@@ -13,7 +13,7 @@ import {
   VoiceInputMode,
 } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useUserSettingsStore, () => {
   const server = setupMswTrpc();
@@ -58,5 +58,21 @@ describe(useUserSettingsStore, () => {
       isDeafenOnJoin: true,
       isMuteOnJoin: true,
     });
+  });
+
+  // One record for the whole session, so every surface that raises the dialog asks for it and only the first
+  // Ask reaches the server — the concurrent ones join that request rather than issuing duplicates of it
+  test("reads the user settings once for repeat and concurrent opens", async () => {
+    expect.hasAssertions();
+
+    const handler = vi.fn<() => UserSettingsInMessage>(() => userSettings);
+    server.use(trpcMsw.user.readUserSettings.query(handler));
+    const userSettingsStore = useUserSettingsStore();
+    const { readUserSettings } = userSettingsStore;
+    await Promise.all([readUserSettings(), readUserSettings()]);
+    await readUserSettings();
+
+    expect(handler).toHaveBeenCalledTimes(1);
+    expect(userSettingsStore.userSettings).toStrictEqual(userSettings);
   });
 });

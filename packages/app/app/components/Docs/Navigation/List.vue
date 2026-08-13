@@ -9,7 +9,7 @@ interface NavigationListProps {
 }
 
 const { items } = defineProps<NavigationListProps>();
-const route = useRoute();
+const { currentRoute } = useRouter();
 const itemsWithChildren = computed(() => items.map((item) => ({ children: getChildNavigationItems(item), item })));
 </script>
 
@@ -21,13 +21,13 @@ const itemsWithChildren = computed(() => items.map((item) => ({ children: getChi
       </template>
       <v-list-item
         v-if="item.page !== false"
-        :active="route.path === item.path"
+        :active="currentRoute.path === item.path"
         title="Overview"
         :to="item.path"
         :value="`${item.path}${DOCS_NAVIGATION_OVERVIEW_SUFFIX}`"
       />
       <DocsNavigationList :items="children" />
     </v-list-group>
-    <v-list-item v-else :active="route.path === item.path" :title="item.title" :to="item.path" />
+    <v-list-item v-else :active="currentRoute.path === item.path" :title="item.title" :to="item.path" />
   </template>
 </template>

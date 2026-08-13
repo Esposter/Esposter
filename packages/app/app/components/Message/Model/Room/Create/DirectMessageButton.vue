@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const isOpen = defineModel<boolean>({ default: false });
+const isOpen = ref(false);
 </script>
 
 <template>

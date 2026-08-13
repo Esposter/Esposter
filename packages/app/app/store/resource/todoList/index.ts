@@ -1,17 +1,14 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
-import type { Resource } from "@esposter/db-schema";
+import type { Resource, ResourceType } from "@esposter/db-schema";
 
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { useResourceStore } from "@/store/resource";
 import { toRawDeep } from "@esposter/shared";
 
 export const useTodoListStore = defineStore("resource/todoList", () => {
-  const route = useRoute();
-  // The store outlives the page, so the id is read from the route per call rather than captured once
-  const { load, readContent, resource, save, setPersistedContent } = useResource(() =>
-    getRouteParamString(route.params.id),
-  );
+  const resourceStore = useResourceStore();
+  const { readContent, readResource, saveContent, setPersistedContent, storeContentVersion } = resourceStore;
   const todoList = ref<TodoListResource>({ items: [] });
   const items = computed({
     get: () => todoList.value.items,
@@ -21,20 +18,25 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   });
   const searchQuery = ref("");
   const loadContent = async () => {
-    await load();
-    const data = await readContent();
+    await readResource();
+    const data = await readContent<ResourceType.TodoList>();
+    // Content is parsed from the blob with plain JSON.parse, so the loaded value carries the list's data
+    // Shape rather than its class instances. The cast is sound because `toJSON` is the only method these
+    // Classes have — pinned by ResourceContent.test-d.ts, which fails the day a second one is added
     todoList.value = (data as TodoListResource | undefined) ?? { items: [] };
+    // Seed the dirty check so a save that changed nothing compares equal instead of bumping contentVersion
+    setPersistedContent(todoList.value);
   };
-  const saveTodoList = () => save(todoList.value);
+  const saveTodoList = () => saveContent(todoList.value);
   // Another device saved — adopt its content and contentVersion so this client renders live data
   // And its own next save is not rejected as stale; the adopted content is what is now persisted
   const storeSaveResourceContent = (content: TodoListResource, contentVersion: Resource["contentVersion"]) => {
     todoList.value = content;
-    if (resource.value) resource.value.contentVersion = contentVersion;
+    storeContentVersion(contentVersion);
     setPersistedContent(content);
   };
   const { createItem, deleteItem, updateItem } = createOperationData(items, ["id"], "Item");
-  const { editedIndex, editedItem, editFormDialog, ...restEditFormData } = createEditFormData(
+  const { editedItem, editFormDialog, originalItem, ...restEditFormData } = createEditFormData(
     computed(() => items.value),
     ["id"],
   );
@@ -43,23 +45,37 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   const saveItem = async (isDeleteAction?: true) => {
     if (!editedItem.value) return false;
 
-    const snapshot = structuredClone(toRawDeep(todoList.value));
-
-    if (isDeleteAction) deleteItem({ id: editedItem.value.id });
-    else if (editedIndex.value > -1) updateItem(editedItem.value);
+    const { id } = editedItem.value;
+    // The unwind is this write's own item rather than a copy of the whole blob: another device's save is
+    // Adopted mid-flight through storeSaveResourceContent, and a blob-wide restore would drop that adopted
+    // Content along with the rejected edit. Cloned before the write because updateItem assigns onto the live
+    // Item, and read before it because originalItem is a computed over items
+    const previousItem = originalItem.value ? structuredClone(toRawDeep(originalItem.value)) : undefined;
+    // Where an item sits is content in a list the user ordered, so the unwind owes its index back too. Read
+    // Before the removal, and used through a re-created insert rather than createItem, which only appends
+    const previousIndex = items.value.findIndex((item) => item.id === id);
+    // Whether this is an edit or an add is the list's own answer to "is that item already here?", read from
+    // The item in hand — a separately tracked index would still hold the previous edit's row when the dialog
+    // Opens straight from the add button, routing that add into an update
+    if (isDeleteAction) deleteItem({ id });
+    else if (previousItem) updateItem(editedItem.value);
     else createItem(editedItem.value);
 
     const isSuccessful = await saveTodoList();
     if (isSuccessful) editFormDialog.value = false;
-    else todoList.value = snapshot;
+    else if (!previousItem) deleteItem({ id });
+    // Clamped to the current length because the list can be shorter by the time the save comes back —
+    // StoreSaveResourceContent adopts another device's content mid-flight, and that content is kept
+    else if (isDeleteAction) items.value.splice(Math.min(previousIndex, items.value.length), 0, previousItem);
+    else updateItem(previousItem);
     return isSuccessful;
   };
   return {
-    editedIndex,
     editedItem,
     editFormDialog,
     items,
     loadContent,
+    originalItem,
     ...restEditFormData,
     saveItem,
     saveTodoList,

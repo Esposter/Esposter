@@ -11,7 +11,7 @@ Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "diff <l
 
 ## Choosing the window — batch up to one, never review dribs
 
-A run's cost is set by the level, not by the size of the diff (SKILL.md), so a handful of files pays close to a full run's price for a fraction of its coverage. Reviewing each small commit as it lands is the most expensive way to use this workflow, and the small-territory trim then cuts the fan-out too, so the thin run is also a shallow one.
+A run's cost is set by the level, not by the size of the diff (`references/run-economics.md`), so a handful of files pays close to a full run's price for a fraction of its coverage. Reviewing each small commit as it lands is the most expensive way to use this workflow, and the small-territory trim then cuts the fan-out too, so the thin run is also a shallow one.
 
 **Unless the ask names a specific change, don't take the working diff — pick a commit window and review everything in it.** Not a release boundary: releases here are cut whenever it suits, so a tag sits an arbitrary distance back — sometimes one commit, sometimes fifty. Walk back instead, and stop when the range is worth a run:
 
@@ -35,6 +35,14 @@ Two exclusions belong in the target string, because a finder spends real attenti
 
 `area` mode pulls the opposite way — narrow the target, don't batch it (see `area.md`), because its finders read whole files rather than hunks.
 
+## Never slice an over-cap branch by path
+
+The cloud `/code-review ultra` refuses a diff past its own caps (it names them in the refusal — files and total lines, both well under a release-sized PR) and suggests a closer base. The tempting workaround is a throwaway branch off the base holding one subsystem's files, reviewed on its own.
+
+**It does not work, and it fails in the direction that wastes the most attention**: the slice is one tree's subsystem sitting on another tree's everything-else, so every reference crossing the cut reads as a defect. A deleted field looks un-migrated, a moved module looks missing, a composable whose consumers live in the other half looks like it broke all of them — each arrives as a confident, well-argued major finding with a step-by-step proof, and each is an artifact of the cut. A whole run can return nothing else.
+
+Split by **history**, not by path: stack real branches so each one's base contains everything before it, and every reference resolves against a tree that actually exists. When the caps refuse even that, the answer is a smaller PR, not a synthetic branch. A local `typecheck` settles the compile-time half of this class in one pass and costs nothing — every reference that stopped resolving across the cut — so run it against the real branch before spending a run on a slice. What it cannot see is the other half: dynamic lookups, data contracts, anything only a run exercises. The suite covers those, and neither is a reason to review a synthetic tree.
+
 ## The Find phase partitions itself by diff size — nothing to pass
 
 Under 50 changed files the finders split by **lens** (one angle each over the whole diff), which is right while the territory is small enough that every finder reads every hunk. At 50 or more they split by **seam** — one finder per subsystem, tracing it end to end plus the boundary it hands data across — since lens-splitting a release-sized diff degenerates into parallel skims that all converge on whatever is loudest. Seam mode adds a whole-diff finder so a bad seam split cannot leave territory unread.
@@ -49,4 +57,4 @@ So when the ask is "review the PR" (not just "review my last change"), target th
 
 ## Reporting
 
-Standard table (see SKILL.md). Findings are `correctness` or `cleanup`; `stale-record` appears as a provenance label rather than a finding kind, because a diff review only notices a stale doc when the change happens to walk past it. Auditing the record properly is what `area` mode is for.
+Standard table (see SKILL.md). Findings are `correctness` or `cleanup` — where `cleanup` now means a broken CLAUDE.md convention and nothing else, since the four quality lenses are `/simplify`'s (SKILL.md). `stale-record` appears as a provenance label rather than a finding kind, because a diff review only notices a stale doc when the change happens to walk past it. Auditing the record properly is what `area` mode is for.

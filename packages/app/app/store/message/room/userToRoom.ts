@@ -5,7 +5,7 @@ import { useRoomStore } from "@/store/message/room";
 export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
   const roomStore = useRoomStore();
   const {
-    data: myUserToRoomMap,
+    data: myUserToRoom,
     getData: getMyUserToRoom,
     setData: setMyUserToRoom,
   } = useDataMap<undefined | UserToRoomInMessage>(() => roomStore.currentRoomId, undefined);
@@ -23,7 +23,7 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
   return {
     getDisplayName,
     getMyUserToRoom,
-    myUserToRoomMap,
+    myUserToRoom,
     setMyUserToRoom,
     setNickname,
   };

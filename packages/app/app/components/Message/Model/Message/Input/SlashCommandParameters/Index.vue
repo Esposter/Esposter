@@ -5,14 +5,8 @@ import { SlashCommandDefinitions } from "@/services/message/slashCommands/SlashC
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 
 const slashCommandStore = useSlashCommandStore();
-const {
-  activeParameters,
-  focusedIndex,
-  hiddenParameters,
-  lastAddedParameterName,
-  parameterValues,
-  pendingSlashCommand,
-} = storeToRefs(slashCommandStore);
+const { activeParameters, focusedIndex, lastAddedParameterName, parameterValues, pendingSlashCommand } =
+  storeToRefs(slashCommandStore);
 const {
   collapseToText,
   createParameter,

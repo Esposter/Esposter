@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import type { VBtn, VCard, VTooltip } from "vuetify/components";
+import type { VCard, VTooltip } from "vuetify/components";
 import type { z } from "zod";
 
 import { mergeProps } from "vue";
 
-interface EditableNameDialogButtonProps {
-  buttonProps?: VBtn["$props"];
+interface StyledEditableNameDialogButtonProps {
   cardProps: VCard["$props"];
   isDirty?: boolean;
   isEditable?: boolean;
@@ -19,7 +18,6 @@ interface EditableNameDialogButtonProps {
 defineSlots<{ default?: () => VNode; "prepend-content"?: () => VNode }>();
 const modelValue = defineModel<boolean>({ default: false });
 const {
-  buttonProps = {},
   cardProps,
   isDirty = false,
   isEditable = true,
@@ -28,18 +26,21 @@ const {
   placeholder,
   schema,
   tooltipProps,
-} = defineProps<EditableNameDialogButtonProps>();
+} = defineProps<StyledEditableNameDialogButtonProps>();
 const emit = defineEmits<{ submit: [name: string] }>();
 const rules = useVRules();
 const { cloned: editedName } = useCloned(() => name);
-const displayName = computed(() => name || placeholder);
+const nameRules = computed(() => [rules.maxLength(maxLength), rules.isNotProfanity()]);
+const confirmButtonAttrs = computed(() => ({
+  disabled: schema.safeParse(editedName.value).data === name && !isDirty,
+}));
 </script>
 
 <template>
   <StyledFormDialog
     v-model="modelValue"
     :card-props
-    :confirm-button-attrs="{ disabled: schema.safeParse(editedName).data === name && !isDirty }"
+    :confirm-button-attrs
     :confirm-button-props="{ text: 'Save' }"
     @submit="
       (_event, onComplete) => {
@@ -59,11 +60,11 @@ const displayName = computed(() => name || placeholder);
                 slim
                 font-bold
                 rd-lg
-                :="mergeProps(tooltipActivatorProps, hoverProps, buttonProps)"
+                :="mergeProps(tooltipActivatorProps, hoverProps)"
                 @click="updateIsOpen(true)"
               >
                 <slot>
-                  {{ displayName }}
+                  {{ name || placeholder }}
                 </slot>
                 <template #append>
                   <v-icon v-if="isEditable" :op="isHovering ? undefined : '0!'" icon="mdi-pencil" size="small" />
@@ -75,13 +76,7 @@ const displayName = computed(() => name || placeholder);
       </v-tooltip>
     </template>
     <slot name="prepend-content" />
-    <v-text-field
-      v-model="editedName"
-      autofocus
-      density="compact"
-      :placeholder
-      :rules="[rules.maxLength(maxLength), rules.isNotProfanity()]"
-    />
+    <v-text-field v-model="editedName" autofocus density="compact" :placeholder :rules="nameRules" />
   </StyledFormDialog>
 </template>
 

@@ -51,7 +51,7 @@ const updateAspectRatio = () => {
           inset-0
           absolute
           group-hover:op-100
-          shadow="[inset_0_0_0_2px_rgb(var(--v-theme-primary))]"
+          shadow="[inset_0_0_0_0.125rem_rgb(var(--v-theme-primary))]"
         />
         <StyledCard m-4 px-3 py-2 rd op-0 transition-opacity bottom-0 left-0 absolute group-hover:op-100>
           <span font-medium text-body-small>{{ presenterName }}'s screen</span>

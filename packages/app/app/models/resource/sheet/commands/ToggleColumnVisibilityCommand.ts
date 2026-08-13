@@ -22,13 +22,13 @@ export class ToggleColumnVisibilityCommand extends ADataSourceCommand<CommandTyp
     this.#hidden = hidden;
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     const column = dataSource.columns.find(({ id }) => id === this.#columnId);
     if (!column) return;
     column.hidden = !this.#hidden;
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     const column = dataSource.columns.find(({ id }) => id === this.#columnId);
     if (!column) return;
     column.hidden = this.#hidden;

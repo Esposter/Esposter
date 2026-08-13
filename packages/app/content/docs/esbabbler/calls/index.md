@@ -56,6 +56,54 @@ The LiveKit webhook (`server/api/webhooks/livekit.post.ts`, validated with `Webh
 
 Every `/calls/[id]` visitor sees prejoin (verify mic/camera) first. The creator (persisted `callSessionsInMessage.userId`) gets **Join now**; non-creators get **Request to join** → `knockCall` puts them in `callKnockerMap`, the creator admits (`admitKnocker` → one-time entry in `callAdmittedParticipantMap`) or dismisses, and only then does `joinCall({ id })` succeed.
 
+```mermaid
+flowchart TD
+  VISIT["visitor opens the call link"] --> ISCREATOR{"session creator?"}
+  ISCREATOR -- yes --> JOIN["joinCall — LiveKit connection data"]
+  ISCREATOR -- no --> KNOCK["knockCall — added to callKnockerMap"]
+  KNOCK --> NOTIFY["onKnockCall — the creator's lobby list"]
+  NOTIFY --> DECIDE{"creator decides"}
+  DECIDE -- admit --> ADMITTED["admitKnocker — one-time callAdmittedParticipantMap entry"]
+  DECIDE -- dismiss --> DISMISSED["dismissKnocker — dropped from callKnockerMap"]
+  ADMITTED --> JOIN
+  DISMISSED --> WAIT["stays on prejoin"]
+```
+
+The creator's lobby list is optimistic: admitting or dismissing removes that knocker at once, and each knocker is its own write target so a host can work down the queue without the writes queueing. A rejected one therefore puts back **only** its own knocker — reinstating the list as it stood would resurrect one already admitted beside it and drop whoever `onKnockCall` delivered meanwhile.
+
+## Ephemeral server state
+
+Everything about a live call except its anchor row lives in module-level maps under `server/services/message/call/`, each keyed by `callSessionId` and each lost on restart. There are four of them rather than one record per session, and the split is load-bearing rather than incidental:
+
+- `callSessionParticipantMap` — the participants, keyed by auth session id. Created by the first join and deleted when the last participant leaves, so its presence _is_ what "this call is live" means, and `requireJoinedCallSession` reads nothing else.
+- `callKnockerMap` and `callAdmittedParticipantMap` — the standalone waiting room. They are torn down with the participant map, because a call nobody is in has nobody left to admit anyone.
+- `callStartTimeMap` — set by the first joiner and read by the **last leaver, after the other three are already gone**, to word the call-duration system message. It outlives the teardown on purpose, which is exactly why it cannot be a field of a record deleted as a unit.
+
+```mermaid
+flowchart TD
+  JOIN["first join — joinCallAsParticipant"] --> CREATE["callSessionParticipantMap entry plus callStartTimeMap entry"]
+  CREATE --> KNOCK["knockCall and admitKnocker fill callKnockerMap and callAdmittedParticipantMap"]
+  CREATE --> LEAVE["leaveCallAsParticipant — deleteCallParticipant"]
+  KNOCK --> LEAVE
+  LEAVE --> LAST{"was that the last participant?"}
+  LAST -->|"no"| KEEP["every map stays — the call is still live"]
+  LAST -->|"yes"| TEARDOWN["participants, knockers and admitted dropped together — knockerDismissed emitted to each"]
+  TEARDOWN --> DURATION["callStartTimeMap read for the duration, then dropped"]
+  DURATION --> SUMMARY["MessageType.Call system message carrying the duration"]
+```
+
+Every teardown path funnels through `leaveCallAsParticipant` — the explicit leave, the LiveKit `participant_left` webhook and the moderation actions alike — so the start time is never orphaned by a call that ended some other way.
+
+### A restart does not end the calls
+
+Losing these maps is survivable, not correct. LiveKit is an external SFU reached over `LIVEKIT_URL`; this process mints tokens and receives webhooks but holds no media connection, so a call in progress is entirely unaffected by the process going away and its participants stay connected to the SFU throughout. What the restart destroys is only this side's picture of them, and three things follow from that:
+
+- `requireJoinedCallSession` reads the participant map and nothing else, so every pre-restart participant is locked out of the call procedures until they rejoin, while still being in the call.
+- Their eventual `participant_left` webhook finds no map entry, `deleteCallParticipant` returns `false`, and `leaveCallAsParticipant` returns early — no `leaveCall` event, no duration message.
+- The next join reads `isFirstJoiner` from that same empty map and re-stamps `callStartTimeMap`, so the duration the call finally reports is measured from the restart rather than from the call.
+
+**Undecided: whether to reconcile.** The fix is to ask LiveKit who is actually in the room and rebuild the maps from the answer, or to close the rooms on boot and make the clients rejoin. The first needs a trigger, and a poll is the wrong one — there is a `RoomServiceClient` listing to call, but nothing native that fires on "this process just lost its state", which is what the `no-scheduled-jobs` rule is about. The second is a visible interruption for something that only happens on deploy. Nothing here is load-bearing until calls outlive deploys often enough to notice, so it is written down rather than built.
+
 ## Procedures
 
 All in `server/trpc/routers/call/index.ts`, registered as `callSession`; the waiting-room procedures live in `server/trpc/routers/call/knocker.ts` and merge in under a `knocker` key:
@@ -106,7 +154,7 @@ DM calls work identically — call procedures accept `RoomType.DirectMessage`; m
 
 ## Notes
 
-- v1 was mesh WebRTC (≤ 8 users, audio only, N² upload); LiveKit replaced it because video/screenshare make mesh bandwidth unsustainable and LiveKit removes all signaling procedures (`sendSignal`/`onSendSignal` deleted).
+- **An SFU rather than a mesh.** Mesh WebRTC costs each participant an upload per peer, which video and screenshare make unsustainable past a handful of people; routing through LiveKit also means the app owns no signaling procedures of its own.
 - Hosting: LiveKit Cloud free tier (5,000 participant-minutes/month) now; self-hosted LiveKit on Azure Container Apps (~$5–15/month, scales to zero) when usage exceeds ~10,000 participant-minutes/month.
 - Empty-string sentinel: `readCallSessionId` returns `""` when the room has no session, never `null`.
 - Virtual backgrounds: starter image presets via `@livekit/track-processors`; selecting a preset turns the camera on, and camera-off resets the processor.

@@ -4,6 +4,7 @@ import type { ScopeAnswer } from "./models/ScopeAnswer";
 
 import { AREA_ARGS, AREA_SCOPE, CANDIDATE } from "./constants.test";
 import { createAreaFiles } from "./createAreaFiles.test";
+import { createCandidates } from "./createCandidates.test";
 import { createSeam } from "./createSeam.test";
 import { getPrompt } from "./getPrompt.test";
 import { runReview } from "./runReview.test";
@@ -19,7 +20,7 @@ const areaScope = (overrides: ScopeAnswer): ScopeAnswer => ({
 
 describe("code-review seam partition", () => {
   // The sweep's own budget, the third cap the reportable ceiling has to account for.
-  const SWEEP_CAP = 8;
+  const SWEEP_CEILING = 8;
 
   test("splits a large area by seam and adds the whole-territory safety net", async () => {
     expect.hasAssertions();
@@ -43,7 +44,7 @@ describe("code-review seam partition", () => {
     // Ones seam mode exists for — the same six resolvers a two-file lens review gets, dropping the rest unexamined.
     const seams = [createSeam("reads", ["cache/f1.ts"]), createSeam("writes", ["cache/f2.ts"])];
     // Twelve unsettled findings, split across two finders because each one's own cap is six.
-    const many = Array.from({ length: 12 }, (_, index) => ({ ...CANDIDATE, line: index + 1 }));
+    const many = createCandidates(12);
     const run = await runReview(
       AREA_ARGS,
       stubFor({
@@ -60,7 +61,7 @@ describe("code-review seam partition", () => {
         !call.label.startsWith("verify:") && !call.label.startsWith("resolve:") && !NON_FINDER_LABELS.has(call.label),
     ).length;
 
-    // Every finder but cleanup, and two resolvers apiece.
+    // Every finder but conventions, and two resolvers apiece.
     expect(run.result.stats).toMatchObject({ angles: finders - 1, findMode: "seam" });
     expect(run.calls.filter((call) => call.label.startsWith("resolve:"))).toHaveLength((finders - 1) * 2);
   });
@@ -83,20 +84,19 @@ describe("code-review seam partition", () => {
     expect(new Set(seamLabels).size).toBe(2);
   });
 
-  test("publishes the ceiling it computed rather than a formula to reassemble", async () => {
+  test("publishes a ceiling that widens with the level and counts the sweep only above high", async () => {
     expect.hasAssertions();
 
     // Every term of the prose formula has drifted out of date at least once — the sweep's own cap was missing from
     // It for two levels — and a reader who re-derives it budgets for a run of a different size than they got.
+    // Asserted as behaviour rather than by re-deriving the sum: a test that restates the implementation's own
+    // Expression can only fail when the code stops using it, which is not a change anyone needs warning about.
     const high = (await runReview("high", stubFor({}))).result.stats;
     const xhigh = (await runReview("xhigh", stubFor({}))).result.stats;
 
-    expect(high?.sweepCap).toBe(0);
-    expect(high?.reportableCeiling).toBe((high?.angles ?? 0) * (high?.perAngle ?? 0) + (high?.cleanupCap ?? 0));
-    expect(xhigh?.sweepCap).toBe(SWEEP_CAP);
-    expect(xhigh?.reportableCeiling).toBe(
-      (xhigh?.angles ?? 0) * (xhigh?.perAngle ?? 0) + (xhigh?.cleanupCap ?? 0) + SWEEP_CAP,
-    );
+    expect(high?.sweepCeiling).toBe(0);
+    expect(xhigh?.sweepCeiling).toBe(SWEEP_CEILING);
+    expect(xhigh?.reportableCeiling).toBeGreaterThan(high?.reportableCeiling ?? 0);
   });
 
   test("falls back to lens when only one seam is usable", async () => {

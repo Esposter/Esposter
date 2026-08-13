@@ -1,14 +1,14 @@
-import type { RecentResourceView } from "@/models/resource/search/RecentResourceView";
 import type { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
 import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearchItem";
+import type { Resource } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { RoutePath } from "@esposter/shared";
 
-// One row shape for both the Resources group (live rows) and the Recently viewed group (localStorage views)
+// One row shape for both the Resources group and the Recently opened group — both are live rows now
 export const getResourceSearchItem = (
-  { id, name, type }: RecentResourceView,
-  group: ResourceSearchGroup.RecentlyViewed | ResourceSearchGroup.Resources,
+  { id, name, type }: Pick<Resource, "id" | "name" | "type">,
+  group: ResourceSearchGroup.RecentlyOpened | ResourceSearchGroup.Resources,
 ): ResourceSearchItem => ({
   group,
   icon: ResourceDefinitionMap[type].icon,

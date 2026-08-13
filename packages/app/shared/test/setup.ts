@@ -35,15 +35,31 @@ class MemoryStorage implements Storage {
 
 globalThis.localStorage = new MemoryStorage();
 globalThis.sessionStorage = new MemoryStorage();
+// Happy-dom implements no `visualViewport`, and Vuetify's overlay location strategy reads it unguarded — so any
+// Test that mounts a real `v-dialog`/`v-menu` dies with `ReferenceError: visualViewport is not defined` before a
+// Single assertion runs. The workaround reached for otherwise is `shallow: true`, which renders no overlay DOM at
+// All and so cannot assert anything about the shell inside it. A stationary 1:1 viewport is exactly what the
+// Strategy wants and never changes, so the listeners are no-ops rather than an event target.
+if (!getIsServer() && !("visualViewport" in globalThis))
+  globalThis.visualViewport = {
+    addEventListener: () => {},
+    height: window.innerHeight,
+    offsetLeft: 0,
+    offsetTop: 0,
+    pageLeft: 0,
+    pageTop: 0,
+    removeEventListener: () => {},
+    scale: 1,
+    width: window.innerWidth,
+  } as unknown as VisualViewport;
 
 vi.mock(import("@@/server/composables/azure/container/useContainerBaseUrl"), () => ({
   useContainerBaseUrl: () => MOCK_BLOB_BASE_URL,
 }));
 // Every Azure client redirects to its colocated in-memory mock, here rather than in `context.test.ts`: a `vi.mock`
 // Is hoisted only within the file that writes it, so one registered from an imported module never intercepts a test
-// File's OWN direct import of the same composable — which is why each such test used to repeat the registration
-// Verbatim. A setup file runs before the test module is imported, so registering once here covers both. The
-// Factories are lazy, so a test that touches no Azure client pays nothing for them.
+// File's OWN direct import of the same composable. A setup file runs before the test module is imported, so
+// Registering once here covers both. The factories are lazy, so a test that touches no Azure client pays nothing.
 vi.mock(
   import("@@/server/composables/azure/container/useContainerClient"),
   () => import("@@/server/composables/azure/container/useContainerClient.test"),

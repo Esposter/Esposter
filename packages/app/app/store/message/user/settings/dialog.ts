@@ -11,11 +11,14 @@ export const useUserSettingsDialogStore = defineStore("message/user/settings/dia
   const activeSectionId = ref<SettingsSection>(VoiceSettingsSection.Devices);
   const isScrollingToSection = ref(false);
   const visibleSectionIds = ref(new Set<SettingsSection>());
+  // Reassigned rather than mutated in place, unlike every other reactive collection here: the scrollspy watches
+  // This ref without `deep`, so it tracks the ref's own dependency and never the Set's — an in-place add or
+  // Delete would leave the active section pinned to whatever was visible when the dialog opened
   const setSectionVisibility = (section: SettingsSection, isSectionVisible: boolean) => {
-    const next = new Set(visibleSectionIds.value);
-    if (isSectionVisible) next.add(section);
-    else next.delete(section);
-    visibleSectionIds.value = next;
+    const newVisibleSectionIds = new Set(visibleSectionIds.value);
+    if (isSectionVisible) newVisibleSectionIds.add(section);
+    else newVisibleSectionIds.delete(section);
+    visibleSectionIds.value = newVisibleSectionIds;
   };
   return {
     activeSectionId,

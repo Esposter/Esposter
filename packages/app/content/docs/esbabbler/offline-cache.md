@@ -54,6 +54,8 @@ That flag only means anything while **the store's list cannot outlive its partit
 
 A store whose partition key can change while it is alive therefore uses `useCursorPaginationDataMap(() => currentKey)` / `useOffsetPaginationDataMap` — messages and members both key on `currentRoomId`. The unkeyed `useCursorPaginationData` is correct only where the key cannot change under the store: the room list partitions on the signed-in user, and signing out reloads the page, so that list is recreated with its partition rather than outliving it.
 
+**Every field describing that partition is keyed, not only the rows.** A cursor is the clearest case: the message list pages in both directions, and a deep link into an older message opens the room around it and leaves a _newer_ cursor to page forward from. Held in a plain `ref` beside a room-keyed list, that cursor and its `hasMoreNewer` flag survive the room switch the rows do not — the next room renders a "load newer" waypoint it never earned, then pages in a window cut from the previous room's timestamps. Anything that answers for one room goes through `useDataMap(() => currentRoomId, …)` like the rows do.
+
 ## Patterns
 
 Feature cache composables wrap the generic one — `getWriteItems` only for feature-specific filtering, `onHydrate` only for side effects not represented by the paginated store itself (member counts, companion user maps):
@@ -94,6 +96,6 @@ Nothing in a fetch composable touches the cache: hydration is a watcher's job, f
 
 ## Notes
 
-- `ReadItemsCacheOptions` was removed — do not reintroduce cache parameters to pagination helpers.
+- **Pagination helpers take no cache options.** The cache is wired at the composable layer, so a read helper never learns whether one exists — threading cache parameters back through them would give the same question two answers.
 - Neither half of the cache alerts. `readIndexedDb` / `writeIndexedDb` report a refused operation to their caller rather than swallowing it, and `usePaginationCache` declares the one `onError` both halves use — the user never asked for the cache, so a browser that refuses it (quota reached, private mode, a database another tab has blocked) is logged and nothing more. A second error channel inside the services is a channel that can disagree with that one.
 - Tests: the generic composable owns the whole cache lifecycle (persist on change, clear on empty, hydrate on mount/switch/offline, readiness and partition-key guards), tested once for both pagination variants. A feature cache tests only what is its own — its `getWriteItems` filter, its `onHydrate` side effects, and one end-to-end wiring pass over its partition-key source and store hook. Awaiting landed cache state is `waitForSynchronizedFunctions()`; the composables return nothing. `fake-indexeddb/auto` is loaded in `vitest.config.ts` `setupFiles` — no mocking needed.

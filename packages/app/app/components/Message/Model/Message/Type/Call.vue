@@ -26,27 +26,24 @@ const formattedDuration = computed(() => {
 </script>
 
 <template>
-  <MessageModelMessageTypeListItem :active :is-preview>
-    <template #prepend>
-      <v-icon
-        :icon="isCallEnded ? 'mdi-phone-hangup' : 'mdi-phone'"
-        :color="isCallEnded ? 'error' : 'success'"
-        size="small"
-      />
-    </template>
+  <MessageModelMessageTypeSystemLine
+    :active
+    :icon="isCallEnded ? 'mdi-phone-hangup' : 'mdi-phone'"
+    :icon-color="isCallEnded ? 'error' : 'success'"
+    :is-preview
+    :message
+  >
     <template v-if="isCallEnded">
-      <span text-gray>Call ended</span>
+      <span op-medium-emphasis>Call ended</span>
       <template v-if="formattedDuration">
-        <span text-gray> · lasted </span>
-        <span text-gray font-medium>{{ formattedDuration }}</span>
+        <span op-medium-emphasis> · lasted </span>
+        <span font-medium op-medium-emphasis>{{ formattedDuration }}</span>
       </template>
-      <span text-gray>. </span>
+      <span op-medium-emphasis>. </span>
     </template>
     <template v-else>
       <span font-bold>{{ creator.name }}</span>
-      <span text-gray> started a call. </span>
+      <span op-medium-emphasis> started a call. </span>
     </template>
-    <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
-    <MessageModelMessageEmojiList :is-preview :message />
-  </MessageModelMessageTypeListItem>
+  </MessageModelMessageTypeSystemLine>
 </template>

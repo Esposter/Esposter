@@ -1,5 +1,5 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
-import type { EditableColumnValue } from "#shared/models/resource/sheet/column/EditableColumnValue";
+import type { EditableColumnValue } from "@/models/resource/sheet/column/EditableColumnValue";
 
 import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
 import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";

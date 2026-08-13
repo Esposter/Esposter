@@ -18,14 +18,7 @@ const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
 <template>
   <div p-4 flex-1 overflow-y-auto>
     <StyledSkeleton v-if="isLoading" type="card@3" />
-    <StyledEmptyState
-      v-else-if="error"
-      icon="mdi-alert-circle-outline"
-      title="Something went wrong"
-      :description="error"
-    >
-      <v-btn prepend-icon="mdi-refresh" variant="tonal" @click="emit('retry')">Retry</v-btn>
-    </StyledEmptyState>
+    <StyledErrorState v-else-if="error" :error @retry="emit('retry')" />
     <!-- The grouped count only returns types the filter actually matched, so an empty summary means an empty list -->
     <StyledEmptyState
       v-else-if="counts.length === 0"

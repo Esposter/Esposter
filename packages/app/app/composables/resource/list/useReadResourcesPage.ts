@@ -1,5 +1,5 @@
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
-import type { Resource } from "@esposter/db-schema";
 
 interface ReadResourcesPageOptions<TFilterInput> {
   // Resolved once per read and handed to both queries, so the total and the rows always describe the same
@@ -13,9 +13,8 @@ interface ReadResourcesPageOptions<TFilterInput> {
   // Repeats, so the total would be re-counted on every one of those three
   getFilterKey: () => string;
   readCount: (filterInput: TFilterInput) => Promise<number>;
-  readPage: (options: ReadResourcesOptions, filterInput: TFilterInput) => Promise<Resource[]>;
+  readPage: (options: ReadResourcesOptions, filterInput: TFilterInput) => Promise<ResourceListItem[]>;
 }
-
 // The one reader behind every server-paged resource table (the workbench list and the Recycle bin). Both page
 // A server-side offset query and count it once per filter, and both can fire overlapping reads — debounced
 // Search, filter pills, Refresh, Retry, a restore or a purge — so a stale response must neither overwrite
@@ -28,7 +27,7 @@ export const useReadResourcesPage = <TFilterInput>({
   readPage,
 }: ReadResourcesPageOptions<TFilterInput>) => {
   const { executeQuery, isPending: isLoading } = useMutation();
-  const items = ref<Resource[]>([]);
+  const items = ref<ResourceListItem[]>([]);
   const count = ref(0);
   const error = ref("");
   // Remembered so Refresh, Retry or a mutation can re-run the exact page the table last asked for
@@ -61,8 +60,8 @@ export const useReadResourcesPage = <TFilterInput>({
           error.value = readError.message;
         },
         onSuccess: ({ newCount, newItems }) => {
-          // Left alone when the count was reused, so an optimistic adjustment made mid-flight (a delete drops the
-          // Rows and the total together) is not overwritten by the total this read started with
+          // A read that reused the previous count issued no count query, so it has nothing to write — the total
+          // Only ever moves when a read actually counted, which is what keeps it the server's number
           if (newCount !== undefined) count.value = newCount;
           countedFilterKey = filterKey;
           items.value = newItems;

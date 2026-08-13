@@ -23,7 +23,6 @@ export const reconcileStorageBlobHandler: EventGridHandler = (event, context) =>
     const { blobName, containerName } = parsedBlobSubject;
     const { contentLength } = blobCreatedEventGridDataSchema.parse(event.data);
     if (await reconcileStorageBlob(db, containerName, blobName, contentLength)) return;
-
     // A blob name reaches us through a url path, and whether storage percent-encodes it in the subject depends
     // On the characters in it — our names carry a `|` separator and a user-chosen filename. Rather than guess
     // Which form a given event used, the decoded form is tried only once the raw one has found no row.

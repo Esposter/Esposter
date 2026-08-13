@@ -2,14 +2,7 @@
 
 How the skills in this directory are organised and maintained. **How to write one is itself a skill — see `skill-authoring`** (frontmatter that drives selection, one owner per topic, don't restate enforcers, generic placeholders). This file is only the index of who owns what.
 
-## Principles
-
-- **Single responsibility** — each skill owns exactly one concern. A given rule lives in exactly one skill.
-- **No overlap** — when a rule could fit two skills, it belongs to the most specific owner. Other skills reference it with a one-line pointer ("See the `formatting` skill") rather than restating it.
-- **Pointers, not duplication** — cross-reference; never copy. Duplicated guidance drifts out of sync and hides the canonical rule, which is what makes a rule hard to find.
-- **No redirect for its own sake** — a pointer earns its place only when it saves a real duplication across skills or sections. Don't redirect to a section a reader reaches by reading on, and don't replace a self-sufficient one-liner with a "see X" link. When in doubt, state the rule concisely inline.
-- **Tight, not fluffy** — one line per rule where possible. Cut redundant prose and example values that will rot.
-- **Two tiers** — `SKILL.md` holds what applies to every task in the domain (~15 KB and ~150 lines, one line per rule) plus a trigger-named index; sub-task deep dives live in that skill's `references/*.md`. See `skill-authoring`.
+**Each skill owns exactly one concern, and a given rule lives in exactly one skill** — which is what the map below is for. Everything about how one is written (the most-specific-owner tiebreak, pointers instead of copies, the two-tier layout and its budget, tight-not-fluffy) is `skill-authoring`'s, stated there in full and deliberately not repeated here.
 
 `.agents/skills` is a symlink to `.claude/skills`, so edits to either tree apply to both automatically — no manual mirroring.
 
@@ -21,7 +14,7 @@ If nothing fits, that may signal a missing single-responsibility skill — creat
 
 ### Meta
 
-- `skill-authoring` — how to write a `SKILL.md`: frontmatter/selection, one owner per topic, the enforcer rule, generic placeholders, declaration layout.
+- `skill-authoring` — how to write a `SKILL.md`: frontmatter/selection, one owner per topic, the enforcer rule, generic placeholders, the two-tier layout.
 - `docs` — `packages/app/content/docs` conventions: the Mermaid mandate, location-carries-status, page templates, area lifecycle.
 - `readme-standards` — package `README.md` template, badges, published-vs-private split.
 
@@ -65,6 +58,7 @@ The `vue` / `vue-component-patterns` / `vue-page-composition` / `vue-composable-
 - `git` — commit format, safety rules, branch hygiene.
 - `code-review` — the one entry point for every review: the workflow script, its two modes, what a run costs and bounds it, confidence and provenance on findings, closing a finding (`fixing-findings.md`), and the stop rule.
 - `coderabbit` — review config: PR file budget, `.coderabbit.yaml` exclusions, exclude/re-enable commit pair.
+- `sweeps` — repo-wide mechanical passes and the `.claude/ledgers/` tree that tracks them: when one earns a file, its metadata/coverage tables, standing vs one-shot, shrinking a sweep into an enforcer. The convention a sweep carries stays owned by its own skill.
 - `oxlint` — lint rule exceptions and disable directives.
 - `package-scripts` — which `pnpm` script to run, and from where.
 - `context-efficiency` — how the main session spends its own context/turns: delegating wide reads, batching verification, polling vs sleeping, baselining before chasing an error.

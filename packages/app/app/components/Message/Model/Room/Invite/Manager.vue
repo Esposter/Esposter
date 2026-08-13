@@ -4,6 +4,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
+import { pluralize } from "#shared/util/text/pluralize";
 import { InviteExpireAfterSelectItems } from "@/services/message/room/invite/InviteExpireAfterSelectItems";
 import { InviteMaxUsesSelectItems } from "@/services/message/room/invite/InviteMaxUsesSelectItems";
 import { useInviteStore } from "@/store/message/room/invite";
@@ -49,7 +50,7 @@ const inviteStateText = computed(() => {
   ];
   if (invite.value.maxUses) {
     const remainingUses = invite.value.maxUses - invite.value.uses;
-    parts.push(`${remainingUses} use${remainingUses === 1 ? "" : "s"} remaining.`);
+    parts.push(`${remainingUses} ${pluralize("use", remainingUses)} remaining.`);
   }
   return parts.join(" ");
 });
@@ -89,7 +90,7 @@ const isCopied = ref(false);
         <StyledClipboardButton w-20 :source="inviteLink" @update:copied="isCopied = $event" @create="onCreateInvite" />
       </template>
     </v-text-field>
-    <div v-if="inviteStateText" text-gray pt-2 text-title-small>{{ inviteStateText }}</div>
+    <div v-if="inviteStateText" pt-2 op-medium-emphasis text-title-small>{{ inviteStateText }}</div>
   </div>
 </template>
 

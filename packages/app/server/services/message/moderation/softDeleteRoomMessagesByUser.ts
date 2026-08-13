@@ -5,7 +5,7 @@ import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishB
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import {
   deserializeEntity,
-  getFileBlobNames,
+  getFilesBlobNames,
   getTableNullClause,
   serializeClauses,
   serializeEntity,
@@ -45,7 +45,7 @@ export const softDeleteRoomMessagesByUser = async (roomId: string, targetUserId:
       ],
       async (batch) => {
         for (const { partitionKey, rowKey } of batch)
-          messageEventEmitter.emit("deleteMessage", { partitionKey, rowKey });
+          messageEventEmitter.emit("deleteMessage", [{ partitionKey, rowKey }]);
         // Hiding the messages leaves their attachments reachable to anyone still holding a read SAS minted before
         // The ban, and no other delete path can reclaim them afterwards — `deleteMessage` rejects an entity that
         // Already carries `deletedAt`, and `deleteFile` needs a live message — so the blobs would be billed until
@@ -54,9 +54,7 @@ export const softDeleteRoomMessagesByUser = async (roomId: string, targetUserId:
         await publishBlobDeletion(
           roomId,
           AzureContainer.MessageAssets,
-          batch.flatMap(({ files }) =>
-            files.flatMap(({ filename, id }) => Object.values(getFileBlobNames(roomId, id, filename))),
-          ),
+          batch.flatMap(({ files }) => getFilesBlobNames(roomId, files)),
         );
       },
     );

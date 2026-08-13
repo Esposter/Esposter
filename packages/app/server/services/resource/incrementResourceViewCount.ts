@@ -2,7 +2,7 @@ import type { Resource } from "@esposter/db-schema";
 
 import { getUtcDateString } from "#shared/services/dayjs/getUtcDateString";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { MAX_VIEW_COUNT_ETAG_RETRIES } from "@@/server/services/resource/viewConstants";
+import { MAX_VIEW_COUNT_ETAG_RETRIES } from "@@/server/services/resource/constants";
 import { createEntity, getEntityWithEtag, updateEntity } from "@esposter/db";
 import { AzureTable, ResourceViewEntity } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";

@@ -23,7 +23,7 @@ import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
 import { compareByCompositeKey } from "@/services/table/compareByCompositeKey";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
-import { exhaustiveGuard, getOrCreate, getResult, ID_SEPARATOR, noop } from "@esposter/shared";
+import { chunk, exhaustiveGuard, getOrCreate, getResult, ID_SEPARATOR, noop } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure TableClient.
  * It uses a Map to simulate table storage and correctly implements the TableClient interface.
@@ -88,9 +88,13 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     const filter = options?.queryOptions?.filter;
     // Azure Table Storage returns entities ordered by partitionKey then rowKey, not insertion order —
     // The reverse-ticked message rowKey design relies on that scan order to read newest-first.
-    const tableEntities = [...(this.table as Map<string, TableEntity<T>>).values()].toSorted(compareByCompositeKey);
+    const tableEntities = [...(this.table as Map<string, TableEntity<T>>).values()];
     const predicate = filter ? createFilterPredicate(filter) : undefined;
-    const resultTableEntities = predicate ? tableEntities.filter((e) => predicate(e)) : tableEntities;
+    // Filtering before the sort keeps the comparison count proportional to the matches rather than to the
+    // Whole table; composite keys are unique, so the surviving order is the same either way
+    const resultTableEntities = (predicate ? tableEntities.filter((e) => predicate(e)) : tableEntities).toSorted(
+      compareByCompositeKey,
+    );
     // One shared generator retains iteration state across next() calls so a bare for await terminates,
     // Matching the real SDK where the returned iterator is single-use.
     const entityIterator = (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResult<T>> {
@@ -105,14 +109,15 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
           else if (maxPageSize !== undefined && maxPageSize > AZURE_MAX_PAGE_SIZE)
             throw new MockRestError("One of the request inputs is not valid.", 400);
 
-          const allEntitiesWithMetadata = entities.map((e) => withMetadata(e));
-          if (allEntitiesWithMetadata.length === 0) return;
+          if (entities.length === 0) return;
           else if (!maxPageSize) {
-            yield await Promise.resolve(allEntitiesWithMetadata);
+            yield await Promise.resolve(entities.map((e) => withMetadata(e)));
             return;
           }
-          for (let i = 0; i < allEntitiesWithMetadata.length; i += maxPageSize)
-            yield await Promise.resolve(allEntitiesWithMetadata.slice(i, i + maxPageSize));
+          // Cloned a page at a time, so a consumer that stops after the first page (a capped read, a bounded
+          // Count) never pays for the rest of the table
+          for (const page of chunk(entities, maxPageSize))
+            yield await Promise.resolve(page.map((e) => withMetadata(e)));
         })(resultTableEntities),
       next: () => entityIterator.next(),
       [Symbol.asyncIterator]() {
@@ -124,7 +129,6 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   setAccessPolicy(): Promise<TableSetAccessPolicyHeaders> {
     throw new Error("Method not implemented.");
   }
-
   // The service applies a transaction atomically, so the actions land through the synchronous appliers rather
   // Than the promise-returning methods: awaiting between two actions would let a concurrent caller interleave
   // Its own writes, and the rollback below would then restore a snapshot predating them — silently dropping
@@ -223,7 +227,6 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   #getCompositeKey(partitionKey: string, rowKey: string): string {
     return `${partitionKey}${ID_SEPARATOR}${rowKey}`;
   }
-
   // Random rather than timestamped: two writes can land within one clock tick, and equal etags across
   // Versions would make a stale conditional update falsely match
   #getEtag(): string {

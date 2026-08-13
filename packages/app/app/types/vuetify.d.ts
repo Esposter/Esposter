@@ -3,6 +3,6 @@ import type { ValidationRuleBuilderWithOptions, ValidationRuleBuilderWithoutOpti
 declare module "vuetify/labs/rules" {
   interface RuleAliases {
     isNotProfanity: ValidationRuleBuilderWithoutOptions;
-    requireAtLeastN: ValidationRuleBuilderWithOptions<number>;
+    minValue: ValidationRuleBuilderWithOptions<number>;
   }
 }

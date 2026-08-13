@@ -9,7 +9,7 @@ A size ceiling that fails a build: `size-limit`, `bundlesize`, `bundlewatch`, or
 
 Nothing of the sort is installed, and no workflow in `.github/workflows/` inspects build output size. The only tooling is the `analyze` script in `packages/app/package.json` — a plain `nuxt analyze` — which is manual, produces a treemap to look at, and enforces no threshold. `configuration/vite.ts` sets no `manualChunks` and no `chunkSizeWarningLimit`, so Rollup's own size warning is at its default and chunking is entirely Nuxt's.
 
-Payload control today is idiomatic rather than measured: Nuxt's per-route code splitting, component maps that resolve their components lazily, and explicit dynamic imports for the heavy ones — `app/components/Docs/Mermaid.vue` imports mermaid only after mount, precisely so the multi-megabyte chunk never lands in the docs route's initial load. (The `ssr: false` entries in `configuration/routeRules.ts` are often mistaken for a payload lever; their comment says otherwise — they exist because those pages touch `window`/`localStorage` during setup and crash under SSR.)
+Payload control today is idiomatic rather than measured: Nuxt's per-route code splitting, component maps that resolve their components lazily, and explicit dynamic imports for the heavy ones — `DocsMermaid` imports mermaid only after mount, precisely so the multi-megabyte chunk never lands in the docs route's initial load. (The `ssr: false` entries in `configuration/routeRules.ts` are often mistaken for a payload lever; their comment says otherwise — they exist because those pages touch `window`/`localStorage` during setup and crash under SSR.)
 
 ## Why deferred
 

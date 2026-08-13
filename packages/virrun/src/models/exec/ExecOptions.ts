@@ -19,7 +19,6 @@ export interface ExecOptions {
   // (install/prepare) tees to "stderr" so a piped caller's stdout is never poisoned by setup logs.
   tee?: ExecTeeTarget;
 }
-
 // "pipe" captures stdout/stderr into the ExecResult; "inherit" streams them live to the host terminal.
 export type ExecStdio = "inherit" | "pipe";
 

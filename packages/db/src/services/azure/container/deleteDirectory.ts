@@ -13,7 +13,6 @@ export const deleteDirectory = async (containerClient: ContainerClient, prefix =
     (name) => containerClient.getBlockBlobClient(name).url,
   );
   if (blobUrls.length === 0) return;
-
   // A directory's blob count has no ceiling, and a batch past MAX_BLOB_BATCH_DELETIONS throws before issuing a
   // Single delete — the whole teardown then fails rather than deleting most of it, so the batches go out in waves
   const blobBatchClient = containerClient.getBlobBatchClient();

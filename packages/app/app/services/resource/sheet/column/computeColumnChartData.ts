@@ -1,33 +1,37 @@
 import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
 import type { ColumnChartData } from "@/models/resource/sheet/column/ColumnChartData";
+import type { ApexOptions } from "apexcharts";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 
+const BASE_CHART_OPTIONS: ApexOptions = { chart: { toolbar: { show: false } } };
+// Horizontal bars render their categories bottom-up, so the entries are reversed to keep the
+// Largest frequency at the top
+const buildTopFrequenciesChartData = (
+  columnStatistics: ColumnStatistics,
+  isHorizontal: boolean,
+): ColumnChartData | undefined => {
+  if (!columnStatistics.topFrequencies?.length) return undefined;
+
+  const entries = isHorizontal ? columnStatistics.topFrequencies.toReversed() : columnStatistics.topFrequencies;
+  return {
+    options: {
+      ...BASE_CHART_OPTIONS,
+      ...(isHorizontal ? { plotOptions: { bar: { horizontal: true } } } : {}),
+      xaxis: { categories: entries.map(([category]) => category) },
+    },
+    series: [{ data: entries.map(([, count]) => count), name: columnStatistics.columnName }],
+    type: "bar",
+  };
+};
+
 const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatistics) => ColumnChartData | undefined>> = {
   [ColumnType.Boolean]: (columnStatistics) => ({
-    options: {
-      chart: { toolbar: { show: false } },
-      labels: ["True", "False", "Null"],
-    },
+    options: { ...BASE_CHART_OPTIONS, labels: ["True", "False", "Null"] },
     series: [columnStatistics.trueCount ?? 0, columnStatistics.falseCount ?? 0, columnStatistics.nullCount],
     type: "pie",
   }),
-  [ColumnType.Date]: (columnStatistics) => {
-    if (!columnStatistics.topFrequencies?.length) return undefined;
-    return {
-      options: {
-        chart: { toolbar: { show: false } },
-        xaxis: { categories: columnStatistics.topFrequencies.map(([month]) => month) },
-      },
-      series: [
-        {
-          data: columnStatistics.topFrequencies.map(([, count]) => count),
-          name: columnStatistics.columnName,
-        },
-      ],
-      type: "bar",
-    };
-  },
+  [ColumnType.Date]: (columnStatistics) => buildTopFrequenciesChartData(columnStatistics, false),
   [ColumnType.Number]: (columnStatistics) => {
     if (
       columnStatistics.minimum === undefined ||
@@ -37,7 +41,7 @@ const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatisti
       return undefined;
     return {
       options: {
-        chart: { toolbar: { show: false } },
+        ...BASE_CHART_OPTIONS,
         plotOptions: { bar: { horizontal: true } },
         xaxis: { categories: ["Minimum", "Average", "Maximum"] },
       },
@@ -50,19 +54,7 @@ const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatisti
       type: "bar",
     };
   },
-  [ColumnType.String]: (columnStatistics) => {
-    if (!columnStatistics.topFrequencies?.length) return undefined;
-    const entries = [...columnStatistics.topFrequencies].toReversed();
-    return {
-      options: {
-        chart: { toolbar: { show: false } },
-        plotOptions: { bar: { horizontal: true } },
-        xaxis: { categories: entries.map(([value]) => value) },
-      },
-      series: [{ data: entries.map(([, count]) => count), name: columnStatistics.columnName }],
-      type: "bar",
-    };
-  },
+  [ColumnType.String]: (columnStatistics) => buildTopFrequenciesChartData(columnStatistics, true),
 };
 
 export const ChartableColumnTypes: ReadonlySet<ColumnType> = new Set(Object.keys(ColumnChartDataMap) as ColumnType[]);

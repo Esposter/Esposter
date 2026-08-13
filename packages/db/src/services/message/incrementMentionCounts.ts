@@ -1,6 +1,5 @@
-import type { MessageEntity, relations, UserToRoomInMessage } from "@esposter/db-schema";
+import type { Database, MessageEntity, UserToRoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { getMentionBadgeConditions } from "@/services/message/mention/getMentionBadgeConditions";
 import { userStatusesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
@@ -11,7 +10,7 @@ import { and, eq, inArray, ne, or, sql } from "drizzle-orm";
 // Single batched UPDATE (the userStatuses join for @here lives in the inArray subquery), excluding
 // The sender, and returns the updated rows so callers can fan them out to subscriptions.
 export const incrementMentionCounts = async (
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   { message, partitionKey, userId }: Pick<MessageEntity, "message" | "partitionKey" | "userId">,
 ): Promise<UserToRoomInMessage[]> => {
   const classifiedMentions = classifyMentions(message);

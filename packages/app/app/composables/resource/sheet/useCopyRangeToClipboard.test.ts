@@ -4,11 +4,11 @@ import { createComputedColumn } from "@/composables/resource/sheet/commands/crea
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
+import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { useCopyRangeToClipboard } from "@/composables/resource/sheet/useCopyRangeToClipboard";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useRowStore } from "@/store/resource/sheet/row";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const selectRange = (rowStart: number, rowEnd: number, columnStart: number, columnEnd: number) => {
@@ -21,8 +21,9 @@ const selectRange = (rowStart: number, rowEnd: number, columnStart: number, colu
 describe(useCopyRangeToClipboard, () => {
   let writeTextMock: ReturnType<typeof vi.fn<() => Promise<void>>>;
 
+  setupCommandTest();
+
   beforeEach(() => {
-    setActivePinia(createPinia());
     writeTextMock = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
     vi.stubGlobal("ClipboardItem", undefined);
     vi.stubGlobal("navigator", { clipboard: { writeText: writeTextMock } });

@@ -1,3 +1,4 @@
+import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { Post, PostWithRelations, relations } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
 
@@ -14,10 +15,11 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { getNotBlockedWhere } from "@@/server/services/post/getNotBlockedWhere";
+import { getPostRanking } from "@@/server/services/post/getPostRanking";
 import { getPostWithViewerLike } from "@@/server/services/post/getPostWithViewerLike";
 import { getViewerPostRelations } from "@@/server/services/post/getViewerPostRelations";
-import { ranking } from "@@/server/services/post/ranking";
 import { router } from "@@/server/trpc";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
@@ -31,7 +33,6 @@ import {
   selectPostSchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 
@@ -78,7 +79,7 @@ export const postRouter = router({
                 ...input,
                 createdAt,
                 depth: parentPost.depth + 1,
-                ranking: ranking(0, createdAt),
+                ranking: getPostRanking(0, createdAt),
                 userId: ctx.getSessionPayload.user.id,
               })
               .returning({ id: posts.id })
@@ -120,7 +121,7 @@ export const postRouter = router({
               .values({
                 ...input,
                 createdAt,
-                ranking: ranking(0, createdAt),
+                ranking: getPostRanking(0, createdAt),
                 userId: ctx.getSessionPayload.user.id,
               })
               .returning({ id: posts.id })
@@ -160,11 +161,7 @@ export const postRouter = router({
         input,
       );
       const { parentId: postId } = deletedComment;
-      if (!postId)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, input).message,
-        });
+      if (!postId) throw getInvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, input);
 
       const post = await requireEntity(
         tx.query.posts.findFirst({
@@ -239,44 +236,46 @@ export const postRouter = router({
   }),
   readPosts: standardRateLimitedProcedure
     .input(readPostsInputSchema)
-    .query(async ({ ctx, input: { cursor, limit, parentId, sortBy, userId: authorId } }) => {
-      const userId = ctx.getSessionPayload?.user.id;
-      const where: RelationsFilter<(typeof relations)["posts"], typeof relations> = parentId
-        ? { parentId: { eq: parentId } }
-        : { parentId: { isNull: true } };
-      // Profile feeds scope to a single author — composes with the parentId and cursor clauses
-      if (authorId) where.userId = { eq: authorId };
-      if (cursor || userId)
-        where.RAW = (post) => {
-          const rawWhere = and(
-            cursor ? getCursorWhere(post, cursor, sortBy) : undefined,
-            // Only feeds filter blocked users — `readPost` stays readable since navigating
-            // Directly to a blocked user's post is an intentional act
-            userId ? getNotBlockedWhere(post, ctx.db, userId) : undefined,
-          );
-          if (!rawWhere)
-            throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Post, JSON.stringify({ cursor }));
-          return rawWhere;
-        };
-      const resultPosts = userId
-        ? await ctx.db.query.posts.findMany({
-            limit: limit + 1,
-            orderBy: (post) => parseSortByToSql(post, sortBy),
-            where,
-            with: getViewerPostRelations(userId),
-          })
-        : await ctx.db.query.posts.findMany({
-            limit: limit + 1,
-            orderBy: (post) => parseSortByToSql(post, sortBy),
-            where,
-            with: PostRelations,
-          });
-      return getCursorPaginationData(
-        resultPosts.map((post) => getPostWithViewerLike(post)),
-        limit,
-        sortBy,
-      );
-    }),
+    .query<CursorPaginationData<PostWithRelations>>(
+      async ({ ctx, input: { cursor, limit, parentId, sortBy, userId: authorId } }) => {
+        const userId = ctx.getSessionPayload?.user.id;
+        const where: RelationsFilter<(typeof relations)["posts"], typeof relations> = parentId
+          ? { parentId: { eq: parentId } }
+          : { parentId: { isNull: true } };
+        // Profile feeds scope to a single author — composes with the parentId and cursor clauses
+        if (authorId) where.userId = { eq: authorId };
+        if (cursor || userId)
+          where.RAW = (post) => {
+            const rawWhere = and(
+              cursor ? getCursorWhere(post, cursor, sortBy) : undefined,
+              // Only feeds filter blocked users — `readPost` stays readable since navigating
+              // Directly to a blocked user's post is an intentional act
+              userId ? getNotBlockedWhere(post, ctx.db, userId) : undefined,
+            );
+            if (!rawWhere)
+              throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Post, JSON.stringify({ cursor }));
+            return rawWhere;
+          };
+        const resultPosts = userId
+          ? await ctx.db.query.posts.findMany({
+              limit: limit + 1,
+              orderBy: (post) => parseSortByToSql(post, sortBy),
+              where,
+              with: getViewerPostRelations(userId),
+            })
+          : await ctx.db.query.posts.findMany({
+              limit: limit + 1,
+              orderBy: (post) => parseSortByToSql(post, sortBy),
+              where,
+              with: PostRelations,
+            });
+        return getCursorPaginationData(
+          resultPosts.map((post) => getPostWithViewerLike(post)),
+          limit,
+          sortBy,
+        );
+      },
+    ),
   updateComment: getProfanityFilterProcedure(updateCommentInputSchema, ["description"]).mutation<PostWithRelations>(
     ({ ctx, input: { id, ...rest } }) =>
       ctx.db.transaction(async (tx) => {

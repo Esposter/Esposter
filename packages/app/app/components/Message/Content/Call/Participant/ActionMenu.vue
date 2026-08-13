@@ -4,18 +4,20 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import { useCallStore } from "@/store/message/room/call";
 
 interface CallParticipantActionMenuProps {
-  isHandRaised: boolean;
   participant: CallParticipant;
 }
 
-const { isHandRaised, participant } = defineProps<CallParticipantActionMenuProps>();
-// Close-on-content-click is off so dragging the volume slider keeps the menu open;
-// Action items close it explicitly instead.
-const isOpen = ref(false);
+defineSlots<{ activator: (props: { props: Record<string, unknown> }) => VNode }>();
+const { participant } = defineProps<CallParticipantActionMenuProps>();
 const callStore = useCallStore();
 const { isInCall } = storeToRefs(callStore);
 const { getActions } = useCallParticipantActions();
-const actions = computed(() => getActions(participant.id, participant.userId, participant.isMuted, isHandRaised));
+// Close-on-content-click is off so dragging the volume slider keeps the menu open;
+// Action items close it explicitly instead.
+const isOpen = ref(false);
+const actions = computed(() =>
+  getActions(participant.id, participant.userId, participant.isMuted, participant.isHandRaised),
+);
 </script>
 
 <template>

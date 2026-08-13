@@ -3,7 +3,7 @@ import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@espost
 
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { ResourceActivityType, ResourceType } from "@esposter/db-schema";
-import { noop, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 const { tableClientMock } = vi.hoisted(() => ({
@@ -35,13 +35,11 @@ describe(createResourceRow, () => {
     expect.hasAssertions();
 
     const entities: Record<string, unknown>[] = [];
-    let releaseWrite = noop;
+    const { promise: writePromise, resolve: releaseWrite } = Promise.withResolvers<void>();
     tableClientMock.current = {
       createEntity: (entity) => {
         entities.push(entity);
-        return new Promise<void>((resolve) => {
-          releaseWrite = resolve;
-        });
+        return writePromise;
       },
     };
     let isReturned = false;

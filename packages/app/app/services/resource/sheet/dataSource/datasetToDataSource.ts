@@ -9,7 +9,9 @@ import { NumberColumn } from "#shared/models/resource/sheet/column/NumberColumn"
 import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { inferDateFormat } from "@/services/resource/sheet/column/inferDateFormat";
-import { exhaustiveGuard, takeOne } from "@esposter/shared";
+import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
+import { computeDataSourceStatistics } from "@/services/resource/sheet/dataSource/computeDataSourceStatistics";
+import { exhaustiveGuard } from "@esposter/shared";
 
 export const datasetToDataSource = (
   dataset: Dataset,
@@ -35,12 +37,14 @@ export const datasetToDataSource = (
   });
   const rows = dataset.rows.map((data) => new Row({ data }));
   for (const column of columns)
-    column.size = rows.reduce((total, row) => total + JSON.stringify(takeOne(row.data, column.name)).length, 0);
-  const statisticsSize = columns.reduce((total, column) => total + column.size, 0);
-  return {
+    column.size = rows.reduce((total, row) => total + getValueSize(row.data[column.name]), 0);
+
+  const dataSource: DataSource = {
     columns,
-    metadata: { dataSourceType, importedAt: new Date(), name, size: size ?? statisticsSize },
+    metadata: { dataSourceType, importedAt: new Date(), name, size: 0 },
     rows,
-    statistics: { columnCount: columns.length, rowCount: rows.length, size: statisticsSize },
   };
+  // An import without a file behind it (a dataset, a paste) has no byte count of its own, so the cells stand in
+  dataSource.metadata.size = size ?? computeDataSourceStatistics(dataSource).size;
+  return dataSource;
 };

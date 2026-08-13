@@ -1,5 +1,4 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { assertCanCreateMessage } from "@/services/assertCanCreateMessage";
 import { InvocationContext } from "@azure/functions";
@@ -16,7 +15,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-let mockDb: PostgresJsDatabase<typeof relations>;
+let mockDb: Database;
 
 vi.mock(import("@/services/db"), () => ({
   get db() {

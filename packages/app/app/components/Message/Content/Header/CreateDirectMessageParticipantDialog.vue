@@ -27,19 +27,27 @@ const excludedUserIds = computed(() => {
 });
 const { executeMutation } = useMutation();
 const createDirectMessageParticipants = async (onComplete: (isSuccessful?: boolean) => void) => {
-  const previousParticipants = directMessageParticipantsMap.value.get(roomId) ?? [];
-  const existingParticipantIds = new Set(previousParticipants.map(({ id }) => id));
-  const newParticipants = friends.value.filter(
-    ({ id }) => selectedUserIds.value.includes(id) && !existingParticipantIds.has(id),
-  );
   let isSuccessful = false;
   await executeMutation(
     () => $trpc.room.directMessage.createDirectMessageParticipants.mutate({ roomId, userIds: selectedUserIds.value }),
     {
+      // Read as the write is sent, so this builds on whoever the add ahead of it already stored rather than on
+      // The list as it stood when the user confirmed
       applyOptimistic: () => {
-        directMessageParticipantsMap.value.set(roomId, [...newParticipants, ...previousParticipants]);
+        const currentParticipants = directMessageParticipantsMap.value.get(roomId) ?? [];
+        const existingParticipantIds = new Set(currentParticipants.map(({ id }) => id));
+        const newParticipants = friends.value.filter(
+          ({ id }) => selectedUserIds.value.includes(id) && !existingParticipantIds.has(id),
+        );
+        directMessageParticipantsMap.value.set(roomId, [...newParticipants, ...currentParticipants]);
         return () => {
-          directMessageParticipantsMap.value.set(roomId, previousParticipants);
+          // Only the people this write added — reinstating the list it was issued with would re-add anyone a
+          // Concurrent removal took out and drop whoever arrived while this write was in flight
+          const addedIds = new Set(newParticipants.map(({ id }) => id));
+          directMessageParticipantsMap.value.set(
+            roomId,
+            (directMessageParticipantsMap.value.get(roomId) ?? []).filter(({ id }) => !addedIds.has(id)),
+          );
         };
       },
       key: roomId,

@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import { normalizeString } from "@esposter/shared";
-
 interface PermissionListItemProps {
   permission: bigint;
-  permissionKey: string;
+  title: string;
 }
 
-const { permission, permissionKey } = defineProps<PermissionListItemProps>();
+const { permission, title } = defineProps<PermissionListItemProps>();
 const modelValue = defineModel<bigint>({ required: true });
 const isEnabled = computed(() => Boolean(modelValue.value & permission));
-const title = computed(() => normalizeString(permissionKey.replaceAll(/(?<upper>[A-Z])/gu, " $1")));
 </script>
 
 <template>

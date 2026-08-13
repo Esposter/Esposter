@@ -8,7 +8,6 @@ import type { Except } from "type-fest";
 import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/AzureEntity";
 import { fileEntitySchema } from "@/models/azure/table/FileEntity";
 import { MessageType, standardMessageTypeSchema } from "@/models/message/MessageType";
-import { userIdSchema } from "@/models/shared/UserId";
 import { selectRoomInMessageSchema } from "@/schema/roomsInMessage";
 import { selectUserSchema } from "@/schema/users";
 import { FILE_MAX_LENGTH } from "@/services/azure/container/constants";
@@ -52,5 +51,4 @@ export const baseMessageEntitySchema = z.object({
   message: sanitizedMessageSchema.default(""),
   replyRowKey: z.string().optional(),
   type: standardMessageTypeSchema.default(MessageType.Message),
-  ...userIdSchema.shape,
 }) satisfies z.ZodType<ToData<Except<BaseMessageEntity, "linkPreviewResponse">>>;

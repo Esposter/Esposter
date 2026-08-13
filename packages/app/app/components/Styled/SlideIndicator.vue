@@ -17,8 +17,14 @@ const measure = () => {
     .map((activeKey) => parent.querySelector<HTMLElement>(`[data-slide-indicator-key="${activeKey}"]`))
     .filter((target) => target !== null);
   if (targets.length === 0) return;
-  const top = Math.min(...targets.map((target) => target.offsetTop));
-  const bottom = Math.max(...targets.map((target) => target.offsetTop + target.offsetHeight));
+  let top = Number.POSITIVE_INFINITY;
+  let bottom = Number.NEGATIVE_INFINITY;
+
+  for (const target of targets) {
+    top = Math.min(top, target.offsetTop);
+    bottom = Math.max(bottom, target.offsetTop + target.offsetHeight);
+  }
+
   indicatorStyle.value = { height: `${bottom - top}px`, transform: `translateY(${top}px)` };
 };
 

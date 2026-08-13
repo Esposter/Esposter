@@ -23,7 +23,7 @@ isHidden: boolean().notNull().default(false),
 ## Table Definition
 
 - Use the `pgTable` wrapper from `@/pgTable` (not raw `drizzle-orm/pg-core`) for all tables, including join tables. Pass composite PKs via `extraConfig`.
-- Table name strings stay snake_case plural (`"room_categories"`, `"push_subscriptions"`) — only columns are camelCase.
+- **Every DB identifier is camelCase** — table names, enum names, constraint and index names alike (`pgTable("roomCategories")`, `pgEnum("resourceType")`). The name string is the literal DDL identifier: the wrapper's `camelCase` casing applies to **columns**, and passes the table name through untouched, so nothing normalises it for you and nothing catches a snake_case one at compile time. `schema.test.ts` asserts each table's name equals its exported const, which is what keeps this from drifting again — it drifted once already, into five snake_case tables and eleven snake_case enums, because the rule lived only in this sentence and the sentence was wrong.
 - Pass `schema: messageSchema` for message-feature tables to group them under the `message` Postgres schema. Tables shared beyond the messaging feature (`friends`, `users`, `posts`, `blocks`) take no `schema` and land in the default schema.
 
 ```typescript
@@ -82,6 +82,7 @@ await tx
 1. **Wrap the first element in `requireMutation`** — never hand-roll the undefined guard, never fall back to `?? []` / `?? null`. See the error-handling skill (tRPC Backend Guards).
 2. **Return the full entity** — never a subset of fields. Let callers destructure what they need.
 3. **Add `DatabaseEntityType` if missing** — to `packages/db-schema/src/models/shared/DatabaseEntityType.ts`, then `pnpm build` in `packages/db-schema/` to rebuild dist.
+4. **`[0]`, not `takeOne`, when a guard consumes the result.** `takeOne` is a type-level assertion that erases `undefined` from the element type, so it is for access whose absence would be a bug. A row that may legitimately be absent keeps `[0]`: `undefined` is precisely what `requireMutation`, `requireEntity` and a `!row` branch exist to read. Putting `takeOne` in front of a guard types the absent case out of existence and leaves the guard unreachable — the same applies to a locked `SELECT … FOR UPDATE` standing in for `findFirst`, whose whole contract is `T | undefined`.
 
 ## Empty-Sentinel Columns — the DB Schema Is the Source of Truth
 

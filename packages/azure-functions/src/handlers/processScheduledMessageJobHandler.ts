@@ -26,6 +26,9 @@ import { and, eq, isNull } from "drizzle-orm";
 export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (message, context) =>
   getResultAsync(async () => {
     const { id } = scheduledMessageJobQueueMessageSchema.parse(message);
+    // Every write below this one targets the job this invocation dequeued, so the row it addresses is stated once
+    const updateJob = (values: Partial<typeof scheduledMessageJobsInMessage.$inferInsert>) =>
+      db.update(scheduledMessageJobsInMessage).set(values).where(eq(scheduledMessageJobsInMessage.id, id));
     context.log(`${AzureFunction.ProcessScheduledMessageJob} dequeued job`, { id });
     // Every column the claim below requires to be unset must be unset here too: this read settles an
     // Already-cancelled/completed/claimed job without paying for the claim's write. The claim stays
@@ -50,7 +53,6 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       await enqueueScheduledMessageJob(getServiceBusSender(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
       return;
     }
-
     // Parsed BEFORE the claim, and it is the last thing that may fail before it: a payload the current schema
     // Rejects (a shape an older deploy wrote, column drift) throws here while the row is still untouched, so the
     // Redelivery finds it claimable. Parsed after the claim, that same throw strands the job — the claim is
@@ -94,20 +96,14 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
         async (error) => {
           if (error instanceof WordFilteredError) return true;
 
-          await db
-            .update(scheduledMessageJobsInMessage)
-            .set({ processingStartedAt: null })
-            .where(eq(scheduledMessageJobsInMessage.id, id));
+          await updateJob({ processingStartedAt: null });
           throw error;
         },
       );
       // A word-filter block is the one guard a redelivery can never clear, and it has already applied the room's
       // Automod action — so the job is tombstoned rather than retried, which would re-apply that action per delivery
       if (isWordFiltered) {
-        await db
-          .update(scheduledMessageJobsInMessage)
-          .set({ cancelledAt: new Date() })
-          .where(eq(scheduledMessageJobsInMessage.id, id));
+        await updateJob({ cancelledAt: new Date() });
         context.log(`${AzureFunction.ProcessScheduledMessageJob} cancelled: message is word filtered`, { id });
         return;
       }
@@ -143,7 +139,6 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
         partitionKey: newMessage.partitionKey,
         rowKey: newMessage.rowKey,
       });
-
       // Best-effort after the message write ([persist then notify](/docs/architecture/persist-then-notify)). A
       // Rethrow here cannot retry these steps anyway — the claim above is single-shot, so the redelivery it asks
       // For is skipped — it would only leave the job stuck mid-delivery with `completedAt` never stamped
@@ -161,7 +156,6 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
               title: userToRoom.nickname || userToRoom.user.name,
             }),
           );
-
         // A room-list sort order, not a guard input — so unlike the slowmode clock above this one stays here,
         // Where a failure leaves the room list one send behind until the next one lands
         await db
@@ -173,8 +167,5 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       });
     }
 
-    await db
-      .update(scheduledMessageJobsInMessage)
-      .set({ completedAt: new Date() })
-      .where(eq(scheduledMessageJobsInMessage.id, processingJob.id));
+    await updateJob({ completedAt: new Date() });
   }).match(noop, logAndRethrow(context, AzureFunction.ProcessScheduledMessageJob));

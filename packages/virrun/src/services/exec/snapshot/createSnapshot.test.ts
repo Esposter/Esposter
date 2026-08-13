@@ -11,7 +11,12 @@ import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { beforeEach, describe, expect, test } from "vitest";
+import {beforeEach, describe, expect, test, vi} from "vitest";
+
+vi.mock(
+  import("@/services/exec/util/getSandboxNodeVersion"),
+  () => import("@/services/exec/test/getSandboxNodeVersion.test"),
+);
 
 describe(createSnapshot, () => {
   const { createWorkspace } = setupTemporaryCacheHome();

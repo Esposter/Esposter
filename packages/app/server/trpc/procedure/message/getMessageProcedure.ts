@@ -7,9 +7,8 @@ import { getIsMessageAuthor } from "#shared/services/message/getIsMessageAuthor"
 import { getIsMessageOperationPermitted } from "#shared/services/message/getIsMessageOperationPermitted";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { getEntityWithEtag } from "@esposter/db";
+import { getEntityWithEtag, hasPermission } from "@esposter/db";
 import { AzureEntityType, AzureTable, RoomPermission, StandardMessageEntity } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";

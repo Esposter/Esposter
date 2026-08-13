@@ -2,9 +2,8 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { ResourceBladeType, ResourceBladeTypes } from "@/models/resource/ResourceBladeType";
-import { ResourceBladeDefinitionMap } from "@/services/resource/ResourceBladeDefinitionMap";
-import { ResourceBladeTitleMap } from "@/services/resource/ResourceBladeTitleMap";
+import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
+import { getResourceBladeDefinitions } from "@/services/resource/getResourceBladeDefinitions";
 
 interface ResourceBladeTitleProps {
   activeBlade: string;
@@ -16,9 +15,8 @@ const { activeBlade, resource } = defineProps<ResourceBladeTitleProps>();
 // Said, so only the blades that are somewhere else earn the suffix
 const activeBladeTitle = computed(() => {
   if (activeBlade === ResourceBladeType.Overview) return "";
-  else if (ResourceBladeTypes.has(activeBlade as ResourceBladeType))
-    return ResourceBladeTitleMap[activeBlade as ResourceBladeType];
-  return ResourceBladeDefinitionMap[resource.type].find(({ slug }) => slug === activeBlade)?.title ?? activeBlade;
+
+  return getResourceBladeDefinitions(resource.type).find(({ slug }) => slug === activeBlade)?.title ?? activeBlade;
 });
 </script>
 

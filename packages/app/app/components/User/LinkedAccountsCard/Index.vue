@@ -11,7 +11,7 @@ import { RoutePath } from "@esposter/shared";
 // Both pass, and both delete — leaving an account no provider reaches, which sign-in here can never recover
 const LINKED_ACCOUNTS_KEY = "linkedAccounts";
 
-const route = useRoute();
+const { currentRoute } = useRouter();
 const router = useRouter();
 const { linkSocial, listAccounts, unlinkAccount } = authClient;
 const alertStore = useAlertStore();
@@ -21,7 +21,7 @@ const { data: accounts, refresh } = useQuery(() => requireAuthData(listAccounts(
 const linkedProviderIds = computed(() => accounts.value?.map(({ providerId }) => providerId) ?? []);
 // A link the provider or the callback rejects comes back as a redirect carrying `?error=<code>`, so its
 // Outcome never reaches the promise the button awaited
-const linkError = route.query.error;
+const linkError = currentRoute.value.query.error;
 if (typeof linkError === "string") {
   createAlert(AccountLinkErrorMessageMap[linkError] ?? "Your account could not be linked.", "error");
   // The alert is this outcome's delivery, so the param has done its job — left in the url it replays the toast on

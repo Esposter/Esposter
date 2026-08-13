@@ -13,7 +13,6 @@ import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchroni
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
 import { createPublishedAssetsDirectoryName } from "@@/server/services/resource/createPublishedAssetsDirectoryName";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
-import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
@@ -21,6 +20,7 @@ import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { todoListRouter } from "@@/server/trpc/routers/todoList";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
+import { getContentBlobName } from "@esposter/db";
 import {
   AzureContainer,
   AzureQueue,
@@ -54,6 +54,15 @@ describe("resource", () => {
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
   const dueAt = new Date(1);
 
+  // Every webpage fixture is the same write against the resource it just created, so the version rides the row
+  // Rather than being restated — only a test writing a second time has to say which version it is claiming
+  const saveWebpageContent = (webpageResource: Resource, content: WebpageEditor, contentVersionOffset = 0) =>
+    webpageCaller.saveResourceContent({
+      content,
+      contentVersion: webpageResource.contentVersion + contentVersionOffset,
+      id: webpageResource.id,
+    });
+
   beforeAll(async () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(resourceRouter)(mockContext);
@@ -63,9 +72,11 @@ describe("resource", () => {
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 
-  // UpdatedAt is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency deterministic
+  // UpdatedAt is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency deterministic.
+  // Only Date: vitest's default set also fakes `process.hrtime`, which every Azure Table row key is derived from,
+  // And a frozen tick makes two writes to one partition collide on the same key
   beforeEach(() => {
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });
 
   afterEach(async () => {
@@ -91,7 +102,25 @@ describe("resource", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     const readResource = await caller.readResource({ id: dashboardResource.id });
 
-    expect(readResource).toStrictEqual(dashboardResource);
+    expect(readResource).toStrictEqual({ ...dashboardResource, publication: null });
+  });
+
+  // Opening a resource is one round trip: the publication rides the row, so no surface has to follow the read
+  // With a second request that re-resolves the same ownership
+  test("reads a resource with its publication", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    await saveWebpageContent(webpageResource, webpageEditor);
+    const draftResource = await caller.readResource({ id: webpageResource.id });
+
+    // Null is the answer "this resource is not published", which is a resolved state rather than a missing one
+    expect(draftResource.publication).toBeNull();
+
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    const publishedResource = await caller.readResource({ id: webpageResource.id });
+
+    expect(publishedResource.publication?.publishVersion).toBe(1);
   });
 
   test("reads resources across every type", async () => {
@@ -238,11 +267,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     const draftResource = await dashboardCaller.createResource({ name });
     const { items: publishedItems } = await caller.readResources({ isPublished: true });
@@ -298,11 +323,10 @@ describe("resource", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
-    await webpageCaller.saveResourceContent({
-      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(
+      webpageResource,
+      new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
+    );
     await webpageCaller.publishResource({ id: webpageResource.id });
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
@@ -337,11 +361,10 @@ describe("resource", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     const publishedBlobName = `${createPublishedAssetsDirectoryName(webpageResource.id)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[publishedBlobName, Buffer.alloc(1)]]));
-    await webpageCaller.saveResourceContent({
-      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` }),
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(
+      webpageResource,
+      new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` }),
+    );
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
     assert.exists(content);
@@ -393,11 +416,10 @@ describe("resource", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
-    await webpageCaller.saveResourceContent({
-      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(
+      webpageResource,
+      new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
+    );
     await webpageCaller.publishResource({ id: webpageResource.id });
     await caller.restorePublishedVersion({ id: webpageResource.id, version: 1 });
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
@@ -418,11 +440,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     // Corrupt the stored draft so reading it back for the copy fails after the copy's row already exists
     const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
     assert(container);
@@ -592,11 +610,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     await caller.deleteResources({ ids: [webpageResource.id] });
     await caller.restoreResource({ id: webpageResource.id });
@@ -634,11 +648,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     await webpageCaller.publishResource({ id: webpageResource.id });
     const versions = await caller.readPublishHistory({ id: webpageResource.id });
@@ -665,17 +675,9 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
-    await webpageCaller.saveResourceContent({
-      content: new WebpageEditor({ css: "b", html: "b" }),
-      contentVersion: webpageResource.contentVersion + 1,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, new WebpageEditor({ css: "b", html: "b" }), 1);
     const restoredResource = await caller.restorePublishedVersion({ id: webpageResource.id, version: 1 });
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
     const publication = await webpageCaller.readResourcePublication({ id: webpageResource.id });
@@ -697,11 +699,7 @@ describe("resource", () => {
     // The rowKey is the write's own reverse-ticked timestamp, so the pinned clock has to move between the
     // Mutations for their entries to land on distinct keys instead of colliding in the partition
     vi.advanceTimersByTime(1);
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(1);
     await webpageCaller.publishResource({ id: webpageResource.id });
@@ -810,16 +808,20 @@ describe("resource", () => {
     expect(renamedActivity?.rowKey.localeCompare(createdActivity?.rowKey ?? "")).toBeLessThan(0);
   });
 
+  // A tag edit carries nothing but the tags, so it can neither trip the rename trail nor overwrite the name a
+  // Concurrent rename just wrote
   test("does not record an activity for a tags-only update", async () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.updateResource({ id: dashboardResource.id, name, tags: { env: "prod" } });
+    await dashboardCaller.updateResource({ id: dashboardResource.id, tags: { env: "prod" } });
     // The Created write is fire-and-forget off createResource, so drain it before reading the trail
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: dashboardResource.id });
+    const updatedResource = await caller.readResource({ id: dashboardResource.id });
 
     expect(items.map(({ activityType }) => activityType)).toStrictEqual([ResourceActivityType.Created]);
+    expect(updatedResource.name).toBe(name);
   });
 
   test("coalesces repeated content saves by the same user within the hour", async () => {
@@ -827,20 +829,12 @@ describe("resource", () => {
 
     const webpageResource = await webpageCaller.createResource({ name });
     vi.advanceTimersByTime(1);
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     // The activity write is fire-and-forget off the save path, so drain it before the next save's
     // Coalescing scan can even see it
     await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(1);
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion + 1,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor, 1);
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: webpageResource.id });
 
@@ -858,20 +852,12 @@ describe("resource", () => {
 
     const webpageResource = await webpageCaller.createResource({ name });
     vi.advanceTimersByTime(1);
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     // The activity write is fire-and-forget off the save path, so drain it before the next save's
     // Coalescing scan can even see it
     await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(CONTENT_SAVED_COALESCE_WINDOW_MS + 1);
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion + 1,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor, 1);
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: webpageResource.id });
 

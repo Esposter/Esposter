@@ -7,7 +7,6 @@ import { z } from "zod";
 // Hoisted: this runs once per embedded asset url on a publish and once per asset request on a published page,
 // So a page with hundreds of images would otherwise build and discard that many schemas
 const UUID_SCHEMA = z.uuid();
-
 // The single decoder + validator for `/api/resource-assets/{encodedPath}` — shared by the serving endpoint
 // And the publish/duplicate clone service. Url segments map one-to-one onto blob-name segments, so rejecting
 // Any decoded segment that could re-introduce a separator makes traversal impossible by construction: a

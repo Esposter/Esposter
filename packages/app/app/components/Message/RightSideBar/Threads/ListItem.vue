@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { StandardMessageEntity } from "@esposter/db-schema";
+import type { MessageEntity } from "@esposter/db-schema";
 
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useThreadStore } from "@/store/message/thread";
 
 interface ThreadsListItemProps {
-  thread: StandardMessageEntity;
+  thread: MessageEntity;
 }
 
 const { thread } = defineProps<ThreadsListItemProps>();

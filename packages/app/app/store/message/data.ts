@@ -6,10 +6,10 @@ import type { MessageEvents } from "#shared/models/message/events/MessageEvents"
 import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
-import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
 import { useMutation } from "@/composables/shared/useMutation";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { authClient } from "@/services/auth/authClient";
+import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { getIsAlertedByErrorLink } from "@/services/trpc/errorLink";
@@ -30,6 +30,7 @@ export const useDataStore = defineStore("message/data", () => {
   const { createAlert } = alertStore;
   const roomStore = useRoomStore();
   const threadFollowStore = useThreadFollowStore();
+  const { storeFollowThread } = threadFollowStore;
   const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
     createMessage: baseStoreCreateMessage,
@@ -38,10 +39,12 @@ export const useDataStore = defineStore("message/data", () => {
     ...restOperationData
   } = createOperationData(items, CompositeAzureKeyPath, AzureEntityType.Message);
   const files = computed(() => items.value.flatMap(({ files: messageFiles }) => messageFiles));
-  const hasMoreNewer = ref(false);
-  const nextCursorNewer = ref("");
+  // Keyed by room like the list they page, never global: a deep link into a room leaves a newer-cursor behind,
+  // And a global one would still be pointing at that room's window after the switch — so the next room renders
+  // A "load newer" waypoint it never earned and pages in a window cut from another room's timestamps
+  const { data: hasMoreNewer } = useDataMap(() => roomStore.currentRoomId, false);
+  const { data: nextCursorNewer } = useDataMap(() => roomStore.currentRoomId, "");
   const typings = ref<CreateTypingInput[]>([]);
-
   // `onOptimisticCreate` runs once the bubble is in the list and before anything reaches the server — the
   // Composer reset hangs off it rather than off the send, because the bubble is the sender's only copy of what
   // They typed once the editor is cleared. It is handed the attachments this send took, so the composer stops
@@ -51,7 +54,6 @@ export const useDataStore = defineStore("message/data", () => {
     onOptimisticCreate?: (sentFileIds: string[]) => Promise<void>,
   ) => {
     if (!session.value.data) return false;
-
     // `input.files` is the composer's own live array, and the composer keeps accepting uploads for the whole
     // Round trip — so the attachments are snapshotted once, here, and that one snapshot is what the bubble
     // Carries, what goes on the wire, and what the hooks are handed. Reading the live array in any of those
@@ -90,7 +92,7 @@ export const useDataStore = defineStore("message/data", () => {
         // A local array write with nothing fallible in it, so it is called bare; anything genuinely fallible
         // Added here is best-effort, never a rollback — the message already exists on the server
         const { replyRowKey } = input;
-        if (replyRowKey) threadFollowStore.storeFollowThread(input.roomId, replyRowKey);
+        if (replyRowKey) storeFollowThread(input.roomId, replyRowKey);
         return true;
       },
       async (error) => {
@@ -115,12 +117,12 @@ export const useDataStore = defineStore("message/data", () => {
     );
   };
   const updateMessage = async (input: UpdateMessageInput) => {
-    const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input));
-    const previousMessage = message?.message;
     await executeMutation(() => $trpc.message.updateMessage.mutate(input), {
       // Apply only the raw reactive field change — the subscription echo re-runs MessageHookMap on success,
-      // So calling storeUpdateMessage here would double-fire the update hooks.
+      // So calling storeUpdateMessage here would double-fire the update hooks. Read as the write is sent, so a
+      // Rejected edit restores the body the edit ahead of it stored rather than the one on screen at the click
       applyOptimistic: () => {
+        const previousMessage = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input))?.message;
         baseStoreUpdateMessage(input);
         return () => {
           if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
@@ -134,13 +136,17 @@ export const useDataStore = defineStore("message/data", () => {
     const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, compositeKey));
     if (!message) return;
 
-    const previousFiles = message.files;
     await executeMutation(() => $trpc.message.deleteFile.mutate({ id, ...compositeKey }), {
-      // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success.
+      // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success. Read as the
+      // Write is sent and unwound one attachment at a time: reinstating the list this call was issued with would
+      // Resurrect a file a concurrent deletion already removed and drop whatever arrived while it was in flight
       applyOptimistic: () => {
-        baseStoreUpdateMessage({ ...compositeKey, files: previousFiles.filter((file) => file.id !== id) });
+        const deletedFile = message.files.find((file) => file.id === id);
+        baseStoreUpdateMessage({ ...compositeKey, files: message.files.filter((file) => file.id !== id) });
         return () => {
-          baseStoreUpdateMessage({ ...compositeKey, files: previousFiles });
+          if (!deletedFile) return;
+
+          baseStoreUpdateMessage({ ...compositeKey, files: [...message.files, deletedFile] });
         };
       },
       // Keyed per file so concurrent deletions never swallow each other's rollbacks
@@ -161,7 +167,7 @@ export const useDataStore = defineStore("message/data", () => {
       baseStoreCreateMessage(message, true);
     }
   };
-  const storeUpdateMessage = async (input: MessageEvents["updateMessage"][number]) => {
+  const storeUpdateMessage = async (input: MessageEvents["updateMessage"][0][0]) => {
     await MessageHookMap[Operation.Update].run(input);
     baseStoreUpdateMessage(input);
   };

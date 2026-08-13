@@ -1,8 +1,0 @@
-// What a capped dataset read left behind — only ever produced when the provider knew the uncapped count.
-// IsCountCapped marks a totalRows that is a floor from a bounded count, not an exact total
-export interface DatasetTruncation {
-  hiddenRows: number;
-  isCountCapped: boolean;
-  shownRows: number;
-  totalRows: number;
-}

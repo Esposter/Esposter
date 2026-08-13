@@ -9,12 +9,9 @@ const scrollToMessage = useScrollToMessage();
 </script>
 
 <template>
-  <MessageModelMessageTypeListItem :active :is-preview>
-    <template #prepend>
-      <v-icon icon="mdi-pin" size="small" />
-    </template>
+  <MessageModelMessageTypeSystemLine :active icon="mdi-pin" :is-preview :message>
     <span font-bold>{{ creator.name }}</span>
-    <span text-gray> pinned </span>
+    <span op-medium-emphasis> pinned </span>
     <span
       font-bold
       cursor-pointer
@@ -23,8 +20,6 @@ const scrollToMessage = useScrollToMessage();
     >
       a message
     </span>
-    <span text-gray> to this room. </span>
-    <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
-    <MessageModelMessageEmojiList :is-preview :message />
-  </MessageModelMessageTypeListItem>
+    <span op-medium-emphasis> to this room. </span>
+  </MessageModelMessageTypeSystemLine>
 </template>

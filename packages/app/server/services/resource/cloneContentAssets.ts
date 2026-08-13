@@ -1,7 +1,6 @@
 import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
 import type { ContainerClient } from "@azure/storage-blob";
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import {
   FILES_DIRECTORY_SEGMENT,
@@ -31,7 +30,6 @@ const cloneAsset = async (
   await copyBlob(containerClient, blobName, destinationBlobName);
   return [[url, getResourceAssetUrl(destinationBlobName)] as const];
 };
-
 // Publish, duplicate and restore all snapshot content whose assets must survive the source's working copies
 // Changing: every referenced asset blob is cloned into the destination directory's files directory under a
 // New id and the content rewritten to the clone's url. Only the filename carries over, so a foreign-id url
@@ -39,7 +37,7 @@ const cloneAsset = async (
 // Asset never lands under the destination's own published prefix, which unpublishing wipes — which is also
 // Why the rewrite is a per-url map, never a prefix replace
 export const cloneContentAssets = async <TContent>(
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   userId: string,
   content: TContent,
   destinationDirectoryName: string,
@@ -98,7 +96,6 @@ export const cloneContentAssets = async <TContent>(
     )
       return true;
     if (!isPublished) return false;
-
     // Asked without the caller: ownership is the branch the published check falls through to when there is no
     // Publication row, and it has already answered no for this resource — passing them here would issue that
     // Same query a second time to learn it again

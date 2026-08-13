@@ -2,7 +2,9 @@
 import type { RoomFilterInMessage } from "@esposter/db-schema";
 
 import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
+import { TimeoutDurationSelectItems } from "@/services/message/moderation/TimeoutDurationSelectItems";
 import { WordFilterAction } from "@esposter/db-schema";
+import { toRawDeep } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 
 interface WordFilterFormData {
@@ -18,7 +20,6 @@ interface WordFilterFormProps {
 const { filter, roomId } = defineProps<WordFilterFormProps>();
 const { $trpc } = useNuxtApp();
 const actionSelectItems = Object.values(WordFilterAction).map((value) => ({ title: value, value }));
-const timeoutDurationSelectItems = Object.entries(TimeoutDurationMap).map(([title, value]) => ({ title, value }));
 const getWordFilterFormData = (roomFilter: null | RoomFilterInMessage): WordFilterFormData => ({
   action: roomFilter?.action ?? WordFilterAction.Reject,
   timeoutDurationMs: roomFilter?.timeoutDurationMs ?? TimeoutDurationMap["5 minutes"],
@@ -46,7 +47,7 @@ const saveFilter = async () => {
     {
       applyOptimistic: () => {
         const previousBaseline = baseline.value;
-        baseline.value = structuredClone(toRaw(formData.value));
+        baseline.value = structuredClone(toRawDeep(formData.value));
         return () => {
           baseline.value = previousBaseline;
         };
@@ -69,7 +70,7 @@ const saveFilter = async () => {
     <v-select
       v-if="isTimeout"
       v-model="formData.timeoutDurationMs"
-      :items="timeoutDurationSelectItems"
+      :items="TimeoutDurationSelectItems"
       density="compact"
       hide-details
       label="Timeout duration"

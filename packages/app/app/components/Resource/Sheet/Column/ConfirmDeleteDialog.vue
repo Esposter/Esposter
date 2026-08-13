@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import { getDeleteColumnDescription } from "@/services/resource/sheet/commands/getDeleteColumnDescription";
 import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
 import { withFinalizerAsync } from "@esposter/shared";
 
 const columnDialogStore = useColumnDialogStore();
 const { deletingColumnName } = storeToRefs(columnDialogStore);
 const deleteColumn = useDeleteColumn();
-const title = computed(() => `Delete "${deletingColumnName.value}" Column`);
+const title = computed(() => getDeleteColumnDescription(deletingColumnName.value));
 const { isOpen } = useSingletonDialog(deletingColumnName);
 </script>
 

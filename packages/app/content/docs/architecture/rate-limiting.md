@@ -7,16 +7,16 @@ description: The shared Postgres-backed point budgets behind every "rate-limited
 
 When a feature page calls a procedure "rate-limited", this is the mechanism it means. Every budget in the app is a [`rate-limiter-flexible`](https://github.com/animir/node-rate-limiter-flexible) `RateLimiterDrizzleNonAtomic` whose store is the app's own Postgres database — the `rateLimiterFlexible` table in `@esposter/db-schema`, a key plus a point count and an expiry. Because the counters live in the database rather than in process memory, one budget is shared across every running instance: scaling out adds throughput, not allowance.
 
-A limiter is defined by two configured numbers — how many points a key may spend (`points`) and the window it spends them in (`duration`, in seconds) — and optionally a `blockDuration` that locks a key out for a further period once it overspends. Each limiter lives in its own file under `server/services/rateLimiter/`.
+A limiter is defined by two configured numbers — how many points a key may spend (`points`) and the window it spends them in (`duration`, in seconds) — a mandatory `keyPrefix` naming its keyspace, and optionally a `blockDuration` that locks a key out for a further period once it overspends. Each limiter lives in its own file under `server/services/rateLimiter/`.
 
 ## The four limiters
 
-| Limiter               | Budget             | Keyed on                             | Guards                                   |
-| --------------------- | ------------------ | ------------------------------------ | ---------------------------------------- |
-| `standardRateLimiter` | 1000 points / 60s  | user id, else path + IP address      | ordinary tRPC procedures                 |
-| `slowRateLimiter`     | 100 points / 60s   | user id, else path + IP address      | expensive or abuse-prone tRPC procedures |
-| `webhookRateLimiter`  | 30 points / 60s    | the webhook's id                     | the inbound webhook push route           |
-| `assetRateLimiter`    | 10000 points / 60s | container + user id, else IP address | the resource-asset redirect route        |
+| Limiter               | Budget             | Key prefix        | Keyed on                        | Guards                                   |
+| --------------------- | ------------------ | ----------------- | ------------------------------- | ---------------------------------------- |
+| `standardRateLimiter` | 1000 points / 60s  | `Standard`        | user id, else path + IP address | ordinary tRPC procedures                 |
+| `slowRateLimiter`     | 100 points / 60s   | `Slow`            | user id, else path + IP address | expensive or abuse-prone tRPC procedures |
+| `webhookRateLimiter`  | 30 points / 60s    | `Webhook`         | the webhook's id                | the inbound webhook push route           |
+| `assetRateLimiter`    | 10000 points / 60s | `resource-assets` | user id, else IP address        | the resource-asset redirect route        |
 
 The first two are procedure budgets and are the only two in the central registry, `RateLimiterMap.ts`, which is declared `as const satisfies Record<RateLimiterType, RateLimiterDrizzleNonAtomic>` over the two-value `RateLimiterType` enum (`Slow`, `Standard`) so adding an enum member fails to compile until a limiter exists for it.
 
@@ -30,7 +30,7 @@ flowchart TD
   builder -->|"getIsAuthed pipes getIsRateLimited before the session check"| middleware["getIsRateLimited(type)"]
   middleware -->|"RateLimiterMap[type].consume(key)"| procedureLimiter["standardRateLimiter or slowRateLimiter"]
   webhookRoute["POST /api/webhooks/{id}/{token}"] -->|"consume(webhook id)"| webhookLimiter["webhookRateLimiter"]
-  assetRoute["GET /api/resource-assets/{path}"] -->|"consume(container + user or IP)"| assetLimiter["assetRateLimiter"]
+  assetRoute["GET /api/resource-assets/{path}"] -->|"consume(user id or IP)"| assetLimiter["assetRateLimiter"]
   procedureLimiter --> table[("rateLimiterFlexible table — Postgres")]
   webhookLimiter --> table
   assetLimiter --> table
@@ -43,7 +43,7 @@ flowchart TD
 
 Because the middleware already resolved the session, `getIsAuthed.ts` simply pipes it and then rejects when there is no session. Authentication and rate limiting are therefore a single middleware in one order: **a caller is charged before it is told it is unauthorized**, which is what stops an unauthenticated attacker from probing authed procedures for free.
 
-Every limiter writes to one table, so each carries its **own key prefix** and the budgets stay independent. Without one the two procedure limiters would share a counter row per signed-in user — both key an authed caller on the bare user id — and the slow budget would be spent out by ordinary app traffic, refusing the first slow call of the session. The asset limiter namespaces its key by container for the same reason.
+Every limiter writes to one table, so each carries its **own key prefix** and the budgets stay independent. Without one, three of the four would share a counter row per signed-in user — both procedure limiters and the asset limiter key an authed caller on the bare user id — and the slow budget would be spent out by ordinary app traffic, refusing the first slow call of the session, while one published page full of images would 429 the app around it. That is a correctness invariant rather than a nicety, so `createRateLimiter` takes `keyPrefix` as a **required** parameter: a new limiter cannot inherit a shared keyspace by omission, and `createRateLimiter.test.ts` pins that the four prefixes are distinct.
 
 Three procedure builders sit on top: `standardRateLimitedProcedure` (public, standard budget), `standardAuthedProcedure`, and `slowAuthedProcedure`. `AuthedProcedureMap.ts` maps the enum onto the latter two, and the room procedure builders — `getPermissionsProcedure` and `getOwnerProcedure`, described in [RBAC](/docs/esbabbler/rbac) — take a `rateLimiterType` parameter defaulting to `Standard` and select through it, so moving a room procedure onto the slow budget is a one-argument change at its declaration.
 
@@ -67,6 +67,7 @@ Paths relative to `packages/app` unless noted.
 | `server/services/rateLimiter/slowRateLimiter.ts`        | the tightened budget for expensive procedures             |
 | `server/services/rateLimiter/webhookRateLimiter.ts`     | per-webhook budget for the inbound push route             |
 | `server/services/rateLimiter/assetRateLimiter.ts`       | asset-request budget, deliberately without a block period |
+| `server/services/rateLimiter/createRateLimiter.ts`      | the shared constructor — window, store, required prefix   |
 | `server/services/rateLimiter/RateLimiterMap.ts`         | enum → limiter registry for the procedure budgets         |
 | `server/services/rateLimiter/getIsRateLimitExceeded.ts` | recognises the rejection through a neverthrow wrapper     |
 | `server/models/rateLimiter/RateLimiterType.ts`          | the `Slow` / `Standard` enum                              |

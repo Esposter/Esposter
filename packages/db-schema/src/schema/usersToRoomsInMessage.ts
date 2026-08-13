@@ -1,3 +1,4 @@
+import { createMaxLengthCheckSql } from "@/models/shared/Check";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
@@ -16,7 +17,7 @@ export enum NotificationType {
 
 export const notificationTypeSchema = z.enum(NotificationType) satisfies z.ZodType<NotificationType>;
 
-export const notificationTypeEnum = pgEnum("notification_type", NotificationType);
+export const notificationTypeEnum = pgEnum("notificationType", NotificationType);
 
 export const NICKNAME_MAX_LENGTH = 32;
 
@@ -39,12 +40,9 @@ export const usersToRoomsInMessage = pgTable(
   {
     extraConfig: ({ mentionCount, nickname, roomId, timeoutUntil, userId }) => [
       primaryKey({ columns: [userId, roomId] }),
-      check(
-        "users_to_rooms_nickname_length_check",
-        sql`LENGTH(${nickname}) <= ${sql.raw(NICKNAME_MAX_LENGTH.toString())}`,
-      ),
-      check("users_to_rooms_mention_count_check", sql`${mentionCount} >= 0`),
-      index("users_to_rooms_timeout_until_index")
+      check("usersToRooms_nickname_length_check", createMaxLengthCheckSql(nickname, NICKNAME_MAX_LENGTH)),
+      check("usersToRooms_mentionCount_check", sql`${mentionCount} >= 0`),
+      index("usersToRooms_timeoutUntil_index")
         .on(timeoutUntil)
         .where(sql`${timeoutUntil} IS NOT NULL`),
     ],

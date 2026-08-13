@@ -1,16 +1,9 @@
-import type { Item } from "#shared/models/entity/NamedItem";
+import type { Item } from "@/models/entity/NamedItem";
 import type { ItemCategoryDefinition } from "@/models/resource/ItemCategoryDefinition";
-import type { ItemEntityType } from "@esposter/shared";
 
-import { ANamedItemEntity } from "#shared/models/entity/ANamedItemEntity";
 import { ItemEntityTypePropertyNames } from "@esposter/shared";
 
-class NullItem extends ANamedItemEntity implements ItemEntityType<"None"> {
-  type = "None" as const;
-}
-
-const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition<NullItem> = {
-  create: () => new NullItem(),
+const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition = {
   icon: "mdi-help",
   targetTypeKey: ItemEntityTypePropertyNames.type,
   title: "None",
@@ -20,4 +13,7 @@ const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition<NullItem> = {
 export const getItemCategoryDefinition = <TItem extends Item>(
   itemCategoryDefinitions: TItem extends TItem ? ItemCategoryDefinition<TItem>[] : never,
   item: TItem,
-) => itemCategoryDefinitions.find((icd) => icd.value === item[icd.targetTypeKey]) ?? NULL_ITEM_CATEGORY_DEFINITION;
+) =>
+  itemCategoryDefinitions.find(
+    (itemCategoryDefinition) => itemCategoryDefinition.value === item[itemCategoryDefinition.targetTypeKey],
+  ) ?? NULL_ITEM_CATEGORY_DEFINITION;

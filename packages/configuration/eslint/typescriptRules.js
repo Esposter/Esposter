@@ -8,6 +8,15 @@ export default {
     "error",
     ...restrictedSyntaxes,
     {
+      // A loop registers its cases under one name, so the reporter shows the last one only and `-t` cannot
+      // Select a single case. `.each` names each row, and a failing row says which input produced it.
+      message: "Use `test.each` / `it.each` for a table of cases instead of looping around `test`.",
+      // The modifier forms register their cases the same way, so `test.skip` and `it.concurrent` are matched
+      // Alongside the bare call — `.each` included, since a loop around it names every row once per iteration
+      selector:
+        ":matches(ForOfStatement, ForInStatement, ForStatement):has(CallExpression:matches([callee.name=/^(it|test)$/], [callee.object.name=/^(it|test)$/]))",
+    },
+    {
       message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
       selector:
         ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",
@@ -38,6 +47,15 @@ export default {
       message: "Declare the property optional (`field?: T`) instead of `field: T | undefined`.",
       selector:
         ":matches(TSPropertySignature, PropertyDefinition, TSAbstractPropertyDefinition) > TSTypeAnnotation > TSUnionType > TSUndefinedKeyword",
+    },
+    {
+      // `useRoute()` resolves through the page's *injected* route, which is pinned to that page instance and
+      // Freezes to its last value once the page is swapped out. Anything outliving the page it was created
+      // Under — a Pinia store above all, cached for the app's lifetime — then answers for a route the user has
+      // Already left, and a route naming no segment yields the `""` sentinel a uuid input rejects.
+      message:
+        "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
+      selector: "CallExpression[callee.name='useRoute']",
     },
   ],
   // Kept for later: enable via oxlint (`typescript/naming-convention`) once it supports the rule.

@@ -2,15 +2,16 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockUser, mockSessionOnce } from "@@/server/trpc/context.test";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("role", () => {
-  const { createMember, getMockContext, getRoleCaller, getRoomId, setupMemberWithRole } = setupRoomSuite();
+  const { createMember, getEveryoneRole, getMockContext, getRoleCaller, getRoomId, setupMemberWithRole } =
+    setupRoomSuite();
   let mockContext: Context;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomId: string;
@@ -85,9 +86,7 @@ describe("role", () => {
   test("cannot delete @everyone role", async () => {
     expect.hasAssertions();
 
-    const roles = await roleCaller.readRoles({ roomIds: [roomId] });
-    const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
-    assert.exists(everyoneRole);
+    const everyoneRole = await getEveryoneRole();
 
     await expect(roleCaller.deleteRole({ id: everyoneRole.id, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.RoomRole, everyoneRole.id).message}]`,
@@ -120,8 +119,7 @@ describe("role", () => {
     expect.hasAssertions();
 
     const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
+    const user = await createMockUser(mockContext.db);
 
     await expect(
       roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id }),
@@ -145,9 +143,7 @@ describe("role", () => {
   test("cannot assign @everyone role explicitly", async () => {
     expect.hasAssertions();
 
-    const roles = await roleCaller.readRoles({ roomIds: [roomId] });
-    const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
-    assert.exists(everyoneRole);
+    const everyoneRole = await getEveryoneRole();
     const targetMember = await createMember();
 
     await expect(
@@ -193,6 +189,17 @@ describe("role", () => {
     const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds: [targetMember.id] });
 
     expect(memberRoles.some(({ roleId }) => roleId === role.id)).toBe(false);
+  });
+
+  test("revokes a role the member never held", async () => {
+    expect.hasAssertions();
+
+    // Revoke names an end state rather than a row, so it never rejects for reaching it — two moderators
+    // Clicking the same revoke, or one clicking against a stale list, both get the state they asked for
+    const targetMember = await createMember();
+    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
+
+    await expect(roleCaller.revokeRole({ roleId: role.id, roomId, userId: targetMember.id })).resolves.toBeUndefined();
   });
 
   test("cannot revoke role at or above own top position", async () => {

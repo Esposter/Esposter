@@ -1,6 +1,6 @@
 ---
 name: readme-standards
-description: Esposter README conventions — the anchor+emoji heading template, the published-vs-private split that drives the badges, the typedoc module-page URL and scoped-name slug mangling that drive the docs link, when Getting Started is omitted, the package summary table, and GitHub blob/tree URL rules. Apply when creating or updating any README.md in this monorepo, including the root one.
+description: Esposter README conventions — the anchor+emoji heading template, the published-vs-private split that drives the badges, the typedoc module-page URL and scoped-name slug mangling that drive the docs link, when Getting Started is omitted, reading published-vs-private off each manifest rather than a list, and GitHub blob/tree URL rules. Apply when creating or updating any README.md in this monorepo, including the root one.
 ---
 
 # README Standards — Esposter
@@ -66,24 +66,9 @@ Badge ref format (bottom of file):
 [badge-npm-downloads]: https://img.shields.io/npm/dm/<npm-name>.svg
 ```
 
-## Package Summary
+## Which packages, and which are published
 
-| Package         | npm name                    | Private | README path                          |
-| --------------- | --------------------------- | :-----: | ------------------------------------ |
-| app             | `@esposter/app`             |   yes   | `packages/app/README.md`             |
-| azure-functions | `@esposter/azure-functions` |   yes   | `packages/azure-functions/README.md` |
-| azure-mock      | `azure-mock`                |   no    | `packages/azure-mock/README.md`      |
-| configuration   | `@esposter/configuration`   |   yes   | `packages/configuration/README.md`   |
-| db              | `@esposter/db`              |   yes   | `packages/db/README.md`              |
-| db-mock         | `@esposter/db-mock`         |   yes   | `packages/db-mock/README.md`         |
-| db-schema       | `@esposter/db-schema`       |   yes   | `packages/db-schema/README.md`       |
-| infra           | `@esposter/infra`           |   yes   | `packages/infra/README.md`           |
-| parse-tmx       | `parse-tmx`                 |   no    | `packages/parse-tmx/README.md`       |
-| shared          | `@esposter/shared`          |   no    | `packages/shared/README.md`          |
-| shared-node     | `@esposter/shared-node`     |   yes   | `packages/shared-node/README.md`     |
-| virrun          | `virrun`                    |   no    | `packages/virrun/README.md`          |
-| vue-phaserjs    | `vue-phaserjs`              |   no    | `packages/vue-phaserjs/README.md`    |
-| xml2js          | `@esposter/xml2js`          |   no    | `packages/xml2js/README.md`          |
+Every package carries a `README.md` at its own root. Whether it is published is `private` in its `package.json`, and its npm name is that manifest's `name` — both read from the source rather than from a list here, which would rot the first time a package is added. `AGENTS.md` carries the inventory with a description per package, the one thing the tree cannot answer.
 
 ## Content Rules
 

@@ -16,8 +16,8 @@ const displayFriends = computed(() => friends.value.toSorted((a, b) => b.created
       <MessageFriendsUserListItem v-for="{ id, name, image } of displayFriends" :key="id" :image :name>
         <template #append>
           <div flex gap-x-2>
-            <v-btn text="Remove" variant="tonal" color="error" size="small" @click="deleteFriend(id)" />
-            <v-btn text="Block" variant="tonal" color="error" size="small" @click="blockUser(id)" />
+            <v-btn color="error" size="small" text="Remove" variant="tonal" @click="deleteFriend(id)" />
+            <v-btn color="error" size="small" text="Block" variant="tonal" @click="blockUser(id)" />
           </div>
         </template>
       </MessageFriendsUserListItem>

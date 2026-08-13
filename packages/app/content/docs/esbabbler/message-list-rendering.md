@@ -9,11 +9,11 @@ The message list renders every loaded message as live DOM (no virtualization yet
 
 ## How it works
 
-`List/Container.vue` renders one `List/Item.vue` per message. Each item is wrapped in a `display: contents` div so the message component and its overlapping options menu stay direct flex children of the column-reversed `v-list` while sharing one `mouseenter`/`mouseleave` region — hovering either keeps the toolbar alive, with no unmount race when the pointer crosses between them.
+`MessageModelMessageListContainer` renders one `MessageModelMessageListItem` per message. Each item is wrapped in a `display: contents` div so the message component and its overlapping options menu stay direct flex children of the column-reversed `v-list` while sharing one `mouseenter`/`mouseleave` region — hovering either keeps the toolbar alive, with no unmount race when the pointer crosses between them.
 
 The options menu (reaction buttons, emoji picker, edit/reply/forward buttons, the "More" context menu) is mounted with `v-if` only for the item that is hovered, the context-menu target (`messageStore.optionsMenu`), or has one of its menus open — so exactly one instance of that Vuetify-overlay-heavy subtree exists at a time. Right-clicking a message sets `optionsMenu = { rowKey, target: [x, y] }`, which both mounts the toolbar on that item and opens its "More" menu at the pointer.
 
-The confirm dialogs follow the repo-wide [singleton dialog standard](/docs/architecture/singleton-dialogs): `List/Index.vue` mounts one `ConfirmDeleteDialog` and one `ConfirmPinDialog`, driven by the message dialog store's `deletingRowKey` / `pinningRowKey` targets. Action items (`useMessageActionItems`) write those store refs directly instead of threading emit chains through the component tree.
+The confirm dialogs follow the repo-wide [singleton dialog standard](/docs/architecture/singleton-dialogs): `MessageModelMessageList` mounts one `ConfirmDeleteDialog` and one `ConfirmPinDialog`, driven by the message dialog store's `deletingRowKey` / `pinningRowKey` targets. Action items (`useMessageActionItems`) write those store refs directly instead of threading emit chains through the component tree.
 
 ```mermaid
 flowchart TD
@@ -28,6 +28,31 @@ flowchart TD
     E --> X[emojiIndex - module-scope EmojiIndex singleton]
 ```
 
+## The message component family
+
+`MessageComponentMap` picks a component per `MessageType`, and those components are deliberately thin: each one writes only the sentence or body that is unique to its type and inherits everything else from a shared shell. There are two shells, and a new message type joins one of them rather than assembling `Type/ListItem` again.
+
+`MessageModelMessageTypeBody` is the body of an authored message — the rendered rich text, the `(edited)` marker beside it, the attachment/link-preview/reaction trailing row, and the default slot the inline editor arrives through. `MessageModelMessageType` renders it for both an ordinary and a forwarded message: a forward adds only the quote rail and its **Forwarded** label, then hands the same body component the parent's slot. Re-implementing the body inside the forward branch is what silently drops the edited marker and makes a forwarded message uneditable, so the branch owns the rail and nothing else.
+
+`MessageModelMessageTypeSystemLine` is the shell for the message types nobody authored as prose — call, room edit, pin and system notices. It owns the leading icon, the timestamp and the reaction row, leaving each type one slot of sentence. Secondary text in those sentences uses `op-medium-emphasis`, which dims the inherited colour by the Vuetify emphasis variable and therefore follows the theme; a fixed grey does not, because the palette UnoCSS is configured with holds only the theme colours.
+
+```mermaid
+flowchart TD
+  Map["MessageComponentMap[message.type]"] --> Authored{"authored prose?"}
+  Authored -->|"Message, Webhook"| Index["Type/Index.vue — avatar, batch header, reply spine"]
+  Authored -->|"Call, EditRoom, PinMessage, System"| Line["Type/SystemLine.vue — icon, timestamp, reactions"]
+  Authored -->|"Poll"| PollType["Type/Poll.vue — its own card"]
+  Index --> Forward{"message.isForward?"}
+  Forward -->|"yes"| Rail["quote rail plus Forwarded label"]
+  Rail --> Body["Type/Body.vue"]
+  Forward -->|"no"| Body
+  Body --> Slot{"parent passed the inline editor?"}
+  Slot -->|"yes"| Editor["MessageModelMessageEditor"]
+  Slot -->|"no"| Text["rich text plus (edited) marker"]
+  Body --> Trailing["Type/Trailing.vue — files, link preview, reactions"]
+  Line --> Sentence["the type's own sentence"]
+```
+
 `emojiIndex` is a module-scope singleton service: `EmojiIndex` builds a search index over the full `emoji-mart-vue-fast` dataset (hundreds of kilobytes of JSON) in its constructor, so it is constructed once for the whole app, never per picker instance.
 
 ## Key files
@@ -35,6 +60,8 @@ flowchart TD
 | File                                                                        | Role                                                          |
 | --------------------------------------------------------------------------- | ------------------------------------------------------------- |
 | `packages/app/app/components/Message/Model/Message/List/Item.vue`           | Hover wrapper, lazy options menu mount, context-menu handling |
+| `packages/app/app/components/Message/Model/Message/Type/Body.vue`           | Shared authored-message body, edited marker, editor slot      |
+| `packages/app/app/components/Message/Model/Message/Type/SystemLine.vue`     | Shared shell for the unauthored message lines                 |
 | `packages/app/app/components/Message/Model/Message/OptionsMenu/Index.vue`   | Options toolbar (reactions, picker, items, More menu)         |
 | `packages/app/app/components/Message/Model/Message/ConfirmDeleteDialog.vue` | Store-driven delete dialog singleton                          |
 | `packages/app/app/components/Message/Model/Message/ConfirmPinDialog.vue`    | Store-driven pin dialog singleton                             |
@@ -45,6 +72,6 @@ flowchart TD
 
 ## Notes
 
-- Anything added inside `List/Item.vue` outside the `v-if` toolbar block is paid once per loaded message and again per pagination batch — keep new per-item work O(1) and lazy.
+- Anything added inside `MessageModelMessageListItem` outside the `v-if` toolbar block is paid once per loaded message and again per pagination batch — keep new per-item work O(1) and lazy.
 - One options-menu store write must never fan out re-renders: per-item computeds (`isDisabled`, `isContextMenuTarget`) only propagate when their own value changes, so untargeted items stay untouched.
 - List virtualization is the remaining lever if very long scrollback sessions become a problem.

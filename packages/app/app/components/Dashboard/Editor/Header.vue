@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { visualTypeItemCategoryDefinitions } from "@/services/dashboard/visualTypeItemCategoryDefinitions";
+import { VisualTypeItemCategoryDefinitions } from "@/services/dashboard/VisualTypeItemCategoryDefinitions";
 import { ITEM_TYPE_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
@@ -17,7 +17,7 @@ const { visualType } = storeToRefs(visualStore);
       hide-details
       label="Visual Type"
       max-width="16rem"
-      :items="visualTypeItemCategoryDefinitions"
+      :items="VisualTypeItemCategoryDefinitions"
       @update:model-value="
         $router.replace({
           query: { ...$router.currentRoute.value.query, [ITEM_TYPE_QUERY_PARAMETER_KEY]: $event },

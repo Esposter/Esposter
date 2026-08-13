@@ -1,6 +1,7 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
+import { createMention } from "@/services/message/createMention.test";
+import { createUser } from "@/services/message/createUser.test";
 import { incrementMentionCounts } from "@/services/message/incrementMentionCounts";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -14,26 +15,15 @@ import {
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import {
-  MENTION_EVERYONE_ID,
-  MENTION_HERE_ID,
-  MENTION_ID_ATTRIBUTE,
-  MENTION_ITEM_TYPE_ATTRIBUTE,
-  MENTION_TYPE,
-  MENTION_TYPE_ATTRIBUTE,
-  MentionType,
-} from "@esposter/shared";
+import { MENTION_EVERYONE_ID, MENTION_HERE_ID, MentionType } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
-
-const getMentionMessage = (id: string, type?: MentionType) =>
-  `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${id}"${type ? ` ${MENTION_ITEM_TYPE_ATTRIBUTE}="${type}"` : ""} />`;
 
 const getMentionedUserIds = (updatedUsersToRooms: { userId: string }[]) =>
   new Set(updatedUsersToRooms.map(({ userId }) => userId));
 
 describe(incrementMentionCounts, () => {
-  let db: PostgresJsDatabase<typeof relations>;
+  let db: Database;
   const name = "name";
   const roomId = crypto.randomUUID();
   const roleId = crypto.randomUUID();
@@ -48,21 +38,11 @@ describe(incrementMentionCounts, () => {
   beforeAll(async () => {
     db = await createMockDb();
     const createdAt = new Date();
-    const createUser = (id: string) => ({
-      createdAt,
-      email: id,
-      emailVerified: true,
-      id,
-      image: "",
-      name,
-      updatedAt: createdAt,
-    });
-
     await db
       .insert(users)
       .values(
         [onlineUserId, offlineUserId, nullStatusUserId, neverUserId, roleMemberUserId, senderUserId].map((id) =>
-          createUser(id),
+          createUser(id, createdAt, name),
         ),
       );
 
@@ -120,7 +100,7 @@ describe(incrementMentionCounts, () => {
 
     const updatedUsersToRooms = await incrementMentionCounts(db, {
       ...sender,
-      message: getMentionMessage(neverUserId, MentionType.User),
+      message: createMention(neverUserId, MentionType.User),
     });
 
     expect(updatedUsersToRooms).toHaveLength(1);
@@ -133,7 +113,7 @@ describe(incrementMentionCounts, () => {
 
     const updatedUsersToRooms = await incrementMentionCounts(db, {
       ...sender,
-      message: getMentionMessage(senderUserId, MentionType.User),
+      message: createMention(senderUserId, MentionType.User),
     });
 
     expect(updatedUsersToRooms).toHaveLength(0);
@@ -144,7 +124,7 @@ describe(incrementMentionCounts, () => {
 
     const updatedUsersToRooms = await incrementMentionCounts(db, {
       ...sender,
-      message: getMentionMessage(MENTION_EVERYONE_ID),
+      message: createMention(MENTION_EVERYONE_ID),
     });
 
     expect(updatedUsersToRooms).toHaveLength(4);
@@ -158,7 +138,7 @@ describe(incrementMentionCounts, () => {
 
     const updatedUsersToRooms = await incrementMentionCounts(db, {
       ...sender,
-      message: getMentionMessage(MENTION_HERE_ID),
+      message: createMention(MENTION_HERE_ID),
     });
 
     expect(updatedUsersToRooms).toHaveLength(3);
@@ -172,7 +152,7 @@ describe(incrementMentionCounts, () => {
 
     const updatedUsersToRooms = await incrementMentionCounts(db, {
       ...sender,
-      message: getMentionMessage(roleId, MentionType.Role),
+      message: createMention(roleId, MentionType.Role),
     });
 
     expect(updatedUsersToRooms).toHaveLength(1);
@@ -182,7 +162,7 @@ describe(incrementMentionCounts, () => {
   test("multiple mentions of the same member increment once per message", async () => {
     expect.hasAssertions();
 
-    const message = `${getMentionMessage(onlineUserId, MentionType.User)}${getMentionMessage(MENTION_EVERYONE_ID)}`;
+    const message = `${createMention(onlineUserId, MentionType.User)}${createMention(MENTION_EVERYONE_ID)}`;
     const updatedUsersToRooms = await incrementMentionCounts(db, { ...sender, message });
     const mentionedOnlineUser = updatedUsersToRooms.find(({ userId }) => userId === onlineUserId);
 
@@ -193,7 +173,7 @@ describe(incrementMentionCounts, () => {
     expect.hasAssertions();
 
     const updatedUsersToRooms = await incrementMentionCounts(db, {
-      message: getMentionMessage(senderUserId, MentionType.User),
+      message: createMention(senderUserId, MentionType.User),
       partitionKey: roomId,
     });
 

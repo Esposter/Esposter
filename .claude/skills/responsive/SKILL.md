@@ -61,8 +61,3 @@ Mounting with `v-if` alongside `v-model` (rather than keeping it mounted) means 
 ## `flex-wrap` is the rare exception
 
 Wrapping a button row to a second line is allowed **only** when the surface genuinely has vertical room to spare and the row is short (roughly ≤ 3 controls) — e.g. a transient selection toolbar. It is not the default, and it is never the answer for a full command bar. When in doubt, collapse to `…`.
-
-## Related
-
-- Breakpoint composable naming (`useVDisplay`, never `import { useDisplay } from "vuetify"`) — see the `vuetify` skill.
-- Overflow-menu item shape (`Item`) and the composable + `v-for` pattern — see the `vue-page-composition` skill.

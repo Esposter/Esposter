@@ -1,7 +1,7 @@
-import { BooleanValue } from "#shared/models/resource/sheet/column/BooleanValue";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DateFormat, DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
 import { dayjs } from "#shared/services/dayjs";
+import { BooleanValue } from "@/models/resource/sheet/column/BooleanValue";
 import { inferColumnType } from "@/services/resource/sheet/column/inferColumnType";
 import { describe, expect, test } from "vitest";
 

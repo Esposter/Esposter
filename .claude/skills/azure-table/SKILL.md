@@ -1,6 +1,6 @@
 ---
 name: azure-table
-description: Esposter Azure Table Storage patterns — the AZURE_MAX_PAGE_SIZE / AZURE_MAX_BATCH_SIZE constants, partition and row key design, reverse-ticked timestamps and the ascending mirror table, batching writes that share a partitionKey instead of one round trip per row, reading through getEntityWithEtag and writing conditionally, serializeClauses filters, counting only after a capped read and bounding the walk, optional-init entity constructors, and soft-delete, plus deep dives on the submitTransactionBatches write path and conflict replay, the updateEntityConditionally retry loop, and observing or intercepting table writes in tests. Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code.
+description: Esposter Azure Table Storage patterns — the AZURE_MAX_PAGE_SIZE / AZURE_MAX_BATCH_SIZE constants, partition and row key design, reverse-ticked timestamps and the ascending mirror table, batching writes that share a partitionKey instead of one round trip per row, reading through getEntityWithEtag and writing conditionally, serializeClauses filters with entity-typed Clause arrays and CompositeKeyPropertyNames, the shared getPartitionKeyFilter, counting only after a capped read and bounding the walk, optional-init entity constructors, and soft-delete, plus deep dives on the submitTransactionBatches write path and conflict replay, the updateEntityConditionally retry loop, and observing or intercepting table writes in tests. Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code.
 ---
 
 # Azure Table Storage Patterns
@@ -32,12 +32,14 @@ Always import from `@esposter/db-schema`, never redefine locally.
 
 - **It is its own inverse** — `getReverseTickedTimestamp(rowKey)` maps a stored `rowKey` back to the real timestamp, and vice versa. That's how cursors and the ascending-table mirror are built; never hand-roll the subtraction.
 - Never generate a `rowKey` with `Date.now()` or an ISO string — millisecond resolution collides under load, and lexical ISO sorts oldest-first.
+- **Nanosecond resolution is what makes the bare timestamp a sufficient key**, so don't "harden" it with a random suffix or a retry loop. `now()` reads `process.hrtime`, which is monotonic and advances between two consecutive calls in the same process, so two writes to one partition cannot land on one key — and the key staying exactly the timestamp is what lets cursors and the ascending mirror decode it back.
+- **A test that fakes timers breaks that guarantee**, and the failure looks like a production bug — Vitest's default `toFake` set includes `process.hrtime`, so every row written to one partition gets an identical `rowKey`. Narrow it to `toFake: ["Date"]` (`testing` skill, `references/timers-and-hand-resolved-promises.md`).
 
 ## Batch Writes
 
 **Never spend a round trip per entity when the entities share a `partitionKey`** — chunk them into `submitTransaction` instead. This is the Azure-side twin of the drizzle skill's batch-insert rule: a loop of `createEntity`/`updateEntity` awaits is one network latency per row, so an unremarkable 1000-row write becomes 1000 sequential calls on a request a user is waiting on. Partition-per-owner designs (`partitionKey = roomId`, `= programId`) mean the writes usually already qualify — check whether they do before reaching for `Promise.all`, which still issues a request per row.
 
-Paginate at `AZURE_MAX_PAGE_SIZE`, chunk transactions at `AZURE_MAX_BATCH_SIZE`, and let `submitTransactionBatches` (`@esposter/db`) own the chunking — never hand-roll the slice loop.
+Paginate at `AZURE_MAX_PAGE_SIZE`, chunk transactions at `AZURE_MAX_BATCH_SIZE`, and let `submitTransactionBatches` (`@esposter/db`) own the chunking — never hand-roll the slice loop. A write needing **per-batch** conflict handling is the one case `submitTransactionBatches` can't serve; it chunks with `chunk` (`@esposter/shared`), still never an index-stepping `for` with `.slice()`.
 
 ## Read-Modify-Write Is Conditional
 
@@ -49,7 +51,12 @@ A rejected conditional write is a `412`, meaning only that the version is stale 
 
 ## Filter Clauses
 
-Build OData filter strings with `serializeClauses` from `@esposter/db`. Clause typing rules (entity type argument, `CompositeKeyPropertyNames`, null-clause inference) belong to the `trpc` skill.
+Build OData filter strings with `serializeClauses` from `@esposter/db`.
+
+- **`Clause<T extends Record<string, unknown>>` has no default** — type the array with the entity being queried (`const clauses: Clause<FooEntity>[] = [...]`), never a bare `Clause[]`.
+- **Always `CompositeKeyPropertyNames` for `partitionKey`/`rowKey`** — never an entity's own `PropertyNames`, never a string literal.
+- **Entity-specific fields stay on their own `PropertyNames` constant** — `FooEntityPropertyNames.bar`, with `ItemMetadataPropertyNames.deletedAt` for metadata.
+- **Null clause helpers infer automatically** — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<FooEntity>(...)`. `getCursorWhereAzureTable` returns `Clause<TItem>[]`, typed via a cast in its body since deserialized cursor keys are plain strings at runtime.
 
 ```typescript
 const filter = serializeClauses([
@@ -58,6 +65,8 @@ const filter = serializeClauses([
   getTableNullClause(ItemMetadataPropertyNames.deletedAt),
 ] as Clause<StandardMessageEntity>[]);
 ```
+
+**"Everything under this partition" is `getPartitionKeyFilter(id)`** (`@esposter/db`), never a hand-built one-clause `serializeClauses` call and never a template literal. Every table partitions on its owning entity's id, so a read, a count and a purge of the same entity all start from that one filter — writing it once is what keeps the three from disagreeing after a key-shape change. A feature that also filters on its own columns drops back to the clause array above; a feature that only re-labels the partition filter for its domain (`getSurveyResponseFilter`) is a one-line named wrapper over it, not a second implementation.
 
 ## Counting — Only After a Capped Read, and Bounded
 
@@ -72,7 +81,7 @@ Azure Table has no count API — `countEntities` (from `@esposter/db`) walks eve
 
 ```typescript
 export class MyEntity extends AzureEntity {
-  myField!: string;
+  declare myField: string;
 
   constructor(init?: Partial<MyEntity> & ToData<CompositeKeyEntity>) {
     super();

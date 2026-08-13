@@ -1,6 +1,6 @@
 ---
 name: skill-authoring
-description: Esposter skill-writing conventions for .claude/skills — frontmatter that drives selection, the two-tier layout (SKILL.md is the always-on rule index, references/*.md hold sub-task deep dives, ~150-line budget, trigger-named index lines), one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), don't restate what an enforcer already checks, the reproducible-pattern test (one-offs are deleted rather than recorded — git already holds them), generic placeholders over identifiers from one change, magnitudes over incident numbers, and declaration layout. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
+description: Esposter skill-writing conventions for .claude/skills — frontmatter that drives selection, the two-tier layout (SKILL.md is the always-on rule index, references/*.md hold sub-task deep dives, ~150-line budget, trigger-named index lines), when a skill earns a mermaid diagram (an ordered cycle with a gate, never a rule list), one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), don't restate what an enforcer already checks, the reproducible-pattern test (one-offs are deleted rather than recorded — git already holds them), generic placeholders over identifiers from one change, and magnitudes over incident numbers. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
 ---
 
 # Skill Authoring
@@ -59,10 +59,6 @@ Generic source categories (`#shared`, `@vueuse/*`, `@/`) are fine — they descr
 
 The same applies to numbers: keep only the magnitudes the rule operates on (a limit, a budget), and drop the evidence numbers from the incident that prompted it — PR numbers, dates, counts from one occurrence, quoted error text with baked-in values. If the operative number may drift, state where to re-check it rather than freezing today's reading.
 
-## Declaration layout
-
-- **Interfaces/types at the top** — within a `.vue` `<script setup>` or `.ts` module, group all local `interface`/`type` declarations together at the top of the block (after imports), before the runtime `const`/logic. Don't interleave a stray interface between logic blocks.
-
 ## SKILL.md is the always-on layer; `references/` holds the rest
 
 A selected skill loads **whole**, so every byte of `SKILL.md` is paid for by every task that trips its trigger — including the tasks that needed one rule from it. The budget is **~15 KB, and ~150 lines**: bytes are what the context actually costs, lines are the readability proxy, and this repo's long prose lines make it easy to pass the first while meeting the second. Past that a skill stops being a rule list and becomes a manual nobody reads to the end, which is the same failure as not writing it.
@@ -74,11 +70,23 @@ So a skill is two tiers:
 
 Move a section out when it is a **procedure** (ordered steps run occasionally), when it fires only for one narrow sub-task, or when it runs past ~40 lines of examples. Keep it in `SKILL.md` when violating it is the **default behaviour** — a rule that fires only if someone thought to look it up does not fire.
 
-**The index line carries the split**, and it works like frontmatter: name the trigger, not the topic — `references/mock-cleanup.md` — _when a test creates spies, fake timers or global stubs_. An index line that reads "see X for more detail" guarantees the page is never opened.
+**The index line carries the split**, and it works like frontmatter: name the trigger, not the topic — as `testing` indexes `references/timers-and-hand-resolved-promises.md` _when a test installs fake timers or holds a call in flight_. An index line that reads "see X for more detail" guarantees the page is never opened.
 
 Never split to hit a number. Three cohesive pages beat nine fragments, and two rules that have to be read together stay on one page.
 
 **A split breaks inbound pointers, so fix them in the same change.** Other skills cite sections by heading (``see the `pinia` skill ("Cursor Pagination in Stores")``), and a heading that moved into `references/` leaves that citation pointing at nothing — silently, because nothing resolves skill links. After moving a section, grep the tree for its heading text and repoint each citation at the page (``see the `pinia` skill (`references/keyed-state-and-pagination.md`)``), which is stable across later edits to the heading itself.
+
+## A cycle earns a diagram; a rule list does not
+
+Most skills are rule lists, and a diagram of a list is decoration. The exception is a skill whose subject is an **ordered process with state** — a gate you can be on the wrong side of, a loop whose position decides what you may do next. Prose describes each step of one of those correctly and still leaves the reader unable to answer "where am I, and what does that permit", because that answer lives in the ordering rather than in any step.
+
+One `mermaid` block, in `SKILL.md` beside the rule it serves, when all three hold:
+
+- The subject is a **sequence or cycle**, not a set of independent rules.
+- Being at the wrong point in it is a **mistake you can actually make** — the diagram is a gate, not an illustration.
+- The nodes are states or decisions, not the rules restated as boxes.
+
+Keep it small enough to read at a glance, label the edges with the condition that takes you along them, and never let it carry a rule the prose does not — a diagram is unsearchable, and a rule that exists only in one is a rule nobody greps. Content docs have their own, stricter diagram mandate, owned by the `docs` skill; this is the narrower rule for skills.
 
 ## Tight, not fluffy
 

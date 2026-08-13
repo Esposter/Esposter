@@ -1,3 +1,7 @@
+import type { RoomInMessage } from "@/schema/roomsInMessage";
+import type { User } from "@/schema/users";
+import type { WebhookInMessage } from "@/schema/webhooksInMessage";
+
 import { schema } from "@/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
@@ -25,3 +29,6 @@ export const WebhookInMessageRelations = {
   roomInMessage: true,
   user: true,
 } as const;
+// The row `WebhookInMessageRelations` actually produces, so a procedure returning one can declare it rather
+// Than infer a shape the caller cannot name
+export type WebhookInMessageWithRelations = WebhookInMessage & { roomInMessage: RoomInMessage; user: User };

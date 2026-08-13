@@ -14,7 +14,6 @@ export const runAfterSaveResourceContent = (
 ): void => {
   const afterSaveResourceContent = ResourceAfterSaveContentMap[resource.type];
   if (!afterSaveResourceContent) return;
-
   // The hook is reached through a runtime resource type, so its parameters collapse to the intersection of
   // Every content shape; both contents were parsed by that same type's contentSchema on the way in, so they
   // Are pinned back to what the hook declares

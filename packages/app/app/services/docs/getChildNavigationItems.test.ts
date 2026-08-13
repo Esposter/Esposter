@@ -1,13 +1,7 @@
-import type { ContentNavigationItem } from "@nuxt/content";
-
+import { createNavigationItem } from "@/services/docs/createNavigationItem.test";
 import { getChildNavigationItems } from "@/services/docs/getChildNavigationItems";
 import { RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-
-const createItem = (path: string): ContentNavigationItem => ({
-  path,
-  title: path.split("/").at(-1) ?? "",
-});
 
 describe(getChildNavigationItems, () => {
   test("drops the directory's own index child", () => {
@@ -15,8 +9,8 @@ describe(getChildNavigationItems, () => {
 
     const path = `${RoutePath.Docs}/a`;
     const children = getChildNavigationItems({
-      ...createItem(path),
-      children: [createItem(path), createItem(`${path}/b`)],
+      ...createNavigationItem(path),
+      children: [createNavigationItem(path), createNavigationItem(`${path}/b`)],
     });
 
     expect(children.map((child) => child.path)).toStrictEqual([`${path}/b`]);
@@ -25,6 +19,6 @@ describe(getChildNavigationItems, () => {
   test("returns no items for a leaf page", () => {
     expect.hasAssertions();
 
-    expect(getChildNavigationItems(createItem(`${RoutePath.Docs}/a`))).toStrictEqual([]);
+    expect(getChildNavigationItems(createNavigationItem(`${RoutePath.Docs}/a`))).toStrictEqual([]);
   });
 });

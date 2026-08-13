@@ -28,6 +28,7 @@ describe(useDataStore, () => {
   const server = setupMswTrpc();
   let router: Router;
   const roomId = crypto.randomUUID();
+  const userId = getMockSession().user.id;
   const message = "message";
   const updatedMessage = "updatedMessage";
   const filename = "filename";
@@ -38,6 +39,11 @@ describe(useDataStore, () => {
   beforeAll(() => {
     router = useRouter();
   });
+
+  // The store reads only `session.value.data.user.id`, so signing in is that slice of the session ref
+  const signIn = () => {
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+  };
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -52,9 +58,7 @@ describe(useDataStore, () => {
   test("createMessage rolls back the optimistic message when the Create hook rejects", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    // CreateMessage reads only session.value.data.user.id off the reactive session
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { createMessage } = dataStore;
@@ -73,8 +77,7 @@ describe(useDataStore, () => {
   test("createMessage keeps the optimistic message when the mutation rejects", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { createMessage } = dataStore;
@@ -94,8 +97,7 @@ describe(useDataStore, () => {
   test("storeSendMessage resets the composer only once the optimistic message is in the list", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const { storeSendMessage } = dataStore;
     vi.spyOn(MessageHookMap[Operation.Create], "run").mockRejectedValueOnce(new Error(message));
@@ -110,8 +112,7 @@ describe(useDataStore, () => {
   test("storeSendMessage resets the composer of the room the send was for", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const { storeSendMessage } = dataStore;
     server.use(
@@ -131,8 +132,7 @@ describe(useDataStore, () => {
   test("holds the attachments a send took out of the composer until the server answers", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
     const { files } = storeToRefs(uploadFileStore);
@@ -164,8 +164,7 @@ describe(useDataStore, () => {
   test("hands the composer's attachments back when the server rejects the send", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
     const { files } = storeToRefs(uploadFileStore);
@@ -196,8 +195,7 @@ describe(useDataStore, () => {
   test("createMessage releases the composer's attachments only once the server accepts", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const { createMessage } = dataStore;
     server.use(
@@ -214,8 +212,7 @@ describe(useDataStore, () => {
   test("createMessage releases the composer's attachments for the room the send was for", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const { createMessage } = dataStore;
     server.use(
@@ -235,8 +232,7 @@ describe(useDataStore, () => {
   test("createMessage releases only the attachments the accepted message persisted", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
     const { files } = storeToRefs(uploadFileStore);
@@ -272,8 +268,7 @@ describe(useDataStore, () => {
   test("sends only the attachments the composer held when the send started", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
     const { createMessage } = dataStore;
@@ -307,10 +302,10 @@ describe(useDataStore, () => {
   test("createMessage mirrors the thread auto-follow of a reply", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const threadFollowStore = useThreadFollowStore();
+    const { checkIsFollowing } = threadFollowStore;
     const { createMessage } = dataStore;
     const replyRowKey = crypto.randomUUID();
     server.use(
@@ -321,7 +316,31 @@ describe(useDataStore, () => {
     const isCreated = await createMessage({ files: [], message, replyRowKey, roomId, type: MessageType.Message });
 
     expect(isCreated).toBe(true);
-    expect(threadFollowStore.checkIsFollowing(roomId, replyRowKey)).toBe(true);
+    expect(checkIsFollowing(roomId, replyRowKey)).toBe(true);
+  });
+
+  // The newer-cursor pages the room-keyed list, so it is keyed the same way. Held globally it survives the room
+  // Switch, and the next room renders a "load newer" waypoint it never earned, then pages in a window cut from
+  // The previous room's timestamps
+  test("keeps the newer-message cursor with the room it was read for", () => {
+    expect.hasAssertions();
+
+    const otherRoomId = crypto.randomUUID();
+    const dataStore = useDataStore();
+    const { hasMoreNewer, nextCursorNewer } = storeToRefs(dataStore);
+    hasMoreNewer.value = true;
+    nextCursorNewer.value = message;
+    // Replaced rather than mutated in place: the route is a shallow ref, so only a new value re-runs the
+    // Computed the room-keyed slices resolve their key through
+    router.currentRoute.value = { ...router.currentRoute.value, params: { id: otherRoomId } };
+
+    expect(hasMoreNewer.value).toBe(false);
+    expect(nextCursorNewer.value).toBe("");
+
+    router.currentRoute.value = { ...router.currentRoute.value, params: { id: roomId } };
+
+    expect(hasMoreNewer.value).toBe(true);
+    expect(nextCursorNewer.value).toBe(message);
   });
 
   // Only the sender's own message renders ahead of its hooks — it has a loading bubble to keep responsive and a
@@ -348,6 +367,77 @@ describe(useDataStore, () => {
     await storePromise;
 
     expect(items.value).toHaveLength(1);
+  });
+
+  // Both edits name the same message, so the second runs behind the first and applies on top of what it stored.
+  // A body captured when the caller invoked it — before the write ahead of it had even been sent — unwinds the
+  // Bubble past that write, back to text the user replaced two edits ago
+  test("rolls a queued edit back to the body the edit ahead of it stored", async () => {
+    expect.hasAssertions();
+
+    const rejectedMessage = "rejectedMessage";
+    server.use(
+      trpcMsw.message.updateMessage.mutation(({ input }) => {
+        if (input.message === rejectedMessage) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
+      }),
+    );
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { updateMessage } = dataStore;
+    const newMessage = createMessageEntity({
+      message,
+      roomId,
+      type: MessageType.Message,
+      userId: getMockSession().user.id,
+    });
+    items.value = [newMessage];
+    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    await Promise.all([
+      updateMessage({ ...compositeKey, message: updatedMessage }),
+      updateMessage({ ...compositeKey, message: rejectedMessage }),
+    ]);
+
+    expect(takeOne(items.value).message).toBe(updatedMessage);
+  });
+
+  // Each attachment is its own target, so two removals from one message overlap. Reading the list the call was
+  // Issued with makes the second removal write back the file the first one took off, and its rollback reinstate
+  // Both — the message renders attachments the server no longer has
+  test("removes and restores one attachment at a time", async () => {
+    expect.hasAssertions();
+
+    const rejectedFileId = crypto.randomUUID();
+    const acceptedFileId = crypto.randomUUID();
+    const keptFileId = crypto.randomUUID();
+    server.use(
+      trpcMsw.message.deleteFile.mutation(({ input }) => {
+        if (input.id === rejectedFileId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
+      }),
+    );
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { deleteFile } = dataStore;
+    const newMessage = createMessageEntity({
+      files: [acceptedFileId, rejectedFileId, keptFileId].map((id) => ({
+        filename,
+        hasThumbnail: false,
+        id,
+        mimetype,
+        size,
+      })),
+      message,
+      roomId,
+      type: MessageType.Message,
+      userId: getMockSession().user.id,
+    });
+    items.value = [newMessage];
+    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    await Promise.all([
+      deleteFile({ ...compositeKey, id: acceptedFileId }),
+      deleteFile({ ...compositeKey, id: rejectedFileId }),
+    ]);
+
+    expect(takeOne(items.value).files.map(({ id }) => id)).toStrictEqual([keptFileId, rejectedFileId]);
   });
 
   test("storeUpdateMessage is idempotent", async () => {

@@ -2,7 +2,6 @@
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
 import type { Item } from "@/models/shared/Item";
 import type { Resource } from "@esposter/db-schema";
-import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
 import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
 import { DeletedResourceHeaders } from "@/services/resource/DeletedResourceHeaders";
@@ -50,40 +49,31 @@ const onUpdateOptions = (options: ReadResourcesOptions) => readDeletedResources(
         <v-btn size="small" variant="text" @click="refresh()">Retry</v-btn>
       </template>
     </v-alert>
-    <StyledDataTableServer
+    <v-data-table-server
       flex
       flex-1
       flex-col
-      :data-table-server-props="{
-        headers: DeletedResourceHeaders,
-        height: '100%',
-        items,
-        itemsLength: count,
-        itemsPerPageOptions: RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS,
-        itemsPerPage: RESOURCE_LIST_ITEMS_PER_PAGE,
-        itemValue: 'id',
-        loading: isLoading,
-      }"
+      height="100%"
+      item-value="id"
+      :headers="DeletedResourceHeaders"
+      :items
+      :items-length="count"
+      :items-per-page="RESOURCE_LIST_ITEMS_PER_PAGE"
+      :items-per-page-options="RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS"
+      :loading="isLoading"
       @update:options="onUpdateOptions"
     >
-      <template #[`item.type`]="{ item }: ItemSlot<Resource>">
+      <template #[`item.type`]="{ item }">
         <ResourceListTypeCell :type="item.type" />
       </template>
-      <template #[`item.actions`]="{ item }: ItemSlot<Resource>">
+      <template #[`item.actions`]="{ item }">
         <StyledOverflowMenu :items="getActionItems(item)" />
       </template>
       <template #loading>
         <StyledSkeleton type="table-row@10" />
       </template>
       <template #no-data>
-        <StyledEmptyState
-          v-if="error"
-          icon="mdi-alert-circle-outline"
-          title="Something went wrong"
-          :description="error"
-        >
-          <v-btn prepend-icon="mdi-refresh" variant="tonal" @click="refresh()">Retry</v-btn>
-        </StyledEmptyState>
+        <StyledErrorState v-if="error" :error @retry="refresh()" />
         <StyledEmptyState
           v-else
           icon="mdi-delete-outline"
@@ -91,7 +81,7 @@ const onUpdateOptions = (options: ReadResourcesOptions) => readDeletedResources(
           :description="`Deleted resources appear here for ${RECYCLE_BIN_RETENTION_DAYS} days before they are permanently removed.`"
         />
       </template>
-    </StyledDataTableServer>
+    </v-data-table-server>
     <ResourcePurgeDialog v-if="purgingResource" :resource="purgingResource" @purge="purgeResource($event)" />
   </v-sheet>
 </template>

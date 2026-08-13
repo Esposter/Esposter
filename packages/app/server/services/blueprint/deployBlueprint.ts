@@ -8,9 +8,8 @@ import { substituteBlueprintEntryAliasTokens } from "@@/server/services/blueprin
 import { substituteBlueprintParameterTokens } from "@@/server/services/blueprint/substituteBlueprintParameterTokens";
 import { validateBlueprintEntries } from "@@/server/services/blueprint/validateBlueprintEntries";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
-import { deleteCreatedResources } from "@@/server/services/resource/deleteCreatedResources";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
-import { getResultAsync, noop } from "@esposter/shared";
+import { withResourceRollback } from "@@/server/services/resource/withResourceRollback";
 
 // Substitute parameters → pre-validate every entry against its type's contentSchema → topologically create
 // Each entry (resources row + content blob) with real ids substituted for its `{{entry:key}}` references.
@@ -37,7 +36,7 @@ export const deployBlueprint = async (
   const aliasToId = new Map<string, string>();
   const createdIds: string[] = [];
   const deployments: BlueprintDeployment[] = [];
-  await getResultAsync(async () => {
+  await withResourceRollback(ctx, createdIds, async () => {
     for (const entry of sortedEntries) {
       const newResource = await createResourceRow(ctx, { name: entry.name, type: entry.type });
       createdIds.push(newResource.id);
@@ -46,7 +45,6 @@ export const deployBlueprint = async (
       // An entry captured from a resource whose content was never written deploys to that same state — the
       // Content blob is written on first save, so a freshly created resource simply has none
       if (entry.content === undefined) continue;
-
       // Real ids are known only after every dependency is created, so the content is bound here rather than up front
       const content = mapBlueprintEntryContentStrings(entry, (value) =>
         substituteBlueprintEntryAliasTokens(value, aliasToId),
@@ -57,9 +55,6 @@ export const deployBlueprint = async (
       // And a ContentSaved beside it would claim the owner edited a resource they have not opened yet
       await saveResourceContent(ctx, { content, resource: newResource });
     }
-  }).match(noop, async (error) => {
-    await deleteCreatedResources(ctx, createdIds);
-    throw error;
   });
   return deployments;
 };

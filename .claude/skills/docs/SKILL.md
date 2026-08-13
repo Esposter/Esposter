@@ -57,12 +57,15 @@ Write for a new engineer reading in the browser, not for an agent grepping a rep
 - Keep the **Key Files** table on feature pages — path + one-line role. It's the bridge from docs to code.
 - Nothing is frozen: trim, rename, and split freely as understanding improves — but never merge files (see single-responsibility rule).
 - **No deprecated or stale content, ever.** When something is superseded, delete it and fix every reference in the same change — no deprecation stubs, no "moved to X" notices. Why-not rationale lives only in `deferred/`/`rejected/` pages, and only when genuinely needed.
+- **Invert a tombstone, don't just delete it.** Most stale passages are not dead weight — they are a live rule stated as the history of what it replaced ("X used to be per-call-site; it is now a flag", "the explorer replaced DocumentPicker", "v1 was mesh WebRTC"). Deleting the sentence takes the reasoning with it, which is why these survive pass after pass and get re-added. Keep the reasoning, drop the past tense and the dead identifier: state the rule in the present, with the why the history was carrying. A "Deleted routes:" list or a bare "Y was removed — do not reintroduce" has no reasoning to save and is simply deleted.
 
 ## Diagram mandate
 
 Any page describing a flow, lifecycle, or interaction between 3+ parts (components, procedures, storage, background workers) MUST carry a Mermaid diagram — `flowchart` for data/navigation flows, `stateDiagram-v2` for lifecycles, `sequenceDiagram` for request/event ordering. Prose says _why_; the diagram is the alignment artifact for _what talks to what_. Label edges with the procedure/event that drives them.
 
 Exemptions: `index.md` pages, `deferred/`/`rejected/` pages, `roadmap.md`, and static inventories (key-file tables, component lists). Never add a diagram as decoration.
+
+**The exemption is about the page's shape, not its length.** A short page describing one small flow still owes a diagram; a long page that is a list of rules owes none. When auditing an area, the question to ask each page is "does the prose name three parts and say what passes between them?" — if it does, a missing diagram is a finding, however tidy the page reads. Pages that only _feel_ exempt are the ones this survey keeps rediscovering, so record the verdict per page rather than per area.
 
 Every diagram is parse-validated by `packages/app/content/docs.test.ts` (`mermaid.parse` over all ` ```mermaid ` blocks), so a syntax error fails `pnpm test`. Gotcha: `;` is a mermaid statement separator even inside message/note text — never use a semicolon in labels or notes (use `—` or a comma).
 

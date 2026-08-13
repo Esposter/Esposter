@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import type { CountSurveyResponsesOutput } from "#shared/models/resource/survey/CountSurveyResponsesOutput";
-import type { Resource, ResourcePublication } from "@esposter/db-schema";
+import type { Resource } from "@esposter/db-schema";
 
+import { pluralize } from "#shared/util/text/pluralize";
 import { useSurveyStore } from "@/store/survey";
 import { getResultAsync, RoutePath } from "@esposter/shared";
 
 interface ResourceSurveyOverviewProps {
-  isLoading?: boolean;
-  publication?: ResourcePublication;
   resource: Resource;
 }
 
-const { isLoading, publication, resource } = defineProps<ResourceSurveyOverviewProps>();
+const { resource } = defineProps<ResourceSurveyOverviewProps>();
 const { $trpc } = useNuxtApp();
 const surveyStore = useSurveyStore();
 const { loadContent } = surveyStore;
@@ -20,10 +19,8 @@ const responseCount = ref<CountSurveyResponsesOutput>();
 const responseLabel = computed(() => {
   if (!responseCount.value) return "";
   const { count, isCapped } = responseCount.value;
-  const noun = count === 1 && !isCapped ? "response" : "responses";
-  return `${count}${isCapped ? "+" : ""} ${noun}`;
+  return `${count}${isCapped ? "+" : ""} ${pluralize("response", count)}`;
 });
-
 // The page is keyed by resource id, so this instance only ever describes one survey — both reads run
 // Once, in parallel. The Collection card edits the same content blob the editor writes, so it needs
 // The loaded settings
@@ -37,7 +34,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ResourceOverview :is-loading :publication :resource>
+  <ResourceOverview :resource>
     <template #essentials>
       <template v-if="responseCount">
         <span op-medium-emphasis>Responses</span>

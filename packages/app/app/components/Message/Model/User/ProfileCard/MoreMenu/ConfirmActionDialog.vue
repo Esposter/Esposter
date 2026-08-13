@@ -8,7 +8,7 @@ interface ConfirmActionDialogProps {
   text: string;
   title: string;
   type: AdminActionType.CreateBan | AdminActionType.KickFromRoom | AdminActionType.SoftBan;
-  user: Pick<User, "id" | "name">;
+  user: Pick<User, "id">;
 }
 
 const { text, title, type, user } = defineProps<ConfirmActionDialogProps>();

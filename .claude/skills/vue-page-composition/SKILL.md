@@ -46,6 +46,7 @@ Granularity must **simplify the problem** or enable **reuse**. Skip refactors th
 
 - A wrapper that only forwards props/attrs and needs `inheritAttrs: false` plumbing just to make a click reach the inner element is an anti-pattern — inline the `v-tooltip` + `v-btn` instead.
 - Don't extract a component that is used in exactly one place and removes no logic from its parent (pure passthrough). Extract when the child owns a distinct responsibility (an action, a form, a self-contained piece of layout), not to hit a line count.
+- **The mechanical form of that rule**: a component whose template is one element and whose entire script is a `defineEmits` that element re-emits owns no responsibility — it is a rename of `<StyledButton>`. Inline it at its one call site and delete the file. Two of them side by side look like a family and are really one toolbar row that was never written.
 
 ## List Item Rendering: Array + v-for over Hardcoded Items
 

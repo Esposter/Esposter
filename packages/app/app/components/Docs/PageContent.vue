@@ -58,7 +58,6 @@ const { page } = defineProps<PageContentProps>();
     text-decoration: underline;
     text-underline-offset: 0.125rem;
   }
-
   // Heading anchor links keep the heading colour; the hash affordance appears on hover
   :deep(h1 a),
   :deep(h2 a),

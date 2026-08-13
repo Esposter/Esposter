@@ -2,6 +2,7 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
+import { pluralize } from "#shared/util/text/pluralize";
 import { useWebhookStore } from "@/store/message/room/webhook";
 import { withFinalizerAsync } from "@esposter/shared";
 
@@ -43,7 +44,7 @@ const isLoading = ref(false);
       </StyledButton>
     </div>
     <div v-if="items.length >= WEBHOOK_MAX_LENGTH" text-red text-body-medium>
-      You can only create up to {{ WEBHOOK_MAX_LENGTH }} webhook{{ WEBHOOK_MAX_LENGTH > 1 ? "s" : "" }}.
+      You can only create up to {{ WEBHOOK_MAX_LENGTH }} {{ pluralize("webhook", WEBHOOK_MAX_LENGTH) }}.
     </div>
     <MessageModelRoomSettingsTypeWebhookList :room-id="room.id" />
   </div>

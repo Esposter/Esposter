@@ -35,6 +35,19 @@ Two writes that share a key are two writes to the same thing, and they run one a
 
 Reads and writes never share a queue, even on one key: a read waits for nobody.
 
+## A key queues only within one `useMutation()` instance
+
+The queue is state on the instance, not on the key. Two instances keyed on the same target therefore run concurrently while their call sites read as if they serialised — the failure mode is silent, because the key is right and the ordering it promises simply never existed.
+
+So the instance count follows what the writes touch, not how many mutations there are:
+
+- **Writes that end the same row share one instance**, declared once at the store root and named for the target rather than for either write (`executeBlockMutation` for `blockUser`/`unblockUser`, one executor for cancelling and sending a scheduled message job, one for publishing and unpublishing a resource — both end that resource's publication row). Sharing is what makes `key: id` mean what it says: the second write applies its optimistic change against what the first actually left, so its rollback cannot resurrect a row the first already removed.
+- **Writes that own different fields of one entity keep their own instances.** A call participant's camera, mute and hand-raise all key on the participant, and that is correct precisely because none of them replaces another — they merge, and queueing would only make each wait on writes it cannot conflict with. Same for the Attachments panel writing a room's maximum file size and its allowed types, and for a resource's content save, rename and tag edit.
+
+  Owning a field is a claim about the **payload**, not only about what the client merges back. A tag edit that restated the resource's name alongside its tags would put the pre-rename name back whenever it overlapped a rename, however carefully the response was merged — so the input schema makes each field optional and the write carries nothing else.
+
+The test is whether one write's rollback could undo another's landed change. If it could, they are the same target and share an executor; if it could not, they are independent and keep theirs.
+
 ## The state an operation writes back is bound where the key is
 
 The `key` is not the only thing an operation resolves when it is issued. **Every per-key slice an operation writes back is resolved at the same moment, never at the moment the response lands.** A store that keys state by the room, the tab or the post exposes that state twice: a current-key ref, which is what the rendered surface binds because it must track whatever is on screen, and a **binder** — `useDataMap`'s `getBoundData()` — which pins the key as it is right now and hands back a ref that keeps writing there. An operation takes the binder.
@@ -57,8 +70,8 @@ A joined read is never `Dropped`. Dropping is right for a write, whose caller wa
 
 Two things `isExclusive` deliberately does **not** do:
 
-- **It does not cache.** Only a read still in flight can be joined, so read-once-per-session or read-once-per-room stays a flag at the call site (`isLoaded`, a `loadedRoomIds` set) guarding whether to call at all. That is a caching concern, not a concurrency one.
-- **It does not apply to an invalidating re-read.** A read issued _because_ something changed must not join the answer that the change just invalidated, so `refreshFavorites` re-reads without it and wins on latest-wins instead.
+- **It does not cache.** Only a read still in flight can be joined, so read-once-per-session and read-once-per-room are a caching concern, not a concurrency one — they belong to `useCachedRead`, which layers its gate on top of this rather than replacing it. See [caching](/docs/architecture/caching).
+- **It does not apply to an invalidating re-read.** A read issued _because_ something changed must not join the answer that the change just invalidated, so a cache's `refetch` re-reads without it and wins on latest-wins instead.
 
 `isPending` doubles as the loading flag for a read composable — `useQuery` hands it back alongside `data` — so no composable keeps its own `isLoading` ref.
 

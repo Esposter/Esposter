@@ -10,30 +10,24 @@ import { useTodoListStore } from "@/store/resource/todoList";
 const todoListStore = useTodoListStore();
 const { editItem, loadContent } = todoListStore;
 const { items, searchQuery } = storeToRefs(todoListStore);
-const isLoading = ref(true);
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<TodoListItem>) => editItem({ id: item.id });
 useTodoListSubscribables();
-
-onMounted(async () => {
-  await loadContent();
-  isLoading.value = false;
-});
+// The Suspense-wrapped blade awaits the content, so it opens on a populated store and the shell's
+// Skeleton covers the wait — no per-blade loading flag
+await loadContent();
 </script>
 
 <template>
-  <StyledSkeleton v-if="isLoading" />
-  <v-container v-else fluid flex flex-col h-full>
-    <StyledDataTable
+  <v-container fluid flex flex-col h-full>
+    <v-data-table
       flex
       flex-1
       flex-col
-      :data-table-props="{
-        height: '100%',
-        headers: TodoListHeaders,
-        items,
-        search: searchQuery,
-        sortBy: [{ key: 'name', order: 'asc' }],
-      }"
+      height="100%"
+      :headers="TodoListHeaders"
+      :items
+      :search="searchQuery"
+      :sort-by="[{ key: 'name', order: 'asc' }]"
       @click:row="onClickRow"
     >
       <template #top>
@@ -48,7 +42,7 @@ onMounted(async () => {
       <template #[`item.notes`]="{ item }">
         <div class="rich-text-content" v-html="item.notes" />
       </template>
-    </StyledDataTable>
+    </v-data-table>
     <ResourceTodoListEditDialog />
   </v-container>
 </template>

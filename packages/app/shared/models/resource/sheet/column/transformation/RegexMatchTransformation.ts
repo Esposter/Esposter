@@ -2,8 +2,7 @@ import type { SourceColumnId } from "#shared/models/resource/sheet/column/transf
 import type { ItemEntityType } from "@esposter/shared";
 
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
-import { createSourceColumnIdSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnId";
-import { ColumnFormVjsfContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormVjsfContext";
+import { sourceColumnIdSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnId";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -12,11 +11,9 @@ export interface RegexMatchTransformation extends ItemEntityType<ColumnTransform
   pattern: string;
 }
 
-export const regexMatchTransformationSchema = z
-  .object({
-    ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.RegexMatch).readonly()).shape,
-    ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.stringColumnItems"]).shape,
-    groupIndex: z.int().nonnegative(),
-    pattern: z.string(),
-  })
-  .meta({ title: ColumnTransformationType.RegexMatch }) satisfies z.ZodType<RegexMatchTransformation>;
+export const regexMatchTransformationSchema = z.object({
+  ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.RegexMatch).readonly()).shape,
+  ...sourceColumnIdSchema.shape,
+  groupIndex: z.int().nonnegative(),
+  pattern: z.string(),
+}) satisfies z.ZodType<RegexMatchTransformation>;

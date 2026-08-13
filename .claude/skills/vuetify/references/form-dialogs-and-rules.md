@@ -42,9 +42,28 @@ const disabled = computed(() => !(errorIcon.value?.isValid ?? true));
 </v-form>
 ```
 
+## A built-in rule first, a custom alias only where none covers the check
+
+Reach for a Vuetify built-in (`required`, `maxLength`, `minLength`, `email`, `pattern`, `notEmpty`, …) before writing anything. They resolve their copy from `$vuetify.rules.*`, so a field validated by built-ins is worded like every other field in the app for free, and a hand-written English string next to them is a second source of rule copy that can never follow.
+
+That applies to a rule bridging a server Zod schema too: a schema whose only constraints are "non-empty" and "at most N" is `[rules.required(), rules.maxLength(N)]` at the call site, not a `safeParse` wrapper surfacing the issue message. The bridge is earned only by a constraint no built-in expresses (a format, a cross-field invariant), and the app accepts the one gap that composition leaves — built-ins measure the raw input where the schema normalizes first, so whitespace-only input fails server-side rather than in the field.
+
+A bespoke inline message is earned only when the generic one would be **wrong about what the user sees** — e.g. a length rule on a value composed from the field plus a suffix, where "You must enter a maximum of 2000 characters" contradicts a counter reading 100.
+
 ## Adding a custom global rule
 
-Custom stateless/parameterized rules live in `app/rules.config.ts` (wired via `vuetify.moduleOptions.rulesConfiguration.configFile`). Add them as `aliases` builders (`(err) => (value) => …` or `(options, err) => (value) => …`, threading `err` for a caller-supplied message), end the file with `satisfies RulesOptions`, then call `rules.<name>(...)`.
+Custom stateless/parameterized rules live in `app/rules.config.ts` (wired via `vuetify.moduleOptions.rulesConfiguration.configFile`). Add them as `aliases` builders (`(error) => (value) => …` or `(options, error) => (value) => …`, threading `error` for a caller-supplied message), end the file with `satisfies RulesOptions`, then call `rules.<name>(...)`. Name and word the alias in Vuetify's own voice — `minValue` beside `minLength`, `"You must enter a value of at least 5"` beside `"You must enter a minimum of 5 characters"`.
+
+**Its message is a literal in the rule, not a `$vuetify.rules.*` entry** — matching the built-in's _wording_, not its lookup. Vuetify closes its own aliases over the locale instance but hands custom ones nothing, so routing a custom message through `t()` means declaring it under `locale.messages.en.rules` in `vuetify.config.ts` **plus `localeMessages: "en"`** (without that option the object replaces Vuetify's `en` outright and every built-in message disappears). That combination makes the module merge the whole `en` locale eagerly, which measurably slows every Vuetify mount — enough to push a marginal component test past its timeout. The app has no i18n ([deliberately deferred](/docs/architecture/deferred/i18n)), so that is a real cost for a translation nothing reads. Interpolate the literal instead:
+
+```ts
+minValue: (minimum, error) => (value: TextFieldValue) =>
+  value === null || value === "" || Number(value) >= minimum || error || `You must enter a value of at least ${minimum}`,
+```
+
+**Test emptiness by equality, not by falsiness.** `TextFieldValue` is `null | number | string` because a `type="number"` field binds a numeric model and Vuetify hands the rule whatever that model holds — so `!value` reads a numeric `0` as an empty field and passes it, which is the one value a `minValue(1)` is most likely there to reject. A rule that genuinely only applies to text (`isNotProfanity`) says so with `typeof value !== "string"` instead.
+
+Revisit when i18n lands: at that point the locale is being paid for anyway and these two aliases move into it.
 
 Declare each alias's type in `app/types/vuetify.d.ts` so it gets autocomplete and option-type checking — use Vuetify's canonical builder helpers, not hand-rolled signatures:
 
@@ -53,8 +72,8 @@ import type { ValidationRuleBuilderWithOptions, ValidationRuleBuilderWithoutOpti
 
 declare module "vuetify/labs/rules" {
   interface RuleAliases {
-    myRule: ValidationRuleBuilderWithoutOptions; // (err?) => ValidationRule
-    myRuleWithOption: ValidationRuleBuilderWithOptions<number>; // (option, err?) => ValidationRule
+    myRule: ValidationRuleBuilderWithoutOptions; // (error?) => ValidationRule
+    myRuleWithOption: ValidationRuleBuilderWithOptions<number>; // (option, error?) => ValidationRule
   }
 }
 ```

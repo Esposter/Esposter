@@ -3,7 +3,6 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { BlobDeletionEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
-import type { User } from "better-auth";
 
 import { dayjs } from "#shared/services/dayjs";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
@@ -13,11 +12,11 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
+import { createRoomMember } from "@@/server/trpc/routers/createRoomMember.test";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
+import { createDirectMessageWithFriend } from "@@/server/trpc/routers/room/createDirectMessageWithFriend.test";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -34,19 +33,17 @@ import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } 
 describe("room", () => {
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  let directMessageCaller: DecorateRouterRecord<TRPCRouter["room"]["directMessage"]>;
-  let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   const roomId = crypto.randomUUID();
   const name = "name";
   const updatedName = "updatedName";
   const maxUses = takeOne([...INVITE_MAX_USES_OPTIONS]);
+  const publicUserAssetsUrlPrefix = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`;
+  const getBlobName = (publicUrl: string) => publicUrl.slice(publicUserAssetsUrlPrefix.length);
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     roomCaller = createCallerFactory(roomRouter)(mockContext);
-    directMessageCaller = createCallerFactory(directMessageRouter)(mockContext);
-    friendRequestCaller = createCallerFactory(friendRequestRouter)(mockContext);
     roleCaller = createCallerFactory(roleRouter)(mockContext);
   });
 
@@ -61,13 +58,6 @@ describe("room", () => {
     await mockContext.db.delete(friends);
     await mockContext.db.delete(roomsInMessage);
   });
-
-  const createFriends = async (userA: User, userB: User) => {
-    await mockSessionOnce(mockContext.db, userA);
-    await friendRequestCaller.sendFriendRequest(userB.id);
-    await mockSessionOnce(mockContext.db, userB);
-    await friendRequestCaller.acceptFriendRequest(userA.id);
-  };
 
   test("creates", async () => {
     expect.hasAssertions();
@@ -177,12 +167,8 @@ describe("room", () => {
   test("reads latest updated room excluding direct messages", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
     const newRoom = await roomCaller.createRoom({ name });
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    await directMessageCaller.createDirectMessage([user.id]);
+    await createDirectMessageWithFriend(mockContext);
     const readRoom = await roomCaller.readRoom();
 
     expect(readRoom).toStrictEqual(newRoom);
@@ -196,7 +182,7 @@ describe("room", () => {
     // The leaf is a per-upload uuid, so the knowable part is the versioned prefix; the sas url is the exact public
     // Url plus the mock write-sas query, which is what actually needs asserting. The prefix is spelled out
     // Rather than built from the helper so the documented rooms/ namespace is pinned by the test
-    const blobPrefix = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/rooms/${newRoom.id}/ProfileImage/`;
+    const blobPrefix = `${publicUserAssetsUrlPrefix}rooms/${newRoom.id}/ProfileImage/`;
 
     expect(publicUrl.startsWith(blobPrefix)).toBe(true);
     expect(sasUrl).toBe(
@@ -208,10 +194,8 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
-    const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(invite.id);
-    await mockSessionOnce(mockContext.db, user);
+    const member = await createRoomMember(mockContext, newRoom.id);
+    await mockSessionOnce(mockContext.db, member);
 
     await expect(
       roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id }),
@@ -223,7 +207,7 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
-    const publicUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${blobName}`;
+    const publicUrl = `${publicUserAssetsUrlPrefix}${blobName}`;
     MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
     const onUpdateRoom = await roomCaller.onUpdateRoom([newRoom.id]);
@@ -251,7 +235,7 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
-    const blobName = publicUrl.slice(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length);
+    const blobName = getBlobName(publicUrl);
     // Uploaded through the client, so the mock dates it now
     await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
@@ -270,7 +254,7 @@ describe("room", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const { publicUrl: staleUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     const { publicUrl: freshUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
-    const freshBlobName = freshUrl.slice(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length);
+    const freshBlobName = getBlobName(freshUrl);
     await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, freshBlobName).upload(Buffer.alloc(0), 0);
     // The other admin's save landed first, so the row already points at the fresh avatar
     await roomCaller.updateRoom({ id: newRoom.id, image: freshUrl });
@@ -286,14 +270,12 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
-    const publicUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${blobName}`;
+    const publicUrl = `${publicUserAssetsUrlPrefix}${blobName}`;
     // Seeded rather than uploaded, so the mock dates it before the write sas window and the sweep collects it
     MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
     const { publicUrl: inFlightPublicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
-    const inFlightBlobName = inFlightPublicUrl.slice(
-      `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length,
-    );
+    const inFlightBlobName = getBlobName(inFlightPublicUrl);
     // Uploaded through the client, so the mock dates it now — the state a second admin's in-flight save is in
     await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, inFlightBlobName).upload(Buffer.alloc(0), 0);
     await roomCaller.updateRoom({ id: newRoom.id, image: "" });
@@ -314,7 +296,7 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const victimBlobName = `${crypto.randomUUID()}/${crypto.randomUUID()}`;
-    const craftedImage = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${getRoomProfileImageBlobPrefix(newRoom.id)}/../../../${victimBlobName}`;
+    const craftedImage = `${publicUserAssetsUrlPrefix}${getRoomProfileImageBlobPrefix(newRoom.id)}/../../../${victimBlobName}`;
     await roomCaller.updateRoom({ id: newRoom.id, image: craftedImage });
     await roomCaller.updateRoom({ id: newRoom.id, image: "" });
 
@@ -328,7 +310,7 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
-    const blobName = publicUrl.slice(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length);
+    const blobName = getBlobName(publicUrl);
     await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
     MockEventGridDatabase.clear();
@@ -369,10 +351,8 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
-    const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(invite.id);
-    await mockSessionOnce(mockContext.db, user);
+    const member = await createRoomMember(mockContext, newRoom.id);
+    await mockSessionOnce(mockContext.db, member);
 
     await expect(roomCaller.updateRoom({ id: newRoom.id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -641,72 +621,52 @@ describe("room", () => {
   test("fails create invite with direct message room", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage } = await createDirectMessageWithFriend(mockContext);
 
     await expect(
       roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: directMessage.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, directMessage.id).message}]`,
     );
   });
 
   test("fails read invite token with direct message room", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage } = await createDirectMessageWithFriend(mockContext);
 
     await expect(roomCaller.readMyInvite({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, directMessage.id).message}]`,
     );
   });
 
   test("fails leave with direct message room", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage } = await createDirectMessageWithFriend(mockContext);
 
     await expect(roomCaller.leaveRoom(directMessage.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, directMessage.id).message}]`,
     );
   });
 
   test("fails kick member with direct message room", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage, user } = await createDirectMessageWithFriend(mockContext);
 
     await expect(
       roomCaller.deleteMember({ roomId: directMessage.id, userId: user.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, directMessage.id).message}]`,
     );
   });
 
   test("reads rooms excluding direct messages", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
     const newRoom = await roomCaller.createRoom({ name });
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    await directMessageCaller.createDirectMessage([user.id]);
+    await createDirectMessageWithFriend(mockContext);
     const readRooms = await roomCaller.readRooms();
 
     expect(readRooms.items).toHaveLength(1);
@@ -716,12 +676,8 @@ describe("room", () => {
   test("reads rooms with direct message roomId", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
     const newRoom = await roomCaller.createRoom({ name });
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage } = await createDirectMessageWithFriend(mockContext);
     const readRooms = await roomCaller.readRooms({ roomId: directMessage.id });
 
     expect(readRooms.items).toHaveLength(1);
@@ -769,15 +725,9 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: 0,
-      maxUses: 0,
-      roomId: newRoom.id,
-    });
-    const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(newInvite.id);
+    const member = await createRoomMember(mockContext, newRoom.id);
     vi.advanceTimersByTime(1);
-    await mockSessionOnce(mockContext.db, user);
+    await mockSessionOnce(mockContext.db, member);
     const leftRoomId = await roomCaller.leaveRoom(newRoom.id);
 
     expect(leftRoomId).toStrictEqual(newRoom.id);
@@ -798,16 +748,10 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: 0,
-      maxUses: 0,
-      roomId: newRoom.id,
-    });
-    const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(newInvite.id);
+    const member = await createRoomMember(mockContext, newRoom.id);
     vi.advanceTimersByTime(1);
     const onLeaveRoom = await roomCaller.onLeaveRoom([newRoom.id]);
-    const session = await mockSessionOnce(mockContext.db, user);
+    const session = await mockSessionOnce(mockContext.db, member);
     const data = await getFirstEmit(
       () => onLeaveRoom,
       () => roomCaller.leaveRoom(newRoom.id),
@@ -876,16 +820,14 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
-    const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(invite.id);
+    const member = await createRoomMember(mockContext, newRoom.id);
     vi.advanceTimersByTime(1);
 
-    await roomCaller.deleteMember({ roomId: newRoom.id, userId: user.id });
+    await roomCaller.deleteMember({ roomId: newRoom.id, userId: member.id });
 
     const members = await roomCaller.readMembers({ roomId: newRoom.id });
 
-    expect(members.items.find(({ id }) => id === user.id)).toBeUndefined();
+    expect(members.items.find(({ id }) => id === member.id)).toBeUndefined();
   });
 
   test("fails kick self with owner", async () => {

@@ -2,7 +2,6 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
-import { RoutePath } from "@esposter/shared";
 
 interface DirectMessageListItemProps {
   room: RoomInMessage;
@@ -17,33 +16,19 @@ const isActive = computed(() => room.id === currentDirectMessageId.value);
 </script>
 
 <template>
-  <v-hover #default="{ isHovering, props }">
-    <v-list-item :="props" :active="isActive" :to="RoutePath.Messages(room.id)" :value="room.id">
-      <template #prepend>
-        <StyledAvatar :name="directMessageName" />
-      </template>
-      <v-list-item-title pr-6>
-        {{ directMessageName }}
-      </v-list-item-title>
-      <template #append>
-        <StyledLinkRowActions>
-          <v-btn
-            v-show="isActive || isHovering"
-            density="compact"
-            icon="mdi-close"
-            variant="plain"
-            size="small"
-            :ripple="false"
-            @click="hideDirectMessage(room.id)"
-          />
-        </StyledLinkRowActions>
-      </template>
-    </v-list-item>
-  </v-hover>
+  <MessageModelRoomBaseListItem :is-active :name="directMessageName" :room-id="room.id">
+    <template #append="{ isHovering }">
+      <StyledLinkRowActions>
+        <v-btn
+          v-show="isActive || isHovering"
+          density="compact"
+          icon="mdi-close"
+          variant="plain"
+          size="small"
+          :ripple="false"
+          @click="hideDirectMessage(room.id)"
+        />
+      </StyledLinkRowActions>
+    </template>
+  </MessageModelRoomBaseListItem>
 </template>
-
-<style scoped>
-:deep(.v-list-item__prepend > .v-list-item__spacer) {
-  width: 0.5rem;
-}
-</style>

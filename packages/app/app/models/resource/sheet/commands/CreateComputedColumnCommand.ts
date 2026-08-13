@@ -20,7 +20,7 @@ export class CreateComputedColumnCommand extends ADataSourceCommand<CommandType.
     this.#newColumn = newColumn;
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     dataSource.columns = [
       ...dataSource.columns.slice(0, this.#columnIndex),
       this.#newColumn,
@@ -29,7 +29,7 @@ export class CreateComputedColumnCommand extends ADataSourceCommand<CommandType.
     // No row.data writes — computed values are never stored
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     dataSource.columns = dataSource.columns.filter((column) => column.id !== this.#newColumn.id);
   }
 }

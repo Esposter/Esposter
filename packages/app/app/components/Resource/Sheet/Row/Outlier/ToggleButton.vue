@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 import { useOutlierStore } from "@/store/resource/sheet/outlier";
 
 const outlierStore = useOutlierStore();
@@ -8,10 +9,8 @@ const { isOutlierHighlightEnabled } = storeToRefs(outlierStore);
 <template>
   <StyledTooltipIconButton
     :button-props="{
-      class: 'm-0',
+      ...DENSE_ICON_BUTTON_PROPS,
       color: isOutlierHighlightEnabled ? 'warning' : undefined,
-      size: 'small',
-      tile: true,
       variant: 'text',
     }"
     :icon="isOutlierHighlightEnabled ? 'mdi-alert-circle' : 'mdi-alert-circle-outline'"

@@ -15,4 +15,4 @@ Esposter is a social platform monorepo — a nice and casual place for posting r
 
 ## API reference
 
-Generated TypeDoc API documentation for the monorepo packages lives at [/docs/api/](/docs/api/){target="_blank"}.
+Generated TypeDoc API documentation for the monorepo packages lives at [/docs/api/](/docs/api/){target="_blank"}. It is static output served from `public/`, not a content page, so the link opens in a new tab — an in-app navigation would hand `/docs/api/` to the docs route, which has no page to render for it.

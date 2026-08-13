@@ -14,10 +14,9 @@ interface ResourceFlowchartViewProps {
 
 const { id } = defineProps<ResourceFlowchartViewProps>();
 const { $trpc } = useNuxtApp();
-const { content, name } = await useReadPublishedResourceContent(ResourceType.Flowchart, id, () =>
+const { content } = await useReadPublishedResourceContent(ResourceType.Flowchart, id, () =>
   $trpc.flowchart.readPublishedResourceContent.query(id),
 );
-useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 </script>
 
 <template>

@@ -21,8 +21,10 @@ const createWord = () => {
 </script>
 
 <template>
-  <div flex flex-col gap-2>
-    <div font-semibold>Blocked Words</div>
+  <MessageModelRoomSettingsField
+    hint="Messages containing these words will be blocked. Comparisons are case-insensitive."
+    title="Blocked Words"
+  >
     <v-text-field
       v-model="newWord"
       :disabled="isAtMaxWords"
@@ -51,6 +53,5 @@ const createWord = () => {
         {{ word }}
       </v-chip>
     </div>
-    <span text-hint> Messages containing these words will be blocked. Comparisons are case-insensitive. </span>
-  </div>
+  </MessageModelRoomSettingsField>
 </template>

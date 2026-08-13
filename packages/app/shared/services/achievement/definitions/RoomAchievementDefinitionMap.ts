@@ -1,11 +1,11 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
+import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
 import { RoomAchievementName } from "@esposter/db-schema";
 
-export const RoomAchievementDefinitionMap = {
+export const RoomAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Room, {
   [RoomAchievementName.Inviter]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Room,
     description: "Create an invite link",
     icon: "mdi-link-plus",
     points: 10,
@@ -13,7 +13,6 @@ export const RoomAchievementDefinitionMap = {
   }),
   [RoomAchievementName.PartyHost]: defineAchievementDefinition({
     amount: 10,
-    category: AchievementCategory.Room,
     description: "Create 10 rooms",
     icon: "mdi-party-popper",
     points: 75,
@@ -21,7 +20,6 @@ export const RoomAchievementDefinitionMap = {
   }),
   [RoomAchievementName.RoomCreator]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Room,
     description: "Create your first chat room",
     icon: "mdi-forum",
     points: 25,
@@ -29,7 +27,6 @@ export const RoomAchievementDefinitionMap = {
   }),
   [RoomAchievementName.RoomDestroyer]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Room,
     description: "Delete a room",
     icon: "mdi-delete-forever",
     points: 10,
@@ -37,7 +34,6 @@ export const RoomAchievementDefinitionMap = {
   }),
   [RoomAchievementName.RoomHopper]: defineAchievementDefinition({
     amount: 20,
-    category: AchievementCategory.Room,
     description: "Join 20 rooms",
     icon: "mdi-run-fast",
     points: 60,
@@ -45,7 +41,6 @@ export const RoomAchievementDefinitionMap = {
   }),
   [RoomAchievementName.RoomJoiner]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Room,
     description: "Join a room",
     icon: "mdi-account-arrow-right",
     points: 10,
@@ -53,7 +48,6 @@ export const RoomAchievementDefinitionMap = {
   }),
   [RoomAchievementName.RoomLeaver]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Room,
     description: "Leave a room",
     icon: "mdi-exit-to-app",
     points: 5,
@@ -61,7 +55,6 @@ export const RoomAchievementDefinitionMap = {
   }),
   [RoomAchievementName.RoomRenovator]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Room,
     description: "Update a room",
     icon: "mdi-home-edit",
     points: 10,
@@ -69,10 +62,9 @@ export const RoomAchievementDefinitionMap = {
   }),
   [RoomAchievementName.Socialite]: defineAchievementDefinition({
     amount: 5,
-    category: AchievementCategory.Room,
     description: "Join 5 different chat rooms",
     icon: "mdi-account-group",
     points: 50,
     triggerPath: "room.joinRoom" as const,
   }),
-};
+});

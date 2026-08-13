@@ -1,5 +1,4 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { reconcileStorageBlob } from "@/services/storage/reconcileStorageBlob";
 import { releaseStorageBlobs } from "@/services/storage/releaseStorageBlobs";
@@ -12,7 +11,7 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 // The counter carries stored bytes and nothing else, so every case here is about which of the two signals —
 // Storage saying a blob landed, or a deletion saying it is gone — moved it, and by how much.
 describe("storage blob ledger", () => {
-  let db: PostgresJsDatabase<typeof relations>;
+  let db: Database;
   const userId = crypto.randomUUID();
   const containerName = AzureContainer.ResourceAssets;
   const resourceId = crypto.randomUUID();

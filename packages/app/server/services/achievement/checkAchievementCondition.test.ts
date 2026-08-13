@@ -13,69 +13,23 @@ describe(checkAchievementCondition, () => {
   const data = { message };
   const baseCondition = { path: "message.length", type: AchievementConditionType.Property } as const;
 
-  test(`${AchievementConditionType.Property} ${BinaryOperator.eq}`, () => {
+  // Every comparison is the same two assertions over `message.length`, so the row carries the offset that must
+  // Hold and the offset that must not
+  test.each([
+    [BinaryOperator.eq, 0, 1],
+    [BinaryOperator.ge, 0, 1],
+    [BinaryOperator.gt, -1, 0],
+    [BinaryOperator.le, 0, -1],
+    [BinaryOperator.lt, 1, 0],
+    [BinaryOperator.ne, 1, 0],
+  ] as const)(`${AchievementConditionType.Property} %s`, (operator, matchingOffset, nonMatchingOffset) => {
     expect.hasAssertions();
 
     expect(
-      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.eq, value: message.length }, data),
+      checkAchievementCondition({ ...baseCondition, operator, value: message.length + matchingOffset }, data),
     ).toBe(true);
     expect(
-      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.eq, value: message.length + 1 }, data),
-    ).toBe(false);
-  });
-
-  test(`${AchievementConditionType.Property} ${BinaryOperator.gt}`, () => {
-    expect.hasAssertions();
-
-    expect(
-      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.gt, value: message.length - 1 }, data),
-    ).toBe(true);
-    expect(
-      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.gt, value: message.length }, data),
-    ).toBe(false);
-  });
-
-  test(`${AchievementConditionType.Property} ${BinaryOperator.ge}`, () => {
-    expect.hasAssertions();
-
-    expect(
-      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.ge, value: message.length }, data),
-    ).toBe(true);
-    expect(
-      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.ge, value: message.length + 1 }, data),
-    ).toBe(false);
-  });
-
-  test(`${AchievementConditionType.Property} ${BinaryOperator.lt}`, () => {
-    expect.hasAssertions();
-
-    expect(
-      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.lt, value: message.length + 1 }, data),
-    ).toBe(true);
-    expect(
-      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.lt, value: message.length }, data),
-    ).toBe(false);
-  });
-
-  test(`${AchievementConditionType.Property} ${BinaryOperator.le}`, () => {
-    expect.hasAssertions();
-
-    expect(
-      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.le, value: message.length }, data),
-    ).toBe(true);
-    expect(
-      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.le, value: message.length - 1 }, data),
-    ).toBe(false);
-  });
-
-  test(`${AchievementConditionType.Property} ${BinaryOperator.ne}`, () => {
-    expect.hasAssertions();
-
-    expect(
-      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.ne, value: message.length + 1 }, data),
-    ).toBe(true);
-    expect(
-      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.ne, value: message.length }, data),
+      checkAchievementCondition({ ...baseCondition, operator, value: message.length + nonMatchingOffset }, data),
     ).toBe(false);
   });
 

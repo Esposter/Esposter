@@ -14,7 +14,9 @@ export interface Item extends Description {
 }
 
 export const itemSchema = z.object({
-  ...descriptionSchema.extend({ description: z.string().min(1) }).shape,
+  ...descriptionSchema.shape,
+  // An item without a description is a blank tooltip, so this one tightens the shared optional-text field
+  description: z.string().min(1),
   effect: itemEffectSchema,
   id: itemIdSchema,
   quantity: z.int().positive(),

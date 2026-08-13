@@ -1,18 +1,6 @@
-import type { RoomCategoryInMessage } from "@esposter/db-schema";
-
+import { createRoomCategory } from "@/services/message/roomCategory/createRoomCategory.test";
 import { getCategoryPositionUpdates } from "@/services/message/roomCategory/getCategoryPositionUpdates";
 import { describe, expect, test } from "vitest";
-
-const createRoomCategory = (overrides: Partial<RoomCategoryInMessage>): RoomCategoryInMessage => ({
-  createdAt: new Date(),
-  deletedAt: null,
-  id: crypto.randomUUID(),
-  name: "name",
-  position: 0,
-  updatedAt: new Date(),
-  userId: crypto.randomUUID(),
-  ...overrides,
-});
 
 describe(getCategoryPositionUpdates, () => {
   const firstCategory = createRoomCategory({ position: 0 });

@@ -20,7 +20,6 @@ interface UseSaveUnauthOptions<T extends ItemMetadata> {
   key: string;
   schema: z.ZodType<T>;
 }
-
 // `updatedAt` is bumped by saving itself (`saveItemMetadata`) so it never participates in the dirty check
 const getSnapshotJson = (value: ItemMetadata) =>
   JSON.stringify(value, (key, propertyValue: unknown) =>

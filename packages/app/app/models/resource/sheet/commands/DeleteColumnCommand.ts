@@ -24,12 +24,12 @@ export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteCo
     this.#originalRowValues = originalRowValues;
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     dataSource.columns = dataSource.columns.filter((column) => column.name !== this.#originalColumn.name);
     for (const { data } of dataSource.rows) delete data[this.#originalColumn.name];
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     dataSource.columns = [
       ...dataSource.columns.slice(0, this.#columnIndex),
       this.#originalColumn,

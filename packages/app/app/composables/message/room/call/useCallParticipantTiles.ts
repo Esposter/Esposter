@@ -33,7 +33,6 @@ export const useCallParticipantTiles = () => {
   });
   const getParticipantTileProps = (participant: CallParticipant): CallParticipantTileProps => ({
     isDeafened: isDeafened.value && participant.id === sessionId.value,
-    isHandRaised: participant.isHandRaised,
     isScreenSharing: screenSharingParticipantIds.value.includes(participant.id),
     isSelf: participant.id === sessionId.value,
     isSpeaking: speakingIds.value.includes(participant.id),

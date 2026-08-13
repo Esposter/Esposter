@@ -2,13 +2,13 @@
 import type { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { hasPermission } from "#shared/services/room/rbac/hasPermission";
 import { SettingsCategories, SettingsCategory } from "@/models/message/room/SettingsCategory";
 import { SettingsType } from "@/models/message/room/SettingsType";
 import { SettingsCategoryMap } from "@/services/message/settings/SettingsCategoryMap";
 import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
 import { SettingsPermissionMap } from "@/services/message/settings/SettingsPermissionMap";
 import { useRoleStore } from "@/store/message/room/role";
+import { hasPermission } from "@esposter/db-schema";
 
 interface LeftSideBarProps {
   room: RoomInMessage;
@@ -20,12 +20,12 @@ const isDrawerOpen = defineModel<boolean>("open", { default: false });
 const emit = defineEmits<{ "open:delete": [] }>();
 const roleStore = useRoleStore();
 const { getMyPermissions } = roleStore;
+const myPermissions = computed(() => getMyPermissions(room.id));
 const checkIsVisible = (settingsType: SettingsType) => {
   const permission = SettingsPermissionMap[settingsType];
   if (!permission) return true;
-  const myPermissions = getMyPermissions(room.id);
-  if (!myPermissions) return false;
-  return hasPermission(myPermissions.permissions, permission, myPermissions.isRoomOwner);
+  if (!myPermissions.value) return false;
+  return hasPermission(myPermissions.value.permissions, permission, myPermissions.value.isRoomOwner);
 };
 const visibleCategories = computed(() =>
   Object.entries(SettingsCategoryMap)
@@ -80,10 +80,3 @@ const onClick = (settingsType: SettingsType) => {
     </v-list>
   </MessageModelSettingsLeftSideBar>
 </template>
-
-<style scoped>
-/* Positioning context for the StyledSlideIndicator rail. */
-:deep(.v-list-group__items) {
-  position: relative;
-}
-</style>

@@ -2,13 +2,16 @@
 import type { BlueprintDeployment } from "#shared/models/resource/blueprint/BlueprintDeployment";
 
 import { useNotificationStore } from "@/store/notification";
+import { useResourceStore } from "@/store/resource";
 import { useBlueprintStore } from "@/store/resource/blueprint";
 import { RoutePath } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const { executeMutation, isPending: isDeployPending } = useMutation();
+const resourceStore = useResourceStore();
+const { resource } = storeToRefs(resourceStore);
 const blueprintStore = useBlueprintStore();
-const { blueprint, resource } = storeToRefs(blueprintStore);
+const { blueprint } = storeToRefs(blueprintStore);
 const notificationStore = useNotificationStore();
 const { createErrorNotification } = notificationStore;
 const isOpen = ref(false);

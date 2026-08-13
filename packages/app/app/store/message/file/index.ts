@@ -1,9 +1,9 @@
 import type { ReadFileUrl } from "@/models/message/file/ReadFileUrl";
 import type { FileEntity } from "@esposter/db-schema";
 
-import { getHasThumbnail } from "#shared/services/message/file/getHasThumbnail";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { getInferredMimetype } from "@/services/file/getInferredMimetype";
+import { getHasThumbnail } from "@/services/message/file/getHasThumbnail";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
@@ -21,8 +21,7 @@ export const useDownloadFileStore = defineStore("message/file", () => {
     setData,
   } = useDataMap(() => roomStore.currentRoomId, new Map<string, ReadFileUrl>());
   // The only place read urls are minted and written, so the two rules that make a write correct hold by
-  // Construction for every caller instead of once per call site — the invariant was previously restated at
-  // Three of them and half-applied at the third.
+  // Construction for every caller instead of once per call site.
   // Keyed by the room the files were read FOR, never `fileUrlMap.value`: that resolves to whichever room is
   // Current at the moment it is read, and every caller awaits a network round trip first. A user who switches
   // Rooms during that await would have one room's urls written into another room's map — the room they landed
@@ -43,18 +42,20 @@ export const useDownloadFileStore = defineStore("message/file", () => {
       for (const [id, fileUrl] of newFileUrlMap) roomFileUrlMap.set(id, fileUrl);
     setData(roomId, roomFileUrlMap);
   };
-  MessageHookMap[Operation.Create].register(async (message) => {
-    const roomId = roomStore.currentRoomId;
-    if (!roomId || message.files.length === 0) return;
+  // The room the message was sent to, never the current one: a subscription handler is queued behind the ones
+  // Before it, so a message that arrives just before a room switch is handled after `currentRoomId` has already
+  // Moved on. Read against the wrong room the SAS query names file ids that room does not own, so it rejects
+  // And every attachment on that message renders broken.
+  MessageHookMap[Operation.Create].register(async ({ files, partitionKey }) => {
+    if (files.length === 0) return;
 
-    await storeReadFileUrls(roomId, message.files);
+    await storeReadFileUrls(partitionKey, files);
   });
   MessageHookMap[Operation.Delete].register((input) => {
     const message = dataStore.items.find(({ rowKey }) => rowKey === input.rowKey);
     if (!message) return;
     for (const { id } of message.files) fileUrlMap.value.delete(id);
   });
-
   // Read SAS urls expire, and the only other thing that mints them is a page read — which skips every file it
   // Already holds a url for. A room left open past the SAS duration would therefore render every attachment
   // Broken and fail every download until reload. Sweeping re-mints only the entries inside the refresh margin;

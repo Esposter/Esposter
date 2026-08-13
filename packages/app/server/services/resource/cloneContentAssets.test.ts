@@ -1,6 +1,5 @@
 import type { ContainerClient } from "@azure/storage-blob";
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { FILES_DIRECTORY_SEGMENT, PUBLISHED_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
@@ -41,7 +40,7 @@ describe(cloneContentAssets, () => {
           resourcePublications: { findFirst: () => Promise.resolve(undefined) },
           resources: { findFirst: findFirstResource },
         },
-      } as unknown as PostgresJsDatabase<typeof relations>,
+      } as unknown as Database,
       findFirstResource,
     };
   };

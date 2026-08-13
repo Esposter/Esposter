@@ -7,12 +7,12 @@ import { getRouteParamString } from "@/util/router/getRouteParamString";
 // Stay live without any polling or manual refresh
 export const useTodoListSubscribables = () => {
   const { $trpc } = useNuxtApp();
-  const route = useRoute();
+  const { currentRoute } = useRouter();
   const todoListStore = useTodoListStore();
   const { storeSaveResourceContent } = todoListStore;
 
   useOnlineSubscribable(
-    () => getRouteParamString(route.params.id),
+    () => getRouteParamString(currentRoute.value.params.id),
     (id) => {
       if (!id) return undefined;
 

@@ -28,7 +28,7 @@ export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindRepla
     this.#affectedCells = affectedCells;
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     const columnsByNameMap = new Map(dataSource.columns.map((column) => [column.name, column]));
     for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
       const row = takeOne(dataSource.rows, rowIndex);
@@ -41,7 +41,7 @@ export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindRepla
     }
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     const columnsByNameMap = new Map(dataSource.columns.map((column) => [column.name, column]));
     for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
       const row = takeOne(dataSource.rows, rowIndex);

@@ -1,14 +1,15 @@
-import type { PortableResourceType } from "#shared/models/resource/PortableResourceType";
 import type { PortableFormat } from "@/models/resource/PortableFormat";
+import type { PortableResourceType } from "@/models/resource/PortableResourceType";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
+import { getDatasetTruncation } from "@/services/dataset/getDatasetTruncation";
 import { OPEN_EMAIL_EDITOR_MESSAGE } from "@/services/emailEditor/constants";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
+import { useResourceStore } from "@/store/resource";
 import { useSheetStore } from "@/store/resource/sheet";
 import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -20,12 +21,13 @@ const createSheetPortableFormat = (type: DataSourceType): PortableFormat => ({
     const { loadContent } = sheetStore;
     // The command bar is reachable from any blade, so the content may not be loaded yet
     await loadContent();
+    const resourceStore = useResourceStore();
     const configuration = DataSourceConfigurationMap[type];
     const settings = sheetStore.settings.type === type ? sheetStore.settings : createDefaultSheetSettings(type);
     const exportFile = useExportFile();
     await exportFile(
       (mimeType) => configuration.serialize(sheetStore.dataSource, settings, mimeType),
-      sheetStore.resource?.name ?? "export",
+      resourceStore.resource?.name ?? "export",
       configuration.mimeType,
       configuration.accept,
     );
@@ -53,9 +55,12 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
         const { $trpc } = useNuxtApp();
         const alertStore = useAlertStore();
         const { createAlert } = alertStore;
-        // The live editor + bound dataset live on the email store (set by the blade); the export needs both
+        // The live editor + bound dataset live on the email store (set by the blade); the row it belongs to is
+        // The blade's own, so the export takes each from the store that owns it
         const emailEditorStore = useEmailEditorStore();
-        const { datasetReference, editor, resource } = storeToRefs(emailEditorStore);
+        const { datasetReference, editor } = storeToRefs(emailEditorStore);
+        const resourceStore = useResourceStore();
+        const { resource } = storeToRefs(resourceStore);
         const emailExportDialogStore = useEmailExportDialogStore();
         const { pendingDataset } = storeToRefs(emailExportDialogStore);
         const exportPersonalizedHtml = useExportPersonalizedHtml();
@@ -75,7 +80,6 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
             createAlert("Dataset has no rows to export", "warning");
             return;
           }
-
           // Silently mailing a truncated audience is the one failure the sender can never take back,
           // So a capped read hands the decision to the Editor blade's confirm instead of exporting
           if (getDatasetTruncation(dataset)) pendingDataset.value = dataset;

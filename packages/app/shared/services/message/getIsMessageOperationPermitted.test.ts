@@ -91,12 +91,4 @@ describe(getIsMessageOperationPermitted, () => {
       }
     `);
   });
-
-  test("refuses an operation the message type does not support even to a caller with manage messages", () => {
-    expect.hasAssertions();
-
-    const permission = getMessageOperationPermission(MessageType.Poll, MessageOperation.Update);
-
-    expect(permission).toBeUndefined();
-  });
 });

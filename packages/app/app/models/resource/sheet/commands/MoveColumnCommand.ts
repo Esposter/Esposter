@@ -24,20 +24,20 @@ export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn
     this.#toIndex = toIndex;
   }
 
-  protected doExecute(dataSource: DataSource) {
-    this.#moveColumn(dataSource);
+  execute(dataSource: DataSource) {
+    this.#moveColumn(dataSource, this.#fromIndex, this.#toIndex);
   }
 
-  protected doUndo(dataSource: DataSource) {
-    this.#moveColumn(dataSource);
+  undo(dataSource: DataSource) {
+    this.#moveColumn(dataSource, this.#toIndex, this.#fromIndex);
   }
 
-  #moveColumn(dataSource: DataSource) {
+  #moveColumn(dataSource: DataSource, fromIndex: number, toIndex: number) {
     const columns = [...dataSource.columns];
-    const [moved] = columns.splice(this.#fromIndex, 1);
+    const [moved] = columns.splice(fromIndex, 1);
     if (!moved) return;
 
-    columns.splice(this.#toIndex, 0, moved);
+    columns.splice(toIndex, 0, moved);
     dataSource.columns = columns;
     const columnNames = columns.map(({ name }) => name);
     for (const row of dataSource.rows) {

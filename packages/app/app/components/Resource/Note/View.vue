@@ -23,7 +23,6 @@ const { content, name } = await useReadPublishedResourceContent(
 // JSON is the source of truth at rest — HTML is generated here and sanitized at the render boundary per the
 // String-utils standard. @tiptap/html serializes without a browser DOM, so the render is SSR-safe.
 const html = computed(() => sanitizeTextHtml(generateHTML(content.doc, getNoteExtensions())));
-useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 </script>
 
 <template>

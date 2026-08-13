@@ -1,6 +1,6 @@
 ---
 name: routing
-description: Esposter routing conventions — declarative links via NuxtLink/NuxtInvisibleLink or Vuetify :to (raw <a> lint-banned), navigateTo for imperative navigation (always awaited or returned — never a floating statement), useRouter for reactive route reads, where navigation state lives (url for what the page shows, history-entry state for how the visitor got here, localStorage for preferences — written once in a router.afterEach hook, never per link), route-synced tabs with useEnumRouteQuery, and definePageMeta validate + key for optional/nested segments. Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments.
+description: Esposter routing conventions — declarative links via NuxtLink/NuxtInvisibleLink or Vuetify :to (raw <a> lint-banned), navigateTo for imperative navigation (always awaited or returned — never a floating statement), useRoute() lint-banned in favour of useRouter().currentRoute (and why the ban is total, not just for reactive reads), where navigation state lives (url for what the page shows, history-entry state for how the visitor got here, localStorage for preferences — written once in a router.afterEach hook, never per link), route-synced tabs with useEnumRouteQuery, and definePageMeta validate + key for optional/nested segments. Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments.
 ---
 
 # Routing
@@ -29,12 +29,24 @@ The raw-`<a>` ban is enforced by `packages/configuration/eslint/overrides/vueRul
 - Middleware → `return navigateTo(...)`.
 - A **single-expression** inline handler (`@click="navigateTo(...)"`, `@click="cond && navigateTo(...)"`, one-expression arrow) is already compliant — the expression's promise is implicitly returned into Vue's `callWithAsyncErrorHandling`, which is the sanctioned "or return" form. Do not churn these into `async () => await ...`.
 
-## Reactive Route Reads — `useRouter()`, Not `useRoute()`
+## Route Reads — `useRouter().currentRoute`, never `useRoute()`
 
-- **`useRouter()` for reactive reads** — route data inside a `computed`/`watch` (`router.currentRoute.value.params.id`).
-- **`useRoute()` for plain reads** — params/query outside a reactive context (a page's `<script setup>`, a regular function, an async handler).
+**`useRoute()` is banned** (`no-restricted-syntax`), pages included. One form everywhere:
 
-> This inverts the usual Vue Router split deliberately: `useRoute()` returns a stale, non-reactive snapshot when called outside a component setup (composables, stores, middleware, async handlers), whereas `useRouter().currentRoute` stays reactive everywhere. Route reads often live in composables, so standardizing on `useRouter()` for reactive reads avoids that footgun.
+```ts
+const { currentRoute } = useRouter(); // script: currentRoute.value.params.id — template: currentRoute.params.id
+```
+
+Destructured, because a ref reached through `router.` does not auto-unwrap in a template while `currentRoute` does.
+
+The message states the fix; what it can't say is why the ban is total rather than "reactive reads only". `useRoute()` resolves through the page's _injected_ route, which is pinned to that page instance and freezes to its last value once the page is swapped out. Anything outliving the page that created it — a Pinia store above all, cached for the app's lifetime — then answers for a route the user has already left, and a route naming no segment yields the `""` sentinel that reaches the server as a uuid and is rejected.
+
+- **A segment the page cannot exist without is read through `requireRouteParam(params, name)`**, never an `as string` cast: params are `string | string[] | undefined`, and a cast hands the empty case to a query that fails at the server instead of here. `getRouteParamString` stays for a genuinely optional segment.
+- **Guard before spending a request** (`uuidValidateV4(id)`) where a read can race a navigation — it resolves the route after the user has left the page that named it, and the lint rule cannot see that.
+- A `definePageMeta` `validate`/`key` callback receives its own `route` argument. That is not a `useRoute()` call and none of the above applies to it.
+- Tests do not catch the staleness on their own — with no page component in the tree there is no injection to pin, so both forms are the same object there and both pass.
+- **The one earned exception is a component test that must drive the route.** `mockNuxtImport("useRoute")` is supported; `mockNuxtImport("useRouter")` replaces the router Nuxt's own plugins call (`router.beforeResolve`) and takes the whole environment down. A component that reads the route _only_ to render, holds nothing past its page, and needs that mock takes an `eslint-disable-next-line` carrying this reason.
+- Typed routes do not help and are deliberately off. Both `experimental.typedPages` and `nuxt-typed-router` type `params` as a union across every route, narrowed only by naming the route at the call site — and the generic readers (`validate`, the `use*FromRoute` composables) run under several routes, so for them the union is the correct type and no narrowing exists.
 
 ## Where Navigation State Lives — URL vs History Entry vs Storage
 
@@ -62,7 +74,7 @@ Sync `v-tabs` state to the URL instead of a plain `ref`, so the active tab survi
 It validates against the enum via a `transform`, falling back to the default when the param is missing **or** invalid — raw `@vueuse/router` `useRouteQuery` only falls back when the param is absent, so a hand-edited `?tab=garbage` would otherwise leave no tab active. It infers the enum type from its arguments, so no generic is needed.
 
 ```typescript
-import { TAB_QUERY_PARAMETER_KEY } from "#shared/services/route/constants";
+import { TAB_QUERY_PARAMETER_KEY } from "@/services/route/constants";
 import { FooTab, FooTabs } from "@/models/<feature>/FooTab";
 
 // syncs to ?tab=bar and survives refresh — not a plain ref(FooTab.Bar)
@@ -81,19 +93,21 @@ For pages with **optional or nested route segments** sharing one page component 
 ```ts
 // pages/foos/[id]/[[bar]].vue
 import { validate } from "@/services/router/validate";
+import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { requireRouteParam } from "@/util/router/requireRouteParam";
 
 definePageMeta({
   key: (route) => `foo-${Array.isArray(route.params.id) ? route.params.id[0] : route.params.id}`,
   middleware: "auth",
   validate: (route) => validate(route) && (!route.params.bar || typeof route.params.bar === "string"),
 });
-const route = useRoute();
-// Keyed/stable segment → plain const cast (page remounts on id change; validate guarantees it is a string)
-const id = route.params.id as string;
+const { currentRoute } = useRouter();
+// Keyed/stable segment → read once (the page remounts on id change), through the throwing helper
+const id = requireRouteParam(currentRoute.value.params, "id");
 const { foo, load } = useFoo(id);
 await load();
 // Only the CHANGING segment needs a computed — it updates without a remount once the page is reused
-const activeBar = computed(() => (route.params.bar as string) || FooBarType.Default);
+const activeBar = computed(() => getRouteParamString(currentRoute.value.params.bar) || FooBarType.Default);
 ```
 
 **Validate only what is knowable before load.** `validate` runs before setup, so it cannot see fetched data — it checks shape (uuid, `typeof x === "string"`, an enum `Set`). A segment whose valid values depend on **loaded** data must be guarded after the load instead. Because sibling-segment switches reuse the page instance, that guard is a `watchImmediate` (a one-shot setup check would not re-run on reuse), not a setup-time `if`:
@@ -109,5 +123,5 @@ watchImmediate([activeBar, foo], ([newActiveBar, newFoo]) => {
 **Rules:**
 
 - A `v-list-item` `@click="navigateTo(...)"` / a `<NuxtLink to>` are already SPA navigations — they do **not** cause (or fix) a remount refetch. The remount comes from the per-segment page key, so fix it at the page level.
-- The **keyed/stable** segment is a plain `route.params.x as string` (safe because `validate` gated it and the page remounts when it changes). Only the **changing** segment needs a `computed` — a captured `const` for it goes stale after reuse.
-- `takeOne` (`@esposter/shared`) is the `noUncheckedIndexedAccess` workaround for **array / first-element** access — not for `string | string[]` route params, which `validate` + a cast already handle.
+- The **keyed/stable** segment is read once through `requireRouteParam` — the page remounts when it changes, so a captured `const` stays correct. Only the **changing** segment needs a `computed`, since a captured `const` for it goes stale once the page is reused.
+- `takeOne` (`@esposter/shared`) is the `noUncheckedIndexedAccess` workaround for **array / first-element** access — not for `string | string[]` route params, which `requireRouteParam` / `getRouteParamString` already normalize.

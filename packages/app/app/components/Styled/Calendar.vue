@@ -11,28 +11,29 @@ import "@fullcalendar/vue3/skeleton.css";
 import "@fullcalendar/vue3/themes/monarch/palettes/green.css";
 import "@fullcalendar/vue3/themes/monarch/theme.css";
 
+const CALENDAR_OPTIONS = {
+  editable: true,
+  footerToolbar: { right: "dayGridMonth,timeGridWeek,timeGridDay" },
+  headerToolbar: { left: "title", right: "prevYear,prev,next,nextYear today" },
+  plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, monarchThemePlugin],
+} satisfies CalendarOptions;
+
 interface StyledCalendarProps {
   calendarOptions?: CalendarOptions;
 }
 
 const { calendarOptions } = defineProps<StyledCalendarProps>();
+// Defaults first so a caller can override them, but the wrapper's own plugins are what make its
+// Toolbars and theme resolve at all, so those are appended to rather than replaced
+const options = computed<CalendarOptions>(() => ({
+  ...CALENDAR_OPTIONS,
+  ...calendarOptions,
+  plugins: [...CALENDAR_OPTIONS.plugins, ...(calendarOptions?.plugins ?? [])],
+}));
 </script>
 
 <template>
-  <FullCalendar
-    :options="{
-      ...calendarOptions,
-      plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, monarchThemePlugin],
-      headerToolbar: {
-        left: 'title',
-        right: 'prevYear,prev,next,nextYear today',
-      },
-      footerToolbar: {
-        right: 'dayGridMonth,timeGridWeek,timeGridDay',
-      },
-      editable: true,
-    }"
-  >
+  <FullCalendar :options>
     <template #eventContent="{ event, timeText }">
       <v-tooltip>
         <template #activator="{ props }">

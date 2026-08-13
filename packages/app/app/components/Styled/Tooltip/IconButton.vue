@@ -8,7 +8,6 @@ interface StyledTooltipIconButtonProps {
   text?: string;
   tooltipProps?: VTooltip["$props"];
 }
-
 // The root is VTooltip, whose fallthrough attrs land on VOverlay's popup element instead of the button —
 // So `to`, `disabled` and styling attrs would silently decorate the tooltip. Route them to the button, which
 // Is what every call site means by them; an explicit buttonProps entry still wins over the same attr

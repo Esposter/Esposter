@@ -3,9 +3,7 @@ import type { ResourceTags } from "@esposter/db-schema";
 
 import { getResourceTags } from "@/services/resource/tag/getResourceTags";
 import { getTagRows } from "@/services/resource/tag/getTagRows";
-import { tagNameRules } from "@/services/resource/tag/tagNameRules";
-import { tagValueRules } from "@/services/resource/tag/tagValueRules";
-import { MAX_TAGS_COUNT } from "@esposter/db-schema";
+import { MAX_TAG_NAME_LENGTH, MAX_TAG_VALUE_LENGTH, MAX_TAGS_COUNT } from "@esposter/db-schema";
 
 interface ResourceTagsEditorDialogProps {
   tags: ResourceTags;
@@ -14,6 +12,7 @@ interface ResourceTagsEditorDialogProps {
 
 const isOpen = defineModel<boolean>({ default: false });
 const { tags, updateTags } = defineProps<ResourceTagsEditorDialogProps>();
+const rules = useVRules();
 // The caller mounts this only while it is open, so the rows start from the current tags on every open.
 // An empty trailing row means the first thing the user sees is somewhere to type.
 const rows = ref(tags && Object.keys(tags).length > 0 ? getTagRows(tags) : [{ name: "", value: "" }]);
@@ -34,13 +33,28 @@ const canAddRow = computed(() => rows.value.length < MAX_TAGS_COUNT);
   >
     <div flex flex-col gap-2>
       <div v-for="(row, index) of rows" :key="index" flex gap-2 items-start>
-        <v-text-field v-model="row.name" density="comfortable" label="Name" :rules="tagNameRules" />
-        <v-text-field v-model="row.value" density="comfortable" label="Value" :rules="tagValueRules" />
+        <v-text-field
+          v-model="row.name"
+          density="comfortable"
+          label="Name"
+          :rules="[rules.maxLength(MAX_TAG_NAME_LENGTH)]"
+        />
+        <v-text-field
+          v-model="row.value"
+          density="comfortable"
+          label="Value"
+          :rules="[rules.maxLength(MAX_TAG_VALUE_LENGTH)]"
+        />
         <StyledTooltipIconButton icon="mdi-delete" text="Remove tag" @click="rows.splice(index, 1)" />
       </div>
-      <v-btn v-if="canAddRow" prepend-icon="mdi-plus" variant="text" w-fit @click="rows.push({ name: '', value: '' })">
-        Add tag
-      </v-btn>
+      <!-- Same reason as the Edit button that opens this dialog: transparent, it reads as a caption rather
+           than as the control that adds a row -->
+      <StyledButton
+        v-if="canAddRow"
+        :button-props="{ prependIcon: 'mdi-plus', size: 'small', text: 'Add tag' }"
+        w-fit
+        @click="rows.push({ name: '', value: '' })"
+      />
       <span v-else text-caption op-medium-emphasis>A resource can have at most {{ MAX_TAGS_COUNT }} tags.</span>
     </div>
   </StyledFormDialog>

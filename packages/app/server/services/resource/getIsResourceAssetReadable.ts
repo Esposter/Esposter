@@ -1,6 +1,5 @@
 import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 // Whether a caller may read one asset path — the single definition of the question, asked by the serving endpoint
 // Before it signs a SAS and by the clone before it copies a blob. Both must ask it: the clone copies whatever url
@@ -10,7 +9,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 // A url the caller may not read is data, not an error — the clone carries it verbatim, exactly like a dangling or
 // Unparseable one, so a shared blueprint keeps rendering for whoever can already see its assets
 export const getIsResourceAssetReadable = async (
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   { isPublished, resourceId }: Pick<ResourceAssetPath, "isPublished" | "resourceId">,
   userId?: string,
 ): Promise<boolean> => {

@@ -12,7 +12,6 @@ export const useReadFiles = () => {
   return async (files: FileEntity[]) => {
     const roomId = currentRoomId.value;
     if (!roomId) return;
-
     // A url inside the refresh margin is treated as already gone, so nothing is handed to the renderer that
     // Could expire while it is on screen — the store's sweep uses the same margin.
     const expiredAt = Date.now() + READ_SAS_REFRESH_INTERVAL_MS;

@@ -14,12 +14,7 @@ import { join } from "node:path";
 // That rule, so an existing mirror rebuilds once and drops whatever a since-added exclude left behind in it.
 export const readSourceMirrorPublication = (cwd: string): SourceMirrorPublication | undefined => {
   const manifestPath = join(getWslSourceMirrorEntryUnc(cwd), VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME);
-  return getResult(() => readFileSync(manifestPath, "utf8")).match(
-    (data) => {
-      const parsed = getResult(() => parseMachineJson(data)).unwrapOr(undefined);
-      const result = sourceMirrorPublicationSchema.safeParse(parsed);
-      return result.success ? result.data : undefined;
-    },
-    () => undefined,
-  );
+  return getResult(() =>
+    sourceMirrorPublicationSchema.parse(parseMachineJson(readFileSync(manifestPath, "utf8"))),
+  ).unwrapOr(undefined);
 };

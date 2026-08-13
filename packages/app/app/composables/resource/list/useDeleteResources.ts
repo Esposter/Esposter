@@ -1,6 +1,8 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
+import { CacheTag } from "@/models/cache/CacheTag";
+import { useCacheStore } from "@/store/cache";
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
@@ -8,11 +10,12 @@ import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
 export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, refresh: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
   const router = useRouter();
+  const cacheStore = useCacheStore();
+  const { invalidateTags } = cacheStore;
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
   const { executeMutation: executeDeleteResourcesMutation } = useMutation();
   const { restoreResource } = useRestoreResource(refresh);
-  const { refreshFavorites, refreshResources } = useRefreshResources(refresh);
   // Owned here because the row leaves `items` optimistically, which unmounts the v-if-gated delete dialog mid-flight
   const deleteResources = async (resources: Resource[]) => {
     const ids = resources.map(({ id }) => id);
@@ -29,35 +32,39 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
           await $trpc.resource.deleteResources.mutate({ ids: ids.slice(offset, offset + MAX_READ_LIMIT) });
       },
       {
-        // Snapshotted here rather than at call time, since this runs when the write is sent: a rollback built
-        // From the rows the screen held when the user clicked would undo whatever landed in between
+        // Read here rather than at call time, since this runs when the write is sent: rows captured when the
+        // User clicked are the ones from before whatever landed in between
         applyOptimistic: () => {
-          const snapshot = [...items.value];
-          const snapshotCount = count.value;
-          const optimisticItems = items.value.filter(({ id }) => !ids.includes(id));
-          items.value = optimisticItems;
-          count.value -= resources.length;
+          const deletedItems = items.value.filter(({ id }) => ids.includes(id));
+          items.value = items.value.filter(({ id }) => !ids.includes(id));
           return () => {
-            // A refresh, page turn or filter change mid-flight replaces `items` wholesale, so anything but our own
-            // Optimistic array means the snapshot is stale and restoring it would undo the newer read
-            if (items.value !== optimisticItems) return;
-
-            items.value = snapshot;
-            count.value = snapshotCount;
+            // Only this write's own rows are put back. A refresh, a page turn or a delete running beside this one
+            // Replaces `items` wholesale, so reinstating a copy of the list would undo it — and a mid-flight
+            // Refresh has already re-read the rows this failed delete never removed, so only the ones still
+            // Missing come back, at the end rather than in their sorted place
+            const missingItems = deletedItems.filter(({ id }) => !items.value.some((item) => item.id === id));
+            items.value = [...items.value, ...missingItems];
           };
         },
+        // A star or a recently-opened row only resolves while its resource is live
+        invalidates: [CacheTag.Resources],
         // A batch delete spans an arbitrary selection with no single entity id, so each gets a per-call symbol
         key: Symbol("deleteResources"),
         onError: async (error) => {
           createErrorNotification(error);
           // The ids are deleted chunk-by-chunk, each committing independently, so a later chunk's failure
-          // Still leaves earlier chunks deleted server-side. The rollback restores every row, so re-read to
-          // Reconcile the list — and the stars with it, since an earlier chunk's rows are gone for good
-          await refreshResources();
+          // Still leaves earlier chunks deleted server-side — the one write that has to invalidate even
+          // Though it failed. The rollback restores every row, so re-read to reconcile the list, and the
+          // Stars with it, since an earlier chunk's rows are gone for good
+          await invalidateTags([CacheTag.Resources]);
+          await refresh();
         },
         onSuccess: async () => {
-          // A star only resolves while its resource is live, so the set the next surface mounts with is re-read
-          await refreshFavorites();
+          // The total is the server's count over the whole filter, not this page's length, so it is only ever
+          // Written by a read: nudged by the rows this write removed it would land on top of a refresh that had
+          // Already re-counted, and the rollback would add back rows that count never held. The re-read also
+          // Refills the page the optimistic removal left short
+          await refresh();
           createNotification({
             // The undo toast: a single delete is one click away from coming back, no bin trip needed
             action:

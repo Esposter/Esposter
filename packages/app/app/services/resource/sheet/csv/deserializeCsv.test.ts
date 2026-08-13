@@ -1,24 +1,16 @@
-import type { CsvFileSettings } from "#shared/models/resource/sheet/CsvFileSettings";
-
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
+import { CSV_SEMICOLON_SETTINGS, CSV_SETTINGS } from "@/services/resource/sheet/csv/constants.test";
+import { createCsvFile } from "@/services/resource/sheet/csv/createCsvFile.test";
 import { deserializeCsv } from "@/services/resource/sheet/csv/deserializeCsv";
-import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const defaultSettings: CsvFileSettings = { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv };
-
 describe(deserializeCsv, () => {
-  const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Csv].mimeType;
-
-  const createFile = (content: string, name = "a.csv") => new File([content], name, { type: MIME_TYPE });
-
   test("parses columns and rows from CSV", async () => {
     expect.hasAssertions();
 
-    const { columns, rows } = await deserializeCsv(createFile("a,b\n0,1\n2,3"), defaultSettings);
+    const { columns, rows } = await deserializeCsv(createCsvFile("a,b\n0,1\n2,3"), CSV_SETTINGS);
 
     expect(columns).toHaveLength(2);
     expect(takeOne(columns).name).toBe("a");
@@ -32,11 +24,7 @@ describe(deserializeCsv, () => {
   test("uses specified delimiter", async () => {
     expect.hasAssertions();
 
-    const item = {
-      configuration: { delimiter: CsvDelimiter.Semicolon },
-      type: DataSourceType.Csv,
-    } satisfies CsvFileSettings;
-    const { columns, rows } = await deserializeCsv(createFile("a;b\n0;1"), item);
+    const { columns, rows } = await deserializeCsv(createCsvFile("a;b\n0;1"), CSV_SEMICOLON_SETTINGS);
 
     expect(columns).toHaveLength(2);
     expect(takeOne(columns).name).toBe("a");
@@ -46,7 +34,7 @@ describe(deserializeCsv, () => {
   test("empty file returns DataSource with no columns and rows", async () => {
     expect.hasAssertions();
 
-    const { columns, metadata, rows } = await deserializeCsv(createFile(""), defaultSettings);
+    const { columns, metadata, rows } = await deserializeCsv(createCsvFile(""), CSV_SETTINGS);
 
     expect(columns).toHaveLength(0);
     expect(rows).toHaveLength(0);
@@ -56,7 +44,7 @@ describe(deserializeCsv, () => {
   test("only header row returns columns with no rows", async () => {
     expect.hasAssertions();
 
-    const { columns, rows } = await deserializeCsv(createFile("a,b"), defaultSettings);
+    const { columns, rows } = await deserializeCsv(createCsvFile("a,b"), CSV_SETTINGS);
 
     expect(columns).toHaveLength(2);
     expect(takeOne(columns).name).toBe("a");
@@ -67,7 +55,7 @@ describe(deserializeCsv, () => {
   test("empty column name falls back to Column N", async () => {
     expect.hasAssertions();
 
-    const { columns } = await deserializeCsv(createFile(",b\n0,1"), defaultSettings);
+    const { columns } = await deserializeCsv(createCsvFile(",b\n0,1"), CSV_SETTINGS);
 
     expect(takeOne(columns).name).toBe("Column 1");
     expect(takeOne(columns, 1).name).toBe("b");

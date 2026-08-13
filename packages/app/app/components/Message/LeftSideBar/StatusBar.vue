@@ -49,7 +49,7 @@ const callRoute = computed(() =>
           <div truncate text-body-small>
             {{ session.user.name }}
           </div>
-          <div text-gray truncate text-body-small>
+          <div truncate text-hint>
             {{ getStatusMessage(session.user.id) || getStatusEnum(session.user.id) }}
           </div>
         </div>

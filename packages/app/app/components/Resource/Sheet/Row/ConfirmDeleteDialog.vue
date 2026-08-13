@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getDeleteRowDescription } from "@/services/resource/sheet/commands/getDeleteRowDescription";
 import { useRowStore } from "@/store/resource/sheet/row";
 import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
 import { withFinalizerAsync } from "@esposter/shared";
@@ -9,7 +10,7 @@ const rowStore = useRowStore();
 const { rowIndexIdMap } = storeToRefs(rowStore);
 const deleteRow = useDeleteRow();
 const index = computed(() => (deletingId.value ? (rowIndexIdMap.value.get(deletingId.value) ?? -1) : -1));
-const title = computed(() => `Delete Row ${index.value + 1}`);
+const title = computed(() => getDeleteRowDescription(index.value));
 const { isOpen } = useSingletonDialog(deletingId);
 </script>
 

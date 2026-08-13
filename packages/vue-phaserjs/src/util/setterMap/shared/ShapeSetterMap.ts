@@ -13,22 +13,20 @@ import { RenderNodesSetterMap } from "@/util/setterMap/components/RenderNodesSet
 import { ScrollFactorSetterMap } from "@/util/setterMap/components/ScrollFactorSetterMap";
 import { TransformSetterMap } from "@/util/setterMap/components/TransformSetterMap";
 import { VisibleSetterMap } from "@/util/setterMap/components/VisibleSetterMap";
+import { GameObjectSetterMap } from "@/util/setterMap/global/GameObjectSetterMap";
 
 export const ShapeSetterMap = {
   ...AlphaSingleSetterMap,
   ...BlendModeSetterMap,
   ...DepthSetterMap,
   ...DisplaySizeSetterMap,
+  ...GameObjectSetterMap,
   ...MaskSetterMap,
   ...OriginSetterMap,
   ...RenderNodesSetterMap,
   ...ScrollFactorSetterMap,
   ...TransformSetterMap,
   ...VisibleSetterMap,
-  active: (gameObject) => (value) => {
-    if (value === undefined) return;
-    gameObject.setActive(value);
-  },
   fillAlpha: (gameObject) => (value) => {
     gameObject.setFillStyle(gameObject.fillColor, value);
   },

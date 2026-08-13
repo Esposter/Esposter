@@ -13,7 +13,7 @@ Chromium 116+ only; the pop-out button is feature-detected and never renders uns
 
 ## How it works
 
-The pop-out **intent** is a single `isPoppedOut` boolean on `call/media.ts` (cleared by `resetCallMedia`, so leaving the call auto-docks for free). `Call/Pip/Host.vue` — mounted once in `app.vue`, the persistent root outside `<NuxtPage>`, so the window survives all route and layout changes — watches it, opens/closes the OS window, and `<Teleport>`s the compact view into `pipWindow.document.body` (the element, not a selector — Vue must teleport across documents). Component instances, reactivity, and handlers are unchanged; `<video :srcObject.prop>` keeps playing because the same `MediaStream` objects stay attached.
+The pop-out **intent** is a single `isPoppedOut` boolean on `call/media.ts` (cleared by `resetCallMedia`, so leaving the call auto-docks for free). `MessageContentCallPipHost` — mounted once in `app.vue`, the persistent root outside `<NuxtPage>`, so the window survives all route and layout changes — watches it, opens/closes the OS window, and `<Teleport>`s the compact view into `pipWindow.document.body` (the element, not a selector — Vue must teleport across documents). Component instances, reactivity, and handlers are unchanged; `<video :srcObject.prop>` keeps playing because the same `MediaStream` objects stay attached.
 
 ```mermaid
 stateDiagram-v2
@@ -32,9 +32,9 @@ stateDiagram-v2
     Docked --> [*]: leaveCall
 ```
 
-While popped out, the main page swaps the stage for `Pip/Placeholder.vue` ("call is in a mini player") but **keeps rendering the full control bar**, so every primary control stays usable (Meet parity). The presenter pill lives in `Call/View.vue`'s top bar, shown over both the live stage and the placeholder.
+While popped out, the main page swaps the stage for `MessageContentCallPipPlaceholder` ("call is in a mini player") but **keeps rendering the full control bar**, so every primary control stays usable (Meet parity). The presenter pill lives in `MessageContentCallView`'s top bar, shown over both the live stage and the placeholder.
 
-Both surfaces render the **same** `Call/Stage.vue` (`isDense` in PiP tightens padding/tile size and makes the screen stage non-interactive) — the layout lives in exactly one place; never fork a second stage.
+Both surfaces render the **same** `MessageContentCallStage` (`isDense` in PiP tightens padding/tile size and makes the screen stage non-interactive) — the layout lives in exactly one place; never fork a second stage.
 
 ## Style bridge
 
@@ -45,7 +45,7 @@ The PiP window opens with an empty document, so `useDocumentPictureInPicture`:
 3. Sets `<html>`/`<body>` `height: 100%` + `margin: 0` — a fresh document has no layout height, so `size-full` content would collapse.
 4. Attaches a `MutationObserver` on `document.head` to mirror late-added stylesheets (UnoCSS dev-time HMR injection).
 
-**Tooltips**: Vuetify positions overlays against the **main** window, so a `v-tooltip` inside the PiP window mis-anchors. `Call/Control/ActionButton.vue` detects teleportation (`wrapper.ownerDocument !== document`) and sets the tooltip's `attach` to its own wrapper, with a global CSS override anchoring it — main-window tooltips are unaffected. The same mis-anchoring is why the PiP control bar is a flat row with no `v-menu` (the menu-only `HealthButton` is intentionally omitted), and why its `StyledCard` needs `overflow-visible` so the attached tooltip isn't clipped.
+**Tooltips**: Vuetify positions overlays against the **main** window, so a `v-tooltip` inside the PiP window mis-anchors. `MessageContentCallControlActionButton` detects teleportation (`wrapper.ownerDocument !== document`) and sets the tooltip's `attach` to its own wrapper, with a global CSS override anchoring it — main-window tooltips are unaffected. The same mis-anchoring is why the PiP control bar is a flat row with no `v-menu` (the menu-only `HealthButton` is intentionally omitted), and why its `StyledCard` needs `overflow-visible` so the attached tooltip isn't clipped.
 
 ## Gesture / activation rules
 
@@ -55,7 +55,7 @@ The PiP window opens with an empty document, so `useDocumentPictureInPicture`:
 
 ## Standalone-call interaction
 
-`/calls/[id]` unmount normally leaves the call ([call view UI](/docs/esbabbler/calls/call-view)). Popping out a standalone call means navigating away while staying connected, so `useCallIdSubscribables` **skips `leaveCall()` on unmount when `isPoppedOut`**. Since a popped-out standalone call has no on-page surface, `LeftSideBar/StatusBar.vue` surfaces **any** active call and links to the correct route (`RoutePath.Messages(callRoomId)` for room calls, the calls route for standalone) — a docked call is always one click away. The browser allows exactly one Document PiP window per document.
+`/calls/[id]` unmount normally leaves the call ([call view UI](/docs/esbabbler/calls/call-view)). Popping out a standalone call means navigating away while staying connected, so `useCallIdSubscribables` **skips `leaveCall()` on unmount when `isPoppedOut`**. Since a popped-out standalone call has no on-page surface, `MessageLeftSideBarStatusBar` surfaces **any** active call and links to the correct route (`RoutePath.Messages(callRoomId)` for room calls, the calls route for standalone) — a docked call is always one click away. The browser allows exactly one Document PiP window per document.
 
 ## Key files
 

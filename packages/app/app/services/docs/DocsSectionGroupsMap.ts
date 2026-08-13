@@ -12,8 +12,10 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "serialization",
       "client-data",
       "async-operations",
+      "caching",
       "persisted-data-latest-shape-only",
       "content-token-rewriting",
+      "dialog-shell",
       "destructive-confirmation",
       "persist-then-notify",
       "conditional-writes",
@@ -21,6 +23,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "no-polling",
       "no-manual-recovery",
       "null-vs-undefined",
+      "module-boundaries",
       "singleton-dialogs",
       "navigation",
       "search",
@@ -56,6 +59,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
   platform: {
     "Explorer & shell": [
       "resource-explorer",
+      "resource-service-menu",
       "list-filters-and-views",
       "summary-view",
       "resource-page-parity",
@@ -71,7 +75,6 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "publish-history",
       "shell-cohesion",
       "breadcrumb-trail",
-      "resource-consolidation",
     ],
     Resources: [
       "sheet-resource",

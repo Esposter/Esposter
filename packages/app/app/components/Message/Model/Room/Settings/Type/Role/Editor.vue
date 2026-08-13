@@ -19,7 +19,10 @@ const isDirty = computed(() => permissions.value !== role.permissions);
   <div font-bold mb-2 text-title-medium>{{ role.name }}</div>
   <MessageModelRoomSettingsTypeRolePermissionList v-model="permissions" />
   <template v-if="isDirty">
-    <MessageModelRoomSettingsTypeRoleSaveButton @save="updateRole({ id: role.id, permissions, roomId })" />
-    <MessageModelRoomSettingsTypeRoleResetButton @reset="permissions = role.permissions" />
+    <StyledButton
+      :button-props="{ text: 'Save Changes', variant: 'tonal' }"
+      @click="updateRole({ id: role.id, permissions, roomId })"
+    />
+    <v-btn variant="plain" @click="permissions = role.permissions">Reset</v-btn>
   </template>
 </template>

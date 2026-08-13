@@ -1,7 +1,8 @@
+import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { countSurveyResponses } from "@@/server/services/survey/countSurveyResponses";
 import { createEntity } from "@esposter/db";
-import { AZURE_MAX_PAGE_SIZE, AzureTable, SurveyResponseEntity } from "@esposter/db-schema";
+import { AzureTable, SurveyResponseEntity } from "@esposter/db-schema";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -31,22 +32,24 @@ describe(countSurveyResponses, () => {
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
   });
 
-  test("counts exactly at the page size ceiling uncapped", async () => {
+  // The ceiling is the dataset's, not a page's — reading it off a page shows a survey between the two as
+  // "1000+" here while the Responses blade shows its real total
+  test("counts exactly at the dataset ceiling uncapped", async () => {
     expect.hasAssertions();
 
-    await createSurveyResponses(AZURE_MAX_PAGE_SIZE);
+    await createSurveyResponses(DATASET_MAX_COUNTED_ROWS);
     const responseCount = await countSurveyResponses(surveyId);
 
-    // Exactly-at-cap is still an exact count — only beyond-cap renders the "1000+" form
-    expect(responseCount).toStrictEqual({ count: AZURE_MAX_PAGE_SIZE, isCapped: false });
+    // Exactly-at-cap is still an exact count — only beyond-cap renders the "10000+" form
+    expect(responseCount).toStrictEqual({ count: DATASET_MAX_COUNTED_ROWS, isCapped: false });
   });
 
-  test("caps the count beyond the page size ceiling", async () => {
+  test("caps the count beyond the dataset ceiling", async () => {
     expect.hasAssertions();
 
-    await createSurveyResponses(AZURE_MAX_PAGE_SIZE + 1);
+    await createSurveyResponses(DATASET_MAX_COUNTED_ROWS + 1);
     const responseCount = await countSurveyResponses(surveyId);
 
-    expect(responseCount).toStrictEqual({ count: AZURE_MAX_PAGE_SIZE, isCapped: true });
+    expect(responseCount).toStrictEqual({ count: DATASET_MAX_COUNTED_ROWS, isCapped: true });
   });
 });

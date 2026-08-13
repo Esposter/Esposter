@@ -9,6 +9,5 @@ export enum DocsNavigationSlug {
   Rejected = "rejected",
   Proposals = "proposals",
 }
-
 // Widened to string[] so weight lookups can pass an arbitrary path slug straight to indexOf.
 export const DocsNavigationSlugs: readonly string[] = Object.values(DocsNavigationSlug);

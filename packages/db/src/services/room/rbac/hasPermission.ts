@@ -1,11 +1,10 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { getPermissions } from "@/services/room/rbac/getPermissions";
-import { RoomPermission } from "@esposter/db-schema";
+import { hasPermission as getHasPermission, RoomPermission } from "@esposter/db-schema";
 
 export const hasPermission = async (
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   userId: string,
   roomId: string,
   permission: RoomPermission,
@@ -19,5 +18,7 @@ export const hasPermission = async (
 
   const permissions = await getPermissions(db, userId, roomId);
   if (!permissions) return false;
-  return Boolean(permissions & RoomPermission.Administrator) || (permissions & permission) === permission;
+  // What the bits mean is `@esposter/db-schema`'s to say, so this function is only the query around it.
+  // The owner already returned above — reaching here means the caller is not one
+  return getHasPermission(permissions, permission, false);
 };

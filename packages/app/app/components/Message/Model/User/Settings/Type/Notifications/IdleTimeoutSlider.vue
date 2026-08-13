@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
+import { dayjs } from "#shared/services/dayjs";
 import { useUserSettingsStore } from "@/store/message/user/settings";
 import { MAX_AUTO_IDLE_THRESHOLD_MS, MIN_AUTO_IDLE_THRESHOLD_MS } from "@esposter/db-schema";
 
@@ -9,7 +10,7 @@ interface IdleTimeoutSliderProps {
 }
 
 const { userSettings } = defineProps<IdleTimeoutSliderProps>();
-const MS_PER_MINUTE = 60_000;
+const MS_PER_MINUTE = dayjs.duration(1, "minute").asMilliseconds();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
 const { cloned: autoIdleThresholdMinutes } = useCloned(() => userSettings.autoIdleThresholdMs / MS_PER_MINUTE);

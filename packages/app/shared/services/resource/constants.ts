@@ -7,7 +7,6 @@ export const staleContentVersionErrorMessage = new InvalidOperationError(
   DatabaseEntityType.Resource,
   "cannot save resource content with old content version",
 ).message;
-
 // The blob-name directory segments — the single source for building directory names and validating asset paths
 export const FILES_DIRECTORY_SEGMENT = "files";
 export const PUBLISHED_DIRECTORY_SEGMENT = "published";

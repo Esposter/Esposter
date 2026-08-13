@@ -1,11 +1,10 @@
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
-import { TRPC_WS_PATH } from "#shared/services/trpc/constants";
 import { transformer } from "#shared/services/trpc/transformer";
 import { IS_PRODUCTION, IS_TEST } from "#shared/util/environment/constants";
 import { TRPCOfflineClientError } from "@/models/trpc/TRPCOfflineClientError";
-import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
+import { TRPC_CLIENT_PATH, TRPC_WS_PATH } from "@/services/trpc/constants";
 import { errorLink } from "@/services/trpc/errorLink";
 import { createOfflineLink } from "@/services/trpc/offlineLink";
 import { getIsServer } from "@esposter/shared";

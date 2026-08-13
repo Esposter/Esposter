@@ -13,13 +13,13 @@ const { editedItem, editForm, editFormDialog, isDirty, isEditFormValid, isFullSc
   <StyledEditFormDialog
     v-if="editedItem"
     v-model="editFormDialog"
+    v-model:is-full-screen-dialog="isFullScreenDialog"
     :name="originalItem?.name ?? ''"
     :edited-item
     :original-item
     :is-dirty
     :is-edit-form-valid
     :schema="todoListItemSchema"
-    :is-full-screen-dialog
     :is-savable
     @close="resetItem()"
     @delete="
@@ -37,7 +37,6 @@ const { editedItem, editForm, editFormDialog, isDirty, isEditFormValid, isFullSc
     "
     @save="saveItem()"
     @update:edit-form="editForm = $event"
-    @update:fullscreen-dialog="isFullScreenDialog = $event"
   >
     <ResourceTodoListEditForm v-model="editedItem" />
   </StyledEditFormDialog>

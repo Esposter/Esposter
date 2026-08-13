@@ -13,6 +13,7 @@ const { data: session } = await authClient.useSession(useFetch);
         <AppLoadingIndicator />
         <NuxtPage />
         <StyledAlertList />
+        <StyledClipboardSnackbar />
         <AppNotificationSnackbar v-if="session" />
         <AchievementNotificationSnackBarList v-if="session" />
         <MessageContentCallPipHost v-if="session" />

@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import type { StyledDeleteFormDialogProps } from "@/components/Styled/DeleteFormDialog.vue";
+import type { VBtn } from "vuetify/components";
+
+const DELETE_BUTTON_PROPS: VBtn["$props"] = { size: "small", tile: true };
 
 defineSlots<{ default?: () => VNode }>();
-const { cardProps, confirmButtonProps, confirmName } = defineProps<StyledDeleteFormDialogProps>();
+const { cardProps } = defineProps<Pick<StyledDeleteFormDialogProps, "cardProps">>();
 const emit = defineEmits<{ delete: [onComplete: () => void] }>();
 </script>
 
 <template>
-  <StyledDeleteFormDialog :card-props :confirm-button-props :confirm-name @delete="emit('delete', $event)">
+  <StyledDeleteFormDialog :card-props @delete="emit('delete', $event)">
     <template #activator="{ updateIsOpen }">
       <StyledTooltipIconButton
-        :button-props="{ class: 'm-0', size: 'small', tile: true }"
+        :button-props="DELETE_BUTTON_PROPS"
         icon="mdi-delete"
         :text="cardProps?.title?.toString()"
         @click.stop="updateIsOpen(true)"

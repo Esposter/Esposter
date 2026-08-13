@@ -41,7 +41,7 @@ Fan-out is earned by the prompt and paid for by the budget. The historical failu
 
 Plan the batch around what the agents touch:
 
-- Size each PR to **fill the review budget, not just stay under it** — ~80 changed files per PR (see the coderabbit skill's "PR File Budget"). A single proposal is typically 10–25 files; one-proposal-per-agent wastes most of a review slot and multiplies review rounds. Batch several related proposals from the same area into one agent's spec so its single PR approaches the budget.
+- Size each PR to **fill the review budget, not just stay under it** — the number itself is the `coderabbit` skill's ("PR File Budget"), and a single proposal comes nowhere near it. One-proposal-per-agent therefore wastes most of a review slot and multiplies review rounds; batch several related proposals from one area into a single agent's spec.
 - Give each agent its own branch cut from `develop` and a stated merge order; a PR that depends on another's output is a stacked branch, not a parallel one — fold it into its parent's PR instead.
 - Overlap must be additive only (separate rows on a shared component, separate procedures in a shared router). Shared schema sections or a shared write path mean one PR, not two agents.
 - Each agent commits, pushes, and opens its own PR from its worktree. Verify each landed commit yourself before the next PR merges on top.
@@ -54,7 +54,7 @@ Agent worktrees and their branches outlive the agent. Sweep them once their PR m
 
 Reviews are execution roles, not the thinking role. The full convention — single entry point, opus-pinned workflow script, scriptPath invocation, findings handling — lives in the `code-review` skill; load it on any review request. Never review inline in the session and never use the `review` skill.
 
-**A delegated fix round carries that skill's closing checklist verbatim in its prompt** ("Closing a finding so the next review cannot reopen it"). An agent handed only a findings list optimises for the finding: it makes each one's own test pass and stops, which is precisely how a round ships a worse defect than it closed — a guard exempted, a sibling site left behind, a mitigation asserted in a comment and never written. The checklist is what the prompt's done-definition is built from, alongside the usual grep audits.
+**A delegated fix round carries that skill's closing checklist verbatim in its prompt** (`code-review`, `fixing-findings.md`). An agent handed only a findings list optimises for the finding: it makes each one's own test pass and stops, which is precisely how a round ships a worse defect than it closed — a guard exempted, a sibling site left behind, a mitigation asserted in a comment and never written. The checklist is what the prompt's done-definition is built from, alongside the usual grep audits.
 
 ## Design for agents
 

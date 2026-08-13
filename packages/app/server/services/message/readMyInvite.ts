@@ -23,7 +23,6 @@ export const readMyInvite = async (
   });
   if (!invite) return null;
   else if (checkIsInviteUsable(invite)) return invite;
-
   // Delete by primary key — a (userId, roomId) match could race a concurrent createInvite and remove its fresh row
   await db.delete(invitesInMessage).where(eq(invitesInMessage.id, invite.id));
   return null;

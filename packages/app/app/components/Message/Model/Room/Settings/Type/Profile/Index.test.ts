@@ -1,10 +1,9 @@
 // @vitest-environment nuxt
-import type { RoomInMessage, UserToRoomInMessage } from "@esposter/db-schema";
-
 import MessageModelRoomSettingsTypeProfileIndex from "@/components/Message/Model/Room/Settings/Type/Profile/Index.vue";
+import { createRoom } from "@/services/message/room/createRoom.test";
+import { createUserToRoom } from "@/services/message/room/createUserToRoom.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
-import { MimeCategory, NotificationType, RoomType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -12,37 +11,8 @@ import { VTextField } from "vuetify/components";
 
 describe("messageModelRoomSettingsTypeProfileIndex", () => {
   const server = setupMswTrpc();
-  const userId = crypto.randomUUID();
-  const room: RoomInMessage = {
-    allowedMimeCategories: [MimeCategory.Audio, MimeCategory.Document, MimeCategory.Image, MimeCategory.Video],
-    categoryId: null,
-    createdAt: new Date("1970-01-01"),
-    deletedAt: null,
-    id: crypto.randomUUID(),
-    image: "",
-    isReadOnly: false,
-    maxFileSizeBytes: null,
-    name: "name",
-    participantKey: null,
-    slowmodeMs: null,
-    topic: "",
-    type: RoomType.Room,
-    updatedAt: new Date("1970-01-01"),
-    userId,
-  };
-  const userToRoom: UserToRoomInMessage = {
-    createdAt: new Date("1970-01-01"),
-    deletedAt: null,
-    isHidden: false,
-    lastMessageAt: null,
-    mentionCount: 0,
-    nickname: "",
-    notificationType: NotificationType.DirectMessage,
-    roomId: room.id,
-    timeoutUntil: null,
-    updatedAt: new Date("1970-01-01"),
-    userId,
-  };
+  const room = createRoom("name");
+  const userToRoom = createUserToRoom({ roomId: room.id, userId: room.userId });
 
   // The field emits save from blur and from Enter, so a nickname committed with Enter and then blurred writes
   // The same value twice — every one of those writes is a round trip the queue now runs one after the other

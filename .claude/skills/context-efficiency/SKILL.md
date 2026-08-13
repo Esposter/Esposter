@@ -21,7 +21,11 @@ Batch format/typecheck/tests until **all** edits are done. Each pass re-pays a f
 
 Commit per coherent chunk regardless: commits are cheap and protect against other sessions' resets, checks are not.
 
+The pass runs **after** `/simplify`, not before — cleanup edits code, so checking first pays the startup cost twice. See "Finishing a change" in `CLAUDE.md` for the full order.
+
 ## Wait on a condition, never a sleep
+
+This is about waiting on an **external process from the shell** — a dev server, a build, a deploy. It is not a loosening of the polling ban, which is about code and tests: inside the repo, a wait is an awaited signal, never a retry loop (`testing` skill, and `architecture/no-polling.md`). Nothing here may be copied into a test.
 
 Poll until the thing you need is actually true, with a bounded loop:
 

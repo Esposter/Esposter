@@ -2,15 +2,19 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import type { XlsxFileSettings } from "#shared/models/resource/sheet/XlsxFileSettings";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { buildDataset } from "@/services/resource/sheet/dataSource/buildDataset";
-import { datasetToDataSource } from "@/services/resource/sheet/dataSource/datasetToDataSource";
-import { normalizeString, takeOne } from "@esposter/shared";
-import { readSheet } from "read-excel-file/browser";
+import { deserializeToDataSource } from "@/services/resource/sheet/dataSource/deserializeToDataSource";
+import { getSourceColumnName } from "@/services/resource/sheet/dataSource/getSourceColumnName";
 
 export const deserializeXlsx = async (file: File, settings: XlsxFileSettings): Promise<DataSource> => {
+  // The command bar renders on every resource page and reaches this codec through PortableFormatMap, while
+  // Xlsx is one format of the one portable type that has it — the eight types that can neither import nor
+  // Export would otherwise ship a workbook parser they can never run, so it is fetched when one is read
+  const { readSheet } = await import("read-excel-file/browser");
   const rawData = await readSheet(file, settings.configuration.sheetIndex + 1);
-  if (rawData.length === 0) return datasetToDataSource(buildDataset([], []), DataSourceType.Xlsx, file.name, file.size);
-  const sourceNames = takeOne(rawData).map((cell, index) => normalizeString(cell?.toString()) || `Column ${index + 1}`);
-  const bodyRows = rawData.slice(1).map((row) => row.map((cell) => cell?.toString() ?? ""));
-  return datasetToDataSource(buildDataset(sourceNames, bodyRows), DataSourceType.Xlsx, file.name, file.size);
+  const [headerCells, ...bodyCells] = rawData;
+  const sourceNames = headerCells
+    ? headerCells.map((cell, index) => getSourceColumnName(cell?.toString() ?? "", index))
+    : [];
+  const bodyRows = bodyCells.map((row) => row.map((cell) => cell?.toString() ?? ""));
+  return deserializeToDataSource(sourceNames, bodyRows, DataSourceType.Xlsx, file);
 };

@@ -10,27 +10,24 @@ export const generateUploadFileSasEntities = (
   files: Pick<FileEntity, "filename" | "mimetype">[],
   prefix = "",
   options: { withThumbnail?: boolean } = {},
-) => {
-  if (files.length === 0) return [] as FileSasEntity[];
-  else
-    return Promise.all(
-      files.map(async ({ filename, mimetype }) => {
-        const id: string = crypto.randomUUID();
-        const { blobName, thumbnailBlobName } = getFileBlobNames(prefix, id, filename);
-        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-        const entity: FileSasEntity = {
-          id,
-          sasUrl: await generateWriteSasUrl(blockBlobClient, { contentType: mimetype }),
-        };
-        // Images get a sibling thumbnail write target so the client can upload a downscaled preview alongside.
-        if (options.withThumbnail && getMimeCategory(mimetype) === MimeCategory.Image) {
-          const thumbnailBlobClient = containerClient.getBlockBlobClient(thumbnailBlobName);
-          entity.thumbnailSasUrl = await generateWriteSasUrl(thumbnailBlobClient, {
-            contentType: THUMBNAIL_CONTENT_TYPE,
-          });
-        }
+) =>
+  Promise.all(
+    files.map(async ({ filename, mimetype }) => {
+      const id: string = crypto.randomUUID();
+      const { blobName, thumbnailBlobName } = getFileBlobNames(prefix, id, filename);
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      const entity: FileSasEntity = {
+        id,
+        sasUrl: await generateWriteSasUrl(blockBlobClient, { contentType: mimetype }),
+      };
+      // Images get a sibling thumbnail write target so the client can upload a downscaled preview alongside.
+      if (options.withThumbnail && getMimeCategory(mimetype) === MimeCategory.Image) {
+        const thumbnailBlobClient = containerClient.getBlockBlobClient(thumbnailBlobName);
+        entity.thumbnailSasUrl = await generateWriteSasUrl(thumbnailBlobClient, {
+          contentType: THUMBNAIL_CONTENT_TYPE,
+        });
+      }
 
-        return entity;
-      }),
-    );
-};
+      return entity;
+    }),
+  );

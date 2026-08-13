@@ -14,7 +14,6 @@ const { content, name } = await useReadPublishedResourceContent(ResourceType.Ema
 // Serves it without loading GrapesJS. This is the unpersonalized template — merge-field tokens render
 // As authored, which is what a browser copy is
 const srcdoc = content.html ?? "";
-useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 </script>
 
 <template>

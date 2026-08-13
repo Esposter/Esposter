@@ -1,16 +1,15 @@
-import type { StandardMessageEntity } from "@esposter/db-schema";
+import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
 
 export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   const { $trpc } = useNuxtApp();
-  const { executeQuery } = useMutation();
   const roomStore = useRoomStore();
   const {
     data: followedThreads,
     getData: getFollowedThreads,
     setData: setFollowedThreads,
-  } = useDataMap<StandardMessageEntity[]>(
+  } = useDataMap<MessageEntity[]>(
     () => roomStore.currentRoomId,
     () => [],
   );
@@ -23,28 +22,20 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
     () => roomStore.currentRoomId,
     () => [],
   );
-  // Read-once-per-room, which single-flight cannot cover: a settled read is no longer in flight to join
-  const loadedRoomIds = reactive(new Set<string>());
-
-  const readFollowedThreads = async (roomId: string, { isExclusive }: { isExclusive?: true } = {}) => {
-    await executeQuery(() => $trpc.message.readFollowedThreads.query({ roomId }), {
-      isExclusive,
-      key: roomId,
-      onSuccess: ({ threadRootRowKeys, threads }) => {
+  // Cached per room rather than per session — the key is the roomId, and one response populates both maps
+  // Declared above. Untagged: nothing a resource write does changes who follows which thread.
+  // The gated read loads once per room, so the follow-state check is accurate without re-fetching on every
+  // Thread open and every follow button in the room joins that one read rather than each issuing its own —
+  // A caller handed nothing renders an unfollowed star for a thread the user follows
+  const { read: ensureFollowedThreadsLoaded, refetch: readFollowedThreads } = useCachedRead(
+    (roomId) => $trpc.message.readFollowedThreads.query({ roomId }),
+    {
+      onSuccess: ({ threadRootRowKeys, threads }, roomId) => {
         setFollowedThreads(roomId, threads);
         setFollowedThreadRootRowKeys(roomId, threadRootRowKeys);
-        loadedRoomIds.add(roomId);
       },
-    });
-  };
-  // Load once per room so the follow-state check is accurate without re-fetching on every thread open. Every
-  // Follow button in the room mounts its own call, so they join one read rather than each issuing their own —
-  // A caller handed nothing here renders an unfollowed star for a thread the user follows
-  const ensureFollowedThreadsLoaded = async (roomId: string) => {
-    if (loadedRoomIds.has(roomId)) return;
-
-    await readFollowedThreads(roomId, { isExclusive: true });
-  };
+    },
+  );
   const checkIsFollowing = (roomId: string, threadRootRowKey: StandardMessageEntity["rowKey"]) =>
     Boolean(getFollowedThreadRootRowKeys(roomId)?.includes(threadRootRowKey));
   // Follow STATE only — the drawer's display list needs the server-resolved root entity, which callers that

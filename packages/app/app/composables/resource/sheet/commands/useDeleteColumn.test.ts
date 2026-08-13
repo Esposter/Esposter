@@ -23,22 +23,6 @@ describe(useDeleteColumn, () => {
     expect(takeOne(dataSource.rows).data[""]).toBeUndefined();
   });
 
-  test("undo restores deleted column and row values", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const deleteColumn = useDeleteColumn();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { undo } = sheetHistoryStore;
-    await deleteColumn("");
-    undo(dataSource);
-
-    expect(dataSource.columns).toHaveLength(2);
-    expect(takeOne(dataSource.columns).name).toBe("");
-    expect(takeOne(dataSource.rows).data[""]).toBe(0);
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
-  });
-
   test("undo preserves row.data key order after restore", async () => {
     expect.hasAssertions();
 

@@ -1,20 +1,18 @@
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
+import type { ResourceType } from "@esposter/db-schema";
 
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { useResourceStore } from "@/store/resource";
 
 const createEmptyBlueprint = (): BlueprintResource => ({ entries: [], parameters: [] });
 
 export const useBlueprintStore = defineStore("resource/blueprint", () => {
-  const route = useRoute();
-  // The store outlives the page, so the id is read from the route per call rather than captured once
-  const { load, readContent, resource, save, setPersistedContent } = useResource(() =>
-    getRouteParamString(route.params.id),
-  );
+  const resourceStore = useResourceStore();
+  const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
   const blueprint = ref<BlueprintResource>(createEmptyBlueprint());
   const loadContent = async () => {
-    await load();
-    const content = await readContent();
-    blueprint.value = (content as BlueprintResource | undefined) ?? createEmptyBlueprint();
+    await readResource();
+    const content = await readContent<ResourceType.Blueprint>();
+    blueprint.value = content ?? createEmptyBlueprint();
     // Seed the dirty check so an unedited Save compares equal instead of bumping contentVersion for nothing
     setPersistedContent(blueprint.value);
   };
@@ -23,9 +21,9 @@ export const useBlueprintStore = defineStore("resource/blueprint", () => {
   // Ref while deploy resolves parameters from the stored manifest, so a rejected save must never leave the
   // Two disagreeing about which manifest is live
   const saveBlueprint = async (content: BlueprintResource) => {
-    const isSuccessful = await save(content);
+    const isSuccessful = await saveContent(content);
     if (isSuccessful) blueprint.value = content;
     return isSuccessful;
   };
-  return { blueprint, loadContent, resource, saveBlueprint };
+  return { blueprint, loadContent, saveBlueprint };
 });

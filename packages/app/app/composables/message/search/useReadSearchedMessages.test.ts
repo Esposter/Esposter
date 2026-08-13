@@ -1,13 +1,12 @@
 // @vitest-environment nuxt
 import type { VueWrapper } from "@vue/test-utils";
 import type { MockInstance } from "vitest";
-import type { Router } from "vue-router";
 
 import { useReadSearchedMessages } from "@/composables/message/search/useReadSearchedMessages";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useSearchMessageStore } from "@/store/message/search";
 import { useSearchHistoryStore } from "@/store/message/search/history";
-import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -15,7 +14,6 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 describe(useReadSearchedMessages, () => {
   const server = setupMswTrpc();
   let wrapper: VueWrapper;
-  let router: Router;
   let count: Ref<number>;
   let hasFiles: Ref<boolean>;
   let page: Ref<number>;
@@ -31,9 +29,7 @@ describe(useReadSearchedMessages, () => {
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          router = useRouter();
-          router.currentRoute.value.params.id = roomId;
-          triggerRef(router.currentRoute);
+          setCurrentRoomId(roomId);
           const searchMessageStore = useSearchMessageStore();
           ({ count, hasFiles, page } = storeToRefs(searchMessageStore));
           // Each tab's page starts at its own value, so a page written into the wrong slice is visible
@@ -60,10 +56,8 @@ describe(useReadSearchedMessages, () => {
   test("files a search's totals, page and history under the tab it was issued for", async () => {
     expect.hasAssertions();
 
-    let releaseSearch = noop;
-    const searchGate = new Promise<void>((resolve) => {
-      releaseSearch = resolve;
-    });
+    const { promise: searchPromise, resolve: releaseSearch } = Promise.withResolvers<void>();
+    const searchGate = searchPromise;
     server.use(
       trpcMsw.message.searchMessages.query(async () => {
         await searchGate;

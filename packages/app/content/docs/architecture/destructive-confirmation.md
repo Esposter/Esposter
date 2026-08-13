@@ -5,7 +5,7 @@ description: One shared delete-confirmation dialog — StyledDeleteFormDialog wi
 
 # Destructive Confirmation
 
-Every destructive action in the app confirms through **one** component: `StyledDeleteFormDialog`. It wraps `StyledFormDialog` with a red `Delete` confirm button and emits `delete(onComplete)` on submit — the consumer runs its mutation and calls `onComplete()` to close the dialog. Feature code never hand-rolls a `v-dialog` + confirm-button flow; if a delete confirmation needs something the shared component lacks, the capability is added to the shared component so every caller can opt in.
+Every destructive action in the app confirms through **one** component: `StyledDeleteFormDialog`. It wraps `StyledFormDialog` — the middle layer of the [dialog shell](/docs/architecture/dialog-shell) — with a red `Delete` confirm button and emits `delete(onComplete)` on submit, so the consumer runs its mutation and calls `onComplete()` to close the dialog. Feature code never hand-rolls a `v-dialog` + confirm-button flow; if a delete confirmation needs something the shared component lacks, the capability is added to the shared component so every caller can opt in.
 
 ## The type-the-name guard
 
@@ -39,6 +39,7 @@ The component renders the name in a `v-code` block with a `StyledClipboardIconBu
 
 ## Notes
 
+- The two `ConfirmDeleteDialogButton` components are the two tiers above wearing an icon button, not a duplicate pair. `Styled/ConfirmDeleteDialogButton` is the plain-confirm one: it takes free-form body content and a title, and belongs in a toolbar acting on a selection. `Styled/EditFormDialog/ConfirmDeleteDialogButton` is the guarded one: it derives its title and its prose from the entity being edited and always passes `confirmName`, so an editor cannot ship a container-level delete without the guard. Collapsing them would make the guard a caller's choice again, which is the thing the tier table decides once.
 - No destructive button deletes on click — every one opens this dialog first. A button keeps its own styling by supplying the activator slot and calling `updateIsOpen(true)` (e.g. the role and dashboard-visual delete buttons wrap `StyledDeleteFormDialog` around their existing icon button rather than adopting `StyledConfirmDeleteDialogButton`'s look).
 - List-item deletes mount the dialog once per list and target it through a dialog store — see [Singleton dialogs](/docs/architecture/singleton-dialogs).
-- `StyledEditFormDialogConfirmCloseDialogButton` (save/discard/cancel on dirty close) is a three-action decision dialog, not a destructive confirmation — it stays outside this component on purpose.
+- `StyledEditFormDialogConfirmCloseDialogButton` (save/discard/cancel on dirty close) is a three-action decision dialog, not a destructive confirmation — it composes the [dialog shell](/docs/architecture/dialog-shell) directly, carrying discard in `prepend-actions`, and stays outside this component on purpose.

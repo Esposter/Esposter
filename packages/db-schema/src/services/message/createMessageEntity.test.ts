@@ -1,8 +1,7 @@
 import type { AppUserInMessage } from "@/schema/appUsersInMessage";
 
-import { MessageType } from "@/models/message/MessageType";
-import { StandardMessageEntity } from "@/models/message/StandardMessageEntity";
-import { WebhookMessageEntity } from "@/models/message/WebhookMessageEntity";
+import { MessageEntityMap } from "@/models/message/MessageEntityMap";
+import { MessageType, MessageTypes } from "@/models/message/MessageType";
 import { createMessageEntity } from "@/services/message/createMessageEntity";
 import { describe, expect, test } from "vitest";
 
@@ -18,22 +17,20 @@ describe(createMessageEntity, () => {
   };
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
+  const createEntity = (type: MessageType) =>
+    createMessageEntity(type === MessageType.Webhook ? { appUser, roomId, type } : { appUser, roomId, type, userId });
 
-  test("creates", () => {
+  // MessageEntityMap is the one answer to which class a message type instantiates, so every type is checked
+  // Against it rather than against the two classes a hand-written branch happened to name
+  test("instantiates the class MessageEntityMap names for every message type", () => {
     expect.hasAssertions();
 
-    const newMessageEntity = createMessageEntity({ appUser, roomId, type: MessageType.Message, userId });
-
-    expect(newMessageEntity).toBeInstanceOf(StandardMessageEntity);
-    expect(newMessageEntity).toStrictEqual(expect.objectContaining({ partitionKey: roomId }));
+    for (const type of MessageTypes) expect(createEntity(type)).toBeInstanceOf(MessageEntityMap[type]);
   });
 
-  test("creates webhook", () => {
+  test("keys the entity by room id", () => {
     expect.hasAssertions();
 
-    const newMessageEntity = createMessageEntity({ appUser, roomId, type: MessageType.Webhook });
-
-    expect(newMessageEntity).toBeInstanceOf(WebhookMessageEntity);
-    expect(newMessageEntity).toStrictEqual(expect.objectContaining({ partitionKey: roomId }));
+    expect(createEntity(MessageType.Message).partitionKey).toBe(roomId);
   });
 });

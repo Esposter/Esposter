@@ -22,12 +22,10 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     deleteRoomCategory: storeDeleteRoomCategory,
     updateRoomCategory: storeUpdateRoomCategory,
   } = createOperationData(categories, ["id"], DatabaseEntityType.RoomCategory);
-
   // The server only adds userId and the appended position, so the client can build the
   // Row faithfully — insert a temp-id placeholder now and reconcile the server row onto it in onSuccess.
   const createRoomCategory = async (input: CreateRoomCategoryInput) => {
     if (!session.value.data) return;
-
     // Reactive so the onSuccess Object.assign onto this same object triggers the list re-render
     const newCategory = reactive<RoomCategoryInMessage>({
       createdAt: new Date(),
@@ -57,12 +55,16 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   };
 
   const deleteRoomCategory = async (id: DeleteRoomCategoryInput) => {
-    const snapshot = [...categories.value];
     await executeDeleteRoomCategoryMutation(() => $trpc.room.category.deleteRoomCategory.mutate(id), {
+      // The one row this write removes, not a copy of the list: deletes are keyed per category and never queue
+      // Against each other, so reinstating the list would resurrect a category another delete already took out
+      // And drop the ones created while this write was in flight. Position drives the rendered order, so where
+      // The restored row lands in the array is not observable
       applyOptimistic: () => {
+        const deletedCategory = categories.value.find((category) => category.id === id);
         storeDeleteRoomCategory({ id });
         return () => {
-          categories.value = snapshot;
+          if (deletedCategory) storeCreateRoomCategory(deletedCategory);
         };
       },
       key: id,
@@ -70,12 +72,16 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   };
 
   const updateRoomCategory = async (input: UpdateRoomCategoryInput) => {
-    const snapshot = categories.value.map((category) => ({ ...category }));
     await executeUpdateRoomCategoryMutation(() => $trpc.room.category.updateRoomCategory.mutate(input), {
       applyOptimistic: () => {
+        // Only the fields this write overwrites, on the one row it touches, and read as the write is sent:
+        // A whole-list snapshot restored by reassignment would also undo whatever landed while this was queued
+        // And swap every row for a copy, stranding the create placeholder its own onSuccess writes onto
+        const previousCategory = categories.value.find(({ id }) => id === input.id);
+        const rollbackCategory = previousCategory && { ...previousCategory };
         storeUpdateRoomCategory(input);
         return () => {
-          categories.value = snapshot;
+          if (rollbackCategory) storeUpdateRoomCategory(rollbackCategory);
         };
       },
       key: input.id,
@@ -89,14 +95,20 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     const updates = getCategoryPositionUpdates(newCategories);
     if (updates.length === 0) return;
     await executeReorderRoomCategoriesMutation(() => $trpc.room.category.reorderRoomCategories.mutate(updates), {
+      // Only the position of each row this write moves: restoring the list would swap every row for a copy —
+      // Stranding the placeholder a concurrent create's onSuccess writes onto — and undo whatever else landed
+      // While the reorder was in flight
       applyOptimistic: () => {
-        const snapshot = categories.value.map((category) => ({ ...category }));
+        const previousPositions = updates
+          .map(({ id }) => categories.value.find((category) => category.id === id))
+          .filter((category) => category !== undefined)
+          .map(({ id, position }) => ({ id, position }));
         for (const update of updates) storeUpdateRoomCategory(update);
         return () => {
-          categories.value = snapshot;
+          for (const previousPosition of previousPositions) storeUpdateRoomCategory(previousPosition);
         };
       },
-      // A stable key so the latest whole-list reorder supersedes any in-flight one
+      // The whole list is the target, so a stable key: reorders run one after the other against it
       key: "reorderRoomCategories",
     });
   };
@@ -106,9 +118,6 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     createRoomCategory,
     deleteRoomCategory,
     reorderRoomCategories,
-    storeCreateRoomCategory,
-    storeDeleteRoomCategory,
-    storeUpdateRoomCategory,
     updateRoomCategory,
   };
 });

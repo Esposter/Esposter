@@ -3,8 +3,7 @@ import GitHubRenovateAppActorId from "@/github/constants/GitHubRenovateAppActorI
 import { repository } from "@/github/repository";
 import * as github from "@pulumi/github";
 
-// Replaces the classic `*` wildcard branch protection's "restrict who can push" list,
-// Whose real intent was to restrict who may create branches. Rulesets cannot bypass by
+// Restricts who may create branches. Rulesets cannot be bypassed by
 // Individual user (only role/team/app), so the equivalent is restricting creation across
 // All refs to the Admin repository role (5) + the Renovate GitHub App (app id 2740), which
 // Must keep opening its dependency-update branches. `creation: true` only allows bypass

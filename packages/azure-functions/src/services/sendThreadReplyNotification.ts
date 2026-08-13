@@ -17,12 +17,11 @@ export const sendThreadReplyNotification = async (
 ): Promise<void> => {
   const payload = getCreateMessageNotificationPayload(context, message, {
     icon,
-    title,
     // Deep-link to the thread root so the notification opens the thread it belongs to.
-    url: `${process.env.BASE_URL}${RoutePath.MessagesMessage(partitionKey, threadRootRowKey)}`,
+    path: RoutePath.MessagesMessage(partitionKey, threadRootRowKey),
+    title,
   });
   if (!payload) return;
-
   // Recompute the generic message push recipients so thread followers already reached by ProcessPushNotification
   // Are excluded here — otherwise a follower with room NotificationType.All would get two pushes for one reply.
   const messagePushSubscriptions = await getPushSubscriptionsForMessage(db, { message, partitionKey, userId });

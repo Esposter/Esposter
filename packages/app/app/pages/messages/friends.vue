@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ middleware: "auth" });
 
-const { readFriends } = useReadFriends();
+const readFriends = useReadFriends();
 await readFriends();
 </script>
 

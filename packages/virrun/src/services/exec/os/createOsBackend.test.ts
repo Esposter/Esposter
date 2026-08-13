@@ -3,7 +3,7 @@ import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { ACCEPTANCE_TIMEOUT_MINUTES } from "@/services/exec/test/constants.test";
 import { TEST_DIR } from "@/services/exec/util/constants.test";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(createOsBackend, () => {
@@ -59,7 +59,14 @@ describe(createOsBackend, () => {
 
       const { exec } = createOsBackend();
 
-      await expect(exec(`echo hi`, { bindDirs: [TEST_DIR], cwd: "", stdio: "pipe" })).rejects.toThrow(
+      const message = (
+        await getResultAsync(() => exec(`echo hi`, { bindDirs: [TEST_DIR], cwd: "", stdio: "pipe" }))
+      ).match(
+        () => "",
+        (error) => error.message,
+      );
+
+      expect(message).toContain(
         new InvalidOperationError(Operation.Create, createOsBackend.name, "bubblewrap failed to set up the sandbox")
           .message,
       );

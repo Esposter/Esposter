@@ -27,12 +27,20 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### Available Mocks
 
-| Class                          | Azure Equivalent           | Description                   |
-| ------------------------------ | -------------------------- | ----------------------------- |
-| `MockTableClient`              | `TableClient`              | In-memory Azure Table Storage |
-| `MockBlobServiceClient`        | `BlobServiceClient`        | In-memory Azure Blob Storage  |
-| `MockServiceBusSender`         | `ServiceBusSender`         | In-memory Azure Service Bus   |
-| `MockEventGridPublisherClient` | `EventGridPublisherClient` | No-op EventGrid publisher     |
+| Class                          | Azure Equivalent           | Description                                  |
+| ------------------------------ | -------------------------- | -------------------------------------------- |
+| `MockTableClient`              | `TableClient`              | In-memory Azure Table Storage                |
+| `MockContainerClient`          | `ContainerClient`          | In-memory blob container, listing and paging |
+| `MockBlobClient`               | `BlobClient`               | In-memory blob read, copy and delete         |
+| `MockBlockBlobClient`          | `BlockBlobClient`          | In-memory block blob upload and download     |
+| `MockBlobBatchClient`          | `BlobBatchClient`          | In-memory batched blob deletion              |
+| `MockSearchClient`             | `SearchClient`             | In-memory Azure AI Search index              |
+| `MockQueueClient`              | `QueueClient`              | In-memory Azure Storage Queue                |
+| `MockServiceBusSender`         | `ServiceBusSender`         | In-memory Azure Service Bus                  |
+| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`   | In-memory Azure Web PubSub                   |
+| `MockEventGridPublisherClient` | `EventGridPublisherClient` | In-memory EventGrid publisher                |
+
+Each client's state lives in an exported `Mock*Database` map (`MockTableDatabase`, `MockContainerDatabase`, …), so a test resets by clearing the one it seeded.
 
 ### Usage
 

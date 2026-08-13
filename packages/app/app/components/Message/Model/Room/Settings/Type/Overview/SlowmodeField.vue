@@ -1,24 +1,26 @@
 <script setup lang="ts">
+import { dayjs } from "#shared/services/dayjs";
+
 const modelValue = defineModel<null | number>({ required: true });
 const emit = defineEmits<{ save: [] }>();
 const rules = useVRules();
 </script>
 
 <template>
-  <div flex flex-col gap-2>
-    <div font-semibold>Slowmode</div>
+  <MessageModelRoomSettingsField hint="Seconds between messages. Leave empty to disable." title="Slowmode">
     <v-text-field
-      :model-value="modelValue != null ? modelValue / 1000 : ''"
-      :rules="[rules.requireAtLeastN(1)]"
+      :model-value="modelValue != null ? dayjs.duration(modelValue).asSeconds() : ''"
+      :rules="[rules.minValue(1)]"
       density="compact"
       hide-details="auto"
       placeholder="Disabled"
       type="number"
       min="1"
-      @update:model-value="modelValue = $event && Number($event) >= 1 ? Number($event) * 1000 : null"
+      @update:model-value="
+        modelValue = $event && Number($event) >= 1 ? dayjs.duration(Number($event), 'seconds').asMilliseconds() : null
+      "
       @blur="emit('save')"
       @keydown.enter.prevent="emit('save')"
     />
-    <span text-hint>Seconds between messages. Leave empty to disable.</span>
-  </div>
+  </MessageModelRoomSettingsField>
 </template>

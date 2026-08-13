@@ -11,7 +11,6 @@ import { initTRPC } from "@trpc/server";
 import { isNull, sql } from "drizzle-orm";
 
 const t = initTRPC.context<AuthedContext>().create();
-
 // Achievement processing is best-effort: the mutation already committed by the time we run,
 // So a failure here must never reject the call — log it and return the original result.
 export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next, path, type }) => {

@@ -8,18 +8,21 @@ const emit = defineEmits<{ remove: [] }>();
 </script>
 
 <template>
-  <v-menu>
-    <template #activator="{ props: menuProps }">
-      <v-chip closable :="menuProps" @click:close="emit('remove')">Status == {{ modelValue || "all" }}</v-chip>
-    </template>
+  <ResourceListFilterPill
+    is-closed-on-content-click
+    is-removable
+    label="Status"
+    :value="modelValue || 'all'"
+    @remove="emit('remove')"
+  >
     <v-list density="compact">
       <v-list-item
         v-for="{ title, value } of ResourceStatusFilterItems"
-        :key="title"
+        :key="value"
         :active="modelValue === value"
         :title
         @click="modelValue = value"
       />
     </v-list>
-  </v-menu>
+  </ResourceListFilterPill>
 </template>

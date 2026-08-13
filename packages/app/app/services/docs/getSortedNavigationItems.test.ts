@@ -1,25 +1,20 @@
 import type { ContentNavigationItem } from "@nuxt/content";
 
 import { DocsNavigationSlug } from "@/models/docs/DocsNavigationSlug";
+import { createNavigationItem } from "@/services/docs/createNavigationItem.test";
 import { getSortedNavigationItems } from "@/services/docs/getSortedNavigationItems";
 import { RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-
-const createItem = (path: string, children?: ContentNavigationItem[]): ContentNavigationItem => ({
-  children,
-  path,
-  title: path.split("/").at(-1) ?? "",
-});
 
 describe(getSortedNavigationItems, () => {
   test("sorts architecture first, areas alphabetically, proposals last", () => {
     expect.hasAssertions();
 
     const items = getSortedNavigationItems([
-      createItem(`${RoutePath.Docs}/${DocsNavigationSlug.Proposals}`),
-      createItem(`${RoutePath.Docs}/b`),
-      createItem(`${RoutePath.Docs}/${DocsNavigationSlug.Architecture}`),
-      createItem(`${RoutePath.Docs}/a`),
+      createNavigationItem(`${RoutePath.Docs}/${DocsNavigationSlug.Proposals}`),
+      createNavigationItem(`${RoutePath.Docs}/b`),
+      createNavigationItem(`${RoutePath.Docs}/${DocsNavigationSlug.Architecture}`),
+      createNavigationItem(`${RoutePath.Docs}/a`),
     ]);
 
     expect(items.map(({ path }) => path)).toStrictEqual([
@@ -35,12 +30,12 @@ describe(getSortedNavigationItems, () => {
 
     const areaPath = `${RoutePath.Docs}/a`;
     const items = getSortedNavigationItems([
-      createItem(areaPath, [
-        createItem(`${areaPath}/${DocsNavigationSlug.Rejected}`),
-        createItem(`${areaPath}/${DocsNavigationSlug.Deferred}`),
-        createItem(`${areaPath}/${DocsNavigationSlug.Roadmap}`),
-        createItem(`${areaPath}/b`),
-        createItem(`${areaPath}/a`),
+      createNavigationItem(areaPath, [
+        createNavigationItem(`${areaPath}/${DocsNavigationSlug.Rejected}`),
+        createNavigationItem(`${areaPath}/${DocsNavigationSlug.Deferred}`),
+        createNavigationItem(`${areaPath}/${DocsNavigationSlug.Roadmap}`),
+        createNavigationItem(`${areaPath}/b`),
+        createNavigationItem(`${areaPath}/a`),
       ]),
     ]);
 

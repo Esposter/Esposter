@@ -1,8 +1,8 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
-import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { computeDatasetVisualPropsData } from "@/services/dashboard/dataset/computeDatasetVisualPropsData";
+import { getDatasetTruncation } from "@/services/dataset/getDatasetTruncation";
 
 export const useVisualPropsData = (visual: MaybeRefOrGetter<Visual>) => {
   // A published snapshot is baked into the binding, so only unsnapshotted bindings resolve their reference

@@ -1,7 +1,7 @@
 import type { DeviceSection } from "@/models/message/room/call/DeviceSection";
 
-import { readDevices } from "@/services/message/room/liveKit/readDevices";
 import { getResultAsync, noop } from "@esposter/shared";
+import { Room } from "livekit-client";
 
 interface CallDeviceDefinition {
   kind: MediaDeviceKind;
@@ -23,7 +23,7 @@ export const useCallDeviceSettings = (definitions: CallDeviceDefinition[]) => {
     await getResultAsync(async () => {
       const devices = await Promise.all(
         definitions.map(async ({ kind }) => ({
-          devices: await readDevices(kind),
+          devices: await Room.getLocalDevices(kind),
           kind,
         })),
       );

@@ -19,7 +19,7 @@ const vitestConfig = await defineVitestProject({
     // Would otherwise be a forgeable token in production and nothing at all in a test.
     env: { BETTER_AUTH_SECRET: "mock-auth-secret" },
     // Root the Nuxt project at this package, not the vitest cwd (the repo root, where `@nuxt/kit` and the
-    // App don't resolve) — required now that the run is driven by the root `projects` config.
+    // App don't resolve) — the run is driven by the root `projects` config.
     environmentOptions: { nuxt: { rootDir: import.meta.dirname } },
     // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
     // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
@@ -33,6 +33,11 @@ const vitestConfig = await defineVitestProject({
     // Constructors the `idb` library needs (the nuxt env's indexedDb mock only sets `indexedDB`); it's
     // Cheap and harmless for node tests, so it stays global.
     setupFiles: ["fake-indexeddb/auto", "./shared/test/setup.ts"],
+    // A `mountSuspended` in the nuxt environment costs a few seconds on its own, so a component test sits close
+    // To Vitest's 5s default before the run is even parallel — and with sixteen workers sharing a machine the
+    // Slowest of them tips over it. The failure reads as a flaky component rather than as a test that was
+    // Always near the line, so give every test the headroom the environment actually needs
+    testTimeout: dayjs.duration(30, "seconds").asMilliseconds(),
   },
 });
 // `defineVitestProject` is `resolveConfig` (all the nuxt wiring: plugins, aliases, runtime entry setup

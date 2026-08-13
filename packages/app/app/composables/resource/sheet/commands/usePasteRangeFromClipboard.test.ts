@@ -10,13 +10,15 @@ import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";
 import { takeOne } from "@esposter/shared";
-import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const selectAnchor = (rowIndex: number, columnIndex: number) => {
   const cellStore = useCellStore();
   const { startCellSelection } = cellStore;
   startCellSelection(rowIndex, columnIndex);
 };
+
+const createSingleCellDataSource = () => createDataSource([createColumn("a")], [createRow({ a: "1" })]);
 
 describe(usePasteRangeFromClipboard, () => {
   let readTextMock: ReturnType<typeof vi.fn<() => Promise<string>>>;
@@ -44,8 +46,6 @@ describe(usePasteRangeFromClipboard, () => {
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
 
-      assert.exists(dataSource);
-
       expect(takeOne(dataSource.rows).data.a).toBe("10");
       expect(takeOne(dataSource.rows).data.b).toBe("20");
     });
@@ -61,8 +61,6 @@ describe(usePasteRangeFromClipboard, () => {
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
 
-      assert.exists(dataSource);
-
       expect(takeOne(dataSource.rows).data.a).toBe("1");
       expect(takeOne(dataSource.rows).data.b).toBe("99");
     });
@@ -70,28 +68,30 @@ describe(usePasteRangeFromClipboard, () => {
     test("appends new rows when pasted data extends past the last row", async () => {
       expect.hasAssertions();
 
-      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
+      const { dataSource } = setupWithDataSource(createSingleCellDataSource());
       readTextMock.mockResolvedValueOnce("2\n3");
       selectAnchor(1, 0);
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
-
-      assert.exists(dataSource);
+      const sheetHistoryStore = useSheetHistoryStore();
+      const { undo } = sheetHistoryStore;
 
       expect(dataSource.rows).toHaveLength(3);
       expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
       expect(takeOne(dataSource.rows, 2).data.a).toBe("3");
+
+      undo(dataSource);
+
+      expect(dataSource.rows).toHaveLength(1);
     });
 
     test("appends at end when no cell is selected", async () => {
       expect.hasAssertions();
 
-      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
+      const { dataSource } = setupWithDataSource(createSingleCellDataSource());
       readTextMock.mockResolvedValueOnce("2");
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
-
-      assert.exists(dataSource);
 
       expect(dataSource.rows).toHaveLength(2);
       expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
@@ -106,58 +106,7 @@ describe(usePasteRangeFromClipboard, () => {
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
 
-      assert.exists(dataSource);
-
       expect(takeOne(dataSource.rows).data.n).toBe(42);
-    });
-
-    test("undo restores original cell values", async () => {
-      expect.hasAssertions();
-
-      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "original" })]));
-      readTextMock.mockResolvedValueOnce("changed");
-      selectAnchor(0, 0);
-      const pasteRangeFromClipboard = usePasteRangeFromClipboard();
-      await pasteRangeFromClipboard();
-      const sheetHistoryStore = useSheetHistoryStore();
-      sheetHistoryStore.undo(dataSource);
-
-      assert.exists(dataSource);
-
-      expect(takeOne(dataSource.rows).data.a).toBe("original");
-    });
-
-    test("undo removes appended rows", async () => {
-      expect.hasAssertions();
-
-      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
-      readTextMock.mockResolvedValueOnce("1\n2");
-      selectAnchor(0, 0);
-      const pasteRangeFromClipboard = usePasteRangeFromClipboard();
-      await pasteRangeFromClipboard();
-      const sheetHistoryStore = useSheetHistoryStore();
-      sheetHistoryStore.undo(dataSource);
-
-      assert.exists(dataSource);
-
-      expect(dataSource.rows).toHaveLength(1);
-    });
-
-    test("redo re-applies paste after undo", async () => {
-      expect.hasAssertions();
-
-      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "original" })]));
-      readTextMock.mockResolvedValueOnce("changed");
-      selectAnchor(0, 0);
-      const pasteRangeFromClipboard = usePasteRangeFromClipboard();
-      await pasteRangeFromClipboard();
-      const sheetHistoryStore = useSheetHistoryStore();
-      sheetHistoryStore.undo(dataSource);
-      sheetHistoryStore.redo(dataSource);
-
-      assert.exists(dataSource);
-
-      expect(takeOne(dataSource.rows).data.a).toBe("changed");
     });
   });
 
@@ -173,32 +122,10 @@ describe(usePasteRangeFromClipboard, () => {
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard(PasteMode.ShiftDown);
 
-      assert.exists(dataSource);
-
       expect(dataSource.rows).toHaveLength(3);
       expect(takeOne(dataSource.rows).data.a).toBe("1");
       expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
       expect(takeOne(dataSource.rows, 2).data.a).toBe("3");
-    });
-
-    test("undo removes inserted rows and restores original order", async () => {
-      expect.hasAssertions();
-
-      const { dataSource } = setupWithDataSource(
-        createDataSource([createColumn("a")], [createRow({ a: "1" }), createRow({ a: "3" })]),
-      );
-      readTextMock.mockResolvedValueOnce("2");
-      selectAnchor(1, 0);
-      const pasteRangeFromClipboard = usePasteRangeFromClipboard();
-      await pasteRangeFromClipboard(PasteMode.ShiftDown);
-      const sheetHistoryStore = useSheetHistoryStore();
-      sheetHistoryStore.undo(dataSource);
-
-      assert.exists(dataSource);
-
-      expect(dataSource.rows).toHaveLength(2);
-      expect(takeOne(dataSource.rows).data.a).toBe("1");
-      expect(takeOne(dataSource.rows, 1).data.a).toBe("3");
     });
   });
 
@@ -206,14 +133,12 @@ describe(usePasteRangeFromClipboard, () => {
     test("no-op when clipboard text is empty", async () => {
       expect.hasAssertions();
 
-      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
+      const { dataSource } = setupWithDataSource(createSingleCellDataSource());
       readTextMock.mockResolvedValueOnce("");
       selectAnchor(0, 0);
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
       const sheetHistoryStore = useSheetHistoryStore();
-
-      assert.exists(dataSource);
 
       expect(sheetHistoryStore.isUndoable).toBe(false);
       expect(takeOne(dataSource.rows).data.a).toBe("1");

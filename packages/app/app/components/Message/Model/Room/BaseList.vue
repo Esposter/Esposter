@@ -18,12 +18,12 @@ const emit = defineEmits<{ loadMore: [onComplete: () => void] }>();
     <v-expand-transition>
       <div v-show="!isCollapsed">
         <template v-if="isPending">
-          <MessageModelRoomSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+          <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
         </template>
         <template v-else>
           <slot />
           <StyledWaypoint :is-active="hasMore" @change="emit('loadMore', $event)">
-            <MessageModelRoomSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+            <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
           </StyledWaypoint>
         </template>
       </div>

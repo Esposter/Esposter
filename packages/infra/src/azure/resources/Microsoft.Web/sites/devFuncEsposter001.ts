@@ -8,8 +8,10 @@ import * as pulumi from "@pulumi/pulumi";
 
 const config = new pulumi.Config();
 
+const siteName = "dev-func-esposter-001";
+
 export const devFuncEsposter001: azure_native.web.WebApp = new azure_native.web.WebApp(
-  "dev-func-esposter-001",
+  siteName,
   {
     clientAffinityEnabled: false,
     clientAffinityProxyEnabled: false,
@@ -24,12 +26,12 @@ export const devFuncEsposter001: azure_native.web.WebApp = new azure_native.web.
     hostNameSslStates: [
       {
         hostType: azure_native.web.HostType.Standard,
-        name: "dev-func-esposter-001.azurewebsites.net",
+        name: `${siteName}.azurewebsites.net`,
         sslState: azure_native.web.SslState.Disabled,
       },
       {
         hostType: azure_native.web.HostType.Repository,
-        name: "dev-func-esposter-001.scm.azurewebsites.net",
+        name: `${siteName}.scm.azurewebsites.net`,
         sslState: azure_native.web.SslState.Disabled,
       },
     ],
@@ -43,7 +45,7 @@ export const devFuncEsposter001: azure_native.web.WebApp = new azure_native.web.
     keyVaultReferenceIdentity: "SystemAssigned",
     kind: "functionapp",
     location: AzureAustraliaEastDisplayLocation,
-    name: "dev-func-esposter-001",
+    name: siteName,
     outboundVnetRouting: {
       allTraffic: false,
       applicationTraffic: false,
@@ -89,7 +91,7 @@ export const devFuncEsposter001: azure_native.web.WebApp = new azure_native.web.
         { name: "WEBSITE_NODE_DEFAULT_VERSION", value: "~24" },
         {
           name: "WEBSITE_RUN_FROM_PACKAGE",
-          value: "https://devstesposter001.blob.core.windows.net/dev-func-esposter-001/release.zip",
+          value: `https://devstesposter001.blob.core.windows.net/${siteName}/release.zip`,
         },
       ],
       use32BitWorkerProcess: false,

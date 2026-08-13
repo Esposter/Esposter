@@ -1,6 +1,9 @@
 import { describe, expect, test } from "vitest";
 
 import { AREA_ARGS, AREA_SCOPE, CANDIDATE } from "./constants.test";
+import { createCandidates } from "./createCandidates.test";
+import { createCorrectnessOnly } from "./createCorrectnessOnly.test";
+import { createSplitAcrossFinders } from "./createSplitAcrossFinders.test";
 import { getFinding } from "./getFinding.test";
 import { getResolveLog } from "./getResolveLog.test";
 import { runReview } from "./runReview.test";
@@ -16,12 +19,12 @@ describe("code-review dedupe and resolve", () => {
   test("collapses two reports of one line into a single finding", async () => {
     expect.hasAssertions();
 
-    // Correctness angles only: the cleanup finder's copies carry kind `cleanup`, which is a separate row by
+    // Correctness angles only: the conventions finder's copies carry kind `cleanup`, which is a separate row by
     // Design, and answering it here would test the cross-kind rule instead of this one.
     const run = await runReview(
       "high",
       stubFor({
-        finderFor: (label) => (label === "cleanup" ? [] : [{ ...CANDIDATE }, { ...CANDIDATE, summary: "Same bug" }]),
+        finderFor: createCorrectnessOnly(() => [{ ...CANDIDATE }, { ...CANDIDATE, summary: "Same bug" }]),
       }),
     );
 
@@ -75,7 +78,7 @@ describe("code-review dedupe and resolve", () => {
     const run = await runReview(
       "high",
       stubFor({
-        finderFor: (label) => (label === "cleanup" ? [] : [{ ...CANDIDATE }, { ...CANDIDATE, summary: "Same bug" }]),
+        finderFor: createCorrectnessOnly(() => [{ ...CANDIDATE }, { ...CANDIDATE, summary: "Same bug" }]),
       }),
     );
     const angles = run.calls.filter((call) => call.label.startsWith("angle-")).length;
@@ -90,7 +93,7 @@ describe("code-review dedupe and resolve", () => {
     const run = await runReview(
       "high",
       stubFor({
-        finderFor: (label) => (label === "cleanup" ? [] : [{ ...CANDIDATE, summary: label }]),
+        finderFor: createCorrectnessOnly((label) => [{ ...CANDIDATE, summary: label }]),
         verdictFor: (index) => (index === 2 ? { severity: "critical" } : {}),
       }),
     );
@@ -108,7 +111,7 @@ describe("code-review dedupe and resolve", () => {
     const run = await runReview(
       "high",
       stubFor({
-        finderFor: (label) => (label === "cleanup" ? [] : [{ ...CANDIDATE, summary: label }]),
+        finderFor: createCorrectnessOnly((label) => [{ ...CANDIDATE, summary: label }]),
         verdictFor: (index) =>
           index === 0 ? { confidence: 40, severity: "critical" } : { confidence: 95, severity: "minor" },
       }),
@@ -126,7 +129,7 @@ describe("code-review dedupe and resolve", () => {
     const run = await runReview(
       "high",
       stubFor({
-        finderFor: (label) => (label === "cleanup" ? [] : [{ ...CANDIDATE }]),
+        finderFor: createCorrectnessOnly(() => [{ ...CANDIDATE }]),
         resolution: RESOLVED,
         verdictFor: UNDER_CONFIDENT,
       }),
@@ -211,28 +214,33 @@ describe("code-review dedupe and resolve", () => {
   test("names findings dropped at the resolve budget in the summary", async () => {
     expect.hasAssertions();
 
-    const many = Array.from({ length: 8 }, (_, index) => ({ ...CANDIDATE, line: index + 1 }));
+    const many = createCandidates(8);
     const run = await runReview(
       "high",
       stubFor({
-        finderFor: (label) => (label === "angle-A" ? many.slice(0, 6) : label === "angle-B" ? many.slice(6) : []),
+        finderFor: createSplitAcrossFinders(many, 6),
         resolution: RESOLVED,
         verdictFor: UNDER_CONFIDENT,
       }),
     );
 
+    // The pair, not the count alone: `droppedUnsettled` says the budget ran out and `resolveCeiling` says what it
+    // Was, and run-economics sends the reader to the second to tell "nothing else needed resolving" apart from
+    // "the budget ran out". Asserting it is also what keeps `ReviewStats` honest — the field was emitted and
+    // Documented for two rounds while the interface omitted it, because no test ever read it.
     expect(run.result.stats?.droppedUnsettled).toBe(2);
+    expect(run.result.stats?.resolveCeiling).toBe(6);
     expect(run.result.summary).toContain("dropped unsettled at the resolve budget");
   });
 
   test("spends the resolve budget worst-first", async () => {
     expect.hasAssertions();
 
-    const many = Array.from({ length: 8 }, (_, index) => ({ ...CANDIDATE, line: index + 1 }));
+    const many = createCandidates(8);
     const run = await runReview(
       "high",
       stubFor({
-        finderFor: (label) => (label === "angle-A" ? many.slice(0, 6) : label === "angle-B" ? many.slice(6) : []),
+        finderFor: createSplitAcrossFinders(many, 6),
         resolution: RESOLVED,
         // Index 7 arrives last, past the six-finding budget: a resolver spending it in arrival order never
         // Reaches this candidate, so only a worst-first spend can confirm it.

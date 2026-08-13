@@ -34,7 +34,7 @@ const getMemberCountSuffix = (roleId: string) => {
 <template>
   <v-list>
     <template v-if="isPending">
-      <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+      <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
     <template v-else-if="currentRoom">
       <template v-for="{ members: groupMembers, role } of memberGroups" :key="role?.id ?? ''">
@@ -44,7 +44,7 @@ const getMemberCountSuffix = (roleId: string) => {
         <MessageModelMemberListItem v-for="member of groupMembers" :key="member.id" :member :room="currentRoom" />
       </template>
       <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
-        <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+        <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
       </StyledWaypoint>
     </template>
   </v-list>

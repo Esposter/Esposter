@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { UserAchievementWithDefinition } from "#shared/models/achievement/UserAchievementWithDefinition";
 import type { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
+import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
 import { getCategoryColor } from "@/services/achievement/getCategoryColor";
 import { prettify } from "@/util/text/prettify";
@@ -17,14 +17,14 @@ const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
   <v-col cols="12" sm="6" md="4" lg="3">
     <StyledCard hover h-full cursor-auto>
       <v-card-text text-center flex flex-col gap-y-2 h-full items-center>
-        <v-avatar :color="userAchievement?.unlockedAt ? 'success' : 'grey'" size="64">
-          <v-icon :icon="achievementDefinition.icon" color="white" size="40" />
+        <v-avatar :color="userAchievement?.unlockedAt ? 'success' : 'grey'" size="4rem">
+          <v-icon :icon="achievementDefinition.icon" color="white" size="2.5rem" />
         </v-avatar>
         <div>
           <div font-bold text-title-large>{{ prettify(achievementDefinition.name) }}</div>
           <div text-body-small>{{ achievementDefinition.description }}</div>
         </div>
-        <div v-if="userAchievement?.unlockedAt" text-gray font-bold italic text-body-small>
+        <div v-if="userAchievement?.unlockedAt" font-bold italic text-hint>
           Unlocked {{ userAchievement.unlockedAt.toLocaleDateString() }}
         </div>
         <v-spacer />

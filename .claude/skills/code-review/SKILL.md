@@ -26,7 +26,7 @@ Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "[mode] 
 ```
 
 - `mode` — `diff` (default, omittable) or `area`.
-- `level` — `high` (default), `xhigh`, or `max`. Post-merge PR audits run `high` unless asked otherwise.
+- `level` — `low` (default), `high`, `xhigh`, or `max`. **`low` is the everyday level**; it gives up width, not depth. When to raise it, and what each costs: `references/run-economics.md`. Post-merge PR audits run `low` unless asked otherwise.
 - `target` — optional in `diff` (PR number, branch, ref range, path, free-form instruction); **required in `area`**, where it names the subsystem. Omitting it takes the working diff, which is usually the wrong scope — `modes/diff.md` owns picking the commit window.
 
 Both leading words are positional and optional (`"high"`, `"diff high"`, `"area high packages/app/…"` all parse). **A leading mode word only switches modes when a level word follows it** — otherwise it is part of the target, because diff targets are free-form English. So always spell the level out when you mean the mode.
@@ -34,11 +34,28 @@ Both leading words are positional and optional (`"high"`, `"diff high"`, `"area 
 - **Never `Workflow({ name: "code-review" })`** — name resolution loads the built-in, which inherits the premium session model onto ~20 agents (~1.46M tokens). The project script pins `model: "opus"` on every agent.
 - `args: "probe"` exits instantly with `{ probe: true }` — a free **syntax** check after editing the script. It returns before the Scope agent, so no ordering, TDZ or prompt-assembly bug is caught by it; only a live run checks those.
 
+## What this pipeline is for, and what it must never pay for
+
+**Verification is the cost, and it is the only thing worth buying here.** A run costs 10–100× a main-session skill pass for one reason: proving a claim real needs an agent that did not raise it, reading files the finder never opened. That is why an inline review is banned above, and it is also why every finding this pipeline touches must be one where being wrong is expensive.
+
+It follows that a quality finding does not belong in it: settled by looking at the code it names, `minor` by definition, and the stop rule then calls the round converged — so the verifier and resolver it bought decided nothing. The local ladder, cheapest first, each layer seeing only what the one before it cannot:
+
+| Layer                    | Cost               | Catches                                                                                                                      |
+| ------------------------ | ------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| typecheck / lint / tests | ~free              | everything mechanically decidable — never write a review finding for one (`feedback_dont_restate_enforced_rules`)            |
+| `/simplify`              | ~tens of k         | **reuse, simplification, efficiency, altitude** — the workflow has no cleanup finder, deliberately                           |
+| CodeRabbit on the PR     | free, already runs | a broad bug sweep, unverified — it reasons from names and will assert semantics this repo does not have (`coderabbit` skill) |
+| this workflow            | ~200k at `low`     | correctness angles this repo's shape makes likely, **verified**, plus conventions                                            |
+
+**Conventions is the one lens that stayed** — `/simplify` names those four and only those four, so a broken CLAUDE.md rule has no other enforcer, and CodeRabbit asserts repo conventions from names rather than from the files. Because area mode lets a finder self-declare its `kind`, the exclusion has to be stated to _every_ agent that chooses one, not just to the conventions finder: the script keeps one `MOVED_LENSES` string for that, and the test asserts both sites quote it.
+
+One corollary worth stating where the ladder is, because it is the wrong instinct to act on: **trimming the script saves nothing.** Every prompt in a run together is ~5k tokens and its comments never leave the file — what cost is actually made of, and what moves it, is `references/run-economics.md`.
+
 ## Coverage, cost and when to re-run — `references/run-economics.md`
 
-Read it when choosing a level, reading a run's `stats`, or deciding on another round. In short: a run reports the top findings **per finder**, so its ceiling (`stats.reportableCeiling`) is a budget, not a defect count; widen by raising the level, never by re-running the same one; every discard is counted in a `stats.dropped*` field, and a degraded run is not a clean file.
+Read it when choosing a level, reading a run's `stats`, or deciding on another round. In short: a run reports the top findings **per finder**, so its ceiling (`stats.reportableCeiling`) is a budget, not a defect count; widen by raising the level, never by re-running the same one; and a degraded run is not a clean file — some discards carry a `stats.dropped*` field and the rest appear only in the log, so read both.
 
-**The stop rule: a round whose CONFIRMED findings are all `minor` is converged.** Fix them if cheap, then stop. Another round needs a CONFIRMED `critical`/`major`, a `dropped N at cap` line, or a fix round that touched lines an earlier fix wrote.
+**The stop rule: a round whose CONFIRMED findings are all `minor` is converged.** Fix them if cheap, then stop. What justifies another round — and which remedy each degradation calls for — is that page's "The stop rule"; it is stated once, there.
 
 ## The pipeline improves itself — `references/self-improvement.md`
 

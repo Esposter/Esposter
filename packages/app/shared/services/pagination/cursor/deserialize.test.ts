@@ -4,7 +4,7 @@ import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { describe, expect, test } from "vitest";
 
 describe(deserialize, () => {
-  test("deserializes", () => {
+  test("round-trips the cursor keys a serialize produced", () => {
     expect.hasAssertions();
 
     const item = { "": "" };

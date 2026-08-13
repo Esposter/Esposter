@@ -10,7 +10,6 @@ interface StyledDatePickerProps {
 const slots = defineSlots<Record<keyof (typeof VueDatePicker)["$slots"], () => VNode>>();
 const modelValue = defineModel<Date | null>({ required: true });
 const { datePickerProps } = defineProps<StyledDatePickerProps>();
-defineEmits<(emitEvents: (typeof VueDatePicker)["emits"]) => void>();
 const isDark = useIsDark();
 const colorsStore = useColorsStore();
 const { border, surface } = storeToRefs(colorsStore);
@@ -19,7 +18,7 @@ const { border, surface } = storeToRefs(colorsStore);
 <template>
   <VueDatePicker v-model="modelValue" centered :="datePickerProps" :dark="isDark">
     <template v-for="(_slot, name) of slots" #[name]="scope">
-      <slot :name :="{ ...scope }" />
+      <slot :name :="scope" />
     </template>
   </VueDatePicker>
 </template>

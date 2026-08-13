@@ -10,7 +10,6 @@ export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultVa
   };
   const readDataByKey = (key: string) => {
     if (!key) return createDefaultValue();
-
     // Existence, not truthiness — a key holding `false`, `0` or `""` is stored data, and treating it as absent
     // Would regenerate the default over a value a caller explicitly wrote
     if (dataMap.value.has(key)) return getData(key) ?? createDefaultValue();
@@ -34,7 +33,6 @@ export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultVa
         writeDataByKey(toValue(key), newData);
       },
     });
-
   // Tracks the current key, so it always reads and writes whichever slice is current.
   const data = getDataRef(currentId);
   // Pins the key as it is right now. An operation that binds once up front and writes through this ref files its

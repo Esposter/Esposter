@@ -5,6 +5,7 @@ import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefa
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { filterDataSourceColumns } from "@/services/resource/sheet/dataSource/filterDataSourceColumns";
 import { filterDataSourceRows } from "@/services/resource/sheet/dataSource/filterDataSourceRows";
+import { useResourceStore } from "@/store/resource";
 import { useSheetStore } from "@/store/resource/sheet";
 import { useFilterStore } from "@/store/resource/sheet/filter";
 import { useRowStore } from "@/store/resource/sheet/row";
@@ -16,8 +17,10 @@ interface ExportDialogProps {
 const isOpen = defineModel<boolean>({ default: false });
 const { dataSourceType } = defineProps<ExportDialogProps>();
 const exportFile = useExportFile();
+const resourceStore = useResourceStore();
+const { resource } = storeToRefs(resourceStore);
 const sheetStore = useSheetStore();
-const { dataSource, resource, settings } = storeToRefs(sheetStore);
+const { dataSource, settings } = storeToRefs(sheetStore);
 const filterStore = useFilterStore();
 const { columnFilters } = storeToRefs(filterStore);
 const rowStore = useRowStore();

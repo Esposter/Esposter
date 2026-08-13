@@ -1,8 +1,8 @@
+import { createMaxLengthCheckSql } from "@/models/shared/Check";
 import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { StorageTier } from "@/models/user/StorageTier";
 import { pgTable } from "@/pgTable";
 import { createNormalizedStringSchema } from "@esposter/shared";
-import { sql } from "drizzle-orm";
 import { bigint, boolean, check, pgEnum, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
@@ -10,7 +10,7 @@ import { z } from "zod";
 export const USER_BIOGRAPHY_MAX_LENGTH = 160;
 export const USER_NAME_MAX_LENGTH = 100;
 
-export const storageTierEnum = pgEnum("storage_tier", StorageTier);
+export const storageTierEnum = pgEnum("storageTier", StorageTier);
 
 export const users = pgTable(
   "users",
@@ -30,10 +30,7 @@ export const users = pgTable(
   },
   {
     extraConfig: ({ biography, name }) => [
-      check(
-        "users_biography_length_check",
-        sql`LENGTH(${biography}) <= ${sql.raw(USER_BIOGRAPHY_MAX_LENGTH.toString())}`,
-      ),
+      check("users_biography_length_check", createMaxLengthCheckSql(biography, USER_BIOGRAPHY_MAX_LENGTH)),
       check("users_name_length_check", createNameCheckSql(name, USER_NAME_MAX_LENGTH)),
     ],
   },

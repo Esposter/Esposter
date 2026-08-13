@@ -2,8 +2,7 @@ import type { ContainerClient } from "@azure/storage-blob";
 import type { FileEntity } from "@esposter/db-schema";
 
 import { copyBlob } from "@/services/azure/container/copyBlob";
-import { getBlobName } from "@/services/azure/container/getBlobName";
-import { getThumbnailBlobName } from "@/services/azure/container/getThumbnailBlobName";
+import { getFileBlobNames } from "@/services/azure/container/getFileBlobNames";
 import { getResultAsync, settleAll } from "@esposter/shared";
 
 // Returns each clone's minted id alongside the thumbnail state its blobs actually carry, so the caller
@@ -23,16 +22,16 @@ export const cloneFiles = async (
     settleAll(
       files.map(({ filename, hasThumbnail, id }) => async () => {
         const newId: string = crypto.randomUUID();
-        const destinationBlobName = getBlobName(`${destinationPrefix}/${newId}`, filename);
-        await copyBlob(containerClient, getBlobName(`${sourcePrefix}/${id}`, filename), destinationBlobName);
-        writtenBlobNames.push(destinationBlobName);
+        const sourceBlobNames = getFileBlobNames(sourcePrefix, id, filename);
+        const destinationBlobNames = getFileBlobNames(destinationPrefix, newId, filename);
+        await copyBlob(containerClient, sourceBlobNames.blobName, destinationBlobNames.blobName);
+        writtenBlobNames.push(destinationBlobNames.blobName);
         // The thumbnail is a sibling blob, not part of the original, so copying only the original leaves a
         // Clone whose `hasThumbnail` points the renderer at a blob that was never written. `hasThumbnail` is
         // The uploader's own record that it wrote one (see FileEntity), so it is read here rather than probed
         if (hasThumbnail) {
-          const destinationThumbnailBlobName = getThumbnailBlobName(destinationPrefix, newId);
-          await copyBlob(containerClient, getThumbnailBlobName(sourcePrefix, id), destinationThumbnailBlobName);
-          writtenBlobNames.push(destinationThumbnailBlobName);
+          await copyBlob(containerClient, sourceBlobNames.thumbnailBlobName, destinationBlobNames.thumbnailBlobName);
+          writtenBlobNames.push(destinationBlobNames.thumbnailBlobName);
         }
         return { hasThumbnail, id: newId };
       }),

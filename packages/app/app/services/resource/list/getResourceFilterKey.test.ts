@@ -1,6 +1,7 @@
 import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
 
 import { dayjs } from "#shared/services/dayjs";
+import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
 import { getResourceFilterKey } from "@/services/resource/list/getResourceFilterKey";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -8,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 describe(getResourceFilterKey, () => {
   const values: ResourceFilterValues = {
     searchQuery: "",
+    source: ResourceListSource.All,
     status: "",
     tagName: "",
     tagValue: "",

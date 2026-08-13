@@ -48,6 +48,20 @@ describe("scheduledMessageJob", () => {
   const text = "text";
   const runAt = new Date("1970-01-01");
 
+  // Automod blocking the message this suite schedules — the one rejection that is not idempotent, so it is what
+  // The burn-the-job tests land on the room
+  const insertBlockingWordFilter = () =>
+    mockContext.db
+      .insert(roomFiltersInMessage)
+      .values({ action: WordFilterAction.Timeout, roomId, timeoutDurationMs: 1, words: [message] });
+  // Send-now is a member's own job, so every test of it starts from a member who scheduled one
+  const setupMemberScheduledMessage = async () => {
+    const member = await createMember();
+    await mockSessionOnce(mockContext.db, member);
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt });
+    return { member, scheduledMessageJob };
+  };
+
   beforeAll(() => {
     mockContext = getMockContext();
     roomCaller = getRoomCaller();
@@ -169,32 +183,24 @@ describe("scheduledMessageJob", () => {
     );
   });
 
-  test("fails to schedule reminder as non-member", async () => {
+  test.each([
+    [ScheduledMessageJobType.Reminder, () => scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text })],
+    [
+      ScheduledMessageJobType.ScheduledMessage,
+      () => scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt }),
+    ],
+  ] as const)("fails to schedule a %s as non-member", async (_type, schedule) => {
     expect.hasAssertions();
 
     await mockSessionOnce(mockContext.db);
 
-    await expect(
-      scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("fails to schedule message as non-member", async () => {
-    expect.hasAssertions();
-
-    await mockSessionOnce(mockContext.db);
-
-    await expect(
-      scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    await expect(schedule()).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("fails send scheduled message now with read-only room", async () => {
     expect.hasAssertions();
 
-    const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
-    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt });
+    const { member, scheduledMessageJob } = await setupMemberScheduledMessage();
     await roomCaller.updateRoom({ id: roomId, isReadOnly: true });
     await mockSessionOnce(mockContext.db, member);
 
@@ -215,16 +221,9 @@ describe("scheduledMessageJob", () => {
   test("burns the job when send scheduled message now is word filtered", async () => {
     expect.hasAssertions();
 
-    const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
-    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt });
+    const { member, scheduledMessageJob } = await setupMemberScheduledMessage();
     // The filter arrives after the job is scheduled — the only way a stored message can be blocked at delivery
-    await mockContext.db.insert(roomFiltersInMessage).values({
-      action: WordFilterAction.Timeout,
-      roomId,
-      timeoutDurationMs: 1,
-      words: [message],
-    });
+    await insertBlockingWordFilter();
     await mockSessionOnce(mockContext.db, member);
 
     await expect(
@@ -243,17 +242,10 @@ describe("scheduledMessageJob", () => {
   test("burns the job when send scheduled message now is word filtered after the claim", async () => {
     expect.hasAssertions();
 
-    const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
-    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt });
+    const { member, scheduledMessageJob } = await setupMemberScheduledMessage();
     await mockSessionOnce(mockContext.db, member);
     onAssertCanCreateMessage.current = async () => {
-      await mockContext.db.insert(roomFiltersInMessage).values({
-        action: WordFilterAction.Timeout,
-        roomId,
-        timeoutDurationMs: 1,
-        words: [message],
-      });
+      await insertBlockingWordFilter();
     };
 
     await expect(

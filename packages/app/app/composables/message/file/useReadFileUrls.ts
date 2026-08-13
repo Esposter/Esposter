@@ -2,7 +2,7 @@ import type { ReadFileUrl } from "@/models/message/file/ReadFileUrl";
 import type { FileEntity } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
-import { getHasThumbnail } from "#shared/services/message/file/getHasThumbnail";
+import { getHasThumbnail } from "@/services/message/file/getHasThumbnail";
 import { READ_SAS_DURATION_MS } from "@esposter/db-schema";
 import { getResultAsync, takeOne } from "@esposter/shared";
 
@@ -17,7 +17,6 @@ export const useReadFileUrls = () => {
   return async (files: FileEntity[], roomId: string): Promise<Map<FileEntity["id"], ReadFileUrl>> => {
     const fileUrlMap = new Map<FileEntity["id"], ReadFileUrl>();
     if (files.length === 0) return fileUrlMap;
-
     // A file whose upload recorded no thumbnail gets no thumbnail url minted for it — nothing downstream has
     // To discover that from a failed image load
     const imageFiles = files.filter((file) => getHasThumbnail(file));

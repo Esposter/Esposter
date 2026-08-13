@@ -1,6 +1,5 @@
 import type { EventGridEvent } from "@azure/functions";
-import type { BlobCreatedEventGridData, relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { BlobCreatedEventGridData, Database } from "@esposter/db-schema";
 
 import { reconcileStorageBlobHandler } from "@/handlers/reconcileStorageBlobHandler";
 import { InvocationContext } from "@azure/functions";
@@ -8,7 +7,7 @@ import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer, getBlobSubjectPrefix, storageBlobs, users } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-let mockDb: PostgresJsDatabase<typeof relations>;
+let mockDb: Database;
 
 vi.mock(import("@/services/db"), () => ({
   get db() {

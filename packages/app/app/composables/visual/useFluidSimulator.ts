@@ -145,7 +145,6 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     folderClouds.add(sky.cloudCoverage, "value", 0, 1, 0.01).name("coverage");
     folderClouds.add(sky.cloudDensity, "value", 0, 1, 0.01).name("density");
     folderClouds.add(sky.cloudElevation, "value", 0, 1, 0.01).name("elevation");
-
     // Registered after awaits, so it is outside the synchronous setup scope and won't auto-dispose —
     // its stop handle travels in the resources so teardown can detach it
     const stopResize = useEventListener("resize", () => {
@@ -176,7 +175,6 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
       water,
     };
   });
-
   // Idempotent, undefined-safe teardown: an early unmount (before or between the onMounted awaits) leaves
   // fluidResources undefined, so nothing is dereferenced; clearing it first makes a repeat call a no-op
   onUnmounted(async () => {

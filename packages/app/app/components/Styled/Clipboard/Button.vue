@@ -5,7 +5,7 @@ interface StyledClipboardButtonProps {
 
 const { source } = defineProps<StyledClipboardButtonProps>();
 const emit = defineEmits<{ create: []; "update:copied": [boolean] }>();
-const { copied, copy } = useClipboard({ source });
+const { copied, copy } = useClipboard();
 
 watch(copied, (newCopied) => {
   emit("update:copied", newCopied);

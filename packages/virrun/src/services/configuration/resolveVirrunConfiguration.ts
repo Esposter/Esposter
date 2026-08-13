@@ -20,10 +20,6 @@ export const resolveVirrunConfiguration = (cwd = ""): undefined | VirrunConfigur
   ).match(
     ({ config, sources }) => (sources.length === 0 ? undefined : parseVirrunConfiguration(config)),
     (error) => {
-      throw new InvalidOperationError(
-        Operation.Read,
-        resolveVirrunConfiguration.name,
-        error instanceof Error ? error.message : String(error),
-      );
+      throw new InvalidOperationError(Operation.Read, resolveVirrunConfiguration.name, error.message);
     },
   );

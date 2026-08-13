@@ -1,4 +1,5 @@
 import { MimeCategory, mimeCategorySchema } from "@/models/file/MimeCategory";
+import { createMaxLengthCheckSql } from "@/models/shared/Check";
 import { createNameCheckSql } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
@@ -20,9 +21,9 @@ export enum RoomType {
 
 export const roomTypeSchema = z.enum(RoomType) satisfies z.ZodType<RoomType>;
 
-export const roomTypeEnum = pgEnum("room_type", RoomType);
+export const roomTypeEnum = pgEnum("roomType", RoomType);
 
-export const mimeCategoryEnum = pgEnum("mime_category", MimeCategory);
+export const mimeCategoryEnum = pgEnum("mimeCategory", MimeCategory);
 
 export const roomsInMessage = pgTable(
   "rooms",
@@ -54,12 +55,12 @@ export const roomsInMessage = pgTable(
         sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND LENGTH(TRIM(${name})) = 0) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${createNameCheckSql(name, ROOM_NAME_MAX_LENGTH)})`,
       ),
       check(
-        "participant_key_type",
+        "rooms_type_participantKey_check",
         sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${participantKey} IS NOT NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${participantKey} IS NULL)`,
       ),
-      check("rooms_max_file_size_bytes_check", sql`${maxFileSizeBytes} IS NULL OR ${maxFileSizeBytes} >= 1`),
-      check("rooms_slowmode_ms_check", sql`${slowmodeMs} IS NULL OR ${slowmodeMs} >= 1`),
-      check("rooms_topic_length_check", sql`LENGTH(${topic}) <= ${sql.raw(ROOM_TOPIC_MAX_LENGTH.toString())}`),
+      check("rooms_maxFileSizeBytes_check", sql`${maxFileSizeBytes} IS NULL OR ${maxFileSizeBytes} >= 1`),
+      check("rooms_slowmodeMs_check", sql`${slowmodeMs} IS NULL OR ${slowmodeMs} >= 1`),
+      check("rooms_topic_length_check", createMaxLengthCheckSql(topic, ROOM_TOPIC_MAX_LENGTH)),
     ],
     schema: messageSchema,
   },

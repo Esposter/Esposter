@@ -60,7 +60,6 @@ export class MicrophoneProcessor implements TrackProcessor<Track.Kind.Audio, Aud
         return exhaustiveGuard(this.voiceInputMode);
     }
   }
-
   // The analyser taps the source pre-gain so a gated (gain 0) mic can still detect speech and reopen.
   #connectSource(track: MediaStreamTrack) {
     if (!this.#audioContext || !this.#gainNode || !this.#analyser) return;

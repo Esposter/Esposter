@@ -5,18 +5,10 @@ const nullStrategy = useNullStrategy();
 </script>
 
 <template>
-  <StyledTooltipMenuIconButton
-    :button-props="{ class: 'm-0', size: 'small', tile: true }"
+  <ResourceSheetRowCommandMenuButton
     icon="mdi-null"
+    :items="NullStrategyItemCategoryDefinitions"
     text="Null Strategy"
-  >
-    <v-list density="compact">
-      <v-list-item
-        v-for="{ title, value } of NullStrategyItemCategoryDefinitions"
-        :key="value"
-        :title
-        @click="nullStrategy(value)"
-      />
-    </v-list>
-  </StyledTooltipMenuIconButton>
+    @select="(value) => nullStrategy(value)"
+  />
 </template>

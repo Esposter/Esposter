@@ -1,7 +1,7 @@
+import { createMaxLengthCheckSql } from "@/models/shared/Check";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { users } from "@/schema/users";
-import { sql } from "drizzle-orm";
 import { boolean, check, pgEnum, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
@@ -19,7 +19,7 @@ const userStatusSchema = z.enum(UserStatus) satisfies z.ZodType<UserStatus>;
 
 export const UserStatuses: readonly UserStatus[] = Object.values(UserStatus);
 
-export const userStatusEnum = pgEnum("user_status", UserStatus);
+export const userStatusEnum = pgEnum("userStatus", UserStatus);
 
 export const userStatusesInMessage = pgTable(
   "userStatuses",
@@ -35,10 +35,7 @@ export const userStatusesInMessage = pgTable(
   },
   {
     extraConfig: ({ message }) => [
-      check(
-        "user_statuses_message_length_check",
-        sql`LENGTH(${message}) <= ${sql.raw(STATUS_MESSAGE_MAX_LENGTH.toString())}`,
-      ),
+      check("userStatuses_message_length_check", createMaxLengthCheckSql(message, STATUS_MESSAGE_MAX_LENGTH)),
     ],
     schema: messageSchema,
   },

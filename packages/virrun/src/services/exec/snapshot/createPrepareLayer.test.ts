@@ -17,7 +17,7 @@ import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { beforeEach, describe, expect, test } from "vitest";
+import {beforeEach, describe, expect, test, vi} from "vitest";
 
 // A two-segment output dir (`a/a`) the fake prepare command populates, alongside a node_modules tree it churns.
 const OUTPUT = `${TEST_FILENAME}/${TEST_FILENAME}`;
@@ -33,9 +33,17 @@ const createFakeBackend = (exitCode: number): ExecBackend & ReturnType<typeof cr
     }
   });
 
+vi.mock(
+  import("@/services/exec/util/getSandboxNodeVersion"),
+  () => import("@/services/exec/test/getSandboxNodeVersion.test"),
+);
+
 describe(createPrepareLayer, () => {
   const { createWorkspace } = setupTemporaryCacheHome();
   let repository = "";
+  // The layer is always provisioned for this suite's own repository and step, so only the backend varies
+  const prepare = (backend: ExecBackend) =>
+    createPrepareLayer(backend, prepareStep, { cwd: repository, stdio: "pipe" }, resolvePrepareLocation(repository, prepareStep));
 
   beforeEach(() => {
     repository = createWorkspace();
@@ -46,7 +54,7 @@ describe(createPrepareLayer, () => {
 
     mkdirSync(resolveSnapshotLocation(repository).upperDir, { recursive: true });
     const backend = createFakeBackend(0);
-    await createPrepareLayer(backend, prepareStep, { cwd: repository, stdio: "pipe" }, resolvePrepareLocation(repository, prepareStep));
+    await prepare(backend);
 
     const { exists, upperDir } = resolvePrepareLocation(repository, prepareStep);
 
@@ -61,7 +69,7 @@ describe(createPrepareLayer, () => {
     const dependenciesUpperDir = resolveSnapshotLocation(repository).upperDir;
     mkdirSync(dependenciesUpperDir, { recursive: true });
     const backend = createFakeBackend(0);
-    await createPrepareLayer(backend, prepareStep, { cwd: repository, stdio: "pipe" }, resolvePrepareLocation(repository, prepareStep));
+    await prepare(backend);
 
     const { dir: directory } = resolvePrepareLocation(repository, prepareStep);
     const { lowerDirs, upperDir, workDir } = backend.calls[0]?.overlayLayers ?? {};
@@ -76,12 +84,14 @@ describe(createPrepareLayer, () => {
 
     const backend = createFakeBackend(0);
 
-    expect(() => createPrepareLayer(backend, prepareStep, { cwd: repository, stdio: "pipe" }, resolvePrepareLocation(repository, prepareStep))).toThrow(
-      new InvalidOperationError(
-        Operation.Create,
-        createPrepareLayer.name,
-        "no captured deps snapshot to fork for the prepare layer; run createSnapshot first",
-      ),
+    expect(() => prepare(backend)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${
+        new InvalidOperationError(
+          Operation.Create,
+          createPrepareLayer.name,
+          "no captured deps snapshot to fork for the prepare layer; run createSnapshot first",
+        ).message
+      }]`,
     );
   });
 
@@ -91,9 +101,7 @@ describe(createPrepareLayer, () => {
     mkdirSync(resolveSnapshotLocation(repository).upperDir, { recursive: true });
     const backend = createFakeBackend(1);
 
-    await expect(createPrepareLayer(backend, prepareStep, { cwd: repository, stdio: "pipe" }, resolvePrepareLocation(repository, prepareStep))).rejects.toThrow(
-      InvalidOperationError,
-    );
+    await expect(prepare(backend)).rejects.toThrowErrorMatchingInlineSnapshot(`[InvalidOperationError: Invalid operation: Create, name: createPrepareLayer, prepare command exited with 1: ]`);
     expect(resolvePrepareLocation(repository, prepareStep).exists).toBe(false);
   });
 });

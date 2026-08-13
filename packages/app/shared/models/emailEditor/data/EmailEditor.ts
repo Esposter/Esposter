@@ -102,7 +102,12 @@ export class EmailEditor extends AGrapesJsEditor {
   }
 }
 
-export const emailEditorSchema = grapesJsEditorSchema.extend({
-  datasetReference: datasetReferenceSchema.optional(),
-  html: z.string().optional(),
-}) satisfies z.ZodType<ToData<EmailEditor>>;
+// The catchall is re-declared, not inherited: spreading `.shape` copies fields and nothing else, and without
+// It every GrapesJS key this model does not name (styles, assets, symbols) is stripped on parse
+export const emailEditorSchema = z
+  .object({
+    ...grapesJsEditorSchema.shape,
+    datasetReference: datasetReferenceSchema.optional(),
+    html: z.string().optional(),
+  })
+  .catchall(z.unknown()) satisfies z.ZodType<ToData<EmailEditor>>;

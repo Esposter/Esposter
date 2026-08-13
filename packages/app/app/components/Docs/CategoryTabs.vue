@@ -16,7 +16,7 @@ interface CategoryTabsProps {
 const { activeCategory, sections } = defineProps<CategoryTabsProps>();
 const layoutStore = useLayoutStore();
 const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
-const route = useRoute();
+const { currentRoute } = useRouter();
 // Vuetify highlights a tab from its router link, never from the tabs' model value, and every docs page resolves
 // To the same [...slug] route, so a link only counts as active on its own exact path. Each tab lands on its
 // Category's first section, except the active one, which points at the page you are on so that it stays lit
@@ -24,7 +24,7 @@ const categories = computed(() =>
   DocsCategories.flatMap((category) => {
     const firstSection = sections.find(({ path }) => getSectionCategory(path) === category);
     if (!firstSection) return [];
-    else if (category === activeCategory) return [{ category, path: route.path }];
+    else if (category === activeCategory) return [{ category, path: currentRoute.value.path }];
     else return [{ category, path: firstSection.path }];
   }),
 );

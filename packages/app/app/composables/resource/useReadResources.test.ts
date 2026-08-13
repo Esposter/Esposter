@@ -1,18 +1,17 @@
 // @vitest-environment nuxt
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
-import type { Resource } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { dayjs } from "#shared/services/dayjs";
 import { useReadResources } from "@/composables/resource/useReadResources";
 import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
-import { ResourceType } from "@esposter/db-schema";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useReadResources, () => {
   const server = setupMswTrpc();
-  const items = [{ id: crypto.randomUUID(), name: "name", type: ResourceType.Sheet } as Resource];
+  const items = [createResourceListItem()];
   const firstOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 1, sortBy: [] };
   const secondOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 2, sortBy: [] };
 

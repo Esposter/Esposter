@@ -1,24 +1,11 @@
-import type { Resource } from "@esposter/db-schema";
-
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { getResourcesCsv } from "@/services/resource/list/getResourcesCsv";
-import { ResourceType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(getResourcesCsv, () => {
-  const userId = crypto.randomUUID();
   // Local-time construction keeps the formatted output deterministic across machine timezones
   const epochDate = new Date(1970, 0, 1);
-  const createResource = (name: string): Resource => ({
-    contentVersion: 0,
-    createdAt: epochDate,
-    deletedAt: null,
-    id: crypto.randomUUID(),
-    name,
-    tags: {},
-    type: ResourceType.Sheet,
-    updatedAt: epochDate,
-    userId,
-  });
+  const createResource = (name: string) => createResourceListItem({ createdAt: epochDate, name, updatedAt: epochDate });
 
   test("serializes an empty list to the header row", () => {
     expect.hasAssertions();

@@ -23,8 +23,8 @@ const displayReceivedFriendRequests = computed(() =>
       >
         <template #append>
           <div flex gap-x-2>
-            <v-btn text="Accept" variant="tonal" color="success" size="small" @click="acceptFriendRequest(sender)" />
-            <v-btn text="Decline" variant="tonal" color="error" size="small" @click="declineFriendRequest(sender.id)" />
+            <v-btn color="success" size="small" text="Accept" variant="tonal" @click="acceptFriendRequest(sender)" />
+            <v-btn color="error" size="small" text="Decline" variant="tonal" @click="declineFriendRequest(sender.id)" />
           </div>
         </template>
       </MessageFriendsUserListItem>

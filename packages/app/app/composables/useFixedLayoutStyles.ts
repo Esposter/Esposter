@@ -20,7 +20,7 @@ export const useFixedLayoutStyles = (
   const middleRightOffset = computed(() => (isDesktop.value && isRightDrawerOpen.value ? toValue(rightWidth) : 0));
   return {
     bottom: computed<CSSProperties>(() => ({
-      bottom: "0px",
+      bottom: "0",
       left: `${middleLeftOffset.value}px`,
       width: `calc(100% - ${middleLeftOffset.value + middleRightOffset.value}px)`,
     })),

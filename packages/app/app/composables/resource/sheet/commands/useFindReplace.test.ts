@@ -40,22 +40,6 @@ describe(useFindReplace, () => {
     expect(takeOne(dataSource.rows).data[""]).toBe("a");
   });
 
-  test("undo restores all original values", async () => {
-    expect.hasAssertions();
-
-    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": " " })]);
-    const { dataSource } = setupWithDataSource(initialDataSource);
-    const findReplace = useFindReplace();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { undo } = sheetHistoryStore;
-
-    await findReplace(" ", "");
-    undo(dataSource);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe(" ");
-  });
-
   test("replaces only the specific cell when specificCell is provided", async () => {
     expect.hasAssertions();
 

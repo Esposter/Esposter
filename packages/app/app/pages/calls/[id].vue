@@ -3,6 +3,7 @@ import { authClient } from "@/services/auth/authClient";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { requireRouteParam } from "@/util/router/requireRouteParam";
 import { DatabaseEntityType, selectCallSessionInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
@@ -16,8 +17,8 @@ definePageMeta({
   },
 });
 
-const route = useRoute();
-const id = route.params.id as string;
+const { currentRoute } = useRouter();
+const id = requireRouteParam(currentRoute.value.params, "id");
 const callSession = await useCallIdSubscribables(id);
 if (!callSession)
   throw createError({

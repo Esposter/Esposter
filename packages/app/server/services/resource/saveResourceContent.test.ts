@@ -1,5 +1,6 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { Transaction } from "@@/server/models/db/Transaction";
 import type { Context } from "@@/server/trpc/context";
 import type { Resource } from "@esposter/db-schema";
 
@@ -16,6 +17,19 @@ import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from
 import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
+// The upload is the seam a post-blob failure has to be injected at: it is the only step between the version bump
+// And the commit that is not transactional, so rejecting anything earlier proves nothing about the window where
+// The row and the blob can disagree. It delegates to the real upload by default, so every other test is unaffected
+const { uploadMock } = vi.hoisted(() => ({
+  uploadMock: vi.fn<typeof import("@@/server/composables/azure/container/useUpload").useUpload>(),
+}));
+
+vi.mock(import("@@/server/composables/azure/container/useUpload"), async (importOriginal) => {
+  const { useUpload } = await importOriginal();
+  uploadMock.mockImplementation(useUpload);
+  return { useUpload: uploadMock };
+});
+
 // The one place a resource's content blob is written, so its whole tail — the save event, the activity entry
 // And the type's registered after-save hook — is asserted here once. Every path that writes content (the
 // Editor's save, blueprint deploy, duplicate, restore) keeps only a wiring test proving it comes through here.
@@ -25,11 +39,27 @@ const readActivityTypes = () =>
     ({ activityType }) => activityType as ResourceActivityType,
   );
 
+// The real compare-and-set the editor's save runs, so the losing case fails the way production fails
+const updateContentVersion = async (tx: Transaction, id: Resource["id"]) =>
+  takeOne(await tx.update(resources).set({ contentVersion: 1 }).where(eq(resources.id, id)).returning());
+
 describe(saveResourceContent, () => {
   let mockContext: Context;
   let ctx: AuthedContext;
   let resource: Resource;
   const name = "name";
+  const surveyId = crypto.randomUUID();
+  const unboundProgramContent = { audience: null, emailId: "", keyColumn: "", surveyId: "" };
+  // A Program already bound to a survey, which is the only state an unbind can be observed from
+  const createBoundProgram = async () =>
+    takeOne(
+      await ctx.db
+        .insert(resources)
+        .values({ boundResourceId: surveyId, name, type: ResourceType.Program, userId: ctx.getSessionPayload.user.id })
+        .returning(),
+    );
+  const readBoundResourceId = async (id: Resource["id"]) =>
+    (await ctx.db.query.resources.findFirst({ where: { id: { eq: id } } }))?.boundResourceId;
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
   const dueAt = new Date(1);
   const item = new TodoListItem({ dueAt, name });
@@ -141,6 +171,77 @@ describe(saveResourceContent, () => {
     await waitForSynchronizedFunctions();
 
     expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([createReminder(resource.id)]);
+  });
+
+  // The blob is not transactional, so a transaction that fails *after* the upload cannot be rolled back to match
+  // It. For a Program that means the row can outlive the content it describes — and an unbind is the fail-open
+  // Direction, because `resolveIdentifiedToken` reads the column and would keep accepting tokens the owner just
+  // Revoked. So the failure has to land on null, which the resolver reads as "ask the blob"
+  test("leaves no stale binding when the save fails after the content is written", async () => {
+    expect.hasAssertions();
+
+    const program = await createBoundProgram();
+    // Rejected after the upload resolves, which is the only window the row and the blob can disagree in —
+    // Rejecting the version bump instead would fail before the blob was ever written and prove nothing
+    uploadMock.mockImplementationOnce(async (...parameters: Parameters<typeof uploadMock>) => {
+      await uploadMock.getMockImplementation()?.(...parameters);
+      throw new Error("rejected");
+    });
+
+    await expect(
+      saveResourceContent(ctx, {
+        content: unboundProgramContent,
+        resource: program,
+        updateContentVersion: (tx) => updateContentVersion(tx, program.id),
+      }),
+    ).rejects.toThrow("rejected");
+
+    await expect(readBoundResourceId(program.id)).resolves.toBeNull();
+  });
+
+  // The other half of the same rule: a save that loses the version check never wrote its content, so it has no
+  // Business clearing a binding the save that beat it just stored. Clearing inside the transaction is what makes
+  // The loser's clear roll back with the rest of it
+  test("leaves the binding alone when the save loses the content version check", async () => {
+    expect.hasAssertions();
+
+    const program = await createBoundProgram();
+
+    await expect(
+      saveResourceContent(ctx, {
+        content: unboundProgramContent,
+        resource: program,
+        updateContentVersion: () => Promise.reject(new Error("stale")),
+      }),
+    ).rejects.toThrow("stale");
+
+    await expect(readBoundResourceId(program.id)).resolves.toBe(surveyId);
+  });
+
+  // The binding is stored after the transaction that bumped the version, so a save that commits first can still
+  // Reach that write last and flatten a newer save's binding. The version this save established guards it.
+  // Stood in for rather than raced: the callback bumps the row the way a save that beat this one would have,
+  // And returns the row this save wrote — which is exactly the pair of facts the losing save holds
+  test("leaves a newer save's binding alone when its own version has been superseded", async () => {
+    expect.hasAssertions();
+
+    const program = await createBoundProgram();
+    const otherSurveyId = crypto.randomUUID();
+
+    await saveResourceContent(ctx, {
+      content: { ...unboundProgramContent, surveyId: otherSurveyId },
+      resource: program,
+      updateContentVersion: async (tx) => {
+        const supersededResource = takeOne(
+          await tx.update(resources).set({ contentVersion: 1 }).where(eq(resources.id, program.id)).returning(),
+        );
+        await tx.update(resources).set({ contentVersion: 2 }).where(eq(resources.id, program.id));
+        return supersededResource;
+      },
+    });
+
+    // Null, not `otherSurveyId`: the clear inside the transaction stands, and the store after it finds no row
+    await expect(readBoundResourceId(program.id)).resolves.toBeNull();
   });
 
   // The one step a caller may opt out of, and only where `createResourceRow` has already opened the trail

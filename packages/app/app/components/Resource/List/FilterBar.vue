@@ -9,6 +9,11 @@ interface ResourceListFilterBarProps {
   hasActiveFilters: boolean;
 }
 
+interface ResourceListFilterTypeDefinition {
+  isVisible: ComputedRef<boolean>;
+  reset: () => void;
+}
+
 const { hasActiveFilters } = defineProps<ResourceListFilterBarProps>();
 const types = defineModel<ResourceType[]>("types", { required: true });
 const status = defineModel<"" | ResourceStatusFilter>("status", { required: true });
@@ -31,24 +36,34 @@ const isTagPillVisible = computed(
   () => Boolean(tagName.value) || addedFilterTypes.value.includes(ResourceListFilterType.Tag),
 );
 // Keyed by filter type so adding a new ResourceListFilterType is a compile error here instead of a silent fallthrough
-const filterTypeVisibilityMap: Record<ResourceListFilterType, ComputedRef<boolean>> = {
-  [ResourceListFilterType.Status]: isStatusPillVisible,
-  [ResourceListFilterType.Tag]: isTagPillVisible,
-  [ResourceListFilterType.Updated]: isUpdatedPillVisible,
+const filterTypeDefinitionMap: Record<ResourceListFilterType, ResourceListFilterTypeDefinition> = {
+  [ResourceListFilterType.Status]: {
+    isVisible: isStatusPillVisible,
+    reset: () => {
+      status.value = "";
+    },
+  },
+  [ResourceListFilterType.Tag]: {
+    isVisible: isTagPillVisible,
+    reset: () => {
+      tagName.value = "";
+      tagValue.value = "";
+    },
+  },
+  [ResourceListFilterType.Updated]: {
+    isVisible: isUpdatedPillVisible,
+    reset: () => {
+      updatedFilter.value = "";
+      updatedAfter.value = undefined;
+      updatedBefore.value = undefined;
+    },
+  },
 };
 const availableFilterTypes = computed(() =>
-  ResourceListFilterTypes.filter((filterType) => !filterTypeVisibilityMap[filterType].value),
+  ResourceListFilterTypes.filter((filterType) => !filterTypeDefinitionMap[filterType].isVisible.value),
 );
 const removeFilter = (filterType: ResourceListFilterType) => {
-  if (filterType === ResourceListFilterType.Status) status.value = "";
-  else if (filterType === ResourceListFilterType.Tag) {
-    tagName.value = "";
-    tagValue.value = "";
-  } else {
-    updatedFilter.value = "";
-    updatedAfter.value = undefined;
-    updatedBefore.value = undefined;
-  }
+  filterTypeDefinitionMap[filterType].reset();
   addedFilterTypes.value = addedFilterTypes.value.filter((addedFilterType) => addedFilterType !== filterType);
 };
 const clearFilters = () => {

@@ -1,5 +1,5 @@
 <template>
   <MessageRightSideBarMemberHeader />
   <v-divider />
-  <MessageRightSideBarMemberList />
+  <MessageModelMemberList overflow-y-auto />
 </template>

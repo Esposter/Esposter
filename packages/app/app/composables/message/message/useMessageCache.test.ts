@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
 import type { MessageEntity } from "@esposter/db-schema";
 import type { VueWrapper } from "@vue/test-utils";
-import type { Router } from "vue-router";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
@@ -10,6 +9,7 @@ import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/c
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { useDataStore } from "@/store/message/data";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { StandardMessageEntity } from "@esposter/db-schema";
@@ -18,7 +18,6 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMessageCache, () => {
-  let router: Router;
   let wrapper: VueWrapper;
   let items: Ref<MessageEntity[]>;
   let initializeCursorPaginationData: (data: CursorPaginationData<MessageEntity>) => void;
@@ -26,22 +25,14 @@ describe(useMessageCache, () => {
   const secondPartitionKey = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const message = "message";
-  // Router.currentRoute is a shallowRef, so mutating params.id does not trigger
-  // Reactivity — this helper replaces the mutation and forces dependents to update
-  const setRouteId = (id: string) => {
-    router.currentRoute.value.params.id = id;
-    triggerRef(router.currentRoute);
-  };
-  // Capture router and pinia from inside the mounted component's scope
-  // Because mountSuspended creates its own context
+  // The store refs are captured from inside the mounted component's scope because mountSuspended creates its own
+  // Context
   const mountCache = async (initialRouteId: string = partitionKey) => {
     wrapper = await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          router = useRouter();
-          router.currentRoute.value.params.id = initialRouteId;
-          triggerRef(router.currentRoute);
+          setCurrentRoomId(initialRouteId);
           const dataStore = useDataStore();
           ({ items } = storeToRefs(dataStore));
           ({ initializeCursorPaginationData } = dataStore);
@@ -94,7 +85,7 @@ describe(useMessageCache, () => {
       secondPartitionKey,
     );
     await mountCache();
-    setRouteId(secondPartitionKey);
+    setCurrentRoomId(secondPartitionKey);
     await flushCache();
 
     expect(items.value).toHaveLength(1);

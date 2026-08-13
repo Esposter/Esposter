@@ -5,7 +5,7 @@ import { createSearchHistoryInputSchema } from "#shared/models/db/searchHistory/
 import { deleteSearchHistoryInputSchema } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
 import { updateSearchHistoryInputSchema } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { ownedBy } from "@@/server/services/db/ownedBy";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
@@ -15,13 +15,12 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, searchHistoriesInMessage, selectSearchHistoryInMessageSchema } from "@esposter/db-schema";
-import { ItemMetadataPropertyNames, Operation } from "@esposter/shared";
+import { Operation } from "@esposter/shared";
 import { z } from "zod";
 
 const readSearchHistoriesInputSchema = z.object({
-  ...createCursorPaginationParamsSchema(selectSearchHistoryInMessageSchema.keyof(), [
-    { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
-  ]).shape,
+  ...createCursorPaginationParamsSchema(selectSearchHistoryInMessageSchema.keyof(), [CREATED_AT_DESCENDING_SORT_ITEM])
+    .shape,
   roomId: selectSearchHistoryInMessageSchema.shape.roomId,
 });
 
@@ -60,8 +59,11 @@ export const searchHistoryRouter = router({
     }),
   readSearchHistories: getMemberProcedure(readSearchHistoriesInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, limit, roomId, sortBy } }) => {
+      // A search history is the caller's own, exactly as `ownedBy` scopes every write to it — membership only
+      // Says which room's searches may be read, never whose
       const where: RelationsFilter<(typeof relations)["searchHistoriesInMessage"], typeof relations> = {
         roomId: { eq: roomId },
+        userId: { eq: ctx.getSessionPayload.user.id },
       };
       if (cursor) where.RAW = (searchHistory) => getCursorWhere(searchHistory, cursor, sortBy);
       const resultSearchHistories = await ctx.db.query.searchHistoriesInMessage.findMany({

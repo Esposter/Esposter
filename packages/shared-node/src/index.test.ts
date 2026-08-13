@@ -11,7 +11,7 @@ const distRunnerDtsFile = resolve(import.meta.dirname, "../dist/runner.d.ts");
 describe("@esposter/shared-node", () => {
   test("reporter bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distReporterFile)).toMatchInlineSnapshot(`"reporter.js: 5.37 KB (5498 bytes)"`);
+    expect(getFileSize(distReporterFile)).toMatchInlineSnapshot(`"reporter.js: 5.35 KB (5480 bytes)"`);
   });
 
   test("reporter types size", () => {

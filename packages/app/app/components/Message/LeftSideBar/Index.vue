@@ -5,7 +5,7 @@ import { useInputStore } from "@/store/message/input";
 import { RoutePath } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
-const router = useRouter();
+const { currentRoute } = useRouter();
 const inputStore = useInputStore();
 const { drafts } = storeToRefs(inputStore);
 const scheduledMessageJobCount = await $trpc.message.scheduledMessageJob.readMyScheduledJobsCount.query();
@@ -39,7 +39,7 @@ const items = computed(
         v-for="{ badges, icon, title, value } of items"
         :key="value"
         font-bold
-        :active="router.currentRoute.value.path === value"
+        :active="currentRoute.path === value"
         :prepend-icon="icon"
         :title
         :to="value"

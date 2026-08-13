@@ -5,8 +5,8 @@ import { TRPCClientError } from "@trpc/client";
 
 export const useReadUserFromRoute = async () => {
   const { $trpc } = useNuxtApp();
-  const route = useRoute();
-  const userId = route.params.id as string;
+  const { currentRoute } = useRouter();
+  const userId = currentRoute.value.params.id as string;
   // Only a genuine "user not found" becomes a 404 — transport/server failures propagate rather than being
   // Masked as an absent user
   const user = await getResultAsync(() => $trpc.user.readUser.query(userId)).match(

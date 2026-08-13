@@ -22,6 +22,20 @@ const displayFriends = computed(() =>
       !excludedUserIdSet.value.has(id) && (!search.value || name.toLowerCase().includes(search.value.toLowerCase())),
   ),
 );
+// The single/multiple split is the component's generic, which the template cannot narrow — so the two shapes of
+// The model are read and written here, in one place, rather than cast at every binding
+const selectedUserIds = computed(() => (isMultiple ? (modelValue.value as string[] | undefined) : undefined) ?? []);
+const checkIsSelected = (id: string) => (isMultiple ? selectedUserIds.value.includes(id) : modelValue.value === id);
+const toggleFriend = (id: string) => {
+  if (!isMultiple) {
+    modelValue.value = (modelValue.value === id ? undefined : id) as ModelValue;
+    return;
+  }
+
+  modelValue.value = (
+    checkIsSelected(id) ? selectedUserIds.value.filter((userId) => userId !== id) : [...selectedUserIds.value, id]
+  ) as ModelValue;
+};
 
 const reset = () => {
   search.value = "";
@@ -29,7 +43,7 @@ const reset = () => {
 
 defineExpose({ reset });
 
-const { readFriends } = useReadFriends();
+const readFriends = useReadFriends();
 await readFriends();
 </script>
 
@@ -37,29 +51,12 @@ await readFriends();
   <v-container>
     <v-text-field v-model="search" placeholder="Search friends" autofocus clearable hide-details />
     <v-list overflow-y-auto lines="two" max-height="360">
-      <v-list-item
-        v-for="{ id, image, name } of displayFriends"
-        :key="id"
-        :title="name"
-        @click="
-          isMultiple
-            ? (modelValue = (
-                (modelValue as string[] | undefined)?.includes(id)
-                  ? (modelValue as string[]).filter((userId: string) => userId !== id)
-                  : [...((modelValue as string[] | undefined) ?? []), id]
-              ) as ModelValue)
-            : (modelValue = (modelValue === id ? undefined : id) as ModelValue)
-        "
-      >
+      <v-list-item v-for="{ id, image, name } of displayFriends" :key="id" :title="name" @click="toggleFriend(id)">
         <template #prepend>
           <StyledAvatar mr-3 :image :name :avatar-props="{ size: '2.25rem' }" />
         </template>
         <template #append>
-          <v-checkbox-btn
-            :model-value="
-              isMultiple ? ((modelValue as string[] | undefined)?.includes(id) ?? false) : modelValue === id
-            "
-          />
+          <v-checkbox-btn :model-value="checkIsSelected(id)" />
         </template>
       </v-list-item>
       <v-list-item v-if="displayFriends.length === 0" title="No friends found" />

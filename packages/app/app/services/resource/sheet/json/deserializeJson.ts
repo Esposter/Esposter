@@ -2,12 +2,20 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import type { JsonFileSettings } from "#shared/models/resource/sheet/JsonFileSettings";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { buildDataset } from "@/services/resource/sheet/dataSource/buildDataset";
-import { datasetToDataSource } from "@/services/resource/sheet/dataSource/datasetToDataSource";
+import { deserializeToDataSource } from "@/services/resource/sheet/dataSource/deserializeToDataSource";
 import { getResult, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { z } from "zod";
 
 const jsonRowsSchema = z.array(z.record(z.string(), z.unknown()));
+// A JSON null and an absent property both become an empty cell, which coerces back to null the way
+// The CSV path already does. String() alone would persist them as the text "null" and "undefined",
+// And a container as "[object Object]" - each branch narrows so only a real primitive is stringified.
+const getCellText = (value: unknown): string => {
+  if (value === null || value === undefined) return "";
+  else if (typeof value === "string") return value;
+  else if (typeof value === "boolean" || typeof value === "number") return String(value);
+  else return JSON.stringify(value);
+};
 
 export const deserializeJson = async (file: File, _settings: JsonFileSettings): Promise<DataSource> => {
   const text = await file.text();
@@ -20,8 +28,8 @@ export const deserializeJson = async (file: File, _settings: JsonFileSettings): 
       throw new InvalidOperationError(Operation.Read, file.name, error.message);
     },
   );
-  if (rows.length === 0) return datasetToDataSource(buildDataset([], []), DataSourceType.Json, file.name, file.size);
-  const sourceNames = Object.keys(takeOne(rows));
-  const bodyRows = rows.map((row) => sourceNames.map((sourceName) => String(takeOne(row, sourceName))));
-  return datasetToDataSource(buildDataset(sourceNames, bodyRows), DataSourceType.Json, file.name, file.size);
+  const [firstRow] = rows;
+  const sourceNames = firstRow ? Object.keys(firstRow) : [];
+  const bodyRows = rows.map((row) => sourceNames.map((sourceName) => getCellText(takeOne(row, sourceName))));
+  return deserializeToDataSource(sourceNames, bodyRows, DataSourceType.Json, file);
 };

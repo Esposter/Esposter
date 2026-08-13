@@ -2,12 +2,13 @@
 import type { User } from "@esposter/db-schema";
 
 interface ProfileCardHeaderProps {
+  displayName: string;
   isSelf: boolean;
-  user: Pick<User, "id" | "image" | "name">;
+  user: Pick<User, "id" | "image">;
 }
 
 defineSlots<{ actions: () => VNode }>();
-const { isSelf, user } = defineProps<ProfileCardHeaderProps>();
+const { displayName, isSelf, user } = defineProps<ProfileCardHeaderProps>();
 </script>
 
 <template>
@@ -17,6 +18,11 @@ const { isSelf, user } = defineProps<ProfileCardHeaderProps>();
     </div>
   </div>
   <div mt--8 px-4 flex items-end justify-between>
-    <MessageModelMemberStatusAvatar :id="user.id" :image="user.image" :name="user.name" :avatar-props="{ size: 64 }" />
+    <MessageModelMemberStatusAvatar
+      :id="user.id"
+      :image="user.image"
+      :name="displayName"
+      :avatar-props="{ size: 64 }"
+    />
   </div>
 </template>

@@ -25,18 +25,19 @@ flowchart LR
 
 - **Block source** — `useReadPublishedSurveys` reads the owner's surveys and keeps only the published ones: a draft survey has no public URL for a block to link. Both editors share it.
 - **Block content** — a styled button linking `RoutePath.View(ResourceType.Survey, id)`. The webpage flavour carries its own inline styling, since a published page loads no stylesheet of ours. Survey names are HTML-escaped into both the block label and the button markup.
-- **Re-sync** — the block category is replaced wholesale through `setBlocks` whenever the editor or the survey list changes, so no per-block bookkeeping is needed.
+- **Re-sync** — the block category is replaced wholesale through `setBlocks` whenever the editor or the survey list changes, so no per-block bookkeeping is needed. The watch itself is shared too (`useSurveyInviteBlocks`): each editor hands it the live editor, the survey list and its own renderer, and owns none of the wiring.
 - **No per-recipient identity** — there is no audience row behind an anonymous page visitor, so a webpage block is always the plain published URL. Invite tokens belong to a distribution orchestrator, not a public page.
 
 ## Key files
 
-| File                                                                         | Role                                    |
-| ---------------------------------------------------------------------------- | --------------------------------------- |
-| `packages/app/app/services/grapesjs/createSurveyInviteBlocks.ts`             | shared core — survey list to block defs |
-| `packages/app/app/services/emailEditor/createEmailSurveyInviteBlocks.ts`     | MJML button flavour                     |
-| `packages/app/app/services/webpageEditor/createWebpageSurveyInviteBlocks.ts` | plain-HTML button flavour               |
-| `packages/app/app/composables/survey/useReadPublishedSurveys.ts`             | the shared block source                 |
-| `packages/app/app/services/grapesjs/setBlocks.ts`                            | wholesale block-category re-sync        |
+| File                                                                         | Role                                       |
+| ---------------------------------------------------------------------------- | ------------------------------------------ |
+| `packages/app/app/services/grapesjs/createSurveyInviteBlocks.ts`             | shared core — survey list to block defs    |
+| `packages/app/app/services/emailEditor/createEmailSurveyInviteBlocks.ts`     | MJML button flavour                        |
+| `packages/app/app/services/webpageEditor/createWebpageSurveyInviteBlocks.ts` | plain-HTML button flavour                  |
+| `packages/app/app/composables/survey/useReadPublishedSurveys.ts`             | the shared block source                    |
+| `packages/app/app/composables/grapesjs/useSurveyInviteBlocks.ts`             | the shared re-sync watch both editors call |
+| `packages/app/app/services/grapesjs/setBlocks.ts`                            | wholesale block-category re-sync           |
 
 ## Notes
 

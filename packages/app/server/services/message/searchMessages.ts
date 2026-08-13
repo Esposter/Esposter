@@ -3,8 +3,7 @@ import type { SelectFields } from "@azure/search-documents";
 import type { Clause, MessageEntity } from "@esposter/db-schema";
 
 import { dedupeFilters } from "#shared/services/message/dedupeFilters";
-import { useSearchClient } from "@@/server/composables/azure/search/useSearchClient";
-import { deserializeMessageSearchDocument } from "@@/server/services/message/deserializeMessageSearchDocument";
+import { readMessageSearchDocuments } from "@@/server/services/message/readMessageSearchDocuments";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { filtersToClauses, getSearchNullClause, serializeSearchClauses } from "@esposter/db";
 import {
@@ -27,7 +26,6 @@ export const searchMessages = async ({
   roomId,
   sortBy,
 }: SearchMessagesInput) => {
-  const client = useSearchClient(SearchIndex.Messages);
   const dedupedFilters = dedupeFilters(filters);
   const hasRoomInFilter = dedupedFilters.some(({ type }) => type === FilterType.In);
   const clauses: Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] = [
@@ -42,17 +40,13 @@ export const searchMessages = async ({
   const filter = hasFiles
     ? `${serializedClauses} ${UnaryOperator.and} ${StandardMessageEntityPropertyNames.files}/any()`
     : serializedClauses;
-  // The Files-in-room tab searches on the files/any() filter alone, so its text query is legitimately empty —
-  // Which Azure Search reads as "match nothing" rather than "match everything", hence the explicit match-all
-  const { count, results } = await client.search(query || "*", {
+  const { count, messages } = await readMessageSearchDocuments({
     filter,
-    includeTotalCount: true,
+    limit,
+    offset,
     orderBy: sortBy.map(({ key, order }) => `${key} ${order}`),
+    query,
     searchFields: SearchIndexSearchableFieldsMap[SearchIndex.Messages],
-    skip: offset,
-    top: limit + 1,
   });
-  const messages: MessageEntity[] = [];
-  for await (const { document } of results) messages.push(deserializeMessageSearchDocument(document));
   return { count, data: getOffsetPaginationData(messages, limit) };
 };

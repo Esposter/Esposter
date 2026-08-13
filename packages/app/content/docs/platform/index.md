@@ -20,7 +20,8 @@ The standards the platform applies live in architecture: the layer model ([/docs
 ## Feature pages
 
 - [Resource explorer](/docs/platform/resource-explorer) — the shell: Home, list, create flow, resource page, blades, command bar
-- [List filters & views](/docs/platform/list-filters-and-views) — the `/all` workbench: filter pills, URL-synced state, bulk operations, column chooser, grouping, CSV export
+- [Resource service menu](/docs/platform/resource-service-menu) — the standing left rail: All, Favorites, Recent, Tags and the bin as sibling routes over one list surface
+- [List filters & views](/docs/platform/list-filters-and-views) — the list workbench: filter pills, URL-synced state, bulk operations, column chooser, grouping, CSV export
 - [Summary view](/docs/platform/summary-view) — the `/all` List/Summary toggle: per-type count cards over a grouped count procedure
 - [Resource page parity](/docs/platform/resource-page-parity) — labeled command bar with overflow, Refresh, Duplicate, type-the-name delete guard, save-conflict surface
 - [Share to esbabbler](/docs/platform/share-to-esbabbler) — Share command posting a published resource's public link into a room you pick
@@ -28,7 +29,7 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [TodoList due reminders](/docs/platform/todolist-due-reminders) — web-push when a TodoList item comes due, over the scheduled-job + push subsystems
 - [Global search](/docs/platform/global-search) — grouped as-you-type dropdown, `Ctrl+K` command palette, keyboard chords, relevance-ranked results
 - [Global search relevance](/docs/platform/global-search-relevance) — `pg_trgm` trigram index and `similarity()` ranking, so a typo still finds its resource
-- [Favorites & recents](/docs/platform/favorites-and-recents) — server-side stars and Home tabs over recently _viewed_ resources
+- [Favorites & recents](/docs/platform/favorites-and-recents) — server-side stars and server-side opens, as Home tabs and as full list routes
 - [Resource tags](/docs/platform/tags) — name:value pairs in Essentials, edited in place, filterable on `/all`
 - [Recycle bin](/docs/platform/recycle-bin) — soft delete with restore, permanent purge, and a 30-day timer sweep
 - [Activity log](/docs/platform/activity-log) — the per-resource audit trail blade, in Azure Table Storage
@@ -54,7 +55,6 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Resource file assets](/docs/platform/resource-file-assets) — the FileAssets capability: hosted binary assets + GrapesJS Asset Manager
 - [Storage quotas](/docs/platform/storage-quotas) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar in the explorer shell's header
 - [Webpage survey invite blocks](/docs/platform/webpage-survey-invite-blocks) — published surveys as drag-in invite buttons in both GrapesJS editors
-- [Resource Explorer consolidation](/docs/platform/resource-consolidation) — the shipped six-phase program record
 
 Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity designs it references live under [proposals](/docs/proposals). Ideas we chose not to pursue are under [deferred](/docs/platform/deferred) (with revisit triggers) and [rejected](/docs/platform/rejected).
 
@@ -79,7 +79,7 @@ Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity d
 - Survey invite blocks in the webpage editor — the email block builder moved to a shared core with per-editor markup wrappers
 - **Note resource** — a rich-text document `ResourceType` on the existing Tiptap dependency: `{ doc }` JSON content (source of truth at rest), a writing-kit editor blade, and a Publishable `/view/Note/[id]` render through `generateHTML` sanitized at the boundary. One pg enum value, zero new dependencies or services. Also a live test of the one-`ResourceType` extensibility claim — the friction it surfaced (per-type router + registration, client mutation switch arm, exhaustive blade map, and three create-flow lists) is recorded on the [Note resource](/docs/platform/note-resource) page.
 - **Blueprint resource + capture** — a parameterized manifest resource: `deployBlueprint` substitutes `{{parameter:key}}`/`{{entry:key}}` tokens, validates every entry against its type's contentSchema, topologically creates the wired set (with mid-deploy compensating cleanup), and `captureBlueprint` turns a selection of live resources into that manifest by rewriting cross-resource ids to aliases. One Postgres enum value, no new services.
-- Storage-backed explorer features — `resourceFavorites` + Home Recent/Favorites tabs, `tags` jsonb with Essentials editing and an `/all` pill, `deletedAt` soft delete with a Recycle bin and a 30-day timer purge, `pg_trgm` relevance ranking, and the Azure Table activity blade. Three Postgres migrations, one new Azure Table, no new Azure services.
+- Storage-backed explorer features — `resourceFavorites` and `resourceAccesses` behind the Favorites and Recent surfaces, `tags` jsonb with Essentials editing plus an `/all` pill and a Tags route, `deletedAt` soft delete with a Recycle bin and a 30-day timer purge, `pg_trgm` relevance ranking, and the Azure Table activity blade. A handful of Postgres migrations, one new Azure Table, no new Azure services.
 - Publish history blade — a capability-gated built-in blade listing every retained `{id}/published/{n}` snapshot from a blob prefix listing (no history table), an owner-only `?version=` preview on the view route, and a restore-to-draft copying a snapshot into the working copy. No new tables or Azure services.
 - **Storage quotas** — a per-user blob allowance (Free = 10 GiB) held under a row lock at SAS issuance and charged by Storage's own `BlobCreated` event; deletion and purge decrement through the same per-blob ledger, an abandoned hold expires as a predicate rather than as work for a job, and the explorer shell's header grows a usage bar on every resource page. One Postgres migration, one Event Grid subscription on the system topic that already existed, nothing scheduled.
 - **TodoList due reminders** — the first platform feature on the notification stack: a post-save due-date diff enqueues one scheduled Service Bus message per new or changed `(itemId, dueAt)`, and the `SendTodoReminder` function re-reads the content blob at fire time (dropping deleted or re-dated items) before web-pushing `『{item}』 is due` to the owner. Stateless — no Postgres row backs the reminder; the scheduled message is the state. One new Service Bus queue, no new services.

@@ -1,34 +1,46 @@
+import type { Transaction } from "@@/server/models/db/Transaction";
 import type { Like } from "@esposter/db-schema";
 
 import { createLikeInputSchema } from "#shared/models/db/post/CreateLikeInput";
 import { deleteLikeInputSchema } from "#shared/models/db/post/DeleteLikeInput";
 import { updateLikeInputSchema } from "#shared/models/db/post/UpdateLikeInput";
-import { ranking } from "@@/server/services/post/ranking";
+import { getPostRanking } from "@@/server/services/post/getPostRanking";
 import { router } from "@@/server/trpc";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
+import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, likes, posts } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
+
+// The three vote writes all read the same slice of the post and all rewrite the same pair of columns, so the
+// Projection and the recount live once — a ranking input added here can never reach only two of them.
+// Every one of them is a read-modify-write of `noLikes`, so the row is locked for the rest of the transaction:
+// Two votes landing together would otherwise both read the pre-vote count and the later write would replace
+// Rather than add, losing a vote and leaving `ranking` derived from a count that never existed. The lock is what
+// Lets `getPostRanking` stay the one ranking formula — a SQL-side increment would need a second copy of it
+const readLikedPost = async (tx: Transaction, postId: string) =>
+  (
+    await tx
+      .select({ createdAt: posts.createdAt, id: posts.id, noLikes: posts.noLikes })
+      .from(posts)
+      .where(eq(posts.id, postId))
+      .for("update")
+  )[0];
+
+const updateLikeCount = (tx: Transaction, post: { createdAt: Date; id: string }, noLikes: number) =>
+  tx
+    .update(posts)
+    .set({ noLikes, ranking: getPostRanking(noLikes, post.createdAt) })
+    .where(eq(posts.id, post.id));
 
 export const likeRouter = router({
   createLike: standardAuthedProcedure.input(createLikeInputSchema).mutation<Like>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
       const [post, existingLike] = await Promise.all([
-        tx.query.posts.findFirst({
-          columns: {
-            createdAt: true,
-            id: true,
-            noLikes: true,
-          },
-          where: {
-            id: {
-              eq: input.postId,
-            },
-          },
-        }),
+        readLikedPost(tx, input.postId),
         tx.query.likes.findFirst({
           where: {
             postId: {
@@ -40,18 +52,11 @@ export const likeRouter = router({
           },
         }),
       ]);
-      if (!post)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Post, input.postId).message,
-        });
+      if (!post) throw getNotFoundError(DatabaseEntityType.Post, input.postId);
       // A like already exists for this (user, post) — the client desynced (double-click / stale feed);
       // Fail cleanly instead of surfacing the raw likes_pkey duplicate-key error as a 500
       else if (existingLike)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Like, JSON.stringify(input)).message,
-        });
+        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Like, JSON.stringify(input));
 
       const newLike = requireMutation(
         (
@@ -64,36 +69,14 @@ export const likeRouter = router({
         DatabaseEntityType.Like,
         JSON.stringify(input),
       );
-      const noLikesNew = post.noLikes + newLike.value;
-      await tx
-        .update(posts)
-        .set({
-          noLikes: noLikesNew,
-          ranking: ranking(noLikesNew, post.createdAt),
-        })
-        .where(eq(posts.id, post.id));
+      await updateLikeCount(tx, post, post.noLikes + newLike.value);
       return newLike;
     }),
   ),
   deleteLike: standardAuthedProcedure.input(deleteLikeInputSchema).mutation<Like>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
       // Get post with current like count in a single query
-      const post = await requireEntity(
-        tx.query.posts.findFirst({
-          columns: {
-            createdAt: true,
-            id: true,
-            noLikes: true,
-          },
-          where: {
-            id: {
-              eq: input,
-            },
-          },
-        }),
-        DatabaseEntityType.Post,
-        input,
-      );
+      const post = await requireEntity(readLikedPost(tx, input), DatabaseEntityType.Post, input);
       const deletedLike = requireMutation(
         (
           await tx
@@ -105,32 +88,14 @@ export const likeRouter = router({
         DatabaseEntityType.Like,
         input,
       );
-      const noLikesNew = post.noLikes - deletedLike.value;
-      await tx
-        .update(posts)
-        .set({
-          noLikes: noLikesNew,
-          ranking: ranking(noLikesNew, post.createdAt),
-        })
-        .where(eq(posts.id, input));
+      await updateLikeCount(tx, post, post.noLikes - deletedLike.value);
       return deletedLike;
     }),
   ),
   updateLike: standardAuthedProcedure.input(updateLikeInputSchema).mutation<Like>(({ ctx, input: { postId, value } }) =>
     ctx.db.transaction(async (tx) => {
       const [post, like] = await Promise.all([
-        tx.query.posts.findFirst({
-          columns: {
-            createdAt: true,
-            id: true,
-            noLikes: true,
-          },
-          where: {
-            id: {
-              eq: postId,
-            },
-          },
-        }),
+        readLikedPost(tx, postId),
         tx.query.likes.findFirst({
           where: {
             postId: {
@@ -142,27 +107,11 @@ export const likeRouter = router({
           },
         }),
       ]);
-      if (!post)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Post, postId).message,
-        });
-      else if (!like)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Like, postId).message,
-        });
+      if (!post) throw getNotFoundError(DatabaseEntityType.Post, postId);
+      else if (!like) throw getNotFoundError(DatabaseEntityType.Like, postId);
       else if (like.value === value)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Update,
-            DatabaseEntityType.Like,
-            JSON.stringify({ postId, value }),
-          ).message,
-        });
+        throw getInvalidOperationError(Operation.Update, DatabaseEntityType.Like, JSON.stringify({ postId, value }));
 
-      const noLikesNew = post.noLikes + value * 2;
       const updatedLike = requireMutation(
         (
           await tx
@@ -175,13 +124,7 @@ export const likeRouter = router({
         DatabaseEntityType.Like,
         JSON.stringify({ postId, value }),
       );
-      await tx
-        .update(posts)
-        .set({
-          noLikes: noLikesNew,
-          ranking: ranking(noLikesNew, post.createdAt),
-        })
-        .where(eq(posts.id, postId));
+      await updateLikeCount(tx, post, post.noLikes + value * 2);
       return updatedLike;
     }),
   ),

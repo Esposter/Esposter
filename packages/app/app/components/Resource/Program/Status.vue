@@ -8,16 +8,17 @@ import { useProgramStore } from "@/store/resource/program";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { getResultAsync } from "@esposter/shared";
 
-const route = useRoute();
+const { currentRoute } = useRouter();
 const { $trpc } = useNuxtApp();
 const programStore = useProgramStore();
 const { loadContent } = programStore;
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
 const { executeMutation: executeGenerateMutation, isPending: isGeneratePending } = useMutation();
-const id = computed(() => getRouteParamString(route.params.id));
+const id = computed(() => getRouteParamString(currentRoute.value.params.id));
 const statusRows = ref<ProgramStatusRow[]>([]);
-const isLoading = ref(true);
+// Set when the response scan hit its cap, which makes every count on this blade a floor rather than a total
+const isRespondedPartial = ref(false);
 const respondedCount = computed(() => statusRows.value.filter(({ isResponded }) => isResponded).length);
 const headers = [
   { key: "keyValue", title: "Participant" },
@@ -25,8 +26,9 @@ const headers = [
   { key: "isResponded", title: "Responded" },
 ];
 const readStatus = async () => {
-  await getResultAsync(() => $trpc.program.readProgramStatus.query({ id: id.value })).match((newStatusRows) => {
-    statusRows.value = newStatusRows;
+  await getResultAsync(() => $trpc.program.readProgramStatus.query({ id: id.value })).match((programStatus) => {
+    isRespondedPartial.value = programStatus.isRespondedPartial;
+    statusRows.value = programStatus.rows;
   }, createErrorNotification);
 };
 const generateParticipants = async () => {
@@ -39,21 +41,20 @@ const generateParticipants = async () => {
     },
   });
 };
-
-onMounted(async () => {
-  await loadContent();
-  await readStatus();
-  isLoading.value = false;
-});
+// The Suspense-wrapped blade awaits the content and the rows it renders, so it opens populated and the
+// Shell's skeleton covers the wait — no per-blade loading flag
+await loadContent();
+await readStatus();
 </script>
 
 <template>
-  <StyledSkeleton v-if="isLoading" />
-  <div v-else p-6 flex flex-col gap-4>
+  <div p-6 flex flex-col gap-4>
     <div flex flex-wrap gap-4 items-center>
       <span text-h6>Status</span>
       <v-spacer />
-      <span op-medium-emphasis>{{ respondedCount }} of {{ statusRows.length }} responded</span>
+      <span op-medium-emphasis>
+        {{ isRespondedPartial ? "at least " : "" }}{{ respondedCount }} of {{ statusRows.length }} responded
+      </span>
       <StyledButton
         :button-props="{
           disabled: isGeneratePending,
@@ -65,6 +66,15 @@ onMounted(async () => {
         Generate participants
       </StyledButton>
     </div>
+    <!-- The undercount is in the table too — a participant past the response cap renders as Awaiting — so the
+      warning sits above both rather than beside the count -->
+    <v-alert
+      v-if="isRespondedPartial"
+      density="compact"
+      type="warning"
+      variant="tonal"
+      text="This survey holds more responses than one read returns, so some participants shown as awaiting may have already responded."
+    />
     <StyledEmptyState
       v-if="statusRows.length === 0"
       icon="mdi-ticket-outline"

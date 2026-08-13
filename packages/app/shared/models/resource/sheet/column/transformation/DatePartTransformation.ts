@@ -3,8 +3,7 @@ import type { ItemEntityType } from "@esposter/shared";
 
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { DatePartType, datePartTypeSchema } from "#shared/models/resource/sheet/column/transformation/DatePartType";
-import { createSourceColumnIdSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnId";
-import { ColumnFormVjsfContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormVjsfContext";
+import { sourceColumnIdSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnId";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -12,10 +11,8 @@ export interface DatePartTransformation extends ItemEntityType<ColumnTransformat
   part: DatePartType;
 }
 
-export const datePartTransformationSchema = z
-  .object({
-    ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.DatePart).readonly()).shape,
-    ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.dateColumnItems"]).shape,
-    part: datePartTypeSchema,
-  })
-  .meta({ title: ColumnTransformationType.DatePart }) satisfies z.ZodType<DatePartTransformation>;
+export const datePartTransformationSchema = z.object({
+  ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.DatePart).readonly()).shape,
+  ...sourceColumnIdSchema.shape,
+  part: datePartTypeSchema,
+}) satisfies z.ZodType<DatePartTransformation>;

@@ -10,7 +10,6 @@ interface UserSettingsContentProps {
 const { settingsType } = defineProps<UserSettingsContentProps>();
 const userSettingsDialogStore = useUserSettingsDialogStore();
 const { isDrawerOpen, isVisible } = storeToRefs(userSettingsDialogStore);
-const { smAndDown } = useVDisplay();
 const component = computed(() => UserSettingsContentMap[settingsType]);
 useSettingsScrollSpy();
 </script>
@@ -18,19 +17,9 @@ useSettingsScrollSpy();
 <template>
   <MessageModelSettingsContent>
     <template #header>
-      <v-sheet tag="header" px-4 py-4 flex items-center justify-between>
-        <div flex gap-2 items-center>
-          <StyledTooltipIconButton v-if="smAndDown" icon="mdi-menu" text="Show menu" @click="isDrawerOpen = true" />
-          <div font-bold text-headline-medium>{{ settingsType }}</div>
-        </div>
-        <v-tooltip text="Close">
-          <template #activator="{ props: tooltipProps }">
-            <v-btn :="tooltipProps" icon="mdi-close" variant="text" @click="isVisible = false" />
-          </template>
-        </v-tooltip>
-      </v-sheet>
+      <MessageModelSettingsHeader :title="settingsType" @close="isVisible = false" @open:drawer="isDrawerOpen = true" />
     </template>
-    <!-- pb-8 gives the scroll area its bottom breathing room, which the panels used to each carry as a mb-8 -->
+    <!-- The scroll area owns its bottom breathing room, so no panel carries a trailing margin of its own -->
     <div pb-8>
       <!-- Timeout 0 shows the skeleton on every tab switch instead of keeping the stale panel -->
       <Suspense v-if="component" :timeout="0">

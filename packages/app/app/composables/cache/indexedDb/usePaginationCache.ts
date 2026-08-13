@@ -26,7 +26,6 @@ export interface PaginationCacheOptions<
   onHydrate?: (items: IndexedDbDatabaseSchema[TStore]["value"][]) => Promisable<void>;
   partitionKey: MaybeRefOrGetter<PartitionKey<TStore, TIndex> | undefined>;
 }
-
 // The schema types every index key as a string, which is what lets a partition double as a `useMutation` target
 // Verbatim. The conditional cannot resolve while the store stays generic, so the intersection restates the
 // Guarantee the schema already makes
@@ -55,7 +54,6 @@ export const usePaginationCache = <
   // Neither half of the cache is something the user acted on — one mirrors a list they are already looking at,
   // The other restores what they already had — so a failure is logged, never alerted
   const onError = console.error;
-
   // Both operations are fired from a watcher, so each is adapted to that sync slot rather than floated
   const writeCachedItems = getSynchronizedFunction(
     async (newItems: IndexedDbDatabaseSchema[TStore]["value"][], partitionKeyValue: PartitionKey<TStore, TIndex>) => {
@@ -81,7 +79,6 @@ export const usePaginationCache = <
       },
     });
   });
-
   // The capped write set is both what gets persisted and what the deep watch tracks. Watching the whole
   // Loaded list instead traversed it on every store write to discover changes that can never reach the cache —
   // A room scrolled back far enough holds many times the rows the cache keeps. Readiness is watched beside it
@@ -106,7 +103,6 @@ export const usePaginationCache = <
     },
     { flush: "post" },
   );
-
   // Both sources restore a partition the user is looking at with no way to fetch it, so both have to fire:
   // Immediate, because the partition a cold start opens on never changes — the room id comes from the route and
   // The layout that calls this already has it at setup, so opening the installed app offline on
@@ -119,7 +115,6 @@ export const usePaginationCache = <
 
     readCachedItems(newPartitionKey);
   });
-
   // Nothing to return: both operations are fire-and-forget through getSynchronizedFunction, so a caller that
   // Needs them landed awaits waitForSynchronizedFunctions() — the drain that already covers every one of them
 };

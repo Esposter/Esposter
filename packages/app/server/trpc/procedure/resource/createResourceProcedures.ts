@@ -11,6 +11,7 @@ import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirecto
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { MAX_UNRECONCILED_STORAGE_BLOBS } from "#shared/services/storage/constants";
+import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
@@ -54,11 +55,17 @@ import { z } from "zod";
 const readResourcesInputSchema = createOffsetPaginationParamsSchema(selectResourceSchema.keyof()).prefault({});
 
 const createResourceInputSchema = selectResourceSchema.pick({ name: true });
-// Tags replace the whole record rather than merging, which is Azure's own tag update semantics
-const updateResourceInputSchema = z.object({
-  ...selectResourceSchema.pick({ id: true, name: true }).shape,
-  ...selectResourceSchema.pick({ tags: true }).partial().shape,
-});
+// Tags replace the whole record rather than merging, which is Azure's own tag update semantics.
+// Both editable fields are optional so a caller writes only the field it owns: a rename and a tag edit are
+// Independent writes to one row, and a tag edit that had to restate the name would put the pre-rename name
+// Back whenever the two overlap
+const updateResourceInputSchema = refineAtLeastOne(
+  z.object({
+    ...selectResourceSchema.pick({ id: true }).shape,
+    ...selectResourceSchema.pick({ name: true, tags: true }).partial().shape,
+  }),
+  ["name", "tags"],
+);
 
 const resourceIdInputSchema = selectResourceSchema.pick({ id: true });
 
@@ -410,7 +417,6 @@ export const createResourceProcedures = <TType extends ResourceType>(
         .delete(resourcePublications)
         .where(eq(resourcePublications.resourceId, id))
         .returning();
-
       // Best-effort after the publications delete, but durable: a lingering blob stays downloadable to anyone
       // Still holding a cached short-lived SAS, and unpublished snapshots must not linger regardless — cleanup
       // Goes through the one blob-deletion publish every delete funnels through (/docs/architecture/persist-then-notify)

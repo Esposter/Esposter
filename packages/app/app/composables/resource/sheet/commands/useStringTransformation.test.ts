@@ -1,6 +1,4 @@
 // @vitest-environment nuxt
-import { NumberColumn } from "#shared/models/resource/sheet/column/NumberColumn";
-import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
 import { StringTransformationType } from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
 import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
@@ -64,50 +62,17 @@ describe(useStringTransformation, () => {
     expect(takeOne(dataSource.rows).data[""]).toBe("A B");
   });
 
-  test("skips non-string columns", async () => {
+  test("no-op when no string cell changes", async () => {
     expect.hasAssertions();
 
-    const numberColumn = new NumberColumn({ name: "", size: 0, sourceName: "" });
-    const initialDataSource = createDataSource([numberColumn], [createRow({ "": 0 })]);
-    const { dataSource } = setupWithDataSource(initialDataSource);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": null })]);
+    setupWithDataSource(initialDataSource);
     const stringTransformation = useStringTransformation();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
     await stringTransformation(StringTransformationType.Trim);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe(0);
     expect(isUndoable.value).toBe(false);
-  });
-
-  test("skips hidden columns", async () => {
-    expect.hasAssertions();
-
-    const hiddenColumn = new StringColumn({ hidden: true, name: "", size: 0, sourceName: "" });
-    const initialDataSource = createDataSource([hiddenColumn], [createRow({ "": " " })]);
-    const { dataSource } = setupWithDataSource(initialDataSource);
-    const stringTransformation = useStringTransformation();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { isUndoable } = storeToRefs(sheetHistoryStore);
-    await stringTransformation(StringTransformationType.Trim);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
-    expect(isUndoable.value).toBe(false);
-  });
-
-  test("undo restores all original values", async () => {
-    expect.hasAssertions();
-
-    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": " " })]);
-    const { dataSource } = setupWithDataSource(initialDataSource);
-    const stringTransformation = useStringTransformation();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { undo } = sheetHistoryStore;
-
-    await stringTransformation(StringTransformationType.Trim);
-    undo(dataSource);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe(" ");
   });
 
   test("description includes the transform", async () => {

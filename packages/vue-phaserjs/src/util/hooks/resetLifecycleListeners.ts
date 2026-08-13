@@ -5,10 +5,7 @@ import { ExternalSceneStore } from "@/store/scene";
 
 export const resetLifecycleListeners = (scene: SceneWithPlugins, lifecycle: Lifecycle) => {
   const listenersMap = ExternalSceneStore.lifecycleListenersMap.get(lifecycle);
-  if (!listenersMap) return;
-
-  const listeners = listenersMap.get(scene.scene.key);
-  if (!listeners) return;
+  if (!listenersMap?.has(scene.scene.key)) return;
 
   listenersMap.set(scene.scene.key, []);
 };

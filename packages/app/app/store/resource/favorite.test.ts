@@ -1,16 +1,19 @@
 // @vitest-environment nuxt
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 
+import { CacheTag } from "@/models/cache/CacheTag";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { useCacheStore } from "@/store/cache";
 import { useFavoriteStore } from "@/store/resource/favorite";
-import { ResourceType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useFavoriteStore, () => {
   const server = setupMswTrpc();
-  const resource = { contentVersion: 0, id: crypto.randomUUID(), name: "name", type: ResourceType.Sheet } as Resource;
+  const resource = createResourceListItem();
+  const otherResource = createResourceListItem();
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -69,10 +72,41 @@ describe(useFavoriteStore, () => {
     expect(favorites.value).toStrictEqual([resource]);
   });
 
+  // This list is replaced wholesale by its own cached read, which refetches the moment a delete elsewhere
+  // Invalidates the resources tag — so a rollback to a copy of the list drops every star that read delivered,
+  // And nothing re-reads them until a reload
+  test("rolls a failed toggle back without dropping stars a re-read delivered", async () => {
+    expect.hasAssertions();
+
+    const cacheStore = useCacheStore();
+    const { invalidateTags } = cacheStore;
+    let isRead = false;
+    server.use(
+      trpcMsw.resource.readFavorites.query(() => {
+        if (isRead) return [otherResource];
+
+        isRead = true;
+        return [];
+      }),
+      trpcMsw.resource.toggleFavorite.mutation(async () => {
+        // The re-read lands while the toggle is still in flight
+        await invalidateTags([CacheTag.Resources]);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+    );
+    const favoriteStore = useFavoriteStore();
+    const { favorites } = storeToRefs(favoriteStore);
+    const { readFavorites, toggleFavorite } = favoriteStore;
+    await readFavorites();
+    await toggleFavorite(resource);
+
+    expect(favorites.value).toStrictEqual([otherResource]);
+  });
+
   test("reads the favorites once for repeat and concurrent mounts", async () => {
     expect.hasAssertions();
 
-    const handler = vi.fn<() => Resource[]>(() => [resource]);
+    const handler = vi.fn<() => ResourceListItem[]>(() => [resource]);
     server.use(trpcMsw.resource.readFavorites.query(handler));
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
@@ -84,18 +118,25 @@ describe(useFavoriteStore, () => {
     expect(favorites.value).toStrictEqual([resource]);
   });
 
-  // A delete or a restore changes which stars still resolve to a live resource, so the cached set is dropped
-  test("re-reads the favorites after an invalidation", async () => {
+  // A delete or a restore changes which stars still resolve to a live resource, and the stars are rendered in
+  // The very table the delete is issued from — so this is the one cache that re-reads at once rather than
+  // Dropping and waiting for its next mount
+  test("re-reads the favorites the moment the resources tag is invalidated", async () => {
     expect.hasAssertions();
 
-    const handler = vi.fn<() => Resource[]>(() => [resource]);
+    const handler = vi.fn<() => ResourceListItem[]>(() => [resource]);
     server.use(trpcMsw.resource.readFavorites.query(handler));
+    const cacheStore = useCacheStore();
+    const { invalidateTags } = cacheStore;
     const favoriteStore = useFavoriteStore();
-    const { readFavorites, refreshFavorites } = favoriteStore;
+    const { readFavorites } = favoriteStore;
     await readFavorites();
-    await refreshFavorites();
+    await invalidateTags([CacheTag.Resources]);
+    const callCountAfterInvalidation = handler.mock.calls.length;
     await readFavorites();
 
+    expect(callCountAfterInvalidation).toBe(2);
+    // The re-read re-cached the set, so the next mount reads nothing
     expect(handler).toHaveBeenCalledTimes(2);
   });
 });

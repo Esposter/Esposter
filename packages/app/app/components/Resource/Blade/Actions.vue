@@ -1,55 +1,35 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
-import type { Resource, ResourcePublication } from "@esposter/db-schema";
+import type { Resource } from "@esposter/db-schema";
 
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { useNavigationTrailStore } from "@/store/navigationTrail";
+import { useResourceStore } from "@/store/resource";
 
 interface ResourceBladeActionsProps {
-  duplicate: () => Promise<void>;
-  isDuplicatePending?: boolean;
-  isLoading?: boolean;
-  isPublishPending?: boolean;
-  isUnpublishPending?: boolean;
-  publication?: ResourcePublication;
-  publish: () => Promise<void>;
-  refresh: () => Promise<void>;
-  remove: () => Promise<boolean>;
-  rename: (name: string) => Promise<void>;
   resource: Resource;
-  unpublish: () => Promise<void>;
 }
 
-const {
-  duplicate,
-  isDuplicatePending,
-  isLoading,
-  isPublishPending,
-  isUnpublishPending,
-  publication,
-  publish,
-  refresh,
-  remove,
-  rename,
-  resource,
-  unpublish,
-} = defineProps<ResourceBladeActionsProps>();
-// When narrow, every command collapses into the … overflow menu — the close ✕ never collapses
+const { resource } = defineProps<ResourceBladeActionsProps>();
+// When narrow, every command collapses into the … overflow menu — the star and the close ✕ never collapse
 const { smAndDown } = useVDisplay();
 // The ✕ peels back to wherever the trail says the visitor came from, so it and the last crumb are one move
 const navigationTrailStore = useNavigationTrailStore();
 const { closeTo } = storeToRefs(navigationTrailStore);
+const resourceStore = useResourceStore();
+const { isDuplicatePending, isLoading, isPublicationPending, publication } = storeToRefs(resourceStore);
+const { deleteResource, duplicateResource, publishResource, readResource, renameResource, unpublishResource } =
+  resourceStore;
 const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
-const isPortable = computed(() => hasCapability(resource.type, "portable"));
 // The dialogs mount only while open so their fields start from the current resource every time
 const isRenameOpen = ref(false);
 const isDeleteOpen = ref(false);
 const isShareOpen = ref(false);
 const { exportFormats, importFormats } = usePortableFormats(() => resource);
-// The collapsed menu is the same command set as the wide bar, derived from the same gates
-// (isPublishable, publication, portable formats) so the two renderings cannot diverge
-const overflowItems = computed<Item[]>(() => [
-  { icon: "mdi-refresh", onClick: () => refresh(), title: "Refresh" },
+// One command set rendered two ways — a labelled bar when there is room, the overflow menu when there is not.
+// Built once rather than written twice, so a label, an icon or a pending state cannot differ between them
+const commandItems = computed<Item[]>(() => [
+  { icon: "mdi-refresh", loading: isLoading.value, onClick: () => readResource(), title: "Refresh" },
   {
     icon: "mdi-pencil",
     onClick: () => {
@@ -65,21 +45,39 @@ const overflowItems = computed<Item[]>(() => [
     },
     title: "Delete",
   },
-  { disabled: isDuplicatePending, icon: "mdi-content-copy", onClick: () => duplicate(), title: "Duplicate" },
+  {
+    disabled: isDuplicatePending.value,
+    icon: "mdi-content-copy",
+    isGroupStart: true,
+    loading: isDuplicatePending.value,
+    onClick: () => duplicateResource(),
+    title: "Duplicate",
+  },
+  // Publishing and unpublishing are one executor, so one pending flag covers the single button that is
+  // Rendered for whichever of them applies
   ...(isPublishable.value
     ? [
-        publication
+        publication.value
           ? {
-              disabled: isUnpublishPending,
+              disabled: isPublicationPending.value,
               icon: "mdi-cloud-off-outline",
-              onClick: () => unpublish(),
+              isGroupStart: true,
+              loading: isPublicationPending.value,
+              onClick: () => unpublishResource(),
               title: "Unpublish",
             }
-          : { disabled: isPublishPending, icon: "mdi-cloud-upload", onClick: () => publish(), title: "Publish" },
+          : {
+              disabled: isPublicationPending.value,
+              icon: "mdi-cloud-upload",
+              isGroupStart: true,
+              loading: isPublicationPending.value,
+              onClick: () => publishResource(),
+              title: "Publish",
+            },
       ]
     : []),
   // An unpublished resource has no public URL, so there is nothing to share until it has one
-  ...(isPublishable.value && publication
+  ...(isPublishable.value && publication.value
     ? [
         {
           icon: "mdi-share-variant",
@@ -90,12 +88,13 @@ const overflowItems = computed<Item[]>(() => [
         },
       ]
     : []),
-  ...importFormats.value.map(({ import: importFormat, label }) => ({
+  ...importFormats.value.map<Item>(({ import: importFormat, label }, index) => ({
     icon: "mdi-import",
+    isGroupStart: index === 0,
     onClick: () => importFormat?.(),
     title: `Import ${label}`,
   })),
-  ...exportFormats.value.map(({ export: exportFormat, label }) => ({
+  ...exportFormats.value.map<Item>(({ export: exportFormat, label }) => ({
     icon: "mdi-export",
     onClick: () => exportFormat?.(),
     title: `Export ${label}`,
@@ -104,38 +103,20 @@ const overflowItems = computed<Item[]>(() => [
 </script>
 
 <template>
-  <template v-if="!smAndDown">
-    <v-btn prepend-icon="mdi-refresh" variant="text" :loading="isLoading" @click="refresh()">Refresh</v-btn>
-    <v-btn prepend-icon="mdi-pencil" variant="text" @click="isRenameOpen = true">Rename</v-btn>
-    <v-btn color="error" prepend-icon="mdi-delete" variant="text" @click="isDeleteOpen = true">Delete</v-btn>
-    <v-divider vertical mx-1 />
-    <v-btn
-      :disabled="isDuplicatePending"
-      :loading="isDuplicatePending"
-      prepend-icon="mdi-content-copy"
-      variant="text"
-      @click="duplicate()"
-    >
-      Duplicate
+  <template
+    v-for="{ color, disabled, icon, isGroupStart, loading, onClick, title } of smAndDown ? [] : commandItems"
+    :key="title"
+  >
+    <v-divider v-if="isGroupStart" vertical mx-1 />
+    <v-btn :color :disabled :loading :prepend-icon="icon" variant="text" @click="onClick?.($event)">
+      {{ title }}
     </v-btn>
-    <template v-if="isPublishable">
-      <v-divider vertical mx-1 />
-      <ResourcePublishToggle :is-publish-pending :is-unpublish-pending :publication :publish :unpublish />
-      <!-- An unpublished resource has no public URL, so there is nothing to share until it has one -->
-      <v-btn v-if="publication" prepend-icon="mdi-share-variant" variant="text" @click="isShareOpen = true">
-        Share
-      </v-btn>
-    </template>
-    <template v-if="isPortable">
-      <v-divider vertical mx-1 />
-      <ResourcePortableActions :resource />
-    </template>
   </template>
-  <StyledOverflowMenu v-else icon="mdi-dots-horizontal" :items="overflowItems" />
+  <StyledOverflowMenu v-if="smAndDown" icon="mdi-dots-horizontal" :items="commandItems" />
   <!-- One click, one icon: the star stays out of the overflow menu like the close ✕ -->
   <ResourceFavoriteToggle :resource />
   <StyledTooltipIconButton :to="closeTo" icon="mdi-close" text="Close" />
-  <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename :resource />
-  <ResourceDeleteDialog v-if="isDeleteOpen" v-model="isDeleteOpen" :remove :resource />
+  <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename="renameResource" :resource />
+  <ResourceDeleteDialog v-if="isDeleteOpen" v-model="isDeleteOpen" :remove="deleteResource" :resource />
   <ResourceShareDialog v-if="isShareOpen" v-model="isShareOpen" :resource />
 </template>

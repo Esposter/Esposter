@@ -8,17 +8,17 @@ import { buildColumnStatisticsComputeContext } from "@/services/resource/sheet/c
 import { ColumnStatisticsDefinitions } from "@/services/resource/sheet/column/ColumnStatisticsDefinitionMap";
 import { computeMonthFrequencies } from "@/services/resource/sheet/column/computeMonthFrequencies";
 import { computeTopFrequencies } from "@/services/resource/sheet/column/computeTopFrequencies";
-import { getComputedColumnEffectiveType } from "@/services/resource/sheet/column/getComputedColumnEffectiveType";
-import { takeOne, toRawDeep } from "@esposter/shared";
+import { computeValue } from "@/services/resource/sheet/column/computeValue";
+import { getEffectiveColumnType } from "@/services/resource/sheet/column/getEffectiveColumnType";
 
 export const computeColumnStatisticsForColumn = (dataSource: DataSource, column: Column): ColumnStatistics => {
-  const effectiveColumnType =
-    column.type === ColumnType.Computed ? getComputedColumnEffectiveType(column) : column.type;
-  const values = dataSource.rows.map((row) => takeOne(row.data, column.name));
-  const context = buildColumnStatisticsComputeContext(
-    Object.assign(structuredClone(toRawDeep(column)), { type: effectiveColumnType }),
-    values,
+  const effectiveColumnType = getEffectiveColumnType(column);
+  // Through the resolver rather than the cells: a computed column never writes to `row.data`, so reading it
+  // Directly reports every one of its rows as absent — neither a value nor a null
+  const values = dataSource.rows.map((row, rowIndex) =>
+    computeValue(dataSource.rows, row, dataSource.columns, column, rowIndex),
   );
+  const context = buildColumnStatisticsComputeContext(effectiveColumnType, values);
   const statisticsValues = Object.fromEntries(
     ColumnStatisticsDefinitions.map(({ applicableColumnTypes, compute, key }) => [
       key,
@@ -27,9 +27,11 @@ export const computeColumnStatisticsForColumn = (dataSource: DataSource, column:
   ) as Pick<ColumnStatistics, ColumnStatisticsKey>;
   const topFrequencies =
     effectiveColumnType === ColumnType.String
-      ? computeTopFrequencies(context.nonNullStrings)
+      ? computeTopFrequencies(context.stringCountMap)
       : effectiveColumnType === ColumnType.Date
         ? computeMonthFrequencies(context.nonNullStrings)
         : undefined;
-  return { columnName: column.name, columnType: column.type, ...statisticsValues, topFrequencies };
+  // The effective type, because it is the type every statistic above was computed under — reporting the
+  // Declared `Computed` instead leaves the chart map with no arm for a column whose numbers it can plot
+  return { columnName: column.name, columnType: effectiveColumnType, ...statisticsValues, topFrequencies };
 };

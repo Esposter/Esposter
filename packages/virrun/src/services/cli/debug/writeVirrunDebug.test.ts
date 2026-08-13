@@ -7,7 +7,6 @@ describe(writeVirrunDebug, () => {
   const message = "task cache off";
 
   afterEach(() => {
-    vi.unstubAllEnvs();
     vi.restoreAllMocks();
   });
 

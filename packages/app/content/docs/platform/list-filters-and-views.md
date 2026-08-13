@@ -1,11 +1,13 @@
 ---
 title: List Filters & Views
-description: The /resource-explorer/all workbench — filter pills, URL-synced state, bulk operations, column management, grouping, CSV export, and real-link rows.
+description: The resource list workbench — filter pills, URL-synced state, bulk operations, column management, grouping, CSV export, and real-link rows.
 ---
 
 # List Filters & Views
 
-Azure "All resources" parity for `/resource-explorer/all`: a filter-pill row, checkbox multi-select with bulk commands, a Manage-view column chooser, group-by-type, CSV export, and a refresh button — all state deep-linkable via query params. Everything is frontend + procedures on the existing `resource` router — no schema changes.
+Azure "All resources" parity for the resource list: a filter-pill row, checkbox multi-select with bulk commands, a Manage-view column chooser, group-by-type, CSV export, and a refresh button — all state deep-linkable via query params.
+
+The workbench is one component, `ResourceListView`, and every list route renders it — `/all`, `/favorites` and `/recents` differ only by a `source` prop that supplies a filter preset and a default sort ([resource service menu](/docs/platform/resource-service-menu)). Everything below is therefore true of all three; `/all` is simply the source with no preset.
 
 ## Filters
 
@@ -23,7 +25,7 @@ Azure "All resources" parity for `/resource-explorer/all`: a filter-pill row, ch
 
 ## Views
 
-- **Column chooser** ("Manage view"): checkbox `v-menu` over `ResourceHeaders`, hidden set persisted to `LocalStorageKey.ResourceListHiddenColumns`; the name column can never be hidden.
+- **Column chooser** ("Manage view"): checkbox `v-menu` over `ResourceHeaders`, hidden set persisted to `LocalStorageKey.ResourceListHiddenColumns`. Two columns are never offered: the name column, which is the row's identity, and the source's **pinned** column — the one the view is ordered by, since a sort key the reader can hide is an order nobody can explain. `Last accessed` is pinned on Recent and hidden by default everywhere else.
 - **Group by type**: toolbar toggle mapping to the data table's `group-by`, section headers = type icon + title + count.
 - **Footer parity**: "Showing x–y of N records" + page-size select (`items-per-page-options`).
 - **Summary view**: a toolbar toggle swapping the table for per-type count cards over the same filters — see [summary view](/docs/platform/summary-view).
@@ -53,28 +55,31 @@ flowchart LR
 
 ## Procedures
 
-| Procedure                                   | Auth                          | Input                                                         | Purpose                                           |
-| ------------------------------------------- | ----------------------------- | ------------------------------------------------------------- | ------------------------------------------------- |
-| `resource.readResources` / `resource.count` | authed                        | `isPublished?: boolean`, `updatedAfter?/updatedBefore?: Date` | status + date filters via `createResourcesWhere`  |
-| `resource.deleteResources`                  | authed (owner-scoped `where`) | `ids: string[]` (unique, bounded)                             | bulk soft delete — `deletedAt` + publication rows |
+| Procedure                                   | Auth                          | Input                                                                                       | Purpose                                                 |
+| ------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `resource.readResources` / `resource.count` | authed                        | `isPublished?`, `isFavorite?`, `isAccessed?: boolean`, `updatedAfter?/updatedBefore?: Date` | status, set and date filters via `createResourcesWhere` |
+| `resource.deleteResources`                  | authed (owner-scoped `where`) | `ids: string[]` (unique, bounded)                                                           | bulk soft delete — `deletedAt` + publication rows       |
 
 ## Key files
 
-| File                                                    | Role                                                                     |
-| ------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `app/components/Resource/List/View.vue`                 | the workbench orchestrator: toolbar, pills, selection, table, singletons |
-| `app/components/Resource/List/FilterBar.vue`            | pill row + `+ Add filter` menu                                           |
-| `app/components/Resource/List/SelectionToolbar.vue`     | `n selected · Delete (n) · Export CSV · Save as blueprint · Clear`       |
-| `app/composables/resource/useResourceListFilters.ts`    | URL-synced filter state                                                  |
-| `app/composables/resource/useReadResources.ts`          | filter input, chunked page reader for CSV export                         |
-| `app/composables/resource/list/useReadResourcesPage.ts` | the shared paged reader: stale guard + filter-keyed count                |
-| `app/composables/resource/list/useDebouncedFilter.ts`   | field ↔ filter bridge that debounces typing                              |
-| `app/composables/resource/useExportResourcesCsv.ts`     | selected-rows + chunked full export with truncation warning              |
-| `server/trpc/routers/resource.ts`                       | filter schema, `createResourcesWhere`, bulk delete                       |
+| File                                                            | Role                                                                     |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `app/components/Resource/List/View.vue`                         | the workbench orchestrator: toolbar, pills, selection, table, singletons |
+| `app/services/resource/list/ResourceListSourceDefinitionMap.ts` | per-source filter preset, default sort, pinned column, empty state       |
+| `app/components/Resource/List/FilterBar.vue`                    | pill row + `+ Add filter` menu                                           |
+| `app/components/Resource/List/SelectionToolbar.vue`             | `n selected · Delete (n) · Export CSV · Save as blueprint · Clear`       |
+| `app/composables/resource/useResourceListFilters.ts`            | URL-synced filter state                                                  |
+| `app/composables/resource/useReadResources.ts`                  | filter input, chunked page reader for CSV export                         |
+| `app/composables/resource/list/useReadResourcesPage.ts`         | the shared paged reader: stale guard + filter-keyed count                |
+| `app/composables/resource/list/useDebouncedFilter.ts`           | field ↔ filter bridge that debounces typing                              |
+| `app/composables/resource/useExportResourcesCsv.ts`             | selected-rows + chunked full export with truncation warning              |
+| `server/trpc/routers/resource.ts`                               | filter schema, `createResourcesWhere`, bulk delete                       |
 
 ## Notes
 
 - Publish **status stays off the default columns** (the consolidation decision) — it appears only as an opt-in filter pill, not a column.
-- One filter source: every filter lands in `createResourcesWhere` so `count` and `readResources` can never disagree.
+- One filter source: every filter lands in `createResourcesWhere` so `count` and `readResources` can never disagree. That includes a source's own preset, which is why Favorites and Recent get the pill row, the total and the summary cards without a line of their own.
+- The `Last accessed` column is sortable because the join that produces it is also the sort space: `readResources` selects the resource columns alongside `resourceAccesses.accessedAt` once and hands that same selection to `parseSortByToSql`, so a column the list can show is a column it can sort by.
 - All filters funnel through the data table's `search` prop (a JSON key of the filter state) so Vuetify resets to page 1 and refires `update:options` on any change. That is also why every text filter — the search box and a tag pill's name and value — writes through `useDebouncedFilter` instead of per keystroke: a raw binding would reset to page 1 and re-run both queries on every character.
+- **The total is only ever written by a read.** A bulk delete drops its rows from the page optimistically, because those rows are what the user is looking at, but the count is the server's number over the whole filter — so the delete re-reads instead of nudging it. Nudging is wrong in both directions: a refresh landing mid-flight has already re-counted, so the adjustment is applied on top of a number that no longer needs it, and the rollback of a rejected delete then adds back rows the fresh count never included.
 - `update:options` also fires for a page turn, a page-size change and a sort change, none of which move the total, so the count is keyed to the filter the user picked (`getResourceFilterKey`) and reused until that changes (or a mutation refreshes). The key is deliberately built from the **selection**, not from the input the queries send: a relative Updated preset anchors its boundary to the current time, so a key holding that resolved date would never repeat and every page turn would re-run the count. For the same reason `useReadResourcesPage` resolves the filter input once per read and hands the same one to both queries, so the total and the rows always describe the same window. The list and the [recycle bin](/docs/platform/recycle-bin) share that composable, which owns the keying and the latest-wins stale guard that keeps a slower earlier read from overwriting a fresher one.

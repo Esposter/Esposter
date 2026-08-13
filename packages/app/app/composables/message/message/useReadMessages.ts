@@ -6,11 +6,12 @@ import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
+import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 export const useReadMessages = () => {
-  const route = useRoute();
+  const { currentRoute } = useRouter();
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
@@ -46,7 +47,7 @@ export const useReadMessages = () => {
   const readMessages = () => {
     const roomId = requirePartitionKey(currentRoomId.value, readMessages.name);
     return readItems(async () => {
-      const rowKey = route.params.rowKey as string | undefined;
+      const rowKey = getRouteParamString(currentRoute.value.params.rowKey);
       if (rowKey) {
         const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
         if (messagesByRowKeys.length > 0) {

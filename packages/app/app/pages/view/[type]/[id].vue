@@ -2,12 +2,12 @@
 import { ViewComponentMap } from "@/services/resource/ViewComponentMap";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 
-const route = useRoute();
-const type = getRouteParamString(route.params.type);
-const id = getRouteParamString(route.params.id);
+const { currentRoute } = useRouter();
+const type = getRouteParamString(currentRoute.value.params.type);
+const id = getRouteParamString(currentRoute.value.params.id);
 // An owner-only preview param — the renderer loads {id}/published/{version} instead of the latest. Anonymous
 // Visitors have no param and always get the latest; a non-owner passing one is rejected server-side
-const versionString = getRouteParamString(route.query.version);
+const versionString = getRouteParamString(currentRoute.value.query.version);
 const parsedVersion = Number(versionString);
 const version = versionString && Number.isInteger(parsedVersion) && parsedVersion > 0 ? parsedVersion : undefined;
 // The route type is an arbitrary string, so it is matched against the registered publishable renderers

@@ -29,6 +29,8 @@ describe("getWslNativeCacheRoot", () => {
   // `wsl.exe -l -q` lists installed distros default-first; only the first non-empty line is taken.
   const distroList = `${TEST_WSL_DISTRO}\n${TEST_WSL_DISTRO_SECONDARY}\n`;
   const cacheRoot = createTestWslUnc(TEST_WSL_CACHE_ROOT_LINUX);
+  // Either half missing is the same refusal, so the three cases below all reconstruct this one message
+  const unresolvedEnvironmentErrorMessage = `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "getWslNativeCacheRoot", "could not resolve the WSL distro or home directory").message}]`;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -58,37 +60,23 @@ describe("getWslNativeCacheRoot", () => {
     expect(execFileSync).toHaveBeenCalledTimes(0);
   });
 
-  test("throws when the distro cannot be resolved", async () => {
-    expect.hasAssertions();
-
-    mockWsl("", `${TEST_WSL_HOME}\n`);
-    const { getWslNativeCacheRoot } = await import("@/services/exec/wsl/getWslNativeCacheRoot");
-
-    expect(() => getWslNativeCacheRoot()).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "getWslNativeCacheRoot", "could not resolve the WSL distro or home directory").message}]`,
-    );
-  });
-
   test("throws when the home directory cannot be resolved", async () => {
     expect.hasAssertions();
 
     mockWsl(distroList, "");
     const { getWslNativeCacheRoot } = await import("@/services/exec/wsl/getWslNativeCacheRoot");
 
-    expect(() => getWslNativeCacheRoot()).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "getWslNativeCacheRoot", "could not resolve the WSL distro or home directory").message}]`,
-    );
+    expect(() => getWslNativeCacheRoot()).toThrowErrorMatchingInlineSnapshot(unresolvedEnvironmentErrorMessage);
   });
 
-  test("does not persist a failed probe", async () => {
+  // A failed probe throws AND leaves nothing behind: persisting it would pin every later process to a refusal
+  test("throws when the distro cannot be resolved, and does not persist the failed probe", async () => {
     expect.hasAssertions();
 
     mockWsl("", `${TEST_WSL_HOME}\n`);
     const { getWslNativeCacheRoot } = await import("@/services/exec/wsl/getWslNativeCacheRoot");
 
-    expect(() => getWslNativeCacheRoot()).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "getWslNativeCacheRoot", "could not resolve the WSL distro or home directory").message}]`,
-    );
+    expect(() => getWslNativeCacheRoot()).toThrowErrorMatchingInlineSnapshot(unresolvedEnvironmentErrorMessage);
     expect(existsSync(join(getCacheHome(), WSL_CACHE_ROOT_CACHE_FILENAME))).toBe(false);
   });
 });

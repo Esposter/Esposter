@@ -2,12 +2,12 @@ import type { Filter } from "@/models/message/filter/Filter";
 
 import { MESSAGE_MAX_LENGTH } from "@/models/message/BaseMessageEntity";
 import { filterSchema } from "@/models/message/filter/Filter";
+import { createMaxLengthCheckSql } from "@/models/shared/Check";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
 import { createUniqueArraySchema } from "@esposter/shared";
-import { sql } from "drizzle-orm";
 import { check, jsonb, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
@@ -26,7 +26,7 @@ export const searchHistoriesInMessage = pgTable(
   },
   {
     extraConfig: ({ query }) => [
-      check("search_histories_query_length_check", sql`LENGTH(${query}) <= ${sql.raw(MESSAGE_MAX_LENGTH.toString())}`),
+      check("searchHistories_query_length_check", createMaxLengthCheckSql(query, MESSAGE_MAX_LENGTH)),
     ],
     schema: messageSchema,
   },

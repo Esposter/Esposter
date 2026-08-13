@@ -30,7 +30,6 @@ export const useAlertStore = defineStore("alert", () => {
     props?: Pick<VAlert["$props"], "icon" | "location">,
   ) => {
     if (getIsServer()) return;
-
     // One cause routinely rejects several operations at once — the file and thumbnail reads of a single
     // Attachment batch, every chunk of a paged sweep — and each rejection arrives here on its own. A toast per
     // Operation says nothing the first one did not, so an identical alert still on screen is refreshed instead

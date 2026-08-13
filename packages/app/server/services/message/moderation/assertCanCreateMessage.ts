@@ -18,7 +18,6 @@ export const assertCanCreateMessage = async (
   if (!rejection) return;
   else if (rejection.type === MessageCreationRejectionType.Slowmode) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
   else if (rejection.type !== MessageCreationRejectionType.WordFilter) throw new TRPCError({ code: "FORBIDDEN" });
-
   // The configured action (warn/timeout) runs before the message is rejected — Discord blocks and acts.
   await executeAutomodAction(db, {
     action: rejection.filter.action,

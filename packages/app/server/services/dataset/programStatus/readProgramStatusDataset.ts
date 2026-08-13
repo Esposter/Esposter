@@ -13,7 +13,7 @@ import { AZURE_MAX_PAGE_SIZE, ResourceType } from "@esposter/db-schema";
 export const readProgramStatusDataset: DatasetProvider = async (ctx, reference) => {
   const resource = await requireOwnedResource(ctx, reference.id, ResourceType.Program);
 
-  const statusRows = await readProgramStatusRows(resource.id);
+  const { isRespondedPartial, rows: statusRows } = await readProgramStatusRows(resource.id);
   // A read that fit under the cap answers for itself; only a read that filled it pays for the count
   const totalRows =
     statusRows.length < AZURE_MAX_PAGE_SIZE ? statusRows.length : await countProgramParticipantEntities(resource.id);
@@ -23,6 +23,10 @@ export const readProgramStatusDataset: DatasetProvider = async (ctx, reference) 
       { name: "addedAt", type: ColumnType.Date },
       { name: "responded", type: ColumnType.Boolean },
     ],
+    // A capped response read reports unmatched participants as not responded, and every participant row is
+    // Still present — so the funnel looks complete while under-reporting. The dataset says so rather than
+    // Letting a dashboard or a published snapshot chart it as an exact total
+    ...(isRespondedPartial && { partialColumns: ["responded"] }),
     // Charting a funnel needs the day, not the minute — and a date-only string is what survives the
     // Published-snapshot round trip (see getUtcDateString)
     rows: statusRows.map(({ addedAt, isResponded, publicId }) => ({

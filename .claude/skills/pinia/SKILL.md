@@ -39,6 +39,10 @@ Some store refs are populated _by a component_ so code outside its subtree can r
 
 Symmetry rule: whatever a component bridges onto a store in setup/`watchImmediate`, its `onUnmounted` un-bridges.
 
+**A teardown on a keyed route takes an id and checks it first.** A page keyed by an entity id is destroyed and recreated when that id changes, and the successor is mounted — and has already loaded its own state — before the predecessor unmounts. An unconditional `onUnmounted` teardown therefore blanks the state the next page just loaded. Pass the id the component owned (`clearFoo(id)`) and make the action a no-op when the store no longer holds it.
+
+**A store cannot be generic, so a type parameter shared by only part of the state is not a reason to keep the whole thing a composable.** Split it: the members whose shape genuinely depends on the parameter take it themselves (a generic _method_, `readContent<ResourceType.Sheet>()`, survives `defineStore` unchanged), and everything identical across parameters becomes plain store state that every surface reads.
+
 ## Never Redirect Store Functions — Use Them Directly
 
 A store function is defined **once** and consumed directly at every use site by destructuring it from the store. Never insert a layer that only forwards to it:
@@ -69,13 +73,13 @@ Do **not** create Pinia actions that only wrap a single `$trpc.xxx.mutate(...)` 
 A store action that mutates goes through `useMutation` (`composables/shared/useMutation.ts`):
 
 - **Declare every instance at the store root** — `const { executeMutation } = useMutation()`. Never inside an action (detached effect scope leak).
-- **One `useMutation()` instance per mutation**, via destructure renames (`executeCreateFooMutation`, plus `isPending: isCreateFooPending` / `getIsPending: getIsFooPending` when consumed), so one action's queue and pending state can't hold up another's.
+- **One `useMutation()` instance per mutation**, via destructure renames (`executeCreateFooMutation`, plus `isPending: isCreateFooPending` / `getIsPending: getIsFooPending` when consumed), so one action's queue and pending state can't hold up another's. **Two mutations that end the same row share one instance instead**, named for the target — the rule and the test for which case you are in are in `packages/app/content/docs/architecture/async-operations.md` § A key queues only within one `useMutation()` instance.
 - **Never hand-roll the alert/rollback/pending wiring** — it surfaces errors via `createAlert` unless you pass `onError`, and runs writes to one `key` one at a time so two actions writing different fields of the same entity both land. Destructure `isPending` only where a control consumes it; the in-flight guard decision tree lives in `packages/app/content/docs/architecture/client-data.md` § In-flight guarding.
 - **`key` is required on every call** — like a Pinia store id, identity is always explicit, and same key means those writes queue.
-- **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure. It runs when the write is **sent**, so take the snapshot **inside** the callback — a queued write must roll back to what the write ahead of it stored, not to the state the user saw when they clicked. Same reason: anything else the payload reads from live state (a version token, a create-or-update branch) is read inside the `mutate` callback, never before the call.
+- **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure. The snapshot is taken **inside** the callback, and the rollback undoes **its own write, never the list** — both traps, and why, are in `references/mutation-actions.md`.
 - **`onSuccess`** is for server-generated results that can't be predicted client-side (a created entity with its id).
 - **A store never orders its own async work** — no promise chained onto the previous one, no `Map<id, Promise>` of in-flight reads, no generation counter or `isSaving` flag. That ordering lives in the primitive, keyed by target; a store that seems to need its own needs the right `key`. Protection applied by hand is protection that gets forgotten.
-- **A read that must not be issued twice at once passes `isExclusive: true` to `executeQuery`** — the fan-out read every mounted instance of a surface fires. Concurrent callers **join** one request and all get the data; a read is never dropped, which would leave the joiner rendering an empty list. It joins only what is still in flight, so read-once semantics stay a separate cache flag (`isLoaded`, a `loadedRoomIds` set) the action checks first, and an invalidating re-read omits the opt-in so it cannot join the answer it just invalidated.
+- **A read that must not be issued twice at once passes `isExclusive: true` to `executeQuery`.** Concurrent callers **join** one request and all get the data — a read is never dropped, which would leave the joiner rendering an empty list. It joins only what is still in flight, so read-once semantics stay a separate cache flag the action checks first, and an invalidating re-read omits the opt-in so it cannot join the answer it just invalidated.
 
 ## CRUD Conventions
 
@@ -101,9 +105,9 @@ Vue 3 tracks `Map` mutations (`set`, `delete`, `clear`) on a `ref(new Map(...))`
 
 ## Storing Class Instances — `markRaw`
 
-Pinia `ref`/`reactive` state is **deep**, so a class instance pushed into a reactive array is recursively wrapped in a reactive `Proxy`. Two things break: ECMAScript `#` private field access (`this` is the Proxy, so the brand check throws `Cannot read private member #x …`), and Pinia devtools traversal, which reads every nested getter and crashes on a lazily-initialised one.
+Pinia state is **deep**, so a class instance pushed into a reactive array is recursively wrapped in a `Proxy`. Two things break: ECMAScript `#` field access (`this` is the Proxy, so the brand check throws `Cannot read private member #x …`), and devtools traversal, which reads every nested getter and crashes on a lazily-initialised one.
 
-Wrap class instances in `markRaw` at the single point they enter reactive state (`history.value.push(markRaw(command))`). The container stays reactive — its `length`/identity still drives computeds — and only the instance opts out, which is correct since command/controller instances hold no reactive state of their own. `markRaw` sets `__v_skip = true`, so traversal skips it. Prefer this over downgrading `#` fields to the TS `private` keyword: keep the strictest ECMAScript form and stop the proxying instead. `shallowRef` is not a substitute when the container relies on in-place `.push()` — it only tracks `.value` reassignment. Applies to any third-party instance holding a live graph (Phaser objects, tilemaps, input keys, plugin instances — see the `vue-phaserjs` skill).
+Wrap class instances in `markRaw` at the single point they enter reactive state (`history.value.push(markRaw(command))`). The container stays reactive — its length and identity still drive computeds — and only the instance opts out, which is correct since command and controller instances hold no reactive state of their own. Prefer this to downgrading `#` fields to the TS `private` keyword: keep the strictest ECMAScript form and stop the proxying instead. `shallowRef` is not a substitute where the container relies on in-place `.push()`, which it does not track. Applies to any third-party instance holding a live graph (`vue-phaserjs` skill).
 
 ## Optimistic Input Clearing on Submit
 
@@ -111,7 +115,7 @@ Clear local form input **before** `await`-ing the store action so the field empt
 
 ## Session Auth in Stores
 
-Never expose `sessionId` or any raw session identifier as a store state field. Read the session via `authClient.useSession()` — in a setup store the **synchronous** form (`const session = authClient.useSession()`, accessed as `session.value.data`), since the setup function can't `await`. The awaited `await authClient.useSession(useFetch)` form is for async, SSR-relevant contexts only — see the `vue` skill's Auth Session section.
+Never expose `sessionId` or any raw session identifier as a store state field. A setup store can't `await`, so it always takes the **synchronous** form: `const session = authClient.useSession()`, accessed as `session.value.data`. Both forms and when each applies: the `vue` skill (`references/auth-session.md`).
 
 ## Deep Dives
 

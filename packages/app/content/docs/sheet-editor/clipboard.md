@@ -9,7 +9,7 @@ Keyboard-driven copy/paste for cell ranges, aligned with Excel selection UX; eve
 
 ## How it works
 
-The grid maintains an anchor/focus cell selection in the cell store. `Row/Table.vue` listens for keyboard shortcuts and routes them to two composables: `useCopyRangeToClipboard` and `usePasteRangeFromClipboard`.
+The grid maintains an anchor/focus cell selection in the cell store. `ResourceSheetRowTable` listens for keyboard shortcuts and routes them to two composables: `useCopyRangeToClipboard` and `usePasteRangeFromClipboard`.
 
 **Copy (`Ctrl+C` / `Cmd+C`)** materializes the selected columns and filtered rows through `filterDataSourceColumns` — so computed columns copy their displayed value, not an empty cell ([copy computed values](/docs/sheet-editor/copy-computed-values)) — and hands the sub-DataSource to `copyToClipboard`, which writes both `text/plain` (TSV) and `text/html` (a styled table, so pasting into Excel/Sheets keeps structure) via `ClipboardItem`, falling back to `writeText` where `ClipboardItem` is unavailable (e.g. Firefox). Hidden columns are excluded; the header row is included or not based on the `copyIncludesHeaders` toolbar toggle.
 
@@ -67,7 +67,8 @@ All paths relative to `packages/app/app`.
 | `services/resource/sheet/commands/parseClipboardValuesByPosition.ts` | TSV → `string[][]` (no header row)                                                                                                                 |
 | `services/resource/sheet/commands/copyToClipboard.ts`                | TSV + HTML `ClipboardItem` write with `writeText` fallback                                                                                         |
 | `composables/resource/sheet/useCopyRangeToClipboard.ts`              | Slices the selected range and writes it to the clipboard                                                                                           |
-| `composables/resource/sheet/commands/usePasteRangeFromClipboard.ts`  | Wires clipboard → `PasteRangeCommand` or `CreateRowsCommand`                                                                                       |
+| `composables/resource/sheet/commands/usePasteRangeFromClipboard.ts`  | Wires clipboard → `usePasteRange` or `useCreateRows`                                                                                               |
+| `composables/resource/sheet/commands/usePasteRange.ts`               | The overwrite paste as a `useSheetCommand`, so both modes share one execute/push/save tail                                                         |
 | `components/Resource/Sheet/Row/Table.vue`                            | Keyboard handlers; maps `shiftKey` → `PasteMode`                                                                                                   |
 | `store/resource/sheet/cell.ts`                                       | Anchor/focus selection state, keyboard navigation, and the `selectedCellRange` computed (normalized `rowStart`/`rowEnd`/`columnStart`/`columnEnd`) |
 
@@ -75,4 +76,4 @@ All paths relative to `packages/app/app`.
 
 - Copy materializes computed values through the same `filterDataSourceColumns` path export uses, so [computed columns](/docs/sheet-editor/computed-columns) copy their displayed value ([copy computed values](/docs/sheet-editor/copy-computed-values)).
 - Paste target columns are pre-indexed by name to avoid repeated linear scans over wide tables.
-- The dedicated copy/paste buttons were removed from the cell text slot when keyboard range copy/paste shipped; row-level copy of checkbox-selected rows remains in the toolbar, alongside the `copyIncludesHeaders` toggle.
+- Copying is keyboard-only — the toolbar carries no copy button, just the `copyIncludesHeaders` toggle deciding whether a copied range leads with its header row.

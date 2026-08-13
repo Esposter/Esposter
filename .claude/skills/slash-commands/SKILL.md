@@ -1,6 +1,6 @@
 ---
 name: slash-commands
-description: Esposter slash command conventions — parameter definitions, execution modes, the chip-based parameter UI and its safeParse/setErrors validation, message formatting, and adding new commands. Apply when writing or modifying slash commands, useExecuteSlashCommand, SlashCommandDefinitionMap, or the SlashCommandParameters components.
+description: Esposter slash command conventions — parameter definitions, execution modes, the chip-based parameter UI and its safeParse/setErrors validation, message formatting, adding new commands, and SlashCommandDefinitionMap being the inventory rather than any page that mirrors it (plus the two shapes the map cannot show — a command that posts nothing, and inline parameters versus a dialog being alternatives). Apply when writing or modifying slash commands, useExecuteSlashCommand, SlashCommandDefinitionMap, or the SlashCommandParameters components.
 ---
 
 # Slash Command Conventions
@@ -132,21 +132,11 @@ Always use `SlashCommandType.X` enum values, never `"Me"`, `"Shrug"`, etc.
    - Neither: do the work inline (e.g. `Topic` runs a room mutation and posts nothing)
 4. No new `MessageType` unless rendering is structurally different (e.g. Poll, Call).
 
-## Existing Commands
+## The registry is the list, not this page
 
-The enum, the map, and the switch must stay in sync (the map is enforced by `satisfies Record<SlashCommandType, SlashCommand>`, the switch by `exhaustiveGuard`):
+The enum, the map and the switch must stay in sync — `satisfies Record<SlashCommandType, SlashCommand>` enforces the map and `exhaustiveGuard` enforces the switch — so `SlashCommandDefinitionMap` **is** the readable inventory of what exists and what each command does. Never mirror it here: a copy is one command behind from the first addition.
 
-| Command      | Parameters                                | Behaviour                                                                                               |
-| ------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `/flip`      | `[]`                                      | Immediate — posts `🌝 **Heads**` or `🌚 **Tails**` (different sides of the coin)                        |
-| `/me`        | `[{ name: "message", isRequired: true }]` | Parameterized — posts `*message*`                                                                       |
-| `/poll`      | `[]`                                      | Immediate → opens `PollDialog` (dialog, not inline params); posts nothing itself                        |
-| `/remind`    | `[]`                                      | Immediate → opens `ScheduledMessageJobDialog(ScheduledMessageJobType.Reminder)`                         |
-| `/roll`      | `[]`                                      | Immediate — posts `🎲 Rolled a **N**` (1–100)                                                           |
-| `/schedule`  | `[]`                                      | Immediate → opens `ScheduledMessageJobDialog(ScheduledMessageJobType.ScheduledMessage)`                 |
-| `/shrug`     | `[{ name: "text", isRequired: false }]`   | Parameterized (optional) — posts `text¯\_(ツ)_/¯`                                                       |
-| `/tableflip` | `[]`                                      | Immediate — posts `(╯°□°）╯︵ ┻━┻`                                                                      |
-| `/topic`     | `[{ name: "text", isRequired: false }]`   | Parameterized — **posts no message**; runs `room.updateRoom` optimistically to set/clear the room topic |
-| `/unflip`    | `[]`                                      | Immediate — posts `┬─┬ノ( º _ ºノ)`                                                                     |
+Two shapes are worth knowing before reading it, because neither is guessable from the map alone:
 
-`/topic` is the proof that a slash command need not produce a message at all — leave `createMessageInput` unassigned and the shared tail sends nothing.
+- **A command need not post a message at all.** Leave `createMessageInput` unassigned and the shared tail sends nothing — that is how a command which only runs a mutation (setting a room topic) or only opens a dialog is written.
+- **Inline parameters and a dialog are alternatives.** A command either collects its arguments as inline chips through `parameters`, or opens a dialog and declares none. Never both.

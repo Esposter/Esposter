@@ -7,7 +7,12 @@ import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapsho
 import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, test } from "vitest";
+import {describe, expect, test, vi} from "vitest";
+
+vi.mock(
+  import("@/services/exec/util/getSandboxNodeVersion"),
+  () => import("@/services/exec/test/getSandboxNodeVersion.test"),
+);
 
 describe(resolveSnapshotLocation, () => {
   const { createWorkspace, getCacheHome } = setupTemporaryCacheHome();

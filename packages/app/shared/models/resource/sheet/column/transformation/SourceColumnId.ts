@@ -1,19 +1,9 @@
-import { ColumnFormVjsfContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormVjsfContext";
 import { z } from "zod";
 
 export interface SourceColumnId {
   sourceColumnId: string;
 }
 
-export const createSourceColumnIdSchema = (
-  getItems: keyof typeof ColumnFormVjsfContextPropertyNames = ColumnFormVjsfContextPropertyNames["context.columnItems"],
-) =>
-  z.object({
-    sourceColumnId: z.string().meta({
-      layout: {
-        comp: "select",
-        getItems,
-      },
-      title: "Source Column",
-    }),
-  }) satisfies z.ZodType<SourceColumnId>;
+export const sourceColumnIdSchema = z.object({
+  sourceColumnId: z.string(),
+}) satisfies z.ZodType<SourceColumnId>;

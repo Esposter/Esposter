@@ -11,18 +11,18 @@ One consistent chrome across every product: a shared page header, shared empty/l
 
 Shell primitives live in `app/components/Styled/` (design-system set) and `app/components/App/` (app-chrome), one export per file.
 
-- `Styled/PageHeader.vue` — the canonical page header. A `v-toolbar` (surface, `height="auto"`) laying out flex rows — the breadcrumb trail with a right-aligned `status` slot for a standing readout, then the page title beside a right-aligned `actions` slot, then an optional `filters` row — never inside `v-toolbar-title`. The trail row is where a persistent number belongs: the trail rarely fills a line, so anything parked on the title row instead pays a row of its own for width already going spare. The title row renders only when there is a title or actions, so a page named by its own content ([resource explorer](/docs/platform/resource-explorer)) costs no empty row.
-- `Styled/EmptyState.vue` — icon + title + description + optional action slot, for "no resources yet" / "no rows" / "not bound to data" states.
-- `Styled/Skeleton.vue` — thin `v-skeleton-loader` wrapper with the project's bordered-card preset, for per-region loading (instead of relying on the single global `AppLoadingIndicator`).
-- `Styled/KeyboardShortcutsDialog.vue` — the shared shortcuts help dialog (category groups + `kbd` chips over a `KeyboardShortcutCategory[]` prop); bound to the messaging shortcuts dialog and the resource explorer's `Resource/ShortcutsOverlay`.
-- `App/Breadcrumbs.vue` — renders the area hub followed by the pages the visitor actually came through, never the page they are on, so a direct arrival still has its way out ([breadcrumb trail](/docs/platform/breadcrumb-trail)); rendered by `PageHeader`, not the global app bar, so it carries page context and never duplicates.
-- `App/Menu/LinkListItem.vue` — a single launcher leaf (extracted from `MenuLinkList` so leaves render identically at top level and inside a group).
+- `StyledPageHeader` — the canonical page header. A `v-toolbar` (surface, `height="auto"`) laying out flex rows — the breadcrumb trail with a right-aligned `status` slot for a standing readout, then the page title beside a right-aligned `actions` slot, then an optional `filters` row — never inside `v-toolbar-title`. The trail row is where a persistent number belongs: the trail rarely fills a line, so anything parked on the title row instead pays a row of its own for width already going spare. The title row renders only when there is a title or actions, so a page named by its own content ([resource explorer](/docs/platform/resource-explorer)) costs no empty row.
+- `StyledEmptyState` — icon + title + description + optional action slot, for "no resources yet" / "no rows" / "not bound to data" states.
+- `StyledSkeleton` — thin `v-skeleton-loader` wrapper with the project's bordered-card preset, for per-region loading (instead of relying on the single global `AppLoadingIndicator`).
+- `StyledKeyboardShortcutsDialog` — the shared shortcuts help dialog (category groups + `kbd` chips over a `KeyboardShortcutCategory[]` prop); bound to the messaging shortcuts dialog and the resource explorer's `Resource/ShortcutsOverlay`.
+- `AppBreadcrumbs` — renders the area hub followed by the pages the visitor actually came through, never the page they are on, so a direct arrival still has its way out ([breadcrumb trail](/docs/platform/breadcrumb-trail)); rendered by `StyledPageHeader`, not the global app bar, so it carries page context and never duplicates.
+- `AppMenuLinkListItem` — a single launcher leaf (extracted from `MenuLinkList` so leaves render identically at top level and inside a group).
 
 ## Navigation
 
 - `ListLinkItem` carries `children?: readonly ListLinkItem[]`. `MenuLinkList` renders a child-bearing item as a `v-list-group`; leaves go through `MenuLinkListItem`.
 - `ProductListLinkItems`: one **Resources** entry replaces the old per-editor entries; Clicker + Dungeons live under a "Games" group. `ProductList` (home/login drawer) reuses `MenuLinkList` so both surfaces stay in sync.
-- The app bar's `#append` cluster (`App/Bar.vue`) orders the app launcher (nine-dot `mdi-dots-grid`) first, then the theme toggle, the notification bell, and the More/account menu last — the launcher leads so the product grid is the first affordance, and the bell sits directly beside the More menu.
+- The app bar's `#append` cluster (`AppBar`) orders the app launcher (nine-dot `mdi-dots-grid`) first, then the theme toggle, the notification bell, and the More/account menu last — the launcher leads so the product grid is the first affordance, and the bell sits directly beside the More menu.
 
 ## Key files
 

@@ -8,13 +8,15 @@ import { DistributedResolver } from "@/models/resolvers/dashboard/chart/Distribu
 import { DonutResolver } from "@/models/resolvers/dashboard/chart/DonutResolver";
 import { PyramidResolver } from "@/models/resolvers/dashboard/chart/PyramidResolver";
 
-export const getActiveChartTypeResolvers = <T extends Chart["configuration"]>(
-  type: ChartType,
-): AChartTypeResolver<T>[] =>
-  [
-    new ChartType3DResolver(),
-    new BasicResolver(),
-    new DistributedResolver(),
-    new DonutResolver(),
-    new PyramidResolver(),
-  ].filter((r) => r.isActive(type));
+// A resolver carries nothing but the chart type it answers to, so one instance serves every lookup —
+// The chart options and the form schema are both recomputed on each edit keystroke
+const chartTypeResolvers: AChartTypeResolver<Chart["configuration"]>[] = [
+  new ChartType3DResolver(),
+  new BasicResolver(),
+  new DistributedResolver(),
+  new DonutResolver(),
+  new PyramidResolver(),
+];
+
+export const getActiveChartTypeResolvers = (type: ChartType): AChartTypeResolver<Chart["configuration"]>[] =>
+  chartTypeResolvers.filter((resolver) => resolver.isActive(type));

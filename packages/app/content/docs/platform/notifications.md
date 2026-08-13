@@ -13,7 +13,7 @@ Azure-portal notifications parity: resource operation outcomes (duplicated, publ
 
 An action marked `isSingleUse` (undo-style mutations, e.g. the delete toast's **Restore**) is consumed on success: both surfaces call `consumeNotificationAction` when the button completes, stripping the button while keeping the notification as history — a second fire from the bell panel would target state the first fire already changed. Repeatable actions (navigation links, **Copy public link**) stay clickable from the bell for the whole session.
 
-Sources (fired from `useResource` and the `/all` list dialogs):
+Sources (fired from `useResourceStore` and the `/all` list dialogs):
 
 - duplicated → success + **Go to resource** action
 - published v{n} / unpublished → success, with **Copy public link** action on publish
@@ -25,7 +25,7 @@ Sources (fired from `useResource` and the `/all` list dialogs):
 
 ```mermaid
 flowchart LR
-  UR["useResource actions<br/>publish · delete · rename · duplicate · save"] --> ST
+  UR["useResourceStore actions<br/>publish · delete · rename · duplicate · save"] --> ST
   LST["/all list dialogs + bulk delete + CSV export"] --> ST
   CV["saveResourceContent<br/>stale contentVersion"] -->|warning + Refresh action| ST["store/notification"]
   ST --> BELL["app-bar bell + badge<br/>(G N opens panel)"]

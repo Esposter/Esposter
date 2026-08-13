@@ -18,6 +18,7 @@ import { getDirectMessageParticipantKey } from "@@/server/services/room/directMe
 import { readDirectMessageParticipantIds } from "@@/server/services/room/directMessage/readDirectMessageParticipantIds";
 import { updateDirectMessageParticipantKey } from "@@/server/services/room/directMessage/updateDirectMessageParticipantKey";
 import { router } from "@@/server/trpc";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
@@ -34,8 +35,7 @@ import {
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { InvalidOperationError, ItemMetadataPropertyNames, Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import { ItemMetadataPropertyNames, Operation } from "@esposter/shared";
 import { and, eq, getColumns, inArray, ne, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
@@ -58,11 +58,7 @@ export const directMessageRouter = router({
         const allUserIds = [...new Set([userId, ...input])];
         const targetUserIds = allUserIds.filter((id) => id !== userId);
         if (targetUserIds.length === 0)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId)
-              .message,
-          });
+          throw getInvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId);
 
         const acceptedFriendships = await tx
           .select()
@@ -74,11 +70,7 @@ export const directMessageRouter = router({
             ),
           );
         if (acceptedFriendships.length !== targetUserIds.length)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId)
-              .message,
-          });
+          throw getInvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId);
 
         const participantKey = getDirectMessageParticipantKey(allUserIds);
         const [newRoom] = await tx
@@ -115,10 +107,7 @@ export const directMessageRouter = router({
 
       for (const userId of userIds) {
         if (participantIds.includes(userId))
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userId).message,
-          });
+          throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userId);
         await assertCanCreateDirectMessageParticipant(tx, actorUser.id, participantIds, userId);
         const targetUser = await requireEntity(
           tx.query.users.findFirst({ where: { id: { eq: userId } } }),
@@ -177,10 +166,7 @@ export const directMessageRouter = router({
       await assertIsRoom(tx, roomId, RoomType.DirectMessage);
       const participantIds = await readDirectMessageParticipantIds(tx, roomId);
       if (!participantIds.includes(userId))
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, userId).message,
-        });
+        throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, userId);
 
       const removedUser = await requireEntity(
         tx.query.users.findFirst({ where: { id: { eq: userId } } }),

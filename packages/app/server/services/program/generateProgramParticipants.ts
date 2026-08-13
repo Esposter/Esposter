@@ -1,6 +1,6 @@
 import type { ProgramParticipant } from "#shared/models/resource/program/ProgramParticipant";
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Clause, Resource } from "@esposter/db-schema";
+import type { Resource } from "@esposter/db-schema";
 
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -12,20 +12,25 @@ import {
   createEntity,
   getEntity,
   getIsConflict,
+  getPartitionKeyFilter,
   getTopNEntities,
-  serializeClauses,
   serializeEntity,
 } from "@esposter/db";
-import {
-  AZURE_MAX_BATCH_SIZE,
-  AZURE_MAX_PAGE_SIZE,
-  AzureTable,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
-  ProgramParticipantEntity,
-} from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
+import { AZURE_MAX_BATCH_SIZE, AZURE_MAX_PAGE_SIZE, AzureTable, ProgramParticipantEntity } from "@esposter/db-schema";
+import { chunk, getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+
+// A create whose row already exists is the one rejection this path expects — it means a concurrent run
+// Claimed the recipient first. Every other failure is a real fault and propagates, so a transient storage
+// Error is never mistaken for a collision and degraded into a per-row storm that fails anyway
+const getIsCreated = (create: () => Promise<unknown>): Promise<boolean> =>
+  getResultAsync(create).match(
+    () => true,
+    (error) => {
+      if (getIsConflict(error)) return false;
+      throw error;
+    },
+  );
 
 // Idempotent by the audience key value: re-running after the audience grows issues only the missing
 // Tokens and never rotates an existing one, because a rotated token would dead-link a link already sent out.
@@ -36,7 +41,6 @@ export const generateProgramParticipants = async (
 ): Promise<ProgramParticipant[]> => {
   const content = await readResourceContent(programResourceSchema, programId);
   if (!content?.audience || !content.keyColumn) throw danglingProgramBindingError();
-
   // A deleted audience makes its provider throw UNAUTHORIZED — surfaced as the program's own
   // Dangling-binding error rather than thrown through as if the owner had lost access to their program.
   // Every other failure is a real fault and propagates, so a transient storage or parse error is never
@@ -51,9 +55,6 @@ export const generateProgramParticipants = async (
   );
   if (!columns.some(({ name }) => name === content.keyColumn)) throw danglingProgramBindingError();
 
-  const clauses: Clause<ProgramParticipantEntity>[] = [
-    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: programId },
-  ];
   const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
   // The capped page is a warm cache, never the source of truth — a participant past the cap is simply one
   // This read did not see, and the insert below still refuses to issue them a second token
@@ -61,7 +62,7 @@ export const generateProgramParticipants = async (
     programParticipantClient,
     AZURE_MAX_PAGE_SIZE,
     ProgramParticipantEntity,
-    { filter: serializeClauses(clauses) },
+    { filter: getPartitionKeyFilter(programId) },
   );
   const participantsByKeyValue = new Map<string, ProgramParticipant>(
     existingParticipants.map(({ keyValue, token }) => [keyValue, { keyValue, token }]),
@@ -88,38 +89,23 @@ export const generateProgramParticipants = async (
   // Every participant of a program shares its partition, so the inserts ride one transaction per batch
   // Instead of a round trip each — an audience at the read cap costs ten calls rather than a thousand,
   // And this is a single mutation request the owner waits on
-  for (let i = 0; i < newParticipants.length; i += AZURE_MAX_BATCH_SIZE) {
-    const batch = newParticipants.slice(i, i + AZURE_MAX_BATCH_SIZE);
-    const isBatchCreated = await getResultAsync(() =>
+  for (const batch of chunk(newParticipants, AZURE_MAX_BATCH_SIZE)) {
+    const isBatchCreated = await getIsCreated(() =>
       programParticipantClient.submitTransaction(batch.map((participant) => ["create", serializeEntity(participant)])),
-    ).match(
-      () => true,
-      (error) => {
-        if (getIsConflict(error)) return false;
-        throw error;
-      },
     );
     if (isBatchCreated) {
       for (const { keyValue, token } of batch) participantsByKeyValue.set(keyValue, { keyValue, token });
       continue;
     }
-
     // A transaction is all-or-nothing, so one recipient a concurrent run already claimed rolls back the
     // Whole batch — replay it insert by insert, which lands everyone this run is still the first to reach
     for (const participant of batch) {
       const { keyValue, rowKey, token } = participant;
-      const isCreated = await getResultAsync(() => createEntity(programParticipantClient, participant)).match(
-        () => true,
-        (error) => {
-          if (getIsConflict(error)) return false;
-          throw error;
-        },
-      );
+      const isCreated = await getIsCreated(() => createEntity(programParticipantClient, participant));
       if (isCreated) {
         participantsByKeyValue.set(keyValue, { keyValue, token });
         continue;
       }
-
       // Someone else got there first, so their token is the one that may already be sitting in an inbox —
       // This run adopts it and drops the token it just minted, which was never stored and never sent
       const existingParticipant = await getEntity(

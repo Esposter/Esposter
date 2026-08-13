@@ -1,39 +1,13 @@
 <script setup lang="ts">
-import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
+import type { Resource } from "@esposter/db-schema";
 
 interface ResourceExplorerProps {
   activeBlade: string;
-  duplicate: () => Promise<void>;
-  isDuplicatePending?: boolean;
-  isLoading?: boolean;
-  isPublishPending?: boolean;
-  isUnpublishPending?: boolean;
-  publication?: ResourcePublication;
-  publish: () => Promise<void>;
-  refresh: () => Promise<void>;
-  remove: () => Promise<boolean>;
-  rename: (name: string) => Promise<void>;
   resource: Resource;
-  unpublish: () => Promise<void>;
-  updateTags: (tags: ResourceTags) => Promise<void>;
 }
-
-const {
-  activeBlade,
-  duplicate,
-  isDuplicatePending,
-  isLoading,
-  isPublishPending,
-  isUnpublishPending,
-  publication,
-  publish,
-  refresh,
-  remove,
-  rename,
-  resource,
-  unpublish,
-  updateTags,
-} = defineProps<ResourceExplorerProps>();
+// The resource itself is threaded because the page's own guard is what makes it non-optional; everything else
+// The blade shows or does — the publication, the loading flag, every write — comes from the resource store
+const { activeBlade, resource } = defineProps<ResourceExplorerProps>();
 // The blade nav is a rail beside the content on desktop and a dropdown above it where there is no room for one
 const { smAndDown } = useVDisplay();
 </script>
@@ -44,25 +18,15 @@ const { smAndDown } = useVDisplay();
   <v-sheet flex flex-1>
     <!-- min-w-0 lets the box shrink below its content's intrinsic width so wide blades scroll internally -->
     <div b-0 b-border b-solid flex flex-1 flex-col min-w-0>
-      <ResourceBladeToolbar
-        :active-blade
-        :duplicate
-        :is-duplicate-pending
-        :is-loading
-        :is-publish-pending
-        :is-unpublish-pending
-        :publication
-        :publish
-        :refresh
-        :remove
-        :rename
-        :resource
-        :unpublish
-      />
+      <v-toolbar pl-4>
+        <ResourceBladeTitle :active-blade :resource />
+        <v-spacer />
+        <ResourceBladeActions :resource />
+      </v-toolbar>
       <div b-0 b-t-1 b-border b-solid flex flex-1 min-w-0 :class="smAndDown ? 'flex-col' : 'flex-row'">
         <ResourceBladeNav :active-blade :resource />
         <div flex-1 min-w-0 overflow-auto>
-          <ResourceBladeOutlet :active-blade :is-loading :publication :resource :update-tags />
+          <ResourceBladeOutlet :active-blade :resource />
         </div>
       </div>
     </div>

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
-import { mergeProps } from "vue";
-
 interface StyledOverflowMenuProps {
   icon?: string;
   items: Item[];
@@ -13,14 +11,7 @@ const { icon = "mdi-dots-vertical", items, text = "More commands" } = defineProp
 </script>
 
 <template>
-  <v-menu>
-    <template #activator="{ props: menuProps }">
-      <v-tooltip :text>
-        <template #activator="{ props: tooltipProps }">
-          <v-btn :icon :="mergeProps(menuProps, tooltipProps)" />
-        </template>
-      </v-tooltip>
-    </template>
+  <StyledTooltipMenuIconButton :icon :text>
     <v-list density="compact">
       <v-list-item
         v-for="{ active, color, disabled, icon: itemIcon, onClick, title } of items"
@@ -33,5 +24,5 @@ const { icon = "mdi-dots-vertical", items, text = "More commands" } = defineProp
         @click="onClick"
       />
     </v-list>
-  </v-menu>
+  </StyledTooltipMenuIconButton>
 </template>

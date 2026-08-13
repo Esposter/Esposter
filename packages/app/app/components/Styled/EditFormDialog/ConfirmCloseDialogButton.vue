@@ -12,11 +12,20 @@ interface ConfirmCloseDialogButtonProps<T> {
 const dialog = defineModel<boolean>({ required: true });
 const { editedItem, isDirty, isSavable } = defineProps<ConfirmCloseDialogButtonProps<T>>();
 const emit = defineEmits<{ save: []; "update:edit-form-dialog": [value: false] }>();
-const displayItemType = computed(() => prettify(editedItem.type));
 </script>
 
 <template>
-  <v-dialog v-model="dialog">
+  <StyledDialog
+    v-model="dialog"
+    :card-props="{ title: 'Confirm Changes' }"
+    :confirm-button-props="{ disabled: !isSavable, text: 'Save changes' }"
+    @confirm="
+      (onComplete) => {
+        onComplete();
+        emit('save');
+      }
+    "
+  >
     <template #activator>
       <StyledTooltipIconButton
         icon="mdi-close"
@@ -29,36 +38,19 @@ const displayItemType = computed(() => prettify(editedItem.type));
         "
       />
     </template>
-    <StyledCard
-      :card-props="{
-        title: 'Confirm Changes',
-        text: `You have modified this ${displayItemType}. You can save your changes, discard your changes, or cancel to continue
-          editing.`,
-      }"
-    >
-      <v-card-actions flex-wrap gap-y-2>
-        <v-spacer />
-        <v-btn text="Cancel" variant="outlined" @click="dialog = false" />
-        <v-btn
-          text="Discard changes"
-          variant="outlined"
-          @click="
-            () => {
-              dialog = false;
-              emit('update:edit-form-dialog', false);
-            }
-          "
-        />
-        <StyledButton
-          :button-props="{ disabled: !isSavable, text: 'Save changes' }"
-          @click="
-            () => {
-              dialog = false;
-              emit('save');
-            }
-          "
-        />
-      </v-card-actions>
-    </StyledCard>
-  </v-dialog>
+    You have modified this {{ prettify(editedItem.type) }}. You can save your changes, discard your changes, or cancel
+    to continue editing.
+    <template #prepend-actions>
+      <v-btn
+        text="Discard changes"
+        variant="outlined"
+        @click="
+          () => {
+            dialog = false;
+            emit('update:edit-form-dialog', false);
+          }
+        "
+      />
+    </template>
+  </StyledDialog>
 </template>

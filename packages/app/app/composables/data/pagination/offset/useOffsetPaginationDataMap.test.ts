@@ -2,7 +2,7 @@
 import type { VueWrapper } from "@vue/test-utils";
 
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
-import { noop } from "@esposter/shared";
+import { createPendingQuery } from "@/composables/data/pagination/createPendingQuery.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -29,20 +29,10 @@ describe(useOffsetPaginationDataMap, () => {
     );
     await flushPromises();
   };
-  const getPendingData = () => {
+  const createPendingRead = () => {
     const data = new OffsetPaginationData<string>();
     data.items = [item];
-    let resolveQuery: (data: OffsetPaginationData<string>) => void = noop;
-    const query = () =>
-      new Promise<OffsetPaginationData<string>>((resolve) => {
-        resolveQuery = resolve;
-      });
-    return {
-      query,
-      resolveQuery: () => {
-        resolveQuery(data);
-      },
-    };
+    return createPendingQuery(data);
   };
 
   afterEach(() => {
@@ -54,7 +44,7 @@ describe(useOffsetPaginationDataMap, () => {
     expect.hasAssertions();
 
     await mountDataMap();
-    const { query, resolveQuery } = getPendingData();
+    const { query, resolveQuery } = createPendingRead();
     const pendingRead = readItems(query);
     // The target switches while the read for the original key is still in flight
     currentId.value = otherKey;
@@ -74,7 +64,7 @@ describe(useOffsetPaginationDataMap, () => {
     expect.hasAssertions();
 
     await mountDataMap();
-    const { query, resolveQuery } = getPendingData();
+    const { query, resolveQuery } = createPendingRead();
     const pendingRead = getReadMoreItems(query)();
     currentId.value = otherKey;
     await flushPromises();

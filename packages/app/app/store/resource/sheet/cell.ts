@@ -29,9 +29,7 @@ export const useCellStore = defineStore("resource/sheet/cell", () => {
     if (cellState.value.mode === CellMode.Edit) cellState.value = { mode: CellMode.View };
   };
   const isEditingCell = (rowIndex: number, columnName: string) =>
-    cellState.value.mode === CellMode.Edit &&
-    cellState.value.rowIndex === rowIndex &&
-    cellState.value.columnName === columnName;
+    editingCell.value?.rowIndex === rowIndex && editingCell.value.columnName === columnName;
 
   const focusCell = computed(() => (cellState.value.mode === CellMode.Select ? cellState.value.focus : undefined));
 
@@ -42,14 +40,13 @@ export const useCellStore = defineStore("resource/sheet/cell", () => {
       mode: CellMode.Select,
     };
   };
-  const shiftStartCellSelection = (rowIndex: number, columnIndex: number) => {
-    if (cellState.value.mode === CellMode.Select)
-      cellState.value = { ...cellState.value, focus: { columnIndex, rowIndex } };
-    else startCellSelection(rowIndex, columnIndex);
-  };
   const extendCellSelection = (rowIndex: number, columnIndex: number) => {
     if (cellState.value.mode !== CellMode.Select) return;
     cellState.value = { ...cellState.value, focus: { columnIndex, rowIndex } };
+  };
+  const shiftStartCellSelection = (rowIndex: number, columnIndex: number) => {
+    if (cellState.value.mode === CellMode.Select) extendCellSelection(rowIndex, columnIndex);
+    else startCellSelection(rowIndex, columnIndex);
   };
   const clearCellSelection = () => {
     if (cellState.value.mode === CellMode.Select) cellState.value = { mode: CellMode.View };

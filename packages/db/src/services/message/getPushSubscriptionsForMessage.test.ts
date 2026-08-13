@@ -1,6 +1,7 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
+import { createMention } from "@/services/message/createMention.test";
+import { createUser } from "@/services/message/createUser.test";
 import { getPushSubscriptionsForMessage } from "@/services/message/getPushSubscriptionsForMessage";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -13,21 +14,13 @@ import {
   userStatusesInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import {
-  MENTION_EVERYONE_ID,
-  MENTION_HERE_ID,
-  MENTION_ID_ATTRIBUTE,
-  MENTION_TYPE,
-  MENTION_TYPE_ATTRIBUTE,
-} from "@esposter/shared";
+import { MENTION_EVERYONE_ID, MENTION_HERE_ID } from "@esposter/shared";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 const getEndpoint = (userId: string) => `https://push.example.com/${userId}`;
-const getMentionMessage = (id: string) =>
-  `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${id}" />`;
 
 describe(getPushSubscriptionsForMessage, () => {
-  let db: PostgresJsDatabase<typeof relations>;
+  let db: Database;
   const name = "name";
   const roomId = crypto.randomUUID();
   const allOnlineUserId = crypto.randomUUID();
@@ -42,27 +35,19 @@ describe(getPushSubscriptionsForMessage, () => {
   beforeAll(async () => {
     db = await createMockDb();
     const createdAt = new Date();
-    const createUser = (id: string) => ({
-      createdAt,
-      email: id,
-      emailVerified: true,
-      id,
-      image: "",
-      name,
-      updatedAt: createdAt,
-    });
-
     await db
       .insert(users)
-      .values([
-        createUser(allOnlineUserId),
-        createUser(allOfflineUserId),
-        createUser(allNullStatusUserId),
-        createUser(directMessageOnlineUserId),
-        createUser(directMessageOfflineUserId),
-        createUser(neverUserId),
-        createUser(senderUserId),
-      ]);
+      .values(
+        [
+          allOnlineUserId,
+          allOfflineUserId,
+          allNullStatusUserId,
+          directMessageOnlineUserId,
+          directMessageOfflineUserId,
+          neverUserId,
+          senderUserId,
+        ].map((id) => createUser(id, createdAt, name)),
+      );
 
     await db.insert(roomsInMessage).values({
       id: roomId,
@@ -143,7 +128,7 @@ describe(getPushSubscriptionsForMessage, () => {
 
     const result = await getPushSubscriptionsForMessage(db, {
       ...sender,
-      message: getMentionMessage(directMessageOnlineUserId),
+      message: createMention(directMessageOnlineUserId),
     });
     const endpointSet = new Set(result.map((pushSubscription) => pushSubscription.endpoint));
 
@@ -159,7 +144,7 @@ describe(getPushSubscriptionsForMessage, () => {
 
     const result = await getPushSubscriptionsForMessage(db, {
       ...sender,
-      message: getMentionMessage(MENTION_EVERYONE_ID),
+      message: createMention(MENTION_EVERYONE_ID),
     });
 
     const endpointSet = new Set(result.map((pushSubscription) => pushSubscription.endpoint));
@@ -177,7 +162,7 @@ describe(getPushSubscriptionsForMessage, () => {
 
     const result = await getPushSubscriptionsForMessage(db, {
       ...sender,
-      message: getMentionMessage(MENTION_HERE_ID),
+      message: createMention(MENTION_HERE_ID),
     });
 
     const endpointSet = new Set(result.map((pushSubscription) => pushSubscription.endpoint));

@@ -2,7 +2,7 @@ import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { Direction } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";

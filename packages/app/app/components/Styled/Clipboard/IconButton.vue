@@ -1,18 +1,21 @@
 <script setup lang="ts">
+import { useClipboardStore } from "@/store/clipboard";
+
 interface StyledClipboardIconButtonProps {
   source: string;
   text?: string;
 }
 
 const { source, text } = defineProps<StyledClipboardIconButtonProps>();
-const { copied, copy } = useClipboard({ source });
+const clipboardStore = useClipboardStore();
+const { copy } = clipboardStore;
 </script>
 
 <template>
-  <v-tooltip :text="text ?? 'Copy'">
-    <template #activator="{ props }">
-      <v-btn :="props" icon="mdi-clipboard" size="small" @click="copy(source)" />
-    </template>
-  </v-tooltip>
-  <StyledClipboardSnackbar v-model="copied" :source />
+  <StyledTooltipIconButton
+    :button-props="{ size: 'small' }"
+    icon="mdi-clipboard"
+    :text="text ?? 'Copy'"
+    @click="copy(source)"
+  />
 </template>

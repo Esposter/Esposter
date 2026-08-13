@@ -9,7 +9,7 @@ description: pg_trgm typo tolerance for resource name search — extension, GIN 
 
 ## How it works
 
-Name search used to be exact-substring only, ranked prefix-first then newest-first. That is fine until you mistype, at which point a resource you can see in the list simply does not exist as far as search is concerned.
+Exact-substring matching — ranked prefix-first, then newest-first — is fine until you mistype, at which point a resource you can see in the list simply does not exist as far as search is concerned. Name search therefore scores by similarity rather than by containment alone.
 
 The `pg_trgm` extension makes Postgres compare strings by the trigrams they share. `similarity(name, query)` returns the fraction in common, so a transposition costs a little similarity instead of all of it. `SEARCH_SIMILARITY_THRESHOLD` is pg_trgm's own default cutoff — the point where "survye" still reaches "Survey" without unrelated names leaking in.
 

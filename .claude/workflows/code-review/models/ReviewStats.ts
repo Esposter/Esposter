@@ -7,8 +7,13 @@ export interface ReviewStats {
   candidates: number;
   claimsChecked?: number;
   claimsInventoried?: number;
-  cleanupCap?: number;
+  conventionsCeiling?: number;
   deduped: number;
+  droppedAtAreaFileCap: number;
+  droppedAtFinderCap: number;
+  droppedAtVerifyCap: number;
+  droppedClaims: number;
+  droppedSeams: number;
   droppedUnfound: number;
   droppedUnsettled: number;
   droppedUnverified: number;
@@ -20,8 +25,10 @@ export interface ReviewStats {
   refuted: number;
   reportableCeiling?: number;
   reported: number;
+  resolveCeiling?: number;
   seams?: string[];
-  sweepCap?: number;
+  sweepCeiling?: number;
   verified: number;
   verifierAgents: number;
+  verifyCeiling?: number;
 }

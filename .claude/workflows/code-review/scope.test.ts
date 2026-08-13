@@ -78,7 +78,9 @@ describe("code-review scope sizing", () => {
     const run = await runReview("high", stubFor({ scope: { changedLines: 100, files: ["a.ts"] } }));
 
     expect(getPrompt(run, "angle-A")).toContain("Surface up to 4 candidate findings");
-    // The cleanup finder covers five lenses on one budget: the correctness total, never a per-lens one.
-    expect(getPrompt(run, "cleanup")).toContain("Surface up to 8 candidate findings");
+    // The conventions finder gets ONE candidate per correctness angle, never the correctness total its
+    // Five-lens predecessor carried — that budget made it half of a lens run's candidates and half of its
+    // Verifier fan-out, for findings that are minor by definition.
+    expect(getPrompt(run, "conventions")).toContain("Surface up to 2 candidate findings");
   });
 });

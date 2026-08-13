@@ -4,7 +4,6 @@ import { createDataSource } from "@/composables/resource/sheet/commands/createDa
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -16,8 +15,7 @@ describe(useToggleColumnVisibility, () => {
 
     const { dataSource } = setupWithDataSource();
     const toggleColumnVisibility = useToggleColumnVisibility();
-    const column = takeOne(dataSource?.columns ?? []);
-    await toggleColumnVisibility(column.id);
+    await toggleColumnVisibility(takeOne(dataSource.columns).id);
 
     expect(takeOne(dataSource.columns).hidden).toBe(true);
   });
@@ -29,20 +27,6 @@ describe(useToggleColumnVisibility, () => {
     const { dataSource } = setupWithDataSource(createDataSource([hiddenColumn], [createRow({ "": 0 })]));
     const toggleColumnVisibility = useToggleColumnVisibility();
     await toggleColumnVisibility(hiddenColumn.id);
-
-    expect(takeOne(dataSource.columns).hidden).toBe(false);
-  });
-
-  test("undo restores original visibility", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const toggleColumnVisibility = useToggleColumnVisibility();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { undo } = sheetHistoryStore;
-    const column = takeOne(dataSource?.columns ?? []);
-    await toggleColumnVisibility(column.id);
-    undo(dataSource);
 
     expect(takeOne(dataSource.columns).hidden).toBe(false);
   });

@@ -1,12 +1,11 @@
 // @vitest-environment nuxt
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { VueWrapper } from "@vue/test-utils";
-import type { Router } from "vue-router";
 
 import { useReadMembers } from "@/composables/message/room/useReadMembers";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useMemberStore } from "@/store/message/user/member";
-import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -14,7 +13,6 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 describe(useReadMembers, () => {
   const server = setupMswTrpc();
   let wrapper: VueWrapper;
-  let router: Router;
   let count: Ref<number>;
   let countsByTopRole: Ref<MemberCountByTopRole[]>;
   let readMembers: ReturnType<typeof useReadMembers>["readMembers"];
@@ -23,17 +21,12 @@ describe(useReadMembers, () => {
   const roleId = crypto.randomUUID();
   const newCount = 5;
 
-  const setRouteId = (id: string) => {
-    router.currentRoute.value.params.id = id;
-    triggerRef(router.currentRoute);
-  };
   const mountRead = async () => {
     wrapper = await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          router = useRouter();
-          setRouteId(roomId);
+          setCurrentRoomId(roomId);
           const memberStore = useMemberStore();
           ({ count, countsByTopRole } = storeToRefs(memberStore));
           ({ readMembers } = useReadMembers());
@@ -53,10 +46,8 @@ describe(useReadMembers, () => {
   test("files the member totals under the room they were read for", async () => {
     expect.hasAssertions();
 
-    let releaseReads = noop;
-    const readGate = new Promise<void>((resolve) => {
-      releaseReads = resolve;
-    });
+    const { promise: readsPromise, resolve: releaseReads } = Promise.withResolvers<void>();
+    const readGate = readsPromise;
     server.use(
       trpcMsw.room.countMembers.query(async () => {
         await readGate;
@@ -76,14 +67,14 @@ describe(useReadMembers, () => {
     // The reads are issued a microtask after the call, so let them go out before the room moves
     await flushPromises();
     // The user switches rooms while the three reads are still in flight
-    setRouteId(otherRoomId);
+    setCurrentRoomId(otherRoomId);
     releaseReads();
     await pendingRead;
 
     expect(count.value).toBe(0);
     expect(countsByTopRole.value).toStrictEqual([]);
 
-    setRouteId(roomId);
+    setCurrentRoomId(roomId);
 
     expect(count.value).toBe(newCount);
     expect(countsByTopRole.value).toStrictEqual([{ count: newCount, roleId }]);

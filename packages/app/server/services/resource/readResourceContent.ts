@@ -1,8 +1,8 @@
 import type { Resource } from "@esposter/db-schema";
 import type { z } from "zod";
 
-import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
+import { getContentBlobName } from "@esposter/db";
 
 export const readResourceContent = <TSchema extends z.ZodType>(
   contentSchema: TSchema,

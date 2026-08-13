@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { GRAPES_JS_EDITOR_CONTAINER_ID, SURVEY_INVITE_BLOCK_CATEGORY } from "@/services/grapesjs/constants";
-import { setBlocks } from "@/services/grapesjs/setBlocks";
+import { GRAPES_JS_EDITOR_CONTAINER_ID } from "@/services/grapesjs/constants";
 import { createWebpageSurveyInviteBlocks } from "@/services/webpageEditor/createWebpageSurveyInviteBlocks";
 import { WebpageEditorPlugins } from "@/services/webpageEditor/WebpageEditorPlugins";
 import { WebpageEditorStyleManager } from "@/services/webpageEditor/WebpageEditorStyleManager";
+import { useResourceStore } from "@/store/resource";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType } from "@esposter/db-schema";
 import "grapesjs/dist/css/grapes.min.css";
 
+const resourceStore = useResourceStore();
+const { resource } = storeToRefs(resourceStore);
 const webpageEditorStore = useWebpageEditorStore();
 const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
-const uploadFile = useUploadResourceFile(ResourceType.Webpage, () => webpageEditorStore.resource?.id ?? "");
+const uploadFile = useUploadResourceFile(ResourceType.Webpage, () => resource.value?.id ?? "");
 const { publishedSurveys } = useReadPublishedSurveys();
 const { editor } = await useGrapesJsEditor(
   {
@@ -26,10 +28,7 @@ const { editor } = await useGrapesJsEditor(
   { upload: uploadFile },
 );
 
-watch([editor, publishedSurveys], ([newEditor, newPublishedSurveys]) => {
-  if (!newEditor) return;
-  setBlocks(newEditor, SURVEY_INVITE_BLOCK_CATEGORY, createWebpageSurveyInviteBlocks(newPublishedSurveys));
-});
+useSurveyInviteBlocks(editor, publishedSurveys, createWebpageSurveyInviteBlocks);
 </script>
 
 <template>

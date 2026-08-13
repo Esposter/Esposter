@@ -5,11 +5,11 @@ import { takeOne } from "@esposter/shared";
 
 const id = "colors";
 const useBaseColorsStore = defineStore<typeof id, Colors>(id, () => {
-  const globalTheme = useGlobalTheme();
+  const { global } = useVTheme();
   const colors = Object.fromEntries(
-    Object.keys(globalTheme.current.value.colors).map((color) => [
+    Object.keys(global.current.value.colors).map((color) => [
       color,
-      computed(() => takeOne(globalTheme.current.value.colors, color)),
+      computed(() => takeOne(global.current.value.colors, color)),
     ]),
   ) as Colors;
   return colors;

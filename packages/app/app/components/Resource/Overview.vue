@@ -1,43 +1,44 @@
 <script setup lang="ts">
-import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
+import type { Resource } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
+import { useResourceStore } from "@/store/resource";
 import { getResultAsync, RoutePath } from "@esposter/shared";
 
 interface ResourceOverviewProps {
-  isLoading?: boolean;
-  publication?: ResourcePublication;
   resource: Resource;
-  updateTags?: (tags: ResourceTags) => Promise<void>;
 }
 
-const { isLoading, publication, resource, updateTags } = defineProps<ResourceOverviewProps>();
+const { resource } = defineProps<ResourceOverviewProps>();
 // Essentials takes extra rows from the type (the grid owns the two columns, so a slot renders
 // A label/value pair); summary takes whole cards below the card
 defineSlots<{ essentials?: () => VNode; summary?: () => VNode }>();
-const getResourceMutations = useResourceMutations();
+const getResourceRouter = useResourceRouter();
+const resourceStore = useResourceStore();
+const { isLoading, publication } = storeToRefs(resourceStore);
+const { updateResourceTags } = resourceStore;
 const isTagsEditorOpen = ref(false);
 const tagRows = computed(() => Object.entries(resource.tags));
 const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
-const publicUrl = computed(() => (publication ? RoutePath.View(resource.type, resource.id) : undefined));
+const publicUrl = computed(() => (publication.value ? RoutePath.View(resource.type, resource.id) : undefined));
 // Best-effort telemetry, so a failed count leaves the row out rather than erroring the whole blade
 // The page is keyed by resource id, so this instance only ever describes one resource — the count is
 // Read once on mount rather than watching an id that cannot change underneath it
 const viewCount = ref<number>();
 onMounted(async () => {
-  const { readResourceViewCount } = getResourceMutations(resource.type);
-  if (!readResourceViewCount) return;
+  // Only a published resource has views, and only its row renders the count — reading it for a draft spends
+  // A round trip on a number nothing displays. The capability is what makes the procedure reachable, so the
+  // Guard and the availability are one fact
+  const { type } = resource;
+  if (!publication.value || !hasCapability(type, "publishable")) return;
 
-  viewCount.value = await getResultAsync(() => readResourceViewCount({ id: resource.id })).unwrapOr(undefined);
+  const { readResourceViewCount } = getResourceRouter(type);
+  viewCount.value = await getResultAsync(() => readResourceViewCount.query({ id: resource.id })).unwrapOr(undefined);
 });
-const copyPublicLink = async () => {
-  if (!publicUrl.value) return;
-  await copyLinkToClipboard(publicUrl.value);
-};
 </script>
 
 <template>
@@ -77,29 +78,36 @@ const copyPublicLink = async () => {
             <span op-medium-emphasis>Public link</span>
             <div flex flex-wrap gap-2 items-center>
               <NuxtLink :to="publicUrl" external text-info target="_blank">{{ publicUrl }}</NuxtLink>
-              <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="copyPublicLink" />
+              <StyledTooltipIconButton
+                icon="mdi-content-copy"
+                text="Copy link"
+                @click="copyLinkToClipboard(publicUrl)"
+              />
             </div>
           </template>
-          <template v-if="updateTags">
-            <span op-medium-emphasis>Tags</span>
-            <div flex flex-wrap gap-2 items-center>
-              <v-chip v-for="[tagName, tagValue] of tagRows" :key="tagName" size="small">
-                {{ tagValue ? `${tagName}: ${tagValue}` : tagName }}
-              </v-chip>
-              <span v-if="tagRows.length === 0" op-medium-emphasis>None</span>
-              <v-btn size="small" variant="text" @click="isTagsEditorOpen = true">Edit</v-btn>
-            </div>
-          </template>
+          <span op-medium-emphasis>Tags</span>
+          <div flex flex-wrap gap-2 items-center>
+            <v-chip v-for="[tagName, tagValue] of tagRows" :key="tagName" size="small">
+              {{ tagValue ? `${tagName}: ${tagValue}` : tagName }}
+            </v-chip>
+            <span v-if="tagRows.length === 0" op-medium-emphasis>None</span>
+            <!-- The only way into the tags editor, and a colourless flat button is transparent here, so it read
+                 as a word sitting beside the chips rather than as the control they are edited from -->
+            <StyledButton
+              :button-props="{ prependIcon: 'mdi-pencil', size: 'small', text: 'Edit' }"
+              @click="isTagsEditorOpen = true"
+            />
+          </div>
           <slot name="essentials" />
         </div>
       </v-card-text>
     </v-card>
     <slot name="summary" />
     <ResourceTagsEditorDialog
-      v-if="updateTags && isTagsEditorOpen"
+      v-if="isTagsEditorOpen"
       v-model="isTagsEditorOpen"
       :tags="resource.tags"
-      :update-tags
+      :update-tags="updateResourceTags"
     />
   </div>
 </template>

@@ -46,7 +46,7 @@ export const reserveStorageBytes = async (
     .subtract(EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS, "ms")
     .toDate();
   await db.transaction(async (tx) => {
-    // `storage_blobs` before `users`, the order every path that touches both takes — a release and a reconcile
+    // `storageBlobs` before `users`, the order every path that touches both takes — a release and a reconcile
     // Lock the ledger row first and move the counter second, so a reserve that took the user row first would
     // Close a lock cycle with them and deadlock. See /docs/platform/storage-quotas
     //
@@ -68,7 +68,6 @@ export const reserveStorageBytes = async (
       .where(eq(users.id, userId))
       .for("update");
     if (!user) throw new TRPCError({ code: "NOT_FOUND", message: DatabaseEntityType.User });
-
     // Read behind that lock, so a concurrent reserve cannot see the same outstanding set and pass on it.
     // Expiry is what stops a hold counting, not the collection above — a row is kept past `expiresAt` only so a
     // Late `BlobCreated` can still find it, and a dead write target must never hold space or a slot in the

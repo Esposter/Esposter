@@ -1,19 +1,24 @@
 import type { IndexedColumn } from "@/models/resource/sheet/commands/IndexedColumn";
 
 import { DeleteColumnsCommand } from "@/models/resource/sheet/commands/DeleteColumnsCommand";
-import { getOriginalRowValues } from "@/services/resource/sheet/getOriginalRowValues";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const useDeleteColumns = () =>
   useSheetCommand((dataSource, ids: string[]) => {
+    const columnIndexById = new Map(dataSource.columns.map((column, index) => [column.id, index]));
     const indexedColumns: IndexedColumn[] = [];
     for (const id of ids) {
-      const columnIndex = dataSource.columns.findIndex((column) => column.id === id);
-      if (columnIndex === -1) continue;
+      const columnIndex = columnIndexById.get(id);
+      if (columnIndex === undefined) continue;
       const originalColumn = structuredClone(toRawDeep(takeOne(dataSource.columns, columnIndex)));
-      const originalRowValues = getOriginalRowValues(dataSource, originalColumn.name);
-      indexedColumns.push({ columnIndex, originalColumn, originalRowValues });
+      indexedColumns.push({ columnIndex, originalColumn, originalRowValues: [] });
     }
     if (indexedColumns.length === 0) return undefined;
+    // Every target column's values are collected in one pass, so each row is unwrapped once
+    for (const row of dataSource.rows) {
+      const { data } = toRawDeep(row);
+      for (const { originalColumn, originalRowValues } of indexedColumns)
+        originalRowValues.push(takeOne(data, originalColumn.name));
+    }
     return new DeleteColumnsCommand(indexedColumns);
   });

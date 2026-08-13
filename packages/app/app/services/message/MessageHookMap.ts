@@ -17,7 +17,7 @@ export const MessageHookMap = {
   CommitSend: createHookRegistry<(roomId: string, fileIds: string[]) => Promisable<void>>(),
   [Operation.Create]: createHookRegistry<(message: MessageEntity) => Promisable<void>>(),
   [Operation.Delete]: createHookRegistry<(input: DeleteMessageInput) => Promisable<void>>(),
-  [Operation.Update]: createHookRegistry<(input: MessageEvents["updateMessage"][number]) => Promisable<void>>(),
+  [Operation.Update]: createHookRegistry<(input: MessageEvents["updateMessage"][0][0]) => Promisable<void>>(),
   // Runs once the optimistic bubble is in the list: the editor and the reply target clear, and the attachments
   // This send took leave the composer. They leave here rather than at the commit because the composer keeps
   // Accepting Enter for the whole round trip, and one that still offers them posts a second message naming the

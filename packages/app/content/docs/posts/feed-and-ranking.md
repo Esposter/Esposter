@@ -57,7 +57,7 @@ Paths relative to `packages/app`.
 | `app/services/post/PostSortTypeSortByMap.ts` | sort menu → `sortBy` mapping       |
 | `app/services/post/PostSortTypeIconMap.ts`   | sort → menu icon mapping           |
 | `server/trpc/routers/post.ts`                | `readPosts` / `readPost`           |
-| `server/services/post/ranking.ts`            | the hot score                      |
+| `server/services/post/getPostRanking.ts`     | the hot score                      |
 | `server/services/pagination/cursor/`         | shared cursor pagination helpers   |
 
 ## Notes

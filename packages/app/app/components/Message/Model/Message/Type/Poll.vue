@@ -11,7 +11,7 @@ import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/share
 
 interface PollProps extends MessageComponentProps<StandardMessageEntity> {}
 
-const { active, creator, isPreview = false, isSameBatch, message } = defineProps<PollProps>();
+const { active, creator, isPreview = false, message } = defineProps<PollProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const pollContent = computed(() => {
   const parsedMessage = jsonDateParse(message.message);
@@ -34,12 +34,12 @@ const { isVoting, vote } = await useVotePoll(
 </script>
 
 <template>
-  <MessageModelMessageTypeListItem :active :is-preview :is-same-batch>
+  <MessageModelMessageTypeListItem :active :is-preview>
     <template #prepend>
       <v-icon icon="mdi-poll" size="small" />
     </template>
     <span font-bold>{{ creator.name }}</span>
-    <span text-gray> created a poll </span>
+    <span op-medium-emphasis> created a poll </span>
     <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
     <v-card variant="outlined" mt-2 w-full>
       <v-card-title>{{ pollContent.question }}</v-card-title>

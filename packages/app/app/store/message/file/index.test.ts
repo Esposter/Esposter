@@ -1,31 +1,28 @@
 // @vitest-environment nuxt
-import type { Router } from "vue-router";
 
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
+import { MessageHookMap } from "@/services/message/MessageHookMap";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useDownloadFileStore } from "@/store/message/file";
 import { createMessageEntity, MessageType, READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
-import { MAX_READ_LIMIT, takeOne } from "@esposter/shared";
+import { MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useDownloadFileStore, () => {
   const server = setupMswTrpc();
-  let router: Router;
   const roomId = crypto.randomUUID();
+  const otherRoomId = crypto.randomUUID();
   const fileId = crypto.randomUUID();
   const filename = "a";
   const staleUrl = "https://sas.url/stale";
   const freshUrl = "https://sas.url/fresh";
 
-  beforeAll(() => {
-    router = useRouter();
-  });
-
   beforeEach(() => {
     setActivePinia(createPinia());
-    router.currentRoute.value.params.id = roomId;
+    setCurrentRoomId(roomId);
   });
 
   afterEach(() => {
@@ -95,6 +92,33 @@ describe(useDownloadFileStore, () => {
     expect(generateDownloadFileSasUrls).toHaveBeenCalledTimes(2);
 
     expect(fileUrlMap.value.get(takeOne(files, MAX_READ_LIMIT).id)?.url).toBe(freshUrl);
+  });
+
+  // A subscription handler is queued behind the ones before it, so a message that arrives just before a room
+  // Switch is handled once the current room already names the next one. Read against that room the SAS query
+  // Names file ids it does not own and is rejected, leaving every attachment on the message broken.
+  test("mints an incoming message's urls under the room it was sent to", async () => {
+    expect.hasAssertions();
+
+    const queriedRoomIds: string[] = [];
+    server.use(
+      trpcMsw.message.generateDownloadFileSasUrls.query(({ input }) => {
+        queriedRoomIds.push(input.roomId);
+        return [freshUrl];
+      }),
+    );
+    useDownloadFileStore();
+    await MessageHookMap[Operation.Create].run(
+      createMessageEntity({
+        files: [{ filename, hasThumbnail: false, id: fileId, mimetype: "text/plain", size: 1 }],
+        message: filename,
+        roomId: otherRoomId,
+        type: MessageType.Message,
+        userId: crypto.randomUUID(),
+      }),
+    );
+
+    expect(queriedRoomIds).toContain(otherRoomId);
   });
 
   test("issues no query while every cached url is comfortably valid", async () => {

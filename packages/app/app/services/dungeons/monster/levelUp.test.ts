@@ -5,7 +5,7 @@ import { levelUp } from "@/services/dungeons/monster/levelUp";
 import { describe, expect, test, vi } from "vitest";
 
 // Pin the growth rolls to their lower bound so the stat gains are deterministic
-vi.mock(import("#shared/util/math/random/createRandomNumber"), () => ({ createRandomNumber: () => 0 }));
+vi.mock(import("@/util/math/random/createRandomNumber"), () => ({ createRandomNumber: () => 0 }));
 
 describe(levelUp, () => {
   test("grows stats and consumes the level's experience", () => {

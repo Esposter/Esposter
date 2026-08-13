@@ -1,8 +1,8 @@
 import type { CompositeKey, CustomTableClient } from "@esposter/db-schema";
 
 import { submitTransactionBatches } from "@/services/azure/table/submitTransactionBatches";
-import { serializeClauses } from "@/services/azure/transformer/serializeClauses";
-import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames } from "@esposter/db-schema";
+import { getPartitionKeyFilter } from "@/services/azure/transformer/getPartitionKeyFilter";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
 
 // Azure Table has no partition-drop, so clearing a partition means enumerating it and batch-deleting.
 // Every page is walked, unlike the capped reads elsewhere: a purge that stopped at the cap would leave
@@ -11,9 +11,7 @@ export const deleteTablePartitionEntities = async (
   tableClient: CustomTableClient<CompositeKey>,
   partitionKey: string,
 ) => {
-  const filter = serializeClauses([
-    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: partitionKey },
-  ]);
+  const filter = getPartitionKeyFilter(partitionKey);
   for await (const page of tableClient
     .listEntities<CompositeKey>({ queryOptions: { filter } })
     .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))

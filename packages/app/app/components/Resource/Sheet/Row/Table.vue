@@ -137,6 +137,7 @@ onKeyStroke(["ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp"], (event) => {
   else startCellSelection(newRowIndex, newColumnIndex);
 });
 
+// @ts-expect-error TS2590: Expression produces a union type that is too complex to represent.
 onClickOutside(table, () => {
   clearCellSelection();
 });
@@ -150,39 +151,25 @@ onKeyStroke("Escape", () => {
 <template>
   <v-card flat>
     <template #text>
-      <ResourceSheetRowTextSlot :data-source />
+      <ResourceSheetRowTextSlot />
     </template>
     <VueDraggable v-model="dragRows" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
-      <StyledDataTable
+      <v-data-table
         ref="table"
+        v-model="selectedRowIds"
+        v-model:items-per-page="itemsPerPage"
+        v-model:page="page"
+        v-model:sort-by="sortBy"
+        density="compact"
+        multi-sort
+        show-select
         flex
         flex-1
         flex-col
-        :data-table-props="{
-          cellProps,
-          density: 'compact',
-          headers: tableHeaders,
-          itemsPerPage,
-          items: filteredRows,
-          modelValue: selectedRowIds,
-          multiSort: true,
-          page,
-          search,
-          showSelect: true,
-          sortBy,
-          'onUpdate:itemsPerPage': (newItemsPerPage) => {
-            itemsPerPage = newItemsPerPage;
-          },
-          'onUpdate:modelValue': (newModelValue) => {
-            selectedRowIds = newModelValue as string[];
-          },
-          'onUpdate:page': (newPage) => {
-            page = newPage;
-          },
-          'onUpdate:sortBy': (newSortBy) => {
-            sortBy = newSortBy;
-          },
-        }"
+        :cell-props
+        :headers="tableHeaders"
+        :items="filteredRows"
+        :search
       >
         <template v-if="selectedRowIds.length > 0" #top>
           <ResourceSheetRowTopSlot />
@@ -204,18 +191,12 @@ onKeyStroke("Escape", () => {
           <ResourceSheetRowHeaderSlot :column :get-sort-icon :header-column :is-sorted :toggle-sort />
         </template>
         <template v-for="column of displayColumns" :key="column.id" #[`item.${toColumnKey(column.name)}`]="{ item }">
-          <ResourceSheetRowItemSlot
-            :column
-            :columns="dataSource.columns"
-            :item
-            :row-index="rowIndexIdMap.get(item.id) ?? -1"
-            :rows="filteredRows"
-          />
+          <ResourceSheetRowItemSlot :column :item :row-index="rowIndexIdMap.get(item.id) ?? -1" />
         </template>
         <template #tfoot>
           <ResourceSheetRowFooterSlot />
         </template>
-      </StyledDataTable>
+      </v-data-table>
     </VueDraggable>
     <ResourceSheetRowEditDialog
       v-if="editingRow"

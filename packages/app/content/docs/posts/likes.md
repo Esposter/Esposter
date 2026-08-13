@@ -19,7 +19,7 @@ Reddit-style voting: each user holds at most one like per post with `value ∈ {
 
 **Viewer-scoped reads** — every procedure that returns a post (reads and mutations alike) carries `viewerLike: Like | undefined` on `PostWithRelations`: at most the viewer's own like row, never the full list, since the net count already lives in the denormalized `noLikes`. The `likes` relation is only the server-side fetch strategy — `getViewerPostRelations` filters it to the caller, and `getPostWithViewerLike` maps the result. Unauthenticated rate-limited reads have no viewer, so they skip the like lookup entirely and the arrows render uncolored. A hot feed page's payload is O(posts) instead of O(total likes).
 
-**Client** — `LikeSection.vue` derives `liked`/`unliked` from `viewerLike`, and maps arrow clicks to the right mutation (up while unliked = flip, up while liked = retract, …). `useLikeOperations` applies the result optimistically to whichever store owns the list (feed posts vs a post page's comments — two store instances of the same shape), patching `viewerLike` and `noLikes` in place so counts update without a refetch.
+**Client** — `PostLikeSection` derives `liked`/`unliked` from `viewerLike`, and maps arrow clicks to the right mutation (up while unliked = flip, up while liked = retract, …). `useLikeOperations` applies the result optimistically to whichever store owns the list (feed posts vs a post page's comments — two store instances of the same shape), patching `viewerLike` and `noLikes` in place so counts update without a refetch.
 
 ## Procedures
 

@@ -6,8 +6,8 @@ import { useMessageLayoutStore } from "@/store/message/ui/layout";
 
 export const useThreadStore = defineStore("message/thread", () => {
   const { $trpc } = useNuxtApp();
-  const activeRootRowKey = ref<string | undefined>();
-  const activeRoomId = ref<string | undefined>();
+  const activeRootRowKey = ref<MessageEntity["rowKey"]>("");
+  const activeRoomId = ref<MessageEntity["partitionKey"]>("");
   const threadMessages = ref<MessageEntity[]>([]);
   const layoutStore = useLayoutStore();
   const messageLayoutStore = useMessageLayoutStore();
@@ -22,8 +22,8 @@ export const useThreadStore = defineStore("message/thread", () => {
     layoutStore.isRightDrawerOpen = true;
   };
   const closeThread = () => {
-    activeRootRowKey.value = undefined;
-    activeRoomId.value = undefined;
+    activeRootRowKey.value = "";
+    activeRoomId.value = "";
     threadMessages.value = [];
     layoutStore.isRightDrawerOpen = false;
   };

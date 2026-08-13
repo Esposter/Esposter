@@ -62,7 +62,7 @@ describe("createResourceProcedures", () => {
   afterEach(async () => {
     MockContainerDatabase.clear();
     MockTableDatabase.clear();
-    // Cascade removes any resource_publications rows too
+    // Cascade removes any resourcePublications rows too
     await mockContext.db.delete(resources);
     vi.restoreAllMocks();
   });

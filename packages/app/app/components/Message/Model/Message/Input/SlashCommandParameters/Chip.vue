@@ -27,19 +27,11 @@ const { errors } = storeToRefs(slashCommandStore);
 const { setErrors } = slashCommandStore;
 const input = useTemplateRef("input");
 const isError = computed(() => {
-  const error = errors.value.find((e) => e.id === name);
-  return error && error.messages.length > 0;
+  const parameterError = errors.value.find(({ id }) => id === name);
+  return Boolean(parameterError && parameterError.messages.length > 0);
 });
-const { trigger } = watchTriggerable(
-  () => isFocused,
-  (newIsFocused) => {
-    if (newIsFocused) input.value?.focus();
-  },
-);
 
-onMounted(() => {
-  trigger();
-});
+useFocusWhenActive(input, () => isFocused);
 </script>
 
 <template>

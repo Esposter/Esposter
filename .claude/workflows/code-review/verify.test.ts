@@ -1,6 +1,9 @@
 import { describe, expect, test } from "vitest";
 
+import type { Candidate } from "./models/Candidate";
+
 import { AREA_ARGS, AREA_SCOPE, CANDIDATE, VERDICT_DEFAULT } from "./constants.test";
+import { createCandidates } from "./createCandidates.test";
 import { getFinding } from "./getFinding.test";
 import { runReview } from "./runReview.test";
 import { stubFor } from "./stubFor.test";
@@ -22,11 +25,59 @@ describe("code-review verify", () => {
   test("truncates a finder at its cap and logs what it dropped", async () => {
     expect.hasAssertions();
 
-    const candidates = Array.from({ length: 9 }, (_, index) => ({ ...CANDIDATE, line: index + 1 }));
-    const run = await runReview("high", stubFor({ candidates }));
+    const run = await runReview("high", stubFor({ candidates: createCandidates(9) }));
 
     expect(run.logs).toContainEqual(expect.stringContaining("dropped 3 at cap 6 — coverage truncated"));
     expect(run.result.stats?.candidates).toBe(6);
+    // A cause with no summary sentence still carries a stats field. This one was visible in the log alone, so a
+    // Reader following "read the stats, never the prose" got a block that said nothing had been truncated.
+    expect(run.result.stats?.droppedAtFinderCap).toBe(3);
+  });
+
+  test("caps the verifier fan-out by kind and says which files it left unjudged", async () => {
+    expect.hasAssertions();
+
+    // Grouping by file bounds nothing on its own: one candidate per file is the normal shape of a wide diff, and it
+    // Degrades the phase holding most of a run's agents to one verifier per candidate.
+    // Ten one-candidate files against `low`'s cap of eight. The ordering can only use `kind` — a finder is never
+    // Asked for `severity` (`CANDIDATES_SCHEMA`), the verifier assigns it — so the two correctness candidates are
+    // Returned LAST, where an unordered slice would cut them and keep eight convention nits instead.
+    const files = Array.from({ length: 10 }, (_, index) => `f${index}.ts`);
+    const CandidatesByFinder: Record<string, Candidate[]> = {
+      "angle-A": createCandidates(4, (index) => ({ file: `f${index}.ts`, kind: "cleanup" })),
+      "angle-F": createCandidates(4, (index) => ({ file: `f${index + 4}.ts`, kind: "cleanup" })),
+      coverage: createCandidates(2, (index) => ({ file: `f${index + 8}.ts`, kind: "correctness" })),
+    };
+    const run = await runReview(
+      "area low the cache",
+      stubFor({
+        finderFor: (label) => CandidatesByFinder[label] ?? [],
+        scope: { ...AREA_SCOPE, files },
+      }),
+    );
+    const verifiedFiles = run.calls
+      .filter((call) => call.label.startsWith("verify:"))
+      .map((call) => call.label)
+      .toSorted((a, b) => a.localeCompare(b));
+
+    // The two correctness files survive and two convention nits are cut, whatever order the finders returned in.
+    expect(verifiedFiles).toStrictEqual([
+      "verify:f0.ts(1) cleanup",
+      "verify:f1.ts(1) cleanup",
+      "verify:f2.ts(1) cleanup",
+      "verify:f3.ts(1) cleanup",
+      "verify:f4.ts(1) cleanup",
+      "verify:f5.ts(1) cleanup",
+      "verify:f8.ts(1)",
+      "verify:f9.ts(1)",
+    ]);
+    // `droppedUnverified: 0` is the invariant, not a formality: fold the cap's drops into that counter and the two
+    // Causes stop arguing opposite ways about the next round, which is the whole reason for a second field.
+    expect(run.result.stats).toMatchObject({ droppedAtVerifyCap: 2, droppedUnverified: 0, verifyCeiling: 8 });
+    // Named, not counted — which files went unexamined is what decides whether to re-run, and the cap's remedy
+    // Differs from a dead verifier's, so it gets its own sentence rather than borrowing that one's.
+    expect(run.result.summary).toContain("2 candidate(s) in f6.ts, f7.ts were dropped at the 8-verifier cap");
+    expect(run.result.summary).toContain("narrow the window or raise the level");
   });
 
   test("honours a self-declared kind in area mode only", async () => {
