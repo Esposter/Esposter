@@ -35,6 +35,14 @@ Two exclusions belong in the target string, because a finder spends real attenti
 
 `area` mode pulls the opposite way — narrow the target, don't batch it (see `area.md`), because its finders read whole files rather than hunks.
 
+## Never slice an over-cap branch by path
+
+The cloud `/code-review ultra` refuses a diff past its own caps (it names them in the refusal — files and total lines, both well under a release-sized PR) and suggests a closer base. The tempting workaround is a throwaway branch off the base holding one subsystem's files, reviewed on its own.
+
+**It does not work, and it fails in the direction that wastes the most attention**: the slice is one tree's subsystem sitting on another tree's everything-else, so every reference crossing the cut reads as a defect. A deleted field looks un-migrated, a moved module looks missing, a composable whose consumers live in the other half looks like it broke all of them — each arrives as a confident, well-argued major finding with a step-by-step proof, and each is an artifact of the cut. A whole run can return nothing else.
+
+Split by **history**, not by path: stack real branches so each one's base contains everything before it, and every reference resolves against a tree that actually exists. When the caps refuse even that, the answer is a smaller PR, not a synthetic branch. A local `typecheck` settles this entire class in one pass and costs nothing — run it against the real branch before spending a run on a slice.
+
 ## The Find phase partitions itself by diff size — nothing to pass
 
 Under 50 changed files the finders split by **lens** (one angle each over the whole diff), which is right while the territory is small enough that every finder reads every hunk. At 50 or more they split by **seam** — one finder per subsystem, tracing it end to end plus the boundary it hands data across — since lens-splitting a release-sized diff degenerates into parallel skims that all converge on whatever is loudest. Seam mode adds a whole-diff finder so a bad seam split cannot leave territory unread.
