@@ -36,7 +36,8 @@ export const useInitializeGameObject = <
   // Track whether this gameObject sits in a parent container so we can append to it.
   // Use provide/inject so the context is scoped to the current rendering tree, not every component;
   // This works because phaser containers only hold gameObjects one level deep.
-  const parentContainer = inject(InjectionKeyMap.ParentContainer);
+  // The default is passed explicitly because a gameObject outside any container is the normal case.
+  const parentContainer = inject(InjectionKeyMap.ParentContainer, undefined);
   const sceneKey = useInjectSceneKey();
   const lifecycleHook = getInitializeGameObjectLifecycleHook(sceneKey);
   const initializeGameObject = (scene: SceneWithPlugins) => {
