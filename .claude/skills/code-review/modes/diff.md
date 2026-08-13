@@ -11,7 +11,7 @@ Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "diff <l
 
 ## Choosing the window — batch up to one, never review dribs
 
-A run's cost is set by the level, not by the size of the diff (SKILL.md), so a handful of files pays close to a full run's price for a fraction of its coverage. Reviewing each small commit as it lands is the most expensive way to use this workflow, and the small-territory trim then cuts the fan-out too, so the thin run is also a shallow one.
+A run's cost is set by the level, not by the size of the diff (`references/run-economics.md`), so a handful of files pays close to a full run's price for a fraction of its coverage. Reviewing each small commit as it lands is the most expensive way to use this workflow, and the small-territory trim then cuts the fan-out too, so the thin run is also a shallow one.
 
 **Unless the ask names a specific change, don't take the working diff — pick a commit window and review everything in it.** Not a release boundary: releases here are cut whenever it suits, so a tag sits an arbitrary distance back — sometimes one commit, sometimes fifty. Walk back instead, and stop when the range is worth a run:
 

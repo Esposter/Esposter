@@ -49,7 +49,7 @@ It follows that a quality finding does not belong in it: settled by looking at t
 
 **Conventions is the one lens that stayed** — `/simplify` names those four and only those four, so a broken CLAUDE.md rule has no other enforcer, and CodeRabbit asserts repo conventions from names rather than from the files. Because area mode lets a finder self-declare its `kind`, the exclusion has to be stated to _every_ agent that chooses one, not just to the conventions finder: the script keeps one `MOVED_LENSES` string for that, and the test asserts both sites quote it.
 
-**Cost is agents × what each one reads, never the size of the prompts.** Measured: every prompt in a run together is ~5k tokens, and the script's comments never leave the file. Trimming prose saves nothing; only agent count, per-finder caps and reasoning effort move the number.
+One corollary worth stating where the ladder is, because it is the wrong instinct to act on: **trimming the script saves nothing.** Every prompt in a run together is ~5k tokens and its comments never leave the file — what cost is actually made of, and what moves it, is `references/run-economics.md`.
 
 ## Coverage, cost and when to re-run — `references/run-economics.md`
 
