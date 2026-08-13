@@ -7,4 +7,6 @@
 // `.oxlintrc.json`) repeat the literal and are pinned against this constant by `scripts/agentWorktrees.test.ts`.
 export const AGENT_WORKTREES_DIRECTORY = ".claude/worktrees";
 
+export const DISTRIBUTION_DIRECTORY = "dist";
+
 export const KIBIBYTE: number = 2 ** 10;

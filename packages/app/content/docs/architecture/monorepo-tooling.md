@@ -113,7 +113,7 @@ Vitest runs on Windows: the former `spawn EPERM` / UnoCSS config-load crash was 
 Pin actions to full commit SHAs with a trailing version comment:
 
 ```yaml
-uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 ```
 
 To resolve the SHA for a pin, look up the latest stable `vX.Y.Z` tag via:

@@ -1,6 +1,6 @@
 ---
 name: bench
-description: Esposter benchmarking conventions — colocated *.bench.ts files on Vitest's own bench(), module-level setup because bench callbacks fire before suite hooks, benching the unit rather than its use* composable wrapper, rebuilding a fresh fixture inside the callback for mutating ops, varying input shape as well as scale with nested describes per scale so vs base stays meaningful, running bench per package and from the root, and the bench being the speed gate so no .speed.test.ts exists — plus a deep dive on the report pipeline (the colocated per-file JSON/Markdown reporter, the stable runner, the md columns, platform-suffixed artifacts, where the tooling lives, and the dormant CodSpeed wiring). Apply when adding or editing benchmarks, or changing what a *.bench.md contains.
+description: Esposter benchmarking conventions — colocated *.bench.ts files on Vitest's own bench(), module-level setup because bench callbacks fire before suite hooks, benching the unit rather than its use* composable wrapper, rebuilding a fresh fixture inside the callback for mutating ops, varying input shape as well as scale with nested describes per scale so vs base stays meaningful, running bench per package and from the root, and the bench being the speed gate so no .speed.test.ts exists — plus a deep dive on the report pipeline (the colocated per-file JSON/Markdown reporter, the stable runner, the md columns, platform-suffixed artifacts, and where the tooling lives). Apply when adding or editing benchmarks, or changing what a *.bench.md contains.
 ---
 
 # Benchmarking Conventions
@@ -11,7 +11,7 @@ Benchmarks run on Vitest's built-in `bench()` (tinybench underneath). There is n
 
 ## Deep dive
 
-- `references/report-pipeline.md` — when changing what a `*.bench.md` contains, touching the reporter or runner, adding a package that benches, or re-enabling CodSpeed.
+- `references/report-pipeline.md` — when changing what a `*.bench.md` contains, touching the reporter or runner, or adding a package that benches.
 
 ## Writing benchmarks
 

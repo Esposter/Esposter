@@ -62,15 +62,6 @@
     "unplugin-auto-import": "catalog:",
     "unplugin-dts": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-mkcert": "catalog:",
     "vitest": "catalog:"
-  },
-  "peerDependencies": {
-    "@codspeed/vitest-plugin": "catalog:"
-  },
-  "peerDependenciesMeta": {
-    "@codspeed/vitest-plugin": {
-      "optional": true
-    }
   }
 }

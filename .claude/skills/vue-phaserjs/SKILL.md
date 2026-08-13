@@ -77,16 +77,8 @@ Any Phaser class that chains to `Scene → TextureManager → Texture → Frame 
 - Rex plugin instances (Slider, VirtualJoystick, etc.)
 - Any class that holds a `scene` reference
 
-## SSR / "Phaser is not defined" Fix
+## SSR / "Phaser is not defined"
 
-**Rule**: In the shared `external` list, always use `/^package-name/u` (regex) instead of `"package-name"` (string) when the package may be imported via subpaths. String literals only match exact module IDs.
+`phaser` and `phaser4-rex-plugins` must stay externalized, subpaths included. A bundled `phaser4-rex-plugins/plugins/*.js` reads `Phaser.Scene`/`Phaser.Game` as globals at module-eval time and throws under Node SSR.
 
-Cause: `external` used `"phaser4-rex-plugins"`, which matched only the root package, not subpath imports like `"phaser4-rex-plugins/plugins/clickoutside.js"`. The bundled subpath code accesses `Phaser.Scene`/`Phaser.Game` as globals at module-eval time, failing in Node.js SSR.
-
-The externals no longer live in this package — `packages/vue-phaserjs/vite.config.ts` just re-exports `getViteConfiguration()`. The entries are in the shared list at `packages/configuration/src/external/external.ts`, grouped by owning package:
-
-```ts
-// @esposter/vue-phaserjs
-"phaser",
-/^phaser4-rex-plugins/u,
-```
+Nothing in this package configures that: they are its `peerDependencies`, and `getExternal()` turns every peer into a prefix pattern that covers subpath imports. Keep them peers.

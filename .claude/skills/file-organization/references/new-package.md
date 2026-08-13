@@ -23,12 +23,7 @@ Don't add `#!/usr/bin/env node` to source files, including `bin` entrypoints (`s
 
 ## Rolldown externals
 
-Packages declared as `peerDependencies` must also be in the rolldown `external` array — pnpm doesn't tell rolldown to skip them. Either:
-
-- Add to the shared `external` list in `packages/configuration/src/external/external.ts` (preferred when used by multiple packages), OR
-- Override locally by spreading the factory's result: `const configuration = getRolldownConfigurationNode(); export default { ...configuration, external: [...configuration.external, "my-peer-dep"] }`. The `external` array is `(RegExp | string)[]` — don't cast it to `string[]`.
-
-After adding to the shared config, rebuild `packages/configuration` (`pnpm build`) before rebuilding dependents.
+Nothing to configure: `getExternal()` derives the external array from the new package's own `peerDependencies` plus its workspace siblings. Declare the peer in `package.json` and it is externalized. See the `build` skill for the two kinds of package that override this in their own `rolldown.config.ts`.
 
 ## peerDependencies vs dependencies
 

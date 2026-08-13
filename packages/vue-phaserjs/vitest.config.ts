@@ -1,11 +1,9 @@
-import { getVitestConfiguration } from "@esposter/configuration";
-import vue from "@vitejs/plugin-vue";
+import { getVitestConfiguration, getVuePlugins } from "@esposter/configuration";
 import { join } from "node:path";
-import AutoImport from "unplugin-auto-import/vite";
 import { mergeConfig } from "vitest/config";
 
 export default mergeConfig(getVitestConfiguration(), {
-  plugins: [AutoImport({ imports: ["pinia", "vue"] }), vue()],
+  plugins: getVuePlugins(),
   resolve: {
     alias: {
       // Use the pre-built ESM bundle so phaser3spectorjs (a WebGL inspector referenced

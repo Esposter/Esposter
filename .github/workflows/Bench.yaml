@@ -1,14 +1,11 @@
 name: 🏎️ Bench
 
 # Benchmarks run as their own workflow (not part of 🏗️ CI) so they never block merges — they're a
-# nice-to-have signal, not a required check. The committed `*.bench.md` stay the offline walltime gate.
-# CodSpeed (dashboard uploads, PR regression comments, flamegraphs, and the walltime/memory modes on its
-# bare-metal `codspeed-macro` runners) is REMOVED: the runs exceeded the free tier's 600 min/month, after which
-# every upload fails and posts a red commit status. Plain `vitest bench` still runs here as a smoke signal that
-# every `*.bench.ts` executes. Packages are built once by the shared `build-packages` reusable workflow and
-# fanned out to every bench shard as the `package-builds` artifact. Artifacts are run-scoped, but that reusable
-# workflow's `actions/cache` key is shared repo-wide, so a 🏗️ CI build of the same content warms the cache here
-# for free (and vice versa).
+# nice-to-have signal, not a required check. The committed `*.bench.md` stay the offline walltime gate; this
+# workflow only proves every `*.bench.ts` still executes. Packages are built once by the shared
+# `build-packages` reusable workflow and fanned out to every bench shard as the `package-builds` artifact.
+# Artifacts are run-scoped, but that reusable workflow's `actions/cache` key is shared repo-wide, so a 🏗️ CI
+# build of the same content warms the cache here for free (and vice versa).
 on:
   push:
     branches:
@@ -41,8 +38,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # No Node pin: the Node-24 pin existed only for @codspeed/core's prebuilt native addon (V8 symbol removed in
-      # Node 25+); without CODSPEED_ENV the codspeed plugin never loads, so the repo default Node is fine.
+
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 

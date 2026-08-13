@@ -5,7 +5,6 @@
   "description": "Node-only shared tooling (benchmark reporting) reused across packages.",
   "keywords": [
     "benchmark",
-    "codspeed",
     "monorepo",
     "node",
     "reporting",
