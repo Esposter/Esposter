@@ -14,7 +14,6 @@ import { execFileSync } from "node:child_process";
 import { existsSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
-
 // Task-cache equivalence (specs/config-and-cache.md): a cache HIT is observably identical to the MISS that recorded
 // It — same exit code, stdout, stderr, and produced host files — while skipping the sandbox entirely. The command's
 // Output is written to a gitignored path so it never perturbs the source-tree hash, keeping the key stable across
@@ -61,8 +60,7 @@ describe.todo("persistWithCache - a hit replays a recorded run identically (task
     else process.env[VIRRUN_NO_CACHE_KEY] = previousNoCache;
   });
 
-  // @TODO: This doesn't work on CI but works on local for some reason
-  test.todo(
+  test(
     "records on a miss, then replays an identical result without re-executing the sandbox",
     async () => {
       expect.hasAssertions();
