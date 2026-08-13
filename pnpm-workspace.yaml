@@ -214,7 +214,7 @@ catalog:
   temporal-polyfill: ^1.0.3
   three: ^0.185.1
   three-globe: ^2.45.2
-  trpc-nuxt: ^2.1.1
+  trpc-nuxt: ^2.1.2
   tsx: ^4.23.12
   type-fest: ^5.8.0
   typedoc: ^0.28.20
