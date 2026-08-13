@@ -109,16 +109,24 @@ const makeStats = (known) => ({
   // Are not comparable without them — a trimmed run reads as a full one on every other field.
   angles: undefined,
   perAngle: undefined,
-  conventionsCap: undefined,
-  sweepCap: undefined,
+  conventionsCeiling: undefined,
+  sweepCeiling: undefined,
   reportableCeiling: undefined,
   resolveCeiling: undefined,
   verifyCeiling: undefined,
-  droppedAtVerifyCap: 0,
   seams: undefined,
   claimsChecked: undefined,
   claimsInventoried: undefined,
   deduped: 0,
+  // One field per drop cause, all of them, always present. Four of the six truncation sites used to carry no
+  // Field at all and were visible only in the log, so a reader following "read the stats, never the prose" got a
+  // Block that said nothing had been dropped while a third of the territory had been. They are derived from one
+  // Registry rather than threaded by hand, which is what made the missing four possible.
+  droppedAtAreaFileCap: 0,
+  droppedAtFinderCap: 0,
+  droppedAtVerifyCap: 0,
+  droppedClaims: 0,
+  droppedSeams: 0,
   droppedUnfound: 0,
   droppedUnsettled: 0,
   droppedUnverified: 0,
@@ -130,6 +138,40 @@ const makeStats = (known) => ({
   reported: 0,
   ...known,
 });
+// ─── The drop registry ───
+// Everything this run refused to look at, in one list. Six sites truncate — the area file cap, the seam cap, the
+// Claim cap, each finder's own cap, the verifier cap and the resolve budget — plus two failure paths that lose
+// Material without a cap (a finder that returned nothing usable, a verifier that returned no verdict). Each had
+// Grown its own counter, its own log line, its own stats field and its own hand-written sentence, and four of the
+// Eight had only the log: a run could drop a third of its territory and publish a stats block saying otherwise.
+//
+// What differs per site is the SELECTION — arrival order for a finder's cap, source-first for the file cap,
+// Rank for verify and resolve — and that stays at each site, because it is the part that is actually about the
+// Phase. What does not differ is the accounting, and it is all here: the count, the subjects, the field it lands
+// In, and whether the reader is told in the summary as well as the log.
+const DropCause = {
+  areaFileCap: "droppedAtAreaFileCap",
+  claims: "droppedClaims",
+  finderCap: "droppedAtFinderCap",
+  seams: "droppedSeams",
+  unfound: "droppedUnfound",
+  unsettled: "droppedUnsettled",
+  unverified: "droppedUnverified",
+  verifyCap: "droppedAtVerifyCap",
+};
+const drops = [];
+const listOf = (subjects) => [...subjects].toSorted((a, b) => a.localeCompare(b)).join(", ");
+// `logLine` stays per-site rather than being generated: each phase's line is read by someone watching the run and
+// Says something specific about that phase ("coverage truncated", "no finder could have read them"), which one
+// Template would flatten into eight copies of the same sentence. The registry owns what is COUNTED, not the prose.
+const recordDrop = ({ cause, count, logLine, subjects = [] }) => {
+  if (count <= 0) return;
+  drops.push({ cause, count, subjects: [...subjects] });
+  if (logLine) log(logLine);
+};
+const dropsFor = (cause) => drops.filter((d) => d.cause === cause);
+const droppedCount = (cause) => dropsFor(cause).reduce((total, d) => total + d.count, 0);
+const droppedSubjects = (cause) => new Set(dropsFor(cause).flatMap((d) => d.subjects));
 // Project override: review agents are execution roles, not the thinking role — pin them to opus so a
 // Premium session model is never inherited by 20 finder/verifier agents (see model-delegation skill).
 const AGENT_MODEL = "opus";
@@ -572,6 +614,13 @@ const dedupeKey = (c) => `${loc(c)} ${c.kind ?? ""}`;
 // Primary by the same ordering the report ranks by — two orderings for "which reading is worse" would disagree.
 const SEVERITY_RANK = { critical: 0, major: 1, minor: 2 };
 const KIND_RANK = { cleanup: 2, conformance: 0, correctness: 0, "record-gap": 2 };
+// Which kinds are settled by LOOKING rather than by reasoning — a convention violation is quoted from the rule and
+// The line, a record-gap from the page that does not mention the behaviour — so their finders and their verifiers
+// Run at `low` effort whatever the level. Stated as its own map because it is its own property: read off the kind
+// Name instead, the coupling is invisible, and renaming a kind silently moves a family into or out of full-effort
+// Verification. `KIND_RANK` above is now the only thing the kind itself decides.
+const IS_KIND_CHEAP_TO_SETTLE = { cleanup: true, conformance: false, correctness: false, "record-gap": false };
+const isCheapToSettle = (c) => IS_KIND_CHEAP_TO_SETTLE[c.kind] === true;
 const severityRank = (c) => SEVERITY_RANK[c.severity] ?? 1;
 const rank = (c) => severityRank(c) * 4 + (KIND_RANK[c.kind] ?? 0) + (c.verdict === "PLAUSIBLE" ? 1 : 0);
 // A verdict its own author would not defend is not a verdict, in either direction — an under-confident CONFIRMED
@@ -645,11 +694,13 @@ if (isAreaCapped) {
     ...scope.files.filter((f) => NON_SOURCE_REGEX.test(f)),
   ].slice(0, AREA_MAX_FILES);
   const dropped = resolvedFileCount - scope.files.length;
-  log(
-    `area: Scope resolved ${resolvedFileCount} files — capped at ${AREA_MAX_FILES}, ${
+  recordDrop({
+    cause: DropCause.areaFileCap,
+    count: dropped,
+    logLine: `area: Scope resolved ${resolvedFileCount} files — capped at ${AREA_MAX_FILES}, ${
       dropped
     } dropped. Narrow the target and re-run to cover the rest.`,
-  );
+  });
 }
 const filesUnder = (prefixes) => filterUnder(scope.files, prefixes);
 // Fan-out scales with the TERRITORY, not with the level alone. Every finder reads the same material again, and
@@ -699,17 +750,21 @@ const seams = SEAM_MODE ? rawSeams : [];
 // Cap's remedy ("raise the level") is nonsense once the partition was discarded wholesale: no seam got a finder
 // At all, so the user would buy a 2-3× more expensive run for coverage the file-count gate refuses again.
 if (IS_AREA && usableSeams.length < declaredSeams.length)
-  log(
-    `area: ${
+  recordDrop({
+    cause: DropCause.seams,
+    count: declaredSeams.length - usableSeams.length,
+    logLine: `area: ${
       declaredSeams.length - usableSeams.length
     } seam(s) dropped — their pathPrefixes resolve to no file in scope, so no finder could have read them`,
-  );
+  });
 if (SEAM_MODE && usableSeams.length > rawSeams.length)
-  log(
-    `${usableSeams.length - rawSeams.length} seam(s) past the level's cap of ${
+  recordDrop({
+    cause: DropCause.seams,
+    count: usableSeams.length - rawSeams.length,
+    logLine: `${usableSeams.length - rawSeams.length} seam(s) past the level's cap of ${
       P.maxSeams
     } got no finder — raise the level or narrow the target to cover them`,
-  );
+  });
 // The file cap has to bind on the CLAIMS as well as the files. A claim whose paths were all truncated away is
 // Still prefix-overlapped onto some surviving seam by claimsFor, so a finder is told to check a documented
 // Behaviour against code the run never opened, cannot find it, and raises a conformance candidate saying the
@@ -730,13 +785,15 @@ const isClaimResolvable = (c, files) =>
 const claims = isAreaCapped
   ? inventoriedClaims.filter((c) => !isClaimResolvable(c, preCapFiles) || isClaimResolvable(c, scope.files))
   : inventoriedClaims;
-if (claims.length < inventoriedClaims.length)
-  log(
+recordDrop({
+  cause: DropCause.claims,
+  count: inventoriedClaims.length - claims.length,
+  logLine:
     `area: ${inventoriedClaims.length - claims.length} of ${
       inventoriedClaims.length
     } documented claims dropped — the file cap removed every file they describe, so nothing in this run ` +
-      `checks them.`,
-  );
+    `checks them.`,
+});
 log(
   `${LEVEL} ${MODE} review: ${scope.files.length}${IS_AREA ? " files in scope" : " changed files"}${
     unlistedFileCount > 0 ? ` (${unlistedFileCount} generated/binary unlisted)` : ""
@@ -922,7 +979,10 @@ const VERIFY_SCOPE_BLOCK = (paths) => {
 // Moving it onto each FINDERS entry would duplicate it across every
 // Correctness angle).
 const FINDER_PROMPT = (f) => {
-  const isCleanup = f.kind === "cleanup";
+  // The finder's own flag, not its kind: what varies here is the SHAPE of the brief — one named lens carried in
+  // `text`, a precedence note, and a failure_scenario that is a broken rule rather than a crash. Read off
+  // `kind === "cleanup"` instead, adding a second such finder means giving it a kind chosen for its prompt.
+  const isCleanup = f.isNamedLens === true;
   // A record finding has no crash to name, and demanding one makes the finder either drop it or dress a
   // Documentation problem up as a runtime failure. The coverage finder is the ONLY one that raises record
   // Findings alone; every other area finder raises both — the seam finders are declared correctness while being
@@ -987,7 +1047,12 @@ const canonFile = (raw) => {
 // One is ignored, so a candidate cannot demote itself out of full-effort verification. Validated against KINDS
 // Either way: an unrecognised string would rank as correctness and escape the cleanup family's cheaper pass.
 const ingest = (cs, cap, kind, label) => {
-  if (cs.length > cap) log(`${label}: dropped ${cs.length - cap} at cap ${cap} — coverage truncated`);
+  recordDrop({
+    cause: DropCause.finderCap,
+    count: cs.length - cap,
+    logLine: `${label}: dropped ${cs.length - cap} at cap ${cap} — coverage truncated`,
+    subjects: [label],
+  });
   // `finder` rides along so the dedupe can tell independent corroboration from one finder repeating itself.
   // The candidates are the agent's own structured output, kept intact for the verifier prompt, so the canonical
   // File and provenance fields are attached to a copy.
@@ -1068,22 +1133,11 @@ const RESOLVER_PROMPT = (candidate) =>
 // Never reach the report as fabricated PLAUSIBLE. Trade-off: one verifier-
 // Agent failure drops every candidate in that file rather than one.
 let verifierAgents = 0;
-// Candidates no verdict ever reached — a dead verifier agent, or one that omitted an index. They are dropped
-// Rather than shipped as fabricated PLAUSIBLE, but a drop nothing counts is indistinguishable from a clean run:
-// The stop rule reads "no findings" as converged, so a session limit mid-verify would end a review early with the
-// Reader told nothing. Counted here, logged with the other losses, and published in stats.
-let unverifiedDropped = 0;
-// Candidates no verifier was ALLOWED to judge, which is a different cause with the same consequence: the cap bit
-// Rather than an agent dying. Counted apart because they argue opposite ways about the next round — a dead
-// Verifier is a reason to re-run the same level, a cap that bit is a reason to raise it or narrow the window.
-let verifyCapDropped = 0;
-// The files those candidates sat in, named in the summary alongside the count: a bare number tells the reader some
-// Of the diff went unexamined without telling them WHICH of it, which is the half they need to re-run or read by hand.
-// One set per CAUSE, not one shared by both. Sharing it publishes the cap's filenames under the dead-verifier
-// Sentence — false for them, and with a count that no longer matches the list beside it — and on a cap-only run
-// Nothing renders them at all, since that sentence is gated on the other counter.
-const unverifiedDroppedFiles = new Set();
-const verifyCapDroppedFiles = new Set();
+// A candidate no verdict reached and a candidate no verifier was ALLOWED to reach are two causes with one
+// Consequence, and they argue opposite ways about the next round — a dead verifier is a reason to re-run the same
+// Level, a cap that bit is a reason to raise it or narrow the window — so each is its own `DropCause`, with its
+// Own count and its own file list. Both record the FILES as subjects, not just a count: a bare number tells the
+// Reader some of the diff went unexamined without telling them which of it, which is the half they need.
 // The verifier budget is the RUN's, not each pass's. `verifyGroups` is called twice above `high` — once for the
 // Main candidates, once for the sweep's — so reading `P.verifyMax` per call let a run spawn `verifyMax` verifiers
 // Twice while `stats.verifyCeiling` published one of them, and handed the sweep's ≤8 candidates a budget they
@@ -1114,16 +1168,15 @@ const verifyGroups = async (candidates) => {
   const groups = ordered.slice(0, verifyBudget);
   const overflow = ordered.slice(verifyBudget);
   verifyBudget -= groups.length;
-  if (overflow.length > 0) {
-    const dropped = overflow.reduce((n, g) => n + g.length, 0);
-    verifyCapDropped += dropped;
-    for (const g of overflow) verifyCapDroppedFiles.add(g[0].file);
-    log(
-      `verify: ${dropped} candidate(s) in ${overflow.length} lower-ranked file(s) dropped at the ${
-        P.verifyMax
-      }-verifier cap — they were never judged`,
-    );
-  }
+  const cappedOut = overflow.reduce((total, g) => total + g.length, 0);
+  recordDrop({
+    cause: DropCause.verifyCap,
+    count: cappedOut,
+    logLine: `verify: ${cappedOut} candidate(s) in ${overflow.length} lower-ranked file(s) dropped at the ${
+      P.verifyMax
+    }-verifier cap — they were never judged`,
+    subjects: overflow.map((g) => g[0].file),
+  });
   verifierAgents += groups.length;
   const out = await parallel(
     groups.map((g) => async () => {
@@ -1132,7 +1185,7 @@ const verifyGroups = async (candidates) => {
       // Comment stale, is the work duplicated — with no trigger to construct and no failure path to trace.
       // Correctness claims are the ones that need reasoning depth, and cleanup can outnumber them at every
       // Level, so spending the same per-agent effort on both is where the level's budget quietly goes.
-      const isCleanupOnly = g.every((c) => c.kind === "cleanup");
+      const isCleanupOnly = g.every((c) => isCheapToSettle(c));
       const r = await agent(GROUP_VERIFIER_PROMPT(g), {
         effort: isCleanupOnly ? "low" : P.effort,
         label: `verify:${short}(${g.length})${isCleanupOnly ? " cleanup" : ""}`,
@@ -1144,8 +1197,7 @@ const verifyGroups = async (candidates) => {
       // Throw here escapes the fan-out and ends the run — the outcome this whole block exists to turn into a counted
       // Drop, so schema drift must degrade the same way an agent failure does.
       if (!r || !Array.isArray(r.verdicts)) {
-        unverifiedDropped += g.length;
-        unverifiedDroppedFiles.add(g[0].file);
+        recordDrop({ cause: DropCause.unverified, count: g.length, subjects: [g[0].file] });
         return [];
       }
       const byIdx = {};
@@ -1162,8 +1214,7 @@ const verifyGroups = async (candidates) => {
       return g.flatMap((c, i) => {
         const v = byIdx[i];
         if (!v) {
-          unverifiedDropped++;
-          unverifiedDroppedFiles.add(c.file);
+          recordDrop({ cause: DropCause.unverified, count: 1, subjects: [c.file] });
           return [];
         }
         // The floor rule itself lives in `isUnderConfident` and is called, never restated: a second copy of it
@@ -1396,16 +1447,19 @@ const COVERAGE_FINDER = {
 // That are minor by definition, on a stop rule that calls an all-minor round converged. Four of those lenses are
 // The `simplify` skill's job now; the cap that survives with the fifth is `ANGLES` — one convention violation per
 // Correctness angle, which keeps it a spot-check rather than a second review.
-// `kind` stays `cleanup`, which is what routes it to low-effort finding and low-effort verification and ranks it
-// Below every correctness candidate. A conventions violation is settled by quoting the rule and the line, so it
-// Needs the cheap path for exactly the reason the old family did; renaming the kind here would silently promote it
-// Into full-effort verification and above real bugs in the report.
+// Its `kind` is `cleanup` because that is what its findings ARE — a maintainability cost, ranked below every
+// Correctness candidate. Everything else that used to follow from that word now says so itself: `isNamedLens`
+// Shapes the prompt, `isAncillary` keeps it out of the correctness fan-out the resolve budget is sized from, and
+// `IS_KIND_CHEAP_TO_SETTLE` routes the effort. Read the kind for all four and none of them can be changed
+// Independently — which is how a taxonomy edit silently promoted the family into full-effort verification once.
 // `ingest` logs what it truncated, so a run with more violations than the cap says so rather than reading as
 // Clean. In area mode the lens needs the same no-diff reframing the correctness ones get — it is worded around
 // "the diff", and without the note the finder has nothing to match and returns empty, shipping an area review
 // With zero conventions findings that still reads as full coverage.
 const CONVENTIONS_FINDER = {
   cap: ANGLES,
+  isAncillary: true,
+  isNamedLens: true,
   kind: "cleanup",
   label: "conventions",
   text: IS_AREA ? AREA_LENS_NOTE + CONVENTIONS_TEXT : CONVENTIONS_TEXT,
@@ -1460,8 +1514,9 @@ const FINDERS = [
 // Passes. `ANGLES` describes the lens split alone, and in seam mode no angle finder is spawned at all (the
 // Finders are `seams + 1`). Everything sized off the fan-out reads this instead — the resolve budget, and the
 // Number the report publishes as coverage — so a seam run cannot be budgeted or read as a three-angle review.
-// Cleanup is excluded because it is the one finder with a different (single, derived) budget.
-const NON_CLEANUP_FINDER_COUNT = FINDERS.filter((f) => f.kind !== "cleanup").length;
+// Ancillary finders are excluded because they carry a different (single, derived) budget — today that is the
+// Conventions finder, and it says so on itself rather than being recognised by its kind.
+const PRIMARY_FINDER_COUNT = FINDERS.filter((f) => f.isAncillary !== true).length;
 
 // A finder that died and one that answered without a `candidates` array are the same loss with the same remedy:
 // Its lens or its seam went unread. Verify already turns both into one counted drop, and this is the second site
@@ -1471,13 +1526,14 @@ const NON_CLEANUP_FINDER_COUNT = FINDERS.filter((f) => f.kind !== "cleanup").len
 // The loss is also LOGGED and counted, not just survived: a dead finder that returns silently leaves a run
 // Missing a third of its territory looking exactly like a run that found nothing there, and the stop rule reads
 // The second as converged. Every other degradation in this script is named in `stats` for the same reason.
-let finderDropped = 0;
-const finderDroppedLabels = new Set();
 const readCandidates = (result, label) => {
   if (result && Array.isArray(result.candidates)) return result.candidates;
-  finderDropped++;
-  finderDroppedLabels.add(label);
-  log(`${label}: returned no usable candidates — this finder's territory went unread`);
+  recordDrop({
+    cause: DropCause.unfound,
+    count: 1,
+    logLine: `${label}: returned no usable candidates — this finder's territory went unread`,
+    subjects: [label],
+  });
   return null;
 };
 
@@ -1488,7 +1544,7 @@ const finderOuts = await parallel(
         // A conventions pass reads rules and matches lines against them — its verifiers already run low for the
         // Same reason. Reasoning depth is what correctness angles need, so they get the level's own effort and
         // The `cleanup` kind overrides it downward.
-        effort: f.kind === "cleanup" ? "low" : P.effort,
+        effort: isCheapToSettle(f) ? "low" : P.effort,
         label: f.label,
         model: AGENT_MODEL,
         phase: "Find",
@@ -1618,11 +1674,18 @@ if (collapsed > 0) log(`dedupe: ${collapsed} duplicate reports collapsed onto ${
 // Sized off the correctness fan-out that ran, not the lens angle count: seam mode spawns `seams + 1` finders each
 // Capped at PER_ANGLE, so a budget of `ANGLES × 2` gave the largest reviews — the ones seam mode exists for — the
 // Same six resolvers a two-file lens review gets, and everything below rank six was dropped unexamined.
-const RESOLVE_MAX = NON_CLEANUP_FINDER_COUNT * 2;
+const RESOLVE_MAX = PRIMARY_FINDER_COUNT * 2;
 const undecided = dedupedFindings.filter((c) => c.verdict === "PLAUSIBLE").toSorted((a, b) => rank(a) - rank(b));
 const toResolve = undecided.slice(0, RESOLVE_MAX);
 const unresolvedDropped = undecided.slice(RESOLVE_MAX);
 for (const c of unresolvedDropped) c.droppedUnsettled = true;
+// Registered without a log line: the resolve log below already names the budget and what it cut, in the one
+// Sentence that also says how many were sent — splitting that into two lines would report one decision twice.
+recordDrop({
+  cause: DropCause.unsettled,
+  count: unresolvedDropped.length,
+  subjects: unresolvedDropped.map((c) => loc(c)),
+});
 if (toResolve.length > 0) {
   phase("Resolve");
   log(
@@ -1690,7 +1753,9 @@ log(
   `Verify done: ${verified.length} verified → ${surviving.length} kept, ${refuted.length} refuted${
     collapsed > 0 ? `, ${collapsed} deduped` : ""
   }${unresolvedDropped.length > 0 ? `, ${unresolvedDropped.length} dropped unsettled` : ""}${
-    unverifiedDropped > 0 ? `, ${unverifiedDropped} dropped unverified (a verifier returned no verdict)` : ""
+    droppedCount(DropCause.unverified) > 0
+      ? `, ${droppedCount(DropCause.unverified)} dropped unverified (a verifier returned no verdict)`
+      : ""
   }`,
 );
 
@@ -1699,17 +1764,19 @@ const stats = makeStats({
   findMode: SEAM_MODE ? "seam" : "lens",
   // The correctness finders actually spawned, not the level's lens count: in seam mode those are two different
   // Numbers, and the smaller one reads as ~40% less coverage than the run bought.
-  angles: NON_CLEANUP_FINDER_COUNT,
+  angles: PRIMARY_FINDER_COUNT,
   perAngle: PER_ANGLE,
   // The conventions finder's own small budget, derived from the lens angle count rather than the fan-out.
-  conventionsCap: CONVENTIONS_FINDER.cap,
-  // The sweep's own budget — a third cap that is neither `perAngle` nor `conventionsCap`, and absent below xhigh.
-  sweepCap: P.sweep ? SWEEP_MAX : 0,
+  conventionsCeiling: CONVENTIONS_FINDER.cap,
+  // The sweep's own budget — a third ceiling that is neither `perAngle` nor `conventionsCeiling`, and absent
+  // Below xhigh. One suffix across all of them: a reader looking for the run's limits should not have to know
+  // Which half of them were named `Cap` and which `Ceiling`.
+  sweepCeiling: P.sweep ? SWEEP_MAX : 0,
   // The ceiling COMPUTED from the fan-out that ran, never a formula for a reader to reassemble. Every term here
   // Has drifted out of the prose at least once — the sweep's cap was missing from it for two levels — and a
   // Reader who re-derives it budgets for a run of a different size than the one they got. There is one number
   // And the script owns it: three caps, each from the finder family that actually spawned.
-  reportableCeiling: NON_CLEANUP_FINDER_COUNT * PER_ANGLE + CONVENTIONS_FINDER.cap + (P.sweep ? SWEEP_MAX : 0),
+  reportableCeiling: PRIMARY_FINDER_COUNT * PER_ANGLE + CONVENTIONS_FINDER.cap + (P.sweep ? SWEEP_MAX : 0),
   // How many unsettled findings a resolver was allowed, which is NOT what the resolve log line reports: that
   // Counts the ones actually sent, and a run with fewer plausible findings than the cap sends fewer. Only this
   // Field distinguishes "nothing else needed resolving" from "the budget ran out", and the two have opposite
@@ -1718,7 +1785,6 @@ const stats = makeStats({
   // What Verify was allowed, so `verifierAgents` can be read against something. Equal to the ceiling with an
   // Overflow logged means the phase was truncated; equal with no overflow means it exactly fit.
   verifyCeiling: P.verifyMax,
-  droppedAtVerifyCap: verifyCapDropped,
   seams: SEAM_MODE ? seams.map((s) => s.name) : undefined,
   // The claims actually put in front of an agent, not the size of the inventory: a claim whose pathPrefixes
   // Overlap no seam, or whose files the cap dropped, reaches no finder, and counting it overstates the one number
@@ -1726,9 +1792,9 @@ const stats = makeStats({
   claimsChecked: IS_AREA ? claimsShown.size : undefined,
   claimsInventoried: IS_AREA ? inventoriedClaims.length : undefined,
   deduped: collapsed,
-  droppedUnfound: finderDropped,
-  droppedUnsettled: unresolvedDropped.length,
-  droppedUnverified: unverifiedDropped,
+  // Every cause, off the one registry. Threaded by hand, four of the eight had no field at all and the reader was
+  // Told the run was clean; spelling them out here would reintroduce exactly that omission one cause at a time.
+  ...Object.fromEntries(Object.values(DropCause).map((cause) => [cause, droppedCount(cause)])),
   finders: FINDERS.length,
   candidates: candidatesSeen,
   verifierAgents,
@@ -1742,35 +1808,33 @@ const stats = makeStats({
 // Two phrasings of one condition drift, and which one the user gets would depend only on whether anything else
 // Survived. The refuted rows are built once for the same reason: the report format asks for them on every run,
 // Including the run that refuted everything.
-// One clause per cause, each gated on its own count and naming its own subjects. Written as a concat ladder of
-// Space-prefixed strings instead, the leading-space rule was restated at every clause and a fourth cause was one
-// Omission away from gluing two sentences together; here the separator is applied once.
-const listOf = (subjects) => [...subjects].toSorted((a, b) => a.localeCompare(b)).join(", ");
-const unexaminedNote = [
-  unresolvedDropped.length > 0 &&
-    `${
-      unresolvedDropped.length
-    } further finding(s) were dropped unsettled at the resolve budget rather than refuted — this round did not clear them.`,
+// One sentence per cause, from the registry. Not every drop earns one: a finder's own cap fires on most runs and
+// Is the log's business, while these four mean a slice of the review did not happen. A cause with no entry here is
+// Still counted in `stats` — the summary is the loud channel, the stats block the complete one.
+const DROP_NOTES = {
+  [DropCause.unsettled]: (count) =>
+    `${count} further finding(s) were dropped unsettled at the resolve budget rather than refuted — this round did not clear them.`,
   // The cap biting is stated separately from a verifier dying, because the remedy differs: this one is answered by
   // A narrower window or a higher level, never by re-running the same level over the same range.
-  verifyCapDropped > 0 &&
-    `${verifyCapDropped} candidate(s) in ${listOf(verifyCapDroppedFiles)} were dropped at the ${
+  [DropCause.verifyCap]: (count, subjects) =>
+    `${count} candidate(s) in ${listOf(subjects)} were dropped at the ${
       P.verifyMax
     }-verifier cap and reached no verdict — narrow the window or raise the level rather than re-running this one.`,
-  unverifiedDropped > 0 &&
-    `${unverifiedDropped} candidate(s) in ${listOf(
-      unverifiedDroppedFiles,
+  [DropCause.unverified]: (count, subjects) =>
+    `${count} candidate(s) in ${listOf(
+      subjects,
     )} reached no verdict at all — a verifier agent returned nothing, so this round did not examine them and their absence is not evidence of a clean file.`,
-  // The loudest of the four, because it is the only one that costs a whole lens or seam rather than a handful of
-  // Candidates: the finders are NAMED, since which territory went unread is what decides whether re-running is
-  // Worth it, and a bare count reads as a rounding error against a run that reported thirty findings.
-  finderDropped > 0 &&
-    `${finderDropped} finder(s) returned nothing usable (${listOf(
-      finderDroppedLabels,
+  // The loudest, because it is the only one that costs a whole lens or seam rather than a handful of candidates:
+  // The finders are NAMED, since which territory went unread is what decides whether re-running is worth it, and a
+  // Bare count reads as a rounding error against a run that reported thirty findings.
+  [DropCause.unfound]: (count, subjects) =>
+    `${count} finder(s) returned nothing usable (${listOf(
+      subjects,
     )}) — that territory went unread this round, so a clean result for it means nobody looked.`,
-]
-  .filter(Boolean)
-  .map((clause) => ` ${clause}`)
+};
+const unexaminedNote = Object.entries(DROP_NOTES)
+  .filter(([cause]) => droppedCount(cause) > 0)
+  .map(([cause, getNote]) => ` ${getNote(droppedCount(cause), droppedSubjects(cause))}`)
   .join("");
 const refutedRows = refuted.map((c) => ({
   file: c.file,

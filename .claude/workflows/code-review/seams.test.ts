@@ -20,7 +20,7 @@ const areaScope = (overrides: ScopeAnswer): ScopeAnswer => ({
 
 describe("code-review seam partition", () => {
   // The sweep's own budget, the third cap the reportable ceiling has to account for.
-  const SWEEP_CAP = 8;
+  const SWEEP_CEILING = 8;
 
   test("splits a large area by seam and adds the whole-territory safety net", async () => {
     expect.hasAssertions();
@@ -94,8 +94,8 @@ describe("code-review seam partition", () => {
     const high = (await runReview("high", stubFor({}))).result.stats;
     const xhigh = (await runReview("xhigh", stubFor({}))).result.stats;
 
-    expect(high?.sweepCap).toBe(0);
-    expect(xhigh?.sweepCap).toBe(SWEEP_CAP);
+    expect(high?.sweepCeiling).toBe(0);
+    expect(xhigh?.sweepCeiling).toBe(SWEEP_CEILING);
     expect(xhigh?.reportableCeiling).toBeGreaterThan(high?.reportableCeiling ?? 0);
   });
 

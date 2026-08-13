@@ -29,6 +29,9 @@ describe("code-review verify", () => {
 
     expect(run.logs).toContainEqual(expect.stringContaining("dropped 3 at cap 6 — coverage truncated"));
     expect(run.result.stats?.candidates).toBe(6);
+    // A cause with no summary sentence still carries a stats field. This one was visible in the log alone, so a
+    // Reader following "read the stats, never the prose" got a block that said nothing had been truncated.
+    expect(run.result.stats?.droppedAtFinderCap).toBe(3);
   });
 
   test("caps the verifier fan-out by kind and says which files it left unjudged", async () => {

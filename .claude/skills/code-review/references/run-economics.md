@@ -4,7 +4,7 @@ Read when choosing a level, reading a run's `stats`, or deciding whether another
 
 ## Coverage is a budget, not a measurement of the code
 
-Each finder returns at most `stats.perAngle` candidates and the rest are truncated; the conventions finder has a small budget of its own (`stats.conventionsCap`, one candidate per correctness angle), and `xhigh`/`max` add a sweep pass with a third (`stats.sweepCap`).
+Each finder returns at most `stats.perAngle` candidates and the rest are truncated; the conventions finder has a small budget of its own (`stats.conventionsCeiling`, one candidate per correctness angle), and `xhigh`/`max` add a sweep pass with a third (`stats.sweepCeiling`).
 
 **Read the ceiling off `stats.reportableCeiling`** — the script computes it from the fan-out that actually ran, and none of the three caps can be inferred from the others. Never reassemble it from a formula here; a prose formula went stale within one round and under-budgeted two levels.
 
@@ -16,7 +16,7 @@ Repeat rounds at one level re-pay the dominant cost — a verifier per file, a r
 
 `low` is the default, and the axis it gives up is width alone: its effort is `medium`, not `low`, because a bug hunt below medium stops constructing triggers and reports what a linter would — the one saving that makes a cheap run worthless rather than cheap.
 
-The per-level numbers are deliberately not tabulated here — the script publishes all of them per run (`stats.angles`, `perAngle`, `verifyCeiling`, `sweepCap`, `reportableCeiling`), and a prose copy of `LEVEL_PARAMS` rots the same way the prose ceiling formula did. What a reader choosing a level _before_ a run needs is the magnitude:
+The per-level numbers are deliberately not tabulated here — the script publishes all of them per run (`stats.angles`, `perAngle`, `verifyCeiling`, `sweepCeiling`, `reportableCeiling`), and a prose copy of `LEVEL_PARAMS` rots the same way the prose ceiling formula did. What a reader choosing a level _before_ a run needs is the magnitude:
 
 | Level           | Reach for it when                                                           | Agents |
 | --------------- | --------------------------------------------------------------------------- | ------ |
@@ -48,7 +48,9 @@ Cost is agents × material read, set by the level rather than the diff size. The
 
 ## A degraded run is not a clean file
 
-Four discards carry a `stats` field, and the rest are log-only — **read the fields, never count the sites from prose**: `droppedUnfound` (a finder died, taking its lens or seam), `droppedUnverified` (a dead verifier left candidates unjudged), `droppedAtVerifyCap` (no verifier was allowed to judge them), `droppedUnsettled` (below the resolve budget). The per-finder cap, the area file cap and dropped seams/claims are visible **only** in the log (`dropped N at cap`, `seam(s) dropped`, and in `area` mode `claimsChecked` against `claimsInventoried`), so a stats block alone is not the whole picture. Any of these means the round is degraded, and the stop rule must not read one as convergence.
+**Every discard carries a `stats` field** — one per cause, all derived from a single registry so a new truncation cannot be added without one. Read the fields, never count the sites from prose: `droppedUnfound` (a finder died, taking its lens or seam), `droppedUnverified` (a dead verifier left candidates unjudged), `droppedAtVerifyCap` (no verifier was allowed to judge them), `droppedUnsettled` (below the resolve budget), `droppedAtFinderCap` (ranked out of a finder's own cap), and in `area` mode `droppedAtAreaFileCap`, `droppedSeams`, `droppedClaims` — plus `claimsChecked` against `claimsInventoried`.
+
+The **summary** is louder than complete: only the four that mean a slice of the review did not happen get a sentence there, because a finder's own cap fires on most runs and a note on every run is a note nobody reads. Any non-zero field means the round is degraded, and the stop rule must not read one as convergence.
 
 ## The stop rule
 

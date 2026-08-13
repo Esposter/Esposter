@@ -3,6 +3,7 @@ import { describe, expect, test } from "vitest";
 import { AREA_ARGS, AREA_SCOPE, CANDIDATE } from "./constants.test";
 import { createCandidates } from "./createCandidates.test";
 import { createCorrectnessOnly } from "./createCorrectnessOnly.test";
+import { createSplitAcrossFinders } from "./createSplitAcrossFinders.test";
 import { getFinding } from "./getFinding.test";
 import { getResolveLog } from "./getResolveLog.test";
 import { runReview } from "./runReview.test";
@@ -217,7 +218,7 @@ describe("code-review dedupe and resolve", () => {
     const run = await runReview(
       "high",
       stubFor({
-        finderFor: (label) => (label === "angle-A" ? many.slice(0, 6) : label === "angle-B" ? many.slice(6) : []),
+        finderFor: createSplitAcrossFinders(many, 6),
         resolution: RESOLVED,
         verdictFor: UNDER_CONFIDENT,
       }),
@@ -239,7 +240,7 @@ describe("code-review dedupe and resolve", () => {
     const run = await runReview(
       "high",
       stubFor({
-        finderFor: (label) => (label === "angle-A" ? many.slice(0, 6) : label === "angle-B" ? many.slice(6) : []),
+        finderFor: createSplitAcrossFinders(many, 6),
         resolution: RESOLVED,
         // Index 7 arrives last, past the six-finding budget: a resolver spending it in arrival order never
         // Reaches this candidate, so only a worst-first spend can confirm it.
