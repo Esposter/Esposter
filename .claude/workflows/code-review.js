@@ -1047,11 +1047,12 @@ const canonFile = (raw) => {
 // One is ignored, so a candidate cannot demote itself out of full-effort verification. Validated against KINDS
 // Either way: an unrecognised string would rank as correctness and escape the cleanup family's cheaper pass.
 const ingest = (cs, cap, kind, label) => {
+  // No subjects: they are read only by a `DROP_NOTES` sentence, and this cause deliberately has none — it fires on
+  // Most runs, and the finder it fired on is already named in the log line.
   recordDrop({
     cause: DropCause.finderCap,
     count: cs.length - cap,
     logLine: `${label}: dropped ${cs.length - cap} at cap ${cap} — coverage truncated`,
-    subjects: [label],
   });
   // `finder` rides along so the dedupe can tell independent corroboration from one finder repeating itself.
   // The candidates are the agent's own structured output, kept intact for the verifier prompt, so the canonical
@@ -1185,10 +1186,10 @@ const verifyGroups = async (candidates) => {
       // Comment stale, is the work duplicated — with no trigger to construct and no failure path to trace.
       // Correctness claims are the ones that need reasoning depth, and cleanup can outnumber them at every
       // Level, so spending the same per-agent effort on both is where the level's budget quietly goes.
-      const isCleanupOnly = g.every((c) => isCheapToSettle(c));
+      const isCheapGroup = g.every((c) => isCheapToSettle(c));
       const r = await agent(GROUP_VERIFIER_PROMPT(g), {
-        effort: isCleanupOnly ? "low" : P.effort,
-        label: `verify:${short}(${g.length})${isCleanupOnly ? " cleanup" : ""}`,
+        effort: isCheapGroup ? "low" : P.effort,
+        label: `verify:${short}(${g.length})${isCheapGroup ? " cleanup" : ""}`,
         model: AGENT_MODEL,
         phase: "Verify",
         schema: GROUP_VERDICT_SCHEMA,
