@@ -38,7 +38,7 @@ catalog:
   "@codspeed/vitest-plugin": ^5.7.1
   "@dxup/nuxt": ^0.5.6
   "@dxup/unimport": ^0.1.2
-  "@electric-sql/pglite": ^0.5.4
+  "@electric-sql/pglite": ^0.5.5
   "@eslint/core": ^1.2.1
   "@eslint/json": ^2.0.1
   "@floating-ui/dom": ^1.8.0
