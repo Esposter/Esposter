@@ -12,6 +12,10 @@ import type { Candidate } from "./models/Candidate";
 export const createSplitAcrossFinders =
   (candidates: Candidate[], perAngle: number) =>
   (label: string): Candidate[] =>
-    label === "angle-A" ? candidates.slice(0, perAngle) : label === "angle-B" ? candidates.slice(perAngle) : [];
+    label === "angle-A"
+      ? candidates.slice(0, perAngle)
+      : label === "angle-B"
+        ? candidates.slice(perAngle, perAngle * 2)
+        : [];
 
 describe.todo("createSplitAcrossFinders");
