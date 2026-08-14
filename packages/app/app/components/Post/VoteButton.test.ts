@@ -7,11 +7,11 @@ import { useLikeStore } from "@/store/post/like";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
+const createViewerLike = (value: Like["value"]) => ({ value }) as Like;
+
 // One button now serves both directions, so the branch that decides between casting, switching and withdrawing
 // A vote is written once — and a wrong branch here fires a create against the likes primary key
 describe("postVoteButton", () => {
-  const createViewerLike = (value: Like["value"]) => ({ value }) as Like;
-
   // The store outlives the test, so a spy left on it collects the next case's clicks too
   afterEach(() => {
     vi.restoreAllMocks();
