@@ -3,7 +3,6 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import { useMutation } from "@/composables/shared/useMutation";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
-import { useRoomStore } from "@/store/message/room";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
@@ -21,7 +20,6 @@ export const useCallStore = defineStore("message/room/call", () => {
   const { executeMutation: executeSetCameraMutation } = useMutation();
   const { executeMutation: executeSetHandRaisedMutation } = useMutation();
   const { executeMutation: executeSetMuteMutation } = useMutation();
-  const roomStore = useRoomStore();
   const knockerStore = useKnockerStore();
   const { resetKnockerState } = knockerStore;
   const mediaStore = useMediaStore();
