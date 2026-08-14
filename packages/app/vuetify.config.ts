@@ -92,9 +92,6 @@ const defaults: DefaultsOptions = {
   },
   VDialog: { maxWidth: "100%", width: 500 },
   VFileInput: { variant: "outlined" },
-  // Vuetify elevates a drawer only while it is temporary and open, leaving every other drawer separated from the
-  // Page by a hairline border alone — which reads as part of the page once the scrim is off
-  VNavigationDrawer: { elevation: 4 },
   VSelect: { variant: "outlined" },
   // Every switch in the app is a primary-coloured toggle with no message slot below it — a switch reports its
   // State by being on, so the grey default reads as disabled, and the reserved message row breaks list rhythm

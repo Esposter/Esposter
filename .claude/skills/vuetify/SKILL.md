@@ -48,18 +48,21 @@ Vuetify composables are auto-imported with a `v` prefix and are globally availab
 
 These variants are set globally and must **never** be repeated on individual components:
 
-| Component       | Default                        |
-| --------------- | ------------------------------ |
-| `VAutocomplete` | `variant="outlined"`           |
-| `VColorInput`   | `variant="outlined"`           |
-| `VCombobox`     | `variant="outlined"`           |
-| `VFileInput`    | `variant="outlined"`           |
-| `VSelect`       | `variant="outlined"`           |
-| `VTextarea`     | `variant="outlined"`           |
-| `VTextField`    | `variant="outlined"`           |
-| `VBtn`          | `flat`                         |
-| `VDialog`       | `maxWidth="100%"`, `width=500` |
-| `VTooltip`      | `location="top"`               |
+| Component       | Default                          |
+| --------------- | -------------------------------- |
+| `VAutocomplete` | `variant="outlined"`             |
+| `VColorInput`   | `variant="outlined"`             |
+| `VCombobox`     | `variant="outlined"`             |
+| `VFileInput`    | `variant="outlined"`             |
+| `VSelect`       | `variant="outlined"`             |
+| `VTextarea`     | `variant="outlined"`             |
+| `VTextField`    | `variant="outlined"`             |
+| `VBtn`          | `flat`                           |
+| `VDialog`       | `maxWidth="100%"`, `width=500`   |
+| `VSwitch`       | `color="primary"`, `hideDetails` |
+| `VTooltip`      | `location="top"`                 |
+
+**A default is a constant, so anything conditional on component state cannot be one.** A prop set here applies to every instance in every state — a drawer's `elevation` default also shadows it while it is closed and off-canvas, and no default can distinguish the `temporary` a drawer turns on for itself at the mobile breakpoint. Style those cases as a rule in `globals.scss` keyed on Vuetify's own state classes (`.v-navigation-drawer--active:not(.v-navigation-drawer--temporary)`), inside the `vuetify-overrides` layer, using the framework's mixin so the values stay Vuetify's: `@use "vuetify/tools" as vuetify` then `@include vuetify.elevation(4)`. This is the one place a Vuetify SASS API is allowed — component `<style>` blocks still may not (below).
 
 ## Button Conventions
 

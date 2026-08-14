@@ -17,7 +17,7 @@ const isOpen = defineModel<boolean>({ required: true });
      these are a handful of links reached a few times a session. The shadow is what separates it from the page —
      there is no scrim, so the page behind stays readable and usable and opening the menu never blocks the work
      it navigates between. It is spelled out because this is a sheet rather than a v-navigation-drawer, and so
-     misses the global drawer elevation it has to match -->
+     misses the open-drawer elevation rule in globals.scss it has to match -->
 <template>
   <v-slide-x-transition>
     <v-sheet v-if="isOpen" elevation="4" inset-y-0 left-0 absolute z-2 overflow-y-auto :width="LEFT_DRAWER_WIDTH">
