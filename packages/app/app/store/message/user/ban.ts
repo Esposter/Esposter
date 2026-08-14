@@ -1,6 +1,7 @@
 import type { DeleteBanInput } from "#shared/models/db/moderation/DeleteBanInput";
 import type { BanInMessageWithRelations } from "@esposter/db-schema";
 
+import { COMPOSITE_KEY_SEPARATOR } from "@/services/shared/constants";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
@@ -27,7 +28,7 @@ export const useBanStore = defineStore("message/user/ban", () => {
         };
       },
       // Keyed per room-user pair so concurrent unbans across bans run independently instead of queueing behind each other
-      key: `${input.roomId}-${input.userId}`,
+      key: `${input.roomId}${COMPOSITE_KEY_SEPARATOR}${input.userId}`,
     });
   };
 

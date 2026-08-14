@@ -3,6 +3,7 @@ import type { RoomInMessage, User } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { useMutation } from "@/composables/shared/useMutation";
+import { COMPOSITE_KEY_SEPARATOR } from "@/services/shared/constants";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
@@ -73,7 +74,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
         },
         // The target is the room-and-participant pair: the same person can be in more than one direct message,
         // So keying on userId alone would make unrelated rooms' removals queue behind each other
-        key: `${roomId}-${userId}`,
+        key: `${roomId}${COMPOSITE_KEY_SEPARATOR}${userId}`,
       },
     );
   };

@@ -6,6 +6,7 @@ import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import { ResourceBladeDefinitionMap } from "@/services/resource/ResourceBladeDefinitionMap";
 import { ResourceEditorComponentMap } from "@/services/resource/ResourceEditorComponentMap";
 import { ResourceOverviewComponentMap } from "@/services/resource/ResourceOverviewComponentMap";
+import { COMPOSITE_KEY_SEPARATOR } from "@/services/shared/constants";
 
 interface ResourceBladeOutletProps {
   activeBlade: string;
@@ -42,7 +43,7 @@ const overviewComponent = computed(() => ResourceOverviewComponentMap[resource.t
     </template>
   </Suspense>
   <Suspense v-else-if="contentComponent">
-    <component :is="contentComponent" :key="`${resource.id}-${activeBlade}`" />
+    <component :is="contentComponent" :key="`${resource.id}${COMPOSITE_KEY_SEPARATOR}${activeBlade}`" />
     <template #fallback>
       <StyledSkeleton />
     </template>

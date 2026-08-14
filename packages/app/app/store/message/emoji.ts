@@ -9,6 +9,7 @@ import { useMutation } from "@/composables/shared/useMutation";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { authClient } from "@/services/auth/authClient";
 import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
+import { COMPOSITE_KEY_SEPARATOR } from "@/services/shared/constants";
 import { MessageMetadataType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
@@ -31,7 +32,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
       },
       // Keyed per emoji identity so reacting with two emojis in quick succession never queues behind the other
       // The first one's rollback or server-entity assignment
-      key: `${input.messageRowKey}-${input.emojiTag}`,
+      key: `${input.messageRowKey}${COMPOSITE_KEY_SEPARATOR}${input.emojiTag}`,
       onSuccess: (result) => {
         Object.assign(newEmoji, result);
       },

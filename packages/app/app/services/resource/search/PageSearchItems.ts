@@ -3,6 +3,7 @@ import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearch
 import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
+import { COMPOSITE_KEY_SEPARATOR } from "@/services/shared/constants";
 import { RoutePath } from "@esposter/shared";
 
 // The list routes come from the source registry so a new source is searchable without being listed twice.
@@ -25,7 +26,7 @@ export const PageSearchItems: readonly ResourceSearchItem[] = [
   ...Object.values(ResourceListSource).map((source) => ({
     group: ResourceSearchGroup.Pages,
     icon: ResourceListSourceDefinitionMap[source].icon,
-    id: `${ResourceSearchGroup.Pages}-${source}`,
+    id: `${ResourceSearchGroup.Pages}${COMPOSITE_KEY_SEPARATOR}${source}`,
     title: ResourceListSourceSearchTitleMap[source],
     to: ResourceListSourceDefinitionMap[source].to,
   })),

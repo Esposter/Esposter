@@ -13,6 +13,7 @@ import { useMutation } from "@/composables/shared/useMutation";
 import { getTopRole } from "@/services/message/member/getTopRole";
 import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks";
 import { MANAGEMENT_PERMISSIONS } from "@/services/room/rbac/constants";
+import { COMPOSITE_KEY_SEPARATOR } from "@/services/shared/constants";
 import { useRoomStore } from "@/store/message/room";
 import { noop } from "@esposter/shared";
 
@@ -206,7 +207,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
           }
         : undefined,
       // Keyed per member-role pair so concurrent assignments across members/roles run independently instead of queueing behind each other
-      key: `${input.userId}-${input.roleId}`,
+      key: `${input.userId}${COMPOSITE_KEY_SEPARATOR}${input.roleId}`,
       onSuccess: (newRole) => {
         setMemberRole(input.roomId, input.userId, newRole);
       },
@@ -222,7 +223,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
         };
       },
       // Keyed per member-role pair so concurrent revocations across members/roles run independently instead of queueing behind each other
-      key: `${input.userId}-${input.roleId}`,
+      key: `${input.userId}${COMPOSITE_KEY_SEPARATOR}${input.roleId}`,
     });
   };
   return {
