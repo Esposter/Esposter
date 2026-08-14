@@ -7,10 +7,10 @@ definePageMeta({
 
 const { user, userId } = await useReadUserFromRoute();
 const userAchievements = await useReadUserAchievements(userId);
-const { readMoreUserPosts, readUserPosts } = useReadUserPosts(userId);
+const { readMorePosts, readPosts } = useReadPosts(userId);
 const postStore = usePostStore();
 const { hasMore, items } = storeToRefs(postStore);
-await readUserPosts();
+await readPosts();
 </script>
 
 <template>
@@ -28,7 +28,7 @@ await readUserPosts();
           <PostCard :post />
         </v-col>
       </v-row>
-      <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMoreUserPosts" />
+      <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMorePosts" />
     </v-container>
     <PostConfirmDeleteDialog />
   </NuxtLayout>

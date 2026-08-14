@@ -39,16 +39,16 @@ The `userId` filter composes with the existing clauses on `readPosts`: the `pare
 
 Paths relative to `packages/app`.
 
-| File                                                 | Role                                     |
-| ---------------------------------------------------- | ---------------------------------------- |
-| `app/pages/user/[id].vue`                            | the profile page                         |
-| `app/components/User/Profile/Header.vue`             | avatar, name, biography                  |
-| `app/components/User/Profile/AchievementSummary.vue` | achievement points and recent unlocks    |
-| `app/composables/post/useReadUserPosts.ts`           | cursor pagination for one author's posts |
-| `server/trpc/routers/user.ts`                        | `readUser` public identity query         |
-| `server/trpc/routers/post.ts`                        | `userId` filter on `readPosts`           |
-| `app/components/Post/Card.vue`                       | author link                              |
-| `app/components/Post/Comment/Card.vue`               | author link                              |
+| File                                                 | Role                                                        |
+| ---------------------------------------------------- | ----------------------------------------------------------- |
+| `app/pages/user/[id].vue`                            | the profile page                                            |
+| `app/components/User/Profile/Header.vue`             | avatar, name, biography                                     |
+| `app/components/User/Profile/AchievementSummary.vue` | achievement points and recent unlocks                       |
+| `app/composables/post/useReadPosts.ts`               | cursor pagination, filtered by author when given a `userId` |
+| `server/trpc/routers/user.ts`                        | `readUser` public identity query                            |
+| `server/trpc/routers/post.ts`                        | `userId` filter on `readPosts`                              |
+| `app/components/Post/Card.vue`                       | author link                                                 |
+| `app/components/Post/Comment/Card.vue`               | author link                                                 |
 
 ## Notes
 

@@ -29,7 +29,13 @@ const isCreator = computed(() => post.userId === session.value?.user.id);
       <v-card-actions p-0>
         <PostCommentsButton :post />
         <PostUpdateButton v-if="isCreator" :post-id="post.id" />
-        <PostDeleteButton v-if="isCreator" @update:delete-mode="deletingId = post.id" />
+        <StyledTooltipIconButton
+          v-if="isCreator"
+          :button-props="{ size: 'small', tile: true }"
+          icon="mdi-delete"
+          text="Delete Post"
+          @click="deletingId = post.id"
+        />
       </v-card-actions>
     </v-card>
   </StyledCard>
