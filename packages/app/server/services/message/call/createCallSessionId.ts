@@ -11,7 +11,7 @@ export const createCallSessionId = async (
   db: Context["db"],
   roomId: string,
   userId: string,
-  threadRootRowKey: string,
+  threadRootRowKey = "",
 ): Promise<string> => {
   for (let attempt = 0; attempt < MAX_CALL_SESSION_ID_ATTEMPTS; attempt++) {
     const existingCallSessionId = await readCallSessionId(db, roomId, threadRootRowKey);

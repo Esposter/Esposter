@@ -33,7 +33,9 @@ export const useKeyboardShortcutsExtension = async (send: (editor: Editor) => Pr
           return true;
         },
         Enter: () => {
-          getSynchronizedFunction(() => send(this.editor))();
+          getSynchronizedFunction(async () => {
+            await send(this.editor);
+          })();
           return true;
         },
       };
