@@ -71,7 +71,7 @@ UnoCSS `presetAttributify` + `presetWind4` project-wide: static styles as elemen
 
 Nine workflows: CI, Bench, Release (tags), Pulumi (infra preview on PRs), Delete Merged Branch, Claude warmup, a reusable build, and two Azure Functions deployments (develop → dev slot, main → prod slot).
 
-CI builds every non-app package once via the reusable `build-packages` workflow, which every downstream job (`build`, `build-docs`, `coverage`, `format`, `lint`, `typecheck`) gates on. Its `actions/cache` entry is keyed by content hash and shared repo-wide, so a CI build gives Bench a cache hit for free, and vice versa — the common app-only commit skips the build entirely. Tests run through one root `vitest.config.ts` `projects` config, so coverage runs as an 8-way `--shard` matrix with `--reporter=blob`, feeding a dependent `coverage-merge` job that recombines the blobs into one artifact.
+CI builds every non-app package once via the reusable `build-packages` workflow, which every downstream job (`build`, `build-docs`, `coverage`, `format`, `lint`, `typecheck`) gates on. Its `actions/cache` entry is keyed by content hash and shared repo-wide, so a CI build gives Bench a cache hit for free, and vice versa — the common app-only commit skips the build entirely. Tests run through one root `vitest.config.ts` `projects` config, so coverage runs as a `--shard` matrix with `--reporter=blob`, feeding a dependent `coverage-merge` job that recombines the blobs into one artifact.
 
 Security hardening throughout: every third-party action is SHA-pinned, `persist-credentials: false` on all checkouts, and explicit least-privilege `permissions:`.
 
