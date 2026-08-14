@@ -14,7 +14,11 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
   const userId = crypto.randomUUID();
   const room = createRoom("name");
   const createJob = (message: string) =>
-    createScheduledMessageJob({ payload: { message, type: ScheduledMessageJobType.ScheduledMessage }, room, userId });
+    createScheduledMessageJob({
+      payload: { message, replyRowKey: "", type: ScheduledMessageJobType.ScheduledMessage },
+      room,
+      userId,
+    });
 
   // What the send owes the page — the optimistic removal and the rollback that races the cancel of the same job
   // — belongs to the store both surfaces write through, and is covered there. This is the wiring: the button

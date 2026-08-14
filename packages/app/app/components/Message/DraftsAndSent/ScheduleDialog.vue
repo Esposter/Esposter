@@ -7,7 +7,7 @@ const { $trpc } = useNuxtApp();
 const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { isOpen, minScheduledAt, scheduledAt, target } = storeToRefs(scheduleDialogStore);
 const inputStore = useInputStore();
-const { clearDraft } = inputStore;
+const { clearComposer } = inputStore;
 const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
 const { executeMutation } = useMutation();
 // Server-scheduled job — non-optimistic, store refresh in onSuccess
@@ -24,11 +24,13 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
         ? $trpc.message.scheduledMessageJob.rescheduleMessage.mutate({
             id: currentTarget.scheduledMessageJobId,
             message: currentTarget.content,
+            replyRowKey: currentTarget.threadRootRowKey,
             roomId: currentTarget.roomId,
             runAt: scheduledAt.value,
           })
         : $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
             message: currentTarget.content,
+            replyRowKey: currentTarget.threadRootRowKey,
             roomId: currentTarget.roomId,
             runAt: scheduledAt.value,
           }),
@@ -37,7 +39,8 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
       key: currentTarget.scheduledMessageJobId || Symbol("scheduleMessage"),
       onSuccess: async () => {
         isSuccessful = true;
-        if (!currentTarget.scheduledMessageJobId) clearDraft(currentTarget.roomId);
+        if (!currentTarget.scheduledMessageJobId)
+          clearComposer({ roomId: currentTarget.roomId, threadRootRowKey: currentTarget.threadRootRowKey });
         await readScheduledMessageJobs();
         target.value = undefined;
       },

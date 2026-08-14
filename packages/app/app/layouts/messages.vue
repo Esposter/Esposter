@@ -12,18 +12,22 @@ await useSubscribables();
 const layoutStore = useLayoutStore();
 const { isDesktop } = storeToRefs(layoutStore);
 const messageLayoutStore = useMessageLayoutStore();
-const { leftSideBarWidth, rightSideBarWidth } = storeToRefs(messageLayoutStore);
+const { leftSideBarWidth, rightSideBarWidth, splitRightDrawer } = storeToRefs(messageLayoutStore);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
 </script>
 
+<!-- Split view puts two panes in the one drawer, so the drawer is twice as wide — the handle still resizes one
+     pane's worth, which is what keeps both halves equal at any width -->
 <template>
   <NuxtLayout
     :footer-style="{ paddingBottom: 0 }"
     hide-global-scrollbar
     :left-navigation-drawer-props="{ width: isDesktop ? leftSideBarWidth : LEFT_DRAWER_WIDTH }"
-    :right-navigation-drawer-props="{ width: isDesktop ? rightSideBarWidth : RIGHT_DRAWER_WIDTH }"
+    :right-navigation-drawer-props="{
+      width: isDesktop ? (splitRightDrawer ? rightSideBarWidth * 2 : rightSideBarWidth) : RIGHT_DRAWER_WIDTH,
+    }"
   >
     <Head>
       <Title>{{ roomName }}</Title>

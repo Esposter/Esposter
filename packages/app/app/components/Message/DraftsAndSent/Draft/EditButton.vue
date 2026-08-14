@@ -14,6 +14,12 @@ const { draftItem } = defineProps<MessageDraftsAndSentDraftEditButtonProps>();
   <MessageDraftsAndSentActionButton
     icon="mdi-pencil-outline"
     text="Edit draft"
-    @click="navigateTo(RoutePath.Messages(draftItem.room.id))"
+    @click="
+      navigateTo(
+        draftItem.threadRootRowKey
+          ? RoutePath.MessagesThread(draftItem.room.id, draftItem.threadRootRowKey)
+          : RoutePath.Messages(draftItem.room.id),
+      )
+    "
   />
 </template>

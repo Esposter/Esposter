@@ -1,10 +1,17 @@
 <script setup lang="ts">
+import type { ComposerTarget } from "@/models/message/ComposerTarget";
+
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { takeOne } from "@esposter/shared";
 
+interface FileInputContainerProps {
+  target: ComposerTarget;
+}
+
+const { target } = defineProps<FileInputContainerProps>();
 const uploadFileStore = useUploadFileStore();
-const { discardCurrentUploadFiles } = uploadFileStore;
-const { files, fileUrlMap } = storeToRefs(uploadFileStore);
+const { discardUploadFiles, getComposerFileUrlMap, getComposerFiles } = uploadFileStore;
+const files = computed(() => getComposerFiles(target));
 </script>
 
 <template>
@@ -15,8 +22,8 @@ const { files, fileUrlMap } = storeToRefs(uploadFileStore);
         :key="file.id"
         :file
         :index
-        :upload-file-url="fileUrlMap.get(file.id)"
-        @delete="(index) => discardCurrentUploadFiles([takeOne(files, index).id])"
+        :upload-file-url="getComposerFileUrlMap(target).get(file.id)"
+        @delete="(index) => discardUploadFiles(target, [takeOne(files, index).id])"
       />
     </v-row>
   </v-container>

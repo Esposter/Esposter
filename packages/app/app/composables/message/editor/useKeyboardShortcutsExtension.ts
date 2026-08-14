@@ -1,3 +1,6 @@
+import type { Editor } from "@tiptap/core";
+import type { Promisable } from "type-fest";
+
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { authClient } from "@/services/auth/authClient";
 import { useMessageStore } from "@/store/message";
@@ -6,11 +9,12 @@ import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MessageType } from "@esposter/db-schema";
 import { Extension } from "@tiptap/vue-3";
 
-export const useKeyboardShortcutsExtension = async () => {
+// Send is passed in rather than read from the data store: the room composer and the thread pane's composer
+// Both bind these shortcuts, and Enter has to reach the composer the editor belongs to
+export const useKeyboardShortcutsExtension = async (send: (editor: Editor) => Promisable<void>) => {
   const { data: session } = await authClient.useSession(useFetch);
   const dataStore = useDataStore();
   const { items } = storeToRefs(dataStore);
-  const { sendMessage } = dataStore;
   const messageStore = useMessageStore();
   const { editingRowKey } = storeToRefs(messageStore);
   return new Extension({
@@ -29,7 +33,7 @@ export const useKeyboardShortcutsExtension = async () => {
           return true;
         },
         Enter: () => {
-          getSynchronizedFunction(() => sendMessage(this.editor))();
+          getSynchronizedFunction(() => send(this.editor))();
           return true;
         },
       };

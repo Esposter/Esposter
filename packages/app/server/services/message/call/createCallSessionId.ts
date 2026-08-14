@@ -7,21 +7,26 @@ import { CALL_ID_LENGTH, callSessionsInMessage, DatabaseEntityType } from "@espo
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
-export const createCallSessionId = async (db: Context["db"], roomId: string, userId: string): Promise<string> => {
+export const createCallSessionId = async (
+  db: Context["db"],
+  roomId: string,
+  userId: string,
+  threadRootRowKey: string,
+): Promise<string> => {
   for (let attempt = 0; attempt < MAX_CALL_SESSION_ID_ATTEMPTS; attempt++) {
-    const existingCallSessionId = await readCallSessionId(db, roomId);
+    const existingCallSessionId = await readCallSessionId(db, roomId, threadRootRowKey);
     if (existingCallSessionId) return existingCallSessionId;
     const id = createId(CALL_ID_LENGTH);
     const callSession = await getResultAsync(() =>
-      db.insert(callSessionsInMessage).values({ id, roomId, userId }).returning(),
+      db.insert(callSessionsInMessage).values({ id, roomId, threadRootRowKey, userId }).returning(),
     )
       .orTee(console.error)
       .unwrapOr(undefined);
     if (callSession?.[0]) return callSession[0].id;
   }
 
-  // Every attempt lost the race to another creator, so the room's session is whatever they landed
-  const callSessionId = await readCallSessionId(db, roomId);
+  // Every attempt lost the race to another creator, so the session is whatever they landed
+  const callSessionId = await readCallSessionId(db, roomId, threadRootRowKey);
   if (!callSessionId)
     throw new TRPCError({
       code: "UNPROCESSABLE_CONTENT",

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { getComposerTarget } from "@/services/message/composer/getComposerTarget";
 import { useInputStore } from "@/store/message/input";
 import { useRoomStore } from "@/store/message/room";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
@@ -16,7 +17,13 @@ const { drafts } = storeToRefs(inputStore);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const isActive = computed(() => room.id === currentRoomId.value);
-const hasDraft = computed(() => drafts.value.has(room.id) && !isActive.value);
+// A thread's draft counts as the room's, because the room list is the only place either is surfaced — a reply
+// Half-written in a thread pane is otherwise invisible until the drafts page is opened
+const hasDraft = computed(
+  () =>
+    !isActive.value &&
+    [...drafts.value.keys()].some((composerKey) => getComposerTarget(composerKey).roomId === room.id),
+);
 const userToRoomStore = useUserToRoomStore();
 const { getMyUserToRoom } = userToRoomStore;
 const myUserToRoom = computed(() => getMyUserToRoom(room.id));

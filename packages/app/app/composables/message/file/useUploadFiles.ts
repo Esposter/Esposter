@@ -1,4 +1,5 @@
 import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
+import type { ComposerTarget } from "@/models/message/ComposerTarget";
 
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
@@ -11,31 +12,35 @@ import { useRoomStore } from "@/store/message/room";
 import { FILE_MAX_LENGTH, getMimeCategory } from "@esposter/db-schema";
 import { getResultAsync, noop, takeOne, withFinalizerAsync } from "@esposter/shared";
 
-export const useUploadFiles = () => {
+// The composer the files are being attached to, passed in rather than read from the current room: the thread
+// Pane's composer accepts its own attachments, and both are on screen at once
+export const useUploadFiles = (target: MaybeRefOrGetter<ComposerTarget>) => {
   const { $trpc } = useNuxtApp();
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   const roomStore = useRoomStore();
-  const { currentRoom, currentRoomId } = storeToRefs(roomStore);
+  const { rooms } = storeToRefs(roomStore);
   const uploadFileStore = useUploadFileStore();
   const {
     discardUploadFiles,
+    getComposerFiles,
     storeUploadEnd,
     storeUploadFileProgress,
     storeUploadFiles,
     storeUploadFileThumbnails,
     storeUploadStart,
   } = uploadFileStore;
-  const { files } = storeToRefs(uploadFileStore);
   const validateFile = useValidateFile();
   return async (newFiles: File[] | null) => {
-    if (!currentRoomId.value || !newFiles) return;
-    else if (files.value.length + newFiles.length > FILE_MAX_LENGTH) {
+    const targetValue = toValue(target);
+    const files = getComposerFiles(targetValue);
+    if (!targetValue.roomId || !newFiles) return;
+    else if (files.length + newFiles.length > FILE_MAX_LENGTH) {
       createAlert(`You can only upload ${FILE_MAX_LENGTH} files at a time!`, "error");
       return;
     }
 
-    const room = currentRoom.value;
+    const room = rooms.value.find(({ id }) => id === targetValue.roomId);
     // Mirror the server chokepoint's platform-cap clamp so a room limit above the cap fails here, not at the SAS query.
     const maxFileSizeBytes = Math.min(room?.maxFileSizeBytes ?? MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
     // Validate before the SAS query and before rendering metadata so a rejected file is surfaced loudly. One
@@ -50,8 +55,8 @@ export const useUploadFiles = () => {
         return;
       }
 
-    const roomId = currentRoomId.value;
-    storeUploadStart(roomId);
+    const { roomId } = targetValue;
+    storeUploadStart(targetValue);
     // Downscale image thumbnails while the originals upload so both land in one pass.
     const thumbnailsPromise = Promise.all(newFiles.map((file) => generateImageThumbnail(file)));
     // A failed upload takes its seeded metadata and object urls back out — the composer renders from those, and
@@ -67,13 +72,13 @@ export const useUploadFiles = () => {
             generateUploadFileSasEntities: (uploadFiles) =>
               $trpc.message.generateUploadFileSasEntities.query({ files: uploadFiles, roomId }),
             onUploadProgress: ({ id }, progress) => {
-              storeUploadFileProgress(roomId, id, progress);
+              storeUploadFileProgress(targetValue, id, progress);
             },
             onUploadStart: (newFileSasEntities) => {
               seededFileSasEntities = newFileSasEntities;
               // Seed each file's metadata + object url once the write targets exist so Vue renders progress
               storeUploadFiles(
-                roomId,
+                targetValue,
                 newFileSasEntities.map(({ id, token }, index) => ({ file: takeOne(newFiles, index), id, token })),
               );
             },
@@ -101,10 +106,10 @@ export const useUploadFiles = () => {
               ),
             )
           ).flat();
-          storeUploadFileThumbnails(roomId, thumbnailIds);
+          storeUploadFileThumbnails(targetValue, thumbnailIds);
         }).match(noop, async (error) => {
           await discardUploadFiles(
-            roomId,
+            targetValue,
             seededFileSasEntities.map(({ id }) => id),
           );
           // A rejected SAS request is one of the codes errorLink owns, so it has already told the user; a failed
@@ -112,7 +117,7 @@ export const useUploadFiles = () => {
           if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
         }),
       () => {
-        storeUploadEnd(roomId);
+        storeUploadEnd(targetValue);
       },
     );
   };

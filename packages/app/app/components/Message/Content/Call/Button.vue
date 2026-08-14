@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { useCallStore } from "@/store/message/room/call";
+import { useRoomStore } from "@/store/message/room";
 import { mergeProps } from "vue";
 
+const roomStore = useRoomStore();
+const { currentRoomId } = storeToRefs(roomStore);
 const callStore = useCallStore();
 const { isConnecting, isInCall } = storeToRefs(callStore);
 const { joinCallByRoomId, leaveCall } = callStore;
@@ -41,6 +44,6 @@ const roomParticipantMap = useCallRoomParticipantMap();
     icon="mdi-phone"
     text="Start Call"
     :tooltip-props="{ location: 'bottom' }"
-    @click="joinCallByRoomId()"
+    @click="joinCallByRoomId(currentRoomId)"
   />
 </template>

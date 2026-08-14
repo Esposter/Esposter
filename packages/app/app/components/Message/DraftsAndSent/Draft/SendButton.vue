@@ -13,7 +13,7 @@ const { draftItem } = defineProps<MessageDraftsAndSentDraftSendButtonProps>();
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const inputStore = useInputStore();
-const { clearDraft } = inputStore;
+const { clearComposer } = inputStore;
 </script>
 
 <template>
@@ -26,11 +26,12 @@ const { clearDraft } = inputStore;
           await createMessage({
             files: [],
             message: draftItem.content,
+            replyRowKey: draftItem.threadRootRowKey,
             roomId: draftItem.room.id,
             type: MessageType.Message,
           })
         )
-          clearDraft(draftItem.room.id);
+          clearComposer({ roomId: draftItem.room.id, threadRootRowKey: draftItem.threadRootRowKey });
       }
     "
   />

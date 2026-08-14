@@ -15,8 +15,12 @@ const { draftItem } = defineProps<MessageDraftsAndSentDraftListItemProps>();
   <MessageDraftsAndSentBaseListItem
     :display-time="getDisplayTime(draftItem.updatedAt)"
     :subtitle="draftItem.content"
-    :title="draftItem.room.name"
-    :to="RoutePath.Messages(draftItem.room.id)"
+    :title="draftItem.threadRootRowKey ? `${draftItem.room.name} — thread` : draftItem.room.name"
+    :to="
+      draftItem.threadRootRowKey
+        ? RoutePath.MessagesThread(draftItem.room.id, draftItem.threadRootRowKey)
+        : RoutePath.Messages(draftItem.room.id)
+    "
   >
     <template #prepend>
       <StyledAvatar :image="draftItem.room.image" :name="draftItem.room.name" />

@@ -8,6 +8,7 @@ import { z } from "zod";
 export const scheduleMessageInputSchema = z.object({
   ...roomIdSchema.shape,
   message: scheduledMessageScheduledMessageJobPayloadSchema.shape.message,
+  replyRowKey: scheduledMessageScheduledMessageJobPayloadSchema.shape.replyRowKey,
   runAt: selectScheduledMessageJobInMessageSchema.shape.runAt,
 });
 export type ScheduleMessageInput = z.infer<typeof scheduleMessageInputSchema>;

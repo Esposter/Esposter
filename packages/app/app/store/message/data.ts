@@ -3,6 +3,7 @@ import type { DeleteFileInput } from "#shared/models/db/message/DeleteFileInput"
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
+import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
@@ -52,6 +53,8 @@ export const useDataStore = defineStore("message/data", () => {
   const createMessage = async (
     input: StandardCreateMessageInput,
     onOptimisticCreate?: (sentFileIds: string[]) => Promise<void>,
+    // Whose attachments this send took, so the commit and the rollback reach the composer that is holding them
+    target: ComposerTarget = { roomId: input.roomId, threadRootRowKey: "" },
   ) => {
     if (!session.value.data) return false;
     // `input.files` is the composer's own live array, and the composer keeps accepting uploads for the whole
@@ -86,7 +89,7 @@ export const useDataStore = defineStore("message/data", () => {
         delete newMessage.isLoading;
         // The server has the message, so the attachments held since the bubble are dropped for good — with them
         // Go the grants that authorize reclaiming their blobs, which only a rejection could have needed back
-        await MessageHookMap.CommitSend.run(sentInput.roomId, sentFileIds);
+        await MessageHookMap.CommitSend.run(target, sentFileIds);
         // The server auto-follows the thread a reply lands in, so mirror it here — the follow state is loaded
         // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
         // A local array write with nothing fallible in it, so it is called bare; anything genuinely fallible
@@ -110,7 +113,7 @@ export const useDataStore = defineStore("message/data", () => {
         // Affordance would reclaim blobs it is still using. That trades a rare broken attachment the user chose
         // Against a certain leak plus lost work on every deterministic rejection, which is what slowmode and the
         // Word filter are
-        await MessageHookMap.RollbackSend.run(sentInput.roomId, sentFileIds);
+        await MessageHookMap.RollbackSend.run(target, sentFileIds);
         if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
         return false;
       },
@@ -177,31 +180,42 @@ export const useDataStore = defineStore("message/data", () => {
   };
 
   const inputStore = useInputStore();
-  const { clearDraft, validateInput } = inputStore;
+  const { clearComposer, validateInput } = inputStore;
   const uploadFileStore = useUploadFileStore();
+  const { getComposerFiles } = uploadFileStore;
   const replyStore = useReplyStore();
-  const sendMessage = async (editor: Editor) => {
-    const roomId = roomStore.currentRoomId;
-    if (!roomId || !validateInput(editor, true)) return;
+  // One send for both composers: the room's own, and the thread pane's, which differ only in whose text and
+  // Attachments they take and in what the reply points at. A pane send always replies to the thread root — that
+  // Is what puts it in the thread rather than merely in the room — where the room composer replies to whatever
+  // The user last picked Reply on, if anything
+  const sendMessage = async (editor: Editor, target: ComposerTarget) => {
+    const { roomId, threadRootRowKey } = target;
+    if (!roomId || !validateInput(target, editor, true)) return;
 
     const input: StandardCreateMessageInput = {
-      files: uploadFileStore.files,
-      message: inputStore.input,
-      replyRowKey: replyStore.rowKey,
+      files: getComposerFiles(target),
+      message: inputStore.getComposerInput(target),
+      replyRowKey: threadRootRowKey || replyStore.rowKey,
       roomId,
       type: MessageType.Message,
     };
-    await storeSendMessage(input, editor);
+    await storeSendMessage(input, editor, target);
   };
-  const storeSendMessage = async (input: StandardCreateMessageInput, editor?: Editor) => {
+  const storeSendMessage = async (
+    input: StandardCreateMessageInput,
+    editor?: Editor,
+    // Everything that composes outside a composer — a slash command, a poll, a draft sent from the drafts page —
+    // Is the room's own send, and its reset finds nothing of the thread pane's to clear
+    target: ComposerTarget = { roomId: input.roomId, threadRootRowKey: "" },
+  ) => {
     // The reset runs behind the optimistic bubble, never ahead of the send: it clears the editor and the reply
     // Target, so a send that fails before the bubble exists would take the text the user just typed with it.
     // The attachments leave the composer here too, but only held — they are dropped on `CommitSend` once the
     // Server has accepted the message, and handed back on `RollbackSend` if it rejects
-    if (await createMessage(input, (sentFileIds) => MessageHookMap.ResetSend.run(input.roomId, sentFileIds, editor)))
-      clearDraft(input.roomId);
+    if (await createMessage(input, (sentFileIds) => MessageHookMap.ResetSend.run(target, sentFileIds, editor), target))
+      clearComposer(target);
   };
-  MessageHookMap.ResetSend.register((_roomId, _fileIds, editor) => {
+  MessageHookMap.ResetSend.register((_target, _fileIds, editor) => {
     editor?.commands.clearContent(true);
   });
   // Only expose the internal store CRUD functions for subscriptions; everything else directly calls
