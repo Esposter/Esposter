@@ -32,7 +32,7 @@ The benchmark reporting toolkit consumed by the repo's `vitest bench` runs (see 
 
 - **Node-only**: depends on Node built-ins (`fs`, `os`) — must not be bundled into the browser app.
 - Depends on `@esposter/shared` for shared types and utilities.
-- Wired into `vitest bench` via `BenchmarkMarkdownReporter`; the CodSpeed dashboard layer reads the emitted artifacts.
+- Wired into `vitest bench` via `BenchmarkMarkdownReporter`; the emitted artifacts are committed and diffed offline as the speed gate.
 
 ### Commands
 

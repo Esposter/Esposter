@@ -55,7 +55,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 - 🚀 [Getting Started][doc-getting-started] — prerequisites, CLI, programmatic API, package scripts.
 - 🤖 [CI][doc-ci] — the two gates (differential correctness + speed) and the CI snapshot cache.
-- 🏎️ [Speed Harness][doc-speed-harness] — benchmarking conventions, committed `*.bench.md`, CodSpeed.
+- 🏎️ [Speed Harness][doc-speed-harness] — benchmarking conventions, committed `*.bench.md`, the CI smoke signal.
 
 Design docs live in [`packages/app/content/docs/virrun`](https://github.com/Esposter/Esposter/tree/main/packages/app/content/docs/virrun) — start with the [architecture overview](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/architecture.md) and the [execution backends page](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/execution-backends.md).
 
