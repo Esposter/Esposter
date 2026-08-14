@@ -23,11 +23,11 @@ Carries `vue-page-composition`'s "Maximal Component Granularity — One Action p
 
 ```bash
 # more than one action button in a file — the rule's loudest failure
-grep -rlE "<(v-btn|StyledButton)" --include=*.vue app | xargs grep -cE "<(v-btn|StyledButton)" | awk -F: '$2 > 1'
+grep -rlE "<(v-btn|StyledButton)" --include=*.vue packages/app/app | xargs grep -cE "<(v-btn|StyledButton)" | awk -F: '$2 > 1'
 # a v-for whose item body carries its own handler
-grep -rn -A 20 "v-for" --include=*.vue app | grep "@click"
+grep -rn -A 20 "v-for" --include=*.vue packages/app/app | grep "@click"
 # a page owning an element's state
-grep -rlE "\b(ref|computed|useTemplateRef)\(" --include=*.vue app/pages
+grep -rlE "\b(ref|computed|useTemplateRef)\(" --include=*.vue packages/app/app/pages
 ```
 
 ## Exclusions
@@ -37,4 +37,4 @@ grep -rlE "\b(ref|computed|useTemplateRef)\(" --include=*.vue app/pages
 
 ## Next enforceable
 
-An oxlint rule counting `<v-btn>`/`<StyledButton>` per SFC, and one banning `ref(`/`computed(` under `pages/**`. Both are template/AST-shaped and would end the two find-recipe greps above; the `v-for` item-body clause needs judgement and stays a reading pass.
+An oxlint rule counting `<v-btn>`/`<StyledButton>` per SFC, and one banning `ref(`/`computed(`/`useTemplateRef(` under `pages/**`. Both are template/AST-shaped and would end the two find-recipe greps above; the `v-for` item-body clause needs judgement and stays a reading pass.
