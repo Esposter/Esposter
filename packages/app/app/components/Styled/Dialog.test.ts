@@ -82,11 +82,9 @@ describe("styledDialog", () => {
       { "prepend-confirm": '<button class="v-btn">Discard changes</button>' },
     );
 
-    expect([...body.querySelectorAll(".v-card-actions .v-btn")].map(({ textContent }) => textContent?.trim())).toEqual([
-      "Cancel",
-      "Discard changes",
-      text,
-    ]);
+    expect(
+      [...body.querySelectorAll(".v-card-actions .v-btn")].map(({ textContent }) => textContent?.trim()),
+    ).toStrictEqual(["Cancel", "Discard changes", text]);
   });
 
   // The header is the reason a search field can sit above a scrolling list without the consumer rebuilding the
