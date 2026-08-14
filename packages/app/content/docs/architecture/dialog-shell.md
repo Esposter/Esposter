@@ -5,7 +5,7 @@ description: One dialog shell — StyledDialog owns the card, the scrollable bod
 
 # Dialog Shell
 
-`StyledDialog` is the shell every dialog composes, with one documented exception below. It owns the whole frame — the `v-dialog`, the `StyledCard` inside it, the full-screen toggle in the card's append slot, the padded scrollable body, and the actions row — so the contract is what the header says (`cardProps`), what the confirm button says (`confirmButtonProps`), and bare body content in the default slot. Only the body is really required: a dialog with nothing to confirm omits `confirmButtonProps` and loses the actions row with it. Three optional controls sit alongside — `#header` for a region pinned above the scroll, `#prepend-actions` for an action on the row's leading edge, and `hideCancelButton` for a dialog whose only way out is confirming. Nothing else in the app hand-rolls a `v-dialog` + confirm-button pair.
+`StyledDialog` is the shell every dialog composes, with one documented exception below. It owns the whole frame — the `v-dialog`, the `StyledCard` inside it, the full-screen toggle in the card's append slot, the padded scrollable body, and the actions row — so the contract is what the header says (`cardProps`), what the confirm button says (`confirmButtonProps`), and bare body content in the default slot. Only the body is really required: a dialog with nothing to confirm omits `confirmButtonProps` and loses the actions row with it. Four optional controls sit alongside — `#header` for a region pinned above the scroll, `#prepend-actions` for the row's leading edge, `#prepend-confirm` for a third decision in the trailing group, and `hideCancelButton` for a dialog whose only way out is confirming. Nothing else in the app hand-rolls a `v-dialog` + confirm-button pair.
 
 Three shells build on each other. `StyledFormDialog` wraps the base with a `v-form`, a generated form id and submit wiring, so its confirm button is a real submit that carries validity, `loading` and the disabled state without the consumer computing any of them. `StyledDeleteFormDialog` wraps that with the red `Delete` button and the opt-in type-the-name guard described in [destructive confirmation](/docs/architecture/destructive-confirmation). `StyledEditFormDialog` is the editor-shaped sibling rather than a fourth layer: it trades the card title for a `v-toolbar` header carrying save, delete, validity and full-screen controls, because an editor's actions live at the top where the form below can scroll past them.
 
@@ -18,8 +18,8 @@ flowchart TD
   HEADER --> PINNED["optional header slot — pinned above the scroll region, rendered bare"]
   PINNED --> BODY["default slot — padded, scrollable, one column with its own rhythm"]
   BODY --> HASACTIONS{"is there anything to confirm"}
-  HASACTIONS -->|"no confirmButtonProps and no prepend-actions"| CLOSE["no actions row — a close button in the card's append instead"]
-  HASACTIONS -->|"yes"| ACTIONS["actions row — prepend-actions, spacer, Cancel"]
+  HASACTIONS -->|"no confirmButtonProps and no action slots"| CLOSE["no actions row — a close button in the card's append instead"]
+  HASACTIONS -->|"yes"| ACTIONS["actions row — prepend-actions, spacer, Cancel, prepend-confirm"]
   ACTIONS --> GATE{"confirm colour"}
   GATE -->|"absent, or primary"| GRADIENT["StyledButton — the midnight-bloom gradient"]
   GATE -->|"any other colour"| PLAIN["outlined v-btn in that colour"]
@@ -31,7 +31,7 @@ flowchart TD
 
 **Body content is the default slot, never `cardProps.text`.** `cardProps` describes the header — title, subtitle, prepend icon — and Vuetify's `text` prop renders outside the shell's own `v-card-text`, so a message passed that way escapes the scroll container and the column rhythm the shell sets for every other dialog. A sentence of prose is still a body: pass it as children.
 
-**The actions row belongs to the shell.** Cancel is the shell's and closes the dialog. A third choice — discard, skip, "export anyway" — goes in the `#prepend-actions` slot, which renders on the leading edge before the spacer, so the two standing answers stay together on the trailing edge wherever the dialog appears. An informational dialog that only acknowledges passes `hideCancelButton`, because cancelling is meaningless when nothing is pending.
+**The actions row belongs to the shell.** Cancel is the shell's and closes the dialog. A third choice — discard, skip, "export anyway" — is a decision the same weight as the other two, so it goes in `#prepend-confirm` and sits between them: the whole trailing group reads cancel → alternative → confirm, and every decision the dialog offers is under the pointer at once. `#prepend-actions` is the other edge and is not for decisions: it carries what annotates the row rather than answers it — a `3/10 options` counter, a hint — kept away from the buttons so it is not clicked as one. An informational dialog that only acknowledges passes `hideCancelButton`, because cancelling is meaningless when nothing is pending.
 
 **The confirm button comes from the shell, not from the caller.** A confirm with no colour is the app's primary action and paints as the `StyledButton` gradient — a colourless flat `v-btn` is transparent on the app's base, which is why the `vuetify` skill bans one as a primary action. Naming a colour means the confirm should not look inviting — `error` for a destructive action, `warning` for a cautionary one — and the shell renders an outlined button in that colour instead. Either way the consumer passes only `confirmButtonProps`, and never reaches past the shell to build its own button.
 
@@ -65,7 +65,7 @@ Nothing else in the app wants that region, and a slot earning its existence from
 | `app/components/Styled/FormDialog.vue`                              | Adds the `v-form`, submit wiring, validity and loading state to the shell              |
 | `app/components/Styled/DeleteFormDialog.vue`                        | The destructive layer — red Delete plus the type-the-name guard                        |
 | `app/components/Styled/EditFormDialog/Index.vue`                    | Editor-shaped dialog — toolbar header, full-screen width, dirty-close confirmation     |
-| `app/components/Styled/EditFormDialog/ConfirmCloseDialogButton.vue` | Save / discard / cancel on a dirty close, composed on the shell with `prepend-actions` |
+| `app/components/Styled/EditFormDialog/ConfirmCloseDialogButton.vue` | Save / discard / cancel on a dirty close, composed on the shell with `prepend-confirm` |
 | `app/components/Styled/Card.vue`                                    | The bordered card every dialog renders inside                                          |
 | `app/components/Styled/PreviewCard.vue`                             | The quoted-content box a confirm dialog shows the target in                            |
 | `app/components/Styled/SearchDialog.vue`                            | The action-less palette shell — hotkey, search field, results slot                     |

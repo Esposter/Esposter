@@ -40,7 +40,7 @@ const emit = defineEmits<{ save: []; "update:edit-form-dialog": [value: false] }
     </template>
     You have modified this {{ prettify(editedItem.type) }}. You can save your changes, discard your changes, or cancel
     to continue editing.
-    <template #prepend-actions>
+    <template #prepend-confirm>
       <v-btn
         text="Discard changes"
         variant="outlined"

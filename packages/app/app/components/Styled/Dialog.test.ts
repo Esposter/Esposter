@@ -72,6 +72,23 @@ describe("styledDialog", () => {
     expect(body.querySelector(".v-card-actions .text-warning")).not.toBeNull();
   });
 
+  // A third decision is a button among the other two, so it belongs in the trailing group rather than pushed to
+  // The opposite edge with the annotations — which is where it lands if it is passed as `prepend-actions`
+  test("renders a third decision between cancel and confirm", async () => {
+    expect.hasAssertions();
+
+    const body = await mountOpenDialog(
+      { confirmButtonProps: { text } },
+      { "prepend-confirm": '<button class="v-btn">Discard changes</button>' },
+    );
+
+    expect([...body.querySelectorAll(".v-card-actions .v-btn")].map(({ textContent }) => textContent?.trim())).toEqual([
+      "Cancel",
+      "Discard changes",
+      text,
+    ]);
+  });
+
   // The header is the reason a search field can sit above a scrolling list without the consumer rebuilding the
   // Card: it renders outside the scroll container rather than as the first body child
   test("renders the header slot outside the scrollable body", async () => {
