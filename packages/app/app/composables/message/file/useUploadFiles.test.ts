@@ -2,6 +2,8 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { inferProcedureInput } from "@trpc/server";
 // @vitest-environment nuxt
 
+import type { ComposerTarget } from "@/models/message/ComposerTarget";
+
 import { useUploadFiles } from "@/composables/message/file/useUploadFiles";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
@@ -27,6 +29,8 @@ type DeleteUploadFilesInput = inferProcedureInput<TRPCRouter["message"]["deleteU
 describe(useUploadFiles, () => {
   const server = setupMswTrpc();
   const roomId = crypto.randomUUID();
+  // The room's own composer — attachments are partitioned per composer, so every read below names one
+  const target: ComposerTarget = { roomId, threadRootRowKey: "" };
   const filename = "a";
   const fileId = crypto.randomUUID();
   // The grant the server mints beside each write target — the composer hands it back to reclaim the upload
@@ -60,15 +64,15 @@ describe(useUploadFiles, () => {
     expect.hasAssertions();
 
     const uploadFileStore = useUploadFileStore();
-    const { files } = storeToRefs(uploadFileStore);
+    const { getComposerFiles } = uploadFileStore;
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
     server.use(trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles));
     uploadBlocksMock.mockImplementation((_blob: Blob, sasUrl: string) =>
       sasUrl.endsWith("thumbnail") ? Promise.reject(new Error(filename)) : Promise.resolve(),
     );
-    await useUploadFiles()([createFile()]);
+    await useUploadFiles(target)([createFile()]);
 
-    expect(files.value).toHaveLength(1);
+    expect(getComposerFiles(target)).toHaveLength(1);
     expect(deleteUploadFiles).not.toHaveBeenCalled();
   });
 
@@ -78,40 +82,52 @@ describe(useUploadFiles, () => {
     expect.hasAssertions();
 
     const uploadFileStore = useUploadFileStore();
-    const { files } = storeToRefs(uploadFileStore);
+    const { getComposerFiles } = uploadFileStore;
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
     server.use(trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles));
     uploadBlocksMock.mockRejectedValue(new Error(filename));
-    await useUploadFiles()([createFile()]);
+    await useUploadFiles(target)([createFile()]);
 
-    expect(files.value).toHaveLength(0);
+    expect(getComposerFiles(target)).toHaveLength(0);
     expect(deleteUploadFiles).toHaveBeenCalledWith({ input: { files: [{ filename, id: fileId, token }], roomId } });
   });
 
-  // Crossing the two features that meet on this path: the composer is keyed by room, and a revert runs after
-  // Awaits the user can switch rooms during. Resolved against whichever room is current, the revert finds
-  // Nothing of this upload in it — leaving the room the user left holding a stuck attachment whose blob no
-  // Delete path can ever name again.
-  test("reverts into the room the upload started in after a mid-upload room switch", async () => {
+  // Crossing the two features that meet on this path: attachments are keyed by composer, and a revert runs
+  // After awaits the user can switch rooms during. Resolved against whichever composer is current, the revert
+  // Finds nothing of this upload in it — leaving the room the user left holding a stuck attachment whose blob
+  // No delete path can ever name again.
+  test("reverts into the composer the upload started in after a mid-upload room switch", async () => {
     expect.hasAssertions();
 
     const otherRoomId = crypto.randomUUID();
     const uploadFileStore = useUploadFileStore();
-    const { files } = storeToRefs(uploadFileStore);
+    const { getComposerFiles } = uploadFileStore;
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
     server.use(trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles));
     uploadBlocksMock.mockImplementation(() => {
       setCurrentRoomId(otherRoomId);
       return Promise.reject(new Error(filename));
     });
-    await useUploadFiles()([createFile()]);
+    await useUploadFiles(target)([createFile()]);
 
     expect(deleteUploadFiles).toHaveBeenCalledWith({ input: { files: [{ filename, id: fileId, token }], roomId } });
-    expect(files.value).toHaveLength(0);
+    expect(getComposerFiles(target)).toHaveLength(0);
+  });
 
-    setCurrentRoomId(roomId);
+  // The room's composer and its thread pane's are on screen together, so an attachment picked in one must not
+  // Appear in — or be sent by — the other. Both write blobs to the same room, which is what makes the
+  // Partition the only thing keeping them apart
+  test("keeps a thread composer's attachments out of the room composer", async () => {
+    expect.hasAssertions();
 
-    expect(files.value).toHaveLength(0);
+    const threadTarget: ComposerTarget = { roomId, threadRootRowKey: "threadRootRowKey" };
+    const uploadFileStore = useUploadFileStore();
+    const { getComposerFiles } = uploadFileStore;
+    uploadBlocksMock.mockResolvedValue(undefined);
+    await useUploadFiles(threadTarget)([createFile()]);
+
+    expect(getComposerFiles(threadTarget)).toHaveLength(1);
+    expect(getComposerFiles(target)).toHaveLength(0);
   });
 
   // A revert names the whole batch to the delete, so it must not run while the batch's other uploads are still
@@ -139,7 +155,7 @@ describe(useUploadFiles, () => {
           })
         : Promise.reject(new Error(filename)),
     );
-    await useUploadFiles()([createFile(), createFile()]);
+    await useUploadFiles(target)([createFile(), createFile()]);
 
     expect(isSlowUploadFinished).toBe(true);
     expect(deleteUploadFiles).toHaveBeenCalledWith({
@@ -159,23 +175,23 @@ describe(useUploadFiles, () => {
     expect.hasAssertions();
 
     const uploadFileStore = useUploadFileStore();
-    const { files } = storeToRefs(uploadFileStore);
+    const { getComposerFiles } = uploadFileStore;
     uploadBlocksMock.mockResolvedValue(undefined);
-    await useUploadFiles()([createFile()]);
+    await useUploadFiles(target)([createFile()]);
 
-    expect(takeOne(files.value).hasThumbnail).toBe(true);
+    expect(takeOne(getComposerFiles(target)).hasThumbnail).toBe(true);
   });
 
   test("records no thumbnail when its upload fails", async () => {
     expect.hasAssertions();
 
     const uploadFileStore = useUploadFileStore();
-    const { files } = storeToRefs(uploadFileStore);
+    const { getComposerFiles } = uploadFileStore;
     uploadBlocksMock.mockImplementation((_blob: Blob, sasUrl: string) =>
       sasUrl.endsWith("thumbnail") ? Promise.reject(new Error(filename)) : Promise.resolve(),
     );
-    await useUploadFiles()([createFile()]);
+    await useUploadFiles(target)([createFile()]);
 
-    expect(takeOne(files.value).hasThumbnail).toBe(false);
+    expect(takeOne(getComposerFiles(target)).hasThumbnail).toBe(false);
   });
 });

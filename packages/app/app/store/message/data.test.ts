@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { Router } from "vue-router";
 
 import { MessageHookMap } from "@/services/message/MessageHookMap";
@@ -28,6 +29,8 @@ describe(useDataStore, () => {
   const server = setupMswTrpc();
   let router: Router;
   const roomId = crypto.randomUUID();
+  // Every send here is the room's own composer, which is the target `storeSendMessage` defaults to
+  const target: ComposerTarget = { roomId, threadRootRowKey: "" };
   const userId = getMockSession().user.id;
   const message = "message";
   const updatedMessage = "updatedMessage";
@@ -107,9 +110,10 @@ describe(useDataStore, () => {
     expect(resetSendSpy).not.toHaveBeenCalled();
   });
 
-  // The reset runs behind the optimistic bubble, so a room switch can land in between — every registration is
-  // Handed the room the send was for rather than resolving the current one after the await
-  test("storeSendMessage resets the composer of the room the send was for", async () => {
+  // The reset runs behind the optimistic bubble, so a room switch — or another thread being opened — can land
+  // In between: every registration is handed the composer the send was for rather than resolving the current
+  // One after the await
+  test("storeSendMessage resets the composer the send was for", async () => {
     expect.hasAssertions();
 
     signIn();
@@ -123,7 +127,7 @@ describe(useDataStore, () => {
     const resetSendSpy = vi.spyOn(MessageHookMap.ResetSend, "run");
     await storeSendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
-    expect(resetSendSpy).toHaveBeenCalledWith(roomId, [], undefined);
+    expect(resetSendSpy).toHaveBeenCalledWith(target, [], undefined);
   });
 
   // The composer keeps accepting Enter for the whole round trip, so the attachments a send took leave it at the
@@ -135,19 +139,19 @@ describe(useDataStore, () => {
     signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
-    const { files } = storeToRefs(uploadFileStore);
     const { storeSendMessage } = dataStore;
+    const { getComposerFiles } = uploadFileStore;
     vi.spyOn(URL, "createObjectURL").mockReturnValue("");
     vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
     const sentFileId = crypto.randomUUID();
     let heldFileIds: string[] = [];
     server.use(
       trpcMsw.message.createMessage.mutation(() => {
-        heldFileIds = files.value.map(({ id }) => id);
+        heldFileIds = getComposerFiles(target).map(({ id }) => id);
         return createMessageEntity({ message, roomId, type: MessageType.Message, userId });
       }),
     );
-    uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: sentFileId, token: "" }]);
+    uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     await storeSendMessage({
       files: [{ filename, hasThumbnail: false, id: sentFileId, mimetype, size }],
       message,
@@ -167,8 +171,8 @@ describe(useDataStore, () => {
     signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
-    const { files } = storeToRefs(uploadFileStore);
     const { storeSendMessage } = dataStore;
+    const { getComposerFiles } = uploadFileStore;
     vi.spyOn(URL, "createObjectURL").mockReturnValue("");
     vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
     const sentFileId = crypto.randomUUID();
@@ -177,7 +181,7 @@ describe(useDataStore, () => {
         throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
       }),
     );
-    uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: sentFileId, token: "" }]);
+    uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     await storeSendMessage({
       files: [{ filename, hasThumbnail: false, id: sentFileId, mimetype, size }],
       message,
@@ -186,7 +190,7 @@ describe(useDataStore, () => {
       type: MessageType.Message,
     });
 
-    expect(files.value.map(({ id }) => id)).toStrictEqual([sentFileId]);
+    expect(getComposerFiles(target).map(({ id }) => id)).toStrictEqual([sentFileId]);
   });
 
   // The composer's attachments carry the only grants that authorize reclaiming their blobs, so a send the server
@@ -209,7 +213,7 @@ describe(useDataStore, () => {
     expect(commitSendSpy).not.toHaveBeenCalled();
   });
 
-  test("createMessage releases the composer's attachments for the room the send was for", async () => {
+  test("createMessage releases the composer's attachments for the composer the send was for", async () => {
     expect.hasAssertions();
 
     signIn();
@@ -223,7 +227,7 @@ describe(useDataStore, () => {
     const commitSendSpy = vi.spyOn(MessageHookMap.CommitSend, "run");
     await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
-    expect(commitSendSpy).toHaveBeenCalledWith(roomId, []);
+    expect(commitSendSpy).toHaveBeenCalledWith(target, []);
   });
 
   // The commit runs behind the send, so the composer keeps taking uploads for the whole round trip. Releasing
@@ -235,8 +239,8 @@ describe(useDataStore, () => {
     signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
-    const { files } = storeToRefs(uploadFileStore);
     const { createMessage } = dataStore;
+    const { getComposerFiles } = uploadFileStore;
     server.use(
       trpcMsw.message.createMessage.mutation(() =>
         createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
@@ -248,7 +252,7 @@ describe(useDataStore, () => {
     vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
     const sentFileId = crypto.randomUUID();
     const nextFileId = crypto.randomUUID();
-    uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: sentFileId, token: "" }]);
+    uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     const createPromise = createMessage({
       files: [{ filename, hasThumbnail: false, id: sentFileId, mimetype, size }],
       message,
@@ -256,10 +260,10 @@ describe(useDataStore, () => {
       roomId,
       type: MessageType.Message,
     });
-    uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: nextFileId, token: "" }]);
+    uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: nextFileId, token: "" }]);
 
     await expect(createPromise).resolves.toBe(true);
-    expect(files.value.map(({ id }) => id)).toStrictEqual([nextFileId]);
+    expect(getComposerFiles(target).map(({ id }) => id)).toStrictEqual([nextFileId]);
   });
 
   // The wire payload and the ids handed to the commit come from one snapshot, so an upload that lands mid-flight
@@ -283,15 +287,15 @@ describe(useDataStore, () => {
         return createMessageEntity({ message, roomId, type: MessageType.Message, userId });
       }),
     );
-    uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: sentFileId, token: "" }]);
+    uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     const createPromise = createMessage({
-      files: uploadFileStore.files,
+      files: uploadFileStore.getComposerFiles(target),
       message,
       replyRowKey: "",
       roomId,
       type: MessageType.Message,
     });
-    uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: nextFileId, token: "" }]);
+    uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: nextFileId, token: "" }]);
     await createPromise;
 
     expect(payloadFileIds).toStrictEqual([sentFileId]);

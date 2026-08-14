@@ -41,6 +41,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "slash-commands",
       "scheduled-messages",
       "drafts-and-sent",
+      "threads",
       "thread-follows",
       "file-media",
     ],

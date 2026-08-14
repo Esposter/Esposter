@@ -9,7 +9,7 @@ interface MessageDraftsAndSentDraftDeleteButtonProps {
 
 const { draftItem } = defineProps<MessageDraftsAndSentDraftDeleteButtonProps>();
 const inputStore = useInputStore();
-const { clearDraft } = inputStore;
+const { clearComposer } = inputStore;
 </script>
 
 <template>
@@ -17,7 +17,7 @@ const { clearDraft } = inputStore;
     :card-props="{ title: 'Delete draft' }"
     @delete="
       (onComplete) => {
-        clearDraft(draftItem.room.id);
+        clearComposer({ roomId: draftItem.room.id, threadRootRowKey: draftItem.threadRootRowKey });
         onComplete();
       }
     "

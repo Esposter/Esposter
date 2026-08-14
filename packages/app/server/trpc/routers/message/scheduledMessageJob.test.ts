@@ -97,7 +97,11 @@ describe("scheduledMessageJob", () => {
     const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt });
 
     expect(scheduledMessageJob.roomId).toBe(roomId);
-    expect(scheduledMessageJob.payload).toStrictEqual({ message, type: ScheduledMessageJobType.ScheduledMessage });
+    expect(scheduledMessageJob.payload).toStrictEqual({
+      message,
+      replyRowKey: "",
+      type: ScheduledMessageJobType.ScheduledMessage,
+    });
   });
 
   test("reads scheduled jobs", async () => {

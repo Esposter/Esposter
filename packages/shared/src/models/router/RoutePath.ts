@@ -19,6 +19,7 @@ export const RoutePath: {
   readonly MessagesIndex: "/messages";
   readonly MessagesInvite: (code: string) => string;
   readonly MessagesMessage: (id: string, rowKey: string) => string;
+  readonly MessagesThread: (id: string, rowKey: string) => string;
   readonly Post: (id: string) => string;
   readonly PostCreate: "/post/create";
   readonly PostUpdate: (id: string) => string;
@@ -55,6 +56,7 @@ export const RoutePath: {
   MessagesIndex: "/messages",
   MessagesInvite: (code: string) => `/messages/invite/${code}`,
   MessagesMessage: (id: string, rowKey: string) => `/messages/${id}/${rowKey}`,
+  MessagesThread: (id: string, rowKey: string) => `/messages/${id}/thread/${rowKey}`,
   Post: (id: string) => `/post/${id}`,
   PostCreate: "/post/create",
   PostUpdate: (id: string) => `/post/update/${id}`,

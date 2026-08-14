@@ -148,7 +148,11 @@ export const scheduledMessageJobRouter = router({
             await tx
               .insert(scheduledMessageJobsInMessage)
               .values({
-                payload: { message: input.message, type: ScheduledMessageJobType.ScheduledMessage },
+                payload: {
+                  message: input.message,
+                  replyRowKey: input.replyRowKey,
+                  type: ScheduledMessageJobType.ScheduledMessage,
+                },
                 roomId: input.roomId,
                 runAt: input.runAt,
                 userId: ctx.getSessionPayload.user.id,
@@ -171,7 +175,11 @@ export const scheduledMessageJobRouter = router({
           await ctx.db
             .insert(scheduledMessageJobsInMessage)
             .values({
-              payload: { message: input.message, type: ScheduledMessageJobType.ScheduledMessage },
+              payload: {
+                message: input.message,
+                replyRowKey: input.replyRowKey,
+                type: ScheduledMessageJobType.ScheduledMessage,
+              },
               roomId: input.roomId,
               runAt: input.runAt,
               userId: ctx.getSessionPayload.user.id,
@@ -250,6 +258,8 @@ export const scheduledMessageJobRouter = router({
         createUserMessage(ctx.db, ctx.getSessionPayload, {
           files: [],
           message: payload.message,
+          // A message scheduled from a thread lands back in that thread, exactly as sending it there would
+          replyRowKey: payload.replyRowKey,
           roomId: scheduledMessageJob.roomId,
           type: MessageType.Message,
         }),

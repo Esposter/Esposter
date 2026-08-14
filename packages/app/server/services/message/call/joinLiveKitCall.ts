@@ -7,7 +7,7 @@ import { createLiveKitToken } from "@@/server/services/livekit/createLiveKitToke
 import { joinCallAsParticipant } from "@@/server/services/message/call/joinCallAsParticipant";
 
 export const joinLiveKitCall = async (
-  callSession: Pick<CallSessionInMessage, "id" | "roomId">,
+  callSession: Pick<CallSessionInMessage, "id" | "roomId" | "threadRootRowKey">,
   participant: CallParticipant,
   userId: string,
 ): Promise<JoinCallOutput> => {

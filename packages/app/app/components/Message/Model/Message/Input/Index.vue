@@ -11,10 +11,12 @@ import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
+// The room's own composer — the thread pane renders its own with the thread as its target
+const target = computed(() => ({ roomId: currentRoomId.value, threadRootRowKey: "" }));
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 const { sendMessage } = dataStore;
-const keyboardExtension = await useKeyboardShortcutsExtension();
+const keyboardExtension = await useKeyboardShortcutsExtension((editor) => sendMessage(editor, target.value));
 const codeBlockExtension = useCodeBlockExtension();
 const emojiExtension = useEmojiExtension();
 const mentionExtension = useMentionExtension();
@@ -27,7 +29,7 @@ const { rowKey } = storeToRefs(replyStore);
 const replyToMessage = computed(() =>
   rowKey.value ? items.value.find(({ rowKey: messageRowKey }) => messageRowKey === rowKey.value) : undefined,
 );
-const uploadFiles = useUploadFiles();
+const uploadFiles = useUploadFiles(target);
 const slashCommandStore = useSlashCommandStore();
 const { pendingSlashCommand } = storeToRefs(slashCommandStore);
 const keyboardShortcutsDialogStore = useKeyboardShortcutsDialogStore();
@@ -65,7 +67,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
       @paste="(_editor, files) => uploadFiles(files)"
     >
       <template #prepend-inner-header>
-        <MessageModelMessageFileInputContainer />
+        <MessageModelMessageFileInputContainer :target />
       </template>
       <template #prepend-footer>
         <RichTextEditorCustomUploadFileButton @upload-file="uploadFiles" />
@@ -73,11 +75,11 @@ useEventListener("keydown", (event: KeyboardEvent) => {
       <template #append-footer="{ editor }">
         <RichTextEditorCustomAudioRecorderButton @upload-file="uploadFiles" />
         <MessageModelMessageInputSendMessageButton
-          :disabled="!validateInput(editor)"
+          :disabled="!validateInput(target, editor)"
           @click="
             () => {
               if (!editor) return;
-              sendMessage(editor);
+              sendMessage(editor, target);
             }
           "
         />

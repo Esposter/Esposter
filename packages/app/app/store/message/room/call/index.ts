@@ -3,7 +3,6 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import { useMutation } from "@/composables/shared/useMutation";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
-import { useRoomStore } from "@/store/message/room";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
@@ -21,7 +20,6 @@ export const useCallStore = defineStore("message/room/call", () => {
   const { executeMutation: executeSetCameraMutation } = useMutation();
   const { executeMutation: executeSetHandRaisedMutation } = useMutation();
   const { executeMutation: executeSetMuteMutation } = useMutation();
-  const roomStore = useRoomStore();
   const knockerStore = useKnockerStore();
   const { resetKnockerState } = knockerStore;
   const mediaStore = useMediaStore();
@@ -42,6 +40,9 @@ export const useCallStore = defineStore("message/room/call", () => {
   const userSettingsStore = useUserSettingsStore();
   const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
   const callRoomId = ref("");
+  // The thread the joined call belongs to, empty for the room's own call — what tells the thread pane whether
+  // The call it can start is the one the user is already in
+  const callThreadRootRowKey = ref("");
   const activeCallSessionId = ref("");
   const currentRoomCallSessionId = ref("");
   const isCallViewOpen = ref(false);
@@ -191,19 +192,26 @@ export const useCallStore = defineStore("message/room/call", () => {
     );
     return joinedCallSessionId;
   };
-  const joinCallByRoomId = async () => {
-    const roomId = roomStore.currentRoomId;
+  // A thread's call is the room's call addressed by the thread it belongs to, so joining one is the same act
+  // With the root the pane is showing — the room's own call is the empty root. Both ids come from the caller
+  // Rather than from the thread store: a call is not a thread's own state, and reaching for it here would put
+  // The drawer's layout behind every join
+  const joinCallByRoomId = async (roomId: string, threadRootRowKey = "") => {
     if (!roomId || activeCallSessionId.value) return;
     isConnecting.value = true;
     callRoomId.value = roomId;
+    callThreadRootRowKey.value = threadRootRowKey;
     let isJoined = false;
     await getResultAsync(async () => {
       const { callSessionId, livekitToken, livekitUrl, participantMap } =
         await $trpc.callSession.joinCallByRoomId.mutate({
           roomId,
+          threadRootRowKey,
         });
       await connect(createRoom(), livekitUrl, livekitToken, leaveCall, true);
-      currentRoomCallSessionId.value = callSessionId;
+      // Only the room's own call is the one the room header offers to join — a thread's call is reached from
+      // Its pane, and writing it here would light up the header for a call that is not the room's
+      if (!threadRootRowKey) currentRoomCallSessionId.value = callSessionId;
       activeCallSessionId.value = callSessionId;
       isJoined = true;
       setParticipantMap(callSessionId, participantMap);
@@ -213,6 +221,7 @@ export const useCallStore = defineStore("message/room/call", () => {
       if (isJoined) await leaveCall();
       else {
         callRoomId.value = "";
+        callThreadRootRowKey.value = "";
         activeCallSessionId.value = "";
         await disconnect();
       }
@@ -229,6 +238,7 @@ export const useCallStore = defineStore("message/room/call", () => {
       },
       async () => {
         callRoomId.value = "";
+        callThreadRootRowKey.value = "";
         resetKnockerState();
         activeCallSessionId.value = "";
         isCallViewOpen.value = false;
@@ -322,6 +332,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   return {
     activeCallSessionId,
     callRoomId,
+    callThreadRootRowKey,
     createCall,
     currentRoomCallSessionId,
     isCallViewOpen,

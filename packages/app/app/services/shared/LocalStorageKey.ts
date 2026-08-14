@@ -2,7 +2,7 @@
 // Values are kept byte-identical to their historical strings to preserve existing persisted data.
 export const LocalStorageKey = {
   ClickerStore: "clicker-store",
-  Draft: (roomId: string) => `draft:${roomId}`,
+  Draft: (composerKey: string) => `draft:${composerKey}`,
   DungeonsStore: "dungeons-store",
   IsResourceBladeNavCollapsed: "is-resource-blade-nav-collapsed",
   MessageCategoryCollapsed: (categoryId: string) => `message-category-${categoryId}-collapsed`,

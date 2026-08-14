@@ -34,7 +34,12 @@ import { z } from "zod";
 // One call session addressed by its own id — every subscription and the two id-only procedures take it
 const callSessionIdInputSchema = selectCallSessionInMessageSchema.shape.id;
 const callSessionInputSchema = z.object({ id: callSessionIdInputSchema });
-const roomCallInputSchema = roomIdSchema;
+// A room call and a thread call are the same call addressed by where it is: the empty root rowKey is the
+// Room's own, which is what every existing caller sends
+const roomCallInputSchema = z.object({
+  ...roomIdSchema.shape,
+  threadRootRowKey: z.string().default(""),
+});
 const setCameraInputSchema = z.object({ ...callSessionIdSchema.shape, isCameraEnabled: z.boolean() });
 const setHandRaisedInputSchema = z.object({
   ...callSessionIdSchema.shape,
@@ -70,10 +75,14 @@ export const baseCallRouter = router({
       return joinLiveKitCall(callSession, createParticipant(session, user), user.id);
     }),
   joinCallByRoomId: getMemberProcedure(roomCallInputSchema, "roomId").mutation<JoinCallOutput>(
-    async ({ ctx, input: { roomId } }) => {
+    async ({ ctx, input: { roomId, threadRootRowKey } }) => {
       const { session, user } = ctx.getSessionPayload;
-      const callSessionId = await createCallSessionId(ctx.db, roomId, user.id);
-      return joinLiveKitCall({ id: callSessionId, roomId }, createParticipant(session, user), user.id);
+      const callSessionId = await createCallSessionId(ctx.db, roomId, user.id, threadRootRowKey);
+      return joinLiveKitCall(
+        { id: callSessionId, roomId, threadRootRowKey },
+        createParticipant(session, user),
+        user.id,
+      );
     },
   ),
   leaveCall: standardAuthedProcedure
@@ -158,8 +167,8 @@ export const baseCallRouter = router({
     const callSession = await requireReadableCallSession(ctx.db, ctx.getSessionPayload, id);
     return { id: callSession.id, roomId: callSession.roomId, userId: callSession.userId };
   }),
-  readCallSessionId: getMemberProcedure(roomCallInputSchema, "roomId").query<string>(({ ctx, input: { roomId } }) =>
-    readCallSessionId(ctx.db, roomId),
+  readCallSessionId: getMemberProcedure(roomCallInputSchema, "roomId").query<string>(
+    ({ ctx, input: { roomId, threadRootRowKey } }) => readCallSessionId(ctx.db, roomId, threadRootRowKey),
   ),
   setCamera: standardAuthedProcedure
     .input(setCameraInputSchema)

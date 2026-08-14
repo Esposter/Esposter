@@ -46,6 +46,7 @@ describe(processScheduledMessageJobHandler, () => {
   const roomId = crypto.randomUUID();
   const scheduledMessagePayload: ScheduledMessageJobPayload = {
     message: "message",
+    replyRowKey: "",
     type: ScheduledMessageJobType.ScheduledMessage,
   };
   const userId = crypto.randomUUID();

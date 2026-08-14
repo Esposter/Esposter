@@ -5,11 +5,11 @@ description: Follow a thread to be notified on new replies, with a Followed Thre
 
 # Thread Follows
 
-Follow a thread and receive a push notification whenever someone replies to it, and open a **Followed Threads** drawer to jump back into any thread you follow. This is Discord's thread-following model scoped to the shipped single-level thread view (a thread is a root message plus every message whose `replyRowKey` points at it).
+Follow a thread and receive a push notification whenever someone replies to it, and open a **Followed Threads** drawer to jump back into any thread you follow. This is Discord's thread-following model over the single-level [thread](/docs/esbabbler/threads) the pane shows.
 
 ## How it works
 
-Replying to a message is an implicit follow (Discord behaviour) for the replier **and for the root message's author**, and a bell toggle on the thread header is the explicit follow. All three write a row to `threadFollowsInMessage`. Following the replier alone would leave the one member the thread belongs to as the only one the pipeline never reaches, while anyone who merely replied once keeps being told. When a reply lands, the room's followers of that thread — everyone except the replier and anyone whose room notification preference is `Never` — receive a push notification through the existing web-push pipeline.
+Replying to a message is an implicit follow (Discord behaviour) for the replier **and for the root message's author**, and the thread menu's notification toggle is the explicit follow. All three write a row to `threadFollowsInMessage`. Following the replier alone would leave the one member the thread belongs to as the only one the pipeline never reaches, while anyone who merely replied once keeps being told. When a reply lands, the room's followers of that thread — everyone except the replier and anyone whose room notification preference is `Never` — receive a push notification through the existing web-push pipeline.
 
 ```mermaid
 flowchart TD
@@ -20,7 +20,7 @@ flowchart TD
   Q -->|followers exist| E["EventGrid ProcessThreadReplyNotification"]
   E --> F["azure-functions web-push to followers"]
   F --> D["notification deep-links to the thread root"]
-  B["thread header bell toggle"] --> FT["followThread / unfollowThread"]
+  B["thread menu notification toggle"] --> FT["followThread / unfollowThread"]
 ```
 
 ### An unfollow outranks somebody else's reply
@@ -31,7 +31,7 @@ Which follows may clear that tombstone is decided by whose action the follow is,
 
 | Follow                           | Self-initiated | Effect on a recorded unfollow |
 | :------------------------------- | :------------- | :---------------------------- |
-| the thread header bell           | yes            | cleared — the member asked    |
+| the thread menu's toggle         | yes            | cleared — the member asked    |
 | the replier's own reply          | yes            | cleared — Discord parity      |
 | the root author, someone replies | no             | left alone                    |
 
@@ -67,4 +67,4 @@ All under `message.` in `server/trpc/routers/message/index.ts`, member-gated:
 | `packages/azure-functions/src/handlers/processThreadReplyNotificationHandler.ts` | web-push worker                        |
 | `packages/app/app/store/message/threadFollow.ts`                                 | client follow state + drawer list      |
 | `packages/app/app/components/Message/RightSideBar/Threads/`                      | Followed Threads drawer                |
-| `packages/app/app/components/Message/RightSideBar/Thread/FollowButton.vue`       | thread-header follow toggle            |
+| `packages/app/app/composables/message/thread/useThreadActionItems.ts`            | thread menu's notification toggle      |

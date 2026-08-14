@@ -131,6 +131,8 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
         );
       const newMessage = await createAndBroadcastMessage(context, {
         message: payload.message,
+        // A message scheduled from a thread lands back in that thread, exactly as sending it there would
+        replyRowKey: payload.replyRowKey,
         roomId: processingJob.roomId,
         type: MessageType.Message,
         userId: processingJob.userId,

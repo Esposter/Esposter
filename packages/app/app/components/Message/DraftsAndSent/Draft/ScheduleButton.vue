@@ -16,6 +16,12 @@ const { open } = scheduleDialogStore;
   <MessageDraftsAndSentActionButton
     icon="mdi-clock-plus-outline"
     text="Schedule message"
-    @click="open({ content: draftItem.content, roomId: draftItem.room.id })"
+    @click="
+      open({
+        content: draftItem.content,
+        roomId: draftItem.room.id,
+        threadRootRowKey: draftItem.threadRootRowKey,
+      })
+    "
   />
 </template>
