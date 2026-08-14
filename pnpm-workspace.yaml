@@ -59,7 +59,7 @@ catalog:
   "@pinia/nuxt": ^1.0.2
   "@platformatic/vfs": ^0.4.0
   "@pulumi/azure-native": ^3.26.0
-  "@pulumi/github": ^6.14.1
+  "@pulumi/github": ^6.15.0
   "@pulumi/pulumi": ^3.257.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
   "@takumi-rs/core": ^2.7.3
