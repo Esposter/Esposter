@@ -12,13 +12,7 @@ const isEnabled = computed(() => Boolean(modelValue.value & permission));
 <template>
   <v-list-item :title>
     <template #append>
-      <v-switch
-        :model-value="isEnabled"
-        color="primary"
-        density="compact"
-        hide-details
-        @update:model-value="modelValue = modelValue ^ permission"
-      />
+      <v-switch :model-value="isEnabled" density="compact" @update:model-value="modelValue = modelValue ^ permission" />
     </template>
   </v-list-item>
 </template>

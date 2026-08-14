@@ -35,12 +35,12 @@ const isBold = computed(() => (hasUnread.value || hasDraft.value ? true : undefi
       <v-chip v-if="mentionCount" color="error" density="compact" size="x-small" variant="flat">
         {{ mentionCount }}
       </v-chip>
-      <v-tooltip v-if="hasDraft" text="Draft" location="top">
+      <v-tooltip v-if="hasDraft" text="Draft">
         <template #activator="{ props: activatorProps }">
           <v-icon :="activatorProps" icon="mdi-pencil" size="x-small" op-medium-emphasis />
         </template>
       </v-tooltip>
-      <v-tooltip v-if="room.isReadOnly" text="Read-only" location="top">
+      <v-tooltip v-if="room.isReadOnly" text="Read-only">
         <template #activator="{ props: activatorProps }">
           <v-icon :="activatorProps" icon="mdi-bullhorn-outline" size="x-small" op-medium-emphasis />
         </template>

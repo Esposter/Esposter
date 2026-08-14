@@ -25,7 +25,6 @@ useEventListener("keydown", async (event) => {
     <v-text-field
       :model-value="isCapturingKeybind ? '' : keybind"
       :placeholder="isCapturingKeybind ? 'Press a key… (Esc to cancel)' : 'No Keybind Set'"
-      variant="outlined"
       bg-color="background"
       density="compact"
       hide-details

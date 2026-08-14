@@ -14,17 +14,13 @@ const { updateUserSettings } = userSettingsStore;
 
 <template>
   <v-switch
-    color="primary"
     label="Mute on join"
     :model-value="userSettings.isMuteOnJoin"
-    hide-details
     @update:model-value="updateUserSettings({ isMuteOnJoin: Boolean($event) })"
   />
   <v-switch
-    color="primary"
     label="Deafen on join"
     :model-value="userSettings.isDeafenOnJoin"
-    hide-details
     @update:model-value="updateUserSettings({ isDeafenOnJoin: Boolean($event) })"
   />
 </template>

@@ -45,6 +45,10 @@ describe(defineVuetifyConfiguration, () => {
           "VSelect": {
             "variant": "outlined",
           },
+          "VSwitch": {
+            "color": "primary",
+            "hideDetails": true,
+          },
           "VTextField": {
             "variant": "outlined",
           },

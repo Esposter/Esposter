@@ -28,7 +28,7 @@ const statusTooltip = computed(() => {
 </script>
 
 <template>
-  <v-tooltip :text="statusTooltip" location="top">
+  <v-tooltip :text="statusTooltip">
     <template #activator="{ props: tooltipProps }">
       <StyledAvatar
         :avatar-attrs

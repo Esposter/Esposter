@@ -26,10 +26,8 @@ const save = async () => {
     <v-card-text flex flex-col gap-4>
       <v-switch
         v-model="cloned.isAcceptingResponses"
-        color="primary"
         label="Accepting responses"
         :disabled="isPending"
-        hide-details
         @update:model-value="save"
       />
       <v-textarea
