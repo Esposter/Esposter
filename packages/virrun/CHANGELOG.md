@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.37.0](https://github.com/Esposter/Esposter/compare/v2.36.0...v2.37.0) (2026-08-14)
+
+### Bug Fixes
+
+* address CodeRabbit review findings ([61fc14a](https://github.com/Esposter/Esposter/commit/61fc14a766d3f46c5f141f3e3e9cf3846ca40198))
+* **build:** stop the shared build preset from squatting on configuration's own build config ([7926319](https://github.com/Esposter/Esposter/commit/792631944592810a2a60eb24184fdd0c3de45555))
+* close the review findings in the mirror excludes and the review workflow ([fa4d878](https://github.com/Esposter/Esposter/commit/fa4d878d4ab302ae9fd487d9c3c59dfdfa647a02))
+* close the review findings on the drained release window ([f9290fe](https://github.com/Esposter/Esposter/commit/f9290fe9406f62b9a73858e6e96f542e944abbb7))
+* code review comments ([813b854](https://github.com/Esposter/Esposter/commit/813b854939772e4f8600b85116a22dfbe6374d2b))
+* derive worktree excludes from git's recorded facts ([f3f1c65](https://github.com/Esposter/Esposter/commit/f3f1c65e0c37f1528f9cc3da2d114bba04527178))
+* keep a ..-prefixed worktree directory nested ([efb0c51](https://github.com/Esposter/Esposter/commit/efb0c51550ce11361d4ad7a2f47ffa8a194f316a))
+* lint ([7a9e825](https://github.com/Esposter/Esposter/commit/7a9e825b34ed00c6adfcec467d01a2f34b188e40))
+* lint ([8ea0a30](https://github.com/Esposter/Esposter/commit/8ea0a305c5acc01dbd0d53a1bf79ee9277108ae7))
+* parse virrun's machine JSON without the date reviver ([68a2d24](https://github.com/Esposter/Esposter/commit/68a2d24949a1d5d4f6252ab163bb1978feeb370a))
+* remove disabling necessary rules ([17369c1](https://github.com/Esposter/Esposter/commit/17369c1a6e09bfcb3391539dfb803bb9abfe9f3a))
+* resolve the mirror excludes once from the run's environment ([6b687cc](https://github.com/Esposter/Esposter/commit/6b687cc16931fa233f61634973aa54079f87736c))
+* **review:** address the open CodeRabbit findings ([68a3331](https://github.com/Esposter/Esposter/commit/68a333188408d4fdb3ef1c559c86247cb5a13a72))
+* **review:** address the second round of CodeRabbit findings ([f8d62ad](https://github.com/Esposter/Esposter/commit/f8d62adef4e085c173530816c463ff814d73e2c8))
+* **review:** close the backfill race and the stale-binding window ([51f2a99](https://github.com/Esposter/Esposter/commit/51f2a99aa7963b6ee78a027ed889e49aacc3b732))
+* snapshot ([74cce8f](https://github.com/Esposter/Esposter/commit/74cce8fac939bc372ab413fbd8a8be1864c61941))
+* test renames ([c106891](https://github.com/Esposter/Esposter/commit/c1068915c3c9e9f277332641a328e010ea7abe33))
+* virrun ghost paths ([4ab9236](https://github.com/Esposter/Esposter/commit/4ab923680fd64aa3e2dc59c960403f1f8290768a))
+* **virrun:** neutralize an ambient NO_COLOR in the failure-role format test ([022f6cd](https://github.com/Esposter/Esposter/commit/022f6cdbeb7fbd046b62c109381c028bf11d058f))
+
 # [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
 
 ### Bug Fixes

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.37.0](https://github.com/Esposter/Esposter/compare/v2.36.0...v2.37.0) (2026-08-14)
+
+### Bug Fixes
+
+* **build:** stop the shared build preset from squatting on configuration's own build config ([7926319](https://github.com/Esposter/Esposter/commit/792631944592810a2a60eb24184fdd0c3de45555))
+* lint and snapshots ([9957a4a](https://github.com/Esposter/Esposter/commit/9957a4a6c46d712c1a9f49a4fb3ecf8af79bf5b3))
+* **platform:** close the storage-quota review findings ([bb01ac6](https://github.com/Esposter/Esposter/commit/bb01ac6a74405af5d71debd46b7a30b5f811c1a2))
+* remove disabling necessary rules ([17369c1](https://github.com/Esposter/Esposter/commit/17369c1a6e09bfcb3391539dfb803bb9abfe9f3a))
+* **review:** answer the CodeRabbit findings on the Styled window ([9470340](https://github.com/Esposter/Esposter/commit/9470340e396e8f5e1d84632aca0fd396270e9001))
+* **review:** drain the review findings and clear the root lint gate ([66c8f53](https://github.com/Esposter/Esposter/commit/66c8f53991305944abdd0d1df658229ce5197391))
+
 # [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
 
 ### Bug Fixes

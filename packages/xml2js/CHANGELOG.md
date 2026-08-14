@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.37.0](https://github.com/Esposter/Esposter/compare/v2.36.0...v2.37.0) (2026-08-14)
+
+### Bug Fixes
+
+* apply cdata to every scalar value in xml2js Builder ([f12e976](https://github.com/Esposter/Esposter/commit/f12e976c8cab206907ff4ddd9f1d4df4596a006a)), closes [#3](https://github.com/Esposter/Esposter/issues/3) [#4](https://github.com/Esposter/Esposter/issues/4) [#5](https://github.com/Esposter/Esposter/issues/5)
+* **build:** stop the shared build preset from squatting on configuration's own build config ([7926319](https://github.com/Esposter/Esposter/commit/792631944592810a2a60eb24184fdd0c3de45555))
+* lint and snapshots ([9957a4a](https://github.com/Esposter/Esposter/commit/9957a4a6c46d712c1a9f49a4fb3ecf8af79bf5b3))
+* remove disabling necessary rules ([17369c1](https://github.com/Esposter/Esposter/commit/17369c1a6e09bfcb3391539dfb803bb9abfe9f3a))
+* render nullish and scalar values correctly in xml2js Builder ([235ef0f](https://github.com/Esposter/Esposter/commit/235ef0f5843891f019d49cfe832c75702bd04fff))
+* snapshots ([212c073](https://github.com/Esposter/Esposter/commit/212c073f4b5c99318b630559a50f3684c60dcdd3))
+* **xml2js:** render nullish array members and attribute bags as nothing ([e4ad29c](https://github.com/Esposter/Esposter/commit/e4ad29c36a684e4b7be43a441c50f79dae564a7f))
+
 # [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
 
 ### Bug Fixes

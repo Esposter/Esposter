@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.37.0](https://github.com/Esposter/Esposter/compare/v2.36.0...v2.37.0) (2026-08-14)
+
+### Bug Fixes
+
+* **build:** stop the shared build preset from squatting on configuration's own build config ([7926319](https://github.com/Esposter/Esposter/commit/792631944592810a2a60eb24184fdd0c3de45555))
+* code review comments ([813b854](https://github.com/Esposter/Esposter/commit/813b854939772e4f8600b85116a22dfbe6374d2b))
+* **message:** stop votes deleting poll labels and re-following unfollowers ([10a997c](https://github.com/Esposter/Esposter/commit/10a997c546f064774e5ea8b45ab1763d8e817086))
+* **platform:** close the storage-quota review findings ([bb01ac6](https://github.com/Esposter/Esposter/commit/bb01ac6a74405af5d71debd46b7a30b5f811c1a2))
+* **platform:** correct the residual-quota-gap bound, lock users in a fixed order ([a707ea0](https://github.com/Esposter/Esposter/commit/a707ea05686587a72228e645306e6da317970cc9))
+* **review:** address the third round of CodeRabbit findings ([e81f9f5](https://github.com/Esposter/Esposter/commit/e81f9f51cea29190c614ae12632b8fddcbdbef4c))
+* **review:** drain the open findings from the last review cycle ([6654740](https://github.com/Esposter/Esposter/commit/6654740f01b802a998a48ebab1c90c6b18e31f70))
+* **review:** drain the review findings and clear the root lint gate ([66c8f53](https://github.com/Esposter/Esposter/commit/66c8f53991305944abdd0d1df658229ce5197391))
+
+### Features
+
+* **platform:** enforce per-user blob storage quotas ([d6aab71](https://github.com/Esposter/Esposter/commit/d6aab71ecf5565cf287a63e43cc4e18214f12368))
+* **resource-explorer:** add the service menu, with Recent and Favorites as list routes ([cd23cc5](https://github.com/Esposter/Esposter/commit/cd23cc594c2145e10a252e1a1e352eb2e94bee1c))
+
+### Performance Improvements
+
+* **survey:** resolve a participant token from a column, not every program's blob ([0900d47](https://github.com/Esposter/Esposter/commit/0900d4736403f909b1e6efe37acc82ad7a9472cd))
+
 # [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
 
 ### Bug Fixes

@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.37.0](https://github.com/Esposter/Esposter/compare/v2.36.0...v2.37.0) (2026-08-14)
+
+### Bug Fixes
+
+* **azure:** distinguish an absent entity from a read that failed ([696379f](https://github.com/Esposter/Esposter/commit/696379f253dad65af6b6655a37bff2e9b055fdd9))
+* **build:** stop the shared build preset from squatting on configuration's own build config ([7926319](https://github.com/Esposter/Esposter/commit/792631944592810a2a60eb24184fdd0c3de45555))
+* code review comments ([813b854](https://github.com/Esposter/Esposter/commit/813b854939772e4f8600b85116a22dfbe6374d2b))
+* lint and snapshots ([bb38abb](https://github.com/Esposter/Esposter/commit/bb38abbab7430f5d86d8b2eecf744d2648c0c062))
+* **message:** stop votes deleting poll labels and re-following unfollowers ([10a997c](https://github.com/Esposter/Esposter/commit/10a997c546f064774e5ea8b45ab1763d8e817086))
+* **platform:** close the storage-quota review findings ([bb01ac6](https://github.com/Esposter/Esposter/commit/bb01ac6a74405af5d71debd46b7a30b5f811c1a2))
+* **platform:** correct the residual-quota-gap bound, lock users in a fixed order ([a707ea0](https://github.com/Esposter/Esposter/commit/a707ea05686587a72228e645306e6da317970cc9))
+* **review:** address remaining CodeRabbit cleanup findings ([fd8aa84](https://github.com/Esposter/Esposter/commit/fd8aa845975f6b808ce5e324243af702792e4a29))
+* **shared:** rewrite jsonDateParse's reviver as guard clauses ([cd922c9](https://github.com/Esposter/Esposter/commit/cd922c90dbc70cd4aace6b4cb9c8dc762ef92943))
+* snapshots ([cd704f9](https://github.com/Esposter/Esposter/commit/cd704f9b200ead2ba85221f5c1d62e80aba0872c))
+* snapshots ([7d52b59](https://github.com/Esposter/Esposter/commit/7d52b597a8a64a74a43611035e90b4dbafe35448))
+* test renames ([c106891](https://github.com/Esposter/Esposter/commit/c1068915c3c9e9f277332641a328e010ea7abe33))
+
+### Features
+
+* **platform:** enforce per-user blob storage quotas ([d6aab71](https://github.com/Esposter/Esposter/commit/d6aab71ecf5565cf287a63e43cc4e18214f12368))
+
 # [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
 
 ### Bug Fixes

@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.37.0](https://github.com/Esposter/Esposter/compare/v2.36.0...v2.37.0) (2026-08-14)
+
+### Bug Fixes
+
+* answer the review on the filter pills, the reorder recipe and the probe ([8591234](https://github.com/Esposter/Esposter/commit/8591234e8cdeae520d0fbe3f90a2ef71beaac7f9))
+* **build:** stop the shared build preset from squatting on configuration's own build config ([7926319](https://github.com/Esposter/Esposter/commit/792631944592810a2a60eb24184fdd0c3de45555))
+* code review comments ([813b854](https://github.com/Esposter/Esposter/commit/813b854939772e4f8600b85116a22dfbe6374d2b))
+* lint and snapshots ([cba23c7](https://github.com/Esposter/Esposter/commit/cba23c7f291eee44e615e0f226d0d4cbf1a6da78))
+* lint and snapshots ([bb38abb](https://github.com/Esposter/Esposter/commit/bb38abbab7430f5d86d8b2eecf744d2648c0c062))
+
 # [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
 
 ### Bug Fixes

@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.37.0](https://github.com/Esposter/Esposter/compare/v2.36.0...v2.37.0) (2026-08-14)
+
+### Bug Fixes
+
+* **build:** stop the shared build preset from squatting on configuration's own build config ([7926319](https://github.com/Esposter/Esposter/commit/792631944592810a2a60eb24184fdd0c3de45555))
+* close the seams the merged review branches left ([f2c0b26](https://github.com/Esposter/Esposter/commit/f2c0b26d3f405ef1c6fceae05f93eaea16e74e8b))
+* lint and snapshots ([cba23c7](https://github.com/Esposter/Esposter/commit/cba23c7f291eee44e615e0f226d0d4cbf1a6da78))
+* lint and snapshots ([bb38abb](https://github.com/Esposter/Esposter/commit/bb38abbab7430f5d86d8b2eecf744d2648c0c062))
+* **oxlint:** flag a default-exported forwarding arrow, and pin the parse in the handler test ([ae1ae63](https://github.com/Esposter/Esposter/commit/ae1ae63e351c929e0bcbd435a447c6fc16d5ae73))
+* **platform:** close the storage-quota review findings ([bb01ac6](https://github.com/Esposter/Esposter/commit/bb01ac6a74405af5d71debd46b7a30b5f811c1a2))
+* **review:** drain the review findings and clear the root lint gate ([66c8f53](https://github.com/Esposter/Esposter/commit/66c8f53991305944abdd0d1df658229ce5197391))
+* **shared:** drop the stray quote truncate appended to every push notification ([85f8af0](https://github.com/Esposter/Esposter/commit/85f8af0cfe19f1dc10c3aca5382adcaf5ba01084))
+* snapshot ([8d14ca3](https://github.com/Esposter/Esposter/commit/8d14ca320c7140c97490877839af7daa36a221d7))
+* snapshots ([cd704f9](https://github.com/Esposter/Esposter/commit/cd704f9b200ead2ba85221f5c1d62e80aba0872c))
+* snapshots ([7d52b59](https://github.com/Esposter/Esposter/commit/7d52b597a8a64a74a43611035e90b4dbafe35448))
+* test renames ([c106891](https://github.com/Esposter/Esposter/commit/c1068915c3c9e9f277332641a328e010ea7abe33))
+
+### Features
+
+* **oxlint:** catch the forwarded read too, and retire the ledger ([1a6eb3c](https://github.com/Esposter/Esposter/commit/1a6eb3c799586de8e119f4a8acb79dddd9764c88))
+* **platform:** enforce per-user blob storage quotas ([d6aab71](https://github.com/Esposter/Esposter/commit/d6aab71ecf5565cf287a63e43cc4e18214f12368))
+
 # [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
 
 ### Bug Fixes

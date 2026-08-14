@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.37.0](https://github.com/Esposter/Esposter/compare/v2.36.0...v2.37.0) (2026-08-14)
+
+### Bug Fixes
+
+* **build:** stop the shared build preset from squatting on configuration's own build config ([7926319](https://github.com/Esposter/Esposter/commit/792631944592810a2a60eb24184fdd0c3de45555))
+* **ci:** green the two checks that have been red on develop ([49d5640](https://github.com/Esposter/Esposter/commit/49d5640418e97f4907d933820b266f65f51e1bba))
+* dialog UI ([b708502](https://github.com/Esposter/Esposter/commit/b708502804a1848d172e4e5740bffc889c1c0b4e))
+* lint + warnings ([a80e67d](https://github.com/Esposter/Esposter/commit/a80e67dc589d9b87d69270d741c35baadb150d3d))
+* lint and snapshots ([9957a4a](https://github.com/Esposter/Esposter/commit/9957a4a6c46d712c1a9f49a4fb3ecf8af79bf5b3))
+* remove disabling necessary rules ([17369c1](https://github.com/Esposter/Esposter/commit/17369c1a6e09bfcb3391539dfb803bb9abfe9f3a))
+* **review:** address the open CodeRabbit findings ([68a3331](https://github.com/Esposter/Esposter/commit/68a333188408d4fdb3ef1c559c86247cb5a13a72))
+* **review:** address the second round of CodeRabbit findings ([f8d62ad](https://github.com/Esposter/Esposter/commit/f8d62adef4e085c173530816c463ff814d73e2c8))
+* **review:** drain the review findings and clear the root lint gate ([66c8f53](https://github.com/Esposter/Esposter/commit/66c8f53991305944abdd0d1df658229ce5197391))
+* snapshot ([74cce8f](https://github.com/Esposter/Esposter/commit/74cce8fac939bc372ab413fbd8a8be1864c61941))
+* test renames ([c106891](https://github.com/Esposter/Esposter/commit/c1068915c3c9e9f277332641a328e010ea7abe33))
+* test snapshot ([b2c53e5](https://github.com/Esposter/Esposter/commit/b2c53e57650897c34eccdbd760e084a444639d5a))
+
 # [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
 
 ### Bug Fixes

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.37.0](https://github.com/Esposter/Esposter/compare/v2.36.0...v2.37.0) (2026-08-14)
+
+### Bug Fixes
+
+* address the review round on the docs sync ([3995930](https://github.com/Esposter/Esposter/commit/39959306f109849abc41fb7a640f6d9fd5f7123e))
+* **build:** stop the shared build preset from squatting on configuration's own build config ([7926319](https://github.com/Esposter/Esposter/commit/792631944592810a2a60eb24184fdd0c3de45555))
+* exclude agent worktrees from every repo-wide tool glob ([597e7ce](https://github.com/Esposter/Esposter/commit/597e7ce5276ba08e8c68a054725c004963838167))
+* **review:** address remaining CodeRabbit cleanup findings ([fd8aa84](https://github.com/Esposter/Esposter/commit/fd8aa845975f6b808ce5e324243af702792e4a29))
+* **review:** answer the CodeRabbit findings on the Styled window ([9470340](https://github.com/Esposter/Esposter/commit/9470340e396e8f5e1d84632aca0fd396270e9001))
+* **routing:** read the live route, and ban the API that froze it ([61430f3](https://github.com/Esposter/Esposter/commit/61430f321456d320d36e38831bbada6816732ece))
+* test renames ([c106891](https://github.com/Esposter/Esposter/commit/c1068915c3c9e9f277332641a328e010ea7abe33))
+
+### Features
+
+* **lint:** enable accessibility linting on Vue templates ([8bef605](https://github.com/Esposter/Esposter/commit/8bef605af27985370c6380ffb6a355eba25a3d65))
+
 # [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
 
 ### Bug Fixes

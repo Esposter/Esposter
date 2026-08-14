@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.37.0](https://github.com/Esposter/Esposter/compare/v2.36.0...v2.37.0) (2026-08-14)
+
+### Bug Fixes
+
+* **build:** stop the shared build preset from squatting on configuration's own build config ([7926319](https://github.com/Esposter/Esposter/commit/792631944592810a2a60eb24184fdd0c3de45555))
+* **platform:** close the storage-quota review findings ([bb01ac6](https://github.com/Esposter/Esposter/commit/bb01ac6a74405af5d71debd46b7a30b5f811c1a2))
+* **shared:** drop the stray quote truncate appended to every push notification ([85f8af0](https://github.com/Esposter/Esposter/commit/85f8af0cfe19f1dc10c3aca5382adcaf5ba01084))
+* **shared:** rewrite jsonDateParse's reviver as guard clauses ([cd922c9](https://github.com/Esposter/Esposter/commit/cd922c90dbc70cd4aace6b4cb9c8dc762ef92943))
+* test renames ([c106891](https://github.com/Esposter/Esposter/commit/c1068915c3c9e9f277332641a328e010ea7abe33))
+
+### Features
+
+* **resource-explorer:** add the service menu, with Recent and Favorites as list routes ([cd23cc5](https://github.com/Esposter/Esposter/commit/cd23cc594c2145e10a252e1a1e352eb2e94bee1c))
+* **resource-explorer:** drop the split view, and name the area everywhere ([6b6f03f](https://github.com/Esposter/Esposter/commit/6b6f03fade342eaf96d8e8414bd6124343ab4bf6))
+
 # [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
 
 ### Bug Fixes
