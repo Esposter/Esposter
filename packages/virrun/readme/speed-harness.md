@@ -15,13 +15,10 @@ Regenerate before committing and diff the multipliers — this is the offline re
 - A workload whose numbers genuinely differ by host (the `os` backend runs `os/linux` natively and `os/wsl` bridged from win32) is named `*.platform.bench.ts`. The reporter then writes per-platform artifacts (`Foo.platform.bench.<platform>.{json,md}`, keyed by `process.platform`) so a win32 run and a linux run each update only their own committed file instead of clobbering each other.
 - Plain `*.bench.ts` stays single-artifact and cross-platform.
 
-## CodSpeed dashboard
+## CI smoke signal
 
-The 🏎️ Bench workflow instruments the same colocated `*.bench.ts` files (no bench rewrite) via CodSpeed and uploads to the hosted dashboard for PR regression comments + flamegraphs:
+The 🏎️ Bench workflow runs the same colocated `*.bench.ts` files as a plain sharded `vitest bench --run` on every push. It is a smoke signal only — that every bench still executes — not a speed gate: shared-runner wall-clock is too noisy for a pass/fail bar, so regression detection stays with the committed `*.bench.md` diffed offline. It is its own workflow rather than a 🏗️ CI job, so it never blocks a merge.
 
-- **simulation** — CPU/cache simulation + flamegraphs, hardware-independent, free on `ubuntu-latest` (sharded 8×). This is the CI speed signal.
-- **walltime / memory** — real elapsed time + heap allocations on CodSpeed's bare-metal runners, run unsharded.
-
-The reporter self-disables under `CODSPEED_ENV`, so instrumented CI runs don't rewrite the committed `*.bench.md`.
+The reporter does rewrite `*.bench.md` beside each bench on the runner, but that is ephemeral disk and nothing commits it, so the tracked artifacts are untouched.
 
 See [CI](https://github.com/Esposter/Esposter/blob/main/packages/virrun/readme/ci.md) for how the speed gate is enforced.

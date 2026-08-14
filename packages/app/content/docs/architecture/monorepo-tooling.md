@@ -75,13 +75,13 @@ flowchart LR
   BP --> L[lint]
   BP --> T[typecheck]
   BP --> D[build documentation]
-  BP --> C["coverage (×8 shards)"] --> M[merge coverage]
+  BP --> C["coverage (sharded)"] --> M[merge coverage]
   BP --> A[build app]
 ```
 
 Tests run through a single root `vitest.config.ts` with a `projects: ["packages/*", <scripts>]` config — every package (the app as a Nuxt project via `defineVitestProject`, the rest by their own configs) plus the root `scripts/` suite is one project in one vitest run. So `coverage`/`test` are `vitest run` at the root, not a `pnpm -r` fan-out.
 
-`coverage` runs as an 8-way matrix: `pnpm exec vitest run --coverage --reporter=blob --shard=i/8` splits _all_ test files across runners (each shard runs a distinct eighth and writes the collision-safe `.vitest-reports/blob-i-8.json`, which carries that shard's coverage data). A dependent `merge coverage` job downloads all eight blobs and runs `pnpm exec vitest run --merge-reports --coverage` to recombine them into one unified coverage report — this re-emits the report only, it does not re-run tests. CI invokes `vitest` via `pnpm exec` (not `pnpm coverage -- …`) because pnpm does not reliably forward post-`--` args to the script here, which silently dropped `--shard`/`--reporter`.
+`coverage` runs as a matrix over `.github/workflows/CI.yaml`'s `matrix.shard`: `pnpm exec vitest run --coverage --reporter=blob --shard=i/n` splits _all_ test files across runners (each shard runs a distinct slice and writes the collision-safe `.vitest-reports/blob-i-n.json`, which carries that shard's coverage data). A dependent `merge coverage` job downloads every blob and runs `pnpm exec vitest run --merge-reports --coverage` to recombine them into one unified coverage report — this re-emits the report only, it does not re-run tests. CI invokes `vitest` via `pnpm exec` (not `pnpm coverage -- …`) because pnpm does not reliably forward post-`--` args to the script here, which silently dropped `--shard`/`--reporter`.
 
 Sharding shortens the coverage work itself but not total CI time, which is gated by `lint`; it is kept for faster test-failure feedback and so every suite (previously `vue-phaserjs` and the `scripts/` tests were skipped by the coverage fan-out) is covered. There are no coverage thresholds, so a partial per-shard report cannot false-fail. Matrix shards are isolated runners with no shared filesystem, so each repeats checkout + install + `setup-packages`; the package _build_ is not repeated (it is downloaded as an artifact), so the per-shard cost is setup only.
 
