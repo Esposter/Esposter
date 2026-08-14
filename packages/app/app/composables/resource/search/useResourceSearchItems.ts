@@ -7,9 +7,8 @@ import { getResourceSearchItem } from "@/services/resource/search/getResourceSea
 import { getServiceSearchItems } from "@/services/resource/search/getServiceSearchItems";
 import { pushRecent } from "@/services/resource/search/pushRecent";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { COMPOSITE_KEY_SEPARATOR } from "@/services/shared/constants";
 import { useRecentStore } from "@/store/resource/recent";
-import { normalizeString, RoutePath } from "@esposter/shared";
+import { ID_SEPARATOR, normalizeString, RoutePath } from "@esposter/shared";
 
 // Flat dropdown contents across groups: as-you-type Resources/Services/Pages for a query, recent searches
 // (per-device — a query typed here is not something to follow you) plus recently opened resources (the
@@ -31,7 +30,7 @@ export const useResourceSearchItems = (searchQuery: Ref<string>) => {
           ...recentSearches.value.map((recentSearch) => ({
             group: ResourceSearchGroup.RecentSearches,
             icon: "mdi-history",
-            id: `${ResourceSearchGroup.RecentSearches}${COMPOSITE_KEY_SEPARATOR}${recentSearch}`,
+            id: `${ResourceSearchGroup.RecentSearches}${ID_SEPARATOR}${recentSearch}`,
             title: recentSearch,
             to: { path: RoutePath.ResourceExplorerAll, query: { search: recentSearch } },
           })),

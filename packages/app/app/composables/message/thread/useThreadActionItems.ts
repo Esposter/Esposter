@@ -1,11 +1,10 @@
 import type { Item } from "@/models/shared/Item";
 
-import { COMPOSITE_KEY_SEPARATOR } from "@/services/shared/constants";
 import { useCallStore } from "@/store/message/room/call";
 import { useThreadStore } from "@/store/message/thread";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { useMessageLayoutStore } from "@/store/message/ui/layout";
-import { RoutePath } from "@esposter/shared";
+import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 
 // The thread pane's overflow menu. Everything here acts on the thread the pane is showing, so nothing is
 // Passed in — the store already names it, and a prop would only be a second copy that can disagree
@@ -35,7 +34,7 @@ export const useThreadActionItems = () => {
           () => (isFollowing.value ? unfollowThread(roomId, threadRootRowKey) : followThread(roomId, threadRootRowKey)),
           // Single-flight per thread: the menu closes on click, so a second toggle is a double-fire rather
           // Than an intent to flip back
-          { isExclusive: true, key: `${roomId}${COMPOSITE_KEY_SEPARATOR}${threadRootRowKey}` },
+          { isExclusive: true, key: `${roomId}${ID_SEPARATOR}${threadRootRowKey}` },
         );
       },
       title: isFollowing.value ? "Turn off notifications for replies" : "Turn on notifications for replies",
