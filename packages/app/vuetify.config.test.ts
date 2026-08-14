@@ -39,6 +39,9 @@ describe(defineVuetifyConfiguration, () => {
           "VFileInput": {
             "variant": "outlined",
           },
+          "VNavigationDrawer": {
+            "elevation": 4,
+          },
           "VSelect": {
             "variant": "outlined",
           },

@@ -92,6 +92,9 @@ const defaults: DefaultsOptions = {
   },
   VDialog: { maxWidth: "100%", width: 500 },
   VFileInput: { variant: "outlined" },
+  // Vuetify elevates a drawer only while it is temporary and open, leaving every other drawer separated from the
+  // Page by a hairline border alone — which reads as part of the page once the scrim is off
+  VNavigationDrawer: { elevation: 4 },
   VSelect: { variant: "outlined" },
   VTextarea: { variant: "outlined" },
   VTextField: { variant: "outlined" },
