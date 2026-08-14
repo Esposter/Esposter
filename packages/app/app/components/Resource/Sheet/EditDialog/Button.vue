@@ -35,7 +35,7 @@ const isOpen = ref(false);
     @reset="emit('reset')"
     @submit="(onComplete) => emit('submit', onComplete)"
   >
-    <template #prepend-actions>
+    <template v-if="$slots['prepend-actions']" #prepend-actions>
       <slot name="prepend-actions" />
     </template>
     <slot />
