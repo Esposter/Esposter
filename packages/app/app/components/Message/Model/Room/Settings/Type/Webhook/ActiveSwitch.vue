@@ -18,9 +18,7 @@ const { updateWebhook } = webhookStore;
     <template #activator="{ props }">
       <v-switch
         :model-value="webhook.isActive"
-        color="primary"
         density="compact"
-        hide-details
         :="props"
         @update:model-value="(value) => updateWebhook(roomId, { id: webhook.id, isActive: value ?? false })"
       />

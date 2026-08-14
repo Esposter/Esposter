@@ -20,7 +20,7 @@ onMounted(() => {
 
 <template>
   <div ref="wrapper" flex relative class="call-pip-tooltip-wrapper">
-    <v-tooltip :text="tooltip" location="top" :attach>
+    <v-tooltip :text="tooltip" :attach>
       <template #activator="{ props }">
         <v-btn :="props" :icon :color size="default" :variant :ripple="false" @click="emit('click')" />
       </template>

@@ -72,6 +72,35 @@ describe("styledDialog", () => {
     expect(body.querySelector(".v-card-actions .text-warning")).not.toBeNull();
   });
 
+  // A third decision is a button among the other two, so it belongs in the trailing group rather than pushed to
+  // The opposite edge with the annotations — which is where it lands if it is passed as `prepend-actions`
+  test("renders a third decision between cancel and confirm", async () => {
+    expect.hasAssertions();
+
+    const body = await mountOpenDialog(
+      { confirmButtonProps: { text } },
+      { "prepend-confirm": '<button class="v-btn">Discard changes</button>' },
+    );
+
+    expect(
+      [...body.querySelectorAll(".v-card-actions .v-btn")].map(({ textContent }) => textContent?.trim()),
+    ).toStrictEqual(["Cancel", "Discard changes", text]);
+  });
+
+  // The row exists when the row has content, not only when there is a confirm button: a dialog whose only answers
+  // Are cancel and an alternative still needs somewhere to put them
+  test("renders the actions row for an action slot with nothing to confirm", async () => {
+    expect.hasAssertions();
+
+    const body = await mountOpenDialog({}, { "prepend-confirm": '<button class="v-btn">Discard changes</button>' });
+
+    expect(
+      [...body.querySelectorAll(".v-card-actions .v-btn")].map(({ textContent }) => textContent?.trim()),
+    ).toStrictEqual(["Cancel", "Discard changes"]);
+    // The row carries the dismissal, so the append close button would be a second one
+    expect(body.querySelector('[aria-label="Close"], button .mdi-close')).toBeNull();
+  });
+
   // The header is the reason a search field can sit above a scrolling list without the consumer rebuilding the
   // Card: it renders outside the scroll container rather than as the first body child
   test("renders the header slot outside the scrollable body", async () => {

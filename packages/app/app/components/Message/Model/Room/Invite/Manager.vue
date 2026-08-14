@@ -79,7 +79,6 @@ const isCopied = ref(false);
     </div>
     <v-text-field
       v-model="inviteLink"
-      variant="outlined"
       hide-details
       readonly
       bg-color="background"

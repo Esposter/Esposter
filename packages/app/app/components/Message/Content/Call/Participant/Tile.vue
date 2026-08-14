@@ -37,7 +37,7 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
     </div>
     <MessageContentCallParticipantActionMenu v-if="!isSelf" :participant>
       <template #activator="{ props: menuProps }">
-        <v-tooltip text="More Options" location="top">
+        <v-tooltip text="More Options">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               m-1

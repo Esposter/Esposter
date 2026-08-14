@@ -40,9 +40,7 @@ await readMemberRoles({ roomId, userIds: [member.id] });
           <v-switch
             :disabled="!checkIsRoleManageable(role)"
             :model-value="hasRole(role.id)"
-            color="primary"
             density="compact"
-            hide-details
             @update:model-value="
               async () => {
                 if (hasRole(role.id)) await revokeRole({ roleId: role.id, roomId, userId: member.id });
