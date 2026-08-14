@@ -1,6 +1,6 @@
 {
   "name": "azure-mock",
-  "version": "2.37.1",
+  "version": "2.37.2",
   "description": "A library that contains azure mock classes.",
   "keywords": [
     "azure",
