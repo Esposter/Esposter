@@ -17,7 +17,7 @@ describe("vue-phaserjs", () => {
 
   test.skipIf(process.platform === "win32")("bundle size (POSIX)", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 32.38 KB (33156 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 32.39 KB (33166 bytes)"`);
   });
 
   test("types size", () => {
