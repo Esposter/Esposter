@@ -8,7 +8,7 @@ Progress state for sweeps in flight. What a sweep is and how one is run: the `sw
 | [simplification](simplification/)                 | one-shot | `AGENTS.md` step 1           | one area           | one file per area |
 | [component-granularity](component-granularity.md) | one-shot | `vue-page-composition` skill | one component tree | dated per tree    |
 | [test-trimming](test-trimming.md)                 | one-shot | `testing` skill              | one tree           | dated per tree    |
-| [single-use-computeds](single-use-computeds.md)   | one-shot | `vue` skill                  | one tree           | dated per tree    |
+| [computed-extraction](computed-extraction.md)     | one-shot | `vue` skill                  | one tree           | dated per tree    |
 
 Coverage lives in the leaf, never here. A pass reads this table and the one file it is sweeping.
 
