@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuTextStyle";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { CONTENT_MENU_WIDTH, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";
 import { Input } from "phaser";
 import { Rectangle, Text } from "vue-phaserjs";
 
+interface ItemListRowProps {
+  text: string;
+}
+
+defineSlots<{ default?: () => VNode }>();
+const { text } = defineProps<ItemListRowProps>();
 const emit = defineEmits<{ click: [] }>();
 </script>
 
@@ -20,8 +25,9 @@ const emit = defineEmits<{ click: [] }>();
   <Text
     :configuration="{
       x: INITIAL_CURSOR_POSITION.x + 20,
-      text: PlayerSpecialInput.Cancel,
+      text,
       style: MenuTextStyle,
     }"
   />
+  <slot />
 </template>

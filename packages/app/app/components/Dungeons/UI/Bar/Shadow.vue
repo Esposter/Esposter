@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 
+import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+
 interface ShadowProps {
   imagePosition: ImagePosition;
   scaleY: number;
@@ -18,15 +20,22 @@ const rightCapShadowX = computed(() => middleShadowX.value + middleShadowDisplay
 </script>
 
 <template>
-  <DungeonsUIBarLeftCapShadow v-model:display-width="leftCapShadowDisplayWidth" :image-position :scale-y />
-  <DungeonsUIBarMiddleShadow
-    :image-position="{ ...imagePosition, x: middleShadowX }"
+  <DungeonsUIBarImage
+    v-model:display-width="leftCapShadowDisplayWidth"
+    :image-position
+    :texture="ImageKey.BarLeftCapShadow"
     :scale-y
-    :display-width="middleShadowDisplayWidth"
   />
-  <DungeonsUIBarRightCapShadow
+  <DungeonsUIBarImage
+    :image-position="{ ...imagePosition, x: middleShadowX }"
+    :display-width="middleShadowDisplayWidth"
+    :texture="ImageKey.BarMiddleShadow"
+    :scale-y
+  />
+  <DungeonsUIBarImage
     v-model:display-width="rightCapShadowDisplayWidth"
     :image-position="{ ...imagePosition, x: rightCapShadowX }"
+    :texture="ImageKey.BarRightCapShadow"
     :scale-y
   />
 </template>

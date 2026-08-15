@@ -83,22 +83,25 @@ watch(barWidth, (newBarWidth) => {
 <template>
   <!-- We use a placeholder component to hold the tween for the entire bar -->
   <Image :configuration="{ visible: false, texture: '', displayWidth: barDisplayWidth, tween }" />
-  <DungeonsUIBarLeftCap
+  <DungeonsUIBarImage
     v-model:display-width="leftCapDisplayWidth"
     :image-position
     :texture="BarTextureMap[type][BarOrigin.Left]"
     :scale-y
+    is-hidden-when-empty
   />
-  <DungeonsUIBarMiddle
+  <DungeonsUIBarImage
     :image-position="{ ...imagePosition, x: middleX }"
     :display-width="middleDisplayWidth"
     :texture="BarTextureMap[type][BarOrigin.Middle]"
     :scale-y
+    is-hidden-when-empty
   />
-  <DungeonsUIBarRightCap
+  <DungeonsUIBarImage
     v-model:display-width="rightCapDisplayWidth"
     :image-position="{ ...imagePosition, x: rightCapX }"
     :texture="BarTextureMap[type][BarOrigin.Right]"
     :scale-y
+    is-hidden-when-empty
   />
 </template>

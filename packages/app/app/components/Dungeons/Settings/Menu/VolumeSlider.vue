@@ -4,17 +4,15 @@ import type { RectangleConfiguration } from "vue-phaserjs";
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import {
-  INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
   MENU_HORIZONTAL_PADDING,
-  SETTINGS_POSITION_INCREMENT,
   VOLUME_SLIDER_BAR_WIDTH,
   VOLUME_SLIDER_END_X,
   VOLUME_SLIDER_HEIGHT,
   VOLUME_SLIDER_START_X,
   VOLUME_SLIDER_WIDTH,
 } from "@/services/dungeons/scene/settings/constants";
-import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
+import { getSettingsOptionY } from "@/services/dungeons/scene/settings/getSettingsOptionY";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { Input } from "phaser";
 import { Rectangle, Text } from "vue-phaserjs";
@@ -22,11 +20,7 @@ import { Rectangle, Text } from "vue-phaserjs";
 const volumeStore = useVolumeStore();
 const { setVolume } = volumeStore;
 const { volumePercentage, volumeSlider } = storeToRefs(volumeStore);
-const baseY = computed(
-  () =>
-    INITIAL_SETTINGS_POSITION.y +
-    SETTINGS_POSITION_INCREMENT.y * (SettingsOptionGrid.getPosition(SettingsOption.VolumePercentage)?.y ?? 0),
-);
+const baseY = computed(() => getSettingsOptionY(SettingsOption.VolumePercentage));
 const baseSliderBarConfiguration = computed<Partial<RectangleConfiguration>>(() => ({
   originX: 0,
   originY: 0.5,
