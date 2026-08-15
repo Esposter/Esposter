@@ -15,12 +15,17 @@ interface BarImageProps {
 
 const { displayWidth, imagePosition, isHiddenWhenEmpty, scaleY, texture } = defineProps<BarImageProps>();
 const emit = defineEmits<{ "update:displayWidth": [value?: number] }>();
-const visible = computed(() => !isHiddenWhenEmpty || (displayWidth ?? 0) > 0);
 </script>
 
 <template>
   <Image
-    :configuration="{ visible, ...imagePosition, texture, displayWidth, scaleY }"
+    :configuration="{
+      visible: !isHiddenWhenEmpty || (displayWidth ?? 0) > 0,
+      ...imagePosition,
+      texture,
+      displayWidth,
+      scaleY,
+    }"
     @update:display-width="emit('update:displayWidth', $event)"
   />
 </template>

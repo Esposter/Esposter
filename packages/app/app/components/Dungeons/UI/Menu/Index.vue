@@ -14,7 +14,6 @@ interface MenuProps {
 const menu = defineModel<boolean>("menu", { required: true });
 const { grid, position } = defineProps<MenuProps>();
 const { border, primary } = useDungeonsColors();
-const menuHeight = computed(() => getMenuHeight(grid.rowSize));
 </script>
 
 <template>
@@ -23,7 +22,7 @@ const menuHeight = computed(() => getMenuHeight(grid.rowSize));
       :configuration="{
         x: 1,
         width: MENU_WIDTH - 1,
-        height: menuHeight - 1,
+        height: getMenuHeight(grid.rowSize) - 1,
         origin: 0,
         fillColor: primary,
         alpha: 0.9,

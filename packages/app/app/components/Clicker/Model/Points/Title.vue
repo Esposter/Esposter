@@ -8,12 +8,11 @@ const { clicker, clickerItemProperties } = storeToRefs(clickerStore);
 const buildingStore = useBuildingStore();
 const { allBuildingPower } = storeToRefs(buildingStore);
 const displayNoPointsHtml = computed(() => formatNumberLong(clicker.value.noPoints, 3).replaceAll(/\s/gu, "<br />"));
-const displayAllBuildingPower = computed(() => formatNumberLong(allBuildingPower.value));
 </script>
 
 <template>
   <div font-bold text-center select-none text-display-medium>
     <span v-html="displayNoPointsHtml" /> {{ clickerItemProperties.pluralName }}
   </div>
-  <div font-bold text-center select-none text-headline-small>per second: {{ displayAllBuildingPower }}</div>
+  <div font-bold text-center select-none text-headline-small>per second: {{ formatNumberLong(allBuildingPower) }}</div>
 </template>

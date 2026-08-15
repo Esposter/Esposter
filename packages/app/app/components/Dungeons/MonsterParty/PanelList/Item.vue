@@ -19,7 +19,6 @@ const { columnIndex, monster, rowIndex } = defineProps<PanelListItemProps>();
 const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
 const onGridClick = useOnGridClick(monsterPartyOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
 const isActive = computed(() => deepEqual({ x: columnIndex, y: rowIndex }, monsterPartyOptionGrid.position.value));
-const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) * 100);
 </script>
 
 <template>
@@ -78,7 +77,12 @@ const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) *
         style: HealthLabelTextStyle,
       }"
     />
-    <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 100, y: 40 }" :width="252" :bar-percentage />
+    <DungeonsUIBarContainer
+      :type="BarType.Health"
+      :position="{ x: 100, y: 40 }"
+      :width="252"
+      :bar-percentage="(monster.status.hp / monster.stats.maxHp) * 100"
+    />
     <Text
       :configuration="{
         x: 458,

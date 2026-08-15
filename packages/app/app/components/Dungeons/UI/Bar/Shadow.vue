@@ -16,7 +16,6 @@ const middleShadowDisplayWidth = computed(
   () => width - ((leftCapShadowDisplayWidth.value ?? 0) + (rightCapShadowDisplayWidth.value ?? 0)),
 );
 const rightCapShadowDisplayWidth = ref<number>();
-const rightCapShadowX = computed(() => middleShadowX.value + middleShadowDisplayWidth.value);
 </script>
 
 <template>
@@ -34,7 +33,7 @@ const rightCapShadowX = computed(() => middleShadowX.value + middleShadowDisplay
   />
   <DungeonsUIBarImage
     v-model:display-width="rightCapShadowDisplayWidth"
-    :image-position="{ ...imagePosition, x: rightCapShadowX }"
+    :image-position="{ ...imagePosition, x: middleShadowX + middleShadowDisplayWidth }"
     :texture="ImageKey.BarRightCapShadow"
     :scale-y
   />

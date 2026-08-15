@@ -16,10 +16,7 @@ const { isEnemy } = defineProps<InfoContainerProps>();
 const store = useBattleMonsterStore(isEnemy);
 const { initialMonsterInfoContainerPosition } = store;
 const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(store);
-const scaleY = computed(() => (isEnemy ? 0.8 : undefined));
 const nameDisplayWidth = ref<number>();
-const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
-const healthBarPercentage = computed(() => (activeMonster.value.status.hp / activeMonster.value.stats.maxHp) * 100);
 const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
 
 onUnmounted(() => {
@@ -29,7 +26,7 @@ onUnmounted(() => {
 
 <template>
   <Container :configuration="{ ...monsterInfoContainerPosition, tween: monsterInfoContainerTween }">
-    <Image :configuration="{ origin: 0, texture: ImageKey.HealthBarBackground, scaleY }" />
+    <Image :configuration="{ origin: 0, texture: ImageKey.HealthBarBackground, scaleY: isEnemy ? 0.8 : undefined }" />
     <Text
       :configuration="{
         x: 30,
@@ -45,7 +42,7 @@ onUnmounted(() => {
     />
     <Text
       :configuration="{
-        x: levelX,
+        x: 35 + (nameDisplayWidth ?? 0),
         y: 23,
         text: `L${activeMonster.stats.level}`,
         style: {
@@ -62,7 +59,11 @@ onUnmounted(() => {
         style: HealthLabelTextStyle,
       }"
     />
-    <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 34, y: 34 }" :bar-percentage="healthBarPercentage" />
+    <DungeonsUIBarContainer
+      :type="BarType.Health"
+      :position="{ x: 34, y: 34 }"
+      :bar-percentage="(activeMonster.status.hp / activeMonster.stats.maxHp) * 100"
+    />
     <template v-if="!isEnemy">
       <Text
         :configuration="{

@@ -39,7 +39,6 @@ const updateDisplayWidth = (newDisplayWidth: number) => {
   emit("update:display-width", newDisplayWidth);
 };
 const middleX = computed(() => imagePosition.x + (leftCapDisplayWidth.value ?? 0));
-const rightCapX = computed(() => middleX.value + (middleDisplayWidth.value ?? 0));
 const tween = ref<TweenBuilderConfiguration>();
 
 watch(
@@ -99,7 +98,7 @@ watch(barWidth, (newBarWidth) => {
   />
   <DungeonsUIBarImage
     v-model:display-width="rightCapDisplayWidth"
-    :image-position="{ ...imagePosition, x: rightCapX }"
+    :image-position="{ ...imagePosition, x: middleX + (middleDisplayWidth ?? 0) }"
     :texture="BarTextureMap[type][BarOrigin.Right]"
     :scale-y
     is-hidden-when-empty

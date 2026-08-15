@@ -22,11 +22,8 @@ const slots = defineSlots<{
 }>();
 const { amount, description, flavorDescription, id, isAffordable, menuProps, price, type } =
   defineProps<ItemMenuProps>();
-const descriptionHtml = computed(() => (description ? marked.parse(description, { async: false }) : ""));
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`, { async: false }));
 const displayPrice = computed(() => formatNumberLong(price));
-const buildingIcon = computed(() => BuildingIconMap[id]);
-const menuIcon = computed(() => MenuIconMap[id]);
 const upgradeIcon = computed(() => UpgradeIconMap[id]);
 </script>
 
@@ -39,7 +36,7 @@ const upgradeIcon = computed(() => UpgradeIconMap[id]);
             mr-1
             width="2rem"
             height="2rem"
-            :src="type === Target.Building ? buildingIcon : upgradeIcon"
+            :src="type === Target.Building ? BuildingIconMap[id] : upgradeIcon"
             :alt="id"
           />
         </template>
@@ -59,12 +56,12 @@ const upgradeIcon = computed(() => UpgradeIconMap[id]);
     <StyledCard>
       <v-card-title font-bold flex>
         <div>
-          <v-img width="2rem" height="2rem" :src="type === Target.Building ? menuIcon : upgradeIcon" :alt="id" />
+          <v-img width="2rem" height="2rem" :src="type === Target.Building ? MenuIconMap[id] : upgradeIcon" :alt="id" />
         </div>
         {{ id }}
       </v-card-title>
       <v-card-text>
-        <div v-if="description" pb-4 v-html="descriptionHtml" />
+        <div v-if="description" pb-4 v-html="marked.parse(description, { async: false })" />
         <div pb-4 flex font-italic justify-end>
           <span text-right v-html="flavorDescriptionHtml" />
         </div>

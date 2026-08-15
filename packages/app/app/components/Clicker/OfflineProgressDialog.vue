@@ -17,11 +17,6 @@ const isOpen = computed({
     elapsedMs.value = 0;
   },
 });
-const displayAwardedPoints = computed(() => formatNumberLong(awardedPoints.value, 3));
-const displayTimeAway = computed(() => formatDuration(elapsedMs.value));
-// The award stops accruing at the cap, so absences past it say so instead of implying the full time paid out
-const isCapped = computed(() => elapsedMs.value > OFFLINE_CAP);
-const displayOfflineCap = computed(() => formatDuration(OFFLINE_CAP));
 </script>
 
 <template>
@@ -32,9 +27,10 @@ const displayOfflineCap = computed(() => formatDuration(OFFLINE_CAP));
     :confirm-button-props="{ text: 'Collect' }"
     @confirm="(onComplete) => onComplete()"
   >
-    While you were away for {{ displayTimeAway }}, your buildings produced
-    <span font-bold>{{ displayAwardedPoints }}</span>
+    <!-- The award stops accruing at the cap, so absences past it say so instead of implying the full time paid out -->
+    While you were away for {{ formatDuration(elapsedMs) }}, your buildings produced
+    <span font-bold>{{ formatNumberLong(awardedPoints, 3) }}</span>
     {{ clickerItemProperties.pluralName
-    }}<template v-if="isCapped"> (production is capped at {{ displayOfflineCap }})</template>.
+    }}<template v-if="elapsedMs > OFFLINE_CAP"> (production is capped at {{ formatDuration(OFFLINE_CAP) }})</template>.
   </StyledDialog>
 </template>
