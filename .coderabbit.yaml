@@ -6,40 +6,6 @@ reviews:
     # generated pglite snapshot (binary)
     - "!packages/db-mock/src/snapshot.tar.gz"
 
-    # call sites from the simplification sweep (no reviewable content change); the definition each one
-    # calls stays in review, so every change below is reviewed exactly once, at its definition.
-    # remove these once the sweep's PR merges
-    - "!packages/app/app/components/About/Header.vue"
-    - "!packages/app/app/components/About/Supporters.vue"
-    - "!packages/app/app/components/Achievement/GridItem.vue"
-    - "!packages/app/app/components/Achievement/List.vue"
-    - "!packages/app/app/components/App/ScrollToTopButton.vue"
-    - "!packages/app/app/components/Clicker/Model/RotatingCursors.vue"
-    - "!packages/app/app/components/Dungeons/Battle/Monster/Index.vue"
-    - "!packages/app/app/components/Dungeons/Battle/Monster/InfoContainer.vue"
-    - "!packages/app/app/components/Dungeons/Inventory/ItemList/ItemContainer.vue"
-    - "!packages/app/app/components/Dungeons/MonsterParty/Menu/Confirmation.vue"
-    - "!packages/app/app/components/Dungeons/MonsterParty/Menu/Index.vue"
-    - "!packages/app/app/components/Dungeons/Settings/Menu/Content/Text.vue"
-    - "!packages/app/app/components/Dungeons/Title/Menu/Background.vue"
-    - "!packages/app/app/components/Dungeons/UI/Input/PromptCursor.vue"
-    - "!packages/app/app/components/Dungeons/World/Chest/Index.vue"
-    - "!packages/app/app/components/Post/Description/RichTextEditor.vue"
-    - "!packages/app/app/components/RichTextEditor/Index.vue"
-    - "!packages/app/app/components/User/Profile/AchievementSummary.vue"
-    - "!packages/app/app/composables/dungeons/camera/useRectangleCameraMask.ts"
-    - "!packages/app/app/composables/dungeons/scene/battle/useTakeDamage.ts"
-    - "!packages/app/app/composables/dungeons/scene/settings/useSettingsCursorDimensions.ts"
-    - "!packages/app/app/composables/dungeons/scene/world/interaction/useGetInteractiveObject.ts"
-    - "!packages/app/app/services/clicker/getGlobImage.ts"
-    - "!packages/app/app/services/docs/getNavigationGroups.ts"
-    - "!packages/app/app/services/docs/getSectionCategory.ts"
-    - "!packages/app/app/services/docs/getSectionIcon.ts"
-    - "!packages/app/app/services/docs/getSortedNavigationItems.ts"
-    - "!packages/app/app/services/dungeons/area/getEncounterArea.ts"
-    - "!packages/app/app/services/dungeons/attack/getAttack.ts"
-    - "!packages/app/app/services/dungeons/npc/getNpc.ts"
-
   auto_review:
     # 0 disables the auto-pause; its resume prompt costs a review slot to answer
     auto_pause_after_reviewed_commits: 0
