@@ -2,7 +2,7 @@
 import type { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
-import { getCategoryColor } from "@/services/achievement/getCategoryColor";
+import { CategoryColorMap } from "@/services/achievement/CategoryColorMap";
 import { prettify } from "@/util/text/prettify";
 
 interface GridItemProps {
@@ -28,7 +28,7 @@ const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
           Unlocked {{ userAchievement.unlockedAt.toLocaleDateString() }}
         </div>
         <v-spacer />
-        <v-chip :color="getCategoryColor(achievementDefinition.category)" size="small">
+        <v-chip :color="CategoryColorMap[achievementDefinition.category]" size="small">
           {{ achievementDefinition.category }}
         </v-chip>
         <div text-orange font-bold text-body-small>{{ achievementDefinition.points }} points</div>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { mapToUserAchievementWithDefinition } from "@/services/achievement/mapToUserAchievementWithDefinition";
 import { useAchievementStore } from "@/store/achievement";
 
 await useAchievementSubscribables();
@@ -8,11 +7,11 @@ const { $trpc } = useNuxtApp();
 const achievementStore = useAchievementStore();
 const { recentlyUnlockedUserAchievements, userAchievements } = storeToRefs(achievementStore);
 const { deleteRecentlyUnlockedUserAchievement, initializeAchievementDefinitionMap } = achievementStore;
+// The signed-in surfaces read the map the server masked for this viewer, so a hidden achievement they have
+// Not unlocked keeps its "???" description
 const achievementDefinitionMap = await $trpc.achievement.readAchievementMap.query();
 initializeAchievementDefinitionMap(achievementDefinitionMap);
-userAchievements.value = (await $trpc.achievement.readUserAchievements.query()).map((achievement) =>
-  mapToUserAchievementWithDefinition(achievement, achievementDefinitionMap[achievement.achievement.name]),
-);
+userAchievements.value = await useReadUserAchievements(undefined, achievementDefinitionMap);
 </script>
 
 <template>
