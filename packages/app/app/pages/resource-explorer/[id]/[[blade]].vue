@@ -29,7 +29,9 @@ useRecordResourceAccess(resource);
 const favoriteStore = useFavoriteStore();
 const { readFavorites } = favoriteStore;
 // The toolbar's star needs to know whether this resource is already starred
-onMounted(readFavorites);
+onMounted(async () => {
+  await readFavorites();
+});
 // The store is app-lifetime and this state is the blade's, so the page that opened the resource takes it down
 // Again. Keyed by the id it opened, because a page swap mounts the next resource's page first
 onUnmounted(() => {
