@@ -58,6 +58,7 @@ Permission-gated settings tabs are hidden via a tab-definition map (`FooPermissi
 
 - Always clean up in `onUnmounted`: intervals, timeouts, animation frames, event listeners.
 - Prefer `VueUse` composables over manual event listeners where possible.
+- **A mount-scoped interval is `useWorkerInterval(callback, intervalMs)`**, never a hand-written `setInterval` in `onMounted` plus a `clearInterval` in `onUnmounted` — the second copy of that pair is where one of them loses its teardown. It schedules on `worker-timers`, so the interval keeps firing in a backgrounded tab; VueUse's `useIntervalFn` is the main-thread one, correct where throttling is fine. An interval armed by an event rather than by mounting (a recorder starting, a countdown beginning) still owns its own id.
 - **Unmount is the teardown trigger, not "currently unneeded".** An observer or listener set up once at setup stays for the component's life; don't add a `watchEffect` that stops and re-creates it as some flag flips. An `IntersectionObserver` is the clearest case — on a `display: none` element it reports not-intersecting and goes quiet on its own, so `v-show` plus a permanent observer already costs nothing, while the stop/restart version adds a re-observation race for no saving (`Styled/Waypoint.vue`, and the `pagination` skill). Where a resource genuinely must not exist yet, use the composable's own defer option rather than a teardown cycle.
 
 ## Online/Offline Detection

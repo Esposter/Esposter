@@ -27,13 +27,15 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   );
   const getBoughtBuildingPower = (boughtBuilding: BuildingWithStats) =>
     applyBuildingUpgrade(boughtBuilding, clickerStore.clicker.boughtUpgrades, clickerStore.clicker.boughtBuildings);
+  const getBoughtBuilding = (building: Building) =>
+    clickerStore.clicker.boughtBuildings.find(({ id }) => id === building.id);
   const getBoughtBuildingAmount = (building: Building) => {
-    const boughtBuilding = clickerStore.clicker.boughtBuildings.find(({ id }) => id === building.id);
+    const boughtBuilding = getBoughtBuilding(building);
     if (!boughtBuilding) return 0;
     return boughtBuilding.amount;
   };
   const getBoughtBuildingStats = (building: Building) => {
-    const boughtBuilding = clickerStore.clicker.boughtBuildings.find(({ id }) => id === building.id);
+    const boughtBuilding = getBoughtBuilding(building);
     if (!boughtBuilding) return [];
 
     const buildingPower = getBoughtBuildingPower(boughtBuilding);
@@ -61,7 +63,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   const buyQuantity = ref(1);
   const createBoughtBuilding = (newBuilding: Building, quantity: number) => {
     const newBuildingPrice = getBuildingPriceForQuantity(newBuilding, quantity);
-    const boughtBuilding = clickerStore.clicker.boughtBuildings.find(({ id }) => id === newBuilding.id);
+    const boughtBuilding = getBoughtBuilding(newBuilding);
     if (boughtBuilding) boughtBuilding.amount += quantity;
     else clickerStore.clicker.boughtBuildings.push({ ...newBuilding, amount: quantity, producedValue: 0 });
     decrementPoints(newBuildingPrice);
