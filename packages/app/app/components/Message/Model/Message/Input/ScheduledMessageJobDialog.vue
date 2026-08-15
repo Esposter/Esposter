@@ -7,6 +7,7 @@ import { ScheduledMessageJobType } from "@esposter/db-schema";
 import { marked } from "marked";
 
 const rules = useVRules();
+const textRules = computed(() => [rules.required()]);
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
@@ -66,6 +67,6 @@ watch(isOpen, (newIsOpen) => {
         sixWeeks: 'append',
       }"
     />
-    <v-textarea v-model="text" :label="isReminder ? 'Reminder' : 'Message'" :rules="[rules.required()]" auto-grow />
+    <v-textarea v-model="text" :label="isReminder ? 'Reminder' : 'Message'" :rules="textRules" auto-grow />
   </StyledFormDialog>
 </template>

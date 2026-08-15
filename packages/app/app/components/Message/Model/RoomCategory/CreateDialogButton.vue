@@ -4,6 +4,7 @@ import { ROOM_CATEGORY_NAME_MAX_LENGTH } from "@esposter/db-schema";
 import { withFinalizerAsync } from "@esposter/shared";
 
 const rules = useVRules();
+const nameRules = computed(() => [rules.required(), rules.maxLength(ROOM_CATEGORY_NAME_MAX_LENGTH)]);
 const roomCategoryStore = useRoomCategoryStore();
 const { createRoomCategory } = roomCategoryStore;
 const isOpen = ref(false);
@@ -37,7 +38,7 @@ const name = ref("");
       density="compact"
       label="Category name"
       :maxlength="ROOM_CATEGORY_NAME_MAX_LENGTH"
-      :rules="[rules.required(), rules.maxLength(ROOM_CATEGORY_NAME_MAX_LENGTH)]"
+      :rules="nameRules"
     />
   </StyledFormDialog>
 </template>

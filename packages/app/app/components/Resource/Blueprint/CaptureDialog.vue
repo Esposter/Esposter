@@ -25,6 +25,7 @@ const name = ref("");
 // Blueprint the server will reject — with the count to drop, which the schema's rejection cannot tell them
 const overLimitCount = computed(() => Math.max(0, captureIds.value.length - MAX_BLUEPRINT_ENTRIES));
 const nameRules = computed(() => [rules.required(), rules.maxLength(RESOURCE_NAME_MAX_LENGTH)]);
+const confirmButtonProps = computed(() => ({ disabled: overLimitCount.value > 0, text: "Create" }));
 watch(isOpen, (newIsOpen) => {
   if (newIsOpen) name.value = "";
 });
@@ -40,7 +41,7 @@ onUnmounted(() => {
   <StyledFormDialog
     v-model="isOpen"
     :card-props="{ title: 'Save as blueprint' }"
-    :confirm-button-props="{ disabled: overLimitCount > 0, text: 'Create' }"
+    :confirm-button-props
     @submit="
       async (_event, onComplete) => {
         let isSuccessful = false;

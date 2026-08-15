@@ -17,6 +17,7 @@ interface NotesDialogProps {
 const { displayName, roomId, user } = defineProps<NotesDialogProps>();
 const { $trpc } = useNuxtApp();
 const rules = useVRules();
+const noteRules = computed(() => [rules.maxLength(MODERATION_NOTE_MAX_LENGTH)]);
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const { readModerationNotes, readMoreModerationNotes } = useReadModerationNotes(roomId, () => user.id);
@@ -80,13 +81,7 @@ const createNote = (onComplete: (isSuccessful?: boolean) => void) =>
         </v-list-item>
         <StyledWaypoint :is-active="hasMore" @change="readMoreModerationNotes" />
       </v-list>
-      <v-textarea
-        v-model="note"
-        :rules="[rules.maxLength(MODERATION_NOTE_MAX_LENGTH)]"
-        auto-grow
-        label="Add a note"
-        rows="2"
-      />
+      <v-textarea v-model="note" :rules="noteRules" auto-grow label="Add a note" rows="2" />
     </div>
   </StyledFormDialog>
 </template>

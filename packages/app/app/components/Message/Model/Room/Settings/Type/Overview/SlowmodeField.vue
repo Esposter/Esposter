@@ -4,13 +4,14 @@ import { dayjs } from "#shared/services/dayjs";
 const modelValue = defineModel<null | number>({ required: true });
 const emit = defineEmits<{ save: [] }>();
 const rules = useVRules();
+const slowmodeRules = computed(() => [rules.minValue(1)]);
 </script>
 
 <template>
   <MessageModelRoomSettingsField hint="Seconds between messages. Leave empty to disable." title="Slowmode">
     <v-text-field
       :model-value="modelValue != null ? dayjs.duration(modelValue).asSeconds() : ''"
-      :rules="[rules.minValue(1)]"
+      :rules="slowmodeRules"
       density="compact"
       hide-details="auto"
       placeholder="Disabled"

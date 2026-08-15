@@ -13,6 +13,12 @@ const normalizedWords = computed(() => new Set(words.value.map((word) => roomFil
 const isNewWordValid = computed(
   () => parsedNewWord.value.success && !normalizedWords.value.has(parsedNewWord.value.data),
 );
+const newWordRules = computed(() => [rules.maxLength(FILTER_KEY_MAX_LENGTH)]);
+const createWordButtonProps = computed(() => ({
+  disabled: isAtMaxWords.value || !isNewWordValid.value,
+  size: "x-small" as const,
+  variant: "plain" as const,
+}));
 const createWord = () => {
   if (!isNewWordValid.value) return;
   words.value = [...words.value, newWord.value];
@@ -28,14 +34,14 @@ const createWord = () => {
     <v-text-field
       v-model="newWord"
       :disabled="isAtMaxWords"
-      :rules="[rules.maxLength(FILTER_KEY_MAX_LENGTH)]"
+      :rules="newWordRules"
       density="compact"
       placeholder="Add a word..."
       @keydown.enter.prevent="createWord()"
     >
       <template #append-inner>
         <StyledTooltipIconButton
-          :button-props="{ disabled: isAtMaxWords || !isNewWordValid, size: 'x-small', variant: 'plain' }"
+          :button-props="createWordButtonProps"
           icon="mdi-plus"
           text="Add word"
           @click="createWord()"

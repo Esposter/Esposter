@@ -52,6 +52,15 @@ Identity is about a **fresh reference per render**, so it only applies when the 
 `:button-props="{ text: 'Copied' }"` is hoisted to a constant by the compiler and allocates once for the whole
 module — extracting it into a computed adds an effect to cache something that was already stable.
 
+When the allocation reads no reactive state at all, the fix is a plain setup `const`, not a `computed` —
+`const fileRules = [validateFileRule]` allocates once for the instance where a computed would add an effect to
+cache a value that can never change.
+
+It also only applies to a **component prop**. `:style` and `:class` on a native element are attributes: Vue
+diffs them against the DOM and there is no child component to re-render, so a fresh object there costs a cheap
+patch and nothing else. `:style="{ color: topRoleColor }"` on a `<div>` stays inline; the same literal on a
+component does not.
+
 ## Three traps
 
 **Identity applies only to a whole expression.** `:configuration="{ x: 30, y: 23, scaleY: isEnemy ? 0.8 : undefined }"`
@@ -68,3 +77,8 @@ computed, or hoist the whole mapped list when the row count is unbounded.
 
 A computed that has a statement body, is writable (`computed({ get, set })`), or is consumed as a `Ref` — passed
 to a composable, destructured `storeToRefs`-style, or returned as a composable's own surface.
+
+Also keep one whose **name is the only thing explaining the expression**, where inlining would leave the use site
+harder to read than the indirection costs — most often a negated boolean feeding another condition, where
+inlining produces a double negative. This is a judgement call and the weakest of the keeps: it justifies leaving
+a computed alone, never extracting a new one.

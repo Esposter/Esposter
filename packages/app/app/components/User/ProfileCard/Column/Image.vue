@@ -27,6 +27,7 @@ const validateFileRule = (fileValue: FileFieldValue) => {
 
   return true;
 };
+const fileRules = [validateFileRule];
 </script>
 
 <template>
@@ -38,7 +39,7 @@ const validateFileRule = (fileValue: FileFieldValue) => {
       </v-avatar>
       <v-file-input
         :disabled="isLoading"
-        :rules="[validateFileRule]"
+        :rules="fileRules"
         accept="image/*"
         prepend-icon=""
         prepend-inner-icon="mdi-upload"

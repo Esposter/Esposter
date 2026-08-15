@@ -19,14 +19,16 @@ const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => room.userId === session.value?.user.id);
 const roomStore = useRoomStore();
 const { deleteRoom, leaveRoom } = roomStore;
+const cardProps = computed(() => ({ title: isCreator.value ? "Delete Room" : "Leave Room" }));
+const confirmButtonProps = computed(() => ({ text: isCreator.value ? "Delete" : "Leave" }));
 </script>
 
 <template>
   <!-- Deleting a room is irreversible (all messages/members), so the creator must type the room name to confirm -->
   <StyledDeleteFormDialog
     v-model="modelValue"
-    :card-props="{ title: isCreator ? 'Delete Room' : 'Leave Room' }"
-    :confirm-button-props="{ text: isCreator ? 'Delete' : 'Leave' }"
+    :card-props
+    :confirm-button-props
     :confirm-name="isCreator ? room.name : undefined"
     @delete="
       async (onComplete) => {
