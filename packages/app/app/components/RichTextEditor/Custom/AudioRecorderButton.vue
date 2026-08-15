@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { MimeType } from "#shared/models/file/MimeType";
 import { dayjs } from "#shared/services/dayjs";
+import { AUDIO_RECORDER_TIMER_INTERVAL } from "@/services/richTextEditor/constants";
 import { clearInterval, setInterval } from "worker-timers";
-
-const TIMER_INTERVAL = dayjs.duration(1, "second").asMilliseconds();
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
 const timer = ref(0);
@@ -21,7 +20,7 @@ const { data, start, state, stop } = useMediaRecorder({
   onStart: () => {
     timerInterval = setInterval(() => {
       timer.value++;
-    }, TIMER_INTERVAL);
+    }, AUDIO_RECORDER_TIMER_INTERVAL);
   },
   onStop: () => {
     resetTimer();

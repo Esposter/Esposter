@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
+import { MAX_RECENT_ACHIEVEMENTS } from "@/services/achievement/constants";
 import { getUnlockedUserAchievements } from "@/services/achievement/getUnlockedUserAchievements";
-
-const MAX_RECENT_ACHIEVEMENTS = 4;
 
 interface AchievementSummaryProps {
   userAchievements: UserAchievementWithDefinition[];
