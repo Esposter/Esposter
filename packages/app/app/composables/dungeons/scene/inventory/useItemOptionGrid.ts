@@ -15,24 +15,15 @@ const ItemOptionGrid = new Grid<Item | PlayerSpecialInput.Cancel, (Item | Player
   wrap: true,
 });
 
-let isInitialized = false;
-
-export const useItemOptionGrid = () => {
+export const useItemOptionGrid = createUseGrid(ItemOptionGrid, (grid) => {
   const inventorySceneStore = useInventorySceneStore();
   const { inventory } = storeToRefs(inventorySceneStore);
+  grid.grid = computed(() => [...inventory.value.map((i) => [i]), [PlayerSpecialInput.Cancel]]);
 
-  if (!isInitialized) {
-    ItemOptionGrid.grid = computed(() => [...inventory.value.map((i) => [i]), [PlayerSpecialInput.Cancel]]);
-
-    watchDeep(inventory, () => {
-      if (unref(ItemOptionGrid.validate(ItemOptionGrid.position.value))) return;
-      // If our inventory has changed and we are no longer on a valid item,
-      // Simply move down to the next valid item
-      ItemOptionGrid.move(Direction.DOWN);
-    });
-
-    isInitialized = true;
-  }
-
-  return ItemOptionGrid;
-};
+  watchDeep(inventory, () => {
+    if (unref(grid.validate(grid.position.value))) return;
+    // If our inventory has changed and we are no longer on a valid item,
+    // Simply move down to the next valid item
+    grid.move(Direction.DOWN);
+  });
+});

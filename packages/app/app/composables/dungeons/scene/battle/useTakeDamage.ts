@@ -1,8 +1,5 @@
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
-
 export const useTakeDamage = (isEnemy: boolean) => (damage: number) => {
-  const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
+  const store = useBattleMonsterStore(isEnemy);
   const { activeMonster } = storeToRefs(store);
 
   let newHp = activeMonster.value.status.hp - damage;

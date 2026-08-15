@@ -1,18 +1,13 @@
 import type { InteractableDirectionMap } from "@/models/dungeons/direction/InteractableDirectionMap";
 import type { Position } from "grid-engine";
 
+import { DEFAULT_INTERACTABLE_DIRECTION_MAP } from "@/services/dungeons/direction/constants";
 import { InteractiveObjectPositionComparator } from "@/services/dungeons/scene/world/interaction/InteractiveObjectPositionComparator";
 import { usePlayerStore } from "@/store/dungeons/player";
-import { Direction } from "grid-engine";
 // We have to assume that only the unit position is passed in
 export const useGetInteractiveObject = <T extends Position>(
   objects: T[],
-  interactableDirectionMap: InteractableDirectionMap = {
-    [Direction.DOWN]: true,
-    [Direction.LEFT]: true,
-    [Direction.RIGHT]: true,
-    [Direction.UP]: true,
-  },
+  interactableDirectionMap: InteractableDirectionMap = DEFAULT_INTERACTABLE_DIRECTION_MAP,
 ) => {
   const playerStore = usePlayerStore();
   const { player } = storeToRefs(playerStore);

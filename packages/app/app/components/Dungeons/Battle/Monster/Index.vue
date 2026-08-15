@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { Image } from "vue-phaserjs";
 
 interface MonsterProps {
@@ -9,7 +7,7 @@ interface MonsterProps {
 }
 
 const { isEnemy } = defineProps<MonsterProps>();
-const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
+const store = useBattleMonsterStore(isEnemy);
 const { initialMonsterPosition } = store;
 const { activeMonster, monsterPosition, monsterTween } = storeToRefs(store);
 
