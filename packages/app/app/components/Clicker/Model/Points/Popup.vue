@@ -13,15 +13,14 @@ const { duration, left, points, top } = defineProps<PointsPopupProps>();
 const clickerStore = useClickerStore();
 const { clickerItemProperties } = storeToRefs(clickerStore);
 const color = computed(() => clickerItemProperties.value.color);
+const displayPoints = computed(() => formatNumberLong(points));
 const durationMs = computed(() => `${duration}ms`);
 const leftPx = computed(() => `${left}px`);
 const topPx = computed(() => `${top}px`);
 </script>
 
 <template>
-  <div class="popup" font-bold pointer-events-none select-none absolute text-headline-small>
-    +{{ formatNumberLong(points) }}
-  </div>
+  <div class="popup" font-bold pointer-events-none select-none absolute text-headline-small>+{{ displayPoints }}</div>
 </template>
 
 <style scoped>

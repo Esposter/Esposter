@@ -23,12 +23,13 @@ const { viewFiles } = downloadFileStore;
 const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
 const url = computed(() => fileUrlMap.value.get(file.id)?.url ?? "");
 const viewableFileIndex = computed(() => viewableFiles.value.findIndex(({ id }) => id === file.id));
+const cornerStyle = computed(() => getFileCornerStyle(columnLayout, index));
 const isActive = ref(false);
 </script>
 
 <template>
   <StyledCard
-    :style="getFileCornerStyle(columnLayout, index)"
+    :style="cornerStyle"
     h-full
     @="viewableFileIndex === -1 ? {} : { click: () => viewFiles(viewableFileIndex) }"
     @mouseenter="isActive = true"

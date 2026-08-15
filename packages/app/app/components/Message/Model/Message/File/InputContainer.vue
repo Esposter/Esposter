@@ -12,6 +12,7 @@ const { target } = defineProps<FileInputContainerProps>();
 const uploadFileStore = useUploadFileStore();
 const { discardUploadFiles, getComposerFiles, getComposerFileUrlMap } = uploadFileStore;
 const files = computed(() => getComposerFiles(target));
+const composerFileUrlMap = computed(() => getComposerFileUrlMap(target));
 </script>
 
 <template>
@@ -22,7 +23,7 @@ const files = computed(() => getComposerFiles(target));
         :key="file.id"
         :file
         :index
-        :upload-file-url="getComposerFileUrlMap(target).get(file.id)"
+        :upload-file-url="composerFileUrlMap.get(file.id)"
         @delete="(index) => discardUploadFiles(target, [takeOne(files, index).id])"
       />
     </v-row>

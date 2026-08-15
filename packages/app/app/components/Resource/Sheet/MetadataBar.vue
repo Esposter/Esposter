@@ -9,6 +9,7 @@ interface MetadataBarProps {
 }
 
 const { metadata } = defineProps<MetadataBarProps>();
+const displaySize = computed(() => getFileSize(metadata.size));
 </script>
 
 <template>
@@ -18,7 +19,7 @@ const { metadata } = defineProps<MetadataBarProps>();
       <v-card-subtitle>Imported {{ dayjs(metadata.importedAt).format("MMM D, YYYY h:mm A") }}</v-card-subtitle>
       <template #append>
         <div flex flex-wrap gap-2>
-          <v-chip label size="small" prepend-icon="mdi-database">{{ getFileSize(metadata.size) }}</v-chip>
+          <v-chip label size="small" prepend-icon="mdi-database">{{ displaySize }}</v-chip>
           <v-chip label size="small" prepend-icon="mdi-file-outline">
             {{ metadata.dataSourceType.toUpperCase() }}
           </v-chip>

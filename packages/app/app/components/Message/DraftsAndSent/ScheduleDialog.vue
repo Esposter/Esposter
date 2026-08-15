@@ -13,6 +13,7 @@ const cardProps = computed(() => ({
   title: target.value?.scheduledMessageJobId ? "Reschedule Message" : "Schedule Message",
 }));
 const confirmButtonAttrs = computed(() => ({ disabled: !scheduledAt.value }));
+const displayText = computed(() => (target.value ? getTextFromHtml(target.value.content) : ""));
 const datePickerProps = computed(() => ({
   minDate: minScheduledAt.value,
   placeholder: "Run at",
@@ -69,6 +70,6 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
     @submit="(_event, onComplete) => scheduleMessage(onComplete)"
   >
     <StyledDatePicker v-model="scheduledAt" :date-picker-props />
-    <v-textarea :model-value="target ? getTextFromHtml(target.content) : ''" label="Message" readonly />
+    <v-textarea :model-value="displayText" label="Message" readonly />
   </StyledFormDialog>
 </template>

@@ -8,6 +8,7 @@ interface MessageTimelineProps {
 }
 
 const { messageDate, nextMessageDate } = defineProps<MessageTimelineProps>();
+const displayDate = computed(() => getTimelineDateLabel(messageDate));
 </script>
 
 <template>
@@ -23,7 +24,7 @@ const { messageDate, nextMessageDate } = defineProps<MessageTimelineProps>();
       <v-divider />
     </v-col>
     <div text-center text-title-small>
-      {{ getTimelineDateLabel(messageDate) }}
+      {{ displayDate }}
     </div>
     <v-col flex-1>
       <v-divider />

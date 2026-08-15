@@ -18,6 +18,11 @@ const { actionMessageItems, deleteMessageItem, rowKey, updateMessageMenuItems } 
 const emit = defineEmits<{ "update:menu": [value: boolean]; "update:select-emoji": [emoji: string] }>();
 const messageStore = useMessageStore();
 const { optionsMenu } = storeToRefs(messageStore);
+const moreMenuProps = computed(() => ({
+  location: "left" as const,
+  target: optionsMenu.value?.target,
+  transition: "none",
+}));
 </script>
 
 <template>
@@ -26,7 +31,7 @@ const { optionsMenu } = storeToRefs(messageStore);
     icon="mdi-dots-horizontal"
     text="More"
     :button-props="{ class: 'm-0', size: 'small', tile: true }"
-    :menu-props="{ location: 'left', target: optionsMenu?.target, transition: 'none' }"
+    :menu-props="moreMenuProps"
     @update:model-value="
       (value) => {
         // We just need to set a placeholder so that the menu will appear

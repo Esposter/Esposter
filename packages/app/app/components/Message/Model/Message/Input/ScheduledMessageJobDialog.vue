@@ -18,6 +18,10 @@ const minScheduledAt = ref(scheduledAt.value);
 const text = ref("");
 const isReminder = computed(() => type.value === ScheduledMessageJobType.Reminder);
 const title = computed(() => (isReminder.value ? "Set Reminder" : "Schedule Message"));
+const confirmButtonProps = computed(() => ({
+  prependIcon: ScheduledMessageJobIconMap[type.value],
+  text: title.value,
+}));
 const setDefaultScheduledAt = () => {
   scheduledAt.value = dayjs().add(1, "minute").toDate();
   minScheduledAt.value = new Date(scheduledAt.value);
@@ -55,7 +59,7 @@ watch(isOpen, (newIsOpen) => {
   <StyledFormDialog
     v-model="isOpen"
     :card-props="{ title }"
-    :confirm-button-props="{ text: title, prependIcon: ScheduledMessageJobIconMap[type] }"
+    :confirm-button-props
     :confirm-button-attrs="{ disabled: !scheduledAt }"
     @submit="(_event, onComplete) => scheduleJob(onComplete)"
   >

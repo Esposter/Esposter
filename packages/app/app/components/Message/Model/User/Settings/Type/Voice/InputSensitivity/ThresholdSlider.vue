@@ -16,8 +16,6 @@ const { level, start } = useMicrophoneLevel();
 const trackRef = useTemplateRef<HTMLDivElement>("track");
 const isDragging = ref(false);
 const range = MAX_INPUT_SENSITIVITY_DECIBELS - MIN_INPUT_SENSITIVITY_DECIBELS;
-const levelFraction = computed(() => (level.value - MIN_INPUT_SENSITIVITY_DECIBELS) / range);
-const thresholdFraction = computed(() => (inputSensitivityDecibels.value - MIN_INPUT_SENSITIVITY_DECIBELS) / range);
 const setThresholdFromClientX = (clientX: number) => {
   if (!trackRef.value) return;
   const rect = trackRef.value.getBoundingClientRect();
@@ -56,7 +54,15 @@ onMounted(async () => {
       overflow-hidden
       bg="[linear-gradient(to_right,hsl(55,70%,45%),hsl(120,70%,45%))]"
     >
-      <div bg-black opacity-30 h-full left-0 top-0 absolute :style="{ width: `${levelFraction * 100}%` }" />
+      <div
+        bg-black
+        opacity-30
+        h-full
+        left-0
+        top-0
+        absolute
+        :style="{ width: `${((level - MIN_INPUT_SENSITIVITY_DECIBELS) / range) * 100}%` }"
+      />
     </div>
     <div
       top="1/2"
@@ -68,7 +74,7 @@ onMounted(async () => {
       w-5
       shadow
       absolute
-      :style="{ left: `${thresholdFraction * 100}%` }"
+      :style="{ left: `${((inputSensitivityDecibels - MIN_INPUT_SENSITIVITY_DECIBELS) / range) * 100}%` }"
     />
   </div>
 </template>

@@ -10,6 +10,7 @@ const { postId } = defineProps<PostCreateCommentRichTextEditorProps>();
 const commentStore = useCommentStore();
 const { createComment } = commentStore;
 const description = ref("");
+const commentButtonProps = computed(() => ({ disabled: EMPTY_TEXT_REGEX.test(description.value), text: "Comment" }));
 </script>
 
 <template>
@@ -17,7 +18,7 @@ const description = ref("");
     <template #append-footer="{ editor }">
       <StyledButton
         v-if="editor"
-        :button-props="{ disabled: EMPTY_TEXT_REGEX.test(description), text: 'Comment' }"
+        :button-props="commentButtonProps"
         @click="
           async () => {
             const savedDescription = description;
