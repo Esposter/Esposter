@@ -1,0 +1,1 @@
+export const SHOW_SCROLL_TO_TOP_OFFSET = 200;

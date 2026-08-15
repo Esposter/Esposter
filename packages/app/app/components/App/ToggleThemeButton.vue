@@ -13,6 +13,8 @@ const toggleTheme = useToggleTheme();
   <v-tooltip location="bottom" :text="ThemeModeTooltipMap[currentTheme]">
     <template #activator="{ props }">
       <v-avatar color="background">
+        <!-- The theme's view transition grows from where it was clicked, so this button needs the pointer event
+          itself — which StyledTooltipIconButton's click emit narrows to a MouseEvent -->
         <v-btn :icon="ThemeModeIconMap[currentTheme]" :="props" @click="toggleTheme" />
       </v-avatar>
     </template>
