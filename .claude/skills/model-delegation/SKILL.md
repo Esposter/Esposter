@@ -1,6 +1,6 @@
 ---
 name: model-delegation
-description: Esposter model-delegation conventions — the main session does all thinking (specs, proposals, architecture, review); mechanical implementation is delegated to background subagents with self-contained prompts. Apply when deciding whether to implement in-session or delegate, and when writing a delegation prompt.
+description: Esposter model-delegation conventions — the main session does all thinking (specs, proposals, architecture, review); mechanical implementation is delegated to background subagents with self-contained prompts, but a reading pass over a whole tree stays in the main session because delegation is priced by files read rather than files changed. Apply when deciding whether to implement in-session or delegate, and when writing a delegation prompt.
 ---
 
 # Model Delegation — The Main Session Thinks, Subagents Implement
@@ -17,6 +17,30 @@ The split is by **role, not by model**. Whatever model the session happens to ru
 - **Background subagent**: executing an already-written spec — renames, sweeps, migrations, mechanical refactors, well-scoped feature implementation. Launch via the Agent tool with `subagent_type: "general-purpose"`, run in background so the main session keeps working.
 
 The docs skill already encodes the handoff: proposals must be self-contained enough for a cold implementation session. The delegation prompt is that cold session's entire world.
+
+## A reading pass is not delegable work
+
+The division above splits on judgment vs. execution. There is a second axis that overrides it: **how much of the
+agent's context is spent reading versus writing.** A spec execution reads a handful of files and writes most of
+them. A convention sweep reads a whole tree to change a tenth of it, and the agent pays full context cost for
+every file it opens and discards.
+
+That inverts the economics. A delegated sweep costs on the order of **tens of thousands of tokens per file it
+actually changes** — a large multiple of doing the same pass in the main session, where the tree is read once and
+the rule is already in context. Four parallel sweep agents can burn a session's remaining budget and stop
+mid-unit, leaving partially-swept trees that cannot be ticked.
+
+So: **delegate by edit ratio, not by tedium.** Mechanical does not mean delegable. If the task is "read
+everything under X and change what matches", run it in the main session and chunk it by unit. Delegate when the
+files to change are known up front.
+
+Three costs compound and are easy to miss when the work looks parallel:
+
+- **Cold start per agent.** Each one re-reads the same skill files, references and conventions the main session
+  already holds. Fan-out multiplies that fixed cost by the number of agents.
+- **Reading dominates.** The change is a few lines; the judgment needs the whole file. Tokens track files read.
+- **No shared learning.** A carve-out one agent discovers (an exception the rule failed to state) is re-derived
+  by every sibling, or missed. In the main session it is found once and applied to everything after it.
 
 ## Writing the delegation prompt
 

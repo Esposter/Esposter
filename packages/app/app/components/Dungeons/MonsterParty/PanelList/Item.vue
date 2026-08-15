@@ -19,6 +19,7 @@ const { columnIndex, monster, rowIndex } = defineProps<PanelListItemProps>();
 const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
 const onGridClick = useOnGridClick(monsterPartyOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
 const isActive = computed(() => deepEqual({ x: columnIndex, y: rowIndex }, monsterPartyOptionGrid.position.value));
+const monsterName = computed(() => prettify(monster.key));
 </script>
 
 <template>
@@ -51,7 +52,7 @@ const isActive = computed(() => deepEqual({ x: columnIndex, y: rowIndex }, monst
       :configuration="{
         x: 162,
         y: 36,
-        text: prettify(monster.key),
+        text: monsterName,
         style: {
           color: 'white',
           fontSize: 30,

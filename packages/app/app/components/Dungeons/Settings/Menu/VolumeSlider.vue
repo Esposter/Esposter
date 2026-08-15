@@ -20,14 +20,14 @@ import { Rectangle, Text } from "vue-phaserjs";
 const volumeStore = useVolumeStore();
 const { setVolume } = volumeStore;
 const { volumePercentage, volumeSlider } = storeToRefs(volumeStore);
-const baseY = computed(() => getSettingsOptionY(SettingsOption.VolumePercentage));
-const baseSliderBarConfiguration = computed<Partial<RectangleConfiguration>>(() => ({
+const baseY = getSettingsOptionY(SettingsOption.VolumePercentage);
+const baseSliderBarConfiguration: Partial<RectangleConfiguration> = {
   originX: 0,
   originY: 0.5,
   width: VOLUME_SLIDER_BAR_WIDTH,
   x: INITIAL_SETTINGS_VALUE_POSITION.x,
-  y: baseY.value + 17,
-}));
+  y: baseY + 17,
+};
 const onSliderBarClick = async ({ x }: Input.Pointer) => {
   if (!volumeSlider.value) return;
 

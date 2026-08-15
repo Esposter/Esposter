@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { VBtn } from "vuetify/components";
+
 import { useRoomStore } from "@/store/message/room";
 import { useCallStore } from "@/store/message/room/call";
 import { mergeProps } from "vue";
@@ -9,6 +11,7 @@ const callStore = useCallStore();
 const { isConnecting, isInCall } = storeToRefs(callStore);
 const { joinCallByRoomId, leaveCall } = callStore;
 const roomParticipantMap = useCallRoomParticipantMap();
+const buttonProps = computed<VBtn["$props"]>(() => ({ loading: isConnecting.value, size: "small" }));
 </script>
 
 <template>
@@ -40,7 +43,7 @@ const roomParticipantMap = useCallRoomParticipantMap();
   </v-menu>
   <StyledTooltipIconButton
     v-else
-    :button-props="{ loading: isConnecting, size: 'small' }"
+    :button-props
     icon="mdi-phone"
     text="Start Call"
     :tooltip-props="{ location: 'bottom' }"

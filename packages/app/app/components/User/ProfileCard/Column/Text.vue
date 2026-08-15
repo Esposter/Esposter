@@ -12,16 +12,12 @@ export interface UserProfileCardColumnTextProps {
 const modelValue = defineModel<Row<RowValueType.Text>["value"]>({ required: true });
 const { editMode, value } = defineProps<UserProfileCardColumnTextProps>();
 const rules = useVRules();
+const valueRules = computed(() => [rules.required(), rules.maxLength(USER_NAME_MAX_LENGTH), rules.isNotProfanity()]);
 </script>
 
 <template>
   <v-col font-bold self-center cols="6">
-    <v-text-field
-      v-if="editMode"
-      v-model="modelValue"
-      size="small"
-      :rules="[rules.required(), rules.maxLength(USER_NAME_MAX_LENGTH), rules.isNotProfanity()]"
-    />
+    <v-text-field v-if="editMode" v-model="modelValue" size="small" :rules="valueRules" />
     <template v-else>
       {{ value }}
     </template>

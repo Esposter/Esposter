@@ -8,15 +8,11 @@ interface ConfirmDeleteDialogButtonProps<T> {
 
 const { name, originalItem } = defineProps<ConfirmDeleteDialogButtonProps<T>>();
 const emit = defineEmits<{ delete: [onComplete: (isSuccessful?: boolean) => void] }>();
+const cardProps = computed(() => ({ title: `Confirm Deletion of ${originalItem?.type}` }));
 </script>
 
 <template>
-  <StyledDeleteFormDialog
-    v-if="originalItem"
-    :card-props="{ title: `Confirm Deletion of ${originalItem.type}` }"
-    :confirm-name="name"
-    @delete="emit('delete', $event)"
-  >
+  <StyledDeleteFormDialog v-if="originalItem" :card-props :confirm-name="name" @delete="emit('delete', $event)">
     <template #activator="{ updateIsOpen }">
       <StyledTooltipIconButton icon="mdi-delete" text="Delete" @click="updateIsOpen(true)" />
     </template>

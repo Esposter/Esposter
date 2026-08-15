@@ -24,6 +24,7 @@ const buildingStatsHtml = computed(() =>
 );
 const buildingPrice = computed(() => getBuildingPriceForQuantity(building, buyQuantity.value));
 const isAffordable = computed(() => clicker.value.noPoints >= buildingPrice.value);
+const amount = computed(() => getBoughtBuildingAmount(building));
 const displayFlavorDescription = useDecompileString(building.flavorDescription);
 </script>
 
@@ -36,7 +37,7 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
     :menu-props="{ location: 'right center' }"
     :flavor-description="displayFlavorDescription"
     :price="buildingPrice"
-    :amount="getBoughtBuildingAmount(building)"
+    :amount
   >
     <template v-if="buildingStatsHtml.length > 0" #append-text>
       <div

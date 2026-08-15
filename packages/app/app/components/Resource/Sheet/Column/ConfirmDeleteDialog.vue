@@ -7,12 +7,13 @@ const columnDialogStore = useColumnDialogStore();
 const { deletingColumnName } = storeToRefs(columnDialogStore);
 const deleteColumn = useDeleteColumn();
 const { isOpen } = useSingletonDialog(deletingColumnName);
+const cardProps = computed(() => ({ title: getDeleteColumnDescription(deletingColumnName.value) }));
 </script>
 
 <template>
   <StyledDeleteFormDialog
     v-model="isOpen"
-    :card-props="{ title: getDeleteColumnDescription(deletingColumnName) }"
+    :card-props
     @delete="
       async (onComplete) => {
         if (!deletingColumnName) return;

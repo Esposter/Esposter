@@ -7,6 +7,7 @@ const { data: session } = await authClient.useSession(useFetch);
 const notificationStore = useNotificationStore();
 const { isPanelOpen, notifications, unreadCount } = storeToRefs(notificationStore);
 const { deleteNotifications, markAllAsRead } = notificationStore;
+const badge = computed(() => ({ color: "error", content: unreadCount.value, modelValue: unreadCount.value > 0 }));
 </script>
 
 <template>
@@ -26,7 +27,7 @@ const { deleteNotifications, markAllAsRead } = notificationStore;
         <template #activator="{ props: tooltipProps }">
           <!-- The badge rides on the avatar itself (native badge prop wraps it in a v-badge) —
             Nested inside, the avatar's circular overflow clip would cut the badge off -->
-          <v-avatar color="background" :badge="{ color: 'error', content: unreadCount, modelValue: unreadCount > 0 }">
+          <v-avatar :badge color="background">
             <v-btn aria-label="Notifications" icon :="mergeProps(menuProps, tooltipProps)">
               <v-icon icon="mdi-bell-outline" />
             </v-btn>

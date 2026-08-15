@@ -17,6 +17,7 @@ const { columnIndex, item, rowIndex } = defineProps<ItemProps>();
 const emit = defineEmits<{ click: [] }>();
 const itemOptionGrid = useItemOptionGrid();
 const isUsableItem = useIsUsableItem(() => item);
+const text = computed(() => prettify(item.id));
 const alpha = computed(() => {
   const isValid = unref(itemOptionGrid.validate({ x: columnIndex, y: rowIndex }));
   return isValid ? 1 : DISABLED_OPACITY;
@@ -25,7 +26,7 @@ const alpha = computed(() => {
 
 <template>
   <Container :configuration="{ alpha }">
-    <DungeonsInventoryItemListRow :text="prettify(item.id)" @click="isUsableItem && emit('click')">
+    <DungeonsInventoryItemListRow :text @click="isUsableItem && emit('click')">
       <Text
         :configuration="{
           x: INITIAL_CURSOR_POSITION.x + 590,

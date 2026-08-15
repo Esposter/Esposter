@@ -13,13 +13,15 @@ const { file, isPreview, url } = defineProps<FileRendererComponentProps>();
 const isDark = useIsDark();
 const isOpen = ref(false);
 const { cloned: isDarkMode } = useCloned(isDark);
+const source = computed(() => ({ url }));
+const cardProps = computed(() => ({ title: file.filename }));
 </script>
 
 <template>
   <VuePdfEmbed
     :style="isPreview ? { maxHeight: PREVIEW_MAX_HEIGHT } : { cursor: 'pointer' }"
     :page="1"
-    :source="{ url }"
+    :source
     annotation-layer
     text-layer
     @click="
@@ -29,12 +31,7 @@ const { cloned: isDarkMode } = useCloned(isDark);
     "
   />
   <!-- Nothing to confirm, so the shell serves it without an actions row and owns the close button -->
-  <StyledDialog
-    v-if="!isPreview"
-    v-model="isOpen"
-    :card-props="{ title: file.filename }"
-    :dialog-props="{ height: '48rem', width: '64rem' }"
-  >
+  <StyledDialog v-if="!isPreview" v-model="isOpen" :card-props :dialog-props="{ height: '48rem', width: '64rem' }">
     <VPdfViewer
       v-model:dark-mode="isDarkMode"
       :character-map="{ url: '/cmaps/' }"

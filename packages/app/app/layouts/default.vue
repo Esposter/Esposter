@@ -34,6 +34,12 @@ const { bottom, left, middle, right } = useFixedLayoutStyles(
   () => Number(leftNavigationDrawerProps?.width ?? LEFT_DRAWER_WIDTH),
   () => Number(rightNavigationDrawerProps?.width ?? RIGHT_DRAWER_WIDTH),
 );
+const mergedMainStyle = computed<CSSProperties>(() => ({
+  ...middle.value,
+  ...mainStyle,
+  maxHeight: hideGlobalScrollbar ? "100dvh" : undefined,
+}));
+const mergedFooterStyle = computed<CSSProperties>(() => ({ ...bottom.value, ...footerStyle }));
 
 useResizeObserver(footer, (entries) => {
   const entry = takeOne(entries);
@@ -82,15 +88,11 @@ defineExpose({ container: computed<HTMLElement>(() => container.value?.$el) });
       <slot name="right" />
     </v-navigation-drawer>
     <!-- Set max height here so we can hide global window scrollbar -->
-    <v-main
-      ref="container"
-      pt="[--app-bar-height]"
-      :style="{ ...middle, ...mainStyle, maxHeight: hideGlobalScrollbar ? '100dvh' : undefined }"
-    >
+    <v-main ref="container" pt="[--app-bar-height]" :style="mergedMainStyle">
       <slot />
     </v-main>
 
-    <v-footer v-if="slots.footer" ref="footer" :style="{ ...bottom, ...footerStyle }" app>
+    <v-footer v-if="slots.footer" ref="footer" :style="mergedFooterStyle" app>
       <slot name="footer" />
     </v-footer>
   </div>

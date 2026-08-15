@@ -16,16 +16,20 @@ const isOpen = computed({
     if (!value && snackbarNotification.value) deleteSnackbar(snackbarNotification.value.id);
   },
 });
-const timeout = computed(() =>
-  snackbarNotification.value?.severity === "error"
-    ? NOTIFICATION_SNACKBAR_PERSISTENT_TIMEOUT
-    : NOTIFICATION_SNACKBAR_TIMEOUT_MS,
-);
 </script>
 
 <template>
   <!-- Keyed by id so consecutive notifications remount the snackbar and restart its timer -->
-  <v-snackbar v-if="snackbarNotification" :key="snackbarNotification.id" v-model="isOpen" :timeout>
+  <v-snackbar
+    v-if="snackbarNotification"
+    :key="snackbarNotification.id"
+    v-model="isOpen"
+    :timeout="
+      snackbarNotification.severity === 'error'
+        ? NOTIFICATION_SNACKBAR_PERSISTENT_TIMEOUT
+        : NOTIFICATION_SNACKBAR_TIMEOUT_MS
+    "
+  >
     <div flex gap-2 items-center>
       <v-icon
         :color="snackbarNotification.severity"

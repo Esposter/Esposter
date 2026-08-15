@@ -48,6 +48,10 @@ A comparison, a boolean, a ternary, a template literal, a property read, an arit
 Wrapping these costs more than it saves, and the binding target infers the type an extracted computed would have
 had to annotate.
 
+Identity is about a **fresh reference per render**, so it only applies when the literal has reactive members.
+`:button-props="{ text: 'Copied' }"` is hoisted to a constant by the compiler and allocates once for the whole
+module — extracting it into a computed adds an effect to cache something that was already stable.
+
 ## Three traps
 
 **Identity applies only to a whole expression.** `:configuration="{ x: 30, y: 23, scaleY: isEnemy ? 0.8 : undefined }"`

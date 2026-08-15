@@ -12,13 +12,14 @@ interface ConfirmCloseDialogButtonProps<T> {
 const dialog = defineModel<boolean>({ required: true });
 const { editedItem, isDirty, isSavable } = defineProps<ConfirmCloseDialogButtonProps<T>>();
 const emit = defineEmits<{ save: []; "update:edit-form-dialog": [value: false] }>();
+const confirmButtonProps = computed(() => ({ disabled: !isSavable, text: "Save changes" }));
 </script>
 
 <template>
   <StyledDialog
     v-model="dialog"
     :card-props="{ title: 'Confirm Changes' }"
-    :confirm-button-props="{ disabled: !isSavable, text: 'Save changes' }"
+    :confirm-button-props
     @confirm="
       (onComplete) => {
         onComplete();

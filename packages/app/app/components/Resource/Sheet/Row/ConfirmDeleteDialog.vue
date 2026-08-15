@@ -9,14 +9,17 @@ const { deletingId } = storeToRefs(rowDialogStore);
 const rowStore = useRowStore();
 const { rowIndexIdMap } = storeToRefs(rowStore);
 const deleteRow = useDeleteRow();
-const index = computed(() => (deletingId.value ? (rowIndexIdMap.value.get(deletingId.value) ?? -1) : -1));
 const { isOpen } = useSingletonDialog(deletingId);
+const cardProps = computed(() => {
+  const index = deletingId.value ? (rowIndexIdMap.value.get(deletingId.value) ?? -1) : -1;
+  return { title: getDeleteRowDescription(index) };
+});
 </script>
 
 <template>
   <StyledDeleteFormDialog
     v-model="isOpen"
-    :card-props="{ title: getDeleteRowDescription(index) }"
+    :card-props
     @delete="
       async (onComplete) => {
         if (!deletingId) return;

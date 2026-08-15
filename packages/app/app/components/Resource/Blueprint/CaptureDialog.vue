@@ -24,6 +24,7 @@ const name = ref("");
 // The manifest caps its entries, so the selection is checked here rather than letting the user name a
 // Blueprint the server will reject — with the count to drop, which the schema's rejection cannot tell them
 const overLimitCount = computed(() => Math.max(0, captureIds.value.length - MAX_BLUEPRINT_ENTRIES));
+const nameRules = computed(() => [rules.required(), rules.maxLength(RESOURCE_NAME_MAX_LENGTH)]);
 watch(isOpen, (newIsOpen) => {
   if (newIsOpen) name.value = "";
 });
@@ -68,11 +69,6 @@ onUnmounted(() => {
       A blueprint holds at most {{ MAX_BLUEPRINT_ENTRIES }} resources — deselect {{ overLimitCount }}
       {{ pluralize("resource", overLimitCount) }} to continue.
     </v-alert>
-    <v-text-field
-      v-model="name"
-      autofocus
-      label="Blueprint name"
-      :rules="[rules.required(), rules.maxLength(RESOURCE_NAME_MAX_LENGTH)]"
-    />
+    <v-text-field v-model="name" autofocus label="Blueprint name" :rules="nameRules" />
   </StyledFormDialog>
 </template>

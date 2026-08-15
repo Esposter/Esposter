@@ -14,11 +14,10 @@ interface ItemContainerProps {
 const { columnIndex, item, rowIndex } = defineProps<ItemContainerProps>();
 const itemOptionGrid = useItemOptionGrid();
 const onGridClick = useOnGridClick(itemOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
-const y = computed(() => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSITION_INCREMENT.y * rowIndex);
 </script>
 
 <template>
-  <Container :configuration="{ y }">
+  <Container :configuration="{ y: INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSITION_INCREMENT.y * rowIndex }">
     <DungeonsInventoryItemListRow
       v-if="item === PlayerSpecialInput.Cancel"
       :text="PlayerSpecialInput.Cancel"

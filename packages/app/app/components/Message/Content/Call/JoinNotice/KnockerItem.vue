@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+import type { VBtn } from "vuetify/components";
 
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
@@ -16,6 +17,17 @@ const knockerStore = useKnockerStore();
 const { admitKnocker, dismissKnocker } = knockerStore;
 const isAdmitting = ref(false);
 const isDismissing = ref(false);
+const admitButtonProps = computed<VBtn["$props"]>(() => ({
+  icon: "mdi-check",
+  loading: isAdmitting.value,
+  size: "small",
+  variant: "tonal",
+}));
+const dismissButtonProps = computed<VBtn["$props"]>(() => ({
+  loading: isDismissing.value,
+  size: "small",
+  variant: "plain",
+}));
 </script>
 
 <template>
@@ -26,7 +38,7 @@ const isDismissing = ref(false);
       <template #activator="{ props: tooltipProps }">
         <StyledButton
           :="tooltipProps"
-          :button-props="{ icon: 'mdi-check', loading: isAdmitting, size: 'small', variant: 'tonal' }"
+          :button-props="admitButtonProps"
           @click="
             async () => {
               const callSessionId = activeCallSessionId;
@@ -46,7 +58,7 @@ const isDismissing = ref(false);
       </template>
     </v-tooltip>
     <StyledTooltipIconButton
-      :button-props="{ loading: isDismissing, size: 'small', variant: 'plain' }"
+      :button-props="dismissButtonProps"
       icon="mdi-close"
       text="Dismiss"
       @click="

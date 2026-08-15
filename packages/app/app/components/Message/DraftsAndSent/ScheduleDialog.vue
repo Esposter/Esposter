@@ -9,6 +9,15 @@ const { isOpen, minScheduledAt, scheduledAt, target } = storeToRefs(scheduleDial
 const inputStore = useInputStore();
 const { clearComposer } = inputStore;
 const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
+const cardProps = computed(() => ({
+  title: target.value?.scheduledMessageJobId ? "Reschedule Message" : "Schedule Message",
+}));
+const confirmButtonAttrs = computed(() => ({ disabled: !scheduledAt.value }));
+const datePickerProps = computed(() => ({
+  minDate: minScheduledAt.value,
+  placeholder: "Run at",
+  sixWeeks: "append" as const,
+}));
 const { executeMutation } = useMutation();
 // Server-scheduled job — non-optimistic, store refresh in onSuccess
 const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => {
@@ -54,15 +63,12 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
 <template>
   <StyledFormDialog
     v-model="isOpen"
-    :card-props="{ title: target?.scheduledMessageJobId ? 'Reschedule Message' : 'Schedule Message' }"
+    :card-props
     :confirm-button-props="{ prependIcon: 'mdi-send-clock', text: 'Schedule Message' }"
-    :confirm-button-attrs="{ disabled: !scheduledAt }"
+    :confirm-button-attrs
     @submit="(_event, onComplete) => scheduleMessage(onComplete)"
   >
-    <StyledDatePicker
-      v-model="scheduledAt"
-      :date-picker-props="{ minDate: minScheduledAt, placeholder: 'Run at', sixWeeks: 'append' }"
-    />
+    <StyledDatePicker v-model="scheduledAt" :date-picker-props />
     <v-textarea :model-value="target ? getTextFromHtml(target.content) : ''" label="Message" readonly />
   </StyledFormDialog>
 </template>

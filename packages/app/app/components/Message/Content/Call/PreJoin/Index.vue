@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ComponentPublicInstance } from "vue";
+import type { VBtn } from "vuetify/components";
 
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
@@ -19,6 +20,11 @@ const isRequestingJoin = ref(false);
 const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggleMicrophone } = useCallPreJoinMedia();
 const mediaControls = useTemplateRef<ComponentPublicInstance>("mediaControls");
 const { height: mediaControlsHeight } = useElementSize(mediaControls);
+const buttonProps = computed<VBtn["$props"]>(() => ({
+  loading: isRequestingJoin.value,
+  size: "large",
+  text: isCreator ? "Join now" : "Request to join",
+}));
 </script>
 
 <template>
@@ -46,11 +52,7 @@ const { height: mediaControlsHeight } = useElementSize(mediaControls);
           </span>
         </div>
         <StyledButton
-          :button-props="{
-            loading: isRequestingJoin,
-            size: 'large',
-            text: isCreator ? 'Join now' : 'Request to join',
-          }"
+          :button-props
           @click="
             async () => {
               isRequestingJoin = true;

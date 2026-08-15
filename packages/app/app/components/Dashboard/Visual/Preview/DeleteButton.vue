@@ -13,11 +13,12 @@ interface DeleteButtonProps {
 const { id, type } = defineProps<DeleteButtonProps>();
 const visualStore = useVisualStore();
 const { deleteVisual } = visualStore;
+const cardProps = computed(() => ({ title: `Delete ${prettify(type)} Visual` }));
 </script>
 
 <template>
   <StyledDeleteFormDialog
-    :card-props="{ title: `Delete ${prettify(type)} Visual` }"
+    :card-props
     @delete="
       async (onComplete) => {
         let isSuccessful = false;
@@ -36,7 +37,7 @@ const { deleteVisual } = visualStore;
       <StyledTooltipIconButton
         :button-props="{ class: 'right-0 top-0 absolute', size: 'small' }"
         icon="mdi-close"
-        :text="`Delete ${prettify(type)} Visual`"
+        :text="cardProps.title"
         @click.stop="updateIsOpen(true)"
       />
     </template>

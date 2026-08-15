@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { VBtn } from "vuetify/components";
+
 import { ConnectionQualityMetadataMap } from "@/services/message/room/liveKit/ConnectionQualityMetadataMap";
 import { ConnectionStateMetadataMap } from "@/services/message/room/liveKit/ConnectionStateMetadataMap";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
@@ -10,20 +12,20 @@ const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
 const { cameraDeviceId, inputDeviceId, outputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
 const connectionQualityMetadata = computed(() => ConnectionQualityMetadataMap[connectionQuality.value]);
 const connectionStateMetadata = computed(() => ConnectionStateMetadataMap[connectionState.value]);
-const title = computed(() => `${connectionStateMetadata.value.title} - ${connectionQualityMetadata.value.title}`);
+const buttonProps = computed<VBtn["$props"]>(() => ({
+  color: connectionQualityMetadata.value.color ?? connectionStateMetadata.value.color,
+  ripple: false,
+  size: "default",
+  variant: "plain",
+}));
 </script>
 
 <template>
   <StyledTooltipMenuIconButton
-    :button-props="{
-      color: connectionQualityMetadata.color ?? connectionStateMetadata.color,
-      ripple: false,
-      size: 'default',
-      variant: 'plain',
-    }"
+    :button-props
     :icon="connectionQualityMetadata.icon"
     :menu-props="{ closeOnContentClick: false, location: 'top' }"
-    :text="title"
+    :text="`${connectionStateMetadata.title} - ${connectionQualityMetadata.title}`"
   >
     <StyledCard py-2 min-w-72>
       <v-list density="compact">

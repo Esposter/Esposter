@@ -11,13 +11,9 @@ interface MessageDraftsAndSentActionButtonProps {
 
 const { buttonProps, icon, text } = defineProps<MessageDraftsAndSentActionButtonProps>();
 const emit = defineEmits<{ click: [event: MouseEvent] }>();
+const mergedButtonProps = computed(() => ({ ...DRAFTS_AND_SENT_ACTION_BUTTON_PROPS, ...buttonProps }));
 </script>
 
 <template>
-  <StyledTooltipIconButton
-    :button-props="{ ...DRAFTS_AND_SENT_ACTION_BUTTON_PROPS, ...buttonProps }"
-    :icon
-    :text
-    @click.stop="emit('click', $event)"
-  />
+  <StyledTooltipIconButton :button-props="mergedButtonProps" :icon :text @click.stop="emit('click', $event)" />
 </template>

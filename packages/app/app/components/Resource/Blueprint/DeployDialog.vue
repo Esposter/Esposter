@@ -17,6 +17,11 @@ const { createErrorNotification } = notificationStore;
 const isOpen = ref(false);
 const parameterValues = ref<Record<string, string>>({});
 const deployments = ref<BlueprintDeployment[]>([]);
+const buttonProps = computed(() => ({
+  disabled: isDeployPending.value,
+  loading: isDeployPending.value,
+  text: "Deploy",
+}));
 // Each open starts fresh: fields prefilled from their defaults, previous results cleared
 watch(isOpen, (newIsOpen) => {
   if (!newIsOpen) return;
@@ -77,10 +82,7 @@ const deploy = async () => {
         <v-spacer />
         <template v-if="deployments.length === 0">
           <StyledButton :button-props="{ text: 'Cancel', variant: 'text' }" @click="isOpen = false" />
-          <StyledButton
-            :button-props="{ disabled: isDeployPending, loading: isDeployPending, text: 'Deploy' }"
-            @click="deploy"
-          />
+          <StyledButton :button-props @click="deploy" />
         </template>
         <StyledButton v-else :button-props="{ text: 'Done' }" @click="isOpen = false" />
       </v-card-actions>

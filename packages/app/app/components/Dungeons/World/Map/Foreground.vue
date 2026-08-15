@@ -8,14 +8,15 @@ import { Image } from "vue-phaserjs";
 
 const worldSceneStore = useWorldSceneStore();
 const { tilemapKey } = storeToRefs(worldSceneStore);
-const foregroundTextureKey = computed(() => `World${tilemapKey.value}Foreground` as ImageKey);
-const texture = computed(() => (ImageKeys.has(foregroundTextureKey.value) ? foregroundTextureKey.value : undefined));
+const texture = computed(() => {
+  const foregroundTextureKey = `World${tilemapKey.value}Foreground` as ImageKey;
+  return ImageKeys.has(foregroundTextureKey) ? foregroundTextureKey : undefined;
+});
 const worldPlayerStore = useWorldPlayerStore();
 const { sprite } = storeToRefs(worldPlayerStore);
-// Foreground sits above the player so they can hide behind it.
-const depth = computed(() => (sprite.value ? sprite.value.depth + 1 : 0));
 </script>
 
 <template>
-  <Image v-if="texture" :configuration="{ origin: 0, texture, depth }" />
+  <!-- Foreground sits above the player so they can hide behind it. -->
+  <Image v-if="texture" :configuration="{ origin: 0, texture, depth: sprite ? sprite.depth + 1 : 0 }" />
 </template>

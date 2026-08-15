@@ -13,18 +13,18 @@ once both have been applied to it.
 Behaviour-preserving except where a fresh `:rules` array was making a Vuetify field re-validate on every render —
 restoring the stable reference stops that, which is a fix, not a regression.
 
-| Unit                                      | Swept | Notes                                                            |
-| :---------------------------------------- | :---- | :--------------------------------------------------------------- |
-| `app/components/Message`                  |       |                                                                  |
-| `app/components/Resource`                 |       |                                                                  |
-| `app/components/Styled` + `App`           |       | Primitives — merged prop objects and rules arrays cluster here   |
-| `app/components/Clicker`                  |       |                                                                  |
-| `app/components/Dungeons`                 |       | Phaser `:configuration` literals — whole-expression trap applies |
-| `app/components` — the rest               |       |                                                                  |
-| `app/pages` + `app/layouts`               |       |                                                                  |
-| `app/composables`                         |       | A returned computed is the composable's surface, not a find      |
-| `app/store`                               |       | A store's computed is read by consumers it cannot count          |
-| `packages/vue-phaserjs`, `packages/infra` |       |                                                                  |
+| Unit                                      | Swept      | Notes                                                            |
+| :---------------------------------------- | :--------- | :--------------------------------------------------------------- |
+| `app/components/Message`                  |            | Partly edited on 2026-08-16 — re-read in full, nothing to trust  |
+| `app/components/Resource`                 |            | Partly edited on 2026-08-16 — re-read in full, nothing to trust  |
+| `app/components/Styled` + `App`           | 2026-08-16 | Primitives — merged prop objects and rules arrays cluster here   |
+| `app/components/Clicker`                  | 2026-08-16 |                                                                  |
+| `app/components/Dungeons`                 | 2026-08-16 | Phaser `:configuration` literals — whole-expression trap applies |
+| `app/components` — the rest               |            | Partly edited on 2026-08-16 — re-read in full, nothing to trust  |
+| `app/pages` + `app/layouts`               | 2026-08-16 |                                                                  |
+| `app/composables`                         |            | A returned computed is the composable's surface, not a find      |
+| `app/store`                               |            | A store's computed is read by consumers it cannot count          |
+| `packages/vue-phaserjs`, `packages/infra` |            |                                                                  |
 
 ## Find recipe
 

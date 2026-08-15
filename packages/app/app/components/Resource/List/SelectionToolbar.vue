@@ -16,19 +16,17 @@ const { exportResourcesCsv } = useExportResourcesCsv();
 const blueprintCaptureDialogStore = useBlueprintCaptureDialogStore();
 const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
 const selectedLabel = computed(() => `${selectedResources.length} ${pluralize("resource", selectedResources.length)}`);
-// One selection guards on the name, matching the row and blade delete dialogs;
-// Past one no single name identifies the set, so the guard falls back to the count phrase
-const confirmName = computed(() =>
-  selectedResources.length === 1 ? takeOne(selectedResources).name : `Delete ${selectedLabel.value}`,
-);
+const cardProps = computed(() => ({ title: `Delete ${selectedLabel.value}` }));
 </script>
 
 <template>
   <div px-4 py-2 b-0 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center>
     <span op-medium-emphasis>{{ selectedResources.length }} selected</span>
+    <!-- One selection guards on the name, matching the row and blade delete dialogs;
+      past one no single name identifies the set, so the guard falls back to the count phrase -->
     <StyledDeleteFormDialog
-      :card-props="{ title: `Delete ${selectedLabel}` }"
-      :confirm-name
+      :card-props
+      :confirm-name="selectedResources.length === 1 ? takeOne(selectedResources).name : `Delete ${selectedLabel}`"
       @delete="
         (onComplete) => {
           onComplete();

@@ -14,6 +14,7 @@ const emit = defineEmits<{
   submit: [event: SubmitEventPromise, values: NonNullable<PostUpsertFormProps["initialValues"]>];
 }>();
 const rules = useVRules();
+const titleRules = computed(() => [rules.required(), rules.maxLength(POST_TITLE_MAX_LENGTH), rules.isNotProfanity()]);
 const values = ref(initialValues);
 const isEditFormValid = ref(true);
 </script>
@@ -29,7 +30,7 @@ const isEditFormValid = ref(true);
               label="Title"
               placeholder="Title"
               :counter="POST_TITLE_MAX_LENGTH"
-              :rules="[rules.required(), rules.maxLength(POST_TITLE_MAX_LENGTH), rules.isNotProfanity()]"
+              :rules="titleRules"
               autofocus
             />
           </v-col>

@@ -15,6 +15,8 @@ const tagText = computed(() => {
   if (!tagNameInput.value) return "all";
   return tagValueInput.value ? `${tagNameInput.value}: ${tagValueInput.value}` : tagNameInput.value;
 });
+const tagNameRules = computed(() => [rules.maxLength(MAX_TAG_NAME_LENGTH)]);
+const tagValueRules = computed(() => [rules.maxLength(MAX_TAG_VALUE_LENGTH)]);
 </script>
 
 <template>
@@ -22,20 +24,14 @@ const tagText = computed(() => {
     <v-card min-w-72>
       <v-card-text>
         <div flex flex-col gap-2>
-          <v-text-field
-            v-model="tagNameInput"
-            autofocus
-            density="comfortable"
-            label="Name"
-            :rules="[rules.maxLength(MAX_TAG_NAME_LENGTH)]"
-          />
+          <v-text-field v-model="tagNameInput" autofocus density="comfortable" label="Name" :rules="tagNameRules" />
           <v-text-field
             v-model="tagValueInput"
             density="comfortable"
             hint="Leave empty to match any value"
             label="Value"
             persistent-hint
-            :rules="[rules.maxLength(MAX_TAG_VALUE_LENGTH)]"
+            :rules="tagValueRules"
           />
         </div>
       </v-card-text>

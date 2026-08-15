@@ -27,6 +27,7 @@ const displayName = computed(() => getDisplayName(member, room.id));
 const roleStore = useRoleStore();
 const { getMemberRoles } = roleStore;
 const memberRoles = computed(() => getMemberRoles(room.id, member.id).toSorted((a, b) => b.position - a.position));
+const topRoleColor = computed(() => getTopRole(memberRoles.value)?.color || undefined);
 const isMenuOpen = ref(false);
 </script>
 
@@ -45,7 +46,7 @@ const isMenuOpen = ref(false);
           </template>
           <v-list-item-title pr-6>
             <!-- Discord tints the display name with the member's top role color -->
-            <div flex gap-x-1 items-center :style="{ color: getTopRole(memberRoles)?.color || undefined }">
+            <div flex gap-x-1 items-center :style="{ color: topRoleColor }">
               {{ displayName }}
               <v-tooltip v-if="room.userId === member.id" text="Room Owner">
                 <template #activator="{ props }">

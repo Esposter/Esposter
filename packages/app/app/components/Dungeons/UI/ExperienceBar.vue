@@ -19,9 +19,6 @@ const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore
 const experienceBarStore = useExperienceBarStore();
 const { isAnimating, isSkipAnimations } = storeToRefs(experienceBarStore);
 const isAnimatingLevelUp = ref(false);
-const barPercentage = computed(() =>
-  isAnimatingLevelUp.value && !(isSkipAnimations.value || isSettingsSkipAnimations.value) ? 0 : baseBarPercentage,
-);
 </script>
 
 <template>
@@ -35,7 +32,7 @@ const barPercentage = computed(() =>
     :position
     :width
     :scale-y
-    :bar-percentage
+    :bar-percentage="isAnimatingLevelUp && !(isSkipAnimations || isSettingsSkipAnimations) ? 0 : baseBarPercentage"
     :is-skip-animations="isSkipAnimations && !isAnimatingLevelUp"
     @start:display-width="isAnimating = true"
     @update:display-width="

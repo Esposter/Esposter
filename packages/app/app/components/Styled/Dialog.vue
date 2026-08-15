@@ -44,11 +44,6 @@ const slots = defineSlots<{
 const isFullScreen = ref(false);
 const hasActions = computed(() => Boolean(confirmButtonProps ?? slots["prepend-actions"] ?? slots["prepend-confirm"]));
 const mergedConfirmButtonProps = computed(() => mergeProps(confirmButtonProps ?? {}, confirmButtonAttrs));
-// `primary` is StyledButton's own colour, so it is not a request for a plain button — reading any colour as
-// One is what silently dropped the gradient from every dialog that spelled the default out.
-const hasCustomConfirmColor = computed(
-  () => Boolean(confirmButtonProps?.color) && confirmButtonProps?.color !== "primary",
-);
 const confirm = () => {
   emit("confirm", () => (modelValue.value = false));
 };
@@ -97,7 +92,15 @@ const confirm = () => {
           <!-- A third decision — discard, skip, "export anyway" — stays in the trailing group between the two
             standing answers, so the row reads cancel → alternative → confirm wherever the dialog appears. -->
           <slot name="prepend-confirm" />
-          <v-btn v-if="hasCustomConfirmColor" text-3 variant="outlined" :="mergedConfirmButtonProps" @click="confirm" />
+          <!-- `primary` is StyledButton's own colour, so it is not a request for a plain button — reading any
+            colour as one is what silently dropped the gradient from every dialog that spelled the default out. -->
+          <v-btn
+            v-if="confirmButtonProps?.color && confirmButtonProps.color !== 'primary'"
+            text-3
+            variant="outlined"
+            :="mergedConfirmButtonProps"
+            @click="confirm"
+          />
           <StyledButton v-else-if="confirmButtonProps" text-3 :="mergedConfirmButtonProps" @click="confirm" />
         </v-card-actions>
       </template>

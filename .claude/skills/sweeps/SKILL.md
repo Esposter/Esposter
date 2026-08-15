@@ -68,7 +68,14 @@ Anything else — what the convention says, why it matters, how a pass is run �
 
 **Read the leaf, not the tree.** A pass loads `.claude/ledgers/README.md` and the one file it is sweeping.
 
-**One agent per leaf.** Parallel passes across different area files are fine and encouraged; two agents inside one file are not. Adding, promoting or retiring a ledger is the only edit to the index row.
+**Run the pass in the main session, one unit at a time.** A sweep reads a whole tree to change a fraction of it,
+and delegation is priced by files read rather than files changed — fanning units out to agents costs a large
+multiple of sweeping them here, and an agent that exhausts its budget mid-unit leaves a tree that cannot be
+ticked (`model-delegation`, "A reading pass is not delegable work"). It also throws away the pass's own learning:
+a carve-out the rule failed to state is found once in a sequential pass and applied to every unit after it, where
+parallel agents each re-derive it or miss it. If a sweep is ever delegated anyway, it is still **one agent per
+leaf** — two inside one file trample each other. Adding, promoting or retiring a ledger is the only edit to the
+index row.
 
 ## Modes
 

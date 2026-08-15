@@ -16,6 +16,7 @@ const { isEnemy } = defineProps<InfoContainerProps>();
 const store = useBattleMonsterStore(isEnemy);
 const { initialMonsterInfoContainerPosition } = store;
 const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(store);
+const monsterName = computed(() => prettify(activeMonster.value.key));
 const nameDisplayWidth = ref<number>();
 const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
 
@@ -31,7 +32,7 @@ onUnmounted(() => {
       :configuration="{
         x: 30,
         y: 20,
-        text: prettify(activeMonster.key),
+        text: monsterName,
         style: {
           color: '#7e3d3f',
           fontSize: 32,
