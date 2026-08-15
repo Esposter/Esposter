@@ -13,6 +13,7 @@ const sheetStore = useSheetStore();
 const { dataSource } = storeToRefs(sheetStore);
 const isOpen = ref(false);
 const keepMode = ref(KeepDuplicateMode.First);
+const keepDuplicateModes = Object.values(KeepDuplicateMode);
 const deleteDuplicateRows = useDeleteDuplicateRows();
 const duplicateRowEntries = computed<IndexedRow[]>(() => findDuplicateRows(dataSource.value, keepMode.value));
 const duplicateCount = computed(() => duplicateRowEntries.value.length);
@@ -41,8 +42,7 @@ const duplicateHeaders = computed(() => [
     <template v-else>
       <span>{{ duplicateCount }} duplicate {{ pluralize("row", duplicateCount) }} will be deleted.</span>
       <v-btn-toggle v-model="keepMode" density="compact" mandatory mt-4>
-        <v-btn :value="KeepDuplicateMode.First">Keep First</v-btn>
-        <v-btn :value="KeepDuplicateMode.Last">Keep Last</v-btn>
+        <v-btn v-for="mode of keepDuplicateModes" :key="mode" :value="mode">Keep {{ mode }}</v-btn>
       </v-btn-toggle>
       <v-data-table
         mt-4

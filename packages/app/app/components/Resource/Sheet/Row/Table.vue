@@ -3,8 +3,6 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { CellPropsFunction } from "vuetify/lib/components/VDataTable/types.mjs";
 
-import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
-import { ArrowKeyDeltaMap } from "@/services/resource/sheet/ArrowKeyDeltaMap";
 import { toColumnKey } from "@/services/resource/sheet/column/toColumnKey";
 import { DRAG_HANDLE_CLASS } from "@/services/resource/sheet/constants";
 import { useCellStore } from "@/store/resource/sheet/cell";
@@ -44,7 +42,7 @@ const isDraggable = computed(
   () => !search.value && sortBy.value.length === 0 && filteredRows.value === dataSource.rows,
 );
 const cellStore = useCellStore();
-const { editingCell, focusCell, selectedCellRange } = storeToRefs(cellStore);
+const { selectedCellRange } = storeToRefs(cellStore);
 const {
   clearCellSelection,
   extendCellSelection,
@@ -53,8 +51,6 @@ const {
   shiftStartCellSelection,
   startCellSelection,
 } = cellStore;
-const copyRangeToClipboard = useCopyRangeToClipboard();
-const pasteRangeFromClipboard = usePasteRangeFromClipboard();
 const columnKeyMap = computed(
   () => new Map(displayColumns.value.map((column, columnIndex) => [toColumnKey(column.name), { column, columnIndex }])),
 );
@@ -87,63 +83,10 @@ const cellProps: CellPropsFunction<Row> = ({ column: headerColumn, item }) => {
   return result;
 };
 
-const getIsInputFocused = () => {
-  const activeElement = window.document.activeElement;
-  return activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement;
-};
-
-onKeyStroke(["c", "C"], async (event) => {
-  if (
-    editingCell.value ||
-    getIsInputFocused() ||
-    (!event.ctrlKey && !event.metaKey) ||
-    event.shiftKey ||
-    !selectedCellRange.value
-  )
-    return;
-  event.preventDefault();
-  await copyRangeToClipboard();
-});
-
-onKeyStroke(["v", "V"], async (event) => {
-  if (editingCell.value || getIsInputFocused() || (!event.ctrlKey && !event.metaKey) || !selectedCellRange.value)
-    return;
-  event.preventDefault();
-  await pasteRangeFromClipboard(event.shiftKey ? PasteMode.ShiftDown : PasteMode.Overwrite);
-});
-
-onKeyStroke(["a", "A"], (event) => {
-  if (editingCell.value || getIsInputFocused() || (!event.ctrlKey && !event.metaKey) || event.shiftKey) return;
-  event.preventDefault();
-  const rowCount = filteredRows.value.length;
-  const columnCount = displayColumns.value.length;
-  if (rowCount > 0 && columnCount > 0) {
-    startCellSelection(0, 0);
-    extendCellSelection(rowCount - 1, columnCount - 1);
-  }
-});
-
-onKeyStroke(["ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp"], (event) => {
-  if (editingCell.value || getIsInputFocused() || !focusCell.value) return;
-  const arrowDelta = ArrowKeyDeltaMap[event.key];
-  if (!arrowDelta) return;
-  event.preventDefault();
-  const [rowDelta, columnDelta] = arrowDelta;
-  const rowCount = filteredRows.value.length;
-  const columnCount = displayColumns.value.length;
-  const newRowIndex = Math.max(0, Math.min(rowCount - 1, focusCell.value.rowIndex + rowDelta));
-  const newColumnIndex = Math.max(0, Math.min(columnCount - 1, focusCell.value.columnIndex + columnDelta));
-  if (event.shiftKey) extendCellSelection(newRowIndex, newColumnIndex);
-  else startCellSelection(newRowIndex, newColumnIndex);
-});
+useCellKeyboardShortcuts();
 
 // @ts-expect-error TS2590: Expression produces a union type that is too complex to represent.
 onClickOutside(table, () => {
-  clearCellSelection();
-});
-
-onKeyStroke("Escape", () => {
-  if (editingCell.value || getIsInputFocused()) return;
   clearCellSelection();
 });
 </script>
