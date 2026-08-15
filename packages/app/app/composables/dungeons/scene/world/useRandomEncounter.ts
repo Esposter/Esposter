@@ -15,7 +15,7 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
-import { getWeightedRandomValue } from "@/util/math/random/getWeightedRandomValues";
+import { getWeightedRandomValue } from "@/util/math/random/getWeightedRandomValue";
 import { NotFoundError } from "@esposter/shared";
 
 export const useRandomEncounter = (scene: SceneWithPlugins) => {

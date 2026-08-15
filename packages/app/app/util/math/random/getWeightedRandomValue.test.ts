@@ -1,4 +1,4 @@
-import { getWeightedRandomValue } from "@/util/math/random/getWeightedRandomValues";
+import { getWeightedRandomValue } from "@/util/math/random/getWeightedRandomValue";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

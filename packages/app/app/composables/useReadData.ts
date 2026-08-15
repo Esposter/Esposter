@@ -14,9 +14,14 @@ export const useReadData = async (unauthedReader: () => Promisable<void>, authed
       else await unauthedReader();
     },
   );
-  onUnmounted(stop, currentInstance);
+  onUnmounted(() => {
+    stop();
+  }, currentInstance);
 
   if (session.value) await authedReader();
   // Unauthenticated means reading data from local storage, which must happen onMounted.
-  else onMounted(unauthedReader, currentInstance);
+  else
+    onMounted(async () => {
+      await unauthedReader();
+    }, currentInstance);
 };

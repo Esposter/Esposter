@@ -1,9 +1,8 @@
 import type { CSSProperties } from "vue";
 
 import { LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
+import { APP_BAR_CSS_VALUE } from "@/services/app/constants";
 import { useLayoutStore } from "@/store/layout";
-
-const APP_BAR_CSS_VALUE = "var(--app-bar-height)";
 
 export const useFixedLayoutStyles = (
   bottomOffset: Ref<number | string>,
