@@ -3,8 +3,8 @@ import type { MessageEntity } from "@esposter/db-schema";
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useLayoutStore } from "@/store/layout";
-import { useMessageLayoutStore } from "@/store/message/ui/layout";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
+import { useMessageLayoutStore } from "@/store/message/ui/layout";
 import { Operation } from "@esposter/shared";
 
 export const useThreadStore = defineStore("message/thread", () => {
@@ -40,7 +40,13 @@ export const useThreadStore = defineStore("message/thread", () => {
           // The read spans the whole open, so the user can close the drawer while it is still in flight — a
           // Response applied afterwards reopens a thread they just dismissed
           if (!activeRootRowKey.value) return;
-          threadMessages.value = messages;
+          // A reply can land while the read is in flight, and the create hook has already pushed it here. The
+          // Response is a snapshot from before it, so assigning it wholesale drops the reply until a reopen
+          const readRowKeys = new Set(messages.map(({ rowKey }) => rowKey));
+          threadMessages.value = [
+            ...messages,
+            ...threadMessages.value.filter(({ rowKey }) => !readRowKeys.has(rowKey)),
+          ];
         },
       }),
       // The pane's menu offers the reply notification toggle, so the follow state it reads loads with the

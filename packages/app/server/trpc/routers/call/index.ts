@@ -14,6 +14,7 @@ import { requireCallSession } from "@@/server/services/message/call/requireCallS
 import { requireJoinedCallSession } from "@@/server/services/message/call/requireJoinedCallSession";
 import { requireReadableCallSession } from "@@/server/services/message/call/requireReadableCallSession";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
+import { readMessagesByRowKeys } from "@@/server/services/message/readMessagesByRowKeys";
 import { router } from "@@/server/trpc";
 import { getForbiddenError } from "@@/server/trpc/guards/getForbiddenError";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
@@ -54,6 +55,15 @@ const requireCallParticipant = (callSessionId: string, sessionId: string) => {
   if (!participant) throw getForbiddenError("Must join call first");
   return participant;
 };
+// A thread call hangs off the message its thread is rooted at, and that rowKey is written onto every join and
+// Leave message as the replyRowKey. Membership does not bound it and the session's unique index rejects only
+// Exact duplicates, so an unknown rowKey would open a session of its own whose messages reply to nothing
+const requireThreadRoot = async (roomId: string, threadRootRowKey: string) => {
+  if (!threadRootRowKey) return;
+
+  const [message] = await readMessagesByRowKeys(roomId, [threadRootRowKey]);
+  if (!message) throw getNotFoundError("Message", threadRootRowKey);
+};
 
 export const baseCallRouter = router({
   createCall: standardAuthedProcedure.mutation(async ({ ctx }) => {
@@ -77,6 +87,7 @@ export const baseCallRouter = router({
   joinCallByRoomId: getMemberProcedure(roomCallInputSchema, "roomId").mutation<JoinCallOutput>(
     async ({ ctx, input: { roomId, threadRootRowKey } }) => {
       const { session, user } = ctx.getSessionPayload;
+      await requireThreadRoot(roomId, threadRootRowKey);
       const callSessionId = await createCallSessionId(ctx.db, roomId, user.id, threadRootRowKey);
       return joinLiveKitCall(
         { id: callSessionId, roomId, threadRootRowKey },

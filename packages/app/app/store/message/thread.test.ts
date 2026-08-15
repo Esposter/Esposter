@@ -105,6 +105,38 @@ describe(useThreadStore, () => {
     expect(threadMessages.value.map(({ rowKey }) => rowKey)).toStrictEqual([reply.rowKey]);
   });
 
+  // The response is a snapshot from before the reply, so assigning it wholesale drops a reply the create hook
+  // Already pushed here — and the pane shows nothing of it until the thread is reopened
+  test("keeps a reply that landed while the thread read was in flight", async () => {
+    expect.hasAssertions();
+
+    let resolveRead: (replies: MessageEntity[]) => void = noop;
+    const readStarted = new Promise<void>((resolveReadStarted) => {
+      server.use(
+        trpcMsw.message.readThread.query(
+          () =>
+            new Promise<MessageEntity[]>((resolve) => {
+              resolveRead = resolve;
+              resolveReadStarted();
+            }),
+        ),
+      );
+    });
+    await mountThreadDrawer();
+    const threadStore = useThreadStore();
+    const { threadMessages } = storeToRefs(threadStore);
+    const { openThread } = threadStore;
+    const openPromise = openThread(roomId, rootRowKey);
+    await readStarted;
+    const liveReply = createReply(rootRowKey);
+    await MessageHookMap[Operation.Create].run(liveReply);
+    const readReply = createReply(rootRowKey);
+    resolveRead([readReply]);
+    await openPromise;
+
+    expect(threadMessages.value.map(({ rowKey }) => rowKey)).toStrictEqual([readReply.rowKey, liveReply.rowKey]);
+  });
+
   test("ignores a message that belongs to another thread", async () => {
     expect.hasAssertions();
 

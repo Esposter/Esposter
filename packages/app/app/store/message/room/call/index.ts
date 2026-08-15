@@ -303,14 +303,16 @@ export const useCallStore = defineStore("message/room/call", () => {
   AdminActionHookMap[AdminActionType.CreateBan].register(async (roomId) => {
     if (callRoomId.value === roomId) await leaveCall();
   });
+  // The participant map is keyed by the call the user is actually in, which is the thread's session during a
+  // Thread call — `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here
   AdminActionHookMap[AdminActionType.ForceMute].register(async (roomId) => {
-    if (participantStore.sessionId) setMute(currentRoomCallSessionId.value, participantStore.sessionId, true);
+    if (participantStore.sessionId) setMute(activeCallSessionId.value, participantStore.sessionId, true);
     if (callRoomId.value !== roomId) return;
     await setMicrophone(false);
     mediaStore.isForceMuted = true;
   });
   AdminActionHookMap[AdminActionType.ForceUnmute].register(async (roomId) => {
-    if (participantStore.sessionId) setMute(currentRoomCallSessionId.value, participantStore.sessionId, false);
+    if (participantStore.sessionId) setMute(activeCallSessionId.value, participantStore.sessionId, false);
     if (callRoomId.value !== roomId) return;
     await setMicrophone(true);
     mediaStore.isForceMuted = false;
