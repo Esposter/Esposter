@@ -2,22 +2,22 @@
 
 Carries `vue-page-composition`'s "Maximal Component Granularity — One Action per Component" across the components written before it, including its `v-for` item-body clause and the page-decomposition rule above it. The simplification sweeps ran the opposite direction — collapsing duplicate components into shared primitives — so a tree dated on that ledger says nothing about this one.
 
-| Unit                                                                                       | Swept | Notes                                                          |
-| ------------------------------------------------------------------------------------------ | ----- | -------------------------------------------------------------- |
-| `pages/` + `layouts/`                                                                      | —     | The page-decomposition rule: a page holding no element's state |
-| `Resource/Sheet`                                                                           | —     |                                                                |
-| `Message/Model/Message`                                                                    | —     |                                                                |
-| `Message/Model/Room`                                                                       | —     |                                                                |
-| `Message/Content/Call`                                                                     | —     |                                                                |
-| `Message/Model/User`                                                                       | —     |                                                                |
-| `Message` — the rest                                                                       | —     |                                                                |
-| `Resource` — the rest                                                                      | —     |                                                                |
-| `Dungeons`                                                                                 | —     |                                                                |
-| `Clicker`                                                                                  | —     |                                                                |
-| `Post`                                                                                     | —     |                                                                |
-| `Styled` + `App`                                                                           | —     | Primitives — the rule bites least here, so they go late        |
-| `User`, `Achievement`, `Docs`, `Dashboard`, `Dataset`, `FlowchartEditor`, `RichTextEditor` | —     |                                                                |
-| `Visual`, `Anime`, `About`, `Login`, `Nuxt`, `Transition`, `Fragment.vue`                  | —     |                                                                |
+| Unit                                                                                       | Swept      | Notes                                                          |
+| ------------------------------------------------------------------------------------------ | ---------- | -------------------------------------------------------------- |
+| `pages/` + `layouts/`                                                                      | 2026-08-15 | The page-decomposition rule: a page holding no element's state |
+| `Resource/Sheet`                                                                           | —          |                                                                |
+| `Message/Model/Message`                                                                    | —          |                                                                |
+| `Message/Model/Room`                                                                       | —          |                                                                |
+| `Message/Content/Call`                                                                     | —          |                                                                |
+| `Message/Model/User`                                                                       | —          |                                                                |
+| `Message` — the rest                                                                       | —          |                                                                |
+| `Resource` — the rest                                                                      | —          |                                                                |
+| `Dungeons`                                                                                 | —          |                                                                |
+| `Clicker`                                                                                  | —          |                                                                |
+| `Post`                                                                                     | —          |                                                                |
+| `Styled` + `App`                                                                           | —          | Primitives — the rule bites least here, so they go late        |
+| `User`, `Achievement`, `Docs`, `Dashboard`, `Dataset`, `FlowchartEditor`, `RichTextEditor` | —          |                                                                |
+| `Visual`, `Anime`, `About`, `Login`, `Nuxt`, `Transition`, `Fragment.vue`                  | —          |                                                                |
 
 ## Find recipe
 
