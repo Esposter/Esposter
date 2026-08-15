@@ -6,13 +6,12 @@ await useReadClicker();
 useTimers();
 const clickerStore = useClickerStore();
 const { clicker, clickerItemProperties } = storeToRefs(clickerStore);
-const displayNoPoints = computed(() => formatNumberLong(clicker.value.noPoints, 3));
 </script>
 
 <template>
   <NuxtLayout>
     <Head>
-      <Title>{{ displayNoPoints }} {{ clickerItemProperties.pluralName }}</Title>
+      <Title>{{ formatNumberLong(clicker.noPoints, 3) }} {{ clickerItemProperties.pluralName }}</Title>
     </Head>
     <v-container flex flex-col h-full items-center justify-center>
       <ClickerHeader w-full />

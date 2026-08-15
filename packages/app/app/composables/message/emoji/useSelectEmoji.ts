@@ -8,12 +8,11 @@ export const useSelectEmoji = async (message: MessageEntity) => {
   const { data: session } = await authClient.useSession(useFetch);
   const emojiStore = useEmojiStore();
   const { createEmoji, deleteEmoji, getEmojis, updateEmoji } = emojiStore;
-  const emojis = computed(() => getEmojis(message.rowKey));
   return async (emoji: string) => {
     if (!session.value) return;
 
     const emojiTag = unemojify(emoji);
-    const foundEmoji = emojis.value.find((e) => e.emojiTag === emojiTag);
+    const foundEmoji = getEmojis(message.rowKey).find((e) => e.emojiTag === emojiTag);
     if (!foundEmoji)
       await createEmoji({
         emojiTag,

@@ -31,7 +31,6 @@ const { activeCallSessionId } = storeToRefs(callStore);
 const knockerStore = useKnockerStore();
 const { knockingCallSessionId } = storeToRefs(knockerStore);
 const { data: session } = await authClient.useSession(useFetch);
-const isCreator = computed(() => callSession.userId === session.value?.user.id);
 
 watch(activeCallSessionId, async (newActiveCallSessionId) => {
   if (!newActiveCallSessionId) await navigateTo(RoutePath.CallsIndex);
@@ -46,7 +45,7 @@ watch(activeCallSessionId, async (newActiveCallSessionId) => {
     <div size-full>
       <MessageContentCallView v-if="activeCallSessionId" />
       <MessageContentCallWaiting v-else-if="knockingCallSessionId" />
-      <MessageContentCallPreJoin v-else :call-id="id" :is-creator />
+      <MessageContentCallPreJoin v-else :call-id="id" :is-creator="callSession.userId === session?.user.id" />
     </div>
   </NuxtLayout>
 </template>

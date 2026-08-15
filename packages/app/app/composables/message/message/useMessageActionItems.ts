@@ -55,8 +55,6 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const isUpdateSupported = computed(() =>
     Boolean(getMessageOperationPermission(message.type, MessageOperation.Update)),
   );
-  const isDeletePermitted = computed(() => getIsOperationPermitted(MessageOperation.Delete));
-  const isPinPermitted = computed(() => getIsOperationPermitted(MessageOperation.Pin));
   const editMessageItem: Item = {
     icon: "mdi-pencil",
     onClick: () => {
@@ -160,7 +158,9 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     },
     title: "Mark Unread From Here",
   };
-  const pinMessageItems = computed<Item[]>(() => (isPinPermitted.value ? [pinMessageItem.value] : []));
+  const pinMessageItems = computed<Item[]>(() =>
+    getIsOperationPermitted(MessageOperation.Pin) ? [pinMessageItem.value] : [],
+  );
   const updateMessageItems = computed<Item[]>(() =>
     isUpdateSupported.value
       ? isEditable.value
@@ -196,7 +196,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     }
   });
   const deleteMessageItem = computed<Item | undefined>(() =>
-    isDeletePermitted.value
+    getIsOperationPermitted(MessageOperation.Delete)
       ? {
           color: "error",
           icon: "mdi-delete",

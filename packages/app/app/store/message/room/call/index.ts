@@ -1,5 +1,3 @@
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-
 import { useMutation } from "@/composables/shared/useMutation";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
@@ -52,12 +50,10 @@ export const useCallStore = defineStore("message/room/call", () => {
   const currentRoomCallSessionId = ref("");
   const isCallViewOpen = ref(false);
   const isConnecting = ref(false);
-  const callParticipantMap = computed(
-    () =>
-      participantStore.callSessionParticipantsMap.get(activeCallSessionId.value) ?? new Map<string, CallParticipant>(),
-  );
   const selfParticipant = computed(() =>
-    participantStore.sessionId ? callParticipantMap.value.get(participantStore.sessionId) : undefined,
+    participantStore.sessionId
+      ? participantStore.callSessionParticipantsMap.get(activeCallSessionId.value)?.get(participantStore.sessionId)
+      : undefined,
   );
   const isInCall = computed(() => Boolean(selfParticipant.value));
   // Hosted here (not a component) so hold-to-talk survives navigation, like the call itself
