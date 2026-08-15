@@ -19,6 +19,7 @@ const id = computed(() => getRouteParamString(currentRoute.value.params.id));
 const statusRows = ref<ProgramStatusRow[]>([]);
 // Set when the response scan hit its cap, which makes every count on this blade a floor rather than a total
 const isRespondedPartial = ref(false);
+const respondedCount = computed(() => statusRows.value.filter(({ isResponded }) => isResponded).length);
 const headers = [
   { key: "keyValue", title: "Participant" },
   { key: "addedAt", title: "Added" },
@@ -52,8 +53,7 @@ await readStatus();
       <span text-h6>Status</span>
       <v-spacer />
       <span op-medium-emphasis>
-        {{ isRespondedPartial ? "at least " : "" }}{{ statusRows.filter(({ isResponded }) => isResponded).length }} of
-        {{ statusRows.length }} responded
+        {{ isRespondedPartial ? "at least " : "" }}{{ respondedCount }} of {{ statusRows.length }} responded
       </span>
       <StyledButton
         :button-props="{

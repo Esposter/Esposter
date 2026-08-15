@@ -30,13 +30,17 @@ const {
 const emit = defineEmits<{ submit: [name: string] }>();
 const rules = useVRules();
 const { cloned: editedName } = useCloned(() => name);
+const nameRules = computed(() => [rules.maxLength(maxLength), rules.isNotProfanity()]);
+const confirmButtonAttrs = computed(() => ({
+  disabled: schema.safeParse(editedName.value).data === name && !isDirty,
+}));
 </script>
 
 <template>
   <StyledFormDialog
     v-model="modelValue"
     :card-props
-    :confirm-button-attrs="{ disabled: schema.safeParse(editedName).data === name && !isDirty }"
+    :confirm-button-attrs
     :confirm-button-props="{ text: 'Save' }"
     @submit="
       (_event, onComplete) => {
@@ -72,13 +76,7 @@ const { cloned: editedName } = useCloned(() => name);
       </v-tooltip>
     </template>
     <slot name="prepend-content" />
-    <v-text-field
-      v-model="editedName"
-      autofocus
-      density="compact"
-      :placeholder
-      :rules="[rules.maxLength(maxLength), rules.isNotProfanity()]"
-    />
+    <v-text-field v-model="editedName" autofocus density="compact" :placeholder :rules="nameRules" />
   </StyledFormDialog>
 </template>
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
@@ -22,6 +23,10 @@ const selectedCategoryId = ref(room.categoryId);
 const isReadOnly = ref(room.isReadOnly);
 const slowmodeMs = ref(room.slowmodeMs);
 const topic = ref(room.topic);
+const categoryItems = computed<SelectItemCategoryDefinition<null | string>[]>(() => [
+  { title: "None (uncategorized)", value: null },
+  ...categories.value.map(({ id, name }) => ({ title: name, value: id })),
+]);
 const isDirty = computed(
   () =>
     selectedCategoryId.value !== room.categoryId ||
@@ -52,10 +57,7 @@ const save = async () => {
       <v-col cols="12" md="6" sm="8">
         <MessageModelRoomSettingsTypeOverviewCategoryField
           v-model="selectedCategoryId"
-          :items="[
-            { title: 'None (uncategorized)', value: null },
-            ...categories.map(({ id, name }) => ({ title: name, value: id })),
-          ]"
+          :items="categoryItems"
           @save="save()"
         />
       </v-col>

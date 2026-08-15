@@ -33,9 +33,12 @@ onMounted(async () => {
   // Only a published resource has views, and only its row renders the count — reading it for a draft spends
   // A round trip on a number nothing displays. The capability is what makes the procedure reachable, so the
   // Guard and the availability are one fact
-  if (!publication.value || !isPublishable.value) return;
+  // Called on the local `type` rather than read off `isPublishable`, because it is the type guard that narrows
+  // The router to the one carrying `readResourceViewCount`
+  const { type } = resource;
+  if (!publication.value || !hasCapability(type, "publishable")) return;
 
-  const { readResourceViewCount } = getResourceRouter(resource.type);
+  const { readResourceViewCount } = getResourceRouter(type);
   viewCount.value = await getResultAsync(() => readResourceViewCount.query({ id: resource.id })).unwrapOr(undefined);
 });
 </script>

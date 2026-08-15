@@ -12,6 +12,7 @@ const openPanels = ref(["columns", "data"]);
 const isLoading = ref(true);
 // "Not yet imported" is an empty data section (the blob is written on first save)
 const hasData = computed(() => dataSource.value.columns.length > 0 || dataSource.value.rows.length > 0);
+const statistics = computed(() => computeDataSourceStatistics(dataSource.value));
 
 onMounted(async () => {
   await loadContent();
@@ -46,11 +47,7 @@ onMounted(async () => {
           <template #title>
             Data
             <v-spacer />
-            <ResourceSheetStatisticsBar
-              mr-4
-              :filtered-row-count="filteredRows.length"
-              :statistics="computeDataSourceStatistics(dataSource)"
-            />
+            <ResourceSheetStatisticsBar mr-4 :filtered-row-count="filteredRows.length" :statistics />
           </template>
           <v-expansion-panel-text>
             <ResourceSheetRowTable :data-source />
