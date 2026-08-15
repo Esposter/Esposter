@@ -1,10 +1,6 @@
 import type { NpcId } from "#shared/generated/tiled/propertyTypes/enum/NpcId";
 
 import { npcs } from "@/assets/dungeons/data/npcs";
-import { NotFoundError } from "@esposter/shared";
+import { getById } from "@/services/dungeons/getById";
 
-export const getNpc = (npcId: NpcId) => {
-  const npc = npcs.find(({ id }) => id === npcId);
-  if (!npc) throw new NotFoundError(getNpc.name, npcId);
-  return npc;
-};
+export const getNpc = (npcId: NpcId) => getById(npcs, npcId, getNpc.name);
