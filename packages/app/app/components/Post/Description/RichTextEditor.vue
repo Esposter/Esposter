@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FooterBarAppendSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
+import type { FooterBarSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
 
 import { POST_DESCRIPTION_MAX_LENGTH } from "@esposter/db-schema";
 
@@ -11,7 +11,7 @@ interface DescriptionRichTextEditorProps {
 const modelValue = defineModel<string>({ required: true });
 const { height = "15rem", placeholder } = defineProps<DescriptionRichTextEditorProps>();
 defineSlots<{
-  "append-footer": (props: FooterBarAppendSlotProps) => VNode;
+  "append-footer": (props: FooterBarSlotProps) => VNode;
 }>();
 </script>
 

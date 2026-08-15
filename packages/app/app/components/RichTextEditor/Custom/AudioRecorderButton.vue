@@ -3,6 +3,8 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { dayjs } from "#shared/services/dayjs";
 import { clearInterval, setInterval } from "worker-timers";
 
+const TIMER_INTERVAL = dayjs.duration(1, "second").asMilliseconds();
+
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
 const timer = ref(0);
 let timerInterval: number | undefined;
@@ -19,7 +21,7 @@ const { data, start, state, stop } = useMediaRecorder({
   onStart: () => {
     timerInterval = setInterval(() => {
       timer.value++;
-    }, 1000);
+    }, TIMER_INTERVAL);
   },
   onStop: () => {
     resetTimer();
@@ -42,25 +44,20 @@ const formattedTimer = computed(() => {
 </script>
 
 <template>
-  <v-tooltip :text="isRecording ? 'Stop Recording' : 'Record Audio Message'">
-    <template #activator="{ props }">
-      <div flex items-center>
-        <span v-if="isRecording" font-bold pr-2>
-          {{ formattedTimer }}
-        </span>
-        <v-btn
-          :="props"
-          :color="isRecording ? 'error' : undefined"
-          :icon="isRecording ? 'mdi-stop-circle-outline' : 'mdi-microphone'"
-          size="small"
-          @click="
-            () => {
-              if (isRecording) stop();
-              else start();
-            }
-          "
-        />
-      </div>
-    </template>
-  </v-tooltip>
+  <div flex items-center>
+    <span v-if="isRecording" font-bold pr-2>
+      {{ formattedTimer }}
+    </span>
+    <StyledTooltipIconButton
+      :button-props="{ color: isRecording ? 'error' : undefined, size: 'small' }"
+      :icon="isRecording ? 'mdi-stop-circle-outline' : 'mdi-microphone'"
+      :text="isRecording ? 'Stop Recording' : 'Record Audio Message'"
+      @click="
+        () => {
+          if (isRecording) stop();
+          else start();
+        }
+      "
+    />
+  </div>
 </template>

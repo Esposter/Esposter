@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import type { Editor } from "@tiptap/vue-3";
 
-export interface FooterBarAppendSlotProps {
-  editor?: Editor;
-}
-
-export interface FooterBarPrependSlotProps {
+export interface FooterBarSlotProps {
   editor?: Editor;
 }
 
@@ -14,8 +10,8 @@ interface FooterBarProps {
 }
 
 defineSlots<{
-  append: (props: FooterBarAppendSlotProps) => VNode;
-  prepend: (props: FooterBarPrependSlotProps) => VNode;
+  append: (props: FooterBarSlotProps) => VNode;
+  prepend: (props: FooterBarSlotProps) => VNode;
 }>();
 
 const { editor } = defineProps<FooterBarProps>();
