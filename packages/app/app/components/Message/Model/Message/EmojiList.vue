@@ -2,7 +2,6 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
-import { emojify } from "@/services/message/emoji/emojify";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { useEmojiStore } from "@/store/message/emoji";
 
@@ -14,55 +13,14 @@ interface MessageEmojiListProps {
 const { isPreview, message } = defineProps<MessageEmojiListProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const emojiStore = useEmojiStore();
-const { deleteEmoji, getEmojis, updateEmoji } = emojiStore;
-const emojis = computed(() =>
-  getEmojis(message.rowKey).map(({ emojiTag, partitionKey, rowKey, userIds }) => ({
-    emoji: emojify(emojiTag),
-    isReacted: Boolean(session.value && userIds.includes(session.value.user.id)),
-    partitionKey,
-    rowKey,
-    userIds,
-  })),
-);
+const { getEmojis } = emojiStore;
+const emojis = computed(() => getEmojis(message.rowKey));
 const selectEmoji = await useSelectEmoji(message);
 </script>
 
 <template>
   <div v-if="session && emojis.length > 0" flex flex-wrap gap-1 items-center>
-    <div
-      v-for="{ partitionKey, rowKey, userIds, isReacted, emoji } of emojis"
-      :key="rowKey"
-      :class="
-        isReacted
-          ? ['bg-info-opacity-10', 'b-info']
-          : ['bg-background-opacity-80', 'b-transparent', 'hover:bg-surface-opacity-80', 'hover:b-border']
-      "
-      px-2
-      b-1
-      rd-full
-      b-solid
-      flex
-      w-fit
-      cursor-pointer
-      shadow-md
-      origin-center
-      items-center
-      z-1
-      active:scale-95
-      @click="
-        isReacted && userIds.length === 1
-          ? deleteEmoji({ partitionKey, rowKey, messageRowKey: message.rowKey })
-          : updateEmoji({
-              partitionKey,
-              rowKey,
-              messageRowKey: message.rowKey,
-              userIds,
-            })
-      "
-    >
-      {{ emoji }}
-      <span pl-1 text-title-small>{{ userIds.length }}</span>
-    </div>
+    <MessageModelMessageEmojiListItem v-for="emoji of emojis" :key="emoji.rowKey" :emoji />
     <StyledEmojiPicker
       v-if="!isPreview"
       :tooltip-props="{ text: EMOJI_PICKER_TOOLTIP_TEXT }"

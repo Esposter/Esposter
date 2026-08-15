@@ -6,7 +6,7 @@ Carries `vue-page-composition`'s "Maximal Component Granularity — One Action p
 | ------------------------------------------------------------------------------------------ | ---------- | -------------------------------------------------------------- |
 | `pages/` + `layouts/`                                                                      | 2026-08-15 | The page-decomposition rule: a page holding no element's state |
 | `Resource/Sheet`                                                                           | 2026-08-15 | Find/replace bar split; cell shortcuts moved to a composable   |
-| `Message/Model/Message`                                                                    | —          |                                                                |
+| `Message/Model/Message`                                                                    | 2026-08-15 | Forward send button and emoji reaction extracted               |
 | `Message/Model/Room`                                                                       | —          |                                                                |
 | `Message/Content/Call`                                                                     | —          |                                                                |
 | `Message/Model/User`                                                                       | —          |                                                                |
