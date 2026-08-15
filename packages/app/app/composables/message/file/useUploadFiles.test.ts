@@ -1,8 +1,7 @@
-import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { inferProcedureInput } from "@trpc/server";
-// @vitest-environment nuxt
-
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { TRPCRouter } from "@@/server/trpc/routers";
+// @vitest-environment nuxt
+import type { inferProcedureInput } from "@trpc/server";
 
 import { useUploadFiles } from "@/composables/message/file/useUploadFiles";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";

@@ -10,7 +10,7 @@ interface FileInputContainerProps {
 
 const { target } = defineProps<FileInputContainerProps>();
 const uploadFileStore = useUploadFileStore();
-const { discardUploadFiles, getComposerFileUrlMap, getComposerFiles } = uploadFileStore;
+const { discardUploadFiles, getComposerFiles, getComposerFileUrlMap } = uploadFileStore;
 const files = computed(() => getComposerFiles(target));
 </script>
 

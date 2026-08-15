@@ -11,11 +11,11 @@ const { rightDrawer, splitRightDrawer } = storeToRefs(messageLayoutStore);
      of those again and could be dragged out of agreement with this one -->
 <template>
   <div flex h-full>
-    <div v-if="splitRightDrawer" flex flex-col flex-1 h-full overflow-hidden>
+    <div v-if="splitRightDrawer" flex flex-1 flex-col h-full overflow-hidden>
       <component :is="RightDrawerComponentMap[splitRightDrawer]" />
     </div>
     <v-divider v-if="splitRightDrawer" vertical />
-    <div flex flex-col flex-1 h-full overflow-hidden>
+    <div flex flex-1 flex-col h-full overflow-hidden>
       <component :is="RightDrawerComponentMap[rightDrawer]" />
     </div>
   </div>

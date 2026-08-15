@@ -1,6 +1,6 @@
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
+import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { MessageEntity } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 import type { Promisable } from "type-fest";

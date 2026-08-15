@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useCallStore } from "@/store/message/room/call";
 import { useRoomStore } from "@/store/message/room";
+import { useCallStore } from "@/store/message/room/call";
 import { mergeProps } from "vue";
 
 const roomStore = useRoomStore();
