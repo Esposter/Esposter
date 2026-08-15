@@ -3,6 +3,7 @@ import type { AttackProps } from "@/models/dungeons/attack/AttackProps";
 
 import { AttackKey } from "#shared/models/dungeons/keys/spritesheet/AttackKey";
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
+import { getAttackAnimationConfiguration } from "@/services/dungeons/scene/battle/attack/getAttackAnimationConfiguration";
 import { Animations } from "phaser";
 
 const isActive = defineModel<boolean>("isActive", { required: true });
@@ -22,20 +23,8 @@ const onCompleteKey = `${Animations.Events.ANIMATION_COMPLETE_KEY}${AttackKey["I
     }"
     :create-animation-configurations="
       (scene) => [
-        {
-          key: AttackKey['Ice Shard'],
-          frames: scene.anims.generateFrameNumbers(AttackKey['Ice Shard']),
-          frameRate: 16,
-          repeat: 0,
-          delay: 0,
-        },
-        {
-          key: AttackKey['Ice Shard Start'],
-          frames: scene.anims.generateFrameNumbers(AttackKey['Ice Shard Start']),
-          frameRate: 16,
-          repeat: 0,
-          delay: 0,
-        },
+        getAttackAnimationConfiguration(scene, AttackKey['Ice Shard']),
+        getAttackAnimationConfiguration(scene, AttackKey['Ice Shard Start']),
       ]
     "
     :play-animation-key="playSpriteAnimationKey"
