@@ -8,13 +8,16 @@ import { takeOne } from "@esposter/shared";
 const sheetStore = useSheetStore();
 const { dataSource } = storeToRefs(sheetStore);
 const createRow = useCreateRow();
-// Every editable column, hidden ones included: a new row carries a cell for each of them, and the form is what
-// Narrows to the ones on screen
-const editableColumns = computed(() => dataSource.value.columns.filter(checkIsEditableColumnValue));
 const rowFormColumns = computed(() => getRowFormColumns(dataSource.value.columns));
+// Every editable column, hidden ones included: a new row carries a cell for each of them, and the form is what
+// Narrows to the ones on screen.
 // StructuredClone to a plain object: fast-deep-equal compares constructors, so class instances never equal their clones.
 const blankRow = structuredClone(
-  new Row({ data: Object.fromEntries(editableColumns.value.map((column) => [column.name, null])) }),
+  new Row({
+    data: Object.fromEntries(
+      dataSource.value.columns.filter(checkIsEditableColumnValue).map(({ name }) => [name, null]),
+    ),
+  }),
 );
 const editedRow = ref(structuredClone(blankRow));
 const resetForm = () => {

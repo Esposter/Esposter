@@ -16,7 +16,6 @@ const rules = useVRules();
 // The caller mounts this only while it is open, so the rows start from the current tags on every open.
 // An empty trailing row means the first thing the user sees is somewhere to type.
 const rows = ref(tags && Object.keys(tags).length > 0 ? getTagRows(tags) : [{ name: "", value: "" }]);
-const canAddRow = computed(() => rows.value.length < MAX_TAGS_COUNT);
 </script>
 
 <template>
@@ -50,7 +49,7 @@ const canAddRow = computed(() => rows.value.length < MAX_TAGS_COUNT);
       <!-- Same reason as the Edit button that opens this dialog: transparent, it reads as a caption rather
            than as the control that adds a row -->
       <StyledButton
-        v-if="canAddRow"
+        v-if="rows.length < MAX_TAGS_COUNT"
         :button-props="{ prependIcon: 'mdi-plus', size: 'small', text: 'Add tag' }"
         w-fit
         @click="rows.push({ name: '', value: '' })"

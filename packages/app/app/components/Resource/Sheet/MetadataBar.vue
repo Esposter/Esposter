@@ -9,14 +9,13 @@ interface MetadataBarProps {
 }
 
 const { metadata } = defineProps<MetadataBarProps>();
-const formattedDate = computed(() => dayjs(metadata.importedAt).format("MMM D, YYYY h:mm A"));
 </script>
 
 <template>
   <v-card variant="tonal">
     <v-card-item>
       <v-card-title text-wrap>{{ metadata.name }}</v-card-title>
-      <v-card-subtitle>Imported {{ formattedDate }}</v-card-subtitle>
+      <v-card-subtitle>Imported {{ dayjs(metadata.importedAt).format("MMM D, YYYY h:mm A") }}</v-card-subtitle>
       <template #append>
         <div flex flex-wrap gap-2>
           <v-chip label size="small" prepend-icon="mdi-database">{{ getFileSize(metadata.size) }}</v-chip>

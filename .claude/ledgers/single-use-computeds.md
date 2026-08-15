@@ -7,7 +7,7 @@ Behaviour-preserving by construction: inlining a single-use computed changes not
 | Unit                                      | Swept      | Notes                                                       |
 | :---------------------------------------- | :--------- | :---------------------------------------------------------- |
 | `app/components/Message`                  | 2026-08-15 | Sharpened the inline-vs-keep test into the owning rule      |
-| `app/components/Resource`                 | —          |                                                             |
+| `app/components/Resource`                 | 2026-08-15 |                                                             |
 | `app/components/Styled` + `App`           | —          | Primitives — a computed here often does bind twice          |
 | `app/components` — the rest               | —          |                                                             |
 | `app/pages` + `app/layouts`               | —          |                                                             |

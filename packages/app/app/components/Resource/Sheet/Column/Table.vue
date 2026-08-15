@@ -23,9 +23,6 @@ const { chartingColumnName, editingColumnName } = storeToRefs(columnDialogStore)
 const { isOpen: isChartOpen, item: chartingColumn } = useSingletonDialog(chartingColumnName, () =>
   dataSource.columns.find(({ name }) => name === chartingColumnName.value),
 );
-const chartingColumnStatistics = computed(() =>
-  chartingColumn.value ? computeColumnStatisticsForColumn(dataSource, chartingColumn.value) : undefined,
-);
 const { item: editingColumn } = useSingletonDialog(editingColumnName, () =>
   dataSource.columns.find(({ name }) => name === editingColumnName.value),
 );
@@ -70,7 +67,10 @@ const dragColumns = computed({
         </template>
       </v-data-table>
     </VueDraggable>
-    <ResourceSheetColumnChartDialog v-model="isChartOpen" :column-statistics="chartingColumnStatistics" />
+    <ResourceSheetColumnChartDialog
+      v-model="isChartOpen"
+      :column-statistics="chartingColumn ? computeColumnStatisticsForColumn(dataSource, chartingColumn) : undefined"
+    />
     <ResourceSheetColumnEditDialog v-if="editingColumn" :key="editingColumn.id" :column="editingColumn" :data-source />
     <ResourceSheetColumnConfirmDeleteDialog />
   </v-card>

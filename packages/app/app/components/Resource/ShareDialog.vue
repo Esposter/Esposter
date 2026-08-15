@@ -21,8 +21,9 @@ const roomItems = ref<SelectItemCategoryDefinition<string>[]>([]);
 const isLoadingRooms = ref(true);
 const roomId = ref("");
 const note = ref("");
-const shareUrl = computed(() => `${window.location.origin}${RoutePath.View(resource.type, resource.id)}`);
-const shareMessage = computed(() => getShareMessage(note.value, shareUrl.value));
+const shareMessage = computed(() =>
+  getShareMessage(note.value, `${window.location.origin}${RoutePath.View(resource.type, resource.id)}`),
+);
 const title = computed(() => `Share "${resource.name}"`);
 // The caller mounts this only while open, so the rooms are read once per open rather than watched
 onMounted(async () => {

@@ -10,14 +10,13 @@ const rowStore = useRowStore();
 const { rowIndexIdMap } = storeToRefs(rowStore);
 const deleteRow = useDeleteRow();
 const index = computed(() => (deletingId.value ? (rowIndexIdMap.value.get(deletingId.value) ?? -1) : -1));
-const title = computed(() => getDeleteRowDescription(index.value));
 const { isOpen } = useSingletonDialog(deletingId);
 </script>
 
 <template>
   <StyledDeleteFormDialog
     v-model="isOpen"
-    :card-props="{ title }"
+    :card-props="{ title: getDeleteRowDescription(index) }"
     @delete="
       async (onComplete) => {
         if (!deletingId) return;

@@ -19,7 +19,6 @@ const { editingId } = storeToRefs(rowDialogStore);
 const { isOpen } = useSingletonDialog(editingId);
 const rowFormColumns = computed(() => getRowFormColumns(columns));
 const updateRow = useUpdateRow();
-const title = computed(() => getEditRowDescription(index));
 const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
   clone: (source) => structuredClone(toRawDeep(source)),
   deep: true,
@@ -29,7 +28,7 @@ const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
 <template>
   <ResourceSheetEditDialog
     v-model="isOpen"
-    :title
+    :title="getEditRowDescription(index)"
     :value="row"
     :edited-value="editedRow"
     :schema="rowSchema"

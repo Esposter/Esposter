@@ -6,14 +6,13 @@ import { withFinalizerAsync } from "@esposter/shared";
 const columnDialogStore = useColumnDialogStore();
 const { deletingColumnName } = storeToRefs(columnDialogStore);
 const deleteColumn = useDeleteColumn();
-const title = computed(() => getDeleteColumnDescription(deletingColumnName.value));
 const { isOpen } = useSingletonDialog(deletingColumnName);
 </script>
 
 <template>
   <StyledDeleteFormDialog
     v-model="isOpen"
-    :card-props="{ title }"
+    :card-props="{ title: getDeleteColumnDescription(deletingColumnName) }"
     @delete="
       async (onComplete) => {
         if (!deletingColumnName) return;
