@@ -4,6 +4,10 @@ Carries `vue-page-composition`'s "Maximal Component Granularity — One Action p
 
 **The `v-for` clause is where [computed-extraction](computed-extraction.md) hands work over.** A loop variable has no script scope, so an expression over it cannot become a `computed` however expensive it is — the computed sweep can only leave a note. Extracting the item body into a component gives that expression a `<script setup>`, and the finding becomes an ordinary extraction there. A row body that calls a helper per render, or calls the same one twice, is therefore a granularity finding first and a computed finding second.
 
+The **`v-for` clause alone** was run across every tree on 2026-08-16, driven by the third find-recipe command
+below. The unit rows still track the whole rule, so an undated row means its one-action and page-decomposition
+clauses are outstanding — not that its row bodies are unswept.
+
 | Unit                                                                                       | Swept      | Notes                                                          |
 | ------------------------------------------------------------------------------------------ | ---------- | -------------------------------------------------------------- |
 | `pages/` + `layouts/`                                                                      | 2026-08-15 | The page-decomposition rule: a page holding no element's state |
@@ -28,9 +32,17 @@ Carries `vue-page-composition`'s "Maximal Component Granularity — One Action p
 grep -rlE "<(v-btn|StyledButton)" --include=*.vue packages/app/app | xargs grep -cE "<(v-btn|StyledButton)" | awk -F: '$2 > 1'
 # a v-for whose item body carries its own handler
 grep -rn -A 20 "v-for" --include=*.vue packages/app/app | grep "@click"
+# a v-for whose item body calls a helper per row — the computed sweep's handover
+grep -rn -A 18 'v-for=' --include=*.vue packages/app/app |
+  grep -E '\b(get|format|compute|build|parse|to)[A-Z][a-zA-Z]*\(|dayjs\('
 # a page owning an element's state
 grep -rlE "\b(ref|computed|useTemplateRef)\(" --include=*.vue packages/app/app/pages
 ```
+
+On the third: the same helper called **twice** in one row body is the strongest signal, because extracting the
+row collapses both calls into one `computed`. A row already rendering a single child component is not a finding —
+the body is extracted; if that child's props are rebuilt per row, the fix is hoisting the props to one keyed
+`computed` in the parent, not another component.
 
 ## Exclusions
 
