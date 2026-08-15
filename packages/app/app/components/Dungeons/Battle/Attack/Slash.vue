@@ -3,7 +3,7 @@ import type { AttackProps } from "@/models/dungeons/attack/AttackProps";
 
 import { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
-import { getAttackAnimationConfiguration } from "@/services/dungeons/scene/battle/attack/getAttackAnimationConfiguration";
+import { getAnimationConfiguration } from "@/services/dungeons/animation/getAnimationConfiguration";
 
 const isActive = defineModel<boolean>("isActive", { required: true });
 const { isToEnemy } = defineProps<AttackProps>();
@@ -20,7 +20,7 @@ const playAnimationKey = usePlayAnimation(SpritesheetKey.Slash, isActive, emit);
       :configuration="{
         type: AttackGameObjectType.Container,
       }"
-      :create-animation-configurations="(scene) => [getAttackAnimationConfiguration(scene, SpritesheetKey.Slash)]"
+      :create-animation-configurations="(scene) => [getAnimationConfiguration(scene, SpritesheetKey.Slash)]"
       :play-animation-key
     />
     <DungeonsBattleAttack

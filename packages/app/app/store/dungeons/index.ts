@@ -27,8 +27,12 @@ export const useDungeonsStore = defineStore("dungeons", () => {
     await saveDungeons();
   };
 
-  const fadeSwitchToScene = (scene: SceneWithPlugins, sceneKey: SceneKey, msDuration = 1000) => {
-    fadeOut(scene, dayjs.duration(msDuration, "milliseconds").asMilliseconds());
+  const fadeSwitchToScene = (
+    scene: SceneWithPlugins,
+    sceneKey: SceneKey,
+    durationMs = dayjs.duration(1, "second").asMilliseconds(),
+  ) => {
+    fadeOut(scene, durationMs);
     scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {
       await switchToScene(sceneKey);
     });

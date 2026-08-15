@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { dayjs } from "#shared/services/dayjs";
-import { CURSOR_POSITION_INCREMENT, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/title/menu/constants";
+import {
+  CURSOR_POSITION_INCREMENT,
+  INITIAL_CURSOR_POSITION,
+  MENU_BACKGROUND_HEIGHT,
+  MENU_BACKGROUND_WIDTH,
+} from "@/services/dungeons/scene/title/menu/constants";
 import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 import { Container } from "vue-phaserjs";
 </script>
 
 <template>
   <Container>
-    <DungeonsTitleMenuBackground />
+    <DungeonsUIGlassPanelNineSlice :width="MENU_BACKGROUND_WIDTH" :height="MENU_BACKGROUND_HEIGHT" />
     <DungeonsUIInputCursor
       :grid="PlayerTitleMenuOptionGrid"
       :initial-position="INITIAL_CURSOR_POSITION"
