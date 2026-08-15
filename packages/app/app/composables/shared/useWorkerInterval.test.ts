@@ -2,13 +2,15 @@
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-// worker-timers needs a Web Worker, which the test environment has no equivalent for — the delegation
-// Keeps the composable's own scheduling under vitest's fake timers
-vi.mock("worker-timers", () => ({
+// The worker-timers package needs a Web Worker, which the test environment has no equivalent for — the
+// Delegation keeps the composable's own scheduling under vitest's fake timers
+vi.mock(import("worker-timers"), () => ({
   clearInterval: (intervalId: number) => {
-    globalThis.clearInterval(intervalId);
+    window.clearInterval(intervalId);
   },
-  setInterval: (callback: () => void, intervalMs: number) => globalThis.setInterval(callback, intervalMs),
+  // Through `window` rather than `globalThis`, whose node-typed overload returns a Timeout where worker-timers
+  // Hands back the number its own clearInterval takes
+  setInterval: (callback: () => void, intervalMs: number) => window.setInterval(callback, intervalMs),
 }));
 
 describe(useWorkerInterval, () => {
