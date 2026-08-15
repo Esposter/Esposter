@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { VisualType } from "#shared/models/dashboard/data/VisualType";
+import type { Visual } from "#shared/models/dashboard/data/Visual";
 
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
 import { withFinalizerAsync } from "@esposter/shared";
 
 interface DeleteButtonProps {
-  id: string;
-  type: VisualType;
+  id: Visual["id"];
+  type: Visual["type"];
 }
 
 const { id, type } = defineProps<DeleteButtonProps>();

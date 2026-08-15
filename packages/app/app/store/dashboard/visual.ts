@@ -1,5 +1,6 @@
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
+import { DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
 import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
@@ -26,13 +27,12 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     storeCreateVisual(
       new Visual({
         type: visualType.value,
-        x: (visuals.value.length * 2) % noColumns.value,
+        x: (visuals.value.length * 2) % DASHBOARD_NO_COLUMNS,
         // Puts the item at the bottom
-        y: visuals.value.length + noColumns.value,
+        y: visuals.value.length + DASHBOARD_NO_COLUMNS,
       }),
     );
   };
-  const noColumns = ref(12);
   const editFormData = createEditFormData(
     computed(() => visuals.value),
     ["id"],
@@ -71,7 +71,6 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     visuals,
     visualType,
     ...restOperationData,
-    noColumns,
     ...editFormData,
     save,
   };
