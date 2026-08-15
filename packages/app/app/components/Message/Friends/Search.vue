@@ -1,16 +1,5 @@
 <script setup lang="ts">
-import { useBlockStore } from "@/store/message/user/block";
-import { useFriendStore } from "@/store/message/user/friend";
-import { useFriendRequestStore } from "@/store/message/user/friendRequest";
-
 const { $trpc } = useNuxtApp();
-const blockStore = useBlockStore();
-const { blockedUsers } = storeToRefs(blockStore);
-const { blockUser } = blockStore;
-const friendRequestStore = useFriendRequestStore();
-const { getHasSentFriendRequest, sendFriendRequest } = friendRequestStore;
-const friendStore = useFriendStore();
-const { getIsFriend } = friendStore;
 const searchQuery = ref("");
 const searchResults = ref<Awaited<ReturnType<typeof $trpc.friend.searchUsers.query>>>([]);
 const { isPending } = useAutoSearch(searchQuery, {
@@ -21,7 +10,6 @@ const { isPending } = useAutoSearch(searchQuery, {
     searchResults.value = await $trpc.friend.searchUsers.query(sanitizedSearchQuery, { signal });
   },
 });
-const checkIsBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id === userId);
 </script>
 
 <template>
@@ -37,29 +25,7 @@ const checkIsBlocked = (userId: string) => blockedUsers.value.some(({ id }) => i
       />
     </div>
     <v-list v-if="searchResults.length > 0" rd>
-      <MessageFriendsUserListItem v-for="{ id, name, image } of searchResults" :key="id" :image :name>
-        <template #append>
-          <div flex gap-x-2>
-            <v-btn
-              v-if="!getIsFriend(id) && !getHasSentFriendRequest(id)"
-              size="small"
-              text="Send Request"
-              variant="tonal"
-              @click="sendFriendRequest(id)"
-            />
-            <v-chip v-else-if="getHasSentFriendRequest(id)" size="small" text="Request Sent" />
-            <v-chip v-else color="success" size="small" text="Friends" />
-            <v-btn
-              v-if="!checkIsBlocked(id)"
-              color="error"
-              size="small"
-              text="Block"
-              variant="tonal"
-              @click="blockUser(id)"
-            />
-          </div>
-        </template>
-      </MessageFriendsUserListItem>
+      <MessageFriendsSearchResultListItem v-for="{ id, name, image } of searchResults" :id :key="id" :image :name />
     </v-list>
     <v-progress-linear v-if="isPending" indeterminate />
   </MessageFriendsSection>

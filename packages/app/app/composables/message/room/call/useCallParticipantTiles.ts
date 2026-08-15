@@ -31,14 +31,27 @@ export const useCallParticipantTiles = () => {
     if (!participant) return "Someone";
     return participant.id === sessionId.value ? `${participant.name} (You)` : participant.name;
   });
-  const getParticipantTileProps = (participant: CallParticipant): CallParticipantTileProps => ({
-    isDeafened: isDeafened.value && participant.id === sessionId.value,
-    isScreenSharing: screenSharingParticipantIds.value.includes(participant.id),
-    isSelf: participant.id === sessionId.value,
-    isSpeaking: speakingIds.value.includes(participant.id),
-    participant,
-    videoStream:
-      participant.id === sessionId.value ? localVideoStream.value : remoteVideoStreams.value.get(participant.id),
+  // Built once per render rather than per tile: the stage renders the same participants in two lists, and each
+  // Tile's flags cost a scan of the speaking and screen-sharing id arrays
+  const participantTilePropsMap = computed(() => {
+    const screenSharingIdSet = new Set(screenSharingParticipantIds.value);
+    const speakingIdSet = new Set(speakingIds.value);
+    return new Map<string, CallParticipantTileProps>(
+      [...callParticipantMap.value.values()].map((participant) => {
+        const isSelf = participant.id === sessionId.value;
+        return [
+          participant.id,
+          {
+            isDeafened: isDeafened.value && isSelf,
+            isScreenSharing: screenSharingIdSet.has(participant.id),
+            isSelf,
+            isSpeaking: speakingIdSet.has(participant.id),
+            participant,
+            videoStream: isSelf ? localVideoStream.value : remoteVideoStreams.value.get(participant.id),
+          },
+        ];
+      }),
+    );
   });
-  return { callParticipantMap, getParticipantTileProps, presenterName, sessionId };
+  return { callParticipantMap, participantTilePropsMap, presenterName, sessionId };
 };

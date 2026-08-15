@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-import { dayjs } from "#shared/services/dayjs";
-import { getResourceActivityDetail } from "@/services/resource/activity/getResourceActivityDetail";
-import { ResourceActivityDefinitionMap } from "@/services/resource/activity/ResourceActivityDefinitionMap";
-import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
 import { useAlertStore } from "@/store/alert";
 import { useActivityStore } from "@/store/resource/activity";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -42,19 +38,7 @@ onMounted(async () => {
     />
     <v-card v-else>
       <v-list lines="two">
-        <v-list-item
-          v-for="activity of items"
-          :key="activity.rowKey"
-          :prepend-icon="ResourceActivityDefinitionMap[activity.activityType].icon"
-          :title="ResourceActivityDefinitionMap[activity.activityType].title"
-        >
-          <template #subtitle>
-            <span v-if="getResourceActivityDetail(activity)">{{ getResourceActivityDetail(activity) }} · </span>
-            <span :title="dayjs(activity.createdAt).format(RESOURCE_DATE_FORMAT)">
-              {{ dayjs(activity.createdAt).fromNow() }}
-            </span>
-          </template>
-        </v-list-item>
+        <ResourceActivityLogListItem v-for="activity of items" :key="activity.rowKey" :activity />
       </v-list>
       <StyledWaypoint :is-active="hasMore" @change="readMoreActivities" />
     </v-card>

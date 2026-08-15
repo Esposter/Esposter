@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { useBlockStore } from "@/store/message/user/block";
 import { useFriendStore } from "@/store/message/user/friend";
 
-const blockStore = useBlockStore();
-const { blockUser } = blockStore;
 const friendStore = useFriendStore();
 const { deleteFriend } = friendStore;
 const { friends } = storeToRefs(friendStore);
@@ -17,7 +14,7 @@ const displayFriends = computed(() => friends.value.toSorted((a, b) => b.created
         <template #append>
           <div flex gap-x-2>
             <v-btn color="error" size="small" text="Remove" variant="tonal" @click="deleteFriend(id)" />
-            <v-btn color="error" size="small" text="Block" variant="tonal" @click="blockUser(id)" />
+            <MessageFriendsBlockUserButton :user-id="id" />
           </div>
         </template>
       </MessageFriendsUserListItem>

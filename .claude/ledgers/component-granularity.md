@@ -2,6 +2,8 @@
 
 Carries `vue-page-composition`'s "Maximal Component Granularity — One Action per Component" across the components written before it, including its `v-for` item-body clause and the page-decomposition rule above it. The simplification sweeps ran the opposite direction — collapsing duplicate components into shared primitives — so a tree dated on that ledger says nothing about this one.
 
+**The `v-for` clause is where [computed-extraction](computed-extraction.md) hands work over.** A loop variable has no script scope, so an expression over it cannot become a `computed` however expensive it is — the computed sweep can only leave a note. Extracting the item body into a component gives that expression a `<script setup>`, and the finding becomes an ordinary extraction there. A row body that calls a helper per render, or calls the same one twice, is therefore a granularity finding first and a computed finding second.
+
 | Unit                                                                                       | Swept      | Notes                                                          |
 | ------------------------------------------------------------------------------------------ | ---------- | -------------------------------------------------------------- |
 | `pages/` + `layouts/`                                                                      | 2026-08-15 | The page-decomposition rule: a page holding no element's state |

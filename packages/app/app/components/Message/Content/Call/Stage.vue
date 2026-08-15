@@ -9,7 +9,7 @@ const { isDense } = defineProps<CallStageProps>();
 const emit = defineEmits<{ fullscreen: [] }>();
 const mediaStore = useMediaStore();
 const { activeScreenShareStream, hasScreenShare, pinnedParticipantId } = storeToRefs(mediaStore);
-const { callParticipantMap, getParticipantTileProps, presenterName } = useCallParticipantTiles();
+const { callParticipantMap, participantTilePropsMap, presenterName } = useCallParticipantTiles();
 const isScreenSharePresenting = computed(() => hasScreenShare.value && Boolean(activeScreenShareStream.value));
 const callParticipantGridClass = computed(() => {
   if (callParticipantMap.value.size <= 1) return "grid-cols-1";
@@ -35,10 +35,10 @@ const callParticipantGridClass = computed(() => {
     />
     <div v-else flex-1 grid grid-auto-rows-fr :class="[isDense ? 'gap-2' : 'gap-3', callParticipantGridClass]">
       <MessageContentCallParticipantTile
-        v-for="participant of callParticipantMap.values()"
-        :key="participant.id"
-        :="getParticipantTileProps(participant)"
-        @click="pinnedParticipantId = participant.id"
+        v-for="[participantId, tileProps] of participantTilePropsMap"
+        :key="participantId"
+        :="tileProps"
+        @click="pinnedParticipantId = participantId"
       />
     </div>
     <div
@@ -51,13 +51,13 @@ const callParticipantGridClass = computed(() => {
       :class="isDense ? 'gap-y-2' : 'gap-y-3'"
     >
       <MessageContentCallParticipantTile
-        v-for="participant of callParticipantMap.values()"
-        :key="participant.id"
+        v-for="[participantId, tileProps] of participantTilePropsMap"
+        :key="participantId"
         shrink-0
         aspect-video
         :class="isDense ? 'h-20' : 'h-32'"
-        :="getParticipantTileProps(participant)"
-        @click="pinnedParticipantId = participant.id"
+        :="tileProps"
+        @click="pinnedParticipantId = participantId"
       />
     </div>
   </main>
