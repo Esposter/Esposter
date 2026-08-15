@@ -1,7 +1,8 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
+import { getFilePickerTypes } from "@/services/file/getFilePickerTypes";
 import { useNotificationStore } from "@/store/notification";
-import { getResultAsync, noop, normalizeString } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { showSaveFilePicker } from "show-open-file-picker";
 
 export const useExportFile = () => {
@@ -16,12 +17,7 @@ export const useExportFile = () => {
     getResultAsync(async () => {
       const fileHandle = await showSaveFilePicker({
         suggestedName: fileName,
-        types: [
-          {
-            accept: { [mimeType]: accept.split(",").map((ext) => normalizeString(ext)) },
-            description: (accept.split(",")[0] ?? "").replace(/^\./u, "").toUpperCase(),
-          },
-        ],
+        types: getFilePickerTypes(mimeType, accept),
       });
       const blob = await serialize(mimeType);
       const writable = await fileHandle.createWritable();

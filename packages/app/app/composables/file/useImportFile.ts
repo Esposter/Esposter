@@ -1,7 +1,8 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
+import { getFilePickerTypes } from "@/services/file/getFilePickerTypes";
 import { useAlertStore } from "@/store/alert";
-import { getResultAsync, noop, normalizeString, takeOne } from "@esposter/shared";
+import { getResultAsync, noop, takeOne } from "@esposter/shared";
 import { showOpenFilePicker } from "show-open-file-picker";
 
 export const useImportFile = () => {
@@ -9,14 +10,7 @@ export const useImportFile = () => {
   const { createAlert } = alertStore;
   return (mimeType: MimeType, accept: string, onSelect: (file: File) => Promise<void>): Promise<void> =>
     getResultAsync(async () => {
-      const handles = await showOpenFilePicker({
-        types: [
-          {
-            accept: { [mimeType]: accept.split(",").map((value) => normalizeString(value)) },
-            description: (accept.split(",")[0] ?? "").replace(/^\./u, "").toUpperCase(),
-          },
-        ],
-      });
+      const handles = await showOpenFilePicker({ types: getFilePickerTypes(mimeType, accept) });
       const file = await takeOne(handles).getFile();
       await onSelect(file);
     }).match(noop, (error) => {

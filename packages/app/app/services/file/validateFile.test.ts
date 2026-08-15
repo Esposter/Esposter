@@ -1,4 +1,5 @@
 import { MAX_FILE_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
+import { EMPTY_FILE_MESSAGE } from "@/services/file/constants";
 import { getFileSize } from "@/services/file/getFileSize";
 import { validateFile } from "@/services/file/validateFile";
 import { describe, expect, test } from "vitest";
@@ -7,7 +8,7 @@ describe(validateFile, () => {
   test("rejects a non-positive size", () => {
     expect.hasAssertions();
 
-    expect(validateFile(0)).toStrictEqual({ isValid: false, message: "You can only upload non-empty files!" });
+    expect(validateFile(0)).toStrictEqual({ isValid: false, message: EMPTY_FILE_MESSAGE });
   });
 
   test("rejects a size above the max", () => {
