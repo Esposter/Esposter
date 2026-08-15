@@ -4,10 +4,9 @@ import { useDataStore } from "@/store/message/data";
 
 const dataStore = useDataStore();
 const { typings } = storeToRefs(dataStore);
-const typingMessage = computed(() => getTypingMessage(typings.value.map(({ username }) => username)));
 </script>
 
 <template>
   <!-- Add &nbsp; to avoid layout shift -->
-  <div text-body-medium>{{ typingMessage }}&nbsp;</div>
+  <div text-body-medium>{{ getTypingMessage(typings.map(({ username }) => username)) }}&nbsp;</div>
 </template>

@@ -13,7 +13,6 @@ const {
   message,
 } = defineProps<MessageComponentProps>();
 const isSameBatch = computed(() => baseIsSameBatch && !isPreview);
-const displayCreatedAtShort = computed(() => dayjs(message.createdAt).format("H:mm"));
 const messageHtml = useMessageWithMentions(
   () => message.message,
   () => message.partitionKey,
@@ -37,7 +36,7 @@ const messageHtml = useMessageWithMentions(
       </div>
       <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
       <span v-else :op="active ? undefined : 0" text-center text-hint>
-        {{ displayCreatedAtShort }}
+        {{ dayjs(message.createdAt).format("H:mm") }}
       </span>
     </template>
     <MessageModelMessageReplyTitle v-if="message.replyRowKey || !isSameBatch" :creator :message />

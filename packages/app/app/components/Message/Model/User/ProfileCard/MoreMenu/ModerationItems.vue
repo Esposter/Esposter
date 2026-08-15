@@ -19,7 +19,6 @@ const { getDisplayName } = userToRoomStore;
 // The moderator picked this member off a list that names them by nickname, so every confirmation names them
 // The same way
 const displayName = computed(() => getDisplayName(user, roomId));
-const myPermissions = computed(() => getMyPermissions(roomId));
 // An unloaded member role map is not the same as a member with no roles: the first hides the actions until the
 // Roles arrive, the second is a real position below every assigned role
 const targetTopPosition = computed(() => {
@@ -28,7 +27,7 @@ const targetTopPosition = computed(() => {
   return Math.max(-1, ...roles.map(({ position }) => position));
 });
 const manageablePermissions = computed(() => {
-  const permissions = myPermissions.value;
+  const permissions = getMyPermissions(roomId);
   if (
     !permissions ||
     targetTopPosition.value === undefined ||
@@ -45,11 +44,10 @@ const checkHasManageablePermission = (permission: RoomPermission) =>
 const isBannable = computed(() => checkHasManageablePermission(RoomPermission.BanMembers));
 const isKickable = computed(() => checkHasManageablePermission(RoomPermission.KickMembers));
 const isWarnable = computed(() => checkHasManageablePermission(RoomPermission.ManageMessages));
-const hasModActions = computed(() => isBannable.value || isKickable.value || isWarnable.value);
 </script>
 
 <template>
-  <template v-if="hasModActions">
+  <template v-if="isBannable || isKickable || isWarnable">
     <MessageModelUserProfileCardMoreMenuConfirmActionDialog
       v-if="isBannable"
       :text="`Are you sure you want to ban ${displayName}?`"

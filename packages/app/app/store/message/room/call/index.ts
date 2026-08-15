@@ -10,7 +10,7 @@ import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { useUserSettingsStore } from "@/store/message/user/settings";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
 import { AdminActionType, NoiseSuppressionMode } from "@esposter/db-schema";
-import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
+import { getResultAsync, noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
 import { Room } from "livekit-client";
 
 export const useCallStore = defineStore("message/room/call", () => {
@@ -44,6 +44,11 @@ export const useCallStore = defineStore("message/room/call", () => {
   // The call it can start is the one the user is already in
   const callThreadRootRowKey = ref("");
   const activeCallSessionId = ref("");
+  // Where the joined call is shown: inside its room for a room call, on the call's own page otherwise —
+  // The status bar's link and the picture-in-picture window's way back both land there
+  const callRoute = computed(() =>
+    callRoomId.value ? RoutePath.Messages(callRoomId.value) : RoutePath.Calls(activeCallSessionId.value),
+  );
   const currentRoomCallSessionId = ref("");
   const isCallViewOpen = ref(false);
   const isConnecting = ref(false);
@@ -334,6 +339,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   return {
     activeCallSessionId,
     callRoomId,
+    callRoute,
     callThreadRootRowKey,
     createCall,
     currentRoomCallSessionId,

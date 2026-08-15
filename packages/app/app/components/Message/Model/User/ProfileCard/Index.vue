@@ -26,8 +26,6 @@ const displayName = computed(() => getDisplayName(user, currentRoomId.value));
 // The card is a popout that must appear the moment it is hovered, so the mutual rooms load behind it rather
 // Than blocking setup — the section simply appears once they land
 const { data: mutualRooms } = useQuery(() => $trpc.room.readMutualRooms.query({ userId: user.id }));
-const statusMessage = computed(() => getStatusMessage(user.id));
-const statusEnum = computed(() => getStatusEnum(user.id));
 </script>
 
 <template>
@@ -41,7 +39,7 @@ const statusEnum = computed(() => getStatusEnum(user.id));
     <v-card-text pt-2 flex flex-col gap-y-3>
       <div>
         <div font-bold>{{ displayName }}</div>
-        <div op-medium-emphasis text-body-medium>{{ statusMessage || statusEnum }}</div>
+        <div op-medium-emphasis text-body-medium>{{ getStatusMessage(user.id) || getStatusEnum(user.id) }}</div>
       </div>
       <template v-if="!isSelf">
         <v-divider />

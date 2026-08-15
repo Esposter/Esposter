@@ -12,13 +12,12 @@ const { role, roomId } = defineProps<RoleEditorProps>();
 const roleStore = useRoleStore();
 const { updateRole } = roleStore;
 const permissions = ref(role.permissions);
-const isDirty = computed(() => permissions.value !== role.permissions);
 </script>
 
 <template>
   <div font-bold mb-2 text-title-medium>{{ role.name }}</div>
   <MessageModelRoomSettingsTypeRolePermissionList v-model="permissions" />
-  <template v-if="isDirty">
+  <template v-if="permissions !== role.permissions">
     <StyledButton
       :button-props="{ text: 'Save Changes', variant: 'tonal' }"
       @click="updateRole({ id: role.id, permissions, roomId })"

@@ -15,7 +15,6 @@ const replyStore = useReplyStore();
 const { isIndicatorActive, replyMap } = storeToRefs(replyStore);
 const reply = computed(() => replyMap.value.get(rowKey));
 const creator = useCreator(reply);
-const color = computed(() => (isIndicatorActive.value ? text.value : "gray"));
 const scrollToMessage = useScrollToMessage();
 </script>
 
@@ -35,7 +34,7 @@ const scrollToMessage = useScrollToMessage();
         />
         <span
           v-else
-          :style="{ color }"
+          :style="{ color: isIndicatorActive ? text : 'gray' }"
           cursor-pointer
           italic
           text-body-small

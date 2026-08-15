@@ -6,13 +6,16 @@ interface PermissionListItemProps {
 
 const { permission, title } = defineProps<PermissionListItemProps>();
 const modelValue = defineModel<bigint>({ required: true });
-const isEnabled = computed(() => Boolean(modelValue.value & permission));
 </script>
 
 <template>
   <v-list-item :title>
     <template #append>
-      <v-switch :model-value="isEnabled" density="compact" @update:model-value="modelValue = modelValue ^ permission" />
+      <v-switch
+        :model-value="Boolean(modelValue & permission)"
+        density="compact"
+        @update:model-value="modelValue = modelValue ^ permission"
+      />
     </template>
   </v-list-item>
 </template>

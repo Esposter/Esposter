@@ -33,11 +33,16 @@ const hasUnread = computed(() => {
   return Boolean(lastMessageAt && lastMessageAt < room.updatedAt);
 });
 const mentionCount = computed(() => (isActive.value ? 0 : (myUserToRoom.value?.mentionCount ?? 0)));
-const isBold = computed(() => (hasUnread.value || hasDraft.value ? true : undefined));
 </script>
 
 <template>
-  <MessageModelRoomBaseListItem :image="room.image" :is-active :is-bold :name="roomName" :room-id="room.id">
+  <MessageModelRoomBaseListItem
+    :image="room.image"
+    :is-active
+    :is-bold="hasUnread || hasDraft ? true : undefined"
+    :name="roomName"
+    :room-id="room.id"
+  >
     <template #append="{ isHovering }">
       <v-chip v-if="mentionCount" color="error" density="compact" size="x-small" variant="flat">
         {{ mentionCount }}

@@ -14,10 +14,9 @@ const userToRoomStore = useUserToRoomStore();
 const { setMyUserToRoom } = userToRoomStore;
 const { executeMutation } = useMutation();
 const nickname = ref(userToRoom.nickname);
-// The field emits save from both blur and Enter, so the same value would otherwise be written twice
-const isDirty = computed(() => nickname.value !== userToRoom.nickname);
 const save = async () => {
-  if (!isDirty.value) return;
+  // The field emits save from both blur and Enter, so the same value would otherwise be written twice
+  if (nickname.value === userToRoom.nickname) return;
 
   const newNickname = nickname.value;
   await executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ nickname: newNickname, roomId }), {

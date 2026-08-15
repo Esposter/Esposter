@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
-import { RoutePath } from "@esposter/shared";
 
 const { close, open, pipWindow } = useDocumentPictureInPicture({ height: 320, width: 420 });
 const callStore = useCallStore();
-const { activeCallSessionId, callRoomId, isInCall } = storeToRefs(callStore);
+const { callRoute, isInCall } = storeToRefs(callStore);
 const mediaStore = useMediaStore();
 const { isPoppedOut } = storeToRefs(mediaStore);
-const callRoute = computed(() =>
-  callRoomId.value ? RoutePath.Messages(callRoomId.value) : RoutePath.Calls(activeCallSessionId.value),
-);
 // Key events don't cross documents — the PiP window needs its own push-to-talk listeners
 usePushToTalk(isInCall, pipWindow);
 

@@ -17,7 +17,6 @@ const minScheduledAt = ref(scheduledAt.value);
 const text = ref("");
 const isReminder = computed(() => type.value === ScheduledMessageJobType.Reminder);
 const title = computed(() => (isReminder.value ? "Set Reminder" : "Schedule Message"));
-const textLabel = computed(() => (isReminder.value ? "Reminder" : "Message"));
 const setDefaultScheduledAt = () => {
   scheduledAt.value = dayjs().add(1, "minute").toDate();
   minScheduledAt.value = new Date(scheduledAt.value);
@@ -67,6 +66,6 @@ watch(isOpen, (newIsOpen) => {
         sixWeeks: 'append',
       }"
     />
-    <v-textarea v-model="text" :label="textLabel" :rules="[rules.required()]" auto-grow />
+    <v-textarea v-model="text" :label="isReminder ? 'Reminder' : 'Message'" :rules="[rules.required()]" auto-grow />
   </StyledFormDialog>
 </template>

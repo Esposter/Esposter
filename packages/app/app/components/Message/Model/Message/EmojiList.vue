@@ -24,12 +24,11 @@ const emojis = computed(() =>
     userIds,
   })),
 );
-const hasEmojis = computed(() => emojis.value.length > 0);
 const selectEmoji = await useSelectEmoji(message);
 </script>
 
 <template>
-  <div v-if="session && hasEmojis" flex flex-wrap gap-1 items-center>
+  <div v-if="session && emojis.length > 0" flex flex-wrap gap-1 items-center>
     <div
       v-for="{ partitionKey, rowKey, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
