@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import type { Card } from "@/models/visual/Card";
-
 import { CardType } from "@/models/visual/CardType";
+import { SupporterCards } from "@/services/about/SupporterCards";
 
-const supporters = ["Braedon Wooding", "Ryan Fallah", "Arsentiy Zakharchenko", "Bill Do", "Leila Yuan", "Kevin Chen"];
-const cards: Card[] = supporters.map((s) => ({ text: s }));
 const cardType = ref(CardType.Marquee);
 </script>
 
@@ -17,8 +14,8 @@ const cardType = ref(CardType.Marquee);
       <VisualCardSwitch v-model="cardType" />
     </v-col>
     <v-col cols="12">
-      <VisualCardMarquee v-if="cardType === CardType.Marquee" :cards />
-      <VisualCardCarousel v-else :cards />
+      <VisualCardMarquee v-if="cardType === CardType.Marquee" :cards="SupporterCards" />
+      <VisualCardCarousel v-else :cards="SupporterCards" />
     </v-col>
   </v-row>
 </template>
