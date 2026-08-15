@@ -8,7 +8,7 @@ Behaviour-preserving by construction: inlining a single-use computed changes not
 | :---------------------------------------- | :--------- | :---------------------------------------------------------- |
 | `app/components/Message`                  | 2026-08-15 | Sharpened the inline-vs-keep test into the owning rule      |
 | `app/components/Resource`                 | 2026-08-15 |                                                             |
-| `app/components/Styled` + `App`           | —          | Primitives — a computed here often does bind twice          |
+| `app/components/Styled` + `App`           | 2026-08-15 | Primitives — a computed here often does bind twice          |
 | `app/components` — the rest               | —          |                                                             |
 | `app/pages` + `app/layouts`               | —          |                                                             |
 | `app/composables`                         | —          | A returned computed is the composable's surface, not a find |

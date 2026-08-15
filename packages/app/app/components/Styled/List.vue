@@ -12,7 +12,6 @@ interface StyledListProps {
 const slots = defineSlots<Record<keyof VList["$slots"], () => VNode>>();
 const { listAttrs = {}, listProps = {}, selectedIndex } = defineProps<StyledListProps>();
 const list = useTemplateRef("list");
-const mergedListProps = computed(() => mergeProps(listProps, listAttrs));
 
 watch(
   () => selectedIndex,
@@ -25,7 +24,7 @@ watch(
 </script>
 
 <template>
-  <v-list ref="list" :="mergedListProps">
+  <v-list ref="list" :="mergeProps(listProps, listAttrs)">
     <template v-for="(_slot, name) of slots" #[name]="scope">
       <slot :name :="scope" />
     </template>

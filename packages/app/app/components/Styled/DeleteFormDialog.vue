@@ -17,11 +17,6 @@ const modelValue = defineModel<boolean>({ default: false });
 const { cardProps, confirmButtonProps, confirmName = "" } = defineProps<StyledDeleteFormDialogProps>();
 const emit = defineEmits<{ delete: [onComplete: (isSuccessful?: boolean) => void] }>();
 const confirmNameValue = ref("");
-const mergedCardProps = computed(() => ({ prependIcon: "mdi-delete-alert-outline", ...cardProps }));
-const mergedConfirmButtonProps = computed(() => ({ color: "error", text: "Delete", ...confirmButtonProps }));
-const confirmButtonAttrs = computed(() => ({
-  disabled: Boolean(confirmName) && confirmNameValue.value !== confirmName,
-}));
 
 watch(modelValue, (newModelValue) => {
   if (!newModelValue) confirmNameValue.value = "";
@@ -31,9 +26,9 @@ watch(modelValue, (newModelValue) => {
 <template>
   <StyledFormDialog
     v-model="modelValue"
-    :card-props="mergedCardProps"
-    :confirm-button-attrs
-    :confirm-button-props="mergedConfirmButtonProps"
+    :card-props="{ prependIcon: 'mdi-delete-alert-outline', ...cardProps }"
+    :confirm-button-attrs="{ disabled: Boolean(confirmName) && confirmNameValue !== confirmName }"
+    :confirm-button-props="{ color: 'error', text: 'Delete', ...confirmButtonProps }"
     @submit="(_event, onComplete) => emit('delete', onComplete)"
   >
     <template #activator="activatorProps">
