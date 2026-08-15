@@ -22,7 +22,7 @@ const isReacted = computed(() => {
 </script>
 
 <template>
-  <div
+  <button
     :class="
       isReacted
         ? ['bg-info-opacity-10', 'b-info']
@@ -40,6 +40,7 @@ const isReacted = computed(() => {
     items-center
     z-1
     active:scale-95
+    type="button"
     @click="
       isReacted && emoji.userIds.length === 1
         ? deleteEmoji({
@@ -57,5 +58,5 @@ const isReacted = computed(() => {
   >
     {{ emojify(emoji.emojiTag) }}
     <span pl-1 text-title-small>{{ emoji.userIds.length }}</span>
-  </div>
+  </button>
 </template>

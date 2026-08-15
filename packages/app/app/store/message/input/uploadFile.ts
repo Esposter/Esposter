@@ -147,8 +147,11 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
   const discardUploadFiles = async (target: ComposerTarget, ids: string[]) => {
     const composerUploadTokenMap = getUploadTokenMap(getComposerKey(target));
     // Read before the removal takes the tokens with it
-    const tokens = new Map(
-      ids.flatMap((id) => (composerUploadTokenMap?.has(id) ? [[id, composerUploadTokenMap.get(id)]] : [])),
+    const tokens = new Map<string, string>(
+      ids.flatMap((id) => {
+        const token = composerUploadTokenMap?.get(id);
+        return token ? [[id, token] as const] : [];
+      }),
     );
     const removedFiles = removeUploadFiles(target, ids);
     const deletedFiles = removedFiles.flatMap(({ filename, id }) => {

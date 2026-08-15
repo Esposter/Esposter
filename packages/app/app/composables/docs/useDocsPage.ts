@@ -15,7 +15,7 @@ export const useDocsPage = async () => {
   );
   const [{ data: page }, { data: navigation }] = await Promise.all([
     useAsyncData(
-      AsyncDataKey.DocsPage(path.value),
+      computed(() => AsyncDataKey.DocsPage(path.value)),
       () => queryCollection(ContentCollection.Docs).path(path.value).first(),
       {
         watch: [path],
@@ -44,6 +44,12 @@ export const useDocsPage = async () => {
       ? sections.value.filter(({ path: sectionPath }) => getSectionCategory(sectionPath) === category.value)
       : [],
   );
+  // The page is reused across doc→doc navigation, so a later refetch that finds nothing has to raise the 404
+  // Itself — the setup guard above only ever runs for the first page
+  watch(page, (newPage) => {
+    if (!newPage) showError({ fatal: true, statusCode: 404, statusMessage: "Page Not Found" });
+  });
+
   return {
     category,
     categorySections,

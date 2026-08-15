@@ -1,8 +1,14 @@
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
 import { ArrowKeyDeltaMap } from "@/services/resource/sheet/ArrowKeyDeltaMap";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
 import { useRowStore } from "@/store/resource/sheet/row";
+
+const getIsInputFocused = () => {
+  const activeElement = window.document.activeElement;
+  return activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement;
+};
 
 // The spreadsheet's keyboard surface: copy, paste, select-all and arrow navigation over the cell selection.
 // Every handler stands down while a cell is being edited or an input holds focus, so typing into a cell never
@@ -18,30 +24,31 @@ export const useCellKeyboardShortcuts = () => {
   const copyRangeToClipboard = useCopyRangeToClipboard();
   const pasteRangeFromClipboard = usePasteRangeFromClipboard();
 
-  const getIsInputFocused = () => {
-    const activeElement = window.document.activeElement;
-    return activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement;
-  };
+  onKeyStroke(
+    ["c", "C"],
+    getSynchronizedFunction(async (event: KeyboardEvent) => {
+      if (
+        editingCell.value ||
+        getIsInputFocused() ||
+        (!event.ctrlKey && !event.metaKey) ||
+        event.shiftKey ||
+        !selectedCellRange.value
+      )
+        return;
+      event.preventDefault();
+      await copyRangeToClipboard();
+    }),
+  );
 
-  onKeyStroke(["c", "C"], async (event) => {
-    if (
-      editingCell.value ||
-      getIsInputFocused() ||
-      (!event.ctrlKey && !event.metaKey) ||
-      event.shiftKey ||
-      !selectedCellRange.value
-    )
-      return;
-    event.preventDefault();
-    await copyRangeToClipboard();
-  });
-
-  onKeyStroke(["v", "V"], async (event) => {
-    if (editingCell.value || getIsInputFocused() || (!event.ctrlKey && !event.metaKey) || !selectedCellRange.value)
-      return;
-    event.preventDefault();
-    await pasteRangeFromClipboard(event.shiftKey ? PasteMode.ShiftDown : PasteMode.Overwrite);
-  });
+  onKeyStroke(
+    ["v", "V"],
+    getSynchronizedFunction(async (event: KeyboardEvent) => {
+      if (editingCell.value || getIsInputFocused() || (!event.ctrlKey && !event.metaKey) || !selectedCellRange.value)
+        return;
+      event.preventDefault();
+      await pasteRangeFromClipboard(event.shiftKey ? PasteMode.ShiftDown : PasteMode.Overwrite);
+    }),
+  );
 
   onKeyStroke(["a", "A"], (event) => {
     if (editingCell.value || getIsInputFocused() || (!event.ctrlKey && !event.metaKey) || event.shiftKey) return;

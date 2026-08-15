@@ -22,6 +22,7 @@ const slots = defineSlots<{
 }>();
 const { amount, description, flavorDescription, id, isAffordable, menuProps, price, type } =
   defineProps<ItemMenuProps>();
+const descriptionHtml = computed(() => (description ? marked.parse(description, { async: false }) : ""));
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`, { async: false }));
 const displayPrice = computed(() => formatNumberLong(price));
 const upgradeIcon = computed(() => UpgradeIconMap[id]);
@@ -61,7 +62,7 @@ const upgradeIcon = computed(() => UpgradeIconMap[id]);
         {{ id }}
       </v-card-title>
       <v-card-text>
-        <div v-if="description" pb-4 v-html="marked.parse(description, { async: false })" />
+        <div v-if="description" pb-4 v-html="descriptionHtml" />
         <div pb-4 flex font-italic justify-end>
           <span text-right v-html="flavorDescriptionHtml" />
         </div>

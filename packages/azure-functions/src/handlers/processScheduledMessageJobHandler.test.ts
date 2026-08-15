@@ -20,7 +20,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -195,6 +195,21 @@ describe(processScheduledMessageJobHandler, () => {
     expect(processedJob?.completedAt).toStrictEqual(new Date(0));
     expect(processedJob?.processingStartedAt).toStrictEqual(new Date(0));
     expect(MockTableDatabase.get(AzureTable.Messages)?.size).toBe(1);
+  });
+
+  // Thread placement is the whole point of the payload's replyRowKey, and every other case here sends the
+  // Room-level ""
+  test("creates the message under the thread root the payload names", async () => {
+    expect.hasAssertions();
+
+    const replyRowKey = "replyRowKey";
+    const job = await insertJob({ ...scheduledMessagePayload, replyRowKey });
+    await processScheduledMessageJobHandler({ id: job.id }, context);
+
+    const messagesTable = MockTableDatabase.get(AzureTable.Messages);
+    assert.exists(messagesTable);
+
+    expect(takeOne([...messagesTable.values()])).toMatchObject({ replyRowKey });
   });
 
   test("completes job when notifying fails after the message is created", async () => {
