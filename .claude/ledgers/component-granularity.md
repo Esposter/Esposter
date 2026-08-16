@@ -59,4 +59,6 @@ the body is extracted; if that child's props are rebuilt per row, the fix is hoi
 
 ## Next enforceable
 
-An oxlint rule counting `<v-btn>`/`<StyledButton>` per SFC, and one banning `ref(`/`computed(`/`useTemplateRef(` under `pages/**`. Both are template/AST-shaped and would end the two find-recipe greps above; the `v-for` item-body clause needs judgement and stays a reading pass.
+An oxlint rule counting `<v-btn>`/`<StyledButton>` per SFC — that one is a pure AST count and would end the first grep above.
+
+The page-state grep does **not** become a rule by banning `ref(`/`computed(`/`useTemplateRef(` under `pages/**`. The rule is that a value belonging to _one interactive element_ moves into that element; a page may hold route-derived state and `<Head>` values, and today every hit is one of those. Deciding between them means following what the value feeds, which is the same judgement the `v-for` item-body clause needs. Both stay reading passes.
