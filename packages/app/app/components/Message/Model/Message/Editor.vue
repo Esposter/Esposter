@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@esposter/db-schema";
-import type { Editor } from "@tiptap/core";
 
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useDataStore } from "@/store/message/data";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
-import { withFinalizerAsync } from "@esposter/shared";
 import { Extension } from "@tiptap/vue-3";
 
 interface MessageEditorProps {
@@ -26,33 +22,22 @@ const editedMessageHtml = ref(
     () => message.partitionKey,
   ).value,
 );
-const onUpdateMessage = (editor: Editor) => {
-  getSynchronizedFunction(async () => {
-    await withFinalizerAsync(
-      async () => {
-        if (editedMessageHtml.value === message.message) return;
-        else if (EMPTY_TEXT_REGEX.test(editor.getText())) {
-          emit("update:delete-mode", true);
-          return;
-        }
-        await updateMessage({
-          message: editedMessageHtml.value,
-          partitionKey: message.partitionKey,
-          rowKey: message.rowKey,
-        });
-      },
-      () => {
-        emit("update:update-mode", false);
-        editedMessageHtml.value = message.message;
-      },
-    );
-  })();
-};
+const saveMessage = useSaveRichTextEdit(
+  editedMessageHtml,
+  () => message.message,
+  () =>
+    updateMessage({
+      message: editedMessageHtml.value,
+      partitionKey: message.partitionKey,
+      rowKey: message.rowKey,
+    }),
+  emit,
+);
 const keyboardExtension = new Extension({
   addKeyboardShortcuts() {
     return {
       Enter: () => {
-        onUpdateMessage(this.editor);
+        saveMessage(this.editor);
         return true;
       },
       Esc: () => {
@@ -76,12 +61,7 @@ const mentionExtension = useMentionExtension();
   >
     <template #append-footer="{ editor }">
       <v-btn size="small" text="Cancel" variant="outlined" @click="emit('update:update-mode', false)" />
-      <StyledButton
-        v-if="editor"
-        ml-2
-        :button-props="{ size: 'small', text: 'Save' }"
-        @click="onUpdateMessage(editor)"
-      />
+      <StyledButton v-if="editor" ml-2 :button-props="{ size: 'small', text: 'Save' }" @click="saveMessage(editor)" />
     </template>
   </RichTextEditor>
 </template>
