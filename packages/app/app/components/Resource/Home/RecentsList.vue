@@ -1,0 +1,29 @@
+<script setup lang="ts">
+import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
+import { useRecentStore } from "@/store/resource/recent";
+
+const recentStore = useRecentStore();
+const { error, isLoading, recents } = storeToRefs(recentStore);
+const { readRecents } = recentStore;
+// Fetched after mount (not awaited in setup) so the card shows its skeleton instead of blocking navigation
+const hasLoaded = ref(false);
+
+onMounted(async () => {
+  await readRecents();
+  hasLoaded.value = true;
+});
+</script>
+
+<template>
+  <v-alert v-if="error" ma-4 density="compact" type="error" :text="error">
+    <template #append>
+      <v-btn size="small" variant="text" @click="readRecents()">Retry</v-btn>
+    </template>
+  </v-alert>
+  <ResourceHomeList
+    v-else
+    :is-loading="isLoading || !hasLoaded"
+    :resources="recents"
+    :source="ResourceListSource.Recents"
+  />
+</template>
