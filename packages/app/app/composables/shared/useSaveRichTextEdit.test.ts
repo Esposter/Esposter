@@ -1,18 +1,19 @@
 // @vitest-environment nuxt
-import type { SaveRichTextEditEmit } from "@/composables/shared/useSaveRichTextEdit";
 import type { Editor } from "@tiptap/core";
 
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { describe, expect, test, vi } from "vitest";
 
+const createEditor = (text: string) => ({ getText: () => text }) as Editor;
+
 describe(useSaveRichTextEdit, () => {
   const original = "<p>original</p>";
   const edit = "<p>edit</p>";
-  const createEditor = (text: string) => ({ getText: () => text }) as Editor;
-  const createSave = (editedValue: string) => {
+  const createSave = (editedValue: string, update = vi.fn<() => Promise<unknown>>(() => Promise.resolve())) => {
     const edited = ref(editedValue);
-    const update = vi.fn(() => Promise.resolve());
-    const emit = vi.fn() as ReturnType<typeof vi.fn> & SaveRichTextEditEmit;
+    // Spelled as one signature over the union of valid calls: `vi.fn` collapses an overloaded emit type to its
+    // Last overload, which then rejects the other event
+    const emit = vi.fn<(...parameters: ["update:delete-mode", true] | ["update:update-mode", false]) => void>();
     return { edited, emit, save: useSaveRichTextEdit(edited, () => original, update, emit), update };
   };
 
@@ -56,13 +57,9 @@ describe(useSaveRichTextEdit, () => {
   test("leaves edit mode and reverts when the update fails", async () => {
     expect.hasAssertions();
 
-    const edited = ref(edit);
-    const emit = vi.fn() as ReturnType<typeof vi.fn> & SaveRichTextEditEmit;
-    const save = useSaveRichTextEdit(
-      edited,
-      () => original,
-      () => Promise.reject(new Error("error")),
-      emit,
+    const { edited, emit, save } = createSave(
+      edit,
+      vi.fn<() => Promise<unknown>>(() => Promise.reject(new Error("error"))),
     );
     save(createEditor("edit"));
     await waitForSynchronizedFunctions();
