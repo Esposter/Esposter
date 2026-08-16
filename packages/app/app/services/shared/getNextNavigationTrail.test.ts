@@ -2,6 +2,7 @@ import { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
 import { getNextNavigationTrail } from "@/services/shared/getNextNavigationTrail";
 import { RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { reactive } from "vue";
 
 describe(getNextNavigationTrail, () => {
   const resourcePath = RoutePath.Resource("id");
@@ -65,6 +66,20 @@ describe(getNextNavigationTrail, () => {
       getNextNavigationTrail(resourcePath, otherResourcePath, [NavigationTrailPage.Resources, NavigationTrailPage.All]),
     ).toStrictEqual([NavigationTrailPage.Resources, NavigationTrailPage.All]);
     expect(getNextNavigationTrail(bladePath, otherResourcePath, [NavigationTrailPage.All])).toStrictEqual([
+      NavigationTrailPage.All,
+    ]);
+  });
+
+  // The plugin writes what comes back onto the history entry, and the browser structured-clones it. The trail it
+  // Passes in is the store's own reactive array, so a branch that returned it untouched put a proxy in front of
+  // The serializer — a DataCloneError that rejected the very navigation the trail was being recorded for
+  test("returns a trail the history entry can hold", () => {
+    expect.hasAssertions();
+
+    const trail = reactive([NavigationTrailPage.Resources, NavigationTrailPage.All]);
+
+    expect(structuredClone(getNextNavigationTrail(resourcePath, otherResourcePath, trail))).toStrictEqual([
+      NavigationTrailPage.Resources,
       NavigationTrailPage.All,
     ]);
   });
