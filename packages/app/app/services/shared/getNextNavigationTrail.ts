@@ -14,7 +14,10 @@ const getPage = (path: string) => NAVIGATION_TRAIL_PAGE_ENTRIES.find(([, crumb])
 // Moving around inside one page apart from leaving it for another
 const getPageKey = (path: string) => path.split("/").slice(0, 3).join("/");
 // Where a navigation leaves the trail — the whole model, as one pure function, so it is testable without a
-// Browser and the plugin only has to decide when to ask. See /docs/platform/breadcrumb-trail
+// Browser and the plugin only has to decide when to ask. Every branch returns a fresh plain array, never the one
+// It was handed: the caller writes the result onto the history entry, which the browser structured-clones, and
+// The trail it passes in is the store's own reactive array — a proxy the serializer rejects outright.
+// See /docs/platform/breadcrumb-trail
 export const getNextNavigationTrail = (
   fromPath: string,
   toPath: string,
@@ -36,5 +39,5 @@ export const getNextNavigationTrail = (
   // Re-entered with different filters — and one arriving from outside the area carries the empty trail that
   // Leaving it left behind, which is exactly what a direct arrival is
   if (fromPage && getPageKey(fromPath) !== getPageKey(toPath)) return [...trail, fromPage];
-  return trail;
+  return [...trail];
 };

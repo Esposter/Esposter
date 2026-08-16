@@ -61,6 +61,12 @@ Decide by what the value **is**, not by what is reachable:
 
   Its lifetime already matches: per entry, kept across a reload, restored on back/forward, gone with the entry.
 
+  **Everything in that object is structured-cloned, so none of it may be reactive state.** A `ref`'s array or a
+  store's object reaches the serializer as a Proxy, which it rejects outright — and the `DataCloneError` is thrown
+  inside the `afterEach` hook, so it rejects the navigation that was being recorded rather than merely losing the
+  value. Hand the entry a plain snapshot, and make that the returned contract of the pure function above rather
+  than a spread at the call site.
+
 - **What the visitor prefers** (a collapsed rail, a theme) → **`localStorage`** through the `LocalStorageKey` registry — it outlives the tab and belongs to the person.
 
 The middle case is the one that gets mis-filed. Putting "how I got here" in the URL mints a second address for one page (worse for sharing, bookmarks and analytics, and editable by anyone who types); putting it in storage makes it outlive the journey, so a tab restored later claims a path nobody walked.
