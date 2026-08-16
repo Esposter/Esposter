@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
+import { EmojiDescriptionMap } from "@/services/message/emoji/EmojiDescriptionMap";
 import { EmojiMoreMenuItems } from "@/services/message/emoji/EmojiMoreMenuItems";
-import { unemojify } from "@/services/message/emoji/unemojify";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { useMessageStore } from "@/store/message";
 
@@ -44,7 +44,7 @@ const moreMenuProps = computed(() => ({
     <v-list density="compact" text-body-medium>
       <v-list-item>
         <div flex gap-x-2>
-          <v-tooltip v-for="emoji of EmojiMoreMenuItems" :key="emoji" :text="unemojify(emoji)">
+          <v-tooltip v-for="emoji of EmojiMoreMenuItems" :key="emoji" :text="EmojiDescriptionMap.get(emoji)">
             <template #activator="{ props }">
               <v-btn
                 :text="emoji"

@@ -11,6 +11,7 @@ interface GridItemProps {
 }
 
 const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
+const displayName = computed(() => prettify(achievementDefinition.name));
 </script>
 
 <template>
@@ -21,7 +22,7 @@ const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
           <v-icon :icon="achievementDefinition.icon" color="white" size="2.5rem" />
         </v-avatar>
         <div>
-          <div font-bold text-title-large>{{ prettify(achievementDefinition.name) }}</div>
+          <div font-bold text-title-large>{{ displayName }}</div>
           <div text-body-small>{{ achievementDefinition.description }}</div>
         </div>
         <div v-if="userAchievement?.unlockedAt" font-bold italic text-hint>

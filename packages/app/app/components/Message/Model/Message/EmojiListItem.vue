@@ -19,6 +19,8 @@ const isReacted = computed(() => {
   const userId = session.value.data?.user.id;
   return Boolean(userId && emoji.userIds.includes(userId));
 });
+// A reaction re-renders whenever anyone adds or removes theirs, and the tag only resolves once per emoji
+const displayEmoji = computed(() => emojify(emoji.emojiTag));
 </script>
 
 <template>
@@ -56,7 +58,7 @@ const isReacted = computed(() => {
           })
     "
   >
-    {{ emojify(emoji.emojiTag) }}
+    {{ displayEmoji }}
     <span pl-1 text-title-small>{{ emoji.userIds.length }}</span>
   </button>
 </template>

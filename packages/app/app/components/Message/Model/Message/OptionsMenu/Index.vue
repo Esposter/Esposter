@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { EmojiDescriptionMap } from "@/services/message/emoji/EmojiDescriptionMap";
 import { EmojiMenuItems } from "@/services/message/emoji/EmojiMenuItems";
-import { unemojify } from "@/services/message/emoji/unemojify";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 
 interface MessageOptionsMenuProps {
@@ -31,7 +31,7 @@ const selectEmoji = await useSelectEmoji(message);
           <v-btn :text="emoji" icon tile m-0 size-10 :="props" @click="selectEmoji(emoji)" />
         </template>
         <div text-center flex flex-col>
-          <div font-bold>{{ unemojify(emoji) }}</div>
+          <div font-bold>{{ EmojiDescriptionMap.get(emoji) }}</div>
           <div>Click to react</div>
         </div>
       </v-tooltip>

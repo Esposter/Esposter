@@ -30,19 +30,22 @@ grep -rlE "<(v-btn|StyledButton)" --include=*.vue packages/app/app | xargs grep 
 grep -rn -A 20 "v-for" --include=*.vue packages/app/app | grep "@click"
 # a v-for whose item body calls a helper per row — the computed sweep's handover
 grep -rn -A 18 'v-for=' --include=*.vue packages/app/app |
-  grep -E '\b(get|format|compute|build|parse|to)[A-Z][a-zA-Z]*\(|dayjs\('
+  grep -E '\b[a-z][a-zA-Z0-9]*\(' | grep -vE 'onClick|\$emit|emit\('
 # repeated list items with no v-for — the array-and-loop rule
 for f in $(grep -rl '<v-list-item' --include=*.vue packages/app/app/components); do
   [ "$(grep -c '<v-list-item' "$f")" -ge 3 ] && [ "$(grep -c 'v-for' "$f")" -eq 0 ] && echo "$f"
 done
 # a dialog mounted per row
 grep -rn -A 25 'v-for=' --include=*.vue packages/app/app | grep -E '<(v-dialog|v-menu)'
-# a page owning an element's state
-grep -rlE "\b(ref|computed|useTemplateRef)\(" --include=*.vue packages/app/app/pages
+# a page or layout owning an element's state
+grep -rlE "\b(ref|computed|useTemplateRef)\(" --include=*.vue packages/app/app/pages packages/app/app/layouts
 ```
 
-The page grep's only hits are a `<Head><Title>` computed and route orchestration, both of which the rule allows —
-it fires on the shape, so read what the value feeds before treating a hit as a finding.
+Both greps fire on shape, so read what a hit feeds before calling it a finding. The last one's current hits are
+all allowed: a `<Head><Title>` computed and route orchestration in `pages/`, and in `layouts/` the fixed-layout
+measurements and the drawer-open flags — a flag shared by a hamburger and the drawer it opens belongs to their
+common ancestor, which is the layout. The `-A 18` window on the loop greps is a false-negative boundary: an item
+body longer than that is only reached by reading the file.
 
 On the third: the same helper called **twice** in one row body is the strongest signal, because extracting the
 row collapses both calls into one `computed`. A row already rendering a single child component is not a finding —

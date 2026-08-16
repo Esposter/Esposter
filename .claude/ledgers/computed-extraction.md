@@ -43,18 +43,24 @@ grep -rnE ':[a-z-]+="(\{[^"]*(\.\.\.|\w+\(|: *[a-z][a-zA-Z0-9]*[ ,}?])|\[[^"]*(\
 # Collection work inlined into a template
 grep -rnE '(\{\{|:[a-z-]+=")[^"}]*\.(filter|map|toSorted|sort|reduce|flatMap|join)\(' --include=*.vue packages/app/app
 
-# EVERY helper called from a template, so the pass judges each one's body rather than a guessed list of names
-grep -rnoE '(\{\{[^}]*|:[a-z-]+="[^"]*)\b(get|format|compute|build|parse|to|make|create|calc)[A-Z][a-zA-Z]*\(' \
-  --include=*.vue packages/app/app
+# Every call in a render position, so the pass judges each callee's body rather than a guessed list of names
+grep -rnoE '(\{\{[^}]*|:[a-z-]+="[^"]*)\b[a-z][a-zA-Z0-9]*\(' --include=*.vue packages/app/app |
+  grep -oE '\b[a-z][a-zA-Z0-9]*\($' | sort -u
 ```
 
-The third command is the one that matters and the easy one to skip. Grepping a hand-listed set of "expensive"
-helper names misses the ones nobody thought to list — a helper that builds a DOM element to strip HTML, or that
-runs three dayjs comparisons, reads like any other `getX` at the call site. Enumerate the call sites, then open
-the helper.
+The third command is the one that matters and the easy one to skip. It deliberately matches **any** callee, not
+a `get|format|build|…` prefix set: the first version of this recipe carried that allowlist and missed `emojify`
+(a node-emoji lookup), `prettify` (two lookbehind regex passes, four call sites) and `unemojify` (a reverse
+lookup over a constant menu) — every one of them work, none of them prefixed. Read the deduped callee list, drop
+the CSS functions and framework slot predicates, and open what remains.
 
 All three over-report — `:style="{ color }"` on a plain element binds to no child, `.map` over a two-element
 array is not work, and most `getX` helpers are a property read. The rule decides; these only narrow what to open.
+
+They also **under-report**, which is the direction that ends a sweep early. The first two match one line at a
+time, so an attribute wrapped across lines by the formatter is invisible to them; the third finds the call but
+never the callee's cost, and a helper reached through a store or a slot prop reads like a bare identifier. A
+clean grep is the start of the pass, not its result.
 
 ## Next enforceable
 
