@@ -4,26 +4,22 @@ Carries `vue-page-composition`'s "Maximal Component Granularity — One Action p
 
 **The `v-for` clause is where [computed-extraction](computed-extraction.md) hands work over.** A loop variable has no script scope, so an expression over it cannot become a `computed` however expensive it is — the computed sweep can only leave a note. Extracting the item body into a component gives that expression a `<script setup>`, and the finding becomes an ordinary extraction there. A row body that calls a helper per render, or calls the same one twice, is therefore a granularity finding first and a computed finding second.
 
-The **`v-for` clause alone** was run across every tree on 2026-08-16, driven by the third find-recipe command
-below. The unit rows still track the whole rule, so an undated row means its one-action and page-decomposition
-clauses are outstanding — not that its row bodies are unswept.
-
-| Unit                                                                                       | Swept      | Notes                                                          |
-| ------------------------------------------------------------------------------------------ | ---------- | -------------------------------------------------------------- |
-| `pages/` + `layouts/`                                                                      | 2026-08-15 | The page-decomposition rule: a page holding no element's state |
-| `Resource/Sheet`                                                                           | 2026-08-15 | Find/replace bar split; cell shortcuts moved to a composable   |
-| `Message/Model/Message`                                                                    | 2026-08-15 | Forward send button and emoji reaction extracted               |
-| `Message/Model/Room`                                                                       | —          |                                                                |
-| `Message/Content/Call`                                                                     | —          |                                                                |
-| `Message/Model/User`                                                                       | —          |                                                                |
-| `Message` — the rest                                                                       | —          |                                                                |
-| `Resource` — the rest                                                                      | —          |                                                                |
-| `Dungeons`                                                                                 | —          |                                                                |
-| `Clicker`                                                                                  | —          |                                                                |
-| `Post`                                                                                     | —          |                                                                |
-| `Styled` + `App`                                                                           | —          | Primitives — the rule bites least here, so they go late        |
-| `User`, `Achievement`, `Docs`, `Dashboard`, `Dataset`, `FlowchartEditor`, `RichTextEditor` | —          |                                                                |
-| `Visual`, `Anime`, `About`, `Login`, `Nuxt`, `Transition`, `Fragment.vue`                  | —          |                                                                |
+| Unit                                                                                       | Swept      | Notes                                                                      |
+| ------------------------------------------------------------------------------------------ | ---------- | -------------------------------------------------------------------------- |
+| `pages/` + `layouts/`                                                                      | 2026-08-16 | The page-decomposition rule: a page holding no element's state             |
+| `Resource/Sheet`                                                                           | 2026-08-15 | Find/replace bar split; cell shortcuts moved to a composable               |
+| `Message/Model/Message`                                                                    | 2026-08-16 | Forward send button and emoji reaction extracted; poll option row split    |
+| `Message/Model/Room`                                                                       | 2026-08-16 | Ban row split; role editor and settings menus are already one unit each    |
+| `Message/Content/Call`                                                                     | 2026-08-16 | Health panel's status and device rows became two `v-for`s over one array   |
+| `Message/Model/User`                                                                       | 2026-08-16 | Moderation-note row split                                                  |
+| `Message` — the rest                                                                       | 2026-08-16 | Friends: one button component per action across the three lists            |
+| `Resource` — the rest                                                                      | 2026-08-16 | Selection toolbar's three commands, the Home tab lists, the search row     |
+| `Dungeons`                                                                                 | 2026-08-16 | Grid-engine wrappers: shape is the engine's, same ground as the exclusion  |
+| `Clicker`                                                                                  | 2026-08-16 | Already config-array driven — the buy-quantity toggle is the allowed group |
+| `Post`                                                                                     | 2026-08-16 | The comment editor's save _is_ its responsibility, so the button stays     |
+| `Styled` + `App`                                                                           | 2026-08-16 | Primitives — as expected the rule found nothing to split                   |
+| `User`, `Achievement`, `Docs`, `Dashboard`, `Dataset`, `FlowchartEditor`, `RichTextEditor` | 2026-08-16 | Docs search row became a real link; the rest are single-responsibility     |
+| `Visual`, `Anime`, `About`, `Login`, `Nuxt`, `Transition`, `Fragment.vue`                  | 2026-08-16 | Canvas/animation effects — one concern each, splitting simplifies nothing  |
 
 ## Find recipe
 
@@ -35,9 +31,18 @@ grep -rn -A 20 "v-for" --include=*.vue packages/app/app | grep "@click"
 # a v-for whose item body calls a helper per row — the computed sweep's handover
 grep -rn -A 18 'v-for=' --include=*.vue packages/app/app |
   grep -E '\b(get|format|compute|build|parse|to)[A-Z][a-zA-Z]*\(|dayjs\('
+# repeated list items with no v-for — the array-and-loop rule
+for f in $(grep -rl '<v-list-item' --include=*.vue packages/app/app/components); do
+  [ "$(grep -c '<v-list-item' "$f")" -ge 3 ] && [ "$(grep -c 'v-for' "$f")" -eq 0 ] && echo "$f"
+done
+# a dialog mounted per row
+grep -rn -A 25 'v-for=' --include=*.vue packages/app/app | grep -E '<(v-dialog|v-menu)'
 # a page owning an element's state
 grep -rlE "\b(ref|computed|useTemplateRef)\(" --include=*.vue packages/app/app/pages
 ```
+
+The page grep's only hits are a `<Head><Title>` computed and route orchestration, both of which the rule allows —
+it fires on the shape, so read what the value feeds before treating a hit as a finding.
 
 On the third: the same helper called **twice** in one row body is the strongest signal, because extracting the
 row collapses both calls into one `computed`. A row already rendering a single child component is not a finding —
