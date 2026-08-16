@@ -19,6 +19,10 @@ const createColumn = useCreateColumn();
 const defaultColumn = structuredClone(ColumnTypeCreateMap[ColumnType.String].create());
 const editedColumn = ref<Column>(structuredClone(defaultColumn));
 const jsonSchema = zodToJsonSchema(columnFormSchema);
+const value = extractSchemaFields(ColumnTypeFormSchemaMap[defaultColumn.type], defaultColumn);
+const editedValue = computed(() =>
+  extractSchemaFields(ColumnTypeFormSchemaMap[editedColumn.value.type], editedColumn.value),
+);
 const options = useColumnFormOptions(
   () => dataSource,
   () => "",
@@ -33,9 +37,9 @@ const resetForm = () => {
     icon="mdi-table-column-plus-after"
     title="Create Column"
     tooltip-text="Add Column"
-    :edited-value="extractSchemaFields(ColumnTypeFormSchemaMap[editedColumn.type], editedColumn)"
+    :edited-value
     :schema="columnFormSchema"
-    :value="extractSchemaFields(ColumnTypeFormSchemaMap[defaultColumn.type], defaultColumn)"
+    :value
     @reset="resetForm()"
     @submit="
       (onComplete) => {

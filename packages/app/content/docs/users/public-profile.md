@@ -12,7 +12,7 @@ Every post and comment names its author, and that name now links to `/user/[id]`
 The page is public — it renders for signed-out visitors on the rate-limited procedure, with no session required. It composes three reads:
 
 - **Identity** comes from `user.readUser(id)`, whose Drizzle query projects only the allowlisted columns (name, image, biography). The private `email` column is never part of the projection, so it cannot leave the database regardless of what the client asks for.
-- **Achievements** reuse `achievement.readUserAchievements(id)`, which is already public and takes any user id. The page merges each row with its static, client-side definition to show total unlocked points and the most recent unlocks, rendered with the achievement gallery's grid item.
+- **Achievements** reuse `achievement.readUserAchievements(id)`, which is already public and takes any user id. The page merges each row with its static, client-side definition — the viewer-masked map `achievement.readAchievementMap` returns needs a session, which this page deliberately does not require — to show total unlocked points and the most recent unlocks, rendered with the achievement gallery's grid item.
 - **Posts** reuse the home feed's machinery: the same cursor-paginated `post.readPosts`, now accepting an optional `userId` filter, feeding the same post card and infinite-scroll waypoint. Only top-level posts appear (`parentId IS NULL`) — comments are excluded.
 
 Author name and avatar on post and comment cards are `NuxtLink`s to the profile. Messaging surfaces deliberately keep their own member-profile popovers — room identity is not global identity.
@@ -39,16 +39,16 @@ The `userId` filter composes with the existing clauses on `readPosts`: the `pare
 
 Paths relative to `packages/app`.
 
-| File                                                 | Role                                     |
-| ---------------------------------------------------- | ---------------------------------------- |
-| `app/pages/user/[id].vue`                            | the profile page                         |
-| `app/components/User/Profile/Header.vue`             | avatar, name, biography                  |
-| `app/components/User/Profile/AchievementSummary.vue` | achievement points and recent unlocks    |
-| `app/composables/post/useReadUserPosts.ts`           | cursor pagination for one author's posts |
-| `server/trpc/routers/user.ts`                        | `readUser` public identity query         |
-| `server/trpc/routers/post.ts`                        | `userId` filter on `readPosts`           |
-| `app/components/Post/Card.vue`                       | author link                              |
-| `app/components/Post/Comment/Card.vue`               | author link                              |
+| File                                                 | Role                                                        |
+| ---------------------------------------------------- | ----------------------------------------------------------- |
+| `app/pages/user/[id].vue`                            | the profile page                                            |
+| `app/components/User/Profile/Header.vue`             | avatar, name, biography                                     |
+| `app/components/User/Profile/AchievementSummary.vue` | achievement points and recent unlocks                       |
+| `app/composables/post/useReadPosts.ts`               | cursor pagination, filtered by author when given a `userId` |
+| `server/trpc/routers/user.ts`                        | `readUser` public identity query                            |
+| `server/trpc/routers/post.ts`                        | `userId` filter on `readPosts`                              |
+| `app/components/Post/Card.vue`                       | author link                                                 |
+| `app/components/Post/Comment/Card.vue`               | author link                                                 |
 
 ## Notes
 

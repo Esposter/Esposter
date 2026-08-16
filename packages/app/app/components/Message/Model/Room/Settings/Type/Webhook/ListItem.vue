@@ -13,7 +13,6 @@ const runtimeConfig = useRuntimeConfig();
 const webhookStore = useWebhookStore();
 const { updateWebhook } = webhookStore;
 const name = ref(webhook.name);
-const source = computed(() => `${runtimeConfig.public.baseUrl}/api/webhooks/${webhook.id}/${webhook.token}`);
 </script>
 
 <template>
@@ -31,7 +30,10 @@ const source = computed(() => `${runtimeConfig.public.baseUrl}/api/webhooks/${we
       @blur="updateWebhook(roomId, { id: webhook.id, name })"
     />
     <template #append>
-      <StyledClipboardIconButton :source text="Copy Webhook URL" />
+      <StyledClipboardIconButton
+        :source="`${runtimeConfig.public.baseUrl}/api/webhooks/${webhook.id}/${webhook.token}`"
+        text="Copy Webhook URL"
+      />
       <MessageModelRoomSettingsTypeWebhookRotateTokenButton :id="webhook.id" :room-id />
       <MessageModelRoomSettingsTypeWebhookDeleteButton :id="webhook.id" />
       <v-spacer />

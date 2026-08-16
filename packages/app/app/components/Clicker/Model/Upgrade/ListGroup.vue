@@ -7,11 +7,10 @@ interface UpgradeListGroupProps {
 }
 
 const { isBought, upgrades } = defineProps<UpgradeListGroupProps>();
-const hasUpgrades = computed(() => upgrades.length > 0);
 </script>
 
 <template>
-  <ClickerModelListGroup v-if="hasUpgrades" icon="mdi-gesture-swipe-up" title="Upgrades">
+  <ClickerModelListGroup v-if="upgrades.length > 0" icon="mdi-gesture-swipe-up" title="Upgrades">
     <ClickerModelUpgradeListItem v-for="upgrade of upgrades" :key="upgrade.id" :upgrade :is-bought />
   </ClickerModelListGroup>
 </template>

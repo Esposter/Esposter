@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TValue, TGrid extends readonly (readonly TValue[])[]">
+<script setup lang="ts" generic="TGrid extends readonly (readonly unknown[])[]">
 import type { Grid } from "@/models/dungeons/Grid";
 import type { Position } from "grid-engine";
 
@@ -7,7 +7,7 @@ import { Input } from "phaser";
 import { Text } from "vue-phaserjs";
 
 interface TextProps {
-  grid: Grid<TValue, TGrid>;
+  grid: Grid<TGrid>;
   gridPosition: Position;
   position: Position;
   text: string;

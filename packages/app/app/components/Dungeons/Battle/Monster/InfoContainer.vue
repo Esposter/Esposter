@@ -4,8 +4,6 @@ import { ExperienceLabelTextStyle } from "@/assets/dungeons/styles/ExperienceLab
 import { HealthLabelTextStyle } from "@/assets/dungeons/styles/HealthLabelTextStyle";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { phaserEventEmitter } from "@/services/phaser/events";
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { prettify } from "@/util/text/prettify";
 import { Container, Image, Text } from "vue-phaserjs";
 
@@ -15,13 +13,11 @@ interface InfoContainerProps {
 
 defineSlots<{ default: () => VNode }>();
 const { isEnemy } = defineProps<InfoContainerProps>();
-const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
+const store = useBattleMonsterStore(isEnemy);
 const { initialMonsterInfoContainerPosition } = store;
 const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(store);
-const scaleY = computed(() => (isEnemy ? 0.8 : undefined));
+const monsterName = computed(() => prettify(activeMonster.value.key));
 const nameDisplayWidth = ref<number>();
-const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
-const healthBarPercentage = computed(() => (activeMonster.value.status.hp / activeMonster.value.stats.maxHp) * 100);
 const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
 
 onUnmounted(() => {
@@ -31,12 +27,12 @@ onUnmounted(() => {
 
 <template>
   <Container :configuration="{ ...monsterInfoContainerPosition, tween: monsterInfoContainerTween }">
-    <Image :configuration="{ origin: 0, texture: ImageKey.HealthBarBackground, scaleY }" />
+    <Image :configuration="{ origin: 0, texture: ImageKey.HealthBarBackground, scaleY: isEnemy ? 0.8 : undefined }" />
     <Text
       :configuration="{
         x: 30,
         y: 20,
-        text: prettify(activeMonster.key),
+        text: monsterName,
         style: {
           color: '#7e3d3f',
           fontSize: 32,
@@ -47,7 +43,7 @@ onUnmounted(() => {
     />
     <Text
       :configuration="{
-        x: levelX,
+        x: 35 + (nameDisplayWidth ?? 0),
         y: 23,
         text: `L${activeMonster.stats.level}`,
         style: {
@@ -64,7 +60,11 @@ onUnmounted(() => {
         style: HealthLabelTextStyle,
       }"
     />
-    <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 34, y: 34 }" :bar-percentage="healthBarPercentage" />
+    <DungeonsUIBarContainer
+      :type="BarType.Health"
+      :position="{ x: 34, y: 34 }"
+      :bar-percentage="(activeMonster.status.hp / activeMonster.stats.maxHp) * 100"
+    />
     <template v-if="!isEnemy">
       <Text
         :configuration="{

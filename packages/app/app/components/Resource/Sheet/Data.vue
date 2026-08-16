@@ -10,8 +10,6 @@ const rowStore = useRowStore();
 const { filteredRows } = storeToRefs(rowStore);
 const openPanels = ref(["columns", "data"]);
 const isLoading = ref(true);
-// "Not yet imported" is an empty data section (the blob is written on first save)
-const hasData = computed(() => dataSource.value.columns.length > 0 || dataSource.value.rows.length > 0);
 const statistics = computed(() => computeDataSourceStatistics(dataSource.value));
 
 onMounted(async () => {
@@ -30,7 +28,8 @@ onMounted(async () => {
       <ResourceSheetToolbarImportDatasetButton />
       <ResourceSheetToolbarExportButton />
     </div>
-    <template v-if="hasData">
+    <!-- "Not yet imported" is an empty data section (the blob is written on first save) -->
+    <template v-if="dataSource.columns.length > 0 || dataSource.rows.length > 0">
       <ResourceSheetMetadataBar :metadata="dataSource.metadata" />
       <v-expansion-panels v-model="openPanels" multiple>
         <v-expansion-panel value="columns">

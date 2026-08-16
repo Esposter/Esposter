@@ -1,17 +1,18 @@
 <script setup lang="ts">
+import { DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
 import { useColorsStore } from "@/store/colors";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
 const visualStore = useVisualStore();
-const { noColumns, visuals } = storeToRefs(visualStore);
+const { visuals } = storeToRefs(visualStore);
 const colorsStore = useColorsStore();
 const { background, border, surface } = storeToRefs(colorsStore);
 </script>
 
 <template>
   <v-container fluid flex-1>
-    <GridLayout v-model:layout="visuals" :col-num="noColumns" :row-height="40" :use-style-cursor="false">
+    <GridLayout v-model:layout="visuals" :col-num="DASHBOARD_NO_COLUMNS" :row-height="40" :use-style-cursor="false">
       <GridItem v-for="{ id, type, x, y, w, h } of visuals" :key="id" :i="id" :x :y :w :h>
         <DashboardVisualPreviewContainer :id size-full :type />
       </GridItem>

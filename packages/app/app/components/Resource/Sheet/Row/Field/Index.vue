@@ -27,9 +27,6 @@ const cellStore = useCellStore();
 const { requestFocus } = cellStore;
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
 const text = computed(() => getCellText(item, column));
-const isCurrentOccurrence = computed(
-  () => currentOccurrence.value?.rowIndex === rowIndex && currentOccurrence.value?.columnName === column.name,
-);
 const isOutlier = computed(() => outlierCells.value.has(getItemId(item.id, column.name)));
 </script>
 
@@ -38,7 +35,7 @@ const isOutlier = computed(() => outlierCells.value.has(getItemId(item.id, colum
     <ResourceSheetFindReplaceHighlight
       v-if="findValue"
       :class="{ [OUTLIER_HIGHLIGHT_CLASS]: isOutlier }"
-      :is-current-occurrence
+      :is-current-occurrence="currentOccurrence?.rowIndex === rowIndex && currentOccurrence?.columnName === column.name"
       :search="findValue"
       :text
     />

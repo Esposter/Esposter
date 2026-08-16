@@ -1,9 +1,8 @@
 import type { CSSProperties } from "vue";
 
 import { LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
+import { APP_BAR_CSS_VALUE } from "@/services/app/constants";
 import { useLayoutStore } from "@/store/layout";
-
-const APP_BAR_CSS_VALUE = "var(--app-bar-height)";
 
 export const useFixedLayoutStyles = (
   bottomOffset: Ref<number | string>,
@@ -12,8 +11,6 @@ export const useFixedLayoutStyles = (
 ) => {
   const layoutStore = useLayoutStore();
   const { isDesktop, isLeftDrawerOpen, isRightDrawerOpen } = storeToRefs(layoutStore);
-  const leftOffset = computed(() => (isLeftDrawerOpen.value ? 0 : -toValue(leftWidth)));
-  const rightOffset = computed(() => (isRightDrawerOpen.value ? 0 : -toValue(rightWidth)));
   // We only need to offset the middle if we are on desktop
   // As the drawers are floating on non-desktop screens
   const middleLeftOffset = computed(() => (isDesktop.value && isLeftDrawerOpen.value ? toValue(leftWidth) : 0));
@@ -26,7 +23,7 @@ export const useFixedLayoutStyles = (
     })),
     left: computed<CSSProperties>(() => ({
       height: `calc(100% - ${APP_BAR_CSS_VALUE})`,
-      left: `${leftOffset.value}px`,
+      left: `${isLeftDrawerOpen.value ? 0 : -toValue(leftWidth)}px`,
       top: APP_BAR_CSS_VALUE,
       width: `${toValue(leftWidth)}px`,
     })),
@@ -38,7 +35,7 @@ export const useFixedLayoutStyles = (
     })),
     right: computed<CSSProperties>(() => ({
       height: `calc(100% - ${APP_BAR_CSS_VALUE})`,
-      right: `${rightOffset.value}px`,
+      right: `${isRightDrawerOpen.value ? 0 : -toValue(rightWidth)}px`,
       top: APP_BAR_CSS_VALUE,
       width: `${toValue(rightWidth)}px`,
     })),

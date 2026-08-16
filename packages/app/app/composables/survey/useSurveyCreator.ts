@@ -22,6 +22,11 @@ export const useSurveyCreator = () => {
   const exportJsonFile = useExportJsonFile();
   const getResourceId = () => resource.value?.id ?? "";
   const deleteFile = useDeleteResourceFile(ResourceType.Survey, getResourceId);
+  // Every deletion hook below is handed a url the creator may never have set — a logo that was never
+  // Uploaded, an image choice left blank — so the presence check belongs with the delete, not at each hook
+  const deleteFileIfPresent = async (url: string | undefined) => {
+    if (url) await deleteFile(url);
+  };
   const uploadFile = useUploadResourceFile(ResourceType.Survey, getResourceId);
   const isDark = useIsDark();
   // The creator needs the loaded model at construction, so the blade renders a skeleton until it exists
@@ -71,36 +76,19 @@ export const useSurveyCreator = () => {
     LogoImageViewModel.prototype.remove = getSynchronizedFunction(async (logoViewModel: LogoImageViewModel) => {
       const url = logoViewModel.survey.logo;
       removeLogoImage(logoViewModel);
-      if (!url) return;
-      await deleteFile(url);
+      await deleteFileIfPresent(url);
     });
     newCreator.themeEditor.themeModel.onPropertyChanged.add(async (_themeEditor, { name, newValue, oldValue }) => {
-      if (name === getPropertyNames<ThemeTabPlugin["themeModel"]>().backgroundImage) {
-        if (!newValue && oldValue) await deleteFile(oldValue);
-        return;
-      }
+      if (name !== getPropertyNames<ThemeTabPlugin["themeModel"]>().backgroundImage || newValue) return;
+      await deleteFileIfPresent(oldValue);
     });
     newCreator.onCollectionItemDeleting.add(async (_creator, { item }) => {
-      if (item instanceof ImageItemValue) {
-        if (!item.imageLink) return;
-        await deleteFile(item.imageLink);
-        return;
-      }
+      if (item instanceof ImageItemValue) await deleteFileIfPresent(item.imageLink);
     });
     newCreator.onElementDeleting.add(async (_creator, { element }) => {
-      if (element instanceof QuestionImageModel) {
-        if (!element.imageLink) return;
-        await deleteFile(element.imageLink);
-        return;
-      }
-
-      if (element instanceof QuestionImagePickerModel) {
-        for (const item of element.choices as ImageItemValue[]) {
-          if (!item.imageLink) continue;
-          await deleteFile(item.imageLink);
-        }
-        return;
-      }
+      if (element instanceof QuestionImageModel) await deleteFileIfPresent(element.imageLink);
+      else if (element instanceof QuestionImagePickerModel)
+        for (const item of element.choices as ImageItemValue[]) await deleteFileIfPresent(item.imageLink);
     });
     creator.value = newCreator;
   });

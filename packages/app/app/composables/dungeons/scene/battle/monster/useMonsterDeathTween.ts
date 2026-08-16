@@ -1,11 +1,10 @@
 import { dayjs } from "#shared/services/dayjs";
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
+import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useTween } from "vue-phaserjs";
 
 export const useMonsterDeathTween = (isEnemy: boolean) => {
-  const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
+  const store = useBattleMonsterStore(isEnemy);
   const { monsterInfoContainerPosition, monsterInfoContainerTween, monsterPosition, monsterTween } = storeToRefs(store);
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
@@ -26,11 +25,7 @@ export const useMonsterDeathTween = (isEnemy: boolean) => {
     onComplete: () => {
       monsterInfoContainerPosition.value.x = monsterInfoContainerPositionXEnd;
     },
-    x: {
-      from: monsterInfoContainerPosition.value.x,
-      start: monsterInfoContainerPosition.value.x,
-      to: monsterInfoContainerPositionXEnd,
-    },
+    x: getTweenRange(monsterInfoContainerPosition.value.x, monsterInfoContainerPositionXEnd),
   });
 
   return new Promise<void>((resolve) => {
@@ -41,11 +36,7 @@ export const useMonsterDeathTween = (isEnemy: boolean) => {
         monsterPosition.value.y = monsterPositionYEnd;
         resolve();
       },
-      y: {
-        from: monsterPosition.value.y,
-        start: monsterPosition.value.y,
-        to: monsterPositionYEnd,
-      },
+      y: getTweenRange(monsterPosition.value.y, monsterPositionYEnd),
     });
   });
 };

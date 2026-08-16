@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { MimeType } from "#shared/models/file/MimeType";
 import { dayjs } from "#shared/services/dayjs";
+import { AUDIO_RECORDER_TIMER_INTERVAL } from "@/services/richTextEditor/constants";
 import { clearInterval, setInterval } from "worker-timers";
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
@@ -19,7 +20,7 @@ const { data, start, state, stop } = useMediaRecorder({
   onStart: () => {
     timerInterval = setInterval(() => {
       timer.value++;
-    }, 1000);
+    }, AUDIO_RECORDER_TIMER_INTERVAL);
   },
   onStop: () => {
     resetTimer();
@@ -34,6 +35,10 @@ const { data, start, state, stop } = useMediaRecorder({
   },
 });
 const isRecording = computed(() => state.value === "recording");
+const recordButtonProps = computed(() => ({
+  color: isRecording.value ? "error" : undefined,
+  size: "small" as const,
+}));
 const formattedTimer = computed(() => {
   const minutes = Math.floor(timer.value / 60);
   const seconds = timer.value % 60;
@@ -42,25 +47,20 @@ const formattedTimer = computed(() => {
 </script>
 
 <template>
-  <v-tooltip :text="isRecording ? 'Stop Recording' : 'Record Audio Message'">
-    <template #activator="{ props }">
-      <div flex items-center>
-        <span v-if="isRecording" font-bold pr-2>
-          {{ formattedTimer }}
-        </span>
-        <v-btn
-          :="props"
-          :color="isRecording ? 'error' : undefined"
-          :icon="isRecording ? 'mdi-stop-circle-outline' : 'mdi-microphone'"
-          size="small"
-          @click="
-            () => {
-              if (isRecording) stop();
-              else start();
-            }
-          "
-        />
-      </div>
-    </template>
-  </v-tooltip>
+  <div flex items-center>
+    <span v-if="isRecording" font-bold pr-2>
+      {{ formattedTimer }}
+    </span>
+    <StyledTooltipIconButton
+      :button-props="recordButtonProps"
+      :icon="isRecording ? 'mdi-stop-circle-outline' : 'mdi-microphone'"
+      :text="isRecording ? 'Stop Recording' : 'Record Audio Message'"
+      @click="
+        () => {
+          if (isRecording) stop();
+          else start();
+        }
+      "
+    />
+  </div>
 </template>

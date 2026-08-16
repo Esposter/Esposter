@@ -29,20 +29,20 @@ const emit = defineEmits<{
   "start:display-width": [tween: Tweens.Tween];
   "update:display-width": [value: number];
 }>();
-const barPercentage = computed(() => clamp(baseBarPercentage, 0, 100));
 // Origin at the middle-left of the health caps so it spans the game object's full width.
 const imageOrigin = { originX: 0, originY: 0.5 } as const satisfies Pick<ImagePosition, "originX" | "originY">;
+const imagePosition = computed(() => ({ ...position, ...imageOrigin }));
 </script>
 
 <template>
   <Container :configuration="{ ...position }">
-    <DungeonsUIBarShadow :image-position="{ ...position, ...imageOrigin }" :width :scale-y />
+    <DungeonsUIBarShadow :image-position :width :scale-y />
     <DungeonsUIBar
       :type
-      :image-position="{ ...position, ...imageOrigin }"
+      :image-position
       :width
       :scale-y
-      :bar-percentage
+      :bar-percentage="clamp(baseBarPercentage, 0, 100)"
       :is-skip-animations
       @start:display-width="(...args) => emit('start:display-width', ...args)"
       @update:display-width="(...args) => emit('update:display-width', ...args)"

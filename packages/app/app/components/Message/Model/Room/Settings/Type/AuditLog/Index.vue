@@ -16,7 +16,6 @@ const filters = computed(() => ({
   targetUserId: targetUserId.value,
   type: type.value,
 }));
-const hasFilters = computed(() => Boolean(type.value || actorUserId.value || targetUserId.value));
 const { readModerationLog, readMoreModerationLog } = useReadModerationLog(room.id, filters);
 const moderationLogStore = useModerationLogStore();
 const { hasMore, items } = storeToRefs(moderationLogStore);
@@ -34,7 +33,7 @@ await Promise.all([readModerationLog(), readMembers()]);
       @update="readModerationLog"
     />
     <div v-if="items.length === 0" op-medium-emphasis>
-      {{ hasFilters ? "No audit log entries match the filters." : "No audit log entries." }}
+      {{ type || actorUserId || targetUserId ? "No audit log entries match the filters." : "No audit log entries." }}
     </div>
     <v-list v-else lines="two">
       <MessageModelRoomSettingsTypeAuditLogListItem v-for="item of items" :key="item.rowKey" :item />

@@ -10,13 +10,16 @@ const { label } = defineProps<ResourceSheetSelectionToolbarProps>();
 const selectedIds = defineModel<string[]>({ required: true });
 const emit = defineEmits<{ delete: [ids: string[]] }>();
 const pluralizedLabel = computed(() => pluralize(label, selectedIds.value.length));
+const cardProps = computed(() => ({
+  title: `Delete ${selectedIds.value.length} ${capitalize(pluralizedLabel.value)}`,
+}));
 </script>
 
 <template>
   <v-toolbar>
     <v-toolbar-title>{{ selectedIds.length }} {{ pluralizedLabel }} selected</v-toolbar-title>
     <StyledConfirmDeleteDialogButton
-      :card-props="{ title: `Delete ${selectedIds.length} ${capitalize(pluralizedLabel)}` }"
+      :card-props
       @delete="
         (onComplete) => {
           emit('delete', selectedIds);

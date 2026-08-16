@@ -6,11 +6,10 @@ interface BuildingListGroupProps {
 }
 
 const { buildings } = defineProps<BuildingListGroupProps>();
-const hasBuildings = computed(() => buildings.length > 0);
 </script>
 
 <template>
-  <ClickerModelListGroup v-if="hasBuildings" icon="mdi-domain" title="Buildings">
+  <ClickerModelListGroup v-if="buildings.length > 0" icon="mdi-domain" title="Buildings">
     <ClickerModelBuildingListItem v-for="building of buildings" :key="building.id" :building />
   </ClickerModelListGroup>
 </template>

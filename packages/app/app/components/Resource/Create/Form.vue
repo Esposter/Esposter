@@ -26,6 +26,11 @@ const sheetResource = ref<SheetResource>();
 const fileError = ref("");
 // Submitting mid-parse would create an empty sheet and silently discard the import, so parsing blocks Create
 const isFileParsing = ref(false);
+const nameRules = computed(() => [rules.required(), rules.maxLength(RESOURCE_NAME_MAX_LENGTH)]);
+const buttonProps = computed(() => ({
+  disabled: !isValid.value || Boolean(fileError.value) || isFileParsing.value,
+  loading: isSubmitting.value,
+}));
 // The create call writes no blob, so the parsed rows land through the same first save the Data blade would do.
 // A failed save still leaves a valid empty sheet, so the user keeps the resource and is told what is missing
 const submit = async () => {
@@ -82,13 +87,7 @@ const submit = async () => {
             }
           "
         >
-          <v-text-field
-            v-model="name"
-            autofocus
-            :counter="RESOURCE_NAME_MAX_LENGTH"
-            label="Name"
-            :rules="[rules.required(), rules.maxLength(RESOURCE_NAME_MAX_LENGTH)]"
-          />
+          <v-text-field v-model="name" autofocus :counter="RESOURCE_NAME_MAX_LENGTH" label="Name" :rules="nameRules" />
           <ResourceCreateSheetFile
             v-if="type === ResourceType.Sheet"
             v-model="sheetResource"
@@ -98,12 +97,7 @@ const submit = async () => {
           />
           <div mt-4 flex gap-2 justify-end>
             <v-btn :to="RoutePath.ResourceExplorerCreate" variant="text">Cancel</v-btn>
-            <StyledButton
-              type="submit"
-              :button-props="{ disabled: !isValid || Boolean(fileError) || isFileParsing, loading: isSubmitting }"
-            >
-              Create
-            </StyledButton>
+            <StyledButton type="submit" :button-props> Create </StyledButton>
           </div>
         </v-form>
       </v-card-text>

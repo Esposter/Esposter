@@ -6,7 +6,9 @@ import type { VMenu } from "vuetify/components";
 
 import { Target } from "#shared/models/clicker/data/Target";
 import { formatNumberLong } from "@/services/clicker/format";
-import { getGlobImage } from "@/services/clicker/getGlobImage";
+import { BuildingIconMap } from "@/services/clicker/icon/BuildingIconMap";
+import { MenuIconMap } from "@/services/clicker/icon/MenuIconMap";
+import { UpgradeIconMap } from "@/services/clicker/icon/UpgradeIconMap";
 import { marked } from "marked";
 
 type ItemMenuProps = Partial<Pick<BuildingWithStats, "amount">> &
@@ -23,21 +25,7 @@ const { amount, description, flavorDescription, id, isAffordable, menuProps, pri
 const descriptionHtml = computed(() => (description ? marked.parse(description, { async: false }) : ""));
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`, { async: false }));
 const displayPrice = computed(() => formatNumberLong(price));
-const buildingIcon = computed(() =>
-  getGlobImage(
-    import.meta.glob<string>("@/assets/clicker/icons/buildings/*.png", { eager: true, import: "default" }),
-    id,
-  ),
-);
-const menuIcon = computed(() =>
-  getGlobImage(import.meta.glob<string>("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" }), id),
-);
-const upgradeIcon = computed(() =>
-  getGlobImage(
-    import.meta.glob<string>("@/assets/clicker/icons/upgrades/**/*.png", { eager: true, import: "default" }),
-    id,
-  ),
-);
+const upgradeIcon = computed(() => UpgradeIconMap[id]);
 </script>
 
 <template>
@@ -49,7 +37,7 @@ const upgradeIcon = computed(() =>
             mr-1
             width="2rem"
             height="2rem"
-            :src="type === Target.Building ? buildingIcon : upgradeIcon"
+            :src="type === Target.Building ? BuildingIconMap[id] : upgradeIcon"
             :alt="id"
           />
         </template>
@@ -69,7 +57,7 @@ const upgradeIcon = computed(() =>
     <StyledCard>
       <v-card-title font-bold flex>
         <div>
-          <v-img width="2rem" height="2rem" :src="type === Target.Building ? menuIcon : upgradeIcon" :alt="id" />
+          <v-img width="2rem" height="2rem" :src="type === Target.Building ? MenuIconMap[id] : upgradeIcon" :alt="id" />
         </div>
         {{ id }}
       </v-card-title>

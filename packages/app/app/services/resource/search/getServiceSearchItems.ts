@@ -4,7 +4,7 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
 import { CreatableResourceTypes } from "@/services/resource/CreatableResourceTypes";
 import { ResourceTypeDescriptionMap } from "@/services/resource/ResourceTypeDescriptionMap";
-import { RoutePath } from "@esposter/shared";
+import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 
 // Client-side substring match over the type registry — a registry this small justifies neither server work
 // Nor a fuzzy library
@@ -18,7 +18,7 @@ export const getServiceSearchItems = (searchQuery: string): ResourceSearchItem[]
     createTo: RoutePath.ResourceExplorerCreateType(type),
     group: ResourceSearchGroup.Services,
     icon: ResourceDefinitionMap[type].icon,
-    id: `${ResourceSearchGroup.Services}-${type}`,
+    id: `${ResourceSearchGroup.Services}${ID_SEPARATOR}${type}`,
     subtitle: ResourceTypeDescriptionMap[type],
     title: ResourceDefinitionMap[type].title,
     to: { path: RoutePath.ResourceExplorerAll, query: { types: type } },

@@ -1,10 +1,6 @@
 import type { AttackId } from "#shared/models/dungeons/attack/AttackId";
 
 import { attacks } from "@/assets/dungeons/data/attacks";
-import { NotFoundError } from "@esposter/shared";
+import { getById } from "@/services/dungeons/getById";
 
-export const getAttack = (attackId: AttackId) => {
-  const attack = attacks.find(({ id }) => id === attackId);
-  if (!attack) throw new NotFoundError(getAttack.name, attackId);
-  return attack;
-};
+export const getAttack = (attackId: AttackId) => getById(attacks, attackId, getAttack.name);

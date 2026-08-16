@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
+import { EmojiDescriptionMap } from "@/services/message/emoji/EmojiDescriptionMap";
 import { EmojiMoreMenuItems } from "@/services/message/emoji/EmojiMoreMenuItems";
-import { unemojify } from "@/services/message/emoji/unemojify";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { useMessageStore } from "@/store/message";
 
@@ -18,6 +18,11 @@ const { actionMessageItems, deleteMessageItem, rowKey, updateMessageMenuItems } 
 const emit = defineEmits<{ "update:menu": [value: boolean]; "update:select-emoji": [emoji: string] }>();
 const messageStore = useMessageStore();
 const { optionsMenu } = storeToRefs(messageStore);
+const moreMenuProps = computed(() => ({
+  location: "left" as const,
+  target: optionsMenu.value?.target,
+  transition: "none",
+}));
 </script>
 
 <template>
@@ -26,7 +31,7 @@ const { optionsMenu } = storeToRefs(messageStore);
     icon="mdi-dots-horizontal"
     text="More"
     :button-props="{ class: 'm-0', size: 'small', tile: true }"
-    :menu-props="{ location: 'left', target: optionsMenu?.target, transition: 'none' }"
+    :menu-props="moreMenuProps"
     @update:model-value="
       (value) => {
         // We just need to set a placeholder so that the menu will appear
@@ -39,7 +44,7 @@ const { optionsMenu } = storeToRefs(messageStore);
     <v-list density="compact" text-body-medium>
       <v-list-item>
         <div flex gap-x-2>
-          <v-tooltip v-for="emoji of EmojiMoreMenuItems" :key="emoji" :text="unemojify(emoji)">
+          <v-tooltip v-for="emoji of EmojiMoreMenuItems" :key="emoji" :text="EmojiDescriptionMap.get(emoji)">
             <template #activator="{ props }">
               <v-btn
                 :text="emoji"

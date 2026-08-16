@@ -18,15 +18,18 @@ const emit = defineEmits<{ reset: []; submit: [onComplete: () => void] }>();
 const styledDialog = useTemplateRef("styledDialog");
 const errorIcon = useTemplateRef("errorIcon");
 const isEqual = computed(() => deepEqual(value, editedValue));
-const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || (!isCreate && isEqual.value));
+const cardProps = computed(() => ({ title }));
+const confirmButtonAttrs = computed(() => ({
+  disabled: !(errorIcon.value?.isValid ?? true) || (!isCreate && isEqual.value),
+}));
 </script>
 
 <template>
   <StyledFormDialog
     ref="styledDialog"
     v-model="modelValue"
-    :card-props="{ title }"
-    :confirm-button-attrs="{ disabled }"
+    :card-props
+    :confirm-button-attrs
     :confirm-button-props="{ text: 'Save & Close' }"
     @submit="(_event, onComplete) => emit('submit', onComplete)"
   >

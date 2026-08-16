@@ -6,6 +6,7 @@ import type { UserAchievementWithDefinition } from "@/models/achievement/UserAch
 import type { AchievementName, UserAchievementWithRelations } from "@esposter/db-schema";
 
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
+import { getUnlockedUserAchievements } from "@/services/achievement/getUnlockedUserAchievements";
 import { mapToUserAchievementWithDefinition } from "@/services/achievement/mapToUserAchievementWithDefinition";
 
 export const useAchievementStore = defineStore("achievement", () => {
@@ -18,24 +19,12 @@ export const useAchievementStore = defineStore("achievement", () => {
   };
   const userAchievements = ref<UserAchievementWithDefinition[]>([]);
   const stats = computed(() => {
-    const achievementDefinitionMapValue = achievementDefinitionMap.value;
-    if (!achievementDefinitionMapValue)
-      return {
-        totalAchievements: 0,
-        totalPoints: 0,
-        unlockedAchievements: 0,
-        unlockedPoints: 0,
-      };
-
-    const unlockedAchievements = userAchievements.value.filter(({ unlockedAt }) => unlockedAt !== null);
+    const unlockedUserAchievements = getUnlockedUserAchievements(userAchievements.value);
     return {
       totalAchievements: achievementDefinitions.value.length,
       totalPoints: achievementDefinitions.value.reduce((total, { points }) => total + points, 0),
-      unlockedAchievements: unlockedAchievements.length,
-      unlockedPoints: unlockedAchievements.reduce(
-        (total, { achievement: { name } }) => total + achievementDefinitionMapValue[name].points,
-        0,
-      ),
+      unlockedAchievements: unlockedUserAchievements.length,
+      unlockedPoints: unlockedUserAchievements.reduce((total, { achievement: { points } }) => total + points, 0),
     };
   });
   const recentlyUnlockedUserAchievements = ref<UserAchievementWithDefinition[]>([]);
@@ -43,10 +32,6 @@ export const useAchievementStore = defineStore("achievement", () => {
     recentlyUnlockedUserAchievements.value = recentlyUnlockedUserAchievements.value.filter(
       ({ achievement }) => achievement.name !== name,
     );
-  };
-  const isAchievementUnlocked = (name: AchievementName): boolean => {
-    const userAchievement = userAchievements.value.find(({ achievement }) => achievement.name === name);
-    return userAchievement?.unlockedAt !== null;
   };
   const updateAchievement = (userAchievement: UserAchievementWithRelations) => {
     if (!achievementDefinitionMap.value) return;
@@ -65,11 +50,9 @@ export const useAchievementStore = defineStore("achievement", () => {
       recentlyUnlockedUserAchievements.value.push(userAchievementWithDefinition);
   };
   return {
-    achievementDefinitionMap,
     achievementDefinitions,
     deleteRecentlyUnlockedUserAchievement,
     initializeAchievementDefinitionMap,
-    isAchievementUnlocked,
     recentlyUnlockedUserAchievements,
     stats,
     updateAchievement,

@@ -72,6 +72,7 @@ const filterValues = computed<ResourceFilterValues>(() => ({
 const filterKey = computed(() => JSON.stringify(filterValues.value));
 const itemsPerPage = ref(RESOURCE_LIST_ITEMS_PER_PAGE);
 const isGroupedByType = ref(false);
+const groupBy = computed(() => (isGroupedByType.value ? [{ key: "type" }] : []));
 // Summary is a lens on the same filtered query rather than a route, so it stays local to the workbench
 const isSummaryView = ref(false);
 const {
@@ -168,7 +169,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       flex
       flex-1
       flex-col
-      :group-by="isGroupedByType ? [{ key: 'type' }] : []"
+      :group-by
       :headers="visibleHeaders"
       :items
       :items-length="count"

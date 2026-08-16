@@ -21,11 +21,8 @@ const pollContent = computed(() => {
 });
 const totalVotes = computed(() => Object.keys(pollContent.value.votes).length);
 const voteCountMap = computed(() => getVoteCountMap(pollContent.value.votes));
-const getVotePercentage = (optionId: string) => {
-  const count = voteCountMap.value.get(optionId) ?? 0;
-  return totalVotes.value > 0 ? Math.round((count / totalVotes.value) * 100) : 0;
-};
 const userId = computed(() => session.value?.user.id);
+const totalVotesDescription = computed(() => getVoteDescription(totalVotes.value));
 const { isVoting, vote } = await useVotePoll(
   () => message,
   () => pollContent.value,
@@ -52,20 +49,15 @@ const { isVoting, vote } = await useVotePoll(
           hide-details
           @update:model-value="vote"
         >
-          <template v-for="{ id, label } of pollContent.options" :key="id">
-            <v-radio :value="id">
-              <template #label>
-                <div flex w-full>
-                  <div flex-1>{{ label }}</div>
-                  <div text-hint>
-                    {{ getVoteDescription(voteCountMap.get(id) ?? 0) }} · {{ getVotePercentage(id) }}%
-                  </div>
-                </div>
-              </template>
-            </v-radio>
-            <v-progress-linear :model-value="getVotePercentage(id)" color="primary" mb-3 />
-          </template>
-          <v-list-subheader>{{ getVoteDescription(totalVotes) }}</v-list-subheader>
+          <MessageModelMessageTypePollOption
+            v-for="{ id, label } of pollContent.options"
+            :id
+            :key="id"
+            :label
+            :total-votes
+            :vote-count="voteCountMap.get(id) ?? 0"
+          />
+          <v-list-subheader>{{ totalVotesDescription }}</v-list-subheader>
         </v-radio-group>
       </v-card-text>
     </v-card>

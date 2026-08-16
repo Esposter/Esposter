@@ -1,10 +1,6 @@
 import type { Area } from "#shared/generated/tiled/propertyTypes/enum/Area";
 
 import { encounterAreas } from "@/assets/dungeons/data/encounterAreas";
-import { NotFoundError } from "@esposter/shared";
+import { getById } from "@/services/dungeons/getById";
 
-export const getEncounterArea = (area: Area) => {
-  const encounterArea = encounterAreas.find(({ id }) => id === area);
-  if (!encounterArea) throw new NotFoundError(getEncounterArea.name, area);
-  return encounterArea;
-};
+export const getEncounterArea = (area: Area) => getById(encounterAreas, area, getEncounterArea.name);

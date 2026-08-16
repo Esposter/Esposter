@@ -12,13 +12,15 @@ interface ConfirmCloseDialogButtonProps<T> {
 const dialog = defineModel<boolean>({ required: true });
 const { editedItem, isDirty, isSavable } = defineProps<ConfirmCloseDialogButtonProps<T>>();
 const emit = defineEmits<{ save: []; "update:edit-form-dialog": [value: false] }>();
+const confirmButtonProps = computed(() => ({ disabled: !isSavable, text: "Save changes" }));
+const displayItemType = computed(() => prettify(editedItem.type));
 </script>
 
 <template>
   <StyledDialog
     v-model="dialog"
     :card-props="{ title: 'Confirm Changes' }"
-    :confirm-button-props="{ disabled: !isSavable, text: 'Save changes' }"
+    :confirm-button-props
     @confirm="
       (onComplete) => {
         onComplete();
@@ -38,8 +40,8 @@ const emit = defineEmits<{ save: []; "update:edit-form-dialog": [value: false] }
         "
       />
     </template>
-    You have modified this {{ prettify(editedItem.type) }}. You can save your changes, discard your changes, or cancel
-    to continue editing.
+    You have modified this {{ displayItemType }}. You can save your changes, discard your changes, or cancel to continue
+    editing.
     <template #prepend-confirm>
       <v-btn
         text="Discard changes"

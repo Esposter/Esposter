@@ -2,10 +2,7 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 
-import { dayjs } from "#shared/services/dayjs";
-import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
-import { RoutePath } from "@esposter/shared";
 
 interface ResourceHomeListProps {
   isLoading?: boolean;
@@ -24,19 +21,6 @@ const { isLoading, resources, source } = defineProps<ResourceHomeListProps>();
     :icon="ResourceListSourceDefinitionMap[source].icon"
   />
   <v-list v-else lines="two">
-    <v-list-item
-      v-for="resource in resources"
-      :key="resource.id"
-      :prepend-icon="ResourceDefinitionMap[resource.type].icon"
-      :title="resource.name"
-      :to="RoutePath.Resource(resource.id)"
-    >
-      <template #subtitle>
-        {{ ResourceDefinitionMap[resource.type].title }} ·
-        <!-- Favorites are ordered by the resource's own recency, so only Recent has an open time to show -->
-        <template v-if="resource.lastAccessedAt">opened {{ dayjs(resource.lastAccessedAt).fromNow() }}</template>
-        <template v-else>{{ dayjs(resource.updatedAt).fromNow() }}</template>
-      </template>
-    </v-list-item>
+    <ResourceHomeListItem v-for="resource in resources" :key="resource.id" :resource />
   </v-list>
 </template>

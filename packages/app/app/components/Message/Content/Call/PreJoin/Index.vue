@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ComponentPublicInstance } from "vue";
+import type { VBtn } from "vuetify/components";
 
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
@@ -16,13 +17,14 @@ const { joinCall } = callStore;
 const knockerStore = useKnockerStore();
 const { knockCall } = knockerStore;
 const isRequestingJoin = ref(false);
-const joinButtonText = computed(() => (isCreator ? "Join now" : "Request to join"));
-const joinHint = computed(() =>
-  isCreator ? "Start the call when you're ready." : "You'll wait in the ready room until someone admits you.",
-);
 const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggleMicrophone } = useCallPreJoinMedia();
 const mediaControls = useTemplateRef<ComponentPublicInstance>("mediaControls");
 const { height: mediaControlsHeight } = useElementSize(mediaControls);
+const buttonProps = computed<VBtn["$props"]>(() => ({
+  loading: isRequestingJoin.value,
+  size: "large",
+  text: isCreator ? "Join now" : "Request to join",
+}));
 </script>
 
 <template>
@@ -41,10 +43,16 @@ const { height: mediaControlsHeight } = useElementSize(mediaControls);
       <StyledCard p-6 text-center flex flex-1 flex-col gap-y-6 justify-center>
         <div flex flex-col gap-y-2>
           <h2 font-medium text-headline-small>Ready to join?</h2>
-          <span op-medium-emphasis text-body-medium>{{ joinHint }}</span>
+          <span op-medium-emphasis text-body-medium>
+            {{
+              isCreator
+                ? "Start the call when you're ready."
+                : "You'll wait in the ready room until someone admits you."
+            }}
+          </span>
         </div>
         <StyledButton
-          :button-props="{ loading: isRequestingJoin, size: 'large', text: joinButtonText }"
+          :button-props
           @click="
             async () => {
               isRequestingJoin = true;

@@ -30,8 +30,20 @@ const isUpdateMode = ref(false);
       />
       <PostDescription v-else :description="comment.description" />
       <v-card-actions p-0>
-        <PostCommentUpdateButton v-if="isCreator" @update:update-mode="isUpdateMode = $event" />
-        <PostCommentDeleteButton v-if="isCreator" @update:delete-mode="deletingId = comment.id" />
+        <StyledTooltipIconButton
+          v-if="isCreator"
+          :button-props="{ size: 'small', tile: true }"
+          icon="mdi-pencil"
+          text="Edit Comment"
+          @click="isUpdateMode = true"
+        />
+        <StyledTooltipIconButton
+          v-if="isCreator"
+          :button-props="{ size: 'small', tile: true }"
+          icon="mdi-delete"
+          text="Delete Comment"
+          @click="deletingId = comment.id"
+        />
       </v-card-actions>
     </v-card>
   </div>

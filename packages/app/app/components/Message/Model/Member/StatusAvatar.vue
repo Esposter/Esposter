@@ -16,10 +16,7 @@ interface StatusAvatarProps {
 const { avatarAttrs = {}, avatarProps = {}, id, image, name } = defineProps<StatusAvatarProps>();
 const statusStore = useStatusStore();
 const { getStatusEnum, getStatusMessage } = statusStore;
-const badge = computed(() => {
-  const userStatusEnum = getStatusEnum(id);
-  return StatusBadgePropsMap[userStatusEnum];
-});
+const badge = computed(() => ({ ...StatusBadgePropsMap[getStatusEnum(id)], location: "bottom end" }));
 const statusTooltip = computed(() => {
   const message = getStatusMessage(id);
   const status = getStatusEnum(id);
@@ -30,14 +27,7 @@ const statusTooltip = computed(() => {
 <template>
   <v-tooltip :text="statusTooltip">
     <template #activator="{ props: tooltipProps }">
-      <StyledAvatar
-        :avatar-attrs
-        :avatar-props
-        :badge="{ ...badge, location: 'bottom end' }"
-        :image
-        :name
-        :="tooltipProps"
-      />
+      <StyledAvatar :avatar-attrs :avatar-props :badge :image :name :="tooltipProps" />
     </template>
   </v-tooltip>
 </template>

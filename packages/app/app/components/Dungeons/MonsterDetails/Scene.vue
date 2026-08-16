@@ -15,6 +15,7 @@ const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
 const { onPlayerInput } = monsterDetailsSceneStore;
 const { selectedMonster } = storeToRefs(monsterDetailsSceneStore);
 const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
+const monsterName = computed(() => prettify(selectedMonster.value.key));
 </script>
 
 <template>
@@ -33,7 +34,7 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
       :configuration="{
         x: 200,
         y: 60,
-        text: prettify(selectedMonster.key),
+        text: monsterName,
         style: { ...MenuTextStyle, fontSize: 40 },
       }"
     />

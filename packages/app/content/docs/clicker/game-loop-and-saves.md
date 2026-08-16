@@ -9,10 +9,10 @@ Production runs on one worker-based game tick, and the entire game state is one 
 
 ## How it works
 
-`pages/clicker.vue` loads the save with `useReadClicker`, then `useTimers` starts two timer composables. Both intervals come from `worker-timers`, which runs in a Web Worker so production continues when the tab is backgrounded (browsers throttle main-thread timers there).
+`pages/clicker.vue` loads the save with `useReadClicker`, then `useTimers` starts two intervals through the shared `useWorkerInterval`, which schedules on `worker-timers` — a Web Worker, so production continues when the tab is backgrounded (browsers throttle main-thread timers there) — and clears the interval on unmount.
 
-- `useGameTickTimer` — one 60 FPS interval calling `applyGameTick`: it computes each bought building's power once per tick, accumulates the building's lifetime `producedValue`, and adds the summed power to `noPoints`. Powers are read fresh every tick, so purchases apply on the next tick with no watch/teardown machinery.
-- `useAutosaveTimer` — saves the full state every 60 seconds.
+- the game tick — one 60 FPS interval calling `applyGameTick`: it computes each bought building's power once per tick, accumulates the building's lifetime `producedValue`, and adds the summed power to `noPoints`. Powers are read fresh every tick, so purchases apply on the next tick with no watch/teardown machinery.
+- the autosave — saves the full state every 60 seconds.
 
 Clicking the central item goes through the popup store: it adds `mousePower` points and spawns a floating `+N` popup at the cursor that despawns after 10 seconds.
 
@@ -53,9 +53,8 @@ Paths relative to `packages/app`.
 | File                                          | Role                                              |
 | --------------------------------------------- | ------------------------------------------------- |
 | `app/composables/clicker/useReadClicker.ts`   | load + hydrate save, immediate-save watch         |
-| `app/composables/clicker/useTimers.ts`        | starts the two timers                             |
-| `app/composables/clicker/useGameTickTimer.ts` | the single 60 FPS game tick interval              |
-| `app/composables/clicker/useAutosaveTimer.ts` | periodic save                                     |
+| `app/composables/clicker/useTimers.ts`        | the game tick + autosave intervals                |
+| `app/composables/shared/useWorkerInterval.ts` | worker-backed interval, cleared on unmount        |
 | `app/services/clicker/applyGameTick.ts`       | per-tick production math (points + producedValue) |
 | `app/services/clicker/save/toClickerSave.ts`  | serialize in-memory state to ids/counters         |
 | `app/services/clicker/save/toClicker.ts`      | parse + hydrate ids back                          |

@@ -1,20 +1,16 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
-import { useAlertStore } from "@/store/alert";
 import { useDataStore } from "@/store/message/data";
 import { useForwardStore } from "@/store/message/input/forward";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
-import { normalizeString, RoutePath, takeOne } from "@esposter/shared";
+import { normalizeString } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
-const alertStore = useAlertStore();
-const { createAlert } = alertStore;
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 const forwardStore = useForwardStore();
-const { resetForward } = forwardStore;
-const { messageInput, roomIds, rowKey } = storeToRefs(forwardStore);
+const { messageInput, rowKey } = storeToRefs(forwardStore);
 const { isOpen, item: forward } = useSingletonDialog(rowKey, () =>
   items.value.find((message) => message.rowKey === rowKey.value),
 );
@@ -38,36 +34,6 @@ const {
   true,
   true,
 );
-const { executeMutation } = useMutation();
-// Forwarded messages land in the target rooms via the subscription echo — non-optimistic
-const forwardMessage = async () => {
-  if (!forward.value) return;
-  const { partitionKey, rowKey: forwardRowKey } = forward.value;
-  await executeMutation(
-    () =>
-      $trpc.message.forwardMessage.mutate({
-        message: messageInput.value,
-        partitionKey,
-        roomIds: roomIds.value,
-        rowKey: forwardRowKey,
-      }),
-    {
-      key: forwardRowKey,
-      onSuccess: async () => {
-        // Capture the destination, then reset before navigating. After navigateTo, the forward store's
-        // Room-keyed useDataMap resolves against the destination room, so resetting afterwards would
-        // Clear the destination's state instead of the source's
-        const destinationRoomId = roomIds.value.length === 1 ? takeOne(roomIds.value) : "";
-        resetForward();
-        searchQuery.value = "";
-        if (destinationRoomId) {
-          await navigateTo(RoutePath.Messages(destinationRoomId));
-          createAlert("Message forwarded!", "success", { icon: "mdi-share", location: "top center" });
-        }
-      },
-    },
-  );
-};
 </script>
 
 <template>
@@ -105,14 +71,7 @@ const forwardMessage = async () => {
       <v-divider />
       <v-card-actions flex-col gap-0>
         <RichTextEditor v-model="messageInput" :limit="MESSAGE_MAX_LENGTH" placeholder="Add an optional message..." />
-        <StyledButton
-          w-full
-          :button-props="{
-            disabled: roomIds.length === 0,
-            text: `Send ${roomIds.length > 1 ? `(${roomIds.length})` : ''}`,
-          }"
-          @click="forwardMessage"
-        />
+        <MessageModelMessageForwardSendButton :forward />
       </v-card-actions>
     </StyledCard>
   </v-dialog>

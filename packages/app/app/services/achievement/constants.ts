@@ -1,0 +1,1 @@
+export const MAX_RECENT_ACHIEVEMENTS = 4;

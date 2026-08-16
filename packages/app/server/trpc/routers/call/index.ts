@@ -14,6 +14,7 @@ import { requireCallSession } from "@@/server/services/message/call/requireCallS
 import { requireJoinedCallSession } from "@@/server/services/message/call/requireJoinedCallSession";
 import { requireReadableCallSession } from "@@/server/services/message/call/requireReadableCallSession";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
+import { readMessagesByRowKeys } from "@@/server/services/message/readMessagesByRowKeys";
 import { router } from "@@/server/trpc";
 import { getForbiddenError } from "@@/server/trpc/guards/getForbiddenError";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
@@ -34,7 +35,12 @@ import { z } from "zod";
 // One call session addressed by its own id — every subscription and the two id-only procedures take it
 const callSessionIdInputSchema = selectCallSessionInMessageSchema.shape.id;
 const callSessionInputSchema = z.object({ id: callSessionIdInputSchema });
-const roomCallInputSchema = roomIdSchema;
+// A room call and a thread call are the same call addressed by where it is: the empty root rowKey is the
+// Room's own, which is what every existing caller sends
+const roomCallInputSchema = z.object({
+  ...roomIdSchema.shape,
+  threadRootRowKey: z.string().default(""),
+});
 const setCameraInputSchema = z.object({ ...callSessionIdSchema.shape, isCameraEnabled: z.boolean() });
 const setHandRaisedInputSchema = z.object({
   ...callSessionIdSchema.shape,
@@ -48,6 +54,15 @@ const requireCallParticipant = (callSessionId: string, sessionId: string) => {
   const participant = callSessionParticipantMap.get(callSessionId)?.get(sessionId);
   if (!participant) throw getForbiddenError("Must join call first");
   return participant;
+};
+// A thread call hangs off the message its thread is rooted at, and that rowKey is written onto every join and
+// Leave message as the replyRowKey. Membership does not bound it and the session's unique index rejects only
+// Exact duplicates, so an unknown rowKey would open a session of its own whose messages reply to nothing
+const requireThreadRoot = async (roomId: string, threadRootRowKey: string) => {
+  if (!threadRootRowKey) return;
+
+  const [message] = await readMessagesByRowKeys(roomId, [threadRootRowKey]);
+  if (!message) throw getNotFoundError("Message", threadRootRowKey);
 };
 
 export const baseCallRouter = router({
@@ -70,10 +85,15 @@ export const baseCallRouter = router({
       return joinLiveKitCall(callSession, createParticipant(session, user), user.id);
     }),
   joinCallByRoomId: getMemberProcedure(roomCallInputSchema, "roomId").mutation<JoinCallOutput>(
-    async ({ ctx, input: { roomId } }) => {
+    async ({ ctx, input: { roomId, threadRootRowKey } }) => {
       const { session, user } = ctx.getSessionPayload;
-      const callSessionId = await createCallSessionId(ctx.db, roomId, user.id);
-      return joinLiveKitCall({ id: callSessionId, roomId }, createParticipant(session, user), user.id);
+      await requireThreadRoot(roomId, threadRootRowKey);
+      const callSessionId = await createCallSessionId(ctx.db, roomId, user.id, threadRootRowKey);
+      return joinLiveKitCall(
+        { id: callSessionId, roomId, threadRootRowKey },
+        createParticipant(session, user),
+        user.id,
+      );
     },
   ),
   leaveCall: standardAuthedProcedure
@@ -158,8 +178,8 @@ export const baseCallRouter = router({
     const callSession = await requireReadableCallSession(ctx.db, ctx.getSessionPayload, id);
     return { id: callSession.id, roomId: callSession.roomId, userId: callSession.userId };
   }),
-  readCallSessionId: getMemberProcedure(roomCallInputSchema, "roomId").query<string>(({ ctx, input: { roomId } }) =>
-    readCallSessionId(ctx.db, roomId),
+  readCallSessionId: getMemberProcedure(roomCallInputSchema, "roomId").query<string>(
+    ({ ctx, input: { roomId, threadRootRowKey } }) => readCallSessionId(ctx.db, roomId, threadRootRowKey),
   ),
   setCamera: standardAuthedProcedure
     .input(setCameraInputSchema)

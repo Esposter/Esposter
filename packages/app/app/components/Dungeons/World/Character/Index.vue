@@ -45,11 +45,6 @@ const {
   spriteConfiguration,
   walkingAnimationMapping,
 } = defineProps<CharacterProps>();
-const flipX = computed(
-  () =>
-    (singleSidedSpritesheetDirection === Direction.LEFT && direction.value === Direction.RIGHT) ||
-    (singleSidedSpritesheetDirection === Direction.RIGHT && direction.value === Direction.LEFT),
-);
 const subscriptionMovementStarted = ref<Subscription>();
 const subscriptionMovementStopped = ref<Subscription>();
 const subscriptionPositionChangeStarted = ref<Subscription>();
@@ -67,7 +62,12 @@ onUnmounted(() => {
 
 <template>
   <Sprite
-    :configuration="{ flipX, ...spriteConfiguration }"
+    :configuration="{
+      flipX:
+        (singleSidedSpritesheetDirection === Direction.LEFT && direction === Direction.RIGHT) ||
+        (singleSidedSpritesheetDirection === Direction.RIGHT && direction === Direction.LEFT),
+      ...spriteConfiguration,
+    }"
     :on-complete="
       (scene, sprite) => {
         scene.gridEngine.addCharacter({

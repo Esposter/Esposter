@@ -13,16 +13,10 @@ const { icon = "mdi-dots-vertical", items, text = "More commands" } = defineProp
 <template>
   <StyledTooltipMenuIconButton :icon :text>
     <v-list density="compact">
-      <v-list-item
-        v-for="{ active, color, disabled, icon: itemIcon, onClick, title } of items"
-        :key="title"
-        :active
-        :base-color="color"
-        :disabled
-        :prepend-icon="itemIcon"
-        :title
-        @click="onClick"
-      />
+      <template v-for="{ active, color, disabled, icon: itemIcon, isGroupStart, onClick, title } of items" :key="title">
+        <v-divider v-if="isGroupStart" />
+        <v-list-item :active :base-color="color" :disabled :prepend-icon="itemIcon" :title @click="onClick" />
+      </template>
     </v-list>
   </StyledTooltipMenuIconButton>
 </template>

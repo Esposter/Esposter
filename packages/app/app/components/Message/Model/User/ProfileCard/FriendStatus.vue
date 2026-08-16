@@ -14,11 +14,10 @@ const { getIsFriend } = friendStore;
 const friendRequestStore = useFriendRequestStore();
 const { getHasSentFriendRequest } = friendRequestStore;
 const isFriend = computed(() => getIsFriend(user.id));
-const hasSentRequest = computed(() => getHasSentFriendRequest(user.id));
 </script>
 
 <template>
-  <div v-if="isFriend || hasSentRequest" flex gap-x-2>
+  <div v-if="isFriend || getHasSentFriendRequest(user.id)" flex gap-x-2>
     <v-chip v-if="isFriend" density="compact" color="success" prepend-icon="mdi-account-check" text="Friends" />
     <v-chip v-else density="compact" prepend-icon="mdi-clock-outline" text="Request Sent" />
   </div>

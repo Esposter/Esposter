@@ -1,4 +1,5 @@
 import { INITIAL_SETTINGS_POSITION, SETTINGS_POSITION_INCREMENT } from "@/services/dungeons/scene/settings/constants";
+import { getSettingsRowY } from "@/services/dungeons/scene/settings/getSettingsRowY";
 
 export const useSettingsCursorDimensions = (rowIndex: MaybeRefOrGetter<number>) => {
   useSettingsMenuWidth((settingsMenuWidth) => {
@@ -10,6 +11,6 @@ export const useSettingsCursorDimensions = (rowIndex: MaybeRefOrGetter<number>) 
     origin: 0,
     width,
     x: INITIAL_SETTINGS_POSITION.x / 2,
-    y: computed(() => INITIAL_SETTINGS_POSITION.y + SETTINGS_POSITION_INCREMENT.y * toValue(rowIndex) - 3),
+    y: computed(() => getSettingsRowY(toValue(rowIndex)) - 3),
   };
 };

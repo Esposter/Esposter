@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { AchievementStatus, AchievementStatuses } from "@/models/achievement/AchievementStatus";
+import { getUnlockedUserAchievements } from "@/services/achievement/getUnlockedUserAchievements";
 import { TAB_QUERY_PARAMETER_KEY } from "@/services/route/constants";
 import { useAchievementStore } from "@/store/achievement";
 
 const achievementStore = useAchievementStore();
 const { achievementDefinitions, stats, userAchievements } = storeToRefs(achievementStore);
 const achievementListMap = computed(() => {
-  const unlockedUserAchievements = userAchievements.value.filter(({ unlockedAt }) => unlockedAt !== null);
+  const unlockedUserAchievements = getUnlockedUserAchievements(userAchievements.value);
   return {
     [AchievementStatus.All]: {
       achievementDefinitions: achievementDefinitions.value,

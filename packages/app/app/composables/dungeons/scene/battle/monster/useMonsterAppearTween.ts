@@ -1,11 +1,10 @@
 import { dayjs } from "#shared/services/dayjs";
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
+import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useTween } from "vue-phaserjs";
 
 export const useMonsterAppearTween = (isEnemy: boolean) => {
-  const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
+  const store = useBattleMonsterStore(isEnemy);
   const { initialMonsterPosition } = store;
   const { monsterPosition, monsterTween } = storeToRefs(store);
   const settingsStore = useSettingsStore();
@@ -27,11 +26,7 @@ export const useMonsterAppearTween = (isEnemy: boolean) => {
         monsterPosition.value.x = xEnd;
         resolve();
       },
-      x: {
-        from: monsterPosition.value.x,
-        start: monsterPosition.value.x,
-        to: xEnd,
-      },
+      x: getTweenRange(monsterPosition.value.x, xEnd),
     });
   });
 };

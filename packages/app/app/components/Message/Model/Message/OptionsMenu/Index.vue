@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { EmojiDescriptionMap } from "@/services/message/emoji/EmojiDescriptionMap";
 import { EmojiMenuItems } from "@/services/message/emoji/EmojiMenuItems";
-import { unemojify } from "@/services/message/emoji/unemojify";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 
 interface MessageOptionsMenuProps {
@@ -21,17 +21,18 @@ const { actionMessageItems, deleteMessageItem, updateMessageItems, updateMessage
   isCreator,
 );
 const selectEmoji = await useSelectEmoji(message);
+const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProps }));
 </script>
 
 <template>
-  <StyledCard :card-props="{ elevation: isHovering ? 12 : 2, ...hoverProps }">
+  <StyledCard :card-props>
     <v-card-actions p-0 gap-0 min-h-auto>
       <v-tooltip v-for="emoji of EmojiMenuItems" :key="emoji">
         <template #activator="{ props }">
           <v-btn :text="emoji" icon tile m-0 size-10 :="props" @click="selectEmoji(emoji)" />
         </template>
         <div text-center flex flex-col>
-          <div font-bold>{{ unemojify(emoji) }}</div>
+          <div font-bold>{{ EmojiDescriptionMap.get(emoji) }}</div>
           <div>Click to react</div>
         </div>
       </v-tooltip>

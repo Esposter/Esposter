@@ -10,7 +10,7 @@ import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/Composi
 import { authClient } from "@/services/auth/authClient";
 import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
 import { MessageMetadataType } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 
 export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();
@@ -31,7 +31,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
       },
       // Keyed per emoji identity so reacting with two emojis in quick succession never queues behind the other
       // The first one's rollback or server-entity assignment
-      key: `${input.messageRowKey}-${input.emojiTag}`,
+      key: `${input.messageRowKey}${ID_SEPARATOR}${input.emojiTag}`,
       onSuccess: (result) => {
         Object.assign(newEmoji, result);
       },

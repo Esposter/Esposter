@@ -25,6 +25,7 @@ const excludedUserIds = computed(() => {
   userIds.push(...(directMessageParticipantsMap.value.get(roomId) ?? []).map(({ id }) => id));
   return userIds;
 });
+const confirmButtonAttrs = computed(() => ({ disabled: selectedUserIds.value.length === 0 }));
 const { executeMutation } = useMutation();
 const createDirectMessageParticipants = async (onComplete: (isSuccessful?: boolean) => void) => {
   let isSuccessful = false;
@@ -68,7 +69,7 @@ const createDirectMessageParticipants = async (onComplete: (isSuccessful?: boole
     v-model="isOpen"
     :card-props="{ title: 'Add People' }"
     :confirm-button-props="{ text: 'Add' }"
-    :confirm-button-attrs="{ disabled: selectedUserIds.length === 0 }"
+    :confirm-button-attrs
     @submit="(_event, onComplete) => createDirectMessageParticipants(onComplete)"
   >
     <MessageModelRoomDirectMessageFriendPicker

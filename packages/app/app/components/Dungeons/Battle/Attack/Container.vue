@@ -9,11 +9,10 @@ interface ContainerProps {
 defineSlots<{ default: () => VNode }>();
 const isActive = defineModel<boolean>("isActive", { required: true });
 const { isToEnemy } = defineProps<ContainerProps>();
-const position = computed(() => getAttackPosition(isToEnemy));
 </script>
 
 <template>
-  <Container :configuration="{ visible: isActive, ...position }">
+  <Container :configuration="{ visible: isActive, ...getAttackPosition(isToEnemy) }">
     <slot />
   </Container>
 </template>

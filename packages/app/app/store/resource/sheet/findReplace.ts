@@ -15,6 +15,13 @@ export const useFindReplaceStore = defineStore("resource/sheet/findReplace", () 
     }));
   });
 
+  // The occurrence list is a ring: stepping past either end lands on the other, so Enter keeps cycling
+  const goToOccurrence = (delta: number) => {
+    if (occurrences.value.length === 0) return;
+    currentOccurrenceIndex.value =
+      (currentOccurrenceIndex.value + delta + occurrences.value.length) % occurrences.value.length;
+  };
+
   watch(findValue, () => {
     currentOccurrenceIndex.value = 0;
   });
@@ -26,5 +33,5 @@ export const useFindReplaceStore = defineStore("resource/sheet/findReplace", () 
     },
   );
 
-  return { currentOccurrenceIndex, findValue, isFindReplaceOpen, occurrences, replaceValue };
+  return { currentOccurrenceIndex, findValue, goToOccurrence, isFindReplaceOpen, occurrences, replaceValue };
 });

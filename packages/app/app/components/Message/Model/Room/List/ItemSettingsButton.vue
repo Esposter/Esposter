@@ -19,8 +19,7 @@ const roleStore = useRoleStore();
 const { checkIsManageable } = roleStore;
 const dialogStore = useDialogStore();
 const { settingsRoomId } = storeToRefs(dialogStore);
-const isCreator = computed(() => room.userId === session.value?.user.id);
-const isVisible = computed(() => isCreator.value || checkIsManageable(room.id));
+const isVisible = computed(() => room.userId === session.value?.user.id || checkIsManageable(room.id));
 </script>
 
 <template>

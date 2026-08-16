@@ -9,13 +9,14 @@ interface ResourceListContextMenuProps {
 const isOpen = defineModel<boolean>({ required: true });
 const { position, resource } = defineProps<ResourceListContextMenuProps>();
 const { getActionItems } = useResourceListActionItems();
+const actionItems = computed(() => getActionItems(resource));
 </script>
 
 <template>
   <v-menu v-model="isOpen" :target="position">
     <v-list density="compact">
       <v-list-item
-        v-for="{ color, icon, onClick, title } of getActionItems(resource)"
+        v-for="{ color, icon, onClick, title } of actionItems"
         :key="title"
         :base-color="color"
         :prepend-icon="icon"

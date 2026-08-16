@@ -1,6 +1,7 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { Resource, ResourceType } from "@esposter/db-schema";
 
+import { createContentData } from "@/services/resource/createContentData";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { useResourceStore } from "@/store/resource";
@@ -8,8 +9,17 @@ import { toRawDeep } from "@esposter/shared";
 
 export const useTodoListStore = defineStore("resource/todoList", () => {
   const resourceStore = useResourceStore();
-  const { readContent, readResource, saveContent, setPersistedContent, storeContentVersion } = resourceStore;
-  const todoList = ref<TodoListResource>({ items: [] });
+  const { setPersistedContent, storeContentVersion } = resourceStore;
+  const {
+    content: todoList,
+    loadContent,
+    saveContent: saveTodoList,
+  } = createContentData<ResourceType.TodoList, TodoListResource>(
+    // Content is parsed from the blob with plain JSON.parse, so the loaded value carries the list's data
+    // Shape rather than its class instances. The cast is sound because `toJSON` is the only method these
+    // Classes have — pinned by ResourceContent.test-d.ts, which fails the day a second one is added
+    (data) => (data as TodoListResource | undefined) ?? { items: [] },
+  );
   const items = computed({
     get: () => todoList.value.items,
     set: (newItems) => {
@@ -17,17 +27,6 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     },
   });
   const searchQuery = ref("");
-  const loadContent = async () => {
-    await readResource();
-    const data = await readContent<ResourceType.TodoList>();
-    // Content is parsed from the blob with plain JSON.parse, so the loaded value carries the list's data
-    // Shape rather than its class instances. The cast is sound because `toJSON` is the only method these
-    // Classes have — pinned by ResourceContent.test-d.ts, which fails the day a second one is added
-    todoList.value = (data as TodoListResource | undefined) ?? { items: [] };
-    // Seed the dirty check so a save that changed nothing compares equal instead of bumping contentVersion
-    setPersistedContent(todoList.value);
-  };
-  const saveTodoList = () => saveContent(todoList.value);
   // Another device saved — adopt its content and contentVersion so this client renders live data
   // And its own next save is not rejected as stale; the adopted content is what is now persisted
   const storeSaveResourceContent = (content: TodoListResource, contentVersion: Resource["contentVersion"]) => {

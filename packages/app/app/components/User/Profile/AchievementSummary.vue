@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
-const MAX_RECENT_ACHIEVEMENTS = 4;
+import { MAX_RECENT_ACHIEVEMENTS } from "@/services/achievement/constants";
+import { getUnlockedUserAchievements } from "@/services/achievement/getUnlockedUserAchievements";
 
 interface AchievementSummaryProps {
   userAchievements: UserAchievementWithDefinition[];
 }
 
 const { userAchievements } = defineProps<AchievementSummaryProps>();
-const unlockedUserAchievements = computed(() => userAchievements.filter(({ unlockedAt }) => unlockedAt !== null));
+const unlockedUserAchievements = computed(() => getUnlockedUserAchievements(userAchievements));
 const totalPoints = computed(() =>
   unlockedUserAchievements.value.reduce((total, { achievement }) => total + achievement.points, 0),
 );

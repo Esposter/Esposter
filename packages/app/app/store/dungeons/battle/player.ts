@@ -1,6 +1,3 @@
-import type { Position } from "grid-engine";
-import type { TweenBuilderConfiguration } from "vue-phaserjs";
-
 import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
@@ -18,24 +15,12 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
   const switchActiveMonster = (id: string) => {
     activeMonsterIndex.value = monsterPartySceneStore.monsters.findIndex((m) => m.id === id);
   };
-
-  const initialMonsterPosition = Object.freeze<Position>({ x: -150, y: 316 });
-  const monsterPosition = ref(structuredClone<Position>(initialMonsterPosition));
-  const monsterTween = ref<TweenBuilderConfiguration>();
-  const initialMonsterInfoContainerPosition = Object.freeze<Position>({ x: 1200, y: 318 });
-  const monsterInfoContainerPosition = ref(structuredClone<Position>(initialMonsterInfoContainerPosition));
-  const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
   const attacks = computed(() => activeMonster.value.attackIds.map(getAttack));
 
   return {
     activeMonster,
     attacks,
-    initialMonsterInfoContainerPosition,
-    initialMonsterPosition,
-    monsterInfoContainerPosition,
-    monsterInfoContainerTween,
-    monsterPosition,
-    monsterTween,
     switchActiveMonster,
+    ...useMonsterPositions({ x: -150, y: 316 }, { x: 1200, y: 318 }),
   };
 });

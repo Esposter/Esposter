@@ -2,7 +2,7 @@
 import type { Position } from "grid-engine";
 
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
-import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
+import { getMenuPosition } from "@/services/dungeons/UI/menu/getMenuPosition";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { onCreate } from "vue-phaserjs";
 
@@ -18,10 +18,7 @@ const isMenuVisible = computed({
 });
 
 onCreate((scene) => {
-  position.value = {
-    x: scene.scale.width - MENU_PADDING * 2 - MENU_WIDTH,
-    y: MENU_PADDING * 2,
-  };
+  position.value = getMenuPosition(scene);
 });
 </script>
 

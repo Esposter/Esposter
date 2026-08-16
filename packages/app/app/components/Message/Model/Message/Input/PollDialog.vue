@@ -10,6 +10,7 @@ import { MessageType } from "@esposter/db-schema";
 import { withFinalizerAsync } from "@esposter/shared";
 
 const rules = useVRules();
+const requiredRules = computed(() => [rules.required()]);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const pollDialogStore = usePollDialogStore();
@@ -37,12 +38,12 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
     :confirm-button-props="{ text: 'Create Poll', prependIcon: 'mdi-poll' }"
     @submit="submit"
   >
-    <v-text-field v-model="question" :rules="[rules.required()]" label="Question" />
+    <v-text-field v-model="question" :rules="requiredRules" label="Question" />
     <v-list bg-color="transparent">
       <v-list-item v-for="(option, index) of options" :key="index" :ripple="false" px-0>
         <v-text-field
           :model-value="option"
-          :rules="[rules.required()]"
+          :rules="requiredRules"
           :label="`Option ${index + 1}`"
           hide-details="auto"
           @update:model-value="options[index] = $event"

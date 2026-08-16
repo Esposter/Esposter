@@ -36,10 +36,11 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
       return;
     }
     case EffectType.SceneFade: {
-      scene.cameras.main.fadeOut(dayjs.duration(1, "seconds").asMilliseconds());
+      const fadeDurationMs = dayjs.duration(1, "second").asMilliseconds();
+      scene.cameras.main.fadeOut(fadeDurationMs);
       scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {
-        await sleep(scene, dayjs.duration(1, "seconds").asMilliseconds());
-        scene.cameras.main.fadeIn(dayjs.duration(1, "seconds").asMilliseconds());
+        await sleep(scene, fadeDurationMs);
+        scene.cameras.main.fadeIn(fadeDurationMs);
         scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
           onComplete();
         });

@@ -12,18 +12,30 @@ await useSubscribables();
 const layoutStore = useLayoutStore();
 const { isDesktop } = storeToRefs(layoutStore);
 const messageLayoutStore = useMessageLayoutStore();
-const { leftSideBarWidth, rightSideBarWidth } = storeToRefs(messageLayoutStore);
+const { leftSideBarWidth, rightSideBarWidth, splitRightDrawer } = storeToRefs(messageLayoutStore);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
+const leftNavigationDrawerProps = computed(() => ({
+  width: isDesktop.value ? leftSideBarWidth.value : LEFT_DRAWER_WIDTH,
+}));
+const rightNavigationDrawerProps = computed(() => ({
+  width: isDesktop.value
+    ? splitRightDrawer.value
+      ? rightSideBarWidth.value * 2
+      : rightSideBarWidth.value
+    : RIGHT_DRAWER_WIDTH,
+}));
 </script>
 
+<!-- Split view puts two panes in the one drawer, so the drawer is twice as wide — the handle still resizes one
+     pane's worth, which is what keeps both halves equal at any width -->
 <template>
   <NuxtLayout
     :footer-style="{ paddingBottom: 0 }"
     hide-global-scrollbar
-    :left-navigation-drawer-props="{ width: isDesktop ? leftSideBarWidth : LEFT_DRAWER_WIDTH }"
-    :right-navigation-drawer-props="{ width: isDesktop ? rightSideBarWidth : RIGHT_DRAWER_WIDTH }"
+    :left-navigation-drawer-props
+    :right-navigation-drawer-props
   >
     <Head>
       <Title>{{ roomName }}</Title>

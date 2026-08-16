@@ -1,9 +1,10 @@
 import type { MaybeElementRef } from "@vueuse/core";
 
+import { MAX_ROTATION } from "@/services/visual/constants";
+
 export const useRotatingTransform = (target: MaybeElementRef) => {
   const { elementHeight, elementWidth, elementX, elementY, isOutside } = useMouseInElement(target);
   const transform = computed(() => {
-    const MAX_ROTATION = 20;
     // Handles x-axis
     const rX = (MAX_ROTATION / 2 - (elementY.value / elementHeight.value) * MAX_ROTATION).toFixed(2);
     // Handles y-axis

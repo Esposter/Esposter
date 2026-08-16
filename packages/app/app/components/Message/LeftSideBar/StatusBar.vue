@@ -2,17 +2,13 @@
 import { authClient } from "@/services/auth/authClient";
 import { useCallStore } from "@/store/message/room/call";
 import { useStatusStore } from "@/store/message/user/status";
-import { RoutePath } from "@esposter/shared";
 
 const { data: session } = await authClient.useSession(useFetch);
 const statusStore = useStatusStore();
 const { getStatusEnum, getStatusMessage } = statusStore;
 const callStore = useCallStore();
-const { activeCallSessionId, callRoomId, isInCall } = storeToRefs(callStore);
+const { callRoomId, callRoute, isInCall } = storeToRefs(callStore);
 const callRoomName = useRoomName(callRoomId);
-const callRoute = computed(() =>
-  callRoomId.value ? RoutePath.Messages(callRoomId.value) : RoutePath.Calls(activeCallSessionId.value),
-);
 </script>
 
 <template>

@@ -3,6 +3,7 @@ import type { Filter, FilterType, MessageEntity } from "@esposter/db-schema";
 import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
+import { ID_SEPARATOR } from "@esposter/shared";
 
 export const useSearchMessageStore = defineStore("message/search", () => {
   const roomStore = useRoomStore();
@@ -17,7 +18,7 @@ export const useSearchMessageStore = defineStore("message/search", () => {
   // The Files tab hands back the Search tab's own (empty until searched) results instead of the attachment
   // Browse, and paging them can never re-issue that browse's query with hasFiles false.
   const searchResultId = computed(() =>
-    roomStore.currentRoomId ? `${roomStore.currentRoomId}-${hasFiles.value}` : "",
+    roomStore.currentRoomId ? `${roomStore.currentRoomId}${ID_SEPARATOR}${hasFiles.value}` : "",
   );
   const { data: selectedFilters } = useDataMap<Filter[]>(() => roomStore.currentRoomId, []);
   const activeSelectedFilter = computed({

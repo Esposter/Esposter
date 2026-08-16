@@ -1,14 +1,9 @@
 <script setup lang="ts">
 import { Target } from "#shared/models/clicker/data/Target";
-import { getGlobImage } from "@/services/clicker/getGlobImage";
+import { MenuIconMap } from "@/services/clicker/icon/MenuIconMap";
 
 const { rotatingDivIds } = useRotatingCursors();
-const icon = computed(() =>
-  getGlobImage(
-    import.meta.glob<string>("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" }),
-    Target.Cursor,
-  ),
-);
+const icon = MenuIconMap[Target.Cursor];
 </script>
 
 <template>

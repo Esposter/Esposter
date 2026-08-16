@@ -12,3 +12,5 @@
 | `Resource/Survey`, `Resource/Program`, `Resource/TodoList`, `Resource/Blueprint`, `Resource/Note` | 2026-08-09 |                                                           |
 | `app/composables/resource` + `app/services/resource`, less the `sheet` and list units above       | 2026-08-09 |                                                           |
 | `app/store/resource`, less the `sheet` unit above                                                 | 2026-08-09 |                                                           |
+| `Dashboard`, `Dataset`, `FlowchartEditor` + their store, composable and service layers            | 2026-08-15 | `createContentData` now backs seven content stores        |
+| `emailEditor`, `webpageEditor`, `grapesjs`, `survey` — store, composables, services               | 2026-08-15 | Components swept above; shared models on `shared.md`      |

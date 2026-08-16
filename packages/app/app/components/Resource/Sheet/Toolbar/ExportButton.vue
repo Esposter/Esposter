@@ -7,14 +7,11 @@ const sheetStore = useSheetStore();
 const { dataSource } = storeToRefs(sheetStore);
 const isExportDialogOpen = ref(false);
 const dataSourceType = ref(DataSourceType.Csv);
+const buttonProps = computed(() => ({ disabled: dataSource.value.rows.length === 0 }));
 </script>
 
 <template>
-  <StyledTooltipMenuIconButton
-    :button-props="{ disabled: dataSource.rows.length === 0 }"
-    icon="mdi-download"
-    text="Export"
-  >
+  <StyledTooltipMenuIconButton :button-props icon="mdi-download" text="Export">
     <v-list>
       <v-list-item
         v-for="{ value, icon, title } of DataSourceTypeItemCategoryDefinitions"

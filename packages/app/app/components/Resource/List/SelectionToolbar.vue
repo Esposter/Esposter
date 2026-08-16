@@ -1,57 +1,20 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-import { pluralize } from "#shared/util/text/pluralize";
-import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
-import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
-
 interface ResourceListSelectionToolbarProps {
   selectedResources: Resource[];
 }
 
 const { selectedResources } = defineProps<ResourceListSelectionToolbarProps>();
 const emit = defineEmits<{ clear: []; delete: [resources: Resource[]] }>();
-const { exportResourcesCsv } = useExportResourcesCsv();
-const blueprintCaptureDialogStore = useBlueprintCaptureDialogStore();
-const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
-const selectedLabel = computed(() => `${selectedResources.length} ${pluralize("resource", selectedResources.length)}`);
-// One selection guards on the name, matching the row and blade delete dialogs;
-// Past one no single name identifies the set, so the guard falls back to the count phrase
-const confirmName = computed(() =>
-  selectedResources.length === 1 ? takeOne(selectedResources).name : `Delete ${selectedLabel.value}`,
-);
 </script>
 
 <template>
   <div px-4 py-2 b-0 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center>
     <span op-medium-emphasis>{{ selectedResources.length }} selected</span>
-    <StyledDeleteFormDialog
-      :card-props="{ title: `Delete ${selectedLabel}` }"
-      :confirm-name
-      @delete="
-        (onComplete) => {
-          onComplete();
-          emit('delete', selectedResources);
-        }
-      "
-    >
-      <template #activator="{ updateIsOpen }">
-        <v-btn color="error" prepend-icon="mdi-delete" variant="text" @click="updateIsOpen(true)">
-          Delete ({{ selectedResources.length }})
-        </v-btn>
-      </template>
-      Deleting {{ selectedLabel }} moves them to the Recycle bin for {{ RECYCLE_BIN_RETENTION_DAYS }} days.
-      <v-list density="compact">
-        <v-list-item v-for="{ id, name } of selectedResources" :key="id" :title="name" />
-      </v-list>
-    </StyledDeleteFormDialog>
-    <v-btn prepend-icon="mdi-file-export-outline" variant="text" @click="exportResourcesCsv(selectedResources)">
-      Export CSV
-    </v-btn>
-    <v-btn prepend-icon="mdi-floor-plan" variant="text" @click="captureIds = selectedResources.map(({ id }) => id)">
-      Save as blueprint
-    </v-btn>
+    <ResourceListSelectionDeleteButton :selected-resources @delete="emit('delete', $event)" />
+    <ResourceListSelectionExportButton :selected-resources />
+    <ResourceListSelectionCaptureBlueprintButton :selected-resources />
     <v-spacer />
     <v-btn size="small" variant="text" @click="emit('clear')">Clear</v-btn>
   </div>

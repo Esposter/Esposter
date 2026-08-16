@@ -29,9 +29,6 @@ const isActive = defineModel<boolean>("isActive", { required: true });
 const { configuration, createAnimationConfigurations, isToEnemy, playAnimationKey, spritesheetKey } =
   defineProps<AttackProps>();
 const frame = ref<number>();
-const position = computed(() =>
-  configuration.type === AttackGameObjectType.Sprite ? getAttackPosition(isToEnemy) : configuration.position,
-);
 const animations = createAnimationConfigurations ? useAnimations(createAnimationConfigurations, true) : undefined;
 </script>
 
@@ -39,7 +36,7 @@ const animations = createAnimationConfigurations ? useAnimations(createAnimation
   <Sprite
     :configuration="{
       visible: isActive,
-      ...position,
+      ...(configuration.type === AttackGameObjectType.Sprite ? getAttackPosition(isToEnemy) : configuration.position),
       texture: spritesheetKey,
       frame,
       scale: 4,

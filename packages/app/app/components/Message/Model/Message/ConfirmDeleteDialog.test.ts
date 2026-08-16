@@ -21,28 +21,6 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
   const message = "message";
   const creator = createUser({ id: userId });
 
-  // The behaviour matrix for a singleton dialog whose item leaves its list lives in useSingletonDialog's own
-  // Test; here only that this dialog resolves through the primitive rather than a computed of its own
-  test("drops the target when its message leaves the timeline", async () => {
-    expect.hasAssertions();
-
-    // Shallow because the reconciliation under test lives in setup — the overlay DOM has no bearing on it
-    await mountSuspended(MessageModelMessageConfirmDeleteDialog, { shallow: true });
-    setCurrentRoomId(roomId);
-    const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
-    const messageDialogStore = useMessageDialogStore();
-    const { deletingRowKey } = storeToRefs(messageDialogStore);
-    const newMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
-    items.value = [newMessage];
-    deletingRowKey.value = newMessage.rowKey;
-    await flushPromises();
-    items.value = [];
-    await flushPromises();
-
-    expect(deletingRowKey.value).toBe("");
-  });
-
   // A rejected delete owes back the row it took out and nothing else — the timeline also receives subscription
   // Pushes, so reinstating the copy this write was issued with drops whatever arrived while it was in flight
   test("restores only its own message when the delete is rejected", async () => {

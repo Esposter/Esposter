@@ -10,12 +10,11 @@ import { useMessageStore } from "@/store/message";
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useForwardStore } from "@/store/message/input/forward";
 import { useReplyStore } from "@/store/message/input/reply";
-import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useThreadStore } from "@/store/message/thread";
 import { hasPermission, MessageType, RoomPermission } from "@esposter/db-schema";
-import { exhaustiveGuard, noop, normalizeString, RoutePath } from "@esposter/shared";
+import { exhaustiveGuard, noop, normalizeString } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<boolean>, isCreator: Ref<boolean>) => {
@@ -32,15 +31,13 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const { rowKey: replyRowKey } = storeToRefs(replyStore);
   const forwardStore = useForwardStore();
   const { rowKey: forwardRowKey } = storeToRefs(forwardStore);
-  const roomStore = useRoomStore();
-  const { currentRoomId } = storeToRefs(roomStore);
+  const copyMessageLink = useCopyMessageLink();
   const userToRoomStore = useUserToRoomStore();
   const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
   const threadStore = useThreadStore();
   const { openThread } = threadStore;
   const roleStore = useRoleStore();
   const { getMyPermissions } = roleStore;
-  const runtimeConfig = useRuntimeConfig();
   const hasManageMessages = computed(() => {
     const myPermissions = getMyPermissions(message.partitionKey);
     if (!myPermissions) return false;
@@ -58,8 +55,6 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const isUpdateSupported = computed(() =>
     Boolean(getMessageOperationPermission(message.type, MessageOperation.Update)),
   );
-  const isDeletePermitted = computed(() => getIsOperationPermitted(MessageOperation.Delete));
-  const isPinPermitted = computed(() => getIsOperationPermitted(MessageOperation.Pin));
   const editMessageItem: Item = {
     icon: "mdi-pencil",
     onClick: () => {
@@ -132,9 +127,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const copyMessageLinkItem: Item = {
     icon: "mdi-link-variant",
     onClick: async () => {
-      if (!currentRoomId.value) return;
-      const link = `${runtimeConfig.public.baseUrl}${RoutePath.MessagesMessage(currentRoomId.value, message.rowKey)}`;
-      await copy(link);
+      await copyMessageLink(message.partitionKey, message.rowKey);
     },
     title: "Copy Message Link",
   };
@@ -165,7 +158,9 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     },
     title: "Mark Unread From Here",
   };
-  const pinMessageItems = computed<Item[]>(() => (isPinPermitted.value ? [pinMessageItem.value] : []));
+  const pinMessageItems = computed<Item[]>(() =>
+    getIsOperationPermitted(MessageOperation.Pin) ? [pinMessageItem.value] : [],
+  );
   const updateMessageItems = computed<Item[]>(() =>
     isUpdateSupported.value
       ? isEditable.value
@@ -201,7 +196,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     }
   });
   const deleteMessageItem = computed<Item | undefined>(() =>
-    isDeletePermitted.value
+    getIsOperationPermitted(MessageOperation.Delete)
       ? {
           color: "error",
           icon: "mdi-delete",

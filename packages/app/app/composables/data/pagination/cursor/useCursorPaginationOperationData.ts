@@ -2,6 +2,8 @@ import type { Promisable } from "type-fest";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
+import { getBoundComputed } from "@/util/vue/getBoundComputed";
+import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
 import { createExponentialBackoff, withFinalizerAsync } from "@esposter/shared";
 
 export const useCursorPaginationOperationData = <TItem>(
@@ -18,36 +20,11 @@ export const useCursorPaginationOperationData = <TItem>(
   const executeWithBackoff = createExponentialBackoff(BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS);
   // Binding per read resolves the key every time, which is what makes this track the current slice. It is the
   // Same binder an operation pins once, so the two views can never point at different maps.
-  const cursorPaginationData = computed({
-    get: () => bindCursorPaginationData().value,
-    set: (newData) => {
-      bindCursorPaginationData().value = newData;
-    },
-  });
-  const isLoaded = computed({
-    get: () => bindIsLoaded().value,
-    set: (newIsLoaded) => {
-      bindIsLoaded().value = newIsLoaded;
-    },
-  });
-  const items = computed({
-    get: () => cursorPaginationData.value.items,
-    set: (newItems) => {
-      cursorPaginationData.value.items = newItems;
-    },
-  });
-  const nextCursor = computed({
-    get: () => cursorPaginationData.value.nextCursor,
-    set: (newNextCursor) => {
-      cursorPaginationData.value.nextCursor = newNextCursor;
-    },
-  });
-  const hasMore = computed({
-    get: () => cursorPaginationData.value.hasMore,
-    set: (newHasMore) => {
-      cursorPaginationData.value.hasMore = newHasMore;
-    },
-  });
+  const cursorPaginationData = getBoundComputed(bindCursorPaginationData);
+  const isLoaded = getBoundComputed(bindIsLoaded);
+  const items = getPropertyComputed(cursorPaginationData, "items");
+  const nextCursor = getPropertyComputed(cursorPaginationData, "nextCursor");
+  const hasMore = getPropertyComputed(cursorPaginationData, "hasMore");
   const initializeCursorPaginationData = (data: CursorPaginationData<TItem>) => {
     cursorPaginationData.value = data;
     isLoaded.value = true;

@@ -2,7 +2,7 @@
 import type { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
-import { getCategoryColor } from "@/services/achievement/getCategoryColor";
+import { CategoryColorMap } from "@/services/achievement/CategoryColorMap";
 import { prettify } from "@/util/text/prettify";
 
 interface GridItemProps {
@@ -11,6 +11,7 @@ interface GridItemProps {
 }
 
 const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
+const displayName = computed(() => prettify(achievementDefinition.name));
 </script>
 
 <template>
@@ -21,14 +22,14 @@ const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
           <v-icon :icon="achievementDefinition.icon" color="white" size="2.5rem" />
         </v-avatar>
         <div>
-          <div font-bold text-title-large>{{ prettify(achievementDefinition.name) }}</div>
+          <div font-bold text-title-large>{{ displayName }}</div>
           <div text-body-small>{{ achievementDefinition.description }}</div>
         </div>
         <div v-if="userAchievement?.unlockedAt" font-bold italic text-hint>
           Unlocked {{ userAchievement.unlockedAt.toLocaleDateString() }}
         </div>
         <v-spacer />
-        <v-chip :color="getCategoryColor(achievementDefinition.category)" size="small">
+        <v-chip :color="CategoryColorMap[achievementDefinition.category]" size="small">
           {{ achievementDefinition.category }}
         </v-chip>
         <div text-orange font-bold text-body-small>{{ achievementDefinition.points }} points</div>

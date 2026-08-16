@@ -21,14 +21,12 @@ defineSlots<{
 }>();
 const { member, room } = defineProps<MemberListItemProps>();
 const emit = defineEmits<{ click: [event: KeyboardEvent | MouseEvent] }>();
-const isCreator = computed(() => room.userId === member.id);
 const userToRoomStore = useUserToRoomStore();
 const { getDisplayName } = userToRoomStore;
 const displayName = computed(() => getDisplayName(member, room.id));
 const roleStore = useRoleStore();
 const { getMemberRoles } = roleStore;
 const memberRoles = computed(() => getMemberRoles(room.id, member.id).toSorted((a, b) => b.position - a.position));
-// Discord tints the display name with the member's top role color
 const topRoleColor = computed(() => getTopRole(memberRoles.value)?.color || undefined);
 const isMenuOpen = ref(false);
 </script>
@@ -47,9 +45,10 @@ const isMenuOpen = ref(false);
             <MessageModelMemberStatusAvatar :id="member.id" :image="member.image" :name="displayName" />
           </template>
           <v-list-item-title pr-6>
+            <!-- Discord tints the display name with the member's top role color -->
             <div flex gap-x-1 items-center :style="{ color: topRoleColor }">
               {{ displayName }}
-              <v-tooltip v-if="isCreator" text="Room Owner">
+              <v-tooltip v-if="room.userId === member.id" text="Room Owner">
                 <template #activator="{ props }">
                   <v-icon icon="mdi-crown" :="props" color="yellow-darken-4" />
                 </template>

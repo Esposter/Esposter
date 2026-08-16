@@ -20,14 +20,10 @@ export const useClickerStore = defineStore("clicker", () => {
     toSave: toClickerSave,
     unauth: { key: LocalStorageKey.ClickerStore, schema: clickerSaveSchema },
   });
-  const clickerItemColor = computed(
-    () =>
-      getColorMap({ error: colorsStore.error, info: colorsStore.info, primary: colorsStore.primary })[
-        clicker.value.type
-      ],
-  );
   const clickerItemProperties = computed<ClickerItemProperties>(() => ({
-    color: clickerItemColor.value,
+    color: getColorMap({ error: colorsStore.error, info: colorsStore.info, primary: colorsStore.primary })[
+      clicker.value.type
+    ],
     iconComponent: IconComponentMap[clicker.value.type],
     name: NameMap[clicker.value.type],
     pluralName: PluralNameMap[clicker.value.type],

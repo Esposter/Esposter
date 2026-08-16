@@ -13,6 +13,7 @@ const { rename, resource } = defineProps<ResourceRenameDialogProps>();
 const rules = useVRules();
 // The caller mounts this only while it is open, so the field starts from the current name on every open
 const editedName = ref(resource.name);
+const nameRules = computed(() => [rules.required(), rules.maxLength(RESOURCE_NAME_MAX_LENGTH)]);
 </script>
 
 <template>
@@ -31,11 +32,6 @@ const editedName = ref(resource.name);
       }
     "
   >
-    <v-text-field
-      v-model="editedName"
-      autofocus
-      label="Name"
-      :rules="[rules.required(), rules.maxLength(RESOURCE_NAME_MAX_LENGTH)]"
-    />
+    <v-text-field v-model="editedName" autofocus label="Name" :rules="nameRules" />
   </StyledFormDialog>
 </template>

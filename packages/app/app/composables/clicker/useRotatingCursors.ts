@@ -1,7 +1,7 @@
 import { Target } from "#shared/models/clicker/data/Target";
 import { dayjs } from "#shared/services/dayjs";
 import { useClickerStore } from "@/store/clicker";
-import { takeOne } from "@esposter/shared";
+import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 
 export const useRotatingCursors = () => {
   const clickerStore = useClickerStore();
@@ -14,7 +14,7 @@ export const useRotatingCursors = () => {
   // The v-for and make Vue destroy/recreate every cursor node, resetting all animations on each purchase
   const instanceId = crypto.randomUUID();
   const rotatingDivIds = computed(() =>
-    Array.from({ length: amount.value }, (_value, index) => `${instanceId}-${index}`),
+    Array.from({ length: amount.value }, (_value, index) => `${instanceId}${ID_SEPARATOR}${index}`),
   );
   const animateCursors = (cursorCount: number) => {
     const initialRotationOffsets = Array.from({ length: cursorCount }, (_value, index) => (360 / cursorCount) * index);

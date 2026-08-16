@@ -27,16 +27,12 @@ const headers = [
     value: ({ statistics }: ColumnStatisticsRow) => statistics[key],
   })),
 ];
+const itemValue = ({ column }: ColumnStatisticsRow) => column.name;
 </script>
 
 <template>
   <ResourceSheetDialog v-model="isOpen" title="Column Statistics">
-    <v-data-table
-      density="compact"
-      :headers
-      :item-value="({ column }: ColumnStatisticsRow) => column.name"
-      :items="columnStatistics"
-    >
+    <v-data-table density="compact" :headers :item-value :items="columnStatistics">
       <template #[`item.chart`]="{ item }">
         <v-tooltip v-if="ChartableColumnTypes.has(item.statistics.columnType)" text="View Chart">
           <template #activator="{ props }">

@@ -7,6 +7,7 @@ import { prettify } from "@/util/text/prettify";
 const visualStore = useVisualStore();
 const { createVisual } = visualStore;
 const { visualType } = storeToRefs(visualStore);
+const createVisualText = computed(() => `Add ${prettify(visualType.value)} Visual`);
 </script>
 
 <template>
@@ -31,7 +32,7 @@ const { visualType } = storeToRefs(visualStore);
       icon="mdi-plus"
       :button-props="{ flat: false, variant: 'elevated' }"
       :is-icon-button="false"
-      :text="`Add ${prettify(visualType)} Visual`"
+      :text="createVisualText"
       @click="createVisual"
     />
   </v-toolbar>

@@ -12,17 +12,12 @@ export interface UserProfileCardColumnTextareaProps {
 const modelValue = defineModel<Row<RowValueType.Textarea>["value"]>({ required: true });
 const { editMode, value } = defineProps<UserProfileCardColumnTextareaProps>();
 const rules = useVRules();
+const valueRules = computed(() => [rules.maxLength(USER_BIOGRAPHY_MAX_LENGTH)]);
 </script>
 
 <template>
   <v-col font-bold whitespace-pre-wrap self-center cols="6">
-    <v-textarea
-      v-if="editMode"
-      v-model="modelValue"
-      :rules="[rules.maxLength(USER_BIOGRAPHY_MAX_LENGTH)]"
-      rows="3"
-      auto-grow
-    />
+    <v-textarea v-if="editMode" v-model="modelValue" :rules="valueRules" rows="3" auto-grow />
     <template v-else>
       {{ value }}
     </template>

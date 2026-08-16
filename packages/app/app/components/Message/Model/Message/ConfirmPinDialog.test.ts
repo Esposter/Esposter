@@ -21,28 +21,6 @@ describe("messageModelMessageConfirmPinDialog", () => {
   const message = "message";
   const creator = createUser({ id: userId });
 
-  // The behaviour matrix for a singleton dialog whose item leaves its list lives in useSingletonDialog's own
-  // Test; here only that this dialog resolves through the primitive rather than a computed of its own
-  test("drops the target when its message leaves the timeline", async () => {
-    expect.hasAssertions();
-
-    // Shallow because the reconciliation under test lives in setup — the overlay DOM has no bearing on it
-    await mountSuspended(MessageModelMessageConfirmPinDialog, { shallow: true });
-    setCurrentRoomId(roomId);
-    const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
-    const messageDialogStore = useMessageDialogStore();
-    const { pinningRowKey } = storeToRefs(messageDialogStore);
-    const newMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
-    items.value = [newMessage];
-    pinningRowKey.value = newMessage.rowKey;
-    await flushPromises();
-    items.value = [];
-    await flushPromises();
-
-    expect(pinningRowKey.value).toBe("");
-  });
-
   // What a rejected pin owes back is read as the write is sent, never assumed: another moderator's pin can land
   // Between the dialog opening and the confirm, and a hard-coded unpin then drops a pin the server still has
   test("leaves an already pinned message pinned when the pin is rejected", async () => {

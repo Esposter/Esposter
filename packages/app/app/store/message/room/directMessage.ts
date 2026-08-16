@@ -6,7 +6,7 @@ import { useMutation } from "@/composables/shared/useMutation";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
-import { RoutePath, takeOne } from "@esposter/shared";
+import { ID_SEPARATOR, RoutePath, takeOne } from "@esposter/shared";
 
 export const useDirectMessageStore = defineStore("message/room/directMessage", () => {
   const { $trpc } = useNuxtApp();
@@ -73,7 +73,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
         },
         // The target is the room-and-participant pair: the same person can be in more than one direct message,
         // So keying on userId alone would make unrelated rooms' removals queue behind each other
-        key: `${roomId}-${userId}`,
+        key: `${roomId}${ID_SEPARATOR}${userId}`,
       },
     );
   };

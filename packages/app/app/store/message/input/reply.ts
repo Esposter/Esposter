@@ -9,8 +9,12 @@ export const useReplyStore = defineStore("message/input/reply", () => {
   const roomStore = useRoomStore();
   const { data: rowKey, setData: setRowKey } = useDataMap(() => roomStore.currentRoomId, "");
   // Keyed by the room the send was for: the reset runs behind the optimistic bubble, so writing through
-  // `rowKey.value` would clear the reply target of whichever room the user switched to mid-send instead
-  MessageHookMap.ResetSend.register((roomId) => {
+  // `rowKey.value` would clear the reply target of whichever room the user switched to mid-send instead.
+  // Only the room's own composer has one to clear — a thread reply's target is the thread root, which the pane
+  // Holds for as long as it is open rather than picking per message
+  MessageHookMap.ResetSend.register(({ roomId, threadRootRowKey }) => {
+    if (threadRootRowKey) return;
+
     setRowKey(roomId, "");
   });
 

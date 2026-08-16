@@ -29,6 +29,7 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 | [/docs/esbabbler/moderation](/docs/esbabbler/moderation)                             | Admin actions, word filter, bans/timeouts, audit log              |
 | [/docs/esbabbler/automod-actions](/docs/esbabbler/automod-actions)                   | Word-filter reject/warn/timeout actions via the admin machinery   |
 | [/docs/esbabbler/moderator-notes](/docs/esbabbler/moderator-notes)                   | Private, append-only per-member moderator notes                   |
+| [/docs/esbabbler/threads](/docs/esbabbler/threads)                                   | Thread pane, its composer, thread calls, split view, thread route |
 | [/docs/esbabbler/thread-follows](/docs/esbabbler/thread-follows)                     | Follow threads, notify-on-reply, Followed Threads drawer          |
 | [/docs/esbabbler/invites](/docs/esbabbler/invites)                                   | Invite links with expiry and max-use options                      |
 | [/docs/esbabbler/nicknames](/docs/esbabbler/nicknames)                               | Per-room nicknames and display-name resolution                    |

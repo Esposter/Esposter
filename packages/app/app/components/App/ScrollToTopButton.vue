@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const SHOW_SCROLL_TO_TOP_OFFSET = 200;
+import { SHOW_SCROLL_TO_TOP_OFFSET } from "@/services/app/constants";
+
 const { y } = useWindowScroll();
 const goTo = useVGoTo();
 </script>

@@ -16,6 +16,7 @@ const memberStore = useMemberStore();
 const { getMemberName } = memberStore;
 // The actor may be the reserved AutoMod id (word-filter warn/timeout) — render it as "AutoMod".
 const getActorLabel = (userId: string) => (userId === AUTOMOD_USER_ID ? "AutoMod" : getMemberName(userId));
+const displayDuration = computed(() => (item.durationMs ? formatDuration(item.durationMs) : ""));
 </script>
 
 <template>
@@ -26,6 +27,6 @@ const getActorLabel = (userId: string) => (userId === AUTOMOD_USER_ID ? "AutoMod
     <v-list-item-title>
       {{ item.type }} — {{ getActorLabel(item.actorUserId) }} acted on {{ getMemberName(item.targetUserId) }}
     </v-list-item-title>
-    <v-list-item-subtitle v-if="item.durationMs">{{ formatDuration(item.durationMs) }}</v-list-item-subtitle>
+    <v-list-item-subtitle v-if="item.durationMs">{{ displayDuration }}</v-list-item-subtitle>
   </v-list-item>
 </template>

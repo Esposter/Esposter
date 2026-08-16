@@ -14,8 +14,13 @@ const emit = defineEmits<{
   submit: [event: SubmitEventPromise, values: NonNullable<PostUpsertFormProps["initialValues"]>];
 }>();
 const rules = useVRules();
+const titleRules = computed(() => [rules.required(), rules.maxLength(POST_TITLE_MAX_LENGTH), rules.isNotProfanity()]);
 const values = ref(initialValues);
 const isEditFormValid = ref(true);
+const submitButtonProps = computed(() => ({
+  disabled: !isEditFormValid.value,
+  text: isCreate ? "Post" : "Edit Post",
+}));
 </script>
 
 <template>
@@ -29,7 +34,7 @@ const isEditFormValid = ref(true);
               label="Title"
               placeholder="Title"
               :counter="POST_TITLE_MAX_LENGTH"
-              :rules="[rules.required(), rules.maxLength(POST_TITLE_MAX_LENGTH), rules.isNotProfanity()]"
+              :rules="titleRules"
               autofocus
             />
           </v-col>
@@ -41,10 +46,7 @@ const isEditFormValid = ref(true);
         </v-row>
         <v-row>
           <v-col flex justify-end>
-            <StyledButton
-              type="submit"
-              :button-props="{ disabled: !isEditFormValid, text: isCreate ? 'Post' : 'Edit Post' }"
-            />
+            <StyledButton type="submit" :button-props="submitButtonProps" />
           </v-col>
         </v-row>
       </v-container>

@@ -39,6 +39,7 @@ const {
   shininess,
 } = GlobeConfiguration;
 const id = "globe";
+const getRandomColor = () => takeOne(COLORS, createRandomInteger(COLORS.length - 1));
 const { width } = useWindowSize();
 const height = computed(() => width.value);
 let renderer: WebGLRenderer;
@@ -111,7 +112,7 @@ onMounted(async () => {
     .arcStartLng((d) => (d as Data).startLng)
     .arcEndLat((d) => (d as Data).endLat)
     .arcEndLng((d) => (d as Data).endLng)
-    .arcColor(() => takeOne(COLORS, createRandomInteger(COLORS.length - 1)))
+    .arcColor(() => getRandomColor())
     .arcAltitude((e) => (e as Data).arcAlt)
     .arcStroke(() => takeOne(ARC_STROKES, createRandomInteger(ARC_STROKES.length - 1)))
     .arcDashLength(arcLength)
@@ -128,12 +129,12 @@ onMounted(async () => {
     .labelResolution(6)
     .labelAltitude(0.01)
     .pointsData(countries)
-    .pointColor(() => takeOne(COLORS, createRandomInteger(COLORS.length - 1)))
+    .pointColor(() => getRandomColor())
     .pointsMerge(true)
     .pointAltitude(0)
     .pointRadius(1)
     .ringsData(getRandomValues(countries, rings))
-    .ringColor(() => takeOne(COLORS, createRandomInteger(COLORS.length - 1)))
+    .ringColor(() => getRandomColor())
     .ringMaxRadius(ringMaxRadius)
     .ringPropagationSpeed(3)
     .ringRepeatPeriod(arcTime * arcLength);

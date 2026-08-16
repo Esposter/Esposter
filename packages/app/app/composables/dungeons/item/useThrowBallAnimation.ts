@@ -2,6 +2,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { dayjs } from "#shared/services/dayjs";
 import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
+import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useBallStore } from "@/store/dungeons/battle/ball";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useSettingsStore } from "@/store/dungeons/settings";
@@ -57,30 +58,11 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, captureResu
       });
     });
 
-  const playCatchEnemyAnimation = () =>
+  // The enemy fades out as it is caught, and back in when the ball fails to hold it
+  const playEnemyFadeAnimation = (fromAlpha: number, toAlpha: number) =>
     new Promise<void>((resolve) => {
       useTween(monsterTween, {
-        alpha: {
-          from: 1,
-          start: 1,
-          to: 0,
-        },
-        duration: dayjs.duration(0.5, "seconds").asMilliseconds(),
-        ease: Math.Easing.Sine.InOut,
-        onComplete: () => {
-          resolve();
-        },
-      });
-    });
-
-  const playCatchEnemyFailedAnimation = () =>
-    new Promise<void>((resolve) => {
-      useTween(monsterTween, {
-        alpha: {
-          from: 0,
-          start: 0,
-          to: 1,
-        },
+        alpha: getTweenRange(fromAlpha, toAlpha),
         duration: dayjs.duration(0.5, "seconds").asMilliseconds(),
         ease: Math.Easing.Sine.InOut,
         onComplete: () => {
@@ -90,9 +72,9 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, captureResu
     });
 
   await playThrowBallAnimation();
-  await playCatchEnemyAnimation();
+  await playEnemyFadeAnimation(1, 0);
   await playShakeBallAnimation();
   await sleep(scene, dayjs.duration(0.5, "seconds").asMilliseconds());
   isVisible.value = false;
-  if (captureResult !== CaptureResult.Success) await playCatchEnemyFailedAnimation();
+  if (captureResult !== CaptureResult.Success) await playEnemyFadeAnimation(0, 1);
 };

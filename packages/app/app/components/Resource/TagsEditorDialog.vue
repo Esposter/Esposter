@@ -13,10 +13,11 @@ interface ResourceTagsEditorDialogProps {
 const isOpen = defineModel<boolean>({ default: false });
 const { tags, updateTags } = defineProps<ResourceTagsEditorDialogProps>();
 const rules = useVRules();
+const nameRules = computed(() => [rules.maxLength(MAX_TAG_NAME_LENGTH)]);
+const valueRules = computed(() => [rules.maxLength(MAX_TAG_VALUE_LENGTH)]);
 // The caller mounts this only while it is open, so the rows start from the current tags on every open.
 // An empty trailing row means the first thing the user sees is somewhere to type.
 const rows = ref(tags && Object.keys(tags).length > 0 ? getTagRows(tags) : [{ name: "", value: "" }]);
-const canAddRow = computed(() => rows.value.length < MAX_TAGS_COUNT);
 </script>
 
 <template>
@@ -33,24 +34,14 @@ const canAddRow = computed(() => rows.value.length < MAX_TAGS_COUNT);
   >
     <div flex flex-col gap-2>
       <div v-for="(row, index) of rows" :key="index" flex gap-2 items-start>
-        <v-text-field
-          v-model="row.name"
-          density="comfortable"
-          label="Name"
-          :rules="[rules.maxLength(MAX_TAG_NAME_LENGTH)]"
-        />
-        <v-text-field
-          v-model="row.value"
-          density="comfortable"
-          label="Value"
-          :rules="[rules.maxLength(MAX_TAG_VALUE_LENGTH)]"
-        />
+        <v-text-field v-model="row.name" density="comfortable" label="Name" :rules="nameRules" />
+        <v-text-field v-model="row.value" density="comfortable" label="Value" :rules="valueRules" />
         <StyledTooltipIconButton icon="mdi-delete" text="Remove tag" @click="rows.splice(index, 1)" />
       </div>
       <!-- Same reason as the Edit button that opens this dialog: transparent, it reads as a caption rather
            than as the control that adds a row -->
       <StyledButton
-        v-if="canAddRow"
+        v-if="rows.length < MAX_TAGS_COUNT"
         :button-props="{ prependIcon: 'mdi-plus', size: 'small', text: 'Add tag' }"
         w-fit
         @click="rows.push({ name: '', value: '' })"

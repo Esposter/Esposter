@@ -9,6 +9,7 @@ interface NotificationListItemProps {
 
 const { userAchievement } = defineProps<NotificationListItemProps>();
 const emit = defineEmits<{ close: [] }>();
+const displayName = computed(() => prettify(userAchievement.achievement.name));
 </script>
 
 <template>
@@ -29,7 +30,7 @@ const emit = defineEmits<{ close: [] }>();
       <v-icon :icon="userAchievement.achievement.icon" size="large" />
       <div>
         <div font-bold text-title-large>Achievement Unlocked!</div>
-        <div text-body-large>{{ prettify(userAchievement.achievement.name) }}</div>
+        <div text-body-large>{{ displayName }}</div>
         <div text-body-small>{{ userAchievement.achievement.description }}</div>
         <div text-orange font-bold text-body-small>+{{ userAchievement.achievement.points }} points</div>
       </div>

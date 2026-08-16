@@ -230,6 +230,25 @@ describe(useInputStore, () => {
     expect(getDraft(roomId1)?.content).toBe(draftContent);
   });
 
+  // The room is one of the watched sources, so switching it inside the debounce window cancels the pending save
+  // And reschedules it against the room moved to. The outgoing keystrokes stay in the map, so nothing looks
+  // Wrong until a reload finds they were never persisted
+  test("persists the outgoing room's draft when the room changes within the debounce window", async () => {
+    expect.hasAssertions();
+
+    const inputStore = useInputStore();
+    const { input } = storeToRefs(inputStore);
+    input.value = draftContent;
+    await nextTick();
+    vi.advanceTimersByTime(debounceMs - 1);
+    setCurrentRoomId(roomId2);
+    await nextTick();
+    vi.advanceTimersByTime(debounceMs);
+    await nextTick();
+
+    expect(getDraft(roomId1)?.content).toBe(draftContent);
+  });
+
   test("does not save before debounce delay elapses", async () => {
     expect.hasAssertions();
 

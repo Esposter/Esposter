@@ -21,9 +21,16 @@ const roomItems = ref<SelectItemCategoryDefinition<string>[]>([]);
 const isLoadingRooms = ref(true);
 const roomId = ref("");
 const note = ref("");
-const shareUrl = computed(() => `${window.location.origin}${RoutePath.View(resource.type, resource.id)}`);
-const shareMessage = computed(() => getShareMessage(note.value, shareUrl.value));
-const title = computed(() => `Share "${resource.name}"`);
+const shareMessage = computed(() =>
+  getShareMessage(note.value, `${window.location.origin}${RoutePath.View(resource.type, resource.id)}`),
+);
+const cardProps = computed(() => ({ prependIcon: "mdi-share-variant", title: `Share "${resource.name}"` }));
+const confirmButtonAttrs = computed(() => ({ disabled: !roomId.value }));
+const noteRules = computed(() => [
+  () =>
+    shareMessage.value.length <= MESSAGE_MAX_LENGTH ||
+    "The note and link together exceed the message limit, so the note needs to be shorter",
+]);
 // The caller mounts this only while open, so the rooms are read once per open rather than watched
 onMounted(async () => {
   await getResultAsync(async () => {
@@ -58,8 +65,8 @@ const share = async () => {
 <template>
   <StyledFormDialog
     v-model="isOpen"
-    :card-props="{ prependIcon: 'mdi-share-variant', title }"
-    :confirm-button-attrs="{ disabled: !roomId }"
+    :card-props
+    :confirm-button-attrs
     :confirm-button-props="{ text: 'Share' }"
     @submit="
       async (_event, onComplete) => {
@@ -80,17 +87,7 @@ const share = async () => {
     </StyledEmptyState>
     <div v-else flex flex-col gap-2>
       <v-select v-model="roomId" autofocus label="Room" :items="roomItems" />
-      <v-textarea
-        v-model="note"
-        :counter="MESSAGE_MAX_LENGTH"
-        label="Message (optional)"
-        rows="3"
-        :rules="[
-          () =>
-            shareMessage.length <= MESSAGE_MAX_LENGTH ||
-            'The note and link together exceed the message limit, so the note needs to be shorter',
-        ]"
-      />
+      <v-textarea v-model="note" :counter="MESSAGE_MAX_LENGTH" label="Message (optional)" rows="3" :rules="noteRules" />
       <span text-caption op-medium-emphasis>The public link is posted as your own message in the room.</span>
     </div>
   </StyledFormDialog>

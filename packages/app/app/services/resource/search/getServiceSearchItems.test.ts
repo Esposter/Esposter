@@ -4,7 +4,7 @@ import { CreatableResourceTypes } from "@/services/resource/CreatableResourceTyp
 import { ResourceTypeDescriptionMap } from "@/services/resource/ResourceTypeDescriptionMap";
 import { getServiceSearchItems } from "@/services/resource/search/getServiceSearchItems";
 import { ResourceType } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
+import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(getServiceSearchItems, () => {
@@ -12,7 +12,7 @@ describe(getServiceSearchItems, () => {
     createTo: RoutePath.ResourceExplorerCreateType(ResourceType.Survey),
     group: ResourceSearchGroup.Services,
     icon: ResourceDefinitionMap[ResourceType.Survey].icon,
-    id: `${ResourceSearchGroup.Services}-${ResourceType.Survey}`,
+    id: `${ResourceSearchGroup.Services}${ID_SEPARATOR}${ResourceType.Survey}`,
     subtitle: ResourceTypeDescriptionMap[ResourceType.Survey],
     title: ResourceDefinitionMap[ResourceType.Survey].title,
     to: { path: RoutePath.ResourceExplorerAll, query: { types: ResourceType.Survey } },

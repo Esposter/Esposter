@@ -1,6 +1,7 @@
 import type { GameObjects } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Filters, Geom, Math } from "phaser";
 
@@ -35,9 +36,7 @@ export const useRectangleCameraMask = (scene: SceneWithPlugins) => {
       duration: 800,
       height: {
         ease: Math.Easing.Expo.InOut,
-        from: 0,
-        start: 0,
-        to: height,
+        ...getTweenRange(0, height),
       },
       onComplete: () => {
         scene.cameras.main.filters.internal.remove(mask);
@@ -51,9 +50,7 @@ export const useRectangleCameraMask = (scene: SceneWithPlugins) => {
       targets: rectangleShape,
       y: {
         ease: Math.Easing.Expo.InOut,
-        from: height / 2,
-        start: height / 2,
-        to: 0,
+        ...getTweenRange(height / 2, 0),
       },
     });
   });

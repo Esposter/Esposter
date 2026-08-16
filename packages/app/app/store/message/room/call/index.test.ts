@@ -7,6 +7,7 @@ import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { getMockSession } from "@@/server/trpc/context.test";
+import { RoutePath } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -37,6 +38,8 @@ describe(useCallStore, () => {
   const server = setupMswTrpc();
   const callSessionId = crypto.randomUUID();
   const imagePath = "/image.png";
+  const roomId = crypto.randomUUID();
+  const threadRootRowKey = crypto.randomUUID();
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -63,6 +66,36 @@ describe(useCallStore, () => {
 
     expect(selectedVirtualBackground.value).toBe(imagePath);
     expect(isCameraEnabled.value).toBe(false);
+  });
+
+  // A thread call carries the room it belongs to, so a route keyed on the room alone lands in the room with the
+  // Thread pane shut — the call announced itself in a pane the link then refuses to open
+  test.each([
+    { expected: RoutePath.Messages(roomId), threadRootRowKey: "", title: "the room for a room call" },
+    {
+      expected: RoutePath.MessagesThread(roomId, threadRootRowKey),
+      threadRootRowKey,
+      title: "the thread for a thread call",
+    },
+  ])("routes to $title", ({ expected, threadRootRowKey: rootRowKey }) => {
+    expect.hasAssertions();
+
+    const callStore = useCallStore();
+    const { callRoomId, callRoute, callThreadRootRowKey } = storeToRefs(callStore);
+    callRoomId.value = roomId;
+    callThreadRootRowKey.value = rootRowKey;
+
+    expect(callRoute.value).toBe(expected);
+  });
+
+  test("routes to the call's own page when the call belongs to no room", () => {
+    expect.hasAssertions();
+
+    const callStore = useCallStore();
+    const { activeCallSessionId, callRoute } = storeToRefs(callStore);
+    activeCallSessionId.value = callSessionId;
+
+    expect(callRoute.value).toBe(RoutePath.Calls(callSessionId));
   });
 });
 

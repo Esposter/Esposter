@@ -18,8 +18,13 @@ const unlockedStoreUpgrades = computed(() =>
     .toSorted((a, b) => a.price - b.price),
 );
 
-initializeUpgradeMap(await $trpc.clicker.readUpgradeMap.query());
-initializeBuildingMap(await $trpc.clicker.readBuildingMap.query());
+const [upgradeMap, buildingMap] = await Promise.all([
+  $trpc.clicker.readUpgradeMap.query(),
+  $trpc.clicker.readBuildingMap.query(),
+]);
+
+initializeUpgradeMap(upgradeMap);
+initializeBuildingMap(buildingMap);
 </script>
 
 <template>

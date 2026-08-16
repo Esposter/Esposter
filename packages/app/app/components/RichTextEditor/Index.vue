@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FooterBarAppendSlotProps, FooterBarPrependSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
+import type { FooterBarSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
 import type { FileHandlePluginOptions } from "@tiptap/extension-file-handler";
 import type { AnyExtension, FocusPosition } from "@tiptap/vue-3";
 import type { CSSProperties } from "vue";
@@ -20,8 +20,8 @@ interface RichTextEditorProps {
 }
 
 defineSlots<{
-  "append-footer": (props: FooterBarAppendSlotProps) => VNode;
-  "prepend-footer": (props: FooterBarPrependSlotProps) => VNode;
+  "append-footer": (props: FooterBarSlotProps) => VNode;
+  "prepend-footer": (props: FooterBarSlotProps) => VNode;
   "prepend-inner-header": () => VNode;
   "prepend-outer-footer": () => VNode;
 }>();

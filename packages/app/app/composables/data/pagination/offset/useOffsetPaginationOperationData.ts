@@ -1,4 +1,6 @@
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
+import { getBoundComputed } from "@/util/vue/getBoundComputed";
+import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
 import { withFinalizerAsync } from "@esposter/shared";
 
 export const useOffsetPaginationOperationData = <TItem>(
@@ -12,30 +14,10 @@ export const useOffsetPaginationOperationData = <TItem>(
 ) => {
   // Binding per read resolves the key every time, which is what makes this track the current slice. It is the
   // Same binder an operation pins once, so the two views can never point at different maps.
-  const offsetPaginationData = computed({
-    get: () => bindOffsetPaginationData().value,
-    set: (newData) => {
-      bindOffsetPaginationData().value = newData;
-    },
-  });
-  const isLoaded = computed({
-    get: () => bindIsLoaded().value,
-    set: (newIsLoaded) => {
-      bindIsLoaded().value = newIsLoaded;
-    },
-  });
-  const items = computed({
-    get: () => offsetPaginationData.value.items,
-    set: (newItems) => {
-      offsetPaginationData.value.items = newItems;
-    },
-  });
-  const hasMore = computed({
-    get: () => offsetPaginationData.value.hasMore,
-    set: (newHasMore) => {
-      offsetPaginationData.value.hasMore = newHasMore;
-    },
-  });
+  const offsetPaginationData = getBoundComputed(bindOffsetPaginationData);
+  const isLoaded = getBoundComputed(bindIsLoaded);
+  const items = getPropertyComputed(offsetPaginationData, "items");
+  const hasMore = getPropertyComputed(offsetPaginationData, "hasMore");
 
   const initializeOffsetPaginationData = (data: OffsetPaginationData<TItem>) => {
     offsetPaginationData.value = data;

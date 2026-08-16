@@ -3,7 +3,6 @@ import type { CallParticipantTileProps } from "@/models/message/room/call/CallPa
 
 const { isDeafened, isScreenSharing, isSelf, isSpeaking, participant, videoStream } =
   defineProps<CallParticipantTileProps>();
-const displayName = computed(() => (isSelf ? `${participant.name} (You)` : participant.name));
 </script>
 
 <template>
@@ -56,7 +55,7 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
     </MessageContentCallParticipantActionMenu>
     <StyledCard m-2 px-2 py-1 rd-lg flex gap-x-2 items-center bottom-0 left-0 absolute>
       <span font-medium truncate text-body-small>
-        {{ displayName }}
+        {{ isSelf ? `${participant.name} (You)` : participant.name }}
       </span>
       <v-icon v-if="isScreenSharing" text-primary icon="mdi-monitor-share" size="small" />
       <v-icon v-if="participant.isHandRaised" text-warning icon="mdi-hand-back-right" size="small" />

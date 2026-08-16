@@ -6,14 +6,10 @@ import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
 import { getActiveItemResolvers } from "@/services/dungeons/item/getActiveItemResolvers";
 
 export const useItem = async (scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) => {
-  const itemResolvers = getActiveItemResolvers(item, monster);
-  let handled = false;
+  // The resolvers are ordered by precedence, so the first active one owns the item
+  const [itemResolver] = getActiveItemResolvers(item, monster);
+  if (!itemResolver) return;
 
-  for (const itemResolver of itemResolvers) {
-    await itemResolver.handleItem(scene, item, monster);
-    handled = true;
-    break;
-  }
-
-  if (handled) AItemResolver.postHandleItem(item);
+  await itemResolver.handleItem(scene, item, monster);
+  AItemResolver.postHandleItem(item);
 };

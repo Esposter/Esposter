@@ -1,10 +1,17 @@
 <script setup lang="ts">
+import type { VBtn } from "vuetify/components";
+
 import { useCallStore } from "@/store/message/room/call";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 const callStore = useCallStore();
 const { createCall } = callStore;
 const isCreating = ref(false);
+const buttonProps = computed<VBtn["$props"]>(() => ({
+  loading: isCreating.value,
+  prependIcon: "mdi-video-plus",
+  text: "New call",
+}));
 </script>
 
 <template>
@@ -12,7 +19,7 @@ const isCreating = ref(false);
     <template #activator="{ props }">
       <StyledButton
         :="props"
-        :button-props="{ loading: isCreating, prependIcon: 'mdi-video-plus', text: 'New call' }"
+        :button-props
         @click="
           async () => {
             isCreating = true;

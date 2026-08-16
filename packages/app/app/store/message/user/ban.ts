@@ -3,6 +3,7 @@ import type { BanInMessageWithRelations } from "@esposter/db-schema";
 
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
+import { ID_SEPARATOR } from "@esposter/shared";
 
 export const useBanStore = defineStore("message/user/ban", () => {
   const { $trpc } = useNuxtApp();
@@ -27,7 +28,7 @@ export const useBanStore = defineStore("message/user/ban", () => {
         };
       },
       // Keyed per room-user pair so concurrent unbans across bans run independently instead of queueing behind each other
-      key: `${input.roomId}-${input.userId}`,
+      key: `${input.roomId}${ID_SEPARATOR}${input.userId}`,
     });
   };
 

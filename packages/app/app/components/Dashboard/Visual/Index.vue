@@ -19,6 +19,11 @@ useResizeObserver(container, (entries) => {
 
 const { error, isLoading, refresh, truncation, visualPropsData } = useVisualPropsData(() => visual);
 const data = computed(() => visualPropsData.value ?? VisualTypeDemoDataMap[visual.type](visual.chart.type));
+const refreshButtonProps = computed(() => ({
+  loading: isLoading.value,
+  size: "small" as const,
+  variant: "text" as const,
+}));
 const options = useApexOptions(
   () => visual.chart,
   () => visual.type,
@@ -48,7 +53,7 @@ const options = useApexOptions(
         absolute
         icon="mdi-refresh"
         text="Refresh data"
-        :button-props="{ loading: isLoading, size: 'small', variant: 'text' }"
+        :button-props="refreshButtonProps"
         @click="refresh()"
       />
     </div>

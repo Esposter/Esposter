@@ -30,9 +30,17 @@ export const useVisibleTocLinkIds = (links: MaybeRefOrGetter<TocLink[]>) => {
     if (newVisibleIds.length > 0) visibleIds.value = newVisibleIds;
   };
 
-  useEventListener("scroll", updateVisibleIds, { passive: true });
-  useEventListener("resize", updateVisibleIds, { passive: true });
-  onMounted(updateVisibleIds);
+  useEventListener(
+    ["resize", "scroll"],
+    () => {
+      updateVisibleIds();
+    },
+    { passive: true },
+  );
+
+  onMounted(() => {
+    updateVisibleIds();
+  });
 
   return visibleIds;
 };

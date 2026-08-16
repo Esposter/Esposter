@@ -5,9 +5,9 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
-  SETTINGS_POSITION_INCREMENT,
   SETTINGS_VALUE_POSITION_INCREMENT,
 } from "@/services/dungeons/scene/settings/constants";
+import { getSettingsRowY } from "@/services/dungeons/scene/settings/getSettingsRowY";
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useSettingsStore } from "@/store/dungeons/settings";
@@ -42,7 +42,7 @@ const onGridClick = useOnGridClick(
         columnIndex === 0
           ? INITIAL_SETTINGS_POSITION.x
           : INITIAL_SETTINGS_VALUE_POSITION.x + SETTINGS_VALUE_POSITION_INCREMENT.x * (columnIndex - 1),
-      y: INITIAL_SETTINGS_POSITION.y + SETTINGS_POSITION_INCREMENT.y * rowIndex,
+      y: getSettingsRowY(rowIndex),
       text,
       style: {
         ...MenuTextStyle,

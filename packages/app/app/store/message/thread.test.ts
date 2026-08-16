@@ -2,11 +2,12 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import MessageRightSideBarThreadIndex from "@/components/Message/RightSideBar/Thread/Index.vue";
+import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useLayoutStore } from "@/store/layout";
 import { useThreadStore } from "@/store/message/thread";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
+import { noop, Operation } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -21,7 +22,8 @@ describe(useThreadStore, () => {
   const userId = crypto.randomUUID();
   const message = "message";
   const rootRowKey = "rootRowKey";
-  const createReply = () => createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+  const createReply = (replyRowKey?: string) =>
+    createMessageEntity({ message, replyRowKey, roomId, type: MessageType.Message, userId });
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -71,6 +73,10 @@ describe(useThreadStore, () => {
     const { closeThread, openThread } = threadStore;
     const openPromise = openThread(roomId, rootRowKey);
     await readStarted;
+
+    // The click opens the drawer, not the response — a read still in flight has a pane to load into
+    expect(isRightDrawerOpen.value).toBe(true);
+
     closeThread();
     resolveRead([createReply()]);
     await openPromise;
@@ -79,5 +85,89 @@ describe(useThreadStore, () => {
     expect(isRightDrawerOpen.value).toBe(false);
     expect(activeRoomId.value).toBe("");
     expect(activeRootRowKey.value).toBe("");
+  });
+
+  // The pane is a live view rather than the snapshot `readThread` returned — without this a reply lands in the
+  // Room list and the thread it belongs to shows nothing, including the sender's own, which is the composer's
+  // Entire feedback
+  test("shows a reply that lands while the thread is open", async () => {
+    expect.hasAssertions();
+
+    server.use(trpcMsw.message.readThread.query(() => []));
+    await mountThreadDrawer();
+    const threadStore = useThreadStore();
+    const { threadMessages } = storeToRefs(threadStore);
+    const { openThread } = threadStore;
+    await openThread(roomId, rootRowKey);
+    const reply = createReply(rootRowKey);
+    await MessageHookMap[Operation.Create].run(reply);
+
+    expect(threadMessages.value.map(({ rowKey }) => rowKey)).toStrictEqual([reply.rowKey]);
+  });
+
+  // The response is a snapshot from before the reply, so assigning it wholesale drops a reply the create hook
+  // Already pushed here — and the pane shows nothing of it until the thread is reopened
+  test("keeps a reply that landed while the thread read was in flight", async () => {
+    expect.hasAssertions();
+
+    let resolveRead: (replies: MessageEntity[]) => void = noop;
+    const readStarted = new Promise<void>((resolveReadStarted) => {
+      server.use(
+        trpcMsw.message.readThread.query(
+          () =>
+            new Promise<MessageEntity[]>((resolve) => {
+              resolveRead = resolve;
+              resolveReadStarted();
+            }),
+        ),
+      );
+    });
+    await mountThreadDrawer();
+    const threadStore = useThreadStore();
+    const { threadMessages } = storeToRefs(threadStore);
+    const { openThread } = threadStore;
+    const openPromise = openThread(roomId, rootRowKey);
+    await readStarted;
+    const liveReply = createReply(rootRowKey);
+    await MessageHookMap[Operation.Create].run(liveReply);
+    const readReply = createReply(rootRowKey);
+    resolveRead([readReply]);
+    await openPromise;
+
+    expect(threadMessages.value.map(({ rowKey }) => rowKey)).toStrictEqual([readReply.rowKey, liveReply.rowKey]);
+  });
+
+  test("ignores a message that belongs to another thread", async () => {
+    expect.hasAssertions();
+
+    server.use(trpcMsw.message.readThread.query(() => []));
+    await mountThreadDrawer();
+    const threadStore = useThreadStore();
+    const { threadMessages } = storeToRefs(threadStore);
+    const { openThread } = threadStore;
+    await openThread(roomId, rootRowKey);
+    await MessageHookMap[Operation.Create].run(createReply("otherRootRowKey"));
+
+    expect(threadMessages.value).toStrictEqual([]);
+  });
+
+  // The thread is named by its root, so a deleted root leaves nothing for the pane to be about — where a
+  // Deleted reply merely leaves the thread one message shorter
+  test("closes the pane when the root is deleted", async () => {
+    expect.hasAssertions();
+
+    server.use(trpcMsw.message.readThread.query(() => [createReply(rootRowKey)]));
+    await mountThreadDrawer();
+    const layoutStore = useLayoutStore();
+    const { isRightDrawerOpen } = storeToRefs(layoutStore);
+    const threadStore = useThreadStore();
+    const { activeRootRowKey, threadMessages } = storeToRefs(threadStore);
+    const { openThread } = threadStore;
+    await openThread(roomId, rootRowKey);
+    await MessageHookMap[Operation.Delete].run({ partitionKey: roomId, rowKey: rootRowKey });
+
+    expect(activeRootRowKey.value).toBe("");
+    expect(threadMessages.value).toStrictEqual([]);
+    expect(isRightDrawerOpen.value).toBe(false);
   });
 });

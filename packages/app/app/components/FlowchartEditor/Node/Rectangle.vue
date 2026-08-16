@@ -16,7 +16,7 @@ const colorsStore = useColorsStore();
 const { text } = storeToRefs(colorsStore);
 const flowchartEditorStore = useFlowchartEditorStore();
 const { flowchartEditor } = storeToRefs(flowchartEditorStore);
-const node = computed(() => flowchartEditor.value.nodes.find((n) => n.id === id));
+const node = computed(() => flowchartEditor.value.nodes.find(({ id: nodeId }) => nodeId === id));
 </script>
 
 <template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getTimelineSections } from "@/services/message/draftsAndSent/getTimelineSections";
 import { useSentMessageStore } from "@/store/message/sentMessage";
+import { ID_SEPARATOR } from "@esposter/shared";
 
 const { readMoreSentMessages } = useReadSentMessages();
 const sentMessageStore = useSentMessageStore();
@@ -13,7 +14,7 @@ const sections = computed(() => getTimelineSections(items.value, ({ message }) =
     <MessageDraftsAndSentSection v-for="section of sections" :key="section.title" :title="section.title">
       <MessageDraftsAndSentSentListItem
         v-for="{ message, room } of section.items"
-        :key="`${message.partitionKey}:${message.rowKey}`"
+        :key="`${message.partitionKey}${ID_SEPARATOR}${message.rowKey}`"
         :message
         :room
       />

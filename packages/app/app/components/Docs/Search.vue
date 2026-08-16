@@ -57,15 +57,10 @@ const results = computed(() => {
         <v-list-item
           v-for="result of results"
           :key="result.id"
-          link
           :subtitle="result.subtitle"
           :title="result.title"
-          @click="
-            async () => {
-              await navigateTo(result.id);
-              isOpen = false;
-            }
-          "
+          :to="result.id"
+          @click="isOpen = false"
         />
       </v-list>
       <p v-else m-0 p-4 text-center op-medium-emphasis>No results for "{{ query }}"</p>

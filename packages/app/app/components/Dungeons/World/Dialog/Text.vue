@@ -13,42 +13,21 @@ interface DialogTextProps {
 const { dialogMessage } = defineProps<DialogTextProps>();
 const x = 18;
 const y = 12;
+// A titled message stacks its title above the text, one line height apart
+const lines = computed(() => (dialogMessage.title ? [dialogMessage.title, dialogMessage.text] : [dialogMessage.text]));
 </script>
 
 <template>
-  <template v-if="dialogMessage.title">
-    <Text
-      :configuration="{
-        x,
-        y,
-        text: dialogMessage.title,
-        style: {
-          ...DialogTextStyle,
-          wordWrap: { width: DIALOG_WIDTH - WORD_PADDING },
-        },
-      }"
-    />
-    <Text
-      :configuration="{
-        x,
-        y: y + DialogTextStyle.fontSize,
-        text: dialogMessage.text,
-        style: {
-          ...DialogTextStyle,
-          wordWrap: { width: DIALOG_WIDTH - WORD_PADDING },
-        },
-      }"
-    />
-  </template>
   <Text
-    v-else
+    v-for="(line, index) of lines"
+    :key="index"
     :configuration="{
       x,
-      y,
-      text: dialogMessage.text,
+      y: y + DialogTextStyle.fontSize * index,
+      text: line,
       style: {
         ...DialogTextStyle,
-        wordWrap: { width: DIALOG_WIDTH - x },
+        wordWrap: { width: DIALOG_WIDTH - WORD_PADDING },
       },
     }"
   />

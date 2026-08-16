@@ -27,7 +27,7 @@ export const leaveCallAsParticipant = async (
   // Failed lookup loses the summary message, never the leave that already happened
   await getResultAsync(async () => {
     const callSession = await db.query.callSessionsInMessage.findFirst({
-      columns: { roomId: true },
+      columns: { roomId: true, threadRootRowKey: true },
       where: { id: { eq: callSessionId } },
     });
     if (!callSession?.roomId) return;
@@ -37,6 +37,8 @@ export const leaveCallAsParticipant = async (
       : 0;
     // The line is worded by the duration it reports, which is what the renderer reads an ended call back as
     await createSystemRoomMessage(callSession.roomId, userId, String(callDurationSeconds), sessionId, {
+      // The summary belongs where the call was — the thread it ran in, or the room itself
+      replyRowKey: callSession.threadRootRowKey || undefined,
       type: MessageType.Call,
     });
   }).match(noop, console.error);

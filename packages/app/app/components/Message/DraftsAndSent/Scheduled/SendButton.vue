@@ -11,11 +11,14 @@ interface MessageDraftsAndSentScheduledSendButtonProps {
 const { scheduledMessageJob } = defineProps<MessageDraftsAndSentScheduledSendButtonProps>();
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { sendScheduledMessageNow } = scheduledMessageJobStore;
+const buttonProps = computed(() => ({
+  disabled: scheduledMessageJob.payload.type !== ScheduledMessageJobType.ScheduledMessage,
+}));
 </script>
 
 <template>
   <MessageDraftsAndSentActionButton
-    :button-props="{ disabled: scheduledMessageJob.payload.type !== ScheduledMessageJobType.ScheduledMessage }"
+    :button-props
     icon="mdi-send-outline"
     text="Send message"
     @click="sendScheduledMessageNow(scheduledMessageJob.id)"

@@ -21,7 +21,7 @@ const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
     <template v-else>
       <span op-medium-emphasis> removed the custom room name. </span>
     </template>
-    <span text-info cursor-pointer hover:underline @click="isEditRoomDialogOpen = true">Edit Room</span>
+    <span font-bold cursor-pointer hover:underline @click="isEditRoomDialogOpen = true">Edit Room</span>
     &nbsp;
   </MessageModelMessageTypeSystemLine>
 </template>

@@ -1,6 +1,5 @@
 import { dayjs } from "#shared/services/dayjs";
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
+import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useTween } from "vue-phaserjs";
 
@@ -9,15 +8,11 @@ export const useMonsterTakeDamageTween = (isEnemy: boolean) => {
   const { isSkipAnimations } = storeToRefs(settingsStore);
   if (isSkipAnimations.value) return undefined;
 
-  const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
+  const store = useBattleMonsterStore(isEnemy);
   const { monsterTween } = storeToRefs(store);
   return new Promise<void>((resolve) => {
     useTween(monsterTween, {
-      alpha: {
-        from: 1,
-        start: 1,
-        to: 0,
-      },
+      alpha: getTweenRange(1, 0),
       delay: 0,
       duration: dayjs.duration(0.15, "seconds").asMilliseconds(),
       onComplete: (_tween, [monsterImageGameObject]) => {

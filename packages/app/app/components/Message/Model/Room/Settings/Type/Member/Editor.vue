@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import type { RoomInMessage, RoomRoleInMessage, User } from "@esposter/db-schema";
+import type { RoomInMessage, User } from "@esposter/db-schema";
 
-import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { useRoleStore } from "@/store/message/room/role";
 
 interface MemberEditorProps {
@@ -11,15 +10,10 @@ interface MemberEditorProps {
 
 const { member, roomId } = defineProps<MemberEditorProps>();
 const roleStore = useRoleStore();
-const { assignRole, getMemberRoles, getMyPermissions, getRoles, readMemberRoles, revokeRole } = roleStore;
+const { getMemberRoles, getMyPermissions, getRoles, readMemberRoles } = roleStore;
 const allRoles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));
 const memberRoles = computed(() => getMemberRoles(roomId, member.id));
 const myPermissions = computed(() => getMyPermissions(roomId));
-const hasRole = (roleId: string) => memberRoles.value.some(({ id }) => id === roleId);
-const checkIsRoleManageable = ({ position }: RoomRoleInMessage) => {
-  if (!myPermissions.value) return false;
-  return checkIsManageable(myPermissions.value.topRolePosition, position, myPermissions.value.isRoomOwner);
-};
 
 await readMemberRoles({ roomId, userIds: [member.id] });
 </script>
@@ -32,24 +26,16 @@ await readMemberRoles({ roomId, userIds: [member.id] });
     </div>
     <div v-if="allRoles.length === 0" op-medium-emphasis>No roles available.</div>
     <v-list v-else density="compact" rd>
-      <v-list-item v-for="role of allRoles" :key="role.id" :title="role.name">
-        <template #prepend>
-          <MessageModelRoomSettingsTypeRoleColorDot mr-2 :color="role.color" />
-        </template>
-        <template #append>
-          <v-switch
-            :disabled="!checkIsRoleManageable(role)"
-            :model-value="hasRole(role.id)"
-            density="compact"
-            @update:model-value="
-              async () => {
-                if (hasRole(role.id)) await revokeRole({ roleId: role.id, roomId, userId: member.id });
-                else await assignRole({ roleId: role.id, roomId, userId: member.id });
-              }
-            "
-          />
-        </template>
-      </v-list-item>
+      <MessageModelRoomSettingsTypeMemberRoleListItem
+        v-for="role of allRoles"
+        :key="role.id"
+        :is-room-owner="myPermissions?.isRoomOwner ?? false"
+        :member-roles
+        :role
+        :room-id
+        :top-role-position="myPermissions?.topRolePosition ?? -1"
+        :user-id="member.id"
+      />
     </v-list>
   </div>
 </template>

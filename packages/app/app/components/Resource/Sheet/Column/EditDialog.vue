@@ -22,8 +22,11 @@ const { isOpen } = useSingletonDialog(editingColumnName);
 const updateColumn = useUpdateColumn();
 // StructuredClone to a plain object: vjsf rejects class instances, and fast-deep-equal compares constructors.
 const editedColumn = ref(structuredClone(toRawDeep(column)));
-const title = computed(() => getEditColumnDescription(column.name));
 const jsonSchema = zodToJsonSchema(columnFormSchema);
+const value = computed(() => extractSchemaFields(ColumnTypeFormSchemaMap[column.type], column));
+const editedValue = computed(() =>
+  extractSchemaFields(ColumnTypeFormSchemaMap[editedColumn.value.type], editedColumn.value),
+);
 const options = useColumnFormOptions(
   () => dataSource,
   () => column.name,
@@ -36,10 +39,10 @@ const resetForm = () => {
 <template>
   <ResourceSheetEditDialog
     v-model="isOpen"
-    :title
-    :edited-value="extractSchemaFields(ColumnTypeFormSchemaMap[editedColumn.type], editedColumn)"
+    :title="getEditColumnDescription(column.name)"
+    :edited-value
     :schema="columnFormSchema"
-    :value="extractSchemaFields(ColumnTypeFormSchemaMap[column.type], column)"
+    :value
     @reset="resetForm()"
     @submit="
       (onComplete) => {

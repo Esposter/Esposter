@@ -13,11 +13,10 @@ const friendStore = useFriendStore();
 const { getIsFriend } = friendStore;
 const friendRequestStore = useFriendRequestStore();
 const { getHasSentFriendRequest, sendFriendRequest } = friendRequestStore;
-const isAddable = computed(() => !getIsFriend(user.id) && !getHasSentFriendRequest(user.id));
 </script>
 
 <template>
-  <v-avatar v-if="isAddable" color="surface">
+  <v-avatar v-if="!getIsFriend(user.id) && !getHasSentFriendRequest(user.id)" color="surface">
     <StyledTooltipIconButton
       :button-props="{ size: 'small' }"
       icon="mdi-account-plus"

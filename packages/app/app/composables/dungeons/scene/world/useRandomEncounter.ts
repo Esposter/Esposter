@@ -3,6 +3,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
 import { EncounterObjectProperty } from "#shared/generated/tiled/propertyTypes/class/EncounterObjectProperty";
+import { dayjs } from "#shared/services/dayjs";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { getEncounterArea } from "@/services/dungeons/area/getEncounterArea";
 import { createEncounteredMonster } from "@/services/dungeons/monster/createEncounteredMonster";
@@ -14,7 +15,7 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
-import { getWeightedRandomValue } from "@/util/math/random/getWeightedRandomValues";
+import { getWeightedRandomValue } from "@/util/math/random/getWeightedRandomValue";
 import { NotFoundError } from "@esposter/shared";
 
 export const useRandomEncounter = (scene: SceneWithPlugins) => {
@@ -45,5 +46,5 @@ export const useRandomEncounter = (scene: SceneWithPlugins) => {
   const { activeMonster } = storeToRefs(enemyStore);
   stepsSinceLastEncounter.value = 0;
   activeMonster.value = randomMonster;
-  fadeSwitchToScene(scene, SceneKey.Battle, 2000);
+  fadeSwitchToScene(scene, SceneKey.Battle, dayjs.duration(2, "seconds").asMilliseconds());
 };
