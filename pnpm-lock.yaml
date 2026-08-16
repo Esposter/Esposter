@@ -325,8 +325,8 @@ catalogs:
       specifier: ^7.0.0
       version: 7.0.0
     dayjs:
-      specifier: ^1.11.21
-      version: 1.11.21
+      specifier: ^1.11.22
+      version: 1.11.22
     debug:
       specifier: ^4.4.3
       version: 4.4.3
@@ -925,7 +925,7 @@ importers:
         version: 6.0.2
       dayjs:
         specifier: 'catalog:'
-        version: 1.11.21
+        version: 1.11.22
       debug:
         specifier: 'catalog:'
         version: 4.4.3(supports-color@10.2.2)
@@ -1534,7 +1534,7 @@ importers:
         version: link:../shared
       dayjs:
         specifier: 'catalog:'
-        version: 1.11.21
+        version: 1.11.22
       drizzle-orm:
         specifier: 'catalog:'
         version: 1.0.0-rc.4(@electric-sql/pglite@0.5.5)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(valibot@1.4.2(typescript@6.0.3))(zod@4.4.3)
@@ -1623,7 +1623,7 @@ importers:
         version: link:../shared
       dayjs:
         specifier: 'catalog:'
-        version: 1.11.21
+        version: 1.11.22
       drizzle-orm:
         specifier: 'catalog:'
         version: 1.0.0-rc.4(@electric-sql/pglite@0.5.5)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(valibot@1.4.2(typescript@6.0.3))(zod@4.4.3)
@@ -1700,7 +1700,7 @@ importers:
         version: 7.0.0(@noble/hashes@2.3.0)
       dayjs:
         specifier: 'catalog:'
-        version: 1.11.21
+        version: 1.11.22
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -1815,7 +1815,7 @@ importers:
         version: 2.8.2(@types/node@26.2.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.9.6)(typescript@6.0.3)(vue-tsc@3.3.10(typescript@6.0.3)))(prettier@3.9.6)(typescript@6.0.3)
       dayjs:
         specifier: 'catalog:'
-        version: 1.11.21
+        version: 1.11.22
       dedent:
         specifier: 'catalog:'
         version: 1.7.2
@@ -8853,6 +8853,9 @@ packages:
 
   dayjs@1.11.21:
     resolution: {integrity: sha512-98IT+HOahAisibz/yjKbzuOBwYcjJ7BCLPzARyHiyEBmRz4fatF+KPJszEHXsGYjUG234aH/cOjW1wwTbKUZlA==}
+
+  dayjs@1.11.22:
+    resolution: {integrity: sha512-1YRnxzt/AabP3GHxnaB9/b+ZScCKu5TeF+co+BWG+lnWVIwEcTFc1FVE0WLNmNO3sA6GGXL40i5qkHfbLzpwrg==}
 
   db0@0.3.4:
     resolution: {integrity: sha512-RiXXi4WaNzPTHEOu8UPQKMooIbqOEyqA1t7Z6MsdxSCeb8iUC9ko3LcmsLmeUt2SM5bctfArZKkRQggKZz7JNw==}
@@ -23028,6 +23031,8 @@ snapshots:
 
   dayjs@1.11.21: {}
 
+  dayjs@1.11.22: {}
+
   db0@0.3.4(@electric-sql/pglite@0.5.5)(drizzle-orm@1.0.0-rc.4(@electric-sql/pglite@0.5.5)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(valibot@1.4.2(typescript@6.0.3))(zod@4.4.3)):
     optionalDependencies:
       '@electric-sql/pglite': 0.5.5
@@ -25692,7 +25697,7 @@ snapshots:
       d3: 7.9.0
       d3-sankey: 0.12.3
       dagre-d3-es: 7.0.14
-      dayjs: 1.11.21
+      dayjs: 1.11.22
       dompurify: 3.4.13
       es-toolkit: 1.50.0
       katex: 0.16.47
