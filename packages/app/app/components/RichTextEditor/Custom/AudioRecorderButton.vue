@@ -35,6 +35,10 @@ const { data, start, state, stop } = useMediaRecorder({
   },
 });
 const isRecording = computed(() => state.value === "recording");
+const recordButtonProps = computed(() => ({
+  color: isRecording.value ? "error" : undefined,
+  size: "small" as const,
+}));
 const formattedTimer = computed(() => {
   const minutes = Math.floor(timer.value / 60);
   const seconds = timer.value % 60;
@@ -48,7 +52,7 @@ const formattedTimer = computed(() => {
       {{ formattedTimer }}
     </span>
     <StyledTooltipIconButton
-      :button-props="{ color: isRecording ? 'error' : undefined, size: 'small' }"
+      :button-props="recordButtonProps"
       :icon="isRecording ? 'mdi-stop-circle-outline' : 'mdi-microphone'"
       :text="isRecording ? 'Stop Recording' : 'Record Audio Message'"
       @click="

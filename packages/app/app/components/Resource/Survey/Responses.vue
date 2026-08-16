@@ -27,7 +27,10 @@ const refreshResponses = async () => {
     },
   );
 };
-const headers = computed(() => records.value?.columns.map(({ name }) => ({ key: name, title: name })) ?? []);
+const headers = computed(() => [
+  ...(records.value?.columns.map(({ name }) => ({ key: name, title: name })) ?? []),
+  { key: "actions", sortable: false, title: "" },
+]);
 const items = computed(() => records.value?.rows ?? []);
 const truncation = computed(() => (records.value ? getDatasetTruncation(records.value) : undefined));
 
@@ -40,7 +43,7 @@ await refreshResponses();
     <template v-else>
       <!-- Responses are the one dataset the owner reads as a record of truth, so a silent cut is never acceptable -->
       <DatasetTruncationAlert v-if="truncation" :truncation />
-      <v-data-table :headers="[...headers, { key: 'actions', sortable: false, title: '' }]" :items>
+      <v-data-table :headers :items>
         <template #[`item.actions`]="{ item }">
           <div flex gap-1 justify-end>
             <StyledTooltipIconButton icon="mdi-eye-outline" text="View response" @click="detailRowKey = item.rowKey" />

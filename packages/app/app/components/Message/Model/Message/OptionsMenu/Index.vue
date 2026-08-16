@@ -21,10 +21,11 @@ const { actionMessageItems, deleteMessageItem, updateMessageItems, updateMessage
   isCreator,
 );
 const selectEmoji = await useSelectEmoji(message);
+const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProps }));
 </script>
 
 <template>
-  <StyledCard :card-props="{ elevation: isHovering ? 12 : 2, ...hoverProps }">
+  <StyledCard :card-props>
     <v-card-actions p-0 gap-0 min-h-auto>
       <v-tooltip v-for="emoji of EmojiMenuItems" :key="emoji">
         <template #activator="{ props }">

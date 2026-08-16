@@ -2,6 +2,14 @@
 import { RoutePath } from "@esposter/shared";
 
 const { counts, error, isLoading, refresh } = useReadResourceTagCounts();
+// RouterLink resolves `to` by identity, so the routes are built with the rows rather than on every render
+const tagItems = computed(() =>
+  counts.value.map(({ count, name }) => ({
+    count,
+    name,
+    to: { path: RoutePath.ResourceExplorerAll, query: { tagName: name } },
+  })),
+);
 
 onMounted(() => refresh());
 </script>
@@ -20,13 +28,7 @@ onMounted(() => refresh());
       description="Tag a resource from its Overview blade and it will show up here."
     />
     <v-list v-else nav>
-      <v-list-item
-        v-for="{ count, name } of counts"
-        :key="name"
-        prepend-icon="mdi-tag-outline"
-        :title="name"
-        :to="{ path: RoutePath.ResourceExplorerAll, query: { tagName: name } }"
-      >
+      <v-list-item v-for="{ count, name, to } of tagItems" :key="name" prepend-icon="mdi-tag-outline" :title="name" :to>
         <template #append>
           <v-chip size="small" variant="tonal">{{ count }}</v-chip>
         </template>

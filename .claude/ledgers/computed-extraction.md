@@ -57,6 +57,11 @@ the CSS functions and framework slot predicates, and open what remains.
 All three over-report — `:style="{ color }"` on a plain element binds to no child, `.map` over a two-element
 array is not work, and most `getX` helpers are a property read. The rule decides; these only narrow what to open.
 
+The first recipe's largest cluster is the `Dungeons` `:configuration` literals, and none of them is a finding:
+`useInitializeGameObjectSetters` watches `() => configuration[key]` **per key**, so the wrapper never reads the
+object's identity and a fresh one costs nothing. Its siblings in that list are static literals, which the
+compiler hoists. What remains after those two are subtracted is the real set.
+
 They also **under-report**, which is the direction that ends a sweep early. The first two match one line at a
 time, so an attribute wrapped across lines by the formatter is invisible to them; the third finds the call but
 never the callee's cost, and a helper reached through a store or a slot prop reads like a bare identifier. A

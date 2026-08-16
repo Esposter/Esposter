@@ -17,6 +17,16 @@ const { restoringVersion } = storeToRefs(publishHistoryDialogStore);
 const versions = ref(await $trpc.resource.readPublishHistory.query({ id: resource.id }));
 // Newest snapshot first, matching the order the publish flow stacks versions
 const items = computed(() => versions.value.toSorted((first, second) => second.version - first.version));
+// The row is a data-table slot, so its link is keyed here rather than rebuilt on every render of the table
+const viewVersionToMap = computed(
+  () =>
+    new Map(
+      items.value.map(({ version }) => [
+        version,
+        { path: RoutePath.View(resource.type, resource.id), query: { version } },
+      ]),
+    ),
+);
 const headers = [
   { key: "version", title: "Version" },
   { key: "publishedAt", title: "Published" },
@@ -43,7 +53,7 @@ const headers = [
       <template #[`item.actions`]="{ item }">
         <div flex gap-1 justify-end>
           <StyledTooltipIconButton
-            :to="{ path: RoutePath.View(resource.type, resource.id), query: { version: item.version } }"
+            :to="viewVersionToMap.get(item.version)"
             icon="mdi-eye-outline"
             text="View version"
           />
