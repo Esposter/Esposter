@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TValue, TGrid extends readonly (readonly TValue[])[]">
+<script setup lang="ts" generic="TGrid extends readonly (readonly unknown[])[]">
 import type { Grid } from "@/models/dungeons/Grid";
 
 import { MenuTextStyle } from "@/assets/dungeons/styles/MenuTextStyle";
@@ -8,7 +8,7 @@ import { Text } from "vue-phaserjs";
 
 interface ContentTextProps {
   columnIndex: number;
-  grid: Grid<TValue, TGrid>;
+  grid: Grid<TGrid>;
   rowIndex: number;
   text: string;
 }

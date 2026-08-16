@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TValue, TGrid extends readonly (readonly TValue[])[]">
+<script setup lang="ts" generic="TGrid extends readonly (readonly unknown[])[]">
 import type { Grid } from "@/models/dungeons/Grid";
 import type { Position } from "grid-engine";
 import type { ImageConfiguration } from "vue-phaserjs";
@@ -8,7 +8,7 @@ import { Image } from "vue-phaserjs";
 
 interface CursorProps {
   cursorImageKey?: Extract<ImageKey, "CursorWhite">;
-  grid: Grid<TValue, TGrid>;
+  grid: Grid<TGrid>;
   initialPosition: Position;
   positionIncrement: Partial<Position>;
   scale?: number;

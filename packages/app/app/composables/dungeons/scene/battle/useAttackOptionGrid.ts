@@ -3,15 +3,14 @@ import type { Attack } from "#shared/models/dungeons/attack/Attack";
 import { Grid } from "@/models/dungeons/Grid";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
-const AttackOptionGrid = new Grid<
-  Attack | undefined,
-  [[Attack | undefined, Attack | undefined], [Attack | undefined, Attack | undefined]]
->({
-  grid: [
-    [undefined, undefined],
-    [undefined, undefined],
-  ],
-});
+const AttackOptionGrid = new Grid<[[Attack | undefined, Attack | undefined], [Attack | undefined, Attack | undefined]]>(
+  {
+    grid: [
+      [undefined, undefined],
+      [undefined, undefined],
+    ],
+  },
+);
 
 export const useAttackOptionGrid = createUseGrid(AttackOptionGrid, (grid) => {
   const battlePlayerStore = useBattlePlayerStore();

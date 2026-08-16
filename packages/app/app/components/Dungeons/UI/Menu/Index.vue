@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TValue extends string, TGrid extends readonly (readonly TValue[])[]">
+<script setup lang="ts" generic="TGrid extends readonly (readonly string[])[]">
 import type { Grid } from "@/models/dungeons/Grid";
 import type { Position } from "grid-engine";
 
@@ -7,7 +7,7 @@ import { getMenuHeight } from "@/services/dungeons/UI/menu/getMenuHeight";
 import { Container, Rectangle } from "vue-phaserjs";
 
 interface MenuProps {
-  grid: Grid<TValue, TGrid>;
+  grid: Grid<TGrid>;
   position: Position;
 }
 

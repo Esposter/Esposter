@@ -3,7 +3,7 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { MenuOption } from "@/models/dungeons/scene/monsterParty/MenuOption";
 import { usePlayerStore } from "@/store/dungeons/player";
 
-const MonsterPartyMenuOptionGrid = new Grid<MenuOption, MenuOption[][]>({
+const MonsterPartyMenuOptionGrid = new Grid<MenuOption[][]>({
   grid: [],
   wrap: true,
 });

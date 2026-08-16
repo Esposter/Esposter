@@ -7,7 +7,7 @@ const grid = [
   [PlayerTitleMenuOption.Continue],
   [PlayerTitleMenuOption.Settings],
 ] as const;
-export const PlayerTitleMenuOptionGrid = new Grid<(typeof grid)[number][number], typeof grid>({
+export const PlayerTitleMenuOptionGrid = new Grid<typeof grid>({
   grid,
   validate(position) {
     const titleSceneStore = useTitleSceneStore();

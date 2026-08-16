@@ -1,5 +1,6 @@
-<script setup lang="ts" generic="TValue, TGrid extends readonly (readonly TValue[])[]">
+<script setup lang="ts" generic="TGrid extends readonly (readonly unknown[])[]">
 import type { Grid } from "@/models/dungeons/Grid";
+import type { GridValue } from "@/models/dungeons/GridValue";
 
 import { getGridKey } from "@/services/dungeons/getGridKey";
 import {
@@ -12,8 +13,8 @@ import { getPanelTextPosition } from "@/services/dungeons/scene/battle/menu/getP
 import { Container, Rectangle } from "vue-phaserjs";
 
 interface PanelGridProps {
-  getText: (value: TValue) => string;
-  grid: Grid<TValue, TGrid>;
+  getText: (value: GridValue<TGrid>) => string;
+  grid: Grid<TGrid>;
   isVisible: boolean;
   x?: number;
 }

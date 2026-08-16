@@ -1,4 +1,5 @@
 /* eslint-disable perfectionist/sort-switch-case */
+import type { GridValue } from "@/models/dungeons/GridValue";
 import type { Position } from "grid-engine";
 import type { SetRequired } from "type-fest";
 import type { UnwrapRef } from "vue";
@@ -6,11 +7,11 @@ import type { UnwrapRef } from "vue";
 import { exhaustiveGuard, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { Direction } from "grid-engine";
 
-export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
+export class Grid<TGrid extends readonly (readonly unknown[])[]> {
   // Our grid may be purely computed based on some external 1D array
   grid: MaybeRef<TGrid>;
   position: Ref<Position>;
-  validate: (this: Grid<TValue, TGrid>, position: Position) => MaybeRef<boolean>;
+  validate: (this: Grid<TGrid>, position: Position) => MaybeRef<boolean>;
   wrap: boolean;
   // Going from top-left to bottom-right
   get index() {
@@ -35,7 +36,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
     position = ref({ x: 0, y: 0 }),
     validate,
     wrap = false,
-  }: SetRequired<Partial<Grid<TValue, TGrid>>, "grid">) {
+  }: SetRequired<Partial<Grid<TGrid>>, "grid">) {
     this.validate = (targetPosition) => {
       const value = this.getValue(targetPosition);
       // We want to skip grid values that don't exist
@@ -54,7 +55,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
     return takeOne(unref(this.grid), rowIndex).length;
   }
 
-  getPosition(value: TValue): Position | undefined {
+  getPosition(value: GridValue<TGrid>): Position | undefined {
     for (let y = 0; y < this.rowSize - 1; y++)
       for (let x = 0; x < this.getColumnSize(y); x++) {
         const position: Position = { x, y };
@@ -64,7 +65,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
     return undefined;
   }
 
-  getPositionX(value: TValue, y: number): number | undefined {
+  getPositionX(value: GridValue<TGrid>, y: number): number | undefined {
     for (let x = 0; x < this.getColumnSize(y); x++) if (this.getValue({ x, y }) === value) return x;
 
     return undefined;

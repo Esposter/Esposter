@@ -5,8 +5,8 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import { useControlsStore } from "@/store/dungeons/controls";
 import deepEqual from "fast-deep-equal";
 
-export const useOnGridClick = <TValue, TGrid extends readonly (readonly TValue[])[]>(
-  grid: Grid<TValue, TGrid>,
+export const useOnGridClick = <TGrid extends readonly (readonly unknown[])[]>(
+  grid: Grid<TGrid>,
   position: MaybeRefOrGetter<Position>,
   onConfirm?: () => void,
 ) => {
