@@ -2,7 +2,6 @@
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
 const friendRequestStore = useFriendRequestStore();
-const { acceptFriendRequest, declineFriendRequest } = friendRequestStore;
 const { receivedFriendRequests } = storeToRefs(friendRequestStore);
 const displayReceivedFriendRequests = computed(() =>
   receivedFriendRequests.value.toSorted((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
@@ -23,8 +22,8 @@ const displayReceivedFriendRequests = computed(() =>
       >
         <template #append>
           <div flex gap-x-2>
-            <v-btn color="success" size="small" text="Accept" variant="tonal" @click="acceptFriendRequest(sender)" />
-            <v-btn color="error" size="small" text="Decline" variant="tonal" @click="declineFriendRequest(sender.id)" />
+            <MessageFriendsAcceptFriendRequestButton :sender />
+            <MessageFriendsDeclineFriendRequestButton :user-id="sender.id" />
           </div>
         </template>
       </MessageFriendsUserListItem>

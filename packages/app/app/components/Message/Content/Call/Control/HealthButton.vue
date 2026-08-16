@@ -18,6 +18,15 @@ const buttonProps = computed<VBtn["$props"]>(() => ({
   size: "default",
   variant: "plain",
 }));
+const healthRows = computed(() => [
+  { ...connectionStateMetadata.value, label: "Connection" },
+  { ...connectionQualityMetadata.value, label: "Quality" },
+]);
+const deviceRows = computed(() => [
+  { icon: "mdi-microphone", label: "Microphone", value: inputDeviceId.value },
+  { icon: "mdi-speaker", label: "Speakers", value: outputDeviceId.value },
+  { icon: "mdi-video", label: "Camera", value: cameraDeviceId.value },
+]);
 </script>
 
 <template>
@@ -30,27 +39,24 @@ const buttonProps = computed<VBtn["$props"]>(() => ({
     <StyledCard py-2 min-w-72>
       <v-list density="compact">
         <v-list-item
-          :prepend-icon="connectionStateMetadata.icon"
-          :subtitle="connectionStateMetadata.title"
-          title="Connection"
+          v-for="{ color, icon, label, title } of healthRows"
+          :key="label"
+          :prepend-icon="icon"
+          :subtitle="title"
+          :title="label"
         >
           <template #append>
-            <v-icon :color="connectionStateMetadata.color" icon="mdi-circle" size="x-small" />
-          </template>
-        </v-list-item>
-        <v-list-item
-          :prepend-icon="connectionQualityMetadata.icon"
-          :subtitle="connectionQualityMetadata.title"
-          title="Quality"
-        >
-          <template #append>
-            <v-icon :color="connectionQualityMetadata.color" icon="mdi-circle" size="x-small" />
+            <v-icon :color icon="mdi-circle" size="x-small" />
           </template>
         </v-list-item>
         <v-divider />
-        <v-list-item prepend-icon="mdi-microphone" :subtitle="inputDeviceId || 'Default'" title="Microphone" />
-        <v-list-item prepend-icon="mdi-speaker" :subtitle="outputDeviceId || 'Default'" title="Speakers" />
-        <v-list-item prepend-icon="mdi-video" :subtitle="cameraDeviceId || 'Default'" title="Camera" />
+        <v-list-item
+          v-for="{ icon, label, value } of deviceRows"
+          :key="label"
+          :prepend-icon="icon"
+          :subtitle="value || 'Default'"
+          :title="label"
+        />
       </v-list>
     </StyledCard>
   </StyledTooltipMenuIconButton>

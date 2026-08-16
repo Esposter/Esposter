@@ -2,7 +2,6 @@
 import { useFriendStore } from "@/store/message/user/friend";
 
 const friendStore = useFriendStore();
-const { deleteFriend } = friendStore;
 const { friends } = storeToRefs(friendStore);
 const displayFriends = computed(() => friends.value.toSorted((a, b) => b.createdAt.getTime() - a.createdAt.getTime()));
 </script>
@@ -13,7 +12,7 @@ const displayFriends = computed(() => friends.value.toSorted((a, b) => b.created
       <MessageFriendsUserListItem v-for="{ id, name, image } of displayFriends" :key="id" :image :name>
         <template #append>
           <div flex gap-x-2>
-            <v-btn color="error" size="small" text="Remove" variant="tonal" @click="deleteFriend(id)" />
+            <MessageFriendsRemoveFriendButton :user-id="id" />
             <MessageFriendsBlockUserButton :user-id="id" />
           </div>
         </template>

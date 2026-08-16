@@ -3,7 +3,6 @@ import { useBlockStore } from "@/store/message/user/block";
 
 const blockStore = useBlockStore();
 const { blockedUsers } = storeToRefs(blockStore);
-const { unblockUser } = blockStore;
 </script>
 
 <template>
@@ -11,7 +10,7 @@ const { unblockUser } = blockStore;
     <v-list rd>
       <MessageFriendsUserListItem v-for="{ id, name, image } of blockedUsers" :key="id" :image :name>
         <template #append>
-          <v-btn size="small" text="Unblock" variant="tonal" @click="unblockUser(id)" />
+          <MessageFriendsUnblockUserButton :user-id="id" />
         </template>
       </MessageFriendsUserListItem>
     </v-list>
