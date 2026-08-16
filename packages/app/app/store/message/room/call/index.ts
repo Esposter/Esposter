@@ -42,11 +42,16 @@ export const useCallStore = defineStore("message/room/call", () => {
   // The call it can start is the one the user is already in
   const callThreadRootRowKey = ref("");
   const activeCallSessionId = ref("");
-  // Where the joined call is shown: inside its room for a room call, on the call's own page otherwise —
-  // The status bar's link and the picture-in-picture window's way back both land there
-  const callRoute = computed(() =>
-    callRoomId.value ? RoutePath.Messages(callRoomId.value) : RoutePath.Calls(activeCallSessionId.value),
-  );
+  // Where the joined call is shown: inside its room for a room call, on the thread that addresses it for a
+  // Thread call, on the call's own page otherwise — the status bar's link and the picture-in-picture window's
+  // Way back both land there. A thread call's route is the thread's own, so the pane the call announced itself
+  // In opens with it rather than leaving the user in the room hunting for the message it hangs off
+  const callRoute = computed(() => {
+    if (!callRoomId.value) return RoutePath.Calls(activeCallSessionId.value);
+    else if (callThreadRootRowKey.value) return RoutePath.MessagesThread(callRoomId.value, callThreadRootRowKey.value);
+
+    return RoutePath.Messages(callRoomId.value);
+  });
   const currentRoomCallSessionId = ref("");
   const isCallViewOpen = ref(false);
   const isConnecting = ref(false);
