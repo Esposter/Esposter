@@ -8,6 +8,6 @@ const icon = MenuIconMap[Target.Cursor];
 
 <template>
   <div v-for="rotatingDivId of rotatingDivIds" :id="rotatingDivId" :key="rotatingDivId" size-50 top-0 absolute>
-    <v-img select-none rotate-135 absolute width="2rem" height="2rem" :src="icon" :alt="Target.Cursor" />
+    <NuxtImg size-8 select-none rotate-135 absolute object-contain :src="icon" :alt="Target.Cursor" />
   </div>
 </template>

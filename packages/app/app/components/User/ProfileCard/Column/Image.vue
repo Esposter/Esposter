@@ -34,8 +34,8 @@ const fileRules = [validateFileRule];
   <v-col flex flex-wrap gap-x-4 items-center self-center cols="6">
     <template v-if="editMode">
       <v-avatar>
-        <v-img v-if="modelValue" :src="modelValue" :alt="modelValue" />
-        <v-img v-else-if="value" :src="value" :alt="value" />
+        <NuxtImg v-if="modelValue" size-full object-contain :src="modelValue" :alt="modelValue" />
+        <NuxtImg v-else-if="value" size-full object-contain :src="value" :alt="value" />
       </v-avatar>
       <v-file-input
         :disabled="isLoading"
@@ -74,7 +74,7 @@ const fileRules = [validateFileRule];
       />
     </template>
     <v-avatar v-else>
-      <v-img v-if="value" :src="value" :alt="value" />
+      <NuxtImg v-if="value" size-full object-contain :src="value" :alt="value" />
     </v-avatar>
   </v-col>
 </template>

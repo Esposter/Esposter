@@ -17,7 +17,7 @@ const mergedAvatarProps = computed(() => mergeProps(avatarAttrs, avatarProps));
 
 <template>
   <v-avatar v-if="image" :="mergedAvatarProps">
-    <v-img :src="image" :alt="name" />
+    <NuxtImg size-full object-contain :src="image" :alt="name" />
   </v-avatar>
   <StyledDefaultAvatar v-else :="mergedAvatarProps" />
 </template>

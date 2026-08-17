@@ -12,6 +12,7 @@ export const modules: NuxtConfig["modules"] = process.env.VITEST
       "@nuxt/content",
       "@nuxt/eslint",
       "@nuxt/fonts",
+      "@nuxt/image",
       "@nuxt/scripts",
       "@nuxt/test-utils/module",
       "@nuxtjs/seo",

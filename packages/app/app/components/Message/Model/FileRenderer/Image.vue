@@ -25,11 +25,11 @@ const isThumbnailRendered = computed(
 </script>
 
 <template>
-  <v-img
+  <NuxtImg
+    max-w-full
     :src="isThumbnailRendered ? thumbnailUrl : url"
     :alt="file.filename"
-    :cover="isPreview"
-    :class="isPreview ? 'size-full' : undefined"
+    :class="isPreview ? 'size-full object-cover' : undefined"
     @error="
       () => {
         if (isThumbnailRendered) failedThumbnailUrls.add(thumbnailUrl);

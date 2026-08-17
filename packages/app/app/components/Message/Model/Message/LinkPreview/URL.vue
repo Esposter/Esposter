@@ -14,6 +14,6 @@ const { description, images, siteName, title, url } = defineProps<URLLinkPreview
     <v-card-text v-if="description">
       {{ description }}
     </v-card-text>
-    <v-img width="100%" :src="images[0]" :alt="siteName ?? title" cover />
+    <NuxtImg v-if="images[0]" w-full :src="images[0]" :alt="siteName ?? title" />
   </StyledCard>
 </template>

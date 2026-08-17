@@ -10,6 +10,7 @@ import { devtools } from "./configuration/devtools";
 import { experimental } from "./configuration/experimental";
 import { future } from "./configuration/future";
 import { hooks } from "./configuration/hooks";
+import { image } from "./configuration/image";
 import { imports } from "./configuration/imports";
 import { modules } from "./configuration/modules";
 import { nitro } from "./configuration/nitro";
@@ -32,6 +33,7 @@ export default defineNuxtConfig({
   experimental,
   future,
   hooks,
+  image,
   imports,
   modules,
   nitro,
