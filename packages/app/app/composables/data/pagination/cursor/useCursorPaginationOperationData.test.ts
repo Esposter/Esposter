@@ -8,8 +8,14 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+const PAYLOAD_KEY = "read-items";
+
 describe(useCursorPaginationOperationData, () => {
   let wrapper: VueWrapper;
+  let hydratingNuxtApp: ReturnType<typeof useNuxtApp> | undefined;
+  let isLoaded: ReturnType<typeof useCursorPaginationOperationData<string>>["isLoaded"];
+  let items: ReturnType<typeof useCursorPaginationOperationData<string>>["items"];
+  let readItems: ReturnType<typeof useCursorPaginationOperationData<string>>["readItems"];
   let readMoreItems: ReturnType<typeof useCursorPaginationOperationData<string>>["readMoreItems"];
 
   beforeEach(() => {
@@ -17,8 +23,46 @@ describe(useCursorPaginationOperationData, () => {
   });
 
   afterEach(() => {
+    if (hydratingNuxtApp) {
+      hydratingNuxtApp.isHydrating = false;
+      delete hydratingNuxtApp.payload.data[PAYLOAD_KEY];
+      hydratingNuxtApp = undefined;
+    }
     wrapper?.unmount();
     vi.restoreAllMocks();
+  });
+
+  test("adopts the server's page from the payload instead of querying again while hydrating", async () => {
+    expect.hasAssertions();
+
+    // The payload rides to the client as plain data, so the fixture is the shape hydration really reads
+    const serverData: CursorPaginationData<string> = { hasMore: false, items: ["item"], nextCursor: "" };
+    wrapper = await mountSuspended(
+      defineComponent({
+        render: () => h("div"),
+        setup: () => {
+          hydratingNuxtApp = useNuxtApp();
+          hydratingNuxtApp.isHydrating = true;
+          hydratingNuxtApp.payload.data[PAYLOAD_KEY] = serverData;
+          const cursorPaginationData = ref(new CursorPaginationData<string>());
+          const isLoadedSource = ref(false);
+          ({ isLoaded, items, readItems } = useCursorPaginationOperationData(
+            () => cursorPaginationData,
+            () => isLoadedSource,
+          ));
+        },
+      }),
+    );
+    await flushPromises();
+
+    const query = vi.fn<() => Promise<CursorPaginationData<string>>>();
+
+    const { isPending } = await readItems(query, { key: PAYLOAD_KEY });
+
+    expect(query).not.toHaveBeenCalled();
+    expect(items.value).toStrictEqual(["item"]);
+    expect(isLoaded.value).toBe(true);
+    expect(isPending.value).toBe(false);
   });
 
   test("does not query more items while offline and still completes the waypoint cycle", async () => {
@@ -32,10 +76,10 @@ describe(useCursorPaginationOperationData, () => {
           const cursorPaginationData = ref(new CursorPaginationData<string>());
           cursorPaginationData.value.hasMore = true;
           cursorPaginationData.value.nextCursor = "cursor";
-          const isLoaded = ref(false);
+          const isLoadedSource = ref(false);
           ({ readMoreItems } = useCursorPaginationOperationData(
             () => cursorPaginationData,
-            () => isLoaded,
+            () => isLoadedSource,
           ));
         },
       }),
@@ -61,10 +105,10 @@ describe(useCursorPaginationOperationData, () => {
           const cursorPaginationData = ref(new CursorPaginationData<string>());
           cursorPaginationData.value.hasMore = true;
           cursorPaginationData.value.nextCursor = "cursor";
-          const isLoaded = ref(false);
+          const isLoadedSource = ref(false);
           ({ readMoreItems } = useCursorPaginationOperationData(
             () => cursorPaginationData,
-            () => isLoaded,
+            () => isLoadedSource,
           ));
         },
       }),

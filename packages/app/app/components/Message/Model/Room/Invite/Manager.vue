@@ -38,21 +38,29 @@ const onCreateInvite = () =>
 const onUpdateOptions = async () => {
   if (invite.value) await onCreateInvite();
 };
+// The panel outlives the link it shows, so an invite that lapses while it is open has to flip the copy rather
+// Than read "expires 5 minutes ago". One timeout at the expiry instant, restarted whenever the link changes
+const remainingExpiryMs = computed(() => (invite.value?.expiresAt ? dayjs(invite.value.expiresAt).diff() : 0));
+const isExpired = ref(false);
+const { start: startExpiryTimeout, stop: stopExpiryTimeout } = useTimeoutFn(
+  () => {
+    isExpired.value = true;
+  },
+  remainingExpiryMs,
+  { immediate: false },
+);
+watchImmediate(remainingExpiryMs, (newRemainingExpiryMs) => {
+  stopExpiryTimeout();
+  isExpired.value = Boolean(invite.value?.expiresAt) && newRemainingExpiryMs <= 0;
+  if (newRemainingExpiryMs > 0) startExpiryTimeout();
+});
 const inviteLink = computed(() =>
   invite.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(invite.value.id)}` : "",
 );
-const inviteStateText = computed(() => {
-  if (!invite.value) return "";
-  const parts = [
-    invite.value.expiresAt
-      ? `Your invite link expires ${dayjs(invite.value.expiresAt).fromNow()}.`
-      : "Your invite link never expires.",
-  ];
-  if (invite.value.maxUses) {
-    const remainingUses = invite.value.maxUses - invite.value.uses;
-    parts.push(`${remainingUses} ${pluralize("use", remainingUses)} remaining.`);
-  }
-  return parts.join(" ");
+const remainingUsesText = computed(() => {
+  if (!invite.value?.maxUses) return "";
+  const remainingUses = invite.value.maxUses - invite.value.uses;
+  return `${remainingUses} ${pluralize("use", remainingUses)} remaining.`;
 });
 const isCopied = ref(false);
 </script>
@@ -89,7 +97,14 @@ const isCopied = ref(false);
         <StyledClipboardButton w-20 :source="inviteLink" @update:copied="isCopied = $event" @create="onCreateInvite" />
       </template>
     </v-text-field>
-    <div v-if="inviteStateText" pt-2 op-medium-emphasis text-title-small>{{ inviteStateText }}</div>
+    <div v-if="invite" pt-2 op-medium-emphasis text-title-small>
+      <template v-if="isExpired">Your invite link has expired.</template>
+      <template v-else-if="invite.expiresAt">
+        Your invite link expires <NuxtTime :datetime="invite.expiresAt" relative />.
+      </template>
+      <template v-else>Your invite link never expires.</template>
+      {{ remainingUsesText }}
+    </div>
   </div>
 </template>
 

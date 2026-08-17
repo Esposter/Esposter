@@ -78,6 +78,7 @@ describe(defineVuetifyConfiguration, () => {
         },
         "labComponents": true,
         "theme": {
+          "defaultTheme": "light",
           "themes": {
             "dark": {
               "colors": {

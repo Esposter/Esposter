@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-import { dayjs } from "#shared/services/dayjs";
-import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
+import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { usePublishHistoryDialogStore } from "@/store/resource/publishHistoryDialog";
 import { RoutePath } from "@esposter/shared";
 
@@ -49,7 +48,9 @@ const headers = [
           <v-chip v-if="item.isCurrent" color="primary" size="x-small" text="Current" />
         </div>
       </template>
-      <template #[`item.publishedAt`]="{ item }">{{ dayjs(item.publishedAt).format(RESOURCE_DATE_FORMAT) }}</template>
+      <template #[`item.publishedAt`]="{ item }">
+        <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="item.publishedAt" />
+      </template>
       <template #[`item.actions`]="{ item }">
         <div flex gap-1 justify-end>
           <StyledTooltipIconButton

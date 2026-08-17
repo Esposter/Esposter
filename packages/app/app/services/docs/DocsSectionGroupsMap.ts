@@ -30,7 +30,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     ],
     Backend: ["auth", "rate-limiting", "azure-services", "file-uploads"],
     Development: ["environment", "monorepo-tooling", "build-pipeline", "server-testing"],
-    Frontend: ["responsive", "security-posture"],
+    Frontend: ["responsive", "date-time-display", "security-posture"],
   },
   esbabbler: {
     Messaging: [

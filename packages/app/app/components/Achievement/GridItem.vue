@@ -26,7 +26,7 @@ const displayName = computed(() => prettify(achievementDefinition.name));
           <div text-body-small>{{ achievementDefinition.description }}</div>
         </div>
         <div v-if="userAchievement?.unlockedAt" font-bold italic text-hint>
-          Unlocked {{ userAchievement.unlockedAt.toLocaleDateString() }}
+          Unlocked <NuxtTime :datetime="userAchievement.unlockedAt" day="numeric" month="numeric" year="numeric" />
         </div>
         <v-spacer />
         <v-chip :color="CategoryColorMap[achievementDefinition.category]" size="small">

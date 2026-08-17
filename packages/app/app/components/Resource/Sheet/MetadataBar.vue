@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Metadata } from "#shared/models/resource/sheet/datasource/Metadata";
 
-import { dayjs } from "#shared/services/dayjs";
 import { getFileSize } from "@/services/file/getFileSize";
+import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 
 interface MetadataBarProps {
   metadata: Metadata;
@@ -16,7 +16,9 @@ const displaySize = computed(() => getFileSize(metadata.size));
   <v-card variant="tonal">
     <v-card-item>
       <v-card-title text-wrap>{{ metadata.name }}</v-card-title>
-      <v-card-subtitle>Imported {{ dayjs(metadata.importedAt).format("MMM D, YYYY h:mm A") }}</v-card-subtitle>
+      <v-card-subtitle>
+        Imported <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="metadata.importedAt" />
+      </v-card-subtitle>
       <template #append>
         <div flex flex-wrap gap-2>
           <v-chip label size="small" prepend-icon="mdi-database">{{ displaySize }}</v-chip>

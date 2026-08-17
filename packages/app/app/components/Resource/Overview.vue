@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-import { dayjs } from "#shared/services/dayjs";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
+import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { useResourceStore } from "@/store/resource";
 import { getResultAsync, RoutePath } from "@esposter/shared";
@@ -56,9 +55,9 @@ onMounted(async () => {
             {{ ResourceDefinitionMap[resource.type].title }}
           </div>
           <span op-medium-emphasis>Created</span>
-          <span>{{ dayjs(resource.createdAt).format(RESOURCE_DATE_FORMAT) }}</span>
+          <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="resource.createdAt" />
           <span op-medium-emphasis>Updated</span>
-          <span>{{ dayjs(resource.updatedAt).fromNow() }}</span>
+          <NuxtTime :datetime="resource.updatedAt" relative />
           <template v-if="isPublishable">
             <span op-medium-emphasis>Status</span>
             <div flex gap-2 items-center>

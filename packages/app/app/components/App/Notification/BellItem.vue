@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { AppNotification } from "@/models/notification/AppNotification";
 
-import { dayjs } from "#shared/services/dayjs";
 import { NotificationSeverityIconMap } from "@/services/notification/NotificationSeverityIconMap";
 import { useNotificationStore } from "@/store/notification";
 
@@ -22,7 +21,7 @@ const { consumeNotificationAction, deleteNotification } = notificationStore;
     <template #subtitle>
       <div pt-1 flex flex-col gap-1 items-start>
         <span v-if="notification.message">{{ notification.message }}</span>
-        <span op-medium-emphasis>{{ dayjs(notification.createdAt).fromNow() }}</span>
+        <NuxtTime :datetime="notification.createdAt" relative op-medium-emphasis />
         <AppNotificationActionButton
           v-if="notification.action"
           :action="notification.action"

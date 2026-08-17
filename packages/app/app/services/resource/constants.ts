@@ -13,7 +13,17 @@ export const RESOURCE_AUTOSAVE_DEBOUNCE_MS = dayjs.duration(0.5, "seconds").asMi
 export const RECENT_RESOURCES_LIMIT = 5;
 // Enough parsed rows to recognise your own file before committing to it, without rendering the import twice
 export const SHEET_IMPORT_PREVIEW_ROW_COUNT = 5;
+// The string form, for the csv export and the table-header accessors that sort on it. Anything rendered for a
+// Reader takes the attribute form below instead, so it formats in the reader's own locale and timezone
 export const RESOURCE_DATE_FORMAT = "ddd, MMM D, YYYY h:mm A";
+export const RESOURCE_DATE_TIME_ATTRIBUTES = {
+  day: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  month: "short",
+  weekday: "short",
+  year: "numeric",
+} as const;
 // Caps the chunked CSV export re-query so export cost stays bounded on huge lists
 export const MAX_CSV_EXPORT_ROWS = 10_000;
 export const DEFAULT_RESOURCE_SORT_BY = [

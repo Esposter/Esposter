@@ -1,6 +1,6 @@
 ---
 title: Search
-description: One search stack — StyledSearchDialog palettes, useAutoSearch/useCursorSearcher for server search-as-you-type, and the three sanctioned exceptions.
+description: One search stack — StyledSearchDialog palettes, useAutoSearch/useCursorSearcher for server search-as-you-type, MiniSearch for client-index search, and the three sanctioned exceptions.
 ---
 
 # Search
@@ -14,7 +14,11 @@ flowchart TD
   Palette["StyledSearchDialog (Ctrl+K palette shell)"] -- "v-model:search-query" --> Core
   Cursor["useCursorSearcher (cursor-paginated results)"] --> Core["useAutoSearch (throttle + abort + pending)"]
   Core -- "search(sanitizedQuery, signal)" --> Trpc["tRPC search procedure"]
+  Palette -- "v-model:search-query" --> Client["computed over a MiniSearch index"]
+  Client --> Loaded["already-loaded data - no server call"]
 ```
+
+**Which branch a feature takes is decided by one question: does answering the query need the server?** If it does, it is the `useAutoSearch` stack and nothing about that is optional. If the data is already in memory, it is the right branch below and the stack would be pure ceremony — there is no request to throttle, abort, or show pending state for.
 
 ### `useAutoSearch` — the shared core
 
@@ -57,6 +61,19 @@ export const useSearchStore = defineStore("message/room/search", () => {
 });
 ```
 
+### Client-index search — MiniSearch
+
+When the data is already loaded, the search is a `computed` over a **MiniSearch** index and nothing more. MiniSearch is the one client-side index in the repo: a second one — a hand-rolled token map, a sorted-prefix array, a bespoke scorer — is the same drift this page exists to stop, and it loses on the part that actually matters, which is relevance rather than speed.
+
+Two settings carry most of that relevance and are easy to omit:
+
+- **`combineWith: "AND"`** — the default unions terms, so a two-word query returns nearly everything instead of the intersection.
+- **`prefix: true`** — an as-you-type query is a prefix, not a whole word.
+
+Boost the field a user is most likely to be naming — the title in docs search, the shortcode in the emoji index. Where that field is a canonical identifier rather than prose, pin an exact hit on it ahead of the ranked results rather than trusting the score to float it up; a prose title has no exact form to pin. `fuzzy` is a per-index call: off for short canonical names, where it manufactures noise, and on (docs search runs `0.2`) where the indexed body is prose long enough for a typo to cost the whole query.
+
+This branch has no `isPending` and no abort, because there is nothing asynchronous to track. It is not an exception to the ban — the ban is on re-rolling the _server_ query lifecycle — and it is not a licence to hand-roll the index either.
+
 ### `StyledSearchDialog` — the palette shell
 
 `StyledSearchDialog` is the one Ctrl+K palette: a `v-dialog` wrapping a solo, autofocused, clearable `mdi-magnify` text field. It exposes `v-model` (open state), `v-model:search-query`, an `activator` slot receiving `updateIsOpen`, and results in the default slot. Its `hotkey` prop registers through Vuetify's `useVHotkey` — the **only** sanctioned hotkey mechanism for dialog search; never re-roll `onKeyStroke` or `useEventListener` listeners per feature.
@@ -80,7 +97,7 @@ Three search shapes legitimately sit outside `useAutoSearch`, because there is n
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `v-data-table-server`  | The table owns fetch orchestration — its `search` prop triggers `@update:options`; feed it a `refDebounced` query ref | `Resource/List/View.vue` + `useReadResources`            |
 | Explicit-submit search | Enter-triggered with filters and search history; nothing fires per keystroke                                          | Message right-sidebar search (`useReadSearchedMessages`) |
-| Client-index search    | A `computed` over already-loaded data — no server call, no abort, no pending state                                    | Docs search (MiniSearch)                                 |
+| Client-index search    | A `computed` over already-loaded data — no server call, no abort, no pending state (see above)                        | Docs search (MiniSearch)                                 |
 
 Portal chord shortcuts (`useResourceKeyboardShortcuts` G-chords) are likewise a separate concern from the palette `hotkey` prop — chords are sequences, not single hotkeys.
 

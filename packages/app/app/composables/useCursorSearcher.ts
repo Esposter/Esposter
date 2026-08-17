@@ -11,7 +11,7 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>>(
   const searchQuery = ref("");
   const { hasMore, initializeCursorPaginationData, items, readItems, readMoreItems, resetCursorPaginationData } =
     useCursorPaginationData<TItem>();
-  const readItemsSearched = (onComplete: () => void) => readItems(() => query(searchQuery.value, ""), onComplete);
+  const readItemsSearched = (onComplete: () => void) => readItems(() => query(searchQuery.value, ""), { onComplete });
   const readMoreItemsSearched = (onComplete: () => void) =>
     readMoreItems((cursor) => query(searchQuery.value, cursor), onComplete);
 

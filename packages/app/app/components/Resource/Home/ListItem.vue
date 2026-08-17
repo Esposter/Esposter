@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 
-import { dayjs } from "#shared/services/dayjs";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { RoutePath } from "@esposter/shared";
 
@@ -10,10 +9,6 @@ interface ResourceHomeListItemProps {
 }
 
 const { resource } = defineProps<ResourceHomeListItemProps>();
-// Favorites are ordered by the resource's own recency, so only Recent has an open time to show
-const displayTime = computed(() =>
-  resource.lastAccessedAt ? `opened ${dayjs(resource.lastAccessedAt).fromNow()}` : dayjs(resource.updatedAt).fromNow(),
-);
 </script>
 
 <template>
@@ -22,6 +17,13 @@ const displayTime = computed(() =>
     :title="resource.name"
     :to="RoutePath.Resource(resource.id)"
   >
-    <template #subtitle> {{ ResourceDefinitionMap[resource.type].title }} · {{ displayTime }} </template>
+    <template #subtitle>
+      {{ ResourceDefinitionMap[resource.type].title }} ·
+      <!-- Favorites are ordered by the resource's own recency, so only Recent has an open time to show -->
+      <template v-if="resource.lastAccessedAt">
+        opened <NuxtTime :datetime="resource.lastAccessedAt" relative />
+      </template>
+      <NuxtTime v-else :datetime="resource.updatedAt" relative />
+    </template>
   </v-list-item>
 </template>

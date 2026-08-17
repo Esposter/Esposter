@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import type { ResourceActivityEntity } from "@esposter/db-schema";
 
-import { dayjs } from "#shared/services/dayjs";
 import { getResourceActivityDetail } from "@/services/resource/activity/getResourceActivityDetail";
 import { ResourceActivityDefinitionMap } from "@/services/resource/activity/ResourceActivityDefinitionMap";
-import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
 
 interface ResourceActivityLogListItemProps {
   activity: ResourceActivityEntity;
@@ -12,8 +10,6 @@ interface ResourceActivityLogListItemProps {
 
 const { activity } = defineProps<ResourceActivityLogListItemProps>();
 const detail = computed(() => getResourceActivityDetail(activity));
-const displayCreatedAt = computed(() => dayjs(activity.createdAt).fromNow());
-const displayCreatedAtExact = computed(() => dayjs(activity.createdAt).format(RESOURCE_DATE_FORMAT));
 </script>
 
 <template>
@@ -23,7 +19,7 @@ const displayCreatedAtExact = computed(() => dayjs(activity.createdAt).format(RE
   >
     <template #subtitle>
       <span v-if="detail">{{ detail }} · </span>
-      <span :title="displayCreatedAtExact">{{ displayCreatedAt }}</span>
+      <NuxtTime :datetime="activity.createdAt" relative />
     </template>
   </v-list-item>
 </template>

@@ -1,3 +1,4 @@
+import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
 
 export default {
@@ -38,6 +39,10 @@ export default {
       element: "img",
       message: "Don't use a raw <img>. Use <NuxtImg>.",
     },
+    {
+      element: "time",
+      message: "Don't hand-write <time>. Use <NuxtTime>, which renders one and formats it hydration-safely.",
+    },
   ],
   // Object.* calls in a render-evaluated template expression (bind, v-for, interpolation) allocate a fresh
   // Reference every render, breaking prop reference-equality and forcing needless re-renders. Hoist to a
@@ -59,6 +64,7 @@ export default {
       selector:
         ":matches(VOnExpression, ArrowFunctionExpression > BlockStatement, FunctionExpression > BlockStatement) > ExpressionStatement:first-child > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/], ArrowFunctionExpression > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/]",
     },
+    ...restrictedDateSyntaxes,
   ],
   "vue/no-unused-vars": "off",
   "vue/no-v-html": "off",

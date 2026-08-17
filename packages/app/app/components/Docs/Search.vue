@@ -17,7 +17,12 @@ const { data: searchSections } = useAsyncData(
 const miniSearch = computed(() => {
   const index = new MiniSearch<DocsSearchSection>({
     fields: [DocsSearchSectionPropertyNames.title, DocsSearchSectionPropertyNames.content],
-    searchOptions: { fuzzy: 0.2, prefix: true },
+    searchOptions: {
+      boost: { [DocsSearchSectionPropertyNames.title]: 2 },
+      combineWith: "AND",
+      fuzzy: 0.2,
+      prefix: true,
+    },
     storeFields: [DocsSearchSectionPropertyNames.title, DocsSearchSectionPropertyNames.titles],
   });
   index.addAll(searchSections.value ?? []);
