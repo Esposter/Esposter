@@ -12,6 +12,7 @@ import { MicrophoneProcessor } from "@/models/message/room/call/MicrophoneProces
 import { DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE } from "@/services/message/room/call/constants";
 import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
 import { checkIsRemoteAudioSource } from "@/services/message/room/liveKit/checkIsRemoteAudioSource";
+import { getRemoteAudioElementKey } from "@/services/message/room/liveKit/getRemoteAudioElementKey";
 import { rasterizeSvg } from "@/services/message/room/liveKit/rasterizeSvg";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
@@ -146,7 +147,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     element.autoplay = true;
     element.muted = mediaStore.isDeafened;
     applyRemoteAudioVolume(element, participant.identity);
-    remoteAudioElements.set(`${participant.identity}:${publication.source}`, {
+    remoteAudioElements.set(getRemoteAudioElementKey(participant.identity, publication.source), {
       element,
       identity: participant.identity,
     });
@@ -159,7 +160,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   ) => {
     if (!checkIsRemoteAudioSource(publication.source)) return;
     for (const element of track.detach()) element.remove();
-    remoteAudioElements.delete(`${participant.identity}:${publication.source}`);
+    remoteAudioElements.delete(getRemoteAudioElementKey(participant.identity, publication.source));
   };
   const { attach: attachRemoteCamera, detach: detachRemoteCamera } = getRemoteStreamHandlers(
     Track.Source.Camera,

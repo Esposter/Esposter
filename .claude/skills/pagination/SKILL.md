@@ -63,6 +63,7 @@ await readFoos();
 - **Never** call `readItems`/`readMoreItems` from a component directly — always via a `useRead*` composable.
 - Optimistic mutations update `items.value` directly (spread for create, filter for delete) — no re-fetch.
 - `readMoreItems` appends; `readItems` resets the full `CursorPaginationData` ref (handles navigating back to first page).
+- A list on an **SSR'd route** passes `readItems` a `key` from `AsyncDataKey`; one behind `ssr: false` (everything under `/messages`, `/calls`, `/dungeons`, `/resource-explorer`) passes none. Without a key the read runs twice per page load — the server issues it for the html, and hydration replays the same setup client-side — and the second answer can disagree with the rows already rendered. The key covers every input that changes which page the server rendered (the sort, the profile, the parent post), and only the hydrating render adopts the payload: a sort change, a pull to refresh and a client-side navigation all read live.
 - Which pagination helper a store uses (single list vs per-key lists) is the `pinia` skill's (`references/keyed-state-and-pagination.md`).
 - The endpoint-side input schemas are the `trpc` skill's (`references/read-endpoints.md`).
 

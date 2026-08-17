@@ -4,7 +4,14 @@ import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPag
 import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
 import { getBoundComputed } from "@/util/vue/getBoundComputed";
 import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
-import { createExponentialBackoff, withFinalizerAsync } from "@esposter/shared";
+import { createExponentialBackoff, getIsServer, withFinalizerAsync } from "@esposter/shared";
+
+interface ReadItemsOptions<TItem> {
+  // Payload key, from `AsyncDataKey`, for a read a server render also issues. Without one the read runs twice
+  // For every such page — once for the html, once again as hydration replays the same setup client-side
+  key?: string;
+  onComplete?: (data: CursorPaginationData<TItem>) => Promisable<void>;
+}
 
 export const useCursorPaginationOperationData = <TItem>(
   // Resolves the slice to write to, at the moment it is called. An operation binds once up front, so its response
@@ -15,6 +22,7 @@ export const useCursorPaginationOperationData = <TItem>(
   // The load knows which. Bound the same way, and for the same reason, as the slice it describes
   bindIsLoaded: () => Ref<boolean>,
 ) => {
+  const nuxtApp = useNuxtApp();
   const online = useOnline();
   // The waypoint re-arms via onComplete even when the query fails, so pace retries instead of spinning hot
   const executeWithBackoff = createExponentialBackoff(BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS);
@@ -35,30 +43,45 @@ export const useCursorPaginationOperationData = <TItem>(
   };
   const readItems = async (
     query: () => Promise<CursorPaginationData<TItem>>,
-    onComplete?: (data: CursorPaginationData<TItem>) => Promisable<void>,
+    { key, onComplete }: ReadItemsOptions<TItem> = {},
   ) => {
     const isPending = ref(true);
     const boundCursorPaginationData = bindCursorPaginationData();
     const boundIsLoaded = bindIsLoaded();
+    const storeCursorPaginationData = async (data: CursorPaginationData<TItem>) => {
+      boundCursorPaginationData.value = data;
+      // Readiness is recorded whether the page came back full or empty, so a partition the server says is
+      // Empty is distinguishable from one that has not answered yet
+      boundIsLoaded.value = true;
+      // Absorbs onComplete errors so data already set above is never lost
+      await Promise.allSettled([onComplete?.(data)]);
+    };
     const refresh = async () => {
       isPending.value = true;
       await withFinalizerAsync(
         async () => {
           const data = await query();
-          boundCursorPaginationData.value = data;
-          // Readiness is recorded whether the page came back full or empty, so a partition the server says is
-          // Empty is distinguishable from one that has not answered yet
-          boundIsLoaded.value = true;
-          // Absorbs onComplete errors so data already set above is never lost
-          await Promise.allSettled([onComplete?.(data)]);
+          await storeCursorPaginationData(data);
+          // The page the html was rendered from rides to the client, so hydration adopts the rows already on
+          // Screen rather than fetching a second copy of them
+          if (key && getIsServer()) nuxtApp.payload.data[key] = data;
         },
         () => {
           isPending.value = false;
         },
       );
     };
+    // Only the hydrating render may adopt the payload — a sort change, a pull to refresh and a client-side
+    // Navigation all read live. A server read that failed wrote nothing, so hydration issues it again and the
+    // TRPC error link surfaces what the server render swallowed
+    const hydratedData =
+      key && nuxtApp.isHydrating ? (nuxtApp.payload.data[key] as CursorPaginationData<TItem> | undefined) : undefined;
+    if (hydratedData) {
+      await storeCursorPaginationData(hydratedData);
+      isPending.value = false;
+    }
     // Absorb query errors so component setup never fails; the tRPC link chain handles them.
-    await Promise.allSettled([refresh()]);
+    else await Promise.allSettled([refresh()]);
     return { isPending, refresh };
   };
   const readMoreItems = async (

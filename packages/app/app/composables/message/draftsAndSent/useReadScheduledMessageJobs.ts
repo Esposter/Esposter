@@ -16,8 +16,10 @@ export const useReadScheduledMessageJobs = () => {
         count.value = total;
         return data;
       },
-      () => {
-        isPending.value = false;
+      {
+        onComplete: () => {
+          isPending.value = false;
+        },
       },
     );
   const readMoreScheduledMessageJobs = (onComplete: () => void) =>

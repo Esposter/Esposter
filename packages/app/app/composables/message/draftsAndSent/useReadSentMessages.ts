@@ -14,8 +14,10 @@ export const useReadSentMessages = () => {
         offset.value = data.items.length;
         return data;
       },
-      () => {
-        isPending.value = false;
+      {
+        onComplete: () => {
+          isPending.value = false;
+        },
       },
     );
   const readMoreSentMessages = (onComplete: () => void) =>
