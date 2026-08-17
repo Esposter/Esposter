@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 
-import { dayjs } from "#shared/services/dayjs";
+import { getShortTimeLabel } from "@/services/dayjs/getShortTimeLabel";
 import { MessageType } from "@esposter/db-schema";
 
 defineSlots<{ default?: () => VNode }>();
@@ -36,7 +36,7 @@ const messageHtml = useMessageWithMentions(
       </div>
       <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
       <span v-else :op="active ? undefined : 0" text-center text-hint>
-        {{ dayjs(message.createdAt).format("H:mm") }}
+        {{ getShortTimeLabel(message.createdAt) }}
       </span>
     </template>
     <MessageModelMessageReplyTitle v-if="message.replyRowKey || !isSameBatch" :creator :message />

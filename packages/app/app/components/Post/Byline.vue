@@ -9,7 +9,6 @@ interface PostBylineProps {
 }
 
 const { isLink, post } = defineProps<PostBylineProps>();
-const createdAtTimeAgo = useTimeAgo(() => post.createdAt);
 </script>
 
 <template>
@@ -23,6 +22,6 @@ const createdAtTimeAgo = useTimeAgo(() => post.createdAt);
       {{ post.user.name }}
     </NuxtInvisibleLink>
     <span v-else font-bold>{{ post.user.name }}</span>
-    <span op-medium-emphasis>{{ createdAtTimeAgo }}</span>
+    <NuxtTime :datetime="post.createdAt" relative op-medium-emphasis />
   </div>
 </template>

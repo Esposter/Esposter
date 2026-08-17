@@ -15,6 +15,10 @@ const displayModelValue = computed(() => {
   const date = dayjs(modelValue.value, column.format, true);
   return date.isValid() ? date.format("YYYY-MM-DD") : modelValue.value;
 });
+const onUpdateModelValue = (newModelValue: null | string) => {
+  // eslint-disable-next-line no-restricted-syntax -- writes the cell's stored value in the column's own format
+  modelValue.value = newModelValue ? dayjs(newModelValue, "YYYY-MM-DD").format(column.format) : newModelValue;
+};
 </script>
 
 <template>
@@ -25,6 +29,6 @@ const displayModelValue = computed(() => {
     :single-line="isInline"
     type="date"
     density="compact"
-    @update:model-value="modelValue = $event ? dayjs($event, 'YYYY-MM-DD').format(column.format) : $event"
+    @update:model-value="onUpdateModelValue"
   />
 </template>

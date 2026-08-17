@@ -28,6 +28,9 @@ const { data, start, state, stop } = useMediaRecorder({
     if (data.value.length === 0) return;
 
     const blob = new Blob(data.value, { type: MimeType.AudioWebm });
+    // A filename wants one stable sortable spelling for everyone, which is the opposite of what a localised
+    // <NuxtTime> renders
+    // eslint-disable-next-line no-restricted-syntax -- a filename, not text a reader sees
     const file = new File([blob], `Audio Message - ${dayjs().format("YYYY-MM-DD HH:mm:ss")}.webm`, {
       type: MimeType.AudioWebm,
     });

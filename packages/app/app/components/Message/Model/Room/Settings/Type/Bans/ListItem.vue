@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { BanInMessageWithRelations } from "@esposter/db-schema";
 
-import { dayjs } from "#shared/services/dayjs";
 import { useBanStore } from "@/store/message/user/ban";
 import { withFinalizerAsync } from "@esposter/shared";
 
@@ -13,7 +12,6 @@ interface BansListItemProps {
 const { ban, roomId } = defineProps<BansListItemProps>();
 const banStore = useBanStore();
 const { deleteBan } = banStore;
-const displayBannedAt = computed(() => dayjs(ban.createdAt).format("MMM D, YYYY h:mm A"));
 </script>
 
 <template>
@@ -23,7 +21,8 @@ const displayBannedAt = computed(() => dayjs(ban.createdAt).format("MMM D, YYYY 
     </template>
     <v-list-item-title>{{ ban.user.name }}</v-list-item-title>
     <v-list-item-subtitle>
-      Banned on {{ displayBannedAt }}
+      Banned on
+      <NuxtTime :datetime="ban.createdAt" day="numeric" hour="numeric" minute="2-digit" month="short" year="numeric" />
       <template v-if="ban.bannedByUser"> by {{ ban.bannedByUser.name }}</template>
     </v-list-item-subtitle>
     <template #append>

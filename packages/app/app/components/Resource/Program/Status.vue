@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
 
-import { dayjs } from "#shared/services/dayjs";
-import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
+import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { useNotificationStore } from "@/store/notification";
 import { useProgramStore } from "@/store/resource/program";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
@@ -82,7 +81,9 @@ await readStatus();
       description="Bind an audience on the Setup blade, then generate participants."
     />
     <v-data-table v-else :headers :items="statusRows">
-      <template #[`item.addedAt`]="{ item }">{{ dayjs(item.addedAt).format(RESOURCE_DATE_FORMAT) }}</template>
+      <template #[`item.addedAt`]="{ item }">
+        <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="item.addedAt" />
+      </template>
       <template #[`item.isResponded`]="{ item }">
         <v-chip v-if="item.isResponded" color="success" size="small">Responded</v-chip>
         <v-chip v-else size="small">Awaiting</v-chip>

@@ -3,8 +3,6 @@ import { authClient } from "@/services/auth/authClient";
 import { SITE_NAME } from "@esposter/shared";
 
 const { data: session } = await authClient.useSession(useFetch);
-const createdAt = useDateFormat(() => session.value?.user.createdAt, "MMM D, YYYY");
-const createdAtTimeAgo = useTimeAgo(() => session.value?.user.createdAt ?? "");
 </script>
 
 <template>
@@ -14,7 +12,11 @@ const createdAtTimeAgo = useTimeAgo(() => session.value?.user.createdAt ?? "");
       <div>
         {{ session.user.email }}
       </div>
-      <div>Joined {{ SITE_NAME }} on {{ createdAt }} ({{ createdAtTimeAgo }})</div>
+      <div>
+        Joined {{ SITE_NAME }} on
+        <NuxtTime :datetime="session.user.createdAt" day="numeric" month="short" year="numeric" />
+        (<NuxtTime :datetime="session.user.createdAt" relative />)
+      </div>
     </div>
     <StyledAvatar :image="session.user.image" :name="session.user.name" :avatar-props="{ size: '6rem' }" />
   </StyledCard>

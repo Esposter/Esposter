@@ -2,7 +2,6 @@
 import type { CreateInviteInput } from "#shared/models/db/room/CreateInviteInput";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { dayjs } from "#shared/services/dayjs";
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { pluralize } from "#shared/util/text/pluralize";
 import { InviteExpireAfterSelectItems } from "@/services/message/room/invite/InviteExpireAfterSelectItems";
@@ -41,18 +40,10 @@ const onUpdateOptions = async () => {
 const inviteLink = computed(() =>
   invite.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(invite.value.id)}` : "",
 );
-const inviteStateText = computed(() => {
-  if (!invite.value) return "";
-  const parts = [
-    invite.value.expiresAt
-      ? `Your invite link expires ${dayjs(invite.value.expiresAt).fromNow()}.`
-      : "Your invite link never expires.",
-  ];
-  if (invite.value.maxUses) {
-    const remainingUses = invite.value.maxUses - invite.value.uses;
-    parts.push(`${remainingUses} ${pluralize("use", remainingUses)} remaining.`);
-  }
-  return parts.join(" ");
+const remainingUsesText = computed(() => {
+  if (!invite.value?.maxUses) return "";
+  const remainingUses = invite.value.maxUses - invite.value.uses;
+  return `${remainingUses} ${pluralize("use", remainingUses)} remaining.`;
 });
 const isCopied = ref(false);
 </script>
@@ -89,7 +80,13 @@ const isCopied = ref(false);
         <StyledClipboardButton w-20 :source="inviteLink" @update:copied="isCopied = $event" @create="onCreateInvite" />
       </template>
     </v-text-field>
-    <div v-if="inviteStateText" pt-2 op-medium-emphasis text-title-small>{{ inviteStateText }}</div>
+    <div v-if="invite" pt-2 op-medium-emphasis text-title-small>
+      <template v-if="invite.expiresAt">
+        Your invite link expires <NuxtTime :datetime="invite.expiresAt" relative />.
+      </template>
+      <template v-else>Your invite link never expires.</template>
+      {{ remainingUsesText }}
+    </div>
   </div>
 </template>
 
