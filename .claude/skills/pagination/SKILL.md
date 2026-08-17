@@ -1,6 +1,6 @@
 ---
 name: pagination
-description: Esposter paginated-list conventions — the three-layer cursor pagination pattern (store + useRead* composable + StyledWaypoint), a keyed read binding to its key when issued, infinite scroll instead of a Load-more button, the ban on hand-rolling search-as-you-type, bundling ancillary reads into the primary read, and the offline IndexedDB cache being self-contained, plus deep dives on wiring useAutoSearch/useCursorSearcher with its sanctioned exceptions and on the feature cache composables. Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache.
+description: Esposter paginated-list conventions — the three-layer cursor pagination pattern (store + useRead* composable + StyledWaypoint), a keyed read binding to its key when issued, infinite scroll instead of a Load-more button, the ban on hand-rolling search-as-you-type and MiniSearch being the one client-side index, bundling ancillary reads into the primary read, and the offline IndexedDB cache being self-contained, plus deep dives on wiring useAutoSearch/useCursorSearcher with its sanctioned exceptions and on the feature cache composables. Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache.
 ---
 
 # Pagination, Search & Offline List Cache
@@ -98,6 +98,8 @@ Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" butto
 ## Server Search-as-You-Type — hand-rolling BANNED
 
 Hand-rolling search-as-you-type around a `$trpc` search query is **banned**: no per-component `useThrottle`/`refDebounced` + `watch` + `AbortController` + `isSearching` wiring, and no `@input` handler firing a query. That stack exists exactly once, in `useAutoSearch` — reach for it, or for `useCursorSearcher` when the results are cursor-paginated.
+
+**Searching data that is already loaded is the other branch, and it is not a free-for-all.** There is no request to throttle or abort, so `useAutoSearch` would be pure ceremony — but the index is **MiniSearch**, the same one docs search uses, queried by a `computed`. Never hand-roll a token map, a sorted-prefix array or a bespoke scorer: a second client-side search mechanism is exactly the drift the one stack exists to stop, and the hand-rolled one loses on relevance, which is the part that matters. Set `combineWith: "AND"` (the default unions terms) and `prefix: true`, boost the field the user is naming, and pin an exact hit ahead of the ranked results. Full standard, both branches: `/docs/architecture/search`.
 
 ## Bundle Ancillary Reads with the Primary Read
 

@@ -110,7 +110,7 @@ The one accepted limitation: Unicode allows a _different_ tone per person in seq
 
 **One category renders at a time, and there is no virtualisation.** The largest CLDR group is under four hundred emoji, which a grid of buttons handles without help; the repo has no virtual-scroll primitive in use, and introducing one to avoid a cost that does not exist would be the opposite of lean. Discord scrolls continuously across all categories, which does need virtualisation — that is a deliberate deferral, revisited only if the tabbed form is missed.
 
-**Search does not go through `useAutoSearch`.** That ban is about hand-rolling debounce, abort and loading state around a `$trpc` query; this search is synchronous and in-memory, so it is a `computed` over the query ref and nothing else. Results replace the grid while the query is non-empty, capped before display.
+**Search does not go through `useAutoSearch`.** That stack owns throttle, abort and pending state around a `$trpc` query, and none of those exist here — this is the [client-index exception](/docs/architecture/search), a `computed` over an already-built index. Results replace the grid while the query is non-empty, capped before display.
 
 Recents and the chosen skin tone live in a Pinia store, persisted through the `LocalStorageKey` registry rather than the dependency's own `emoji-mart.*` namespace. That is what makes the recents category update live — upstream's #289 is a module-level singleton the UI never re-reads. Several other upstream bugs stop existing rather than getting fixed: there is no scroll maths against a `$refs` array to get wrong (#305), category selection is store state instead of a `v-show` expression that also has to know whether a search is running (#136), and the dataset is read rather than mutated in place (#140).
 
@@ -213,8 +213,25 @@ Sprite-rendering issues (#262, #119, #78, #72, #71) go with the sprite sheet.
 | `packages/app/configuration/vue.ts`                              | `optionsApi: true`, deleted in the last phase                   |
 | `packages/app/shared/services/app/ImageSourceWhitelist.ts`       | Holds the pinned `unpkg` sprite-sheet URL                       |
 
-## Open questions
+## Data sources
 
-- Unsupported-glyph detection: worth doing at build time, at runtime by measurement, or not at all until someone reports empty boxes?
-- Custom emoji are not supported today and the rewrite makes them possible — in scope for esbabbler, or deliberately not?
-- Does the composer's `:` list want the same ranking as the picker, or does an autocomplete want slug matches only?
+Both are MIT, data-only, and pinned in the catalog like every other dependency.
+
+| Package              | Provides                                                        | Keyed by  |
+| -------------------- | --------------------------------------------------------------- | --------- |
+| `unicode-emoji-json` | name, slug, CLDR group, canonical order, skin-tone support flag | character |
+| `emojilib`           | keywords, the slug first in each list                           | character |
+
+They are published to be used together and track the same Unicode release, which is what makes the join a lookup rather than a reconciliation. The upstream authority behind both is the Unicode CLDR emoji ordering, so the picker's category order and within-category order are the canonical ones rather than a maintainer's preference.
+
+The dataset carries `emoji_version` per record, which is the lever for the tofu question below.
+
+## Resolved questions
+
+**Unsupported glyphs cannot be detected at build time, so we do not try.** Whether a glyph renders depends on the reader's OS and font, which the build machine knows nothing about — there is no build-time answer to compute. The runtime answer is canvas measurement (draw the glyph, compare its width against the tofu box), which is what `emoji-picker-element` does; it is perhaps twenty lines plus a cached measurement pass, and it is not worth carrying yet.
+
+What is worth doing, because it is one line and removes most of the realistic risk, is capping the dataset by `emoji_version`. The distribution is heavily weighted to old emoji — only a couple of dozen records are newer than Unicode 15.1, and those are precisely the ones likely to render as boxes on a device that has not updated. Filter to a conservative version, revisit when the floor moves, and add measurement only if someone reports a box.
+
+**Custom emoji are in scope, in their own proposal.** They are a product feature — uploaded images, per-room ownership, storage and quota, a shortcode namespace that can collide with the Unicode slugs — not part of retiring two libraries, and the docs standard is one idea per page. This rewrite only has to leave the seams: the picker's category list is data rather than a fixed enum, so a custom group appends to it; `Emoji` is the record everything renders from, so a custom entry differs only in carrying an image instead of a character; and the reaction round trip already goes through a slug, which a custom name slots into. A separate esbabbler proposal picks it up from there.
+
+**The `:` autocomplete already exists and shares the index.** `SuggestionTrigger.Emoji` is `:`, and `EmojiSuggestion` already pops `Suggestion/EmojiList.vue` in the composer — the rewrite swaps what backs it, not whether it exists. A _slug match_ is a hit on the shortcode itself (`thumbs_up` for 👍) as opposed to a hit on a keyword (`happy` for 😀), and the question was whether the `:` list should rank slug-only while the picker ranks both. It should not: same index, same ranking, one behaviour to reason about — and since the shortcode field is boosted hardest and an exact shortcode is pinned first, a `:` query that names a shortcode already resolves to it.
