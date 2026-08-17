@@ -66,7 +66,7 @@ We also diverge from [`emoji-picker-element`](https://github.com/nolanlawson/emo
 
 Together that is every field the picker, the reactions and the composer need. `emojibase-data` is the richer alternative — tags, subgroups, full skin records, and shortcode presets for several vocabularies — but it unpacks to tens of megabytes because it ships every locale, and we would import one file from it. Reconsider only if localisation lands.
 
-Shortcode vocabulary changes as a result, and that is safe here: nothing is in production and the repo takes no legacy-data migrations, so `emojiTag` simply starts out consistent instead of being made consistent.
+Shortcode vocabulary changes as a result, and that is safe here: the repo takes no legacy-data migrations, so `emojiTag` starts out consistent instead of being made consistent. The rows already written are not left unrenderable either — `emojiTag` is an unvalidated string that today holds shortcodes and raw glyphs alike, so the render path falls back to the stored tag whenever `BySlug` misses it, exactly as `emojify` does now. A tag under the old vocabulary therefore renders as itself rather than as nothing, and no migration is owed.
 
 ## The index
 
@@ -80,6 +80,8 @@ The index is configured over three fields with the shortcode boosted hardest, an
 - **`prefix: true`** — the query is a prefix as it is typed, which is what an as-you-type picker means.
 
 An exact shortcode hit is pinned ahead of the ranked results, so `"thumbs_up"` resolves to 👍 alone rather than to whatever BM25 preferred. Fuzzy matching is left off: on short emoji names it mostly manufactures noise.
+
+**Punctuation is a delimiter, never an operator.** MiniSearch tokenizes on it rather than parsing it, so `"grin("` and `"[grin"` search for `grin` and a query that is punctuation or whitespace alone tokenizes to nothing and returns no results — which the picker shows as its empty state, the same as any query that matches nothing. There is no escaping step and no query syntax: quotes and operators are delimiters too. This is already the contract `node-emoji` fails, where the same input compiles as a regex and throws.
 
 Around it sit the two lookups the reactions and the composer need, which are plain maps and not MiniSearch's business:
 
@@ -97,6 +99,8 @@ Both incumbents lose on correctness before speed even matters: `"happy"` finds n
 ### Building it
 
 Both datasets are keyed by the emoji character, so the build is one pass over the canonical order list, reading `data-by-emoji` for the metadata and `emojilib` for the keywords. `Emoji` carries the character, slug, name, group and skin-tone flag; keywords exist only to be indexed and are not kept on the record.
+
+**Nine groups in, `Component` out.** `unicode-emoji-json` labels every record with one of ten CLDR groups, and the tenth — `Component` — is the skin-tone modifiers and hair colours, which are not emoji anyone picks: they only exist to be composed onto another character, which the tone synthesis below does from the flag rather than from these records. One rule drops them, and `EmojiGroup`, the dataset filter and the grid tabs all read from it, so a group cannot exist in the enum without a tab or in a tab without records. The nine kept, in canonical order, are Smileys & Emotion, People & Body, Animals & Nature, Food & Drink, Travel & Places, Activities, Objects, Symbols and Flags — with Frequently Used pinned ahead of them from the store rather than from the dataset.
 
 ### Skin tones
 
@@ -121,11 +125,11 @@ Everything is client-side. The server stores `emojiTag` as a bare string with no
 ```text
 app/models/message/emoji/
   Emoji.ts                the record - character, slug, name, group, skin-tone support
-  EmojiGroup.ts           the nine CLDR groups as an enum, declaration order being display order
+  EmojiGroup.ts           the nine kept CLDR groups as an enum, declaration order being display order
 app/services/message/emoji/
   getEmojiIndex.ts        the lazily built index - the four structures and the prefix search
   applySkinTone.ts        tone synthesis and stripping
-  constants.ts            result caps, the tone modifier range, recents length
+  constants.ts            result caps, the tone modifier range, recents length, the version cutoff
 app/store/message/
   emojiPicker.ts          recents, chosen tone, active group
 app/components/Styled/
@@ -138,14 +142,16 @@ app/components/Styled/
 
 All of them collapse into map lookups, which is why the library earns nothing once the index exists:
 
-| Today                                      | Becomes                                                     |
-| ------------------------------------------ | ----------------------------------------------------------- |
-| `emojify(emojiTag)` in `EmojiListItem.vue` | `BySlug.get(slug)?.character`                               |
-| `unemojify(emoji)` in `useSelectEmoji.ts`  | `ByCharacter.get(stripped)?.slug`                           |
-| `search(query)` in `EmojiSuggestion.ts`    | the index's prefix search, capped, mapped to `EmojiItem`    |
-| `unemojify` in `EmojiDescriptionMap.ts`    | the same reverse lookup, still resolved once at module load |
+| Today                                      | Becomes                                                  |
+| ------------------------------------------ | -------------------------------------------------------- |
+| `emojify(emojiTag)` in `EmojiListItem.vue` | `BySlug.get(slug)?.character`                            |
+| `unemojify(emoji)` in `useSelectEmoji.ts`  | `ByCharacter.get(stripped)?.slug`                        |
+| `search(query)` in `EmojiSuggestion.ts`    | the index's prefix search, capped, mapped to `EmojiItem` |
+| `unemojify` in `EmojiDescriptionMap.ts`    | the same reverse lookup, resolved on first read          |
 
-`EmojiDescriptionMap` is the easy one to miss — it resolves tooltip text for the fixed quick-reaction lists (🤣 👍 ❤️ 👌) at module load, so it is a fourth consumer that has to move before the dependency can go. Note that its members carry variation selectors (❤️), which the reverse lookup must normalise away, exactly as `node-emoji` does today.
+`EmojiDescriptionMap` is the easy one to miss — it resolves tooltip text for the fixed quick-reaction lists (🤣 👍 ❤️ 👌), so it is a fourth consumer that has to move before the dependency can go. Note that its members carry variation selectors (❤️), which the reverse lookup must normalise away, exactly as `node-emoji` does today.
+
+It is also the one call site that cannot keep its shape. Today it resolves at module load, which under a lazily built index would either read an index that does not exist yet or force the whole dataset in at import time — on the server too, where nothing renders a tooltip. So it becomes a lookup performed when a description is asked for rather than a map materialised when the module is imported: the quick-reaction list stays a module constant, and the description resolves through the index at read time, which is the same first-open trigger every other consumer uses.
 
 `Intl.Segmenter` replaces the `char-regex` grapheme splitting only if a future caller needs to walk a mixed string; the two call sites we have are each handed exactly one emoji, so they need a lookup and not a parser.
 
@@ -157,6 +163,7 @@ The index is the part worth testing, and it is testable without the Nuxt runtime
 - **Ranking, against a fixed query set.** `"smile"` puts the exact slug first; `"happy"` finds 😀 through its keywords, which is the query `node-emoji` returns nothing for; `"grin f"` intersects rather than unions; a query with `(` or `[` returns results instead of throwing.
 - **Tone synthesis.** The ZWJ cases explicitly — `🧑‍💻` at each tone, and stripping back to the base — since that is where the naive implementation is wrong.
 - **Caps.** A one-character query returns no more than the display cap.
+- **The version cutoff, from both sides.** A record at the cutoff is in the index and one above it is absent — the pair is what makes the filter deterministic, since asserting only the inclusion passes just as well when nothing is filtered at all.
 
 No test asserts the dataset's contents beyond what the code derives; the count of emoji in a category is the dataset's business, not ours.
 
@@ -230,7 +237,9 @@ The dataset carries `emoji_version` per record, which is the lever for the tofu 
 
 **Unsupported glyphs cannot be detected at build time, so we do not try.** Whether a glyph renders depends on the reader's OS and font, which the build machine knows nothing about — there is no build-time answer to compute. The runtime answer is canvas measurement (draw the glyph, compare its width against the tofu box), which is what `emoji-picker-element` does; it is perhaps twenty lines plus a cached measurement pass, and it is not worth carrying yet.
 
-What is worth doing, because it is one line and removes most of the realistic risk, is capping the dataset by `emoji_version`. The distribution is heavily weighted to old emoji — only a couple of dozen records are newer than Unicode 15.1, and those are precisely the ones likely to render as boxes on a device that has not updated. Filter to a conservative version, revisit when the floor moves, and add measurement only if someone reports a box.
+What is worth doing, because it is one line and removes most of the realistic risk, is capping the dataset by `emoji_version`. The distribution is heavily weighted to old emoji — only a couple of dozen records are newer than Unicode 15.1, and those are precisely the ones likely to render as boxes on a device that has not updated.
+
+**The cutoff is Unicode 15.1**: a record is kept when its `emoji_version` is at or below it and dropped when it is above, so the picker, the search index and both lookups all see the same set. The cutoff is a named constant and moves by editing it — the trigger is the oldest OS release still worth supporting shipping the next version's glyphs, which is a judgement made when someone asks for a newer emoji rather than on a schedule. Canvas measurement is added only if someone reports a box.
 
 **Custom emoji are in scope, in their own proposal.** They are a product feature — uploaded images, per-room ownership, storage and quota, a shortcode namespace that can collide with the Unicode slugs — not part of retiring two libraries, and the docs standard is one idea per page. This rewrite only has to leave the seams: the picker's category list is data rather than a fixed enum, so a custom group appends to it; `Emoji` is the record everything renders from, so a custom entry differs only in carrying an image instead of a character; and the reaction round trip already goes through a slug, which a custom name slots into. A separate esbabbler proposal picks it up from there.
 

@@ -70,7 +70,7 @@ Two settings carry most of that relevance and are easy to omit:
 - **`combineWith: "AND"`** — the default unions terms, so a two-word query returns nearly everything instead of the intersection.
 - **`prefix: true`** — an as-you-type query is a prefix, not a whole word.
 
-Boost the field a user is most likely to be naming, and pin an exact hit on it ahead of the ranked results rather than trusting the score to float it up. Leave `fuzzy` off unless typo tolerance is actually wanted; on short strings it manufactures noise.
+Boost the field a user is most likely to be naming — the title in docs search, the shortcode in the emoji index. Where that field is a canonical identifier rather than prose, pin an exact hit on it ahead of the ranked results rather than trusting the score to float it up; a prose title has no exact form to pin. `fuzzy` is a per-index call: off for short canonical names, where it manufactures noise, and on (docs search runs `0.2`) where the indexed body is prose long enough for a typo to cost the whole query.
 
 This branch has no `isPending` and no abort, because there is nothing asynchronous to track. It is not an exception to the ban — the ban is on re-rolling the _server_ query lifecycle — and it is not a licence to hand-roll the index either.
 
