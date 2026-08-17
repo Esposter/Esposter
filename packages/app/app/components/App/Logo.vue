@@ -10,7 +10,7 @@ const logoImageUrl = useLogoImageUrl();
 </script>
 
 <template>
-  <div>
-    <v-img :width :src="logoImageUrl" :alt="SITE_NAME" />
+  <div :style="{ width }">
+    <NuxtImg w-full :src="logoImageUrl" :alt="SITE_NAME" />
   </div>
 </template>

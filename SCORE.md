@@ -1,6 +1,6 @@
 # Esposter — Repository Score
 
-> Last reviewed: 2026-07-15 · Nuxt `compatibilityDate`: `2026-07-15` · Overall: **93 / 100**
+> Last reviewed: 2026-08-17 · Nuxt `compatibilityDate`: `2026-08-17` · Overall: **94 / 100**
 
 | Area                 | Score   | Notes                                                                      |
 | -------------------- | ------- | -------------------------------------------------------------------------- |
@@ -9,12 +9,12 @@
 | Code Quality         | 10 / 10 | Guard clauses, `InvalidOperationError`, `neverthrow` over `try`/`catch`    |
 | Testing              | 10 / 10 | Several hundred test files; only Phaser store gaps remain                  |
 | Security             | 8 / 10  | CSP trade-offs documented; `xssValidator` pending upstream                 |
-| Dependencies         | 8 / 10  | A few pre-release packages (Drizzle RC, Survey betas)                      |
+| Dependencies         | 9 / 10  | Three pre-release packages left (Drizzle RC, Vuetify module RC)            |
 | Styling              | 9 / 10  | Attributify enforced; Vuetify token bridge; no visual regression tests     |
 | CI / CD              | 10 / 10 | Cached reusable build; SHA-pinned actions; least-privilege; Pulumi preview |
 | Bundle & Performance | 8 / 10  | Vite auto-splits; ~65 MB known footprint; no automated budget              |
 
-A TypeScript-strict monorepo with strong architectural discipline and comprehensive linting, deliberately delegating heavy lifting to well-maintained libraries (Vite, nuxt-security, Drizzle) over custom solutions. Primary remaining drag is the set of pre-release production dependencies.
+A TypeScript-strict monorepo with strong architectural discipline and comprehensive linting, deliberately delegating heavy lifting to well-maintained libraries (Vite, nuxt-security, Drizzle) over custom solutions. Primary remaining drag is the set of pre-release production dependencies, now down to the ORM and the Vuetify module.
 
 ---
 
@@ -48,22 +48,20 @@ Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` with D
 - `unsafe-inline` — required by Vuetify style injection and Nuxt hydration
 - `xssValidator: false` — disabled pending tRPC-Nuxt #215
 
-## Dependencies — 8 / 10
+## Dependencies — 9 / 10
 
-Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents drift. Nuxt 4.4.8, Vuetify 4.1.5, Phaser 4.2.1, TypeScript 6, `rolldown` and `unplugin-dts` all stable. `h3` is held at v1 via a pnpm override, below its v2 line. Drizzle is on RC — the v1 API is stable in practice and the schema/query migration is complete.
+Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents drift; every version lives in the catalog, so the lockfile is the only place a number is worth reading. Nuxt, Vue, Vuetify, Phaser, TypeScript, `rolldown` and `unplugin-dts` are all on stable lines. `h3` is held at v1 via a pnpm override, below its v2 line.
 
-**7 pre-release packages in production paths:**
+The four Survey packages reached stable `3.x` since the last review, leaving **three pre-release packages in production paths**:
 
-| Package                           | Version       | Role                   |
-| --------------------------------- | ------------- | ---------------------- |
-| `drizzle-orm` / `drizzle-kit`     | 1.0.0-rc.2    | Core ORM + migrations  |
-| `vuetify-nuxt-module`             | ^1.0.0-rc.2   | Primary UI integration |
-| `survey-core` / `-creator-core`   | ^3.0.0-beta.8 | Survey feature         |
-| `survey-creator-vue` / `-vue3-ui` | ^3.0.0-beta.8 | Survey feature         |
+| Package                       | Role                   | Why it's accepted                                                       |
+| ----------------------------- | ---------------------- | ----------------------------------------------------------------------- |
+| `drizzle-orm` / `drizzle-kit` | Core ORM + migrations  | v1 API is stable in practice and the schema/query migration is complete |
+| `vuetify-nuxt-module`         | Primary UI integration | Tracks a stable Vuetify 4; the module itself is the only RC             |
 
 ## Styling — 9 / 10
 
-UnoCSS `presetAttributify` + `presetWind4` project-wide: static styles as element attributes, `class` reserved for dynamic bindings. Vuetify theme colors bridged via CSS custom properties and baked into the UnoCSS theme + safelist — a single source of truth for design tokens. Cascade managed via `outputToCssLayers`. Dark mode wired through `.v-theme--dark`/`.v-theme--light` selectors, avoiding media-query conflicts with Vuetify.
+UnoCSS `presetAttributify` + `presetWind4` project-wide: static styles as element attributes, `class` reserved for dynamic bindings. Vuetify theme colors bridged via CSS custom properties and baked into the UnoCSS theme + safelist — a single source of truth for design tokens. Cascade managed via `outputToCssLayers`. Dark mode wired through `.v-theme--dark`/`.v-theme--light` selectors, avoiding media-query conflicts with Vuetify. Images are `<NuxtImg>` sized in CSS — `<v-img>` and raw `<img>` are both lint errors, the former because it gates its render on a browser-only IntersectionObserver and so mismatches on hydration.
 
 **Accepted trade-off:** no automated visual regression testing — the seeding layer (real-time messages, Azure Table, WebPubSub, env-gated features) makes generic snapshot coverage impractical until the UI stabilises. Visual drift is caught by manual review.
 

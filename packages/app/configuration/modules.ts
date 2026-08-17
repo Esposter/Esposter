@@ -7,11 +7,12 @@ import type { NuxtConfig } from "nuxt/schema";
 // Leaks an EnvironmentTeardownError after teardown, and nuxt-security adds headers/CSP nothing asserts.
 // Allowlist instead of subtract: add a module to the Vitest branch only when a test needs it (then re-run).
 export const modules: NuxtConfig["modules"] = process.env.VITEST
-  ? ["@nuxt/scripts", "@nuxt/test-utils/module", "@pinia/nuxt", "@vueuse/nuxt", "vuetify-nuxt-module"]
+  ? ["@nuxt/image", "@nuxt/scripts", "@nuxt/test-utils/module", "@pinia/nuxt", "@vueuse/nuxt", "vuetify-nuxt-module"]
   : [
       "@nuxt/content",
       "@nuxt/eslint",
       "@nuxt/fonts",
+      "@nuxt/image",
       "@nuxt/scripts",
       "@nuxt/test-utils/module",
       "@nuxtjs/seo",

@@ -1,6 +1,7 @@
 // @TODO: Remove this file when nuxt fixes its types
 /// <reference types="nitropack/types" />
 import type { ModuleOptions as ContentModuleOptions } from "@nuxt/content";
+import type { ModuleOptions as ImageModuleOptions } from "@nuxt/image";
 import type { ModuleOptions as SitemapModuleOptions } from "@nuxtjs/sitemap";
 import type { UnocssNuxtOptions } from "@unocss/nuxt";
 import type { PwaModuleOptions } from "@vite-pwa/nuxt";
@@ -70,6 +71,7 @@ declare module "nitropack/types" {
 declare module "nuxt/schema" {
   interface NuxtConfig {
     content?: Partial<ContentModuleOptions>;
+    image?: Partial<ImageModuleOptions>;
     ogImage?: Partial<OgImageModuleOptions>;
     pwa?: PwaModuleOptions;
     security?: Partial<SecurityModuleOptions>;

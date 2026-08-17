@@ -33,10 +33,10 @@ const upgradeIcon = computed(() => UpgradeIconMap[id]);
     <template #activator="{ props }">
       <v-list-item :title="id" select-none :="props">
         <template #prepend>
-          <v-img
+          <NuxtImg
             mr-1
-            width="2rem"
-            height="2rem"
+            size-8
+            object-contain
             :src="type === Target.Building ? BuildingIconMap[id] : upgradeIcon"
             :alt="id"
           />
@@ -57,7 +57,7 @@ const upgradeIcon = computed(() => UpgradeIconMap[id]);
     <StyledCard>
       <v-card-title font-bold flex>
         <div>
-          <v-img width="2rem" height="2rem" :src="type === Target.Building ? MenuIconMap[id] : upgradeIcon" :alt="id" />
+          <NuxtImg size-8 object-contain :src="type === Target.Building ? MenuIconMap[id] : upgradeIcon" :alt="id" />
         </div>
         {{ id }}
       </v-card-title>

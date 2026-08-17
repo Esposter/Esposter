@@ -39,7 +39,7 @@ const isLoading = ref(false);
                 @click="input?.click()"
               >
                 <v-avatar color="background" size="7rem">
-                  <v-img v-if="modelValue" :src="modelValue" :alt="name" cover />
+                  <NuxtImg v-if="modelValue" size-full object-cover :src="modelValue" :alt="name" />
                   <v-icon v-else icon="mdi-account-multiple" size="3rem" />
                 </v-avatar>
                 <div v-if="isLoading" flex items-center inset-0 justify-center absolute>

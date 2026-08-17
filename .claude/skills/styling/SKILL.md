@@ -1,6 +1,6 @@
 ---
 name: styling
-description: Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for all static styles, class only for scoped CSS refs / dynamic bindings / third-party selectors, theme primitives and theme colours over bespoke values, the MD3 typography set and semantic opacity in place of a fixed text-gray, text-info links, hover:bg-hover over a hand-picked surface, state variants instead of scoped &:hover blocks, slash/fraction utilities in valued attributify, abbreviated utilities (op-, b-, rd-) with the explicit b-solid rule and the per-element b-0 a directional border needs, named over numeric utilities, gap directionality, sentence-like rows staying in inline flow, the parent owning spacing (gap/padding over child margins), absolute positioning within a container, rem over px (Vuetify size/width/height props, :root tokens) with its narrow exceptions, and style-block rules, plus deep dives on page/panel/sidebar/region layout, border ownership and the banned global border reset, and arbitrary bracket values (calc, CSS variables, transitions, !important). Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border.
+description: Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for all static styles, class only for scoped CSS refs / dynamic bindings / third-party selectors, theme primitives and theme colours over bespoke values, the MD3 typography set and semantic opacity in place of a fixed text-gray, text-info links, hover:bg-hover over a hand-picked surface, state variants instead of scoped &:hover blocks, slash/fraction utilities in valued attributify, abbreviated utilities (op-, b-, rd-) with the explicit b-solid rule and the per-element b-0 a directional border needs, an equal w-/h- pair collapsing to size-, images as NuxtImg with width/height being optimizer attributes rather than styles and object-fit stated wherever both dimensions are constrained, named over numeric utilities, gap directionality, sentence-like rows staying in inline flow, the parent owning spacing (gap/padding over child margins), absolute positioning within a container, rem over px (Vuetify size/width/height props, :root tokens) with its narrow exceptions, and style-block rules, plus deep dives on page/panel/sidebar/region layout, border ownership and the banned global border reset, and arbitrary bracket values (calc, CSS variables, transitions, !important). Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border.
 ---
 
 # Styling — UnoCSS Attributify Mode (MANDATORY)
@@ -90,6 +90,17 @@ Always use the UnoCSS abbreviated shorthand forms — they are first-class utili
 **Border-radius (`rd` prefix)** — never the Vuetify `rounded="sm"` prop or `rounded-sm` class: `rd` not `rounded`, `rd-t-2` not `rounded-t-2`, `rd-full` not `rounded-full`. Two mappings aren't a direct rename — Vuetify `rounded-xl` is `rd-3xl` (24px), and `rounded-circle` is `rd="50%"`.
 
 **Background:** `bg-transparent` not `background-transparent`. **Outline:** `outline-none` not `outline-0` (sets `outline: 2px solid transparent`).
+
+**Size (`size-` prefix)** — a `w-{n}` and an `h-{n}` on the same element with the **same** value collapse to one `size-{n}`: `size-8`, never `w-8 h-8`; `size-full`, never `w-full h-full`. The pair is only ever written out when the two values differ.
+
+## Images Are `<NuxtImg>`, Sized in CSS
+
+`<v-img>` and raw `<img>` are both `vue/no-restricted-html-elements` errors — Vuetify's gates its render on an IntersectionObserver that exists only in the browser, so it renders on the server and not on hydration. Two things the lint rule cannot tell you:
+
+- **`width` / `height` are html attributes, not styles.** They take bare numbers, so a percentage or a rem is silently dropped. Under this app's `none` provider they resize nothing either — nothing transforms the source, and the pair is rendered straight onto the `<img>` to reserve its layout box. They only become optimizer inputs under a provider that actually transforms. Either way sizing is CSS utilities (`w-full`, `max-w-180`, `size-8`), and a computed dimension goes through `:style` on the wrapper.
+- **State `object-contain` / `object-cover` wherever both dimensions are constrained** — inside a `v-avatar`, at a `size-*`, or under a `size-full` class. A bare `<img>` defaults to `object-fit: fill` and stretches, where `v-img` defaulted to `contain`. Where only the width is set, the height follows the natural ratio and object-fit is a no-op worth leaving out.
+
+The provider is `none` (`configuration/image.ts`), so `NuxtImg` rewrites no urls — it is a plain `<img>` with Nuxt's component API. Turning the optimizer on is a deliberate change, not a default to assume.
 
 ## Named Utilities Over Numeric
 

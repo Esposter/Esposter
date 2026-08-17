@@ -70,8 +70,7 @@ onMounted(async () => {
       translate-y="-1/2"
       rounded-full
       bg-white
-      h-5
-      w-5
+      size-5
       shadow
       absolute
       :style="{ left: `${((inputSensitivityDecibels - MIN_INPUT_SENSITIVITY_DECIBELS) / range) * 100}%` }"

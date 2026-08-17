@@ -29,6 +29,15 @@ export default {
       message:
         'Don\'t use a raw <a>. Use <NuxtLink :to> (internal), <NuxtLink :to external target> (external), <NuxtInvisibleLink :to="{ hash }"> (in-page anchor), or navigateTo for imperative navigation.',
     },
+    {
+      element: "v-img",
+      message:
+        "Don't use <v-img>. It gates its render on an IntersectionObserver that only exists in the browser, so it renders on the server and not on hydration. Use <NuxtImg>, sizing it with CSS utilities (its width/height props are html attributes for the optimizer, not styles) and stating object-contain/object-cover wherever both dimensions are constrained.",
+    },
+    {
+      element: "img",
+      message: "Don't use a raw <img>. Use <NuxtImg>.",
+    },
   ],
   // Object.* calls in a render-evaluated template expression (bind, v-for, interpolation) allocate a fresh
   // Reference every render, breaking prop reference-equality and forcing needless re-renders. Hoist to a

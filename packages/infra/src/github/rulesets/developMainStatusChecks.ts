@@ -3,14 +3,16 @@ import { repository } from "@/github/repository";
 import * as github from "@pulumi/github";
 // Must match the length of the `coverage` job's `matrix.shard` in .github/workflows/CI.yaml — each shard
 // Publishes its own `Coverage (n)` check context, and only contexts listed here are enforced.
-const coverageShardCount = 16;
+const coverageShardCount = 8;
 // Required status checks live in their own ruleset so that Renovate is not a bypass actor for them.
 // Renovate bypasses the pull request requirement in developMainProtection so branch automerge can push
 // Straight to the base branch, but its updates must still land green. Bypass is granted per ruleset and
 // Never per rule, so the two cannot share one.
-// The sharded Coverage matrix is required shard by shard rather than through its `Merge Coverage` fan-in:
-// Coverage-merge has no `if: always()`, so a failing shard leaves it skipped, and GitHub scores a skipped
-// Required check as passing — which is how dependency updates merged with a red test suite.
+// The sharded Coverage matrix is required shard by shard as well as through its `Merge Coverage` fan-in.
+// Coverage-merge used to be skipped by a failing shard, and GitHub scores a skipped required check as
+// Passing — which is how dependency updates merged with a red test suite. It now runs under `!cancelled()`
+// And fails on any failed dependency, so the fan-in is a real gate; the per-shard contexts stay as the
+// Belt to its braces, since they are what holds if that job is ever edited back into a skip.
 export const developMainStatusChecks: github.RepositoryRuleset = new github.RepositoryRuleset(
   "developMainStatusChecks",
   {

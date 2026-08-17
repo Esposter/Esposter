@@ -24,6 +24,6 @@ const isDark = useIsDark();
     <div op-medium-emphasis text-headline-small>
       An approachable, performant and versatile javascript application powered by
     </div>
-    <v-img id="uwu" width="100%" max-width="45rem" :src="VUEJS_LOGO_UWU_PATH" alt="uwu" />
+    <NuxtImg id="uwu" max-w-180 w-full :src="VUEJS_LOGO_UWU_PATH" alt="uwu" />
   </div>
 </template>
