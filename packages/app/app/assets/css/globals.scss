@@ -1,5 +1,3 @@
-@use "vuetify/tools" as vuetify;
-
 :root {
   --app-bar-height: 3.5rem;
   --avatar-width: 2.5rem;
@@ -77,15 +75,6 @@ canvas {
 }
 // https://vuetifyjs.com/en/getting-started/grid-legacy-mode/#css-override
 @layer vuetify-overrides {
-  // Vuetify shadows a drawer only while it is temporary and open — the one case where a scrim is already
-  // Holding it off the page. A permanent or persistent drawer never gets a scrim, so a hairline border is all
-  // That separates it from the content beside it and it reads as part of the page. It matches Vuetify's own
-  // Temporary rule rather than a `VNavigationDrawer` elevation default, because the prop is static while the
-  // Two conditions are not: `temporary` turns itself on at the mobile breakpoint, and a closed off-canvas
-  // Drawer would otherwise cast this shadow back over the content edge it is parked behind
-  .v-navigation-drawer--active:not(.v-navigation-drawer--temporary) {
-    @include vuetify.elevation(4);
-  }
   // Colorless flat buttons (our default via the VBtn flat prop) blend into their parent surface instead
   // of painting Vuetify's surface background; the color prop still fills via bg-* in the later
   // vuetify-utilities layer

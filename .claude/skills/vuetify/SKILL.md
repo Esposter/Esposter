@@ -62,7 +62,9 @@ These variants are set globally and must **never** be repeated on individual com
 | `VSwitch`       | `color="primary"`, `hideDetails` |
 | `VTooltip`      | `location="top"`                 |
 
-**A default is a constant, so anything conditional on component state cannot be one.** A prop set here applies to every instance in every state — a drawer's `elevation` default also shadows it while it is closed and off-canvas, and no default can distinguish the `temporary` a drawer turns on for itself at the mobile breakpoint. Style those cases as a rule in `globals.scss` keyed on Vuetify's own state classes (`.v-navigation-drawer--active:not(.v-navigation-drawer--temporary)`), inside the `vuetify-overrides` layer, using the framework's mixin so the values stay Vuetify's: `@use "vuetify/tools" as vuetify` then `@include vuetify.elevation(4)`. This is the one place a Vuetify SASS API is allowed — component `<style>` blocks still may not (below).
+**A default is a constant, so anything conditional on component state cannot be one.** A prop set here applies to every instance in every state, and several of the states worth styling are ones the component turns on for itself — `temporary` at the mobile breakpoint, `--active` while a drawer is on-canvas. Style those as a rule in `globals.scss` keyed on Vuetify's own state classes, inside the `vuetify-overrides` layer, using the framework's mixins so the values stay Vuetify's (`@use "vuetify/tools" as vuetify`). This is the one place a Vuetify SASS API is allowed — component `<style>` blocks still may not (below).
+
+**Drawers are flat.** Vuetify shadows a drawer only while it is temporary and open, where a scrim is already holding it off the page, and that is the whole of it — there is no app-wide elevation override, and `StyledNavDrawer`'s sheet carries no `elevation` either. A permanent or persistent drawer is separated from the content beside it by its border alone.
 
 ## Button Conventions
 
@@ -124,7 +126,7 @@ Use `<StyledList>` instead of `<v-list>` whenever a list supports arrow-key navi
 
 ## User Avatars
 
-**Always `<StyledAvatar>`** — never inline `v-avatar` + `v-img` + fallback `<span>`; it shows `v-img` when `image` is set and falls back to `StyledDefaultAvatar`. Props: `image?: User["image"]`, `name: User["name"]`, `avatarProps?: VAvatar["$props"]`, `avatarAttrs?: VAvatar["$attrs"]` — the two are combined with `mergeProps(avatarAttrs, avatarProps)` onto whichever root renders, so activator/tooltip slot props go through `avatarAttrs`.
+**Always `<StyledAvatar>`** — never inline `v-avatar` + image + fallback `<span>`; it shows a `NuxtImg` when `image` is set and falls back to `StyledDefaultAvatar`. Props: `image?: User["image"]`, `name: User["name"]`, `avatarProps?: VAvatar["$props"]`, `avatarAttrs?: VAvatar["$attrs"]` — the two are combined with `mergeProps(avatarAttrs, avatarProps)` onto whichever root renders, so activator/tooltip slot props go through `avatarAttrs`.
 
 ```vue
 <StyledAvatar mr-3 :image="user.image" :name="user.name" :avatar-props="{ size: '2.25rem' }" />
