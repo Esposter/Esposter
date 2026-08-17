@@ -68,6 +68,8 @@ Together that is every field the picker, the reactions and the composer need. `e
 
 Shortcode vocabulary changes as a result, and that is safe here: the repo takes no legacy-data migrations, so `emojiTag` starts out consistent instead of being made consistent. The rows already written are not left unrenderable either — `emojiTag` is an unvalidated string that today holds shortcodes and raw glyphs alike, so the render path falls back to the stored tag whenever `BySlug` misses it, exactly as `emojify` does now. A tag under the old vocabulary therefore renders as itself rather than as nothing, and no migration is owed.
 
+**Rendering is not the whole of it, though — a reaction's tag is also its identity.** `useSelectEmoji` finds an existing reaction by exact `emojiTag` equality and the store keys the mutation the same way, so today's raw-glyph rows (🫠 and everything else newer than `emojilib@2`) stop matching the moment the same emoji starts unemojifying to `melting_face`: the next click would add a second row instead of toggling the first. So the comparison moves off the stored string and onto the canonical slug — a stored tag is resolved through `ByCharacter` before it is matched or grouped, which maps a legacy glyph onto the slug the picker now emits and leaves an already-canonical tag untouched. Nothing is rewritten in the table; the stored value stays whatever it was, and only the identity used to compare rows becomes canonical. Rows that predate this and duplicate each other — one glyph, one shortcode, same emoji — collapse into one reaction in the UI on that same rule.
+
 ## The index
 
 One module, built once, lazily, on first picker open or first suggestion query.
@@ -163,6 +165,7 @@ The index is the part worth testing, and it is testable without the Nuxt runtime
 - **Ranking, against a fixed query set.** `"smile"` puts the exact slug first; `"happy"` finds 😀 through its keywords, which is the query `node-emoji` returns nothing for; `"grin f"` intersects rather than unions; a query with `(` or `[` returns results instead of throwing.
 - **Tone synthesis.** The ZWJ cases explicitly — `🧑‍💻` at each tone, and stripping back to the base — since that is where the naive implementation is wrong.
 - **Caps.** A one-character query returns no more than the display cap.
+- **Reaction identity across both stored forms.** A row holding a raw glyph and a row holding the canonical slug resolve to the same reaction, so selecting that emoji toggles the existing row rather than creating a second one — asserted for a legacy glyph, a legacy shortcode and a canonical slug, since the third is the one that must not change.
 - **The version cutoff, from both sides.** A record at the cutoff is in the index and one above it is absent — the pair is what makes the filter deterministic, since asserting only the inclusion passes just as well when nothing is filtered at all.
 
 No test asserts the dataset's contents beyond what the code derives; the count of emoji in a category is the dataset's business, not ours.
