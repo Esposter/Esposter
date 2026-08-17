@@ -41,5 +41,6 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Rate limiting](/docs/architecture/rate-limiting)                                         | Postgres-backed budgets shared across instances, enforced in the authed middleware       |
 | [Security posture](/docs/architecture/security-posture)                                   | The app's nuxt-security configuration — CSP, permissions policy, and what is off and why |
 | [Responsive layout](/docs/architecture/responsive)                                        | One breakpoint scale feeding both Vuetify and UnoCSS                                     |
+| [Date and time display](/docs/architecture/date-time-display)                             | Every rendered date is a NuxtTime — the reader's locale and timezone, no mismatch        |
 
 Cross-cutting standards we decided against are recorded in [rejected](/docs/architecture/rejected) — check it before proposing a new one. Ones we chose not to build yet, each with a revisit trigger, are in [deferred](/docs/architecture/deferred).

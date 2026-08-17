@@ -1,6 +1,6 @@
 ---
 name: vue
-description: Esposter Vue 3 SFC conventions — macro ordering, script-setup declaration order, template attribute ordering and template conventions, inlining single-use functions and handlers (ceremony vs abstraction, useEventListener, IME guard), v-model vs split bindings, never normalizeString in Vue (server Zod schemas normalize; safeParse drives disabled state), upsert create/edit form mode, optional refs, useTemplateRef, computed and map-lookup preferences, the watch decision tree (computed, direct ref init, useCloned, keyed-instance onMounted) plus watch aliases and hook placement, auth session call forms, browser globals via window., and SSR guards via getIsServer. Apply when writing or reviewing .vue files.
+description: Esposter Vue 3 SFC conventions — macro ordering, script-setup declaration order, template attribute ordering and template conventions, inlining single-use functions and handlers (ceremony vs abstraction, useEventListener, IME guard), v-model vs split bindings, never normalizeString in Vue (server Zod schemas normalize; safeParse drives disabled state), upsert create/edit form mode, optional refs, useTemplateRef, computed and map-lookup preferences, the watch decision tree (computed, direct ref init, useCloned, keyed-instance onMounted) plus watch aliases and hook placement, auth session call forms, browser globals via window., SSR guards via getIsServer, and every rendered date being a NuxtTime rather than a dayjs/toLocaleDateString/useTimeAgo call. Apply when writing or reviewing .vue files, or rendering a date or time.
 ---
 
 # Vue Conventions
@@ -128,3 +128,19 @@ Read it before writing any `watch`, or when a local `ref` mirrors a prop/store v
     use: () => (getIsServer() ? undefined : window.Desmos) as typeof Desmos,
   });
   ```
+
+## Third-party Options API components need the runtime kept in
+
+Nothing here is written in the Options API, but a dependency's component can be — `emoji-mart-vue-fast`'s `Picker.vue` is. `future.compatibilityVersion: 5` defaults `vue.optionsApi` to **off**, which compiles `applyOptions` out of the client: the component still mounts, `$data` stays `{}`, and its compiled render dereferences a property off `undefined` (`Cannot read properties of undefined (reading 'allCategories')`) with **nothing thrown beforehand** to name the cause. It survives typecheck and lint, and it survives Vitest too — `@vitejs/plugin-vue` defaults the flag to `true`, so a component test of the same component passes while the app is broken.
+
+So `configuration/vue.ts` keeps `optionsApi: true`, and a render error inside a `node_modules` component is worth checking `/_nuxt/@vite/env` for (`run-app`) before reading its source.
+
+## Dates Are `<NuxtTime>`
+
+Formatting a date inside a `.vue` — `dayjs(…).format(…)`, `toLocaleDateString()`, `useTimeAgo`, `useDateFormat` — is a `vue/no-restricted-syntax` error, and a hand-written `<time>` is a `vue/no-restricted-html-elements` one. The component formats after the prehydrate rewrite, in the reader's locale and timezone, so the server's UTC clock never leaks into the page and the text cannot mismatch on hydration. Full standard: [date-time-display](../../../packages/app/content/docs/architecture/date-time-display.md). Three things the lint rule cannot tell you:
+
+- **Options, not format strings** — `Intl.DateTimeFormat` attributes (`weekday`, `month`, `hour`, …), `relative` for time-ago, `title` for the exact instant as a tooltip. A format used more than once is one attributes constant, spread with `:="…"`.
+- **A component can't live in a prop string** — a subtitle or sentence that embeds a time becomes slot content with the time in inline flow, never a template literal in script.
+- **`relative` ticks per instance, once a second** — fine for a notification list, worth a thought before a long feed of them.
+
+dayjs still owns date _data_ (filenames, CSV, table-sort accessors, the value an input writes back) and all date logic, and services/server code format freely — the rule is `.vue`-only.
