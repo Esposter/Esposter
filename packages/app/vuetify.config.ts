@@ -52,6 +52,9 @@ export const getBaseColorsExtension = (colors: BaseColors) => {
 };
 
 const theme: ThemeOptions = {
+  // Vuetify's own implicit default, stated because the client-hints module requires a named one to fall back
+  // To on a first request, before it knows the browser's colour scheme
+  defaultTheme: ThemeMode.light,
   themes: {
     [ThemeMode.dark]: {
       colors: {
