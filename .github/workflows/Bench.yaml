@@ -3,7 +3,7 @@ name: 🏎️ Bench
 # Benchmarks run as their own workflow (not part of 🏗️ CI) so they never block merges — they're a
 # nice-to-have signal, not a required check. The committed `*.bench.md` stay the offline walltime gate; this
 # workflow only proves every `*.bench.ts` still executes. Packages are built once by the shared
-# `build-packages` reusable workflow and fanned out to every bench shard as the `package-builds` artifact.
+# `build-packages` reusable workflow and handed to the bench job as the `package-builds` artifact.
 # Artifacts are run-scoped, but that reusable workflow's `actions/cache` key is shared repo-wide, so a 🏗️ CI
 # build of the same content warms the cache here for free (and vice versa).
 on:
@@ -20,18 +20,13 @@ concurrency:
 
 jobs:
   # Build every non-app package once via the shared reusable workflow (same content-hash cache key as 🏗️ CI, so
-  # a CI build of the same content lets this skip the build). The `bench` shards below `needs` this and pull the
-  # `package-builds` artifact through `setup-packages` instead of each rebuilding inline.
+  # a CI build of the same content lets this skip the build). The `bench` job below `needs` this and pulls the
+  # `package-builds` artifact through `setup-packages` instead of rebuilding inline.
   build-packages:
     uses: ./.github/workflows/build-packages.yaml
 
   bench:
-    name: Bench (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: build-packages
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2, 3, 4]
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -45,11 +40,11 @@ jobs:
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
       # A bare root `vitest bench --run` discovers every project's `*.bench.ts` (packages/* + the scripts
-      # project, per the root vitest.config.ts `projects`) as one file set, so `--shard=i/n` partitions that
-      # global set across runners. CI uses this bare sharded invocation rather than the `pnpm bench` root script
-      # (`vitest bench --project scripts && pnpm -r run bench`) because that script is a multi-invocation chain a
-      # single `--shard` can't span; local `pnpm bench` (the committed `*.bench.md` gate) uses the script. The
-      # BenchmarkMarkdownReporter rewrites `*.bench.md` beside each bench on ephemeral runner disk — nothing
-      # commits it, so the committed artifacts are untouched.
+      # project, per the root vitest.config.ts `projects`) as one file set and runs it in one process, where the
+      # `pnpm bench` root script (`vitest bench --project scripts && pnpm -r run bench`) is a chain of several.
+      # Local `pnpm bench` — the committed `*.bench.md` gate — uses the script. The BenchmarkMarkdownReporter
+      # rewrites `*.bench.md` beside each bench on ephemeral runner disk; nothing commits it, so the committed
+      # artifacts are untouched. Unsharded: this job is a smoke test that every bench still executes, so the
+      # only thing splitting it buys is runner minutes spent on setup.
       - name: 🏎️ Run benchmarks
-        run: pnpm exec vitest bench --run --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        run: pnpm exec vitest bench --run
