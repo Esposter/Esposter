@@ -222,7 +222,7 @@ catalog:
   typescript: 6.0.3
   unconfig: ^7.5.0
   unocss: ^66.7.5
-  unocss-preset-vuetify: ^0.3.0
+  unocss-preset-vuetify: ^0.4.0
   unplugin-auto-import: ^21.1.0
   unplugin-dts: ^1.0.3
   v-viewer: ^3.0.23

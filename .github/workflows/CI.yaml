@@ -108,8 +108,19 @@ jobs:
   coverage-merge:
     name: Merge Coverage
     needs: [build-packages, coverage]
+    # Runs even when a dependency failed, because a skipped job reports its required check as *satisfied* —
+    # So without this the one gate that means "every shard passed" goes green precisely when a shard did not,
+    # Which is how a dependency update once merged with a red suite. `!cancelled()` rather than `always()` so
+    # A cancelled run still reads as cancelled instead of turning into a failure.
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
+      # First step, before any setup: turn a failed dependency into a failed check rather than a skipped one.
+      # `needs.*.result` covers the shard matrix as a whole — one failing shard fails the aggregate.
+      - name: 🚦 Gate on the shard results
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
+
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
