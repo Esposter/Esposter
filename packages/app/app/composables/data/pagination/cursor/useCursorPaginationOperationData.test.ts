@@ -12,7 +12,7 @@ const PAYLOAD_KEY = "read-items";
 
 describe(useCursorPaginationOperationData, () => {
   let wrapper: VueWrapper;
-  let hydratingNuxtApp: undefined | ReturnType<typeof useNuxtApp>;
+  let hydratingNuxtApp: ReturnType<typeof useNuxtApp> | undefined;
   let items: ReturnType<typeof useCursorPaginationOperationData<string>>["items"];
   let readItems: ReturnType<typeof useCursorPaginationOperationData<string>>["readItems"];
   let readMoreItems: ReturnType<typeof useCursorPaginationOperationData<string>>["readMoreItems"];
