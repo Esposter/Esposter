@@ -7,7 +7,7 @@ description: Every date a reader sees is a NuxtTime — formatted in their local
 
 A date rendered by a component is formatted twice: once on the server, once again when the client hydrates. Those two runs do not agree. The server formats in the container's locale and timezone (UTC on Azure), the browser in the reader's — so `dayjs(...).format(...)`, `toLocaleDateString()` and `useTimeAgo()` in a template produce different text on each side. Vue reports that as `Hydration completed but contains mismatches`, silently re-renders the subtree, and the reader is left looking at the server's clock rather than their own.
 
-**Anything a reader sees is a `<NuxtTime>`.** Formatting a date any other way inside a `.vue` file is a `vue/no-restricted-syntax` error.
+**Anything a reader sees is a `<NuxtTime>`.** Formatting a date any other way inside a `.vue` file is a `vue/no-restricted-syntax` error. The one exception is the client-rendered message list, [below](#where-dayjs-still-belongs).
 
 ```vue
 <NuxtTime :datetime="post.createdAt" relative />
@@ -16,11 +16,11 @@ A date rendered by a component is formatted twice: once on the server, once agai
 
 ## Why it is hydration-safe
 
-`<NuxtTime>` does not render formatted text on the server at all — it renders the machine-readable instant plus the formatting options, and ships a tiny script that rewrites the text **before** Vue hydrates. Both renders therefore read the same DOM text, computed by the same browser, against one page-wide frozen `now`.
+`<NuxtTime>` renders the server's own formatting into the html, but it also renders the machine-readable instant and the formatting options as attributes, and ships a tiny script that reformats the text from those attributes **before** Vue hydrates. So the server's text never survives to be compared: by the time Vue hydrates, the DOM already holds the browser's own string, computed against one page-wide frozen `now`, which is exactly what Vue's own render then produces.
 
 ```mermaid
 flowchart LR
-  server["server render — time datetime=ISO data-*=options"] --> html["html sent to the browser"]
+  server["server render — time datetime=ISO data-*=options, text in the server's locale"] --> html["html sent to the browser"]
   html --> prehydrate["onPrehydrate script — Intl in the reader's locale/timezone, window._nuxtTimeNow"]
   prehydrate --> text["textContent rewritten"]
   text --> hydrate["Vue hydrates — computes the same string, matches"]
@@ -29,7 +29,7 @@ flowchart LR
 
 ## Options, not format strings
 
-Formatting is [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) options passed as attributes (`weekday`, `year`, `month`, `day`, `hour`, `minute`, `timeZoneName`, `dateStyle`, `timeStyle`), so the shape of the output is chosen by the reader's locale rather than by a pattern we wrote. `relative` switches to `Intl.RelativeTimeFormat` for time-ago text and self-ticks once a second per instance. `title` adds the full instant as a tooltip.
+Formatting is [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) options passed as attributes (`weekday`, `year`, `month`, `day`, `hour`, `minute`, `timeZoneName`, `dateStyle`, `timeStyle`), so the shape of the output is chosen by the reader's locale rather than by a pattern we wrote. `relative` switches to `Intl.RelativeTimeFormat` for time-ago text and self-ticks once a second per instance. `title` is **not** a localized tooltip: the boolean form renders `toISOString()`, and the prehydrate script rewrites only the element's text, never its `title`, so a reader hovering gets UTC machine text. Pass `title` a string when an exact instant is genuinely wanted; otherwise leave it off.
 
 A format shared by more than one call site is one constant of attributes, spread in — `RESOURCE_DATE_TIME_ATTRIBUTES` beside its string counterpart in `app/services/resource/constants.ts`:
 

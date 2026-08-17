@@ -19,7 +19,7 @@ const detail = computed(() => getResourceActivityDetail(activity));
   >
     <template #subtitle>
       <span v-if="detail">{{ detail }} · </span>
-      <NuxtTime :datetime="activity.createdAt" title relative />
+      <NuxtTime :datetime="activity.createdAt" relative />
     </template>
   </v-list-item>
 </template>

@@ -139,8 +139,10 @@ So `configuration/vue.ts` keeps `optionsApi: true`, and a render error inside a 
 
 Formatting a date inside a `.vue` — `dayjs(…).format(…)`, `toLocaleDateString()`, `useTimeAgo`, `useDateFormat` — is a `vue/no-restricted-syntax` error, and a hand-written `<time>` is a `vue/no-restricted-html-elements` one. The component formats after the prehydrate rewrite, in the reader's locale and timezone, so the server's UTC clock never leaks into the page and the text cannot mismatch on hydration. Full standard: [date-time-display](../../../packages/app/content/docs/architecture/date-time-display.md). Three things the lint rule cannot tell you:
 
-- **Options, not format strings** — `Intl.DateTimeFormat` attributes (`weekday`, `month`, `hour`, …), `relative` for time-ago, `title` for the exact instant as a tooltip. A format used more than once is one attributes constant, spread with `:="…"`.
+- **Options, not format strings** — `Intl.DateTimeFormat` attributes (`weekday`, `month`, `hour`, …), `relative` for time-ago. A format used more than once is one attributes constant, spread with `:="…"`. Bare `title` is not a localized tooltip — it renders `toISOString()` and the prehydrate script never rewrites it, so it shows UTC machine text; pass a string or leave it off.
 - **A component can't live in a prop string** — a subtitle or sentence that embeds a time becomes slot content with the time in inline flow, never a template literal in script.
 - **`relative` ticks per instance, once a second** — fine for a notification list, worth a thought before a long feed of them.
 
 dayjs still owns date _data_ (filenames, CSV, table-sort accessors, the value an input writes back) and all date logic, and services/server code format freely — the rule is `.vue`-only.
+
+The **message list is the one display exception**: its `Today`/`Yesterday` labels and 24-hour gutter clock branch on the reader's own day boundary, which no single `<NuxtTime>` expresses, so they stay `getMessageDateLabel`/`getShortTimeLabel` in `app/services/dayjs/`. It is safe only because `/messages/**` is client-rendered (`configuration/routeRules.ts`) — there is no server render to disagree with, and the labels format in the reader's locale and timezone because the browser is the only thing that formats them. Outside a `ssr: false` route the exception does not exist.

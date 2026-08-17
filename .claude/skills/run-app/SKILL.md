@@ -31,7 +31,8 @@ Never report a visual change as verified on the strength of typecheck, lint or a
 **Port 3000 belongs to the user. An agent-started server always takes `--port 3001`**, so the two never race for a port and killing one never takes the other's session down:
 
 ```bash
-cd packages/app && nohup pnpm dev --port 3001 > <scratchpad>/dev.log 2>&1   # run_in_background
+# $SCRATCHPAD is the session scratchpad directory named in the system prompt — substitute it before running
+cd packages/app && nohup pnpm dev --port 3001 > "$SCRATCHPAD/dev.log" 2>&1   # run_in_background
 ```
 
 Four things bite, all of them cheaply:

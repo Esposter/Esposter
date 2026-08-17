@@ -2,6 +2,7 @@
 import type { CreateInviteInput } from "#shared/models/db/room/CreateInviteInput";
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { dayjs } from "#shared/services/dayjs";
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { pluralize } from "#shared/util/text/pluralize";
 import { InviteExpireAfterSelectItems } from "@/services/message/room/invite/InviteExpireAfterSelectItems";
@@ -37,6 +38,22 @@ const onCreateInvite = () =>
 const onUpdateOptions = async () => {
   if (invite.value) await onCreateInvite();
 };
+// The panel outlives the link it shows, so an invite that lapses while it is open has to flip the copy rather
+// Than read "expires 5 minutes ago". One timeout at the expiry instant, restarted whenever the link changes
+const remainingExpiryMs = computed(() => (invite.value?.expiresAt ? dayjs(invite.value.expiresAt).diff() : 0));
+const isExpired = ref(false);
+const { start: startExpiryTimeout, stop: stopExpiryTimeout } = useTimeoutFn(
+  () => {
+    isExpired.value = true;
+  },
+  remainingExpiryMs,
+  { immediate: false },
+);
+watchImmediate(remainingExpiryMs, (newRemainingExpiryMs) => {
+  stopExpiryTimeout();
+  isExpired.value = Boolean(invite.value?.expiresAt) && newRemainingExpiryMs <= 0;
+  if (newRemainingExpiryMs > 0) startExpiryTimeout();
+});
 const inviteLink = computed(() =>
   invite.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(invite.value.id)}` : "",
 );
@@ -81,7 +98,8 @@ const isCopied = ref(false);
       </template>
     </v-text-field>
     <div v-if="invite" pt-2 op-medium-emphasis text-title-small>
-      <template v-if="invite.expiresAt">
+      <template v-if="isExpired">Your invite link has expired.</template>
+      <template v-else-if="invite.expiresAt">
         Your invite link expires <NuxtTime :datetime="invite.expiresAt" relative />.
       </template>
       <template v-else>Your invite link never expires.</template>
