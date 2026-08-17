@@ -83,11 +83,75 @@ Search resolves a prefix by binary-searching the sorted token array for the rang
 
 That is strictly better than both incumbents on every axis that matters, and it is small enough to read in one sitting. The build is the only linear pass and it happens once, off the interaction path.
 
+### Building it
+
+Both datasets are keyed by the emoji character, so the build is one pass over the canonical order list, reading `data-by-emoji` for metadata and `emojilib` for keywords, and pushing into the four structures at once. `Emoji` carries the character, slug, name, group and skin-tone flag; keywords are only ever needed through the postings map, so they are not kept on the record.
+
+Tokens are the slug split on `_` plus each keyword split on whitespace, lowercased and deduped per emoji. Postings hold the emoji's index in the flat array — a number, not a reference — so the postings map stays small and set operations compare integers.
+
+The sorted token array is built once by sorting the postings map's keys. Prefix lookup is a pair of binary searches for the first token `>= prefix` and the first token `> prefix + "￿"`; every token between them shares the prefix, and their postings union to the candidate set.
+
+### Skin tones
+
+`unicode-emoji-json` marks which emoji support a tone but does not ship the toned variants, so they are synthesised. **The modifier goes after the first code point, not at the end** — appending naively produces `🧑‍💻🏻` where the correct form is `🧑🏽‍💻`, because the tone belongs to the person, not the laptop. The rule that holds for every case checked, including multi-component ZWJ sequences, is: take the first code point, append the tone, then re-append the rest with variation selectors dropped. Stripping the tone again is a filter for the modifier range, which round-trips exactly.
+
+The one accepted limitation: Unicode allows a _different_ tone per person in sequences like 🧑‍🤝‍🧑, and a single global tone setting only tones the first. Discord behaves the same way.
+
 ## The picker
 
-`StyledEmojiPicker` keeps its props and its `select` event, so no consumer changes. Inside, it becomes a `<script setup>` component built from the repo's own primitives: a `v-text-field` for search, a slide group for the category anchors, a virtualised grid for the emoji, all coloured by theme tokens so both themes come free. Recents and the chosen skin tone live in a Pinia store persisted through the `LocalStorageKey` registry, which is what makes the recents category update live — upstream's #289 is a module-level singleton that the UI never re-reads.
+`StyledEmojiPicker` keeps its props and its `select` event, so no consumer changes. Inside it becomes a `<script setup>` component built from the repo's own primitives: a `v-text-field` for search, a slide group for the category anchors, a plain grid of buttons, all coloured by theme tokens so both themes come free.
 
-Several other upstream bugs stop existing rather than getting fixed: scroll tracking comes from the virtual list instead of hand-computed `offsetTop` against a `$refs` array (#305), category selection is store state instead of a `v-show` expression that also has to know whether a search is running (#136), and the dataset is read rather than mutated in place (#140, where `uncompress` writes back onto the imported JSON module).
+**One category renders at a time, and there is no virtualisation.** The largest CLDR group is under four hundred emoji, which a grid of buttons handles without help; the repo has no virtual-scroll primitive in use, and introducing one to avoid a cost that does not exist would be the opposite of lean. Discord scrolls continuously across all categories, which does need virtualisation — that is a deliberate deferral, revisited only if the tabbed form is missed.
+
+**Search does not go through `useAutoSearch`.** That ban is about hand-rolling debounce, abort and loading state around a `$trpc` query; this search is synchronous and in-memory, so it is a `computed` over the query ref and nothing else. Results replace the grid while the query is non-empty, capped before display.
+
+Recents and the chosen skin tone live in a Pinia store, persisted through the `LocalStorageKey` registry rather than the dependency's own `emoji-mart.*` namespace. That is what makes the recents category update live — upstream's #289 is a module-level singleton the UI never re-reads. Several other upstream bugs stop existing rather than getting fixed: there is no scroll maths against a `$refs` array to get wrong (#305), category selection is store state instead of a `v-show` expression that also has to know whether a search is running (#136), and the dataset is read rather than mutated in place (#140).
+
+### Files
+
+Everything is client-side. The server stores `emojiTag` as a bare string with no vocabulary validation, so nothing here belongs in `shared/`.
+
+```text
+app/models/message/emoji/
+  Emoji.ts                the record - character, slug, name, group, skin-tone support
+  EmojiGroup.ts           the nine CLDR groups as an enum, declaration order being display order
+app/services/message/emoji/
+  getEmojiIndex.ts        the lazily built index - the four structures and the prefix search
+  applySkinTone.ts        tone synthesis and stripping
+  constants.ts            result caps, the tone modifier range, recents length
+app/store/message/
+  emojiPicker.ts          recents, chosen tone, active group
+app/components/Styled/
+  EmojiPicker.vue         unchanged props and select event, new internals
+  EmojiPicker/Grid.vue    the emoji grid
+  EmojiPicker/Tabs.vue    the category anchors
+```
+
+### The four node-emoji call sites
+
+All of them collapse into map lookups, which is why the library earns nothing once the index exists:
+
+| Today                                      | Becomes                                                     |
+| ------------------------------------------ | ----------------------------------------------------------- |
+| `emojify(emojiTag)` in `EmojiListItem.vue` | `BySlug.get(slug)?.character`                               |
+| `unemojify(emoji)` in `useSelectEmoji.ts`  | `ByCharacter.get(stripped)?.slug`                           |
+| `search(query)` in `EmojiSuggestion.ts`    | the index's prefix search, capped, mapped to `EmojiItem`    |
+| `unemojify` in `EmojiDescriptionMap.ts`    | the same reverse lookup, still resolved once at module load |
+
+`EmojiDescriptionMap` is the easy one to miss — it resolves tooltip text for the fixed quick-reaction lists (🤣 👍 ❤️ 👌) at module load, so it is a fourth consumer that has to move before the dependency can go. Note that its members carry variation selectors (❤️), which the reverse lookup must normalise away, exactly as `node-emoji` does today.
+
+`Intl.Segmenter` replaces the `char-regex` grapheme splitting only if a future caller needs to walk a mixed string; the two call sites we have are each handed exactly one emoji, so they need a lookup and not a parser.
+
+## Tests
+
+The index is the part worth testing, and it is testable without the Nuxt runtime — plain `node` environment, no `mountSuspended`:
+
+- **Round trip.** Every emoji in the dataset maps character → slug → character unchanged. This is the assertion that would have caught today's mixed vocabulary, where 🫠 stores as a raw glyph and 😄 stores as `:smile:`.
+- **Ranking, against a fixed query set.** `"smile"` puts the exact slug first; `"happy"` finds 😀 through its keywords, which is the query `node-emoji` returns nothing for; `"grin f"` intersects rather than unions; a query with `(` or `[` returns results instead of throwing.
+- **Tone synthesis.** The ZWJ cases explicitly — `🧑‍💻` at each tone, and stripping back to the base — since that is where the naive implementation is wrong.
+- **Caps.** A one-character query returns no more than the display cap.
+
+No test asserts the dataset's contents beyond what the code derives; the count of emoji in a category is the dataset's business, not ours.
 
 ## Feasibility
 
@@ -95,10 +159,17 @@ High, and higher than a port would be. Our contract with the picker is one prop 
 
 ## Phases
 
-1. **Index.** Typed, tested against a fixed query set — ranking, shortcode round trip, skin-tone resolution, recents. No UI.
-2. **Picker.** The Vuetify shell against that index, keeping the existing props and `select` event.
-3. **Composer and reactions.** Move `emojify`, `unemojify` and the `:` suggestion list onto the same index; grapheme handling comes from `Intl.Segmenter`, which resolves ZWJ sequences and skin-tone modifiers correctly without a dependency.
-4. **Delete.** `emoji-mart-vue-fast`, `node-emoji`, the `unpkg` entry in `ImageSourceWhitelist`, both `@ts-expect-error`s and `configuration/vue.ts` — then confirm `optionsApi` off across every surface mounting third-party Vue components.
+1. **Index.** `Emoji`, `EmojiGroup`, `getEmojiIndex`, `applySkinTone`, and the tests above. Adds `unicode-emoji-json` and `emojilib` to the catalog. No UI, no consumer touched.
+2. **Picker.** `StyledEmojiPicker`'s internals plus its grid and tabs children and the `emojiPicker` store, against that index. Existing props and `select` event unchanged, so no consumer changes here either. `emoji-mart-vue-fast` stops being imported at the end of this phase.
+3. **Reactions and composer.** Move all four `node-emoji` call sites onto the index — `emojify`, `unemojify`, `EmojiDescriptionMap` and `EmojiSuggestion` — keeping `EmojiItem` as the suggestion contract so `Suggestion/EmojiList.vue` is untouched.
+4. **Delete**, and only delete:
+   - `emoji-mart-vue-fast` and `node-emoji` from `package.json` and the catalog
+   - `app/services/message/emoji/emojiIndex.ts`, `emojify.ts`, `unemojify.ts`
+   - the pinned `unpkg` sprite-sheet URL in `ImageSourceWhitelist`
+   - both `@ts-expect-error` comments and the upstream issue links they cite
+   - `configuration/vue.ts` and its line in `nuxt.config.ts`
+
+   Then confirm `optionsApi` off by exercising the surfaces that mount third-party Vue components — survey, the date picker, GrapesJS, the Phaser wrapper. The check is worth doing explicitly: a missing Options API runtime fails at render with a property read off `undefined` and nothing thrown earlier to point at the cause, which is exactly how the emoji picker's failure presented.
 
 Each phase is separately reviewable; the last only deletes.
 
@@ -113,7 +184,7 @@ None of these is waiting on something we could contribute upstream faster than r
 | #121  | TypeScript support                     | Written in TypeScript                             |
 | #95   | Bundle size                            | One dataset, lazily loaded behind the menu        |
 | #289  | Recents do not update live             | Pinia store instead of a module singleton         |
-| #305  | Null `scrollTop` during scroll         | Virtual list instead of manual scroll maths       |
+| #305  | Null `scrollTop` during scroll         | No scroll maths — one category rendered at a time |
 | #136  | Cannot switch category while searching | Category selection is store state                 |
 | #140  | Frozen dataset module mutated          | The dataset is read, never written back           |
 | #258  | Accessibility quirks                   | Vuetify primitives plus the staged a11y rules     |
@@ -122,16 +193,18 @@ Sprite-rendering issues (#262, #119, #78, #72, #71) go with the sprite sheet.
 
 ## Key files
 
-| File                                                           | Role                                                            |
-| -------------------------------------------------------------- | --------------------------------------------------------------- |
-| `packages/app/app/components/Styled/EmojiPicker.vue`           | The wrapper being rewritten — its props and `select` event stay |
-| `packages/app/app/services/message/emoji/emojiIndex.ts`        | Module-scope `EmojiIndex` singleton, replaced by the new index  |
-| `packages/app/app/services/message/emoji/emojify.ts`           | `node-emoji` shortcode lookup used by reactions                 |
-| `packages/app/app/services/message/emoji/unemojify.ts`         | `node-emoji` reverse lookup used when a reaction is stored      |
-| `packages/app/app/services/message/emoji/EmojiSuggestion.ts`   | `node-emoji` search behind the composer's `:` trigger           |
-| `packages/app/app/composables/message/emoji/useSelectEmoji.ts` | Turns a picked emoji into the stored `emojiTag`                 |
-| `packages/app/configuration/vue.ts`                            | `optionsApi: true`, deleted in the last phase                   |
-| `packages/app/shared/services/app/ImageSourceWhitelist.ts`     | Holds the pinned `unpkg` sprite-sheet URL                       |
+| File                                                             | Role                                                            |
+| ---------------------------------------------------------------- | --------------------------------------------------------------- |
+| `packages/app/app/components/Styled/EmojiPicker.vue`             | The wrapper being rewritten — its props and `select` event stay |
+| `packages/app/app/services/message/emoji/emojiIndex.ts`          | Module-scope `EmojiIndex` singleton, replaced by the new index  |
+| `packages/app/app/services/message/emoji/emojify.ts`             | `node-emoji` shortcode lookup used by reactions                 |
+| `packages/app/app/services/message/emoji/unemojify.ts`           | `node-emoji` reverse lookup used when a reaction is stored      |
+| `packages/app/app/services/message/emoji/EmojiSuggestion.ts`     | `node-emoji` search behind the composer's `:` trigger           |
+| `packages/app/app/services/message/emoji/EmojiDescriptionMap.ts` | Fourth `node-emoji` consumer — quick-reaction tooltip text      |
+| `packages/app/app/composables/message/emoji/useSelectEmoji.ts`   | Turns a picked emoji into the stored `emojiTag`                 |
+| `packages/app/app/services/shared/LocalStorageKey.ts`            | Gains the recents and skin-tone keys                            |
+| `packages/app/configuration/vue.ts`                              | `optionsApi: true`, deleted in the last phase                   |
+| `packages/app/shared/services/app/ImageSourceWhitelist.ts`       | Holds the pinned `unpkg` sprite-sheet URL                       |
 
 ## Open questions
 
