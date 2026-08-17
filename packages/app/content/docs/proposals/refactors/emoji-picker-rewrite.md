@@ -70,26 +70,33 @@ Shortcode vocabulary changes as a result, and that is safe here: nothing is in p
 
 ## The index
 
-One module, built once, lazily, on first picker open or first suggestion query. Everything below is measured against a set of roughly two thousand emoji and under ten thousand distinct keyword tokens.
+One module, built once, lazily, on first picker open or first suggestion query.
 
-| Structure                     | Purpose                                     | Build        | Query                   |
-| ----------------------------- | ------------------------------------------- | ------------ | ----------------------- |
-| flat array in canonical order | the grid, and a stable tiebreak for ranking | linear, once | index access            |
-| `Map<char, Emoji>`            | native → shortcode, for storing a reaction  | linear, once | constant                |
-| `Map<slug, Emoji>`            | shortcode → native, for rendering one       | linear, once | constant                |
-| sorted token array + postings | prefix search                               | linear, once | binary search + matches |
+**Search is MiniSearch, not a hand-rolled index.** It is already a dependency, it is already how docs search works, and [the search standard](/docs/architecture/search) already sanctions exactly this shape — a client-side index queried by a `computed`, with no server call, no abort and no pending state. Writing a bespoke token index here would be a second search mechanism in the repo to maintain and tune, which is the thing that standard exists to prevent.
 
-Search resolves a prefix by binary-searching the sorted token array for the range of tokens sharing it, then unioning those tokens' postings — logarithmic in the token count plus linear in what actually matched, rather than a scan of every emoji per keystroke. Multi-word queries intersect via a `Set` keyed on emoji index, walking the smaller side, so two words cost their sum rather than their product. Ranking is an explicit score — exact slug, then slug prefix, then keyword prefix, tiebroken by canonical order — and sorts only the matched set, which is capped before display.
+The index is configured over three fields with the shortcode boosted hardest, and two settings carry most of the relevance:
 
-That is strictly better than both incumbents on every axis that matters, and it is small enough to read in one sitting. The build is the only linear pass and it happens once, off the interaction path.
+- **`combineWith: "AND"`** — without it a two-word query unions rather than intersects, and `"grin f"` returns most of the dataset instead of the grinning faces.
+- **`prefix: true`** — the query is a prefix as it is typed, which is what an as-you-type picker means.
+
+An exact shortcode hit is pinned ahead of the ranked results, so `"thumbs_up"` resolves to 👍 alone rather than to whatever BM25 preferred. Fuzzy matching is left off: on short emoji names it mostly manufactures noise.
+
+Around it sit the two lookups the reactions and the composer need, which are plain maps and not MiniSearch's business:
+
+| Structure          | Purpose                                    | Build        | Query    |
+| ------------------ | ------------------------------------------ | ------------ | -------- |
+| `Map<char, Emoji>` | native → shortcode, for storing a reaction | linear, once | constant |
+| `Map<slug, Emoji>` | shortcode → native, for rendering one      | linear, once | constant |
+| flat ordered array | the grid, in canonical Unicode order       | linear, once | index    |
+| MiniSearch index   | search                                     | linear, once | prefix   |
+
+Measured on the real datasets, the whole build is tens of milliseconds once, and queries land in single-digit milliseconds — off the interaction path either way, since the build happens on first open. That is not a claim about being asymptotically optimal; it is the observation that the work is small enough that the interesting property is relevance, not speed, and relevance is the thing a shared library is better at than a bespoke one.
+
+Both incumbents lose on correctness before speed even matters: `"happy"` finds nothing through `node-emoji` and `"(("` throws, while both return results here.
 
 ### Building it
 
-Both datasets are keyed by the emoji character, so the build is one pass over the canonical order list, reading `data-by-emoji` for metadata and `emojilib` for keywords, and pushing into the four structures at once. `Emoji` carries the character, slug, name, group and skin-tone flag; keywords are only ever needed through the postings map, so they are not kept on the record.
-
-Tokens are the slug split on `_` plus each keyword split on whitespace, lowercased and deduped per emoji. Postings hold the emoji's index in the flat array — a number, not a reference — so the postings map stays small and set operations compare integers.
-
-The sorted token array is built once by sorting the postings map's keys. Prefix lookup is a pair of binary searches for the first token `>= prefix` and the first token `> prefix + "￿"`; every token between them shares the prefix, and their postings union to the candidate set.
+Both datasets are keyed by the emoji character, so the build is one pass over the canonical order list, reading `data-by-emoji` for the metadata and `emojilib` for the keywords. `Emoji` carries the character, slug, name, group and skin-tone flag; keywords exist only to be indexed and are not kept on the record.
 
 ### Skin tones
 
