@@ -21,6 +21,7 @@ import { runtimeConfig } from "./configuration/runtimeConfig";
 import { security } from "./configuration/security";
 import { site } from "./configuration/site";
 import { vite } from "./configuration/vite";
+import { vue } from "./configuration/vue";
 import { vuetify } from "./configuration/vuetify";
 
 export default defineNuxtConfig({
@@ -44,5 +45,6 @@ export default defineNuxtConfig({
   security,
   site,
   vite,
+  vue,
   vuetify,
 });
