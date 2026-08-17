@@ -66,7 +66,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
     # ubuntu-26.04, not ubuntu-latest: the virrun os-backend suites need bubblewrap >= 0.10.0 (RAM overlay) and
     # 24.04 ships 0.9.0 — on the older image the differential tests self-gate via describe.skipIf and the
     # correctness gate silently disappears.

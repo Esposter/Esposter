@@ -5,7 +5,7 @@ description: Ongoing migration of lint rules from ESLint to oxlint, prioritized 
 
 # ESLint → oxlint Migration
 
-Move lint rules from ESLint to oxlint whenever oxlint gains coverage, prioritized by what actually costs time in the ESLint pass. Oxlint runs the whole repo in well under a minute; the ESLint pass takes several minutes, and a handful of type-aware rules account for most of its rule time.
+Move lint rules from ESLint to oxlint whenever oxlint gains coverage, prioritized by what actually costs time in the ESLint pass. Oxlint clears the whole repo in seconds; ESLint is the slower half by an order of magnitude, and its cost is concentrated in a handful of rules rather than spread across the set. Since the type-aware rules left (`neverthrow/must-use-result` dropped, `typescript-eslint` removed), the remaining pass is short enough to run on every change — `lint` is no longer near CI's critical path, which belongs to `build app`.
 
 ## What works today
 
@@ -30,15 +30,17 @@ flowchart LR
 
 The remaining expensive rules, in descending cost order, and the trigger for migrating each:
 
-| Rule                         | Share of rule time | Blocker                                | Migrate when                                                                               |
-| ---------------------------- | ------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `vue/no-child-content`       | ~a tenth           | Not implemented in oxlint's vue plugin | upstream implements it (check `eslint-plugin-oxlint`'s generated rule maps after upgrades) |
-| `perfectionist/sort-imports` | small              | oxlint has no import-sorting rule      | upstream implements sorting                                                                |
-| `no-restricted-syntax`       | small              | oxlint has no AST-selector rule        | oxlint ships a selector-based rule (the custom bans move into `.oxlintrc.json`)            |
+| Rule                   | Share of rule time | Blocker                                | Migrate when                                                                               |
+| ---------------------- | ------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `vue/no-child-content` | ~two thirds        | Not implemented in oxlint's vue plugin | upstream implements it (check `eslint-plugin-oxlint`'s generated rule maps after upgrades) |
+| `perfectionist/sort-*` | ~a sixth, combined | oxlint has no sorting rules            | upstream implements sorting                                                                |
+| `no-restricted-syntax` | negligible         | oxlint has no AST-selector rule        | oxlint ships a selector-based rule (the custom bans move into `.oxlintrc.json`)            |
+
+Once the type-aware rules were gone, `vue/no-child-content` became the pass — it alone is worth more than everything else combined, so it is the only migration here that would move the number.
 
 **`neverthrow/must-use-result` was dropped, not migrated.** It was the single most expensive rule (~a third of rule time) because it is the only one that needed `parserOptions.projectService`, and type-aware parsing dominates the whole ESLint pass rather than just that rule's share. Deleting it — plugin file, config entry and `@ninoseki/eslint-plugin-neverthrow` dependency — is what makes `pnpm lint` fast enough to run on every change. The cost is real and accepted: an unterminated `Result` chain is now caught only by review, and it fails silently (the call still runs, but the `Err` it returns is never read, so no error surfaces). Re-adding any type-aware ESLint plugin gives back the same multiplier, so the answer to "this convention needs types" is a review rule or a runtime assertion, never a rule here.
 
-Everything else in the ESLint pass is either Nuxt/Vue-specific (`vue/*` SFC rules, `nuxt/*`) or a plugin oxlint has not implemented (`perfectionist/*`, `pinia/*`, `unocss/*`); none of them individually costs meaningful time. `typescript/naming-convention` is parked as a commented-out block in `typescriptRules.js` — it was too expensive under typescript-eslint to ever ship, and is waiting on oxlint to support it.
+Everything else in the ESLint pass is either Nuxt/Vue-specific (`vue/*` SFC rules, `nuxt/*`) or a plugin oxlint has not implemented (`perfectionist/*`, `pinia/*`, `unocss/*`, `link-checker/*`); apart from the `perfectionist/sort-*` family none of them individually costs meaningful time, and the whole tail together is worth a fraction of `vue/no-child-content`. `typescript/naming-convention` is parked as a commented-out block in `typescriptRules.js` — it was too expensive under typescript-eslint to ever ship, and is waiting on oxlint to support it.
 
 ## Ongoing process
 

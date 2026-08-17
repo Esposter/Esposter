@@ -26,12 +26,12 @@ jobs:
     uses: ./.github/workflows/build-packages.yaml
 
   bench:
-    name: Bench (${{ matrix.shard }}/8)
+    name: Bench (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: build-packages
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8]
+        shard: [1, 2, 3, 4]
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -45,11 +45,11 @@ jobs:
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
       # A bare root `vitest bench --run` discovers every project's `*.bench.ts` (packages/* + the scripts
-      # project, per the root vitest.config.ts `projects`) as one file set, so `--shard=i/8` partitions that
+      # project, per the root vitest.config.ts `projects`) as one file set, so `--shard=i/n` partitions that
       # global set across runners. CI uses this bare sharded invocation rather than the `pnpm bench` root script
       # (`vitest bench --project scripts && pnpm -r run bench`) because that script is a multi-invocation chain a
       # single `--shard` can't span; local `pnpm bench` (the committed `*.bench.md` gate) uses the script. The
       # BenchmarkMarkdownReporter rewrites `*.bench.md` beside each bench on ephemeral runner disk — nothing
       # commits it, so the committed artifacts are untouched.
       - name: 🏎️ Run benchmarks
-        run: pnpm exec vitest bench --run --shard=${{ matrix.shard }}/8
+        run: pnpm exec vitest bench --run --shard=${{ matrix.shard }}/${{ strategy.job-total }}
