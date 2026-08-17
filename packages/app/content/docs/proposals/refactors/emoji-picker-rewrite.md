@@ -1,92 +1,110 @@
 ---
 title: Emoji picker rewrite
-description: Replace emoji-mart-vue-fast with an in-repo composition-API picker so the Options API runtime, the CDN sprite sheet and the second emoji dataset can all go.
+description: Retire emoji-mart-vue-fast and node-emoji for one typed emoji index and an in-repo composition-API picker, modelled on Discord.
 ---
 
 # Emoji Picker Rewrite
 
-`StyledEmojiPicker` wraps `emoji-mart-vue-fast`'s `Picker.vue`, and it is the only third-party Vue component in the repo imported as raw source rather than a built bundle. Everything downstream of that one import is a compromise: the Options API runtime stays compiled into the client for it alone, its types are stubbed with `@ts-expect-error`, its stylesheet has no dark mode, and it pulls a sprite sheet off `unpkg.com` at runtime that the app has to whitelist in its CSP.
+Emoji reach the app through two independent libraries that agree on nothing. `emoji-mart-vue-fast` draws the picker grid; `node-emoji` resolves the `:shortcode:` a reaction is stored as and backs the composer's `:` suggestions. Each carries its own dataset, its own vocabulary of shortcodes and its own search implementation, and both implementations are worse than what they replace.
 
-Rewriting it in the repo's own idiom removes all four at once. This page is the investigation and the plan; nothing here is built yet.
+Nothing here is ported. Both libraries are retired for a single typed index and a picker built from the repo's own primitives. This page is the investigation and the plan; nothing is built yet.
 
-## Why it is worth doing
+## Why neither library survives
 
-**The Options API runtime is compiled in for one component.** `compatibilityVersion: 5` defaults `vue.optionsApi` off, which drops `applyOptions` from the client build. `Picker.vue` is Options API, so without the flag it mounts with an empty `$data` and dies reading `allCategories` off `undefined` — upstream's #250, open since 2022. `configuration/vue.ts` turns the runtime back on to keep the picker alive. Nothing else in the repo needs it: no component here uses `export default {}`, and the other Vue dependencies that ship components (`survey-vue3-ui`, `@vuepic/vue-datepicker`) are composition-API throughout.
+**`emoji-mart-vue-fast` costs us the Options API runtime.** `compatibilityVersion: 5` defaults `vue.optionsApi` off, which drops `applyOptions` from the client build. Its `Picker.vue` is Options API, so without the flag it mounts with an empty `$data` and dies reading `allCategories` off `undefined` — upstream's #250, open since 2022. `configuration/vue.ts` turns the runtime back on for that one component. Nothing else needs it: no component here uses `export default {}`, and the other dependencies that ship Vue components are composition-API throughout (`survey-vue3-ui` has no `methods:` or `data()` at all).
 
-**It is untyped, permanently.** Both the component and `EmojiIndex` are imported behind `@ts-expect-error` pointing at upstream's #121 — a types request open since 2021 with no branch behind it.
+**Its search is quadratic and leaks.** Each character typed walks a trie built lazily over the whole emoji set; at every new prefix it scans every candidate's comma-joined keyword blob with `indexOf`, and it caches the result array _and_ a copy of the surviving emoji map at that trie node forever — nothing evicts it, so memory grows with the set of distinct prefixes a session has ever typed. Multi-word queries then go through an `intersect` built on `uniq` + `indexOf`, which is quadratic in the result size. Ranking is `indexOf`'s byte offset into the keyword blob, so relevance is an artifact of keyword ordering rather than a score. Queries past two words are silently dropped.
 
-**It cannot do dark mode.** The stylesheet is a few hundred lines of hardcoded light-mode hex — panel background, borders, the anchor bar, the preview strip, the skin-tone swatches. There is no dark variant and no `prefers-color-scheme` block, which is upstream's #126, also open since 2021. A Vuetify shell gets both themes from the theme tokens without a stylesheet of its own.
+**It renders emoji the rest of the app does not.** It defaults to `set: "apple"`, so `emoji-mart.css` pulls an Apple sprite sheet off `unpkg.com`, pinned by exact URL in `ImageSourceWhitelist` so the CSP permits it. Reactions and inserted emoji render native unicode. The grid is therefore drawn in a different typeface than what the user actually gets, and the app carries a third-party CDN in its image CSP to keep that mismatch running.
 
-**It renders emoji that the rest of the app does not.** The picker defaults to `set: "apple"` sprites, so `emoji-mart.css` loads an Apple sprite sheet from `unpkg.com` — pinned by exact URL in `ImageSourceWhitelist` so the CSP allows it. Meanwhile reactions and inserted emoji render native unicode through `emojify`. The grid a user picks from is therefore drawn in a different typeface than the emoji they get, and the app carries a third-party CDN in its image CSP to make that mismatch happen. Rendering native drops the CSP entry, the sheet download, and the family of upstream issues about sprite artifacts (#262, #119, #78, #72, #71).
+**It has no dark mode and never will.** A few hundred lines of hardcoded light-mode hex — panel, borders, anchor bar, preview strip, skin swatches — with no dark variant and no `prefers-color-scheme` block. Upstream's #126, open since 2021. Its types are stubbed behind `@ts-expect-error` against #121, open since the same year.
 
-**Two emoji datasets ship.** `emoji-mart-vue-fast` brings a compressed dataset of roughly a megabyte for the picker, and `node-emoji` brings its own for `emojify`, `unemojify` and the `:tag:` suggestion list in the composer. They disagree about nothing important and duplicate almost everything.
+**`node-emoji` is smaller but not better.** Three defects, all reproducible against the version in the lockfile:
+
+- **`search` ignores keywords.** Its data layer keeps only `name → char`, discarding the keywords its own `emojilib` dependency ships. `search("happy")` returns nothing, though 😀 lists `happy` as a keyword.
+- **`search` compiles user input as a regex.** It is `name.match(keyword)` with a string argument, so the composer's `:` suggestion path throws `SyntaxError: Invalid regular expression` the moment a query contains an unbalanced `(` or `[`.
+- **Its dataset predates Unicode 14.** `emojilib@2` covers fewer emoji than the picker offers, so anything newer round-trips as a raw character instead of a shortcode: 🫠, 🫶, 🥹 and 🩷 are all stored as the literal glyph while 😄 is stored as `:smile:`. The round trip only appears to work because both directions fall back to their input, which leaves `emojiTag` holding a mixed vocabulary.
 
 ```mermaid
 flowchart TB
-  subgraph today["Today"]
-    P["StyledEmojiPicker"] --> MP["emoji-mart Picker.vue - Options API"]
-    MP --> MD["emoji-mart dataset - compressed JSON"]
-    MP --> CSS["emoji-mart.css - light only"]
-    CSS --> CDN["unpkg.com sprite sheet - CSP whitelisted"]
-    R["reactions and composer"] --> NE["node-emoji dataset"]
-    MP -.->|"emoji.native"| R
+  subgraph today["Today - two libraries, two datasets"]
+    PICK["picker grid"] --> MART["emoji-mart - Options API"]
+    MART --> SPRITE["unpkg sprite sheet - CSP pinned"]
+    MART --> D1["emoji-mart dataset"]
+    REACT["reactions and composer"] --> NE["node-emoji"]
+    NE --> D2["emojilib v2 dataset - pre Unicode 14"]
   end
-  subgraph after["After"]
-    P2["StyledEmojiPicker - script setup"] --> V["Vuetify shell - theme tokens"]
-    P2 --> IDX["typed emoji index - one dataset"]
-    R2["reactions and composer"] --> IDX
+  subgraph after["After - one index"]
+    PICK2["picker grid"] --> IDX["typed emoji index"]
+    REACT2["reactions and composer"] --> IDX
+    IDX --> D3["unicode-emoji-json plus emojilib - joined on the character"]
   end
   today --> after
 ```
 
-## What the dependency actually is
+## How Discord does it, and what we take
 
-The package ships its `src/` uncompiled under BSD-3-Clause, so the real implementation is readable and portable with attribution — the code in `node_modules` is the source, not a build artifact.
+Discord is the parity default for this module (`esbabbler` skill), and its picker is the shape worth copying:
 
-It splits cleanly in two. Rather more than half of it is framework-free logic: the `EmojiIndex`/`EmojiData`/`EmojiView` classes that uncompress the dataset, build the search index and compute sprite positions, plus the dataset uncompressor, the `frequently` recents tracker and its localStorage store. The rest is the Vue layer — the picker itself, plus a category grid, a preview strip, a search box, the anchor bar and a skin-tone selector, with a `PickerView` class holding the scroll and keyboard-navigation state that the picker component owns.
+- **Unicode CLDR groups as categories**, in canonical order, with Frequently Used pinned first.
+- **Search over names and keywords**, not names alone — and matched against the same `:shortcode:` vocabulary the composer autocompletes, so the two surfaces cannot disagree.
+- **One skin tone chosen globally** and persisted, applied to every emoji that supports it, rather than a per-emoji long-press.
+- **`:shortcode:` autocomplete inline in the composer**, sharing the picker's index.
 
-The logic half is what a rewrite ports; the Vue half is what it replaces. Neither is large, and the Vue half is the part the repo already knows how to build.
+We diverge on rendering. Discord ships its own image set for cross-platform consistency, which is exactly the CDN-and-CSP cost we are removing, and every other emoji surface here already renders native. Native it is.
 
-## What we actually use of it
+We also diverge from [`emoji-picker-element`](https://github.com/nolanlawson/emoji-picker-element), the reference implementation for a modern picker, on storage. It keeps its dataset in IndexedDB because a general-purpose element must survive being mounted on page load with a multi-hundred-kilobyte dataset in memory. Ours sits behind a `v-menu`, so a dynamic import on first open buys the same thing for none of the machinery. We take its other two lessons: render native, and detect unsupported glyphs rather than showing empty boxes.
 
-One prop and one event. `StyledEmojiPicker` passes `:data="emojiIndex"` and listens for `@select`, taking only `native` off the payload; every other prop — sets, i18n, custom emoji, include/exclude filters, `perLine`, `emojiSize`, `showPreview`, `infiniteScroll` — sits at its default. The picker is opened from the message options menu, the reaction list and the rich-text-editor toolbar, always inside a `v-menu`.
+## The dataset
 
-So the contract a rewrite has to honour is one prop in, one unicode string out. That is what makes this feasible: almost none of the surface area of the dependency is load-bearing here.
+`unicode-emoji-json` and `emojilib` are both keyed by the emoji character and cover the same set at the same Unicode version, so they join with no glue and no reconciliation:
 
-## Design
+| Source               | Gives                                                      | Cost      |
+| -------------------- | ---------------------------------------------------------- | --------- |
+| `unicode-emoji-json` | name, slug, CLDR group, canonical order, skin-tone support | under 1MB |
+| `emojilib`           | keywords per character, slug first                         | tiny      |
 
-**One dataset, chosen deliberately.** This is the open question, not a decision. `node-emoji` already backs `:tag:` search and is the smaller of the two, but it has no categories and no skin variations, which a grid needs. Either the emoji-mart dataset becomes the single source and `emojify`/`unemojify`/suggestion search are reimplemented on top of it, or `node-emoji` stays and categories come from a data-only package (`emojibase`, `unicode-emoji-json`). The spike decides it; either way exactly one dataset ships and one index serves the picker, the reactions and the composer.
+Together that is every field the picker, the reactions and the composer need. `emojibase-data` is the richer alternative — tags, subgroups, full skin records, and shortcode presets for several vocabularies — but it unpacks to tens of megabytes because it ships every locale, and we would import one file from it. Reconsider only if localisation lands.
 
-**Native rendering.** The grid draws unicode, matching what a reaction and a message already show. The sprite sheet, its CSP entry and the whole sprite-position half of `EmojiView` go with it.
+Shortcode vocabulary changes as a result, and that is safe here: nothing is in production and the repo takes no legacy-data migrations, so `emojiTag` simply starts out consistent instead of being made consistent.
 
-**A Vuetify shell.** Search is a `v-text-field`, the category anchors are a slide group, the grid is virtualised. Both themes come from the theme tokens, and the accessibility rules the repo stages get a component that can satisfy them (upstream's #258 is an accessibility issue and stays open).
+## The index
 
-**Lazily loaded.** The dataset is the bulk of it and the picker is behind a menu, so the index loads on first open rather than sitting in the messages chunk — upstream's #95 is a bundle-size complaint that a consumer can simply not have.
+One module, built once, lazily, on first picker open or first suggestion query. Everything below is measured against a set of roughly two thousand emoji and under ten thousand distinct keyword tokens.
 
-**The repo's own conventions throughout**, which is where several open upstream bugs stop being bugs:
+| Structure                     | Purpose                                     | Build        | Query                   |
+| ----------------------------- | ------------------------------------------- | ------------ | ----------------------- |
+| flat array in canonical order | the grid, and a stable tiebreak for ranking | linear, once | index access            |
+| `Map<char, Emoji>`            | native → shortcode, for storing a reaction  | linear, once | constant                |
+| `Map<slug, Emoji>`            | shortcode → native, for rendering one       | linear, once | constant                |
+| sorted token array + postings | prefix search                               | linear, once | binary search + matches |
 
-- Recents and the chosen skin tone go through the `LocalStorageKey` registry instead of the dependency's own `emoji-mart.*` namespace, and through a Pinia store instead of a module-level singleton — which is what makes the recents category update live (#289).
-- Scroll and active-category tracking come from a virtual list rather than hand-computed `offsetTop` maths against a `$refs` array, retiring the null-`scrollTop` guard upstream added for #305.
-- Category switching is store state, not a `v-show` expression that also has to account for whether a search is running (#136).
-- Typed models under `models/message/emoji/`, a service for the index, and the picker as a `<script setup>` component with `defineSlots`/`defineModel` like every other `Styled*` primitive.
-- The dataset is not mutated in place. `uncompress` currently writes `compressed = false` back onto the imported JSON module object, which is upstream's #140.
+Search resolves a prefix by binary-searching the sorted token array for the range of tokens sharing it, then unioning those tokens' postings — logarithmic in the token count plus linear in what actually matched, rather than a scan of every emoji per keystroke. Multi-word queries intersect via a `Set` keyed on emoji index, walking the smaller side, so two words cost their sum rather than their product. Ranking is an explicit score — exact slug, then slug prefix, then keyword prefix, tiebroken by canonical order — and sorts only the matched set, which is capped before display.
+
+That is strictly better than both incumbents on every axis that matters, and it is small enough to read in one sitting. The build is the only linear pass and it happens once, off the interaction path.
+
+## The picker
+
+`StyledEmojiPicker` keeps its props and its `select` event, so no consumer changes. Inside, it becomes a `<script setup>` component built from the repo's own primitives: a `v-text-field` for search, a slide group for the category anchors, a virtualised grid for the emoji, all coloured by theme tokens so both themes come free. Recents and the chosen skin tone live in a Pinia store persisted through the `LocalStorageKey` registry, which is what makes the recents category update live — upstream's #289 is a module-level singleton that the UI never re-reads.
+
+Several other upstream bugs stop existing rather than getting fixed: scroll tracking comes from the virtual list instead of hand-computed `offsetTop` against a `$refs` array (#305), category selection is store state instead of a `v-show` expression that also has to know whether a search is running (#136), and the dataset is read rather than mutated in place (#140, where `uncompress` writes back onto the imported JSON module).
 
 ## Feasibility
 
-Medium, and the risk is not where it looks. The UI is small and the contract is one prop and one event, so the Vue work is routine. The real work is the index: search relevance is the thing users notice, and a port that ranks results differently will feel worse even when it is correct. That argues for porting the existing scoring rather than inventing one, and for testing it against a fixed set of queries before the UI is built at all.
+High, and higher than a port would be. Our contract with the picker is one prop in and one unicode string out — every other prop the dependency exposes sits at its default — so there is no compatibility surface to preserve. The index is a few small structures over a dataset that already carries every field we need. The judgement call is search relevance, which is why the index is built and tested against a fixed query set before any UI exists.
 
 ## Phases
 
-1. **Spike the dataset.** Pick the single source, confirm it carries categories, skin variations, keywords and shortcodes, and measure what it costs lazily loaded.
-2. **Port the index** as typed TypeScript with tests over a fixed query set — search ranking, shortcode lookup, skin variation resolution, recents. No UI yet.
-3. **Build the picker** on the Vuetify shell against the ported index, keeping `StyledEmojiPicker`'s existing props and `select` event so no consumer changes.
-4. **Cut over and delete.** Drop `emoji-mart-vue-fast`, the `unpkg` entry in `ImageSourceWhitelist`, the two `@ts-expect-error`s, and `configuration/vue.ts` — then verify `optionsApi` off across the surfaces that mount third-party Vue components.
+1. **Index.** Typed, tested against a fixed query set — ranking, shortcode round trip, skin-tone resolution, recents. No UI.
+2. **Picker.** The Vuetify shell against that index, keeping the existing props and `select` event.
+3. **Composer and reactions.** Move `emojify`, `unemojify` and the `:` suggestion list onto the same index; grapheme handling comes from `Intl.Segmenter`, which resolves ZWJ sequences and skin-tone modifiers correctly without a dependency.
+4. **Delete.** `emoji-mart-vue-fast`, `node-emoji`, the `unpkg` entry in `ImageSourceWhitelist`, both `@ts-expect-error`s and `configuration/vue.ts` — then confirm `optionsApi` off across every surface mounting third-party Vue components.
 
-Phases 2 and 3 are separately reviewable; phase 4 is a single commit that only deletes.
+Each phase is separately reviewable; the last only deletes.
 
 ## Upstream issues this closes for us
 
-Every one of these is open, and none is waiting on anything we could contribute upstream faster than replacing the component.
+None of these is waiting on something we could contribute upstream faster than replacing the component.
 
 | Issue | Subject                                | How the rewrite answers it                        |
 | ----- | -------------------------------------- | ------------------------------------------------- |
@@ -100,21 +118,23 @@ Every one of these is open, and none is waiting on anything we could contribute 
 | #140  | Frozen dataset module mutated          | The dataset is read, never written back           |
 | #258  | Accessibility quirks                   | Vuetify primitives plus the staged a11y rules     |
 
-Sprite-rendering issues (#262, #119, #78, #72, #71) disappear with the sprite sheet.
+Sprite-rendering issues (#262, #119, #78, #72, #71) go with the sprite sheet.
 
 ## Key files
 
-| File                                                         | Role                                                            |
-| ------------------------------------------------------------ | --------------------------------------------------------------- |
-| `packages/app/app/components/Styled/EmojiPicker.vue`         | The wrapper being rewritten — its props and `select` event stay |
-| `packages/app/app/services/message/emoji/emojiIndex.ts`      | Module-scope `EmojiIndex` singleton, to be replaced             |
-| `packages/app/app/services/message/emoji/emojify.ts`         | `node-emoji` shortcode lookup used by reactions                 |
-| `packages/app/app/services/message/emoji/EmojiSuggestion.ts` | `node-emoji` search behind the composer's `:` trigger           |
-| `packages/app/configuration/vue.ts`                          | `optionsApi: true`, deleted in phase 4                          |
-| `packages/app/shared/services/app/ImageSourceWhitelist.ts`   | Holds the pinned `unpkg` sprite-sheet URL                       |
+| File                                                           | Role                                                            |
+| -------------------------------------------------------------- | --------------------------------------------------------------- |
+| `packages/app/app/components/Styled/EmojiPicker.vue`           | The wrapper being rewritten — its props and `select` event stay |
+| `packages/app/app/services/message/emoji/emojiIndex.ts`        | Module-scope `EmojiIndex` singleton, replaced by the new index  |
+| `packages/app/app/services/message/emoji/emojify.ts`           | `node-emoji` shortcode lookup used by reactions                 |
+| `packages/app/app/services/message/emoji/unemojify.ts`         | `node-emoji` reverse lookup used when a reaction is stored      |
+| `packages/app/app/services/message/emoji/EmojiSuggestion.ts`   | `node-emoji` search behind the composer's `:` trigger           |
+| `packages/app/app/composables/message/emoji/useSelectEmoji.ts` | Turns a picked emoji into the stored `emojiTag`                 |
+| `packages/app/configuration/vue.ts`                            | `optionsApi: true`, deleted in the last phase                   |
+| `packages/app/shared/services/app/ImageSourceWhitelist.ts`     | Holds the pinned `unpkg` sprite-sheet URL                       |
 
 ## Open questions
 
-- Which dataset wins, and does the picker's grid need anything `node-emoji` cannot give (subcategories, ordering within a category)?
-- Is the existing search scoring worth porting verbatim, or is shortcode-prefix plus keyword match enough for how the picker is actually used?
-- Custom emoji are not supported today. The rewrite makes them possible — is that in scope for esbabbler, or deliberately not (see the Discord-parity default in the `esbabbler` skill)?
+- Unsupported-glyph detection: worth doing at build time, at runtime by measurement, or not at all until someone reports empty boxes?
+- Custom emoji are not supported today and the rewrite makes them possible — in scope for esbabbler, or deliberately not?
+- Does the composer's `:` list want the same ranking as the picker, or does an autocomplete want slug matches only?
