@@ -114,7 +114,7 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^6.8.0
+  apexcharts: ^6.9.0
   better-auth: ^1.6.29
   citty: ^0.2.2
   codemirror: ^6.0.2

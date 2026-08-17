@@ -307,8 +307,8 @@ catalogs:
       specifier: ^4.2.0
       version: 4.2.0
     apexcharts:
-      specifier: ^6.8.0
-      version: 6.8.0
+      specifier: ^6.9.0
+      version: 6.9.0
     better-auth:
       specifier: ^1.6.29
       version: 1.6.29
@@ -916,7 +916,7 @@ importers:
         version: 4.2.0(ajv@8.20.0)
       apexcharts:
         specifier: 'catalog:'
-        version: 6.8.0
+        version: 6.9.0
       better-auth:
         specifier: 'catalog:'
         version: 1.6.29(@opentelemetry/api@1.9.1)(drizzle-orm@1.0.0-rc.4(@electric-sql/pglite@0.5.5)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(valibot@1.4.2(typescript@6.0.3))(zod@4.4.3))(vitest@4.1.10)(vue@3.5.41(typescript@6.0.3))
@@ -1144,7 +1144,7 @@ importers:
         version: 5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(pinia@4.0.3(@vue/devtools-api@8.2.1)(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.102.0)(sass@1.102.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(vue@3.5.41(typescript@6.0.3))(webpack@5.109.2(clean-css@5.3.3)(cssnano@8.0.5(postcss@8.5.26))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@7.2.0)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3))
       vue3-apexcharts:
         specifier: 'catalog:'
-        version: 1.11.1(apexcharts@6.8.0)(vue@3.5.41(typescript@6.0.3))
+        version: 1.11.1(apexcharts@6.9.0)(vue@3.5.41(typescript@6.0.3))
       vuetify:
         specifier: 'catalog:'
         version: 4.1.9(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))
@@ -7887,8 +7887,11 @@ packages:
   anynum@1.0.1:
     resolution: {integrity: sha512-N6//FLET/tXYNM/F6ABca1oH6fWB+KlTt909Le28WMDBk8oaT4vY17DCrwg2MvmuqUKt3Ni4N5dGJ/EoBgcO6A==}
 
-  apexcharts@6.8.0:
-    resolution: {integrity: sha512-ifEl3w/NAMsKQ60JNDD8nRCGdnGeuuKNvUzZTQpPr/3JNewoZv98H42VpXFB96sHle/8GDsHn/NQp785xsNh4A==}
+  apex-commons@0.5.0:
+    resolution: {integrity: sha512-xz83SgPREE1wGtoflvxjwJtcjzl5bKTz2/bDxWCZNL6QVjUNE47kMg/1Zqt0bSh6eOnmFCWlTDc3RU8o85N+wg==}
+
+  apexcharts@6.9.0:
+    resolution: {integrity: sha512-fmCD8aW39UKYynv1XZQ29ESG4/jqmHQ7upcoTFgduh/Fb/XFQJ7s69IxkroDsuya7kB67SJeFtHOxim2N9MQkg==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
   archiver-utils@5.0.2:
@@ -21989,7 +21992,11 @@ snapshots:
 
   anynum@1.0.1: {}
 
-  apexcharts@6.8.0: {}
+  apex-commons@0.5.0: {}
+
+  apexcharts@6.9.0:
+    dependencies:
+      apex-commons: 0.5.0
 
   archiver-utils@5.0.2:
     dependencies:
@@ -30035,9 +30042,9 @@ snapshots:
       '@vue/language-core': 3.3.10
       typescript: 6.0.3
 
-  vue3-apexcharts@1.11.1(apexcharts@6.8.0)(vue@3.5.41(typescript@6.0.3)):
+  vue3-apexcharts@1.11.1(apexcharts@6.9.0)(vue@3.5.41(typescript@6.0.3)):
     dependencies:
-      apexcharts: 6.8.0
+      apexcharts: 6.9.0
       vue: 3.5.41(typescript@6.0.3)
 
   vue@3.5.41(typescript@6.0.3):
