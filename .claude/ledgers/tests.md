@@ -20,20 +20,20 @@ of units, and a suite is read once against all of it rather than once per conven
 Every row resets when a rule joins this table: a unit dated against a narrower rule set is not swept against the
 current one, and there is no partially-swept state. Trimming last ran across every unit on 2026-08-12.
 
-| Unit                                               | Swept      | Notes                                                  |
-| -------------------------------------------------- | ---------- | ------------------------------------------------------ |
-| `app/app/services`                                 | 2026-08-18 |                                                        |
-| `app/app/composables`                              | 2026-08-18 | `message/emoji` written under the rules                |
-| `app/app/store`, `app/app/models`                  | 2026-08-18 |                                                        |
-| `app/app/components`, `app/app/util`               | 2026-08-18 | `Styled/EmojiPicker` written under the rules           |
-| `app/content`                                      |            | `docs.test.ts` — top-level await fixtures, see below   |
-| `app/server/services`, `app/server/trpc/procedure` | 2026-08-18 |                                                        |
-| `app/server/trpc/routers`, rest                    |            |                                                        |
-| `app/shared`                                       |            |                                                        |
-| `virrun`                                           |            | Second-densest package for module-scope constants      |
-| `azure-functions`, `azure-mock`, `db*`             |            |                                                        |
-| `parse-tmx`, `vue-phaserjs`, `xml2js`, rest        |            | plus `shared`, `shared-node`, `configuration`, `infra` |
-| `.claude/workflows`                                |            | the vitest `claude` project                            |
+| Unit                                               | Swept | Notes                                                  |
+| -------------------------------------------------- | ----- | ------------------------------------------------------ |
+| `app/app/services`                                 |       |                                                        |
+| `app/app/composables`                              |       | `message/emoji` written under the rules                |
+| `app/app/store`, `app/app/models`                  |       |                                                        |
+| `app/app/components`, `app/app/util`               |       | `Styled/EmojiPicker` written under the rules           |
+| `app/content`                                      |       | `docs.test.ts` — top-level await fixtures, see below   |
+| `app/server/services`, `app/server/trpc/procedure` |       |                                                        |
+| `app/server/trpc/routers`, rest                    |       |                                                        |
+| `app/shared`                                       |       |                                                        |
+| `virrun`                                           |       | Second-densest package for module-scope constants      |
+| `azure-functions`, `azure-mock`, `db*`             |       |                                                        |
+| `parse-tmx`, `vue-phaserjs`, `xml2js`, rest        |       | plus `shared`, `shared-node`, `configuration`, `infra` |
+| `.claude/workflows`                                |       | the vitest `claude` project                            |
 
 ## Find recipe
 
@@ -57,6 +57,10 @@ for f in files:
         print(f"{f}:{i + 1}: {m.group(2)}")
 PY
 ```
+
+Known blind spot: a curried arrow whose `=>` lands on a later line reads as a plain constant, because the
+first line is bracket-balanced and the scan stops there. `activity.test.ts`'s `createReader` is the repo's case.
+Read the hit before moving it.
 
 Untyped mocks, which lint reports only once a recorded call is destructured:
 
