@@ -40,7 +40,7 @@ sequenceDiagram
 
   S->>BA: listAccounts
   BA->>DB: rows for this userId
-  DB-->>S: one providerId per connected account
+  DB-->>S: one row per connected account, id and providerId
   U->>S: Link
   S->>BA: linkSocial with callbackURL and errorCallbackURL
   BA-->>P: consent redirect
@@ -49,7 +49,7 @@ sequenceDiagram
   BA->>DB: insert an account row on the same userId
   BA-->>S: back to settings, list refetched
   U->>S: Unlink
-  S->>BA: unlinkAccount with providerId
+  S->>BA: unlinkAccount with the account row id
   BA->>DB: delete the row unless it is the last one
 ```
 

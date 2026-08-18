@@ -18,7 +18,9 @@ const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const { executeMutation } = useMutation();
 const { data: accounts, refresh } = useQuery(() => requireAuthData(listAccounts()));
-const linkedProviderIds = computed(() => accounts.value?.map(({ providerId }) => providerId) ?? []);
+// Keyed by provider because that is what a row knows about itself, valued with the account row's own id
+// Because that is what unlinking takes — a provider may hold several accounts, and better-auth deletes one
+const LinkedAccountIdMap = computed(() => new Map(accounts.value?.map(({ id, providerId }) => [providerId, id]) ?? []));
 // A link the provider or the callback rejects comes back as a redirect carrying `?error=<code>`, so its
 // Outcome never reaches the promise the button awaited
 const linkError = currentRoute.value.query.error;
@@ -49,8 +51,8 @@ if (typeof linkError === "string") {
         v-for="loginButtonProps of LoginButtonItems"
         :key="loginButtonProps.provider"
         :="loginButtonProps"
-        :is-linked="linkedProviderIds.includes(loginButtonProps.provider) ? true : undefined"
-        :linked-account-count="linkedProviderIds.length"
+        :is-linked="LinkedAccountIdMap.has(loginButtonProps.provider) ? true : undefined"
+        :linked-account-count="LinkedAccountIdMap.size"
         @link="
           async () => {
             await executeMutation(
@@ -68,7 +70,9 @@ if (typeof linkError === "string") {
         "
         @unlink="
           async () => {
-            await executeMutation(() => requireAuthData(unlinkAccount({ providerId: loginButtonProps.provider })), {
+            const accountId = LinkedAccountIdMap.get(loginButtonProps.provider);
+            if (!accountId) return;
+            await executeMutation(() => requireAuthData(unlinkAccount({ accountId })), {
               key: LINKED_ACCOUNTS_KEY,
               onSuccess: async () => {
                 await refresh();

@@ -1,7 +1,8 @@
 import { db } from "@@/server/db";
+import { drizzleAdapterConfiguration } from "@@/server/services/auth/drizzleAdapterConfiguration";
 import { standardRateLimiter } from "@@/server/services/rateLimiter/standardRateLimiter";
-import { drizzleAdapter } from "@better-auth/drizzle-adapter";
-import { schema, selectUserSchema } from "@esposter/db-schema";
+import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
+import { selectUserSchema } from "@esposter/db-schema";
 import { betterAuth } from "better-auth";
 
 export const auth = betterAuth({
@@ -28,12 +29,15 @@ export const auth = betterAuth({
       updateUserInfoOnLink: false,
     },
   },
-  database: drizzleAdapter(db, {
-    camelCase: true,
-    provider: "pg",
-    schema,
-    usePlural: true,
-  }),
+  advanced: {
+    database: {
+      // Better-auth reads a session with its user, and a user with its accounts, in one query instead of two
+      // Follow-up round trips. Only the relations-v2 adapter above can serve them — it resolves the join
+      // Through `db.query`, which our v2 relations define
+      joins: true,
+    },
+  },
+  database: drizzleAdapter(db, drizzleAdapterConfiguration),
   rateLimit: {
     max: standardRateLimiter.points,
     window: standardRateLimiter.duration,
