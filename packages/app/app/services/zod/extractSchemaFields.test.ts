@@ -2,9 +2,9 @@ import { extractSchemaFields } from "@/services/zod/extractSchemaFields";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
-const name = "name";
-
 describe(extractSchemaFields, () => {
+  const name = "name";
+
   // The form renders the schema, so anything the source carries beyond it is state vjsf has no field for —
   // Handing it over makes the form's own value differ from what it can edit, which reads back as a change
   test("keeps only the fields the schema declares", () => {

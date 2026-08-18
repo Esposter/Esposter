@@ -6,10 +6,11 @@ const createUserTotal = (userId: string, points: number, unlockCount = 1) => ({
   unlockCount,
   user: { id: userId, image: "", name: userId },
 });
-const HIGH_POINTS = 50;
-const LOW_POINTS = 10;
 
 describe(buildPointsLeaderboard, () => {
+  const HIGH_POINTS = 50;
+  const LOW_POINTS = 10;
+
   test("ranks users by summed points descending", () => {
     expect.hasAssertions();
 
