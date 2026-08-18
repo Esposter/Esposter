@@ -3,16 +3,16 @@ import { is } from "drizzle-orm";
 import { getTableConfig, isPgEnum, PgDialect, PgTable } from "drizzle-orm/pg-core";
 import { describe, expect, test } from "vitest";
 
-const dialect = new PgDialect();
-const getRenderedChecks = () =>
-  Object.values(schema)
-    .filter((value) => is(value, PgTable))
-    .flatMap((table) =>
-      getTableConfig(table).checks.map((check) => `${check.name}: ${dialect.sqlToQuery(check.value).sql}`),
-    )
-    .join("\n");
-
 describe("schema", () => {
+  const dialect = new PgDialect();
+  const getRenderedChecks = () =>
+    Object.values(schema)
+      .filter((value) => is(value, PgTable))
+      .flatMap((table) =>
+        getTableConfig(table).checks.map((check) => `${check.name}: ${dialect.sqlToQuery(check.value).sql}`),
+      )
+      .join("\n");
+
   // The `pgTable` wrapper's camelCase casing applies to columns and passes the table name through verbatim, and
   // `pgEnum` is not wrapped at all — so nothing normalises either name and nothing else would catch a snake_case
   // One. That is exactly how five tables and eleven enums drifted while the stated rule said the opposite; this is
