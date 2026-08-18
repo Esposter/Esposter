@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { VBtn, VTooltip } from "vuetify/components";
 
+import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { mergeProps } from "vue";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StyledEmojiPickerProps {
@@ -10,7 +11,7 @@ interface StyledEmojiPickerProps {
 
 defineSlots<{ default?: (props: Record<string, unknown>) => VNode }>();
 const menu = defineModel<boolean>("menu", { default: false });
-const { buttonProps = {}, tooltipProps = {} } = defineProps<StyledEmojiPickerProps>();
+const { buttonProps = {}, tooltipProps = { text: EMOJI_PICKER_TOOLTIP_TEXT } } = defineProps<StyledEmojiPickerProps>();
 const emit = defineEmits<{ select: [emoji: string] }>();
 </script>
 
@@ -20,7 +21,12 @@ const emit = defineEmits<{ select: [emoji: string] }>();
       <slot :="menuProps">
         <v-tooltip :="tooltipProps">
           <template #activator="{ props: tooltipActivatorProps }">
-            <v-btn icon="mdi-emoticon" :="mergeProps(menuProps, tooltipActivatorProps, buttonProps)" />
+            <!-- The tooltip names the icon-only button visually only, so the same text is its accessible name -->
+            <v-btn
+              icon="mdi-emoticon"
+              :aria-label="tooltipProps.text"
+              :="mergeProps(menuProps, tooltipActivatorProps, buttonProps)"
+            />
           </template>
         </v-tooltip>
       </slot>

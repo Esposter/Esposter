@@ -3,19 +3,6 @@ import StyledDialog from "@/components/Styled/Dialog.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test } from "vitest";
 
-// The dialog teleports to the overlay container, so assertions read the document rather than the wrapper — which
-// Makes the teardown load-bearing: every mount appends its own overlay, so without it the second test in the file
-// Counts the first test's buttons too
-let wrapper: Awaited<ReturnType<typeof mountSuspended>> | undefined;
-const mountOpenDialog = async (props: InstanceType<typeof StyledDialog>["$props"], slots?: Record<string, string>) => {
-  wrapper = await mountSuspended(StyledDialog, {
-    attachTo: document.body,
-    props: { ...props, modelValue: true },
-    slots,
-  });
-  return document.body;
-};
-
 // `primary` is StyledButton's own colour, so naming it explicitly must not opt out of the gradient — the
 // Previous gate read any colour at all as "the caller wants a plain button"
 // StyledButton is a v-btn carrying the gradient as an inline background-image, so that style is what
@@ -27,6 +14,21 @@ const getGradientButtons = (body: HTMLElement) =>
 
 describe("styledDialog", () => {
   const text = "Confirm";
+  // The dialog teleports to the overlay container, so assertions read the document rather than the wrapper —
+  // Which makes the teardown load-bearing: every mount appends its own overlay, so without it the second test
+  // In the file counts the first test's buttons too. The helper mutates this, so the two live together
+  let wrapper: Awaited<ReturnType<typeof mountSuspended>> | undefined;
+  const mountOpenDialog = async (
+    props: InstanceType<typeof StyledDialog>["$props"],
+    slots?: Record<string, string>,
+  ) => {
+    wrapper = await mountSuspended(StyledDialog, {
+      attachTo: document.body,
+      props: { ...props, modelValue: true },
+      slots,
+    });
+    return document.body;
+  };
 
   afterEach(() => {
     wrapper?.unmount();

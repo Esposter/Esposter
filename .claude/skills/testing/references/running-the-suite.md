@@ -6,7 +6,7 @@ How to read a failure the targeted run doesn't produce. **The full run itself be
 
 A green targeted run can hide **collateral damage from shared global state**. A sweep or mutation that is safe on an isolated, serial resource (a per-key cache dir) is catastrophic on a shared, concurrent one (the global `os.tmpdir()`, a shared registry): it deletes or corrupts a live sibling test's state. Treat any "another test's temp vanished" failure as your own regression, never flakiness.
 
-This is the one risk targeted runs carry, and it is bounded: it only applies to a change that writes to a process-global resource. When a change does that, name the suites sharing that resource as extra path arguments rather than running everything — and otherwise let CI be the one to find it.
+This is the one risk of _this_ page's kind — collateral damage a green targeted run cannot show you — and it is bounded: it only applies to a change that writes to a process-global resource. It is not the only thing a targeted run misses; an unselected caller or integration path is missed too, and CI is what covers those. When a change does that, name the suites sharing that resource as extra path arguments rather than running everything — and otherwise let CI be the one to find it.
 
 ## A full-run timeout is not automatically a regression
 

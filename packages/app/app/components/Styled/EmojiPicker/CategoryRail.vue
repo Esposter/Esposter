@@ -18,9 +18,9 @@ const { categories } = defineProps<StyledEmojiPickerCategoryRailProps>();
   </v-tabs>
 </template>
 
-<style scoped lang="scss">
-// Vuetify sizes a tab for a text label. The rail is icon-only, so it collapses to the icon plus its padding —
-// And to a height that fits every category in the row the grid sets, instead of scrolling a ten-item rail
+<style scoped>
+/* Vuetify sizes a tab for a text label. The rail is icon-only, so it collapses to the icon plus its padding —
+   and to a height that fits every category in the row the grid sets, instead of scrolling a ten-item rail */
 .v-tab {
   min-width: 0;
   min-height: 2.25rem;

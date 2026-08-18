@@ -3,7 +3,6 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { EmojiMenuItems } from "@/services/message/emoji/EmojiMenuItems";
 import { getEmojiDescription } from "@/services/message/emoji/getEmojiDescription";
-import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 
 interface MessageOptionsMenuProps {
   hoverProps?: Record<string, unknown>;
@@ -38,7 +37,6 @@ const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProp
       </v-tooltip>
       <v-divider thickness="2" vertical h-6 self-center />
       <StyledEmojiPicker
-        :tooltip-props="{ text: EMOJI_PICKER_TOOLTIP_TEXT }"
         :button-props="{ size: 'small', tile: true }"
         @update:menu="emit('update:menu', $event)"
         @select="selectEmoji"
