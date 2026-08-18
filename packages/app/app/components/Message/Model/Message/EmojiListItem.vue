@@ -2,7 +2,7 @@
 import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 
 import { authClient } from "@/services/auth/authClient";
-import { emojify } from "@/services/message/emoji/emojify";
+import { getEmojiCharacter } from "@/services/message/emoji/getEmojiCharacter";
 import { useEmojiStore } from "@/store/message/emoji";
 
 interface MessageEmojiListItemProps {
@@ -20,7 +20,7 @@ const isReacted = computed(() => {
   return Boolean(userId && emoji.userIds.includes(userId));
 });
 // A reaction re-renders whenever anyone adds or removes theirs, and the tag only resolves once per emoji
-const displayEmoji = computed(() => emojify(emoji.emojiTag));
+const displayEmoji = computed(() => getEmojiCharacter(emoji.emojiTag));
 </script>
 
 <template>

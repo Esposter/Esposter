@@ -1,7 +1,7 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
-import { unemojify } from "@/services/message/emoji/unemojify";
+import { getEmojiSlug } from "@/services/message/emoji/getEmojiSlug";
 import { useEmojiStore } from "@/store/message/emoji";
 
 export const useSelectEmoji = async (message: MessageEntity) => {
@@ -11,8 +11,10 @@ export const useSelectEmoji = async (message: MessageEntity) => {
   return async (emoji: string) => {
     if (!session.value) return;
 
-    const emojiTag = unemojify(emoji);
-    const foundEmoji = getEmojis(message.rowKey).find((e) => e.emojiTag === emojiTag);
+    const emojiTag = getEmojiSlug(emoji);
+    // Both sides go through the slug rather than comparing the stored strings, so a row written as a raw
+    // Glyph and one written as its shortcode are the same reaction and toggle rather than duplicating
+    const foundEmoji = getEmojis(message.rowKey).find((storedEmoji) => getEmojiSlug(storedEmoji.emojiTag) === emojiTag);
     if (!foundEmoji)
       await createEmoji({
         emojiTag,

@@ -99,7 +99,7 @@ Working is not finished. Once the change does what it should — a feature, a fi
    - **Add nothing another enforcer already owns.** No test for what typecheck proves (a mechanical schema rewrite, a rename, a tightened type), for a Zod constraint, or for behaviour an existing test already covers. Such a test cannot fail honestly — it only pins the current implementation and breaks on the next real refactor.
    - **Trim and dedupe the tests themselves.** Repeated fixtures become one `create*` helper; twin test files become a behaviour matrix plus a thin wiring test. Tests bloat exactly like code does, and removing one a change made redundant is part of that change.
 3. **Carry the docs and skills with it.** A shipped decision updates its owning docs page and, if it is a reusable convention, its owning skill (`docs`, `skill-authoring`) — in the same change, never "later".
-4. **`pnpm format` → `typecheck` → `lint:fix` → tests**, batched once at the end (`context-efficiency`, `package-scripts`).
+4. **`pnpm format` → `typecheck` → `lint:fix` → tests**, batched once at the end (`context-efficiency`, `package-scripts`). Tests means **the paths the change touched**, passed as arguments — a bare `pnpm test --run` over the whole suite is banned locally and belongs to CI, which shards it.
 5. **Commit** the coherent chunk. Never push unless asked.
 
 Skip step 1 only for a genuinely one-line change. When a step finds nothing, say so — that is a result.

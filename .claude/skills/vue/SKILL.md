@@ -129,11 +129,11 @@ Read it before writing any `watch`, or when a local `ref` mirrors a prop/store v
   });
   ```
 
-## Third-party Options API components need the runtime kept in
+## The Options API runtime is compiled out
 
-Nothing here is written in the Options API, but a dependency's component can be — `emoji-mart-vue-fast`'s `Picker.vue` is. `future.compatibilityVersion: 5` defaults `vue.optionsApi` to **off**, which compiles `applyOptions` out of the client: the component still mounts, `$data` stays `{}`, and its compiled render dereferences a property off `undefined` (`Cannot read properties of undefined (reading 'allCategories')`) with **nothing thrown beforehand** to name the cause. It survives typecheck and lint, and it survives Vitest too — `@vitejs/plugin-vue` defaults the flag to `true`, so a component test of the same component passes while the app is broken.
+`future.compatibilityVersion: 5` defaults `vue.optionsApi` to **off**, and nothing in the repo turns it back on — the last dependency that needed it (`emoji-mart-vue-fast`) was replaced by the in-repo emoji picker.
 
-So `configuration/vue.ts` keeps `optionsApi: true`, and a render error inside a `node_modules` component is worth checking `/_nuxt/@vite/env` for (`run-app`) before reading its source.
+Know the failure mode before adding a dependency that ships `.vue` components. Without `applyOptions` an Options API component still mounts, `$data` stays `{}`, and its compiled render dereferences a property off `undefined` with **nothing thrown beforehand** to name the cause. It survives typecheck and lint, and it survives Vitest too — `@vitejs/plugin-vue` defaults the flag to `true`, so a component test of that component passes while the app is broken. A render error inside a `node_modules` component is worth checking `/_nuxt/@vite/env` for (`run-app`) before reading its source.
 
 ## Dates Are `<NuxtTime>`
 

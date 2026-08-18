@@ -1,11 +1,11 @@
 ---
 title: Message List Rendering
-description: Client architecture of the chat message list — per-item weight budget, single-instance options menu and dialogs, shared emoji index.
+description: Client architecture of the chat message list — per-item weight budget, single-instance options menu and dialogs, lazily built emoji index.
 ---
 
 # Message List Rendering
 
-The message list renders every loaded message as live DOM (no virtualization yet), so anything mounted per item multiplies by the page size and every pagination batch. The architecture therefore keeps each item down to its message component plus a hover wrapper, and everything interactive-but-occasional — the hover options menu, the confirm dialogs, the emoji search index — exists at most once for the whole list.
+The message list renders every loaded message as live DOM (no virtualization yet), so anything mounted per item multiplies by the page size and every pagination batch. The architecture therefore keeps each item down to its message component plus a hover wrapper, and everything interactive-but-occasional — the hover options menu, the confirm dialogs, the emoji index — exists at most once for the whole list.
 
 ## How it works
 
@@ -25,7 +25,7 @@ flowchart TD
     DS -->|deletingRowKey| D[ConfirmDeleteDialog - singleton in List/Index.vue]
     DS -->|pinningRowKey| P[ConfirmPinDialog - singleton in List/Index.vue]
     O --> E[StyledEmojiPicker]
-    E --> X[emojiIndex - module-scope EmojiIndex singleton]
+    E --> X[getEmojiIndex - built once on first open]
 ```
 
 ## The message component family
@@ -53,7 +53,7 @@ flowchart TD
   Line --> Sentence["the type's own sentence"]
 ```
 
-`emojiIndex` is a module-scope singleton service: `EmojiIndex` builds a search index over the full `emoji-mart-vue-fast` dataset (hundreds of kilobytes of JSON) in its constructor, so it is constructed once for the whole app, never per picker instance.
+The emoji index follows the same once-for-the-whole-list rule from the other direction: `getEmojiIndex` builds its maps on first use rather than at import, and the picker's overlay only renders its content once opened, so a list of reactions never constructs a search index and never builds one per picker instance. See [/docs/esbabbler/emoji](/docs/esbabbler/emoji).
 
 ## Key files
 
@@ -66,7 +66,7 @@ flowchart TD
 | `packages/app/app/components/Message/Model/Message/ConfirmDeleteDialog.vue` | Store-driven delete dialog singleton                          |
 | `packages/app/app/components/Message/Model/Message/ConfirmPinDialog.vue`    | Store-driven pin dialog singleton                             |
 | `packages/app/app/composables/message/message/useMessageActionItems.ts`     | Action items writing store targets directly                   |
-| `packages/app/app/services/message/emoji/emojiIndex.ts`                     | Shared `EmojiIndex` instance                                  |
+| `packages/app/app/services/message/emoji/getEmojiIndex.ts`                  | Shared emoji index, built once on first use                   |
 | `packages/app/app/store/message/index.ts`                                   | `optionsMenu`, `editingRowKey`                                |
 | `packages/app/app/store/message/dialog.ts`                                  | Dialog targets: `deletingRowKey`, `pinningRowKey`             |
 

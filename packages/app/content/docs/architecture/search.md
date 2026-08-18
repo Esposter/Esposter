@@ -97,7 +97,7 @@ Three search shapes legitimately sit outside `useAutoSearch`, because there is n
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `v-data-table-server`  | The table owns fetch orchestration — its `search` prop triggers `@update:options`; feed it a `refDebounced` query ref | `Resource/List/View.vue` + `useReadResources`            |
 | Explicit-submit search | Enter-triggered with filters and search history; nothing fires per keystroke                                          | Message right-sidebar search (`useReadSearchedMessages`) |
-| Client-index search    | A `computed` over already-loaded data — no server call, no abort, no pending state (see above)                        | Docs search (MiniSearch)                                 |
+| Client-index search    | A `computed` over already-loaded data — no server call, no abort, no pending state (see above)                        | Docs search, the emoji picker (both MiniSearch)          |
 
 Portal chord shortcuts (`useResourceKeyboardShortcuts` G-chords) are likewise a separate concern from the palette `hotkey` prop — chords are sequences, not single hotkeys.
 
@@ -109,6 +109,7 @@ Portal chord shortcuts (`useResourceKeyboardShortcuts` G-chords) are likewise a 
 | `app/composables/useCursorSearcher.ts`                      | Cursor-paginated search on top of `useAutoSearch`                                       |
 | `app/components/Styled/SearchDialog.vue`                    | `StyledSearchDialog` — Ctrl+K palette shell (`hotkey` via `useVHotkey`)                 |
 | `app/components/Docs/Search.vue`                            | Palette + client-index results (MiniSearch)                                             |
+| `app/services/message/emoji/searchEmojis.ts`                | Client-index emoji search shared by the picker and the composer's `:` trigger           |
 | `app/components/Message/Model/Room/Searcher.vue`            | Palette + cursor-paginated results (`useSearchStore`)                                   |
 | `app/components/Message/Friends/Search.vue`                 | Inline (non-palette) `useAutoSearch` consumer                                           |
 | `app/composables/resource/search/useResourceSearchItems.ts` | Portal dropdown — `useAutoSearch` for the Resources group, client-side groups around it |

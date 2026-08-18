@@ -21,8 +21,6 @@ export const ImageSourceWhitelist = [
   "*.githubusercontent.com",
   // Google user image
   "*.googleusercontent.com",
-  // Emoji-mart-vue-fast
-  "https://unpkg.com/emoji-datasource-apple@15.0.1/img/apple/sheets-256/64.png",
   // Azure
   process.env.AZURE_CONTAINER_BASE_URL,
   // Grapesjs — the hosts its stock blocks and default templates load images from
