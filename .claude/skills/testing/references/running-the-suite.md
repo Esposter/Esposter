@@ -15,3 +15,5 @@ Heavy seeded tests can blow the default timeout purely from full-suite parallel 
 ## Environment
 
 Tests run on Windows: `configuration/modules.ts` allowlists a minimal set of Nuxt modules under `process.env.VITEST`, so a test needing an excluded module adds it to that branch.
+
+The host is Windows but the runner is not: `pnpm test` goes through `virrun`, whose win32 backend executes vitest inside WSL, so `process.platform` reads `linux` while `pnpm build` ran natively. Anything gated on `process.platform` is therefore selected by the sandbox rather than by the host — see `platform-and-bundle-tests.md` for the one suite this makes fail locally by design.
