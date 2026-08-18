@@ -90,6 +90,8 @@ For state-sync emits, use the `update:x` form where `x` is the state name (`"upd
 
 ## Component Folder Naming
 
+**A component that gains a folder moves into it as `Index.vue`.** Never leave `Foo.vue` sitting beside a `Foo/` directory — the moment a component is split, `Foo.vue` becomes `Foo/Index.vue` and its parts become its siblings. `Index` contributes nothing to the auto-import name, so `StyledEmojiPicker` still resolves and no consumer changes; keeping both forms only splits one component's files across two places for no benefit. The same holds for TypeScript modules with a folder.
+
 **The folder path is the prefix — never repeat it in the filename.** Nuxt builds the auto-import name from the directory words plus the filename words, so `Feature/Group/ItemCard.vue` → `FeatureGroupItemCard`, and `Index.vue` contributes nothing (`Group/Index.vue` → `FeatureGroup`). Because a filename's leading words that repeat the folder path's trailing run are emitted **only once**, two files can silently generate one name and the un-collapsed tag renders **empty with no error** — when to fold a shared prefix into a folder, the collapse rules and their carve-outs are in `references/component-naming.md`.
 
 ## File Length

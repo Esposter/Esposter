@@ -1,10 +1,12 @@
 # Running the Suite and Reading Its Failures
 
-Why the full run is the one that counts, and how to read a failure that the targeted run doesn't produce.
+How to read a failure the targeted run doesn't produce. **The full run itself belongs to CI** — running it locally is banned (see the skill's "Running Tests"), so this page is about failures CI reports back, not about reproducing them by sweeping everything.
 
-## Run the full suite, not just your new file
+## What only the full parallel run catches
 
-A green targeted run hides regressions the full parallel run catches — above all **collateral damage from shared global state**. A sweep or mutation that is safe on an isolated, serial resource (a per-key cache dir) is catastrophic on a shared, concurrent one (the global `os.tmpdir()`, a shared registry): it deletes or corrupts a live sibling test's state. Treat any "another test's temp vanished" failure as your own regression, never flakiness.
+A green targeted run can hide **collateral damage from shared global state**. A sweep or mutation that is safe on an isolated, serial resource (a per-key cache dir) is catastrophic on a shared, concurrent one (the global `os.tmpdir()`, a shared registry): it deletes or corrupts a live sibling test's state. Treat any "another test's temp vanished" failure as your own regression, never flakiness.
+
+This is the one risk targeted runs carry, and it is bounded: it only applies to a change that writes to a process-global resource. When a change does that, name the suites sharing that resource as extra path arguments rather than running everything — and otherwise let CI be the one to find it.
 
 ## A full-run timeout is not automatically a regression
 

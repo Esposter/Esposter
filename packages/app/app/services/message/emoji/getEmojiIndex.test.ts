@@ -9,34 +9,29 @@ import { takeOne } from "@esposter/shared";
 import dataByCharacter from "unicode-emoji-json/data-by-emoji.json";
 import { describe, expect, test } from "vitest";
 
-const GRINNING_FACE = "😀";
-const MELTING_FACE = "🫠";
-const RED_HEART = "❤️";
-const TECHNOLOGIST = "🧑‍💻";
-const THUMBS_UP = "👍";
-
-const { bySlug } = getEmojiIndex();
 // Throws rather than returning undefined so a slug that stops existing upstream fails as a missing emoji
 // Rather than as a confusing assertion about `undefined` further down
 const getEmoji = (slug: string) => {
-  const emoji = bySlug.get(slug);
+  const emoji = getEmojiIndex().bySlug.get(slug);
   if (!emoji) throw new Error(`No emoji indexed under "${slug}"`);
   return emoji;
 };
-const redHeart = getEmoji("red_heart");
-const technologist = getEmoji("technologist");
 
 describe("getEmojiIndex", () => {
+  const RED_HEART = "❤️";
+  const { bySlug } = getEmojiIndex();
+
   test("round trips every emoji from character to slug and back", () => {
     expect.hasAssertions();
 
     for (const emoji of bySlug.values()) expect(getEmojiSlug(emoji.character)).toBe(emoji.slug);
   });
 
+  // A tooltip can be asked for a toned glyph, which has no record of its own — it resolves to its base
   test("resolves a toned character back to its untoned slug", () => {
     expect.hasAssertions();
 
-    expect(getEmojiSlug(applySkinTone(technologist, SkinTone.Medium))).toBe("technologist");
+    expect(getEmojiSlug(applySkinTone(getEmoji("technologist"), SkinTone.Medium))).toBe("technologist");
   });
 
   test("resolves an unqualified glyph onto the same slug as the qualified one", () => {
@@ -52,7 +47,7 @@ describe("getEmojiIndex", () => {
     expect(getEmojiSlug("thumbs_up")).toBe("thumbs_up");
   });
 
-  test("returns an unknown tag as itself rather than dropping it", () => {
+  test("returns an unknown string as itself rather than dropping it", () => {
     expect.hasAssertions();
 
     expect(getEmojiSlug("not_an_emoji")).toBe("not_an_emoji");
@@ -93,6 +88,15 @@ describe("getEmojiIndex", () => {
 });
 
 describe("applySkinTone", () => {
+  const MAN_BEARD = "🧔‍♂️";
+  const MAN_BOUNCING_BALL = "⛹️‍♂️";
+  const RED_HEART = "❤️";
+  const TECHNOLOGIST = "🧑‍💻";
+  const manBeard = getEmoji("man_beard");
+  const manBouncingBall = getEmoji("man_bouncing_ball");
+  const redHeart = getEmoji("red_heart");
+  const technologist = getEmoji("technologist");
+
   test("attaches the modifier to the first code point of a ZWJ sequence", () => {
     expect.hasAssertions();
 
@@ -100,6 +104,19 @@ describe("applySkinTone", () => {
     expect(applySkinTone(technologist, SkinTone.Medium)).toBe("🧑🏽‍💻");
     expect(applySkinTone(technologist, SkinTone.Dark)).toBe("🧑🏿‍💻");
     expect(applySkinTone(technologist, SkinTone.Default)).toBe(TECHNOLOGIST);
+  });
+
+  // The base's own selector is replaced by the tone, but a later one qualifies a different component — 131
+  // Sequences carry one, and stripping it drops that component's emoji presentation
+  test("keeps a variation selector that belongs to a later component", () => {
+    expect.hasAssertions();
+
+    expect(manBeard.character).toBe(MAN_BEARD);
+    expect(applySkinTone(manBeard, SkinTone.Medium)).toBe("🧔🏽‍♂️");
+    expect(applySkinTone(getEmoji("index_pointing_up"), SkinTone.Medium)).toBe("☝🏽");
+    // Carries one of each: its own selector, which the tone replaces, and the sign's, which must survive
+    expect(manBouncingBall.character).toBe(MAN_BOUNCING_BALL);
+    expect(applySkinTone(manBouncingBall, SkinTone.Medium)).toBe("⛹🏽‍♂️");
   });
 
   test("leaves an emoji that does not support a tone alone", () => {
@@ -111,6 +128,11 @@ describe("applySkinTone", () => {
 });
 
 describe("searchEmojis", () => {
+  const GRINNING_FACE = "😀";
+  const MELTING_FACE = "🫠";
+  const THUMBS_UP = "👍";
+  const { bySlug } = getEmojiIndex();
+
   test("pins an exact shortcode ahead of everything that merely matched it", () => {
     expect.hasAssertions();
 

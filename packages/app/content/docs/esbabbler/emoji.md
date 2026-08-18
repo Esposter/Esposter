@@ -38,17 +38,29 @@ Two data-only MIT packages, both keyed by the emoji character and both tracking 
 
 `getEmojiIndex` builds three maps on first use, once for the whole app. It is deliberately not built at import: a page with no emoji surface never pays for it, and the server never builds it at all.
 
-| Structure          | Answers                                  |
-| ------------------ | ---------------------------------------- |
-| `bySlug: Map`      | what a stored reaction renders as        |
-| `byCharacter: Map` | what a picked character is stored as     |
-| `byGroup: Map`     | what a category tab shows, in CLDR order |
+| Structure          | Answers                                            |
+| ------------------ | -------------------------------------------------- |
+| `byGroup: Map`     | what a category tab shows, in CLDR order           |
+| `bySlug: Map`      | which record an exact shortcode query names        |
+| `byCharacter: Map` | which record a glyph belongs to, for its shortcode |
 
-`byCharacter` is keyed by `getEmojiCharacterKey`, which strips skin-tone modifiers and variation selectors. That is what makes one emoji have exactly one identity however it arrives: a toned pick (👋🏽), a legacy unqualified glyph (`❤`) and the dataset's own qualified form (`❤️`) all resolve to the same record. There are no collisions across the whole dataset under that normalisation, and slugs are unique, so both maps are total.
+`byCharacter` is keyed by `getEmojiCharacterKey`, which strips skin-tone modifiers and variation selectors, so a toned glyph (👋🏽) and an unqualified one (`❤` vs `❤️`) still find their record. There are no collisions across the whole dataset under that normalisation, and slugs are unique, so both maps are total.
 
-**A reaction's tag is also its identity.** `useSelectEmoji` finds the existing row by matching it, so both sides go through `getEmojiSlug` before anything is compared — a row written as a raw glyph and one written as its shortcode are the same reaction and toggle rather than duplicating. Nothing is rewritten in Table Storage; only the identity rows are compared on becomes canonical. A tag the index does not know renders as itself rather than as nothing.
+## Reactions store the emoji, not a name for it
 
-**Reactions are tone-insensitive, and this is the one deliberate divergence from Discord.** Because a reaction is stored as a slug, reacting with 👍🏽 and reacting with 👍 are the same reaction and toggle each other, and the row renders untoned. Discord keys reactions on the exact character instead, which fragments one sentiment into up to six separate rows on the same message. Tone is preserved everywhere the emoji is content rather than a key — the picker's grid, and anything the composer inserts.
+`emojiTag` holds **the emoji character exactly as it was picked**, toned or not. That makes a reaction's identity plain string equality, so nothing about storing, matching or rendering one touches the index at all: `EmojiListItem` renders `emoji.emojiTag`, and `useSelectEmoji` finds the existing row with `emojiTag === emoji`.
+
+This is what Discord and Slack both do, and **reactions are therefore tone-sensitive**: 👍 and 👍🏽 are different strings and so different reactions, each with its own count. It also means there is no shortcode vocabulary in the storage path to keep two ends of agreeing on, no parsing, and no composite tag format to version — the alternative, a `slug` plus an encoded tone suffix, buys nothing over the character it would encode.
+
+Shortcodes stay where they are a **label** rather than a key: the composer's `:` autocomplete inserts by name, and `getEmojiDescription` resolves the quick-reaction tooltips through `getEmojiSlug`.
+
+### Reading who reacted
+
+A reaction chip carries a **hover card**, not a tooltip — its content has to be clickable, and a Vuetify tooltip's never is, so it is a `v-menu` with `open-on-hover`. The card shows the emoji large, then the sentence `:slug: reacted by <names>`, naming the first few reactors and counting the rest through `Intl.ListFormat` so it stays one line at any count. That sentence is itself the button: no chrome of its own, only the pointer.
+
+Clicking it opens the **Reactions dialog** — one instance mounted at the list level and targeted through `messageDialogStore.reactionsRowKey`, per [singleton dialogs](/docs/architecture/singleton-dialogs), never one per chip. A rail of reactions sorted by count sits beside the reactors of whichever is selected. The selection is _derived_ rather than assigned when the dialog opens, so a reaction that overtakes another — or that disappears while the dialog is open — never leaves the rail pointing at nothing; and a message whose last reaction goes closes the dialog with it.
+
+Each reactor renders under the name the rest of the room sees (`getMemberName`, nickname over global name), with the global name on a second line only when a nickname is standing in front of it.
 
 ### Search
 
@@ -80,17 +92,19 @@ The accepted limitation: Unicode allows a different tone per person in a sequenc
 
 ## Key files
 
-| File                                                              | Role                                                            |
-| ----------------------------------------------------------------- | --------------------------------------------------------------- |
-| `packages/app/app/services/message/emoji/getEmojiIndex.ts`        | The three maps, built once on first use                         |
-| `packages/app/app/services/message/emoji/searchEmojis.ts`         | MiniSearch index and the exact-shortcode pin                    |
-| `packages/app/app/services/message/emoji/getEmojiCharacterKey.ts` | Normalisation that gives one emoji one identity                 |
-| `packages/app/app/services/message/emoji/applySkinTone.ts`        | Tone synthesis, including the ZWJ rule                          |
-| `packages/app/app/services/message/emoji/getEmojiSlug.ts`         | Reverse lookup — the identity a reaction is compared on         |
-| `packages/app/app/services/message/emoji/getEmojiCharacter.ts`    | Forward lookup — what a stored reaction renders as              |
-| `packages/app/app/services/message/emoji/getEmojiCategories.ts`   | Frequently Used plus the nine CLDR groups                       |
-| `packages/app/app/services/message/emoji/EmojiSuggestion.ts`      | The composer's `:` trigger, on the same index and ranking       |
-| `packages/app/app/components/Styled/EmojiPicker.vue`              | The menu and its activator                                      |
-| `packages/app/app/components/Styled/EmojiPicker/Panel.vue`        | Search field, category rail, grid, footer                       |
-| `packages/app/app/store/message/emojiPicker.ts`                   | Recents and the chosen skin tone                                |
-| `packages/app/app/types/unicodeEmojiJson.d.ts`                    | Declares the dataset's shape so TypeScript never reads the JSON |
+| File                                                                           | Role                                                             |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| `packages/app/app/services/message/emoji/getEmojiIndex.ts`                     | The three maps, built once on first use                          |
+| `packages/app/app/services/message/emoji/searchEmojis.ts`                      | MiniSearch index and the exact-shortcode pin                     |
+| `packages/app/app/services/message/emoji/getEmojiCharacterKey.ts`              | Normalisation that finds a glyph's record whatever form it is in |
+| `packages/app/app/services/message/emoji/applySkinTone.ts`                     | Tone synthesis, including the ZWJ rule                           |
+| `packages/app/app/services/message/emoji/getEmojiSlug.ts`                      | Reverse lookup — the shortcode behind a glyph, for tooltips      |
+| `packages/app/app/services/message/emoji/getEmojiCategories.ts`                | Frequently Used plus the nine CLDR groups                        |
+| `packages/app/app/services/message/emoji/EmojiSuggestion.ts`                   | The composer's `:` trigger, on the same index and ranking        |
+| `packages/app/app/components/Styled/EmojiPicker/Index.vue`                     | The menu and its activator                                       |
+| `packages/app/app/components/Styled/EmojiPicker/Panel.vue`                     | Search field, category rail, grid, footer                        |
+| `packages/app/app/store/message/emojiPicker.ts`                                | Recents and the chosen skin tone                                 |
+| `packages/app/app/components/Message/Model/Message/EmojiListItemHoverCard.vue` | The reaction chip's hover card                                   |
+| `packages/app/app/components/Message/Model/Message/ReactionsDialog/Index.vue`  | Singleton Reactions dialog — rail plus reactors                  |
+| `packages/app/app/services/message/emoji/getReactorNames.ts`                   | "Alice, Bob and 4 others", via `Intl.ListFormat`                 |
+| `packages/app/app/types/unicodeEmojiJson.d.ts`                                 | Declares the dataset's shape so TypeScript never reads the JSON  |

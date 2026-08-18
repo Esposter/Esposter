@@ -1,7 +1,6 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
-import { getEmojiSlug } from "@/services/message/emoji/getEmojiSlug";
 import { useEmojiStore } from "@/store/message/emoji";
 
 export const useSelectEmoji = async (message: MessageEntity) => {
@@ -11,13 +10,13 @@ export const useSelectEmoji = async (message: MessageEntity) => {
   return async (emoji: string) => {
     if (!session.value) return;
 
-    const emojiTag = getEmojiSlug(emoji);
-    // Both sides go through the slug rather than comparing the stored strings, so a row written as a raw
-    // Glyph and one written as its shortcode are the same reaction and toggle rather than duplicating
-    const foundEmoji = getEmojis(message.rowKey).find((storedEmoji) => getEmojiSlug(storedEmoji.emojiTag) === emojiTag);
+    // A reaction is stored as the emoji itself — toned exactly as it was picked — so its identity is plain
+    // String equality and needs no index, no shortcode vocabulary and no parsing. 👍 and 👍🏽 are different
+    // Strings and therefore different reactions, which is what Discord and Slack both do
+    const foundEmoji = getEmojis(message.rowKey).find(({ emojiTag }) => emojiTag === emoji);
     if (!foundEmoji)
       await createEmoji({
-        emojiTag,
+        emojiTag: emoji,
         messageRowKey: message.rowKey,
         partitionKey: message.partitionKey,
       });

@@ -23,7 +23,7 @@ const skinToneEmoji = getEmojiIndex().bySlug.get(SKIN_TONE_PREVIEW_EMOJI_SLUG);
         v-for="skinTone of SkinTones"
         :key="skinTone"
         :active="skinTone === modelValue"
-        @click="modelValue = skinTone"
+        @click.stop="modelValue = skinTone"
       >
         <span leading-none text-title-medium>{{ applySkinTone(skinToneEmoji, skinTone) }}</span>
       </v-list-item>
