@@ -79,7 +79,7 @@ row collapses both calls into one `computed`. A row already rendering a single c
 the body is extracted; if that child's props are rebuilt per row, the fix is hoisting the props to one keyed
 `computed` in the parent, not another component.
 
-## Exclusions
+## Exclusions — granularity
 
 - `app/assets/dashboard/demo/icon/*.vue` — chart-icon SVG markup with no script block, so there is no responsibility to split.
 - `packages/vue-phaserjs` — engine wrappers whose shape is fixed by Phaser's object model, not app UI.
@@ -122,7 +122,7 @@ time, so an attribute wrapped across lines by the formatter is invisible to them
 never the callee's cost, and a helper reached through a store or a slot prop reads like a bare identifier. A
 clean grep is the start of the pass, not its result.
 
-## Exclusions
+## Exclusions — computed extraction
 
 - `app/assets/dashboard/demo/icon/*.vue` — chart-icon SVG markup with no script block, so there is no responsibility to split.
 - `packages/vue-phaserjs`, `packages/infra` — engine wrappers whose shape is fixed by Phaser's object model, not app UI.

@@ -16,9 +16,9 @@ of units, and a suite is read once against all of it rather than once per conven
 | Mock cleanup follows how the mock was created              | `testing` — "Mocking"                          |
 | `expect.hasAssertions()`, exact assertions, no polling     | `testing` — "Assertions"                       |
 
-`vi.fn` always takes its signature has left this table: `packages/configuration/eslint/restrictedTestSyntaxes.js`
-bans the bare zero-argument form, and a pass on 2026-08-18 confirmed the repo holds. It fails on the line that
-writes it, so there is nothing left to sweep.
+The row **`vi.fn` always takes its signature** has left this table.
+`packages/configuration/eslint/restrictedTestSyntaxes.js` bans the bare zero-argument form, and a pass on
+2026-08-18 confirmed the repo holds — it fails on the line that writes it, so there is nothing left to sweep.
 
 Every row resets when a rule joins this table: a unit dated against a narrower rule set is not swept against the
 current one, and there is no partially-swept state. Trimming last ran across every unit on 2026-08-12.
@@ -42,9 +42,11 @@ current one, and there is no partially-swept state. Trimming last ran across eve
 
 Constant scope, from the repository root. A line-anchored regex is not enough on its own: it reads a multi-line
 arrow as a constant, because the `=>` lands on a later line, and it cannot tell where a declaration ends, since a
-template literal's `${…}` and a `;` inside a string both fool a bracket count. This scanner tracks strings,
-template substitutions and comments, so a declaration ends at the first `;` genuinely at depth zero and a
-statement is classified by its **whole** text. Helper files are skipped outright — a `*.test.ts` ending in
+template literal's `${…}` and a `;` inside a string both fool a bracket count. This scanner skips strings,
+template substitutions, and both comment forms — `/* … */` matters because the `.claude/workflows` suites use it
+— so a declaration ends at the first `;` genuinely at depth zero and a statement is classified by its **whole**
+text. The `await` and `function` exemptions match on a word boundary, or `awaitable()` and `functionFactory()`
+would be exempted by their prefixes alone. Helper files are skipped outright — a `*.test.ts` ending in
 `describe.todo` holds module state by design (`references/test-helper-files.md`).
 
 ```bash
@@ -64,6 +66,7 @@ def scan(text):
             elif text.startswith("${", i): stack.append("{"); i += 2; continue
         elif c in "\"'": quote = c
         elif text.startswith("//", i): i = text.find("\n", i) % (len(text) + 1); continue
+        elif text.startswith("/*", i): i = (text.find("*/", i) + 2) or len(text); continue
         elif c in "([{`": stack.append(c)
         elif c in ")]}" and stack: stack.pop()
         else: yield c, len(stack)
@@ -86,7 +89,7 @@ for f in sorted(glob.glob("packages/**/*.test.ts", recursive=True) + glob.glob("
             after = tokens[assign + 1:] if assign is not None else []
             body = "".join(c for c, _ in after).strip()
             arrow = any(after[j] == ("=", 0) and after[j + 1:j + 2] == [(">", 0)] for j in range(len(after) - 1))
-            if not (arrow or "vi.hoisted" in text or body.startswith("await") or body.startswith("function")):
+            if not (arrow or "vi.hoisted" in text or re.match(r"^(?:await|function)\b", body)):
                 print(f"{f}:{i + 1}: {name.group(1)}")
             i = end
         i += 1
