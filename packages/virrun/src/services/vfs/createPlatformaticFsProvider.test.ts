@@ -7,9 +7,9 @@ import { createRequire } from "node:module";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
-const require = createRequire(import.meta.url);
-
 describe(createPlatformaticFsProvider, () => {
+  const require = createRequire(import.meta.url);
+
   const temporaryDirectories = createTemporaryDirectoryTracker();
 
   afterEach(() => {

@@ -8,9 +8,9 @@ import { lstatSync, mkdirSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-const NESTED_DIRECTORY_NAME = "b";
-
 describe(buildSourceMirrorManifest, () => {
+  const NESTED_DIRECTORY_NAME = "b";
+
   const { cleanup, create } = createTemporaryDirectoryTracker();
   let cwd = "";
 

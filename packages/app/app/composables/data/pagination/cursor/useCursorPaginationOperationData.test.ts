@@ -8,9 +8,9 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-const PAYLOAD_KEY = "read-items";
-
 describe(useCursorPaginationOperationData, () => {
+  const PAYLOAD_KEY = "read-items";
+
   let wrapper: VueWrapper;
   let hydratingNuxtApp: ReturnType<typeof useNuxtApp> | undefined;
   let isLoaded: ReturnType<typeof useCursorPaginationOperationData<string>>["isLoaded"];

@@ -5,7 +5,6 @@ import { getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
-const ROOM_ID = crypto.randomUUID();
 // The two clients as the sole seam this service has: the ascending index is written first and must be taken back
 // When the entity write rejects, which is what these assert.
 const createTableClients = (createEntityError?: Error) => {
@@ -29,6 +28,8 @@ const createTableClients = (createEntityError?: Error) => {
 };
 
 describe(createMessage, () => {
+  const ROOM_ID = crypto.randomUUID();
+
   // No url in the message, so the entity needs no link-preview fetch
   const input = {
     message: "message",

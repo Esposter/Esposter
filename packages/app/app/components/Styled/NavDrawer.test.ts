@@ -4,12 +4,12 @@ import { RoutePath, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
-const items = [
-  { icon: "mdi-home-outline", isActive: true, title: "Home", to: RoutePath.ResourceExplorer },
-  { icon: "mdi-view-list-outline", isActive: false, title: "All", to: RoutePath.ResourceExplorerAll },
-];
-
 describe("styledNavDrawer", () => {
+  const items = [
+    { icon: "mdi-home-outline", isActive: true, title: "Home", to: RoutePath.ResourceExplorer },
+    { icon: "mdi-view-list-outline", isActive: false, title: "All", to: RoutePath.ResourceExplorerAll },
+  ];
+
   test("renders nothing until it is opened", async () => {
     expect.hasAssertions();
 

@@ -14,4 +14,6 @@ Per-room upload of custom emoji/stickers to Azure Blob (reusing the SAS upload f
 
 **Cheaper interim:** the "needs moderation tooling" blocker is largely answered — RBAC, the word filter, and the moderation log are all shipped, and the SAS upload flow + blob containers already exist.
 
+**The picker-side seams are in place** after the [emoji rewrite](/docs/esbabbler/emoji): the category list is data rather than the group enum, so a custom group appends to it; `Emoji` is the one record everything renders from, so a custom entry differs only in carrying an image instead of a character; and the reaction round trip already goes through a slug, which a custom name slots into. What is left is the product half — the table, the upload UI, the quota, and a shortcode namespace that can collide with the Unicode slugs.
+
 **Revisit when:** rooms want identity/branding badly enough to justify the per-room blob cost and the feature build.

@@ -23,6 +23,7 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
 | [/docs/esbabbler/messaging](/docs/esbabbler/messaging)                               | Message storage, send flow, message types, real-time fan-out      |
 | [/docs/esbabbler/message-list-rendering](/docs/esbabbler/message-list-rendering)     | Per-item weight budget, single-instance menu/dialogs, emoji index |
+| [/docs/esbabbler/emoji](/docs/esbabbler/emoji)                                       | One emoji index — picker, reactions, `:` autocomplete, tones      |
 | [/docs/esbabbler/file-media](/docs/esbabbler/file-media)                             | Image thumbnails, per-room attachment limits, files-in-room tab   |
 | [/docs/esbabbler/friends-and-dms](/docs/esbabbler/friends-and-dms)                   | Friend requests, blocking, 1:1 and group direct messages          |
 | [/docs/esbabbler/rbac](/docs/esbabbler/rbac)                                         | Roles, permission bitfield, hierarchy, procedure guards           |
@@ -72,4 +73,5 @@ Chronological, one line per feature group.
 - **Store hygiene** — subscription-vs-caller ownership audit: every remote-visible message-store transition is owned by its subscription handler, caller-side mutations kept only for optimistic-with-revert or actor-excluded emits, locked in with idempotence tests.
 - **File & media** — one shared SAS upload service, client-side image thumbnails rendered inline with the original in a lightbox, per-room attachment limits (max size + allowed MIME categories) in the Moderation settings, and a files-in-room search tab.
 - **Settings** — message-scoped user-settings dialog (Voice & Video / Notifications / Keybinds) backed by `userSettingsInMessage`, applied live to LiveKit calls; push-to-talk keybind + release delay; room settings Discord-parity IA (category groups, Roles rename, Members/Invites tabs, Integrations + Moderation groups).
+- **Emoji** — both emoji libraries retired for one in-repo index: a composition-API picker rendering native unicode with Discord's category rail, recents and single global skin tone, MiniSearch relevance shared with the composer's `:` autocomplete, and the Options API runtime, the CDN sprite sheet and the second dataset gone with them.
 - **Room UI polish** — role-grouped member list with role-colored names, resizable persisted sidebars, Cozy/Compact message display (Appearance settings), room-list/search empty states, mobile bottom action bar, category drag-reorder with keyboard support.

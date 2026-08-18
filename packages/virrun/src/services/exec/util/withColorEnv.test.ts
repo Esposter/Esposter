@@ -4,8 +4,6 @@ import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
 import { withColorEnv } from "@/services/exec/util/withColorEnv";
 import { afterEach, describe, expect, test } from "vitest";
 
-const originalIsTTY = Object.getOwnPropertyDescriptor(process.stdout, "isTTY");
-const originalGetColorDepth = Object.getOwnPropertyDescriptor(process.stdout, "getColorDepth");
 const stubStdout = (isTTY: boolean, colorDepth: number): void => {
   Object.defineProperty(process.stdout, "isTTY", { configurable: true, value: isTTY });
   Object.defineProperty(process.stdout, "getColorDepth", { configurable: true, value: () => colorDepth });
@@ -21,6 +19,9 @@ const createOptions = (stdio: ExecOptions["stdio"]): ExecOptions => ({
 });
 
 describe(withColorEnv, () => {
+  const originalIsTTY = Object.getOwnPropertyDescriptor(process.stdout, "isTTY");
+  const originalGetColorDepth = Object.getOwnPropertyDescriptor(process.stdout, "getColorDepth");
+
   afterEach(() => {
     restore("isTTY", originalIsTTY);
     restore("getColorDepth", originalGetColorDepth);

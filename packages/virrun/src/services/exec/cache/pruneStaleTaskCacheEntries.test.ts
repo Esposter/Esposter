@@ -10,11 +10,11 @@ import { existsSync, utimesSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-// One day past the cutoff — an entry last touched this long ago is dead weight and swept.
-const STALE_AGE_DAYS = TASK_CACHE_MAX_AGE_DAYS + 1;
-const SECONDS_PER_DAY = 24 * 60 * 60;
-
 describe(pruneStaleTaskCacheEntries, () => {
+  // One day past the cutoff — an entry last touched this long ago is dead weight and swept.
+  const STALE_AGE_DAYS = TASK_CACHE_MAX_AGE_DAYS + 1;
+  const SECONDS_PER_DAY = 24 * 60 * 60;
+
   const { cleanup, create } = createTemporaryDirectoryTracker();
   let tasksRoot = "";
   // Seed a published `tasks/<key>` entry with a meta file, aged `ageDays` days back by stamping the meta mtime.

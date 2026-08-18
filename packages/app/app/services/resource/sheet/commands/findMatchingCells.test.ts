@@ -5,14 +5,15 @@ import { createRow } from "@/composables/resource/sheet/commands/createRow.test"
 import { findMatchingCells } from "@/services/resource/sheet/commands/findMatchingCells";
 import { describe, expect, test } from "vitest";
 
-const amount = "amount";
-const createFormattedDataSource = () => {
-  const column = createNumberColumn(amount);
-  column.format = NumberFormat.Currency;
-  return createDataSource([column], [createRow({ [amount]: 1234 })]);
-};
-
 describe(findMatchingCells, () => {
+  const amount = "amount";
+  // Closes over `amount`, so it lives beside it rather than at module scope
+  const createFormattedDataSource = () => {
+    const column = createNumberColumn(amount);
+    column.format = NumberFormat.Currency;
+    return createDataSource([column], [createRow({ [amount]: 1234 })]);
+  };
+
   // Find and replace is the one search that does not go through the column's format, and deliberately so: a
   // Replacement writes back into the cell, and a match made against `$1,234.00` has no coherent value to write
   // For the separators and the symbol the reader typed. Global search is the one that follows the format —

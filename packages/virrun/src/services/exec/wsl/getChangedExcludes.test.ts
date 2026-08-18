@@ -1,11 +1,11 @@
 import { getChangedExcludes } from "@/services/exec/wsl/getChangedExcludes";
 import { describe, expect, test } from "vitest";
 
-const NODE_MODULES_EXCLUDE = "node_modules";
-const WORKTREE_EXCLUDE = "./.claude/worktrees";
-const NUXT_OUTPUT_EXCLUDE = "./packages/app/.nuxt";
-
 describe(getChangedExcludes, () => {
+  const NODE_MODULES_EXCLUDE = "node_modules";
+  const WORKTREE_EXCLUDE = "./.claude/worktrees";
+  const NUXT_OUTPUT_EXCLUDE = "./packages/app/.nuxt";
+
   test("returns the excludes only one side holds, in both directions", () => {
     expect.hasAssertions();
 

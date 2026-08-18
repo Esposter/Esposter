@@ -351,9 +351,9 @@ catalogs:
     drizzle-orm:
       specifier: 1.0.0-rc.4
       version: 1.0.0-rc.4
-    emoji-mart-vue-fast:
-      specifier: ^15.0.5
-      version: 15.0.5
+    emojilib:
+      specifier: ^4.0.3
+      version: 4.0.3
     eslint:
       specifier: ^10.8.1
       version: 10.8.1
@@ -504,9 +504,6 @@ catalogs:
     neverthrow:
       specifier: ^8.2.0
       version: 8.2.0
-    node-emoji:
-      specifier: ^2.2.0
-      version: 2.2.0
     node-html-parser:
       specifier: ^9.0.1
       version: 9.0.1
@@ -618,6 +615,9 @@ catalogs:
     unconfig:
       specifier: ^7.5.0
       version: 7.5.0
+    unicode-emoji-json:
+      specifier: ^0.9.0
+      version: 0.9.0
     unocss:
       specifier: ^66.7.5
       version: 66.7.5
@@ -941,9 +941,9 @@ importers:
       drizzle-orm:
         specifier: 'catalog:'
         version: 1.0.0-rc.4(@electric-sql/pglite@0.5.5)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(valibot@1.4.2(typescript@6.0.3))(zod@4.4.3)
-      emoji-mart-vue-fast:
+      emojilib:
         specifier: 'catalog:'
-        version: 15.0.5(vue@3.5.41(typescript@6.0.3))
+        version: 4.0.3
       eventemitter3:
         specifier: 'catalog:'
         version: 5.0.4
@@ -1046,9 +1046,6 @@ importers:
       mjml-browser:
         specifier: 'catalog:'
         version: 5.4.0
-      node-emoji:
-        specifier: 'catalog:'
-        version: 2.2.0
       node-html-parser:
         specifier: 'catalog:'
         version: 9.0.1
@@ -1121,6 +1118,9 @@ importers:
       trpc-nuxt:
         specifier: 'catalog:'
         version: 2.1.2(@trpc/client@11.18.0(@trpc/server@11.18.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.18.0(typescript@6.0.3))
+      unicode-emoji-json:
+        specifier: 'catalog:'
+        version: 0.9.0
       v-viewer:
         specifier: 'catalog:'
         version: 3.0.23(viewerjs@1.11.8)(vue@3.5.41(typescript@6.0.3))
@@ -8564,9 +8564,6 @@ packages:
     resolution: {integrity: sha512-XGpFGbMLHwSt74YLTKho7Ib242qi6O8MSX+sRokV4oz7iKXvQWGYZthjIhjRGMxjzVkAubBO512dKGYcefmX3Q==}
     engines: {node: '>=6.4.0'}
 
-  core-js@3.50.0:
-    resolution: {integrity: sha512-BRWgOLKkFeCgRudR6zrs8p9XJZcE14grzKMMssoYrk6krtuEZ7MTKPIY5RzOnqsEKIR9kst7wNzphttraT+Yqw==}
-
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
 
@@ -9302,11 +9299,6 @@ packages:
   embla-carousel@8.6.0:
     resolution: {integrity: sha512-SjWyZBHJPbqxHOzckOfo8lHisEaJWmwd23XppYFYVh10bU66/Pn5tkVkbkCMZVdbUE5eTCI2nD8OyIP4Z+uwkA==}
 
-  emoji-mart-vue-fast@15.0.5:
-    resolution: {integrity: sha512-wnxLor8ggpqshoOPwIc33MdOC3A1XFeDLgUwYLPtNPL8VeAtXJAVrnFq1CN5PeCYAFoLo4IufHQZ9CfHD4IZiw==}
-    peerDependencies:
-      vue: '>2.0.0'
-
   emoji-regex@10.6.0:
     resolution: {integrity: sha512-toUI84YS5YmxW219erniWD0CIVOo46xGKColeNQRgOzDorgBi1v4D71/OFzgD9GO2UGKIv1C3Sp8DAn0+j5w7A==}
 
@@ -9318,6 +9310,9 @@ packages:
 
   emojilib@2.4.0:
     resolution: {integrity: sha512-5U0rVMU5Y2n2+ykNLQqMoqklN9ICBT/KsvC1Gz6vqHbz2AXXGkG+Pm5rMWk/8Vjrr/mY9985Hi8DYzn1F09Nyw==}
+
+  emojilib@4.0.3:
+    resolution: {integrity: sha512-KbWiYre9aRSaPbHrHZIz9zmoM+21LAsK1VFJtnTh1VCtWE/rNMDviGhQTmselFl95dhqtGlY22iH0leG5BuW0g==}
 
   emoticon@4.1.0:
     resolution: {integrity: sha512-VWZfnxqwNcc51hIy/sbOdEem6D+cVtpPzEEtVAFdaas30+1dgkyaOQ4sQ6Bp0tOMqWO1v+HQfYaoodOkdhK6SQ==}
@@ -13951,6 +13946,9 @@ packages:
   unicode-canonical-property-names-ecmascript@2.0.1:
     resolution: {integrity: sha512-dA8WbNeb2a6oQzAQ55YlT5vQAWGV9WXOsi3SskE3bcCdM0P4SDd+24zS/OCacdRq5BkdsRj9q3Pg6YyQoxIGqg==}
     engines: {node: '>=4'}
+
+  unicode-emoji-json@0.9.0:
+    resolution: {integrity: sha512-HdrQW/7SdbXUsTd8uTATv7LvQJkCSgbAgRCDCtOhQ6xn3EAx+xZHQtRniOXWJK3ywIqPegkNhP4U4EbuFsiQng==}
 
   unicode-emoji-modifier-base@1.0.0:
     resolution: {integrity: sha512-yLSH4py7oFH3oG/9K+XWrz1pSi3dfUrWEnInbxMfArOfc1+33BlGPQtLsOYwvdMy11AwUBetYuaRxSPqgkq+8g==}
@@ -22684,8 +22682,6 @@ snapshots:
     dependencies:
       browserslist: 4.28.8
 
-  core-js@3.50.0: {}
-
   core-util-is@1.0.3: {}
 
   cose-base@1.0.3:
@@ -23342,12 +23338,6 @@ snapshots:
 
   embla-carousel@8.6.0: {}
 
-  emoji-mart-vue-fast@15.0.5(vue@3.5.41(typescript@6.0.3)):
-    dependencies:
-      '@babel/runtime': 7.29.7
-      core-js: 3.50.0
-      vue: 3.5.41(typescript@6.0.3)
-
   emoji-regex@10.6.0: {}
 
   emoji-regex@8.0.0: {}
@@ -23355,6 +23345,8 @@ snapshots:
   emoji-regex@9.2.2: {}
 
   emojilib@2.4.0: {}
+
+  emojilib@4.0.3: {}
 
   emoticon@4.1.0: {}
 
@@ -29359,6 +29351,8 @@ snapshots:
       - webpack
 
   unicode-canonical-property-names-ecmascript@2.0.1: {}
+
+  unicode-emoji-json@0.9.0: {}
 
   unicode-emoji-modifier-base@1.0.0: {}
 

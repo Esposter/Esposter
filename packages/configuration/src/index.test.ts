@@ -3,10 +3,10 @@ import { describe, expect, test } from "vitest";
 
 import { getFileSize } from "./getFileSize";
 
-const distFile = resolve(import.meta.dirname, "../dist/index.js");
-const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
-
 describe("@esposter/configuration", () => {
+  const distFile = resolve(import.meta.dirname, "../dist/index.js");
+  const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
+
   test("bundle size", () => {
     expect.hasAssertions();
     expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 3.79 KB (3882 bytes)"`);

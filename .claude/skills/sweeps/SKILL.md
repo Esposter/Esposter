@@ -1,6 +1,6 @@
 ---
 name: sweeps
-description: Esposter repo-wide sweep conventions — progress tracked as a ledger in .claude/ledgers/ (one file per sweep, one index row, promoted to a folder of coverage files as it grows), sweeps are repo state and never proposals, when a mechanical pass earns a ledger and when it is just a commit, one convention per ledger, the six things a ledger may hold and the explanatory prose it may not, state living at the leaf with no rolled-up counts, reading the leaf rather than the tree, one agent per leaf for parallel passes, standing vs one-shot modes and the changed-files command that resumes a standing one, handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill, one unit per commit chunked to the review budget, behaviour-preserving passes and where a behaviour-changing finding goes instead, and what belongs in the commit message rather than the ledger. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
+description: Esposter repo-wide sweep conventions — progress tracked as a ledger in .claude/ledgers/ (one file per sweep, one index row, promoted to a folder of coverage files as it grows), sweeps are repo state and never proposals, when a mechanical pass earns a ledger and when it is just a commit, the six things a ledger may hold and the explanatory prose it may not, state living at the leaf with no rolled-up counts, reading the leaf rather than the tree, one agent per leaf for parallel passes, every sweep being standing and the changed-files command that resumes one, one ledger per subject with a new convention resetting its dates, handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill, one unit per commit chunked to the review budget, behaviour-preserving passes and where a behaviour-changing finding goes instead, and what belongs in the commit message rather than the ledger. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
 ---
 
 # Sweeps
@@ -14,7 +14,7 @@ Each sweep's progress is a **ledger**: one file in `.claude/ledgers/`, one row i
 ## Does it earn a file?
 
 - **More than one sitting or one commit → its own file.** Anything smaller is just the change; a sweep file for it is overhead that then rots.
-- **One convention per file.** Never a combined "cleanup" sweep — two conventions have different units, different modes and different end conditions, so merging them means neither finishes.
+- **One subject per file.** A convention whose files another ledger already owns joins that ledger (see below); what never merges is two conventions with different **units**, because a coverage table can only be dated against one of them. A combined "cleanup" sweep is that mistake at its widest.
 
 - **A unit is what one pass can read.** Reading is what finds duplication and the helper that already exists; a unit too big to read gets grepped instead, and a grep pass that ticks its row records a sweep that never happened. When a pass reaches for grep because the unit is too large, split the row at the directory boundary rather than carrying on — dated rows keep their dates, the rest become several `—` rows.
 - **A migration is not a sweep.** Work gated on an external trigger (upstream shipping a feature) is tracked by its blocker table in its own docs page, not by coverage.
@@ -77,16 +77,31 @@ parallel agents each re-derive it or miss it. If a sweep is ever delegated anywa
 leaf** — two inside one file trample each other. Adding, promoting or retiring a ledger is the only edit to the
 index row.
 
-## Modes
+## Every sweep is standing
 
-- **One-shot** — the units are enumerable and each is swept once. A `—` in `Swept` is unswept. **A fully dated ledger is kept, not deleted** — it is the index that answers "was this area swept, and when" in one read, which git can only answer by archaeology from someone who already knows what to look for. The dates are also what a later convention change is scoped against. Add a coverage line rather than widening an existing one when a unit turns out too big, and split it into its own file when the lines stop fitting.
-- **Standing** — the convention applies to code written after the sweep too, so the file carries a date instead of an end. Sweep only what changed since, then bump the date in the same commit:
+There is no one-shot mode. A convention applies to the code written **after** the sweep as much as to the code
+written before it, so a ledger that could be finished would only be re-opened by the next feature — and a mode
+column whose every row says the same thing is noise. A unit's row carries a date rather than an end: it means
+the rules held there on that date, nothing more.
 
-  ```bash
-  git log --since=<Last swept date> --name-only --pretty=format: -- <the globs this sweep declares> | sort -u
-  ```
+A pass resumes from what changed since that date rather than re-reading the unit:
 
-  Everything outside that list was swept at the last pass — skip it rather than re-reading it.
+```bash
+git log --since=<Last swept date> --name-only --pretty=format: -- <the globs this sweep declares> | sort -u
+```
+
+Everything outside that list was swept at the last pass — skip it rather than re-reading it.
+
+A `—` in `Swept` is unswept, and **a fully dated ledger is kept, not deleted**: it is the index that answers
+"was this area swept, and when" in one read, which git can only answer by archaeology from someone who already
+knows what to look for. Those dates are also what the next convention change is scoped against. Add a coverage
+line rather than widening an existing one when a unit turns out too big, and split it into its own file when the
+lines stop fitting.
+
+**A new convention joins the ledger that already owns its files** rather than opening one of its own, and adding
+it resets that ledger's dates — a unit swept against a narrower rule set is not swept against the current one,
+and there is no partially-swept state. One ledger per _subject_, not per convention: two ledgers over the same
+files mean reading those files twice and handing findings between them.
 
 ## Draining beats scheduling
 
@@ -98,7 +113,7 @@ Scope it to the files the change touches, not the unit around them; widening it 
 
 **The row stays `—` until the whole unit is swept.** There is no partially-swept state, and inventing one — a fraction, a file list, a third symbol — puts progress state at file granularity in a table that exists to track units, where it drifts the moment anyone touches those files again. The opportunistic pass shortens the eventual unit pass; it never reports it.
 
-This is what makes a one-shot ledger finish. The scheduled pass stops being the only thing that drains it and becomes the sweep-up for whatever ordinary work never happened to reach.
+This is what keeps a standing ledger moving. The scheduled pass stops being the only thing that drains it and becomes the sweep-up for whatever ordinary work never happened to reach.
 
 ## Shrinking beats re-running
 

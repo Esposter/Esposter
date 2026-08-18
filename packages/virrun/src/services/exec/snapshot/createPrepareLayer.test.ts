@@ -19,9 +19,6 @@ import { existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import {beforeEach, describe, expect, test, vi} from "vitest";
 
-// A two-segment output dir (`a/a`) the fake prepare command populates, alongside a node_modules tree it churns.
-const OUTPUT = `${TEST_FILENAME}/${TEST_FILENAME}`;
-const prepareStep: PrepareStep = { command: NUXT_PREPARE_COMMAND, outputs: [OUTPUT] };
 // Stands in for the os backend running `nuxt prepare`: on success it writes the declared output plus incidental
 // Dep-tree churn into the capture upper, so the test can assert only the output survives the publish.
 const createFakeBackend = (exitCode: number): ExecBackend & ReturnType<typeof createRecordingBackend> =>
@@ -39,6 +36,10 @@ vi.mock(
 );
 
 describe(createPrepareLayer, () => {
+  // A two-segment output dir (`a/a`) the fake prepare command populates, alongside a node_modules tree it churns.
+  const OUTPUT = `${TEST_FILENAME}/${TEST_FILENAME}`;
+  const prepareStep: PrepareStep = { command: NUXT_PREPARE_COMMAND, outputs: [OUTPUT] };
+
   const { createWorkspace } = setupTemporaryCacheHome();
   let repository = "";
   // The layer is always provisioned for this suite's own repository and step, so only the backend varies

@@ -15,12 +15,12 @@ vi.mock(import("#shared/util/environment/constants"), async (importOriginal) => 
 }));
 vi.mock(import("@@/server/services/request/getIpAddress"), () => ({ getIpAddress: () => undefined }));
 
-const testRouter = router({
-  ping: publicProcedure.use(getIsRateLimited(RateLimiterType.Standard)).query(() => true),
-});
-const createTestCaller = createCallerFactory(testRouter);
-
 describe(getIsRateLimited, () => {
+  const testRouter = router({
+    ping: publicProcedure.use(getIsRateLimited(RateLimiterType.Standard)).query(() => true),
+  });
+  const createTestCaller = createCallerFactory(testRouter);
+
   let mockContext: Context;
   let caller: ReturnType<typeof createTestCaller>;
 

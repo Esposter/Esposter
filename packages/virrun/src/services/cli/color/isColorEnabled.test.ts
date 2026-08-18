@@ -1,12 +1,13 @@
 import { isColorEnabled } from "@/services/cli/color/isColorEnabled";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-const originalIsTTY = Object.getOwnPropertyDescriptor(process.stderr, "isTTY");
 const stubIsTTY = (isTTY: boolean): void => {
   Object.defineProperty(process.stderr, "isTTY", { configurable: true, value: isTTY });
 };
 
 describe(isColorEnabled, () => {
+  const originalIsTTY = Object.getOwnPropertyDescriptor(process.stderr, "isTTY");
+
   afterEach(() => {
     if (originalIsTTY) Object.defineProperty(process.stderr, "isTTY", originalIsTTY);
     else Reflect.deleteProperty(process.stderr, "isTTY");

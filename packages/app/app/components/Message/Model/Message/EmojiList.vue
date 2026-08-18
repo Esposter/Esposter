@@ -2,7 +2,6 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
-import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { useEmojiStore } from "@/store/message/emoji";
 
 interface MessageEmojiListProps {
@@ -23,7 +22,6 @@ const selectEmoji = await useSelectEmoji(message);
     <MessageModelMessageEmojiListItem v-for="emoji of emojis" :key="emoji.rowKey" :emoji />
     <StyledEmojiPicker
       v-if="!isPreview"
-      :tooltip-props="{ text: EMOJI_PICKER_TOOLTIP_TEXT }"
       :button-props="{ size: 'small', density: 'comfortable' }"
       @select="selectEmoji"
     />

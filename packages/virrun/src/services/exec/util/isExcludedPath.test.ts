@@ -4,10 +4,10 @@ import { isExcludedPath } from "@/services/exec/util/isExcludedPath";
 import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
 import { describe, expect, test } from "vitest";
 
-// Any nested slashed pattern — a linked worktree root, a prepare output dir — matches the same way.
-const NESTED_PATH = "b/c";
-
 describe(isExcludedPath, () => {
+  // Any nested slashed pattern — a linked worktree root, a prepare output dir — matches the same way.
+  const NESTED_PATH = "b/c";
+
   test("matches a bare name at the root, at depth, and everything inside it", () => {
     expect.hasAssertions();
 

@@ -7,11 +7,9 @@ import {
 } from "@/services/exec/wsl/constants.test";
 import { createWslBwrapArgs } from "@/services/exec/wsl/createWslBwrapArgs";
 import { describe, expect, test, vi } from "vitest";
-// The ext4 mirror path createWslBwrapArgs uses for the --overlay-src source lower (fast reads), and the logical
-// /mnt/c path it mounts/chdir's into so pwd matches native. The assertions prove the two are decoupled: content comes
-// From the mirror, but the mountpoint is the wslpath-translated repo path.
+// The ext4 mirror path createWslBwrapArgs uses for the --overlay-src source lower (fast reads). It stays at module
+// Scope because the hoisted getWslSourceMirrorPath mock below returns it.
 const TEST_WSL_MIRROR = `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_SOURCES_DIRECTORY_NAME}`;
-const TEST_WSL_LOGICAL = `${TEST_WSL_PREFIX}${TEST_REPO_ROOT_WIN}`;
 
 vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
   readWslPath: (path: string) => `${TEST_WSL_PREFIX}${path}`,
@@ -22,6 +20,10 @@ vi.mock(import("@/services/exec/wsl/getWslSourceMirrorPath"), () => ({
 }));
 
 describe(createWslBwrapArgs, () => {
+  // The logical /mnt/c path createWslBwrapArgs mounts and chdir's into so pwd matches native. The assertions prove
+  // The two are decoupled: content comes from the mirror, but the mountpoint is the wslpath-translated repo path.
+  const TEST_WSL_LOGICAL = `${TEST_WSL_PREFIX}${TEST_REPO_ROOT_WIN}`;
+
   test("sources reads from the ext4 mirror but mounts and chdirs at the logical repo path", () => {
     expect.hasAssertions();
 

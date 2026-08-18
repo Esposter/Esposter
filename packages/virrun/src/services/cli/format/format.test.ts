@@ -15,8 +15,6 @@ import { describe, expect, test, vi } from "vitest";
 // Every CLI line builder is a pure template-string over the shared formatVirrunLine tag, so each one's whole
 // Observable surface is a single color-stripped string — they share one file rather than one 1-test file each.
 // The `[virrun] ` tag formatVirrunLine contributes is asserted inside every full-string expectation below.
-// A 64-hex digest: both the prepare layer key and the provisioning lockfile hash are shortened to 12 chars.
-const key = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
 describe(formatVirrunBanner, () => {
   test("joins a multi-token command and reports backend and node version", () => {
@@ -97,6 +95,9 @@ describe(formatVirrunNetworkHint, () => {
 });
 
 describe(formatVirrunPrepare, () => {
+  // A 64-hex digest: both the prepare layer key and the provisioning lockfile hash are shortened to 12 chars.
+  const key = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
   test("announces a prepare cache miss when the layer does not exist", () => {
     expect.hasAssertions();
 
@@ -115,6 +116,9 @@ describe(formatVirrunPrepare, () => {
 });
 
 describe(formatVirrunProvisioning, () => {
+  // A 64-hex digest: both the prepare layer key and the provisioning lockfile hash are shortened to 12 chars.
+  const key = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
   test("announces a snapshot cache miss when no snapshot exists", () => {
     expect.hasAssertions();
 

@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Esposter Vitest testing conventions — describe with function refs, canonical test values, the shared-test-data DRY rule, takeOne/assert.exists, no unnecessary destructure, mock cleanup by creation style, call-count matchers, toThrowErrorMatchingInlineSnapshot as the only error assertion, global stubs, the polling ban, running the full suite, what earns a test, plus deep dives on router tests, what to mock and module doubles, the nuxt environment, platform/CLI/bundle snapshots, full-run failures, helper/`.test-d.ts` files, and fake timers with hand-resolved promises. Apply when writing .test.ts or .test-d.ts files.
+description: Esposter Vitest testing conventions — describe with function refs, constants scoped to the describe block rather than module scope, canonical test values, the shared-test-data DRY rule, always typing vi.fn, takeOne/assert.exists, no unnecessary destructure, mock cleanup by creation style, call-count matchers, toThrowErrorMatchingInlineSnapshot as the only error assertion, global stubs, the polling ban, the ban on running the full suite locally, what earns a test, plus deep dives on router tests, what to mock and module doubles, the nuxt environment, platform/CLI/bundle snapshots, full-run failures, helper/`.test-d.ts` files, and fake timers with hand-resolved promises. Apply when writing .test.ts or .test-d.ts files.
 ---
 
 # Testing Conventions (Vitest)
@@ -12,13 +12,14 @@ description: Esposter Vitest testing conventions — describe with function refs
 - `references/nuxt-environment-and-mounting.md` — a DOM, the nuxt runtime, a mounted component, a routed link, a dispatched event.
 - `references/platform-and-bundle-tests.md` — skipping on some hosts, colorized CLI output, a built `dist` size.
 - `references/test-helper-files.md` — anything that isn't a plain suite: shared helpers, `constants.test.ts` fixtures, filesystem path names, a wrapper suite delegating its matrix, `.test-d.ts`.
-- `references/running-the-suite.md` — a failure or timeout only the full parallel run produces, and the Windows module allowlist.
+- `references/running-the-suite.md` — reading a CI failure or timeout that only the full parallel run produces, and the Windows module allowlist.
 - `references/timers-and-hand-resolved-promises.md` — fake timers, a pinned clock, throttled code, or a call held in flight.
 
 ## Structure
 
 - **`test` not `it`** — always `test(...)`.
 - **`describe(functionRef, …)`** — the function reference itself; a string only when no importable reference exists. Flat — never a nested `describe` for sub-grouping.
+- **Nothing but functions and hoisted mocks lives at module scope.** Every constant — a literal, a fixture object, an entity built by a factory — is a `const` **inside the `describe` callback**, so it is reachable only from that block's tests instead of from every `describe` in the file. The reason is reachability, not memory: a `describe` callback runs once, during collection, right after module scope — so a constant inside one is created at the same moment a module-scope constant is, shared by every test in the block, and freed at the same time (the file's environment teardown). What changes is who can reach it, and a binding a sibling suite can reach is a binding a sibling suite can mutate, which is how a suite becomes order-dependent. `describe.each` is the one case where the scoping is also a lifetime: its callback runs per case, so each case gets its own. Module scope is for `import`s, pure helper functions (which hold no state), the `vi.hoisted` block, which `vi.mock` lifts above the imports and therefore _cannot_ move inward, and **anything a `vi.mock` factory closes over** — the `let mockDb` a `get db()` factory returns is reached from above the imports too, so it stays out for the same reason. A helper that captures a suite constant is not the pure kind and moves in with it. A constant shared by sibling `describe`s is declared in each — duplicating two lines beats a file-scope binding every block can reach.
 - **Shared test constants as `const` inside the `describe` callback.** State that must be rebuilt per test (a mock DB, a wrapper to unmount, a store) is a `let` there, initialized in `beforeEach` — a helper reads it rather than taking it as an argument. That is scoped to rebuilt-per-test state: an input that simply **differs between tests** stays a parameter (`mountFoo(route, activeCategory)`), never a `let` assigned before each call, which would manufacture the shared mutable state the rule exists to contain.
 - **`test.each` for a table of cases, never a loop around `test`** (`no-restricted-syntax`). A loop registers every case under one name, so the reporter shows one row and `pnpm test -t` cannot select a single case; `.each` names each row and a failure says which input produced it. The title takes `%s` rather than a template literal — the interpolation is the runner's job, and it is what makes the row title match the case. A table of **enum members** needs `as const`: without it the array widens to the enum, and any discriminated union the case feeds rejects it.
 - **`expect.hasAssertions()`** — top of every test body.
@@ -65,6 +66,7 @@ Mock the **smallest seam that makes the behaviour reachable**, never re-declare 
 
 - **`vi.spyOn()` → `vi.restoreAllMocks()`** (default) — restores the original implementation AND clears recorded calls, so spies never leak.
 - **Module-level `vi.fn()` (colocated `vi.mock`) → `vi.clearAllMocks()`** — never a spy, so `restoreAllMocks` lets its call history **leak into the next test**. Required wherever `toHaveBeenCalled*` is asserted on one across tests; a file mixing both kinds needs both calls.
+- **`vi.fn()` always takes its signature** — `vi.fn<(input: CreateEmojiInput) => Promise<void>>()`. A bare `vi.fn()` infers `unknown` parameters, so destructuring a recorded call (`mock.calls.map(([{ id }]) => id)`) is an implicit-`any` lint error and `mockResolvedValue` accepts anything. Write the real signature, importing the production input/return types rather than restating their fields.
 - **Never `vi.resetAllMocks()` as routine cleanup** — it resets implementations to empty functions, erasing intentional `vi.mock` defaults.
 - **Globals use `vi.stubGlobal`**, never `Object.defineProperty`; unstub with `vi.unstubAllGlobals()` in `afterEach` (per-test stubs) or `afterAll` (set once in `beforeAll`). `vi.restoreAllMocks()` does **not** undo a `stubGlobal`.
 - **`vi.stubEnv` needs no teardown** — `unstubEnvs: true` in `getVitestConfiguration` restores the env after every test, so never write an `unstubAllEnvs` hook. The globals flag stays off deliberately: it would restore a `beforeAll` `stubGlobal` after the file's first test.
@@ -79,7 +81,7 @@ Mock the **smallest seam that makes the behaviour reachable**, never re-declare 
 ## Running Tests
 
 - **Always use `run_in_background: true`** for `pnpm lint`, `pnpm typecheck`, and test commands.
-- **Run the full suite, not just your new file** — a green targeted run hides shared-global-state regressions the parallel run catches, and a full-run timeout is not automatically one (never bump `testTimeout` over it). Reading those failures, and the Windows module allowlist: `references/running-the-suite.md`.
+- **Never run the full suite locally** — `pnpm test <paths> -u --run` with the paths the change touched. The scoping rule is the `package-scripts` skill's; full-run-only failures and the Windows module allowlist are `references/running-the-suite.md`.
 
 ## What to Test
 
@@ -90,4 +92,5 @@ Mock the **smallest seam that makes the behaviour reachable**, never re-declare 
 - **Test composables, not the service functions under them** — composable tests cover the full call chain; test a service directly only when it has no composable wrapper.
 - **Don't test Zod schema constraints** (min/max, regex, required-field are Zod's concern) **or trivial lookups** — a function that just indexes a constant map with a static fallback would only restate the map; test functions with real logic (recursion, sorting, branching).
 - **One test per operation** — all field assertions combined; don't split "updates name"/"updates bio".
+- **A hand-written type over a third-party data file earns exactly one shape test** — nothing typechecks a `declare module` against the bytes, so a dependency bump that renames a key passes every other gate silently. Assert one known record `toStrictEqual` its whole shape, plus any invariant the type encodes. This is the "literal fixed outside this repo" exception above, not a restated constant.
 - **A UI change earns a component test only when it is cheap under the default setup.** Mount it and assert the rendered structure when that works out of the box; when it would first need a store graph, the tRPC client or Vuetify internals mocked, write no test — the mocks become the subject, and the layout is the user's to eyeball (`run-app`, which also owns why an agent never checks one in a browser).

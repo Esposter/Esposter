@@ -5,19 +5,6 @@ import { takeOne } from "@esposter/shared";
 import { EventEmitter } from "node:events";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-// Track every fake child so afterEach can trigger the helper's own `close` cleanup — removing exactly the
-// Listeners it added. Never `process.removeAllListeners`: that would also wipe vitest's signal handlers and hang
-// The worker on teardown.
-const children: EventEmitter[] = [];
-
-const createFakeChild = () => {
-  const child = new EventEmitter();
-  const kill = vi.fn<ChildProcess["kill"]>();
-  Object.assign(child, { kill });
-  children.push(child);
-  return { child: child as unknown as ChildProcess, kill };
-};
-
 // Grab the single SIGINT listener forwardTerminationSignals just installed, so we can drive it directly
 // Instead of emitting a real OS signal on `process` and disturbing the test runner.
 const getAddedSignalListener = (signal: NodeJS.Signals, previousListeners: readonly unknown[]) =>
@@ -27,6 +14,19 @@ const getAddedSignalListener = (signal: NodeJS.Signals, previousListeners: reado
   );
 
 describe(forwardTerminationSignals, () => {
+  // Track every fake child so afterEach can trigger the helper's own `close` cleanup — removing exactly the
+  // Listeners it added. Never `process.removeAllListeners`: that would also wipe vitest's signal handlers and hang
+  // The worker on teardown.
+  const children: EventEmitter[] = [];
+
+  const createFakeChild = () => {
+    const child = new EventEmitter();
+    const kill = vi.fn<ChildProcess["kill"]>();
+    Object.assign(child, { kill });
+    children.push(child);
+    return { child: child as unknown as ChildProcess, kill };
+  };
+
   afterEach(() => {
     for (const child of children.splice(0)) child.emit("close");
   });

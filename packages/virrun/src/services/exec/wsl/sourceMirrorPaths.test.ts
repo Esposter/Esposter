@@ -20,9 +20,9 @@ vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
   readWslPath: (path: string) => `${TEST_WSL_PREFIX}${path}`,
 }));
 
-const cacheRootLinux = `${TEST_WSL_PREFIX}${createTestWslUnc(TEST_WSL_CACHE_ROOT_LINUX)}`;
-
 describe(getWslSourceMirrorEntryPath, () => {
+  const cacheRootLinux = `${TEST_WSL_PREFIX}${createTestWslUnc(TEST_WSL_CACHE_ROOT_LINUX)}`;
+
   test("addresses the entry dir under sources/<sha256(hostCwd)> so distinct repos never collide", () => {
     expect.hasAssertions();
 
@@ -44,6 +44,8 @@ describe(getWslSourceMirrorEntryPath, () => {
 });
 
 describe(getWslSourceMirrorPath, () => {
+  const cacheRootLinux = `${TEST_WSL_PREFIX}${createTestWslUnc(TEST_WSL_CACHE_ROOT_LINUX)}`;
+
   // The key scheme itself is pinned once, against the entry resolver above; what this adds is the tree segment
   test("addresses the mirror tree under the entry dir so distinct repos never collide", () => {
     expect.hasAssertions();

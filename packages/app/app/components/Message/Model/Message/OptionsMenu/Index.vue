@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { EmojiDescriptionMap } from "@/services/message/emoji/EmojiDescriptionMap";
 import { EmojiMenuItems } from "@/services/message/emoji/EmojiMenuItems";
-import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
+import { getEmojiDescription } from "@/services/message/emoji/getEmojiDescription";
 
 interface MessageOptionsMenuProps {
   hoverProps?: Record<string, unknown>;
@@ -32,13 +31,12 @@ const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProp
           <v-btn :text="emoji" icon tile m-0 size-10 :="props" @click="selectEmoji(emoji)" />
         </template>
         <div text-center flex flex-col>
-          <div font-bold>{{ EmojiDescriptionMap.get(emoji) }}</div>
+          <div font-bold>{{ getEmojiDescription(emoji) }}</div>
           <div>Click to react</div>
         </div>
       </v-tooltip>
       <v-divider thickness="2" vertical h-6 self-center />
       <StyledEmojiPicker
-        :tooltip-props="{ text: EMOJI_PICKER_TOOLTIP_TEXT }"
         :button-props="{ size: 'small', tile: true }"
         @update:menu="emit('update:menu', $event)"
         @select="selectEmoji"

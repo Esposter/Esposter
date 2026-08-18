@@ -8,9 +8,9 @@ import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
-const roomId = crypto.randomUUID();
-
 describe(useWebhookStore, () => {
+  const roomId = crypto.randomUUID();
+
   const server = setupMswTrpc();
   const first = createWebhook({ name: "first", roomId });
   const second = createWebhook({ name: "second", roomId });

@@ -8,14 +8,12 @@ import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclud
 import { diffSourceMirrorManifests } from "@/services/exec/wsl/diffSourceMirrorManifests";
 import { describe, expect, test } from "vitest";
 
-const OTHER_FILENAME = "b";
 const file = (mtimeMs = 0, size = 0): SourceMirrorManifestEntry => ({
   mtimeMs,
   size,
   target: "",
   type: SourceMirrorEntryType.File,
 });
-const directory: SourceMirrorManifestEntry = { mtimeMs: 0, size: 0, target: "", type: SourceMirrorEntryType.Directory };
 // A published mirror state: entries plus the exclude set they were walked under, which most cases don't vary.
 const publish = (entries: SourceMirrorManifest, excludes: readonly string[] = []): SourceMirrorPublication => ({
   entries,
@@ -29,6 +27,14 @@ const symlink = (target: string): SourceMirrorManifestEntry => ({
 });
 
 describe(diffSourceMirrorManifests, () => {
+  const OTHER_FILENAME = "b";
+  const directory: SourceMirrorManifestEntry = {
+    mtimeMs: 0,
+    size: 0,
+    target: "",
+    type: SourceMirrorEntryType.Directory,
+  };
+
   test("returns an empty delta for identical manifests", () => {
     expect.hasAssertions();
 

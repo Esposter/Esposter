@@ -2,10 +2,10 @@ import { getFileSize } from "@esposter/configuration";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const distFile = resolve(import.meta.dirname, "../dist/index.js");
-const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
-
 describe("vue-phaserjs", () => {
+  const distFile = resolve(import.meta.dirname, "../dist/index.js");
+  const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
+
   // The only package whose bundle differs across OSes: it is large enough that the minifier's single-character
   // Identifiers run out, and which module gets the two-character name follows a module order that a Windows and
   // A POSIX build resolve differently — two bytes apart, every time. The types bundle is byte-identical, so it

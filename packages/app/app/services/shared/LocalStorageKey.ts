@@ -6,6 +6,7 @@ export const LocalStorageKey = {
   ClickerStore: "clicker-store",
   Draft: (composerKey: string) => `draft${LOCAL_STORAGE_KEY_SEPARATOR}${composerKey}`,
   DungeonsStore: "dungeons-store",
+  EmojiSkinTone: "emoji-skin-tone",
   IsResourceBladeNavCollapsed: "is-resource-blade-nav-collapsed",
   MessageCategoryCollapsed: (categoryId: string) => `message-category-${categoryId}-collapsed`,
   MessageDisplayMode: "message-display-mode",
@@ -13,6 +14,7 @@ export const LocalStorageKey = {
   MessageRightSideBarWidth: "message-right-side-bar-width",
   MessageSidebarDirectMessagesCollapsed: "message-sidebar-direct-messages-collapsed",
   MessageSidebarRoomsCollapsed: "message-sidebar-rooms-collapsed",
+  RecentEmojiSlugs: "recent-emoji-slugs",
   ResourceListHiddenColumns: "resource-list-hidden-columns",
   ResourceRecentSearches: "resource-recent-searches",
   // Scoped by participant token as well as survey: a shared browser must not resume a response that was

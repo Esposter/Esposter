@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import type { VBtn, VTooltip } from "vuetify/components";
 
-import { emojiIndex } from "@/services/message/emoji/emojiIndex";
-// @ts-expect-error @TODO: https://github.com/serebrov/emoji-mart-vue/issues/121
-import Picker from "emoji-mart-vue-fast/src/components/Picker.vue";
-import "emoji-mart-vue-fast/css/emoji-mart.css";
+import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { mergeProps } from "vue";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StyledEmojiPickerProps {
@@ -14,26 +11,31 @@ interface StyledEmojiPickerProps {
 
 defineSlots<{ default?: (props: Record<string, unknown>) => VNode }>();
 const menu = defineModel<boolean>("menu", { default: false });
-const { buttonProps = {}, tooltipProps = {} } = defineProps<StyledEmojiPickerProps>();
+const { buttonProps = {}, tooltipProps = { text: EMOJI_PICKER_TOOLTIP_TEXT } } = defineProps<StyledEmojiPickerProps>();
 const emit = defineEmits<{ select: [emoji: string] }>();
 </script>
 
 <template>
-  <v-menu v-model="menu" transition="none" location="left" :close-on-content-click="false">
+  <v-menu v-model="menu" :close-on-content-click="false" location="left" transition="none">
     <template #activator="{ props: menuProps }">
       <slot :="menuProps">
         <v-tooltip :="tooltipProps">
           <template #activator="{ props: tooltipActivatorProps }">
-            <v-btn icon="mdi-emoticon" :="mergeProps(menuProps, tooltipActivatorProps, buttonProps)" />
+            <!-- The tooltip names the icon-only button visually only, so the same text is its accessible name -->
+            <v-btn
+              icon="mdi-emoticon"
+              :aria-label="tooltipProps.text"
+              :="mergeProps(menuProps, tooltipActivatorProps, buttonProps)"
+            />
           </template>
         </v-tooltip>
       </slot>
     </template>
-    <Picker
-      :data="emojiIndex"
+    <!-- The overlay renders its content only once opened, which is what defers the index build to first open -->
+    <StyledEmojiPickerPanel
       @select="
-        (emoji: { native: string }) => {
-          emit('select', emoji.native);
+        (emoji: string) => {
+          emit('select', emoji);
           menu = false;
         }
       "

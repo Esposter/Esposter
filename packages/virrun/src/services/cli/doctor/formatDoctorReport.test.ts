@@ -6,23 +6,23 @@ import { stripAnsi } from "@/services/cli/color/stripAnsi.test";
 import { formatDoctorReport } from "@/services/cli/doctor/formatDoctorReport";
 import { describe, expect, test } from "vitest";
 
-const platform = "win32";
-const okBubblewrap: DiagnosticCheck = {
-  fix: "",
-  label: "bubblewrap >= 0.10.0",
-  note: "bubblewrap 0.11.1",
-  status: DiagnosticStatus.Ok,
-  type: DiagnosticCheckType.Bubblewrap,
-};
-const okSandbox: DiagnosticCheck = {
-  fix: "",
-  label: "overlay sandbox mount",
-  note: "bubblewrap RAM overlay mounts",
-  status: DiagnosticStatus.Ok,
-  type: DiagnosticCheckType.Sandbox,
-};
-
 describe(formatDoctorReport, () => {
+  const platform = "win32";
+  const okBubblewrap: DiagnosticCheck = {
+    fix: "",
+    label: "bubblewrap >= 0.10.0",
+    note: "bubblewrap 0.11.1",
+    status: DiagnosticStatus.Ok,
+    type: DiagnosticCheckType.Bubblewrap,
+  };
+  const okSandbox: DiagnosticCheck = {
+    fix: "",
+    label: "overlay sandbox mount",
+    note: "bubblewrap RAM overlay mounts",
+    status: DiagnosticStatus.Ok,
+    type: DiagnosticCheckType.Sandbox,
+  };
+
   test("renders an aligned ok row and a ready summary", () => {
     expect.hasAssertions();
 

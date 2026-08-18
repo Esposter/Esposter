@@ -19,21 +19,21 @@ const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExec
 
 vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
 
-// A snapshot leaf on the distro's ext4 (`/home/user/.virrun/snapshots/<hash>/upper`); `h` is a stand-in hash.
-const linuxDirectory = `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_SNAPSHOTS_DIRECTORY_NAME}/h/${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}`;
-// The WSL-side teardown removeSnapshotDirectory shells out for a UNC snapshot dir: chmod traversable, then rm -rf.
-// Paths are passed as positional args, never interpolated, so a quote in one can't break the shell quoting — and the
-// Bound is the work timeout, not the probe's: unlinking a node_modules closure is minutes of real work, while an
-// Unbounded call against a wedged WSL service would never return at all.
-const expectWslRemoval = (timeoutMs: number = WSL_WORK_TIMEOUT_MS) => {
-  expect(execFileSync).toHaveBeenCalledExactlyOnceWith(
-    "wsl.exe",
-    ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDirectory],
-    { encoding: "buffer", stdio: "pipe", timeout: timeoutMs, windowsHide: true },
-  );
-};
-
 describe(removeSnapshotDirectory, () => {
+  // A snapshot leaf on the distro's ext4 (`/home/user/.virrun/snapshots/<hash>/upper`); `h` is a stand-in hash.
+  const linuxDirectory = `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_SNAPSHOTS_DIRECTORY_NAME}/h/${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}`;
+  // The WSL-side teardown removeSnapshotDirectory shells out for a UNC snapshot dir: chmod traversable, then rm -rf.
+  // Paths are passed as positional args, never interpolated, so a quote in one can't break the shell quoting — and the
+  // Bound is the work timeout, not the probe's: unlinking a node_modules closure is minutes of real work, while an
+  // Unbounded call against a wedged WSL service would never return at all.
+  const expectWslRemoval = (timeoutMs: number = WSL_WORK_TIMEOUT_MS) => {
+    expect(execFileSync).toHaveBeenCalledExactlyOnceWith(
+      "wsl.exe",
+      ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDirectory],
+      { encoding: "buffer", stdio: "pipe", timeout: timeoutMs, windowsHide: true },
+    );
+  };
+
   const { cleanup, create } = createTemporaryDirectoryTracker();
 
   beforeEach(() => {

@@ -3,13 +3,13 @@ import { getSurroundingPages } from "@/services/docs/getSurroundingPages";
 import { RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const pages = [
-  createNavigationItem(`${RoutePath.Docs}/a`),
-  createNavigationItem(`${RoutePath.Docs}/b`),
-  createNavigationItem(`${RoutePath.Docs}/c`),
-];
-
 describe(getSurroundingPages, () => {
+  const pages = [
+    createNavigationItem(`${RoutePath.Docs}/a`),
+    createNavigationItem(`${RoutePath.Docs}/b`),
+    createNavigationItem(`${RoutePath.Docs}/c`),
+  ];
+
   test("returns previous and next around a middle page", () => {
     expect.hasAssertions();
 

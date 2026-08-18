@@ -24,6 +24,5 @@ Infra has open area proposals right now; every other area's roadmap is clear.
 Repo-wide refactor plans have no area roadmap and live here directly:
 
 - [ESLint → oxlint migration](/docs/proposals/refactors/eslint-to-oxlint-migration) — move rules to oxlint as coverage lands, prioritized by ESLint rule time.
-- [Emoji picker rewrite](/docs/proposals/refactors/emoji-picker-rewrite) — replace `emoji-mart-vue-fast` with an in-repo composition-API picker, retiring the Options API runtime, the CDN sprite sheet and the second emoji dataset.
 
 Sweeps are not proposals. A proposal designs behaviour that does not exist yet; a sweep carries a settled convention across code that already works and changes nothing about what it does. They are tracked as repo state in `.claude/ledgers/`, one ledger file per sweep — or one coverage folder, once a sweep outgrows a single file.

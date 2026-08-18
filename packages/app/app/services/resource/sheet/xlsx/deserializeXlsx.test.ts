@@ -28,11 +28,11 @@ vi.mock(import("write-excel-file/browser"), (importOriginal) => {
   return importOriginal();
 });
 
-// Read while this file is still evaluating, so the assertion holds whatever order the tests run in
-const librariesLoadedAtImport = { ...xlsxLibraries };
-const defaultSettings: XlsxFileSettings = { configuration: { sheetIndex: 0 }, type: DataSourceType.Xlsx };
-
 describe(deserializeXlsx, () => {
+  // Read while this file is still evaluating, so the assertion holds whatever order the tests run in
+  const librariesLoadedAtImport = { ...xlsxLibraries };
+  const defaultSettings: XlsxFileSettings = { configuration: { sheetIndex: 0 }, type: DataSourceType.Xlsx };
+
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Xlsx].mimeType;
 
   const createXlsxFile = async (dataSource: DataSource, name = "test.xlsx") => {

@@ -81,3 +81,23 @@ declare module "nuxt/schema" {
   }
 }
 ```
+
+## A large third-party JSON dataset — declare the module, never let TypeScript read it
+
+Importing a data file directly makes TypeScript infer the literal type of every key in it — a cost paid on every
+typecheck, for a type nothing wants. Some packages also point `types` at a file they do not publish.
+
+Declare the shape in `app/types/<package>.d.ts`, with **no top-level imports** (they would turn `declare module`
+into an augmentation, which fails when the target has no types). Reach the record interface inline instead:
+
+```ts
+declare module "unicode-emoji-json/data-by-emoji.json" {
+  const dataByCharacter: Record<string, import("@/models/message/emoji/UnicodeEmojiRecord").UnicodeEmojiRecord>;
+  export default dataByCharacter;
+}
+```
+
+The interface lives in `app/models/`, models the **whole** record rather than the fields today's caller reads,
+and keeps the source's casing verbatim — a `/* eslint-disable camelcase */` with a reason beats renaming keys
+the file does not have. Optionality is looked up in the data, never guessed. It earns one shape test
+(`testing` skill).

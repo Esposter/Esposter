@@ -5,8 +5,10 @@ import type { MessageEntity } from "@esposter/db-schema";
 export const useMessageDialogStore = defineStore("message/dialog", () => {
   const deletingRowKey = ref<MessageEntity["rowKey"]>("");
   const pinningRowKey = ref<MessageEntity["rowKey"]>("");
+  const reactionsRowKey = ref<MessageEntity["rowKey"]>("");
   return {
     deletingRowKey,
     pinningRowKey,
+    reactionsRowKey,
   };
 });

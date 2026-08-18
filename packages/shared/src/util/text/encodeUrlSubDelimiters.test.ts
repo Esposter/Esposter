@@ -1,9 +1,9 @@
 import { encodeUrlSubDelimiters } from "@/util/text/encodeUrlSubDelimiters";
 import { describe, expect, test } from "vitest";
 
-const prefix = "https://account.blob.core.windows.net/c/1/";
-
 describe(encodeUrlSubDelimiters, () => {
+  const prefix = "https://account.blob.core.windows.net/c/1/";
+
   test("should return a url without sub-delimiters unchanged", () => {
     expect.hasAssertions();
 

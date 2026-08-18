@@ -1,9 +1,9 @@
 import { isVersionAtLeast } from "@/services/cli/run/isVersionAtLeast";
 import { describe, expect, test } from "vitest";
 
-const minimum = "0.10.0";
-
 describe(isVersionAtLeast, () => {
+  const minimum = "0.10.0";
+
   test("accepts an equal version", () => {
     expect.hasAssertions();
 
