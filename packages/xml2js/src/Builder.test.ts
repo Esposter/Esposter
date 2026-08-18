@@ -1,9 +1,9 @@
 import { Builder } from "@/Builder";
 import { describe, expect, test } from "vitest";
 
-const xmlDeclaration = '<?xml version="1.0" encoding="utf8" standalone="yes"?>';
-
 describe(Builder, () => {
+  const xmlDeclaration = '<?xml version="1.0" encoding="utf8" standalone="yes"?>';
+
   test("renders nullish values as empty elements", () => {
     expect.hasAssertions();
 

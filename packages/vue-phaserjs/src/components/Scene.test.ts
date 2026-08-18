@@ -8,24 +8,24 @@ import { mount } from "@vue/test-utils";
 import { Cameras } from "phaser";
 import { afterEach, describe, expect, test } from "vitest";
 
-const sceneKey = "sceneKey";
-let wrapper: ReturnType<typeof mount<typeof Scene>> | undefined;
-
-const mountScene = (props?: Partial<InstanceType<typeof Scene>["$props"]>) => {
-  wrapper = mount(Scene, {
-    global: { plugins: [getTestPinia()] },
-    props: { sceneKey, ...props },
-  });
-  return wrapper;
-};
-
-afterEach(() => {
-  wrapper?.unmount();
-  wrapper = undefined;
-  removeTestScene(sceneKey);
-});
-
 describe("scene", () => {
+  const sceneKey = "sceneKey";
+  let wrapper: ReturnType<typeof mount<typeof Scene>> | undefined;
+
+  const mountScene = (props?: Partial<InstanceType<typeof Scene>["$props"]>) => {
+    wrapper = mount(Scene, {
+      global: { plugins: [getTestPinia()] },
+      props: { sceneKey, ...props },
+    });
+    return wrapper;
+  };
+
+  afterEach(() => {
+    wrapper?.unmount();
+    wrapper = undefined;
+    removeTestScene(sceneKey);
+  });
+
   test("adds the scene to the phaser game after mount", () => {
     expect.hasAssertions();
 
