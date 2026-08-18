@@ -19,7 +19,9 @@ const { createAlert } = alertStore;
 const { executeMutation } = useMutation();
 const { data: accounts, refresh } = useQuery(() => requireAuthData(listAccounts()));
 // Keyed by provider because that is what a row knows about itself, valued with the account row's own id
-// Because that is what unlinking takes — a provider may hold several accounts, and better-auth deletes one
+// Because that is what unlinking takes. One provider holds at most one row here: linking keys on the identity
+// The provider issued and `allowDifferentEmails` is off, so a second account of the same provider would have to
+// Carry the same verified address as the first — which no provider issues twice
 const LinkedAccountIdMap = computed(() => new Map(accounts.value?.map(({ id, providerId }) => [providerId, id])));
 // A link the provider or the callback rejects comes back as a redirect carrying `?error=<code>`, so its
 // Outcome never reaches the promise the button awaited
@@ -52,7 +54,7 @@ if (typeof linkError === "string") {
         :key="loginButtonProps.provider"
         :="loginButtonProps"
         :is-linked="LinkedAccountIdMap.has(loginButtonProps.provider) ? true : undefined"
-        :linked-account-count="LinkedAccountIdMap.size"
+        :linked-account-count="accounts.length"
         @link="
           async () => {
             await executeMutation(
