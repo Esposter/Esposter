@@ -8,9 +8,9 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
-const lockfileContent = "lockfileVersion: '9.0'\n";
-
 describe(computeLockfileHash, () => {
+  const lockfileContent = "lockfileVersion: '9.0'\n";
+
   const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
   // A lockfile-less dir exercises the throw path; any other content makes a workspace root.
   const createRepository = (content?: string): string => (content === undefined ? create() : createWorkspace(content));

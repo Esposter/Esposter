@@ -6,13 +6,13 @@ import { getSandboxNodeVersion } from "@/services/exec/util/getSandboxNodeVersio
 import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
 import { afterEach, describe, expect, test } from "vitest";
 
-const MASKED_PATHS: readonly string[] = [];
-// Every key below needs the sandbox node major, which computeEnvironmentKey probes from a WSL login shell on win32 —
-// With none reachable the key is null by design, and comparing null against null asserts nothing at all. The two
-// Null cases above stay: they are what the probe failing looks like. CI is linux, where the probe is process.version
-const IS_SANDBOX_NODE_VERSION_READABLE = Boolean(getSandboxNodeVersion());
-
 describe(computeTaskCacheKey, () => {
+  const MASKED_PATHS: readonly string[] = [];
+  // Every key below needs the sandbox node major, which computeEnvironmentKey probes from a WSL login shell on win32 —
+  // With none reachable the key is null by design, and comparing null against null asserts nothing at all. The two
+  // Null cases above stay: they are what the probe failing looks like. CI is linux, where the probe is process.version
+  const IS_SANDBOX_NODE_VERSION_READABLE = Boolean(getSandboxNodeVersion());
+
   const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
   const command = "";
 

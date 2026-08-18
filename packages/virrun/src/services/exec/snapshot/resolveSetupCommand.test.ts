@@ -2,11 +2,12 @@ import { SETUP_COMMAND_LINUX, SETUP_COMMAND_WIN32 } from "@/services/exec/snapsh
 import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { afterEach, describe, expect, test } from "vitest";
 
-const realPlatform = process.platform;
 const setPlatform = (platform: NodeJS.Platform) =>
   Object.defineProperty(process, "platform", { configurable: true, value: platform });
 
 describe(resolveSetupCommand, () => {
+  const realPlatform = process.platform;
+
   afterEach(() => {
     setPlatform(realPlatform);
   });

@@ -10,14 +10,14 @@ import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from "no
 import { join } from "node:path";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-// Stands in for any path the sandbox's source view lacks — on win32 a mirror exclude, e.g. a linked worktree root.
-const MASKED_PATH = "b/c";
-
 // Correctness layer 4 write-back equivalence (specs/write-back.md): a persist run leaves the host disk exactly as
 // The same command run natively would. One overlay-entry kind per case; one warm snapshot reused across cases.
 // Each case boots a sandbox and installs, so the suite costs minutes of wall clock — too slow for the default
 // Suite. The body is kept intact; drop the `.todo` to run it when the write-back or flush path changes.
 describe.todo("persistRun - flushes produced files but never node_modules (write-back equivalence)", () => {
+  // Stands in for any path the sandbox's source view lacks — on win32 a mirror exclude, e.g. a linked worktree root.
+  const MASKED_PATH = "b/c";
+
   const { getBackend, getCorpus } = setupWarmSnapshotSuite();
   const acceptanceTimeoutMs = dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds();
   let corpus = "";

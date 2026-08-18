@@ -13,14 +13,14 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {describe, expect, test, vi} from "vitest";
 
-const step: PrepareStep = { command: NUXT_PREPARE_COMMAND, outputs: [NUXT_OUTPUT_DIRECTORY] };
-
 vi.mock(
   import("@/services/exec/util/getSandboxNodeVersion"),
   () => import("@/services/exec/test/getSandboxNodeVersion.test"),
 );
 
 describe(resolvePrepareLocation, () => {
+  const step: PrepareStep = { command: NUXT_PREPARE_COMMAND, outputs: [NUXT_OUTPUT_DIRECTORY] };
+
   const { createWorkspace, getCacheHome } = setupTemporaryCacheHome();
 
   test("addresses the layer under prepare/<key> with its upper dir, outside the repo", () => {

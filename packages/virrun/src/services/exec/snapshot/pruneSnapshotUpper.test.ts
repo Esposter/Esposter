@@ -7,17 +7,17 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
-// A file inside the repo-root dependency closure — the canonical thing the lockfile determines, so the prune keeps it.
-const ROOT_DEPENDENCY = join(NODE_MODULES_DIRECTORY, TEST_FILENAME);
-// A workspace package directory: worth keeping only as the path to its own nested closure.
-const PACKAGE_DIRECTORY = TEST_FILENAME;
-// A file inside that package's nested closure — also kept.
-const NESTED_DEPENDENCY = join(PACKAGE_DIRECTORY, NODE_MODULES_DIRECTORY, TEST_FILENAME);
-// A source-derived artifact tree a postinstall hook left beside the nested closure (e.g. .nuxt): freezing it is the
-// Staleness the prune exists to prevent, so it is dropped while the package directory around it survives.
-const GENERATED_ARTIFACT = join(PACKAGE_DIRECTORY, TEST_FILENAME, TEST_FILENAME);
-
 describe(pruneSnapshotUpper, () => {
+  // A file inside the repo-root dependency closure — the canonical thing the lockfile determines, so the prune keeps it.
+  const ROOT_DEPENDENCY = join(NODE_MODULES_DIRECTORY, TEST_FILENAME);
+  // A workspace package directory: worth keeping only as the path to its own nested closure.
+  const PACKAGE_DIRECTORY = TEST_FILENAME;
+  // A file inside that package's nested closure — also kept.
+  const NESTED_DEPENDENCY = join(PACKAGE_DIRECTORY, NODE_MODULES_DIRECTORY, TEST_FILENAME);
+  // A source-derived artifact tree a postinstall hook left beside the nested closure (e.g. .nuxt): freezing it is the
+  // Staleness the prune exists to prevent, so it is dropped while the package directory around it survives.
+  const GENERATED_ARTIFACT = join(PACKAGE_DIRECTORY, TEST_FILENAME, TEST_FILENAME);
+
   const { cleanup, create } = createTemporaryDirectoryTracker();
 
   afterEach(() => {

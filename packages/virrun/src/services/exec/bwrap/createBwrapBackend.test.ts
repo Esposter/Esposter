@@ -14,10 +14,6 @@ import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { getResultAsync } from "@esposter/shared";
 import { EventEmitter } from "node:events";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-// The wsl backend can't let stderr stream live — it carries the bwrap status block it has to parse — so it
-// Captures stderr regardless of stdio. These cases pin down that the captured stderr is never swallowed:
-// It must surface in the sandbox-setup error, and under "inherit" it must be re-emitted to the host.
-const ERROR_NAME = "createOsBackend";
 
 const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
 
@@ -45,6 +41,11 @@ const createFakeChild = ({ status = "", stderr = "", stdout = "" }): ChildProces
 };
 
 describe(createBwrapBackend, () => {
+  // The wsl backend can't let stderr stream live — it carries the bwrap status block it has to parse — so it
+  // Captures stderr regardless of stdio. These cases pin down that the captured stderr is never swallowed:
+  // It must surface in the sandbox-setup error, and under "inherit" it must be re-emitted to the host.
+  const ERROR_NAME = "createOsBackend";
+
   const createBackend = () =>
     createBwrapBackend(
       () => [],
