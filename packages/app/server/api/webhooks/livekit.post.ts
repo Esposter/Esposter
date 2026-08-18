@@ -32,17 +32,17 @@ export default defineEventHandler(async (event) => {
 
       const session = await db.query.sessions.findFirst({
         where: { id: { eq: sessionId } },
-        with: { user: true },
+        with: { users: true },
       });
       if (!session) return { ok: true };
 
       const callParticipant = {
         id: session.id,
-        image: session.user.image,
+        image: session.users.image,
         isCameraEnabled: false,
         isHandRaised: false,
         isMuted: false,
-        name: session.user.name,
+        name: session.users.name,
         userId: session.userId,
       };
       createCallParticipant(callSessionId, callParticipant);
