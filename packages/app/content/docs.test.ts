@@ -7,11 +7,6 @@ import { glob, readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const MERMAID_REGEX = /```mermaid\r?\n(?<code>[\s\S]*?)```/gu;
-const DOCS_LINK_REGEX = /\]\((?<target>\/docs[^)\s#]*)(?:#[^)\s]*)?\)/gu;
-const BACKTICKED_TOKEN_REGEX = /`(?<token>[^`]+)`/gu;
-const TABLE_ROW_REGEX = /^\s*\|/u;
-const KEY_FILES_HEADER_REGEX = /\bfiles?\b/iu;
 // A path token we can resolve, i.e. no glob, placeholder or prose — brackets are Nuxt route segments.
 const REPOSITORY_PATH_REGEX = /^[\w./[\]-]+$/u;
 // Real /docs routes that are not content pages — the api section is generated TypeDoc output.
@@ -53,6 +48,8 @@ const getIsPage = (slugPath: string) =>
   existsSync(join(docsDirectory, `${slugPath}.md`)) || existsSync(join(docsDirectory, slugPath, "index.md"));
 
 describe(mermaid.parse, () => {
+  const MERMAID_REGEX = /```mermaid\r?\n(?<code>[\s\S]*?)```/gu;
+
   // Skills are checked here too, rather than in a test of their own: a skill diagram has no renderer to fail
   // In front of anyone — nothing loads a skill and draws it — so an unparseable one is invisible until an
   // Agent reads a broken picture as the process. This is the only place the parser is already wired up
@@ -72,6 +69,8 @@ describe(mermaid.parse, () => {
 });
 
 describe("docsLinks", () => {
+  const DOCS_LINK_REGEX = /\]\((?<target>\/docs[^)\s#]*)(?:#[^)\s]*)?\)/gu;
+
   test("every /docs link resolves to a page", () => {
     expect.hasAssertions();
 
@@ -129,6 +128,10 @@ describe("docsSectionGroupsMap", () => {
 });
 
 describe("keyFiles", () => {
+  const BACKTICKED_TOKEN_REGEX = /`(?<token>[^`]+)`/gu;
+  const TABLE_ROW_REGEX = /^\s*\|/u;
+  const KEY_FILES_HEADER_REGEX = /\bfiles?\b/iu;
+
   test("every key files path exists", () => {
     expect.hasAssertions();
 
