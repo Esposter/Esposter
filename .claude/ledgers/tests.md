@@ -99,7 +99,7 @@ factory returns in each `azure-functions` suite, and virrun's two mocked path co
 
 ## Judging a match
 
-- **A function stays at module scope.** It holds no state; moving it in costs a re-creation per block. But a
+- **A function stays at module scope.** It holds no state, so nothing about it can leak between suites. But a
   helper that **captures** one of these constants is not that pure kind — it moves in alongside it. `oxlint`'s
   `unicorn/consistent-function-scoping` does not count a default parameter value as a capture, so a helper whose
   only capture is `(name = blobName)` takes a disable rather than a move back out.
