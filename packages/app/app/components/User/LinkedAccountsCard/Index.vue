@@ -20,7 +20,7 @@ const { executeMutation } = useMutation();
 const { data: accounts, refresh } = useQuery(() => requireAuthData(listAccounts()));
 // Keyed by provider because that is what a row knows about itself, valued with the account row's own id
 // Because that is what unlinking takes — a provider may hold several accounts, and better-auth deletes one
-const LinkedAccountIdMap = computed(() => new Map(accounts.value?.map(({ id, providerId }) => [providerId, id]) ?? []));
+const LinkedAccountIdMap = computed(() => new Map(accounts.value?.map(({ id, providerId }) => [providerId, id])));
 // A link the provider or the callback rejects comes back as a redirect carrying `?error=<code>`, so its
 // Outcome never reaches the promise the button awaited
 const linkError = currentRoute.value.query.error;
