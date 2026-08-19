@@ -11,8 +11,11 @@ export type Clause<T extends object> = {
       value: SerializableValue;
     }
   | {
-      operator: Exclude<SearchOperator, SearchOperator.arrayContains>;
+      operator: Exclude<SearchOperator, SearchOperator.arrayAny | SearchOperator.arrayContains>;
       value: SerializableValue;
+    }
+  | {
+      operator: SearchOperator.arrayAny;
     }
   | {
       operator: SearchOperator.arrayContains;

@@ -73,6 +73,12 @@ export const filtersToClauses = (
                 value: ContentTypesByMimeCategory[FilterTypeHasMimeCategoryMap[value]] ?? [],
               });
               break;
+            case FilterTypeHas.File:
+              clauses.push({
+                key: StandardMessageEntityPropertyNames.files,
+                operator: SearchOperator.arrayAny,
+              });
+              break;
             case FilterTypeHas.Forward:
               clauses.push({
                 key: StandardMessageEntityPropertyNames.isForward,
