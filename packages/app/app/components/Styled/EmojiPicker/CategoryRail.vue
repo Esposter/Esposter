@@ -11,14 +11,15 @@ const { categories, isHorizontal } = defineProps<StyledEmojiPickerCategoryRailPr
 </script>
 
 <template>
-  <!-- A tooltip needs a pointer to hover, so the rail carries one only where the categories sit beside the grid -->
+  <!-- A tooltip needs a pointer to hover, so the rail carries one only where the categories sit beside the grid.
+       The tab is icon-only either way, so its title is its accessible name whether or not a tooltip shows it -->
   <v-tabs
     v-model="modelValue"
     density="compact"
     :class="isHorizontal ? 'w-full' : 'h-full'"
     :direction="isHorizontal ? 'horizontal' : 'vertical'"
   >
-    <v-tab v-for="{ icon, title } of categories" :key="title" :value="title">
+    <v-tab v-for="{ icon, title } of categories" :key="title" :aria-label="title" :value="title">
       <v-icon :icon />
       <v-tooltip v-if="!isHorizontal" activator="parent" location="right" :text="title" />
     </v-tab>

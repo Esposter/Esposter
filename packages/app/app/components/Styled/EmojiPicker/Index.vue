@@ -19,14 +19,17 @@ const emit = defineEmits<{ select: [emoji: string] }>();
 // Panel, in whichever container the viewport can hold, each keeping its own form's transition
 const { smAndDown } = useVDisplay();
 // The width is stated because a bottom sheet is a dialog underneath, so it would otherwise inherit the 500 the
-// App's VDialog default sets and sit centred at the bottom edge rather than spanning it
+// App's VDialog default sets and sit centred at the bottom edge rather than spanning it. The component itself is
+// Kept out of the spread: `is` only selects a dynamic component when it is on the element, never via v-bind
 const overlay = computed(() =>
-  smAndDown.value ? { is: VBottomSheet, width: "100%" } : { is: VMenu, location: "left", transition: "none" },
+  smAndDown.value
+    ? ({ is: VBottomSheet, props: { width: "100%" } } as const)
+    : ({ is: VMenu, props: { location: "left", transition: "none" } } as const),
 );
 </script>
 
 <template>
-  <component v-model="menu" :="overlay" :close-on-content-click="false">
+  <component :is="overlay.is" v-model="menu" :="overlay.props" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
       <slot :="menuProps">
         <v-tooltip :="tooltipProps">
