@@ -12,7 +12,7 @@ description: Esposter file and folder organisation — the alias imports (shared
   - `@@/` — project root (`packages/app/`); `server/` and other root-level paths.
   - `@/` — app source dir (`packages/app/app/`); `composables/`, `components/`, `store/`, `services/`, etc.
   - Never use `~~/` (old Nuxt alias) — replace with `@@/`.
-- **`shared/` may never import `@/` or `~/`** — it is parsed by the server as well as shipped to the browser, so a client import drags UI-library types and browser-only values into the server's graph. Banned by a root `.oxlintrc.json` override, type-only imports included. When a `shared/` module needs a client concern, give it a **twin**: `shared/` keeps the validating schema, `app/` derives the form schema from it with `safeExtend` and `satisfies z.ZodType<TSharedType>`. Moving the client module down into `shared/` relocates the boundary instead of restoring it. See [/docs/architecture/module-boundaries](/docs/architecture/module-boundaries).
+- **`shared/` may never import `@/` or `~/`** — it is parsed by the server as well as shipped to the browser, so a client import drags UI-library types and browser-only values into the server's graph. Banned by a root `.oxlintrc.json` override, type-only imports included. When a `shared/` module needs a client concern, give it a **twin**: `shared/` keeps the validating schema, `app/` derives the form schema from it with `safeExtend` and `satisfies z.ZodType<TSharedType>`. Moving the client module down into `shared/` relocates the boundary instead of restoring it. See `packages/app/content/docs/architecture/module-boundaries.md`.
 - Import grouping, blank lines, ordering, and line endings — see the `formatting` skill.
 
 ## Files and Exports
@@ -61,7 +61,7 @@ Read it when editing a workflow script or its tests, or writing any glob (Vitest
 
 Always PowerShell `New-Item -ItemType SymbolicLink -Path <link> -Target <target>` (needs Developer Mode or an elevated shell), deleting the existing file first. **Never `ln -s` on Windows** — Git Bash's `ln` copies the file instead of linking, so duplicate content gets committed silently. The repo sets `core.symlinks=true` and stores links as git mode `120000`; verify with `git ls-files -s <path>`.
 
-Tracked symlinks: `AGENTS.md` is the canonical agent guide, with `CLAUDE.md` and `GEMINI.md` pointing at it; `.agents/skills` → `.agents/skills`; each package's `eslint.config.js` → the shared `../configuration/eslint/index.{typescript,vue}.js`.
+Tracked symlinks: `AGENTS.md` is the canonical agent guide, with `CLAUDE.md` and `GEMINI.md` pointing at it; `.claude` → `.agents`, so a harness reading either name finds one tree; each package's `eslint.config.js` → the shared `../configuration/eslint/index.{typescript,vue}.js`.
 
 ## Constant Maps
 

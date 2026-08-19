@@ -5,7 +5,7 @@ description: Esposter rolldown build conventions — the shared configuration fa
 
 # Build Conventions (Rolldown)
 
-The mechanism — what runs, in what order, and why — is [/docs/architecture/build-pipeline](../../../packages/app/content/docs/architecture/build-pipeline.md). This skill is the conventions you apply when editing it.
+The mechanism — what runs, in what order, and why — is `packages/app/content/docs/architecture/build-pipeline.md`. This skill is the conventions you apply when editing it.
 
 ## Shared configs
 
@@ -61,4 +61,4 @@ So a package that wraps an augmented library exports the **value** and lets each
 
 ## Dependency installs & workspace graph
 
-Covered by root `CLAUDE.md` (`pnpm i`, `pnpm depcruise:graph`) and [monorepo tooling](../../../packages/app/content/docs/architecture/monorepo-tooling.md) (install safety rules). One addition: if `pnpm i` needs network access, request approval for plain `pnpm i` rather than changing pnpm store settings.
+Covered by root `CLAUDE.md` (`pnpm i`, `pnpm depcruise:graph`) and `packages/app/content/docs/architecture/monorepo-tooling.md` (install safety rules). One addition: if `pnpm i` needs network access, request approval for plain `pnpm i` rather than changing pnpm store settings.

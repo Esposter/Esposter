@@ -15,7 +15,7 @@ Declarative links use a Nuxt-native link component or a component's `:to` prop �
 - A link-styled control with no destination is a `<span text-info underline cursor-pointer>`, not an anchor.
 - Vuetify components (`v-btn`, `v-card`, `v-list-item`, `v-tab`, `v-chip`, `StyledButton`, …) with a plain destination take `:to` directly. Reserve `@click="navigateTo(...)"` for actions that run logic before navigating or compute the target at click time. Route targets still come from `RoutePath`, never string-built.
 
-The raw-`<a>` ban is enforced by `packages/configuration/eslint/overrides/vueRules.js` via `vue/no-restricted-html-elements`. Full standard: [navigation](/docs/architecture/navigation).
+The raw-`<a>` ban is enforced by `packages/configuration/eslint/overrides/vueRules.js` via `vue/no-restricted-html-elements`. Full standard: `packages/app/content/docs/architecture/navigation.md`.
 
 ## Imperative Navigation — `navigateTo`
 
@@ -71,7 +71,7 @@ Decide by what the value **is**, not by what is reachable:
 
 The middle case is the one that gets mis-filed. Putting "how I got here" in the URL mints a second address for one page (worse for sharing, bookmarks and analytics, and editable by anyone who types); putting it in storage makes it outlive the journey, so a tab restored later claims a path nobody walked.
 
-**Write that state in one place — a `router.afterEach` hook in a client plugin — never at each link.** A value appended by hand at N call sites is one the N+1th link silently drops, and the page that lost it is indistinguishable from a page that never had it. Keep the rules as a pure function so they are testable without a browser, and validate anything read back off an entry (it may predate the release). Worked example: `/docs/platform/breadcrumb-trail`.
+**Write that state in one place — a `router.afterEach` hook in a client plugin — never at each link.** A value appended by hand at N call sites is one the N+1th link silently drops, and the page that lost it is indistinguishable from a page that never had it. Keep the rules as a pure function so they are testable without a browser, and validate anything read back off an entry (it may predate the release). Worked example: `packages/app/content/docs/platform/breadcrumb-trail.md`.
 
 ## Route-Synced Tabs — `useEnumRouteQuery`
 

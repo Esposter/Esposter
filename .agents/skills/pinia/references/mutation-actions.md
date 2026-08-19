@@ -61,4 +61,4 @@ Same key = same target, so those writes queue behind each other.
 - **Creates with no natural key** → a per-call `Symbol("createFoo")`, since every create is independent and must not wait behind its siblings. Use a stable key plus `isExclusive` instead when duplicate fires must drop.
 - **Singleton targets** → the scope's id or a stable target name.
 
-Full rationale: `packages/app/content/docs/architecture/async-operations.md` (concurrency) and `client-data.md` (optimistic apply, in-flight guarding).
+Full rationale: `packages/app/content/docs/architecture/async-operations.md` (concurrency) and `packages/app/content/docs/architecture/client-data.md` (optimistic apply, in-flight guarding).

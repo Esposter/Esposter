@@ -84,4 +84,4 @@ Reviews are execution roles, not the thinking role. The full convention — sing
 
 ## Design for agents
 
-Every feature is designed agentic-first: resource creation (and eventually most authoring) may be done by AI, so specs must keep that path open — content is schema-validated JSON, writes go through ordinary validated procedures, no hidden client-side state, validation before side effects. The [Blueprint feature page](../../../packages/app/content/docs/platform/blueprint-resource.md) is the canonical statement: whatever creates resources — human, form, or model — goes through the same front door.
+Every feature is designed agentic-first: resource creation (and eventually most authoring) may be done by AI, so specs must keep that path open — content is schema-validated JSON, writes go through ordinary validated procedures, no hidden client-side state, validation before side effects. `packages/app/content/docs/platform/blueprint-resource.md` is the canonical statement: whatever creates resources — human, form, or model — goes through the same front door.

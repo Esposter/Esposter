@@ -9,7 +9,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 ## Process
 
-If the very first `pnpm` command dies inside the app's `postinstall` (`nuxt prepare`, `Cannot find module '@nuxt/devtools-kit'`), that is `node_modules` drift blocking every script, not a lockfile problem: `pnpm i --force`, then `pnpm build:packages`. → [monorepo tooling](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/architecture/monorepo-tooling.md)
+If the very first `pnpm` command dies inside the app's `postinstall` (`nuxt prepare`, `Cannot find module '@nuxt/devtools-kit'`), that is `node_modules` drift blocking every script, not a lockfile problem: `pnpm i --force`, then `pnpm build:packages`. → `packages/app/content/docs/architecture/monorepo-tooling.md`
 
 1. **Check what's outdated and mismatched** (from repo root): `pnpm outdated:dependencies`
 2. **Update versions** in `pnpm-workspace.yaml` — all non-pinned packages need a `^` caret prefix.

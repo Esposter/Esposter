@@ -25,7 +25,7 @@ The pass runs **after** `/simplify`, not before — cleanup edits code, so check
 
 ## Wait on a condition, never a sleep
 
-This is about waiting on an **external process from the shell** — a dev server, a build, a deploy. It is not a loosening of the polling ban, which is about code and tests: inside the repo, a wait is an awaited signal, never a retry loop (`testing` skill, and `architecture/no-polling.md`). Nothing here may be copied into a test.
+This is about waiting on an **external process from the shell** — a dev server, a build, a deploy. It is not a loosening of the polling ban, which is about code and tests: inside the repo, a wait is an awaited signal, never a retry loop (`testing` skill, and `packages/app/content/docs/architecture/no-polling.md`). Nothing here may be copied into a test.
 
 Poll until the thing you need is actually true, with a bounded loop:
 
