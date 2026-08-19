@@ -109,6 +109,7 @@
     "no-namespace": "off",
     "no-nested-ternary": "off",
     "no-plusplus": "off",
+    "no-redeclare": "off",
     "no-restricted-imports": [
       "error",
       {
