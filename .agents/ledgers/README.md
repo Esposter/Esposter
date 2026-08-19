@@ -2,13 +2,13 @@
 
 Progress state for sweeps in flight. What a sweep is and how one is run: the `sweeps` skill.
 
-| Ledger                              | Rules                                 | Unit               | Coverage          |
-| ----------------------------------- | ------------------------------------- | ------------------ | ----------------- |
-| [comments](comments.md)             | `formatting` skill                    | one package        | dated per package |
-| [docs](docs.md)                     | `docs` + `readme-standards` skills    | one docs area      | dated per area    |
-| [simplification](simplification/)   | `AGENTS.md` step 1                    | one area           | one file per area |
-| [tests](tests.md)                   | `testing` skill                       | one tree           | dated per tree    |
-| [vue-components](vue-components.md) | `vue-page-composition` + `vue` skills | one component tree | dated per tree    |
+| Ledger                              | Rules                                                  | Unit                        | Coverage          |
+| ----------------------------------- | ------------------------------------------------------ | --------------------------- | ----------------- |
+| [comments](comments.md)             | `formatting` skill                                     | one package                 | dated per package |
+| [docs](docs.md)                     | `docs` + `readme-standards` + `skill-authoring` skills | one docs area or skill tree | dated per area    |
+| [simplification](simplification/)   | `AGENTS.md` step 1                                     | one area                    | one file per area |
+| [tests](tests.md)                   | `testing` skill                                        | one tree                    | dated per tree    |
+| [vue-components](vue-components.md) | `vue-page-composition` + `vue` skills                  | one component tree          | dated per tree    |
 
 There is no mode column, because every sweep is standing — the `sweeps` skill owns why, and how a pass resumes
 from the files changed since a row's date.

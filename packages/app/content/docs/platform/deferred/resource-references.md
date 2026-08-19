@@ -9,7 +9,7 @@ A reference index over cross-resource links: which dashboards bind this Sheet, w
 
 ## Why deferred
 
-Links-by-id with re-resolve-on-load is a deliberate design ([/docs/platform/resource-explorer](/docs/platform/resource-explorer) — delete leaves consumers failing soft, never cascading). A reference index is a second source of truth that must be updated on every content save by parsing type-specific content shapes — real machinery, easy to let drift, for a lineage view nobody has asked for at current resource counts (a user's `/all` list fits on one screen).
+Links-by-id with re-resolve-on-load is a deliberate design ([resource explorer](/docs/platform/resource-explorer) — delete leaves consumers failing soft, never cascading). A reference index is a second source of truth that must be updated on every content save by parsing type-specific content shapes — real machinery, easy to let drift, for a lineage view nobody has asked for at current resource counts (a user's `/all` list fits on one screen).
 
 ## Revisit when
 

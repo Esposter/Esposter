@@ -40,8 +40,10 @@ These are set automatically:
 
 **`IS_PRODUCTION` / `IS_TEST` / `IS_DEVELOPMENT` (from `#shared/util/environment/constants`)** — the single consistent choice everywhere: module-level code, class property initialisers, composables, server routes, plugins. `vite.mode` is set from `APP_ENV` in `configuration/vite.ts`, so these build-time constants always reflect the deployed environment.
 
-**`process.env.*` directly** — secrets, urls and connection strings, in code that only ever runs server-side (`server/`, `configuration/`, `packages/azure-functions/`, and the `shared/` modules only those contexts import), plus `APP_ENV` in the build-time config files where `import.meta.env` is not available yet.
+**`process.env.*` directly** — secrets, urls and connection strings, in code that only ever runs server-side (`server/`, `packages/azure-functions/`, and the `shared/` modules only those contexts import) or at build time (`configuration/`, which the Nuxt build evaluates and never ships), plus `APP_ENV` in the build-time config files where `import.meta.env` is not available yet.
 
 ## What not to do
 
 Do not read `process.env.*` in code that executes in the browser — values are `undefined` at runtime and will silently evaluate to `false` for any comparison. The folder location (`shared/`) is not the deciding factor; what matters is whether the code ever runs client-side.
+
+Do not reach for `runtimeConfig` to escape that. `configuration/runtimeConfig.ts` splits on exactly the same line: everything outside `public` is server-only, and everything inside it is serialised into the client payload and readable by anyone who opens the page. A key belongs under `public` only once it is safe to publish — an endpoint or a base url — so classify the value before placing it, and a secret that needs a client-side effect is fronted by a server route rather than moved.
