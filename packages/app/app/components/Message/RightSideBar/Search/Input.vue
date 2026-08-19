@@ -7,7 +7,12 @@ const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
 const { createFilter } = searchMessageStore;
 const { isSearchQueryEmpty, menu, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
-const searchQueryOnFocus = ref("");
+// The query outlives focus — clicking away from a query never empties the field. Vuetify clears its own search
+// Text on every focus transition, and the field is controlled, so the store would follow it down: that clear is
+// Swallowed rather than undone, because restoring a saved value a tick later overwrites whatever the user typed
+// Inside that tick, which is how a one-character search reached the server as an empty query. Swallowing loses
+// Nothing — a keystroke in the same window writes the store and stays written
+const isFocusTransitioning = ref(false);
 const searchInput = useTemplateRef("searchInput");
 const blur = () => {
   const input = searchInput.value?.$el.querySelector("input");
@@ -37,8 +42,8 @@ const blur = () => {
     @keydown.esc="blur()"
     @keydown.enter="
       async () => {
-        // Only a picker gives a filter its value — typed text can never be the userId, room, media kind, date or
-        // Boolean a filter needs, so Enter searches on it as text and leaves any pending chip out of the search
+        // Enter only ever searches: the colon is what converts a keyword, so by the time Enter is pressed the query
+        // Is search text. It never fills a pending chip either — only a picker gives a filter its value
         if (isSearchQueryEmpty) return;
         menu = false;
         blur();
@@ -47,22 +52,17 @@ const blur = () => {
     "
     @update:focused="
       async (value) => {
-        // 1. When focus is gained, open the menu and save the current search query
-        if (value) {
-          menu = value;
-          searchQueryOnFocus = searchQuery;
-        }
-        // 2. Focus lost with a now-empty query: the user selected an item, so restore empty to stop old text reappearing.
-        else if (searchQuery === '') searchQueryOnFocus = '';
-        // 3. Wait for Vuetify's internal clear to happen, then restore our saved value.
+        if (value) menu = value;
+        // Vuetify's clear lands on this same flush, so the flag is up before it arrives and down once it has
+        isFocusTransitioning = true;
         await nextTick();
-        if (value) searchQuery = searchQueryOnFocus;
+        isFocusTransitioning = false;
       }
     "
     @update:search="
       (value: string) => {
-        // Ignore internal clear value callback on blur event
-        if (!value && !menu) return;
+        // Vuetify clearing itself around a focus change, not the user emptying the field
+        if (!value && isFocusTransitioning) return;
         if (value) menu = true;
 
         const filterType = getFilterTypeFromSearchQuery(value);
