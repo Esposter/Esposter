@@ -1,11 +1,11 @@
 ---
 title: File & media
-description: Client-side image thumbnails, per-room attachment limits, and a files-in-room search tab, all riding the shared SAS upload.
+description: Client-side image thumbnails, per-room attachment limits, and browsing a room's attachments, all riding the shared SAS upload.
 ---
 
 # File & Media
 
-Message attachments upload through one shared SAS round-trip ([/docs/architecture/file-uploads](/docs/architecture/file-uploads)). This page covers three enhancements layered on top of it: image thumbnails, per-room attachment limits, and a files-in-room search tab.
+Message attachments upload through one shared SAS round-trip ([/docs/architecture/file-uploads](/docs/architecture/file-uploads)). This page covers three enhancements layered on top of it: image thumbnails, per-room attachment limits, and browsing a room's attachments.
 
 ## How it works
 
@@ -47,12 +47,12 @@ Two columns on `rooms` (`packages/db-schema/src/schema/roomsInMessage.ts`):
 
 ## Procedures
 
-| Procedure                                  | Auth        | Input                               | Purpose                                                           |
-| :----------------------------------------- | :---------- | :---------------------------------- | :---------------------------------------------------------------- |
-| `message.generateUploadFileSasEntities`    | Room member | files (filename, mimetype, size)    | Check the declared limits, issue original and thumbnail write SAS |
-| `message.generateDownloadThumbnailSasUrls` | Room member | file ids                            | Read SAS for the `.thumb` blobs the message list renders          |
-| `message.searchMessages`                   | Room member | query, filters, `hasFiles`          | Files-in-room listing filters to messages that have attachments   |
-| `room.updateRoom`                          | ManageRoom  | room fields incl. attachment limits | Persist per-room limits from the settings Moderation group        |
+| Procedure                                  | Auth        | Input                               | Purpose                                                                                       |
+| :----------------------------------------- | :---------- | :---------------------------------- | :-------------------------------------------------------------------------------------------- |
+| `message.generateUploadFileSasEntities`    | Room member | files (filename, mimetype, size)    | Check the declared limits, issue original and thumbnail write SAS                             |
+| `message.generateDownloadThumbnailSasUrls` | Room member | file ids                            | Read SAS for the `.thumb` blobs the message list renders                                      |
+| `message.searchMessages`                   | Room member | query, filters                      | `has: file` lists a room's attachments — see [message search](/docs/esbabbler/message-search) |
+| `room.updateRoom`                          | ManageRoom  | room fields incl. attachment limits | Persist per-room limits from the settings Moderation group                                    |
 
 ## Deletion is eventual, not guaranteed
 
@@ -73,8 +73,8 @@ Removing an attachment (`deleteFile`), deleting a message with attachments, or d
 | `packages/db-schema/src/schema/roomsInMessage.ts`                                    | `maxFileSizeBytes` + `allowedMimeCategories` columns        |
 | `packages/db-schema/src/services/file/getMimeCategory.ts`                            | Mimetype to coarse category mapping                         |
 | `packages/db/src/services/azure/container/generateUploadFileSasEntities.ts`          | Issues the original and sibling thumbnail write SAS         |
+| `packages/db/src/services/azure/search/filtersToClauses.ts`                          | `has: file` — the non-empty-attachments clause              |
 | `packages/app/app/components/Message/Model/Room/Settings/Type/Attachments/Index.vue` | Room-settings Moderation page editing the limits            |
-| `packages/app/server/services/message/searchMessages.ts`                             | `hasFiles` clause backing the files-in-room tab             |
 | `packages/app/server/services/azure/eventGrid/publishBlobDeletion.ts`                | The one chunked best-effort deletion publish                |
 | `packages/azure-functions/src/handlers/processBlobDeletionHandler.ts`                | Durable blob deletion — idempotent `deleteIfExists` worker  |
 | `packages/db-schema/src/models/azure/eventGrid/BlobDeletionEventGridData.ts`         | The deletion event payload and its schema                   |

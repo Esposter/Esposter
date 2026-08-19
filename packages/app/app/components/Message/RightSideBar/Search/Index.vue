@@ -1,29 +1,13 @@
 <script setup lang="ts">
 import { useSearchMessageStore } from "@/store/message/search";
 
-const searchMessageStore = useSearchMessageStore();
-const { hasFiles, isSearching } = storeToRefs(searchMessageStore);
-const readSearchedMessages = useReadSearchedMessages();
-const tab = computed({
-  get: () => (hasFiles.value ? "files" : "search"),
-  set: (value) => {
-    hasFiles.value = value === "files";
-    // Selecting the Files tab immediately lists the room's attachments. Leaving it needs no read — each tab
-    // Owns its own result slice in the store, so the Search tab is already showing its own results.
-    if (hasFiles.value) readSearchedMessages(0);
-  },
-});
+const { isSearching } = storeToRefs(useSearchMessageStore());
 </script>
 
+<!-- One surface, not two tabs. Browsing a room's attachments is a filter like every other narrowing — `has: file`
+     — so a tab for it was a second way to ask the same question, with its own result slice to keep apart -->
 <template>
-  <v-tabs v-model="tab" grow density="compact">
-    <v-tab value="search" text="Search" />
-    <v-tab value="files" text="Files in this room" />
-  </v-tabs>
+  <MessageRightSideBarSearchHeader />
   <v-divider />
-  <template v-if="!hasFiles">
-    <MessageRightSideBarSearchHeader />
-    <v-divider />
-  </template>
   <MessageRightSideBarSearchMessageList v-if="!isSearching" />
 </template>

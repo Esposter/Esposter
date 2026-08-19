@@ -3,23 +3,12 @@ import type { Filter, FilterType, MessageEntity } from "@esposter/db-schema";
 import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
-import { ID_SEPARATOR } from "@esposter/shared";
 
 export const useSearchMessageStore = defineStore("message/search", () => {
   const roomStore = useRoomStore();
   const { data: searchQuery } = useDataMap(() => roomStore.currentRoomId, "");
   const menu = ref(false);
   const isSearching = ref(false);
-  // Files-in-room tab mode — lists every message with an attachment instead of a text/filter search.
-  // Keyed per room like its query/filter siblings, so switching rooms never carries the previous room's
-  // Tab (and its attachment browse) into the new one.
-  const { data: hasFiles } = useDataMap(() => roomStore.currentRoomId, false);
-  // Each tab owns its own result slice, so the rendered results can never belong to the other tab: leaving
-  // The Files tab hands back the Search tab's own (empty until searched) results instead of the attachment
-  // Browse, and paging them can never re-issue that browse's query with hasFiles false.
-  const searchResultId = computed(() =>
-    roomStore.currentRoomId ? `${roomStore.currentRoomId}${ID_SEPARATOR}${hasFiles.value}` : "",
-  );
   const { data: selectedFilters } = useDataMap<Filter[]>(() => roomStore.currentRoomId, []);
   // The chip a picker is currently filling in. Only ever the last one, because a filter is added by typing its
   // Keyword and immediately needs its value, and the picker writes onto the filter itself rather than replacing it
@@ -28,20 +17,19 @@ export const useSearchMessageStore = defineStore("message/search", () => {
   const createFilter = (type: FilterType) => {
     selectedFilters.value.push({ type, value: "" });
   };
-  const { items, ...restData } = useOffsetPaginationDataMap<MessageEntity>(() => searchResultId.value);
-  // The totals a search writes back belong to the tab it was issued for, so a read binds them alongside the
-  // Result slice it is already binding — `count`/`page` themselves track whichever tab is current, which is
+  const { items, ...restData } = useOffsetPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
+  // The totals a search writes back belong to the room it was issued for, so a read binds them alongside the
+  // Result slice it is already binding — `count`/`page` themselves track whichever room is current, which is
   // What the rendered header and paginator want and exactly what an in-flight response must not use
-  const { data: count, getBoundData: getBoundCount } = useDataMap(() => searchResultId.value, 0);
+  const { data: count, getBoundData: getBoundCount } = useDataMap(() => roomStore.currentRoomId, 0);
   const pageCount = computed(() => Math.ceil(count.value / DEFAULT_READ_LIMIT));
-  const { data: page, getBoundData: getBoundPage } = useDataMap(() => searchResultId.value, 1);
+  const { data: page, getBoundData: getBoundPage } = useDataMap(() => roomStore.currentRoomId, 1);
   return {
     activeSelectedFilter,
     count,
     createFilter,
     getBoundCount,
     getBoundPage,
-    hasFiles,
     isSearching,
     isSearchQueryEmpty,
     items,
