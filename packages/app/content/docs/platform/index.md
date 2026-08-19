@@ -7,7 +7,7 @@ description: The Azure-portal-like Resource Explorer over sheets, surveys, progr
 
 The platform area is the cross-product integration program: **everything is a resource with opt-in capabilities**, surfaced through one Azure-portal-like Resource Explorer at `/resource-explorer`. A sheet, a survey, a program, a todo list, a dashboard, an email, a webpage, and a flowchart are all the same thing to the platform — an identity row, a content blob, and a definition — differing only in which blades and commands their type declares.
 
-The standards the platform applies live in architecture: the layer model ([/docs/architecture/platform](/docs/architecture/platform)), the resource model ([/docs/architecture/resources](/docs/architecture/resources)), datasets ([/docs/architecture/datasets](/docs/architecture/datasets)), and publishing ([/docs/architecture/publishing](/docs/architecture/publishing)). The pages in this area describe the product surface built on them.
+The standards the platform applies live in architecture: the layer model ([the platform layer model](/docs/architecture/platform)), the resource model ([resources](/docs/architecture/resources)), datasets ([datasets](/docs/architecture/datasets)), and publishing ([publishing](/docs/architecture/publishing)). The pages in this area describe the product surface built on them.
 
 ## Key concepts
 

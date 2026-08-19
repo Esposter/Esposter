@@ -37,7 +37,7 @@ interface VisualDatasetBinding {
 
 - **Bind-to-data form** (in the Dashboard Editor blade): pick a provider → pick a resource via the shared `DatasetReferencePicker` → pick the x column and edit multiple series rows (column + aggregation, add/remove).
 - **Render**: a resolver computes chart data from the fetched `Dataset` per bound visual, with loading and error states per visual and a manual refresh action.
-- **Publish**: published dashboards bake the resolved data into the snapshot ([/docs/architecture/publishing](/docs/architecture/publishing)) — the public view never issues live dataset reads.
+- **Publish**: published dashboards bake the resolved data into the snapshot ([publishing](/docs/architecture/publishing)) — the public view never issues live dataset reads.
 
 ## Key files
 

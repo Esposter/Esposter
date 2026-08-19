@@ -38,7 +38,7 @@ flowchart LR
 
 ## Notes
 
-- Settings live in the content blob per the resource standard ([/docs/architecture/resources](/docs/architecture/resources)) — one artifact, one write path, one `contentVersion`. The Overview toggle saves through the same `saveResourceContent` as the editor, so a concurrent edit surfaces through the existing stale-version path.
+- Settings live in the content blob per the resource standard ([resources](/docs/architecture/resources)) — one artifact, one write path, one `contentVersion`. The Overview toggle saves through the same `saveResourceContent` as the editor, so a concurrent edit surfaces through the existing stale-version path.
 - In-flight respondents — form open when the survey closes — get the server rejection on submit rather than a silent failure.
-- Response modes ([/docs/platform/survey-response-modes](/docs/platform/survey-response-modes)) extend this same `settings` object. There is one settings section, not one per feature.
+- Response modes ([survey response modes](/docs/platform/survey-response-modes)) extend this same `settings` object. There is one settings section, not one per feature.
 - Close-at-date scheduling is deliberately absent: it is [publish scheduling](/docs/platform/deferred/publish-scheduling)'s shape — one timer subsystem, not two. Un-deferring it later is additive, since the timer would flip this same flag.

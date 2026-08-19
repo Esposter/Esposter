@@ -5,7 +5,7 @@ description: Every dataset consumer says "showing N of M" when a read hits the 1
 
 # Dataset Row-Cap Warning
 
-Every dataset provider caps its read at `AZURE_MAX_PAGE_SIZE` (1000) rows. Before this, that cap was invisible: a survey with 1400 responses charted, exported, and tabulated as though it had 1000, and nothing on screen said otherwise. A bound dashboard quietly under-reported, and a personalized email export quietly skipped 400 people.
+Every dataset provider caps its read at `AZURE_MAX_PAGE_SIZE` (1000) rows. Unannounced, that cap is invisible: a survey with 1400 responses would chart, export and tabulate as though it had 1000, a bound dashboard would quietly under-report, and a personalized email export would quietly skip 400 people.
 
 The fix is metadata, not pagination. A [`Dataset`](/docs/architecture/datasets) now carries the uncapped total alongside its capped rows, and every consumer surfaces the gap in the shape that fits it — a footnote on a chart, a banner over a table, a confirm before an export you cannot take back. Actually loading more rows stays [deferred](/docs/platform/deferred/dataset-row-cap-pagination); this warning is that page's explicit revisit trigger.
 

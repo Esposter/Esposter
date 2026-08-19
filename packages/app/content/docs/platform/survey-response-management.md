@@ -43,7 +43,7 @@ flowchart LR
 
 ## Notes
 
-- The dataset contract stays untouched — delete and count are survey-specific owner tooling, not dataset capabilities (single consumer; the admission rule is in [/docs/architecture/resources](/docs/architecture/resources)).
+- The dataset contract stays untouched — delete and count are survey-specific owner tooling, not dataset capabilities (single consumer; the admission rule is in [resources](/docs/architecture/resources)).
 - Deleting a response needs its `rowKey`, which a dataset row doesn't carry. Rather than reading keys and rows as two lists and matching them by index — which a response submitted or deleted between the reads shifts out of alignment, pointing a delete at the wrong response — `readSurveyResponseRecords` returns each row already carrying its own key, from the one `readSurveyResponseDatasetSource` read the dataset provider also uses.
 - Bulk delete-all ("reset before launch") is one confirmation away from the same procedure in a loop; it stays out until single delete proves insufficient.
 - Editing a respondent's answers is deliberately out — owners moderate, they don't rewrite answers.

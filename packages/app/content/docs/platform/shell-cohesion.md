@@ -21,7 +21,7 @@ Shell primitives live in `app/components/Styled/` (design-system set) and `app/c
 ## Navigation
 
 - `ListLinkItem` carries `children?: readonly ListLinkItem[]`. `MenuLinkList` renders a child-bearing item as a `v-list-group`; leaves go through `MenuLinkListItem`.
-- `ProductListLinkItems`: one **Resources** entry replaces the old per-editor entries; Clicker + Dungeons live under a "Games" group. `ProductList` (home/login drawer) reuses `MenuLinkList` so both surfaces stay in sync.
+- `ProductListLinkItems`: one **Resources** entry covers every resource type rather than one entry per editor; Clicker + Dungeons live under a "Games" group. `ProductList` (home/login drawer) reuses `MenuLinkList` so both surfaces stay in sync.
 - The app bar's `#append` cluster (`AppBar`) orders the app launcher (nine-dot `mdi-dots-grid`) first, then the theme toggle, the notification bell, and the More/account menu last — the launcher leads so the product grid is the first affordance, and the bell sits directly beside the More menu.
 
 ## Key files

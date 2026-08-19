@@ -5,7 +5,7 @@ description: Best-effort view counts on public reads, surfaced on the Overview b
 
 # Published View Analytics
 
-Publishing used to fire links into the void: an owner exports fifty invites and the only signal back is whichever respondents finish. A best-effort view counter on `readPublishedResourceContent`, surfaced on the Overview blade, makes the middle of the funnel visible for **every** publishable type — how many opened the dashboard, the webpage, the survey. For surveys, views against responses is the completion rate.
+A published link is otherwise a one-way door: an owner exports fifty invites and the only signal back is whichever respondents finish. A best-effort view counter on `readPublishedResourceContent`, surfaced on the Overview blade, makes the middle of the funnel visible for **every** publishable type — how many opened the dashboard, the webpage, the survey. For surveys, views against responses is the completion rate.
 
 This is explicitly **not** an analytics product: no unique-visitor identification (no cookies, no IP storage), no referrer capture, no time-series UI. A total plus a per-day bucket, so a future chart is possible without rework. Deliberately approximate.
 
