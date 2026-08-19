@@ -28,8 +28,6 @@ flowchart TD
   Empty -- "something to search on" --> Read["useReadSearchedMessages"]
 ```
 
-**The query outlives focus**, the way Discord's does — clicking away from a query never empties the field. That takes work, because the field is controlled (its text lives in the store, not in Vuetify) and Vuetify clears its own search text on **every focus transition**. The store ignores that clear rather than undoing it: a saved value restored a tick later overwrites whatever the user typed inside that tick, which is how a one-character search reached the server as an empty query and was rejected outright. Swallowing the clear loses nothing, because a keystroke arriving in the same window writes the store and stays written.
-
 Enter never writes typed text into a chip either. No typed text can be the userId, room id, media kind, date or boolean a filter needs, so filling a chip from the field produced a filter that the input schema rejects, that `filtersToClauses` throws on, or that silently matches nothing. **Only a picker gives a filter its value.**
 
 ## Vuetify's clear, and why the field saves and restores itself

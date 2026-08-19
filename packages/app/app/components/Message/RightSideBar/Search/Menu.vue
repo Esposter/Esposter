@@ -19,7 +19,7 @@ const { width } = useElementSize(activator);
     :close-on-content-click="false"
     :height="500"
     :open-on-click="false"
-    :width="width"
+    :width
     @mousedown.prevent
   >
     <template #activator="{ props }">

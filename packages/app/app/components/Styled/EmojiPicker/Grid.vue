@@ -26,8 +26,8 @@ defineEmits<{ hover: [emoji: Emoji]; select: [emoji: Emoji] }>();
       bg-transparent
       aspect-square
       cursor-pointer
-      hover:bg-surface-opacity-80
       active:bg-surface-opacity-80
+      hover:bg-surface-opacity-80
       text-title-large
       type="button"
       @click="$emit('select', emoji)"

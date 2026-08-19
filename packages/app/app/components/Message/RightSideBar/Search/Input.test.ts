@@ -109,6 +109,28 @@ describe("messageRightSideBarSearchInput", () => {
     expect(searchMessageStore.searchQuery).toBe(query);
   });
 
+  // Creating a chip empties the field deliberately, and the focus restore cannot tell that emptiness from
+  // Vuetify's own clear — so a snapshot left standing resurrects the text the chip replaced, and the next Enter
+  // Searches for it
+  test(`${FilterType.From}: the keyword replacing typed text is not resurrected by the focus restore`, async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(MessageRightSideBarSearchInput);
+    setCurrentRoomId(roomId);
+    const searchMessageStore = useSearchMessageStore();
+    const { searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
+    searchQuery.value = query;
+    selectedFilters.value = [];
+    const autocomplete = component.getComponent(VAutocomplete);
+    // Focus snapshots the typed text, and the keyword arrives before the restore's tick has elapsed
+    autocomplete.vm.$emit("update:focused", true);
+    autocomplete.vm.$emit("update:search", `${FilterType.From.toLowerCase()}:`);
+    await flushPromises();
+
+    expect(selectedFilters.value).toStrictEqual([{ type: FilterType.From, value: "" }]);
+    expect(searchQuery.value).toBe("");
+  });
+
   // A word that ends in a colon but names no filter type is search text, colon and all
   test("a word that is not a keyword is searched for verbatim", async () => {
     expect.hasAssertions();

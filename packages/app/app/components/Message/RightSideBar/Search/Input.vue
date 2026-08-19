@@ -71,7 +71,9 @@ const blur = () => {
         const filterType = getFilterTypeFromSearchQuery(value);
         if (filterType) {
           createFilter(filterType);
-          searchQuery = '';
+          // The keyword became the chip, so the field is deliberately empty. The snapshot goes with it, or a focus
+          // Restore still pending from this same tick reads that emptiness as Vuetify's clear and resurrects the text
+          searchQuery = searchQueryOnFocus = '';
           return;
         }
 
