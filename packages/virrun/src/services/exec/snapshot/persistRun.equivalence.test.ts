@@ -104,7 +104,7 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
 
     // On win32 the sandbox reads a mirror the excludes were filtered out of, so nothing under one of them can be a
     // Host file the command edited — only stale mirror content a tool happened to rewrite. Flushing it recreated
-    // `.claude/worktrees` trees on a host that had deleted them, with the old files the mirror still held.
+    // `.agents/worktrees` trees on a host that had deleted them, with the old files the mirror still held.
     const result = await persistRun(
       getBackend(),
       `mkdir -p ${MASKED_PATH}/${TEST_FILENAME} && printf " " > ${MASKED_PATH}/${TEST_FILENAME}/${TEST_FILENAME} && printf " " > ${TEST_FILENAME}`,

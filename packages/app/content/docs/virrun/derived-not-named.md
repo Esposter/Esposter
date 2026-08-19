@@ -27,7 +27,7 @@ The bar for adding another exception is that high: it must be a substrate every 
 
 ## Why the rule earns its page
 
-It was broken once, and the failure was not obvious from the diff. `.claude/worktrees` was added to the source-mirror excludes as a literal, which read as a harmless two-word constant. What it actually did:
+It was broken once, and the failure was not obvious from the diff. `.agents/worktrees` was added to the source-mirror excludes as a literal, which read as a harmless two-word constant. What it actually did:
 
 - worked only for the exact directory one agent tool uses, at its default location
 - said nothing about **why** the path was special, so the write-back never learned the same rule and kept flushing those paths back to the host

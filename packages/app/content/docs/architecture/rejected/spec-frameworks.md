@@ -18,7 +18,7 @@ Every part of that loop already exists here, under names chosen for this repo:
 | Archive-on-completion               | The same move, done by hand, with proposals rarely left open        |
 | A CLI that validates spec structure | `content/docs.test.ts`, in CI                                       |
 | Authoring conventions               | The `docs` skill                                                    |
-| —                                   | `.claude/ledgers/` — the maintenance loop, which has no counterpart |
+| —                                   | `.agents/ledgers/` — the maintenance loop, which has no counterpart |
 | —                                   | A rendered `/docs` site with search, for humans                     |
 
 The validator row is the decisive one, and it runs the wrong way from what adoption would suggest. A spec CLI checks that a spec file carries the headings its schema requires. `content/docs.test.ts` checks that every Mermaid diagram actually parses, that every page is registered in the sidebar map in both directions, that every `/docs/…` link resolves, and that every backticked repo path in a Key Files table exists on disk — across the whole tree, and across the skills beside it. No spec framework ships anything that strong, so adopting one would mean rebuilding these checks against a foreign file layout for no gain.

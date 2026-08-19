@@ -71,7 +71,7 @@ export const createVirrun = async ({
   // Of (resolveMirrorExcludes, which the backend above resolves from this same `environment`, so neither direction
   // Can answer for a preset the other did not see):
   // A path that never entered the mirror has no legitimate host origin, so an upper entry under one can only be a
-  // Ghost of stale mirror content — flushing it resurrects a tree the host already deleted (`.claude/worktrees`) or
+  // Ghost of stale mirror content — flushing it resurrects a tree the host already deleted (`.agents/worktrees`) or
   // Clobbers host-only state (`.git`). Either way the outputs are root-anchored (toRootAnchoredExclude): they name one
   // Directory, and a root-level one (`.nuxt`) left bare would mask that name at every depth in the repo.
   const prepareOutputs = prepareStep?.outputs ?? [];

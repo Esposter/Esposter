@@ -1,11 +1,11 @@
 import type { ViteUserConfig } from "vitest/config";
 
-import { AGENT_WORKTREES_DIRECTORY, getVitestConfiguration } from "@esposter/configuration";
+import { AGENT_DIRECTORY, AGENT_WORKTREES_DIRECTORY, getVitestConfiguration } from "@esposter/configuration";
 import { defaultExclude, defineConfig } from "vitest/config";
 
 const baseVitestConfiguration = getVitestConfiguration();
 // Unlike `include`, `exclude` replaces its default rather than adding to it, so the defaults are spread back in.
-const agentWorktreesExclude = [...defaultExclude, `${AGENT_WORKTREES_DIRECTORY}/**`];
+const agentExclude = [...defaultExclude, `${AGENT_WORKTREES_DIRECTORY}/**`, ".claude/**"];
 const vitestConfiguration: ViteUserConfig = defineConfig({
   ...baseVitestConfiguration,
   test: {
@@ -24,19 +24,20 @@ const vitestConfiguration: ViteUserConfig = defineConfig({
           name: "scripts",
         },
       },
-      // The workflow scripts under `.claude/` are not a workspace package either. They cannot be imported or
+      // The workflow scripts under `.agents/` are not a workspace package either. They cannot be imported or
       // Split into modules — they are async function bodies the harness injects globals into — so their tests
       // Load the real file and drive it with stubbed agents, which is the only way to pin the decisions a review
       // Makes without spawning one. Both globs are scoped for the same reason as `scripts` above: an unscoped
       // `benchmark.include` inherits `**/*.bench.ts` and re-collects every package's benches under this project.
-      // `.claude/**` also reaches into agent worktrees, which `AGENT_WORKTREES_DIRECTORY` excludes — see its comment.
+      // `.agents/**` also reaches into agent worktrees, which `AGENT_WORKTREES_DIRECTORY` excludes — see its comment —
+      // And the `.claude` alias, which globbers follow back into the same tree under a second name.
       {
         extends: true,
         test: {
-          benchmark: { exclude: agentWorktreesExclude, include: [".claude/**/*.bench.ts"] },
-          exclude: agentWorktreesExclude,
-          include: [".claude/**/*.test.ts"],
-          name: "claude",
+          benchmark: { exclude: agentExclude, include: [`${AGENT_DIRECTORY}/**/*.bench.ts`] },
+          exclude: agentExclude,
+          include: [`${AGENT_DIRECTORY}/**/*.test.ts`],
+          name: "agents",
         },
       },
     ],

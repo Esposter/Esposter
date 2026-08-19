@@ -10,7 +10,8 @@
   },
   "ignorePatterns": [
     "public",
-    ".claude/worktrees",
+    ".agents/worktrees",
+    ".claude",
     "**/auto-imports.d.ts",
     "**/composables/visual/useFluidSimulator.ts"
   ],
@@ -20,7 +21,7 @@
   },
   "overrides": [
     {
-      "files": [".claude/workflows/*.js"],
+      "files": [".agents/workflows/*.js"],
       "rules": {
         "unicorn/prefer-module": "off"
       }

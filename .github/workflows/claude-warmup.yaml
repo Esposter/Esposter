@@ -28,7 +28,7 @@ jobs:
 
       - name: 🤝 Trust the workspace
         # A fresh runner has no ~/.claude.json, so Claude Code treats the checkout as
-        # untrusted and ignores every permissions.allow entry in .claude/settings.local.json.
+        # untrusted and ignores every permissions.allow entry in .agents/settings.local.json.
         # Pre-accepting the trust dialog for the checkout path silences that warning.
         run: |
           node -e '
