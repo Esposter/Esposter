@@ -12,7 +12,9 @@ export const deserializeClause = (
   const normalizedString = normalizeString(string);
   const match = CLAUSE_REGEX.exec(normalizedString);
   if (!match) throw new NotFoundError(deserializeClause.name, normalizedString);
-  const groups = match.groups as Record<keyof Clause<Record<string, unknown>>, string> | undefined;
+  // The four groups CLAUSE_REGEX names, rather than `keyof Clause` — the clause union's common keys exclude
+  // `value`, because a collection-emptiness clause carries none
+  const groups = match.groups as Record<"key" | "not" | "operator" | "value", string> | undefined;
   if (!groups) throw new NotFoundError(deserializeClause.name, normalizedString);
   return {
     key: deserializeKey(groups.key),

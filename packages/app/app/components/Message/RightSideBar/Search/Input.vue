@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
+import { getFilterTypeFromSearchQuery } from "@/services/message/filter/getFilterTypeFromSearchQuery";
 import { useSearchMessageStore } from "@/store/message/search";
-import { FilterTypes } from "@esposter/db-schema";
-import { normalizeString } from "@esposter/shared";
 
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
 const { createFilter } = searchMessageStore;
-const { activeSelectedFilter, isSearchQueryEmpty, menu, searchQuery, selectedFilters } =
-  storeToRefs(searchMessageStore);
+const { isSearchQueryEmpty, menu, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
 const searchQueryOnFocus = ref("");
 const searchInput = useTemplateRef("searchInput");
 const blur = () => {
@@ -30,6 +28,7 @@ const blur = () => {
     :item-value="getFilterDisplayValue"
     :search="searchQuery"
     chips
+    closable-chips
     hide-details
     hide-no-data
     multiple
@@ -38,30 +37,29 @@ const blur = () => {
     @keydown.esc="blur()"
     @keydown.enter="
       async () => {
-        if (activeSelectedFilter && !activeSelectedFilter.value) {
-          const value = normalizeString(searchQuery);
-          if (!value) return;
-          activeSelectedFilter.value = value;
-          searchQuery = '';
-        } else if (!isSearchQueryEmpty) {
-          menu = false;
-          blur();
-          await readSearchedMessages();
-        }
+        // Enter only ever searches: the colon is what converts a keyword, so by the time Enter is pressed the query
+        // Is search text. It never fills a pending chip either — only a picker gives a filter its value
+        if (isSearchQueryEmpty) return;
+        menu = false;
+        blur();
+        await readSearchedMessages();
       }
     "
     @update:focused="
       async (value) => {
-        // 1. When focus is gained, open the menu and save the current search query
-        if (value) {
-          menu = value;
-          searchQueryOnFocus = searchQuery;
-        }
-        // 2. Focus lost with a now-empty query: the user selected an item, so restore empty to stop old text reappearing.
+        // 1. The menu tracks focus in both directions. Losing focus has to close it here rather than leaving it to
+        // The overlay's own click-away, because Vuetify's clear lands first and the closed menu is what makes
+        // `@update:search` ignore it — interacting with the menu never reaches this, since it prevents mousedown
+        menu = value;
+        // 2. Focus gained: save the current search query, because Vuetify is about to clear the field
+        if (value) searchQueryOnFocus = searchQuery;
+        // 3. Focus lost with a now-empty query: the user selected an item, so restore empty to stop old text reappearing.
         else if (searchQuery === '') searchQueryOnFocus = '';
-        // 3. Wait for Vuetify's internal clear to happen, then restore our saved value.
+        // 4. Wait for Vuetify's internal clear to happen, then restore our saved value — but only while it is still
+        // Cleared. A character typed inside this tick is the newer value, and restoring the snapshot over it is how a
+        // One-character search reached the server as an empty query
         await nextTick();
-        if (value) searchQuery = searchQueryOnFocus;
+        if (value && searchQuery === '') searchQuery = searchQueryOnFocus;
       }
     "
     @update:search="
@@ -70,24 +68,21 @@ const blur = () => {
         if (!value && !menu) return;
         if (value) menu = true;
 
-        if (value.endsWith(':')) {
-          const normalizedValue = normalizeString(value);
-          const filterType = FilterTypes.find(
-            (type) => type.toLowerCase() === normalizedValue.slice(0, -1).toLowerCase(),
-          );
-          if (filterType) {
-            createFilter(filterType);
-            searchQuery = '';
-            return;
-          }
+        const filterType = getFilterTypeFromSearchQuery(value);
+        if (filterType) {
+          createFilter(filterType);
+          // The keyword became the chip, so the field is deliberately empty. The snapshot goes with it, or a focus
+          // Restore still pending from this same tick reads that emptiness as Vuetify's clear and resurrects the text
+          searchQuery = searchQueryOnFocus = '';
+          return;
         }
 
         searchQuery = value;
       }
     "
   >
-    <template #chip="{ internalItem: { raw } }">
-      <v-chip>
+    <template #chip="{ internalItem: { raw }, props: chipProps }">
+      <v-chip :="chipProps">
         {{ getFilterDisplayValue(raw) }}
       </v-chip>
     </template>

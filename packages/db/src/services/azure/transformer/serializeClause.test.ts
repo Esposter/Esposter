@@ -13,6 +13,14 @@ describe(serializeClause, () => {
     ).toBe(`${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${escapeValue("")}`);
   });
 
+  test(`serializes ${SearchOperator.arrayAny} as a bare non-empty test`, () => {
+    expect.hasAssertions();
+
+    expect(serializeClause({ key: CompositeKeyPropertyNames.partitionKey, operator: SearchOperator.arrayAny })).toBe(
+      `${serializeKey(CompositeKeyPropertyNames.partitionKey)}/any()`,
+    );
+  });
+
   test(`serializes ${SearchOperator.arrayContains} with simple collection key`, () => {
     expect.hasAssertions();
 

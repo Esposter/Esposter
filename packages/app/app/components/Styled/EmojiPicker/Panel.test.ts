@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { VueWrapper } from "@vue/test-utils";
 
+import StyledEmojiPickerGrid from "@/components/Styled/EmojiPicker/Grid.vue";
 import StyledEmojiPickerPanel from "@/components/Styled/EmojiPicker/Panel.vue";
 import { EmojiGroup, EmojiGroups } from "@/models/message/emoji/EmojiGroup";
 import { SkinTone } from "@/models/message/emoji/SkinTone";
@@ -9,8 +10,14 @@ import { useEmojiPickerStore } from "@/store/message/emojiPicker";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
-// The aria-label is what makes a grid cell identifiable, so selecting on it also asserts every button has one
-const getGridEmojis = (component: VueWrapper) => component.findAll("button[aria-label]").map((button) => button.text());
+// The aria-label is what makes a grid cell identifiable, so selecting on it also asserts every button has one.
+// Scoped to the grid because the rail's tabs are aria-labelled buttons as well — they are icon-only, so the
+// Category title is their accessible name
+const getGridEmojis = (component: VueWrapper) => {
+  // The grid is not rendered at all when nothing matches — the empty state stands in its place
+  const grid = component.findComponent(StyledEmojiPickerGrid);
+  return grid.exists() ? grid.findAll("button[aria-label]").map((button) => button.text()) : [];
+};
 
 describe("styledEmojiPickerPanel", () => {
   beforeEach(() => {
@@ -66,7 +73,7 @@ describe("styledEmojiPickerPanel", () => {
     emojiPickerStore.skinTone = SkinTone.Medium;
     const component = await mountSuspended(StyledEmojiPickerPanel);
     await component.find("input").setValue("technologist");
-    await component.find("button[aria-label]").trigger("click");
+    await component.findComponent(StyledEmojiPickerGrid).find("button[aria-label]").trigger("click");
 
     expect(component.emitted("select")).toStrictEqual([["🧑🏽‍💻"]]);
     expect(emojiPickerStore.recentEmojiSlugs).toStrictEqual(["technologist"]);

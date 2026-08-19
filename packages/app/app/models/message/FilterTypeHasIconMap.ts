@@ -4,6 +4,7 @@ import { FilterTypeHas } from "@esposter/db-schema";
 export const FilterTypeHasIconMap = {
   [FilterTypeHas.Link]: "mdi-link-variant",
   [FilterTypeHas.Embed]: "mdi-file-link-outline",
+  [FilterTypeHas.File]: "mdi-paperclip",
   [FilterTypeHas.Image]: "mdi-image-outline",
   [FilterTypeHas.Video]: "mdi-video-outline",
   [FilterTypeHas.Sound]: "mdi-volume-high",

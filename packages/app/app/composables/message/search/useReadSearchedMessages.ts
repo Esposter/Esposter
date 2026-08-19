@@ -1,4 +1,4 @@
-import { dedupeFilters } from "#shared/services/message/dedupeFilters";
+import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
 import { useRoomStore } from "@/store/message/room";
@@ -18,7 +18,7 @@ export const useReadSearchedMessages = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
   const { getBoundCount, getBoundPage, getReadMoreItems } = searchMessageStore;
-  const { hasFiles, isSearching, menu, searchQuery } = storeToRefs(searchMessageStore);
+  const { isSearching, menu, searchQuery } = storeToRefs(searchMessageStore);
   const { selectedFilters } = storeToRefs(searchMessageStore);
   const searchHistoryStore = useSearchHistoryStore();
   const { createSearchHistory } = searchHistoryStore;
@@ -37,17 +37,16 @@ export const useReadSearchedMessages = () => {
       isRightDrawerOpen.value = true;
       rightDrawer.value = RightDrawer.Search;
       // Everything this read writes back is resolved before its first await, exactly as the result slice it is
-      // Issued against is: the room and the tab can both move while it is in flight, and its totals, its page
-      // And its history entry all belong to the search that was actually run, not to whatever is on screen when
-      // The response lands
-      const isFilesSearch = hasFiles.value;
-      const filters = [...selectedFilters.value];
+      // Issued against is: the room can move while it is in flight, and its totals, its page and its history
+      // Entry all belong to the search that was actually run, not to whatever is on screen when the response lands
+      // A chip the user added but never gave a value to is not a constraint, so it is dropped here rather than
+      // Sent — both to the search and to the history entry the search earns, which stores what it actually ran
+      const filters = getSearchableFilters(selectedFilters.value);
       const query = searchQuery.value;
       const boundCount = getBoundCount();
       const boundPage = getBoundPage();
       const { count: newCount, data } = await $trpc.message.searchMessages.query({
-        filters: dedupeFilters(filters),
-        hasFiles: isFilesSearch,
+        filters,
         offset,
         query,
         roomId,
@@ -55,13 +54,7 @@ export const useReadSearchedMessages = () => {
       // No offset means a fresh search rather than reading the next offset page.
       if (!offset) {
         boundPage.value = 1;
-        // The Files tab is a browse, not a text query, so it is never written to search history.
-        if (!isFilesSearch)
-          await createSearchHistory({
-            filters: filters.length > 0 ? filters : undefined,
-            query,
-            roomId,
-          });
+        await createSearchHistory({ filters: filters.length > 0 ? filters : undefined, query, roomId });
       }
       if (newCount !== undefined) boundCount.value = newCount;
       return data;

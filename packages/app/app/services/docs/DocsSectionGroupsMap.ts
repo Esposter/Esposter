@@ -36,6 +36,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     Messaging: [
       "messaging",
       "message-list-rendering",
+      "message-search",
       "emoji",
       "room-ui",
       "mention-badges",

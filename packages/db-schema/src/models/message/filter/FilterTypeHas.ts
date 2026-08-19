@@ -2,6 +2,7 @@
 export enum FilterTypeHas {
   Link = "Link",
   Embed = "Embed",
+  File = "File",
   Image = "Image",
   Video = "Video",
   Sound = "Sound",
