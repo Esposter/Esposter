@@ -76,16 +76,37 @@ describe("messageRightSideBarSearchInput", () => {
   });
 
   // The query outlives focus, the way Discord's does. Vuetify clears its own search text whenever focus changes,
-  // So the field would empty itself the moment the user clicked away from a query they had not searched yet
+  // So the field would empty itself the moment the user clicked away from a query they had not searched yet. What
+  // Swallows that clear is the closed menu, so the click-away is driven as the overlay drives it — closing first
   test("keeps the typed text after focus is lost", async () => {
     expect.hasAssertions();
 
     const { autocomplete, searchMessageStore } = await type(query);
+    const { menu } = storeToRefs(searchMessageStore);
+    menu.value = false;
     autocomplete.vm.$emit("update:focused", false);
     autocomplete.vm.$emit("update:search", "");
     await flushPromises();
 
     expect(autocomplete.find("input").element.value).toBe(query);
+    expect(searchMessageStore.searchQuery).toBe(query);
+  });
+
+  // The focus-gain clear is undone from a snapshot a tick later, and that restore must never win over a character
+  // Typed inside the tick — doing so is what sent a one-character search to the server as an empty query
+  test("keeps a character typed before the focus restore has run", async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(MessageRightSideBarSearchInput);
+    setCurrentRoomId(roomId);
+    const searchMessageStore = useSearchMessageStore();
+    const autocomplete = component.getComponent(VAutocomplete);
+    // Focus, then Vuetify's own clear of the field, then the character — all before the restore's tick elapses
+    autocomplete.vm.$emit("update:focused", true);
+    autocomplete.vm.$emit("update:search", "");
+    autocomplete.vm.$emit("update:search", query);
+    await flushPromises();
+
     expect(searchMessageStore.searchQuery).toBe(query);
   });
 

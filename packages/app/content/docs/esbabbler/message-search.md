@@ -30,9 +30,42 @@ flowchart TD
 
 **The query outlives focus**, the way Discord's does — clicking away from a query never empties the field. That takes work, because the field is controlled (its text lives in the store, not in Vuetify) and Vuetify clears its own search text on **every focus transition**. The store ignores that clear rather than undoing it: a saved value restored a tick later overwrites whatever the user typed inside that tick, which is how a one-character search reached the server as an empty query and was rejected outright. Swallowing the clear loses nothing, because a keystroke arriving in the same window writes the store and stays written.
 
-**The query outlives focus**, the way Discord's does — clicking away from a query never empties the field. That takes work, because the field is controlled (its text lives in the store, not in Vuetify) and Vuetify clears its own search text on **every focus transition**. The store ignores that clear rather than undoing it: a saved value restored a tick later overwrites whatever the user typed inside that tick, which is how a one-character search reached the server as an empty query and was rejected outright. Swallowing the clear loses nothing, because a keystroke arriving in the same window writes the store and stays written.
-
 Enter never writes typed text into a chip either. No typed text can be the userId, room id, media kind, date or boolean a filter needs, so filling a chip from the field produced a filter that the input schema rejects, that `filtersToClauses` throws on, or that silently matches nothing. **Only a picker gives a filter its value.**
+
+## Vuetify's clear, and why the field saves and restores itself
+
+**The query outlives focus** — clicking away from a query you have not searched yet never empties the field. That takes work, because the text lives in the store rather than in Vuetify (the field is controlled through `:search`) and Vuetify clears its own search text on **every focus transition**, in both directions.
+
+The two directions are handled differently, and neither can be dropped:
+
+- **Focus lost** — the clear is _swallowed_. It arrives once the menu has closed, and `@update:search` ignores an empty value while the menu is closed, so the store never hears about it and the text stays.
+- **Focus gained** — the clear cannot be swallowed the same way, because the menu is open by then. So the store's value is snapshotted on focus and written back a tick later, once Vuetify's clear has landed.
+
+That restore is the subtle one: **it only applies while the field is still empty.** A character typed inside that tick is the newer value, and restoring the snapshot over it is how a one-character search reached the server as `query: ""` and was rejected by the input schema outright.
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant Vuetify as VAutocomplete
+  participant Input as Search Input
+  participant Store as searchMessageStore
+
+  User->>Vuetify: focus the field
+  Vuetify->>Input: update:focused true
+  Input->>Store: snapshot searchQuery, open the menu
+  Vuetify->>Input: update:search "" — its own clear
+  Note over Input: menu is open, so this one is not swallowed
+  Input->>Store: searchQuery = ""
+  User->>Vuetify: types a character
+  Vuetify->>Input: update:search "a"
+  Input->>Store: searchQuery = "a"
+  Note over Input: the restore's tick elapses
+  Input->>Store: restore the snapshot only if searchQuery is still ""
+  User->>Vuetify: clicks away
+  Vuetify->>Input: update:focused false — the menu closes
+  Vuetify->>Input: update:search "" — its own clear
+  Note over Input: menu is closed, so this one is swallowed and "a" survives
+```
 
 ## A chip's lifecycle
 
