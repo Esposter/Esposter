@@ -1,4 +1,4 @@
-import { dedupeFilters } from "#shared/services/message/dedupeFilters";
+import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
 import { useRoomStore } from "@/store/message/room";
@@ -41,12 +41,14 @@ export const useReadSearchedMessages = () => {
       // And its history entry all belong to the search that was actually run, not to whatever is on screen when
       // The response lands
       const isFilesSearch = hasFiles.value;
-      const filters = [...selectedFilters.value];
+      // A chip the user added but never gave a value to is not a constraint, so it is dropped here rather than
+      // Sent — both to the search and to the history entry the search earns, which stores what it actually ran
+      const filters = getSearchableFilters(selectedFilters.value);
       const query = searchQuery.value;
       const boundCount = getBoundCount();
       const boundPage = getBoundPage();
       const { count: newCount, data } = await $trpc.message.searchMessages.query({
-        filters: dedupeFilters(filters),
+        filters,
         hasFiles: isFilesSearch,
         offset,
         query,

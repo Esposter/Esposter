@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
+import { getFilterTypeFromSearchQuery } from "@/services/message/filter/getFilterTypeFromSearchQuery";
 import { useSearchMessageStore } from "@/store/message/search";
-import { FilterTypes } from "@esposter/db-schema";
-import { normalizeString } from "@esposter/shared";
 
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
 const { createFilter } = searchMessageStore;
-const { activeSelectedFilter, isSearchQueryEmpty, menu, searchQuery, selectedFilters } =
-  storeToRefs(searchMessageStore);
+const { isSearchQueryEmpty, menu, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
 const searchQueryOnFocus = ref("");
 const searchInput = useTemplateRef("searchInput");
 const blur = () => {
@@ -30,6 +28,7 @@ const blur = () => {
     :item-value="getFilterDisplayValue"
     :search="searchQuery"
     chips
+    closable-chips
     hide-details
     hide-no-data
     multiple
@@ -38,16 +37,12 @@ const blur = () => {
     @keydown.esc="blur()"
     @keydown.enter="
       async () => {
-        if (activeSelectedFilter && !activeSelectedFilter.value) {
-          const value = normalizeString(searchQuery);
-          if (!value) return;
-          activeSelectedFilter.value = value;
-          searchQuery = '';
-        } else if (!isSearchQueryEmpty) {
-          menu = false;
-          blur();
-          await readSearchedMessages();
-        }
+        // Only a picker gives a filter its value — typed text can never be the userId, room, media kind, date or
+        // Boolean a filter needs, so Enter searches on it as text and leaves any pending chip out of the search
+        if (isSearchQueryEmpty) return;
+        menu = false;
+        blur();
+        await readSearchedMessages();
       }
     "
     @update:focused="
@@ -70,24 +65,19 @@ const blur = () => {
         if (!value && !menu) return;
         if (value) menu = true;
 
-        if (value.endsWith(':')) {
-          const normalizedValue = normalizeString(value);
-          const filterType = FilterTypes.find(
-            (type) => type.toLowerCase() === normalizedValue.slice(0, -1).toLowerCase(),
-          );
-          if (filterType) {
-            createFilter(filterType);
-            searchQuery = '';
-            return;
-          }
+        const filterType = getFilterTypeFromSearchQuery(value);
+        if (filterType) {
+          createFilter(filterType);
+          searchQuery = '';
+          return;
         }
 
         searchQuery = value;
       }
     "
   >
-    <template #chip="{ internalItem: { raw } }">
-      <v-chip>
+    <template #chip="{ internalItem: { raw }, props: chipProps }">
+      <v-chip :="chipProps">
         {{ getFilterDisplayValue(raw) }}
       </v-chip>
     </template>

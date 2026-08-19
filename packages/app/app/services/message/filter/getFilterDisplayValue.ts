@@ -1,14 +1,16 @@
 /* eslint-disable perfectionist/sort-switch-case */
 import type { Filter } from "@esposter/db-schema";
 
+import { getIsFilterPending } from "#shared/services/message/getIsFilterPending";
 import { useRoomStore } from "@/store/message/room";
 import { useUserStore } from "@/store/message/user";
 import { FilterType, serializeValue } from "@esposter/db-schema";
 import { exhaustiveGuard, InvalidOperationError, Operation, uncapitalize } from "@esposter/shared";
 
-export const getFilterDisplayValue = ({ type, value }: Filter) => {
+export const getFilterDisplayValue = (filter: Filter) => {
+  const { type, value } = filter;
   const displayType = `${uncapitalize(type)}:`;
-  if (!value) return displayType;
+  if (getIsFilterPending(filter)) return displayType;
 
   switch (type) {
     case FilterType.From:

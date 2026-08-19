@@ -21,14 +21,9 @@ export const useSearchMessageStore = defineStore("message/search", () => {
     roomStore.currentRoomId ? `${roomStore.currentRoomId}${ID_SEPARATOR}${hasFiles.value}` : "",
   );
   const { data: selectedFilters } = useDataMap<Filter[]>(() => roomStore.currentRoomId, []);
-  const activeSelectedFilter = computed({
-    get: () => selectedFilters.value.at(-1),
-    set: (value) => {
-      const lastIndex = selectedFilters.value.length - 1;
-      if (!value || lastIndex === -1) return;
-      selectedFilters.value[lastIndex] = value;
-    },
-  });
+  // The chip a picker is currently filling in. Only ever the last one, because a filter is added by typing its
+  // Keyword and immediately needs its value, and the picker writes onto the filter itself rather than replacing it
+  const activeSelectedFilter = computed(() => selectedFilters.value.at(-1));
   const isSearchQueryEmpty = computed(() => getIsSearchQueryEmpty(searchQuery.value, selectedFilters.value));
   const createFilter = (type: FilterType) => {
     selectedFilters.value.push({ type, value: "" });

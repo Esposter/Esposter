@@ -2,14 +2,17 @@
 import type { VueWrapper } from "@vue/test-utils";
 import type { MockInstance } from "vitest";
 
+import type { Filter } from "@esposter/db-schema";
+
 import { useReadSearchedMessages } from "@/composables/message/search/useReadSearchedMessages";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useSearchMessageStore } from "@/store/message/search";
 import { useSearchHistoryStore } from "@/store/message/search/history";
+import { FilterType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
 describe(useReadSearchedMessages, () => {
   const server = setupMswTrpc();
@@ -17,12 +20,17 @@ describe(useReadSearchedMessages, () => {
   let count: Ref<number>;
   let hasFiles: Ref<boolean>;
   let page: Ref<number>;
+  let searchQuery: Ref<string>;
+  let selectedFilters: Ref<Filter[]>;
   let createSearchHistory: MockInstance<ReturnType<typeof useSearchHistoryStore>["createSearchHistory"]>;
   let readSearchedMessages: ReturnType<typeof useReadSearchedMessages>;
   const roomId = crypto.randomUUID();
   const newCount = 3;
   const filesPage = 5;
   const searchPage = 2;
+  const query = "a";
+  const pendingFilter = { type: FilterType.Has, value: "" };
+  const filter = { type: FilterType.Pinned, value: false };
 
   const mountRead = async () => {
     wrapper = await mountSuspended(
@@ -31,7 +39,7 @@ describe(useReadSearchedMessages, () => {
         setup: () => {
           setCurrentRoomId(roomId);
           const searchMessageStore = useSearchMessageStore();
-          ({ count, hasFiles, page } = storeToRefs(searchMessageStore));
+          ({ count, hasFiles, page, searchQuery, selectedFilters } = storeToRefs(searchMessageStore));
           // Each tab's page starts at its own value, so a page written into the wrong slice is visible
           hasFiles.value = true;
           page.value = filesPage;
@@ -81,5 +89,29 @@ describe(useReadSearchedMessages, () => {
     expect(count.value).toBe(newCount);
     expect(page.value).toBe(1);
     expect(createSearchHistory).toHaveBeenCalledTimes(1);
+  });
+
+  // A chip the user added by typing its keyword has no value until a picker gives it one, and the search input
+  // Schema rejects that "" — so the read that used to send it failed outright rather than searching on the text
+  // The user had typed. Neither the search nor the history entry it earns carries one
+  test("searches on the typed text with a filter still waiting for its value left out", async () => {
+    expect.hasAssertions();
+
+    const searchMessages = vi.fn<(filters: Filter[]) => void>();
+    server.use(
+      trpcMsw.message.searchMessages.query(({ input }) => {
+        // The wire input types filters as optional because the schema defaults it, but this read always sends it
+        assert.exists(input.filters);
+        searchMessages(input.filters);
+        return { count: newCount, data: { hasMore: false, items: [] } };
+      }),
+    );
+    await mountRead();
+    selectedFilters.value = [pendingFilter, filter];
+    searchQuery.value = query;
+    await readSearchedMessages();
+
+    expect(searchMessages).toHaveBeenCalledExactlyOnceWith([filter]);
+    expect(createSearchHistory).toHaveBeenCalledExactlyOnceWith({ filters: [filter], query, roomId });
   });
 });

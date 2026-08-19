@@ -101,19 +101,29 @@ Three search shapes legitimately sit outside `useAutoSearch`, because there is n
 
 Portal chord shortcuts (`useResourceKeyboardShortcuts` G-chords) are likewise a separate concern from the palette `hotkey` prop — chords are sequences, not single hotkeys.
 
+### Filter chips in the explicit-submit search
+
+The message sidebar's input mixes two things in one field, and the rule that keeps them apart is that **typed text only ever becomes a filter when it names one**. A word followed by `:` is matched against `FilterType` by `getFilterTypeFromSearchQuery`; a match adds the chip, and anything else — a word ending in a colon included — stays search text and searches for itself.
+
+A chip added that way has no value until one of the `SearchFilterComponentMap` pickers gives it one, and `""` is the sentinel for that gap. Nothing else may fill it: typed text can never be the userId, room, media kind, date or boolean a filter needs, so Enter searches on the text and leaves the pending chip out. Everything that searches goes through `getSearchableFilters`, which drops pending chips and repeats — so a pending `""` can never reach the input schema that rejects it, nor the history row that records what the search actually ran with. Emptiness (`getIsSearchQueryEmpty`) asks the same question, so a pending chip alone is not a search.
+
+The pending test is `value === ""`, never falsiness — `pinned: false` is a value the user picked, and reading it as absent left the chip blank with its picker still open.
+
 ## Key files
 
-| File                                                        | Role                                                                                    |
-| ----------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `app/composables/useAutoSearch.ts`                          | Shared core — throttle, abort, normalized change detection, `isPending`                 |
-| `app/composables/useCursorSearcher.ts`                      | Cursor-paginated search on top of `useAutoSearch`                                       |
-| `app/components/Styled/SearchDialog.vue`                    | `StyledSearchDialog` — Ctrl+K palette shell (`hotkey` via `useVHotkey`)                 |
-| `app/components/Docs/Search.vue`                            | Palette + client-index results (MiniSearch)                                             |
-| `app/services/message/emoji/searchEmojis.ts`                | Client-index emoji search shared by the picker and the composer's `:` trigger           |
-| `app/components/Message/Model/Room/Searcher.vue`            | Palette + cursor-paginated results (`useSearchStore`)                                   |
-| `app/components/Message/Friends/Search.vue`                 | Inline (non-palette) `useAutoSearch` consumer                                           |
-| `app/composables/resource/search/useResourceSearchItems.ts` | Portal dropdown — `useAutoSearch` for the Resources group, client-side groups around it |
-| `app/store/message/room/search.ts`                          | Store returning `useCursorSearcher` for the room palette                                |
+| File                                                          | Role                                                                                    |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `app/composables/useAutoSearch.ts`                            | Shared core — throttle, abort, normalized change detection, `isPending`                 |
+| `app/composables/useCursorSearcher.ts`                        | Cursor-paginated search on top of `useAutoSearch`                                       |
+| `app/components/Styled/SearchDialog.vue`                      | `StyledSearchDialog` — Ctrl+K palette shell (`hotkey` via `useVHotkey`)                 |
+| `app/components/Docs/Search.vue`                              | Palette + client-index results (MiniSearch)                                             |
+| `app/services/message/emoji/searchEmojis.ts`                  | Client-index emoji search shared by the picker and the composer's `:` trigger           |
+| `app/components/Message/Model/Room/Searcher.vue`              | Palette + cursor-paginated results (`useSearchStore`)                                   |
+| `app/components/Message/Friends/Search.vue`                   | Inline (non-palette) `useAutoSearch` consumer                                           |
+| `app/composables/resource/search/useResourceSearchItems.ts`   | Portal dropdown — `useAutoSearch` for the Resources group, client-side groups around it |
+| `app/store/message/room/search.ts`                            | Store returning `useCursorSearcher` for the room palette                                |
+| `app/services/message/filter/getFilterTypeFromSearchQuery.ts` | The keyword-plus-colon test that turns typed text into a filter chip                    |
+| `shared/services/message/getSearchableFilters.ts`             | The filters a search runs with — pending chips and repeats dropped                      |
 
 ## Notes
 

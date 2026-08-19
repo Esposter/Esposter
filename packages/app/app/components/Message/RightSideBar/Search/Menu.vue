@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getIsFilterPending } from "#shared/services/message/getIsFilterPending";
 import { SearchFilterComponentMap } from "@/services/message/filter/SearchFilterComponentMap";
 import { useSearchMessageStore } from "@/store/message/search";
 
@@ -21,7 +22,7 @@ const { activeSelectedFilter, menu } = storeToRefs(searchMessageStore);
     <StyledCard p-2>
       <component
         :is="SearchFilterComponentMap[activeSelectedFilter.type]"
-        v-if="activeSelectedFilter && !activeSelectedFilter.value"
+        v-if="activeSelectedFilter && getIsFilterPending(activeSelectedFilter)"
         @select="
           (value) => {
             if (!activeSelectedFilter) return;

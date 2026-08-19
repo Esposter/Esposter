@@ -2,7 +2,7 @@ import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessag
 import type { SelectFields } from "@azure/search-documents";
 import type { Clause, MessageEntity } from "@esposter/db-schema";
 
-import { dedupeFilters } from "#shared/services/message/dedupeFilters";
+import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
 import { readMessageSearchDocuments } from "@@/server/services/message/readMessageSearchDocuments";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { filtersToClauses, getSearchNullClause, serializeSearchClauses } from "@esposter/db";
@@ -26,15 +26,15 @@ export const searchMessages = async ({
   roomId,
   sortBy,
 }: SearchMessagesInput) => {
-  const dedupedFilters = dedupeFilters(filters);
-  const hasRoomInFilter = dedupedFilters.some(({ type }) => type === FilterType.In);
+  const searchableFilters = getSearchableFilters(filters);
+  const hasRoomInFilter = searchableFilters.some(({ type }) => type === FilterType.In);
   const clauses: Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] = [
     ...(hasRoomInFilter
       ? []
       : [{ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId }]),
     getSearchNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
-  if (dedupedFilters.length > 0) clauses.push(...filtersToClauses(dedupedFilters));
+  if (searchableFilters.length > 0) clauses.push(...filtersToClauses(searchableFilters));
   const serializedClauses = serializeSearchClauses(clauses);
   // "Has files" is a non-empty-collection test rather than a value clause, so it appends as a raw OData any().
   const filter = hasFiles
