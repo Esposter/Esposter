@@ -77,13 +77,12 @@ describe("messageRightSideBarSearchInput", () => {
 
   // The query outlives focus, the way Discord's does. Vuetify clears its own search text whenever focus changes,
   // So the field would empty itself the moment the user clicked away from a query they had not searched yet. What
-  // Swallows that clear is the closed menu, so the click-away is driven as the overlay drives it — closing first
+  // And the clear arrives before any overlay has closed, so nothing but the blur itself can be relied on to
+  // Swallow it
   test("keeps the typed text after focus is lost", async () => {
     expect.hasAssertions();
 
     const { autocomplete, searchMessageStore } = await type(query);
-    const { menu } = storeToRefs(searchMessageStore);
-    menu.value = false;
     autocomplete.vm.$emit("update:focused", false);
     autocomplete.vm.$emit("update:search", "");
     await flushPromises();

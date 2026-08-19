@@ -38,8 +38,8 @@ Enter never writes typed text into a chip either. No typed text can be the userI
 
 The two directions are handled differently, and neither can be dropped:
 
-- **Focus lost** — the clear is _swallowed_. It arrives once the menu has closed, and `@update:search` ignores an empty value while the menu is closed, so the store never hears about it and the text stays.
-- **Focus gained** — the clear cannot be swallowed the same way, because the menu is open by then. So the store's value is snapshotted on focus and written back a tick later, once Vuetify's clear has landed.
+- **Focus lost** — the clear is _swallowed_, because `@update:search` ignores an empty value while the menu is closed. That only works if losing focus closes the menu **in the focus handler**: Vuetify's clear arrives before the overlay's own click-away handling, so leaving the close to the overlay lets the clear through and empties the field. Interacting with the menu never reaches this, since the menu prevents mousedown and the field keeps focus.
+- **Focus gained** — the same trick is unavailable, because the menu is open by then. So the store's value is snapshotted on focus and written back a tick later, once Vuetify's clear has landed.
 
 That restore is the subtle one: **it only applies while the field is still empty.** A character typed inside that tick is the newer value, and restoring the snapshot over it is how a one-character search reached the server as `query: ""` and was rejected by the input schema outright.
 
@@ -62,7 +62,8 @@ sequenceDiagram
   Note over Input: the restore's tick elapses
   Input->>Store: restore the snapshot only if searchQuery is still ""
   User->>Vuetify: clicks away
-  Vuetify->>Input: update:focused false — the menu closes
+  Vuetify->>Input: update:focused false
+  Input->>Store: close the menu — before the clear, not after
   Vuetify->>Input: update:search "" — its own clear
   Note over Input: menu is closed, so this one is swallowed and "a" survives
 ```

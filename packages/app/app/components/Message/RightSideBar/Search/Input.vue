@@ -47,14 +47,15 @@ const blur = () => {
     "
     @update:focused="
       async (value) => {
-        // 1. When focus is gained, open the menu and save the current search query
-        if (value) {
-          menu = value;
-          searchQueryOnFocus = searchQuery;
-        }
-        // 2. Focus lost with a now-empty query: the user selected an item, so restore empty to stop old text reappearing.
+        // 1. The menu tracks focus in both directions. Losing focus has to close it here rather than leaving it to
+        // The overlay's own click-away, because Vuetify's clear lands first and the closed menu is what makes
+        // `@update:search` ignore it — interacting with the menu never reaches this, since it prevents mousedown
+        menu = value;
+        // 2. Focus gained: save the current search query, because Vuetify is about to clear the field
+        if (value) searchQueryOnFocus = searchQuery;
+        // 3. Focus lost with a now-empty query: the user selected an item, so restore empty to stop old text reappearing.
         else if (searchQuery === '') searchQueryOnFocus = '';
-        // 3. Wait for Vuetify's internal clear to happen, then restore our saved value — but only while it is still
+        // 4. Wait for Vuetify's internal clear to happen, then restore our saved value — but only while it is still
         // Cleared. A character typed inside this tick is the newer value, and restoring the snapshot over it is how a
         // One-character search reached the server as an empty query
         await nextTick();
