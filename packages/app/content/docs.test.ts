@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 import { DocsSectionGroupsMap } from "@/services/docs/DocsSectionGroupsMap";
+import { AGENT_DIRECTORY } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
 import mermaid from "mermaid";
 import { existsSync } from "node:fs";
@@ -26,14 +27,14 @@ const pagePaths = (await Array.fromAsync(glob("**/*.md", { cwd: docsDirectory })
 const pages = await Promise.all(
   pagePaths.map(async (page) => ({ markdown: await readFile(join(docsDirectory, page), "utf8"), page })),
 );
-const skillsDirectory = join(repositoryDirectory, ".claude", "skills");
+const skillsDirectory = join(repositoryDirectory, AGENT_DIRECTORY, "skills");
 const skillPagePaths = (await Array.fromAsync(glob("**/*.md", { cwd: skillsDirectory }))).map((pagePath) =>
   pagePath.replaceAll("\\", "/"),
 );
 const skillPages = await Promise.all(
   skillPagePaths.map(async (page) => ({
     markdown: await readFile(join(skillsDirectory, page), "utf8"),
-    page: `.claude/skills/${page}`,
+    page: `${AGENT_DIRECTORY}/skills/${page}`,
   })),
 );
 // A token is a path when its first segment names something at the repo root or it carries an app-relative

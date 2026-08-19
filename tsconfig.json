@@ -4,7 +4,7 @@
       "@/*": ["./scripts/*"]
     }
   },
-  "exclude": ["node_modules", "packages", ".claude/worktrees"],
+  "exclude": ["node_modules", "packages", ".agents/worktrees", ".claude"],
   "extends": "./packages/configuration/tsconfig.node.json",
-  "include": [".claude/**/*.ts", "**/*.ts"]
+  "include": [".agents/**/*.ts", "**/*.ts"]
 }

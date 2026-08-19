@@ -53,7 +53,7 @@ describe(isUnderSnapshotLower, () => {
 
   // The write-back half of the source-mirror exclude rule: on win32 the sandbox reads a mirror those paths were
   // Filtered out of, so an upper entry under one is stale mirror content, not a host file the command edited —
-  // Flushing it resurrected `.claude/worktrees` trees the host had already deleted.
+  // Flushing it resurrected `.agents/worktrees` trees the host had already deleted.
   test("masks a mirror-excluded path at any depth so a ghost write can never reach the host", () => {
     expect.hasAssertions();
 

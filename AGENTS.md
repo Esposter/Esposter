@@ -104,7 +104,7 @@ Working is not finished. Once the change does what it should — a feature, a fi
 
 Skip step 1 only for a genuinely one-line change. When a step finds nothing, say so — that is a result.
 
-Carrying one settled convention across code that predates this ritual is a **sweep**: one file per sweep in `.claude/ledgers/`, tracked as repo state rather than as a proposal, and run per the `sweeps` skill.
+Carrying one settled convention across code that predates this ritual is a **sweep**: one file per sweep in `.agents/ledgers/`, tracked as repo state rather than as a proposal, and run per the `sweeps` skill.
 
 A sweep is not only a job someone schedules. **When the change edits a file inside a unit an open ledger still lists as unswept, sweep those files first, in their own commit ahead of the behaviour change** — the ledger drains as a by-product of ordinary work instead of waiting for a sitting. Scope it to the files being touched, keep the two commits apart, and leave the row alone: the coverage table tracks whole units, and there is no partially-swept state (`sweeps` skill).
 
@@ -162,7 +162,24 @@ and this file is the one that goes stale first. Each of these owns its own subje
 | Message types — `MessageComponentMap` and the shared shells   | `packages/app/content/docs/esbabbler/message-list-rendering.md` |
 | tRPC — procedure builders, structure, naming, tests           | `trpc` skill                                                    |
 | Migrations — `db:gen`, SQL fixups, chain recovery             | `drizzle` skill                                                 |
+| Agent tree — `.agents/`, the `.claude` alias, tool excludes   | `packages/app/content/docs/architecture/agent-configuration.md` |
 
 ### Azure Functions
 
 Background handlers, mostly triggered by EventGrid events or Service Bus queues rather than called from the app. Located in `packages/azure-functions/src/functions/`. The app publishes events via `EventGrid` for fire-and-forget async work (push notifications, friend request notifications, webhook delivery) and enqueues Service Bus messages for delayed/scheduled work (scheduled message jobs, which need `scheduleMessages` delivery at a future `runAt`). Two timer triggers run on their own schedules (`PurgeDeletedResources`, `SendTodoReminder`), and one HTTP trigger is routed publicly — `PushWebhook` (`POST webhooks/{id}/{token}`, `authLevel: "function"`), which validates its token from the url. No other HTTP surface exists here, and the app never calls these handlers directly.
+
+## Agent skills
+
+Configuration read by the installed engineering skills (`triage`, `to-tickets`, `to-spec`, `wayfinder`, `grill-with-docs`, `improve-codebase-architecture`). It lives in `.agents/` with the rest of the agent tree — there is no root `docs/` folder, and `packages/app/content/docs` is the public docs site. Which of the two a new file belongs in is settled in `packages/app/content/docs/architecture/agent-configuration.md`.
+
+### Issue tracker
+
+GitHub Issues on `Esposter/Esposter`, via the `gh` CLI; PRs are not treated as a request surface. See `.agents/issue-tracker.md`.
+
+### Triage labels
+
+The five canonical roles, each label string equal to its name (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `.agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context, and **already written** — `packages/app/content/docs` is the glossary and the ADR set, so no root `CONTEXT.md` or `docs/adr/` is created. See `.agents/domain.md`.
