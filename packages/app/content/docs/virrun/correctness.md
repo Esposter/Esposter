@@ -16,13 +16,13 @@ For any command, the sandbox must produce the same observable result as running 
 ```mermaid
 flowchart LR
     subgraph gate["CI coverage shards (hard fail)"]
-        unit["1 · unit\nFS provider, backend wiring"]
-        int["2 · integration/acceptance\nreal pnpm install + native postinstall in RAM"]
-        diff["3 · differential\nsame command: sandbox vs native, normalize, assert identical"]
-        prop["5 · property/fuzz\nfast-check vs node:fs oracle · randomized commands vs isolation invariants"]
+        unit["1 · unit<br/>FS provider, backend wiring"]
+        int["2 · integration/acceptance<br/>real pnpm install + native postinstall in RAM"]
+        diff["3 · differential<br/>same command: sandbox vs native, normalize, assert identical"]
+        prop["5 · property/fuzz<br/>fast-check vs node:fs oracle · randomized commands vs isolation invariants"]
     end
-    equiv["4 · equivalence — parked, run on demand\nwarm fork ≡ cold install · persist ≡ native disk · replay ≡ re-run"]
-    corpus["differential corpus\n(grows with every gap a real repo exposes)"] --> diff
+    equiv["4 · equivalence — parked, run on demand<br/>warm fork ≡ cold install · persist ≡ native disk · replay ≡ re-run"]
+    corpus["differential corpus<br/>(grows with every gap a real repo exposes)"] --> diff
 ```
 
 1. **Unit** — FS provider (read/write/overlay/symlink/module-load), exec backend wiring, snapshot addressing. Fast, deterministic, run everywhere; lives beside the code (`*.test.ts`).

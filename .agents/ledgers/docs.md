@@ -12,7 +12,7 @@ diagram-mandate verdict is recorded per page inside the row's pass, never per ar
 | `virrun/*.md`                                                  | —          |                                                                                                                                                                                                                                                                                                                           |
 | `sheet-editor/`, `infra/`                                      | —          |                                                                                                                                                                                                                                                                                                                           |
 | `clicker/`, `dungeons/`, `posts/`, `users/`                    | —          |                                                                                                                                                                                                                                                                                                                           |
-| `vue-phaserjs/`, `achievements/`, `fluid-simulator/`, `anime/` | —          |                                                                                                                                                                                                                                                                                                                           |
+| `vue-phaserjs/`, `achievements/`, `fluid-simulator/`, `anime/` | 2026-08-20 | the two exhaustive component inventories on the vue-phaserjs index replaced by the command that answers them; a shipped-changelog section cut. The pass found the escaped-line-break defect and it is now enforced, so grep 8 is retired                                                                                  |
 | every `deferred/` and `rejected/` page, every `roadmap.md`     | —          | diagram-exempt — read for revisit triggers and re-argued decisions                                                                                                                                                                                                                                                        |
 | `proposals/`, `docs/index.md`, every area `index.md`           | —          | index tables drift against the pages they list                                                                                                                                                                                                                                                                            |
 | root — `AGENTS.md`, `README.md`, `SCORE.md`, `CONTRIBUTING.md` | —          | plus `SECURITY.md`, `CODE_OF_CONDUCT.md`, `.agents/*.md`                                                                                                                                                                                                                                                                  |
@@ -31,14 +31,14 @@ What each pattern means is the owning skill's to say:
 5. `^::`
 6. ` ```(typescript|javascript|shell|yml)`
 7. `mermaid` absent from a page whose prose names three parts and what passes between them
-8. a literal backslash-n inside a mermaid label
-9. a `## Notes` bullet whose claim already appears in a section above it
+8. a `## Notes` bullet whose claim already appears in a section above it
 
 Excluded: `CHANGELOG.md` (lerna output) · `CLAUDE.md`, `GEMINI.md` (symlinks to `AGENTS.md`) · `public/docs/api` (TypeDoc
 output) · `~/.claude/plugins` skills (external, not ours to edit).
 
-Enforceable next, all in `content/docs.test.ts` where the link, Key Files and mermaid checks already live. Greps
-4, 5, 6 and 8 are exact and decide themselves — but the link-text half of 4 can only land once every row is
-swept, since an unswept area still holds instances that would fail the build. Grep 1 needs an allowlist for the
-counts that may be exact (package count, configured limits) first. None of these reach `.agents/`, which
-`content/docs.test.ts` does not read; an enforcer there would be a second test alongside it.
+Enforceable next, all in `content/docs.test.ts` where the link, Key Files, mermaid-parse and escaped-line-break
+checks already live. Greps 4, 5 and 6 are exact and decide themselves — but the link-text half of 4 can only land
+once every row is swept, since an unswept area still holds instances that would fail the build. Grep 1 needs an
+allowlist for the counts that may be exact (package count, configured limits) first. The escaped-line-break check
+reaches the skill tree too, since the diagram list it runs over already spans both; the rest do not, and
+`content/docs.test.ts` reads nothing else under `.agents/`.

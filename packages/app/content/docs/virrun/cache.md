@@ -45,16 +45,16 @@ Every cache write is disposable, but it must not accumulate. All cleanup runs of
 ```mermaid
 flowchart TB
     exit{"how did the run end?"}
-    exit -->|"clean exit / handled error"| fin["finalizer teardown\nremoves the run's own pid-tagged temps"]
-    exit -->|"hard kill (SIGKILL, wsl --shutdown)"| corpse["temp corpse stranded\ninside the live hash dir"]
+    exit -->|"clean exit / handled error"| fin["finalizer teardown<br/>removes the run's own pid-tagged temps"]
+    exit -->|"hard kill (SIGKILL, wsl --shutdown)"| corpse["temp corpse stranded<br/>inside the live hash dir"]
 
-    next["next run\n(ensureSnapshot / ensurePrepareLayer)"] --> prune["pruneStaleSnapshots / pruneStalePrepareLayers\nsweep superseded hash dirs — spare live leases"]
-    next --> reap["reapStaleTemps\nremove upper./work. temps whose owner pid is dead"]
+    next["next run<br/>(ensureSnapshot / ensurePrepareLayer)"] --> prune["pruneStaleSnapshots / pruneStalePrepareLayers<br/>sweep superseded hash dirs — spare live leases"]
+    next --> reap["reapStaleTemps<br/>remove upper./work. temps whose owner pid is dead"]
     corpse -.->|"reclaimed once pid dead"| reap
 
-    startup["os-backend startup (win32)"] --> mirrors["reapAbandonedSourceMirrors\nsweep mirrors whose origin host dir is gone
+    startup["os-backend startup (win32)"] --> mirrors["reapAbandonedSourceMirrors<br/>sweep mirrors whose origin host dir is gone
 or that aged out unmarked"]
-    startup --> orphans["reapOrphanedWslRuns\ngroup-kill WSL bwrap trees reparented off their Relay"]
+    startup --> orphans["reapOrphanedWslRuns<br/>group-kill WSL bwrap trees reparented off their Relay"]
 ```
 
 - **Finalizer teardown (clean exit)** — each run captures into a private pid-tagged `mkdtemp` sibling (`upper.<pid>.<rand>` + `work.<pid>.<rand>`); its finalizer removes that temp on success and handled error. The published layer is promoted by an atomic `renameSync`, so the temp never survives a normal exit.

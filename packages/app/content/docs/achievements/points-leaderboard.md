@@ -13,7 +13,7 @@ Points live in the definition map (`AchievementDefinitionMap`), not the database
 
 ```mermaid
 flowchart TB
-  query["readPointsLeaderboard\n(rate-limited)"] -->|"sum definition-map points as a CASE\ngroup by user where unlockedAt is not null"| totals["per-user totals"]
+  query["readPointsLeaderboard<br/>(rate-limited)"] -->|"sum definition-map points as a CASE<br/>group by user where unlockedAt is not null"| totals["per-user totals"]
   totals --> build["buildPointsLeaderboard"]
   build -->|"sort desc, competition rank"| ranked["ranked entries"]
   ranked --> entries["top MAX_POINTS_LEADERBOARD_ENTRIES"]

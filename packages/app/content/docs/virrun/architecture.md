@@ -13,7 +13,7 @@ High-level system map for virrun. One entrypoint (`createVirrun` / the `virrun -
 flowchart TB
     subgraph pkg["packages/virrun"]
         cli["virrun -- &lt;cmd&gt; CLI"]
-        api["createVirrun()\norchestrator API"]
+        api["createVirrun()<br/>orchestrator API"]
         cli --> api
 
         subgraph src["source loaders → working dir"]
@@ -24,19 +24,19 @@ flowchart TB
         end
         api --> src
 
-        api --> pick{"BackendType\nselect"}
-        pick -->|Auto / Native| native["Native backend\nspawn on host"]
-        pick -->|Vfs · opt-in| vfs["Vfs backend\nin-process node -e / node &lt;file&gt;"]
-        pick -->|Os · config default| os["Os backend\nisolated process exec"]
+        api --> pick{"BackendType<br/>select"}
+        pick -->|Auto / Native| native["Native backend<br/>spawn on host"]
+        pick -->|Vfs · opt-in| vfs["Vfs backend<br/>in-process node -e / node &lt;file&gt;"]
+        pick -->|Os · config default| os["Os backend<br/>isolated process exec"]
     end
 
-    native --> disk[("REAL disk\n(subprocesses see this)")]
-    vfs --> fsp["FsProvider\n→ @platformatic/vfs (reuse)\n→ node:vfs swap"]
-    fsp --> vmem[("in-process virtual FS\n(only this process sees it)")]
-    os --> sandboxprim["bubblewrap\nLinux direct / Windows WSL2"]
-    sandboxprim --> ram[("tmpfs + overlayfs\nRAM FS — every process sees it")]
-    os --> snap["snapshot + warm-fork\ndeps: environment-key · prepare: source-hash"]
-    os --> wb["write-back\nflush top upper → host\nminus what the sandbox's source\nview never carried\nmutation runs only"]
+    native --> disk[("REAL disk<br/>(subprocesses see this)")]
+    vfs --> fsp["FsProvider<br/>→ @platformatic/vfs (reuse)<br/>→ node:vfs swap"]
+    fsp --> vmem[("in-process virtual FS<br/>(only this process sees it)")]
+    os --> sandboxprim["bubblewrap<br/>Linux direct / Windows WSL2"]
+    sandboxprim --> ram[("tmpfs + overlayfs<br/>RAM FS — every process sees it")]
+    os --> snap["snapshot + warm-fork<br/>deps: environment-key · prepare: source-hash"]
+    os --> wb["write-back<br/>flush top upper → host<br/>minus what the sandbox's source<br/>view never carried<br/>mutation runs only"]
     wb --> disk
 ```
 

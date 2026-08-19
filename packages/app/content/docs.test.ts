@@ -50,6 +50,7 @@ const getIsPage = (slugPath: string) =>
 
 describe(mermaid.parse, () => {
   const MERMAID_REGEX = /```mermaid\r?\n(?<code>[\s\S]*?)```/gu;
+  const ESCAPED_LINE_BREAK_REGEX = /\\n/u;
 
   // Skills are checked here too, rather than in a test of their own: a skill diagram has no renderer to fail
   // In front of anyone — nothing loads a skill and draws it — so an unparseable one is invisible until an
@@ -66,6 +67,18 @@ describe(mermaid.parse, () => {
     expect.hasAssertions();
 
     await expect(mermaid.parse(code)).resolves.toBeDefined();
+  });
+
+  // A line break inside a label is `<br/>`. A literal backslash-n parses cleanly and draws the two characters
+  // Into the box, so the parser above cannot see it and only a reader looking at the rendered page can
+  test("no diagram writes a line break as an escape sequence", () => {
+    expect.hasAssertions();
+
+    const offenders = diagrams
+      .filter(({ code }) => ESCAPED_LINE_BREAK_REGEX.test(code))
+      .map(({ ordinal, page }) => `${page} diagram ${ordinal}`);
+
+    expect(offenders).toStrictEqual([]);
   });
 });
 

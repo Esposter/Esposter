@@ -12,11 +12,11 @@ How a repo moves commands from native execution onto the sandbox **one at a time
 ```mermaid
 flowchart LR
     cmd["virrun -- &lt;cmd&gt;"] --> prefixed{"prefix present?"}
-    prefixed -->|no| native["runs native\n(virrun never involved)"]
-    prefixed -->|yes| config["resolveVirrunConfiguration\nvirrun.config.*"]
+    prefixed -->|no| native["runs native<br/>(virrun never involved)"]
+    prefixed -->|yes| config["resolveVirrunConfiguration<br/>virrun.config.*"]
     config --> resolve["resolveBackend"]
-    resolve -->|"host supports it"| backend["selected backend\n(os / vfs / native)"]
-    resolve -->|"unsupported host\n(no bwrap, no WSL node)"| fallback["degrade to native\nnever error the build"]
+    resolve -->|"host supports it"| backend["selected backend<br/>(os / vfs / native)"]
+    resolve -->|"unsupported host<br/>(no bwrap, no WSL node)"| fallback["degrade to native<br/>never error the build"]
 ```
 
 The `virrun -- <cmd>` prefix **is** the switch: every prefixed command is sandboxed, and opting a command in or out is adding or removing the prefix — a reviewable one-token edit. There is no allowlist and no on/off env flag. The committed config only decides _which backend_ a prefixed command runs through ([configuration](/docs/virrun/configuration)). virrun does inject a vitest-style `VIRRUN=true` into every command's environment (read via `isVirrunEnabled`) so a test or tool can detect it runs under virrun — but that is an output virrun sets, never an input that gates routing.

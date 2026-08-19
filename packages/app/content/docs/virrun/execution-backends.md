@@ -13,21 +13,21 @@ The core, novel work: run a repo's **real** commands against a RAM filesystem, i
 flowchart TB
     cmd["exec(command)"] --> which{backend}
 
-    which -->|native| spawn["spawn on host\n(the baseline + fallback)"]
+    which -->|native| spawn["spawn on host<br/>(the baseline + fallback)"]
 
-    which -->|vfs| parse{"parseNodeInvocation\nrecognised?"}
-    parse -->|"node -e / --eval"| inproc["runNodeInProcess\nvm.runInThisContext"]
-    parse -->|"node &lt;file&gt; (no args)"| inproc2["runNodeInProcess\nrequire(file)"]
-    parse -->|"anything else · shell features\n· async result · uncaught error"| spawn
-    inproc --> mount["overlay FsProvider mounted at cwd\nrequire/fs patched, restored after"]
+    which -->|vfs| parse{"parseNodeInvocation<br/>recognised?"}
+    parse -->|"node -e / --eval"| inproc["runNodeInProcess<br/>vm.runInThisContext"]
+    parse -->|"node &lt;file&gt; (no args)"| inproc2["runNodeInProcess<br/>require(file)"]
+    parse -->|"anything else · shell features<br/>· async result · uncaught error"| spawn
+    inproc --> mount["overlay FsProvider mounted at cwd<br/>require/fs patched, restored after"]
     inproc2 --> mount
 
     which -->|os| host{"host?"}
-    host -->|Linux| bwrap["bwrap --unshare-all --die-with-parent\n--overlay-src cwd (RO lower)\n--tmp-overlay cwd (tmpfs upper)"]
-    host -->|win32| wsl["wsl.exe --exec bwrap …\npaths via wslpath, memoized"]
-    host -->|"unsupported\n(no bwrap / no WSL node)"| throw["throw — never a silent\nun-isolated run"]
+    host -->|Linux| bwrap["bwrap --unshare-all --die-with-parent<br/>--overlay-src cwd (RO lower)<br/>--tmp-overlay cwd (tmpfs upper)"]
+    host -->|win32| wsl["wsl.exe --exec bwrap …<br/>paths via wslpath, memoized"]
+    host -->|"unsupported<br/>(no bwrap / no WSL node)"| throw["throw — never a silent<br/>un-isolated run"]
     wsl --> bwrap
-    bwrap --> store["bind-mount .virrun/store/pnpm\n(shared dep store)"]
+    bwrap --> store["bind-mount .virrun/store/pnpm<br/>(shared dep store)"]
 ```
 
 ## `vfs` backend — in-process, pure npm

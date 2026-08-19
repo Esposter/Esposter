@@ -19,20 +19,20 @@ The mirror is a self-contained entry `<wslCacheRoot>/sources/<sha256(hostCwd)>/`
 
 ```mermaid
 flowchart TB
-    plan["createWslSourceMirrorSync (host side)"] --> walk["buildSourceMirrorManifest\nwalk working tree on NTFS (sub-second)\napplying resolveMirrorExcludes"]
-    walk --> trust{"is the published manifest usable?\nreadable, its tree present, and any\nexclude change targetable by a delete"}
-    trust -->|"yes"| diff["diffSourceMirrorManifests\nvs published manifest.json"]
+    plan["createWslSourceMirrorSync (host side)"] --> walk["buildSourceMirrorManifest<br/>walk working tree on NTFS (sub-second)<br/>applying resolveMirrorExcludes"]
+    walk --> trust{"is the published manifest usable?<br/>readable, its tree present, and any<br/>exclude change targetable by a delete"}
+    trust -->|"yes"| diff["diffSourceMirrorManifests<br/>vs published manifest.json"]
     trust -->|"no"| mark
-    diff -->|"no delta"| refresh["republish the origin marker if it is missing\n(host-side, best-effort) — the invariant\nthe aged-unmarked reaper stands on"] --> skipped["empty script — run pays no sync"]
-    diff -->|"delta: entry changes +\nan rm -rf per exclude change"| mark["create the entry and publish its origin marker\nhost-side (staged temp → atomic rename)\nso it is reapable from birth"]
-    mark -->|"delta"| delta["stage pid-tagged temps over UNC:\nhost tar archive of copied paths + delete list\n→ xargs -0 rm -rf + local tar -x into tree/"]
-    mark -->|"untrusted manifest"| full["full materialize: archive of the whole\nmanifest set, extracted into a cleared tree/\n(first run, cache clean, drift self-heal,\nbare-name exclude change)"]
-    delta --> archive["createSourceMirrorArchive\nhost tar builds the archive"]
+    diff -->|"no delta"| refresh["republish the origin marker if it is missing<br/>(host-side, best-effort) — the invariant<br/>the aged-unmarked reaper stands on"] --> skipped["empty script — run pays no sync"]
+    diff -->|"delta: entry changes +<br/>an rm -rf per exclude change"| mark["create the entry and publish its origin marker<br/>host-side (staged temp → atomic rename)<br/>so it is reapable from birth"]
+    mark -->|"delta"| delta["stage pid-tagged temps over UNC:<br/>host tar archive of copied paths + delete list<br/>→ xargs -0 rm -rf + local tar -x into tree/"]
+    mark -->|"untrusted manifest"| full["full materialize: archive of the whole<br/>manifest set, extracted into a cleared tree/<br/>(first run, cache clean, drift self-heal,<br/>bare-name exclude change)"]
+    delta --> archive["createSourceMirrorArchive<br/>host tar builds the archive"]
     full --> archive
     archive -->|"tar ok"| publish
-    archive -->|"per-entry skip:\nlocked or vanished path"| prune["prune every listed path the archive's\nown members lack from the manifest"] --> publish
-    archive -->|"any other failure"| abort["abort the plan —\nnothing published"]
-    publish["atomic mv: manifest\n(inside the exclusive flock)"] --> bwrap["folded into the run's own wsl.exe invocation\n{ <sync>; } || exit — ahead of bwrap,\nall under the shared reader flock"]
+    archive -->|"per-entry skip:<br/>locked or vanished path"| prune["prune every listed path the archive's<br/>own members lack from the manifest"] --> publish
+    archive -->|"any other failure"| abort["abort the plan —<br/>nothing published"]
+    publish["atomic mv: manifest<br/>(inside the exclusive flock)"] --> bwrap["folded into the run's own wsl.exe invocation<br/>{ <sync>; } || exit — ahead of bwrap,<br/>all under the shared reader flock"]
 ```
 
 - **Manifest delta** — the planner walks the working tree on the host FS (posix relative path → type/size/mtimeMs/symlink target — rsync's classic quick-check signal; a symlink's signal is its _own_ lstat plus its link target, since the archive ships it as a link) and diffs it against the published manifest. The walk is synchronous, unconditional, and on the hot path deliberately: it _is_ the change detector, and off-threading it would add IPC without cutting wall time.

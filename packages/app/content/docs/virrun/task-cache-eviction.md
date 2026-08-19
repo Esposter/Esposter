@@ -15,10 +15,10 @@ Snapshots prune "everything but the current hash" because only the current lockf
 
 ```mermaid
 flowchart TB
-  replay["replayTaskCache (hit)"] -->|utimesSync meta.json| touch["meta mtime = now\n(recency reflects use)"]
-  record["recordTaskCache (miss, exit 0)"] --> reap["reapStaleTemps\n(hard-killed recorder corpses)"]
+  replay["replayTaskCache (hit)"] -->|utimesSync meta.json| touch["meta mtime = now<br/>(recency reflects use)"]
+  record["recordTaskCache (miss, exit 0)"] --> reap["reapStaleTemps<br/>(hard-killed recorder corpses)"]
   record --> prune["pruneStaleTaskCacheEntries"]
-  prune -->|sweepStaleEntries: not a temp\nand meta older than cutoff| evict["detached best-effort removal"]
+  prune -->|sweepStaleEntries: not a temp<br/>and meta older than cutoff| evict["detached best-effort removal"]
   ls["cache ls"] -->|computeDirectoryByteSize| size["tasks count + total payload size"]
 ```
 

@@ -17,16 +17,16 @@ Every os run forks the warm snapshot; the only thing that varies is the top moun
 
 ```mermaid
 flowchart LR
-    src[("source\n(RO lower)")] --> ov{{"overlayfs\nstack"}}
-    snap[("warm snapshot\nnode_modules (RO lower)")] --> ov
-    prep[("prepare layer\n.nuxt (RO lower, source-keyed)")] --> ov
+    src[("source<br/>(RO lower)")] --> ov{{"overlayfs<br/>stack"}}
+    snap[("warm snapshot<br/>node_modules (RO lower)")] --> ov
+    prep[("prepare layer<br/>.nuxt (RO lower, source-keyed)")] --> ov
 
     ov --> top{"top mount"}
-    top -->|"mutation run\n--overlay upper"| up[("persistable upper\n= dist / migrations / fixed src")]
-    top -->|"CI / verification fork\n--tmp-overlay"| vanish[("tmpfs\nwrites vanish")]
+    top -->|"mutation run<br/>--overlay upper"| up[("persistable upper<br/>= dist / migrations / fixed src")]
+    top -->|"CI / verification fork<br/>--tmp-overlay"| vanish[("tmpfs<br/>writes vanish")]
 
-    up --> flush["flushUpperToHost\nfiles · whiteout deletes · opaque dirs"]
-    flush -->|"skip snapshot-lower paths\n+ maskedPaths: prepare outputs,\nand on win32 the mirror excludes"| host[("host working dir\n(native-equivalent)")]
+    up --> flush["flushUpperToHost<br/>files · whiteout deletes · opaque dirs"]
+    flush -->|"skip snapshot-lower paths<br/>+ maskedPaths: prepare outputs,<br/>and on win32 the mirror excludes"| host[("host working dir<br/>(native-equivalent)")]
 ```
 
 Two facts make this native-equivalent without guessing:
