@@ -12,45 +12,45 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 ## Key concepts
 
 - **Room** — the container for a conversation. Rooms and direct messages share one `rooms` table, distinguished by `RoomType` (`Room` | `DirectMessage`). Membership lives in `usersToRooms`.
-- **Storage split** — relational data (rooms, roles, bans, friends, settings, scheduled jobs) lives in Postgres; high-volume, time-ordered data (messages, moderation log) lives in Azure Table Storage with `partitionKey = roomId` and a reverse-ticked timestamp `rowKey` so newest rows sort first. See [/docs/esbabbler/messaging](/docs/esbabbler/messaging).
+- **Storage split** — relational data (rooms, roles, bans, friends, settings, scheduled jobs) lives in Postgres; high-volume, time-ordered data (messages, moderation log) lives in Azure Table Storage with `partitionKey = roomId` and a reverse-ticked timestamp `rowKey` so newest rows sort first. See [messaging](/docs/esbabbler/messaging).
 - **Real-time** — in-process Node `EventEmitter`s (`messageEventEmitter`, `roomEventEmitter`, `callEventEmitter`, …) drive tRPC subscriptions; Azure Web PubSub handles webhook delivery. Subscriptions are the source of truth for store mutations.
-- **RBAC** — permissions are a bigint bitfield on room roles; every privileged procedure is gated through a permissions-aware procedure builder. See [/docs/esbabbler/rbac](/docs/esbabbler/rbac).
-- **Call session** — a call is anchored to a `callSessionsInMessage` row (12-character shareable id), not to a route. Room calls and standalone `/calls/[id]` share-link calls use the same session model. See [/docs/esbabbler/calls](/docs/esbabbler/calls).
+- **RBAC** — permissions are a bigint bitfield on room roles; every privileged procedure is gated through a permissions-aware procedure builder. See [RBAC](/docs/esbabbler/rbac).
+- **Call session** — a call is anchored to a `callSessionsInMessage` row (12-character shareable id), not to a route. Room calls and standalone `/calls/[id]` share-link calls use the same session model. See [calls](/docs/esbabbler/calls).
 
 ## Pages
 
 | Page                                                                                 | Covers                                                            |
 | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
-| [/docs/esbabbler/messaging](/docs/esbabbler/messaging)                               | Message storage, send flow, message types, real-time fan-out      |
-| [/docs/esbabbler/message-list-rendering](/docs/esbabbler/message-list-rendering)     | Per-item weight budget, single-instance menu/dialogs, emoji index |
+| [messaging](/docs/esbabbler/messaging)                                               | Message storage, send flow, message types, real-time fan-out      |
+| [message list rendering](/docs/esbabbler/message-list-rendering)                     | Per-item weight budget, single-instance menu/dialogs, emoji index |
 | [/docs/esbabbler/emoji](/docs/esbabbler/emoji)                                       | One emoji index — picker, reactions, `:` autocomplete, tones      |
-| [/docs/esbabbler/file-media](/docs/esbabbler/file-media)                             | Image thumbnails, per-room attachment limits, attachment browsing |
+| [file & media](/docs/esbabbler/file-media)                                           | Image thumbnails, per-room attachment limits, attachment browsing |
 | [/docs/esbabbler/message-search](/docs/esbabbler/message-search)                     | Right-sidebar search — filter chips, free text, search history    |
 | [/docs/esbabbler/friends-and-dms](/docs/esbabbler/friends-and-dms)                   | Friend requests, blocking, 1:1 and group direct messages          |
-| [/docs/esbabbler/rbac](/docs/esbabbler/rbac)                                         | Roles, permission bitfield, hierarchy, procedure guards           |
-| [/docs/esbabbler/moderation](/docs/esbabbler/moderation)                             | Admin actions, word filter, bans/timeouts, audit log              |
+| [RBAC](/docs/esbabbler/rbac)                                                         | Roles, permission bitfield, hierarchy, procedure guards           |
+| [moderation](/docs/esbabbler/moderation)                                             | Admin actions, word filter, bans/timeouts, audit log              |
 | [/docs/esbabbler/automod-actions](/docs/esbabbler/automod-actions)                   | Word-filter reject/warn/timeout actions via the admin machinery   |
 | [/docs/esbabbler/moderator-notes](/docs/esbabbler/moderator-notes)                   | Private, append-only per-member moderator notes                   |
 | [/docs/esbabbler/threads](/docs/esbabbler/threads)                                   | Thread pane, its composer, thread calls, split view, thread route |
-| [/docs/esbabbler/thread-follows](/docs/esbabbler/thread-follows)                     | Follow threads, notify-on-reply, Followed Threads drawer          |
+| [thread follows](/docs/esbabbler/thread-follows)                                     | Follow threads, notify-on-reply, Followed Threads drawer          |
 | [/docs/esbabbler/invites](/docs/esbabbler/invites)                                   | Invite links with expiry and max-use options                      |
-| [/docs/esbabbler/nicknames](/docs/esbabbler/nicknames)                               | Per-room nicknames and display-name resolution                    |
+| [nicknames](/docs/esbabbler/nicknames)                                               | Per-room nicknames and display-name resolution                    |
 | [/docs/esbabbler/mention-badges](/docs/esbabbler/mention-badges)                     | Mention-only unread counts in the room sidebar                    |
 | [/docs/esbabbler/profiles-and-presence](/docs/esbabbler/profiles-and-presence)       | Profile card/editing and Online/Idle/DND/Offline presence         |
-| [/docs/esbabbler/calls](/docs/esbabbler/calls)                                       | LiveKit sessions, membership boundary, knock lobby                |
+| [calls](/docs/esbabbler/calls)                                                       | LiveKit sessions, membership boundary, knock lobby                |
 | [/docs/esbabbler/calls/call-view](/docs/esbabbler/calls/call-view)                   | Call surface, prejoin/ready room, tiles, control bar              |
 | [/docs/esbabbler/calls/screenshare](/docs/esbabbler/calls/screenshare)               | Screen-share tracks, presenter layout, moderation                 |
 | [/docs/esbabbler/calls/picture-in-picture](/docs/esbabbler/calls/picture-in-picture) | Document PiP pop-out of the active call                           |
-| [/docs/esbabbler/calls/per-user-volume](/docs/esbabbler/calls/per-user-volume)       | Per-participant in-call volume slider (client-only)               |
-| [/docs/esbabbler/settings](/docs/esbabbler/settings)                                 | Message-scoped user settings dialog + `userSettingsInMessage`     |
+| [per-user volume](/docs/esbabbler/calls/per-user-volume)                             | Per-participant in-call volume slider (client-only)               |
+| [user settings](/docs/esbabbler/settings)                                            | Message-scoped user settings dialog + `userSettingsInMessage`     |
 | [/docs/esbabbler/room-settings](/docs/esbabbler/room-settings)                       | Room settings dialog — Discord categories + permission gating     |
-| [/docs/esbabbler/room-ui](/docs/esbabbler/room-ui)                                   | Room-shell polish — member grouping, resizable sidebars, density  |
-| [/docs/esbabbler/voice-video](/docs/esbabbler/voice-video)                           | Voice & Video panel and live LiveKit application                  |
-| [/docs/esbabbler/push-to-talk](/docs/esbabbler/push-to-talk)                         | Hold-to-talk keybind, mic gate, release delay                     |
-| [/docs/esbabbler/push-notifications](/docs/esbabbler/push-notifications)             | Web push delivery and recipient filtering                         |
+| [room UI](/docs/esbabbler/room-ui)                                                   | Room-shell polish — member grouping, resizable sidebars, density  |
+| [voice & video settings](/docs/esbabbler/voice-video)                                | Voice & Video panel and live LiveKit application                  |
+| [push-to-talk](/docs/esbabbler/push-to-talk)                                         | Hold-to-talk keybind, mic gate, release delay                     |
+| [push notifications](/docs/esbabbler/push-notifications)                             | Web push delivery and recipient filtering                         |
 | [/docs/esbabbler/slash-commands](/docs/esbabbler/slash-commands)                     | `/command` registry, picker, execution model                      |
-| [/docs/esbabbler/scheduled-messages](/docs/esbabbler/scheduled-messages)             | `/remind` + `/schedule` jobs and the Service Bus worker           |
-| [/docs/esbabbler/drafts-and-sent](/docs/esbabbler/drafts-and-sent)                   | Cross-room Drafts / Scheduled / Sent view                         |
+| [scheduled messages](/docs/esbabbler/scheduled-messages)                             | `/remind` + `/schedule` jobs and the Service Bus worker           |
+| [drafts & sent](/docs/esbabbler/drafts-and-sent)                                     | Cross-room Drafts / Scheduled / Sent view                         |
 | [/docs/esbabbler/offline-cache](/docs/esbabbler/offline-cache)                       | IndexedDB offline mirror of Pinia state                           |
 | [/docs/esbabbler/webhooks](/docs/esbabbler/webhooks)                                 | Inbound webhooks and their app-user bot identities                |
 | [/docs/esbabbler/deferred](/docs/esbabbler/deferred)                                 | Ideas deferred, each with a revisit trigger                       |

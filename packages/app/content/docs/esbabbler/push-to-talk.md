@@ -26,7 +26,7 @@ stateDiagram-v2
 
 ## Data model
 
-`userSettings.pushToTalkKeybind` (text, `""` = unbound) and `userSettings.pushToTalkReleaseDelayMs` (integer, CHECK 0..2000, default 20) — see [/docs/esbabbler/settings](/docs/esbabbler/settings). No procedures beyond the existing `updateUserSettings`.
+`userSettings.pushToTalkKeybind` (text, `""` = unbound) and `userSettings.pushToTalkReleaseDelayMs` (integer, CHECK 0..2000, default 20) — see [user settings](/docs/esbabbler/settings). No procedures beyond the existing `updateUserSettings`.
 
 ## Key files
 

@@ -5,7 +5,7 @@ description: Client-side image thumbnails, per-room attachment limits, and brows
 
 # File & Media
 
-Message attachments upload through one shared SAS round-trip ([/docs/architecture/file-uploads](/docs/architecture/file-uploads)). This page covers three enhancements layered on top of it: image thumbnails, per-room attachment limits, and browsing a room's attachments.
+Message attachments upload through one shared SAS round-trip ([file uploads](/docs/architecture/file-uploads)). This page covers three enhancements layered on top of it: image thumbnails, per-room attachment limits, and browsing a room's attachments.
 
 ## How it works
 

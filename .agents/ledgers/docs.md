@@ -27,13 +27,13 @@ Greps, over `*.md`. Each finds a candidate, not a defect — the failures are pr
 5. `^::` — MDC syntax, which the renderer has no components for
 6. ` ```(typescript|javascript|shell|yml)` — long-form fence names; one language, one spelling
 7. `mermaid` absent from a page whose prose names three parts and what passes between them
-8. `
-` inside a mermaid label — parses clean, renders the two characters (`<br/>` is the break)
+8. a literal backslash-n inside a mermaid label — parses clean, renders the two characters (`<br/>` is the break)
 9. a `## Notes` bullet whose claim already appears in a section above it
 
 Excluded: `CHANGELOG.md` (lerna output) · `CLAUDE.md`, `GEMINI.md` (symlinks to `AGENTS.md`) · `public/docs/api` (TypeDoc
 output) · `~/.claude/plugins` skills (external, not ours to edit).
 
-Enforceable next, all in `content/docs.test.ts` where the link, Key Files and mermaid checks already live: greps 4,
-5 and 6 are exact and decide themselves; grep 1 needs an allowlist for the counts that may be exact (package
-count, configured limits) before it can fail a build.
+Enforceable next, all in `content/docs.test.ts` where the link, Key Files and mermaid checks already live. Greps
+4, 5, 6 and 8 are exact and decide themselves, as is link text repeating its own route (`\[/docs/[^]]*\]\(`) —
+but that one can only land once every row is swept, since an unswept area still holds instances that would fail
+the build. Grep 1 needs an allowlist for the counts that may be exact (package count, configured limits) first.

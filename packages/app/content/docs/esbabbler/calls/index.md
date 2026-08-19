@@ -7,7 +7,7 @@ description: LiveKit-based audio/video — call sessions, the membership boundar
 
 Discord-style persistent per-room drop-in audio/video plus standalone share-link calls (like Google Meet). Room members join/leave room calls freely; `/calls` starts a roomless call joinable by anyone with the link. Media runs through the **LiveKit SFU** — the server generates access tokens and keeps a participant map for observers; LiveKit handles all WebRTC signaling, track publication, simulcast, and bandwidth estimation.
 
-Sub-pages: [call view UI](/docs/esbabbler/calls/call-view) · [screenshare](/docs/esbabbler/calls/screenshare) · [picture-in-picture](/docs/esbabbler/calls/picture-in-picture) · [per-user volume](/docs/esbabbler/calls/per-user-volume). Voice preferences applied to calls: [/docs/esbabbler/voice-video](/docs/esbabbler/voice-video).
+Sub-pages: [call view UI](/docs/esbabbler/calls/call-view) · [screenshare](/docs/esbabbler/calls/screenshare) · [picture-in-picture](/docs/esbabbler/calls/picture-in-picture) · [per-user volume](/docs/esbabbler/calls/per-user-volume). Voice preferences applied to calls: [voice & video settings](/docs/esbabbler/voice-video).
 
 ## The session model
 

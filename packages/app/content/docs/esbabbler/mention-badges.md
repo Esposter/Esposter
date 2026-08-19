@@ -19,7 +19,7 @@ Badging and [push notifications](/docs/esbabbler/push-notifications) both resolv
 
 Threading a precomputed `ClassifiedMentions` through instead would buy that back at a real cost. `getPushSubscriptionsForMessage` is also called from outside the send path, where no classification has happened, so the parameter would have to be optional — and an optional precomputed input is a parameter a caller can pass from the _wrong_ message, turning a self-contained function into one whose correctness depends on its caller. What the two functions share is the resolution rule, and that is already shared: `getMentionConditions` plus `createMentionConditionBuilders` hold one copy of it, and the badge and notification variants differ only in the condition a resolved set of user ids becomes.
 
-Counts arrive with `readMyUsersToRooms` at startup (already loaded for every room — see [/docs/esbabbler/nicknames](/docs/esbabbler/nicknames)) and update live through the existing `onUpdateUserToRoom` subscription: both the increment and the clear emit `updateUserToRoom` per affected row, so the chip appears and disappears with no new subscription.
+Counts arrive with `readMyUsersToRooms` at startup (already loaded for every room — see [nicknames](/docs/esbabbler/nicknames)) and update live through the existing `onUpdateUserToRoom` subscription: both the increment and the clear emit `updateUserToRoom` per affected row, so the chip appears and disappears with no new subscription.
 
 ```mermaid
 flowchart LR

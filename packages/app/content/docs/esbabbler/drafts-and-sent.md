@@ -17,7 +17,7 @@ Route `/messages/draftsandsent`: a cross-room view of unsent drafts, scheduled j
 
 Sent messages reuse the existing Azure AI Search messages index as the cross-room read model — Azure Table Storage remains the source of truth for message writes. `message.readMySentMessages({ offset, limit })` queries the index with `userId` and non-deleted filters ordered `createdAt DESC`, returning total count, offset pagination metadata, deserialized message entities, and room metadata per row; the client groups rows by day and links each row back to its source room/message.
 
-Scheduled rows come from `message.scheduledMessageJob.readMyScheduledJobs` (see [/docs/esbabbler/scheduled-messages](/docs/esbabbler/scheduled-messages)).
+Scheduled rows come from `message.scheduledMessageJob.readMyScheduledJobs` (see [scheduled messages](/docs/esbabbler/scheduled-messages)).
 
 ## Sidebar indicators
 

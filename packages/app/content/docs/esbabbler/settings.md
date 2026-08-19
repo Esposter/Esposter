@@ -27,16 +27,16 @@ They also share the responsive shell: the sidebar drawer (`MessageModelSettingsL
 
 `userSettingsInMessage` (`packages/db-schema/src/schema/userSettingsInMessage.ts`), 1:1 on `userId` (PK, cascade), under `messageSchema`:
 
-| Column                                                   | Type                                                              | Default         |
-| -------------------------------------------------------- | ----------------------------------------------------------------- | --------------- |
-| `voiceInputMode`                                         | `voice_input_mode` enum (`VoiceActivity` \| `PushToTalk`)         | `VoiceActivity` |
-| `pushToTalkKeybind`                                      | text                                                              | `""`            |
-| `pushToTalkReleaseDelayMs`                               | integer (CHECK 0..2000)                                           | 20              |
-| `inputSensitivityDecibels`                               | integer (CHECK −100..0)                                           | −50             |
-| `microphoneVolumePercentage` / `speakerVolumePercentage` | integer                                                           | 100             |
-| `noiseSuppressionMode`                                   | enum → [/docs/esbabbler/voice-video](/docs/esbabbler/voice-video) |                 |
-| `isMuteOnJoin` / `isDeafenOnJoin`                        | boolean                                                           | false           |
-| `autoIdleThresholdMs`                                    | integer (CHECK 60_000..86_400_000)                                | 600_000         |
+| Column                                                   | Type                                                         | Default         |
+| -------------------------------------------------------- | ------------------------------------------------------------ | --------------- |
+| `voiceInputMode`                                         | `voice_input_mode` enum (`VoiceActivity` \| `PushToTalk`)    | `VoiceActivity` |
+| `pushToTalkKeybind`                                      | text                                                         | `""`            |
+| `pushToTalkReleaseDelayMs`                               | integer (CHECK 0..2000)                                      | 20              |
+| `inputSensitivityDecibels`                               | integer (CHECK −100..0)                                      | −50             |
+| `microphoneVolumePercentage` / `speakerVolumePercentage` | integer                                                      | 100             |
+| `noiseSuppressionMode`                                   | enum → [voice & video settings](/docs/esbabbler/voice-video) |                 |
+| `isMuteOnJoin` / `isDeafenOnJoin`                        | boolean                                                      | false           |
+| `autoIdleThresholdMs`                                    | integer (CHECK 60_000..86_400_000)                           | 600_000         |
 
 Every column is communication-scoped — no account/profile/theme columns, reinforcing the surface split. Read returns the row or an unpersisted defaults object; the first update upserts (`onConflictDoUpdate` on `userId`).
 
@@ -76,4 +76,4 @@ The dialog uses a Discord-style two-level nav: a `v-list-group` per `UserSetting
 
 ## Notes
 
-The Voice & Video panel's content and how each setting applies to live LiveKit calls is its own page: [/docs/esbabbler/voice-video](/docs/esbabbler/voice-video). The Appearance panel's Message Display density is covered by [/docs/esbabbler/room-ui](/docs/esbabbler/room-ui), and per-participant call volume — which is not a column here — by [/docs/esbabbler/calls/per-user-volume](/docs/esbabbler/calls/per-user-volume).
+The Voice & Video panel's content and how each setting applies to live LiveKit calls is its own page: [voice & video settings](/docs/esbabbler/voice-video). The Appearance panel's Message Display density is covered by [room UI](/docs/esbabbler/room-ui), and per-participant call volume — which is not a column here — by [per-user volume](/docs/esbabbler/calls/per-user-volume).

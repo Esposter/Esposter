@@ -9,18 +9,18 @@ Triggered by `/` in the message input. The TipTap suggestion API powers the pick
 
 ## Command reference
 
-| Command      | Kind             | Parameters           | Result                                                                                                    |
-| ------------ | ---------------- | -------------------- | --------------------------------------------------------------------------------------------------------- |
-| `/flip`      | Immediate client | —                    | Posts `🌝 **Heads**` or `🌚 **Tails**`                                                                    |
-| `/me`        | Immediate client | `message` (required) | Posts `*message*` (italic emphasis)                                                                       |
-| `/roll`      | Immediate client | —                    | Posts `🎲 Rolled a **N**` (1–100)                                                                         |
-| `/shrug`     | Immediate client | `text` (optional)    | Posts `text¯\_(ツ)_/¯`                                                                                    |
-| `/tableflip` | Immediate client | —                    | Posts `(╯°□°）╯︵ ┻━┻`                                                                                    |
-| `/unflip`    | Immediate client | —                    | Posts `┬─┬ノ( º _ ºノ)`                                                                                   |
-| `/topic`     | Immediate tRPC   | `text` (optional)    | Calls `room.updateRoom` to set/clear the topic                                                            |
-| `/poll`      | Dialog → tRPC    | —                    | Opens the poll dialog; on submit posts a `MessageType.Poll` message                                       |
-| `/remind`    | Dialog → tRPC    | —                    | Opens the scheduled-job dialog → [/docs/esbabbler/scheduled-messages](/docs/esbabbler/scheduled-messages) |
-| `/schedule`  | Dialog → tRPC    | —                    | Opens the scheduled-job dialog → [/docs/esbabbler/scheduled-messages](/docs/esbabbler/scheduled-messages) |
+| Command      | Kind             | Parameters           | Result                                                                                    |
+| ------------ | ---------------- | -------------------- | ----------------------------------------------------------------------------------------- |
+| `/flip`      | Immediate client | —                    | Posts `🌝 **Heads**` or `🌚 **Tails**`                                                    |
+| `/me`        | Immediate client | `message` (required) | Posts `*message*` (italic emphasis)                                                       |
+| `/roll`      | Immediate client | —                    | Posts `🎲 Rolled a **N**` (1–100)                                                         |
+| `/shrug`     | Immediate client | `text` (optional)    | Posts `text¯\_(ツ)_/¯`                                                                    |
+| `/tableflip` | Immediate client | —                    | Posts `(╯°□°）╯︵ ┻━┻`                                                                    |
+| `/unflip`    | Immediate client | —                    | Posts `┬─┬ノ( º _ ºノ)`                                                                   |
+| `/topic`     | Immediate tRPC   | `text` (optional)    | Calls `room.updateRoom` to set/clear the topic                                            |
+| `/poll`      | Dialog → tRPC    | —                    | Opens the poll dialog; on submit posts a `MessageType.Poll` message                       |
+| `/remind`    | Dialog → tRPC    | —                    | Opens the scheduled-job dialog → [scheduled messages](/docs/esbabbler/scheduled-messages) |
+| `/schedule`  | Dialog → tRPC    | —                    | Opens the scheduled-job dialog → [scheduled messages](/docs/esbabbler/scheduled-messages) |
 
 ## How it works
 

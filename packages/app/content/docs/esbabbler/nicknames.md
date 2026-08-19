@@ -83,4 +83,4 @@ Room settings → **My Profile** tab (visible to all members, no permission requ
 
 ## Notes
 
-Setting **other** members' nicknames via the `ManageNicknames` permission bit is not wired to a UI yet — the bit exists in `RoomPermission` (see [/docs/esbabbler/rbac](/docs/esbabbler/rbac)) but only self-service nickname editing is built.
+Setting **other** members' nicknames via the `ManageNicknames` permission bit is not wired to a UI yet — the bit exists in `RoomPermission` (see [RBAC](/docs/esbabbler/rbac)) but only self-service nickname editing is built.

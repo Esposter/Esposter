@@ -39,7 +39,7 @@ Real-time delivery is two-layered:
 - **In-process** — `messageEventEmitter` / `roomEventEmitter` drive tRPC subscriptions (`onCreateMessage`, `onUpdateMessage`, `onDeleteMessage`, `onCreateTyping`). The app runs a single Node process, so this is sufficient (see [cross-process event bridge](/docs/esbabbler/deferred/cross-process-event-bridge)).
 - **Azure Web PubSub** — used for inbound webhook message delivery; clients get a scoped access URL via `getWebPubSubClientAccessUrl`.
 
-Push notification filtering and delivery detail lives in [/docs/esbabbler/push-notifications](/docs/esbabbler/push-notifications).
+Push notification filtering and delivery detail lives in [push notifications](/docs/esbabbler/push-notifications).
 
 ## Conditional writes
 
@@ -71,7 +71,7 @@ The stored poll body is parsed and re-serialized through `pollMessageContentSche
 
 `MessageTypeOperationPermissionMap` is the one source of truth for what may be done to a message, and it is declared `as const satisfies Record<MessageType, …>`, so it is exhaustive — a new type does not compile until it declares its operations. Presence answers whether the type supports the operation at all: `Call`, `EditRoom`, `PinMessage` and `System` messages are written by the server on the room's behalf and support none, so update, delete and pin on them are a `BAD_REQUEST` for every caller, including one holding `ManageMessages`. The value answers which of the callers who could perform it actually may — `Author` means the author _or_ a member with `ManageMessages`, `AnyMember` means the membership check already settled it, and `ManageMessages` means that permission alone. A webhook message has no user author, so all of its operations resolve to `ManageMessages`.
 
-Mentions are stored as HTML: the TipTap mention suggestion inserts `<span data-type="mention" data-id="...">` nodes, which the server later parses for notification targeting and the client resolves to display names (see [/docs/esbabbler/nicknames](/docs/esbabbler/nicknames)).
+Mentions are stored as HTML: the TipTap mention suggestion inserts `<span data-type="mention" data-id="...">` nodes, which the server later parses for notification targeting and the client resolves to display names (see [nicknames](/docs/esbabbler/nicknames)).
 
 All three composer suggestion popovers — mentions, emoji and [slash commands](/docs/esbabbler/slash-commands) — render through one `MessageModelMessageSuggestionList` surface, so the composer's chrome is the same whichever trigger opened it. It owns the card, the group title from `getSuggestionListTitle`, and the keyboard-navigated `StyledList`; each popover supplies its own rows and its own width as a passthrough attribute, and nothing else.
 
