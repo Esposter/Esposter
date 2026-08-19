@@ -4,19 +4,19 @@
 `docs` skill (`readme-standards` for the READMEs). The diagram-mandate verdict is recorded per page inside the
 row's pass, never per area.
 
-| Unit                                                           | Swept | Notes                                                              |
-| -------------------------------------------------------------- | ----- | ------------------------------------------------------------------ |
-| `architecture/*.md`                                            | —     | repo-wide standards — cited from skills and every area             |
-| `platform/*.md`                                                | —     | largest area                                                       |
-| `esbabbler/*.md`, `esbabbler/calls/`                           | —     |                                                                    |
-| `virrun/*.md`                                                  | —     |                                                                    |
-| `sheet-editor/`, `infra/`                                      | —     |                                                                    |
-| `clicker/`, `dungeons/`, `posts/`, `users/`                    | —     |                                                                    |
-| `vue-phaserjs/`, `achievements/`, `fluid-simulator/`, `anime/` | —     |                                                                    |
-| every `deferred/` and `rejected/` page, every `roadmap.md`     | —     | diagram-exempt — read for revisit triggers and re-argued decisions |
-| `proposals/`, `docs/index.md`, every area `index.md`           | —     | index tables drift against the pages they list                     |
-| root — `AGENTS.md`, `README.md`, `SCORE.md`, `CONTRIBUTING.md` | —     | plus `SECURITY.md`, `CODE_OF_CONDUCT.md`, `.agents/*.md`           |
-| `packages/*/README.md`                                         | —     | `readme-standards` owns the shape                                  |
+| Unit                                                           | Swept      | Notes                                                                                                                                                           |
+| -------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `architecture/*.md`                                            | 2026-08-19 | link text normalised to prose, tombstones inverted, two restating Notes sections cut; the link-text, mermaid-break and Notes rules now live in the `docs` skill |
+| `platform/*.md`                                                | —          | largest area                                                                                                                                                    |
+| `esbabbler/*.md`, `esbabbler/calls/`                           | —          |                                                                                                                                                                 |
+| `virrun/*.md`                                                  | —          |                                                                                                                                                                 |
+| `sheet-editor/`, `infra/`                                      | —          |                                                                                                                                                                 |
+| `clicker/`, `dungeons/`, `posts/`, `users/`                    | —          |                                                                                                                                                                 |
+| `vue-phaserjs/`, `achievements/`, `fluid-simulator/`, `anime/` | —          |                                                                                                                                                                 |
+| every `deferred/` and `rejected/` page, every `roadmap.md`     | —          | diagram-exempt — read for revisit triggers and re-argued decisions                                                                                              |
+| `proposals/`, `docs/index.md`, every area `index.md`           | —          | index tables drift against the pages they list                                                                                                                  |
+| root — `AGENTS.md`, `README.md`, `SCORE.md`, `CONTRIBUTING.md` | —          | plus `SECURITY.md`, `CODE_OF_CONDUCT.md`, `.agents/*.md`                                                                                                        |
+| `packages/*/README.md`                                         | —          | `readme-standards` owns the shape                                                                                                                               |
 
 Greps, over `*.md`. Each finds a candidate, not a defect — the failures are prose-shaped and the pass is reading:
 
@@ -27,6 +27,9 @@ Greps, over `*.md`. Each finds a candidate, not a defect — the failures are pr
 5. `^::` — MDC syntax, which the renderer has no components for
 6. ` ```(typescript|javascript|shell|yml)` — long-form fence names; one language, one spelling
 7. `mermaid` absent from a page whose prose names three parts and what passes between them
+8. `
+` inside a mermaid label — parses clean, renders the two characters (`<br/>` is the break)
+9. a `## Notes` bullet whose claim already appears in a section above it
 
 Excluded: `CHANGELOG.md` (lerna output) · `CLAUDE.md`, `GEMINI.md` (symlinks to `AGENTS.md`) · `public/docs/api` (TypeDoc
 output) · `~/.claude/plugins` skills (external, not ours to edit).

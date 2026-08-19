@@ -40,13 +40,8 @@ These are set automatically:
 
 **`IS_PRODUCTION` / `IS_TEST` / `IS_DEVELOPMENT` (from `#shared/util/environment/constants`)** — the single consistent choice everywhere: module-level code, class property initialisers, composables, server routes, plugins. `vite.mode` is set from `APP_ENV` in `configuration/vite.ts`, so these build-time constants always reflect the deployed environment.
 
-**`process.env.APP_ENV` directly** — only in build-time config files (`configuration/`) where `import.meta.env` is not yet available.
+**`process.env.*` directly** — secrets, urls and connection strings, in code that only ever runs server-side (`server/`, `configuration/`, `packages/azure-functions/`, and the `shared/` modules only those contexts import), plus `APP_ENV` in the build-time config files where `import.meta.env` is not available yet.
 
 ## What not to do
 
 Do not read `process.env.*` in code that executes in the browser — values are `undefined` at runtime and will silently evaluate to `false` for any comparison. The folder location (`shared/`) is not the deciding factor; what matters is whether the code ever runs client-side.
-
-## Rule of thumb
-
-- **`import.meta.env`** — for environment mode checks (`IS_PRODUCTION`, `IS_DEVELOPMENT`, etc.) in any code that may run client-side
-- **`process.env`** — for secrets, URLs, and connection strings in code that only ever runs server-side: `server/`, `configuration/`, `packages/azure-functions/`, and `shared/` modules that are only imported from those contexts

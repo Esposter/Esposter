@@ -11,11 +11,11 @@ Authentication is OAuth-only through [better-auth](https://better-auth.com) with
 
 ```mermaid
 flowchart LR
-  login[login page\nGoogle / GitHub / Facebook] --> ba[better-auth handler\nserver/api/auth/...]
-  ba --> pg[(users / sessions tables\nDrizzle adapter)]
-  page[auth-gated page] --> mw[auth middleware\nsession? else /login]
+  login[login page<br/>Google / GitHub / Facebook] --> ba[better-auth handler<br/>server/api/auth/...]
+  ba --> pg[(users / sessions tables<br/>Drizzle adapter)]
+  page[auth-gated page] --> mw[auth middleware<br/>session? else /login]
   client[$trpc call] --> proc[standardAuthedProcedure]
-  proc --> isAuthed[getIsAuthed + rate limiter\nsession → AuthedContext]
+  proc --> isAuthed[getIsAuthed + rate limiter<br/>session → AuthedContext]
   proc --> plugin[achievementPlugin]
 ```
 

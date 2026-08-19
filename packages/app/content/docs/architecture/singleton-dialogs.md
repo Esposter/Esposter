@@ -13,7 +13,7 @@ Three parts cooperate, and each lives in a fixed place:
 
 1. **A per-service dialog store** holds only the dialog targets — plain string refs like `deletingId` or `editingColumnName` that default to `""` (the empty-string default convention, never `undefined`). Dialog UI state is deliberately kept out of business-logic stores: each service gets a dialog store next to its business store, e.g. `store/message/dialog.ts` (`useMessageDialogStore`), `store/post/dialog.ts`, `store/resource/sheet/rowDialog.ts`.
 2. **Per-item action buttons write the target.** The button in the list item is a dumb icon button whose click handler is one assignment: `@click.stop="deletingId = item.id"`. There are no activator slots and no `@update:delete-mode` emit chains plumbed up the component tree.
-3. **One singleton dialog component** is mounted at the list/table/page level. It resolves the full item from the business store by the target (`items.find(({ id }) => id === deletingId)`), guards rendering with `v-if="item"`, and derives its open state from the target via the `useSingletonDialog` composable — a writable computed whose getter is `Boolean(target)` and whose setter resets the target to `""` on close.
+3. **One singleton dialog component** is mounted at the list/table/page level. It resolves the full item from the business store by the target (`items.find(({ id }) => id === deletingId)`) — so the dialog always shows live data rather than an item captured at open time — guards rendering with `v-if="item"`, and derives its open state from the target via the `useSingletonDialog` composable — a writable computed whose getter is `Boolean(target)` and whose setter resets the target to `""` on close.
 
 ```mermaid
 flowchart LR
@@ -44,7 +44,7 @@ Where the parent owns the lookup because it passes the item down as a prop (the 
 
 ## Scope and non-goals
 
-- **Hover toolbars and options menus** in list items follow the same principle with `v-if` (mount on hover/activation) rather than `v-show` — an always-mounted `v-show` toolbar per item is the same O(N) mount problem in menu form. See `/docs/esbabbler/message-list-rendering` for the message list's full treatment.
+- **Hover toolbars and options menus** in list items follow the same principle with `v-if` (mount on hover/activation) rather than `v-show` — an always-mounted `v-show` toolbar per item is the same O(N) mount problem in menu form. See [the message list's rendering](/docs/esbabbler/message-list-rendering) for its full treatment.
 - **Single-instance dialogs are fine as combined button+dialog components.** A create button in a toolbar or a page-level settings dialog mounts exactly once, so the rule does not apply — it targets per-item multiplication only.
 
 ## Key files
@@ -60,8 +60,3 @@ Where the parent owns the lookup because it passes the item down as a prop (the 
 | `app/components/Post/ConfirmDeleteDialog.vue`                                        | Canonical stateless singleton (resolve → `v-if` → `useSingletonDialog`)              |
 | `app/components/Resource/Sheet/Row/EditDialog.vue`                                   | Canonical stateful singleton (`v-if` + `:key` mount for a fresh edit draft)          |
 | `app/components/Message/Model/Room/Settings/Dialog.vue`                              | Fullscreen settings dialog driven by `settingsRoomId`                                |
-
-## Notes
-
-- The emit-plumbing style this replaces (`@update:delete-mode` chains + activator slots per item) was the original convention; it was retired in July 2026 after profiling showed per-item dialog trees dominated interaction latency.
-- Targets are resolved back to full items through the business store, so the dialog always shows live data — no stale item props captured at open time.

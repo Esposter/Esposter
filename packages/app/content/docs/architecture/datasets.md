@@ -7,7 +7,7 @@ description: The standard for serving tabular data — contract, DatasetProvider
 
 The standard for serving tabular data across products. Whenever one product needs to read another product's data (survey responses in a dashboard, file rows in an import), it goes through this contract — never through product-specific reads.
 
-Serving is the **DatasetProvider capability** ([/docs/architecture/resources](/docs/architecture/resources)): a resource type opts in via `ResourceDefinitionMap`, and `DatasetProviderType` keys the provider map so a declared-but-unregistered provider is a compile error. _Consuming_ is not a capability — it is just calling `dataset.readDataset` from a component (dashboard binding form, email merge fields).
+Serving is the **DatasetProvider capability** ([resources](/docs/architecture/resources)): a resource type opts in via `ResourceDefinitionMap`, and `DatasetProviderType` keys the provider map so a declared-but-unregistered provider is a compile error. _Consuming_ is not a capability — it is just calling `dataset.readDataset` from a component (dashboard binding form, email merge fields).
 
 ## Contract
 

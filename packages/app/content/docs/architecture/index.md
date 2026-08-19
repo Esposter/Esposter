@@ -5,7 +5,7 @@ description: Cross-cutting standards and system explanations shared by every Esp
 
 # Architecture
 
-These pages explain the durable, cross-cutting mechanisms that span multiple packages or feature areas — the repo-wide answer to "whenever we need X, we do it this way". Area-specific features live under their own sections (for example [/docs/platform](/docs/platform) or [/docs/esbabbler](/docs/esbabbler)).
+These pages explain the durable, cross-cutting mechanisms that span multiple packages or feature areas — the repo-wide answer to "whenever we need X, we do it this way". Area-specific features live under their own sections (for example [platform](/docs/platform) or [esbabbler](/docs/esbabbler)).
 
 | Page                                                                                      | What it covers                                                                           |
 | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |

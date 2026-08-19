@@ -74,12 +74,12 @@ Each type owns one content schema (Zod, interface-first, one export per file) in
 
 A capability is a cross-cutting mechanism a resource type opts into via its definition. **Admission rule: a capability exists only when ≥2 resource types need the same mechanism, or when the type system must guarantee its absence** (a TodoList must not have publish endpoints). Anything used by exactly one type is type-specific code — promoting a single-consumer mechanism is over-engineering.
 
-| Capability          | Contract                                                                                                                                               | Adopters                                                                |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
-| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command → [/docs/architecture/publishing](/docs/architecture/publishing) | Dashboard, Email, Flowchart, Note, Survey, Webpage                      |
-| **DatasetProvider** | registers a provider so `dataset.readDataset` resolves the type → [/docs/architecture/datasets](/docs/architecture/datasets)                           | Program (participant status), Sheet, Survey (responses)                 |
-| **FileAssets**      | owner-only upload/download/delete of binary assets under `{id}/files/…` → [/docs/platform/resource-file-assets](/docs/platform/resource-file-assets)   | Email, Survey, Webpage                                                  |
-| **Portable**        | import/export via declared formats (self-contained `export()` / `import()`) + Import/Export commands                                                   | Sheet (csv/json/xlsx, both ways), Email (personalized html export only) |
+| Capability          | Contract                                                                                                                              | Adopters                                                                |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command → [publishing](/docs/architecture/publishing)   | Dashboard, Email, Flowchart, Note, Survey, Webpage                      |
+| **DatasetProvider** | registers a provider so `dataset.readDataset` resolves the type → [datasets](/docs/architecture/datasets)                             | Program (participant status), Sheet, Survey (responses)                 |
+| **FileAssets**      | owner-only upload/download/delete of binary assets under `{id}/files/…` → [resource file assets](/docs/platform/resource-file-assets) | Email, Survey, Webpage                                                  |
+| **Portable**        | import/export via declared formats (self-contained `export()` / `import()`) + Import/Export commands                                  | Sheet (csv/json/xlsx, both ways), Email (personalized html export only) |
 
 Explicitly **not** capabilities: collecting public responses (Survey-only — stays survey-specific code) and dataset _consumption_ (just calling `dataset.readDataset` from a component; no per-type wiring to declare).
 
@@ -138,15 +138,15 @@ Component wiring cannot live in shared code, so the client keeps one thin satell
 
 One factory, `createResourceProcedures(type, options?)` (`server/trpc/procedure/resource/createResourceProcedures.ts`), spread into each type's router. Content schema and container come from `ResourceDefinitionMap[type]` — callers never pass them. Publish procedures are spread **conditionally with a conditional return type** (guarded by `hasCapability(type, "publishable")` at runtime), so a non-publishable type's router has no publish endpoints at the type level — a compile error on the client `$trpc` type, a 404 on the wire. The options argument itself is a conditional tuple: publish hooks are only accepted when `TType extends PublishableResourceType`.
 
-| Procedure                                     | Auth                                                               | Purpose                                                         |
-| --------------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------- |
-| `createResource`                              | authed                                                             | metadata row; content blob written on first save                |
-| `readResources`                               | authed                                                             | per-type offset-paginated list, publication state joined along  |
-| `updateResource`                              | owner                                                              | metadata edit — `{ id, name?, tags? }`, at least one of the two |
-| `deleteResource`                              | owner                                                              | soft delete — stamps `deletedAt`, blobs survive until purge     |
-| `readResourceContent` / `saveResourceContent` | owner                                                              | blob read/write with `contentVersion` check                     |
-| `onSaveResourceContent`                       | owner                                                              | subscription — streams each save's content to other devices     |
-| the publish set                               | see [/docs/architecture/publishing](/docs/architecture/publishing) | Publishable types only                                          |
+| Procedure                                     | Auth                                            | Purpose                                                         |
+| --------------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
+| `createResource`                              | authed                                          | metadata row; content blob written on first save                |
+| `readResources`                               | authed                                          | per-type offset-paginated list, publication state joined along  |
+| `updateResource`                              | owner                                           | metadata edit — `{ id, name?, tags? }`, at least one of the two |
+| `deleteResource`                              | owner                                           | soft delete — stamps `deletedAt`, blobs survive until purge     |
+| `readResourceContent` / `saveResourceContent` | owner                                           | blob read/write with `contentVersion` check                     |
+| `onSaveResourceContent`                       | owner                                           | subscription — streams each save's content to other devices     |
+| the publish set                               | see [publishing](/docs/architecture/publishing) | Publishable types only                                          |
 
 `updateResource` replaces the whole `tags` record rather than merging it (Azure's own tag update semantics), and only a changed `name` writes a `Renamed` [activity](/docs/platform/activity-log) entry — a tags-only edit is not a rename, so it leaves no trail entry. Both editable fields are optional (at least one is required) so a caller writes only the field it owns: a rename and a tag edit are independent writes to one row, and a tag edit that had to restate the name would put the pre-rename name back whenever the two overlap.
 
@@ -160,9 +160,9 @@ So real-time sync is one subscription: after a successful write it emits on `res
 
 The type's after-save hook is registered in `ResourceAfterSaveContentMap`, keyed by `ResourceType`, rather than handed to the procedure factory — a hook reachable from only one of the paths that write content is the failure above. It receives the prior content (read before the write overwrites it, `undefined` on a first write) so it can diff, and is fire-and-forget and best-effort: it must never fail or delay the write. TodoList registers [due reminders](/docs/platform/todolist-due-reminders) there.
 
-The factory also accepts two optional content-transform hooks, `transformPublishedContent` and `transformPublicReadContent` — see [/docs/architecture/publishing](/docs/architecture/publishing).
+The factory also accepts two optional content-transform hooks, `transformPublishedContent` and `transformPublicReadContent` — see [publishing](/docs/architecture/publishing).
 
-`resource.readResource` answers with the row plus its `publication` (the `resource_publications` row, or `null` when there is none) — see [/docs/architecture/publishing](/docs/architecture/publishing).
+`resource.readResource` answers with the row plus its `publication` (the `resource_publications` row, or `null` when there is none) — see [publishing](/docs/architecture/publishing).
 
 Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey, isDeletedOnly = false)` in `server/trpc/procedure/resource/`, querying `resources` and exposing `ctx.resource`; a typeless overload (`type: undefined`) backs the cross-type `resource.readResource`. `isDeletedOnly` inverts which rows resolve, so the [recycle bin](/docs/platform/recycle-bin) procedures (`purgeResource`, `restoreResource`) reach only soft-deleted resources and every other procedure only live ones.
 
