@@ -72,6 +72,5 @@ The emoji index follows the same once-for-the-whole-list rule from the other dir
 
 ## Notes
 
-- Anything added inside `MessageModelMessageListItem` outside the `v-if` toolbar block is paid once per loaded message and again per pagination batch — keep new per-item work O(1) and lazy.
 - One options-menu store write must never fan out re-renders: per-item computeds (`isDisabled`, `isContextMenuTarget`) only propagate when their own value changes, so untargeted items stay untouched.
 - List virtualization is the remaining lever if very long scrollback sessions become a problem.

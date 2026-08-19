@@ -15,6 +15,20 @@ Who a user appears as (profile card, biography, avatar) and whether they appear 
 - `user.upsertStatus` upserts the row (`onConflictDoUpdate` on `userId`) and emits `upsertStatus` on `userEventEmitter`; the `onUpsertStatus` subscription pushes live presence to members. `user.readStatuses(userIds)` batch-loads statuses for the member list.
 - Auto-idle: the client flips to Idle after `autoIdleThresholdMs` from [user settings](/docs/esbabbler/settings).
 
+The stored row is what the user asked for, never what anyone is shown: `getDetectedUserStatus` collapses the manual override, its expiry and `isConnected` into one status on the way out, so an override that has expired stops applying with nothing having to rewrite the row. Both exits derive — the emit and the batch read — so a client never sees a raw row and has no rule of its own to keep in step.
+
+```mermaid
+flowchart TD
+  Idle["idle timer passes autoIdleThresholdMs"] --> Proc
+  Manual["user picks Online / Idle / DND, with an optional expiry"] --> Proc
+  Socket["connection opens or drops"] --> Proc
+  Proc["user.upsertStatus — onConflictDoUpdate on userId"] --> Row[("userStatuses — status, isConnected, message, expiresAt")]
+  Row --> D1["getDetectedUserStatus"]
+  Row -->|"user.readStatuses on member-list load"| D2["getDetectedUserStatus"]
+  D1 -->|"userEventEmitter, onUpsertStatus"| Client
+  D2 --> Client["every member's client — the presence dot and its custom message"]
+```
+
 ## Profile
 
 - **Profile card** — avatar, display name, biography; shown from the member list and message avatars.

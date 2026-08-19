@@ -84,8 +84,8 @@ All under `message.scheduledMessageJob.`:
 
 ## Notes
 
-- **Why Service Bus, not Storage Queue**: the Storage Queue trigger polled the storage account every ~10 s around the clock (the dominant storage cost) and capped visibility delays at 7 days, forcing a re-enqueue loop. Service Bus scheduled messages (`scheduledEnqueueTimeUtc`) deliver natively at `runAt` with no delay cap via a push-style AMQP listener; Basic tier has no base charge.
-- Infrastructure: Basic-tier namespaces (`dev-sbns-esposter-001` / `prod-sbns-esposter-001`) with one queue each, `scheduled-message-jobs`. Connection-string auth via `AZURE_SERVICE_BUS_CONNECTION_STRING`, matching the existing key-based auth grain.
+- **Why Service Bus rather than a Storage Queue**: a Storage Queue trigger polls the storage account on a fixed interval around the clock whether or not a job is due, which for this workload is the dominant storage cost, and its visibility delay caps at 7 days — so anything scheduled further out needs a re-enqueue loop of its own. Service Bus scheduled messages (`scheduledEnqueueTimeUtc`) deliver natively at `runAt` with no delay cap over a push-style AMQP listener, and Basic tier has no base charge.
+- Infrastructure: Basic-tier namespaces (`dev-sbns-esposter-001` / `prod-sbns-esposter-001`) with one queue each, `scheduled-message-jobs`. Connection-string auth via `AZURE_SERVICE_BUS_CONNECTION_STRING`, matching the key-based auth grain the other Azure clients use.
 
 ## Key files
 

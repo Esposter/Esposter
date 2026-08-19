@@ -21,7 +21,7 @@ A Discord-style fullscreen settings dialog for a room, opened from the room list
 
 Gating lives in `SettingsPermissionMap` — a panel with an entry is hidden from members lacking that `RoomPermission`; a category with no visible panels disappears entirely. Room owners bypass all checks via `hasPermission`.
 
-**Roles** edits roles and their permission bitfields; **Members** (previously a tab inside it) assigns/revokes member roles; **Invites** manages your invite link — the same manager component (`MessageModelRoomInviteManager`) the header's Add Friends dialog uses; **Attachments** edits the room's upload limits, described in [file & media](/docs/esbabbler/file-media).
+**Roles** edits roles and their permission bitfields; **Members** assigns/revokes member roles; **Invites** manages your invite link — the same manager component (`MessageModelRoomInviteManager`) the header's Add Friends dialog uses; **Attachments** edits the room's upload limits, described in [file & media](/docs/esbabbler/file-media).
 
 ## How it works
 

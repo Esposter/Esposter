@@ -32,7 +32,7 @@ flowchart TD
 
 The pane's composer is the room composer's equal in everything a reply needs: rich text, mentions, emoji, pasted and dropped attachments, and a draft. It differs in what belongs to a room rather than to a conversation — slash commands and the poll and scheduled-message dialogs stay in the room composer, each being a room-level composition with its own dialog state.
 
-Both composers are on screen at once, which is the whole reason composer state is keyed by a **composer target** (`{ roomId, threadRootRowKey }`) rather than by room. The editor's text, its pending attachments and the send-lifecycle hooks all partition on it — the room's own composer keys by its bare room id, so everything written before threads had a composer still reads back under the same key. The blobs an attachment writes stay the room's wherever it was attached, so every server call still names `target.roomId`; only the local partition is per composer.
+Both composers are on screen at once, which is the whole reason composer state is keyed by a **composer target** (`{ roomId, threadRootRowKey }`) rather than by room. The editor's text, its pending attachments and the send-lifecycle hooks all partition on it — the room's own composer keys by its bare room id, so a room draft has one key whichever composer is on screen beside it. The blobs an attachment writes stay the room's wherever it was attached, so every server call still names `target.roomId`; only the local partition is per composer.
 
 A file dropped anywhere in the pane attaches to the reply, and one dropped elsewhere to the room's message. That is resolved from the drop's own element by the single document-level drop zone — a second zone nested inside the first would fire for the same drop and upload it twice.
 
@@ -54,7 +54,7 @@ The pane's overflow menu is where everything that acts on the thread as a whole 
 
 ### A call in a thread
 
-A call in a thread is the room's call machinery addressed by the thread it belongs to. `callSessions.threadRootRowKey` is empty for the room's own call and holds the root rowKey for a thread's, and the unique constraint spans both columns — so a room runs its own call and one per thread at the same time, while a standalone share-link call carries no room at all and stays unconstrained. Everything downstream is keyed by the session id, so the LiveKit room, the participant maps, the subscriptions and the knock lobby are the same code they always were; see [calls](/docs/esbabbler/calls).
+A call in a thread is the room's call machinery addressed by the thread it belongs to. `callSessions.threadRootRowKey` is empty for the room's own call and holds the root rowKey for a thread's, and the unique constraint spans both columns — so a room runs its own call and one per thread at the same time, while a standalone share-link call carries no room at all and stays unconstrained. Everything downstream is keyed by the session id, so the LiveKit room, the participant maps, the subscriptions and the knock lobby are the room call's code unchanged; see [calls](/docs/esbabbler/calls).
 
 The start and summary lines a call writes go into the thread rather than the room, through the same `replyRowKey` the rest of the thread is made of.
 

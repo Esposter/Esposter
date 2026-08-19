@@ -7,7 +7,7 @@ description: One in-repo emoji index behind the picker, reactions and the compos
 
 Every emoji surface — the picker grid, a stored reaction, the composer's `:` autocomplete and the quick-reaction tooltips — resolves through **one index built from one dataset**. There is no emoji dependency: the picker is our own `<script setup>` components, and the lookups are three maps.
 
-This replaced two libraries that agreed on nothing. `emoji-mart-vue-fast` drew the grid from an Apple sprite sheet on `unpkg.com` (pinned in `ImageSourceWhitelist` so the CSP allowed it), had no dark mode, and forced `vue.optionsApi` back on for the whole app because its `Picker.vue` is Options API. `node-emoji` resolved shortcodes from a pre-Unicode-14 dataset, compiled the user's query as a regex, and ignored the keywords its own dependency shipped. The two vocabularies disagreed: 😄 stored as `:smile:` while 🫠 stored as a raw glyph, and the round trip only appeared to work because both directions fall back to their input.
+Owning the picker is what buys the single vocabulary. An off-the-shelf grid brings its own: one library's picker and another's shortcode resolver index different Unicode releases, so a glyph the picker offers has no shortcode to store and the round trip only appears to work because both directions fall back to their input. They also cost what a component dependency costs — a sprite sheet fetched from a CDN the CSP then has to whitelist, no dark mode without overriding theirs, and an Options API component that turns `vue.optionsApi` back on for the whole app. Three maps over one dataset have none of that surface.
 
 ## The shape of it
 

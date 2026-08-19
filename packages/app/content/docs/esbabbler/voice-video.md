@@ -27,15 +27,15 @@ flowchart LR
   LK -->|"room.switchActiveDevice"| DEV["live device switch"]
 ```
 
-| Setting                 | Field                             | Applied via                                                                                                                                                                                                          |
-| ----------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Microphone Volume**   | `microphoneVolumePercentage`      | `MicrophoneProcessor` Web Audio `GainNode` on the local mic — supports >100% boost                                                                                                                                   |
-| **Speaker Volume**      | `speakerVolumePercentage`         | master output: `HTMLMediaElement.volume` on every remote audio element, multiplied per participant by the in-call [per-user volume](/docs/esbabbler/calls/per-user-volume) (caps at 100%; >100% needs `webAudioMix`) |
-| **Input Profile**       | `noiseSuppressionMode`            | browser-native getUserMedia constraints via `getAudioCaptureDefaults` → Room `audioCaptureDefaults` + `restartTrack`                                                                                                 |
-| **Input Sensitivity**   | `inputSensitivityDecibels`        | voice-activity gate in `MicrophoneProcessor`: gain → 0 when live dB < threshold (Voice Activity mode only)                                                                                                           |
-| **Input mode**          | `voiceInputMode`                  | `VoiceActivity` enables the sensitivity gate; `PushToTalk` gates on the held keybind — [push-to-talk](/docs/esbabbler/push-to-talk)                                                                                  |
-| **Default mute/deafen** | `isMuteOnJoin` / `isDeafenOnJoin` | initial mic/deafen state in the join flow                                                                                                                                                                            |
-| **Devices**             | `inputDeviceId` etc. (local)      | join: Room `audio`/`videoCaptureDefaults.deviceId`; mid-call: `room.switchActiveDevice` via store watchers                                                                                                           |
+| Setting                 | Field                             | Applied via                                                                                                                                                                                                                                                                                         |
+| ----------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Microphone Volume**   | `microphoneVolumePercentage`      | `MicrophoneProcessor` Web Audio `GainNode` on the local mic — supports >100% boost                                                                                                                                                                                                                  |
+| **Speaker Volume**      | `speakerVolumePercentage`         | master output: `HTMLMediaElement.volume` on every remote audio element, multiplied per participant by the in-call [per-user volume](/docs/esbabbler/calls/per-user-volume) (caps at 100% — boosting past it is deferred, see [speaker volume boost](/docs/esbabbler/deferred/speaker-volume-boost)) |
+| **Input Profile**       | `noiseSuppressionMode`            | browser-native getUserMedia constraints via `getAudioCaptureDefaults` → Room `audioCaptureDefaults` + `restartTrack`                                                                                                                                                                                |
+| **Input Sensitivity**   | `inputSensitivityDecibels`        | voice-activity gate in `MicrophoneProcessor`: gain → 0 when live dB < threshold (Voice Activity mode only)                                                                                                                                                                                          |
+| **Input mode**          | `voiceInputMode`                  | `VoiceActivity` enables the sensitivity gate; `PushToTalk` gates on the held keybind — [push-to-talk](/docs/esbabbler/push-to-talk)                                                                                                                                                                 |
+| **Default mute/deafen** | `isMuteOnJoin` / `isDeafenOnJoin` | initial mic/deafen state in the join flow                                                                                                                                                                                                                                                           |
+| **Devices**             | `inputDeviceId` etc. (local)      | join: Room `audio`/`videoCaptureDefaults.deviceId`; mid-call: `room.switchActiveDevice` via store watchers                                                                                                                                                                                          |
 
 ## Device selection — single source of truth
 
@@ -70,10 +70,6 @@ There is **no** shared "speaking indicator analyser" to reuse — in-call active
 | `packages/app/app/store/message/room/liveKit.ts`                           | speaker volume, noise mode, mic processor; `setActiveDevice` + device watchers     |
 | `packages/app/app/composables/message/room/call/useCallPreJoinMedia.ts`    | pre-join preview — reactive constraints from device IDs                            |
 | `packages/app/app/composables/message/room/call/useCallDeviceSettings.ts`  | in-call device picker                                                              |
-
-## Not yet built
-
-- **Speaker Volume >100% boost** — needs Room `webAudioMix`; element volume caps at 100% today.
 
 ## Unverified
 

@@ -42,7 +42,7 @@ Every column is communication-scoped — no account/profile/theme columns, reinf
 
 ## Procedures
 
-On the existing `user` router:
+On the `user` router:
 
 | Procedure            | Auth   | Input                                                                  | Purpose                                 |
 | -------------------- | ------ | ---------------------------------------------------------------------- | --------------------------------------- |
@@ -55,7 +55,7 @@ The client store (`store/message/user/settings/index.ts`) applies updates optimi
 
 The dialog uses a Discord-style two-level nav: a `v-list-group` per `UserSettingsListItemMap` category whose sections come from `UserSettingsSectionMap` (per-panel subsection enums whose values double as section title **and** DOM id).
 
-- **Scroll tracking is visibility-driven, not `v-intersect`.** Each `MessageModelUserSettingsSection` reports visibility via `useElementVisibility` into `visibleSectionIds`; `useSettingsScrollSpy` sets `activeSectionId` to the topmost visible section in map order. `v-intersect` was dropped because `IntersectionObserver` re-fires on any layout reflow — clicking a button inside a panel spuriously moved the sidebar highlight.
+- **Scroll tracking is visibility-driven, not `v-intersect`.** Each `MessageModelUserSettingsSection` reports visibility via `useElementVisibility` into `visibleSectionIds`; `useSettingsScrollSpy` sets `activeSectionId` to the topmost visible section in map order. `v-intersect` is the wrong instrument here: `IntersectionObserver` re-fires on any layout reflow, so a button clicked inside a panel moves the sidebar highlight to a section the user never scrolled to.
 - **The panel header sits outside the scroll container** (the shared shell's fixed `#header` slot above the `flex-1` scroll div). That structural choice keeps the scrollspy simple: a section clipped above the scroll area is genuinely not visible, and `useVGoTo` lands a section title just below the header with no offset math. `scrollToSection` sets `activeSectionId` immediately and guards with `isScrollingToSection` so the highlight doesn't flicker through intermediate sections during the animated scroll.
 - The active sub-item rail is the generic `StyledSlideIndicator` — measures the active item and slides to it via `translateY`, reusable for any vertical nav.
 

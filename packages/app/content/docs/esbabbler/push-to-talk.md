@@ -9,7 +9,7 @@ description: Hold-to-talk keybind driving the mic gate, with a configurable rele
 
 ## How it works
 
-The `usePushToTalk` composable registers `keydown`/`keyup`/`blur` listeners that drive the existing [`MicrophoneProcessor`](/docs/esbabbler/voice-video) gate from key state instead of the voice-activity dB level. The **call store** hosts it on the main window (isInCall is injected so the store avoids a circular import) — living with the store so the listener survives navigation, like the call itself — and `Pip/Host` registers it again on the PiP window, since key events don't cross documents.
+The `usePushToTalk` composable registers `keydown`/`keyup`/`blur` listeners that drive the [`MicrophoneProcessor`](/docs/esbabbler/voice-video) gate from key state instead of the voice-activity dB level. The **call store** hosts it on the main window (isInCall is injected so the store avoids a circular import) — living with the store so the listener survives navigation, like the call itself — and `Pip/Host` registers it again on the PiP window, since key events don't cross documents.
 
 - **Key match** — the stored `pushToTalkKeybind` is a single `event.code` captured by the Keybinds field in the Voice & Video panel; a keydown matching it (outside editable targets — composer, inputs, contenteditable) opens the gate and `preventDefault`s.
 - **Gate** — `MicrophoneProcessor.voiceInputMode` selects the gate source per animation frame: `VoiceActivity` compares the live dB level against the sensitivity threshold; `PushToTalk` reads `isPushToTalkKeyHeld`, set by the liveKit store's `setPushToTalkKeyHeld`.
@@ -26,7 +26,7 @@ stateDiagram-v2
 
 ## Data model
 
-`userSettings.pushToTalkKeybind` (text, `""` = unbound) and `userSettings.pushToTalkReleaseDelayMs` (integer, CHECK 0..2000, default 20) — see [user settings](/docs/esbabbler/settings). No procedures beyond the existing `updateUserSettings`.
+`userSettings.pushToTalkKeybind` (text, `""` = unbound) and `userSettings.pushToTalkReleaseDelayMs` (integer, CHECK 0..2000, default 20) — see [user settings](/docs/esbabbler/settings). No procedures beyond `updateUserSettings`.
 
 ## Key files
 

@@ -30,11 +30,11 @@ The moderation-log write is best-effort — a logging failure never turns the bl
 
 ## Data model
 
-`roomFiltersInMessage` gains `action` (Postgres enum `word_filter_action`: `Reject` default, `Warn`, `Timeout`) and `timeoutDurationMs` (nullable integer). A database CHECK enforces that a `Timeout` action always carries a positive duration, and the router clears the duration whenever the action is not `Timeout` so a stale value can never re-arm a timeout.
+`roomFiltersInMessage` carries `action` (Postgres enum `word_filter_action`: `Reject` default, `Warn`, `Timeout`) and `timeoutDurationMs` (nullable integer). A database CHECK enforces that a `Timeout` action always carries a positive duration, and the router clears the duration whenever the action is not `Timeout` so a stale value can never re-arm a timeout.
 
 ## Procedures
 
-No new procedure — `room.filter.upsertRoomFilter` (gated `ManageRoom`) accepts the new `action` and `timeoutDurationMs` fields, and `readRoomFilter` now returns the full filter row so the settings panel can render them. Automod is a caller of the moderation internals, not a new moderation primitive.
+Automod adds no procedure of its own — it is a caller of the moderation internals rather than a moderation primitive. `room.filter.upsertRoomFilter` (gated `ManageRoom`) accepts `action` and `timeoutDurationMs` alongside the pattern, and `readRoomFilter` returns the whole filter row so the settings panel can render both.
 
 ## Key files
 
@@ -50,4 +50,4 @@ No new procedure — `room.filter.upsertRoomFilter` (gated `ManageRoom`) accepts
 
 ## Notes
 
-Raid-mode (bulk-join throttling) is intentionally not part of this — see [deferred](/docs/esbabbler/deferred/raid-mode).
+Raid-mode (bulk-join throttling) is deliberately not part of this — see [raid mode](/docs/esbabbler/deferred/raid-mode).
