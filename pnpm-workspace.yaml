@@ -21,7 +21,7 @@ catalog:
   "@azure/data-tables": ^13.3.2
   "@azure/eventgrid": ^5.12.0
   "@azure/functions": ^4.16.2
-  "@azure/identity": ^4.13.1
+  "@azure/identity": ^4.13.2
   "@azure/search-documents": ^13.0.0
   "@azure/service-bus": ^7.9.5
   "@azure/storage-blob": ^12.33.0
