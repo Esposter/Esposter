@@ -13,14 +13,14 @@ The Preloader scene loads every asset through the loader constant maps (`models/
 
 ```mermaid
 flowchart LR
-  pre[Preloader\nasset loader maps] --> title[Title]
+  pre[Preloader<br/>asset loader maps] --> title[Title]
   title -->|New Game / Continue| world[World]
   title -->|Settings| settings[Settings]
   world -->|encounter| battle[Battle]
   battle -->|finished| world
   world -->|menu| inv[Inventory] & party[MonsterParty]
   party --> details[MonsterDetails]
-  joystick[MobileJoystick\nparallel scene] -.->|controls| world & battle
+  joystick[MobileJoystick<br/>parallel scene] -.->|controls| world & battle
 ```
 
 **Input** — scenes poll a `Controls` abstraction: `KeyboardControls` (cursor keys + enter/shift/etc.) on desktop, `JoystickControls` on mobile, chosen by `useInitializeControls` via `checkIsMobile`, which also launches the MobileJoystick parallel scene (rendered above the active scene; multi-touch enabled for move + confirm simultaneously). Both produce the same `PlayerInput` union (a `Direction` or a `PlayerSpecialInput` like Confirm/Cancel), so scene logic never branches on device.

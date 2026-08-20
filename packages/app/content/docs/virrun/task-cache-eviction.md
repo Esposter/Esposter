@@ -5,7 +5,7 @@ description: Age-prune the host-global tasks/ directory — the one cache surfac
 
 # Task-Cache Eviction
 
-The host-global `~/.virrun/tasks/` directory is the one cache surface with no superseded-entry sweep. Every other tier self-prunes — `snapshots/` and `prepare/` evict superseded hash dirs on each run, source mirrors reap on origin death — but each `(lockfile, working-tree, command)` state mints a fresh `tasks/<key>` entry carrying a full produced-file payload (a `pnpm build` entry carries `dist/`), and before this nothing removed old ones short of `cache clean --all`. An age-based prune bounds it.
+The host-global `~/.virrun/tasks/` directory is the one cache surface with no superseded-entry sweep. Every other tier self-prunes — `snapshots/` and `prepare/` evict superseded hash dirs on each run, source mirrors reap on origin death — but each `(lockfile, working-tree, command)` state mints a fresh `tasks/<key>` entry carrying a full produced-file payload (a `pnpm build` entry carries `dist/`), and nothing but `cache clean --all` would ever remove one. An age-based prune bounds it.
 
 ## Why age-based, not superseded-based
 
@@ -15,10 +15,10 @@ Snapshots prune "everything but the current hash" because only the current lockf
 
 ```mermaid
 flowchart TB
-  replay["replayTaskCache (hit)"] -->|utimesSync meta.json| touch["meta mtime = now\n(recency reflects use)"]
-  record["recordTaskCache (miss, exit 0)"] --> reap["reapStaleTemps\n(hard-killed recorder corpses)"]
+  replay["replayTaskCache (hit)"] -->|utimesSync meta.json| touch["meta mtime = now<br/>(recency reflects use)"]
+  record["recordTaskCache (miss, exit 0)"] --> reap["reapStaleTemps<br/>(hard-killed recorder corpses)"]
   record --> prune["pruneStaleTaskCacheEntries"]
-  prune -->|sweepStaleEntries: not a temp\nand meta older than cutoff| evict["detached best-effort removal"]
+  prune -->|sweepStaleEntries: not a temp<br/>and meta older than cutoff| evict["detached best-effort removal"]
   ls["cache ls"] -->|computeDirectoryByteSize| size["tasks count + total payload size"]
 ```
 

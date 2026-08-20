@@ -4,7 +4,7 @@ Read when writing or changing an Azure Functions handler, its dead-letter replay
 
 Handlers receive an `InvocationContext`. Log through it — `context.error(...)` / `context.log(...)`. When a service needs to log, `context` is its **first** parameter (`sendPushNotification`, `sendWebPushNotifications`, `createAndBroadcastMessage`).
 
-Which steps may fail the caller is the repo-wide **persist then notify** standard (`/docs/architecture/persist-then-notify`) — guards and the primary write are fatal, everything after the notify is best-effort. In `packages/app/server` that tail is lint-enforced (the `persist-then-notify` oxlint plugin errors on an unwrapped `await` after an `emit`), so don't re-prescribe it here — this section covers only what the linter can't: a handler adds one mechanic on top — EventGrid delivery is at-least-once, so here a throw is a _retry request_, and the two phases get different loggers.
+Which steps may fail the caller is the repo-wide **persist then notify** standard (`packages/app/content/docs/architecture/persist-then-notify.md`) — guards and the primary write are fatal, everything after the notify is best-effort. In `packages/app/server` that tail is lint-enforced (the `persist-then-notify` oxlint plugin errors on an unwrapped `await` after an `emit`), so don't re-prescribe it here — this section covers only what the linter can't: a handler adds one mechanic on top — EventGrid delivery is at-least-once, so here a throw is a _retry request_, and the two phases get different loggers.
 
 ## Fatal path — rethrow to trigger retry
 
@@ -35,10 +35,10 @@ Canonical: `createAndBroadcastMessage` (broadcast) and `processWebhookHandler` (
 
 ## Past the retries — automatic replay, capped, then quarantined
 
-When retries are exhausted the delivery dead-letters, and recovery from there is automatic and event-triggered, never a script someone remembers to run (`/docs/architecture/no-manual-recovery`). A replay handler:
+When retries are exhausted the delivery dead-letters, and recovery from there is automatic and event-triggered, never a script someone remembers to run (`packages/app/content/docs/architecture/no-manual-recovery.md`). A replay handler:
 
 - **Validates before republishing.** A payload that fails its schema can never succeed — quarantine it immediately instead of spending the attempt budget on it.
-- **Carries the attempt count on the event id** (`<eventId>|<attempt>`), the only field republished verbatim into the next dead-letter payload. Anything attached to the stored artifact instead — blob metadata, name, prefix — is lost the moment a failed replay is dead-lettered into a brand-new blob, so that counter restarts at zero every cycle and loops forever ([/docs/infra/eventgrid-dead-letter](/docs/infra/eventgrid-dead-letter)).
+- **Carries the attempt count on the event id** (`<eventId>|<attempt>`), the only field republished verbatim into the next dead-letter payload. Anything attached to the stored artifact instead — blob metadata, name, prefix — is lost the moment a failed replay is dead-lettered into a brand-new blob, so that counter restarts at zero every cycle and loops forever (`packages/app/content/docs/infra/eventgrid-dead-letter.md`).
 - **Quarantines past the cap** — move the payload under a prefix the trigger's filter excludes, then `context.error(...)`. Never leave a poison payload where the trigger can pick it up again.
 
 ## A handler that enumerates its own work bounds it in time and in width

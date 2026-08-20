@@ -99,7 +99,7 @@ afterEach(() => {
 
 `packages/app/server/trpc/context.test.ts` is the central test utility file. It installs the `vi.mock` for auth — the one whose factory needs this module's session state — and exports helpers consumed by every tRPC router test.
 
-**Every Azure composable is mocked once in `shared/test/setup.ts`, not here.** A `vi.mock` is hoisted only within the file that writes it, so a registration made from an imported module does not intercept a test file's own direct import of the same composable — which is why suites reading a table directly used to repeat the registration verbatim. A setup file runs before the test module is imported, so one registration there covers both the router path and a direct `await useTableClient(...)` in the test. Import the composable from its **real** path; never from its `.test` mock.
+**Every Azure composable is mocked once in `shared/test/setup.ts`, not here.** A `vi.mock` is hoisted only within the file that writes it, so a registration made from an imported module does not intercept a test file's own direct import of the same composable, which would leave every suite that reads a table directly repeating the registration verbatim. A setup file runs before the test module is imported, so one registration there covers both the router path and a direct `await useTableClient(...)` in the test. Import the composable from its **real** path; never from its `.test` mock.
 
 **`createMockContext()`** builds a full `Context`: PGlite DB + mocked Azure clients + mocked auth. The default user (base user) is inserted into PGlite and always available via `getMockSession()` — this user becomes the owner for all rooms/resources created in tests.
 

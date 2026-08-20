@@ -27,4 +27,4 @@ The blocked security-hardening wave: disable storage shared-key access, blob pub
 
 ## Notes
 
-User-delegation SAS is the hard part — message-attachment and survey uploads depend on SAS ([/docs/architecture/file-uploads](/docs/architecture/file-uploads)); verify expiry limits (user-delegation keys cap at 7 days) fit the upload flow before flipping shared-key off. Every SAS now fits: resource asset reads sign a minutes-scale SAS per request through `/api/resource-assets`, message-attachment reads default to a day, and upload SAS urls are hour-scale — nothing signs past the 7-day cap.
+User-delegation SAS is the hard part — message-attachment and survey uploads depend on SAS ([file uploads](/docs/architecture/file-uploads)); verify expiry limits (user-delegation keys cap at 7 days) fit the upload flow before flipping shared-key off. Every SAS now fits: resource asset reads sign a minutes-scale SAS per request through `/api/resource-assets`, message-attachment reads default to a day, and upload SAS urls are hour-scale — nothing signs past the 7-day cap.

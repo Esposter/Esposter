@@ -35,7 +35,7 @@ The timer purges per resource rather than as one batch, so one poisoned resource
 
 ## Data model
 
-`resources.deletedAt` is a nullable timestamp — null is live. No migration was needed: `metadataSchema` already gives every table `createdAt`, `updatedAt`, and `deletedAt`, so soft delete was a column the table already had.
+`resources.deletedAt` is a nullable timestamp — null is live. It costs no migration: `metadataSchema` already gives every table `createdAt`, `updatedAt` and `deletedAt`, so soft delete rides a column the table already has.
 
 `RECYCLE_BIN_RETENTION_MS` (30 days) lives in `@esposter/db-schema` — browser-safe, so both the app UI (the "purges in {n} days" column, the delete dialogs) and the purge timer can import the one value from the same source.
 

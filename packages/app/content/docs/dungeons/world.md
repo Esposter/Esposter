@@ -17,11 +17,11 @@ The overworld: tile-based maps authored in Tiled Map Editor, walked with grid-en
 
 ```mermaid
 flowchart TD
-  confirm[Confirm input] --> gio[useGetInteractiveObject\nposition + facing match]
-  gio --> npc[NPC: effect list\nmessages / heal / scene fade]
+  confirm[Confirm input] --> gio[useGetInteractiveObject<br/>position + facing match]
+  gio --> npc[NPC: effect list<br/>messages / heal / scene fade]
   gio --> sign[Sign: message dialog]
-  gio --> chest[Chest: grant item\nopened state → save world.chestMap]
-  gio --> door[Door: teleport\nswitchToTilemap + spawn at target id]
+  gio --> chest[Chest: grant item<br/>opened state → save world.chestMap]
+  gio --> door[Door: teleport<br/>switchToTilemap + spawn at target id]
 ```
 
 NPC dialog and effects come from the `NpcMap` content map (`assets/dungeons/data/npcs.ts`); chest opened-state is per-map in `save.world[tilemapKey].chestMap`; doors read a typed `TeleportTarget` property and fade-switch tilemaps, spawning the player at the matching door id.

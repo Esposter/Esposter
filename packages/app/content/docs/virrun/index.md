@@ -77,5 +77,5 @@ Open work: [roadmap](/docs/virrun/roadmap). Decided ideas: [deferred](/docs/virr
 - **Concurrency-safe cache** — pid-tagged temps, pid-liveness reaping, and per-run leases so concurrent runs never delete each other's files.
 - **`virrun doctor`** — probes each `os`-backend prerequisite and prints an aligned per-check report.
 - **Native-on-Linux CI** — the platform-branched config resolves `native` on Linux CI runners, so CI needs no snapshot pipeline of its own.
-- **Bench-truth** — corrected the speed story: no install bench group (the os install feeds the fork snapshot, not host disk), honest win32 numbers.
+- **Bench truth** — the install bench group dropped, because the os install feeds the fork snapshot rather than host disk and a head-to-head against a native install would imply a substitution nobody can make.
 - **Task-cache eviction** — age-prune of the unbounded `tasks/` dir beside the temp reap, touch-on-hit recency so age reflects use, and payload size in `cache ls`.

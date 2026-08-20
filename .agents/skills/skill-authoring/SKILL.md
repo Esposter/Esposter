@@ -1,6 +1,6 @@
 ---
 name: skill-authoring
-description: Esposter skill-writing conventions for .agents/skills — frontmatter that drives selection, the two-tier layout (SKILL.md is the always-on rule index, references/*.md hold sub-task deep dives, ~150-line budget, trigger-named index lines), when a skill earns a mermaid diagram (an ordered cycle with a gate, never a rule list), one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), don't restate what an enforcer already checks, the reproducible-pattern test (one-offs are deleted rather than recorded — git already holds them), generic placeholders over identifiers from one change, and magnitudes over incident numbers. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
+description: Esposter skill-writing conventions for .agents/skills — frontmatter that drives selection, the two-tier layout (SKILL.md is the always-on rule index, references/*.md hold sub-task deep dives, ~150-line budget, trigger-named index lines), when a skill earns a mermaid diagram (an ordered cycle with a gate, never a rule list), one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), don't restate what an enforcer already checks, the reproducible-pattern test (one-offs are deleted rather than recorded — git already holds them), generic placeholders over identifiers from one change, magnitudes over incident numbers, and citing a docs page by its repo-relative path rather than a relative or GitHub link. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
 ---
 
 # Skill Authoring
@@ -75,6 +75,17 @@ Move a section out when it is a **procedure** (ordered steps run occasionally), 
 Never split to hit a number. Three cohesive pages beat nine fragments, and two rules that have to be read together stay on one page.
 
 **A split breaks inbound pointers, so fix them in the same change.** Other skills cite sections by heading (``see the `pinia` skill ("Cursor Pagination in Stores")``), and a heading that moved into `references/` leaves that citation pointing at nothing — silently, because nothing resolves skill links. After moving a section, grep the tree for its heading text and repoint each citation at the page (``see the `pinia` skill (`references/keyed-state-and-pagination.md`)``), which is stable across later edits to the heading itself.
+
+## Cite a page by its repo path, never by a link
+
+Nothing resolves a link out of a skill: no renderer opens one, and a relative `../../../` hop or a
+`github.com/.../blob/main/...` url is a path the reader has to reconstruct or a network fetch they cannot make.
+So a citation is the **repo-relative path in backticks** — `packages/app/content/docs/architecture/foo.md` — which
+is what a reader greps, opens and edits, and which stays right when the skill moves. A path relative to anything
+but the repo root (`docs/architecture/foo.md`) resolves nowhere and is the form that silently rots.
+
+Cite another **skill** by name plus its page (``the `pinia` skill (`references/keyed-state-and-pagination.md`)``),
+never as a path into `.agents/skills/`.
 
 ## A cycle earns a diagram; a rule list does not
 

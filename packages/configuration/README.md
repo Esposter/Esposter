@@ -34,10 +34,15 @@ import { rolldownConfigurationBrowser } from "@esposter/configuration";
 export default rolldownConfigurationBrowser;
 ```
 
-```json
-// .eslintrc or eslint.config.js
-{ "extends": "@esposter/configuration/eslint" }
+```js
+// eslint.config.js — flat config, one composed export
+import eslintConfiguration from "@esposter/configuration/eslint/index.typescript.js";
+
+export default eslintConfiguration.append({ ignores: ["dist"] });
 ```
+
+Inside this monorepo a package composes the pieces itself instead, because each config extends the Nuxt-generated
+one the app emits — copy `packages/db/eslint.config.js` rather than writing that wiring from scratch.
 
 ### Commands
 

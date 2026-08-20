@@ -27,22 +27,22 @@ They also share the responsive shell: the sidebar drawer (`MessageModelSettingsL
 
 `userSettingsInMessage` (`packages/db-schema/src/schema/userSettingsInMessage.ts`), 1:1 on `userId` (PK, cascade), under `messageSchema`:
 
-| Column                                                   | Type                                                              | Default         |
-| -------------------------------------------------------- | ----------------------------------------------------------------- | --------------- |
-| `voiceInputMode`                                         | `voice_input_mode` enum (`VoiceActivity` \| `PushToTalk`)         | `VoiceActivity` |
-| `pushToTalkKeybind`                                      | text                                                              | `""`            |
-| `pushToTalkReleaseDelayMs`                               | integer (CHECK 0..2000)                                           | 20              |
-| `inputSensitivityDecibels`                               | integer (CHECK −100..0)                                           | −50             |
-| `microphoneVolumePercentage` / `speakerVolumePercentage` | integer                                                           | 100             |
-| `noiseSuppressionMode`                                   | enum → [/docs/esbabbler/voice-video](/docs/esbabbler/voice-video) |                 |
-| `isMuteOnJoin` / `isDeafenOnJoin`                        | boolean                                                           | false           |
-| `autoIdleThresholdMs`                                    | integer (CHECK 60_000..86_400_000)                                | 600_000         |
+| Column                                                   | Type                                                         | Default         |
+| -------------------------------------------------------- | ------------------------------------------------------------ | --------------- |
+| `voiceInputMode`                                         | `voice_input_mode` enum (`VoiceActivity` \| `PushToTalk`)    | `VoiceActivity` |
+| `pushToTalkKeybind`                                      | text                                                         | `""`            |
+| `pushToTalkReleaseDelayMs`                               | integer (CHECK 0..2000)                                      | 20              |
+| `inputSensitivityDecibels`                               | integer (CHECK −100..0)                                      | −50             |
+| `microphoneVolumePercentage` / `speakerVolumePercentage` | integer                                                      | 100             |
+| `noiseSuppressionMode`                                   | enum → [voice & video settings](/docs/esbabbler/voice-video) |                 |
+| `isMuteOnJoin` / `isDeafenOnJoin`                        | boolean                                                      | false           |
+| `autoIdleThresholdMs`                                    | integer (CHECK 60_000..86_400_000)                           | 600_000         |
 
 Every column is communication-scoped — no account/profile/theme columns, reinforcing the surface split. Read returns the row or an unpersisted defaults object; the first update upserts (`onConflictDoUpdate` on `userId`).
 
 ## Procedures
 
-On the existing `user` router:
+On the `user` router:
 
 | Procedure            | Auth   | Input                                                                  | Purpose                                 |
 | -------------------- | ------ | ---------------------------------------------------------------------- | --------------------------------------- |
@@ -55,7 +55,7 @@ The client store (`store/message/user/settings/index.ts`) applies updates optimi
 
 The dialog uses a Discord-style two-level nav: a `v-list-group` per `UserSettingsListItemMap` category whose sections come from `UserSettingsSectionMap` (per-panel subsection enums whose values double as section title **and** DOM id).
 
-- **Scroll tracking is visibility-driven, not `v-intersect`.** Each `MessageModelUserSettingsSection` reports visibility via `useElementVisibility` into `visibleSectionIds`; `useSettingsScrollSpy` sets `activeSectionId` to the topmost visible section in map order. `v-intersect` was dropped because `IntersectionObserver` re-fires on any layout reflow — clicking a button inside a panel spuriously moved the sidebar highlight.
+- **Scroll tracking is visibility-driven, not `v-intersect`.** Each `MessageModelUserSettingsSection` reports visibility via `useElementVisibility` into `visibleSectionIds`; `useSettingsScrollSpy` sets `activeSectionId` to the topmost visible section in map order. `v-intersect` is the wrong instrument here: `IntersectionObserver` re-fires on any layout reflow, so a button clicked inside a panel moves the sidebar highlight to a section the user never scrolled to.
 - **The panel header sits outside the scroll container** (the shared shell's fixed `#header` slot above the `flex-1` scroll div). That structural choice keeps the scrollspy simple: a section clipped above the scroll area is genuinely not visible, and `useVGoTo` lands a section title just below the header with no offset math. `scrollToSection` sets `activeSectionId` immediately and guards with `isScrollingToSection` so the highlight doesn't flicker through intermediate sections during the animated scroll.
 - The active sub-item rail is the generic `StyledSlideIndicator` — measures the active item and slides to it via `translateY`, reusable for any vertical nav.
 
@@ -76,4 +76,4 @@ The dialog uses a Discord-style two-level nav: a `v-list-group` per `UserSetting
 
 ## Notes
 
-The Voice & Video panel's content and how each setting applies to live LiveKit calls is its own page: [/docs/esbabbler/voice-video](/docs/esbabbler/voice-video). The Appearance panel's Message Display density is covered by [/docs/esbabbler/room-ui](/docs/esbabbler/room-ui), and per-participant call volume — which is not a column here — by [/docs/esbabbler/calls/per-user-volume](/docs/esbabbler/calls/per-user-volume).
+The Voice & Video panel's content and how each setting applies to live LiveKit calls is its own page: [voice & video settings](/docs/esbabbler/voice-video). The Appearance panel's Message Display density is covered by [room UI](/docs/esbabbler/room-ui), and per-participant call volume — which is not a column here — by [per-user volume](/docs/esbabbler/calls/per-user-volume).

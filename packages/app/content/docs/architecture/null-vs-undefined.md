@@ -22,8 +22,8 @@ Boundary shapes where `null` is expected and stays:
 - **Azure SDK / EventGrid** — payload types own their nullable members.
 - **DOM and web APIs** — `querySelector`, `localStorage.getItem`, `RegExp.exec` return `T | null`; check with `=== null` or truthiness at the call site.
 - **Third-party component props** — the occasional Vuetify/@vue-flow prop is typed `T | null`; pass `null` only where the prop type requires it.
-- **Persisted JSON blobs** — `JSON.stringify` drops `undefined` keys, so a blob schema that already stores `null` keeps storing it (see [/docs/architecture/persisted-data-latest-shape-only](/docs/architecture/persisted-data-latest-shape-only)).
+- **Persisted JSON blobs** — `JSON.stringify` drops `undefined` keys, so a blob schema that already stores `null` keeps storing it (see [persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only)).
 
 ## Not lint-enforced
 
-A bespoke ESLint gate (flagging `null` literals and `| null` type positions) was tried and removed: every legitimate boundary site above is a false positive, and carving them out costs more than the rule catches. The standard falls to review, like the hand-rolled cases in [/docs/architecture/no-polling](/docs/architecture/no-polling).
+A gate flagging `null` literals and `| null` type positions makes a false positive of every legitimate boundary site above, and carving them out costs more than the rule catches. The standard falls to review, like the hand-rolled cases in [no polling](/docs/architecture/no-polling).

@@ -7,7 +7,7 @@ description: LiveKit-based audio/video — call sessions, the membership boundar
 
 Discord-style persistent per-room drop-in audio/video plus standalone share-link calls (like Google Meet). Room members join/leave room calls freely; `/calls` starts a roomless call joinable by anyone with the link. Media runs through the **LiveKit SFU** — the server generates access tokens and keeps a participant map for observers; LiveKit handles all WebRTC signaling, track publication, simulcast, and bandwidth estimation.
 
-Sub-pages: [call view UI](/docs/esbabbler/calls/call-view) · [screenshare](/docs/esbabbler/calls/screenshare) · [picture-in-picture](/docs/esbabbler/calls/picture-in-picture) · [per-user volume](/docs/esbabbler/calls/per-user-volume). Voice preferences applied to calls: [/docs/esbabbler/voice-video](/docs/esbabbler/voice-video).
+Sub-pages: [call view UI](/docs/esbabbler/calls/call-view) · [screenshare](/docs/esbabbler/calls/screenshare) · [picture-in-picture](/docs/esbabbler/calls/picture-in-picture) · [per-user volume](/docs/esbabbler/calls/per-user-volume). Voice preferences applied to calls: [voice & video settings](/docs/esbabbler/voice-video).
 
 ## The session model
 
@@ -102,7 +102,7 @@ Losing these maps is survivable, not correct. LiveKit is an external SFU reached
 - Their eventual `participant_left` webhook finds no map entry, `deleteCallParticipant` returns `false`, and `leaveCallAsParticipant` returns early — no `leaveCall` event, no duration message.
 - The next join reads `isFirstJoiner` from that same empty map and re-stamps `callStartTimeMap`, so the duration the call finally reports is measured from the restart rather than from the call.
 
-**Undecided: whether to reconcile.** The fix is to ask LiveKit who is actually in the room and rebuild the maps from the answer, or to close the rooms on boot and make the clients rejoin. The first needs a trigger, and a poll is the wrong one — there is a `RoomServiceClient` listing to call, but nothing native that fires on "this process just lost its state", which is what the `no-scheduled-jobs` rule is about. The second is a visible interruption for something that only happens on deploy. Nothing here is load-bearing until calls outlive deploys often enough to notice, so it is written down rather than built.
+Rebuilding the maps from LiveKit's own view of each room is the fix, and it waits on a trigger worth having — [call state reconciliation](/docs/esbabbler/deferred/call-state-reconciliation).
 
 ## Procedures
 
@@ -156,5 +156,4 @@ DM calls work identically — call procedures accept `RoomType.DirectMessage`; m
 
 - **An SFU rather than a mesh.** Mesh WebRTC costs each participant an upload per peer, which video and screenshare make unsustainable past a handful of people; routing through LiveKit also means the app owns no signaling procedures of its own.
 - Hosting: LiveKit Cloud free tier (5,000 participant-minutes/month) now; self-hosted LiveKit on Azure Container Apps (~$5–15/month, scales to zero) when usage exceeds ~10,000 participant-minutes/month.
-- Empty-string sentinel: `readCallSessionId` returns `""` when the room has no session, never `null`.
 - Virtual backgrounds: starter image presets via `@livekit/track-processors`; selecting a preset turns the camera on, and camera-off resets the processor.

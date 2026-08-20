@@ -5,7 +5,7 @@ description: Open infrastructure work — every item links its proposal.
 
 # Roadmap
 
-Open work, each item linking its proposal — nothing is in progress right now. Ideas parked behind a revisit trigger live in [deferred](/docs/infra/deferred) instead. Rationale lives in [Cost & Security Posture](/docs/infra/optimization-review) and `packages/infra/docs/`.
+Open work, each item linking its proposal — nothing is in progress right now. Ideas parked behind a revisit trigger live in [deferred](/docs/infra/deferred) instead. Rationale lives in [Cost & Security Posture](/docs/infra/cost-and-security-posture) and `packages/infra/docs/`.
 
 ## Blocked (app-side migration off key-based auth first)
 

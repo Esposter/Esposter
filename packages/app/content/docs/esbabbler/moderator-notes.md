@@ -9,7 +9,7 @@ Free-text notes a moderator can attach to a room member, visible only to holders
 
 ## How it works
 
-Notes are moderation-log-shaped (append-heavy, time-ordered, per-room, no joins), so they live in Azure Table alongside the audit log rather than in Postgres. Each note is partitioned by `roomId` with a reverse-ticked `rowKey` so the newest note sorts first, and carries the target member, the authoring moderator, and the note text. The member's profile-card moderation menu gains a **Notes** item — a count badge shows how many notes exist, and the dialog lists them newest-first with an input to append another.
+Notes are moderation-log-shaped (append-heavy, time-ordered, per-room, no joins), so they live in Azure Table alongside the audit log rather than in Postgres. Each note is partitioned by `roomId` with a reverse-ticked `rowKey` so the newest note sorts first, and carries the target member, the authoring moderator, and the note text. The member's profile-card moderation menu carries a **Notes** item — a count badge shows how many notes exist, and the dialog lists them newest-first with an input to append another.
 
 ```mermaid
 flowchart LR

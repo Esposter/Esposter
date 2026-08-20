@@ -53,7 +53,7 @@ flowchart TD
   Line --> Sentence["the type's own sentence"]
 ```
 
-The emoji index follows the same once-for-the-whole-list rule from the other direction: `getEmojiIndex` builds its maps on first use rather than at import, and the picker's overlay only renders its content once opened, so a list of reactions never constructs a search index and never builds one per picker instance. See [/docs/esbabbler/emoji](/docs/esbabbler/emoji).
+The emoji index follows the same once-for-the-whole-list rule from the other direction: `getEmojiIndex` builds its maps on first use rather than at import, and the picker's overlay only renders its content once opened, so a list of reactions never constructs a search index and never builds one per picker instance. See [emoji](/docs/esbabbler/emoji).
 
 ## Key files
 
@@ -72,6 +72,5 @@ The emoji index follows the same once-for-the-whole-list rule from the other dir
 
 ## Notes
 
-- Anything added inside `MessageModelMessageListItem` outside the `v-if` toolbar block is paid once per loaded message and again per pagination batch — keep new per-item work O(1) and lazy.
 - One options-menu store write must never fan out re-renders: per-item computeds (`isDisabled`, `isContextMenuTarget`) only propagate when their own value changes, so untargeted items stay untouched.
 - List virtualization is the remaining lever if very long scrollback sessions become a problem.

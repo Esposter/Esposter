@@ -7,7 +7,7 @@ description: How nuxt-security is configured for the app — the CSP, permission
 
 The app's runtime hardening is [`nuxt-security`](https://nuxt-security.vercel.app), registered in `configuration/modules.ts`. It appears only in the production branch of that list: the Vitest branch is an allowlist of the modules a unit test actually exercises, and security headers are something no test asserts, so including the module would only slow config resolution. Nothing about the posture is therefore observable from a unit test — it is a property of a running server.
 
-This page covers the **app**. The Azure estate's posture — network exposure, managed identities, key handling — is owned by the [infrastructure optimization review](/docs/infra/optimization-review).
+This page covers the **app**. The Azure estate's posture — network exposure, managed identities, key handling — is owned by the [cost and security posture](/docs/infra/cost-and-security-posture).
 
 ## How it works
 

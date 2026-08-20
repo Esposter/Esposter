@@ -26,7 +26,7 @@ Keep **one** `.bench.ts` source per workload — never fork the logic into per-h
 
 ## What the numbers say
 
-The biggest win is **warm-fork repeated runs**; the riskiest number is cold overhead. On ext4 the remaining per-command tax is inherent overlayfs read cost (~30–50% on the file I/O a command does) — the OS page cache already serves a warm native run from RAM, so "RAM filesystem" is not a per-command speedup; the product is skipping installs, skipping unchanged re-runs, and not paying bridge taxes ([architecture](/docs/virrun/architecture)). Post source-mirror, win32 `vs base` sits at 0.46–0.91× with build/persist/test in the Linux 0.76–0.95× band ([WSL source mirror](/docs/virrun/wsl-source-mirror)).
+The biggest win is **warm-fork repeated runs**; the riskiest number is cold overhead, which is a per-command tax the warm runs have to buy back rather than a speedup of its own ([architecture](/docs/virrun/architecture) explains why a RAM filesystem is not one). Win32 sits below the Linux band on the shortest commands and inside it on build, persist and test — a sub-second native command cannot amortise the fixed sandbox setup, whatever the source reads cost ([WSL source mirror](/docs/virrun/wsl-source-mirror)). The committed artifacts hold the figures; this page holds none, because a number written into prose is stale by the next bench run.
 
 ## Notes
 

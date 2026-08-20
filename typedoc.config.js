@@ -1,3 +1,4 @@
+import { DOCS_API_DIRECTORY } from "@esposter/configuration";
 import { config } from "dotenv";
 
 config({ path: "packages/app/.env" });
@@ -7,7 +8,7 @@ const typedocConfiguration = {
   entryPointStrategy: "packages",
   exclude: ["packages/app", "packages/configuration"],
   name: "Esposter",
-  out: "packages/app/public/docs/api",
+  out: `packages/app/public/${DOCS_API_DIRECTORY}`,
   packageOptions: {
     entryPoints: ["src/index.ts"],
     includeVersion: true,
@@ -15,7 +16,7 @@ const typedocConfiguration = {
 };
 
 if (process.env.BASE_URL) {
-  typedocConfiguration.hostedBaseUrl = `${process.env.BASE_URL}/docs/api`;
+  typedocConfiguration.hostedBaseUrl = `${process.env.BASE_URL}/${DOCS_API_DIRECTORY}`;
   typedocConfiguration.useHostedBaseUrlForAbsoluteLinks = true;
 }
 

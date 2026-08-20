@@ -100,4 +100,4 @@ A link you send someone lands them on the direct view: they did not walk your pa
 - A trail read back off an entry is validated against the map before it renders — an entry written by an older release, or edited in devtools, is filtered down to slugs that still exist rather than rendering a crumb to nowhere.
 - A crumb is a real link; the title is plain text. Anything not navigable is not a crumb, which is why the current page cannot be one.
 - Pasting a url into the address bar is a direct arrival even in a tab that was on the list: it is a new entry with no trail, which is the honest reading of typing an address.
-- An earlier iteration let a page hardcode its ancestor (the recycle bin offering "All") — the route-tree model wearing the trail's clothes, since it offered a way back to a list the visitor may never have had open.
+- **A page never hardcodes its own ancestor.** Giving the recycle bin a fixed `All` crumb is the route-tree model wearing the trail's clothes: it offers a way back to a list the visitor may never have had open.

@@ -22,11 +22,11 @@ One meta level exists: an effect whose `configuration.itemType` is `Target.Upgra
 
 ```mermaid
 flowchart LR
-  save[boughtUpgrades + boughtBuildings] --> meta[applyUpgradeEffects\nupgrade-targeting effects rewrite upgrades]
+  save[boughtUpgrades + boughtBuildings] --> meta[applyUpgradeEffects<br/>upgrade-targeting effects rewrite upgrades]
   meta --> filter{target predicate}
-  filter -->|targets building id| bp[applyBuildingUpgrade\nbase: building.baseValue × amount]
-  filter -->|targets Mouse| mp[applyMouseUpgrades\nbase: 1 per click]
-  bp --> fold[applyEffects\nAdditive → BuildingAdditive → BuildingAdditiveNor → Multiplicative]
+  filter -->|targets building id| bp[applyBuildingUpgrade<br/>base: building.baseValue × amount]
+  filter -->|targets Mouse| mp[applyMouseUpgrades<br/>base: 1 per click]
+  bp --> fold[applyEffects<br/>Additive → BuildingAdditive → BuildingAdditiveNor → Multiplicative]
   mp --> fold
   fold --> power[power per second / per click]
 ```

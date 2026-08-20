@@ -5,7 +5,7 @@ description: Home's hamburger drawer for the resource area — All, Favorites, R
 
 # Resource service menu
 
-The portal this explorer follows does not put "everything you own" behind a single page. Resource Manager is a **service** with a menu, and each entry opens the _same_ list surface pointed at a different set. Ours had one list page and surfaced the rest as cards on Home, which meant Recent and Favorites could never grow filters, columns, sorting or bulk selection without re-implementing what `/all` already had.
+The portal this explorer follows does not put "everything you own" behind a single page. Resource Manager is a **service** with a menu, and each entry opens the _same_ list surface pointed at a different set. One list page with the rest as cards on Home is the shape that does not scale: Recent and Favorites cannot grow filters, columns, sorting or bulk selection without re-implementing what `/all` already has.
 
 The menu makes each entry a view over the existing list, so a capability built once appears everywhere.
 
@@ -39,7 +39,7 @@ The filter preset is the whole mechanism. `resource.readResources` gained `isFav
 
 **Favorites deliberately does not sort starred-first.** The star's own timestamp is not a column any list shows, and a list ordered by a value the reader cannot see reads as arbitrary. Recent is the opposite case, so it pins the column it sorts by — see the column chooser in [list filters & views](/docs/platform/list-filters-and-views) for what pinning means.
 
-Promoting Recent to a route is what moved recents from per-device `localStorage` to a server-side table — the storage change and the `Last accessed` column it made possible are told in [favorites & recents](/docs/platform/favorites-and-recents).
+Recent is server-side rather than per-device for the same reason it pins the column it sorts by — [favorites & recents](/docs/platform/favorites-and-recents) has the reasoning.
 
 ## What we deliberately did not copy
 

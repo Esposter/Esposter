@@ -13,11 +13,11 @@ Every authed mutation flows through `achievementPlugin`, which turns matching pr
 flowchart LR
   mutation[any authed mutation succeeds] --> plugin[achievementPlugin]
   plugin -->|filter definitions by path| defs[matching definitions]
-  defs -->|condition?| check[checkAchievementCondition\nvs raw input]
-  check --> upsert[(achievements +\nuserAchievements upsert)]
+  defs -->|condition?| check[checkAchievementCondition<br/>vs raw input]
+  check --> upsert[(achievements +<br/>userAchievements upsert)]
   upsert -->|amount reached| unlock[stamp unlockedAt]
   upsert --> emit[achievementEventEmitter]
-  emit --> sub[achievement.onUpdateAchievement\nsubscription]
+  emit --> sub[achievement.onUpdateAchievement<br/>subscription]
   sub --> toast[NotificationSnackBar]
 ```
 

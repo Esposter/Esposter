@@ -77,7 +77,7 @@ flowchart LR
 
 ## Notes
 
-- Publish **status stays off the default columns** (the consolidation decision) — it appears only as an opt-in filter pill, not a column.
+- Publish **status stays off the default columns** — it appears only as an opt-in filter pill.
 - One filter source: every filter lands in `createResourcesWhere` so `count` and `readResources` can never disagree. That includes a source's own preset, which is why Favorites and Recent get the pill row, the total and the summary cards without a line of their own.
 - The `Last accessed` column is sortable because the join that produces it is also the sort space: `readResources` selects the resource columns alongside `resourceAccesses.accessedAt` once and hands that same selection to `parseSortByToSql`, so a column the list can show is a column it can sort by.
 - All filters funnel through the data table's `search` prop (a JSON key of the filter state) so Vuetify resets to page 1 and refires `update:options` on any change. That is also why every text filter — the search box and a tag pill's name and value — writes through `useDebouncedFilter` instead of per keystroke: a raw binding would reset to page 1 and re-run both queries on every character.

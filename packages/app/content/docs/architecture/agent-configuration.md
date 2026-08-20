@@ -51,7 +51,7 @@ Documentation is **public by default**. Everything explanatory lives in `package
 
 The test is whether a human would ever want to read it on the website. If the answer is yes, it is documentation and belongs under `content/docs`; a skill then links to that page instead of restating it, so one topic keeps one owner.
 
-## Key Files
+## Key files
 
 | Path                                      | Role                                                                       |
 | ----------------------------------------- | -------------------------------------------------------------------------- |

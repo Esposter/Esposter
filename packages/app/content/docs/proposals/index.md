@@ -17,9 +17,7 @@ Each product area's roadmap is the prioritized index over its proposals:
 - [virrun roadmap](/docs/virrun/roadmap)
 - [infra roadmap](/docs/infra/roadmap)
 
-posts, vue-phaserjs, clicker, dungeons, anime, and fluid-simulator have no roadmap and no open proposals.
-
-Infra has open area proposals right now; every other area's roadmap is clear.
+The list is which areas keep a roadmap, not which have work open — a mature area's roadmap often reads "no open work", and an area with none has never needed one. `ls */roadmap.md` answers the first question and the page itself answers the second.
 
 Repo-wide refactor plans have no area roadmap and live here directly:
 

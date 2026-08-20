@@ -5,9 +5,7 @@ description: The owner's published surveys offered as drag-in invite-button bloc
 
 # Webpage Survey Invite Blocks
 
-Both GrapesJS editors offer the owner's published surveys as drag-in invite-button blocks. The email editor has always had them ([email personalization](/docs/platform/email-personalization)); the webpage editor now does too, which makes a published webpage a survey distribution surface — a landing page collecting responses from anyone who finds it, with zero send infrastructure.
-
-Without this, putting a survey on a webpage meant publishing the survey, copying its URL out of the Overview blade, and hand-authoring a link in the canvas.
+Both GrapesJS editors offer the owner's published surveys as drag-in invite-button blocks — the email editor for a send ([email personalization](/docs/platform/email-personalization)), the webpage editor for a landing page that collects responses from anyone who finds it, with zero send infrastructure.
 
 ## How it works
 

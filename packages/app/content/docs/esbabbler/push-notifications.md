@@ -5,7 +5,7 @@ description: Web push delivery via EventGrid and Azure Functions, and the recipi
 
 # Push Notifications
 
-Web push notifications delivered with the `web-push` library. The app never pushes directly — it publishes an EventGrid event and an Azure Function does the delivery, so retries are independent of the tRPC request lifecycle (see [/docs/architecture/azure-services](/docs/architecture/azure-services)).
+Web push notifications delivered with the `web-push` library. The app never pushes directly — it publishes an EventGrid event and an Azure Function does the delivery, so retries are independent of the tRPC request lifecycle (see [Azure services](/docs/architecture/azure-services)).
 
 ## How it works
 
@@ -25,7 +25,7 @@ flowchart LR
   FU --> WP2["web-push direct — no EventGrid"]
 ```
 
-A reply carries a third path alongside the generic push. `notifyThreadReplyFollowers` publishes its own EventGrid event to `processThreadReplyNotification`, which recomputes the thread's followers inside the Function and applies its own recipient rules. The two pushes cannot double up because the generic recipients are passed along as `excludedUserIds`, so each user is notified once per reply. The follow model and its recipient rules are [/docs/esbabbler/thread-follows](/docs/esbabbler/thread-follows).
+A reply carries a third path alongside the generic push. `notifyThreadReplyFollowers` publishes its own EventGrid event to `processThreadReplyNotification`, which recomputes the thread's followers inside the Function and applies its own recipient rules. The two pushes cannot double up because the generic recipients are passed along as `excludedUserIds`, so each user is notified once per reply. The follow model and its recipient rules are [thread follows](/docs/esbabbler/thread-follows).
 
 ## Recipient filtering
 
@@ -50,7 +50,7 @@ pushSubscriptions
 
 `userStatuses` is always left-joined even when there is no `@here` mention, so the query shape stays consistent.
 
-The notification title uses the sender's per-room nickname when set (see [/docs/esbabbler/nicknames](/docs/esbabbler/nicknames)).
+The notification title uses the sender's per-room nickname when set (see [nicknames](/docs/esbabbler/nicknames)).
 
 ### `NotificationType` (on `usersToRooms`)
 
@@ -62,7 +62,7 @@ The notification title uses the sender's per-room nickname when set (see [/docs/
 
 ## Reminder notifications
 
-`/remind` takes a different path — no EventGrid; the Service Bus-triggered `processScheduledMessageJob` Function pushes directly via `getPushSubscriptionsForUser(db, userId)`, which returns **all** subscriptions for that one user regardless of room membership or notification preferences (a reminder is self-addressed). See [/docs/esbabbler/scheduled-messages](/docs/esbabbler/scheduled-messages).
+`/remind` takes a different path — no EventGrid; the Service Bus-triggered `processScheduledMessageJob` Function pushes directly via `getPushSubscriptionsForUser(db, userId)`, which returns **all** subscriptions for that one user regardless of room membership or notification preferences (a reminder is self-addressed). See [scheduled messages](/docs/esbabbler/scheduled-messages).
 
 ## Key files
 

@@ -9,7 +9,7 @@ Every resource has an **Activity** blade: created, renamed, saved, published, un
 
 ## How it works
 
-A publish or a rename used to leave no trace. Activity events are message-shaped — high write volume, time-ordered, no joins — so per the storage split they belong in Azure Table Storage. No Postgres migration, no new Azure service.
+Activity events are message-shaped — high write volume, time-ordered, no joins — so per the storage split they belong in Azure Table Storage. No Postgres migration, no new Azure service.
 
 Events are emitted inside the `createResourceProcedures` mutations, in the best-effort tail after the primary write ([persist then notify](/docs/architecture/persist-then-notify)). Losing an audit line is bad; losing someone's save because an audit line failed is worse.
 

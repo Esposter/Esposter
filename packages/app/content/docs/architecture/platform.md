@@ -15,13 +15,13 @@ New products join the platform by adding one `ResourceType` and one `ResourceDef
 
 ## Layer model
 
-| Layer          | Contract                                                                                                                                  |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| **Identity**   | `users.id` (Better-Auth) keys every row, blob path, and session — shared by all products                                                  |
-| **Resources**  | Postgres identity row + content blob + capability declaration → [/docs/architecture/resources](/docs/architecture/resources)              |
-| **Datasets**   | Columns + rows served by DatasetProvider types → [/docs/architecture/datasets](/docs/architecture/datasets)                               |
-| **Publishing** | Versioned publish copy + public rate-limited read at `/view/[type]/[id]` → [/docs/architecture/publishing](/docs/architecture/publishing) |
-| **Events**     | tRPC mutation path = achievement trigger key (`achievementPlugin`) — every new procedure is automatically triggerable                     |
+| Layer          | Contract                                                                                                               |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Identity**   | `users.id` (better-auth) keys every row, blob path, and session — shared by all products                               |
+| **Resources**  | Postgres identity row + content blob + capability declaration → [resources](/docs/architecture/resources)              |
+| **Datasets**   | Columns + rows served by DatasetProvider types → [datasets](/docs/architecture/datasets)                               |
+| **Publishing** | Versioned publish copy + public rate-limited read at `/view/[type]/[id]` → [publishing](/docs/architecture/publishing) |
+| **Events**     | tRPC mutation path = achievement trigger key (`achievementPlugin`) — every new procedure is automatically triggerable  |
 
 ```mermaid
 flowchart TB
@@ -60,7 +60,7 @@ flowchart TB
   PUB -- "public /view URLs (shareable in esbabbler)" --> WORLD((Viewers))
 
   ACH[Achievements<br/>tRPC path middleware]
-  ID[(Identity<br/>Better-Auth users.id)]
+  ID[(Identity<br/>better-auth users.id)]
   platform --- ID
   explorer -. every mutation .-> ACH
 ```
@@ -92,7 +92,7 @@ sequenceDiagram
 
 ## Capability matrix
 
-`ResourceDefinitionMap` ([/docs/architecture/resources](/docs/architecture/resources)) is the authoritative declaration; this is the summary:
+`ResourceDefinitionMap` ([resources](/docs/architecture/resources)) is the authoritative declaration; this is the summary:
 
 | ResourceType | Publishable | DatasetProvider | FileAssets | Portable  | Blades beyond Overview/Editor |
 | ------------ | :---------: | :-------------: | :--------: | :-------: | ----------------------------- |

@@ -5,7 +5,7 @@ description: LiveKit screen-share tracks, the presenter layout, and moderation e
 
 # Screenshare
 
-A screen share is a LiveKit `Track.Source.ScreenShare` track published from the local participant — ephemeral media like audio, with **no DB columns or server state**. The token already grants `screen_share` + `screen_share_audio` publish sources ([/docs/esbabbler/calls](/docs/esbabbler/calls)).
+A screen share is a LiveKit `Track.Source.ScreenShare` track published from the local participant — ephemeral media like audio, with **no DB columns or server state**. The token already grants `screen_share` + `screen_share_audio` publish sources ([calls](/docs/esbabbler/calls)).
 
 ## How it works
 
@@ -54,7 +54,7 @@ When any participant publishes a screen track, the shared `MessageContentCallSta
 
 ## Moderation
 
-`AdminActionType.StopScreenShare` (gate: `MuteMembers` — conceptually the same as force-mute) enforces server-side via the LiveKit Admin API: revoke the target's screen-share publish sources and mute active screen tracks; the target client also runs `setScreenShare(false)` + snackbar through the admin action hook. See [/docs/esbabbler/moderation](/docs/esbabbler/moderation).
+`AdminActionType.StopScreenShare` (gate: `MuteMembers` — conceptually the same as force-mute) enforces server-side via the LiveKit Admin API: revoke the target's screen-share publish sources and mute active screen tracks; the target client also runs `setScreenShare(false)` + snackbar through the admin action hook. See [moderation](/docs/esbabbler/moderation).
 
 ## Key files
 

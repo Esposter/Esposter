@@ -1,6 +1,5 @@
 // @vitest-environment happy-dom
-import { DocsSectionGroupsMap } from "@/services/docs/DocsSectionGroupsMap";
-import { AGENT_DIRECTORY } from "@esposter/configuration";
+import { AGENT_DIRECTORY, DOCS_API_DIRECTORY, DOCS_DIRECTORY } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
 import mermaid from "mermaid";
 import { existsSync } from "node:fs";
@@ -10,16 +9,12 @@ import { describe, expect, test } from "vitest";
 
 // A path token we can resolve, i.e. no glob, placeholder or prose — brackets are Nuxt route segments.
 const REPOSITORY_PATH_REGEX = /^[\w./[\]-]+$/u;
-// Real /docs routes that are not content pages — the api section is generated TypeDoc output.
-const ALLOWED_LINK_TARGETS = ["/docs/api"];
+// Real docs routes that are not content pages — the api section is generated TypeDoc output.
+const ALLOWED_LINK_TARGETS = [`/${DOCS_API_DIRECTORY}`];
 // Path prefixes a Key Files cell may use relative to `packages/app` instead of the repo root.
 const APP_RELATIVE_PREFIXES = ["app/", "configuration/", "content/", "public/", "scripts/", "server/", "shared/"];
-// Pages every section owns that the sidebar map never lists — they trail in an automatic Planning group.
-const UNMAPPED_PAGES = new Set(["index", "roadmap"]);
-const PLANNING_DIRECTORIES = new Set(["deferred", "rejected"]);
-const contentDirectory = import.meta.dirname;
-const docsDirectory = join(contentDirectory, "docs");
-const appDirectory = join(contentDirectory, "..");
+const docsDirectory = import.meta.dirname;
+const appDirectory = join(docsDirectory, "..", "..");
 const repositoryDirectory = join(appDirectory, "..", "..");
 const pagePaths = (await Array.fromAsync(glob("**/*.md", { cwd: docsDirectory }))).map((pagePath) =>
   pagePath.replaceAll("\\", "/"),
@@ -50,6 +45,8 @@ const getIsPage = (slugPath: string) =>
 
 describe(mermaid.parse, () => {
   const MERMAID_REGEX = /```mermaid\r?\n(?<code>[\s\S]*?)```/gu;
+  const ESCAPED_LINE_BREAK_REGEX = /\\n/u;
+  const QUOTE_REGEX = /"/gu;
 
   // Skills are checked here too, rather than in a test of their own: a skill diagram has no renderer to fail
   // In front of anyone — nothing loads a skill and draws it — so an unparseable one is invisible until an
@@ -67,10 +64,35 @@ describe(mermaid.parse, () => {
 
     await expect(mermaid.parse(code)).resolves.toBeDefined();
   });
+
+  // A line break inside a label is `<br/>`. A literal backslash-n parses cleanly and draws the two characters
+  // Into the box, so the parser above cannot see it and only a reader looking at the rendered page can
+  test("no diagram writes a line break as an escape sequence", () => {
+    expect.hasAssertions();
+
+    const offenders = diagrams
+      .filter(({ code }) => ESCAPED_LINE_BREAK_REGEX.test(code))
+      .map(({ ordinal, page }) => `${page} diagram ${ordinal}`);
+
+    expect(offenders).toStrictEqual([]);
+  });
+
+  // The other half of the same mistake: a label carried across a real newline parses, because the label simply
+  // Swallows it, and then renders as one run-on line. A quote left open at the end of a line is the only tell
+  test("no diagram carries a label across a line break", () => {
+    expect.hasAssertions();
+
+    const offenders = diagrams
+      .filter(({ code }) => code.split("\n").some((line) => (line.match(QUOTE_REGEX)?.length ?? 0) % 2 === 1))
+      .map(({ ordinal, page }) => `${page} diagram ${ordinal}`);
+
+    expect(offenders).toStrictEqual([]);
+  });
 });
 
 describe("docsLinks", () => {
-  const DOCS_LINK_REGEX = /\]\((?<target>\/docs[^)\s#]*)(?:#[^)\s]*)?\)/gu;
+  const DOCS_LINK_REGEX = new RegExp(String.raw`\]\((?<target>/${DOCS_DIRECTORY}[^)\s#]*)(?:#[^)\s]*)?\)`, "gu");
+  const DOCS_ROUTE_PREFIX_REGEX = new RegExp(String.raw`^/${DOCS_DIRECTORY}/?`, "u");
 
   test("every /docs link resolves to a page", () => {
     expect.hasAssertions();
@@ -82,49 +104,44 @@ describe("docsLinks", () => {
       .filter(
         ({ target }) =>
           !ALLOWED_LINK_TARGETS.some((allowed) => target === allowed || target.startsWith(`${allowed}/`)) &&
-          !getIsPage(target.replace(/^\/docs\/?/u, "").replace(/\/$/u, "")),
+          !getIsPage(target.replace(DOCS_ROUTE_PREFIX_REGEX, "").replace(/\/$/u, "")),
       )
       .map(({ page, target }) => `${page} → ${target}`);
 
     expect(brokenLinks).toStrictEqual([]);
   });
-});
 
-describe("docsSectionGroupsMap", () => {
-  test("every mapped slug has a page", () => {
+  // The other direction: a link that resolves says nothing about a page nothing links to. An index is the only
+  // Route into its area's pages that a reader browsing the tree has, so one it omits is one nobody finds
+  test("every index page links every page beside it", () => {
     expect.hasAssertions();
 
-    const missingPages = Object.entries(DocsSectionGroupsMap)
-      .flatMap(([section, groups]) =>
-        Object.entries(groups).flatMap(([group, slugs]) => slugs.map((slug) => ({ group, section, slug }))),
-      )
-      .filter(({ section, slug }) => !getIsPage(`${section}/${slug}`))
-      .map(({ group, section, slug }) => `${section} → ${group} → ${slug}`);
-
-    expect(missingPages).toStrictEqual([]);
-  });
-
-  test("every feature page of a mapped section is registered", () => {
-    expect.hasAssertions();
-
-    const unregisteredPages = Object.entries(DocsSectionGroupsMap)
-      .flatMap(([section, groups]) => {
-        const mappedSlugs = new Set(Object.values(groups).flat());
+    const indexPages = pagePaths.filter((page) => page.endsWith("index.md"));
+    const unlisted = indexPages
+      .flatMap((page) => {
+        const directory = page.slice(0, -"index.md".length);
+        const listed = new Set(
+          [...(pages.find((candidate) => candidate.page === page)?.markdown ?? "").matchAll(DOCS_LINK_REGEX)].map(
+            (match) => (match.groups?.target ?? "").replace(/\/$/u, ""),
+          ),
+        );
         return pagePaths
-          .filter((page) => page.startsWith(`${section}/`))
-          .map((page) => page.slice(`${section}/`.length).replace(/(?:\/index)?\.md$/u, ""))
           .filter(
-            (slug) =>
-              !slug.includes("/") &&
-              !UNMAPPED_PAGES.has(slug) &&
-              !PLANNING_DIRECTORIES.has(slug) &&
-              !mappedSlugs.has(slug),
+            (sibling) =>
+              sibling.startsWith(directory) &&
+              sibling !== page &&
+              !sibling
+                .slice(directory.length)
+                .replace(/\/index\.md$/u, "")
+                .includes("/"),
           )
-          .map((slug) => `${section} → ${slug}`);
+          .map((sibling) => `/${DOCS_DIRECTORY}/${sibling.replace(/(?:\/index)?\.md$/u, "")}`)
+          .filter((target) => !listed.has(target))
+          .map((target) => `${page} → ${target}`);
       })
       .toSorted();
 
-    expect(unregisteredPages).toStrictEqual([]);
+    expect(unlisted).toStrictEqual([]);
   });
 });
 

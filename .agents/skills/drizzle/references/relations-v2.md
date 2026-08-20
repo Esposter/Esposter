@@ -30,7 +30,7 @@ export const foosRelation = defineRelationsPart(schema, (r) => ({
 - **`r.one` → singular, descriptive name after what it represents, not the table**: FK to `foos` → `foo`, named after the role it plays whenever that differs from the table.
 - **`r.many` → camelCase plural after the junction/child table**: `foosToBars`.
 - **Through (many-to-many) → `{target}Via{JunctionTable}`**: `foosViaBazes`.
-- **The two better-auth tables are the exception**: `sessions` and `accounts` name their `r.one` to a user `users`, after the table, because better-auth's drizzle adapter derives the relation key it joins on from the schema table key. Renaming either to the singular turns every session read back into two queries, or throws — see [auth](../../../packages/app/content/docs/architecture/auth.md).
+- **The two better-auth tables are the exception**: `sessions` and `accounts` name their `r.one` to a user `users`, after the table, because better-auth's drizzle adapter derives the relation key it joins on from the schema table key. Renaming either to the singular turns every session read back into two queries, or throws — see `packages/app/content/docs/architecture/auth.md`.
 - **`alias` required for through relations** — format `"{targetTable}_id_{sourceTable}_id_via_{junctionTable}"`, e.g. `"bars_id_foos_id_via_bazes"` for a `foosViaBazes` relation defined on `bars`.
 
 ## `where` syntax

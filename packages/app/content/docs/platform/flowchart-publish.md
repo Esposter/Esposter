@@ -5,13 +5,13 @@ description: Flowchart is Publishable — a read-only VueFlow render at /view/Fl
 
 # Flowchart Publish
 
-Flowchart opts into the **Publishable** capability, giving a diagram the same share unit as Dashboard, Webpage and Email: a public read-only render at `/view/Flowchart/[id]`. Before this, a diagram was visible only to its logged-in owner inside the editor, and sharing one meant taking a screenshot.
+Flowchart opts into the **Publishable** capability, giving a diagram the same share unit as Dashboard, Webpage and Email: a public read-only render at `/view/Flowchart/[id]`.
 
 This is the **minimal Publishable adoption** and the reference template for future types: a capability flag plus one view component. The publish procedures, the Publish and Unpublish commands, snapshotting and OG meta all arrive from the existing capability machinery — no bespoke code.
 
 ## How it works
 
-Flowchart content references no other resources and no binary assets, so the publish snapshot is the plain content copy: neither `transformPublishedContent` nor `transformPublicReadContent` is needed ([/docs/architecture/publishing](/docs/architecture/publishing)).
+Flowchart content references no other resources and no binary assets, so the publish snapshot is the plain content copy: neither `transformPublishedContent` nor `transformPublicReadContent` is needed ([publishing](/docs/architecture/publishing)).
 
 ```mermaid
 flowchart LR

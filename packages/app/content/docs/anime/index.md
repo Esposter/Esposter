@@ -22,5 +22,5 @@ Paths relative to `packages/app/app`.
 
 ## Notes
 
-- Adding a drawing = an expressions file + a 7-line component + a `Drawings` entry; snapshot tests cover each drawing's rendered HTML.
+- Adding a drawing is an expressions file, a component thin enough to be all boilerplate, and a `Drawings` entry; snapshot tests cover each drawing's rendered HTML.
 - The area is a finished gallery with no roadmap — it grows when someone makes new art, which is an authoring act, not a feature.

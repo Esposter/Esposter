@@ -67,4 +67,4 @@ Paths relative to `packages/app`.
 ## Notes
 
 - Time away from the page is compensated by [offline progress](/docs/clicker/offline-progress): the load path awards capped production for the gap since the save was last stamped.
-- Late-game blob size shrank by an order of magnitude with normalization (28 full upgrade objects → 28 short ids).
+- Storing ids rather than definitions is also what keeps a late-game blob small: a save carries a short id per bought upgrade instead of the whole upgrade object, which is an order of magnitude less to write on every autosave.

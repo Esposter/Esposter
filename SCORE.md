@@ -52,7 +52,7 @@ Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` with D
 
 Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents drift; every version lives in the catalog, so the lockfile is the only place a number is worth reading. Nuxt, Vue, Vuetify, Phaser, TypeScript, `rolldown` and `unplugin-dts` are all on stable lines. `h3` is held at v1 via a pnpm override, below its v2 line.
 
-The four Survey packages reached stable `3.x` since the last review, leaving **three pre-release packages in production paths**:
+The Survey packages are on stable `3.x`, leaving **three pre-release packages in production paths**:
 
 | Package                       | Role                   | Why it's accepted                                                       |
 | ----------------------------- | ---------------------- | ----------------------------------------------------------------------- |

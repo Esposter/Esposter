@@ -7,7 +7,7 @@ description: Esposter GrapesJS editor conventions — useGrapesJsEditor init com
 
 ## Where the editors live
 
-There are no editor **pages**. The Resource Explorer consolidation replaced them with two components mounted by the generic resource routes:
+There are no editor **pages** — an editor is a component the generic resource routes mount, so a new editor type costs a component rather than a route and a picker of its own:
 
 - `packages/app/app/components/Resource/Email/Editor.vue`
 - `packages/app/app/components/Resource/Webpage/Editor.vue`
@@ -23,7 +23,7 @@ Never call `grapesJS.init` in a component. `useGrapesJsEditor(storage, configura
 
 ## Resource Resolution — No Document Picker
 
-There is no `currentDocument`, `DocumentPicker`, or `DocumentPublishButton` — no per-editor pickers survive the Resource Explorer consolidation. The editor stores (`app/store/emailEditor/`, `app/store/webpageEditor/`) hold only their own content and take the row from `useResourceStore`, which resolves it from the route:
+An editor never picks its own resource and holds no `currentDocument` of its own. The editor stores (`app/store/emailEditor/`, `app/store/webpageEditor/`) hold only their own content and take the row from `useResourceStore`, which resolves it from the route:
 
 ```ts
 const resourceStore = useResourceStore();

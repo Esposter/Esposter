@@ -131,13 +131,13 @@ Read it before writing any `watch`, or when a local `ref` mirrors a prop/store v
 
 ## The Options API runtime is compiled out
 
-`future.compatibilityVersion: 5` defaults `vue.optionsApi` to **off**, and nothing in the repo turns it back on — the last dependency that needed it (`emoji-mart-vue-fast`) was replaced by the in-repo emoji picker.
+`future.compatibilityVersion: 5` defaults `vue.optionsApi` to **off**, and nothing in the repo turns it back on. Turning it on is a whole-app cost paid for one dependency, so a component library that needs it is a library to replace rather than a flag to flip.
 
 Know the failure mode before adding a dependency that ships `.vue` components. Without `applyOptions` an Options API component still mounts, `$data` stays `{}`, and its compiled render dereferences a property off `undefined` with **nothing thrown beforehand** to name the cause. It survives typecheck and lint, and it survives Vitest too — `@vitejs/plugin-vue` defaults the flag to `true`, so a component test of that component passes while the app is broken. A render error inside a `node_modules` component is worth checking `/_nuxt/@vite/env` for (`run-app`) before reading its source.
 
 ## Dates Are `<NuxtTime>`
 
-Formatting a date inside a `.vue` — `dayjs(…).format(…)`, `toLocaleDateString()`, `useTimeAgo`, `useDateFormat` — is a `vue/no-restricted-syntax` error, and a hand-written `<time>` is a `vue/no-restricted-html-elements` one. The component formats after the prehydrate rewrite, in the reader's locale and timezone, so the server's UTC clock never leaks into the page and the text cannot mismatch on hydration. Full standard: [date-time-display](../../../packages/app/content/docs/architecture/date-time-display.md). Three things the lint rule cannot tell you:
+Formatting a date inside a `.vue` — `dayjs(…).format(…)`, `toLocaleDateString()`, `useTimeAgo`, `useDateFormat` — is a `vue/no-restricted-syntax` error, and a hand-written `<time>` is a `vue/no-restricted-html-elements` one. The component formats after the prehydrate rewrite, in the reader's locale and timezone, so the server's UTC clock never leaks into the page and the text cannot mismatch on hydration. Full standard: `packages/app/content/docs/architecture/date-time-display.md`. Three things the lint rule cannot tell you:
 
 - **Options, not format strings** — `Intl.DateTimeFormat` attributes (`weekday`, `month`, `hour`, …), `relative` for time-ago. A format used more than once is one attributes constant, spread with `:="…"`. Bare `title` is not a localized tooltip — it renders `toISOString()` and the prehydrate script never rewrites it, so it shows UTC machine text; pass a string or leave it off.
 - **A component can't live in a prop string** — a subtitle or sentence that embeds a time becomes slot content with the time in inline flow, never a template literal in script.

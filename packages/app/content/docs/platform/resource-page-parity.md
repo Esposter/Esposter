@@ -50,6 +50,5 @@ sequenceDiagram
 
 ## Notes
 
-- Commands stay capability-gated exactly as before — this changed presentation and added Refresh/Duplicate, not the gating model.
 - Listing published snapshots, previewing one, and rolling back to it are [publish history](/docs/platform/publish-history), not command-bar parity.
 - JSON view / export-template parity is [out of scope](/docs/platform/rejected/json-config-parity).

@@ -11,9 +11,9 @@ Two sets answer "take me back to what I was working on": **Favorites**, the reso
 
 Both are relationship tables in Postgres, keyed on `(userId, resourceId)` and cascading on both sides.
 
-Favorites were server-side from day one: a star that vanishes on another device reads as data loss. Recents were not — views lived in `localStorage`, on the reasoning that a recent list differing per device was merely untidy. Promoting Recent to a list route with a visible `Last accessed` column is what retired that reasoning: a **column** that disagrees between two browsers is indefensible in a way a quietly-different card was not. There is no backfill, so Recent starts empty and fills on the next open.
+Both are server-side rather than per-device. A star that vanishes on another machine reads as data loss, and a recent list is no different once it is a list route with a visible `Last accessed` column: a column that disagrees between two browsers is indefensible in a way a quietly-different card is not.
 
-Recent means recently _opened_. Home once approximated it with `updatedAt` desc, which is wrong the moment anything autosaves: a resource you never opened jumps to the top because a background save touched it. Opening a resource page now calls `resource.recordAccess` through `useRecordResourceAccess`, which watches the resource's **identity**, not the object — autosave, rename and tag edits each replace the object, and re-recording on those would order Recent by last autosave, the behaviour this replaced. The write is best-effort and silent on failure: it records that a visit happened, and the visit itself succeeded.
+Recent means recently _opened_, which `updatedAt` desc does not approximate: it is wrong the moment anything autosaves, because a resource you never opened jumps to the top when a background save touches it. Opening a resource page calls `resource.recordAccess` through `useRecordResourceAccess`, which watches the resource's **identity**, not the object — autosave, rename and tag edits each replace the object, so re-recording on those would order Recent by last autosave instead. The write is best-effort and silent on failure: it records that a visit happened, and the visit itself succeeded.
 
 ```mermaid
 flowchart LR
@@ -65,7 +65,7 @@ The list routes use neither of the reads above: they are `resource.readResources
 
 ## Notes
 
-- The `/all` star renders always rather than on hover, which the design originally called for: hover does not exist on touch, and a star you cannot find is a star you do not use.
+- The `/all` star renders always rather than on hover: hover does not exist on touch, and a star you cannot find is a star you do not use.
 - Favorites are read once per list rather than once per row — every row asks "am I starred?", so the store exposes a `Set` of ids and the rows read it. The set itself is read once per session, not once per mount: the workbench list mounts inside the blade, so concurrent mounts share the in-flight query instead of each running the same joined read, and a delete invalidates it because only the server knows which stars still resolve.
 - Soft-deleted resources are filtered out of every read here, so a starred resource sitting in the [recycle bin](/docs/platform/recycle-bin) disappears from Favorites and returns when restored — the star itself is never lost. The same is true of an access row.
 - The search dropdown's **Recently opened** group reads the same server-side set, so it and the Recent route can never disagree. Recent _searches_ stay in `localStorage`: a query you typed is not something to follow you between machines.

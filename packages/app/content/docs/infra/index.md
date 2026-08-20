@@ -7,8 +7,8 @@ description: Azure infrastructure managed as Pulumi code — one prod stack cove
 
 `packages/infra` manages Esposter's cloud footprint as Pulumi TypeScript. A single `prod` stack owns both the development and production Azure resource groups plus the GitHub repository settings (labels, environments, secrets, branch rulesets). Everything runs on free or near-free SKUs, and the whole estate is cost-guarded: `$0.01` budgets trigger Logic App automation that stops Function Apps and deletes Event Grid subscriptions the moment anything exits the free tier.
 
-- [Azure Pulumi migration](/docs/infra/azure-pulumi-migration) — how resources are laid out in Pulumi: one resource per file, ARM-aligned paths, provider split, naming convention.
-- [Cost & Security Posture](/docs/infra/optimization-review) — the budget guard cycle and why each hardening step is deliberately deferred.
+- [Azure Pulumi layout](/docs/infra/azure-pulumi-layout) — how resources are laid out in Pulumi: one resource per file, ARM-aligned paths, provider split, naming convention.
+- [Cost & Security Posture](/docs/infra/cost-and-security-posture) — the budget guard cycle and why each hardening step is deliberately deferred.
 - [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter) — failed deliveries land in a blob container whose writes push-trigger an automatic, attempt-capped replay.
 - [Observability](/docs/infra/observability) — why App Insights and Log Analytics are deliberately not provisioned, and what the estate relies on instead.
 - [Pulumi source of truth](/docs/infra/pulumi-source-of-truth) — Function App runtime settings managed in Pulumi.
@@ -20,7 +20,7 @@ Deeper operational reference lives beside the code in `packages/infra/docs/` (na
 ## Shipped
 
 - **Pulumi adoption** — imported the manually-created Azure resources into Pulumi (one resource per file, `protect: true`).
-- **Posture review** — cost / security / network / identity review; recorded constraints and follow-ups. → [Cost & Security Posture](/docs/infra/optimization-review)
+- **Posture review** — cost / security / network / identity review; recorded constraints and follow-ups. → [Cost & Security Posture](/docs/infra/cost-and-security-posture)
 - **Safe cleanup** — Web PubSub trace ACL left as-is (Azure rejects ACL changes on `Free_F1`).
 - **Storage safety** — disabled blob versioning (unused, paid), kept 7-day blob/container soft delete, kept `Standard_LRS`.
 - **Observability cost controls** — `$0.01` guard budgets wired to Logic App stop/delete automation.

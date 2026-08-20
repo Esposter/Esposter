@@ -9,9 +9,25 @@ The whole game persists as one `Dungeons` entity per user — a single optional 
 
 ## How it works
 
+```mermaid
+flowchart TD
+  setup["page setup — useReadDungeons"] -->|"authed"| readBlob["dungeons.readDungeons"]
+  setup -->|"anonymous"| readLocal["localStorage DungeonsStore"]
+  readBlob --> entity[("Dungeons — one optional save plus settings")]
+  readLocal --> entity
+  entity --> titleScene{"Title scene"}
+  titleScene -->|"Continue, offered only when a save exists"| run["the run — player, party, inventory, per-map world state"]
+  titleScene -->|"New Game"| run
+  run -->|"world menu Save — never automatic"| saveData["saveData assigns the run onto dungeons.save"]
+  settingsScene["Settings scene"] --> saveData
+  saveData -->|"useSave"| write["dungeons.saveDungeons, or localStorage"]
+  write --> entity
+  write -->|"trigger path"| achievements["seven achievements — two count saves, five read the saved run"]
+```
+
 A `Save` is the full run state: `player` (position, direction, party monsters, inventory, respawn location), the active `tilemapKey`, and per-map `world` state (chest opened-flags). `useReadDungeons` loads the blob at page setup (authed: `dungeons.readDungeons`; anonymous: localStorage `DungeonsStore`); the Title scene's Continue resumes `dungeons.save` (enabled only when one exists), New Game starts from a fresh `Save`. Saving is **manual** — the world menu's Save option calls `saveData`, which assigns the active save onto `dungeons.save` and persists via `useSave` — there is no autosave.
 
-**No legacy shapes** — per the [latest-shape-only convention](/docs/architecture/persisted-data-latest-shape-only), `dungeonsSchema` and the `Dungeons` constructor accept only the current single-`save` shape; a blob that fails to parse starts fresh. If real save slots are ever wanted, design them as slots (their own ids, names, timestamps) rather than resurrecting the old array.
+**No legacy shapes** — per the [latest-shape-only convention](/docs/architecture/persisted-data-latest-shape-only), `dungeonsSchema` and the `Dungeons` constructor accept only the current single-`save` shape; a blob that fails to parse starts fresh. If real save slots are ever wanted, design them as slots (their own ids, names, timestamps) rather than as a bare array of saves.
 
 **Settings** — the Settings scene edits `dungeons.settings`, shared across runs: text speed (Slow/Mid/Fast, driving dialog animation delay), battle style, animations on/off, sound on/off + volume percentage, and theme mode (recoloring the UI glass panels via `ThemeModeColorsMap`). Settings persist in the same blob write.
 

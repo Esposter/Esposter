@@ -15,6 +15,22 @@ export const AGENT_DIRECTORY = ".agents";
 // oxlint-disable-next-line typescript/no-inferrable-types
 export const AGENT_WORKTREES_DIRECTORY: string = `${AGENT_DIRECTORY}/worktrees`;
 
+// The docs site's one path segment. `packages/app/content/docs` holds the pages, `app/pages/docs/[...slug].vue` is
+// The route that renders them, and `/docs/...` is therefore the url every page is linked by — so the content
+// Collection, the TypeDoc output path and the docs suites all build their paths from here rather than repeating it.
+// Three consumers cannot import it, and none needs a pin: a Nuxt route is its own directory name, a markdown link
+// Is authored text, and `content.config.ts` is loaded by `nuxt prepare` from the app's `postinstall` — which runs
+// Before any workspace package is built, so importing this there fails the install itself on a fresh clone. All
+// Three are covered by the docs suite, which lives inside the directory and resolves every link to a real page, so
+// A rename that missed one of them fails loudly rather than silently.
+export const DOCS_DIRECTORY = "docs";
+
+// Generated TypeDoc output. It is written into the app's `public/`, so it is served from under the docs route
+// Without being a content page — which is why the docs link check has to allow this one prefix explicitly.
+// The annotation is redundant to oxlint but mandatory to the dts build, as above.
+// oxlint-disable-next-line typescript/no-inferrable-types
+export const DOCS_API_DIRECTORY: string = `${DOCS_DIRECTORY}/api`;
+
 export const DISTRIBUTION_DIRECTORY = "dist";
 
 export const KIBIBYTE: number = 2 ** 10;

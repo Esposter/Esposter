@@ -28,7 +28,7 @@ flowchart TD
   Empty -- "something to search on" --> Read["useReadSearchedMessages"]
 ```
 
-Enter never writes typed text into a chip either. No typed text can be the userId, room id, media kind, date or boolean a filter needs, so filling a chip from the field produced a filter that the input schema rejects, that `filtersToClauses` throws on, or that silently matches nothing. **Only a picker gives a filter its value.**
+Enter never writes typed text into a chip either. No typed text can be the userId, room id, media kind, date or boolean a filter needs, so filling a chip from the field produces a filter the input schema rejects, one `filtersToClauses` throws on, or one that silently matches nothing. **Only a picker gives a filter its value.**
 
 ## Vuetify's clear, and why the field saves and restores itself
 
@@ -39,7 +39,7 @@ The two directions are handled differently, and neither can be dropped:
 - **Focus lost** — the clear is _swallowed_, because `@update:search` ignores an empty value while the menu is closed. That only works if losing focus closes the menu **in the focus handler**: Vuetify's clear arrives before the overlay's own click-away handling, so leaving the close to the overlay lets the clear through and empties the field. Interacting with the menu never reaches this, since the menu prevents mousedown and the field keeps focus.
 - **Focus gained** — the same trick is unavailable, because the menu is open by then. So the store's value is snapshotted on focus and written back a tick later, once Vuetify's clear has landed.
 
-That restore is the subtle one: **it only applies while the field is still empty.** A character typed inside that tick is the newer value, and restoring the snapshot over it is how a one-character search reached the server as `query: ""` and was rejected by the input schema outright.
+That restore is the subtle one: **it only applies while the field is still empty.** A character typed inside that tick is the newer value, and restoring the snapshot over it puts the older empty one back — the search then reaches the server as `query: ""` and the input schema refuses it.
 
 ```mermaid
 sequenceDiagram

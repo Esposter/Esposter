@@ -34,7 +34,7 @@ const { isPending } = useAutoSearch(searchQuery, {
 });
 ```
 
-The only sanctioned exceptions (documented in `docs/architecture/search.md`):
+The only sanctioned exceptions (documented in `packages/app/content/docs/architecture/search.md`):
 
 - **`v-data-table-server` lists** — the table owns fetch orchestration via its `search` prop + `@update:options`; feed it a `refDebounced(searchQuery, …)`.
 - **Explicit-submit search** — Enter-triggered with filters and search history; no as-you-type querying to throttle.

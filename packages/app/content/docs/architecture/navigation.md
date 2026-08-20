@@ -56,8 +56,3 @@ The docs page (`pages/docs/[...slug].vue`) must feel instant when moving between
 | `packages/configuration/eslint/typescriptRules.js`    | bans `router.push` in `.ts` + `.vue` script (`no-restricted-syntax`)                        |
 | `app/pages/docs/[...slug].vue`                        | reactive-key docs page — instant in-place navigation                                        |
 | `app/components/Docs/TableOfContents/Item.vue`        | in-page hash anchor via `NuxtInvisibleLink` + custom smooth scroll                          |
-
-## Notes
-
-- `RoutePath` in `@esposter/shared` is the single source of truth for internal routes; feed it to `:to` and `navigateTo` alike.
-- **Declarative over imperative.** `NuxtLink`/`NuxtInvisibleLink` or a component's `:to` for declarative links, `navigateTo` for imperative cases (logic before navigating, click-time targets, redirects). A plain destination on a Vuetify component belongs on `:to`, which keeps real anchor semantics.

@@ -5,7 +5,7 @@ description: Mention-only unread counts — red chips on sidebar room items that
 
 # Mention Badges
 
-Red count chips in the room sidebar for rooms with unread `@mentions` of the current user — the scoped alternative to full unread tracking (which is [rejected](/docs/esbabbler/rejected/read-receipts-unread-badges); mention-only counts are its explicitly allowed narrower version).
+Red count chips in the room sidebar for rooms with unread `@mentions` of the current user. Full unread tracking is decided against ([read receipts and unread badges](/docs/esbabbler/rejected/read-receipts-unread-badges)) and mention-only counts are the narrower version that page explicitly allows.
 
 ## How it works
 
@@ -19,7 +19,7 @@ Badging and [push notifications](/docs/esbabbler/push-notifications) both resolv
 
 Threading a precomputed `ClassifiedMentions` through instead would buy that back at a real cost. `getPushSubscriptionsForMessage` is also called from outside the send path, where no classification has happened, so the parameter would have to be optional — and an optional precomputed input is a parameter a caller can pass from the _wrong_ message, turning a self-contained function into one whose correctness depends on its caller. What the two functions share is the resolution rule, and that is already shared: `getMentionConditions` plus `createMentionConditionBuilders` hold one copy of it, and the badge and notification variants differ only in the condition a resolved set of user ids becomes.
 
-Counts arrive with `readMyUsersToRooms` at startup (already loaded for every room — see [/docs/esbabbler/nicknames](/docs/esbabbler/nicknames)) and update live through the existing `onUpdateUserToRoom` subscription: both the increment and the clear emit `updateUserToRoom` per affected row, so the chip appears and disappears with no new subscription.
+Counts arrive with `readMyUsersToRooms` at startup (already loaded for every room — see [nicknames](/docs/esbabbler/nicknames)) and update live through the `onUpdateUserToRoom` subscription: both the increment and the clear emit `updateUserToRoom` per affected row, so the chip appears and disappears with no new subscription.
 
 ```mermaid
 flowchart LR
@@ -55,5 +55,4 @@ flowchart LR
 
 ## Notes
 
-- Badge vs push targeting: a direct or role mention always badges regardless of the member's notification preference (Discord), while push delivery respects the `DirectMessage` preference. Both share the broadcast rules and role-member resolution through the `getMentionConditions` core with pluggable builders (`MentionBadgeConditionBuilders` vs `MentionNotificationConditionBuilders`).
-- Mentions arriving while the room is being viewed are suppressed in the sidebar (`isActive`), matching the existing unread-bold behaviour; the stored count clears on the next room view.
+Mentions arriving while the room is being viewed are suppressed in the sidebar (`isActive`), matching the unread-bold behaviour beside them; the stored count still clears on the next room view.

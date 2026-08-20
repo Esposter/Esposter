@@ -7,7 +7,7 @@ description: A Share command on published resources that posts the public link i
 
 A **Share** command on published resources: pick one of your rooms, add an optional note, and the public `/view/[type]/[id]` link lands there as a message. It is the first real bridge between the platform and [esbabbler](/docs/esbabbler), and it is deliberately the smallest one that works — client-side only, reusing the existing message-create path, with no new procedures and no schema.
 
-Before it, sharing meant copying the link off the Overview blade and pasting it into a room by hand. That still works; this just does it in place.
+Copying the link off the Overview blade and pasting it into a room by hand still works; this does the same thing in place.
 
 ## How it works
 

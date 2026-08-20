@@ -5,7 +5,7 @@ description: Deferred — a calendar aggregating todos across all of a user's To
 
 # Global calendar
 
-A calendar aggregating todos across ALL of a user's TodoList resources (the pre-consolidation `/calendar` page read the single table-editor config doc; the per-resource Calendar blade replaced it).
+A calendar aggregating todos across ALL of a user's TodoList resources — today each list's schedule is its own Calendar blade and nothing spans them.
 
 ## Why deferred
 

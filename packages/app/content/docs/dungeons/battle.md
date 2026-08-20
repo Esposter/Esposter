@@ -72,5 +72,5 @@ Paths relative to `packages/app/app`.
 ## Notes
 
 - The `Battle` state orders the two attacks through `useAttackStatePriorityMap` and the post-attack checks route to the other side's attack via the same map. The enemy AI is trivial: `EnemyAttack` picks a uniformly random attack from the monster's `attackIds`.
-- Power and defense values are tuned so early battles keep their pre-defense length: with base defense 5, `power / (power + defense)` sits near 0.9 at low levels, close to the old raw-attack damage.
+- Power and defense are tuned so a low-level battle still runs about as long as raw attack alone would make it: at base defense 5, `power / (power + defense)` sits near 0.9, so the stat matters without slowing the early game down.
 - A type-effectiveness chart is deliberately out of scope until the roster grows beyond the current five [differentiated species](/docs/dungeons/monsters-and-items) — see the deferred [status effects](/docs/dungeons/deferred/status-effects).

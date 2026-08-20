@@ -30,7 +30,7 @@ getNicknameMap(roomId)?.get(user.id) || user.name;
 
 Applied in: mention labels (`useMessageWithMentions`), the member list sidebar (`MemberListItem`), the profile card that pops out of it (`ProfileCard/Index`), the room settings Members panel (`Settings/Type/Member/ListItem`), the push notification title (queried server-side before the EventGrid publish), and — through `useCreator` — every message in the timeline.
 
-**`useCreator` resolves the nickname itself**, so the seven surfaces that render a message author (avatar initials, the batch header, reply titles, forward and pin lines, the delete and pin confirmations) get it from one place rather than each remembering to call `getDisplayName`. It reads the room from the message's own `partitionKey`, so a message rendered outside the current room — a search hit, a thread preview — resolves against the room it was written in rather than the room on screen. A webhook message is the one exception: its author is an app user, which is not a member of the room and therefore has no nickname to overlay.
+**`useCreator` resolves the nickname itself**, so every surface that renders a message author — avatar initials, the batch header, reply titles, forward and pin lines, the delete and pin confirmations — gets it from one place rather than each remembering to call `getDisplayName`. It reads the room from the message's own `partitionKey`, so a message rendered outside the current room — a search hit, a thread preview — resolves against the room it was written in rather than the room on screen. A webhook message is the one exception: its author is an app user, which is not a member of the room and therefore has no nickname to overlay.
 
 The resolution is a single ordered chain, and every surface enters it at the same point:
 
@@ -83,4 +83,4 @@ Room settings → **My Profile** tab (visible to all members, no permission requ
 
 ## Notes
 
-Setting **other** members' nicknames via the `ManageNicknames` permission bit is not wired to a UI yet — the bit exists in `RoomPermission` (see [/docs/esbabbler/rbac](/docs/esbabbler/rbac)) but only self-service nickname editing is built.
+Setting **other** members' nicknames via the `ManageNicknames` permission bit is not wired to a UI yet — the bit exists in `RoomPermission` (see [RBAC](/docs/esbabbler/rbac)) but only self-service nickname editing is built.

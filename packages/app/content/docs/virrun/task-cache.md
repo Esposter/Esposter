@@ -13,16 +13,16 @@ The key is `sha256(environment-key + working-tree-hash + command + write-back ma
 
 ```mermaid
 flowchart TB
-    run["persistWithCache"] --> enabled{"cache enabled\n+ key computable?"}
-    enabled -->|no| plain["plain persistRun\n(network on)"]
+    run["persistWithCache"] --> enabled{"cache enabled<br/>+ key computable?"}
+    enabled -->|no| plain["plain persistRun<br/>(network on)"]
     enabled -->|yes| hit{"tasks/&lt;key&gt; exists?"}
-    hit -->|yes| replay["replayTaskCache\napply recorded flush plan to host\nreproduce streams + exit code"]
-    hit -->|no| exec["persistRun — hermetic\n(network namespace unshared)"]
+    hit -->|yes| replay["replayTaskCache<br/>apply recorded flush plan to host<br/>reproduce streams + exit code"]
+    hit -->|no| exec["persistRun — hermetic<br/>(network namespace unshared)"]
     exec --> code{"exit 0?"}
-    code -->|no| skip["flushed but never recorded\n(+ network-failure hint if applicable)"]
+    code -->|no| skip["flushed but never recorded<br/>(+ network-failure hint if applicable)"]
     code -->|yes| closure{"rewrote pnpm-lock.yaml?"}
-    closure -->|yes| drop["hasDependencyClosureMutation\n→ drop the entry (flushed, uncached)"]
-    closure -->|no| record["recordTaskCache\npid-tagged temp → atomic rename"]
+    closure -->|yes| drop["hasDependencyClosureMutation<br/>→ drop the entry (flushed, uncached)"]
+    closure -->|no| record["recordTaskCache<br/>pid-tagged temp → atomic rename"]
 ```
 
 Each entry holds `meta.json` (recorded exit code, stdout, stderr, and the write-back flush plan) and `upper/` (the produced-file payload the replay reconciles onto the host — only the copy ops carry payload; deletes are recreated from the plan). Publish is atomic, mirroring `createSnapshot`: build in a pid-tagged temp, one `renameSync` promotes it; a race-loser keeps the winner's entry and drops its own temp.

@@ -25,15 +25,15 @@ A name is a guess about someone else's product. It goes stale when the tool rena
 
 The bar for adding another exception is that high: it must be a substrate every project shares, not a popular one.
 
-## Why the rule earns its page
+## What a name costs
 
-It was broken once, and the failure was not obvious from the diff. `.agents/worktrees` was added to the source-mirror excludes as a literal, which read as a harmless two-word constant. What it actually did:
+A literal in an exclude list reads as a harmless two-word constant, which is why the damage never shows in the diff. Take a hardcoded agent-worktree directory:
 
-- worked only for the exact directory one agent tool uses, at its default location
-- said nothing about **why** the path was special, so the write-back never learned the same rule and kept flushing those paths back to the host
-- made the exclude set look constant, when the real property (a worktree exists) changes while a repo is being worked on — the mirror was never taught to reconcile a change to it, so deleted worktrees came back from stale mirror copies
+- it covers the one directory one tool uses, at that tool's default location, and nothing else
+- it says **why** nowhere, so the mechanism that needs the same rule on the other side — the write-back mask — never learns it, and keeps flushing those paths onto the host
+- it makes the exclude set look constant, when the property it stands for (a worktree exists) changes while the repo is being worked on. Nothing reconciles a change to a constant, so a deleted worktree comes back from the stale mirror copy
 
-Re-deriving the same exclusion from `<commonDir>/worktrees/<name>/gitdir` fixed all three at once, and covers every tool that runs `git worktree add` — including ones that don't exist yet.
+Deriving the same exclusion from `<commonDir>/worktrees/<name>/gitdir` answers all three at once, and covers every tool that runs `git worktree add` — including the ones that don't exist yet.
 
 ## Applying it
 

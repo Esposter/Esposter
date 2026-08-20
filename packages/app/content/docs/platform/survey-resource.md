@@ -5,14 +5,14 @@ description: SurveyJS authoring as a resource — inline creator Editor blade, R
 
 # Survey Resource
 
-Survey is a resource type: the SurveyJS model lives in the content blob, the respondent page is Survey's published view, and only the genuinely survey-specific part — responses — has bespoke procedures; asset uploads come from the shared [FileAssets capability](/docs/platform/resource-file-assets). The former `surveys` table and the standalone surveyer product are gone; the product is the **Survey** resource type.
+Survey is a resource type: the SurveyJS model lives in the content blob, the respondent page is Survey's published view, and only the genuinely survey-specific part — responses — has bespoke procedures; asset uploads come from the shared [FileAssets capability](/docs/platform/resource-file-assets).
 
 ## Data model
 
 - Content blob: `surveyResourceSchema = z.object({ model: z.string(), settings: surveySettingsSchema })` — an object wrapper so future fields don't break the blob shape. The SurveyJS theme stays inside the model JSON under `THEME_KEY` — no reason to split it while SurveyJS owns both. The `settings` section is live collection state read outside the publish snapshot: the accepting-responses toggle and closed message ([response controls](/docs/platform/survey-response-controls)) and the response mode ([response modes](/docs/platform/survey-response-modes)) share that one object.
 - `contentVersion` is server-incremented by the resource factory, never by the client.
 - `SurveyResponseEntity` (Azure Table, partitionKey = survey resource id) holds respondent answers plus the opaque `participantToken` that joins a response back to a program participant.
-- Survey groups were dropped in the fold ([resource groups](/docs/platform/deferred/resource-groups)).
+- A survey belongs to no group; grouping resources at all is the deferred [resource groups](/docs/platform/deferred/resource-groups) idea.
 
 ## Capabilities
 
@@ -22,7 +22,7 @@ Survey is a resource type: the SurveyJS model lives in the content blob, the res
 
 ## Procedures
 
-The `survey` router is `createResourceProcedures(ResourceType.Survey, …)` plus the type-specific procedures that are deliberately **not** capabilities (single consumer — see the admission rule in [/docs/architecture/resources](/docs/architecture/resources)):
+The `survey` router is `createResourceProcedures(ResourceType.Survey, …)` plus the type-specific procedures that are deliberately **not** capabilities (single consumer — see the admission rule in [resources](/docs/architecture/resources)):
 
 | Procedure                                                                     | Auth                 | Purpose                          |
 | ----------------------------------------------------------------------------- | -------------------- | -------------------------------- |

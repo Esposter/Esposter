@@ -28,17 +28,13 @@ pnpm db:studio  # open Drizzle Studio UI for visual inspection
 
 Migrations are output to `packages/app/server/db/migrations/` and are applied automatically at app startup by the Nitro plugin `packages/app/server/plugins/migrate.ts` — there is no apply script.
 
-### Schema Domains
+### Schema Layout
 
-| Domain       | Tables                                                         | Description                                      |
-| ------------ | -------------------------------------------------------------- | ------------------------------------------------ |
-| Users        | `users`, `sessions`, `accounts`                                | Authentication via better-auth                   |
-| Rooms        | `rooms`, `roomMembers`, `roomRoles`, `roomInvites`, `roomBans` | Chat rooms + RBAC                                |
-| Messages     | `messages` (schema: `message`)                                 | Message metadata; content in Azure Table Storage |
-| Posts        | `posts`, `postReactions`                                       | Social feed posts                                |
-| Achievements | `achievements`, `userAchievements`                             | Gamification                                     |
-| Push         | `pushSubscriptions`                                            | Web Push notification subscriptions              |
-| Friends      | `friendships`, `friendRequests`                                | Social graph                                     |
+One file per table in `src/schema/`, named after the table it declares, and every one of them — plus every
+`pgEnum` — registered in `src/schema.ts`, which is what `drizzle-kit` reads. `ls src/schema/` is the table list.
+
+What the tree does not say is the split: Postgres holds relational data, while message **content** lives in
+Azure Table Storage, so a `messages` row is metadata and its body is not in this package at all.
 
 ### Conventions
 

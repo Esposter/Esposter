@@ -28,27 +28,27 @@ Not every EventGrid handler consumes an event this app published. `reconcileStor
 
 Container names live in the `AzureContainer` enum (`packages/db-schema/src/models/azure/container/AzureContainer.ts`):
 
-| Container (`AzureContainer`) | Contents                                                                                                                                                 |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AppAssets`                  | App-owned static assets                                                                                                                                  |
-| `ClickerAssets`              | Clicker game save state (`{userId}/save`)                                                                                                                |
-| `DeadLetter`                 | Event Grid dead-letter payloads plus their `archived/` and `quarantine/` copies → [/docs/infra/eventgrid-dead-letter](/docs/infra/eventgrid-dead-letter) |
-| `DungeonsAssets`             | Dungeons game save state (`{userId}/save`)                                                                                                               |
-| `MessageAssets`              | Message file attachments (`{roomId}/{fileId}\|{filename}`). Lifecycle policy tiers blobs Cool@30d → Cold@90d to cut storage cost                         |
-| `PrivateUserAssets`          | Per-user private blobs                                                                                                                                   |
-| `PublicUserAssets`           | User profile images (`{userId}/ProfileImage`), room profile images (`rooms/{roomId}/ProfileImage/{uuid}`)                                                |
-| `ResourceAssets`             | Resource content blobs, publish snapshots, and type-owned files → [/docs/architecture/resources](/docs/architecture/resources)                           |
+| Container (`AzureContainer`) | Contents                                                                                                                                      |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AppAssets`                  | App-owned static assets                                                                                                                       |
+| `ClickerAssets`              | Clicker game save state (`{userId}/save`)                                                                                                     |
+| `DeadLetter`                 | Event Grid dead-letter payloads plus their `archived/` and `quarantine/` copies → [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter) |
+| `DungeonsAssets`             | Dungeons game save state (`{userId}/save`)                                                                                                    |
+| `MessageAssets`              | Message file attachments (`{roomId}/{fileId}\|{filename}`). Lifecycle policy tiers blobs Cool@30d → Cold@90d to cut storage cost              |
+| `PrivateUserAssets`          | Per-user private blobs                                                                                                                        |
+| `PublicUserAssets`           | User profile images (`{userId}/ProfileImage`), room profile images (`rooms/{roomId}/ProfileImage/{uuid}`)                                     |
+| `ResourceAssets`             | Resource content blobs, publish snapshots, and type-owned files → [resources](/docs/architecture/resources)                                   |
 
 ## Table Storage tables
 
 Table names live in the `AzureTable` enum (`packages/db-schema/src/models/azure/table/AzureTable.ts`) — that enum is the full set, and the default shape is `partitionKey = <owning entity id>` (a room, a resource, a survey resource) with `rowKey = reverseTickedTimestamp` for newest-first reads. Moderation logs and notes, resource activity and program participants are all that shape and need nothing said about them. The ones that are not:
 
-| Table (`AzureTable`) | Departure                                                                                                                 |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `MessagesAscending`  | Key-only mirror of `Messages` keyed by the original timestamp, so the same rows can be read oldest-first                  |
-| `MessagesMetadata`   | Sidecar entities keyed to a message rather than to a point in time                                                        |
-| `ResourceViews`      | Best-effort view counters bucketed per resource per UTC day, not one row per event                                        |
-| `SurveyResponses`    | `partitionKey = survey resource id`, and served as a dataset → [/docs/architecture/datasets](/docs/architecture/datasets) |
+| Table (`AzureTable`) | Departure                                                                                                |
+| -------------------- | -------------------------------------------------------------------------------------------------------- |
+| `MessagesAscending`  | Key-only mirror of `Messages` keyed by the original timestamp, so the same rows can be read oldest-first |
+| `MessagesMetadata`   | Sidecar entities keyed to a message rather than to a point in time                                       |
+| `ResourceViews`      | Best-effort view counters bucketed per resource per UTC day, not one row per event                       |
+| `SurveyResponses`    | `partitionKey = survey resource id`, and served as a dataset → [datasets](/docs/architecture/datasets)   |
 
 ## Search index (`messages-index`)
 

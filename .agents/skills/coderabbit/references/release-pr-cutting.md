@@ -4,7 +4,7 @@ Read when a push has put a review window past the file limit and CodeRabbit skip
 
 The release PR (`develop` → `main`) can't be planned to a budget — it accumulates whatever merged. The fix is to **shorten `develop` and park the rest on a queue branch**, then feed the queue back one window at a time.
 
-**Never force-push `develop` to make a window fit.** A rewind desynchronises CodeRabbit's incremental checkpoint from the branch, and the checkpoint does not recover on its own: the review after one such rewind anchored on the **start** of its own range rather than the end, so the next window was counted from a sha whose 65 files had already been reviewed and accepted, and a locally-measured 98-file window arrived as 153. Every later cycle inherits that inflated baseline. The cost of one rewind is therefore not one skipped review but a branch that cannot get under the cap again by any additive means.
+**Never force-push `develop` to make a window fit.** A rewind desynchronises CodeRabbit's incremental checkpoint from the branch, and the checkpoint does not recover on its own: the review after one anchors on the **start** of its own range rather than the end, so the next window is counted from a sha whose files have already been reviewed and accepted, and a window measured locally as comfortably under the cap arrives well over it. Every later cycle inherits that inflated baseline. The cost of one rewind is therefore not one skipped review but a branch that cannot get under the cap again by any additive means.
 
 This is what makes **step 1 below a last resort rather than the routine tool.** The routine tool is not pushing over the cap in the first place (SKILL.md § Pipelining): commit locally, measure, and push while the window is still small.
 

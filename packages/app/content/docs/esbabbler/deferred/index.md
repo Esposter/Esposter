@@ -7,6 +7,7 @@ description: Ideas we chose not to build yet, each with a revisit trigger.
 
 One page per idea; each states why it waits and the concrete trigger to revisit.
 
+- [Call state reconciliation](/docs/esbabbler/deferred/call-state-reconciliation) — rebuild the call maps after a restart; revisit when a call routinely spans a deploy
 - [Cross-process event bridge](/docs/esbabbler/deferred/cross-process-event-bridge) — WebPubSub fan-out; revisit at multi-replica
 - [Custom emoji](/docs/esbabbler/deferred/custom-emoji) — per-room emoji/sticker uploads; revisit on room-branding demand
 - [Custom video backgrounds](/docs/esbabbler/deferred/custom-video-backgrounds) — user-uploaded call backgrounds; revisit with custom emoji

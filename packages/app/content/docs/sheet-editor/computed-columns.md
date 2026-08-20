@@ -108,6 +108,6 @@ All paths relative to `packages/app`.
 
 ## Notes
 
-- Values are recomputed on every read — there is no cache. Row data are plain objects with no dirty-tracking, and recomputation has been cheap enough in practice.
+- Values are recomputed on every read — there is no cache. Row data are plain objects with no dirty-tracking, so a cache would need an invalidation story spanning every mutation path ([computed-value cache](/docs/sheet-editor/deferred/computed-value-cache)).
 - Cycle handling is deliberately inline (the `visited` set) rather than a separate pre-validation pass; a cycle renders as empty cells instead of an error.
 - Range copy ([clipboard](/docs/sheet-editor/clipboard)) and export both materialize computed values through `filterDataSourceColumns`, so a computed column copies its displayed value ([copy computed values](/docs/sheet-editor/copy-computed-values)).

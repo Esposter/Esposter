@@ -7,7 +7,7 @@ description: Drop a CSV/JSON/XLSX on the Sheet create form to parse, pre-fill th
 
 Creating a [Sheet](/docs/platform/sheet-resource) from a file you already have is one step. Drop or pick a CSV, JSON, or XLSX on `/resource-explorer/create/Sheet` and you arrive at a resource whose Data blade already holds the parsed rows — instead of creating an empty sheet, opening the Data blade, and running Import as a second act.
 
-The file input is **optional**: name-only create works exactly as before, and every other resource type is untouched.
+The file input is **optional**: a name-only create is unaffected, as is every other resource type.
 
 ## How it works
 

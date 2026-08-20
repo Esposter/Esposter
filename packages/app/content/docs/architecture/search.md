@@ -5,7 +5,7 @@ description: One search stack — StyledSearchDialog palettes, useAutoSearch/use
 
 # Search
 
-Every search UI in the repo composes from one small stack instead of hand-rolling its own throttle, request-cancellation, and hotkey wiring. Before this consolidation the app had three Ctrl+K palettes with three different hotkey mechanisms (`useVHotkey`, `onKeyStroke`, `useEventListener`) and a friends search that re-implemented throttle + abort + pending state inline; each copy drifted independently. The rule now: **hand-rolling search-as-you-type around a tRPC query is banned** — new search features pick a layer below, and anything that looks like a new exception gets refactored onto the stack instead.
+Every search UI in the repo composes from one small stack instead of hand-rolling its own throttle, request-cancellation, and hotkey wiring. **Hand-rolling search-as-you-type around a tRPC query is banned** — new search features pick a layer below, and anything that looks like a new exception gets refactored onto the stack instead. A per-feature copy of throttle, abort and pending state drifts from every other copy, and a palette that registers its own hotkey makes one Ctrl+K behave differently depending on which surface is open.
 
 ## The layers
 
@@ -119,4 +119,4 @@ Portal chord shortcuts (`useResourceKeyboardShortcuts` G-chords) are likewise a 
 
 - The 1-second throttle and the `normalizeString` sanitization are deliberately inside the core, not per consumer — a feature wanting a different cadence is a smell, not a parameter.
 - Zero-result and pending UI stay with the consumer; the stack only guarantees the query lifecycle.
-- Dialog-style delete confirmation has the same "one shell, never re-roll" treatment — see [Singleton dialogs](/docs/architecture/singleton-dialogs).
+- Delete confirmation has the same "one shell, never re-roll" treatment — see [destructive confirmation](/docs/architecture/destructive-confirmation).

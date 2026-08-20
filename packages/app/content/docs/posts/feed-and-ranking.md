@@ -11,11 +11,11 @@ The home page renders top-level posts with pull-to-refresh, infinite scroll, and
 
 ```mermaid
 flowchart LR
-  sortMenu[Hot / New / Top sort menu] -->|sortType| store[post store\nitems + hasMore + sortType]
+  sortMenu[Hot / New / Top sort menu] -->|sortType| store[post store<br/>items + hasMore + sortType]
   page[pages/index.vue] -->|readPosts + sortBy| store
   page -->|v-pull-to-refresh| refresh[refresh]
   waypoint[StyledWaypoint at list end] -->|readMorePosts + cursor| store
-  store --> proc[post.readPosts\ncursor pagination + viewer block filter]
+  store --> proc[post.readPosts<br/>cursor pagination + viewer block filter]
   proc --> pg[(posts, parentId IS NULL)]
   mutation[likes / comments] -->|transactional| counters[noLikes, noComments, ranking]
   counters --> pg

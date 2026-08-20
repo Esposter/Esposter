@@ -5,7 +5,7 @@ description: A public /user/[id] page showing a user's identity, achievements, a
 
 # Public Profile
 
-Every post and comment names its author, and that name now links to `/user/[id]` — a public page showing the author's avatar, name, biography, achievement showcase, and their posts. It closes the social loop: see something interesting, then look at what else that person has made.
+Every post and comment names its author, and that name links to `/user/[id]` — a public page showing the author's avatar, name, biography, achievement showcase, and their posts. It closes the social loop: see something interesting, then look at what else that person has made.
 
 ## How it works
 
@@ -52,6 +52,5 @@ Paths relative to `packages/app`.
 
 ## Notes
 
-- No new tables or migration — `readUser` reads existing `users` columns and `readPosts` gains one optional filter.
-- The identity projection omits a "member since" date — the `users` table has no `createdAt` column, so that line from the original design was dropped.
+- There is no "member since" line: the `users` table carries no `createdAt` column to render one from.
 - Comments are intentionally excluded from the post list — a stream of context-free comments reads as noise. Revisit with a tab if it is asked for.

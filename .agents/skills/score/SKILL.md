@@ -29,7 +29,8 @@ Nuxt's `compatibilityDate` opts into the framework behaviour as of a given date.
 
 ## Writing style
 
-Same discipline as the `docs` skill: prose over bullets, [magnitudes over precise measurements](../docs/SKILL.md), every line earns its place. The magnitude rule bites hardest here, because a score's evidence is naturally numeric: a magnitude survives a year of merges where an exact count is wrong within weeks — and a stale count discredits the score it was cited to justify. The scores themselves stay exact; they are the artifact, not evidence about the tree. Two rules are specific to this file:
+The shared writing rules are the `docs` skill's. Three are specific to this file:
 
+- **The scores are exact, their evidence is a magnitude.** A score is the artifact rather than a reading of the tree, so it stays precise; the counts cited to justify one are wrong within weeks, and a stale count discredits the score it was cited for.
 - **Accepted trade-offs are first-class.** A score below maximum must say what the trade-off is and why it was accepted, not just what's missing. An area at maximum with a known compromise (e.g. `skipLibCheck`) still records it.
 - **No aspiration.** SCORE.md describes the repo as it is, never as it will be. Planned work belongs in the relevant `docs/<area>/roadmap.md`.

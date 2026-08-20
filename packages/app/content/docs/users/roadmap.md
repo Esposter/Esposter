@@ -7,4 +7,4 @@ description: Open work for the users area — prioritized checkboxes linking the
 
 Open work only. Decided ideas live in [deferred](/docs/users/deferred) and [rejected](/docs/users/rejected) — check both before adding an item.
 
-No open work. The public profile and account linking shipped — see [public profile](/docs/users/public-profile) and [account linking](/docs/users/account-linking).
+No open work.
