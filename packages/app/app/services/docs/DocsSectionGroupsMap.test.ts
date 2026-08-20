@@ -18,7 +18,7 @@ const getIsPage = (slugPath: string) =>
 // The map is the sidebar, and it is hand-maintained against a tree nothing links it to — so it is checked in
 // Both directions. One way a group points at a page that was renamed or deleted; the other a page ships with
 // No way to reach it from the navigation, which is invisible in review because the page itself renders fine
-describe(DocsSectionGroupsMap, () => {
+describe("DocsSectionGroupsMap", () => {
   test("every mapped slug has a page", () => {
     expect.hasAssertions();
 
