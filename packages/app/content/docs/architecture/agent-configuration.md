@@ -62,7 +62,7 @@ to it.
 
 `AGENTS.md` names the real paths, so a skill that reads the instruction file first finds them. Re-running the setup
 skill is what to avoid: it writes a fresh copy under `docs/agents/`, leaving two sources of truth and creating the
-folder this layout exists to not have. Point the skill at `.agents/` instead.
+root `docs/` folder this layout exists to avoid. Point the skill at `.agents/` instead.
 
 ## Key files
 

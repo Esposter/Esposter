@@ -1,6 +1,8 @@
 # Rendering a Date or Time in a `.vue`
 
-Every rendered date is a `<NuxtTime>`, except in the message list — the one exception, described below. The ban itself is lint-enforced — `dayjs(…).format(…)`, `toLocaleDateString()`, `useTimeAgo` and `useDateFormat` inside a `.vue` are `vue/no-restricted-syntax` errors, and a hand-written `<time>` is a `vue/no-restricted-html-elements` one. The full standard is `packages/app/content/docs/architecture/date-time-display.md`.
+Read when rendering a date or time in a `.vue` file.
+
+Every rendered date is a `<NuxtTime>`, except in the message list — the one exception, described below. The ban itself is lint-enforced (`vue/no-restricted-syntax` and `vue/no-restricted-html-elements` in `packages/configuration/eslint/overrides/vueRules.js`), and the full standard is `packages/app/content/docs/architecture/date-time-display.md`.
 
 The component formats after the prehydrate rewrite, in the reader's locale and timezone, so the server's UTC clock never leaks into the page and the text cannot mismatch on hydration.
 

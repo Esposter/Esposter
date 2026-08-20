@@ -5,7 +5,7 @@ description: The single entry point for every code review — a working diff, a 
 
 # Code Review — One Entry Point
 
-Every review request — `/code-review`, "review this", "review PR N", post-merge audits — goes through the project workflow script. **Never review inline in the session** (reading the code yourself and reporting findings): inline reviews skip the independent verifiers, spend premium-session tokens on an execution role, and historically missed what the workflow catches. Never use the `review` skill/command, and never `mattpocock-skills:code-review` — both are installed, both answer to "review this", and two overlapping commands is how the shallower one gets picked. The plugin's reads an issue tracker at a path this repo does not use and reviews inline, which is the thing this skill exists to prevent.
+Every review request — `/code-review`, "review this", "review PR N", post-merge audits — goes through the project workflow script. **Never review inline in the session** (reading the code yourself and reporting findings): inline reviews skip the independent verifiers, spend premium-session tokens on an execution role, and historically missed what the workflow catches. Never use the `review` skill/command, and never `mattpocock-skills:code-review` — both are installed, both answer to "review this", and two overlapping commands is how the shallower one gets picked. The plugin reads an issue tracker at a path this repo does not use and reviews inline, which is the thing this skill exists to prevent.
 
 ## Pick the mode first
 
