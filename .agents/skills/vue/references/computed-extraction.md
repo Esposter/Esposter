@@ -61,25 +61,29 @@ diffs them against the DOM and there is no child component to re-render, so a fr
 patch and nothing else. `:style="{ color: topRoleColor }"` on a `<div>` stays inline; the same literal on a
 component does not.
 
-## Four traps
+## Traps
 
 **Identity applies only to a whole expression.** `:configuration="{ x: 30, y: 23, scaleY: isEnemy ? 0.8 : undefined }"`
 already allocates a fresh object per render, so extracting `scaleY` buys no stability at all. Extract the whole
 object literal or nothing.
 
-**A getter called per `v-for` item** runs once per row inlined, once per render as a computed. Leave it as a
-computed, or hoist the whole mapped list when the row count is unbounded. An expression over a **loop variable or
-a slot prop** cannot become one at all — that binding exists only in the template scope Vue created for it — so
-the choice there is between the inline form and extracting the body into a component that receives the binding as
-a prop, and the extraction is worth it only on the same terms as any other component split.
+**A getter called per `v-for` item is not the same thing as a mapped-list computed.** Inlined, it runs once per
+row on every render. Hoisted into a computed over the whole list, the mapping is cached — the render reads a
+`ref` — but that cache still evaluates the getter once per row on every recomputation, so hoisting converts
+per-render work into per-invalidation work rather than removing it. What decides it is how often the mapping's
+dependencies change against how often the component renders, never the row count on its own.
 
-**A cache is only worth what the render effect wastes.** Work rests on the render effect re-running for
-dependencies the expression never reads, so it stops applying where the expression's inputs _are_ the whole
-dependency set — a leaf whose template reads nothing but its own props, and calls a helper on every one of them.
-Nothing can invalidate the render without invalidating the cache in the same tick, so hoisting the mapped list
-buys a `ComputedRefImpl` and its dep links to recompute exactly as often as the inline form did. Count the
-template's distinct reactive reads before hoisting a loop: the trap above is the unbounded-row case, and this is
-why row count alone does not decide it.
+An expression over a **loop variable or a slot prop** cannot become a computed at all — that binding exists only
+in the template scope Vue created for it, and no parent computed can capture it. The choice there is between the
+inline form and extracting the item body into a component that receives the binding as a prop, and the extraction
+is worth it only on the same terms as any other component split.
+
+**A cache is only worth what its dependencies do not invalidate.** A computed recomputes when a dependency
+changes, so the Work rule is really about the expression's dependencies being _narrower_ than the render's: the
+scan is skipped on every render driven by something it does not read. Where they coincide — a leaf whose template
+reads nothing but its own props, calling a helper on each of them — nothing can invalidate the render without
+invalidating the cache in the same tick, and the hoist buys a `ComputedRefImpl` and its dep links to recompute
+exactly as often as the inline form ran. Count the template's distinct reactive reads before hoisting a loop.
 
 **Setup-time expressions are not render expressions.** A value read once into a `ref`, a `structuredClone`, a
 `new Row(...)` — these run at setup regardless, so caching them changes nothing.

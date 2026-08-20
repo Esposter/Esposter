@@ -24,7 +24,7 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 > `pnpm exec prettier` fails. A `.md` file's own layout is therefore hand-maintained: a table whose cells changed
 > width is realigned in the edit that changed them, because nothing downstream will do it and nothing fails when
 > it drifts.
-
+>
 > Oxlint is **not** part of any package's `lint` script — it runs as a single repo-wide pass from the **root** `pnpm lint` / `pnpm lint:fix` (one `.oxlintrc.json` at the repo root). Packages run ESLint only.
 
 ## Root Scripts

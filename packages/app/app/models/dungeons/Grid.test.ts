@@ -4,7 +4,7 @@ import { describe, expect, test, vi } from "vitest";
 
 // Grid-engine re-exports Phaser, which touches `window` and a canvas context at import — neither of which this
 // Class uses. Only the direction enum is real machinery here, so it is the only thing the mock supplies
-vi.mock("grid-engine", () => ({
+vi.mock(import("grid-engine"), () => ({
   Direction: {
     DOWN: "down",
     DOWN_LEFT: "down-left",
@@ -15,7 +15,9 @@ vi.mock("grid-engine", () => ({
     UP: "up",
     UP_LEFT: "up-left",
     UP_RIGHT: "up-right",
-  },
+    // The dynamic-import form types the factory against the real module, and these literals are the enum's own
+    // Values rather than its members
+  } as unknown as typeof Direction,
 }));
 
 // The invariants every dungeons menu navigates by, rather than a description of how the walk is written.
@@ -66,7 +68,7 @@ describe(Grid, () => {
 
     expect(() => {
       grid.move(Direction.RIGHT);
-    }).toThrow();
+    }).toThrowErrorMatchingInlineSnapshot(`[InvalidOperationError: Invalid operation: Update, name: move, 2]`);
   });
 
   test.each([

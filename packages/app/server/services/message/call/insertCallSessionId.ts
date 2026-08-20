@@ -11,7 +11,7 @@ const UNIQUE_VIOLATION_ERROR_CODE = "23505";
 
 // One attempt at claiming a generated call session id. Returns the id it took, or `undefined` when that id was
 // Already taken — the only case a caller may retry. Anything else throws, because it is not a collision
-export const insertCallSessionId = async (
+export const insertCallSessionId = (
   db: Context["db"],
   values: Pick<typeof callSessionsInMessage.$inferInsert, "roomId" | "threadRootRowKey" | "userId">,
 ): Promise<string | undefined> => {

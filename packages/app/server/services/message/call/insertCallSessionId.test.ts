@@ -3,11 +3,12 @@ import type { Context } from "@@/server/trpc/context";
 import { insertCallSessionId } from "@@/server/services/message/call/insertCallSessionId";
 import { describe, expect, test } from "vitest";
 
+// Only `returning` is reached, so the chain is stubbed rather than the whole client mocked
+const createDb = (returning: () => Promise<{ id: string }[]>) =>
+  ({ insert: () => ({ values: () => ({ returning }) }) }) as unknown as Context["db"];
+
 describe("insertCallSessionId", () => {
   const userId = "userId";
-  // Only `returning` is reached, so the chain is stubbed rather than the whole client mocked
-  const createDb = (returning: () => Promise<{ id: string }[]>) =>
-    ({ insert: () => ({ values: () => ({ returning }) }) }) as unknown as Context["db"];
 
   test("returns the id the insert took", async () => {
     expect.hasAssertions();

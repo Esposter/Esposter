@@ -29,9 +29,9 @@ flowchart LR
   GATE -->|"no"| TESTS["ground it — regression test, dedupe fixtures"]
   RAISE --> TESTS
   TESTS --> CARRY["carry docs + owning skill"]
-  CARRY --> CHECK["format · typecheck · lint:fix · tests"]
-  CHECK --> TICK["date the row, commit"]
+  CARRY --> TICK["date the row, commit"]
   TICK --> PICK
+  TICK -.->|"nothing left to sweep this sitting"| CHECK["format · typecheck · lint:fix · tests, once"]
 ```
 
 - **Behaviour-preserving only.** A finding whose fix would change behaviour is raised, never folded in — the pass has to stay revertible as a unit.

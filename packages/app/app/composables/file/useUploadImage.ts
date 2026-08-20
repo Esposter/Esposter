@@ -6,7 +6,7 @@ import { withFinalizerAsync } from "@esposter/shared";
 // Because each caller owns a different model. `isLoading` clears on a failed upload as well as a successful one
 export const useUploadImage = (generateUploadUrl: () => Promise<{ publicUrl: string; sasUrl: string }>) => {
   const isLoading = ref(false);
-  const uploadImage = async (file: File, finalizer?: () => void) =>
+  const uploadImage = (file: File, finalizer?: () => void) =>
     withFinalizerAsync(
       async () => {
         isLoading.value = true;

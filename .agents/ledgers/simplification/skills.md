@@ -33,9 +33,11 @@ pages = [norm(f) for f in glob.glob(".agents/skills/*/references/*.md")]
 
 for f in skills:
     text = io.open(f, encoding="utf-8").read()
-    lines = len(text.split("\n"))
-    if len(text) > 15000 or lines > 150:
-        print(f"budget      {f}: {len(text)} bytes, {lines} lines")
+    lines = len(text.splitlines())
+    # Bytes, not code points: this repo's prose is full of em-dashes, and each is three of them
+    size = len(text.encode("utf-8"))
+    if size > 15000 or lines > 150:
+        print(f"budget      {f}: {size} bytes, {lines} lines")
 
 for f in pages:
     owner = f.rsplit("/references/", 1)[0] + "/SKILL.md"

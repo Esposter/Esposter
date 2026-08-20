@@ -80,13 +80,17 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
   move(direction: Direction, isSkipValidation?: boolean) {
     switch (direction) {
       case Direction.UP:
-        return this.#step("y", -1, isSkipValidation);
+        this.#step("y", -1, isSkipValidation);
+        return;
       case Direction.DOWN:
-        return this.#step("y", 1, isSkipValidation);
+        this.#step("y", 1, isSkipValidation);
+        return;
       case Direction.LEFT:
-        return this.#step("x", -1, isSkipValidation);
+        this.#step("x", -1, isSkipValidation);
+        return;
       case Direction.RIGHT:
-        return this.#step("x", 1, isSkipValidation);
+        this.#step("x", 1, isSkipValidation);
+        return;
       case Direction.UP_LEFT:
       case Direction.UP_RIGHT:
       case Direction.DOWN_LEFT:
