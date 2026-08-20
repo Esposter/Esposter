@@ -14,7 +14,9 @@ export const useDraftItems = () => {
       .flatMap(([composerKey, draft]) => {
         const { roomId, threadRootRowKey } = getComposerTarget(composerKey);
         const room = roomById.value.get(roomId);
-        return room ? [{ content: draft.content, room, threadRootRowKey, updatedAt: draft.updatedAt }] : [];
+        return room
+          ? [{ composerKey, content: draft.content, room, threadRootRowKey, updatedAt: draft.updatedAt }]
+          : [];
       })
       .toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)),
   );
