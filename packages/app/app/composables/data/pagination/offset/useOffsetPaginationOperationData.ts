@@ -14,6 +14,9 @@ export const useOffsetPaginationOperationData = <TItem>(
 ) => {
   // Binding per read resolves the key every time, which is what makes this track the current slice. It is the
   // Same binder an operation pins once, so the two views can never point at different maps.
+  const { executeQuery } = useMutation();
+  // This composable is one list, so its reads are one target
+  const readMoreItemsKey = Symbol("readMoreItems");
   const offsetPaginationData = getBoundComputed(bindOffsetPaginationData);
   const isLoaded = getBoundComputed(bindIsLoaded);
   const items = getPropertyComputed(offsetPaginationData, "items");
@@ -53,19 +56,28 @@ export const useOffsetPaginationOperationData = <TItem>(
 
   // Appends the next page rather than replacing the slice, which is what an infinite list wants and what
   // `getReadMoreItems` deliberately does not do — a paginator reads a page, a waypoint reads the next one.
-  // The offset is the slice's own length, so nothing outside has to track how far the list has been read
+  // The offset is the slice's own length, so nothing outside has to track how far the list has been read.
+  // Single-flight, because a waypoint re-arms on completion and can fire again while the page it asked for is
+  // Still in flight: both calls would read the same length, ask for the same offset and append that page twice
   const readMoreItems = async (
     query: (offset: number) => Promise<OffsetPaginationData<TItem>>,
     onComplete?: () => void,
   ) => {
     const boundOffsetPaginationData = bindOffsetPaginationData();
     const boundIsLoaded = bindIsLoaded();
-    await withFinalizerAsync(async () => {
-      const { hasMore: newHasMore, items: newItems } = await query(boundOffsetPaginationData.value.items.length);
-      boundOffsetPaginationData.value.hasMore = newHasMore;
-      boundOffsetPaginationData.value.items = [...boundOffsetPaginationData.value.items, ...newItems];
-      boundIsLoaded.value = true;
-    }, onComplete);
+    await withFinalizerAsync(
+      () =>
+        executeQuery(
+          async () => {
+            const { hasMore: newHasMore, items: newItems } = await query(boundOffsetPaginationData.value.items.length);
+            boundOffsetPaginationData.value.hasMore = newHasMore;
+            boundOffsetPaginationData.value.items = [...boundOffsetPaginationData.value.items, ...newItems];
+            boundIsLoaded.value = true;
+          },
+          { isExclusive: true, key: readMoreItemsKey },
+        ),
+      onComplete,
+    );
   };
 
   return {

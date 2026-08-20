@@ -84,7 +84,7 @@ watch(barWidth, (newBarWidth) => {
     v-model:left-cap-display-width="leftCapDisplayWidth"
     v-model:right-cap-display-width="rightCapDisplayWidth"
     :image-position
-    :middle-display-width="middleDisplayWidth"
+    :middle-display-width
     :scale-y
     :textures="BarTextureMap[type]"
     is-hidden-when-empty

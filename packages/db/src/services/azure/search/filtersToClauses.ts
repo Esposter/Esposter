@@ -1,6 +1,6 @@
 /* eslint-disable perfectionist/sort-switch-case */
 import type { SelectFields } from "@azure/search-documents";
-import type { Clause, Filter, MessageEntity } from "@esposter/db-schema";
+import type { Clause, Filter, MessageEntity, SerializableValue } from "@esposter/db-schema";
 
 import { ContentTypes } from "@/models/ContentType";
 import { getSearchNonNullClause } from "@/services/azure/search/getSearchNonNullClause";
@@ -37,7 +37,7 @@ const FilterTypeClauseMap = {
 
 // Every picker writes the shape its own filter type declares, so a value of another shape is a bug in the picker
 // Rather than something the user typed
-const getInvalidValueError = (value: unknown) =>
+const getInvalidValueError = (value: SerializableValue) =>
   new InvalidOperationError(Operation.Read, filtersToClauses.name, serializeValue(value));
 
 export const filtersToClauses = (
