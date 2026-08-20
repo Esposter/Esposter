@@ -2,10 +2,8 @@ import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntiti
 import { uploadFileToSas } from "@/services/file/uploadFileToSas";
 import { withFinalizerAsync } from "@esposter/shared";
 
-// The profile-image upload every surface that has one performs: mint a SAS for the single file, put it there,
-// And hand back the public url the caller stores. The url is returned rather than written, because each caller
-// Owns a different model — the store's flag is what they actually share, and it has to clear on a failed upload
-// As well as a successful one, which is the half that gets forgotten when this is written out by hand
+// Mints a SAS for the single file, puts it there, and hands back the public url — returned rather than written,
+// Because each caller owns a different model. `isLoading` clears on a failed upload as well as a successful one
 export const useUploadImage = (generateUploadUrl: () => Promise<{ publicUrl: string; sasUrl: string }>) => {
   const isLoading = ref(false);
   const uploadImage = async (file: File, finalizer?: () => void) =>

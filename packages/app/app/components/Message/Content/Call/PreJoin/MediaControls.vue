@@ -8,8 +8,6 @@ interface MediaControlsProps {
 
 const { isCameraEnabled, isMicrophoneEnabled } = defineProps<MediaControlsProps>();
 const emit = defineEmits<{ toggleCamera: []; toggleMicrophone: [] }>();
-// The two controls are one pair visually, so their chrome is described once — split, they drift apart the first
-// Time either is restyled
 const getMediaButtonProps = (isEnabled: boolean): VBtn["$props"] => ({
   color: isEnabled ? undefined : "error",
   size: "large",

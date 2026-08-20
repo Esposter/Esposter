@@ -9,9 +9,8 @@ interface CallDeviceDefinition {
   title: string;
 }
 
-// The menu is owned here rather than by each settings button, because the list is only worth enumerating while
-// It is on screen: a device plugged in with the menu shut has to appear when it next opens, and every caller
-// Getting that right separately is how one of them ends up showing a stale list
+// The menu is owned here because the device list is only worth enumerating while it is open — a device plugged
+// In with the menu shut has to appear the next time it opens
 export const useCallDeviceSettings = (definitions: CallDeviceDefinition[]) => {
   const menu = ref(false);
   const deviceMap = ref(new Map<MediaDeviceKind, MediaDeviceInfo[]>());

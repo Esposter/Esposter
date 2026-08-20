@@ -17,9 +17,7 @@ const knockerStore = useKnockerStore();
 const { admitKnocker, dismissKnocker } = knockerStore;
 const isAdmitting = ref(false);
 const isDismissing = ref(false);
-// Both actions need the same three steps around their one call — resolve the session, refuse without one, and
-// Clear the button's loading flag whichever way the call ends. Written per button, the finalizer is what gets
-// Dropped, and a failed admit then leaves its spinner running until the notice is dismissed
+// The loading flag clears whichever way the call ends, so a failed admit does not leave its spinner running
 const getKnockerAction = (isRunning: Ref<boolean>, action: (callSessionId: string) => Promise<void>) => async () => {
   const callSessionId = activeCallSessionId.value;
   if (!callSessionId) return;
@@ -33,8 +31,8 @@ const getKnockerAction = (isRunning: Ref<boolean>, action: (callSessionId: strin
     },
   );
 };
-// Bound here rather than in the template: a ref read from there is already unwrapped, so the flag would arrive
-// As the boolean it held at that render and the helper would have nothing to set
+// Bound here rather than in the template, where a ref is already unwrapped and the flag would arrive as a
+// Boolean the helper cannot set
 const admitCallKnocker = getKnockerAction(isAdmitting, (callSessionId) => admitKnocker(callSessionId, knocker.id));
 const dismissCallKnocker = getKnockerAction(isDismissing, (callSessionId) => dismissKnocker(callSessionId, knocker.id));
 const admitButtonProps = computed<VBtn["$props"]>(() => ({

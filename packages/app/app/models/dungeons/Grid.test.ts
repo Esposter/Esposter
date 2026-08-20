@@ -18,8 +18,7 @@ vi.mock("grid-engine", () => ({
   },
 }));
 
-// Every dungeons menu navigates through this class and nothing pinned it, so these are the invariants the four
-// Movement branches were relied on for rather than a description of how they are written.
+// The invariants every dungeons menu navigates by, rather than a description of how the walk is written.
 describe(Grid, () => {
   const GRID = [
     ["a", "b", "c"],

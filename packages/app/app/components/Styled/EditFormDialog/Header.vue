@@ -23,8 +23,6 @@ const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required
 const { editedItem, editForm, formId, isDirty, isEditFormValid, isSavable, name, originalItem, schema } =
   defineProps<HeaderProps<T>>();
 const errorIcon = useTemplateRef("errorIcon");
-// Two lookbehind passes per call, so it is cached rather than re-run on every unrelated toolbar render — the
-// Same form the sibling close dialog uses for the same value
 const title = computed(() => `Configuration - ${prettify(editedItem.type)}`);
 const emit = defineEmits<{
   delete: [onComplete: (isSuccessful?: boolean) => void];

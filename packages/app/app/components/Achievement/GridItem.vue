@@ -12,8 +12,6 @@ interface GridItemProps {
 
 const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
 const displayName = computed(() => prettify(achievementDefinition.name));
-// Both fallbacks are read twice — by the bar and by the count under it — so they are stated once rather than
-// Left to be changed in one place and not the other
 const amount = computed(() => userAchievement?.amount ?? 0);
 const targetAmount = computed(() => achievementDefinition.amount ?? 1);
 </script>

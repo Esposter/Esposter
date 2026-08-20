@@ -97,12 +97,10 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
         exhaustiveGuard(direction);
     }
   }
-  // Walks one axis until it reaches a position the cursor may sit on. Every candidate is tried, so a row of
-  // Holes is stepped over rather than stopping the cursor at the first one; without `wrap` the candidate stops
-  // At the edge and the walk ends by assigning the cursor to where it already was, which is why pressing up at
-  // The top of a menu does nothing rather than failing. Only a walk that finds nothing valid throws.
-  // One axis rather than four branches: the vertical pair is bounded by the row count and the horizontal pair by
-  // The current row's length, and that bound is the whole of the difference between them
+  // Walks one axis until it reaches a position the cursor may sit on, so a row of holes is stepped over rather
+  // Than stopping at the first. Without `wrap` the candidate stops at the edge and the walk ends by assigning the
+  // Cursor where it already was — pressing up at the top of a menu does nothing rather than failing, and only a
+  // Walk that finds nothing valid throws. The axis bound is the row count vertically, the row's length across
   #step(axis: "x" | "y", delta: -1 | 1, isSkipValidation?: boolean) {
     const size = axis === "y" ? this.rowSize : this.getColumnSize(this.position.value.y);
     const lastIndex = size - 1;
