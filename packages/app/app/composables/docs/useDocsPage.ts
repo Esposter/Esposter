@@ -1,6 +1,7 @@
 import { ContentCollection } from "#shared/models/content/ContentCollection";
 import { DocsCollectionItemPropertyNames } from "@/models/docs/DocsCollectionItemPropertyNames";
 import { getFlattenedNavigationPages } from "@/services/docs/getFlattenedNavigationPages";
+import { getIsDocsPath } from "@/services/docs/getIsDocsPath";
 import { getSectionCategory } from "@/services/docs/getSectionCategory";
 import { getSortedNavigationItems } from "@/services/docs/getSortedNavigationItems";
 import { getSurroundingPages } from "@/services/docs/getSurroundingPages";
@@ -45,9 +46,13 @@ export const useDocsPage = async () => {
       : [],
   );
   // The page is reused across doc→doc navigation, so a later refetch that finds nothing has to raise the 404
-  // Itself — the setup guard above only ever runs for the first page
+  // Itself — the setup guard above only ever runs for the first page.
+  // The path watched is the router's, which moves the moment any navigation starts, including one leaving the
+  // Docs tree — and this component is still mounted then, so the refetch runs against a path the collection
+  // Has no page for. Raising there turns every trip from a docs page back to the site into a 404
   watch(page, (newPage) => {
-    if (!newPage) showError({ fatal: true, statusCode: 404, statusMessage: "Page Not Found" });
+    if (!newPage && getIsDocsPath(path.value))
+      showError({ fatal: true, statusCode: 404, statusMessage: "Page Not Found" });
   });
 
   return {
