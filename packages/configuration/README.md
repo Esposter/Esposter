@@ -34,9 +34,15 @@ import { rolldownConfigurationBrowser } from "@esposter/configuration";
 export default rolldownConfigurationBrowser;
 ```
 
-```json
-// .eslintrc or eslint.config.js
-{ "extends": "@esposter/configuration/eslint" }
+```js
+// eslint.config.js — flat config, composed from the subpath entries
+import oxlint from "@esposter/configuration/eslint/oxlint.js";
+import plugins from "@esposter/configuration/eslint/plugins/index.js";
+import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
+
+import { withNuxt } from "../../app/.nuxt/eslint.config.mjs";
+
+export default withNuxt(plugins, { files: ["**/*.ts"], rules: typescriptRules }).append(oxlint);
 ```
 
 ### Commands
