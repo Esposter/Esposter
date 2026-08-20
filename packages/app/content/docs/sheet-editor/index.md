@@ -18,7 +18,7 @@ The sheet editor is the grid editor of the **Sheet resource** — a spreadsheet-
 
 The area is mature. Open work: [roadmap](/docs/sheet-editor/roadmap). New ideas should be checked against [deferred](/docs/sheet-editor/deferred) and [rejected](/docs/sheet-editor/rejected) first.
 
-## Shipped
+## Shipped log
 
 - **Editing** — inline cell editing, add/edit/delete rows and columns, bulk select + delete, undo/redo, row drag-reorder, keyboard cell navigation, Excel-style range copy/paste ([clipboard](/docs/sheet-editor/clipboard)) that materializes computed-column values on copy ([copy computed values](/docs/sheet-editor/copy-computed-values)).
 - **Columns** — reorder, visibility toggle, descriptions, type recast on change, format options (number/boolean/date) applied to every rendered cell ([cell formatting](/docs/sheet-editor/cell-formatting)), configurable footer aggregate; computed columns (Math via mathjs, ConvertTo, DatePart, RegexMatch, String, StringSplit, StringPattern, chained) and aggregation columns (average/count/min/max/rank/percent-of-total/running-sum) ([computed columns](/docs/sheet-editor/computed-columns)).

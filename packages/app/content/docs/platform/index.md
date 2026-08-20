@@ -58,28 +58,16 @@ The standards the platform applies live in architecture: the layer model ([the p
 
 Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity designs it references live under [proposals](/docs/proposals). Ideas we chose not to pursue are under [deferred](/docs/platform/deferred) (with revisit triggers) and [rejected](/docs/platform/rejected).
 
-## Shipped
+## Shipped log
 
-- Dataset contract — `dataset.readDataset` + Sheet/SurveyResponses providers
-- Dashboard visual dataset binding — reference + query per visual, client aggregation, bind-to-data form, per-visual refresh
-- Document publish lifecycle — versioned snapshots + public `/view/[type]/[id]` (now the Publishable capability)
-- Email personalization — merge-field blocks, survey invite blocks, per-row personalized HTML export
-- Dashboard binding polish — multi-series editing, Sheet sources; published-view OG meta tags
-- Survey distribution fixes — publishing snapshots the model; the public respondent page serves that snapshot and 404s for unpublished surveys
-- **Resource Explorer consolidation (Phases 1–6)** — everything became a resource behind one explorer: `resources` + `resource_publications` tables, one `ResourceAssets` container replacing six, `createResourceProcedures` factory, the explorer shell, all editors migrated to inline blades, the `surveys` table folded in, and every per-editor page/picker/hub deleted. Zero new dependencies and zero new Azure services across all six phases.
-- Global search overhaul — `ResourceSearchMenu` grouped dropdown (inline Home mount + `Ctrl+K` palette), localStorage recents, `G`-chords + `?` shortcuts overlay, prefix-match ranking in `readResources`
-- `/all` list workbench — filter pills (type/status/updated), URL-synced state, bulk select + batch delete, column chooser, group-by-type, chunked CSV export, real-link name cells, skeleton/empty/error states
-- Resource page command-bar parity — labeled commands with `…` overflow, Refresh, `duplicateResource`, type-the-name/`delete {n}` destructive guards
-- Notifications bell — session-scoped notification store, app-bar bell + single snackbar queue, `G N` chord, stale-`contentVersion` save-conflict surface
-- File resource renamed to **Sheet** — pg enum value, `sheet` router, models/components/store, and the docs area (`sheet-editor`, `sheet-resource`); no backwards compat
-- **End-to-end survey funnel** — the send → view → respond → analyze loop closed: survey `settings` (accepting-responses toggle + Anonymous/Identified response mode) enforced at one server write boundary, the **Program** resource issuing opaque participant tokens and serving the identity-free `ProgramStatus` dataset, owner-side response detail/delete/count, and best-effort view counts on every publishable type's public read. One new Postgres enum value and two new Azure Tables; no new services. The café-scenario chain is covered end to end by `surveyFunnel.integration.test.ts`.
-- Explorer parity smalls — `/all` Summary lens over a grouped `countsByType`, the dataset row cap surfaced as "showing N of M" in every consumer (`Dataset.totalRows` + `countEntities`), Sheet create-from-file landing in a ready Data blade, and a Share command posting a published link into an esbabbler room
-- FileAssets capability — Survey's `{id}/files` SAS machinery promoted onto the resource factory, adopted by Email and Webpage through a GrapesJS Asset Manager adapter (hosted images instead of base64)
-- Publish parity for the remaining visual types — Email (`/view/Email/[id]` browser copy via save-time MJML capture) and Flowchart (read-only VueFlow render) both opted into Publishable; Sheet and TodoList stay non-publishable by design
-- Survey invite blocks in the webpage editor — the email block builder moved to a shared core with per-editor markup wrappers
-- **Note resource** — a rich-text document `ResourceType` on the existing Tiptap dependency: `{ doc }` JSON content (source of truth at rest), a writing-kit editor blade, and a Publishable `/view/Note/[id]` render through `generateHTML` sanitized at the boundary. One pg enum value, zero new dependencies or services. Also a live test of the one-`ResourceType` extensibility claim — the friction it surfaced (per-type router + registration, client mutation switch arm, exhaustive blade map, and three create-flow lists) is recorded on the [Note resource](/docs/platform/note-resource) page.
-- **Blueprint resource + capture** — a parameterized manifest resource: `deployBlueprint` substitutes `{{parameter:key}}`/`{{entry:key}}` tokens, validates every entry against its type's contentSchema, topologically creates the wired set (with mid-deploy compensating cleanup), and `captureBlueprint` turns a selection of live resources into that manifest by rewriting cross-resource ids to aliases. One Postgres enum value, no new services.
-- Storage-backed explorer features — `resourceFavorites` and `resourceAccesses` behind the Favorites and Recent surfaces, `tags` jsonb with Essentials editing plus an `/all` pill and a Tags route, `deletedAt` soft delete with a Recycle bin and a 30-day timer purge, `pg_trgm` relevance ranking, and the Azure Table activity blade. A handful of Postgres migrations, one new Azure Table, no new Azure services.
-- Publish history blade — a capability-gated built-in blade listing every retained `{id}/published/{n}` snapshot from a blob prefix listing (no history table), an owner-only `?version=` preview on the view route, and a restore-to-draft copying a snapshot into the working copy. No new tables or Azure services.
-- **Storage quotas** — a per-user blob allowance (Free = 10 GiB) held under a row lock at SAS issuance and charged by Storage's own `BlobCreated` event; deletion and purge decrement through the same per-blob ledger, an abandoned hold expires as a predicate rather than as work for a job, and the explorer shell's header grows a usage bar on every resource page. One Postgres migration, one Event Grid subscription on the system topic that already existed, nothing scheduled.
-- **TodoList due reminders** — the first platform feature on the notification stack: a post-save due-date diff enqueues one scheduled Service Bus message per new or changed `(itemId, dueAt)`, and the `SendTodoReminder` function re-reads the content blob at fire time (dropping deleted or re-dated items) before web-pushing `『{item}』 is due` to the owner. Stateless — no Postgres row backs the reminder; the scheduled message is the state. One new Service Bus queue, no new services.
+One line per program of work; the feature pages above carry the detail. The fact worth keeping at this level is
+what the whole program cost: one Azure Table for the activity blade, one Service Bus queue for reminders, one
+Event Grid subscription on a system topic that already existed, and a handful of Postgres migrations — no new
+Azure service at any point.
+
+- **Resource Explorer consolidation** — every product became a resource behind one explorer: the `resources` and `resource_publications` tables, one `ResourceAssets` container replacing six, the `createResourceProcedures` factory, and every per-editor page, picker and hub deleted.
+- **Capabilities** — Publishable, DatasetProvider, Portable and FileAssets, each adopted by the types that declare them rather than rebuilt per type.
+- **Explorer surface** — the list workbench, summary view, service menu, command-bar parity, global search and its trigram ranking, favorites, recents, tags, the recycle bin, activity log, and publish history.
+- **Resource types** — Sheet (renamed from File), Survey, Program, Note and Blueprint, plus publish parity for Email and Flowchart.
+- **Datasets** — the read contract one resource consumes another through: dashboard visual binding, email merge fields, and the Program funnel status, with the row cap surfaced wherever a read hits it.
+- **Platform services** — storage quotas charged by Storage's own `BlobCreated` event, TodoList due reminders on the scheduled-job stack, and the notifications bell.
