@@ -114,6 +114,39 @@ describe("docsLinks", () => {
 
     expect(brokenLinks).toStrictEqual([]);
   });
+
+  // The other direction: a link that resolves says nothing about a page nothing links to. An index is the only
+  // Route into its area's pages that a reader browsing the tree has, so one it omits is one nobody finds
+  test("every index page links every page beside it", () => {
+    expect.hasAssertions();
+
+    const indexPages = pagePaths.filter((page) => page.endsWith("index.md"));
+    const unlisted = indexPages
+      .flatMap((page) => {
+        const directory = page.slice(0, -"index.md".length);
+        const listed = new Set(
+          [...(pages.find((candidate) => candidate.page === page)?.markdown ?? "").matchAll(DOCS_LINK_REGEX)].map(
+            (match) => (match.groups?.target ?? "").replace(/\/$/u, ""),
+          ),
+        );
+        return pagePaths
+          .filter(
+            (sibling) =>
+              sibling.startsWith(directory) &&
+              sibling !== page &&
+              !sibling
+                .slice(directory.length)
+                .replace(/\/index\.md$/u, "")
+                .includes("/"),
+          )
+          .map((sibling) => `/docs/${sibling.replace(/(?:\/index)?\.md$/u, "")}`)
+          .filter((target) => !listed.has(target))
+          .map((target) => `${page} → ${target}`);
+      })
+      .toSorted();
+
+    expect(unlisted).toStrictEqual([]);
+  });
 });
 
 describe("docsSectionGroupsMap", () => {
