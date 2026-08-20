@@ -87,7 +87,6 @@ export const useRoomStore = defineStore("message/room", () => {
     return isSuccessful;
   };
   const joinRoom = async (input: JoinRoomInput) => {
-    // Keyed per invite so concurrent joins through different invites run independently instead of queueing behind each other
     await executeJoinRoomMutation(() => $trpc.room.joinRoom.mutate(input), {
       key: input,
       onSuccess: async (joinedRoom) => {

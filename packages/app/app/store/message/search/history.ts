@@ -45,7 +45,6 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
           if (rollbackSearchHistory) baseUpdateSearchHistory(rollbackSearchHistory);
         };
       },
-      // Keyed per history row so concurrent operations on different rows run independently instead of queueing behind each other
       key: input.id,
       onSuccess: (updated) => {
         baseUpdateSearchHistory(updated);
@@ -63,7 +62,6 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
           if (deletedSearchHistory) baseCreateSearchHistory(deletedSearchHistory);
         };
       },
-      // Keyed per history row so concurrent operations on different rows run independently instead of queueing behind each other
       key: input,
     });
   };

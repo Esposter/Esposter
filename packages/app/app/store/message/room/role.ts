@@ -156,7 +156,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
           setRole(input.roomId, previousRole);
         };
       },
-      // Keyed per role so concurrent operations on different roles run independently instead of queueing behind each other
       key: input.id,
       onSuccess: (updatedRole) => {
         setRole(input.roomId, updatedRole);
@@ -183,7 +182,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
           setRoles(input.roomId, rolesNow.toSpliced(Math.min(deletedIndex, rolesNow.length), 0, deletedRole));
         };
       },
-      // Keyed per role so concurrent operations on different roles run independently instead of queueing behind each other
       key: input.id,
       onSuccess: () => {
         isSuccessful = true;
@@ -205,7 +203,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
             };
           }
         : undefined,
-      // Keyed per member-role pair so concurrent assignments across members/roles run independently instead of queueing behind each other
       key: `${input.userId}${ID_SEPARATOR}${input.roleId}`,
       onSuccess: (newRole) => {
         setMemberRole(input.roomId, input.userId, newRole);
@@ -221,7 +218,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
           if (revokedRole) setMemberRole(input.roomId, input.userId, revokedRole);
         };
       },
-      // Keyed per member-role pair so concurrent revocations across members/roles run independently instead of queueing behind each other
       key: `${input.userId}${ID_SEPARATOR}${input.roleId}`,
     });
   };

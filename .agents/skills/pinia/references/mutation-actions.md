@@ -46,7 +46,7 @@ const deleteFoo = async (input: DeleteFooInput) => {
       };
     },
     // A foo is identified by the parent-and-child pair, so that composite is the target — there is no `id`
-    key: `${input.parentId}-${input.childId}`,
+    key: `${input.parentId}${ID_SEPARATOR}${input.childId}`,
   });
 };
 ```
@@ -71,7 +71,7 @@ const createFoo = async (input: CreateFooInput) => {
 
 Same key = same target, so those writes queue behind each other.
 
-- **Per-entity operations** → the entity id or its natural composite (`key: input.id`, `` key: `${parentId}-${childId}` ``).
+- **Per-entity operations** → the entity id or its natural composite (`key: input.id`, `` key: `${parentId}${ID_SEPARATOR}${childId}` ``). The separator is `naming`'s `ID_SEPARATOR` and never a hand-written hyphen, since a uuid contains hyphens and such a key cannot be split back apart.
 - **Creates with no natural key** → a per-call `Symbol("createFoo")`, since every create is independent and must not wait behind its siblings. Use a stable key plus `isExclusive` instead when duplicate fires must drop.
 - **Singleton targets** → the scope's id or a stable target name.
 

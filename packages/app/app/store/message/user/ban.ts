@@ -27,7 +27,6 @@ export const useBanStore = defineStore("message/user/ban", () => {
           if (deletedBan) storeCreateBan(deletedBan);
         };
       },
-      // Keyed per room-user pair so concurrent unbans across bans run independently instead of queueing behind each other
       key: `${input.roomId}${ID_SEPARATOR}${input.userId}`,
     });
   };

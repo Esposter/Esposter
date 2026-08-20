@@ -55,7 +55,6 @@ export const useEmojiStore = defineStore("message/emoji", () => {
           storeUpdateEmoji({ ...input, userIds: getUpdatedUserIds(currentEmoji.userIds, userId) });
         };
       },
-      // Keyed per emoji entity so concurrent operations on different emojis run independently instead of queueing behind each other
       key: input.rowKey,
     });
   };
@@ -71,7 +70,6 @@ export const useEmojiStore = defineStore("message/emoji", () => {
           if (deletedEmoji) storeCreateEmoji(deletedEmoji);
         };
       },
-      // Keyed per emoji entity so concurrent operations on different emojis run independently instead of queueing behind each other
       key: input.rowKey,
     });
   };

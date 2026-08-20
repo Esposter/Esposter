@@ -23,6 +23,7 @@ Each pass re-checks only files changed since its unit's date, then bumps it. A n
 4. `<!--` over `*.vue`
 5. `(used to|previously|no longer|formerly|the old |the former |now that |replaces the |we now )` over `//`/`<!--` lines — the history-narration ban. Most hits are present-tense domain uses (`the old manifest`, `no longer resolvable`); what fails is a clause naming what the code replaced.
 6. `^\s*/\*\*` — a doc block. It stays only on an exported API surface, and its content obeys every comment rule: a line restating the declaration's own name, or claiming what `implements` and typecheck already prove, earns nothing.
+7. A comment sentence that appears **verbatim in more than one file** — sort the `//` lines of the unit, count duplicates, and read every group of two or more. A rationale worth writing at every call site is a convention, and the owning skill already states it; the copies are what go stale. This is rule "never restate an established pattern" applied to the one shape a per-file read cannot see.
 
 Never swept anywhere: 3-line `//` blocks with every line short.
 

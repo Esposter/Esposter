@@ -53,7 +53,6 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   // Temp-id placeholder would race the echo's server-id row into a transient duplicate.
   const sendFriendRequest = async (receiverId: User["id"]) => {
     await executeSendFriendRequestMutation(() => $trpc.friendRequest.sendFriendRequest.mutate(receiverId), {
-      // Keyed by receiver so concurrent requests to different users run independently instead of queueing behind each other
       key: receiverId,
       // The onSendFriendRequest echo covers the caller for a newly created request, but the already-exists
       // Conflict path returns the existing row WITHOUT emitting — so this write is the only one on that path.

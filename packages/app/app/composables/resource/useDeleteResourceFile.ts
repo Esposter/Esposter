@@ -21,7 +21,6 @@ export const useDeleteResourceFile = (type: FileAssetsResourceType, id: MaybeRef
     // The server rejects, and drifts the moment either side is tightened
     const blobPath = getDecodedUriComponent(url.slice(filesDirectoryPrefix.length), "");
     if (!BLOB_SEGMENT_REGEX.test(blobPath)) return;
-    // Keyed per blob so concurrent file deletions run independently instead of queueing behind each other
     await executeMutation(() => getResourceRouter(type).deleteFile.mutate({ blobPath, id: idValue }), {
       key: blobPath,
     });
