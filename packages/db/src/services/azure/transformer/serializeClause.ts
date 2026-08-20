@@ -6,7 +6,6 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const serializeClause = (clause: Clause<Record<string, unknown>>, isTableFilter = false): string => {
   clause.key = serializeKey(clause.key);
-
   // Non-emptiness of the collection itself, so there is no value to compare and nothing to project onto x
   if (clause.operator === SearchOperator.arrayAny) return `${clause.key}/any()`;
 

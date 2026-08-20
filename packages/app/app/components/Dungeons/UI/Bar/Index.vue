@@ -80,7 +80,7 @@ watch(barWidth, (newBarWidth) => {
 </script>
 
 <template>
-  <!-- We use a placeholder component to hold the tween for the entire bar -->
+  <!-- Invisible: it exists only to own the tween that drives the whole bar -->
   <Image :configuration="{ visible: false, texture: '', displayWidth: barDisplayWidth, tween }" />
   <DungeonsUIBarImage
     v-model:display-width="leftCapDisplayWidth"

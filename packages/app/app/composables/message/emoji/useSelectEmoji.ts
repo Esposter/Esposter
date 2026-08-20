@@ -9,7 +9,6 @@ export const useSelectEmoji = async (message: MessageEntity) => {
   const { createEmoji, deleteEmoji, getEmojis, updateEmoji } = emojiStore;
   return async (emoji: string) => {
     if (!session.value) return;
-
     // A reaction is stored as the emoji itself — toned exactly as it was picked — so its identity is plain
     // String equality and needs no index, no shortcode vocabulary and no parsing. 👍 and 👍🏽 are different
     // Strings and therefore different reactions, which is what Discord and Slack both do

@@ -24,7 +24,6 @@ export const createCallSessionId = async (
       .unwrapOr(undefined);
     if (callSession?.[0]) return callSession[0].id;
   }
-
   // Every attempt lost the race to another creator, so the session is whatever they landed
   const callSessionId = await readCallSessionId(db, roomId, threadRootRowKey);
   if (!callSessionId)

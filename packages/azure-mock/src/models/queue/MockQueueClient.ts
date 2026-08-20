@@ -36,8 +36,7 @@ import { getMockQueueMessageItem } from "@/services/queue/getMockQueueMessageIte
 import { MockQueueDatabase } from "@/store/MockQueueDatabase";
 import { getOrCreate } from "@esposter/shared";
 /**
- * An in-memory mock of the Azure QueueClient.
- * It uses a Map to simulate queue storage and correctly implements the QueueClient interface.
+ * An in-memory mock of the Azure QueueClient — no emulator and no network.
  *
  * @example
  * const mockQueueClient = new MockQueueClient("", "hello world");

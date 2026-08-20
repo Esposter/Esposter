@@ -91,8 +91,8 @@ describe(useReadSearchedMessages, () => {
   });
 
   // A chip the user added by typing its keyword has no value until a picker gives it one, and the search input
-  // Schema rejects that "" — so the read that used to send it failed outright rather than searching on the text
-  // The user had typed. Neither the search nor the history entry it earns carries one
+  // Schema rejects that "" — so a read that sends it fails outright rather than searching on the text the user
+  // Typed. Neither the search nor the history entry it earns carries one
   test("searches on the typed text with a filter still waiting for its value left out", async () => {
     expect.hasAssertions();
 

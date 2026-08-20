@@ -4,8 +4,7 @@ import type { MapValue } from "@esposter/shared";
 import { MockServiceBusDatabase } from "@/store/MockServiceBusDatabase";
 import { getOrCreate } from "@esposter/shared";
 /**
- * An in-memory mock of the Azure ServiceBusSender.
- * It uses a Map to simulate a Service Bus queue and correctly implements the ServiceBusSender interface.
+ * An in-memory mock of the Azure ServiceBusSender — no emulator and no network.
  *
  * @example
  * const mockServiceBusSender = new MockServiceBusSender("hello world");

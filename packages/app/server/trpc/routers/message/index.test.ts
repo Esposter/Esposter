@@ -572,7 +572,7 @@ describe("message", () => {
       lastEventId: ownerMessage.rowKey,
       roomId,
     });
-    // Holds the catch-up open across the racing send, which is the window the listener used to be attached after
+    // Holds the catch-up open across the racing send, which is the window a listener attached after it would miss
     const { promise, resolve } = Promise.withResolvers<string>();
     readMessagesMock.mockImplementationOnce(async () => {
       await promise;

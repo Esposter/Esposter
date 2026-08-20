@@ -25,8 +25,7 @@ import { MockTableDatabase } from "@/store/MockTableDatabase";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
 import { chunk, exhaustiveGuard, getOrCreate, getResult, ID_SEPARATOR, noop } from "@esposter/shared";
 /**
- * An in-memory mock of the Azure TableClient.
- * It uses a Map to simulate table storage and correctly implements the TableClient interface.
+ * An in-memory mock of the Azure TableClient — no emulator and no network.
  *
  * @example
  * const mockTableClient = new MockTableClient("", "hello world");
