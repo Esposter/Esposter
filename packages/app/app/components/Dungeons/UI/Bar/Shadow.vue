@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { BarShadowTextureMap } from "@/services/dungeons/UI/bar/BarTextureMap";
 
 interface ShadowProps {
   imagePosition: ImagePosition;
@@ -11,30 +11,21 @@ interface ShadowProps {
 
 const { imagePosition, scaleY, width } = defineProps<ShadowProps>();
 const leftCapShadowDisplayWidth = ref<number>();
-const middleShadowX = computed(() => imagePosition.x + (leftCapShadowDisplayWidth.value ?? 0));
+const rightCapShadowDisplayWidth = ref<number>();
+// The shadow is always full: the middle takes whatever the two caps leave, where the bar in front of it has a
+// Fill to animate and gets its widths from `useVDisplayWidths`
 const middleShadowDisplayWidth = computed(
   () => width - ((leftCapShadowDisplayWidth.value ?? 0) + (rightCapShadowDisplayWidth.value ?? 0)),
 );
-const rightCapShadowDisplayWidth = ref<number>();
 </script>
 
 <template>
-  <DungeonsUIBarImage
-    v-model:display-width="leftCapShadowDisplayWidth"
+  <DungeonsUIBarSegments
+    v-model:left-cap-display-width="leftCapShadowDisplayWidth"
+    v-model:right-cap-display-width="rightCapShadowDisplayWidth"
     :image-position
-    :texture="ImageKey.BarLeftCapShadow"
+    :middle-display-width="middleShadowDisplayWidth"
     :scale-y
-  />
-  <DungeonsUIBarImage
-    :image-position="{ ...imagePosition, x: middleShadowX }"
-    :display-width="middleShadowDisplayWidth"
-    :texture="ImageKey.BarMiddleShadow"
-    :scale-y
-  />
-  <DungeonsUIBarImage
-    v-model:display-width="rightCapShadowDisplayWidth"
-    :image-position="{ ...imagePosition, x: middleShadowX + middleShadowDisplayWidth }"
-    :texture="ImageKey.BarRightCapShadow"
-    :scale-y
+    :textures="BarShadowTextureMap"
   />
 </template>

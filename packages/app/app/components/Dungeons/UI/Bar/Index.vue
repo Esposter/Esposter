@@ -5,7 +5,6 @@ import type { Tweens } from "phaser";
 import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
 import { dayjs } from "#shared/services/dayjs";
-import { BarOrigin } from "@/models/dungeons/UI/bar/BarOrigin";
 import { BarTextureMap } from "@/services/dungeons/UI/bar/BarTextureMap";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Math } from "phaser";
@@ -38,7 +37,6 @@ const updateDisplayWidth = (newDisplayWidth: number) => {
   syncDisplayWidths(newDisplayWidth);
   emit("update:display-width", newDisplayWidth);
 };
-const middleX = computed(() => imagePosition.x + (leftCapDisplayWidth.value ?? 0));
 const tween = ref<TweenBuilderConfiguration>();
 
 watch(
@@ -82,25 +80,13 @@ watch(barWidth, (newBarWidth) => {
 <template>
   <!-- Invisible: it exists only to own the tween that drives the whole bar -->
   <Image :configuration="{ visible: false, texture: '', displayWidth: barDisplayWidth, tween }" />
-  <DungeonsUIBarImage
-    v-model:display-width="leftCapDisplayWidth"
+  <DungeonsUIBarSegments
+    v-model:left-cap-display-width="leftCapDisplayWidth"
+    v-model:right-cap-display-width="rightCapDisplayWidth"
     :image-position
-    :texture="BarTextureMap[type][BarOrigin.Left]"
+    :middle-display-width="middleDisplayWidth"
     :scale-y
-    is-hidden-when-empty
-  />
-  <DungeonsUIBarImage
-    :image-position="{ ...imagePosition, x: middleX }"
-    :display-width="middleDisplayWidth"
-    :texture="BarTextureMap[type][BarOrigin.Middle]"
-    :scale-y
-    is-hidden-when-empty
-  />
-  <DungeonsUIBarImage
-    v-model:display-width="rightCapDisplayWidth"
-    :image-position="{ ...imagePosition, x: middleX + (middleDisplayWidth ?? 0) }"
-    :texture="BarTextureMap[type][BarOrigin.Right]"
-    :scale-y
+    :textures="BarTextureMap[type]"
     is-hidden-when-empty
   />
 </template>
