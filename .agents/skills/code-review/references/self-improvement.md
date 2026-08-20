@@ -26,7 +26,7 @@ Run it once per round, after the findings table, alongside the fix round. It rea
 | A run spent a phase on territory that produced nothing                           | The fan-out is mis-sized for that shape of diff        | Adjust the threshold or the trim, and log when it bites                                        |
 | A test in the suite passes against any mutation you can imagine                  | It pins nothing and costs every run                    | Delete it — a suite that only grows stops being read                                           |
 
-Every pipeline change lands with a test, same as any fix. A `regression` or `reopened` cause with no matching entry in `fixing-findings.md` is appended there in the same round; that list is where the compounding is stored.
+Every pipeline change lands with a test, same as any fix. A `regression` or `reopened` cause with no matching entry in `../fixing-findings.md` is appended there in the same round; that list is where the compounding is stored.
 
 ## When the pipeline is converged
 
