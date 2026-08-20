@@ -9,7 +9,7 @@ Flush a sandboxed command's produced files back to the host working tree, so `vi
 
 ## Principle: native-equivalence, not a guessed file set
 
-A "smart filter" (gitignore-aware, denylist) was rejected: `pnpm build` writes `dist/`, which is gitignored yet wanted — any name-based rule guesses wrong eventually. The only stable rule is **leave disk as native would**. The overlay upper already _is_ the native diff — changed/new files, whiteouts for deletes, opaque markers for replaced dirs — so persisting the upper (minus what a lower layer supplies) reproduces the native on-disk result without virrun ever deciding which files "matter".
+A name-based filter — gitignore-aware, or a denylist — cannot hold: `pnpm build` writes `dist/`, gitignored yet wanted, and any such rule guesses wrong eventually. The only stable rule is **leave disk as native would**. The overlay upper already _is_ the native diff — changed/new files, whiteouts for deletes, opaque markers for replaced dirs — so persisting the upper (minus what a lower layer supplies) reproduces the native on-disk result without virrun ever deciding which files "matter".
 
 ## How it works
 
@@ -42,7 +42,7 @@ So the persist call takes `maskedPaths` — prepare outputs everywhere, and on w
 
 The mask is applied when a flush plan is **built**, and a [task-cache](/docs/virrun/task-cache) hit does not build one — it replays a recorded plan verbatim. So the mask is part of the cache key (`computeTaskCacheKey`): an entry recorded under a looser mask, including any entry predating the mask itself, misses instead of flushing the ghosts today's mask forbids. Keying it retires those entries rather than filtering twice, which keeps the mask applied in exactly one place.
 
-The failure it closes, observed: deleted agent worktree trees reappearing on the host after every `pnpm lint:fix`, holding stale copies of repo files. The mirror still carried them, the linter fixed them in place, and the write-back materialised the fixed ghosts. The mirror side of the same bug — why the copies were still there — is the [exclude reconciliation](/docs/virrun/wsl-source-mirror); which directories those are is [derived from git, not named](/docs/virrun/derived-not-named).
+Without the mask, a `--fix` run materialises those ghosts on the host: the mirror hands the sandbox a stale copy, the tool rewrites it in place, and the flush creates it. Why the mirror can still be carrying one is the [exclude reconciliation](/docs/virrun/wsl-source-mirror); how virrun decides which directories those are is [derived from git, not named](/docs/virrun/derived-not-named).
 
 ## Overlay upper format (empirically confirmed)
 
@@ -95,7 +95,7 @@ Paths relative to `packages/virrun/src/`.
 ## Notes
 
 - **Always warm; persist is the only axis.** A cold-install-per-mutation design would defeat "speedup everywhere", and re-flushing `node_modules` would defeat "never touches disk" — both avoided by forking the snapshot and flushing only the top upper.
-- **`pnpm install` is the snapshot-creation path, not a persist run.** Its output is the warm snapshot, not host `node_modules` — materializing `node_modules` onto the host was rejected.
+- **`pnpm install` is the snapshot-creation path, not a persist run.** Its output is the warm snapshot, not host `node_modules` ([materialize node_modules](/docs/virrun/rejected/materialize-node-modules)).
 - The persist-vs-ephemeral choice lives in the orchestrator (`persistRun` parallels `forkSnapshot`), not an `ExecOptions` flag — the backend stays a pure executor of an `overlayLayers` shape.
 - **No new config or per-command list.** Persist is the default for a normal `virrun -- <cmd>`; the prefix remains the sole switch, consistent with the adoption model.
 - **Concurrency**: the snapshot lower is RO and shared safely; the only remaining race is two persist runs flushing the same host path at once — last-writer-wins, exactly as native.

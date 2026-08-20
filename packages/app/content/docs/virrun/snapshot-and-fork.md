@@ -83,5 +83,4 @@ Paths relative to `packages/virrun/src/`.
 
 - FS-only snapshotting is the realized approach; CRIU process-state forking and Firecracker microVM snapshots stay deferred unless measured warm-boot time justifies them.
 - Generated artifacts that are both source- and platform-specific never belong in the environment-keyed deps snapshot: they go in the source-keyed prepare layer, regenerated in-sandbox for the sandbox's own platform.
-- The prepare layer obviated (and removed) the former `virtual-store-dir-max-length=60` install pin.
 - On the `vfs` backend a fork would be a volume clone; process state is never preserved — only files.

@@ -80,5 +80,5 @@ Paths relative to `packages/virrun/src/`.
 ## Notes
 
 - Native-binary support across platforms is impossible in pure JS; the `os` backend is Linux-core and bridged elsewhere — accepted, see the platform table in [architecture](/docs/virrun/architecture).
-- The shell layer (just-bash parser/builtins) is optional sugar for running shell scripts; it is **not** an exec engine and never spawns native binaries — a pure-JS exec engine was rejected.
+- The shell layer (just-bash parser/builtins) is optional sugar for running shell scripts; it is **not** an exec engine and never spawns native binaries ([pure-JS exec](/docs/virrun/rejected/pure-js-exec)).
 - Do **not** use just-bash's FS abstraction — platformatic _is_ node's fs, not a parallel one, so in-process tooling and the module loader see virtual files for free.

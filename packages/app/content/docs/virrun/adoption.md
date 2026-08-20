@@ -27,7 +27,7 @@ The `virrun -- <cmd>` prefix **is** the switch: every prefixed command is sandbo
 2. **package.json script** — bake the prefix into one script (`"test": "virrun -- vitest"`) so collaborators get it for free. Granularity is per-script: adopt `test` first, leave `build` native until measured.
 3. **Config backend selection** — commit `virrun.config.*` to pin which backend prefixed commands run through, reviewable in one place instead of implied by the host's `auto` default.
 
-A fourth level — a transparent PATH shim with zero prefix — was measured unviable and dropped: pnpm prepends `./node_modules/.bin` (and the workspace `.bin`) to the **front** of `PATH` before running a script, so a shim dir can never intercept a script-local binary (`vitest`, `eslint`, `tsgo` all resolve from `.bin`). Transparent routing was also the only mechanism that would have needed a committed allowlist; since it is off the table, virrun carries none. See [whole-repo routing](/docs/virrun/deferred/whole-repo-routing) for the successor idea.
+There is no fourth level that drops the prefix. A transparent `PATH` shim cannot work: pnpm prepends `./node_modules/.bin` (and the workspace `.bin`) to the **front** of `PATH` before running a script, so a shim directory never intercepts a script-local binary — `vitest`, `eslint` and `tsgo` all resolve from `.bin`. Transparent routing is also the only mechanism that would need a committed allowlist, which is why virrun carries none. The idea that could still get there is [whole-repo routing](/docs/virrun/deferred/whole-repo-routing).
 
 ## Auto-fallback (the safety net)
 

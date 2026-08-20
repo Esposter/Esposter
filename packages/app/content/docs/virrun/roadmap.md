@@ -7,4 +7,4 @@ description: Open work for virrun — prioritized checkboxes linking their propo
 
 Open work only. Everything else that was considered is trigger-gated in [deferred](/docs/virrun/deferred) or decided in [rejected](/docs/virrun/rejected) — grep both before adding an item.
 
-No open work. Task-cache eviction shipped — see [task-cache eviction](/docs/virrun/task-cache-eviction).
+No open work.
