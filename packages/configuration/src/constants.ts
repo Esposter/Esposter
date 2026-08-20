@@ -18,11 +18,11 @@ export const AGENT_WORKTREES_DIRECTORY: string = `${AGENT_DIRECTORY}/worktrees`;
 // The docs site's one path segment. `packages/app/content/docs` holds the pages, `app/pages/docs/[...slug].vue` is
 // The route that renders them, and `/docs/...` is therefore the url every page is linked by — so the content
 // Collection, the TypeDoc output path and the docs suites all build their paths from here rather than repeating it.
-// Three consumers cannot import it. A Nuxt route is its own directory name and a markdown link is authored text —
-// Both are held by the link check in `content/docs/index.test.ts`, which resolves every link to a real page. And
-// `content.config.ts` is loaded by `nuxt prepare` from the app's `postinstall`, which runs before any workspace
-// Package is built, so importing this would fail the install itself on a fresh clone; it repeats the literal and is
-// Pinned by `content.config.test.ts`.
+// Three consumers cannot import it, and none needs a pin: a Nuxt route is its own directory name, a markdown link
+// Is authored text, and `content.config.ts` is loaded by `nuxt prepare` from the app's `postinstall` — which runs
+// Before any workspace package is built, so importing this there fails the install itself on a fresh clone. All
+// Three are covered by the docs suite, which lives inside the directory and resolves every link to a real page, so
+// A rename that missed one of them fails loudly rather than silently.
 export const DOCS_DIRECTORY = "docs";
 
 // Generated TypeDoc output. It is written into the app's `public/`, so it is served from under the docs route
