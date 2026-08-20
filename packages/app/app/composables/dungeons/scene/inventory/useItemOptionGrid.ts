@@ -9,7 +9,10 @@ const ItemOptionGrid = new Grid<(Item | PlayerSpecialInput.Cancel)[][]>({
   grid: [],
   validate(position) {
     const value = this.getValue(position);
-    if (value === PlayerSpecialInput.Cancel) return true;
+    // A column the row does not reach reads as a hole, which `Grid.validate` has already rejected before this
+    // Runs — the guard is what lets the item check take an item rather than an item-or-nothing
+    if (!value) return false;
+    else if (value === PlayerSpecialInput.Cancel) return true;
     return useIsUsableItem(value);
   },
   wrap: true,

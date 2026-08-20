@@ -35,6 +35,20 @@ export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems:
       }, onComplete);
     };
 
+  // Appends the next page rather than replacing the slice, matching the keyed variant a consumer may be handed
+  // Instead — the offset is the list's own length, so nothing outside tracks how far it has been read
+  const readMoreItems = async (
+    query: (offset: number) => Promise<OffsetPaginationData<TItem>>,
+    onComplete?: () => void,
+  ) => {
+    await withFinalizerAsync(async () => {
+      const { hasMore: newHasMore, items: newItems } = await query(items.value.length);
+      hasMore.value = newHasMore;
+      items.value = [...items.value, ...newItems];
+      isLoaded.value = true;
+    }, onComplete);
+  };
+
   return {
     getReadMoreItems,
     hasMore,
@@ -42,6 +56,7 @@ export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems:
     isLoaded,
     items,
     readItems,
+    readMoreItems,
     resetOffsetPaginationData,
   };
 };
