@@ -56,7 +56,7 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
   }
 
   getPosition(value: GridValue<TGrid>): Position | undefined {
-    for (let y = 0; y < this.rowSize - 1; y++)
+    for (let y = 0; y < this.rowSize; y++)
       for (let x = 0; x < this.getColumnSize(y); x++) {
         const position: Position = { x, y };
         if (this.getValue(position) === value) return position;
@@ -71,9 +71,11 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
     return undefined;
   }
 
+  // A column outside the row is a hole rather than a fault, which is what `validate` reads it as — the rows may
+  // Be ragged, so a vertical walk crosses a short one instead of failing on it. Only the row index is bounded,
+  // By `getColumnSize`, because a grid has no rows the cursor is allowed to be unaware of
   getValue({ x, y }: Position) {
-    if (x > this.getColumnSize(y))
-      throw new InvalidOperationError(Operation.Read, this.constructor.name, `position: { x: ${x}, y: ${y} }`);
+    if (x > this.getColumnSize(y) - 1) return undefined;
     return takeOne(takeOne(unref(this.grid), y), x);
   }
 
