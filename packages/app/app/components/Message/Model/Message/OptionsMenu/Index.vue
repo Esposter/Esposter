@@ -19,7 +19,7 @@ const { actionMessageItems, deleteMessageItem, updateMessageItems, updateMessage
   isEditable,
   isCreator,
 );
-const selectEmoji = await useSelectEmoji(message);
+const selectEmoji = useSelectEmoji(message);
 const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProps }));
 </script>
 

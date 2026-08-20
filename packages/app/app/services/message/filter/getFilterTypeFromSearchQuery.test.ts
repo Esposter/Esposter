@@ -1,13 +1,13 @@
 import { getFilterTypeFromSearchQuery } from "@/services/message/filter/getFilterTypeFromSearchQuery";
 import { FilterType, FilterTypes } from "@esposter/db-schema";
-import { uncapitalize } from "@esposter/shared";
+import { getFilterKeyword } from "@/services/message/filter/getFilterKeyword";
 import { describe, expect, test } from "vitest";
 
 describe(getFilterTypeFromSearchQuery, () => {
   test.each(FilterTypes)("%s: a keyword followed by a colon becomes that filter", (filterType) => {
     expect.hasAssertions();
 
-    expect(getFilterTypeFromSearchQuery(`${uncapitalize(filterType)}:`)).toBe(filterType);
+    expect(getFilterTypeFromSearchQuery(getFilterKeyword(filterType))).toBe(filterType);
     expect(getFilterTypeFromSearchQuery(` ${filterType.toUpperCase()}: `)).toBe(filterType);
   });
 
@@ -21,6 +21,6 @@ describe(getFilterTypeFromSearchQuery, () => {
     expect(getFilterTypeFromSearchQuery(":")).toBeUndefined();
     expect(getFilterTypeFromSearchQuery("")).toBeUndefined();
     // The colon is what commits the keyword, so the bare word is still being typed
-    expect(getFilterTypeFromSearchQuery(uncapitalize(FilterType.From))).toBeUndefined();
+    expect(getFilterTypeFromSearchQuery(getFilterKeyword(FilterType.From).slice(0, -1))).toBeUndefined();
   });
 });

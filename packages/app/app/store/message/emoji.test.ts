@@ -81,6 +81,39 @@ describe(useEmojiStore, () => {
     expect(emojis).toStrictEqual([]);
   });
 
+  // The reaction row is shared, so leaving it is only ever a write — the row goes with the last reactor and
+  // Stays for everyone else, which is what stops one member's undo taking the others' reactions with it
+  test.each([
+    { expectedProcedure: "deleteEmoji", userIds: [] as string[] },
+    { expectedProcedure: "updateEmoji", userIds: [crypto.randomUUID()] },
+  ])("toggles off through $expectedProcedure when the others are $userIds", async ({ expectedProcedure, userIds }) => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const calledProcedures: string[] = [];
+    server.use(
+      trpcMsw.message.emoji.deleteEmoji.mutation(() => {
+        calledProcedures.push("deleteEmoji");
+      }),
+      trpcMsw.message.emoji.updateEmoji.mutation(() => {
+        calledProcedures.push("updateEmoji");
+      }),
+    );
+    const emojiStore = useEmojiStore();
+    const { setEmojis, toggleEmoji } = emojiStore;
+    const emoji = new MessageEmojiMetadataEntity({
+      messageRowKey,
+      partitionKey,
+      rowKey,
+      userIds: [userId, ...userIds],
+    });
+    setEmojis(messageRowKey, [emoji]);
+    await toggleEmoji(emoji);
+
+    expect(calledProcedures).toStrictEqual([expectedProcedure]);
+  });
+
   // A reaction is a shared row: the toggle owes back only the caller's own id, so it is unwound against the ids
   // As they stand. Reinstating the ids the write was issued with drops every member who reacted meanwhile
   test("keeps a reaction delivered while the rejected toggle was in flight", async () => {

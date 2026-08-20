@@ -1,4 +1,5 @@
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
+import { getFilterKeyword } from "@/services/message/filter/getFilterKeyword";
 import { FilterType, FilterTypeHas, serializeValue } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, uncapitalize } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -10,7 +11,7 @@ describe(getFilterDisplayValue, () => {
   test("a filter still waiting for its value renders as its keyword", () => {
     expect.hasAssertions();
 
-    expect(getFilterDisplayValue({ type: FilterType.Has, value: "" })).toBe(`${uncapitalize(FilterType.Has)}:`);
+    expect(getFilterDisplayValue({ type: FilterType.Has, value: "" })).toBe(getFilterKeyword(FilterType.Has));
   });
 
   // False is a value the user picked, not an absent one — reading it as absent is what left `pinned: false`
@@ -19,7 +20,7 @@ describe(getFilterDisplayValue, () => {
     expect.hasAssertions();
 
     expect(getFilterDisplayValue({ type: FilterType.Pinned, value: isPinned })).toBe(
-      `${uncapitalize(FilterType.Pinned)}: ${isPinned}`,
+      `${getFilterKeyword(FilterType.Pinned)} ${isPinned}`,
     );
   });
 
@@ -27,7 +28,7 @@ describe(getFilterDisplayValue, () => {
     expect.hasAssertions();
 
     expect(getFilterDisplayValue({ type: FilterType.Has, value: FilterTypeHas.Image })).toBe(
-      `${uncapitalize(FilterType.Has)}: ${uncapitalize(FilterTypeHas.Image)}`,
+      `${getFilterKeyword(FilterType.Has)} ${uncapitalize(FilterTypeHas.Image)}`,
     );
   });
 

@@ -15,8 +15,7 @@ const session = authClient.useSession();
 const messageDialogStore = useMessageDialogStore();
 const { reactionsRowKey } = storeToRefs(messageDialogStore);
 const emojiStore = useEmojiStore();
-const { deleteEmoji, updateEmoji } = emojiStore;
-// Reacting again removes this user's own reaction; the last one to leave takes the reaction itself with it
+const { toggleEmoji } = emojiStore;
 const isReacted = computed(() => {
   const userId = session.value.data?.user.id;
   return Boolean(userId && emoji.userIds.includes(userId));
@@ -47,20 +46,7 @@ const isReacted = computed(() => {
         z-1
         active:scale-95
         type="button"
-        @click="
-          isReacted && emoji.userIds.length === 1
-            ? deleteEmoji({
-                messageRowKey: emoji.messageRowKey,
-                partitionKey: emoji.partitionKey,
-                rowKey: emoji.rowKey,
-              })
-            : updateEmoji({
-                messageRowKey: emoji.messageRowKey,
-                partitionKey: emoji.partitionKey,
-                rowKey: emoji.rowKey,
-                userIds: emoji.userIds,
-              })
-        "
+        @click="toggleEmoji(emoji)"
       >
         {{ emoji.emojiTag }}
         <span pl-1 text-title-small>{{ emoji.userIds.length }}</span>

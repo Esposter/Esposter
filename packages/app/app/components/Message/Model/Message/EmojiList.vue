@@ -14,7 +14,7 @@ const { data: session } = await authClient.useSession(useFetch);
 const emojiStore = useEmojiStore();
 const { getEmojis } = emojiStore;
 const emojis = computed(() => getEmojis(message.rowKey));
-const selectEmoji = await useSelectEmoji(message);
+const selectEmoji = useSelectEmoji(message);
 </script>
 
 <template>
