@@ -12,12 +12,12 @@ export const serializeClause = (clause: Clause<Record<string, unknown>>, isTable
   const clauseKey = keys.join("/");
   // Non-emptiness of the collection itself, so there is no value to compare and nothing to project onto x
   if (clause.operator === SearchOperator.arrayAny) return `${clauseKey}/any()`;
-
-  if (clause.operator === SearchOperator.arrayContains) {
-    if (keys.length === 1) return `${keys[0]}/any(x: search.in(x, ${serializeValue(clause.value.join(","))}))`;
+  else if (clause.operator === SearchOperator.arrayContains) {
+    const serializedValue = serializeValue(clause.value.join(","));
+    if (keys.length === 1) return `${clauseKey}/any(x: search.in(x, ${serializedValue}))`;
     else if (keys.length === 2) {
       const [collectionName, propertyName] = keys;
-      return `${collectionName}/any(x: search.in(x/${propertyName}, ${serializeValue(clause.value.join(","))}))`;
+      return `${collectionName}/any(x: search.in(x/${propertyName}, ${serializedValue}))`;
     } else throw new InvalidOperationError(Operation.Read, serializeClause.name, clause.key);
   }
 
