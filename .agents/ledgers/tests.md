@@ -23,20 +23,20 @@ The row **`vi.fn` always takes its signature** has left this table.
 Every row resets when a rule joins this table: a unit dated against a narrower rule set is not swept against the
 current one, and there is no partially-swept state. Trimming last ran across every unit on 2026-08-12.
 
-| Unit                                               | Swept      | Notes                                                  |
-| -------------------------------------------------- | ---------- | ------------------------------------------------------ |
-| `app/app/services`                                 | 2026-08-18 |                                                        |
-| `app/app/composables`                              | 2026-08-18 | `message/emoji` written under the rules                |
-| `app/app/store`, `app/app/models`                  | 2026-08-18 |                                                        |
-| `app/app/components`, `app/app/util`               | 2026-08-18 | `Styled/EmojiPicker` written under the rules           |
-| `app/content`                                      | 2026-08-18 | `docs.test.ts` — top-level await fixtures, see below   |
-| `app/server/services`, `app/server/trpc/procedure` | 2026-08-18 |                                                        |
-| `app/server/trpc/routers`, rest                    | 2026-08-18 |                                                        |
-| `app/shared`                                       | 2026-08-18 |                                                        |
-| `virrun`                                           | 2026-08-18 |                                                        |
-| `azure-functions`, `azure-mock`, `db*`             | 2026-08-18 | every `mockDb` stays — hoisted factory, see below      |
-| `parse-tmx`, `vue-phaserjs`, `xml2js`, rest        | 2026-08-18 | plus `shared`, `shared-node`, `configuration`, `infra` |
-| `.agents/workflows`                                | 2026-08-18 | the vitest `claude` project                            |
+| Unit                                               | Swept      | Notes                                                      |
+| -------------------------------------------------- | ---------- | ---------------------------------------------------------- |
+| `app/app/services`                                 | 2026-08-18 |                                                            |
+| `app/app/composables`                              | 2026-08-18 | `message/emoji` written under the rules                    |
+| `app/app/store`, `app/app/models`                  | 2026-08-18 |                                                            |
+| `app/app/components`, `app/app/util`               | 2026-08-18 | `Styled/EmojiPicker` written under the rules               |
+| `app/content`                                      | 2026-08-18 | `docs/index.test.ts` — top-level await fixtures, see below |
+| `app/server/services`, `app/server/trpc/procedure` | 2026-08-18 |                                                            |
+| `app/server/trpc/routers`, rest                    | 2026-08-18 |                                                            |
+| `app/shared`                                       | 2026-08-18 |                                                            |
+| `virrun`                                           | 2026-08-18 |                                                            |
+| `azure-functions`, `azure-mock`, `db*`             | 2026-08-18 | every `mockDb` stays — hoisted factory, see below          |
+| `parse-tmx`, `vue-phaserjs`, `xml2js`, rest        | 2026-08-18 | plus `shared`, `shared-node`, `configuration`, `infra`     |
+| `.agents/workflows`                                | 2026-08-18 | the vitest `claude` project                                |
 
 ## Find recipe
 
@@ -97,7 +97,7 @@ PY
 ```
 
 Everything it still reports on a swept repo is one of the exceptions below, so a clean pass is a **known** list
-rather than an empty one: `app/content/docs.test.ts`'s top-level-await cluster, the `mockDb` a hoisted `vi.mock`
+rather than an empty one: `app/content/docs/index.test.ts`'s top-level-await cluster, the `mockDb` a hoisted `vi.mock`
 factory returns in each `azure-functions` suite, and virrun's two mocked path constants.
 
 ## Judging a match
@@ -113,7 +113,7 @@ factory returns in each `azure-functions` suite, and virrun's two mocked path co
   `describe` scope is invisible. This is the repo's largest exception — one per `azure-functions` suite.
 - **A `const` initialized by top-level `await` stays**, because a `describe` callback is synchronous and cannot
   hold one. Converting it to `let` + `beforeAll` is worse: it makes a read-only fixture look like rebuilt state,
-  which is the distinction the skill's `let` rule exists to carry. `content/docs.test.ts` is the repo's case, and
+  which is the distinction the skill's `let` rule exists to carry. `content/docs/index.test.ts` is the repo's case, and
   the module-scope helpers reading those fixtures pin the constants they read out there too.
 - **Everything else moves in**, including a factory _call_ (`const message = createMessageEntity(…)`), which is
   state even though a function produced it.

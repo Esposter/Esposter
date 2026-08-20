@@ -35,7 +35,7 @@ If the concept you need isn't in the docs yet, that's a signal — either you're
 
 ## Writing a decision down
 
-Adding or editing any page under `packages/app/content/docs` is governed by the repo's own **`docs` skill** — two-field frontmatter, a Mermaid diagram where the subject is a flow, plain `.md` with GFM only, and registration in both the area `index.md` and `DocsSectionGroupsMap.ts`. `content/docs.test.ts` parse-validates every diagram, so a malformed page fails `pnpm test`. Load that skill before writing; don't hand-roll an ADR file.
+Adding or editing any page under `packages/app/content/docs` is governed by the repo's own **`docs` skill** — two-field frontmatter, a Mermaid diagram where the subject is a flow, plain `.md` with GFM only, and registration in both the area `index.md` and `DocsSectionGroupsMap.ts`. `content/docs/index.test.ts` parse-validates every diagram, so a malformed page fails `pnpm test`. Load that skill before writing; don't hand-roll an ADR file.
 
 ## Flag conflicts
 

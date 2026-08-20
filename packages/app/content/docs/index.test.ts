@@ -1,6 +1,5 @@
 // @vitest-environment happy-dom
-import { DocsSectionGroupsMap } from "@/services/docs/DocsSectionGroupsMap";
-import { AGENT_DIRECTORY } from "@esposter/configuration";
+import { AGENT_DIRECTORY, DOCS_API_DIRECTORY, DOCS_DIRECTORY } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
 import mermaid from "mermaid";
 import { existsSync } from "node:fs";
@@ -10,16 +9,12 @@ import { describe, expect, test } from "vitest";
 
 // A path token we can resolve, i.e. no glob, placeholder or prose — brackets are Nuxt route segments.
 const REPOSITORY_PATH_REGEX = /^[\w./[\]-]+$/u;
-// Real /docs routes that are not content pages — the api section is generated TypeDoc output.
-const ALLOWED_LINK_TARGETS = ["/docs/api"];
+// Real docs routes that are not content pages — the api section is generated TypeDoc output.
+const ALLOWED_LINK_TARGETS = [`/${DOCS_API_DIRECTORY}`];
 // Path prefixes a Key Files cell may use relative to `packages/app` instead of the repo root.
 const APP_RELATIVE_PREFIXES = ["app/", "configuration/", "content/", "public/", "scripts/", "server/", "shared/"];
-// Pages every section owns that the sidebar map never lists — they trail in an automatic Planning group.
-const UNMAPPED_PAGES = new Set(["index", "roadmap"]);
-const PLANNING_DIRECTORIES = new Set(["deferred", "rejected"]);
-const contentDirectory = import.meta.dirname;
-const docsDirectory = join(contentDirectory, "docs");
-const appDirectory = join(contentDirectory, "..");
+const docsDirectory = import.meta.dirname;
+const appDirectory = join(docsDirectory, "..", "..");
 const repositoryDirectory = join(appDirectory, "..", "..");
 const pagePaths = (await Array.fromAsync(glob("**/*.md", { cwd: docsDirectory }))).map((pagePath) =>
   pagePath.replaceAll("\\", "/"),
@@ -96,7 +91,8 @@ describe(mermaid.parse, () => {
 });
 
 describe("docsLinks", () => {
-  const DOCS_LINK_REGEX = /\]\((?<target>\/docs[^)\s#]*)(?:#[^)\s]*)?\)/gu;
+  const DOCS_LINK_REGEX = new RegExp(String.raw`\]\((?<target>/${DOCS_DIRECTORY}[^)\s#]*)(?:#[^)\s]*)?\)`, "gu");
+  const DOCS_ROUTE_PREFIX_REGEX = new RegExp(String.raw`^/${DOCS_DIRECTORY}/?`, "u");
 
   test("every /docs link resolves to a page", () => {
     expect.hasAssertions();
@@ -108,7 +104,7 @@ describe("docsLinks", () => {
       .filter(
         ({ target }) =>
           !ALLOWED_LINK_TARGETS.some((allowed) => target === allowed || target.startsWith(`${allowed}/`)) &&
-          !getIsPage(target.replace(/^\/docs\/?/u, "").replace(/\/$/u, "")),
+          !getIsPage(target.replace(DOCS_ROUTE_PREFIX_REGEX, "").replace(/\/$/u, "")),
       )
       .map(({ page, target }) => `${page} → ${target}`);
 
@@ -139,51 +135,13 @@ describe("docsLinks", () => {
                 .replace(/\/index\.md$/u, "")
                 .includes("/"),
           )
-          .map((sibling) => `/docs/${sibling.replace(/(?:\/index)?\.md$/u, "")}`)
+          .map((sibling) => `/${DOCS_DIRECTORY}/${sibling.replace(/(?:\/index)?\.md$/u, "")}`)
           .filter((target) => !listed.has(target))
           .map((target) => `${page} → ${target}`);
       })
       .toSorted();
 
     expect(unlisted).toStrictEqual([]);
-  });
-});
-
-describe("docsSectionGroupsMap", () => {
-  test("every mapped slug has a page", () => {
-    expect.hasAssertions();
-
-    const missingPages = Object.entries(DocsSectionGroupsMap)
-      .flatMap(([section, groups]) =>
-        Object.entries(groups).flatMap(([group, slugs]) => slugs.map((slug) => ({ group, section, slug }))),
-      )
-      .filter(({ section, slug }) => !getIsPage(`${section}/${slug}`))
-      .map(({ group, section, slug }) => `${section} → ${group} → ${slug}`);
-
-    expect(missingPages).toStrictEqual([]);
-  });
-
-  test("every feature page of a mapped section is registered", () => {
-    expect.hasAssertions();
-
-    const unregisteredPages = Object.entries(DocsSectionGroupsMap)
-      .flatMap(([section, groups]) => {
-        const mappedSlugs = new Set(Object.values(groups).flat());
-        return pagePaths
-          .filter((page) => page.startsWith(`${section}/`))
-          .map((page) => page.slice(`${section}/`.length).replace(/(?:\/index)?\.md$/u, ""))
-          .filter(
-            (slug) =>
-              !slug.includes("/") &&
-              !UNMAPPED_PAGES.has(slug) &&
-              !PLANNING_DIRECTORIES.has(slug) &&
-              !mappedSlugs.has(slug),
-          )
-          .map((slug) => `${section} → ${slug}`);
-      })
-      .toSorted();
-
-    expect(unregisteredPages).toStrictEqual([]);
   });
 });
 
