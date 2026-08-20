@@ -84,8 +84,8 @@ All under `message.scheduledMessageJob.`:
 
 ## Notes
 
-- **Why Service Bus rather than a Storage Queue**: a Storage Queue trigger polls the storage account on a fixed interval around the clock whether or not a job is due, which for this workload is the dominant storage cost, and its visibility delay caps at 7 days — so anything scheduled further out needs a re-enqueue loop of its own. Service Bus scheduled messages (`scheduledEnqueueTimeUtc`) deliver natively at `runAt` with no delay cap over a push-style AMQP listener, and Basic tier has no base charge.
-- Infrastructure: Basic-tier namespaces (`dev-sbns-esposter-001` / `prod-sbns-esposter-001`) with one queue each, `scheduled-message-jobs`. Connection-string auth via `AZURE_SERVICE_BUS_CONNECTION_STRING`, matching the key-based auth grain the other Azure clients use.
+- **Why Service Bus rather than a Storage Queue**: a Storage Queue trigger polls the storage account around the clock whether or not a job is due — it backs off exponentially with jitter while the queue is empty, but only up to `maxPollingInterval`, never to nothing — which for this workload is the dominant storage cost, and its visibility delay caps at 7 days, so anything scheduled further out needs a re-enqueue loop of its own. Service Bus scheduled messages (`scheduledEnqueueTimeUtc`) become eligible at `runAt` with no delay cap and reach a push-style AMQP listener rather than a poll — the moment one is actually picked up still depends on the queue's workload — and Basic tier has no base charge.
+- Infrastructure: Basic-tier namespaces (`dev-sbns-esposter-001` / `prod-sbns-esposter-001`) with one queue each, `scheduled-message-jobs`. Connection-string auth via `AZURE_SERVICE_BUS_CONNECTION_STRING`, the same shared-key authentication the table, blob and Web PubSub clients use.
 
 ## Key files
 

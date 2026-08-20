@@ -70,8 +70,7 @@ Exemptions: `index.md` pages, `deferred/`/`rejected/` pages, `roadmap.md`, and s
 
 **The exemption is about the page's shape, not its length.** A short page describing one small flow still owes a diagram; a long page that is a list of rules owes none. When auditing an area, the question to ask each page is "does the prose name three parts and say what passes between them?" — if it does, a missing diagram is a finding, however tidy the page reads. Pages that only _feel_ exempt are the ones this survey keeps rediscovering, so record the verdict per page rather than per area.
 
-Every diagram is parse-validated by `packages/app/content/docs.test.ts` (`mermaid.parse` over all ` ```mermaid ` blocks), so a syntax error fails `pnpm test`. Two gotchas, both of which parse cleanly and fail only when rendered: `;` is a mermaid statement separator even inside message/note text — never use a semicolon in a label or note (use `—` or a comma) — and a line break inside a label is `<br/>`, never `
-`, which draws the two characters into the box.
+Every diagram is parse-validated by `packages/app/content/docs.test.ts` (`mermaid.parse` over all ` ```mermaid ` blocks), so a syntax error fails `pnpm test`. Two gotchas, both of which parse cleanly and fail only when rendered: `;` is a mermaid statement separator even inside message/note text — never use a semicolon in a label or note (use `—` or a comma) — and a label is one quoted string on one line, so a break inside it is written `<br/>` — a backslash-n draws those two characters into the box, and a real newline is swallowed and renders as one run-on line. Both of those are checked too, so they fail `pnpm test` rather than only the rendered page.
 
 ## Standards vs feature pages
 

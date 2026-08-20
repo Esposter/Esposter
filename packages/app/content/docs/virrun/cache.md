@@ -52,8 +52,7 @@ flowchart TB
     next --> reap["reapStaleTemps<br/>remove upper./work. temps whose owner pid is dead"]
     corpse -.->|"reclaimed once pid dead"| reap
 
-    startup["os-backend startup (win32)"] --> mirrors["reapAbandonedSourceMirrors<br/>sweep mirrors whose origin host dir is gone
-or that aged out unmarked"]
+    startup["os-backend startup (win32)"] --> mirrors["reapAbandonedSourceMirrors<br/>sweep mirrors whose origin host dir is gone<br/>or that aged out unmarked"]
     startup --> orphans["reapOrphanedWslRuns<br/>group-kill WSL bwrap trees reparented off their Relay"]
 ```
 

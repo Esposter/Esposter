@@ -36,9 +36,9 @@ What each pattern means is the owning skill's to say:
 Excluded: `CHANGELOG.md` (lerna output) · `CLAUDE.md`, `GEMINI.md` (symlinks to `AGENTS.md`) · `public/docs/api` (TypeDoc
 output) · `~/.claude/plugins` skills (external, not ours to edit).
 
-Enforceable next, all in `content/docs.test.ts` where the link, Key Files, mermaid-parse and escaped-line-break
-checks already live. Greps 4, 5 and 6 are exact and decide themselves — but the link-text half of 4 can only land
+Enforceable next, all in `content/docs.test.ts` where the link, Key Files, mermaid-parse and both
+label-line-break checks already live. Greps 4, 5 and 6 are exact and decide themselves — but the link-text half of 4 can only land
 once every row is swept, since an unswept area still holds instances that would fail the build. Grep 1 needs an
-allowlist for the counts that may be exact (package count, configured limits) first. The escaped-line-break check
-reaches the skill tree too, since the diagram list it runs over already spans both; the rest do not, and
+allowlist for the counts that may be exact (package count, configured limits) first. The label-line-break checks
+reach the skill tree too, since the diagram list it runs over already spans both; the rest do not, and
 `content/docs.test.ts` reads nothing else under `.agents/`.

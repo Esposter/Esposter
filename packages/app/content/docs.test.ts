@@ -51,6 +51,7 @@ const getIsPage = (slugPath: string) =>
 describe(mermaid.parse, () => {
   const MERMAID_REGEX = /```mermaid\r?\n(?<code>[\s\S]*?)```/gu;
   const ESCAPED_LINE_BREAK_REGEX = /\\n/u;
+  const QUOTE_REGEX = /"/gu;
 
   // Skills are checked here too, rather than in a test of their own: a skill diagram has no renderer to fail
   // In front of anyone — nothing loads a skill and draws it — so an unparseable one is invisible until an
@@ -76,6 +77,18 @@ describe(mermaid.parse, () => {
 
     const offenders = diagrams
       .filter(({ code }) => ESCAPED_LINE_BREAK_REGEX.test(code))
+      .map(({ ordinal, page }) => `${page} diagram ${ordinal}`);
+
+    expect(offenders).toStrictEqual([]);
+  });
+
+  // The other half of the same mistake: a label carried across a real newline parses, because the label simply
+  // Swallows it, and then renders as one run-on line. A quote left open at the end of a line is the only tell
+  test("no diagram carries a label across a line break", () => {
+    expect.hasAssertions();
+
+    const offenders = diagrams
+      .filter(({ code }) => code.split("\n").some((line) => (line.match(QUOTE_REGEX)?.length ?? 0) % 2 === 1))
       .map(({ ordinal, page }) => `${page} diagram ${ordinal}`);
 
     expect(offenders).toStrictEqual([]);
