@@ -9,4 +9,4 @@ Azure-portal parity program for the Resource Explorer: every product is already 
 
 ## Next
 
-Nothing open. The service menu shipped — see [resource service menu](/docs/platform/resource-service-menu). New ideas start as a [proposal](/docs/proposals) and get a prioritized checkbox here.
+Nothing open. New ideas start as a [proposal](/docs/proposals) and get a prioritized checkbox here.

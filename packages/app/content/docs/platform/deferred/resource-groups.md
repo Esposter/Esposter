@@ -9,7 +9,7 @@ Azure-style grouping of resources (the surveyer's `group` column generalized): u
 
 ## Why deferred
 
-Only surveys had grouping, and the explorer's type facets + search cover current volumes. Keeping a `group` column "just in case" on every resource would be speculative schema.
+Nothing groups resources today, and the explorer's type facets + search cover current volumes. Carrying a `group` column "just in case" on every resource would be speculative schema.
 
 ## Revisit when
 

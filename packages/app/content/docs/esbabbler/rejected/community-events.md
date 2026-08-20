@@ -10,4 +10,4 @@ Discord-style scheduled room events: RSVP, reminders, optional linked call sessi
 **Why not**
 
 - Large-community feature; a casual drop-in chat/call app has no need for scheduled, RSVP-able events.
-- It was the only thing forcing the `ManageEvents` permission-bitfield-shift migration — dropping it removes that cost entirely.
+- It is also the only thing that would force a `ManageEvents` permission-bitfield shift, so not building it avoids that migration outright.

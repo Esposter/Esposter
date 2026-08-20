@@ -5,7 +5,7 @@ description: Deferred — editing resources without an account via a localStorag
 
 # Unauthenticated local resources
 
-Editing resources without an account via a localStorage persistence path (the pre-consolidation table editor worked logged-out).
+Editing resources without an account via a localStorage persistence path.
 
 ## Why deferred
 
