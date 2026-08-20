@@ -43,7 +43,7 @@ A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends
 
 **External boundary — keep `null` where required:**
 
-- **Drizzle ORM** — nullable columns infer as `T | null`; leave the boundary shape as-is and consume it at the call site (`??` onto a sentinel, truthiness guard) only where the app-owned shape is actually needed — there is no conversion layer. See `/docs/architecture/null-vs-undefined`.
+- **Drizzle ORM** — nullable columns infer as `T | null`; leave the boundary shape as-is and consume it at the call site (`??` onto a sentinel, truthiness guard) only where the app-owned shape is actually needed — there is no conversion layer. See `packages/app/content/docs/architecture/null-vs-undefined.md`.
 - **Azure SDK / EventGrid** — `SerializableValue`, EventGrid data shapes; keep raw types, convert on ingress.
 - **Vuetify** — a few Vuetify props are typed `T | null`; use `null` only where the prop type requires it, with a comment explaining why.
 
