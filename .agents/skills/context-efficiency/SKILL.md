@@ -19,6 +19,8 @@ The main session's context is the scarce resource. These are the habits that sto
 
 Batch format/typecheck/tests until **all** edits are done. Each pass re-pays a fixed startup cost, so per-chunk checking multiplies it for no extra signal — nothing is learned at chunk 3 that chunk 7 won't also reveal.
 
+**"All edits" means everything going out together, not the sub-task in front of you.** The boundary is the push, so a session covering several units, several files or several ledgers checks once across the lot — a unit finished at noon and a unit finished at three are one pass, however cleanly the first one ended. Sub-task boundaries feel like natural checkpoints and are the commonest way this rule gets misread: the tell is a check whose diff is one file, or a formatter run after a single-line edit.
+
 Commit per coherent chunk regardless: commits are cheap and protect against other sessions' resets, checks are not.
 
 The pass runs **after** `/simplify`, not before — cleanup edits code, so checking first pays the startup cost twice. See "Finishing a change" in `CLAUDE.md` for the full order.

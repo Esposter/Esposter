@@ -19,7 +19,44 @@
 
 Over budget at the sweep's start (`skill-authoring`: ~15 KB, ~150 lines per `SKILL.md`) — `coderabbit` 28 KB/234, `file-organization` 19 KB, `testing` 19 KB, `styling` 18 KB, `typescript` 18 KB, `vue` 18 KB, `pinia` 17 KB, `vuetify` 17 KB/164, `bench` 15 KB. Under-budget skills are still in scope: a line that restates an enforcer or narrates one change is dead weight at any size.
 
-The find recipe is reading, not grepping — the failures are prose-shaped. What each pass looks for, in `skill-authoring`'s terms: a rule an enforcer already fails the build on, a one-off written as a standing rule, identifiers or numbers lifted from the change that prompted the note, a pointer to a section the reader reaches by reading on, a paragraph re-arguing a rule already stated, a `references/` page nothing indexes by trigger, a topic owned by two skills.
+The structural half **is** mechanical, and running it first means the reading pass never spends attention on it.
+From the repository root; a clean run prints nothing but the budget list. `glob` returns platform separators, so
+paths are normalised before the skill name is taken out of them — without that every citation reads as broken:
+
+```bash
+python3 - <<'PY'
+import glob, io, os, re
+
+norm = lambda path: path.replace("\\", "/")
+skills = [norm(f) for f in glob.glob(".agents/skills/*/SKILL.md")]
+pages = [norm(f) for f in glob.glob(".agents/skills/*/references/*.md")]
+
+for f in skills:
+    text = io.open(f, encoding="utf-8").read()
+    lines = len(text.split("\n"))
+    if len(text) > 15000 or lines > 150:
+        print(f"budget      {f}: {len(text)} bytes, {lines} lines")
+
+for f in pages:
+    owner = f.rsplit("/references/", 1)[0] + "/SKILL.md"
+    if f"references/{os.path.basename(f)}" not in io.open(owner, encoding="utf-8").read():
+        print(f"unindexed   {f}")
+
+for f in skills + pages:
+    skill = f.split("/")[2]
+    text = io.open(f, encoding="utf-8").read()
+    for target in sorted(set(re.findall(r"`references/([\w.-]+\.md)`", text))):
+        if not os.path.exists(f".agents/skills/{skill}/references/{target}"):
+            print(f"unresolved  {f} -> {target}")
+PY
+```
+
+Most `unresolved` hits are correct as written: a cross-skill citation names the other skill in the same sentence
+(the `trpc` skill's `references/read-endpoints.md`), and `skill-authoring` uses `references/x.md` as a
+placeholder — read the line before acting. A citation from **inside** `references/` to a file at the skill root
+is the one that is always wrong: it needs `../`, and nothing else resolves it.
+
+The rest of the recipe is reading, not grepping — those failures are prose-shaped. What each pass looks for, in `skill-authoring`'s terms: a rule an enforcer already fails the build on, a one-off written as a standing rule, identifiers or numbers lifted from the change that prompted the note, a pointer to a section the reader reaches by reading on, a paragraph re-arguing a rule already stated, a `references/` page nothing indexes by trigger, a topic owned by two skills.
 
 Two checks bracket every pass. Before: the row's skills are read together, so a rule moving to its most specific owner lands in the same commit. After: each edited skill's `description` is re-read against its new body, and any heading cited elsewhere is grepped for — `grep -rn "<heading text>" .agents/skills packages/app/content/docs AGENTS.md` — because nothing resolves a skill link.
 
