@@ -8,6 +8,6 @@ const typingMessage = computed(() => getTypingMessage(typings.value.map(({ usern
 </script>
 
 <template>
-  <!-- Add &nbsp; to avoid layout shift -->
+  <!-- A non-breaking space so an empty footer still reserves its line and the composer above does not shift -->
   <div text-body-medium>{{ typingMessage }}&nbsp;</div>
 </template>

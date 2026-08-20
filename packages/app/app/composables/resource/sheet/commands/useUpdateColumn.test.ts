@@ -78,7 +78,7 @@ describe(useUpdateColumn, () => {
 
     expect(takeOne(dataSource.rows).data.date).toBe("15/01/2024");
     expect(takeOne(dataSource.rows, 1).data.date).toBe("30/06/2024");
-    expect(takeOne(dataSource.columns).size).toBeGreaterThan(0);
+    expect(takeOne(dataSource.columns).size).toBe(24);
 
     undo(dataSource);
     const restoredColumn = takeOne(dataSource.columns);

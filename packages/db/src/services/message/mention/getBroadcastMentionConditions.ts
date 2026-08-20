@@ -8,6 +8,8 @@ export const getBroadcastMentionConditions = (
   _roomId: string,
   ids: string[],
 ): Promise<SQL | undefined> => {
-  const conditions = ids.map((id) => getBroadcastNotificationCondition(id)).filter(Boolean) as SQL[];
+  const conditions = ids
+    .map((id) => getBroadcastNotificationCondition(id))
+    .filter((condition) => condition !== undefined);
   return Promise.resolve(conditions.length > 0 ? or(...conditions) : undefined);
 };

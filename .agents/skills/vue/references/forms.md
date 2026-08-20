@@ -1,6 +1,6 @@
 # Form bindings and upsert forms
 
-Read when an input needs the split `:model-value` + `@update:model-value` form instead of `v-model`, or when a form handles both create and edit.
+Read when an input needs the split `:model-value` + `@update:model-value` form instead of `v-model`, when a form handles both create and edit, or when deciding what validates a field.
 
 ## When the split binding is justified
 
@@ -31,3 +31,17 @@ const { cloned: values } = useCloned(() => initialValues);
 - Create page passes `is-create`; update page passes `:initial-values` (no `is-create`).
 
 The same `isCreate?: boolean` pattern applies to dialog buttons (e.g. `Foo/EditDialogButton`), where it also skips the equality check that would disable the save button when state matches the original.
+
+## A settings draft is the form's, not the row's
+
+A settings panel that saves on blur binds **local refs seeded from the row**, never a clone of the row and never
+the row itself. The optimistic write rolls the row back when the server rejects it; the controls deliberately
+keep what the user typed, with `isDirty` still true, so the next blur retries it. The panel is still on screen
+beside the alert, which is what makes that draft worth keeping — a form that reset itself to the rolled-back row
+would throw the edit away at the moment the user most wants it.
+
+## Never normalize in Vue — trust the server schema
+
+**Never apply `normalizeString` (or any trimming) anywhere in Vue** — not in `@update:model-value`, not in submit handlers. tRPC input schemas already normalize, and trimming as the user types swallows spaces mid-word. Let raw input flow through `v-model="name"`. It stays valid outside forms (text parsing, CSV/XLSX deserialization, slash commands) — anything not crossing a tRPC Zod boundary.
+
+Validity checks `safeParse` the shared schema (`:disabled="!nameSchema.safeParse(name).success"`); dirty-state comparisons parse **both** sides (`topicSchema.safeParse(editedTopic).data !== topicSchema.safeParse(storedTopic).data`), since a stored value the schema would normalize otherwise reads as dirty the moment the form opens; submit handlers pass raw values with no guards, emptiness checks or local normalization. The only client-side validation is that disabled state plus Vuetify field rules for inline errors.

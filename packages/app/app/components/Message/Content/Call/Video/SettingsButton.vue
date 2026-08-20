@@ -12,19 +12,13 @@ const liveKitStore = useLiveKitStore();
 const { setActiveDevice } = liveKitStore;
 const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
 const { cameraDeviceId } = storeToRefs(voiceDeviceSettingsStore);
-const menu = ref(false);
-const { deviceSections, refreshDevices } = useCallDeviceSettings([
+const { deviceSections, menu } = useCallDeviceSettings([
   {
     kind: "videoinput",
     selectedId: cameraDeviceId,
     title: "Camera",
   },
 ]);
-
-watch(menu, async (isOpen) => {
-  if (!isOpen) return;
-  await refreshDevices();
-});
 </script>
 
 <template>

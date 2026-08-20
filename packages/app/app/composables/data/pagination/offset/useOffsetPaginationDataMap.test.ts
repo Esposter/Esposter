@@ -16,6 +16,7 @@ describe(useOffsetPaginationDataMap, () => {
   let getReadMoreItems: ReturnType<typeof useOffsetPaginationOperationData<string>>["getReadMoreItems"];
   let items: ReturnType<typeof useOffsetPaginationOperationData<string>>["items"];
   let readItems: ReturnType<typeof useOffsetPaginationOperationData<string>>["readItems"];
+  let readMoreItems: ReturnType<typeof useOffsetPaginationOperationData<string>>["readMoreItems"];
 
   const mountDataMap = async () => {
     wrapper = await mountSuspended(
@@ -23,7 +24,7 @@ describe(useOffsetPaginationDataMap, () => {
         render: () => h("div"),
         setup: () => {
           currentId = ref(key);
-          ({ getReadMoreItems, items, readItems } = useOffsetPaginationDataMap<string>(currentId));
+          ({ getReadMoreItems, items, readItems, readMoreItems } = useOffsetPaginationDataMap<string>(currentId));
         },
       }),
     );
@@ -76,6 +77,21 @@ describe(useOffsetPaginationDataMap, () => {
     currentId.value = key;
     await flushPromises();
 
+    expect(items.value).toStrictEqual([item]);
+  });
+
+  // The waypoint re-arms on completion and can fire again while the page it asked for is still in flight. Both
+  // Calls read the same length, so without single-flight they request the same offset and append it twice
+  test("appends one page when two reads overlap", async () => {
+    expect.hasAssertions();
+
+    await mountDataMap();
+    const page = new OffsetPaginationData<string>();
+    page.items = [item];
+    const query = vi.fn<(offset: number) => Promise<OffsetPaginationData<string>>>(() => Promise.resolve(page));
+    await Promise.all([readMoreItems(query), readMoreItems(query)]);
+
+    expect(query).toHaveBeenCalledTimes(1);
     expect(items.value).toStrictEqual([item]);
   });
 });

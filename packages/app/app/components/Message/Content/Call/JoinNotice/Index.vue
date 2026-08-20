@@ -20,11 +20,12 @@ const { joinNoticeParticipant } = storeToRefs(participantStore);
     <div flex gap-x-3 items-center>
       <StyledAvatar :image="joinNoticeParticipant.image" :name="joinNoticeParticipant.name" />
       <span font-medium text-body-medium>{{ joinNoticeParticipant.name }} joined the call</span>
-      <v-tooltip text="Close">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn :="tooltipProps" icon="mdi-close" size="small" variant="plain" @click="clearJoinNotice()" />
-        </template>
-      </v-tooltip>
+      <StyledTooltipIconButton
+        :button-props="{ size: 'small', variant: 'plain' }"
+        icon="mdi-close"
+        text="Close"
+        @click="clearJoinNotice()"
+      />
     </div>
   </StyledCard>
 </template>

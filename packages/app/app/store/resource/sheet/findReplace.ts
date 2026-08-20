@@ -14,7 +14,6 @@ export const useFindReplaceStore = defineStore("resource/sheet/findReplace", () 
       rowIndex,
     }));
   });
-
   // The occurrence list is a ring: stepping past either end lands on the other, so Enter keeps cycling
   const goToOccurrence = (delta: number) => {
     if (occurrences.value.length === 0) return;

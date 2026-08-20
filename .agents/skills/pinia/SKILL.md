@@ -1,6 +1,6 @@
 ---
 name: pinia
-description: Esposter Pinia store conventions — full store name, destructure with storeToRefs, store-to-store dot-access for refs (methods may be destructured), per-service dialog stores, blade-scoped store state torn down on unmount, never redirecting store functions through wrappers, selection state in the store, useDataMap vs a plain Map and keying every field of per-key state, tRPC mutation placement via useMutation with a required key and optimistic rollback, single-flight reads via isExclusive (never a promise map or a chained promise in a store), CRUD verbs and store* subscription handlers, CRUD update/delete mechanics and parameter naming, full tRPC input objects, minimal-input actions, reusing existing store maps, reactive Map mutations, markRaw for class instances, optimistic input clearing, session auth in stores, plus deep dives on keyed state and cursor pagination, worked mutation actions, and cross-surface state with hook registries. Apply when writing or reviewing any Pinia store, or deciding whether logic belongs in a store.
+description: Esposter Pinia store conventions — full store name, destructure with storeToRefs, store-to-store dot-access for refs (methods may be destructured), per-service dialog stores, blade-scoped store state torn down on unmount, never redirecting store functions through wrappers, selection state in the store, useDataMap vs a plain Map and keying every field of per-key state, tRPC mutation placement via useMutation with a required key, CRUD verbs and store* subscription handlers, CRUD update/delete mechanics and parameter naming, full tRPC input objects, minimal-input actions, reusing existing store maps, reactive Map mutations, optimistic input clearing, session auth in stores, plus deep dives on keyed state and cursor pagination, wiring a mutation action (instance placement, optimistic rollback, single-flight reads via isExclusive), class instances in reactive state, and cross-surface state with hook registries. Apply when writing or reviewing any Pinia store, or deciding whether logic belongs in a store.
 ---
 
 # Pinia Store Conventions
@@ -70,16 +70,7 @@ When a component tree has a "selected item" concept, the selected **id** is stor
 
 Do **not** create Pinia actions that only wrap a single `$trpc.xxx.mutate(...)` — components/composables call `$trpc` directly when the result is handled by subscriptions or no shared state update is needed. Add a store action only when it adds meaningful client logic: genuine optimistic state, navigation or local side effects tied to the result, shared state updates subscriptions don't cover, or coordination of multiple stores/requests/validation steps.
 
-A store action that mutates goes through `useMutation` (`composables/shared/useMutation.ts`):
-
-- **Declare every instance at the store root** — `const { executeMutation } = useMutation()`. Never inside an action (detached effect scope leak).
-- **One `useMutation()` instance per mutation**, via destructure renames (`executeCreateFooMutation`, plus `isPending: isCreateFooPending` / `getIsPending: getIsFooPending` when consumed), so one action's queue and pending state can't hold up another's. **Two mutations that end the same row share one instance instead**, named for the target — the rule and the test for which case you are in are in `packages/app/content/docs/architecture/async-operations.md` § A key queues only within one `useMutation()` instance.
-- **Never hand-roll the alert/rollback/pending wiring** — it surfaces errors via `createAlert` unless you pass `onError`, and runs writes to one `key` one at a time so two actions writing different fields of the same entity both land. Destructure `isPending` only where a control consumes it; the in-flight guard decision tree lives in `packages/app/content/docs/architecture/client-data.md` § In-flight guarding.
-- **`key` is required on every call** — like a Pinia store id, identity is always explicit, and same key means those writes queue.
-- **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure. The snapshot is taken **inside** the callback, and the rollback undoes **its own write, never the list** — both traps, and why, are in `references/mutation-actions.md`.
-- **`onSuccess`** is for server-generated results that can't be predicted client-side (a created entity with its id).
-- **A store never orders its own async work** — no promise chained onto the previous one, no `Map<id, Promise>` of in-flight reads, no generation counter or `isSaving` flag. That ordering lives in the primitive, keyed by target; a store that seems to need its own needs the right `key`. Protection applied by hand is protection that gets forgotten.
-- **A read that must not be issued twice at once passes `isExclusive: true` to `executeQuery`.** Concurrent callers **join** one request and all get the data — a read is never dropped, which would leave the joiner rendering an empty list. It joins only what is still in flight, so read-once semantics stay a separate cache flag the action checks first, and an invalidating re-read omits the opt-in so it cannot join the answer it just invalidated.
+A store action that mutates goes through `useMutation` (`composables/shared/useMutation.ts`), and **`key` is required on every call** — like a Pinia store id, identity is always explicit, and the same key queues those writes **within one `useMutation()` instance**: two instances do not serialize against each other however their keys are spelled. Everything else about wiring one — where the instance is declared, one instance per mutation versus two mutations sharing a row, `applyOptimistic` and its rollback, `onSuccess`, and why a store never orders its own async work — is `references/mutation-actions.md`.
 
 ## CRUD Conventions
 
@@ -103,11 +94,9 @@ When a store action receives entities already cached by another store, write the
 
 Vue 3 tracks `Map` mutations (`set`, `delete`, `clear`) on a `ref(new Map(...))` — mutate in place, no clone and reassign.
 
-## Storing Class Instances — `markRaw`
+## Storing Class Instances — `references/class-instances-in-state.md`
 
-Pinia state is **deep**, so a class instance pushed into a reactive array is recursively wrapped in a `Proxy`. Two things break: ECMAScript `#` field access (`this` is the Proxy, so the brand check throws `Cannot read private member #x …`), and devtools traversal, which reads every nested getter and crashes on a lazily-initialised one.
-
-Wrap class instances in `markRaw` at the single point they enter reactive state (`history.value.push(markRaw(command))`). The container stays reactive — its length and identity still drive computeds — and only the instance opts out, which is correct since command and controller instances hold no reactive state of their own. Prefer this to downgrading `#` fields to the TS `private` keyword: keep the strictest ECMAScript form and stop the proxying instead. `shallowRef` is not a substitute where the container relies on in-place `.push()`, which it does not track. Applies to any third-party instance holding a live graph (`vue-phaserjs` skill).
+Pinia state is deep, so a class instance entering reactive state is recursively proxied — which breaks ECMAScript `#` field access and devtools traversal. Wrap it in `markRaw` at the single point it enters (`history.value.push(markRaw(command))`); read the page before reaching for `shallowRef` or downgrading `#` to `private` instead.
 
 ## Optimistic Input Clearing on Submit
 
@@ -122,3 +111,4 @@ Never expose `sessionId` or any raw session identifier as a store state field. A
 - `references/keyed-state-and-pagination.md` — when a store keys state by an id, holds a list of entities, or paginates one.
 - `references/mutation-actions.md` — when writing a store action that calls a tRPC mutation, or picking its `key`.
 - `references/cross-surface-state.md` — when more than one mounted surface displays or mutates the same server-side singular state, or a mutation must fan out to another store.
+- `references/class-instances-in-state.md` — when a class or third-party instance is pushed into store state.

@@ -7,7 +7,7 @@ describe(getSearchableFilters, () => {
   const filter = { type: FilterType.Has, value: " " };
 
   // A chip added by typing its keyword has no value until a picker gives it one, and "" is not a value the
-  // Search input schema accepts — the search it would have been sent with is the one that used to fail
+  // Search input schema accepts — the search it would be sent with is the one the schema rejects
   test("drops a filter still waiting for its value", () => {
     expect.hasAssertions();
 

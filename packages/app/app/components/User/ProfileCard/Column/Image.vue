@@ -3,10 +3,8 @@ import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import type { FileFieldValue } from "@/models/vuetify/FileFieldValue";
 
-import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
-import { uploadFileToSas } from "@/services/file/uploadFileToSas";
 import { validateFile } from "@/services/file/validateFile";
-import { takeOne, withFinalizerAsync } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 
 export interface UserProfileCardColumnImageProps {
   editMode: boolean;
@@ -16,7 +14,7 @@ export interface UserProfileCardColumnImageProps {
 const modelValue = defineModel<Row<RowValueType.Image>["value"]>({ required: true });
 const { editMode, value } = defineProps<UserProfileCardColumnImageProps>();
 const { $trpc } = useNuxtApp();
-const isLoading = ref(false);
+const { isLoading, uploadImage } = useUploadImage(() => $trpc.user.generateProfileImageUploadUrl.mutate());
 const validateFileRule = (fileValue: FileFieldValue) => {
   if (!fileValue) return true;
 
@@ -55,20 +53,7 @@ const fileRules = [validateFileRule];
             const file = Array.isArray(files) ? takeOne(files) : files;
             if (!validateFile(file.size).isValid) return;
 
-            isLoading = true;
-            await withFinalizerAsync(
-              async () => {
-                const { publicUrl, sasUrl } = await $trpc.user.generateProfileImageUploadUrl.mutate();
-                await uploadFileToSas({
-                  files: [file],
-                  generateUploadFileSasEntities: getSingleFileSasEntities(sasUrl),
-                });
-                modelValue = publicUrl;
-              },
-              () => {
-                isLoading = false;
-              },
-            );
+            modelValue = await uploadImage(file);
           }
         "
       />

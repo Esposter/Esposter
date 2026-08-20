@@ -12,8 +12,6 @@ const { storeCreateMessage, storeDeleteMessage } = dataStore;
 const { items } = storeToRefs(dataStore);
 const messageDialogStore = useMessageDialogStore();
 const { deletingRowKey } = storeToRefs(messageDialogStore);
-// Resolved through the primitive rather than a computed of our own, so a target whose message has left the
-// Timeline is dropped with it instead of re-opening this dialog by itself when a later read brings it back
 const { isOpen, item: message } = useSingletonDialog(deletingRowKey, () =>
   items.value.find(({ rowKey }) => rowKey === deletingRowKey.value),
 );
@@ -24,8 +22,6 @@ const deleteMessage = async (onComplete: () => void) => {
   const { partitionKey, rowKey } = message.value;
   onComplete();
   await executeMutation(() => $trpc.message.deleteMessage.mutate({ partitionKey, rowKey }), {
-    // Resolved as the write is sent rather than at the click — the dialog has already closed and cleared its
-    // Target by then, so the row is read off the timeline instead of the dialog's own item
     applyOptimistic: async () => {
       const deletedMessage = items.value.find(
         getIsEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }),

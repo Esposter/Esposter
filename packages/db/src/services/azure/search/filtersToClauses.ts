@@ -1,6 +1,6 @@
 /* eslint-disable perfectionist/sort-switch-case */
 import type { SelectFields } from "@azure/search-documents";
-import type { Clause, Filter, MessageEntity } from "@esposter/db-schema";
+import type { Clause, Filter, MessageEntity, SerializableValue } from "@esposter/db-schema";
 
 import { ContentTypes } from "@/models/ContentType";
 import { getSearchNonNullClause } from "@/services/azure/search/getSearchNonNullClause";
@@ -34,6 +34,11 @@ const FilterTypeClauseMap = {
   [FilterType.From]: { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq },
   [FilterType.In]: { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq },
 } as const satisfies Partial<Record<FilterType, { key: string; operator: BinaryOperator }>>;
+
+// Every picker writes the shape its own filter type declares, so a value of another shape is a bug in the picker
+// Rather than something the user typed
+const getInvalidValueError = (value: SerializableValue) =>
+  new InvalidOperationError(Operation.Read, filtersToClauses.name, serializeValue(value));
 
 export const filtersToClauses = (
   filters: Filter[],
@@ -93,8 +98,8 @@ export const filtersToClauses = (
       }
       case FilterType.During: {
         for (const { value } of filtersByType) {
-          if (!(value instanceof Date))
-            throw new InvalidOperationError(Operation.Read, filtersToClauses.name, serializeValue(value));
+          if (!(value instanceof Date)) throw getInvalidValueError(value);
+
           const date = dayjs(value);
           clauses.push(
             {
@@ -113,8 +118,8 @@ export const filtersToClauses = (
       }
       case FilterType.Pinned: {
         for (const { value } of filtersByType) {
-          if (typeof value !== "boolean")
-            throw new InvalidOperationError(Operation.Read, filtersToClauses.name, serializeValue(value));
+          if (typeof value !== "boolean") throw getInvalidValueError(value);
+
           clauses.push({
             key: StandardMessageEntityPropertyNames.isPinned,
             operator: BinaryOperator.eq,

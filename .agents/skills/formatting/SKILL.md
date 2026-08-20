@@ -1,6 +1,6 @@
 ---
 name: formatting
-description: Esposter code formatting — blank-line placement around consts/returns/blocks, the test-file exception, and comment attachment/content rules (comment only exceptional behaviour, describe the present never the history, keep error-text quotes). Apply when writing or editing any file's whitespace or comments.
+description: Esposter code formatting — blank-line placement around consts/returns/blocks, the test-file exception, and comment attachment/content rules (comment only exceptional behaviour, describe the present never the history, never argue for the refactor that produced the code, keep error-text quotes, `/** */` only on an exported API surface). Apply when writing or editing any file's whitespace or comments.
 ---
 
 # Formatting
@@ -49,6 +49,8 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
     export const useThing = () => {};
     ```
 
+  - **This is a rule about statements inside a block.** Between two **top-level declarations** the blank line is the file's paragraph break and the comment attaches to the declaration below it — the two are doing different jobs, so both stay. Inside a function or a `<script setup>` body there is only one job to do, and the comment does it.
+
   - **Exception — `.test.ts`/`.test-d.ts` files**: do NOT strip these blank lines. Oxlint's `vitest` plugin enforces `vitest/padding-around-test-blocks`, which _requires_ a blank line around `describe`/`test` blocks. A leading comment on such a block sits after that mandatory blank line, so keep it. Blank lines around hooks and between expect groups are convention here rather than enforced — keep them for the same readability reason, but nothing fails if one is missing. Still tighten the comment text itself.
 
 - **CRITICAL — comment only _exceptional_ behaviour.** A comment earns its place only when it explains something a competent reader could not infer from the code, its names, or the project's own conventions. **Never restate an established pattern or anything already documented in a skill or feature doc.** The skill/doc is the single source of truth; duplicating it in a comment is noise that rots. Concretely, delete comments that:
@@ -72,6 +74,14 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 
   Two narrow exceptions survive because they still help the _current_ reader: (1) a comment quoting the **actual external error/warning text** a workaround addresses (it's how the next person greps the cause — see below); (2) a **regression guard** in a test may name the failure mode it defends against, phrased as a present hazard (`coupling both to one check flips this assertion`), not as a past state (`a regression to the old gate`).
 
+- **A comment explains the code, never the change that produced it.** "Stated once rather than left to drift",
+  "cached because it is read twice", "shared so a control added here reaches both" — these argue for a refactor
+  that has already happened, to a reader who is looking at the result and cannot see the alternative. They are
+  also the convention restated at the call site: reuse, work and identity are the `vue` skill's, deduplication is
+  `file-organization`'s, and a rule copied beside one of its instances is the copy that goes stale. Write what the
+  code does and the non-obvious constraint it is under; if the pass turned up a rule worth stating, state it in
+  the owning skill, where every future reader gets it instead of this one file's reader.
+- **`/** */` is for an exported API surface, `//` for everything else.** A doc block on an exported class, interface or helper is what an editor shows at the call site, which a `//` above the declaration is not; anything internal gets `//`. Its **content** obeys every rule above regardless — a doc block that restates the declaration's own name, or claims something typecheck already proves ("correctly implements the interface"), earns nothing and goes.
 - **Keep comments tight and generic** — explain the _why_ in general terms; don't bake in specific example values (versions, IDs, payloads, magic numbers). Prefer a single line, but keep a bulleted list (one item per `//` line) when enumerating distinct items rather than cramming them into one sentence. If an example helps, show only the minimal fragment. Applies to `//`, `/* */`, and Vue `<!-- -->` alike.
 - **Keep error/warning examples** — when a comment quotes the actual error or warning text a workaround addresses (e.g. `[Vue warn]: Invalid prop: type check failed`), keep that quote — it's how the next person greps for the cause. Trim it to the minimal identifying fragment; drop surrounding example values.
 - **Don't fight the comment-capitalization hook** — a hook capitalizes the first letter of every `//` line, so a wrapped sentence shows a mid-sentence capital on its continuation line. That's fine. Only avoid starting a wrapped line with a case-sensitive code identifier the hook would corrupt — reword those.

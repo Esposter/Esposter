@@ -1,4 +1,15 @@
 reviews:
+  # A repo hook capitalizes the first letter of every `//` line, so a comment wrapping onto a second line shows a
+  # mid-sentence capital there. It is mechanical and not authored, so flagging it spends findings on something no
+  # edit can fix — reword only where a wrapped line would start with a case-sensitive identifier.
+  path_instructions:
+    - path: "**/*.{ts,vue,js}"
+      instructions: |
+        Never report the capitalization of a `//` comment's continuation line, or a sentence that reads as broken
+        because its second line begins with a capital. A commit hook capitalizes the first letter of every `//`
+        line; the case is not authored and reverting it is undone on the next edit. Report the comment's content
+        when it is wrong, out of date, or contradicted by the code — never its casing.
+
   path_filters:
     - "!pnpm-lock.yaml"
     # auto-generated migrations

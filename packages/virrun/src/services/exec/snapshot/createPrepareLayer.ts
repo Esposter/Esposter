@@ -3,25 +3,15 @@ import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { PrepareLocation } from "@/models/exec/snapshot/PrepareLocation";
 import type { PrepareStep } from "@/models/virrun/PrepareStep";
 
-import {
-  VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
-  VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
-} from "@/services/exec/snapshot/constants";
-import { getProvisionFailureMessage } from "@/services/exec/snapshot/getProvisionFailureMessage";
+import { captureOverlayUpper } from "@/services/exec/snapshot/captureOverlayUpper";
 import { pruneToOutputs } from "@/services/exec/snapshot/pruneToOutputs";
-import { removeSnapshotDirectoryBestEffort } from "@/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
-import { getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
-import { existsSync, mkdirSync, mkdtempSync, renameSync } from "node:fs";
-import { join } from "node:path";
+import { InvalidOperationError, noop, Operation } from "@esposter/shared";
 // Captures a framework's generated artifacts into the source-keyed prepare layer. Forks the deps snapshot as a
-// Read-only lower (so `nuxt prepare` sees the sandbox's own Linux dep closure) with a persistent capture upper, runs
-// The prepare command, keeps only the declared `outputs` (pruneToOutputs — the inverse of pruneSnapshotUpper), then
-// Atomically publishes via a per-pid temp + rename, the same barrier createSnapshot uses: a concurrent reader never
-// Sees a half-built upper, and a capturer that loses the rename race keeps the published one. On any failure only
-// This invocation's temps are torn down. Requires the deps snapshot to exist (the caller provisions it first). The
-// Publish target is the caller's already-resolved `location`, not a re-resolve: the layer is published to the exact
+// Read-only lower (so `nuxt prepare` sees the sandbox's own Linux dep closure), keeps only the declared
+// `outputs` (pruneToOutputs — the inverse of pruneSnapshotUpper), and publishes through the same barrier
+// `createSnapshot` uses. Requires the deps snapshot to exist (the caller provisions it first). The publish
+// Target is the caller's already-resolved `location`, not a re-resolve: the layer is published to the exact
 // Path the caller will mount, so a source-hash shift between resolves can never leave the mounted upper unbuilt.
 export const createPrepareLayer = (
   backend: ExecBackend,
@@ -36,41 +26,16 @@ export const createPrepareLayer = (
       createPrepareLayer.name,
       "no captured deps snapshot to fork for the prepare layer; run createSnapshot first",
     );
-  // "" until created so the failure finalizer knows whether there is anything to tear down.
-  let captureUpperDir = "";
-  let captureWorkDir = "";
-  return getResultAsync(async () => {
-    mkdirSync(dir, { recursive: true });
-    captureUpperDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`)));
-    captureWorkDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`)));
-    const result = await backend.exec(prepareStep.command, {
-      ...options,
-      overlayLayers: { lowerDirs: [depsLocation.upperDir], upperDir: captureUpperDir, workDir: captureWorkDir },
-    });
-    if (result.exitCode !== 0)
-      throw new InvalidOperationError(
-        Operation.Create,
-        createPrepareLayer.name,
-        getProvisionFailureMessage("prepare command", result, options),
-      );
-    // This layer owns only the declared outputs; the deps snapshot below supplies the dep tree the prepare churned.
-    pruneToOutputs(captureUpperDir, prepareStep.outputs);
-    getResult(() => {
-      renameSync(captureUpperDir, upperDir);
-    }).match(
-      noop,
-      (error) => {
-        if (!existsSync(upperDir)) throw error;
-        removeSnapshotDirectoryBestEffort(captureUpperDir);
-      },
-    );
-    removeSnapshotDirectoryBestEffort(captureWorkDir);
-  }).match(
-    noop,
-    (error) => {
-      if (captureUpperDir) removeSnapshotDirectoryBestEffort(captureUpperDir);
-      if (captureWorkDir) removeSnapshotDirectoryBestEffort(captureWorkDir);
-      throw error;
+  // Not `async`: the guard above is a caller error rather than a failed capture, so it stays a synchronous throw
+  return captureOverlayUpper(backend, prepareStep.command, options, {
+    dir,
+    failureLabel: "prepare command",
+    lowerDirs: [depsLocation.upperDir],
+    operationName: createPrepareLayer.name,
+    // This layer owns only the declared outputs; the deps snapshot below supplies the dep tree the prepare churned
+    prune: (captureUpperDir) => {
+      pruneToOutputs(captureUpperDir, prepareStep.outputs);
     },
-  );
+    upperDir,
+  }).then(noop);
 };

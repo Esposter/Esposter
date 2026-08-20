@@ -3,7 +3,7 @@ import { useReadResourcesPage } from "@/composables/resource/list/useReadResourc
 // The caller's own Recycle bin: soft-deleted resources awaiting restore or purge
 export const useReadDeletedResources = () => {
   const { $trpc } = useNuxtApp();
-  const { count, error, isLoading, items, read, refresh } = useReadResourcesPage({
+  const { count, error, isPending, items, read, refresh } = useReadResourcesPage({
     // Nothing filters the bin, so neither query takes an input and the total is counted on the table's first
     // Read and reused from then on — a page or sort change never re-counts the whole partition, only a
     // Restore or a purge does
@@ -19,5 +19,5 @@ export const useReadDeletedResources = () => {
         })
       ).items,
   });
-  return { count, error, isLoading, items, readDeletedResources: read, refresh };
+  return { count, error, isPending, items, readDeletedResources: read, refresh };
 };

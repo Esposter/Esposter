@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
-import { uploadFileToSas } from "@/services/file/uploadFileToSas";
-import { withFinalizerAsync } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 interface EditRoomImageFieldProps {
@@ -16,7 +13,7 @@ const { name, roomId } = defineProps<EditRoomImageFieldProps>();
 const { $trpc } = useNuxtApp();
 const validateFile = useValidateFile();
 const input = useTemplateRef("input");
-const isLoading = ref(false);
+const { isLoading, uploadImage } = useUploadImage(() => $trpc.room.generateProfileImageUploadUrl.mutate({ roomId }));
 </script>
 
 <template>
@@ -67,21 +64,9 @@ const isLoading = ref(false);
 
                 if (!validateFile(file)) return;
 
-                isLoading = true;
-                await withFinalizerAsync(
-                  async () => {
-                    const { publicUrl, sasUrl } = await $trpc.room.generateProfileImageUploadUrl.mutate({ roomId });
-                    await uploadFileToSas({
-                      files: [file],
-                      generateUploadFileSasEntities: getSingleFileSasEntities(sasUrl),
-                    });
-                    modelValue = publicUrl;
-                  },
-                  () => {
-                    isLoading = false;
-                    if (input) input.value = '';
-                  },
-                );
+                modelValue = await uploadImage(file, () => {
+                  if (input) input.value = '';
+                });
               }
             "
           />

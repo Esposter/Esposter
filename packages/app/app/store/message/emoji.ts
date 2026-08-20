@@ -55,7 +55,6 @@ export const useEmojiStore = defineStore("message/emoji", () => {
           storeUpdateEmoji({ ...input, userIds: getUpdatedUserIds(currentEmoji.userIds, userId) });
         };
       },
-      // Keyed per emoji entity so concurrent operations on different emojis run independently instead of queueing behind each other
       key: input.rowKey,
     });
   };
@@ -71,9 +70,18 @@ export const useEmojiStore = defineStore("message/emoji", () => {
           if (deletedEmoji) storeCreateEmoji(deletedEmoji);
         };
       },
-      // Keyed per emoji entity so concurrent operations on different emojis run independently instead of queueing behind each other
       key: input.rowKey,
     });
+  };
+
+  // Reacting again removes this user's own reaction; the last one to leave takes the reaction itself with it
+  const toggleEmoji = async (emoji: MessageEmojiMetadataEntity) => {
+    if (!session.value.data) return;
+
+    const { messageRowKey, partitionKey, rowKey, userIds } = emoji;
+    if (userIds.length === 1 && userIds.includes(session.value.data.user.id))
+      await deleteEmoji({ messageRowKey, partitionKey, rowKey });
+    else await updateEmoji({ messageRowKey, partitionKey, rowKey, userIds });
   };
 
   const storeCreateEmoji = (newEmoji: MessageEmojiMetadataEntity) => {
@@ -107,6 +115,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     storeCreateEmoji,
     storeDeleteEmoji,
     storeUpdateEmoji,
+    toggleEmoji,
     updateEmoji,
   };
 });

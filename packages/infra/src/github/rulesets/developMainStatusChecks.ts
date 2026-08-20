@@ -9,10 +9,10 @@ const coverageShardCount = 8;
 // Straight to the base branch, but its updates must still land green. Bypass is granted per ruleset and
 // Never per rule, so the two cannot share one.
 // The sharded Coverage matrix is required shard by shard as well as through its `Merge Coverage` fan-in.
-// Coverage-merge used to be skipped by a failing shard, and GitHub scores a skipped required check as
-// Passing — which is how dependency updates merged with a red test suite. It now runs under `!cancelled()`
-// And fails on any failed dependency, so the fan-in is a real gate; the per-shard contexts stay as the
-// Belt to its braces, since they are what holds if that job is ever edited back into a skip.
+// GitHub scores a skipped required check as passing, so a fan-in job that a failing shard can skip is not a
+// Gate at all — it merges a red suite. Coverage-merge therefore runs under `!cancelled()` and fails on any
+// Failed dependency; the per-shard contexts stay as the belt to its braces, since they are what holds if that
+// Job is ever edited back into a skip.
 export const developMainStatusChecks: github.RepositoryRuleset = new github.RepositoryRuleset(
   "developMainStatusChecks",
   {

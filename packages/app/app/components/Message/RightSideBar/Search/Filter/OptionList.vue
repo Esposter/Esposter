@@ -18,7 +18,7 @@ const emit = defineEmits<{ select: [value: SerializableValue] }>();
           {{ label }}
         </v-list-item-title>
         <template #append>
-          <MessageRightSideBarSearchAddIcon :is-hovering="isHovering ?? false" />
+          <MessageRightSideBarSearchAddIcon :is-hovering />
         </template>
       </v-list-item>
     </v-hover>

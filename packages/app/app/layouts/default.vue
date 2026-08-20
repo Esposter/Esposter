@@ -87,7 +87,7 @@ defineExpose({ container: computed<HTMLElement>(() => container.value?.$el) });
     >
       <slot name="right" />
     </v-navigation-drawer>
-    <!-- Set max height here so we can hide global window scrollbar -->
+    <!-- The max height here is what keeps the global window scrollbar hidden -->
     <v-main ref="container" pt="[--app-bar-height]" :style="mergedMainStyle">
       <slot />
     </v-main>

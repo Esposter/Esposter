@@ -1,24 +1,17 @@
 import type { Context } from "@@/server/trpc/context";
 
-import { createId } from "#shared/util/math/random/createId";
 import { MAX_CALL_SESSION_ID_ATTEMPTS } from "@@/server/services/message/call/constants";
-import { CALL_ID_LENGTH, callSessionsInMessage, DatabaseEntityType } from "@esposter/db-schema";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { insertCallSessionId } from "@@/server/services/message/call/insertCallSessionId";
+import { DatabaseEntityType } from "@esposter/db-schema";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
+// No room to key on, so there is nothing to re-read on exhaustion the way the room creator does — a run of
+// Collisions this long is a broken generator rather than a race someone else won
 export const createStandaloneCallSessionId = async (db: Context["db"], userId: string): Promise<string> => {
   for (let attempt = 0; attempt < MAX_CALL_SESSION_ID_ATTEMPTS; attempt++) {
-    const id = createId(CALL_ID_LENGTH);
-    const result = await getResultAsync(() =>
-      db.insert(callSessionsInMessage).values({ id, userId }).returning(),
-    ).match(
-      (value) => value[0]?.id,
-      (error) => {
-        if (typeof error === "object" && error !== null && "code" in error && error.code === "23505") return undefined;
-        throw error;
-      },
-    );
-    if (result) return result;
+    const callSessionId = await insertCallSessionId(db, { userId });
+    if (callSessionId) return callSessionId;
   }
 
   throw new TRPCError({

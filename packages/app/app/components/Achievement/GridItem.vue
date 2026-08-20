@@ -12,6 +12,8 @@ interface GridItemProps {
 
 const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
 const displayName = computed(() => prettify(achievementDefinition.name));
+const amount = computed(() => userAchievement?.amount ?? 0);
+const targetAmount = computed(() => achievementDefinition.amount ?? 1);
 </script>
 
 <template>
@@ -34,13 +36,8 @@ const displayName = computed(() => prettify(achievementDefinition.name));
         </v-chip>
         <div text-orange font-bold text-body-small>{{ achievementDefinition.points }} points</div>
         <div flex flex-col gap-y-1 w-full>
-          <v-progress-linear
-            :model-value="((userAchievement?.amount ?? 0) / (achievementDefinition.amount ?? 1)) * 100"
-            :height="6"
-            color="primary"
-            rd
-          />
-          <div text-body-small>{{ userAchievement?.amount ?? 0 }} / {{ achievementDefinition.amount ?? 1 }}</div>
+          <v-progress-linear :model-value="(amount / targetAmount) * 100" :height="6" color="primary" rd />
+          <div text-body-small>{{ amount }} / {{ targetAmount }}</div>
         </div>
       </v-card-text>
     </StyledCard>

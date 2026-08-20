@@ -29,7 +29,7 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
 </script>
 
 <template>
-  <!-- We can assume that buildings will always be displayed in store section for better UX -->
+  <!-- The store column is the only place a building renders, so the menu can always open to its right -->
   <ClickerModelItemMenu
     :id="building.id"
     :type="ItemType.Building"

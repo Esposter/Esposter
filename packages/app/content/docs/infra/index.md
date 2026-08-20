@@ -17,7 +17,7 @@ description: Azure infrastructure managed as Pulumi code — one prod stack cove
 
 Deeper operational reference lives beside the code in `packages/infra/docs/` (naming conventions, security constraints, search indexes, stacks), and Pulumi coding conventions live in the `pulumi-infra` skill.
 
-## Shipped
+## Shipped log
 
 - **Pulumi adoption** — imported the manually-created Azure resources into Pulumi (one resource per file, `protect: true`).
 - **Posture review** — cost / security / network / identity review; recorded constraints and follow-ups. → [Cost & Security Posture](/docs/infra/cost-and-security-posture)

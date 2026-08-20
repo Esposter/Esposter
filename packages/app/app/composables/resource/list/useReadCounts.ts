@@ -2,7 +2,7 @@
 // Never overwrite the one the latest filter asked for, and a failure surfaces where the cards render rather
 // Than as a toast. Callers supply only the query.
 export const useReadCounts = <TCount>(description: string, query: () => Promise<TCount[]>) => {
-  const { executeQuery, isPending: isLoading } = useMutation();
+  const { executeQuery, isPending } = useMutation();
   const counts = ref<TCount[]>([]) as Ref<TCount[]>;
   const error = ref("");
   const key = Symbol(description);
@@ -18,5 +18,5 @@ export const useReadCounts = <TCount>(description: string, query: () => Promise<
       },
     });
   };
-  return { counts, error, isLoading, refresh };
+  return { counts, error, isPending, refresh };
 };

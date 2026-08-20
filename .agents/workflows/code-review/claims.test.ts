@@ -36,7 +36,8 @@ describe("code-review claims", () => {
     const claims = [createClaim(SINGLE_FLIGHT, ["cache/**/*.ts"])];
     const run = await runReview(AREA_ARGS, stubFor({ scope: { ...AREA_SCOPE, claims } }));
 
-    expect(run.result.stats).toMatchObject({ claimsChecked: 1, claimsInventoried: 1 });
+    expect(run.result.stats?.claimsChecked).toBe(1);
+    expect(run.result.stats?.claimsInventoried).toBe(1);
   });
 
   test("keeps a glob-prefixed claim on a capped run too", async () => {
@@ -47,7 +48,8 @@ describe("code-review claims", () => {
     const claims = [createClaim(SINGLE_FLIGHT, ["cache/**/*.ts"])];
     const run = await runReview(AREA_ARGS, stubFor({ scope: { ...AREA_SCOPE, claims, files: createAreaFiles(200) } }));
 
-    expect(run.result.stats).toMatchObject({ claimsChecked: 1, claimsInventoried: 1 });
+    expect(run.result.stats?.claimsChecked).toBe(1);
+    expect(run.result.stats?.claimsInventoried).toBe(1);
   });
 
   test("drops a claim whose files the cap removed, and says the cap did it", async () => {
@@ -57,7 +59,8 @@ describe("code-review claims", () => {
     const run = await runReview(AREA_ARGS, stubFor({ scope: { ...AREA_SCOPE, claims, files: createAreaFiles(200) } }));
 
     expect(run.logs).toContainEqual(expect.stringContaining("the file cap removed every file they describe"));
-    expect(run.result.stats).toMatchObject({ claimsChecked: 0, claimsInventoried: 1 });
+    expect(run.result.stats?.claimsChecked).toBe(0);
+    expect(run.result.stats?.claimsInventoried).toBe(1);
   });
 
   test("attaches a claim to its own seam and not to a sibling it merely prefixes", async () => {
@@ -107,7 +110,8 @@ describe("code-review claims", () => {
       options.label === "conformance" ? null : base(prompt, options),
     );
 
-    expect(run.result.stats).toMatchObject({ claimsChecked: 0, claimsInventoried: 1 });
+    expect(run.result.stats?.claimsChecked).toBe(0);
+    expect(run.result.stats?.claimsInventoried).toBe(1);
   });
 
   test("builds a conformance finder only when the record said something", async () => {
@@ -142,7 +146,8 @@ describe("code-review claims", () => {
     const claims = [createClaim(SINGLE_FLIGHT, ["cache/f199.ts"])];
     const run = await runReview(AREA_ARGS, stubFor({ scope: { ...AREA_SCOPE, claims, files: createAreaFiles(200) } }));
 
-    expect(run.result.stats).toMatchObject({ claimsChecked: 0, claimsInventoried: 1 });
+    expect(run.result.stats?.claimsChecked).toBe(0);
+    expect(run.result.stats?.claimsInventoried).toBe(1);
     expect(getPrompt(run, "coverage")).toContain(SINGLE_FLIGHT);
   });
 });

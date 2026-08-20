@@ -1,13 +1,14 @@
 ---
 name: styling
-description: Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for all static styles, class only for scoped CSS refs / dynamic bindings / third-party selectors, theme primitives and theme colours over bespoke values, the MD3 typography set and semantic opacity in place of a fixed text-gray, text-info links, hover:bg-hover over a hand-picked surface, state variants instead of scoped &:hover blocks, slash/fraction utilities in valued attributify, abbreviated utilities (op-, b-, rd-) with the explicit b-solid rule and the per-element b-0 a directional border needs, an equal w-/h- pair collapsing to size-, images as NuxtImg with width/height being optimizer attributes rather than styles and object-fit stated wherever both dimensions are constrained, named over numeric utilities, gap directionality, sentence-like rows staying in inline flow, the parent owning spacing (gap/padding over child margins), absolute positioning within a container, rem over px (Vuetify size/width/height props, :root tokens) with its narrow exceptions, and style-block rules, plus deep dives on page/panel/sidebar/region layout, border ownership and the banned global border reset, and arbitrary bracket values (calc, CSS variables, transitions, !important). Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border.
+description: Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for all static styles, class only for scoped CSS refs / dynamic bindings / third-party selectors, theme primitives and theme colours over bespoke values, the MD3 typography set and semantic opacity in place of a fixed text-gray, text-info links, hover:bg-hover over a hand-picked surface, state variants instead of scoped &:hover blocks, slash/fraction utilities in valued attributify, abbreviated utilities (op-, b-, rd-), an equal w-/h- pair collapsing to size-, named over numeric utilities, gap directionality, the parent owning spacing (gap/padding over child margins), absolute positioning within a container, rem over px with its narrow exceptions, and style-block rules — plus deep dives on page/panel/sidebar/region layout, border utilities and ownership including the banned global border reset, sentence-like rows in inline flow, images as NuxtImg, and arbitrary bracket values (calc, CSS variables, transitions, !important). Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border.
 ---
 
 # Styling — UnoCSS Attributify Mode (MANDATORY)
 
 ## Deep Dives
 
-- `references/layout.md` — when laying out a page, panel, sidebar or column split, sizing a region, deciding which component draws a shared border, or a border renders where none was asked for.
+- `references/layout.md` — when laying out a page, panel, sidebar or column split, sizing a region, drawing a border or finding one you did not ask for, or building a row that reads as one sentence.
+- `references/images.md` — when adding or sizing an image.
 - `references/arbitrary-values.md` — when a utility needs an arbitrary `[...]` value: `calc()`, a CSS variable, a transition, or `!important`.
 
 ## Core Rules
@@ -81,11 +82,7 @@ Always use the UnoCSS abbreviated shorthand forms — they are first-class utili
 - For negative values, put the double hyphen in the attribute name: `right--1`, `top--1`, `ml--2`. Do not write `right="-0.25rem"` or use `-right-1` in templates.
 - Use arbitrary values only when off-scale or computed (`references/arbitrary-values.md`).
 
-**Border (`b-` prefix)** — never the Vuetify `border="sm"` prop or `border-sm` class. The `b-{n}` number is the pixel width (`border-sm` → `b-1`, `md` → `b-2`, `lg` → `b-4`, `xl` → `b-8`), and every `border-*` form has a `b-*` counterpart (`b-none`, `b-0`, `b-solid`, `b-t-2`, `b-x-1`).
-
-- **`b-solid` is NOT applied automatically — always add it explicitly with any border-color utility**, and always as a static attribute so it still applies when the colour is dynamic: `<div b-solid b-1 :class="isError ? 'b-error' : 'b-border'">`. For theme-colour borders use `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, etc.
-- **A directional border declares its own zero: `b-0 b-b-1`, never a bare `b-b-1`.** `border-width`'s CSS initial value is `medium` (~3px), so an element carrying `b-solid` paints a 3px frame on every side it gives no explicit width — `b-t-1 b-solid` borders the other three too, reading as unexplained padding. `b-0` first, then the side; UnoCSS emits the shorthand ahead of the longhand, so the pair is order-safe. The same applies inside a `:class` conditional, where the whole set must carry it (`{ 'b-0 b-b-1 b-border b-solid': isBordered }`).
-- **Never reach for a global border reset to fix either of the above** — it erases every Vuetify input's outline, and the `border-style` variant of it borders half the component library. Both have been tried and reverted; `references/layout.md` has why, along with state-dependent border colours.
+**Border (`b-` prefix)** — never the Vuetify `border="sm"` prop or `border-sm` class, and `b-solid` is never applied automatically. Both that rule and the one a directional border needs (`b-0 b-b-1`, never a bare `b-b-1`) are `references/layout.md`, along with why a global border reset is not the fix.
 
 **Border-radius (`rd` prefix)** — never the Vuetify `rounded="sm"` prop or `rounded-sm` class: `rd` not `rounded`, `rd-t-2` not `rounded-t-2`, `rd-full` not `rounded-full`. Two mappings aren't a direct rename — Vuetify `rounded-xl` is `rd-3xl` (24px), and `rounded-circle` is `rd="50%"`.
 
@@ -93,14 +90,9 @@ Always use the UnoCSS abbreviated shorthand forms — they are first-class utili
 
 **Size (`size-` prefix)** — a `w-{n}` and an `h-{n}` on the same element with the **same** value collapse to one `size-{n}`: `size-8`, never `w-8 h-8`; `size-full`, never `w-full h-full`. The pair is only ever written out when the two values differ.
 
-## Images Are `<NuxtImg>`, Sized in CSS
+## Images Are `<NuxtImg>` — `references/images.md`
 
-`<v-img>` and raw `<img>` are both `vue/no-restricted-html-elements` errors — Vuetify's gates its render on an IntersectionObserver that exists only in the browser, so it renders on the server and not on hydration. Two things the lint rule cannot tell you:
-
-- **`width` / `height` are html attributes, not styles.** They take bare numbers, so a percentage or a rem is silently dropped. Under this app's `none` provider they resize nothing either — nothing transforms the source, and the pair is rendered straight onto the `<img>` to reserve its layout box. They only become optimizer inputs under a provider that actually transforms. Either way sizing is CSS utilities (`w-full`, `max-w-180`, `size-8`), and a computed dimension goes through `:style` on the wrapper.
-- **State `object-contain` / `object-cover` wherever both dimensions are constrained** — inside a `v-avatar`, at a `size-*`, or under a `size-full` class. A bare `<img>` defaults to `object-fit: fill` and stretches, where `v-img` defaulted to `contain`. Where only the width is set, the height follows the natural ratio and object-fit is a no-op worth leaving out.
-
-The provider is `none` (`configuration/image.ts`), so `NuxtImg` rewrites no urls — it is a plain `<img>` with Nuxt's component API. Turning the optimizer on is a deliberate change, not a default to assume.
+`<v-img>` and raw `<img>` are both `vue/no-restricted-html-elements` errors. Read the page when adding or sizing one: `width`/`height` are html attributes rather than styles, sizing is CSS utilities, and `object-contain`/`object-cover` is stated wherever both dimensions are constrained.
 
 ## Named Utilities Over Numeric
 
@@ -113,12 +105,6 @@ Prefer UnoCSS **named** utilities over numeric equivalents whenever a name exist
 ## Gap Directionality
 
 Use axis-specific gap utilities instead of omnidirectional `gap-{n}`: **`flex` (row)** → `gap-x-{n}`; **`flex-col`** → `gap-y-{n}`; **`grid` / 2D layouts** → `gap-{n}` (both axes intentional).
-
-## Sentence-Like Rows Stay Inline Flow
-
-A row that reads as one sentence (avatar + "Posted by" + name + timestamp, an inline label with an icon) must stay in **inline flow** — `space-x-{n}` on the container, `align-middle` on the avatar/icon. Do not use `flex`: every item becomes a shrinkable box, so narrow viewports break each one internally ("Posted / by", "4 minutes / ago" stacked in columns) instead of wrapping mid-sentence like prose.
-
-`flex` is for rows of independent boxes (toolbars, cards, controls) — there each item wrapping as a unit is what you want. `gap-x-*` has no effect in inline flow, which is why this is the one place `space-x-*` is the right utility.
 
 ## The Parent Owns Spacing
 

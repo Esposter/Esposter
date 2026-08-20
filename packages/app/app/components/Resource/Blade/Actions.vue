@@ -17,7 +17,7 @@ const { smAndDown } = useVDisplay();
 const navigationTrailStore = useNavigationTrailStore();
 const { closeTo } = storeToRefs(navigationTrailStore);
 const resourceStore = useResourceStore();
-const { isDuplicatePending, isLoading, isPublicationPending, publication } = storeToRefs(resourceStore);
+const { isDuplicatePending, isPending, isPublicationPending, publication } = storeToRefs(resourceStore);
 const { deleteResource, duplicateResource, publishResource, readResource, renameResource, unpublishResource } =
   resourceStore;
 const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
@@ -29,7 +29,7 @@ const { exportFormats, importFormats } = usePortableFormats(() => resource);
 // One command set rendered two ways — a labelled bar when there is room, the overflow menu when there is not.
 // Built once rather than written twice, so a label, an icon or a pending state cannot differ between them
 const commandItems = computed<Item[]>(() => [
-  { icon: "mdi-refresh", loading: isLoading.value, onClick: () => readResource(), title: "Refresh" },
+  { icon: "mdi-refresh", loading: isPending.value, onClick: () => readResource(), title: "Refresh" },
   {
     icon: "mdi-pencil",
     onClick: () => {

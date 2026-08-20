@@ -3,7 +3,7 @@ import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { useRecentStore } from "@/store/resource/recent";
 
 const recentStore = useRecentStore();
-const { error, isLoading, recents } = storeToRefs(recentStore);
+const { error, isPending, recents } = storeToRefs(recentStore);
 const { readRecents } = recentStore;
 // Fetched after mount (not awaited in setup) so the card shows its skeleton instead of blocking navigation
 const hasLoaded = ref(false);
@@ -22,7 +22,7 @@ onMounted(async () => {
   </v-alert>
   <ResourceHomeList
     v-else
-    :is-loading="isLoading || !hasLoaded"
+    :is-pending="isPending || !hasLoaded"
     :resources="recents"
     :source="ResourceListSource.Recents"
   />

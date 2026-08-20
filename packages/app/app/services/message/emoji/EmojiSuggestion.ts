@@ -1,4 +1,4 @@
-import type { EmojiItem } from "@/models/message/EmojiItem";
+import type { Emoji } from "@/models/message/emoji/Emoji";
 import type { SuggestionOptions } from "@tiptap/suggestion";
 import type { Except } from "type-fest";
 
@@ -11,18 +11,16 @@ import { PluginKey } from "@tiptap/pm/state";
 
 const EMOJI_SUGGESTION_MIN_QUERY_LENGTH = 2;
 
-export const EmojiSuggestion: Except<SuggestionOptions<EmojiItem, EmojiItem>, "editor"> = {
+export const EmojiSuggestion: Except<SuggestionOptions<Emoji, Emoji>, "editor"> = {
   char: SuggestionTrigger.Emoji,
-  command: ({ editor, props: emojiItem, range }) => {
-    editor.chain().focus().deleteRange(range).insertContent(emojiItem.emoji).run();
+  command: ({ editor, props: emoji, range }) => {
+    editor.chain().focus().deleteRange(range).insertContent(emoji.character).run();
   },
   // The same index and the same ranking the picker searches, so the two surfaces cannot disagree on what a
   // Query means — the shortcode is boosted hardest and an exact one is pinned, which is what a `:` query wants
   items: ({ query }) => {
     if (query.length < EMOJI_SUGGESTION_MIN_QUERY_LENGTH) return [];
-    return searchEmojis(query)
-      .slice(0, MAX_EMOJI_SUGGESTIONS)
-      .map(({ character, slug }) => ({ emoji: character, name: slug }));
+    return searchEmojis(query).slice(0, MAX_EMOJI_SUGGESTIONS);
   },
   pluginKey: new PluginKey("emojiSuggestion"),
   render: getRender(EmojiSuggestionList),

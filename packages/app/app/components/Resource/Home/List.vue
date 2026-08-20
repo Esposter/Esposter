@@ -5,16 +5,16 @@ import type { ResourceListSource } from "@/models/resource/list/ResourceListSour
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
 
 interface ResourceHomeListProps {
-  isLoading?: boolean;
+  isPending?: boolean;
   resources: ResourceListItem[];
   source: ResourceListSource;
 }
 
-const { isLoading, resources, source } = defineProps<ResourceHomeListProps>();
+const { isPending, resources, source } = defineProps<ResourceHomeListProps>();
 </script>
 
 <template>
-  <StyledSkeleton v-if="isLoading" type="list-item-two-line@5" />
+  <StyledSkeleton v-if="isPending" type="list-item-two-line@5" />
   <StyledEmptyState
     v-else-if="resources.length === 0"
     :="ResourceListSourceDefinitionMap[source].emptyState"

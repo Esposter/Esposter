@@ -76,7 +76,6 @@ export const useInputStore = defineStore("message/input", () => {
   // One watcher per composer rather than one over "whatever is being typed in": both are on screen at once, so
   // A single source would file the thread's reply under the room's key the moment the pane has focus
   const DRAFT_DEBOUNCE_MS = dayjs.duration(0.3, "seconds").asMilliseconds();
-
   // The target is one of the watched sources, so switching it inside the debounce window cancels the pending
   // Save and reschedules it against the composer the user moved to. The outgoing keystrokes are still in the
   // Map, so nothing looks wrong until a reload finds they were never persisted — flush them under their own key

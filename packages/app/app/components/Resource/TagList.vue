@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RoutePath } from "@esposter/shared";
 
-const { counts, error, isLoading, refresh } = useReadResourceTagCounts();
+const { counts, error, isPending, refresh } = useReadResourceTagCounts();
 // RouterLink resolves `to` by identity, so the routes are built with the rows rather than on every render
 const tagItems = computed(() =>
   counts.value.map(({ count, name }) => ({
@@ -19,7 +19,7 @@ onMounted(() => refresh());
      the list pre-filtered by that tag, which is where sorting, columns and bulk actions already live -->
 <template>
   <div flex flex-col h-full min-w-0 overflow-y-auto>
-    <StyledSkeleton v-if="isLoading" type="list-item@8" />
+    <StyledSkeleton v-if="isPending" type="list-item@8" />
     <StyledErrorState v-else-if="error" :error @retry="refresh()" />
     <StyledEmptyState
       v-else-if="counts.length === 0"

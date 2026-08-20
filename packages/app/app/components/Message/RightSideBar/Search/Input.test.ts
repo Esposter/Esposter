@@ -21,7 +21,7 @@ describe("messageRightSideBarSearchInput", () => {
 
   // The field as the user drives it, in the order the browser fires it: focus first, then the character. Vuetify
   // Clears its own search text on that focus transition, so a character arriving before the clear is handled is
-  // Exactly the case that used to reach the server as an empty query. The mount comes first because it resets the
+  // Exactly the case that reaches the server as an empty query. The mount comes first because it resets the
   // Route, and the store keys every field by the room in it
   const type = async (text: string) => {
     searchMessages = vi.fn<(input: z.input<typeof searchMessagesInputSchema>) => void>();

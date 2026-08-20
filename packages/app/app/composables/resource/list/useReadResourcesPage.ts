@@ -26,7 +26,7 @@ export const useReadResourcesPage = <TFilterInput>({
   readCount,
   readPage,
 }: ReadResourcesPageOptions<TFilterInput>) => {
-  const { executeQuery, isPending: isLoading } = useMutation();
+  const { executeQuery, isPending } = useMutation();
   const items = ref<ResourceListItem[]>([]);
   const count = ref(0);
   const error = ref("");
@@ -75,5 +75,5 @@ export const useReadResourcesPage = <TFilterInput>({
     countedFilterKey = undefined;
     return lastOptions ? read(lastOptions) : Promise.resolve();
   };
-  return { count, error, getLastSortBy: () => lastOptions?.sortBy ?? [], isLoading, items, read, refresh };
+  return { count, error, getLastSortBy: () => lastOptions?.sortBy ?? [], isPending, items, read, refresh };
 };

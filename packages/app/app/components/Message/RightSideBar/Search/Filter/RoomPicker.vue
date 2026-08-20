@@ -19,7 +19,7 @@ const { hasMore, rooms } = storeToRefs(roomStore);
         </template>
         <v-list-item-title>{{ room.name }}</v-list-item-title>
         <template #append>
-          <MessageRightSideBarSearchAddIcon :is-hovering="isHovering ?? false" />
+          <MessageRightSideBarSearchAddIcon :is-hovering />
         </template>
       </v-list-item>
     </v-hover>

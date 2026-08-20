@@ -12,7 +12,6 @@ export const usePurgeResource = (refresh: () => Promise<void>) => {
     await executePurgeMutation(() => $trpc.resource.purgeResource.mutate({ id: resource.id }), {
       // The resource can never come back, so a star it still holds must not survive in Home's Favorites list
       invalidates: [CacheTag.Resources],
-      // Keyed per resource so concurrent purges run independently instead of queueing behind each other
       key: resource.id,
       onError: createErrorNotification,
       onSuccess: async () => {

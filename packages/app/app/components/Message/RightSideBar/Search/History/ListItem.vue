@@ -29,7 +29,7 @@ const displayFilters = computed(() => searchHistory.filters.map((filter) => getF
     >
       <v-list-item-title>{{ displayFilters }} {{ searchHistory.query }}</v-list-item-title>
       <template #append>
-        <MessageRightSideBarSearchAddIcon :is-hovering="isHovering ?? false" />
+        <MessageRightSideBarSearchAddIcon :is-hovering />
       </template>
     </v-list-item>
   </v-hover>

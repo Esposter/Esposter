@@ -17,6 +17,24 @@ const knockerStore = useKnockerStore();
 const { admitKnocker, dismissKnocker } = knockerStore;
 const isAdmitting = ref(false);
 const isDismissing = ref(false);
+// The loading flag clears whichever way the call ends, so a failed admit does not leave its spinner running
+const getKnockerAction = (isRunning: Ref<boolean>, action: (callSessionId: string) => Promise<void>) => async () => {
+  const callSessionId = activeCallSessionId.value;
+  if (!callSessionId) return;
+  isRunning.value = true;
+  await withFinalizerAsync(
+    async () => {
+      await action(callSessionId);
+    },
+    () => {
+      isRunning.value = false;
+    },
+  );
+};
+// Bound here rather than in the template, where a ref is already unwrapped and the flag would arrive as a
+// Boolean the helper cannot set
+const admitCallKnocker = getKnockerAction(isAdmitting, (callSessionId) => admitKnocker(callSessionId, knocker.id));
+const dismissCallKnocker = getKnockerAction(isDismissing, (callSessionId) => dismissKnocker(callSessionId, knocker.id));
 const admitButtonProps = computed<VBtn["$props"]>(() => ({
   icon: "mdi-check",
   loading: isAdmitting.value,
@@ -36,46 +54,14 @@ const dismissButtonProps = computed<VBtn["$props"]>(() => ({
     <span font-medium flex-1 truncate text-body-medium>{{ knocker.name }} wants to join</span>
     <v-tooltip text="Let in">
       <template #activator="{ props: tooltipProps }">
-        <StyledButton
-          :="tooltipProps"
-          :button-props="admitButtonProps"
-          @click="
-            async () => {
-              const callSessionId = activeCallSessionId;
-              if (!callSessionId) return;
-              isAdmitting = true;
-              await withFinalizerAsync(
-                async () => {
-                  await admitKnocker(callSessionId, knocker.id);
-                },
-                () => {
-                  isAdmitting = false;
-                },
-              );
-            }
-          "
-        />
+        <StyledButton :="tooltipProps" :button-props="admitButtonProps" @click="admitCallKnocker" />
       </template>
     </v-tooltip>
     <StyledTooltipIconButton
       :button-props="dismissButtonProps"
       icon="mdi-close"
       text="Dismiss"
-      @click="
-        async () => {
-          const callSessionId = activeCallSessionId;
-          if (!callSessionId) return;
-          isDismissing = true;
-          await withFinalizerAsync(
-            async () => {
-              await dismissKnocker(callSessionId, knocker.id);
-            },
-            () => {
-              isDismissing = false;
-            },
-          );
-        }
-      "
+      @click="dismissCallKnocker"
     />
   </div>
 </template>

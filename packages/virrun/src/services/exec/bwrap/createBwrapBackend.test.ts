@@ -143,7 +143,7 @@ describe(createBwrapBackend, () => {
     expect.hasAssertions();
 
     // A single line longer than the marker holdback, split before its trailing newline so the first chunk carries
-    // No newline: the old byte-boundary flush would surface the leading fragment, while the line-aligned writer
+    // No newline: a byte-boundary flush would surface the leading fragment, while the line-aligned writer
     // Holds it until the second chunk completes the line. Sizing off the marker length keeps the "exceeds the
     // Holdback" intent self-documenting instead of a magic width.
     const line = `${TEST_FILENAME.repeat(WSL_BWRAP_STATUS_BEGIN.length)}\n`;

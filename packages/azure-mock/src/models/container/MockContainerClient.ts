@@ -50,8 +50,7 @@ import {
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 /**
- * An in-memory mock of the Azure ContainerClient.
- * It uses a Map to simulate blob storage.
+ * An in-memory mock of the Azure ContainerClient — no emulator and no network.
  *
  * @example
  * const mockContainerClient = new MockContainerClient("", "hello world");

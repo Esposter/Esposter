@@ -15,7 +15,7 @@ export const callSessionsInMessage = pgTable(
     id: text().primaryKey(),
     roomId: uuid().references(() => roomsInMessage.id, { onDelete: "cascade" }),
     // The thread this call belongs to, empty for the room's own call. A room can run both at once — a call in
-    // A thread is a call about that message, not the room's — so the room alone no longer identifies a session
+    // A thread is a call about that message, not the room's — so the room alone does not identify a session
     threadRootRowKey: text().notNull().default(""),
     userId: text()
       .notNull()

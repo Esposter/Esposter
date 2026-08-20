@@ -23,6 +23,7 @@ const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required
 const { editedItem, editForm, formId, isDirty, isEditFormValid, isSavable, name, originalItem, schema } =
   defineProps<HeaderProps<T>>();
 const errorIcon = useTemplateRef("errorIcon");
+const title = computed(() => `Configuration - ${prettify(editedItem.type)}`);
 const emit = defineEmits<{
   delete: [onComplete: (isSuccessful?: boolean) => void];
   save: [];
@@ -31,7 +32,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <v-toolbar flex-none :title="`Configuration - ${prettify(editedItem.type)}`">
+  <v-toolbar flex-none :title>
     <v-spacer />
     <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid :schema :edited-value="editedItem" />
     <slot name="prepend-actions" />

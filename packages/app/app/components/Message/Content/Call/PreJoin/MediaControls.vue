@@ -8,16 +8,13 @@ interface MediaControlsProps {
 
 const { isCameraEnabled, isMicrophoneEnabled } = defineProps<MediaControlsProps>();
 const emit = defineEmits<{ toggleCamera: []; toggleMicrophone: [] }>();
-const microphoneButtonProps = computed<VBtn["$props"]>(() => ({
-  color: isMicrophoneEnabled ? undefined : "error",
+const getMediaButtonProps = (isEnabled: boolean): VBtn["$props"] => ({
+  color: isEnabled ? undefined : "error",
   size: "large",
   variant: "tonal",
-}));
-const cameraButtonProps = computed<VBtn["$props"]>(() => ({
-  color: isCameraEnabled ? undefined : "error",
-  size: "large",
-  variant: "tonal",
-}));
+});
+const microphoneButtonProps = computed(() => getMediaButtonProps(isMicrophoneEnabled));
+const cameraButtonProps = computed(() => getMediaButtonProps(isCameraEnabled));
 </script>
 
 <template>

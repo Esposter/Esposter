@@ -1,6 +1,6 @@
 # Module Mocks (`vi.mock`, colocated doubles, msw-trpc)
 
-What deserves a double at all, how a module-level one is declared, where it lives, and which registration form to use.
+What deserves a double at all, how a module-level one is declared, where it lives, which registration form to use, and which cleanup hook it then needs.
 
 ## What to mock
 
@@ -96,3 +96,17 @@ Call `setupMswTrpc()` at `describe` scope (`@/services/trpc/mswTrpc.test`) and d
 ## `InvocationContext` logHandler
 
 Always a plain no-op: `new InvocationContext({ logHandler: () => {} })`. A bare `vi.fn()` does typecheck here — it is `any`-shaped, so it satisfies the `LogHandler` contract without ever being checked against it — but nothing asserts on the logs, so the spy buys nothing. Reach for `vi.fn<LogHandler>()` only when a test actually asserts what was logged.
+
+## Cleanup follows how the mock was created
+
+Getting this wrong is invisible until a call-count assertion reads a neighbour's calls, so the hook is chosen by creation style, never by habit.
+
+- **`vi.spyOn()` → `vi.restoreAllMocks()`** (default) — restores the original implementation AND clears recorded calls, so spies never leak.
+- **Module-level `vi.fn()` (colocated `vi.mock`) → `vi.clearAllMocks()`** — never a spy, so `restoreAllMocks` lets its call history **leak into the next test**. Required wherever `toHaveBeenCalled*` is asserted on one across tests; a file mixing both kinds needs both calls.
+- **Never `vi.resetAllMocks()` as routine cleanup** — it resets implementations to empty functions, erasing intentional `vi.mock` defaults.
+
+## Globals and environment variables
+
+- **Globals use `vi.stubGlobal`**, never `Object.defineProperty`; unstub with `vi.unstubAllGlobals()` in `afterEach` (per-test stubs) or `afterAll` (set once in `beforeAll`). `vi.restoreAllMocks()` does **not** undo a `stubGlobal`.
+- **`vi.stubEnv` needs no teardown** — `unstubEnvs: true` in `getVitestConfiguration` restores the env after every test, so never write an `unstubAllEnvs` hook. The globals flag stays off deliberately: it would restore a `beforeAll` `stubGlobal` after the file's first test.
+- **A test must never read a color/TTY env var it did not stub.** `isColorEnabled` consults `NO_COLOR`/`FORCE_COLOR`, so an ambient one from the dev's shell repaints CLI output; virrun's `vitest.config.ts` pins both empty for the package, and a test wanting color stubs `FORCE_COLOR` itself.

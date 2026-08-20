@@ -14,7 +14,6 @@ const userSettingsDialogStore = useUserSettingsDialogStore();
 const { activeSectionId, isDrawerOpen, isScrollingToSection, visibleSectionIds } = storeToRefs(userSettingsDialogStore);
 const onSelectType = (settingsType: UserSettingsType) => {
   modelValue.value = settingsType;
-  // Close the mobile drawer after a selection (no-op on desktop where the drawer is permanent)
   isDrawerOpen.value = false;
 };
 const goTo = useVGoTo();

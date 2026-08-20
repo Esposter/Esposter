@@ -42,7 +42,7 @@ const {
   updatedFilter,
 } = useResourceListFilters(defaultSortBy);
 const { debounced: search, input: searchInput } = useDebouncedFilter(searchQuery);
-const { count, createResourcesPageReader, error, isLoading, items, readResources, refresh } = useReadResources(
+const { count, createResourcesPageReader, error, isPending, items, readResources, refresh } = useReadResources(
   {
     searchQuery: search,
     status,
@@ -78,7 +78,7 @@ const isSummaryView = ref(false);
 const {
   counts: typeCounts,
   error: typeCountsError,
-  isLoading: isLoadingTypeCounts,
+  isPending: isTypeCountsPending,
   refresh: refreshTypeCounts,
 } = useReadResourceTypeCounts(() => filterValues.value);
 // The cards are only mounted in summary mode, so the read follows the mode rather than every filter change
@@ -151,7 +151,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       v-if="isSummaryView"
       :counts="typeCounts"
       :error="typeCountsError"
-      :is-loading="isLoadingTypeCounts"
+      :is-pending="isTypeCountsPending"
       @retry="refreshTypeCounts()"
       @select="
         (type) => {
@@ -174,7 +174,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       :items
       :items-length="count"
       :items-per-page-options="RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS"
-      :loading="isLoading"
+      :loading="isPending"
       :model-value="selectedIds"
       :page
       :search="filterKey"

@@ -83,8 +83,8 @@ const searchDocuments = (
 };
 
 /**
- * An in-memory mock of the Azure SearchClient.
- * It uses a Map to simulate the search index and applies the same OData filtering as the other mock clients.
+ * An in-memory mock of the Azure SearchClient — no emulator and no network. It applies the same OData filtering
+ * as the other mock clients, so a query behaves the same here as it does against the service.
  *
  * @example
  * const mockSearchClient = new MockSearchClient(SearchIndex.Messages);

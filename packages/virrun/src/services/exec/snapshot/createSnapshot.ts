@@ -2,24 +2,12 @@ import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { SnapshotCapture } from "@/models/exec/snapshot/SnapshotCapture";
 
-import {
-  VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
-  VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
-} from "@/services/exec/snapshot/constants";
-import { getProvisionFailureMessage } from "@/services/exec/snapshot/getProvisionFailureMessage";
+import { captureOverlayUpper } from "@/services/exec/snapshot/captureOverlayUpper";
 import { pruneSnapshotUpper } from "@/services/exec/snapshot/pruneSnapshotUpper";
-import { removeSnapshotDirectoryBestEffort } from "@/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
-import { getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
-import { existsSync, mkdirSync, mkdtempSync, renameSync } from "node:fs";
-import { join } from "node:path";
 // Captures warm post-install state into the snapshot's overlay upper (keyed by lockfile hash) instead of letting
-// `command`'s writes vanish in tmpfs (specs/snapshot-fork.md). Atomic publish: the install writes into a private
-// Per-invocation temp upper, then a single `renameSync` promotes it onto the final `upperDir` — the last thing to
-// Flip, so a concurrent reader (every fork/resolve reads `existsSync(upperDir)`) never sees a half-built upper, and
-// A capturer that loses the race renames onto a populated `upperDir`, fails, and keeps theirs. On any failure only
-// This invocation's temps are torn down. The capture result is returned so the cold-path fork need not re-run.
+// `command`'s writes vanish in tmpfs (specs/snapshot-fork.md). The capture-and-publish barrier is
+// `captureOverlayUpper`'s. The capture result is returned so the cold-path fork need not re-run.
 export const createSnapshot = (
   backend: ExecBackend,
   command: readonly string[] | string,
@@ -27,50 +15,16 @@ export const createSnapshot = (
 ): Promise<SnapshotCapture> => {
   const location = resolveSnapshotLocation(options.cwd);
   const { dir, upperDir } = location;
-  // "" until created so the failure finalizer knows whether there is anything to tear down (mkdtemp itself could throw).
-  let captureUpperDir = "";
-  let captureWorkDir = "";
-  return getResultAsync(async () => {
-    mkdirSync(dir, { recursive: true });
-    captureUpperDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`)));
-    captureWorkDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`)));
-    const result = await backend.exec(command, {
-      ...options,
-      overlayLayers: { upperDir: captureUpperDir, workDir: captureWorkDir },
-    });
-    if (result.exitCode !== 0)
-      throw new InvalidOperationError(
-        Operation.Create,
-        createSnapshot.name,
-        getProvisionFailureMessage("snapshot setup command", result, options),
-      );
+  // Not `async`, so a location that cannot be resolved throws where it is called rather than on the promise
+  return captureOverlayUpper(backend, command, options, {
+    dir,
+    failureLabel: "snapshot setup command",
+    operationName: createSnapshot.name,
     // The snapshot is keyed only on the lockfile, so it must freeze only what the lockfile determines: the
     // Dependency closure. Strip the source-derived artifacts the install's postinstall hooks wrote (e.g. .nuxt)
     // Before publishing, or a fork would serve a stale copy that shadows the host's fresh one once source moves
-    // On — instead the fork reads them from the host source tree stacked underneath as the `--overlay-src` lower.
-    // Prune the private temp upper, never the published one.
-    pruneSnapshotUpper(captureUpperDir);
-    // Rename-then-check (not check-then-rename) collapses the window where two capturers both saw `exists === false`.
-    // Probe the pre-resolved `upperDir`, not a re-resolve: the install may have rewritten the lockfile, re-hashing to
-    // A different key and checking the wrong address.
-    getResult(() => {
-      renameSync(captureUpperDir, upperDir);
-    }).match(
-      noop,
-      (error) => {
-        if (!existsSync(upperDir)) throw error;
-        removeSnapshotDirectoryBestEffort(captureUpperDir);
-      },
-    );
-    removeSnapshotDirectoryBestEffort(captureWorkDir);
-    return { location: { ...location, exists: true }, result };
-  }).match(
-    (value) => value,
-    (error) => {
-      // Tear down only this invocation's temps — a sibling capturer's published or in-flight layer must survive.
-      if (captureUpperDir) removeSnapshotDirectoryBestEffort(captureUpperDir);
-      if (captureWorkDir) removeSnapshotDirectoryBestEffort(captureWorkDir);
-      throw error;
-    },
-  );
+    // On — instead the fork reads them from the host source tree stacked underneath as the `--overlay-src` lower
+    prune: pruneSnapshotUpper,
+    upperDir,
+  }).then((result) => ({ location: { ...location, exists: true }, result }));
 };

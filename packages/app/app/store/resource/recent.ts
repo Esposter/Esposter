@@ -13,7 +13,7 @@ export const useRecentStore = defineStore("resource/recent", () => {
   const { $trpc } = useNuxtApp();
   const recents = ref<ResourceListItem[]>([]);
   const error = ref("");
-  const { isPending: isLoading, read: readRecents } = useCachedRead(
+  const { isPending, read: readRecents } = useCachedRead(
     () => {
       // Taken from the source registry rather than restated, so what Recent means is one edit everywhere
       const { filter, sortBy } = ResourceListSourceDefinitionMap[ResourceListSource.Recents];
@@ -35,5 +35,5 @@ export const useRecentStore = defineStore("resource/recent", () => {
       tags: [CacheTag.Recents, CacheTag.Resources],
     },
   );
-  return { error, isLoading, readRecents, recents };
+  return { error, isPending, readRecents, recents };
 });

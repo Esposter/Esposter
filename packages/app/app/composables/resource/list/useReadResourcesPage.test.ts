@@ -26,7 +26,7 @@ describe(useReadResourcesPage, () => {
     expect.hasAssertions();
 
     let resolveFirstPage: ((resources: ResourceListItem[]) => void) | undefined;
-    const { isLoading, items, read } = useReadResourcesPage(
+    const { isPending, items, read } = useReadResourcesPage(
       createOptions(
         () => Promise.resolve(0),
         ({ page }) =>
@@ -43,7 +43,7 @@ describe(useReadResourcesPage, () => {
     await firstRead;
 
     expect(items.value).toStrictEqual(secondPage);
-    expect(isLoading.value).toBe(false);
+    expect(isPending.value).toBe(false);
   });
 
   test("counts once for a page or sort change and re-counts when the filter changes", async () => {

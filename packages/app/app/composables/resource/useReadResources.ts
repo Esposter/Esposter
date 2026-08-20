@@ -36,7 +36,7 @@ export const useReadResources = (
     updatedFilter: updatedFilter.value,
   });
   const getFilterInput = () => getResourceFilterInput(getFilterValues());
-  const { count, error, getLastSortBy, isLoading, items, read, refresh } = useReadResourcesPage({
+  const { count, error, getLastSortBy, isPending, items, read, refresh } = useReadResourcesPage({
     getFilterInput,
     // The count depends on the filter alone, so the filter the user picked is exactly what it is keyed by
     getFilterKey: () => getResourceFilterKey(getFilterValues()),
@@ -58,5 +58,5 @@ export const useReadResources = (
     return ({ limit, offset }: { limit: number; offset: number }) =>
       $trpc.resource.readResources.query({ limit, offset, ...input });
   };
-  return { count, createResourcesPageReader, error, isLoading, items, readResources: read, refresh };
+  return { count, createResourcesPageReader, error, isPending, items, readResources: read, refresh };
 };

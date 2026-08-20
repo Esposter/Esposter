@@ -18,8 +18,7 @@ export const useReadSearchedMessages = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
   const { getBoundCount, getBoundPage, getReadMoreItems } = searchMessageStore;
-  const { isSearching, menu, searchQuery } = storeToRefs(searchMessageStore);
-  const { selectedFilters } = storeToRefs(searchMessageStore);
+  const { isSearching, menu, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
   const searchHistoryStore = useSearchHistoryStore();
   const { createSearchHistory } = searchHistoryStore;
   return getReadMoreItems(

@@ -9,7 +9,10 @@ interface CallDeviceDefinition {
   title: string;
 }
 
+// The menu is owned here because the device list is only worth enumerating while it is open — a device plugged
+// In with the menu shut has to appear the next time it opens
 export const useCallDeviceSettings = (definitions: CallDeviceDefinition[]) => {
+  const menu = ref(false);
   const deviceMap = ref(new Map<MediaDeviceKind, MediaDeviceInfo[]>());
   const deviceSections = computed<DeviceSection[]>(() =>
     definitions.map(({ kind, selectedId, title }) => ({
@@ -30,5 +33,10 @@ export const useCallDeviceSettings = (definitions: CallDeviceDefinition[]) => {
       for (const { devices: newDevices, kind } of devices) deviceMap.value.set(kind, newDevices);
     }).match(noop, console.error);
   };
-  return { deviceSections, refreshDevices };
+  watch(menu, async (newMenu) => {
+    if (!newMenu) return;
+    await refreshDevices();
+  });
+
+  return { deviceSections, menu };
 };

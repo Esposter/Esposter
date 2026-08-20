@@ -58,7 +58,8 @@ describe("code-review scope sizing", () => {
     const run = await runReview("high", stubFor({ scope: { changedLines: 120, files: ["a.ts"] } }));
 
     expect(run.logs).toContainEqual(expect.stringContaining("small territory (120 lines)"));
-    expect(run.result.stats).toMatchObject({ angles: 2, perAngle: 4 });
+    expect(run.result.stats?.angles).toBe(2);
+    expect(run.result.stats?.perAngle).toBe(4);
   });
 
   test.each([
@@ -69,7 +70,8 @@ describe("code-review scope sizing", () => {
 
     const run = await runReview("high", stubFor({ scope }));
 
-    expect(run.result.stats).toMatchObject({ angles: 3, perAngle: 6 });
+    expect(run.result.stats?.angles).toBe(3);
+    expect(run.result.stats?.perAngle).toBe(6);
   });
 
   test("derives every finder cap from the fan-out actually run", async () => {

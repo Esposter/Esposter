@@ -17,10 +17,10 @@ useResizeObserver(container, (entries) => {
   height.value = entry.target.clientHeight;
 });
 
-const { error, isLoading, refresh, truncation, visualPropsData } = useVisualPropsData(() => visual);
+const { error, isPending, refresh, truncation, visualPropsData } = useVisualPropsData(() => visual);
 const data = computed(() => visualPropsData.value ?? VisualTypeDemoDataMap[visual.type](visual.chart.type));
 const refreshButtonProps = computed(() => ({
-  loading: isLoading.value,
+  loading: isPending.value,
   size: "small" as const,
   variant: "text" as const,
 }));

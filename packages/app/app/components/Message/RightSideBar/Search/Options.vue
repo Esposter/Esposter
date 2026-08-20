@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { FilterTypePlaceholderMap } from "@/services/message/filter/FilterTypePlaceholderMap";
+import { getFilterKeyword } from "@/services/message/filter/getFilterKeyword";
 import { useSearchMessageStore } from "@/store/message/search";
 import { FilterTypes } from "@esposter/db-schema";
-import { uncapitalize } from "@esposter/shared";
 
 const searchMessageStore = useSearchMessageStore();
 const { createFilter } = searchMessageStore;
@@ -14,11 +14,11 @@ const { createFilter } = searchMessageStore;
     <v-hover v-for="filterType in FilterTypes" :key="filterType" #default="{ isHovering, props }">
       <v-list-item :="props" @click="createFilter(filterType)">
         <v-list-item-title font-bold>
-          {{ uncapitalize(filterType) }}:
+          {{ getFilterKeyword(filterType) }}
           <span font-semibold op-medium-emphasis>{{ FilterTypePlaceholderMap[filterType] }}</span>
         </v-list-item-title>
         <template #append>
-          <MessageRightSideBarSearchAddIcon :is-hovering="isHovering ?? false" />
+          <MessageRightSideBarSearchAddIcon :is-hovering />
         </template>
       </v-list-item>
     </v-hover>

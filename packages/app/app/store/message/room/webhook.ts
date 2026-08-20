@@ -60,7 +60,6 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   // Server-generated token — non-optimistic, applied in onSuccess
   const rotateToken = async (roomId: RoomInMessage["id"], input: Except<RotateTokenInput, "roomId">) => {
     await executeRotateTokenMutation(() => $trpc.webhook.rotateToken.mutate({ ...input, roomId }), {
-      // Keyed per webhook so concurrent operations on different webhooks run independently instead of queueing behind each other
       key: input.id,
       onSuccess: (updatedWebhook) => {
         storeUpdateWebhook(updatedWebhook);
@@ -81,7 +80,6 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
           items.value = items.value.toSpliced(Math.min(deletedIndex, items.value.length), 0, deletedWebhook);
         };
       },
-      // Keyed per webhook so concurrent operations on different webhooks run independently instead of queueing behind each other
       key: input.id,
     });
   };

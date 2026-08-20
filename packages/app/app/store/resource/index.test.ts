@@ -335,13 +335,13 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { isLoading, resource } = storeToRefs(resourceStore);
+    const { isPending, resource } = storeToRefs(resourceStore);
     const { readResource } = resourceStore;
     setRouteId("");
     await readResource();
 
     expect(readResourceQuery).not.toHaveBeenCalled();
     expect(resource.value).toBeUndefined();
-    expect(isLoading.value).toBe(false);
+    expect(isPending.value).toBe(false);
   });
 });

@@ -68,3 +68,7 @@ Not only callbacks passed as arguments:
 
 - **`@click` shorthand** — a single async call uses `@click="myAsyncFn(args)"` directly; no `async () => { await ... }` wrapper.
 - **IME composition guard** — on `@keydown.enter` for text inputs, guard inline so confirming a CJK candidate doesn't commit: `@keydown.enter.stop="!$event.isComposing && commitEdit()"`.
+
+## `useEventListener` is what makes a listener inlineable
+
+**Prefer `useEventListener` over manual `addEventListener`/`removeEventListener`** — it auto-removes on unmount, replacing an `onMounted`/`onUnmounted` pair and letting the handler be inlined. Omit the target for `window` events (`useEventListener("resize", ...)`) — the omitted-target form is SSR-safe (don't reference `window` at setup top-level). Fall back to manual hooks only when the target isn't reachable SSR-safely as a getter and the listener is genuinely tied to mount.

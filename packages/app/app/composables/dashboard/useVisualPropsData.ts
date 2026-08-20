@@ -6,7 +6,7 @@ import { getDatasetTruncation } from "@/services/dataset/getDatasetTruncation";
 
 export const useVisualPropsData = (visual: MaybeRefOrGetter<Visual>) => {
   // A published snapshot is baked into the binding, so only unsnapshotted bindings resolve their reference
-  const { dataset, error, isLoading, refresh } = useDataset(() => {
+  const { dataset, error, isPending, refresh } = useDataset(() => {
     const binding = toValue(visual).dataset;
     return binding && !binding.snapshot ? binding.reference : undefined;
   });
@@ -23,5 +23,5 @@ export const useVisualPropsData = (visual: MaybeRefOrGetter<Visual>) => {
   });
   // A snapshot froze whatever the read gave it, so a published visual reports the same truncation as a live one
   const truncation = computed(() => (resolvedDataset.value ? getDatasetTruncation(resolvedDataset.value) : undefined));
-  return { error, isLoading, refresh, truncation, visualPropsData };
+  return { error, isPending, refresh, truncation, visualPropsData };
 };

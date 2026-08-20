@@ -131,7 +131,8 @@ export const useDataStore = defineStore("message/data", () => {
           if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
         };
       },
-      // Keyed per message so edits to different messages through this shared executor run independently instead of queueing behind each other
+      // `deleteFile` writes through this same executor, so the key is what stops an edit queueing behind an
+      // Unrelated attachment removal
       key: input.rowKey,
     });
   };

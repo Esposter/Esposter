@@ -9,14 +9,17 @@ const backgroundColor = computed(() => (disabled ? "transparent" : "currentColor
 </script>
 
 <template>
-  <v-tooltip text="Send (Enter)">
-    <template #activator="{ props: tooltipProps }">
-      <v-btn icon="mdi-send" size="small" :disabled :="tooltipProps" @click="emit('click')" />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    icon="mdi-send"
+    text="Send (Enter)"
+    :button-props="{ disabled, size: 'small' }"
+    @click="emit('click')"
+  />
 </template>
 
 <style scoped>
+/* The button is disabled while the composer has nothing to send, and Vuetify's disabled overlay is what would
+   otherwise grey the icon out — the send affordance reads as absent rather than as unavailable */
 :deep(.v-btn__overlay) {
   background-color: v-bind(backgroundColor);
 }

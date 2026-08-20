@@ -159,7 +159,6 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
       return token ? [{ filename, id, token }] : [];
     });
     if (deletedFiles.length === 0) return;
-
     // The blobs are the room's wherever they were attached, so the write names the room rather than the composer
     await getResultAsync(() =>
       $trpc.message.deleteUploadFiles.mutate({ files: deletedFiles, roomId: target.roomId }),

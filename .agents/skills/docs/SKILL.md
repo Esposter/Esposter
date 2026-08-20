@@ -7,14 +7,14 @@ description: Esposter documentation conventions for packages/app/content/docs (t
 
 All documentation lives in `packages/app/content/docs/` and is rendered in the app at `/docs` by @nuxt/content. That tree is the single source of truth, kept updated as code changes — never start a parallel docs tree elsewhere in the repo. (Within it, `architecture/` is a real and mandated folder.)
 
-**Docs are public.** They ship with the app and are readable on the deployed site, which is the point: a page nobody can open is a page nobody reads. So anything explanatory goes here rather than into `.agents/`, which holds only what a machine consumes — the boundary is settled in `/docs/architecture/agent-configuration`.
+**Docs are public.** They ship with the app and are readable on the deployed site, which is the point: a page nobody can open is a page nobody reads. So anything explanatory goes here rather than into `.agents/`, which holds only what a machine consumes — the boundary is settled in `packages/app/content/docs/architecture/agent-configuration.md`.
 
 ## The one status rule
 
 **Where a page lives states whether it is built.** Never mix built and unbuilt in one page.
 
 - `docs/<area>/` and `docs/architecture/` describe **only what exists in code today**. If you can't point at the file that implements a sentence, the sentence doesn't belong here.
-- `docs/proposals/<area>/` holds designs **not yet implemented**. When one ships, rewrite it as an area feature page (present tense, as-built) and delete the proposal. **Exception — one-time changes** (renames, migrations, mechanical sweeps): these have no as-built feature to describe, so when done just delete the proposal and its roadmap item and sweep every reference — never convert them into a docs page; the shipped log line in the area `index.md` is the only trace.
+- `docs/proposals/<area>/` holds designs **not yet implemented**. When one ships, rewrite it as an area feature page (present tense, as-built) and delete the proposal. **Exception — one-time changes** (renames, migrations, mechanical sweeps): these have no as-built feature to describe, so when done just delete the proposal and its roadmap item and sweep every reference — never convert them into a docs page; the shipped log line in the area `index.md` is the only trace. That log is **one line per program of work, not per change** — a paragraph restating a feature page listed above it on the same index is the index restating its own contents, and what belongs at that level is the standing fact no single page holds (what the whole program cost, what it did not add).
 - `docs/<area>/deferred/` holds ideas we chose **not to build yet** (one page per idea, each with a revisit trigger); `docs/<area>/rejected/` holds ideas we decided **against** (one page per idea). Folder names are deliberately direct — never a vague umbrella like `decisions/` or `misc/`.
 - `docs/<area>/roadmap.md` holds **open work** (checkbox backlog). Check `deferred/` and `rejected/` before adding a roadmap item or proposal — never re-argue a decided idea.
 

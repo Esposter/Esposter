@@ -8,5 +8,5 @@ export const getRoleMemberIds = async (db: Database, roomId: string, roleIds: st
     .select({ userId: usersToRoomRolesInMessage.userId })
     .from(usersToRoomRolesInMessage)
     .where(and(eq(usersToRoomRolesInMessage.roomId, roomId), inArray(usersToRoomRolesInMessage.roleId, roleIds)));
-  return [...new Set(members.map((m) => m.userId))];
+  return [...new Set(members.map((member) => member.userId))];
 };

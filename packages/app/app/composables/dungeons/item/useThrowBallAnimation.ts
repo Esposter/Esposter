@@ -57,7 +57,6 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, captureResu
         yoyo: true,
       });
     });
-
   // The enemy fades out as it is caught, and back in when the ball fails to hold it
   const playEnemyFadeAnimation = (fromAlpha: number, toAlpha: number) =>
     new Promise<void>((resolve) => {
