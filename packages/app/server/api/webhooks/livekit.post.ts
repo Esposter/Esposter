@@ -1,6 +1,7 @@
 import { db } from "@@/server/db";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { createCallParticipant } from "@@/server/services/message/call/createCallParticipant";
+import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { leaveCallAsParticipant } from "@@/server/services/message/call/leaveCallAsParticipant";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { getResultAsync } from "@esposter/shared";
@@ -36,15 +37,7 @@ export default defineEventHandler(async (event) => {
       });
       if (!session) return { ok: true };
 
-      const callParticipant = {
-        id: session.id,
-        image: session.users.image,
-        isCameraEnabled: false,
-        isHandRaised: false,
-        isMuted: false,
-        name: session.users.name,
-        userId: session.userId,
-      };
+      const callParticipant = createParticipant(session, session.users);
       createCallParticipant(callSessionId, callParticipant);
       callEventEmitter.emit("joinCall", { callSessionId, participant: callParticipant, sessionId });
       return { ok: true };
