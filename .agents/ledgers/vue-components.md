@@ -23,29 +23,34 @@ Both directions are in scope: extract what earns a computed, inline what does no
 leave what holds one. The simplification sweeps ran the _opposite_ direction on granularity — collapsing
 duplicate components into shared primitives — so a tree dated there says nothing about this ledger.
 
+**Neither rule is satisfied by relocation.** A pass that lifts a long literal into `services/` or wraps a cheap
+expression in a `computed` has moved code without buying anything, and both rules exist to decide whether the far
+side pays for the move — a second caller, a loop, a cached evaluation, a type the inline form cannot carry. This
+is the finding the pass produces most often against itself, which is why it is stated here as well as in the
+owning skill.
+
 Behaviour-preserving, except that restoring a stable `:rules` reference stops a Vuetify field re-validating
 every render. That is a fix, not a regression.
 
-Every row resets when a rule joins this table. Granularity and computed extraction each last ran across every
-unit on 2026-08-15/16, before the emoji picker landed.
+Every row resets when a rule joins this table.
 
-| Unit                                                                                       | Swept | Notes                                                                     |
-| ------------------------------------------------------------------------------------------ | ----- | ------------------------------------------------------------------------- |
-| `pages/` + `layouts/`                                                                      |       | The page-decomposition rule: a page holding no element's state            |
-| `Message/Model/Message`                                                                    |       | Gained the reaction hover card and Reactions dialog                       |
-| `Message/Model/Room`                                                                       |       |                                                                           |
-| `Message/Model/User`                                                                       |       |                                                                           |
-| `Message/Content/Call`                                                                     |       |                                                                           |
-| `Message` — the rest                                                                       |       |                                                                           |
-| `Resource/Sheet`                                                                           |       |                                                                           |
-| `Resource` — the rest                                                                      |       |                                                                           |
-| `Styled` + `App`                                                                           |       | Primitives; `Styled/EmojiPicker` was written under both rules             |
-| `Dungeons`                                                                                 |       | Grid-engine wrappers: shape is the engine's, same ground as the exclusion |
-| `Clicker`                                                                                  |       | Already config-array driven                                               |
-| `Post`                                                                                     |       |                                                                           |
-| `User`, `Achievement`, `Docs`, `Dashboard`, `Dataset`, `FlowchartEditor`, `RichTextEditor` |       |                                                                           |
-| `Visual`, `Anime`, `About`, `Login`, `Nuxt`, `Transition`, `Fragment.vue`                  |       | Canvas/animation effects — one concern each                               |
-| `app/composables`, `app/store`                                                             |       | Computed rule only; a returned computed is the surface, not a find        |
+| Unit                                                                                       | Swept      | Notes                                                                                                                                                |
+| ------------------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pages/` + `layouts/`                                                                      | 2026-08-20 | The page-decomposition rule: a page holding no element's state; a bound configuration literal is not a constant to relocate (`vue-page-composition`) |
+| `Message/Model/Message`                                                                    | 2026-08-20 | Gained the reaction hover card and Reactions dialog                                                                                                  |
+| `Message/Model/Room`                                                                       | 2026-08-20 |                                                                                                                                                      |
+| `Message/Model/User`                                                                       | 2026-08-20 |                                                                                                                                                      |
+| `Message/Content/Call`                                                                     | 2026-08-20 |                                                                                                                                                      |
+| `Message` — the rest                                                                       | 2026-08-20 |                                                                                                                                                      |
+| `Resource/Sheet`                                                                           | 2026-08-20 |                                                                                                                                                      |
+| `Resource` — the rest                                                                      | 2026-08-20 |                                                                                                                                                      |
+| `Styled` + `App`                                                                           | 2026-08-20 | Primitives; produced the same-dependency-set carve-out (`vue`, `references/computed-extraction.md`)                                                  |
+| `Dungeons`                                                                                 | 2026-08-20 | Grid-engine wrappers: shape is the engine's, same ground as the exclusion                                                                            |
+| `Clicker`                                                                                  | 2026-08-20 | Already config-array driven                                                                                                                          |
+| `Post`                                                                                     | 2026-08-20 |                                                                                                                                                      |
+| `User`, `Achievement`, `Docs`, `Dashboard`, `Dataset`, `FlowchartEditor`, `RichTextEditor` | 2026-08-20 |                                                                                                                                                      |
+| `Visual`, `Anime`, `About`, `Login`, `Nuxt`, `Transition`, `Fragment.vue`                  | 2026-08-20 | Canvas/animation effects — one concern each                                                                                                          |
+| `app/composables`, `app/store`                                                             | 2026-08-20 | Computed rule only; a returned computed is the surface, not a find                                                                                   |
 
 ## Find recipe — granularity
 
