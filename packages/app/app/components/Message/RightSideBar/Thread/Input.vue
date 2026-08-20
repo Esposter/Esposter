@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { useThreadStore } from "@/store/message/thread";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
@@ -7,21 +6,14 @@ import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 const threadStore = useThreadStore();
 const { activeRoomId, activeRootRowKey } = storeToRefs(threadStore);
 const target = computed(() => ({ roomId: activeRoomId.value, threadRootRowKey: activeRootRowKey.value }));
-const dataStore = useDataStore();
-const { sendMessage } = dataStore;
-const keyboardExtension = await useKeyboardShortcutsExtension((editor) => sendMessage(editor, target.value));
-const codeBlockExtension = useCodeBlockExtension();
-const emojiExtension = useEmojiExtension();
-const mentionExtension = useMentionExtension();
+const { extensions, sendMessage, uploadFiles, validateInput } = await useComposer(target);
 const inputStore = useInputStore();
 const { threadInput, threadTarget } = storeToRefs(inputStore);
-const { validateInput } = inputStore;
 // The composer tells the input store which thread it is on, rather than the store reading it back out of the
 // Thread store: that direction would put the drawer's own state behind every draft this store writes
 watchImmediate(target, (newTarget) => {
   threadTarget.value = newTarget;
 });
-const uploadFiles = useUploadFiles(target);
 </script>
 
 <!-- The pane's own composer: the same rich text, mentions, emoji and attachments as the room's, sending with
@@ -34,7 +26,7 @@ const uploadFiles = useUploadFiles(target);
       v-model="threadInput"
       :limit="MESSAGE_MAX_LENGTH"
       placeholder="Reply..."
-      :extensions="[keyboardExtension, codeBlockExtension, emojiExtension, mentionExtension]"
+      :extensions
       @paste="(_editor, files) => uploadFiles(files)"
     >
       <template #prepend-inner-header>

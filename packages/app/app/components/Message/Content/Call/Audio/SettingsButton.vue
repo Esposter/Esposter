@@ -6,8 +6,7 @@ const liveKitStore = useLiveKitStore();
 const { setActiveDevice } = liveKitStore;
 const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
 const { inputDeviceId, outputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
-const menu = ref(false);
-const { deviceSections: audioDeviceSections, refreshDevices } = useCallDeviceSettings([
+const { deviceSections, menu } = useCallDeviceSettings([
   {
     kind: "audioinput",
     selectedId: inputDeviceId,
@@ -19,11 +18,6 @@ const { deviceSections: audioDeviceSections, refreshDevices } = useCallDeviceSet
     title: "Speakers",
   },
 ]);
-
-watch(menu, async (isOpen) => {
-  if (!isOpen) return;
-  await refreshDevices();
-});
 </script>
 
 <template>
@@ -35,7 +29,7 @@ watch(menu, async (isOpen) => {
     text="Audio Settings"
   >
     <StyledCard py-2 min-w-72>
-      <MessageContentCallDeviceSectionList :sections="audioDeviceSections" @select="setActiveDevice" />
+      <MessageContentCallDeviceSectionList :sections="deviceSections" @select="setActiveDevice" />
     </StyledCard>
   </StyledTooltipMenuIconButton>
 </template>

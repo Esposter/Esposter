@@ -21,12 +21,7 @@ const roomParticipantMap = useCallRoomParticipantMap();
         :is-speaking="speakingIds.includes(participant.id)"
       />
     </div>
-    <MessageContentCallAudioControlGroup />
-    <MessageContentCallVideoControlGroup />
-    <MessageContentCallAudioDeafenButton />
-    <MessageContentCallScreenShareButton />
-    <MessageContentCallControlHandButton />
-    <MessageContentCallControlHealthButton />
+    <MessageContentCallControlGroup />
     <MessageContentCallControlLeaveButton />
     <StyledTooltipIconButton
       :button-props="{ ripple: false, size: 'x-small', variant: 'text' }"

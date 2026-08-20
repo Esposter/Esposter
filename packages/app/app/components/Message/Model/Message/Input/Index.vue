@@ -15,21 +15,16 @@ const roomName = useRoomName(currentRoomId);
 const target = computed(() => ({ roomId: currentRoomId.value, threadRootRowKey: "" }));
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
-const { sendMessage } = dataStore;
-const keyboardExtension = await useKeyboardShortcutsExtension((editor) => sendMessage(editor, target.value));
-const codeBlockExtension = useCodeBlockExtension();
-const emojiExtension = useEmojiExtension();
-const mentionExtension = useMentionExtension();
+const { extensions, sendMessage, uploadFiles, validateInput } = await useComposer(target);
+// Slash commands are the room composer's alone, so they ride on top of the shared stack rather than in it
 const slashCommandExtension = useSlashCommandExtension();
 const inputStore = useInputStore();
 const { input } = storeToRefs(inputStore);
-const { validateInput } = inputStore;
 const replyStore = useReplyStore();
 const { rowKey } = storeToRefs(replyStore);
 const replyToMessage = computed(() =>
   rowKey.value ? items.value.find(({ rowKey: messageRowKey }) => messageRowKey === rowKey.value) : undefined,
 );
-const uploadFiles = useUploadFiles(target);
 const slashCommandStore = useSlashCommandStore();
 const { pendingSlashCommand } = storeToRefs(slashCommandStore);
 const keyboardShortcutsDialogStore = useKeyboardShortcutsDialogStore();
@@ -62,7 +57,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
       autofocus="end"
       :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"
-      :extensions="[keyboardExtension, codeBlockExtension, emojiExtension, mentionExtension, slashCommandExtension]"
+      :extensions="[...extensions, slashCommandExtension]"
       :card-props="replyToMessage ? { class: 'rd-t-none' } : undefined"
       @paste="(_editor, files) => uploadFiles(files)"
     >

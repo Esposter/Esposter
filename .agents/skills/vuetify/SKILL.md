@@ -102,4 +102,4 @@ The goal is always attributify: prefer inline UnoCSS utilities and delete the st
 - `references/nested-activators.md` — when one control activates two or more overlays and no primitive covers the stack.
 - `references/button-backgrounds.md` — when a button's fill is not what you expected, or a container has turned it transparent.
 - `references/router-driven-highlighting.md` — when binding `to` on a button or tab, or the wrong tab is lit.
-- `references/styled-primitives.md` — when building a keyboard-navigable list, or rendering a user's avatar.
+- `references/styled-primitives.md` — when building a keyboard-navigable list, rendering a user's avatar, or reaching for a shared wrapper around a tooltip and a text button.
