@@ -3,9 +3,9 @@ title: Pulumi source of truth
 description: The Function Apps' runtime app settings are managed in Pulumi rather than set by hand in the portal.
 ---
 
-# Pulumi As Full Source Of Truth
+# Pulumi source of truth
 
-The Function Apps are Pulumi-managed resources, but their runtime app settings were once configured by hand in the portal during earlier migrations — the last surface where a `pulumi preview` could not prove the live configuration. Those settings are now adopted into the `WebApp` resources, so the code is the source of truth for runtime config.
+A Function App's runtime app settings are declared on its `WebApp` resource, not set in the portal. Settings held only in the portal are the one surface a `pulumi preview` cannot prove, so a live configuration that the code cannot see is a configuration nobody can review — which is why they are declared here alongside the resource itself.
 
 ## How it works
 
@@ -27,7 +27,7 @@ flowchart TD
 
 `siteConfig.appSettings` is a **replace**, not a merge: applying it drops any live setting the declaration omits. That is the point — a setting the code cannot see is a setting `pulumi preview` cannot prove — but it is only safe because these Function Apps have no live-only settings to lose:
 
-- The declared list was verified **name for name against both live sites** (`az functionapp config appsettings list`): dev and prod each return exactly the seventeen names declared here, so the replace has nothing to drop. Re-run that command before adding or removing a setting; a difference is the only thing that makes this replace unsafe.
+- The declared list was verified **name for name against both live sites** (`az functionapp config appsettings list`): dev and prod each return exactly the names declared here, so the replace has nothing to drop. Re-run that command before adding or removing a setting; a difference is the only thing that makes this replace unsafe.
 - The app runs **from a package URL** (`WEBSITE_RUN_FROM_PACKAGE` pointing at `release.zip` in the environment's storage account), so deployment writes a blob rather than mutating app settings behind Pulumi's back. The URL carries **no SAS** and there is deliberately no `WEBSITE_RUN_FROM_PACKAGE_BLOB_MI_RESOURCE_ID` beside it — that is the live configuration, not an omission, and adding either to "fix" it would change a running deployment on the strength of a reading of the Azure docs rather than of the site.
 - Neither app uses the consumption-plan **content share** (`WEBSITE_CONTENTAZUREFILECONNECTIONSTRING` / `WEBSITE_CONTENTSHARE`) — the settings Azure otherwise injects at create time and which a declared list would silently strip, breaking the host on its next restart. `storageAccountRequired: false` with `AzureWebJobsStorage__*` identity-based URIs is what removes the need for them.
 
