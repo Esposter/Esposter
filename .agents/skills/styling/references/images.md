@@ -2,7 +2,7 @@
 
 Read when adding or sizing an image.
 
-`<v-img>` and raw `<img>` are both `vue/no-restricted-html-elements` errors — Vuetify's gates its render on an IntersectionObserver that exists only in the browser, so it renders on the server and not on hydration.
+`<v-img>` and raw `<img>` are both `vue/no-restricted-html-elements` errors — Vuetify's defers the real `<img>` to a client-side IntersectionObserver, so the server emits the wrapper with no image in it and the picture loads only once the client observes the element.
 
 ## Two things the lint rule cannot tell you
 

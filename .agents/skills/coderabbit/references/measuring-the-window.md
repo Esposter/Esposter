@@ -9,7 +9,7 @@ Every review body states its own range, so this is a fact to read:
 ```bash
 gh api "repos/:owner/:repo/pulls/<pr>/reviews?per_page=100" --paginate \
   --jq '.[] | select(.user.login=="coderabbitai[bot]") | select((.body|length) > 0)
-        | "\(.submitted_at)  \(.body | capture("between (?<a>[0-9a-f]{40}) and (?<b>[0-9a-f]{40})") | "\(.a[0:9])..\(.b[0:9])")"' | tail -3
+        | "\(.submitted_at)  \(.body | capture("between (?<a>[0-9a-f]{40}) and (?<b>[0-9a-f]{40})") | "\(.a)..\(.b)")"' | tail -3
 git diff --name-only <last-reviewed-sha>..origin/<branch> | wc -l   # already pushed and unreviewed
 git diff --name-only <last-reviewed-sha>..HEAD | wc -l              # what the next push would add
 ```

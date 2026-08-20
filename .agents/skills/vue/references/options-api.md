@@ -8,4 +8,4 @@ Read before adding a dependency that ships `.vue` components, or when a componen
 
 Without `applyOptions` an Options API component still mounts, `$data` stays `{}`, and its compiled render dereferences a property off `undefined` with **nothing thrown beforehand** to name the cause.
 
-It survives typecheck and lint, and it survives Vitest too — `@vitejs/plugin-vue` defaults the flag to `true`, so a component test of that component passes while the app is broken. A render error inside a `node_modules` component is worth checking `/_nuxt/@vite/env` for (`run-app`) before reading its source.
+It survives typecheck and lint, and which Vite run compiles the component decides whether it survives Vitest: a package testing through the shared `getVuePlugins()` compiles with `@vitejs/plugin-vue`'s own default, where the Options API is on, so a component test there can pass while the app is broken. A render error inside a `node_modules` component is worth checking `/_nuxt/@vite/env` for (`run-app`) before reading its source.

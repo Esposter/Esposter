@@ -18,7 +18,7 @@ const { createFilter } = searchMessageStore;
           <span font-semibold op-medium-emphasis>{{ FilterTypePlaceholderMap[filterType] }}</span>
         </v-list-item-title>
         <template #append>
-          <MessageRightSideBarSearchAddIcon :is-hovering="isHovering ?? false" />
+          <MessageRightSideBarSearchAddIcon :is-hovering />
         </template>
       </v-list-item>
     </v-hover>
