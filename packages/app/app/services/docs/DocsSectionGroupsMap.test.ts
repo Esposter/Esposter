@@ -8,7 +8,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 // The map is the sidebar, and it is hand-maintained against a tree nothing links it to — so it is checked in
 // Both directions. One way a group points at a page that was renamed or deleted; the other a page ships with
 // No way to reach it from the navigation, which is invisible in review because the page itself renders fine
-describe("DocsSectionGroupsMap", () => {
+describe("docsSectionGroupsMap", () => {
   // Pages every section owns that the sidebar map never lists — they trail in an automatic Planning group.
   const UNMAPPED_PAGES = new Set(["index", "roadmap"]);
   const PLANNING_DIRECTORIES = new Set(["deferred", "rejected"]);
