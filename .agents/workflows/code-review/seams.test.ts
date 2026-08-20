@@ -32,7 +32,8 @@ describe("code-review seam partition", () => {
       }),
     );
 
-    expect(run.result.stats).toMatchObject({ findMode: "seam", seams: ["reads", "writes"] });
+    expect(run.result.stats?.findMode).toBe("seam");
+    expect(run.result.stats?.seams).toStrictEqual(["reads", "writes"]);
     expect(run.calls.map((call) => call.label)).toContain("whole-area");
   });
 
@@ -62,7 +63,8 @@ describe("code-review seam partition", () => {
     ).length;
 
     // Every finder but conventions, and two resolvers apiece.
-    expect(run.result.stats).toMatchObject({ angles: finders - 1, findMode: "seam" });
+    expect(run.result.stats?.angles).toBe(finders - 1);
+    expect(run.result.stats?.findMode).toBe("seam");
     expect(run.calls.filter((call) => call.label.startsWith("resolve:"))).toHaveLength((finders - 1) * 2);
   });
 
@@ -111,7 +113,7 @@ describe("code-review seam partition", () => {
 
     expect(run.logs).toContainEqual(expect.stringContaining("1 seam(s) dropped"));
     expect(run.logs).toContainEqual(expect.stringContaining("seam partition unusable, fell back"));
-    expect(run.result.stats).toMatchObject({ findMode: "lens" });
+    expect(run.result.stats?.findMode).toBe("lens");
   });
 
   test("ignores a seam with no name", async () => {
@@ -144,7 +146,7 @@ describe("code-review seam partition", () => {
     const seams = Array.from({ length: 8 }, (_, index) => createSeam(`s${index}`, [`cache/f${index}.ts`]));
     const run = await runReview(AREA_ARGS, stubFor({ scope: { ...AREA_SCOPE, files: createAreaFiles(8), seams } }));
 
-    expect(run.result.stats).toMatchObject({ findMode: "lens" });
+    expect(run.result.stats?.findMode).toBe("lens");
     expect(run.logs).not.toContainEqual(expect.stringContaining("seam(s) dropped"));
     expect(run.logs).not.toContainEqual(expect.stringContaining("past the level's cap"));
   });

@@ -13,7 +13,7 @@ of units, and a suite is read once against all of it rather than once per conven
 | ---------------------------------------------------------- | ---------------------------------------------- |
 | A test earns its line or is deleted; fixtures written once | `testing` — "What to Test", "Shared Test Data" |
 | Constants inside the `describe`, never module scope        | `testing` — "Structure"                        |
-| Mock cleanup follows how the mock was created              | `testing` — "Mocking"                          |
+| Mock cleanup follows how the mock was created              | `testing` — `references/module-mocks.md`       |
 | `expect.hasAssertions()`, exact assertions, no polling     | `testing` — "Assertions"                       |
 
 The row **`vi.fn` always takes its signature** has left this table.
@@ -23,20 +23,20 @@ The row **`vi.fn` always takes its signature** has left this table.
 Every row resets when a rule joins this table: a unit dated against a narrower rule set is not swept against the
 current one, and there is no partially-swept state. Trimming last ran across every unit on 2026-08-12.
 
-| Unit                                               | Swept      | Notes                                                      |
-| -------------------------------------------------- | ---------- | ---------------------------------------------------------- |
-| `app/app/services`                                 | 2026-08-18 |                                                            |
-| `app/app/composables`                              | 2026-08-18 | `message/emoji` written under the rules                    |
-| `app/app/store`, `app/app/models`                  | 2026-08-18 |                                                            |
-| `app/app/components`, `app/app/util`               | 2026-08-18 | `Styled/EmojiPicker` written under the rules               |
-| `app/content`                                      | 2026-08-18 | `docs/index.test.ts` — top-level await fixtures, see below |
-| `app/server/services`, `app/server/trpc/procedure` | 2026-08-18 |                                                            |
-| `app/server/trpc/routers`, rest                    | 2026-08-18 |                                                            |
-| `app/shared`                                       | 2026-08-18 |                                                            |
-| `virrun`                                           | 2026-08-18 |                                                            |
-| `azure-functions`, `azure-mock`, `db*`             | 2026-08-18 | every `mockDb` stays — hoisted factory, see below          |
-| `parse-tmx`, `vue-phaserjs`, `xml2js`, rest        | 2026-08-18 | plus `shared`, `shared-node`, `configuration`, `infra`     |
-| `.agents/workflows`                                | 2026-08-18 | the vitest `claude` project                                |
+| Unit                                               | Swept      | Notes                                                                                        |
+| -------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------- |
+| `app/app/services`                                 | 2026-08-20 |                                                                                              |
+| `app/app/composables`                              | 2026-08-20 | `message/emoji` written under the rules                                                      |
+| `app/app/store`, `app/app/models`                  | 2026-08-20 |                                                                                              |
+| `app/app/components`, `app/app/util`               | 2026-08-20 | `Styled/EmojiPicker` written under the rules                                                 |
+| `app/content`                                      | 2026-08-20 | `docs/index.test.ts` — top-level await fixtures, see below                                   |
+| `app/server/services`, `app/server/trpc/procedure` | 2026-08-20 |                                                                                              |
+| `app/server/trpc/routers`, rest                    | 2026-08-20 |                                                                                              |
+| `app/shared`                                       | 2026-08-20 |                                                                                              |
+| `virrun`                                           | 2026-08-20 |                                                                                              |
+| `azure-functions`, `azure-mock`, `db*`             | 2026-08-20 | every `mockDb` stays — hoisted factory, see below                                            |
+| `parse-tmx`, `vue-phaserjs`, `xml2js`, rest        | 2026-08-20 | plus `shared`, `shared-node`, `configuration`, `infra`                                       |
+| `.agents/workflows`                                | 2026-08-20 | the vitest `agents` project; 19 `toMatchObject` assertions converted to exact per-field ones |
 
 ## Find recipe
 

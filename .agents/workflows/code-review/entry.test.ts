@@ -30,7 +30,8 @@ describe("code-review entry", () => {
     expect(takeOne(run.logs)).toBe(
       `${mode} mode, ${level} effort, target: ${target ? `"${target}"` : "(the working diff)"}`,
     );
-    expect(run.result.stats).toMatchObject({ level, mode });
+    expect(run.result.stats?.level).toBe(level);
+    expect(run.result.stats?.mode).toBe(mode);
   });
 
   // The whole-args clause of the mode parse: without it "area" alone parses as a diff review whose TARGET is the

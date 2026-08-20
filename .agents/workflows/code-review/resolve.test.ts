@@ -29,6 +29,7 @@ describe("code-review dedupe and resolve", () => {
     );
 
     expect(run.result.findings).toHaveLength(1);
+    // Counted per finder, so the exact number is the stub's finder count rather than anything this test is about.
     expect(run.result.stats?.deduped).toBeGreaterThan(0);
   });
 
@@ -148,7 +149,8 @@ describe("code-review dedupe and resolve", () => {
     );
 
     expect(run.logs).toContainEqual(getResolveLog(1));
-    expect(getFinding(run)).toMatchObject({ confidence: 95, verdict: "CONFIRMED" });
+    expect(getFinding(run).confidence).toBe(95);
+    expect(getFinding(run).verdict).toBe("CONFIRMED");
   });
 
   test("routes an under-confident REFUTED to a resolver rather than dismissing the finding", async () => {

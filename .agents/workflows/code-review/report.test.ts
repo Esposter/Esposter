@@ -149,7 +149,8 @@ describe("code-review report", () => {
       }),
     );
 
-    expect(getFinding(run)).toMatchObject({ severity: "critical", verdict: "CONFIRMED" });
+    expect(getFinding(run).severity).toBe("critical");
+    expect(getFinding(run).verdict).toBe("CONFIRMED");
   });
 
   test("reads a group's confidence off a member that reached the reported verdict", async () => {
@@ -188,7 +189,8 @@ describe("code-review report", () => {
       }),
     );
 
-    expect(getFinding(run)).toMatchObject({ provenance: "regression", provenanceSource: "abc1234" });
+    expect(getFinding(run).provenance).toBe("regression");
+    expect(getFinding(run).provenanceSource).toBe("abc1234");
   });
 
   test("clears the blocker once a merged member settles the group", async () => {

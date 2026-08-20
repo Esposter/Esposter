@@ -73,7 +73,9 @@ describe("code-review verify", () => {
     ]);
     // `droppedUnverified: 0` is the invariant, not a formality: fold the cap's drops into that counter and the two
     // Causes stop arguing opposite ways about the next round, which is the whole reason for a second field.
-    expect(run.result.stats).toMatchObject({ droppedAtVerifyCap: 2, droppedUnverified: 0, verifyCeiling: 8 });
+    expect(run.result.stats?.droppedAtVerifyCap).toBe(2);
+    expect(run.result.stats?.droppedUnverified).toBe(0);
+    expect(run.result.stats?.verifyCeiling).toBe(8);
     // Named, not counted — which files went unexamined is what decides whether to re-run, and the cap's remedy
     // Differs from a dead verifier's, so it gets its own sentence rather than borrowing that one's.
     expect(run.result.summary).toContain("2 candidate(s) in f6.ts, f7.ts were dropped at the 8-verifier cap");
@@ -155,7 +157,8 @@ describe("code-review verify", () => {
         : base(prompt, options),
     );
 
-    expect(run.result.stats).toMatchObject({ droppedUnverified: 1, verified: 0 });
+    expect(run.result.stats?.droppedUnverified).toBe(1);
+    expect(run.result.stats?.verified).toBe(0);
     expect(run.result.findings).toHaveLength(0);
   });
 
@@ -193,7 +196,8 @@ describe("code-review verify", () => {
         : base(prompt, options),
     );
 
-    expect(run.result.stats).toMatchObject({ candidates: 2, verified: 1 });
+    expect(run.result.stats?.candidates).toBe(2);
+    expect(run.result.stats?.verified).toBe(1);
   });
 
   test("discards a verdict whose index is out of range", async () => {
@@ -230,7 +234,7 @@ describe("code-review verify", () => {
     );
     const verifier = run.calls.find((call) => call.label.startsWith("verify:"));
 
-    expect(verifier?.options).toMatchObject({ effort: "low" });
+    expect(verifier?.options.effort).toBe("low");
     expect(verifier?.label).toContain("cleanup");
   });
 
