@@ -153,6 +153,18 @@ describe(Grid, () => {
     expect(grid.position.value).toStrictEqual({ x: 2, y: 2 });
   });
 
+  test("answers no rather than throwing for a row the grid has lost", () => {
+    expect.hasAssertions();
+
+    // The inventory shrinks under a cursor still sitting on the row an emptied item occupied, and asks whether
+    // That position is still valid before moving off it. A throw there strands the cursor instead of moving it
+    const grid = ref([["a"], ["b"]]);
+    const cursorGrid = new Grid({ grid, position: ref({ x: 0, y: 1 }) });
+    grid.value = [["a"]];
+
+    expect(unref(cursorGrid.validate(cursorGrid.position.value))).toBe(false);
+  });
+
   test("finds a value on the last row", () => {
     expect.hasAssertions();
 

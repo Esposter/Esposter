@@ -59,10 +59,12 @@ export const useOffsetPaginationOperationData = <TItem>(
     onComplete?: () => void,
   ) => {
     const boundOffsetPaginationData = bindOffsetPaginationData();
+    const boundIsLoaded = bindIsLoaded();
     await withFinalizerAsync(async () => {
       const { hasMore: newHasMore, items: newItems } = await query(boundOffsetPaginationData.value.items.length);
       boundOffsetPaginationData.value.hasMore = newHasMore;
       boundOffsetPaginationData.value.items = [...boundOffsetPaginationData.value.items, ...newItems];
+      boundIsLoaded.value = true;
     }, onComplete);
   };
 

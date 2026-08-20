@@ -71,11 +71,14 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
     return undefined;
   }
 
-  // A column outside the row is a hole rather than a fault, which is what `validate` reads it as — the rows may
-  // Be ragged, so a vertical walk crosses a short one instead of failing on it. Only the row index is bounded,
-  // By `getColumnSize`, because a grid has no rows the cursor is allowed to be unaware of
+  // A position outside the grid is a hole rather than a fault, which is what `validate` reads it as. Rows may be
+  // Ragged, so a vertical walk crosses a short one instead of failing on it — and the grid itself can shrink
+  // Under a cursor that is still on a row it had, which is what the inventory does when an item is used up.
+  // `getColumnSize` still throws for a row asked about directly; being asked whether a position is valid is the
+  // One question whose answer is no rather than an error
   getValue({ x, y }: Position) {
-    if (x > this.getColumnSize(y) - 1) return undefined;
+    if (y < 0 || y > this.rowSize - 1) return undefined;
+    else if (x < 0 || x > this.getColumnSize(y) - 1) return undefined;
     return takeOne(takeOne(unref(this.grid), y), x);
   }
 
