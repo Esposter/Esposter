@@ -9,6 +9,21 @@ Reddit-style voting: each user holds at most one like per post with `value ∈ {
 
 ## How it works
 
+```mermaid
+flowchart TD
+  arrows["up / down arrow on a post card"] --> pick{"viewerLike"}
+  pick -->|"none"| createLike["like.createLike — noLikes += value"]
+  pick -->|"the opposite value"| updateLike["like.updateLike — noLikes += 2 × value"]
+  pick -->|"the same value"| deleteLike["like.deleteLike — noLikes −= value"]
+  createLike --> txn
+  updateLike --> txn
+  deleteLike --> txn["one transaction — the likes row, noLikes, and the recomputed ranking"]
+  txn --> row[("posts row")]
+  txn --> patch["useLikeOperations patches viewerLike and noLikes in the owning store"]
+  row -->|"getViewerPostRelations — the caller's own like row, never the list"| viewer["every read carries viewerLike"]
+  viewer --> arrows
+```
+
 **Model** — `likes(userId, postId, value)` with a composite primary key (one row per user per post) and a DB check constraining `value` to ±1. The post's `noLikes` is the denormalized net sum.
 
 **Mutations** — three procedures, each a transaction that writes the like row, adjusts `noLikes`, and recomputes the stored [ranking](/docs/posts/feed-and-ranking) from the new count:

@@ -52,6 +52,6 @@ Paths relative to `packages/app`.
 
 ## Notes
 
-- Prices are always derived from the owned count and never stored, so the exponential rebalance needed no save migration — the next purchase simply costs the rebalanced amount.
+- Prices are always derived from the owned count and never stored, so retuning the curve needs no save migration — the next purchase simply costs the new amount.
 - The Cursor building's flavor text says it autoclicks every 10 seconds, but mechanically it is a plain 0.1/s producer like every other building.
 - Upgrade icons are per-upgrade PNGs keyed by upgrade id (`app/assets/clicker/icons/upgrades/<building>/`), so an upgrade without art renders an empty icon slot. This is what gates the other 17 buildings' lines — see [all-building upgrades](/docs/clicker/deferred/all-building-upgrades).
