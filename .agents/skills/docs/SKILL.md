@@ -7,7 +7,7 @@ description: Esposter documentation conventions for packages/app/content/docs (t
 
 All documentation lives in `packages/app/content/docs/` and is rendered in the app at `/docs` by @nuxt/content. That tree is the single source of truth, kept updated as code changes — never start a parallel docs tree elsewhere in the repo. (Within it, `architecture/` is a real and mandated folder.)
 
-**Docs are public.** They ship with the app and are readable on the deployed site, which is the point: a page nobody can open is a page nobody reads. So anything explanatory goes here rather than into `.agents/`, which holds only what a machine consumes — the boundary is settled in `/docs/architecture/agent-configuration`.
+**Docs are public.** They ship with the app and are readable on the deployed site, which is the point: a page nobody can open is a page nobody reads. So anything explanatory goes here rather than into `.agents/`, which holds only what a machine consumes — the boundary is settled in `packages/app/content/docs/architecture/agent-configuration.md`.
 
 ## The one status rule
 

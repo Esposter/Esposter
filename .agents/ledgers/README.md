@@ -21,6 +21,10 @@ ledger of its own.
 
 Coverage lives in the leaf, never here. A pass reads this table and the one file it is sweeping.
 
+Absorbed: **simplification/skills**, folded into [docs](docs.md) on 2026-08-20 — both read `.agents/skills`
+against `skill-authoring`, so the tree was being read twice and each pass handed findings to the other. Its
+structural check went with it.
+
 Retired: **pass-through-helpers**, swept out on 2026-08-12 and now enforced by
 `pass-through-helper/no-forwarding-wrapper` — a forwarding wrapper fails the lint on the line that writes it, so
 there is nothing left to track. A sweep whose whole scope becomes enforceable is deleted rather than maintained
