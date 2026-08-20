@@ -79,66 +79,14 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
 
   move(direction: Direction, isSkipValidation?: boolean) {
     switch (direction) {
-      case Direction.UP: {
-        let newPositionY = this.position.value.y;
-
-        for (let i = 0; i < this.rowSize; i++) {
-          if (newPositionY > 0) newPositionY -= 1;
-          else if (this.wrap && newPositionY === 0) newPositionY = this.rowSize - 1;
-
-          if (!(isSkipValidation || this.#internalValidate({ x: this.position.value.x, y: newPositionY }))) continue;
-
-          this.position.value.y = newPositionY;
-          return;
-        }
-
-        throw new InvalidOperationError(Operation.Update, this.move.name, newPositionY.toString());
-      }
-      case Direction.DOWN: {
-        let newPositionY = this.position.value.y;
-
-        for (let i = 0; i < this.rowSize; i++) {
-          if (newPositionY < this.rowSize - 1) newPositionY += 1;
-          else if (this.wrap && newPositionY === this.rowSize - 1) newPositionY = 0;
-
-          if (!(isSkipValidation || this.#internalValidate({ x: this.position.value.x, y: newPositionY }))) continue;
-
-          this.position.value.y = newPositionY;
-          return;
-        }
-
-        throw new InvalidOperationError(Operation.Update, this.move.name, newPositionY.toString());
-      }
-      case Direction.LEFT: {
-        let newPositionX = this.position.value.x;
-
-        for (let i = 0; i < this.getColumnSize(this.position.value.y); i++) {
-          if (newPositionX > 0) newPositionX -= 1;
-          else if (this.wrap && newPositionX === 0) newPositionX = this.getColumnSize(this.position.value.y) - 1;
-
-          if (!(isSkipValidation || this.#internalValidate({ x: newPositionX, y: this.position.value.y }))) continue;
-
-          this.position.value.x = newPositionX;
-          return;
-        }
-
-        throw new InvalidOperationError(Operation.Update, this.move.name, newPositionX.toString());
-      }
-      case Direction.RIGHT: {
-        let newPositionX = this.position.value.x;
-
-        for (let i = 0; i < this.getColumnSize(this.position.value.y); i++) {
-          if (newPositionX < this.getColumnSize(this.position.value.y) - 1) newPositionX += 1;
-          else if (this.wrap && newPositionX === this.getColumnSize(this.position.value.y) - 1) newPositionX = 0;
-
-          if (!(isSkipValidation || this.#internalValidate({ x: newPositionX, y: this.position.value.y }))) continue;
-
-          this.position.value.x = newPositionX;
-          return;
-        }
-
-        throw new InvalidOperationError(Operation.Update, this.move.name, newPositionX.toString());
-      }
+      case Direction.UP:
+        return this.#step("y", -1, isSkipValidation);
+      case Direction.DOWN:
+        return this.#step("y", 1, isSkipValidation);
+      case Direction.LEFT:
+        return this.#step("x", -1, isSkipValidation);
+      case Direction.RIGHT:
+        return this.#step("x", 1, isSkipValidation);
       case Direction.UP_LEFT:
       case Direction.UP_RIGHT:
       case Direction.DOWN_LEFT:
@@ -148,5 +96,28 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
       default:
         exhaustiveGuard(direction);
     }
+  }
+  // Walks one axis until it reaches a position the cursor may sit on. Every candidate is tried, so a row of
+  // Holes is stepped over rather than stopping the cursor at the first one; without `wrap` the candidate stops
+  // At the edge and the walk ends by assigning the cursor to where it already was, which is why pressing up at
+  // The top of a menu does nothing rather than failing. Only a walk that finds nothing valid throws.
+  // One axis rather than four branches: the vertical pair is bounded by the row count and the horizontal pair by
+  // The current row's length, and that bound is the whole of the difference between them
+  #step(axis: "x" | "y", delta: -1 | 1, isSkipValidation?: boolean) {
+    const size = axis === "y" ? this.rowSize : this.getColumnSize(this.position.value.y);
+    const lastIndex = size - 1;
+    let next = this.position.value[axis];
+
+    for (let i = 0; i < size; i++) {
+      if (delta === -1 ? next > 0 : next < lastIndex) next += delta;
+      else if (this.wrap) next = delta === -1 ? lastIndex : 0;
+
+      if (!(isSkipValidation || this.#internalValidate({ ...this.position.value, [axis]: next }))) continue;
+
+      this.position.value[axis] = next;
+      return;
+    }
+
+    throw new InvalidOperationError(Operation.Update, this.move.name, next.toString());
   }
 }

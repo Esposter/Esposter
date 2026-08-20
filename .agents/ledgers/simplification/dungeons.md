@@ -10,5 +10,8 @@ The game is a fifth of the app's source. `components/Dungeons` splits at its sub
 | `services/dungeons/scene` + `composables/dungeons/scene`                                            | 2026-08-15 | 60 files — the scene layer is half the game's non-component code; `useBattleMonsterStore` behind seven ternaries, `createUseGrid` behind four lazy grid singletons, `getTweenRange` behind seven ranges |
 | `services/dungeons` less `scene` and `UI`                                                           | 2026-08-15 | `getById` behind the three asset find-or-throw readers; the diagonal offsets built from their component directions rather than written out                                                              |
 | `composables/dungeons` less `scene` and `UI`, + `composables/phaser` + `services/phaser`            | 2026-08-15 | the ball's two enemy-fade tweens became one taking its alphas; `useItem`'s single-iteration loop became a guard clause; `onSceneEvent`'s unremovable listener raised                                    |
+| `models/dungeons` — the grid layer every menu navigates through                                     | 2026-08-20 | `Grid.move`'s four axis branches became one walk, behind the tests the class never had                                                                                                                  |
 
 `shared/models/dungeons` was swept on 2026-08-12 (`shared.md`) — the game's shared models are not in scope here.
+`app/models/dungeons` is, and had no row until 2026-08-20: the rows below pair a component group with the store,
+composable and service files only it uses, and a model every group shares belongs to none of them.
