@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Always runs the project opus-pinned workflow script; never an inline/local review, never the review skill, never the built-in workflow by name. Also owns how to size the commit window a review is launched from, what a run costs and what bounds it, the confidence numbers on its verdicts, how to close a finding so the next review cannot reopen it, the standing rule that the workflow's own files stay in every review window plus the per-round meta pass that turns a run's telemetry into the next pipeline fix, and the stop rule for when to re-run and when a round is converged. Apply on any review request, when choosing the scope or boundary to review, when deciding whether to run another round, when applying fixes from one, and when improving the review pipeline itself.
+description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Always runs the project opus-pinned workflow script; never an inline/local review, never the review skill, never the built-in workflow by name. Also owns how to size the commit window a review is launched from, what a run costs and what bounds it, the confidence numbers on its verdicts, how to close a finding so the next review cannot reopen it, the findings-table report shape, the standing rule that the workflow's own files stay in every review window plus the per-round meta pass that turns a run's telemetry into the next pipeline fix, and the stop rule for when to re-run and when a round is converged. Apply on any review request, when choosing the scope or boundary to review, when deciding whether to run another round, when applying fixes from one, and when improving the review pipeline itself.
 ---
 
 # Code Review — One Entry Point
@@ -79,31 +79,11 @@ Only a trigger that genuinely cannot be settled from the repository (a productio
 
 Two things make this worth its cost: a PLAUSIBLE finding shipped to a human is decided by whoever has _less_ context than the agent that raised it, and a fix on an unconfirmed premise is the most common way this repo introduces regressions; and a finding dismissed without evidence comes back next run, worded differently, forever.
 
-## Reporting findings
+## Reporting findings — `references/reporting.md`
 
-**Show the user every finding the workflow reports, as one compact table and nothing per-finding beyond it.** Final assembly adds no cap of its own. Never jump to fixes and report only what changed — the visible findings list is the deliverable.
+**Show the user every finding the workflow reports, as one compact table and nothing per-finding beyond it.** Final assembly adds no cap of its own, and never jump to fixes and report only what changed — the visible findings list is the deliverable. Emit the table **flush-left at the top level** of the message, never indented or nested in a list, blockquote or code fence: an indented table degrades into dot points, which is the failure this format exists to prevent.
 
-Emit the table **flush-left at the top level** of the message — never indented or nested in a list, blockquote or code fence, blank line before and after, same column count in every row. An indented table degrades into dot points, which is the failure this format exists to prevent.
-
-| #   | Finding                                     | Where              | Severity    | Verdict       | Origin                             | Disposition                          |
-| --- | ------------------------------------------- | ------------------ | ----------- | ------------- | ---------------------------------- | ------------------------------------ |
-| 1   | Reordered write drops entity on DB failure  | createThing.ts:40  | 🔴 critical | CONFIRMED 95% | regression 57dcbd3                 | Fixed                                |
-| 2   | Truncated buffer decoded with wrong charset | decodeOutput.ts:15 | 🟡 major    | CONFIRMED 80% | new                                | Fixed                                |
-| 3   | Publish error swallowed, not surfaced       | updateThing.ts:88  | 🟡 major    | REFUTED 90%   | reopened architecture/standard.md  | By-design (architecture/standard.md) |
-| 4   | Comment names a deleted symbol              | helper.ts:6        | 🟢 minor    | CONFIRMED 75% | stale-record readPublishHistory.ts | Fixed                                |
-
-Fixes committed as abc1234. Refuted by verifiers: removeThing timeout bound ×2, batch submission ordering.
-
-- **Finding** — the workflow's `shortSummary` **verbatim** (already the ≤60-char claim; never substitute `summary`, never re-expand it). Append `×N` when `corroboration > 1`.
-- **Where** — `file:line`, plus `(+N)` when `alsoAt` is non-empty.
-- **Severity** — 🔴 critical, 🟡 major (default), 🟢 minor. Sort by it.
-- **Verdict** — verdict plus the workflow's `confidence`. Never restate it in prose, never round up.
-- **Origin** — `provenance` + `provenanceSource`: `new` (bare, no source), `regression <sha>` (the cited line came from an earlier fix — look there next), `reopened <page>` (the record settled this; say what the code does that the record does not cover, or it is a false positive), `stale-record <path>` (the code is right and the doc is wrong, so the fix is the doc edit).
-- **Disposition** — a few words. State the commit hash once under the table, never per row.
-- Add at most one line below the table, and only when a disposition needs the user to decide something. Workflow-refuted candidates get one footnote line.
-- **`area` mode adds a Kind column** after Where (`correctness` / `conformance` / `record-gap` / `cleanup`) — there the kind decides whether the deliverable is a code fix, a doc edit or a new page. `diff` omits it; severity already separates its two kinds.
-
-**A merged row's columns describe the group, not the printed claim**: verdict escalates to CONFIRMED if any member is, severity takes the worst member, confidence the highest among members agreeing with the escalated verdict. So a `🔴 critical | CONFIRMED 95%` row can print a milder member's text, with the confirming evidence in a member the report does not show — `corroboration` and `alsoAt` are the only visible signal, which is why both are rendered.
+The page owns the columns and what each renders — the verbatim `shortSummary`, the `provenance` vocabulary, the `area`-mode Kind column, and what a merged row's columns describe.
 
 ## Then: fix, verify, commit
 

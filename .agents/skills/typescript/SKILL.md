@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: Esposter TypeScript conventions — banned patterns (Omit over Except, forEach, parameter properties, mutating array methods, the void operator), as unknown as treated like any, declare over ! on class fields, arrow functions, callbacks never taking a bare function reference, regex literals, neverthrow promise style and the void ban, InvalidOperationError, guard clauses and if/else-if chains, exhaustive switch guards, inferred return types, for...of loops with .entries(), Array.from over spread+map, environment constants, stable selection IDs, filter narrowing, plus deep dives on enum declaration/values arrays/refs, the "" sentinel and null-vs-undefined, modelling types instead of casting (Pick from source types, discriminant-keyed dispatch maps, nuxt.d.ts augmentation), function signatures (overloads, parameter defaults, boolean flags), and the floating-promise replacement ladder. Apply when writing any TypeScript in this project.
+description: Esposter TypeScript conventions — banned patterns (Omit over Except, forEach, parameter properties, mutating array methods, the void operator), as unknown as treated like any, arrow functions, callbacks never taking a bare function reference, regex literals, neverthrow promise style and the void ban, guard clauses and if/else-if chains, exhaustive switch guards, inferred return types, for...of loops with .entries(), Array.from over spread+map, environment constants, stable selection IDs, filter narrowing, plus deep dives on enum declaration/values arrays/refs, the "" sentinel and null-vs-undefined, modelling types instead of casting (Pick from source types, discriminant-keyed dispatch maps, nuxt.d.ts augmentation), function signatures (overloads, parameter defaults, boolean flags), the floating-promise replacement ladder, and declare over ! on class fields. Apply when writing any TypeScript in this project.
 ---
 
 # TypeScript Conventions
@@ -12,10 +12,11 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 - `references/type-modelling.md` — when reaching for a cast, re-declaring fields a source/SDK type already has, dispatching per variant, or a `NuxtConfig` key the compiler can't see.
 - `references/function-signatures.md` — when writing a function's parameters: overloads, an options object, a default, or a boolean flag.
 - `references/floating-promises.md` — when a lint error flags a floating promise, or an async function must be called from a sync slot.
+- `references/class-fields.md` — when adding a field to a class.
 
 ## Core Rules
 
-- `strict` mode + `tseslint.configs.strictTypeChecked`. `any`, non-null assertions (`!`), and `==`/`!=` are lint errors (`no-explicit-any`, `no-non-null-assertion`, `eqeqeq`) — for `!` prefer a guard clause or optional chaining over a cast, and see Class Fields for the `field!: T` form.
+- `strict` mode + `tseslint.configs.strictTypeChecked`. `any`, non-null assertions (`!`), and `==`/`!=` are lint errors (`no-explicit-any`, `no-non-null-assertion`, `eqeqeq`) — for `!` prefer a guard clause or optional chaining over a cast, and a field with no initializer takes `declare` rather than `!` (`references/class-fields.md`).
 - `Omit` → `Except` from `type-fest`, enforced by `@typescript-eslint/no-restricted-types`. Import it from `type-fest` directly; it is **not** re-exported from `@esposter/shared`.
 - **No parameter properties** — never `constructor(private readonly foo: T)`. Declare fields explicitly and assign in the body.
 - **`private` → ECMAScript `#`** (`no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`). Keep `readonly` when converting (`private readonly foo` → `readonly #foo`); `protected` stays, as `#` is inaccessible to subclasses.
@@ -26,7 +27,6 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 - **Never declare what nothing uses** — every export (schema, type, constant, pluralized enum array) earns its existence with a call site; no speculative API. When removing the last consumer of an export, cascade-delete the newly orphaned export and its now-unused imports too.
 - Named imports from libraries, but only when not auto-imported by Nuxt/modules (`ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; all VueUse composables are auto-imported — never import manually).
 - **Node built-ins take the `node:` protocol** (`unicorn/prefer-node-protocol`) — but **never import an ambient global**: `process`, `console`, `Buffer`, `URL` and `fetch` are already there, so only the non-ambient built-ins are imported at all.
-- Explicitly type variables with proper types.
 - **Never generic variable names like `parsed`** — use a name including the type: `parsedDate`, `parsedResult`.
 - **No `current*` caching of `.value`** just to use it once. If narrowing is needed after a guard, assign a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source is already non-reactive (e.g. a `readonly` prop field).
 - **Cloning** — `structuredClone(obj)` for deep clones; `Object.assign(structuredClone(obj), { ...updates })` to clone+override. Never `{ ...spread }` to clone a class instance (loses prototype). **Exception**: `structuredClone(new ClassName(...))` when a plain object is explicitly required (e.g. Vjsf rejects class instances) — add a comment explaining why.
@@ -38,16 +38,6 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 - **Never `Object.values(SomeEnum)` inline**, and never abbreviate an enum value name (`Configuration`, not `Config`).
 - **Track selections by stable ID, not name or index** — names change, indices shift on delete/reorder. Use `entity.id` (UUID) as the key for selected/active items. A stale ID is harmless; a stale name/index is a bug.
 
-## Class Fields — `declare` over `!`
-
-For a class field with **no inline initializer** (value provided by `Object.assign(this, init)`, a parent/mixin constructor, external assignment, or a pure phantom type carrier), use `declare`, **never** `!`.
-
-**Why**: `declare` emits no field declaration, avoiding the `useDefineForClassFields` footgun where an emitted `field = undefined` runs after `super()` and clobbers a value set by a parent/mixin. `!` only suppresses the strict-init error while still emitting the clobbering initializer.
-
-- Applies to all fields lacking an inline initializer: phantom type carriers, `Object.assign`-populated entity models (`AzureEntity`/`CompositeKeyEntity`/`*MessageEntity`), externally-assigned fields.
-- **Keep the inline initializer** for fields that have one (`id: string = crypto.randomUUID()`) — never convert to `declare` (that drops the runtime default); they're mutually exclusive.
-- Optional fields (`direction?: Direction`) are already correct — leave them.
-
 ## Functions
 
 - **Always arrow functions** — `const fn = () => { ... }`. The `function` keyword is only for cases where `this` binding is required: class methods, object methods referencing `this`, generators (`function*`). Everything else (module-level, composables, callbacks, helpers) must be an arrow function.
@@ -57,18 +47,11 @@ For a class field with **no inline initializer** (value provided by `Object.assi
 
 ## Promise Style
 
-- **`try`/`catch` is BANNED** for fallible work — use neverthrow `getResult`/`getResultAsync` (+ `withFinalizer`/`withFinalizerAsync` for cleanup, never `try`/`finally`); never `.catch()` chains. Full patterns, utilities, consumption rules, and Azure Functions logging/retry live in the **error-handling** skill.
+- **`try`/`catch` is BANNED** for fallible work — use neverthrow `getResult`/`getResultAsync` (+ `withFinalizer`/`withFinalizerAsync` for cleanup, never `try`/`finally`); never `.catch()` chains. **`new Error(...)` is banned too** — a throw is an `InvalidOperationError`. Both subjects in full, plus `jsonDateParse` for any JSON round trip carrying dates, are the **error-handling** skill's.
 - **`.then()` exception**: acceptable only for a **promise queue** (serialising sequential async ops in a sync context, e.g. `chain = chain.then(async () => {...})`) — can't be expressed with `await` in a sync watcher/callback. All other `.then()`/`.catch()` must be converted.
 - **Never `await import(...)`** for code-splitting — always a static top-level `import`. The build already chunk-splits per component, so a nested dynamic import only hides the dependency and, in dev, defers Vite's discovery until first use, which can trigger a mid-session re-optimization leaving chunks on stale dep hashes. Only touch `optimizeDeps` when the dependency's own docs instruct it. Sole exception: a library-mandated lazy-loader contract.
 
 - **`void asyncFn()` is banned** (`no-void`) — it silences `no-floating-promises` by discarding the promise, so rejections go unhandled and the caller cannot await completion. The replacement ladder (make the caller `async`, widen the callback to `Promisable<void>`, `getSynchronizedFunction` as the last resort) is `references/floating-promises.md`.
-
-## Error Handling
-
-- **Never `new Error(...)`** — throw `new InvalidOperationError(operation, name, message)` from `@esposter/shared`, picking the appropriate `Operation` value (`Operation.Read`/`Create`/`Update`/`Delete`, …). Use the resource name (`file.name`, entity ID) as `name`; fall back to the calling function's name (`deserializeJson.name`) if none better.
-  - **Exception: the unimplemented interface stub.** `throw new Error("Method not implemented.")` stays where a mock implements a wide vendor interface it only partly needs. No operation is being attempted and there is no resource to name, so every `InvalidOperationError` field would be filler, and nothing catches it — reaching one means a test called a method the mock never meant to serve. It is also what TypeScript's own "implement all members" fix writes, so stubs stay diff-identical to regenerated ones. Don't route them through a shared `getNotImplementedError()` either; the indirection buys nothing at a site whose entire body is the throw.
-- User-supplied JSON (uploads, external input): Zod `safeParse` and throw `InvalidOperationError` on failure — never bare `JSON.parse` with a cast. Validated endpoint data may use `jsonDateParse` from `@esposter/shared`.
-- **JSON containing dates** (localStorage, blobs, any `JSON.stringify` round trip): parse with `jsonDateParse` — its reviver restores ISO strings to `Date`s, so the Zod schema keeps plain `z.date()`. Never `JSON.parse` + `z.coerce.date()`.
 
 ## Control Flow
 

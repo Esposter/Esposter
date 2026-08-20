@@ -1,6 +1,6 @@
 ---
 name: error-handling
-description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch and try/finally banned), wrapping only what can actually fail, terminating every chain (.isOk/.isErr banned, never void a ResultAsync, noop as the ok handler, a callback nothing awaits terminating its own Result), .orTee(console.error) over console.warn/catch {}, who alerts a tRPC rejection (errorLink ownership, getIsAlertedByErrorLink, background reads, alert coalescing), withFinalizer vs withFinalizerAsync, the tRPC backend guards and the getInvalidOperationError/getNotFoundError constructors a router asserts its own rejections with, plus deep dives on the worked chain shapes, server guards (requireEntity/requireMutation, TRPCError cause, awaiting a best-effort effect a rollback compensates), and Azure Functions logging/retry with capped dead-letter replay. Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
+description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch and try/finally banned), wrapping only what can actually fail, terminating every chain (.isOk/.isErr banned, never void a ResultAsync, noop as the ok handler, a callback nothing awaits terminating its own Result), .orTee(console.error) over console.warn/catch {}, who alerts a tRPC rejection (errorLink ownership, getIsAlertedByErrorLink, background reads, alert coalescing), withFinalizer vs withFinalizerAsync, never new Error (InvalidOperationError, the unimplemented-stub exception, jsonDateParse for JSON with dates), the tRPC backend guards and the getInvalidOperationError/getNotFoundError constructors a router asserts its own rejections with, plus deep dives on the worked chain shapes, server guards (requireEntity/requireMutation, TRPCError cause, awaiting a best-effort effect a rollback compensates), and Azure Functions logging/retry with capped dead-letter replay. Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
 ---
 
 # Error Handling Conventions
@@ -18,6 +18,13 @@ description: Esposter Error Handling Conventions — neverthrow getResult/getRes
 Never write `try` anywhere (no `try`/`catch`, no `try`/`finally`) in any code — components, composables, stores, server routes, tRPC routers. Use `getResult`/`getResultAsync` + chain methods; for cleanup use `withFinalizer`/`withFinalizerAsync`.
 
 Only exception: published package README examples aimed at external consumers may use plain `try`/`finally` — a doc example shouldn't force consumers to install `@esposter/shared`.
+
+## Throwing — never `new Error`
+
+- **Never `new Error(...)`** — throw `new InvalidOperationError(operation, name, message)` from `@esposter/shared`, picking the appropriate `Operation` value (`Operation.Read`/`Create`/`Update`/`Delete`, …). Use the resource name (`file.name`, entity ID) as `name`; fall back to the calling function's name (`deserializeJson.name`) if none better.
+- **Exception: the unimplemented interface stub.** `throw new Error("Method not implemented.")` stays where a mock implements a wide vendor interface it only partly needs. No operation is being attempted and there is no resource to name, so every `InvalidOperationError` field would be filler, and nothing catches it — reaching one means a test called a method the mock never meant to serve. It is also what TypeScript's own "implement all members" fix writes, so stubs stay diff-identical to regenerated ones. Don't route them through a shared `getNotImplementedError()` either; the indirection buys nothing at a site whose entire body is the throw.
+- **User-supplied JSON** (uploads, external input): Zod `safeParse` and throw `InvalidOperationError` on failure — never bare `JSON.parse` with a cast. Validated endpoint data may use `jsonDateParse` from `@esposter/shared`.
+- **JSON containing dates** (localStorage, blobs, any `JSON.stringify` round trip): parse with `jsonDateParse` — its reviver restores ISO strings to `Date`s, so the Zod schema keeps plain `z.date()`. Never `JSON.parse` + `z.coerce.date()`.
 
 ## Core Utility
 

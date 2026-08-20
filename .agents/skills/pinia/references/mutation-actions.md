@@ -1,6 +1,20 @@
 # Writing a store mutation action
 
-Read when a store action calls a tRPC mutation, or when picking its `useMutation` `key`. The rules — when an action is justified at all, root-declared instances, one per mutation, no hand-rolled ordering — are in `SKILL.md`.
+Read when a store action calls a tRPC mutation, or when picking its `useMutation` `key`. Whether the action is justified at all, and the rule that `key` is required on every call, are in `SKILL.md`.
+
+## Wiring the instance
+
+- **Declare every instance at the store root** — `const { executeMutation } = useMutation()`. Never inside an action (detached effect scope leak).
+- **One `useMutation()` instance per mutation**, via destructure renames (`executeCreateFooMutation`, plus `isPending: isCreateFooPending` / `getIsPending: getIsFooPending` when consumed), so one action's queue and pending state can't hold up another's. **Two mutations that end the same row share one instance instead**, named for the target — the rule and the test for which case you are in are in `packages/app/content/docs/architecture/async-operations.md` § A key queues only within one `useMutation()` instance.
+- **Never hand-roll the alert/rollback/pending wiring** — it surfaces errors via `createAlert` unless you pass `onError`, and runs writes to one `key` one at a time so two actions writing different fields of the same entity both land. Destructure `isPending` only where a control consumes it; the in-flight guard decision tree lives in `packages/app/content/docs/architecture/client-data.md` § In-flight guarding.
+- **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure.
+- **`onSuccess`** is for server-generated results that can't be predicted client-side (a created entity with its id).
+
+## A store never orders its own async work
+
+No promise chained onto the previous one, no `Map<id, Promise>` of in-flight reads, no generation counter or `isSaving` flag. That ordering lives in the primitive, keyed by target; a store that seems to need its own needs the right `key`. Protection applied by hand is protection that gets forgotten.
+
+**A read that must not be issued twice at once passes `isExclusive: true` to `executeQuery`.** Concurrent callers **join** one request and all get the data — a read is never dropped, which would leave the joiner rendering an empty list. It joins only what is still in flight, so read-once semantics stay a separate cache flag the action checks first, and an invalidating re-read omits the opt-in so it cannot join the answer it just invalidated.
 
 ## Where the snapshot is taken, and what it covers
 

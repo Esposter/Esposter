@@ -1,6 +1,6 @@
 # Form bindings and upsert forms
 
-Read when an input needs the split `:model-value` + `@update:model-value` form instead of `v-model`, or when a form handles both create and edit.
+Read when an input needs the split `:model-value` + `@update:model-value` form instead of `v-model`, when a form handles both create and edit, or when deciding what validates a field.
 
 ## When the split binding is justified
 
@@ -31,3 +31,9 @@ const { cloned: values } = useCloned(() => initialValues);
 - Create page passes `is-create`; update page passes `:initial-values` (no `is-create`).
 
 The same `isCreate?: boolean` pattern applies to dialog buttons (e.g. `Foo/EditDialogButton`), where it also skips the equality check that would disable the save button when state matches the original.
+
+## Never normalize in Vue — trust the server schema
+
+**Never apply `normalizeString` (or any trimming) anywhere in Vue** — not in `@update:model-value`, not in submit handlers. tRPC input schemas already normalize, and trimming as the user types swallows spaces mid-word. Let raw input flow through `v-model="name"`. It stays valid outside forms (text parsing, CSV/XLSX deserialization, slash commands) — anything not crossing a tRPC Zod boundary.
+
+Validity checks `safeParse` the shared schema (`:disabled="!nameSchema.safeParse(name).success"`); dirty-state comparisons parse **both** sides (`topicSchema.safeParse(editedTopic).data !== storedTopic`); submit handlers pass raw values with no guards, emptiness checks or local normalization. The only client-side validation is that disabled state plus Vuetify field rules for inline errors.
