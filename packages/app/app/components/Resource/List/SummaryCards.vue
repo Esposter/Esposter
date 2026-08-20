@@ -8,16 +8,16 @@ import { pluralize } from "#shared/util/text/pluralize";
 interface ResourceListSummaryCardsProps {
   counts: ResourceTypeCount[];
   error: string;
-  isLoading: boolean;
+  isPending: boolean;
 }
 
-const { counts, error, isLoading } = defineProps<ResourceListSummaryCardsProps>();
+const { counts, error, isPending } = defineProps<ResourceListSummaryCardsProps>();
 const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
 </script>
 
 <template>
   <div p-4 flex-1 overflow-y-auto>
-    <StyledSkeleton v-if="isLoading" type="card@3" />
+    <StyledSkeleton v-if="isPending" type="card@3" />
     <StyledErrorState v-else-if="error" :error @retry="emit('retry')" />
     <!-- The grouped count only returns types the filter actually matched, so an empty summary means an empty list -->
     <StyledEmptyState

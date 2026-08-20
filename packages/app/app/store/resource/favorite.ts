@@ -16,7 +16,7 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
   // The workbench list, the blade page and Home all want the same MAX_READ_LIMIT joined rows, and the list
   // Mounts inside the blade — so the set is read once and two concurrent mounts share the in-flight query
   // Rather than every navigation re-running it
-  const { isPending: isLoading, read: readFavorites } = useCachedRead(() => $trpc.resource.readFavorites.query(), {
+  const { isPending, read: readFavorites } = useCachedRead(() => $trpc.resource.readFavorites.query(), {
     // The one cache that cannot wait for its next mount: the stars are rendered in the very table a delete is
     // Issued from, so the set has to be correct on screen the moment the write lands
     isRefetchOnInvalidate: true,
@@ -66,5 +66,5 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
       },
     });
   };
-  return { favoriteIds, favorites, isLoading, readFavorites, toggleFavorite };
+  return { favoriteIds, favorites, isPending, readFavorites, toggleFavorite };
 });

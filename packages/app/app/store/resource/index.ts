@@ -30,7 +30,7 @@ export const useResourceStore = defineStore("resource", () => {
   const { currentRoute } = useRouter();
   const resource = ref<Resource>();
   const publication = ref<ResourcePublication>();
-  const isLoading = ref(false);
+  const isPending = ref(false);
   // Every write reconciles only the fields it owns. By the time a rollback or a server row lands the ref may
   // Have absorbed another concurrent edit — an autosave's contentVersion, a rename, a tag edit — so replacing
   // It wholesale would clobber that edit; the fallback covers a ref that holds nothing to merge into
@@ -57,7 +57,7 @@ export const useResourceStore = defineStore("resource", () => {
     // Read, and the empty sentinel would reach the server as a uuid that fails validation
     if (!uuidValidateV4(id)) return;
 
-    isLoading.value = true;
+    isPending.value = true;
     await withFinalizerAsync(
       async () => {
         // The publication rides the resource read rather than following it: a second round trip only re-resolved
@@ -70,7 +70,7 @@ export const useResourceStore = defineStore("resource", () => {
         isContentStale = false;
       },
       () => {
-        isLoading.value = false;
+        isPending.value = false;
       },
     );
   };
@@ -287,7 +287,7 @@ export const useResourceStore = defineStore("resource", () => {
     deleteResource,
     duplicateResource,
     isDuplicatePending,
-    isLoading,
+    isPending,
     isPublicationPending,
     publication,
     publishResource,

@@ -18,7 +18,7 @@ const { resource } = defineProps<ResourceOverviewProps>();
 defineSlots<{ essentials?: () => VNode; summary?: () => VNode }>();
 const getResourceRouter = useResourceRouter();
 const resourceStore = useResourceStore();
-const { isLoading, publication } = storeToRefs(resourceStore);
+const { isPending, publication } = storeToRefs(resourceStore);
 const { updateResourceTags } = resourceStore;
 const isTagsEditorOpen = ref(false);
 const tagRows = computed(() => Object.entries(resource.tags));
@@ -45,7 +45,7 @@ onMounted(async () => {
 <template>
   <div p-6 flex flex-col gap-4>
     <span text-h6>Essentials</span>
-    <StyledSkeleton v-if="isLoading" type="article" />
+    <StyledSkeleton v-if="isPending" type="article" />
     <v-card v-else>
       <v-card-text>
         <div gap-x-6 gap-y-2 grid items-center :style="{ gridTemplateColumns: 'auto 1fr' }">

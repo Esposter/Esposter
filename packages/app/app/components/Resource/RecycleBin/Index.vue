@@ -9,7 +9,7 @@ import { useRecycleBinDialogStore } from "@/store/resource/recycleBinDialog";
 import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
-const { count, error, isLoading, items, readDeletedResources, refresh } = useReadDeletedResources();
+const { count, error, isPending, items, readDeletedResources, refresh } = useReadDeletedResources();
 const recycleBinDialogStore = useRecycleBinDialogStore();
 const { purgingId } = storeToRefs(recycleBinDialogStore);
 const purgingResource = computed(() => items.value.find(({ id }) => id === purgingId.value));
@@ -60,7 +60,7 @@ const onUpdateOptions = (options: ReadResourcesOptions) => readDeletedResources(
       :items-length="count"
       :items-per-page="RESOURCE_LIST_ITEMS_PER_PAGE"
       :items-per-page-options="RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS"
-      :loading="isLoading"
+      :loading="isPending"
       @update:options="onUpdateOptions"
     >
       <template #[`item.type`]="{ item }">

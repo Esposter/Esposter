@@ -3,7 +3,7 @@ import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 
 export const useDataset = (reference: MaybeRefOrGetter<DatasetReference | undefined>) => {
   const { $trpc } = useNuxtApp();
-  const { executeQuery, isPending: isLoading } = useMutation();
+  const { executeQuery, isPending } = useMutation();
   const dataset = ref<Dataset>();
   const error = ref<string>();
   // One instance shows one dataset, so a read for a previous reference is superseded by the latest one and
@@ -30,5 +30,5 @@ export const useDataset = (reference: MaybeRefOrGetter<DatasetReference | undefi
     );
   };
   watch(() => toValue(reference), refresh, { deep: true, immediate: true });
-  return { dataset, error, isLoading, refresh };
+  return { dataset, error, isPending, refresh };
 };
