@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FRIENDS_ACTION_BUTTON_PROPS } from "@/services/message/friend/constants";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
 interface DeclineFriendRequestButtonProps {
@@ -11,5 +12,5 @@ const { declineFriendRequest } = friendRequestStore;
 </script>
 
 <template>
-  <v-btn color="error" size="small" text="Decline" variant="tonal" @click="declineFriendRequest(userId)" />
+  <v-btn :="FRIENDS_ACTION_BUTTON_PROPS" color="error" text="Decline" @click="declineFriendRequest(userId)" />
 </template>

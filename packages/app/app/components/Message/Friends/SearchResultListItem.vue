@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FRIENDS_ACTION_BUTTON_PROPS } from "@/services/message/friend/constants";
 import { useBlockStore } from "@/store/message/user/block";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
@@ -27,9 +28,8 @@ const isBlocked = computed(() => blockedUsers.value.some((blockedUser) => blocke
       <div flex gap-x-2>
         <v-btn
           v-if="!isFriend && !hasSentFriendRequest"
-          size="small"
+          :="FRIENDS_ACTION_BUTTON_PROPS"
           text="Send Request"
-          variant="tonal"
           @click="sendFriendRequest(id)"
         />
         <v-chip v-else-if="hasSentFriendRequest" size="small" text="Request Sent" />

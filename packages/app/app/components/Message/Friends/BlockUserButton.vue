@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FRIENDS_ACTION_BUTTON_PROPS } from "@/services/message/friend/constants";
 import { useBlockStore } from "@/store/message/user/block";
 
 interface BlockUserButtonProps {
@@ -11,5 +12,5 @@ const { blockUser } = blockStore;
 </script>
 
 <template>
-  <v-btn color="error" size="small" text="Block" variant="tonal" @click="blockUser(userId)" />
+  <v-btn :="FRIENDS_ACTION_BUTTON_PROPS" color="error" text="Block" @click="blockUser(userId)" />
 </template>

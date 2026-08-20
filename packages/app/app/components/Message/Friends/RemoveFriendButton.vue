@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FRIENDS_ACTION_BUTTON_PROPS } from "@/services/message/friend/constants";
 import { useFriendStore } from "@/store/message/user/friend";
 
 interface RemoveFriendButtonProps {
@@ -11,5 +12,5 @@ const { deleteFriend } = friendStore;
 </script>
 
 <template>
-  <v-btn color="error" size="small" text="Remove" variant="tonal" @click="deleteFriend(userId)" />
+  <v-btn :="FRIENDS_ACTION_BUTTON_PROPS" color="error" text="Remove" @click="deleteFriend(userId)" />
 </template>
