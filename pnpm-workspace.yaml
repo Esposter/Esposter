@@ -175,7 +175,7 @@ catalog:
   lowlight: ^3.3.0
   marked: ^18.0.10
   mathjs: ^15.2.0
-  mermaid: ^11.16.1
+  mermaid: ^11.17.0
   mime-types: ^3.0.2
   minisearch: ^7.2.0
   mjml-browser: ^5.4.0
