@@ -51,6 +51,19 @@ Documentation is **public by default**. Everything explanatory lives in `package
 
 The test is whether a human would ever want to read it on the website. If the answer is yes, it is documentation and belongs under `content/docs`; a skill then links to that page instead of restating it, so one topic keeps one owner.
 
+## The engineering skills look for `docs/agents/`
+
+The installed Matt Pocock engineering skills — `triage`, `to-tickets`, `to-spec`, `wayfinder`, `grill-with-docs`,
+`improve-codebase-architecture` — were scaffolded to read their configuration from `docs/agents/*.md`, and several
+say so literally: one of them tells the user to re-run `/setup-matt-pocock-skills` when `docs/agents/issue-tracker.md`
+is missing. **It is not missing; it is at `.agents/issue-tracker.md`**, because this repo has no root `docs/` folder
+at all — `packages/app/content/docs` is the public docs site, and a second root-level `docs/` would read as a rival
+to it.
+
+`AGENTS.md` names the real paths, so a skill that reads the instruction file first finds them. Re-running the setup
+skill is what to avoid: it writes a fresh copy under `docs/agents/`, leaving two sources of truth and creating the
+folder this layout exists to not have. Point the skill at `.agents/` instead.
+
 ## Key files
 
 | Path                                      | Role                                                                       |

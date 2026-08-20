@@ -170,7 +170,7 @@ Background handlers, mostly triggered by EventGrid events or Service Bus queues 
 
 ## Agent skills
 
-Configuration read by the installed engineering skills (`triage`, `to-tickets`, `to-spec`, `wayfinder`, `grill-with-docs`, `improve-codebase-architecture`). It lives in `.agents/` with the rest of the agent tree — there is no root `docs/` folder, and `packages/app/content/docs` is the public docs site. Which of the two a new file belongs in is settled in `packages/app/content/docs/architecture/agent-configuration.md`.
+Configuration read by the installed engineering skills (`triage`, `to-tickets`, `to-spec`, `wayfinder`, `grill-with-docs`, `improve-codebase-architecture`). It lives in `.agents/` with the rest of the agent tree — there is no root `docs/` folder, and `packages/app/content/docs` is the public docs site. Those skills default to reading `docs/agents/*.md` and one of them offers to re-run setup when it does not find it: **don't** — that writes a second copy and the root folder this layout exists to not have. Which of the two a new file belongs in, and the deviation in full, are settled in `packages/app/content/docs/architecture/agent-configuration.md`.
 
 ### Issue tracker
 
