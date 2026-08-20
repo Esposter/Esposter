@@ -83,5 +83,5 @@ Paths relative to `packages/app`.
 
 ## Notes
 
-- No migration was needed — the `accounts` table is better-auth's stock shape and already permits many rows per `userId`.
+- The `accounts` table is better-auth's stock shape, which already permits many rows against one `userId` — nothing about this feature is a custom schema.
 - Password sign-up is [rejected](/docs/users/rejected/password-auth), which closes the mirror-image attack on this feature: an attacker who could create a local account at the victim's address would otherwise wait for the victim's first OAuth sign-in to be linked into the attacker's row. Nothing should re-introduce one as a step toward anything here.
