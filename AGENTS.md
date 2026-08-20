@@ -59,7 +59,7 @@ pnpm test -t "test description"         # run single test by name
 pnpm coverage         # run from repo root — vitest --coverage across all workspace projects
 ```
 
-Vitest runs on Windows only because `packages/app/configuration/modules.ts` keeps a minimal Nuxt module allowlist under `process.env.VITEST` (no UnoCSS/PWA/security/SEO) — loading the full set crashes the run with `spawn EPERM` while UnoCSS reads its config. If a new test needs an excluded module, add it to the Vitest branch there.
+On Windows, Vitest runs only because `packages/app/configuration/modules.ts` keeps a minimal Nuxt module allowlist under `process.env.VITEST` (no UnoCSS/PWA/security/SEO) — loading the full set crashes the run there with `spawn EPERM` while UnoCSS reads its config. If a new test needs an excluded module, add it to the Vitest branch there.
 
 DB migrations (run from `packages/db-schema/`). All wrap `drizzle-kit` via `db:run`:
 

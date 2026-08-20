@@ -42,7 +42,7 @@ So the persist call takes `maskedPaths` — prepare outputs everywhere, and on w
 
 The mask is applied when a flush plan is **built**, and a [task-cache](/docs/virrun/task-cache) hit does not build one — it replays a recorded plan verbatim. So the mask is part of the cache key (`computeTaskCacheKey`): an entry recorded under a looser mask, including any entry predating the mask itself, misses instead of flushing the ghosts today's mask forbids. Keying it retires those entries rather than filtering twice, which keeps the mask applied in exactly one place.
 
-Without the mask, a `--fix` run materialises those ghosts on the host: the mirror hands the sandbox a stale copy, the tool rewrites it in place, and the flush creates it. Why the mirror can still be carrying one is the [exclude reconciliation](/docs/virrun/wsl-source-mirror); how virrun decides which directories those are is [derived from git, not named](/docs/virrun/derived-not-named).
+Without the mask, a `--fix` run materializes those ghosts on the host: the mirror hands the sandbox a stale copy, the tool rewrites it in place, and the flush creates it. Why the mirror can still be carrying one is the [exclude reconciliation](/docs/virrun/wsl-source-mirror); how virrun decides which directories those are is [derived from git, not named](/docs/virrun/derived-not-named).
 
 ## Overlay upper format (empirically confirmed)
 

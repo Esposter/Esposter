@@ -30,7 +30,7 @@ All commands run from `packages/app/` unless noted.
 ```bash
 pnpm dev              # start dev server
 pnpm typecheck        # type check (vue-tsc)
-pnpm lint             # check linting (eslint; oxlint runs as one pass from the repo root)
+pnpm lint             # eslint only — see the root pnpm lint below for oxlint
 pnpm lint:fix         # auto-fix linting — always use this, never fix manually
 pnpm test             # vitest watch mode
 ```
@@ -38,6 +38,7 @@ pnpm test             # vitest watch mode
 From the **repo root**:
 
 ```bash
+pnpm lint             # oxlint over the whole repo, then eslint — the one that matches CI
 pnpm build            # build all packages then the app
 pnpm test             # run all package tests
 pnpm typecheck        # typecheck all packages

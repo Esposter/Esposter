@@ -9,7 +9,7 @@ This estate runs with **no Application Insights and no Log Analytics**. Neither 
 
 ## What we rely on instead
 
-- **The `$0.01` budget guard is the cost ceiling.** Each Function App has a Consumption (Y1) plan — no idle cost — and a budget that stop-triggers it via Logic App automation the moment spend registers. That guard, not telemetry, is what bounds cost. See [optimization review](/docs/infra/cost-and-security-posture).
+- **The `$0.01` budget guard is the cost ceiling.** Each Function App has a Consumption (Y1) plan — no idle cost — and a budget that stop-triggers it via Logic App automation the moment spend registers. That guard, not telemetry, is what bounds cost. See [cost and security posture](/docs/infra/cost-and-security-posture).
 - **Azure portal platform metrics** answer the operator-level questions (invocation counts, storage size, Service Bus depth) for free, without a Log Analytics workspace to ingest into.
 - **Function handler logs** still write to `context.log` / `context.error`; they surface in the Functions host's live log stream and the platform's built-in log, just not into a queryable, retained, billed store. That surface is what `host.json` leaves `logging.fileLoggingMode` unset for — the default `debugOnly` turns filesystem logging on for as long as a log stream is attached, and it is the only sink those calls have now. Setting it to `never` costs nothing and silently discards every `context.error` in the app, so the operator instructions above and in [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter) stop working.
 

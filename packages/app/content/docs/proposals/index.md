@@ -17,7 +17,7 @@ Each product area's roadmap is the prioritized index over its proposals:
 - [virrun roadmap](/docs/virrun/roadmap)
 - [infra roadmap](/docs/infra/roadmap)
 
-An area with nothing outstanding carries no roadmap at all, so the list above is also the list of areas that have open work to track — `ls */roadmap.md` answers it, and each roadmap says whether it is currently empty.
+The list is which areas keep a roadmap, not which have work open — a mature area's roadmap often reads "no open work", and an area with none has never needed one. `ls */roadmap.md` answers the first question and the page itself answers the second.
 
 Repo-wide refactor plans have no area roadmap and live here directly:
 

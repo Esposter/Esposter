@@ -35,15 +35,14 @@ export default rolldownConfigurationBrowser;
 ```
 
 ```js
-// eslint.config.js — flat config, composed from the subpath entries
-import oxlint from "@esposter/configuration/eslint/oxlint.js";
-import plugins from "@esposter/configuration/eslint/plugins/index.js";
-import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
+// eslint.config.js — flat config, one composed export
+import eslintConfiguration from "@esposter/configuration/eslint/index.typescript.js";
 
-import { withNuxt } from "../../app/.nuxt/eslint.config.mjs";
-
-export default withNuxt(plugins, { files: ["**/*.ts"], rules: typescriptRules }).append(oxlint);
+export default eslintConfiguration.append({ ignores: ["dist"] });
 ```
+
+Inside this monorepo a package composes the pieces itself instead, because each config extends the Nuxt-generated
+one the app emits — copy `packages/db/eslint.config.js` rather than writing that wiring from scratch.
 
 ### Commands
 

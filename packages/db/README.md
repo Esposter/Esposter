@@ -40,7 +40,7 @@ resource purging, blob SAS minting and cloning, Azure Table serialization (`seri
 - **Server-only**: this package must not be imported in browser code.
 - Depends on `@esposter/db-schema` for Drizzle relation and schema definitions, its Azure enums and constants,
   and its `dayjs` singleton — this package never re-declares them.
-- Each Azure client takes the credential form its caller can supply: the Functions run inside Azure and use managed identity, while the app is hosted outside it and has none, so its paths pass connection strings or keys.
+- Every factory here takes a **connection string**, in the app and in the Azure Functions alike — the app is hosted outside Azure and has no managed identity to use, and the Functions' own identity covers the host's storage bindings rather than the clients this package builds. Moving off keys is an app-side migration, tracked as a proposal on the infra roadmap.
 
 ### Commands
 
