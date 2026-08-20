@@ -11,8 +11,6 @@ const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 const messageDialogStore = useMessageDialogStore();
 const { pinningRowKey } = storeToRefs(messageDialogStore);
-// Resolved through the primitive rather than a computed of our own, so a target whose message has left the
-// Timeline is dropped with it instead of re-opening this dialog by itself when a later read brings it back
 const { isOpen, item: message } = useSingletonDialog(pinningRowKey, () =>
   items.value.find(({ rowKey }) => rowKey === pinningRowKey.value),
 );
@@ -23,8 +21,6 @@ const pinMessage = async (onComplete: () => void) => {
   const { partitionKey, rowKey } = message.value;
   onComplete();
   await executeMutation(() => $trpc.message.pinMessage.mutate({ partitionKey, rowKey }), {
-    // Resolved as the write is sent rather than at the click — the dialog has already closed and cleared its
-    // Target by then, so the row is read off the timeline instead of the dialog's own item
     applyOptimistic: () => {
       const pinnedMessage = items.value.find(
         getIsEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }),

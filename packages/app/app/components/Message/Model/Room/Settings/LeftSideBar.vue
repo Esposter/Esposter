@@ -41,7 +41,6 @@ const openedCategories = ref([...SettingsCategories]);
 const onClick = (settingsType: SettingsType) => {
   if (settingsType === SettingsType.Delete) emit("open:delete");
   else modelValue.value = settingsType;
-  // Close the mobile drawer after a selection (no-op on desktop where the drawer is permanent)
   isDrawerOpen.value = false;
 };
 </script>
