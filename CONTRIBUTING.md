@@ -5,7 +5,7 @@ Thanks for taking the time to contribute!
 ## Setup
 
 1. [Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the [`Esposter/Esposter`](https://github.com/Esposter/Esposter) repository and clone it locally.
-2. Install [Node.js](https://nodejs.org/en) `^24.15.0` and [pnpm](https://pnpm.io) `^11`.
+2. Install [Node.js](https://nodejs.org/en) at the version `engines.node` in the root `package.json` asks for, and [pnpm](https://pnpm.io) at the `packageManager` version beside it.
 3. Install dependencies:
    ```bash
    pnpm install
@@ -21,16 +21,7 @@ Thanks for taking the time to contribute!
 
 ## Monorepo Structure
 
-| Package                    | Description                                             |
-| :------------------------- | :------------------------------------------------------ |
-| `packages/app`             | Main Nuxt 4 application (frontend, server routes, tRPC) |
-| `packages/azure-functions` | Serverless backend (Azure Event Grid, timers)           |
-| `packages/db-schema`       | Drizzle ORM schemas and migrations (source of truth)    |
-| `packages/db`              | Database connection logic                               |
-| `packages/shared`          | Shared TypeScript types, utilities, and constants       |
-| `packages/configuration`   | Shared ESLint, Prettier, and TSConfig                   |
-| `packages/vue-phaserjs`    | Phaser game engine Vue integration                      |
-| `packages/azure-mock`      | Mock Azure services for local dev and testing           |
+Esposter is a pnpm workspaces monorepo. Every package, what it holds and whether it is published are in the [package table](README.md#packages), and each package's own `README.md` covers it in full.
 
 ## Commands
 
@@ -39,10 +30,9 @@ All commands run from `packages/app/` unless noted.
 ```bash
 pnpm dev              # start dev server
 pnpm typecheck        # type check (vue-tsc)
-pnpm lint             # check linting (oxlint + eslint)
+pnpm lint             # check linting (eslint; oxlint runs as one pass from the repo root)
 pnpm lint:fix         # auto-fix linting — always use this, never fix manually
 pnpm test             # vitest watch mode
-pnpm coverage         # vitest with coverage report
 ```
 
 From the **repo root**:
@@ -51,13 +41,14 @@ From the **repo root**:
 pnpm build            # build all packages then the app
 pnpm test             # run all package tests
 pnpm typecheck        # typecheck all packages
+pnpm coverage         # run every project's tests with coverage
 ```
 
 From `packages/db-schema/`:
 
 ```bash
-pnpm db:gen           # generate migration from schema changes
-pnpm db:up            # apply pending migrations
+pnpm db:gen           # generate migration SQL from schema changes
+pnpm db:up            # upgrade snapshot metadata to a newer drizzle-kit format
 pnpm db:studio        # open Drizzle Studio UI
 ```
 
@@ -66,7 +57,7 @@ pnpm db:studio        # open Drizzle Studio UI
 When you change a schema file in `packages/db-schema/src/schema/`:
 
 1. Run `pnpm db:gen` to generate the migration SQL.
-2. Run `pnpm db:up` to apply it locally.
+2. Start the app — migrations are applied at startup by the Nitro plugin `packages/app/server/plugins/migrate.ts`. Nothing applies them from the CLI, `db:up` included.
 3. If you added or removed exports, run `pnpm export:gen` in `packages/db-schema/`.
 
 ## Before You Start

@@ -38,7 +38,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
       <td valign="top">
         <h3>Nuxt</h3>
         <p>
-          The Intuitive Web Framework, based on Vue. We highly recommend you take a look at <a href="https://nuxt.com">the Nuxt documentation</a> to level up.
+          The Intuitive Web Framework, based on Vue.
         </p>
       </td>
     </tr>
@@ -52,7 +52,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
       <td valign="top">
         <h3>Vue</h3>
         <p>
-          🖖 Vue.js is a progressive, incrementally-adoptable JavaScript framework for building UI on the web. We highly recommend you take a look at <a href="https://vuejs.org">the Vue documentation</a> to level up.
+          🖖 Vue.js is a progressive, incrementally-adoptable JavaScript framework for building UI on the web.
         </p>
       </td>
     </tr>
@@ -66,7 +66,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
       <td valign="top">
         <h3>Vuetify</h3>
         <p>
-          🐉 Material Component Framework for Vue. We highly recommend you take a look at <a href="https://vuetifyjs.com">the Vuetify documentation</a> to level up.
+          🐉 Material Component Framework for Vue.
         </p>
       </td>
     </tr>
@@ -80,7 +80,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
       <td valign="top">
         <h3>Pinia</h3>
         <p>
-          🍍 Intuitive, type safe, light and flexible Store for Vue using the composition api with DevTools support. We highly recommend you take a look at <a href="https://pinia.vuejs.org">the Pinia documentation</a> to level up.
+          🍍 Intuitive, type safe, light and flexible Store for Vue using the composition api with DevTools support.
         </p>
       </td>
     </tr>
@@ -107,7 +107,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
       <td>
         <h3>tRPC</h3>
         <p>
-          🧙‍♀️ Move Fast and Break Nothing. End-to-end typesafe APIs made easy. We highly recommend you take a look at <a href="https://trpc.io">the tRPC documentation</a> to level up.
+          🧙‍♀️ Move Fast and Break Nothing. End-to-end typesafe APIs made easy.
         </p>
       </td>
     </tr>
@@ -121,7 +121,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
       <td>
         <h3>Zod</h3>
         <p>
-          TypeScript-first schema validation with static type inference. We highly recommend you take a look at <a href="https://zod.dev">the Zod documentation</a> to level up.
+          TypeScript-first schema validation with static type inference.
         </p>
       </td>
     </tr>
@@ -135,7 +135,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
       <td valign="top">
         <h3>Drizzle ORM</h3>
         <p>
-          TypeScript ORM that feels like writing SQL. We highly recommend you take a look at <a href="https://orm.drizzle.team">the Drizzle ORM documentation</a> to level up.
+          TypeScript ORM that feels like writing SQL.
         </p>
       </td>
     </tr>
@@ -149,7 +149,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
       <td valign="top">
         <h3>PostgreSQL</h3>
         <p>
-          PostgreSQL is a powerful, open source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance. We highly recommend you take a look at <a href="https://www.postgresql.org/docs">the PostgreSQL documentation</a> to level up.
+          PostgreSQL is a powerful, open source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance.
         </p>
       </td>
     </tr>
@@ -176,7 +176,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
       <td valign="top">
         <h3>Pulumi</h3>
         <p>
-          Infrastructure as Code in any programming language. We highly recommend you take a look at <a href="https://www.pulumi.com/docs">the Pulumi documentation</a> to level up.
+          Infrastructure as Code in any programming language.
         </p>
       </td>
     </tr>
@@ -203,7 +203,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
       <td>
         <h3>Railway</h3>
         <p>
-          Infrastructure, Instantly. We highly recommend you take a look at <a href="https://railway.app">the Railway documentation</a> to level up.
+          Infrastructure, Instantly.
         </p>
       </td>
     </tr>
@@ -217,7 +217,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
       <td valign="top">
         <h3>Namecheap</h3>
         <p>
-          ICANN-accredited domain name registrar providing domain name registration and web hosting. We highly recommend you take a look at <a href="https://www.namecheap.com">the Namecheap documentation</a> to level up.
+          ICANN-accredited domain name registrar providing domain name registration and web hosting.
         </p>
       </td>
     </tr>
@@ -309,7 +309,7 @@ pnpm preview
 
 ### Architecture
 
-Esposter is a pnpm workspaces monorepo. See [`monorepo-tooling.md`](./packages/app/content/docs/architecture/monorepo-tooling.md) for workspace script orchestration and publishing boundaries.
+Esposter is a pnpm workspaces monorepo. See [monorepo tooling](./packages/app/content/docs/architecture/monorepo-tooling.md) for workspace script orchestration and publishing boundaries.
 Packages are used directly by the nuxt application via `workspace:*`.
 
 ### Workspace Graph
@@ -335,9 +335,9 @@ pnpm depcruise:graph
 | [`packages/db-schema`](https://github.com/Esposter/Esposter/tree/main/packages/db-schema)             | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                 |     —     |
 | [`packages/infra`](https://github.com/Esposter/Esposter/tree/main/packages/infra)                     | Pulumi infrastructure code and migration tools for Azure resources              |     —     |
 | [`packages/parse-tmx`](https://github.com/Esposter/Esposter/tree/main/packages/parse-tmx)             | Parser for Tiled Map Editor `.tmx` files                                        |     ✓     |
-| [`packages/virrun`](https://github.com/Esposter/Esposter/tree/main/packages/virrun)                   | Ephemeral, in-memory virtual runner — runs a repo's real toolchain isolated     |     ✓     |
 | [`packages/shared`](https://github.com/Esposter/Esposter/tree/main/packages/shared)                   | Shared TypeScript types, utilities, and error classes                           |     ✓     |
 | [`packages/shared-node`](https://github.com/Esposter/Esposter/tree/main/packages/shared-node)         | Node-only shared tooling — benchmark reporting for vitest bench runs            |     —     |
+| [`packages/virrun`](https://github.com/Esposter/Esposter/tree/main/packages/virrun)                   | Ephemeral, in-memory virtual runner — runs a repo's real toolchain isolated     |     ✓     |
 | [`packages/vue-phaserjs`](https://github.com/Esposter/Esposter/tree/main/packages/vue-phaserjs)       | Phaser 4 game engine integration for Vue 3                                      |     ✓     |
 | [`packages/xml2js`](https://github.com/Esposter/Esposter/tree/main/packages/xml2js)                   | TypeScript rewrite of xml2js — XML ↔ JSON conversion                            |     ✓     |
 
