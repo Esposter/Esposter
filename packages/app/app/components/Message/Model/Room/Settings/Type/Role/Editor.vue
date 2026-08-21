@@ -17,11 +17,15 @@ const permissions = ref(role.permissions);
 <template>
   <div font-bold mb-2 text-title-medium>{{ role.name }}</div>
   <MessageModelRoomSettingsTypeRolePermissionList v-model="permissions" />
-  <template v-if="permissions !== role.permissions">
+  <!-- Pinned to the bottom rather than trailing the list, which is Discord's own shape here: the switch that made
+       the change is scrolled away by the time the reader looks for a save, and a save they cannot see reads as a
+       change that already took -->
+  <div v-if="permissions !== role.permissions" py-2 bg-surface flex gap-2 items-center bottom-0 sticky>
+    <span flex-1 text-body-medium>You have unsaved changes.</span>
+    <v-btn variant="plain" @click="permissions = role.permissions">Reset</v-btn>
     <StyledButton
       :button-props="{ text: 'Save Changes', variant: 'tonal' }"
       @click="updateRole({ id: role.id, permissions, roomId })"
     />
-    <v-btn variant="plain" @click="permissions = role.permissions">Reset</v-btn>
-  </template>
+  </div>
 </template>
