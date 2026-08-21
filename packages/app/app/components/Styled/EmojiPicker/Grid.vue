@@ -27,8 +27,8 @@ defineEmits<{ hover: [emoji?: PickableEmoji]; select: [emoji: PickableEmoji] }>(
       bg-transparent
       aspect-square
       cursor-pointer
-      active:bg-surface-opacity-80
-      hover:bg-surface-opacity-80
+      active:bg-activated
+      hover:bg-hover
       text-title-large
       type="button"
       @blur="$emit('hover')"

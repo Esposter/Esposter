@@ -87,7 +87,7 @@ const fileRules = computed(() => [
     <div>
       <p font-semibold m-0 text-body-large>2. Give it a name</p>
       <p m-0 op-medium-emphasis text-body-medium>This is also what you'll type to add this emoji to your messages.</p>
-      <MessageModelRoomEmojiNameField v-model="name" autofocus mt-2 placeholder="avocado" />
+      <MessageModelRoomEmojiNameField v-model="name" autofocus />
     </div>
     <p v-if="isFull" text-red m-0 text-body-medium>
       This room already has its {{ MAX_ROOM_EMOJIS }} {{ pluralize("emoji", MAX_ROOM_EMOJIS) }}. Delete one to add

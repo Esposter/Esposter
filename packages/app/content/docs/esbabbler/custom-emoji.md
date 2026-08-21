@@ -52,7 +52,9 @@ Two constraints carry the whole shortcode contract:
 
 Both places a name is entered — the create dialog and the settings rename — are **one field**, and it draws the
 colons either side of the input rather than expecting them to be typed. They are chrome, not value: the caret cannot
-reach them, they are never in the model, and every rule is checked against the name alone. The charset has no room
+reach them, they are never in the model, and every rule is checked against the name alone. The input sizes to its
+own content so the pair closes around the name instead of sitting at the edges of the box — a `:name:` spaced to
+the margins is two decorations, not the token someone will type. The charset has no room
 for a colon, so a field that accepted one would only be a field that rejected what it invited, while a value drawn
 without them does not read as the token it will be typed as. A colon that arrives by paste is dropped for the same
 reason, which is what lets a `:name:` copied out of a message land as a name.

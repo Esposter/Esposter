@@ -4,10 +4,6 @@ import { ROOM_EMOJI_NAME_MAX_LENGTH, ROOM_EMOJI_NAME_REGEX } from "@esposter/db-
 
 const name = defineModel<string>({ required: true });
 const rules = useVRules();
-// The colons are the field's chrome rather than part of its value: they are drawn either side of the input, so
-// The caret can never reach them and every rule below is checked against the name alone. A `:name:` copied out
-// Of a message is still what someone pastes here, so a colon that arrives that way is dropped rather than
-// Failing a charset that has no room for one
 const enteredName = computed({
   get: () => name.value,
   set: (newName) => {
@@ -24,8 +20,15 @@ const nameRules = computed(() => [
 <template>
   <v-text-field
     v-model="enteredName"
+    :placeholder="`${SuggestionTrigger.Emoji}avocado${SuggestionTrigger.Emoji}`"
     :prefix="SuggestionTrigger.Emoji"
     :rules="nameRules"
     :suffix="SuggestionTrigger.Emoji"
   />
 </template>
+
+<style scoped>
+:deep(.v-field__field > input) {
+  width: auto;
+}
+</style>

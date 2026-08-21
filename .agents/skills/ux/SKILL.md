@@ -73,6 +73,14 @@ anything typed or pasted so a value copied from elsewhere still lands. Asking fo
 rejects what its own placeholder invited, and a value shown without it does not read as the thing the user will
 type later.
 
+**The punctuation has to touch the value, and a `suffix` alone does not.** Vuetify puts the prefix and suffix
+either side of the input, but the input takes the whole remaining row, so the closing character lands at the far
+edge of the box with a gap where the token should be — which reads as two pieces of chrome rather than one token.
+Let the input size to its own content (`field-sizing: content`, with the `size` attribute as the character count
+underneath it) and the pair closes around the value. Without that the whole device is pointless: the reason to
+draw the punctuation is that `:name:` reads as the thing that will be typed, and spaced to the margins it does
+not.
+
 **Prime example — the emoji name field.** The name's charset is lowercase letters, digits and underscores, so a
 typed colon could only ever be an error; the field draws `:name:` with the colons fixed either side and stores the
 name alone. One field serves the create dialog and the settings rename, so the rules and the chrome cannot
