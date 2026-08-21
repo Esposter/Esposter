@@ -7,4 +7,6 @@ description: Open work for the users area — prioritized checkboxes linking the
 
 Open work only. Decided ideas live in [deferred](/docs/users/deferred) and [rejected](/docs/users/rejected) — check both before adding an item.
 
-No open work.
+## Next
+
+- [ ] [Session and device management](/docs/proposals/users/session-device-management) — a Sessions card listing active sessions with per-session revoke, over better-auth endpoints nothing calls today

@@ -7,6 +7,5 @@ description: Posts ideas we chose not to build yet — one page per idea with a 
 
 Ideas we chose not to build yet. One page per idea with the rationale and a concrete revisit trigger.
 
-- [Nested comment threads](/docs/posts/deferred/nested-comment-threads) — Reddit-style reply trees.
 - [Post images](/docs/posts/deferred/post-images) — image attachments via the file-upload standard.
 - [Post search](/docs/posts/deferred/post-search) — full-text search over posts.

@@ -68,5 +68,5 @@ Paths relative to `packages/app`, except those starting with `packages/`, which 
 
 ## Notes
 
-- `depth` is tracked on every comment but the UI renders a single flat level — nested reply threads are [deferred](/docs/posts/deferred/nested-comment-threads).
+- `depth` is tracked on every comment but the UI renders a single flat level — the reply tree over it is designed in [nested comment threads](/docs/proposals/posts/nested-comment-threads).
 - Comments have no title by design; the shared table means any future post feature (likes, achievements, profanity filtering) applies to comments for free.
