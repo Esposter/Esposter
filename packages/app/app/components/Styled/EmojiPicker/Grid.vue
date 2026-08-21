@@ -8,7 +8,10 @@ interface StyledEmojiPickerGridProps {
 }
 
 const { emojis, skinTone } = defineProps<StyledEmojiPickerGridProps>();
-defineEmits<{ hover: [emoji: PickableEmoji]; select: [emoji: PickableEmoji] }>();
+// Hover is reported with no emoji when the pointer leaves an emoji, because whatever is showing the preview has
+// Standing content of its own to put back — a preview that outlived the pointer would hold that space for good.
+// Crossing from one emoji to the next reports the leave before the enter, which Vue renders as one update
+defineEmits<{ hover: [emoji?: PickableEmoji]; select: [emoji: PickableEmoji] }>();
 </script>
 
 <template>
@@ -28,9 +31,11 @@ defineEmits<{ hover: [emoji: PickableEmoji]; select: [emoji: PickableEmoji] }>()
       hover:bg-surface-opacity-80
       text-title-large
       type="button"
+      @blur="$emit('hover')"
       @click="$emit('select', emoji)"
       @focus="$emit('hover', emoji)"
       @mouseenter="$emit('hover', emoji)"
+      @mouseleave="$emit('hover')"
     >
       <StyledEmoji :emoji :skin-tone />
     </button>

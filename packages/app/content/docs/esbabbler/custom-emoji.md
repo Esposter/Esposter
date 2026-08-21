@@ -13,7 +13,8 @@ Stickers are a different feature and deliberately not this one — a sticker is 
 
 ```mermaid
 flowchart TD
-  panel["Emojis settings panel — ManageEmojis"] -->|"generateUploadRoomEmojiSasEntity"| sas["Write SAS for {roomId}/emoji/{id} — mime signed as the content type"]
+  footer["Picker footer — Add Emoji, on ManageEmojis"] --> dialog["Add Emoji dialog"]
+  dialog -->|"generateUploadRoomEmojiSasEntity"| sas["Write SAS for {roomId}/emoji/{id} — mime signed as the content type"]
   sas --> put["Client PUTs the image to Azure Blob"]
   put -->|"createRoomEmoji — id, name"| guard{"blob landed, name free, under the cap?"}
   guard -->|no| reject["Invalid operation — nothing is stored"]
@@ -30,6 +31,16 @@ flowchart TD
   gone -.->|"nothing resolves the id any more"| fallback["Reactions show a placeholder, content shows its shortcode"]
 ```
 
+### Where adding lives
+
+Adding an emoji is reachable from **the picker's own footer** and nowhere else, because the moment someone wants an
+emoji the room does not have is the moment they have the picker open and are failing to find it. A settings-only
+create is a feature reachable only by whoever already thought to go looking, and a create in _both_ places is the
+same action twice — so the settings panel does not carry one. It manages the set that exists: the whole list,
+renaming, deleting, and an empty state that names the picker.
+
+The footer button is gated on `ManageEmojis` and simply absent for a member without it.
+
 ## Data model
 
 One table, `roomEmojis`, holding an `id`, a `name`, and its `roomId`. The blob is **derived** from the id — `{roomId}/emoji/{id}` in the message-assets container — so there is no url column to keep in step with storage, nothing to migrate if the layout changes, and no second answer to where the image is.
@@ -38,6 +49,12 @@ Two constraints carry the whole shortcode contract:
 
 - **A unique index on `(roomId, name)`**, so one shortcode names at most one emoji in a room.
 - **A name check constraint** restricting the name to lowercase letters, digits and underscores — the same closed charset the Unicode dataset's slugs use, which is what lets `:name:` resolve against one vocabulary rather than two.
+
+Both places a name is entered — the create dialog and the settings rename — are **one field**, and it shows the
+colons either side of the value rather than expecting them to be typed. They are chrome: the charset has no room for
+a colon, so a field that accepted them would only be a field that rejected what it invited, while a value drawn
+without them does not read as the token it will be typed as. Anything pasted is stripped of them for the same
+reason, which is what lets a `:name:` copied out of a message land as a name.
 
 A name a Unicode slug already owns is **rejected at upload**, not shadowed at read. Shadowing would make the same `:fire:` render differently per room, and a room that later deleted its own entry would silently change every message that used it.
 
@@ -85,7 +102,10 @@ Deleting an emoji removes the row first and then publishes the blob deletion, be
 | `packages/app/app/components/Message/Model/Message/EmojiTag.vue`        | a stored reaction tag, resolved or placeheld               |
 | `packages/app/app/composables/message/emoji/useCustomEmojiExtension.ts` | the content node, carrying id and name and no url          |
 | `packages/app/app/composables/message/useMessageHtml.ts`                | the render pass — mentions and emoji, one parse            |
-| `packages/app/app/components/Message/Model/Room/Settings/Type/Emoji/`   | the settings panel: upload, rename, delete                 |
+| `packages/app/app/components/Message/Model/Room/Emoji/CreateDialog.vue` | the Add Emoji dialog the picker footer opens               |
+| `packages/app/app/components/Message/Model/Room/Emoji/NameField.vue`    | the one name field — colons as chrome, one rule set        |
+| `packages/app/app/components/Message/Model/Message/EmojiPicker.vue`     | the room's picker — its set, and Add Emoji for who may     |
+| `packages/app/app/components/Message/Model/Room/Settings/Type/Emoji/`   | the settings panel: the whole set, rename, delete          |
 
 ## Notes
 

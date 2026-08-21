@@ -17,6 +17,7 @@ interface StyledEmojiPickerPanelProps {
 const { customEmojis = [] } = defineProps<StyledEmojiPickerPanelProps>();
 // The tag leads, because reacting is what most surfaces do with a pick; the record follows for the composer,
 // Which needs the content form rather than the reaction form
+defineSlots<{ footer?: () => VNode }>();
 const emit = defineEmits<{ select: [emojiTag: string, emoji: PickableEmoji] }>();
 const emojiPickerStore = useEmojiPickerStore();
 const { recentEmojiSlugs, skinTone } = storeToRefs(emojiPickerStore);
@@ -77,6 +78,8 @@ const emojis = computed(() => {
       <p v-else m-0 p-4 text-center flex-1 op-medium-emphasis>No results for "{{ searchQuery }}"</p>
     </div>
     <v-divider />
-    <StyledEmojiPickerFooter v-model:skin-tone="skinTone" :emoji="previewEmoji" />
+    <StyledEmojiPickerFooter v-model:skin-tone="skinTone" :emoji="previewEmoji">
+      <slot name="footer" />
+    </StyledEmojiPickerFooter>
   </v-card>
 </template>

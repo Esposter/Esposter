@@ -1,13 +1,7 @@
 <script setup lang="ts">
-import type { FileFieldValue } from "@/models/vuetify/FileFieldValue";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
-import { pluralize } from "#shared/util/text/pluralize";
-import { validateFile } from "@/services/file/validateFile";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
-import { ROOM_EMOJI_NAME_REGEX } from "@esposter/db-schema";
-import { takeOne, withFinalizerAsync } from "@esposter/shared";
 
 interface EmojiProps {
   room: RoomInMessage;
@@ -15,79 +9,25 @@ interface EmojiProps {
 
 const { room } = defineProps<EmojiProps>();
 const roomEmojiStore = useRoomEmojiStore();
-const { createRoomEmoji } = roomEmojiStore;
 const { items } = storeToRefs(roomEmojiStore);
-const rules = useVRules();
-const name = ref("");
-const file = ref<File>();
-const isLoading = ref(false);
-// The name is checked here as well as in the column, so a typo is reported by the field rather than by a
-// Rejected upload — the guard on the write is what makes it true, this is what makes it kind
-const isValidName = computed(() => ROOM_EMOJI_NAME_REGEX.test(name.value));
-const isFull = computed(() => items.value.length >= MAX_ROOM_EMOJIS);
-// The same cap the write SAS is minted under, checked here so an oversized drop is refused before it uploads
-const validateFileRule = (fileValue: FileFieldValue) => {
-  if (!fileValue) return true;
-
-  const result = validateFile(
-    (Array.isArray(fileValue) ? takeOne(fileValue) : fileValue).size,
-    MAX_ROOM_EMOJI_SIZE_BYTES,
-  );
-  return result.isValid ? true : result.message;
-};
 </script>
 
 <template>
-  <div flex flex-col gap-y-4>
-    <div flex gap-x-4 items-center justify-center>
-      <v-text-field
-        v-model="name"
-        density="compact"
-        label="Name"
-        :disabled="isLoading"
-        :rules="[rules.pattern(ROOM_EMOJI_NAME_REGEX, 'Lowercase letters, numbers and underscores only')]"
+  <v-list>
+    <v-list-subheader>Emoji</v-list-subheader>
+    <!-- The panel manages the set and never adds to it, so the empty state is the only place that can say where
+     adding happens -->
+    <v-list-item v-if="items.length === 0">
+      <v-list-item-title>No emoji yet — add one from the emoji picker.</v-list-item-title>
+    </v-list-item>
+    <template v-else>
+      <MessageModelRoomSettingsTypeEmojiListItem
+        v-for="roomEmoji of items"
+        :key="roomEmoji.id"
+        :room-emoji
+        :room-id="room.id"
       />
-      <v-file-input
-        accept="image/*"
-        density="compact"
-        label="Image"
-        :disabled="isLoading"
-        :rules="[validateFileRule]"
-        show-size
-        @update:model-value="
-          (files?) => {
-            file = files ? (Array.isArray(files) ? takeOne(files) : files) : undefined;
-          }
-        "
-      />
-      <StyledButton
-        :disabled="!file || !isValidName || isFull"
-        :loading="isLoading"
-        @click="
-          async () => {
-            if (!file || !isValidName) return;
-
-            const uploadedFile = file;
-            isLoading = true;
-            await withFinalizerAsync(
-              async () => {
-                await createRoomEmoji(room.id, uploadedFile, { name });
-                name = '';
-                file = undefined;
-              },
-              () => {
-                isLoading = false;
-              },
-            );
-          }
-        "
-      >
-        Upload
-      </StyledButton>
-    </div>
-    <div v-if="isFull" text-red text-body-medium>
-      You can only upload up to {{ MAX_ROOM_EMOJIS }} {{ pluralize("emoji", MAX_ROOM_EMOJIS) }}.
-    </div>
-    <MessageModelRoomSettingsTypeEmojiList :room-id="room.id" />
-  </div>
+    </template>
+    <MessageModelRoomSettingsTypeEmojiConfirmDeleteDialog :room-id="room.id" />
+  </v-list>
 </template>

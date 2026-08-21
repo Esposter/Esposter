@@ -14,7 +14,6 @@ interface EmojiListItemProps {
 const { roomEmoji, roomId } = defineProps<EmojiListItemProps>();
 const roomEmojiStore = useRoomEmojiStore();
 const { updateRoomEmoji } = roomEmojiStore;
-const rules = useVRules();
 const name = ref(roomEmoji.name);
 // A rename from another device replaces the field, unless what is in it is an edit of the previous name that
 // Has not been committed yet — that edit is the one the user is still typing
@@ -31,9 +30,8 @@ watch(
     <template #prepend>
       <NuxtImg :alt="getEmojiShortcode(roomEmoji.name)" :src="roomEmoji.sasUrl" mr-4 size-8 object-contain />
     </template>
-    <v-text-field
+    <MessageModelRoomEmojiNameField
       v-model="name"
-      :rules="[rules.pattern(ROOM_EMOJI_NAME_REGEX, 'Lowercase letters, numbers and underscores only')]"
       density="compact"
       variant="plain"
       @blur="

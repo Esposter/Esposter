@@ -13,7 +13,7 @@ interface StyledEmojiPickerProps {
   tooltipProps?: VTooltip["$props"];
 }
 
-defineSlots<{ default?: (props: Record<string, unknown>) => VNode }>();
+defineSlots<{ default?: (props: Record<string, unknown>) => VNode; footer?: () => VNode }>();
 const menu = defineModel<boolean>("menu", { default: false });
 const {
   buttonProps = {},
@@ -60,6 +60,10 @@ const overlay = computed(() =>
           menu = false;
         }
       "
-    />
+    >
+      <template #footer>
+        <slot name="footer" />
+      </template>
+    </StyledEmojiPickerPanel>
   </component>
 </template>
