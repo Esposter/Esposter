@@ -31,12 +31,12 @@ flowchart TB
     end
 
     native --> disk[("REAL disk<br/>(subprocesses see this)")]
-    vfs --> fsp["FsProvider<br/>→ @platformatic/vfs (reuse)<br/>→ node:vfs swap"]
+    vfs --> fsp["FsProvider"]
     fsp --> vmem[("in-process virtual FS<br/>(only this process sees it)")]
     os --> sandboxprim["bubblewrap<br/>Linux direct / Windows WSL2"]
     sandboxprim --> ram[("tmpfs + overlayfs<br/>RAM FS — every process sees it")]
     os --> snap["snapshot + warm-fork<br/>deps: environment-key · prepare: source-hash"]
-    os --> wb["write-back<br/>flush top upper → host<br/>minus what the sandbox's source<br/>view never carried<br/>mutation runs only"]
+    os --> wb["write-back<br/>upper → host, mutation runs only"]
     wb --> disk
 ```
 

@@ -26,7 +26,7 @@ flowchart LR
     top -->|"CI / verification fork<br/>--tmp-overlay"| vanish[("tmpfs<br/>writes vanish")]
 
     up --> flush["flushUpperToHost<br/>files · whiteout deletes · opaque dirs"]
-    flush -->|"skip snapshot-lower paths<br/>+ maskedPaths: prepare outputs,<br/>and on win32 the mirror excludes"| host[("host working dir<br/>(native-equivalent)")]
+    flush -->|"skipping snapshot lowers<br/>and every masked path"| host[("host working dir<br/>(native-equivalent)")]
 ```
 
 Two facts make this native-equivalent without guessing:

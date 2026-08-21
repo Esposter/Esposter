@@ -20,6 +20,7 @@ const nameRules = computed(() => [
 <template>
   <v-text-field
     v-model="enteredName"
+    ps-0
     :placeholder="`${SuggestionTrigger.Emoji}avocado${SuggestionTrigger.Emoji}`"
     :prefix="SuggestionTrigger.Emoji"
     :rules="nameRules"
@@ -29,6 +30,9 @@ const nameRules = computed(() => [
 
 <style scoped>
 :deep(.v-field__field > input) {
+  flex: 0 1 auto;
+  min-width: 0;
   width: auto;
+  field-sizing: content;
 }
 </style>

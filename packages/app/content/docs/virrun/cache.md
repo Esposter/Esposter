@@ -48,11 +48,11 @@ flowchart TB
     exit -->|"clean exit / handled error"| fin["finalizer teardown<br/>removes the run's own pid-tagged temps"]
     exit -->|"hard kill (SIGKILL, wsl --shutdown)"| corpse["temp corpse stranded<br/>inside the live hash dir"]
 
-    next["next run<br/>(ensureSnapshot / ensurePrepareLayer)"] --> prune["pruneStaleSnapshots / pruneStalePrepareLayers<br/>sweep superseded hash dirs — spare live leases"]
+    next["next run<br/>(ensureSnapshot / ensurePrepareLayer)"] --> prune["pruneStaleSnapshots / pruneStalePrepareLayers<br/>superseded hash dirs, live leases spared"]
     next --> reap["reapStaleTemps<br/>remove upper./work. temps whose owner pid is dead"]
     corpse -.->|"reclaimed once pid dead"| reap
 
-    startup["os-backend startup (win32)"] --> mirrors["reapAbandonedSourceMirrors<br/>sweep mirrors whose origin host dir is gone<br/>or that aged out unmarked"]
+    startup["os-backend startup (win32)"] --> mirrors["reapAbandonedSourceMirrors<br/>orphaned or aged-out mirrors"]
     startup --> orphans["reapOrphanedWslRuns<br/>group-kill WSL bwrap trees reparented off their Relay"]
 ```
 
