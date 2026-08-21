@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ValidationRule } from "vuetify/lib/composables/validation.mjs";
+
 import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
 import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { ROOM_EMOJI_NAME_MAX_LENGTH, ROOM_EMOJI_NAME_REGEX } from "@esposter/db-schema";
@@ -15,14 +17,14 @@ const shortcode = computed({
   },
 });
 // Validated against the name rather than the field's own value — the colons the field draws are not part of the
-// Charset the name is checked against, so every rule would fail on the value that displays them
-const nameRules = computed(() =>
-  [
-    rules.required(),
-    rules.maxLength(ROOM_EMOJI_NAME_MAX_LENGTH),
-    rules.pattern(ROOM_EMOJI_NAME_REGEX, "Lowercase letters, numbers and underscores only"),
-  ].map((validate) => () => validate(name.value)),
-);
+// Charset the name is checked against, so every rule would fail on the value that displays them. A rule is allowed
+// To be a bare message rather than a predicate, so the name goes through whichever the builder answered with
+const getNameRule = (rule: ValidationRule) => () => (typeof rule === "function" ? rule(name.value) : rule);
+const nameRules = computed(() => [
+  getNameRule(rules.required()),
+  getNameRule(rules.maxLength(ROOM_EMOJI_NAME_MAX_LENGTH)),
+  getNameRule(rules.pattern(ROOM_EMOJI_NAME_REGEX, "Lowercase letters, numbers and underscores only")),
+]);
 </script>
 
 <template>
