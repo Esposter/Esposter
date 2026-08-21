@@ -39,8 +39,8 @@ export const useVisibleTocLinkIds = (links: MaybeRefOrGetter<TocLink[]>) => {
       newVisibleIds.every((id, index) => id === visibleIds.value[index]);
     if (newVisibleIds.length > 0 && !isUnchanged) visibleIds.value = newVisibleIds;
   };
-  // After render, so the headings the content renderer produced are in the document, and again whenever the
-  // Page's own links change — which is what a doc-to-doc navigation does without remounting this
+  // After render, so the headings the content renderer produced are in the document — and again if the page's
+  // Own links change under a mount, which the keyed docs route makes rare rather than impossible
   watchPostEffect(() => {
     headings.value = getTocLinkIds(toValue(links)).flatMap((id) => {
       const element = window.document.getElementById(id);
