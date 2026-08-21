@@ -9,4 +9,5 @@ Prioritized top-down. Every item links a full proposal; the specs are the plan, 
 
 ## Next
 
+- [ ] [Member permission overrides](/docs/proposals/esbabbler/member-permission-overrides) — grant or deny one member a permission without minting a role for them, and make the roles panel a list of entries
 - [ ] [Custom video backgrounds](/docs/proposals/esbabbler/custom-video-backgrounds) — uploaded call backgrounds in fixed per-user slots, and a background that survives a reload
