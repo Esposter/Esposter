@@ -25,7 +25,6 @@ const memberItems = computed<SelectItemCategoryDefinition<string>[]>(() => [
       label="Action"
       :items="AdminActionTypeSelectItems"
       density="compact"
-      hide-details
       @update:model-value="emit('update')"
     />
     <v-select
@@ -33,7 +32,6 @@ const memberItems = computed<SelectItemCategoryDefinition<string>[]>(() => [
       label="Actor"
       :items="memberItems"
       density="compact"
-      hide-details
       @update:model-value="emit('update')"
     />
     <v-select
@@ -41,7 +39,6 @@ const memberItems = computed<SelectItemCategoryDefinition<string>[]>(() => [
       label="Target"
       :items="memberItems"
       density="compact"
-      hide-details
       @update:model-value="emit('update')"
     />
   </div>

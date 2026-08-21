@@ -27,7 +27,6 @@ useEventListener("keydown", async (event) => {
       :placeholder="isCapturingKeybind ? 'Press a key… (Esc to cancel)' : 'No Keybind Set'"
       bg-color="background"
       density="compact"
-      hide-details
       readonly
     >
       <template #append-inner>

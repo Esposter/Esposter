@@ -12,6 +12,6 @@ const emit = defineEmits<{ save: [] }>();
 
 <template>
   <MessageModelRoomSettingsField hint="Assign this room to a category to group it in the sidebar." title="Category">
-    <v-select v-model="modelValue" :items density="compact" hide-details @update:model-value="emit('save')" />
+    <v-select v-model="modelValue" :items density="compact" @update:model-value="emit('save')" />
   </MessageModelRoomSettingsField>
 </template>

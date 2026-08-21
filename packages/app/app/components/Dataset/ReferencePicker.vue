@@ -37,7 +37,6 @@ watchImmediate([() => session.value.data, type], async ([newSession, newType]) =
     max-width="16rem"
     :items="DatasetProviderTypeItemCategoryDefinitions"
     label="Data source"
-    hide-details
     @update:model-value="modelValue = undefined"
   />
   <v-select
@@ -46,7 +45,6 @@ watchImmediate([() => session.value.data, type], async ([newSession, newType]) =
     label="Source"
     :model-value="modelValue?.id"
     clearable
-    hide-details
     @update:model-value="modelValue = $event ? { id: $event, type } : undefined"
   />
 </template>

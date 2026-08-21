@@ -50,7 +50,6 @@ const save = async () => {
             :model-value="maxFileSizeBytes != null ? maxFileSizeBytes / MEGABYTE : ''"
             :max="maxFileSizeMegabytes"
             density="compact"
-            hide-details="auto"
             placeholder="Default"
             type="number"
             min="1"
@@ -72,7 +71,6 @@ const save = async () => {
             v-model="allowedMimeCategories"
             :items="categoryItems"
             density="compact"
-            hide-details="auto"
             multiple
             @update:model-value="save()"
           />

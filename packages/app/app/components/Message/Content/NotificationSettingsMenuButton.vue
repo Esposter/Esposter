@@ -53,7 +53,6 @@ const updateNotificationType = async (newNotificationType: NotificationType) => 
     <StyledCard pr-2>
       <v-radio-group
         :model-value="notificationType"
-        hide-details
         @update:model-value="updateNotificationType($event as NotificationType)"
       >
         <v-radio v-for="[value, label] of notificationTypeLabels" :key="value" :value :label>

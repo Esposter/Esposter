@@ -49,7 +49,7 @@ await readFriends();
 
 <template>
   <v-container>
-    <v-text-field v-model="search" placeholder="Search friends" autofocus clearable hide-details />
+    <v-text-field v-model="search" placeholder="Search friends" autofocus clearable />
     <v-list overflow-y-auto lines="two" max-height="360">
       <v-list-item v-for="{ id, image, name } of displayFriends" :key="id" :title="name" @click="toggleFriend(id)">
         <template #prepend>

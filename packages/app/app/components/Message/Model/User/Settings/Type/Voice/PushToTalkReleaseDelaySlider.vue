@@ -23,7 +23,6 @@ const { cloned: pushToTalkReleaseDelayMs } = useCloned(() => userSettings.pushTo
       :max="MAX_PUSH_TO_TALK_RELEASE_DELAY_MS"
       :min="MIN_PUSH_TO_TALK_RELEASE_DELAY_MS"
       :step="10"
-      hide-details
       @end="updateUserSettings({ pushToTalkReleaseDelayMs: $event })"
     />
   </div>

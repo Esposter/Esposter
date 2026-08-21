@@ -16,7 +16,6 @@ const { updateUserSettings } = userSettingsStore;
 <template>
   <v-radio-group
     :model-value="userSettings.noiseSuppressionMode"
-    hide-details
     @update:model-value="updateUserSettings({ noiseSuppressionMode: $event as NoiseSuppressionMode })"
   >
     <v-radio v-for="{ subtitle, title, value } of NoiseSuppressionModeItems" :key="value" :value>

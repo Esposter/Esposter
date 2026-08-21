@@ -14,5 +14,5 @@ const items = computed<SelectItemCategoryDefinition<string>[]>(() =>
 </script>
 
 <template>
-  <v-select v-model="modelValue" density="comfortable" :items :label hide-details />
+  <v-select v-model="modelValue" density="comfortable" :items :label />
 </template>

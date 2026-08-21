@@ -85,6 +85,7 @@ const theme: ThemeOptions = {
 const defaults: DefaultsOptions = {
   VAutocomplete: { hideDetails: "auto", variant: "outlined" },
   VBtn: { flat: true },
+  VCheckbox: { hideDetails: "auto" },
   VColorInput: { hideDetails: "auto", variant: "outlined" },
   VCombobox: { hideDetails: "auto", variant: "outlined" },
   VDataTable: {
@@ -99,7 +100,9 @@ const defaults: DefaultsOptions = {
   },
   VDialog: { maxWidth: "100%", width: 500 },
   VFileInput: { hideDetails: "auto", variant: "outlined" },
+  VRadioGroup: { hideDetails: "auto" },
   VSelect: { hideDetails: "auto", variant: "outlined" },
+  VSlider: { hideDetails: "auto" },
   // Every switch in the app is a primary-coloured toggle with no message slot below it — a switch reports its
   // State by being on, so the grey default reads as disabled, and the reserved message row breaks list rhythm
   VSwitch: { color: "primary", hideDetails: true },

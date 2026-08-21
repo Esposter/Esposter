@@ -13,7 +13,6 @@ const slowmodeRules = computed(() => [rules.minValue(1)]);
       :model-value="modelValue != null ? dayjs.duration(modelValue).asSeconds() : ''"
       :rules="slowmodeRules"
       density="compact"
-      hide-details="auto"
       placeholder="Disabled"
       type="number"
       min="1"

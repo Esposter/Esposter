@@ -50,7 +50,6 @@ watch(modelValue, (newModelValue) => {
         :label="`Type '${confirmName}' to confirm`"
         autofocus
         density="compact"
-        hide-details
       />
     </template>
   </StyledFormDialog>

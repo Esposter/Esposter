@@ -17,6 +17,9 @@ describe(defineVuetifyConfiguration, () => {
           "VBtn": {
             "flat": true,
           },
+          "VCheckbox": {
+            "hideDetails": "auto",
+          },
           "VColorInput": {
             "hideDetails": "auto",
             "variant": "outlined",
@@ -43,9 +46,15 @@ describe(defineVuetifyConfiguration, () => {
             "hideDetails": "auto",
             "variant": "outlined",
           },
+          "VRadioGroup": {
+            "hideDetails": "auto",
+          },
           "VSelect": {
             "hideDetails": "auto",
             "variant": "outlined",
+          },
+          "VSlider": {
+            "hideDetails": "auto",
           },
           "VSwitch": {
             "color": "primary",

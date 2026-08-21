@@ -49,7 +49,6 @@ const emojis = computed(() => {
       prepend-inner-icon="mdi-magnify"
       :autofocus="!smAndDown"
       clearable
-      hide-details
       ma-2
     />
     <v-divider />

@@ -29,7 +29,6 @@ const blur = () => {
     :search="searchQuery"
     chips
     closable-chips
-    hide-details
     hide-no-data
     multiple
     return-object

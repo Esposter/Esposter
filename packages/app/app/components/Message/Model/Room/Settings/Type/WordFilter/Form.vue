@@ -66,13 +66,12 @@ const saveFilter = async () => {
   <div flex flex-col gap-2>
     <MessageModelRoomSettingsTypeWordFilterWordsInput v-model="formData.words" />
     <div font-semibold mt-2>Action</div>
-    <v-select v-model="formData.action" :items="actionSelectItems" density="compact" hide-details label="On match" />
+    <v-select v-model="formData.action" :items="actionSelectItems" density="compact" label="On match" />
     <v-select
       v-if="isTimeout"
       v-model="formData.timeoutDurationMs"
       :items="TimeoutDurationSelectItems"
       density="compact"
-      hide-details
       label="Timeout duration"
     />
     <span text-hint>
