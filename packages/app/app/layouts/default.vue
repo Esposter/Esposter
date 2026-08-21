@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import type { CSSProperties } from "vue";
 import type { Except } from "type-fest";
+import type { CSSProperties } from "vue";
 import type { VNavigationDrawer } from "vuetify/components";
 
 import { LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
 import { useLayoutStore } from "@/store/layout";
 import { takeOne } from "@esposter/shared";
-
-// `StyledNavigationDrawer` owns the open state, so a caller styles and positions the drawer through this bag
-// But never binds its model — passing one back would put two answers on the same prop
-type NavigationDrawerProps = Except<VNavigationDrawer["$props"], "modelValue" | "onUpdate:modelValue">;
 
 interface DefaultProps {
   footerStyle?: CSSProperties;
@@ -18,6 +14,10 @@ interface DefaultProps {
   mainStyle?: CSSProperties;
   rightNavigationDrawerProps?: NavigationDrawerProps;
 }
+
+// `StyledNavigationDrawer` owns the open state, so a caller styles and positions the drawer through this bag
+// But never binds its model — passing one back would put two answers on the same prop
+type NavigationDrawerProps = Except<VNavigationDrawer["$props"], "modelValue" | "onUpdate:modelValue">;
 
 const slots = defineSlots<{
   default?: () => VNode;

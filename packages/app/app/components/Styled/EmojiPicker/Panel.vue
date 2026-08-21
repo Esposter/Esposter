@@ -31,14 +31,24 @@ const previewEmoji = ref<PickableEmoji>();
 const categories = computed(() => getEmojiCategories(recentEmojiSlugs.value, customEmojis));
 // Tracked by title rather than by index because Frequently Used only appears once there is something in it,
 // So an index would silently point at a different category the first time an emoji is picked
-const activeCategoryTitle = ref(takeOne(categories.value, 0).title);
+const pickedCategoryTitle = ref(takeOne(categories.value, 0).title);
+// A category can leave the rail while it is the selected one — a room's set going empty takes its category with
+// It — so the pick is resolved against the live list rather than trusted. `v-tabs` handed a value no tab carries
+// Shows no active tab at all, which would leave the rail blank above a grid that had already fallen back
+const activeCategory = computed(
+  () => categories.value.find(({ title }) => title === pickedCategoryTitle.value) ?? takeOne(categories.value, 0),
+);
+const activeCategoryTitle = computed({
+  get: () => activeCategory.value.title,
+  set: (title) => {
+    pickedCategoryTitle.value = title;
+  },
+});
 // Search replaces the grid wholesale while a query is running. The rail stays live rather than being disabled
 // By it — picking a category clears the query, which is the upstream bug that made the two mutually exclusive
-const emojis = computed(() => {
-  if (searchQuery.value) return searchEmojis(searchQuery.value, customEmojis);
-  const activeCategory = categories.value.find(({ title }) => title === activeCategoryTitle.value);
-  return (activeCategory ?? takeOne(categories.value, 0)).emojis;
-});
+const emojis = computed(() =>
+  searchQuery.value ? searchEmojis(searchQuery.value, customEmojis) : activeCategory.value.emojis,
+);
 </script>
 
 <template>

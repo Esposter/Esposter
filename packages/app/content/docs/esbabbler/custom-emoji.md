@@ -50,13 +50,14 @@ Two constraints carry the whole shortcode contract:
 - **A unique index on `(roomId, name)`**, so one shortcode names at most one emoji in a room.
 - **A name check constraint** restricting the name to lowercase letters, digits and underscores — the same closed charset the Unicode dataset's slugs use, which is what lets `:name:` resolve against one vocabulary rather than two.
 
-Both places a name is entered — the create dialog and the settings rename — are **one field**, and it shows the
-colons either side of the value rather than expecting them to be typed. They are chrome: the charset has no room for
-a colon, so a field that accepted them would only be a field that rejected what it invited, while a value drawn
-without them does not read as the token it will be typed as. Anything pasted is stripped of them for the same
+Both places a name is entered — the create dialog and the settings rename — are **one field**, and it draws the
+colons either side of the input rather than expecting them to be typed. They are chrome, not value: the caret cannot
+reach them, they are never in the model, and every rule is checked against the name alone. The charset has no room
+for a colon, so a field that accepted one would only be a field that rejected what it invited, while a value drawn
+without them does not read as the token it will be typed as. A colon that arrives by paste is dropped for the same
 reason, which is what lets a `:name:` copied out of a message land as a name.
 
-A name a Unicode slug already owns is **rejected at upload**, not shadowed at read. Shadowing would make the same `:fire:` render differently per room, and a room that later deleted its own entry would silently change every message that used it.
+A name a Unicode slug already owns is **rejected when the row is created**, not shadowed at read. Shadowing would make the same `:fire:` render differently per room, and a room that later deleted its own entry would silently change every message that used it.
 
 That check reads the dataset as it stands, so a later Unicode release can still introduce a slug an existing room emoji already uses. Nothing breaks when it does: every reaction and every message resolves by id, so the room's own emoji renders exactly as before and only the shortcode becomes ambiguous in search and `:` completion, which a rename settles.
 
@@ -66,7 +67,7 @@ Room emoji are room-owned, exactly like attachments, so they sit outside the per
 
 The cap is the whole accounting story: a room's worst case is a fixed number rather than an open-ended one, with nothing to meter, no ledger row per emoji, and no usage figure for a room owner to act on. It is checked twice on purpose — once when the write target is minted, so a full room never receives one it cannot use, and again inside the transaction that inserts, which is what stops two uploads racing the last slot.
 
-The **size cap is the blob's real byte length**, read back before the row is created. A write SAS constrains the name it may be PUT to and the content type the blob is then served as — never the bytes that arrive through it — so the size the client declared when it asked for the target is an early no rather than the guarantee, and the same is true of the mime type ([upload content validation](/docs/architecture/deferred/upload-content-validation)).
+The **size cap is the blob's real byte length**, read back before the row is created. A write SAS constrains only the name it may be PUT to — never the bytes that arrive through it, and not their type either, since the content type it is signed with is a response override carried by that url rather than a condition on the PUT. So the size the client declared when it asked for the target is an early no rather than the guarantee, and the mime type is the same ([upload content validation](/docs/architecture/deferred/upload-content-validation)).
 
 The cap counts **rows**, so a member with `ManageEmojis` who mints write targets and never creates the rows leaves blobs the cap cannot see, swept only when the room is deleted and unbounded in size because the check that reads the bytes belongs to the create that never ran. That is the known limit of counting rows rather than reservations; if abandoned uploads ever appear in a room's storage figures, the answer is a pending row that counts toward the cap and expires, not a sweeper.
 

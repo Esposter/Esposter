@@ -1,6 +1,12 @@
 import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
 
+// The Vuetify inputs `vuetify.config.ts` declares `hideDetails: "auto"` for. Shared by the two halves of the
+// `hide-details` ban below so the static and bound forms can never cover different tags — a component this list
+// Misses would be banned from binding a prop nothing here declares a default for.
+const VUETIFY_INPUT_ELEMENT_PATTERN =
+  "/^v-(autocomplete|checkbox|color-input|combobox|file-input|radio-group|select|slider|switch|textarea|text-field)$/";
+
 export default {
   // Not covered by eslint-plugin-oxlint on vue files — its vue-svelte-astro-exceptions config
   // Deliberately keeps unused-vars rules enabled there, so this off is still load-bearing.
@@ -52,8 +58,7 @@ export default {
   "vue/no-restricted-static-attribute": [
     "error",
     {
-      element:
-        "/^v-(autocomplete|checkbox|color-input|combobox|file-input|radio-group|select|slider|switch|textarea|text-field)$/",
+      element: VUETIFY_INPUT_ELEMENT_PATTERN,
       key: "hide-details",
       message:
         'Don\'t write `hide-details` on a Vuetify input — `vuetify.config.ts` already declares `hideDetails: "auto"` for it. The bare attribute is `true`, which hides the validation message a field with rules has to show.',
@@ -86,7 +91,7 @@ export default {
       // Its own validation message.
       message:
         'Don\'t bind `:hide-details`. `vuetify.config.ts` declares `hideDetails` as "auto" for every input, which already hides the details row exactly when there is no message to show.',
-      selector: "VAttribute[directive=true][key.name.name='bind'][key.argument.name='hide-details']",
+      selector: `VElement[rawName=${VUETIFY_INPUT_ELEMENT_PATTERN}] > VStartTag > VAttribute[directive=true][key.name.name='bind'][key.argument.name='hide-details']`,
     },
     ...restrictedDateSyntaxes,
   ],

@@ -19,7 +19,7 @@ const { emoji } = defineProps<StyledEmojiPickerFooterProps>();
      the pointer leaves the grid. The bar states its own height, so which of the two is showing never moves anything
      around it -->
 <template>
-  <div px-3 flex gap-3 h="[var(--app-bar-height)]" items-center bg-background>
+  <div h="[var(--app-bar-height)]" px-3 bg-background flex gap-3 items-center>
     <template v-if="emoji">
       <span leading-none text-headline-small><StyledEmoji :emoji :skin-tone /></span>
       <span font-semibold truncate text-body-medium>{{ getEmojiShortcode(emoji.slug) }}</span>

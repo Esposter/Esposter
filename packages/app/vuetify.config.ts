@@ -105,7 +105,7 @@ const defaults: DefaultsOptions = {
   VSlider: { hideDetails: "auto" },
   // Every switch in the app is a primary-coloured toggle with no message slot below it — a switch reports its
   // State by being on, so the grey default reads as disabled, and the reserved message row breaks list rhythm
-  VSwitch: { color: "primary", hideDetails: true },
+  VSwitch: { color: "primary", hideDetails: "auto" },
   VTextarea: { hideDetails: "auto", variant: "outlined" },
   VTextField: { hideDetails: "auto", variant: "outlined" },
   VToolbar: { color: "surface" },

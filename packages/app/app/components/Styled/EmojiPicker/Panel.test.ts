@@ -7,6 +7,7 @@ import StyledEmojiPickerPanel from "@/components/Styled/EmojiPicker/Panel.vue";
 import { EmojiGroup, EmojiGroups } from "@/models/message/emoji/EmojiGroup";
 import { EmojiType } from "@/models/message/emoji/EmojiType";
 import { SkinTone } from "@/models/message/emoji/SkinTone";
+import { ROOM_EMOJI_CATEGORY_TITLE } from "@/services/message/emoji/constants";
 import { getCustomEmojiTag } from "@/services/message/emoji/getCustomEmojiTag";
 import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
 import { searchEmojis } from "@/services/message/emoji/searchEmojis";
@@ -25,6 +26,14 @@ const getGridEmojis = (component: VueWrapper) => {
 };
 
 describe("styledEmojiPickerPanel", () => {
+  const customEmoji: CustomEmoji = {
+    id: crypto.randomUUID(),
+    name: "party_parrot",
+    sasUrl: "https://storage.test/emoji",
+    slug: "party_parrot",
+    type: EmojiType.Custom,
+  };
+
   beforeEach(() => {
     setActivePinia(createPinia());
     window.localStorage.clear();
@@ -90,17 +99,27 @@ describe("styledEmojiPickerPanel", () => {
   test("emits a custom emoji as its id tag with its record", async () => {
     expect.hasAssertions();
 
-    const customEmoji: CustomEmoji = {
-      id: crypto.randomUUID(),
-      name: "party_parrot",
-      sasUrl: "https://storage.test/emoji",
-      slug: "party_parrot",
-      type: EmojiType.Custom,
-    };
     const component = await mountSuspended(StyledEmojiPickerPanel, { props: { customEmojis: [customEmoji] } });
     await component.find("input").setValue("party_parrot");
     await component.findComponent(StyledEmojiPickerGrid).find("button[aria-label]").trigger("click");
 
     expect(component.emitted("select")).toStrictEqual([[getCustomEmojiTag(customEmoji.id), customEmoji]]);
+  });
+
+  // The room's last emoji can be deleted while the picker sits on its category. `v-tabs` given a value no tab
+  // Carries shows no active tab at all, so the rail has to fall back with the grid rather than go blank over it
+  test("falls back to the first category when the active one leaves the rail", async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(StyledEmojiPickerPanel, { props: { customEmojis: [customEmoji] } });
+    await component.find(`.v-tab[aria-label="${ROOM_EMOJI_CATEGORY_TITLE}"]`).trigger("click");
+
+    expect(component.find(".v-tab--selected").attributes("aria-label")).toBe(ROOM_EMOJI_CATEGORY_TITLE);
+
+    await component.setProps({ customEmojis: [] });
+    const categoryTitles = component.findAll(".v-tab").map((tab) => tab.attributes("aria-label"));
+
+    expect(categoryTitles).not.toContain(ROOM_EMOJI_CATEGORY_TITLE);
+    expect(component.find(".v-tab--selected").attributes("aria-label")).toBe(takeOne(categoryTitles));
   });
 });

@@ -23,6 +23,8 @@ The container is the **private** one, because the only consumer of a background 
 
 The list is the container listing under that prefix. There is nothing to keep in step with it, which is the point of deriving the name.
 
+**The size cap is the stored byte length, and the listing is where it is read.** A write SAS cannot bound what is PUT through it, so the size the picker checked before asking for the target is an early no rather than the guarantee — the same split [custom emoji](/docs/esbabbler/custom-emoji) has. A listing already carries each blob's `contentLength`, so a slot over the cap is dropped from the list the picker receives and its blob deleted through the standard blob-deletion event. That costs no extra round trip and needs no row to hang a check on, which is what keeps the no-table property intact.
+
 ### Remembering the choice
 
 `userSettingsInMessage` gains a `virtualBackground` text column defaulting to the empty sentinel, alongside the voice settings it already carries ([user settings](/docs/esbabbler/settings)). It holds either a preset's path or a slot name; the client resolves a slot to a freshly signed read SAS and a preset to its static path, and the empty value means no background — which is what the media store's ref already means today.
@@ -71,4 +73,4 @@ A browser without background processor support keeps today's behaviour: the pick
 
 Cropping and aspect ratio are the processor's problem, not ours — it already composites a preset SVG behind an arbitrary camera aspect, and an uploaded image goes through the same path with no new fitting logic.
 
-The mime category is signed into the write SAS as the blob's content type, so a slot is always **served** as an image whatever was PUT through it, which is the same property room attachments have. It is not a check on the bytes, and no upload path in the app has one ([upload content validation](/docs/architecture/deferred/upload-content-validation)) — a slot is composited into the uploader's own camera track and reaches nobody else, so the exposure is a decoder bug in their own browser.
+The mime category is checked when the write target is minted, and that is all it is: a write SAS constrains the blob name it may be PUT to, never the bytes or the type they arrive as. What makes a slot always **served** as an image is its read SAS being signed with an image content type, which is what attachment downloads already do. Neither is a check on the bytes, and no upload path in the app has one ([upload content validation](/docs/architecture/deferred/upload-content-validation)) — a slot is composited into the uploader's own camera track and reaches nobody else, so the exposure is a decoder bug in their own browser.

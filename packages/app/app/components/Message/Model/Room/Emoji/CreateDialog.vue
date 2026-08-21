@@ -66,17 +66,17 @@ const fileRules = computed(() => [
       emoji picker.
     </p>
     <div>
-      <p m-0 font-semibold text-body-large>1. Upload an image</p>
-      <p m-0 text-body-medium op-medium-emphasis>
+      <p font-semibold m-0 text-body-large>1. Upload an image</p>
+      <p m-0 op-medium-emphasis text-body-medium>
         Square images with transparent backgrounds work best. It has to be under
         {{ MAX_ROOM_EMOJI_SIZE_BYTES / 1024 }} KB — we won't resize it for you.
       </p>
       <v-file-input
         accept="image/*"
         label="Image"
-        mt-2
         :rules="fileRules"
         show-size
+        mt-2
         @update:model-value="
           (files?) => {
             file = files ? (Array.isArray(files) ? takeOne(files) : files) : undefined;
@@ -85,11 +85,11 @@ const fileRules = computed(() => [
       />
     </div>
     <div>
-      <p m-0 font-semibold text-body-large>2. Give it a name</p>
-      <p m-0 text-body-medium op-medium-emphasis>This is also what you'll type to add this emoji to your messages.</p>
-      <MessageModelRoomEmojiNameField v-model="name" autofocus mt-2 placeholder=":avocado:" />
+      <p font-semibold m-0 text-body-large>2. Give it a name</p>
+      <p m-0 op-medium-emphasis text-body-medium>This is also what you'll type to add this emoji to your messages.</p>
+      <MessageModelRoomEmojiNameField v-model="name" autofocus mt-2 placeholder="avocado" />
     </div>
-    <p v-if="isFull" m-0 text-red text-body-medium>
+    <p v-if="isFull" text-red m-0 text-body-medium>
       This room already has its {{ MAX_ROOM_EMOJIS }} {{ pluralize("emoji", MAX_ROOM_EMOJIS) }}. Delete one to add
       another.
     </p>

@@ -2,9 +2,9 @@
 import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
 import type { VBtn, VTooltip } from "vuetify/components";
 
+import { useRoomStore } from "@/store/message/room";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { useRoleStore } from "@/store/message/room/role";
-import { useRoomStore } from "@/store/message/room";
 import { RoomPermission } from "@esposter/db-schema";
 
 interface MessageModelMessageEmojiPickerProps {

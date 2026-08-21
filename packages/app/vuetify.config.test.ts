@@ -58,7 +58,7 @@ describe(defineVuetifyConfiguration, () => {
           },
           "VSwitch": {
             "color": "primary",
-            "hideDetails": true,
+            "hideDetails": "auto",
           },
           "VTextField": {
             "hideDetails": "auto",
