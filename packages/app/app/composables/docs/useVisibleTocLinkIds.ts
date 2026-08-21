@@ -26,8 +26,12 @@ export const useVisibleTocLinkIds = (links: MaybeRefOrGetter<TocLink[]>) => {
         return sectionBottom > viewportTop && sectionTop < window.innerHeight;
       })
       .map(({ id }) => id);
-    // Keep the last non-empty set (e.g. a long intro before the first heading) so the highlight never drops out
-    if (newVisibleIds.length > 0) visibleIds.value = newVisibleIds;
+    // Keep the last non-empty set (e.g. a long intro before the first heading) so the highlight never drops out,
+    // And assign only when it actually moved — which is at a section boundary, not on every scroll event. A fresh
+    // Array each time invalidates every item's `isActive` and makes the slide indicator remeasure the whole list
+    // On the next tick, so the cheap arithmetic above would be paid for with a layout pass per frame
+    if (newVisibleIds.length > 0 && newVisibleIds.join(",") !== visibleIds.value.join(","))
+      visibleIds.value = newVisibleIds;
   };
 
   useEventListener(
