@@ -100,7 +100,7 @@ The accepted limitation: Unicode allows a different tone per person in a sequenc
 | `packages/app/app/services/message/emoji/getEmojiCharacterKey.ts`              | Normalisation that finds a glyph's record whatever form it is in |
 | `packages/app/app/services/message/emoji/applySkinTone.ts`                     | Tone synthesis, including the ZWJ rule                           |
 | `packages/app/app/services/message/emoji/getEmojiSlug.ts`                      | Reverse lookup — the shortcode behind a glyph, for tooltips      |
-| `packages/app/app/services/message/emoji/getEmojiCategories.ts`                | Frequently Used plus the nine CLDR groups                        |
+| `packages/app/app/services/message/emoji/getEmojiCategories.ts`                | Frequently Used, the room's own set, then the nine CLDR groups   |
 | `packages/app/app/services/message/emoji/EmojiSuggestion.ts`                   | The composer's `:` trigger, on the same index and ranking        |
 | `packages/app/app/components/Styled/EmojiPicker/Index.vue`                     | The overlay and its activator — menu, or bottom sheet on mobile  |
 | `packages/app/app/components/Styled/EmojiPicker/Panel.vue`                     | Search field, category rail, grid, footer                        |
