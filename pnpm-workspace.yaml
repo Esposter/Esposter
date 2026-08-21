@@ -61,7 +61,7 @@ catalog:
   "@platformatic/vfs": ^0.4.0
   "@pulumi/azure-native": ^3.26.0
   "@pulumi/github": ^6.15.0
-  "@pulumi/pulumi": ^3.258.0
+  "@pulumi/pulumi": ^3.259.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
   "@takumi-rs/core": ^2.10.0
   "@tiptap/core": ^3.30.2
@@ -119,7 +119,7 @@ catalog:
   better-auth: ^1.7.1
   citty: ^0.2.2
   codemirror: ^6.0.2
-  crossws: ^0.4.10
+  crossws: ^0.4.12
   ctix: ^2.8.2
   data-urls: ^7.0.0
   dayjs: ^1.11.23
@@ -163,7 +163,7 @@ catalog:
   grid-layout-plus: ^1.1.1
   gsap: ^3.15.0
   h3: ^1.15.11
-  happy-dom: ^20.11.2
+  happy-dom: ^20.11.6
   howler: ^2.2.4
   idb: ^8.0.3
   js-beautify: ^2.0.3
@@ -198,19 +198,19 @@ catalog:
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.2.0
   read-excel-file: ^9.3.10
-  rolldown: ^1.2.4
+  rolldown: ^1.2.5
   rolldown-plugin-dts: ^0.28.2
   rxjs: ^7.8.2
   sanitize-html: ^2.17.7
-  sass-embedded: ^1.102.0
+  sass-embedded: ^1.103.1
   sax: ^1.6.1
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6
-  survey-core: ^3.0.0
-  survey-creator-core: ^3.0.0
-  survey-creator-vue: ^3.0.0
-  survey-vue3-ui: ^3.0.0
+  survey-core: ^3.0.1
+  survey-creator-core: ^3.0.1
+  survey-creator-vue: ^3.0.1
+  survey-vue3-ui: ^3.0.1
   temporal-polyfill: ^1.0.4
   three: ^0.185.1
   three-globe: ^2.45.2
@@ -227,7 +227,7 @@ catalog:
   unplugin-dts: ^1.0.3
   v-viewer: ^3.0.23
   viewerjs: ^1.11.8
-  vite: ^8.2.1
+  vite: ^8.2.2
   vitest: ^4.1.11
   vue: ^3.5.41
   vue-codemirror: ^6.1.1
@@ -254,9 +254,9 @@ minimumReleaseAge: 0
 nodeOptions: --max-old-space-size=8192
 
 overrides:
-  crossws: ^0.4.10
+  crossws: ^0.4.12
   h3: ^1.15.11
   pdfjs-dist: ^6.2.108
-  vite: ^8.2.1
+  vite: ^8.2.2
 
 shellEmulator: true
