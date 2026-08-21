@@ -17,6 +17,8 @@ const onSelectType = (settingsType: UserSettingsType) => {
   isDrawerOpen.value = false;
 };
 const goTo = useVGoTo();
+// Stable references, since a literal in either binding allocates a fresh array every render
+const openedTypes = computed(() => [modelValue.value]);
 // Highlight every visible section (docs table-of-contents behaviour) — the slide indicator stretches
 // Across them. While a sidebar click scrolls programmatically, pin the highlight to the target.
 const activeSectionIds = computed<string[]>(() => {
@@ -42,7 +44,8 @@ const scrollToSection = async (section: SettingsSection) => {
 
 <template>
   <MessageModelSettingsLeftSideBar v-model:open="isDrawerOpen">
-    <v-list :opened="[modelValue]">
+    <v-list :opened="openedTypes">
+      <StyledSlideIndicator :active-keys="activeSectionIds" />
       <v-list-group v-for="settingsType of UserSettingsTypes" :key="settingsType" :value="settingsType">
         <template #activator="{ props }">
           <v-list-item :="props" :active="settingsType === modelValue" @click="onSelectType(settingsType)">
@@ -52,7 +55,6 @@ const scrollToSection = async (section: SettingsSection) => {
             <v-list-item-title font-bold>{{ settingsType }}</v-list-item-title>
           </v-list-item>
         </template>
-        <StyledSlideIndicator v-if="settingsType === modelValue" :active-keys="activeSectionIds" />
         <v-list-item
           v-for="section of UserSettingsSectionMap[settingsType]"
           :key="section"

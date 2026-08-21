@@ -12,8 +12,10 @@ const isOpen = defineModel<boolean>("open", { default: false });
 </template>
 
 <style scoped>
-/* Positioning context for the StyledSlideIndicator rail every settings sidebar hangs off its list groups. */
-:deep(.v-list-group__items) {
+/* Positioning context for the StyledSlideIndicator rail every settings sidebar hangs off. It is the whole list
+   rather than a group's items, which is what lets one bar slide between groups instead of a new one appearing
+   inside each. It also puts the bar outside the clip a group applies while it expands. */
+:deep(.v-list) {
   position: relative;
 }
 </style>

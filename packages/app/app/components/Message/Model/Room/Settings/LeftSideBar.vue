@@ -38,6 +38,9 @@ const visibleCategories = computed(() =>
 // Discord heads the first category with the server name itself
 const getCategoryTitle = (category: SettingsCategory) => (category === SettingsCategory.General ? room.name : category);
 const openedCategories = ref([...SettingsCategories]);
+// One key, but as a stable reference: a literal in the binding allocates a fresh array every render, and the
+// Indicator watches what it is handed
+const activeKeys = computed(() => [modelValue.value]);
 const onClick = (settingsType: SettingsType) => {
   if (settingsType === SettingsType.Delete) emit("open:delete");
   else modelValue.value = settingsType;
@@ -48,6 +51,7 @@ const onClick = (settingsType: SettingsType) => {
 <template>
   <MessageModelSettingsLeftSideBar v-model:open="isDrawerOpen">
     <v-list v-model:opened="openedCategories">
+      <StyledSlideIndicator :active-keys />
       <v-list-group v-for="{ category, settingsTypes } of visibleCategories" :key="category" :value="category">
         <template #activator="{ props: activatorProps }">
           <v-list-item :="activatorProps">
@@ -56,7 +60,6 @@ const onClick = (settingsType: SettingsType) => {
             </v-list-item-title>
           </v-list-item>
         </template>
-        <StyledSlideIndicator v-if="settingsTypes.includes(modelValue)" :active-keys="[modelValue]" />
         <MessageModelRoomSettingsLeftSideBarItem
           v-for="settingsType of settingsTypes"
           :key="settingsType"
