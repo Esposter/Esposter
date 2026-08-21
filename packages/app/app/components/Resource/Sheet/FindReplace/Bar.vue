@@ -11,7 +11,7 @@ const { currentOccurrenceIndex, findValue, isFindReplaceOpen, occurrences, repla
     <v-sheet v-if="isFindReplaceOpen" p-2>
       <div flex gap-2 items-center>
         <ResourceSheetFindReplaceFindField />
-        <v-text-field v-model="replaceValue" clearable density="compact" hide-details label="Replace with" max-w-52 />
+        <v-text-field v-model="replaceValue" clearable density="compact" label="Replace with" max-w-52 />
         <span text-right w-16 op-medium-emphasis text-body-medium>
           <template v-if="findValue && occurrences.length === 0">No matches</template>
           <template v-else-if="occurrences.length > 0"

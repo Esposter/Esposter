@@ -56,7 +56,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 2. **`class`** — static class string
 3. **UnoCSS attributify props** — shorthand utilities as props (`ma-2`, `flex`, `flex-col`)
 4. **Component props with values** — `:prop="value"` / `prop="string"` (alphabetical)
-5. **Shorthand boolean props** — bare names defaulting to `true` (`clearable`, `hide-details`)
+5. **Shorthand boolean props** — bare names defaulting to `true` (`clearable`, `autofocus`)
 6. **Event handlers** — `@event="..."` last
 
 ```vue
@@ -65,8 +65,8 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
   ma-2
   density="compact"
   label="Search"
+  autofocus
   clearable
-  hide-details
   @keydown.enter.stop="submit()"
 />
 ```

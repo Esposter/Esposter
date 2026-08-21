@@ -33,7 +33,6 @@ onMounted(async () => {
   <div v-else p-6 flex flex-col gap-4 max-w-xl>
     <v-select
       label="Type"
-      hide-details
       :items="DataSourceTypeItemCategoryDefinitions"
       :model-value="settings.type"
       @update:model-value="onUpdateType"

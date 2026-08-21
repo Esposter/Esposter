@@ -64,7 +64,6 @@ const displayedSelectedColumnIds = computed(() => {
         :key="id"
         v-model="selectedColumnIds"
         density="compact"
-        hide-details
         :label="name"
         :value="id"
       />

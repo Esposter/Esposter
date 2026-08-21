@@ -65,6 +65,6 @@ const navigateTo = (targetRowIndex: number, targetColumnName: string) => {
       }
     "
   >
-    <ResourceSheetRowFieldInput v-model="localValue" :column autofocus hide-details is-inline />
+    <ResourceSheetRowFieldInput v-model="localValue" :column autofocus is-inline />
   </div>
 </template>

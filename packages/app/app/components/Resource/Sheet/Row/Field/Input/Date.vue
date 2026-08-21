@@ -24,7 +24,6 @@ const onUpdateModelValue = (newModelValue: null | string) => {
 <template>
   <v-text-field
     :model-value="displayModelValue"
-    :hide-details="isInline"
     :label="isInline ? '' : column.name"
     :single-line="isInline"
     type="date"

@@ -19,12 +19,13 @@ Use `StyledEditFormDialogErrorIcon` with `:edit-form :is-edit-form-valid` (plus 
 
 ## Inline forms (non-dialog)
 
-For inline forms (slash command params, embedded editors) where inline validation errors would break the layout:
+For inline forms (slash command params, embedded editors), where a dialog's footer row does not exist to carry the state:
 
-- Add `hide-details` to all `v-text-field`/`v-textarea` inputs.
-- Show `StyledEditFormDialogErrorIcon` in the form's header row instead.
+- Show `StyledEditFormDialogErrorIcon` in the form's header row, so validity is legible without reading every field.
 - Name locals to match prop names so the `:edit-form :is-edit-form-valid` shorthands work.
 - Ref the error icon to gate submit via `errorIcon.value?.isValid`.
+
+The fields still report their own errors: `hideDetails: "auto"` reserves no row until there is a message, so the layout only grows when something is actually wrong, and suppressing that with `hide-details` is an eslint error (`vuetify` SKILL.md). The icon summarises; it does not replace what the field says.
 
 ```vue
 <script setup lang="ts">
@@ -38,7 +39,7 @@ const disabled = computed(() => !(errorIcon.value?.isValid ?? true));
   <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid />
 </div>
 <v-form ref="editForm" v-model="isEditFormValid">
-  <v-text-field :rules="[rules.required()]" hide-details ... />
+  <v-text-field :rules="[rules.required()]" ... />
 </v-form>
 ```
 

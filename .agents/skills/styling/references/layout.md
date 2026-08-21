@@ -24,7 +24,7 @@ A Vuetify input's root (`.v-input`) is `flex: 1 1 auto`. Drop it straight into a
 ```html
 <!-- CORRECT — wrapper is the flex item; field is its natural height -->
 <div>
-  <v-text-field density="compact" hide-details placeholder="Create role..." />
+  <v-text-field density="compact" placeholder="Create role..." />
 </div>
 ```
 
