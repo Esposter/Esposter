@@ -15,12 +15,12 @@ flowchart TD
   START -->|imperative — after a mutation, form submit, guard| NAV["navigateTo(target, options)"]
   KIND -->|internal app route| INTERNAL["NuxtLink :to (or NuxtInvisibleLink)"]
   KIND -->|external URL| EXTERNAL["NuxtLink :to external target=_blank"]
-  KIND -->|in-page anchor / fragment| HASH["NuxtInvisibleLink :to=hash + custom @click.prevent"]
+  KIND -->|in-page anchor / fragment| HASH["NuxtInvisibleLink :to=hash replace"]
 ```
 
 - **Internal route** — `<NuxtLink :to="RoutePath.Resource(id)">` (or `<NuxtInvisibleLink>` when the link should inherit surrounding styling). Real anchors, so keyboard and middle-/ctrl-click work. Vuetify components (`v-btn`, `v-card`, `v-list-item`, `v-tab`, `v-chip`) with a plain destination take `:to` directly — same real-anchor semantics; reserve an inline `@click="navigateTo(...)"` handler for actions that run logic before navigating or compute the target at click time. Route targets always come from `RoutePath` (`@esposter/shared`), never string-built.
 - **External URL** — `<NuxtLink :to="url" external target="_blank">`; NuxtLink adds `rel="noopener noreferrer"` for `_blank`, so a manual `rel` is redundant.
-- **In-page anchor** — `<NuxtInvisibleLink :to="{ hash: '#id' }" @click.prevent="…">`; the `.prevent` suppresses router navigation so a custom smooth-scroll + `history.replaceState` handler drives the behavior (see the docs table of contents).
+- **In-page anchor** — `<NuxtInvisibleLink :to="{ hash: '#id' }" replace>`, and nothing else. The router already resolves a hash to its element and honours the heading's `scroll-margin-top`, which is what clears the sticky app bar; `router.options.scrollBehaviorType` in `configuration/router.ts` is the only thing it cannot infer, and it is set once. `replace` keeps a run of anchors from filling the back stack, which is the one thing a hand-rolled `history.replaceState` was buying. **Never `@click.prevent` an anchor to scroll it yourself** — a `replaceState` writes a hash the router does not know about, so `currentRoute` and the address bar disagree from then on and the next navigation inherits the stale hash, which the router reports as a selector matching no element.
 - **Imperative** — `navigateTo(target, { replace: true })` for post-mutation redirects, form submits, and route-guard cases where there is no element to click. `router.push` is banned by lint (`no-restricted-syntax`) — use `navigateTo`. `router.replace({ query })` is a query-string update, not navigation, so it is exempt and allowed.
 
 ## NuxtInvisibleLink
@@ -55,4 +55,5 @@ The docs page (`pages/docs/[...slug].vue`) must feel instant when moving between
 | `packages/configuration/eslint/overrides/vueRules.js` | bans the raw `a` element and `router.push` in templates                                     |
 | `packages/configuration/eslint/typescriptRules.js`    | bans `router.push` in `.ts` + `.vue` script (`no-restricted-syntax`)                        |
 | `app/pages/docs/[...slug].vue`                        | reactive-key docs page — instant in-place navigation                                        |
-| `app/components/Docs/TableOfContents/Item.vue`        | in-page hash anchor via `NuxtInvisibleLink` + custom smooth scroll                          |
+| `app/components/Docs/TableOfContents/Item.vue`        | in-page hash anchor — a plain `NuxtInvisibleLink`, no handler                               |
+| `configuration/router.ts`                             | `scrollBehaviorType: "smooth"` — the whole of our hash-scrolling code                       |

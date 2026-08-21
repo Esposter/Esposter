@@ -9,27 +9,22 @@ interface TableOfContentsItemProps {
 
 const { depth, link, visibleIds } = defineProps<TableOfContentsItemProps>();
 const isActive = computed(() => visibleIds.includes(link.id));
-// Window is not reachable from template expressions, so the handler lives in script
-const onClick = () => {
-  window.document.getElementById(link.id)?.scrollIntoView({ behavior: "smooth" });
-  window.history.replaceState(window.history.state, "", `#${link.id}`);
-};
 </script>
 
 <template>
   <li>
     <NuxtInvisibleLink
       class="text-[0.9375rem]"
-      py-1.5
-      no-underline
-      block
-      transition-colors
       duration="[--transition-duration]"
       :class="isActive ? 'text-primary font-medium' : 'text-inherit op-medium-emphasis hover:op-high-emphasis'"
       :data-slide-indicator-key="link.id"
       :to="{ hash: `#${link.id}` }"
       :style="{ paddingLeft: `${0.75 + depth * 0.75}rem` }"
-      @click.prevent="onClick()"
+      replace
+      py-1.5
+      no-underline
+      block
+      transition-colors
     >
       {{ link.text }}
     </NuxtInvisibleLink>
