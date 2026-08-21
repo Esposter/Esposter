@@ -3,9 +3,9 @@ import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
 import type { SuggestionProps } from "@tiptap/suggestion";
 
 import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
-import { useEmojiPickerStore } from "@/store/message/emojiPicker";
 import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
 import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
+import { useEmojiPickerStore } from "@/store/message/emojiPicker";
 import { takeOne } from "@esposter/shared";
 
 const { command, items, query } = defineProps<Pick<SuggestionProps<PickableEmoji>, "command" | "items" | "query">>();

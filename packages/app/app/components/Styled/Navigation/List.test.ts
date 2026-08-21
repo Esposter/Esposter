@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import StyledNavList from "@/components/Styled/NavList.vue";
+import StyledNavigationList from "@/components/Styled/Navigation/List.vue";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
-describe("styledNavList", () => {
+describe("styledNavigationList", () => {
   const items = [
     { icon: "mdi-home-outline", isActive: true, title: "Home", to: RoutePath.ResourceExplorer },
     { icon: "mdi-view-list-outline", isActive: false, title: "All", to: RoutePath.ResourceExplorerAll },
@@ -15,7 +15,7 @@ describe("styledNavList", () => {
   test("renders one entry per item, highlighting the one the caller marked active", async () => {
     expect.hasAssertions();
 
-    const component = await mountSuspended(StyledNavList, { props: { items } });
+    const component = await mountSuspended(StyledNavigationList, { props: { items } });
 
     expect(component.findAll("a").map((link) => link.text())).toStrictEqual(["Home", "All"]);
     expect(component.findAll(".v-list-item--active")).toHaveLength(1);

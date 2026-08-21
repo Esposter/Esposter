@@ -24,25 +24,15 @@ Vuetify composables are auto-imported with a `v` prefix and are globally availab
 
 ## Global Defaults (vuetify.config.ts)
 
-These variants are set globally and must **never** be repeated on individual components:
+**A prop `vuetify.config.ts` declares must never be repeated on an instance.** Read the `defaults` object there for the current set rather than a copy of it here — it is one screen long. Two entries recur: `variant="outlined"` on every text input, and a `hideDetails` on every input.
 
-| Component       | Default                          |
-| --------------- | -------------------------------- |
-| `VAutocomplete` | `variant="outlined"`             |
-| `VColorInput`   | `variant="outlined"`             |
-| `VCombobox`     | `variant="outlined"`             |
-| `VFileInput`    | `variant="outlined"`             |
-| `VSelect`       | `variant="outlined"`             |
-| `VTextarea`     | `variant="outlined"`             |
-| `VTextField`    | `variant="outlined"`             |
-| `VBtn`          | `flat`                           |
-| `VDialog`       | `maxWidth="100%"`, `width=500`   |
-| `VSwitch`       | `color="primary"`, `hideDetails` |
-| `VTooltip`      | `location="top"`                 |
+`hideDetails: "auto"` is the one worth understanding, because the value a caller reaches for instead is worse than redundant. `"auto"` renders the details row exactly when there is a message to put in it; bare `hide-details` means `true`, which hides the row unconditionally and so **swallows the validation error a field with rules exists to report**. Both the static and the bound form are eslint errors (`vue/no-restricted-static-attribute` and `vue/no-restricted-syntax` in `packages/configuration/eslint/overrides/vueRules.js`) — a binding computes per render what `"auto"` already answers per render. A layout that genuinely cannot afford the row carries a disable comment stating why; no field in the app does today. `VSwitch` is the one component pinned to `true` instead — a switch reports its state by being on, so it has no message row to reserve.
 
 **A default is a constant, so anything conditional on component state cannot be one.** A prop set here applies to every instance in every state, and several of the states worth styling are ones the component turns on for itself — `temporary` at the mobile breakpoint, `--active` while a drawer is on-canvas. Style those as a rule in `globals.scss` keyed on Vuetify's own state classes, inside the `vuetify-overrides` layer, using the framework's mixins so the values stay Vuetify's (`@use "vuetify/tools" as vuetify`). This is the one place a Vuetify SASS API is allowed — component `<style>` blocks still may not (below).
 
-**`v-navigation-drawer` is flat; a drawer that floats over the content is not.** Vuetify shadows a drawer only while it is temporary and open, where a scrim is already holding it off the page, and that is the whole of it — there is no app-wide elevation override. A permanent or persistent drawer reserves its own column in the layout, so the content sits beside it rather than under it and a border is separation enough. `StyledNavDrawer` is the other case: an absolutely-positioned sheet over the content with no scrim, where the shadow is the only thing distinguishing the two, so it states `elevation="4"` itself. Elevation follows whether the surface overlaps what is behind it, not whether it is called a drawer.
+**Every drawer goes through `StyledNavigationDrawer`, never `v-navigation-drawer` directly.** A permanent drawer still honours `model-value`, and Vuetify only forces one open when `permanent` _changes_ to true — the initial pass takes that branch for a null model alone. So a drawer bound to a ref that starts closed renders `inert` for the whole session, and any handler closing the mobile overlay closes the desktop rail with it. The wrapper is the single place that resolves it: while it is permanent it is open, and the model is the open state of the overlay it becomes when it is not. Bound state that is conditional on a prop cannot live in `vuetify.config.ts` — a default is a constant, so this is a component or nothing.
+
+**`v-navigation-drawer` is flat; a drawer that floats over the content is not.** Vuetify shadows a drawer only while it is temporary and open, where a scrim is already holding it off the page, and that is the whole of it — there is no app-wide elevation override. A permanent or persistent drawer reserves its own column in the layout, so the content sits beside it rather than under it and a border is separation enough. `StyledNavigationOverlay` is the other case: an absolutely-positioned sheet over the content with no scrim, where the shadow is the only thing distinguishing the two, so it states `elevation="4"` itself. Elevation follows whether the surface overlaps what is behind it, not whether it is called a drawer.
 
 ## Button Conventions
 

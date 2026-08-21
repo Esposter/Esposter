@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { NavItem } from "@/models/shared/NavItem";
+import type { NavigationItem } from "@/models/shared/NavigationItem";
 
 import { LEFT_DRAWER_WIDTH } from "#shared/services/app/constants";
 
-interface StyledNavDrawerProps {
-  items: NavItem[];
+interface StyledNavigationOverlayProps {
+  items: NavigationItem[];
 }
 
-const { items } = defineProps<StyledNavDrawerProps>();
+const { items } = defineProps<StyledNavigationOverlayProps>();
 // Closed at every breakpoint until the caller's hamburger opens it, and closed again by the entry that was
 // Picked — navigation is the drawer's whole purpose, so staying open outlives its reason to be there
 const isOpen = defineModel<boolean>({ required: true });
@@ -20,7 +20,7 @@ const isOpen = defineModel<boolean>({ required: true });
 <template>
   <v-slide-x-transition>
     <v-sheet v-if="isOpen" elevation="4" inset-y-0 left-0 absolute z-2 overflow-y-auto :width="LEFT_DRAWER_WIDTH">
-      <StyledNavList :items @select="isOpen = false" />
+      <StyledNavigationList :items @select="isOpen = false" />
     </v-sheet>
   </v-slide-x-transition>
 </template>

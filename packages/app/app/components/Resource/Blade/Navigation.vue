@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NavItem } from "@/models/shared/NavItem";
+import type { NavigationItem } from "@/models/shared/NavigationItem";
 import type { Resource } from "@esposter/db-schema";
 
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
@@ -7,14 +7,14 @@ import { getResourceBladeDefinitions } from "@/services/resource/getResourceBlad
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { RoutePath } from "@esposter/shared";
 
-interface ResourceBladeNavProps {
+interface ResourceBladeNavigationigationProps {
   activeBlade: string;
   resource: Resource;
 }
 
-const { activeBlade, resource } = defineProps<ResourceBladeNavProps>();
+const { activeBlade, resource } = defineProps<ResourceBladeNavigationigationProps>();
 // Overview is the resource's own path; every other blade hangs off it as a segment
-const items = computed<NavItem[]>(() => {
+const items = computed<NavigationItem[]>(() => {
   const resourcePath = RoutePath.Resource(resource.id);
   return getResourceBladeDefinitions(resource.type).map(({ icon, slug, title }) => ({
     icon,
@@ -26,10 +26,10 @@ const items = computed<NavItem[]>(() => {
 </script>
 
 <template>
-  <StyledCollapsibleNav
+  <StyledNavigationRail
     :items
     hide-text="Hide blade menu"
     show-text="Show blade menu"
-    :storage-key="LocalStorageKey.IsResourceBladeNavCollapsed"
+    :storage-key="LocalStorageKey.IsResourceBladeNavigationCollapsed"
   />
 </template>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { NavItem } from "@/models/shared/NavItem";
+import type { NavigationItem } from "@/models/shared/NavigationItem";
 
-interface StyledNavListProps {
-  items: NavItem[];
+interface StyledNavigationListProps {
+  items: NavigationItem[];
 }
 
-const { items } = defineProps<StyledNavListProps>();
+const { items } = defineProps<StyledNavigationListProps>();
 const emit = defineEmits<{ select: [] }>();
 </script>
 

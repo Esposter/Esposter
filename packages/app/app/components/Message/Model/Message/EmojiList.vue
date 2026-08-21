@@ -24,8 +24,8 @@ const { customEmojis } = storeToRefs(roomEmojiStore);
   <div v-if="session && emojis.length > 0" flex flex-wrap gap-1 items-center>
     <MessageModelMessageEmojiListItem v-for="emoji of emojis" :key="emoji.rowKey" :emoji />
     <StyledEmojiPicker
-      :custom-emojis
       v-if="!isPreview"
+      :custom-emojis
       :button-props="{ size: 'small', density: 'comfortable' }"
       @select="selectEmoji"
     />

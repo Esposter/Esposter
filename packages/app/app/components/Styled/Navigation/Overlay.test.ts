@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import StyledNavDrawer from "@/components/Styled/NavDrawer.vue";
+import StyledNavigationOverlay from "@/components/Styled/Navigation/Overlay.vue";
 import { RoutePath, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
-describe("styledNavDrawer", () => {
+describe("styledNavigationOverlay", () => {
   const items = [
     { icon: "mdi-home-outline", isActive: true, title: "Home", to: RoutePath.ResourceExplorer },
     { icon: "mdi-view-list-outline", isActive: false, title: "All", to: RoutePath.ResourceExplorerAll },
@@ -13,7 +13,7 @@ describe("styledNavDrawer", () => {
   test("renders nothing until it is opened", async () => {
     expect.hasAssertions();
 
-    const component = await mountSuspended(StyledNavDrawer, { props: { items, modelValue: false } });
+    const component = await mountSuspended(StyledNavigationOverlay, { props: { items, modelValue: false } });
 
     expect(component.text()).toBe("");
   });
@@ -23,7 +23,7 @@ describe("styledNavDrawer", () => {
   test("closes itself on the entry that was picked", async () => {
     expect.hasAssertions();
 
-    const component = await mountSuspended(StyledNavDrawer, { props: { items, modelValue: true } });
+    const component = await mountSuspended(StyledNavigationOverlay, { props: { items, modelValue: true } });
 
     expect(component.text()).toContain("All");
 

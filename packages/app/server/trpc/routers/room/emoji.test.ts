@@ -5,9 +5,9 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
+import { getRoomEmojiBlobName } from "@@/server/services/message/emoji/getRoomEmojiBlobName";
 import { createCallerFactory } from "@@/server/trpc";
 import { mockSessionOnce } from "@@/server/trpc/context.test";
-import { getRoomEmojiBlobName } from "@@/server/services/message/emoji/getRoomEmojiBlobName";
 import { roomEmojiRouter } from "@@/server/trpc/routers/room/emoji";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { AzureContainer, DatabaseEntityType, roomEmojisInMessage, RoomPermission } from "@esposter/db-schema";

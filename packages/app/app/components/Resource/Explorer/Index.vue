@@ -24,7 +24,7 @@ const { smAndDown } = useVDisplay();
         <ResourceBladeActions :resource />
       </v-toolbar>
       <div b-0 b-t-1 b-border b-solid flex flex-1 min-w-0 :class="smAndDown ? 'flex-col' : 'flex-row'">
-        <ResourceBladeNav :active-blade :resource />
+        <ResourceBladeNavigation :active-blade :resource />
         <div flex-1 min-w-0 overflow-auto>
           <ResourceBladeOutlet :active-blade :resource />
         </div>

@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import type { NavItem } from "@/models/shared/NavItem";
+import type { NavigationItem } from "@/models/shared/NavigationItem";
 import type { LocalStorageKeyValue } from "@/services/shared/LocalStorageKey";
 
 import { takeOne } from "@esposter/shared";
 
-interface StyledCollapsibleNavProps {
+interface StyledNavigationRailProps {
   // Whole tooltip sentences rather than a noun this interpolates — a component that owns half a sentence
   // Makes every caller guess the other half
   hideText: string;
-  items: NavItem[];
+  items: NavigationItem[];
   showText: string;
   storageKey: LocalStorageKeyValue;
 }
 
-const { hideText, items, showText, storageKey } = defineProps<StyledCollapsibleNavProps>();
+const { hideText, items, showText, storageKey } = defineProps<StyledNavigationRailProps>();
 // On mobile the rail collapses into a dropdown so the content keeps the full width.
 const { smAndDown } = useVDisplay();
 const isOpen = ref(false);
@@ -35,7 +35,7 @@ const activeItem = computed(() => items.find(({ isActive }) => isActive) ?? take
         </v-list-item>
       </v-list>
     </template>
-    <StyledNavList :items />
+    <StyledNavigationList :items />
   </v-menu>
   <div v-else-if="isCollapsed" px-1 pt-2>
     <StyledTooltipIconButton icon="mdi-chevron-double-right" :text="showText" @click="isCollapsed = false" />
@@ -45,6 +45,6 @@ const activeItem = computed(() => items.find(({ isActive }) => isActive) ?? take
     <div px-1 pt-2 flex justify-end>
       <StyledTooltipIconButton icon="mdi-chevron-double-left" :text="hideText" @click="isCollapsed = true" />
     </div>
-    <StyledNavList :items />
+    <StyledNavigationList :items />
   </div>
 </template>

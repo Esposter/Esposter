@@ -6,9 +6,9 @@ const isOpen = defineModel<boolean>("open", { default: false });
 </script>
 
 <template>
-  <v-navigation-drawer v-model="isOpen" location="left" :permanent="!smAndDown" :temporary="smAndDown">
+  <StyledNavigationDrawer v-model="isOpen" location="left" :permanent="!smAndDown" :temporary="smAndDown">
     <slot />
-  </v-navigation-drawer>
+  </StyledNavigationDrawer>
 </template>
 
 <style scoped>

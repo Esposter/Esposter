@@ -30,8 +30,8 @@ import { assertIsManageable } from "@@/server/services/room/rbac/assertIsManagea
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { isRoom } from "@@/server/trpc/middleware/userToRoom/isRoom";
+import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { createEntity, getTableNullClause, hasPermission } from "@esposter/db";

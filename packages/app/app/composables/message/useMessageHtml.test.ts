@@ -3,8 +3,8 @@ import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmoji
 
 import { useMessageHtml } from "@/composables/message/useMessageHtml";
 import { EmojiType } from "@/models/message/emoji/EmojiType";
-import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { createUser } from "@/services/message/user/createUser.test";
+import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { useUserStore } from "@/store/message/user";
 import {
   CUSTOM_EMOJI_ID_ATTRIBUTE,
