@@ -1,6 +1,6 @@
 ---
 name: ux
-description: Esposter UX conventions — where a feature's entry point goes (point-of-need beside management, never management alone), settings panels hold configuration rather than creation, one dialog shared by every surface that creates the same thing, standing controls that a transient value may never displace, and copying the reference product's wording where the domain matches. Apply when adding any user-facing feature, deciding where an action lives, or reviewing a surface for reachability.
+description: Esposter UX conventions — where a feature's entry point goes (point-of-need beside management, never management alone), settings panels hold configuration rather than creation, one dialog shared by every surface that creates the same thing, standing controls that a transient value may never displace, punctuation a value is written with being field chrome rather than input, and following the reference product's wording, layout and interaction where the domain matches — deviating only for a demonstrably better arrangement, said out loud. Apply when adding any user-facing feature, deciding where an action lives, or reviewing a surface for reachability.
 ---
 
 # UX Conventions
@@ -78,13 +78,24 @@ typed colon could only ever be an error; the field draws `:name:` with the colon
 name alone. One field serves the create dialog and the settings rename, so the rules and the chrome cannot
 disagree between them.
 
-## Copy follows the reference product where the domain matches
+## Follow the reference product where the domain matches
 
 Esposter's messaging surfaces are modelled on Discord and Slack, so when one of them already has the feature, take
-its **wording and its shape verbatim** wherever our domain word substitutes cleanly (their _workspace_ is our
-_room_). Not for lack of imagination: a user arriving from either product should not have to learn that our word
-for the same thing is different. Deviate where the underlying behaviour differs — and say so in a comment, because
-a silent deviation reads as an oversight to the next reader comparing the two.
+its **wording, its layout and its interaction** wherever our domain word substitutes cleanly (their _workspace_ is
+our _room_). Not for lack of imagination: a user arriving from either product should not have to learn that our
+word for the same thing is different, or hunt for a control they already know the shape of.
+
+**This is the rule most often applied to the copy alone, and the copy is the smallest half.** The reference
+product has usually shipped the same feature with the same data model and a materially better arrangement of it —
+Discord's channel permissions are the standing example: the same roles, the same members and the same per-entry
+overrides we already store, laid out as a list you add an entry to and then edit in place, rather than as a form
+that asks which kind of thing you are adding first. When our version holds the same state and reads worse, that is
+a finding of this rule even though every word on the screen is right.
+
+**Deviating is allowed and does not need permission — a better layout is a better layout.** What it needs is to be
+_better_ rather than merely different, and to be said out loud: leave a comment naming what the reference does and
+why this does not. A silent deviation reads as an oversight to the next reader comparing the two, and it is the
+one that gets "fixed" back.
 
 ## Where a whole-product pass is tracked
 

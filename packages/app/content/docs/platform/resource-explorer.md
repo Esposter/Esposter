@@ -53,8 +53,8 @@ flowchart LR
   ALL -->|row click| RES
 
   subgraph bladepage [Resource page]
-    MENU["Blade nav"] --> OV["Overview<br/>Essentials + command bar:<br/>rename · delete · publish* · import/export*"]
-    MENU --> TB["Type blades<br/>Sheet: Data · Settings<br/>Survey: Editor · Responses<br/>TodoList: Items · Calendar<br/>Program: Setup · Status<br/>others: Editor (inline)"]
+    MENU["Blade nav"] --> OV["Overview<br/>Essentials + the command bar"]
+    MENU --> TB["Type blades<br/>one row per type, below"]
   end
 
   RES --> bladepage

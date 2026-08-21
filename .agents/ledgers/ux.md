@@ -6,21 +6,30 @@ date says the rules held there on that date, and the pass resumes from the files
 Nothing here is lint-checkable. A feature reachable only from settings typechecks and passes every test — it is
 wrong only from a seat in front of it — so this ledger is the only thing that finds it.
 
+The reference-product rule widened from wording to layout and interaction on 2026-08-21. It resets no row: the
+one dated unit was swept by copying the reference product's arrangement wholesale, which is what the wider rule
+asks for.
+
 ## Rules
 
-| Rule                                                                 | Owner      |
-| -------------------------------------------------------------------- | ---------- |
-| Point-of-need entry point beside the management one                  | `ux` skill |
-| Settings panels configure and manage; creation forms move to dialogs | `ux` skill |
-| One dialog shared by every surface that creates the same thing       | `ux` skill |
-| Standing controls are never displaced by a transient value           | `ux` skill |
-| Reference-product wording where the domain matches                   | `ux` skill |
+| Rule                                                                       | Owner      |
+| -------------------------------------------------------------------------- | ---------- |
+| Point-of-need entry point beside the management one                        | `ux` skill |
+| Settings panels configure and manage; creation forms move to dialogs       | `ux` skill |
+| One dialog shared by every surface that creates the same thing             | `ux` skill |
+| Standing controls are never displaced by a transient value                 | `ux` skill |
+| Reference-product wording, layout and interaction where the domain matches | `ux` skill |
 
 ## What a pass asks of each unit
 
 For every feature the unit owns: **when does someone first want this?** If the only way to reach it from that
 moment is a trip to settings, the entry point is missing. Then, for every settings panel the unit owns: is anything
 in it a creation form rather than configuration?
+
+Then the question the first two do not ask: **does the reference product ship this, and is its arrangement better
+than ours?** Reachability can be right while the surface a reader arrives at is still the worse version of a screen
+Discord or Slack already solved — the same state, the same permissions, a worse layout. That is a finding here, and
+a better arrangement of our own is an acceptable answer to it, as long as a comment says what it departed from.
 
 ## Coverage
 

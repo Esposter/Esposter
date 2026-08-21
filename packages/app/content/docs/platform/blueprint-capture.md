@@ -15,7 +15,7 @@ This is the authoring path that makes blueprints practical: the Editor blade's s
 flowchart LR
   SEL["explorer multi-select or<br/>row menu command"] -->|"captureBlueprint { ids, name }"| READ["read each resource's<br/>content blob (owner-gated)"]
   READ --> KEYS["derive entry keys<br/>from resource names"]
-  KEYS --> REWRITE["deep-walk content strings —<br/>replace any selected resource's id<br/>with {{entry:key}} (exact match)"]
+  KEYS --> REWRITE["deep-walk content strings —<br/>a selected id becomes {{entry:key}}"]
   REWRITE --> CREATE["create Blueprint resource<br/>manifest = entries, parameters = []"]
   CREATE --> NAV["navigate to the new<br/>blueprint's Editor blade"]
 ```
