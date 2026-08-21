@@ -41,7 +41,7 @@ flowchart LR
 | `packages/app/server/trpc/routers/blueprint.ts`                    | `captureBlueprint` joins the blueprint router  |
 | `packages/app/server/services/blueprint/captureBlueprint.ts`       | ownership check, key derivation, orchestration |
 | `packages/app/server/services/blueprint/rewriteIdsToAliases.ts`    | the deep-walk exact-match rewrite              |
-| `packages/app/app/components/Resource/List/SelectionToolbar.vue`   | bulk Save-as-blueprint entry point             |
+| `packages/app/app/components/Resource/List/Selection/Toolbar.vue`  | bulk Save-as-blueprint entry point             |
 | `packages/app/app/components/Resource/Blueprint/CaptureDialog.vue` | name prompt + create + navigate                |
 
 ## Notes
