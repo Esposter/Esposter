@@ -103,8 +103,8 @@ const defaults: DefaultsOptions = {
   VRadioGroup: { hideDetails: "auto" },
   VSelect: { hideDetails: "auto", variant: "outlined" },
   VSlider: { hideDetails: "auto" },
-  // Every switch in the app is a primary-coloured toggle with no message slot below it — a switch reports its
-  // State by being on, so the grey default reads as disabled, and the reserved message row breaks list rhythm
+  // A switch reports its state by being on, so the grey default reads as disabled. `hideDetails` is `"auto"` here
+  // For the same reason it is everywhere else: no row while there is no message, and the message when there is
   VSwitch: { color: "primary", hideDetails: "auto" },
   VTextarea: { hideDetails: "auto", variant: "outlined" },
   VTextField: { hideDetails: "auto", variant: "outlined" },

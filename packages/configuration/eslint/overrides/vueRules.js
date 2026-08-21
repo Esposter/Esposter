@@ -2,8 +2,9 @@ import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDat
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
 
 // The Vuetify inputs `vuetify.config.ts` declares `hideDetails: "auto"` for. Shared by the two halves of the
-// `hide-details` ban below so the static and bound forms can never cover different tags — a component this list
-// Misses would be banned from binding a prop nothing here declares a default for.
+// `hide-details` ban below so the static and bound forms can never cover different tags. A component missing from
+// This list is caught by neither, which is the failure to watch for: adding an input to `vuetify.config.ts` means
+// Adding it here in the same change, or its instances may quietly restate the default.
 const VUETIFY_INPUT_ELEMENT_PATTERN =
   "/^v-(autocomplete|checkbox|color-input|combobox|file-input|radio-group|select|slider|switch|textarea|text-field)$/";
 

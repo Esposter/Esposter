@@ -11,12 +11,10 @@ How tRPC router tests wire up an in-memory database, mocked Azure services, and 
 
 ```mermaid
 flowchart LR
+  MOCK["vi.mock, hoisted above every import<br/>auth.api.getSession"] --> BA
+  AZ["azure-mock — table, container, EventGrid"] --> BA
   BA["beforeAll<br/>createMockContext()"] --> DB["PGlite, loaded from<br/>the pre-migrated snapshot"]
-  BA --> AUTH["auth.api.getSession<br/>vi.mock"]
-  BA --> AZ["Azure mocks<br/>table, container, EventGrid"]
   DB --> CTX[("mockContext")]
-  AUTH --> CTX
-  AZ --> CTX
   CTX --> CALLER["createCallerFactory(router)(mockContext)<br/>procedures called directly, no HTTP"]
   CALLER --> AE["afterEach<br/>clear Azure state, delete rows, restoreAllMocks"]
   AE -->|"next test"| CALLER

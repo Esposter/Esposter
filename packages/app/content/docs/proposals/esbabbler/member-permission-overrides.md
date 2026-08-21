@@ -15,6 +15,8 @@ This is the half of Discord's channel permissions we did not build. Theirs is no
 
 `roomMemberPermissions` holds `roomId · userId · allow · deny`, unique on the pair, cascading with both. Two bitfields rather than one, because an override has **three** states per permission and a single field can only carry two: allow it, deny it, or say nothing and let the roles decide. A member with no row is the current behaviour exactly, so nothing needs backfilling.
 
+Two fields can express a fourth state the model does not have — a bit set in both — so **`allow & deny` is always zero**, held by a `CHECK` constraint and by a write path that clears the opposite bit rather than adding to whichever field it was handed. Without that the resolution order below silently becomes the definition of a state nobody designed.
+
 **Roles get no equivalent.** Discord needs role overwrites because its roles are server-wide and its permissions are per-channel; ours are already room-scoped, so a role override would be a second place to write the same fact.
 
 ### Resolution — the member has the last word
@@ -35,7 +37,7 @@ flowchart TD
   roles -->|no| no
 ```
 
-Deny beats allow beats roles, and the whole chain sits below ownership: an override can never reach the owner, which is the one guarantee the current model already makes and must keep making.
+Deny beats allow beats roles — **but neither reaches Administrator or ownership**, both of which are answered before the row is read at all. That is Discord's rule too, and it is the one that keeps the feature from becoming a way to lock an owner out of their own room: an override is a statement about the permissions a role could have given, not about the two authorities that were never role-shaped.
 
 ### Who may write one
 

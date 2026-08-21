@@ -25,6 +25,7 @@ const nameRules = computed(() => [
 <template>
   <v-text-field
     v-model="enteredName"
+    aria-label="Emoji name"
     ps-0
     :placeholder="isFocused ? '' : getEmojiShortcode('avocado')"
     :prefix="SuggestionTrigger.Emoji"

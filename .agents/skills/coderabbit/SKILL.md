@@ -94,8 +94,9 @@ The invariant: a chunk is a **push** boundary, not a work boundary. If step 4's 
 run put one — actionable inline threads, the nitpicks, the minors and trivials, and the outside-diff-range block.
 Nobody has to list the categories, and a request naming one of them ("the review comments") is not a request
 scoped to that one. A category is left out only when it is genuinely invalid, and then it is answered like any
-other finding: a reply saying why. The three categories that are not inline threads are the ones a fetch drops
-silently, so the count reconciliation below is what proves they were read at all.
+other finding: a reply saying why. Severity and delivery channel are different axes — a minor can arrive as an
+inline thread — and it is the two channels that are **not** threads, nitpicks and outside-diff findings, that a
+fetch drops silently. The count reconciliation below is what proves all three buckets were read at all.
 
 - **Nitpicks live only in the review body**, inside the collapsed `🧹 Nitpick comments (M)` block — never as inline comments. Fetching only the inline endpoint loses them silently.
 - **Outside-diff-range findings live only in the review body too**, inside the `> [!CAUTION] Some comments are outside the diff` block's `⚠️ Outside diff range comments (K)` list — the platform will not accept an inline thread on a line the diff does not touch. They are ordinary findings that landed on untouched lines, frequently the most substantive ones in a run, and they have no thread to resolve, so the fix commit is their only record.

@@ -62,4 +62,7 @@ Every diagram is parse-validated by `packages/app/content/docs/index.test.ts` (`
 - A label is one quoted string on one line, so a break inside it is written `<br/>`. A backslash-n draws those
   two characters into the box, and a real newline is swallowed and renders as one run-on line.
 
-Both are checked too, so they fail `pnpm test` rather than only the rendered page.
+Only the second is checked, in both of its forms, so a line break written wrong fails `pnpm test` rather than
+only the rendered page. The semicolon is not: every semicolon in the tree today sits inside an HTML entity
+(`&lt;`, `&quot;`), so a pattern that flags the character flags five correct diagrams, and one narrow enough to
+tell a message from an entity is more machinery than the rule is worth. It stays on the writer.
