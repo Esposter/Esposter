@@ -29,7 +29,7 @@ Authority is layered: **Owner** (`rooms.userId`, immune to all role manipulation
 
 **Hierarchy** prevents lower roles acting upward: a user's _top position_ is the max `position` across explicitly assigned roles (owner = infinity), and role management or member-targeting actions require the actor's top position to exceed the target's. That comparison is the pure predicate `checkIsManageable`, which lives in `shared/` because both the server guards and the client `role` store evaluate it; the server calls it through `assertIsManageable`, which resolves both positions and throws `UNAUTHORIZED` when it fails.
 
-`RoomPermission` bits, in order: `ReadMessages`, `SendMessages`, `ManageMessages`, `MentionEveryone`, `ManageRoom`, `ManageRoles`, `ManageInvites`, `KickMembers`, `BanMembers`, `MuteMembers`, `MoveMembers`, `ManageNicknames`, `ManageWebhooks`, `Administrator`. **Bit-ordering rule:** `Administrator` stays the highest bit; new permissions are inserted before `ManageWebhooks`/`Administrator` (which shifts those bits and requires a data migration of stored values).
+`RoomPermission` bits, in order: `ReadMessages`, `SendMessages`, `ManageMessages`, `MentionEveryone`, `ManageRoom`, `ManageRoles`, `ManageInvites`, `KickMembers`, `BanMembers`, `MuteMembers`, `MoveMembers`, `ManageNicknames`, `ManageWebhooks`, `ManageEmojis`, then `Administrator` alone at bit 62. **Bit-ordering rule:** `Administrator` is pinned to the ceiling — `permissions` is a signed 64-bit bigint, so bit 63 is the sign and 62 is the last bit a stored value can carry — and a new permission takes the next free low bit. Nothing shifts, so no stored bitfield changes meaning when one is added, and there are 48 free bits between the two ends before that stops being true.
 
 ## Data model
 

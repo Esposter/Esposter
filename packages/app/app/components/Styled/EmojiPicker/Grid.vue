@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import type { Emoji } from "@/models/message/emoji/Emoji";
+import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
 import type { SkinTone } from "@/models/message/emoji/SkinTone";
 
-import { applySkinTone } from "@/services/message/emoji/applySkinTone";
-
 interface StyledEmojiPickerGridProps {
-  emojis: Emoji[];
+  emojis: PickableEmoji[];
   skinTone: SkinTone;
 }
 
 const { emojis, skinTone } = defineProps<StyledEmojiPickerGridProps>();
-defineEmits<{ hover: [emoji: Emoji]; select: [emoji: Emoji] }>();
+defineEmits<{ hover: [emoji: PickableEmoji]; select: [emoji: PickableEmoji] }>();
 </script>
 
 <template>
@@ -34,7 +32,7 @@ defineEmits<{ hover: [emoji: Emoji]; select: [emoji: Emoji] }>();
       @focus="$emit('hover', emoji)"
       @mouseenter="$emit('hover', emoji)"
     >
-      {{ applySkinTone(emoji, skinTone) }}
+      <StyledEmoji :emoji :skin-tone />
     </button>
   </div>
 </template>

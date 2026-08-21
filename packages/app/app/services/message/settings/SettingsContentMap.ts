@@ -10,6 +10,9 @@ export const SettingsContentMap = {
   [SettingsType.Bans]: defineAsyncComponent(
     () => import("@/components/Message/Model/Room/Settings/Type/Bans/Index.vue"),
   ),
+  [SettingsType.Emojis]: defineAsyncComponent(
+    () => import("@/components/Message/Model/Room/Settings/Type/Emoji/Index.vue"),
+  ),
   [SettingsType.Invites]: defineAsyncComponent(
     () => import("@/components/Message/Model/Room/Settings/Type/Invite/Index.vue"),
   ),

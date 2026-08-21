@@ -17,7 +17,7 @@ const emit = defineEmits<{
 const dataStore = useDataStore();
 const { updateMessage } = dataStore;
 const editedMessageHtml = ref(
-  useMessageWithMentions(
+  useMessageHtml(
     () => message.message,
     () => message.partitionKey,
   ).value,

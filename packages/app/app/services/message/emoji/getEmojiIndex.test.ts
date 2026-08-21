@@ -1,4 +1,5 @@
 import { EmojiGroups } from "@/models/message/emoji/EmojiGroup";
+import { EmojiType } from "@/models/message/emoji/EmojiType";
 import { SkinTone } from "@/models/message/emoji/SkinTone";
 import { applySkinTone } from "@/services/message/emoji/applySkinTone";
 import { MAX_EMOJI_SEARCH_RESULTS } from "@/services/message/emoji/constants";
@@ -132,18 +133,22 @@ describe("searchEmojis", () => {
   const MELTING_FACE = "🫠";
   const THUMBS_UP = "👍";
   const { bySlug } = getEmojiIndex();
+  // These assert on the dataset's own records, so they narrow to it — a room's uploaded emoji carry an image
+  // Rather than a character and are searched in the same call
+  const searchUnicodeEmojis = (query: string) =>
+    searchEmojis(query).filter((emoji) => emoji.type === EmojiType.Unicode);
 
   test("pins an exact shortcode ahead of everything that merely matched it", () => {
     expect.hasAssertions();
 
-    expect(takeOne(searchEmojis("thumbs_up"), 0).character).toBe(THUMBS_UP);
+    expect(takeOne(searchUnicodeEmojis("thumbs_up"), 0).character).toBe(THUMBS_UP);
   });
 
   test("matches on keywords, not only on names", () => {
     expect.hasAssertions();
 
     // The query `node-emoji` returned nothing for: `happy` is a keyword of 😀 and appears in no name
-    expect(searchEmojis("happy").map(({ character }) => character)).toContain(GRINNING_FACE);
+    expect(searchUnicodeEmojis("happy").map(({ character }) => character)).toContain(GRINNING_FACE);
   });
 
   test("intersects a multi-word query rather than unioning it", () => {
@@ -164,7 +169,7 @@ describe("searchEmojis", () => {
   test("finds an emoji newer than the dataset the retired library shipped", () => {
     expect.hasAssertions();
 
-    expect(searchEmojis("melting").map(({ character }) => character)).toContain(MELTING_FACE);
+    expect(searchUnicodeEmojis("melting").map(({ character }) => character)).toContain(MELTING_FACE);
   });
 
   test("caps a one-character query at the display limit", () => {

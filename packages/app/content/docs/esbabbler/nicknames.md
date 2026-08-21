@@ -74,12 +74,12 @@ Room settings → **My Profile** tab (visible to all members, no permission requ
 
 ## Key files
 
-| File                                                                      | Role                                     |
-| :------------------------------------------------------------------------ | :--------------------------------------- |
-| `packages/app/app/store/message/room/userToRoom.ts`                       | `useUserToRoomStore`, `getDisplayName`   |
-| `packages/app/app/composables/message/room/useCreator.ts`                 | message author, nickname already applied |
-| `packages/app/app/composables/message/mentions/useMessageWithMentions.ts` | mention label resolution                 |
-| `packages/app/app/components/Message/Model/Room/Settings/Type/Profile/`   | My Profile tab + nickname field          |
+| File                                                                    | Role                                     |
+| :---------------------------------------------------------------------- | :--------------------------------------- |
+| `packages/app/app/store/message/room/userToRoom.ts`                     | `useUserToRoomStore`, `getDisplayName`   |
+| `packages/app/app/composables/message/room/useCreator.ts`               | message author, nickname already applied |
+| `packages/app/app/composables/message/useMessageHtml.ts`                | mention label resolution                 |
+| `packages/app/app/components/Message/Model/Room/Settings/Type/Profile/` | My Profile tab + nickname field          |
 
 ## Notes
 

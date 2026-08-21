@@ -7,7 +7,6 @@ import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { bigint, boolean, check, index, integer, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-
 // What each bit grants, which the shift alone cannot say. Bit order is the wire format and is fixed by
 // `docs/esbabbler/rbac.md`; the sort is disabled because that order, not the alphabet, is the contract.
 // Text channel:
@@ -30,6 +29,7 @@ import { createSelectSchema } from "drizzle-orm/zod";
 //
 // Advanced:
 // - ManageWebhooks — create/edit/delete webhooks
+// - ManageEmojis — upload/rename/delete the room's custom emoji
 // - Administrator — all permissions; bypasses hierarchy checks
 /* eslint-disable perfectionist/sort-objects */
 export const RoomPermission = {
@@ -46,7 +46,11 @@ export const RoomPermission = {
   MoveMembers: 1n << 10n,
   ManageNicknames: 1n << 11n,
   ManageWebhooks: 1n << 12n,
-  Administrator: 1n << 13n,
+  ManageEmojis: 1n << 13n,
+  // Pinned to the last bit the column can hold — `permissions` is a signed 64-bit bigint, so bit 63 is the sign
+  // And 62 is the ceiling. Administrator sits there so every permission added later takes the next free low bit
+  // Without moving it, which is what keeps a stored bitfield readable across the addition
+  Administrator: 1n << 62n,
 } as const;
 /* eslint-enable perfectionist/sort-objects */
 

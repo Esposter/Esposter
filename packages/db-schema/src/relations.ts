@@ -15,6 +15,7 @@ import { resourceFavoritesRelation } from "@/relations/resourceFavoritesRelation
 import { resourcePublicationsRelation } from "@/relations/resourcePublicationsRelation";
 import { resourcesRelation } from "@/relations/resourcesRelation";
 import { roomCategoriesInMessageRelation } from "@/relations/roomCategoriesInMessageRelation";
+import { roomEmojisInMessageRelation } from "@/relations/roomEmojisInMessageRelation";
 import { roomFiltersInMessageRelation } from "@/relations/roomFiltersInMessageRelation";
 import { roomRolesInMessageRelation } from "@/relations/roomRolesInMessageRelation";
 import { roomsInMessageRelation } from "@/relations/roomsInMessageRelation";
@@ -48,6 +49,7 @@ export const relations = {
   ...resourcePublicationsRelation,
   ...resourcesRelation,
   ...roomCategoriesInMessageRelation,
+  ...roomEmojisInMessageRelation,
   ...roomFiltersInMessageRelation,
   ...roomRolesInMessageRelation,
   ...roomsInMessageRelation,

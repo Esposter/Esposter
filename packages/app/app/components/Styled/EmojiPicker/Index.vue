@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
+import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
 import type { VBtn, VTooltip } from "vuetify/components";
 
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
@@ -7,13 +9,18 @@ import { VBottomSheet, VMenu } from "vuetify/components";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StyledEmojiPickerProps {
   buttonProps?: VBtn["$props"];
+  customEmojis?: CustomEmoji[];
   tooltipProps?: VTooltip["$props"];
 }
 
 defineSlots<{ default?: (props: Record<string, unknown>) => VNode }>();
 const menu = defineModel<boolean>("menu", { default: false });
-const { buttonProps = {}, tooltipProps = { text: EMOJI_PICKER_TOOLTIP_TEXT } } = defineProps<StyledEmojiPickerProps>();
-const emit = defineEmits<{ select: [emoji: string] }>();
+const {
+  buttonProps = {},
+  customEmojis = [],
+  tooltipProps = { text: EMOJI_PICKER_TOOLTIP_TEXT },
+} = defineProps<StyledEmojiPickerProps>();
+const emit = defineEmits<{ select: [emojiTag: string, emoji: PickableEmoji] }>();
 // A phone has no room beside the composer for a panel this size, and a menu anchored to a button near the screen
 // Edge is dragged back into the viewport wherever it fits. It comes up off the bottom edge instead — the same
 // Panel, in whichever container the viewport can hold, each keeping its own form's transition
@@ -46,9 +53,10 @@ const overlay = computed(() =>
     </template>
     <!-- The overlay renders its content only once opened, which is what defers the index build to first open -->
     <StyledEmojiPickerPanel
+      :custom-emojis
       @select="
-        (emoji: string) => {
-          emit('select', emoji);
+        (emojiTag: string, emoji: PickableEmoji) => {
+          emit('select', emojiTag, emoji);
           menu = false;
         }
       "

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { RoutePath } from "@esposter/shared";
-
 // Safe here: the only read is `route.path` inside the computed below, this renders inside the page whose route
 // It reads, and it holds nothing past that page. The exception is for the test: `Breadcrumbs.test.ts` has to
 // Drive the current path to prove the trail drops the crumb for the page it is on, and it does that with

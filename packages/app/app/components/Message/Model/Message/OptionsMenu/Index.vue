@@ -3,6 +3,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { EmojiMenuItems } from "@/services/message/emoji/EmojiMenuItems";
 import { getEmojiDescription } from "@/services/message/emoji/getEmojiDescription";
+import { useRoomEmojiStore } from "@/store/message/room/emoji";
 
 interface MessageOptionsMenuProps {
   hoverProps?: Record<string, unknown>;
@@ -20,6 +21,8 @@ const { actionMessageItems, deleteMessageItem, updateMessageItems, updateMessage
   isCreator,
 );
 const selectEmoji = useSelectEmoji(message);
+const roomEmojiStore = useRoomEmojiStore();
+const { customEmojis } = storeToRefs(roomEmojiStore);
 const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProps }));
 </script>
 
@@ -38,6 +41,7 @@ const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProp
       <v-divider thickness="2" vertical h-6 self-center />
       <StyledEmojiPicker
         :button-props="{ size: 'small', tile: true }"
+        :custom-emojis
         @update:menu="emit('update:menu', $event)"
         @select="selectEmoji"
       />

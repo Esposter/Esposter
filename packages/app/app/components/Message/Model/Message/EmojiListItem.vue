@@ -48,7 +48,7 @@ const isReacted = computed(() => {
         type="button"
         @click="toggleEmoji(emoji)"
       >
-        {{ emoji.emojiTag }}
+        <MessageModelMessageEmojiTag :emoji-tag="emoji.emojiTag" />
         <span pl-1 text-title-small>{{ emoji.userIds.length }}</span>
       </button>
     </template>

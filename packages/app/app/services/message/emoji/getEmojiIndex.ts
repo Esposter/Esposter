@@ -2,6 +2,7 @@ import type { Emoji } from "@/models/message/emoji/Emoji";
 import type { EmojiIndex } from "@/models/message/emoji/EmojiIndex";
 
 import { EmojiGroup, EmojiGroups } from "@/models/message/emoji/EmojiGroup";
+import { EmojiType } from "@/models/message/emoji/EmojiType";
 import { getEmojiCharacterKey } from "@/services/message/emoji/getEmojiCharacterKey";
 import dataByCharacter from "unicode-emoji-json/data-by-emoji.json";
 
@@ -37,6 +38,7 @@ const createEmojiIndex = (): EmojiIndex => {
       isSkinToneSupported: record.skin_tone_support,
       name: record.name,
       slug: record.slug,
+      type: EmojiType.Unicode,
     };
     byCharacter.set(getEmojiCharacterKey(character), emoji);
     byGroup.get(group)?.push(emoji);

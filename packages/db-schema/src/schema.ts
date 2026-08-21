@@ -16,6 +16,7 @@ import { resourceFavorites } from "@/schema/resourceFavorites";
 import { resourcePublications } from "@/schema/resourcePublications";
 import { resources, resourceTypeEnum } from "@/schema/resources";
 import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
+import { roomEmojisInMessage } from "@/schema/roomEmojisInMessage";
 import { roomFiltersInMessage, wordFilterActionEnum } from "@/schema/roomFiltersInMessage";
 import { roomRolesInMessage } from "@/schema/roomRolesInMessage";
 import { mimeCategoryEnum, roomsInMessage, roomTypeEnum } from "@/schema/roomsInMessage";
@@ -58,6 +59,7 @@ export const schema = {
   resources,
   resourceTypeEnum,
   roomCategoriesInMessage,
+  roomEmojisInMessage,
   roomFiltersInMessage,
   roomRolesInMessage,
   roomsInMessage,

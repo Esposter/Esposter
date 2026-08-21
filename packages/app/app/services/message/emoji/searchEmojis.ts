@@ -1,4 +1,6 @@
+import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
 import type { EmojiDocument } from "@/models/message/emoji/EmojiDocument";
+import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
 
 import { EmojiDocumentPropertyNames } from "@/models/message/emoji/EmojiDocument";
 import { MAX_EMOJI_SEARCH_RESULTS } from "@/services/message/emoji/constants";
@@ -37,8 +39,13 @@ const createMiniSearch = () => {
 // `fuzzy` is off: on names this short it manufactures noise rather than forgiving typos. Punctuation is a
 // Delimiter and never an operator, so "grin(" searches for "grin" and a query that is punctuation alone
 // Tokenizes to nothing and returns nothing — the empty state, not the thrown regex `node-emoji` gave it
-export const searchEmojis = (query: string) => {
+export const searchEmojis = (query: string, customEmojis: CustomEmoji[] = []): PickableEmoji[] => {
   const { bySlug } = getEmojiIndex();
+  // The room's set is smaller than the result cap by construction, so it is matched directly rather than merged
+  // Into the global index — which stays room-independent and built once — and its hits lead, the ranking Discord
+  // Gives a server's own emoji
+  const normalizedQuery = query.toLowerCase();
+  const customMatches = customEmojis.filter(({ name }) => name.includes(normalizedQuery));
   // BM25 has no reason to rank an exact shortcode above a longer one that also matched, so it is pinned
   const exactMatch = bySlug.get(query.toLowerCase());
   const results = getMiniSearch()
@@ -47,5 +54,6 @@ export const searchEmojis = (query: string) => {
       const emoji = bySlug.get(String(id));
       return emoji && emoji !== exactMatch ? [emoji] : [];
     });
-  return (exactMatch ? [exactMatch, ...results] : results).slice(0, MAX_EMOJI_SEARCH_RESULTS);
+  const unicodeResults = exactMatch ? [exactMatch, ...results] : results;
+  return [...customMatches, ...unicodeResults].slice(0, MAX_EMOJI_SEARCH_RESULTS);
 };

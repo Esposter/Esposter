@@ -5,6 +5,7 @@ import { EmojiMoreMenuItems } from "@/services/message/emoji/EmojiMoreMenuItems"
 import { getEmojiDescription } from "@/services/message/emoji/getEmojiDescription";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { useMessageStore } from "@/store/message";
+import { useRoomEmojiStore } from "@/store/message/room/emoji";
 
 interface MessageOptionsMenuProps {
   actionMessageItems: Item[];
@@ -18,6 +19,8 @@ const { actionMessageItems, deleteMessageItem, rowKey, updateMessageMenuItems } 
 const emit = defineEmits<{ "update:menu": [value: boolean]; "update:select-emoji": [emoji: string] }>();
 const messageStore = useMessageStore();
 const { optionsMenu } = storeToRefs(messageStore);
+const roomEmojiStore = useRoomEmojiStore();
+const { customEmojis } = storeToRefs(roomEmojiStore);
 const moreMenuProps = computed(() => ({
   location: "left" as const,
   target: optionsMenu.value?.target,
@@ -61,9 +64,10 @@ const moreMenuProps = computed(() => ({
         </div>
       </v-list-item>
       <StyledEmojiPicker
+        :custom-emojis
         @select="
-          (emoji) => {
-            emit('update:select-emoji', emoji);
+          (emojiTag) => {
+            emit('update:select-emoji', emojiTag);
             optionsMenu = undefined;
             emit('update:menu', false);
           }

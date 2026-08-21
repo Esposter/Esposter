@@ -6,7 +6,9 @@ import StyledEmojiPickerPanel from "@/components/Styled/EmojiPicker/Panel.vue";
 import { EmojiGroup, EmojiGroups } from "@/models/message/emoji/EmojiGroup";
 import { SkinTone } from "@/models/message/emoji/SkinTone";
 import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
+import { searchEmojis } from "@/services/message/emoji/searchEmojis";
 import { useEmojiPickerStore } from "@/store/message/emojiPicker";
+import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -66,7 +68,9 @@ describe("styledEmojiPickerPanel", () => {
     expect(component.text()).toContain("No results");
   });
 
-  test("emits the toned character and records the pick as a recent", async () => {
+  // The tag leads and the record follows: reaction surfaces store the first, the composer needs the second to
+  // Know whether to insert a character or a custom-emoji node
+  test("emits the toned character with its record and stores the pick as a recent", async () => {
     expect.hasAssertions();
 
     const emojiPickerStore = useEmojiPickerStore();
@@ -75,7 +79,7 @@ describe("styledEmojiPickerPanel", () => {
     await component.find("input").setValue("technologist");
     await component.findComponent(StyledEmojiPickerGrid).find("button[aria-label]").trigger("click");
 
-    expect(component.emitted("select")).toStrictEqual([["🧑🏽‍💻"]]);
+    expect(component.emitted("select")).toStrictEqual([["🧑🏽‍💻", takeOne(searchEmojis("technologist"))]]);
     expect(emojiPickerStore.recentEmojiSlugs).toStrictEqual(["technologist"]);
   });
 });

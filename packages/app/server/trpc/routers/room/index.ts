@@ -44,6 +44,7 @@ import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermis
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
+import { roomEmojiRouter } from "@@/server/trpc/routers/room/emoji";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
 import { generateWriteSasUrl } from "@esposter/db";
 import {
@@ -583,5 +584,10 @@ export const baseRoomRouter = router({
 
 export const roomRouter = mergeRouters(
   baseRoomRouter,
-  router({ category: categoryRouter, directMessage: directMessageRouter, filter: filterRouter }),
+  router({
+    category: categoryRouter,
+    directMessage: directMessageRouter,
+    emoji: roomEmojiRouter,
+    filter: filterRouter,
+  }),
 );
