@@ -1,50 +1,72 @@
 import type { TocLink } from "@nuxt/content";
 
+import { getVisibleSectionIds } from "@/services/docs/getVisibleSectionIds";
+
 const getTocLinkIds = (links: TocLink[]): string[] =>
   links.flatMap((link) => [link.id, ...(link.children ? getTocLinkIds(link.children) : [])]);
 // A section spans from its heading to the next heading, so every section overlapping the viewport is
 // Highlighted — reading the content under one heading while the next heading is on screen highlights both.
+//
+// Driven by an observer rather than by the scroll event, because the set changes at exactly one kind of moment:
+// A heading crossing an edge of the effective viewport. Those crossings are the observer's own callbacks, so
+// There is nothing to look for in between — where a scroll listener re-measured every heading several hundred
+// Times per section to find the handful of frames where the answer had moved.
 export const useVisibleTocLinkIds = (links: MaybeRefOrGetter<TocLink[]>) => {
   const visibleIds = ref<string[]>([]);
+  const headings = shallowRef<{ element: HTMLElement; id: string }[]>([]);
+  // Headings set scroll-margin-top to clear the sticky app bar, so reuse it as the effective top of the
+  // Viewport instead of duplicating the offset here — it is both the observer's top inset and the line a
+  // Section has to reach past to count as visible
+  const viewportTop = computed(() => {
+    const firstHeading = headings.value.at(0);
+    if (!firstHeading) return 0;
+    // oxlint-disable-next-line unicorn/prefer-number-coercion -- computed styles are px-suffixed ("112px"), Number() would be NaN
+    return Number.parseFloat(window.getComputedStyle(firstHeading.element).scrollMarginTop) || 0;
+  });
 
   const updateVisibleIds = () => {
-    const headings = getTocLinkIds(toValue(links)).flatMap((id) => {
+    if (headings.value.length === 0) return;
+
+    const newVisibleIds = getVisibleSectionIds(
+      headings.value.map(({ element, id }) => ({ id, top: element.getBoundingClientRect().top })),
+      viewportTop.value,
+      window.innerHeight,
+    );
+    // Keep the last non-empty set (e.g. a long intro before the first heading) so the highlight never drops out,
+    // And assign only when it actually moved: a fresh array invalidates every item's `isActive` and makes the
+    // Slide indicator remeasure the whole list on the next tick, which reads layout
+    const isUnchanged =
+      newVisibleIds.length === visibleIds.value.length &&
+      newVisibleIds.every((id, index) => id === visibleIds.value[index]);
+    if (newVisibleIds.length > 0 && !isUnchanged) visibleIds.value = newVisibleIds;
+  };
+
+  // After render, so the headings the content renderer produced are in the document, and again whenever the
+  // Page's own links change — which is what a doc-to-doc navigation does without remounting this
+  watchPostEffect(() => {
+    headings.value = getTocLinkIds(toValue(links)).flatMap((id) => {
       const element = window.document.getElementById(id);
       return element ? [{ element, id }] : [];
     });
-    const firstHeading = headings[0];
-    if (!firstHeading) return;
-    // Headings set scroll-margin-top to clear the sticky app bar + category tabs, so reuse it as the
-    // Effective top of the viewport instead of duplicating the offset here
-    // oxlint-disable-next-line unicorn/prefer-number-coercion -- computed styles are px-suffixed ("112px"), Number() would be NaN
-    const viewportTop = Number.parseFloat(window.getComputedStyle(firstHeading.element).scrollMarginTop) || 0;
-    const tops = headings.map(({ element }) => element.getBoundingClientRect().top);
-    const newVisibleIds = headings
-      .filter((_, index) => {
-        const sectionTop = tops[index] ?? 0;
-        const sectionBottom = tops[index + 1] ?? Number.POSITIVE_INFINITY;
-        return sectionBottom > viewportTop && sectionTop < window.innerHeight;
-      })
-      .map(({ id }) => id);
-    // Keep the last non-empty set (e.g. a long intro before the first heading) so the highlight never drops out,
-    // And assign only when it actually moved — which is at a section boundary, not on every scroll event. A fresh
-    // Array each time invalidates every item's `isActive` and makes the slide indicator remeasure the whole list
-    // On the next tick, so the cheap arithmetic above would be paid for with a layout pass per frame
-    if (newVisibleIds.length > 0 && newVisibleIds.join(",") !== visibleIds.value.join(","))
-      visibleIds.value = newVisibleIds;
-  };
+    updateVisibleIds();
+  });
 
+  useIntersectionObserver(
+    () => headings.value.map(({ element }) => element),
+    () => {
+      updateVisibleIds();
+    },
+    { rootMargin: () => `-${viewportTop.value}px 0px 0px 0px` },
+  );
+  // The observer reports a heading crossing the viewport's edges, never the edges themselves moving — and a
+  // Resize moves the bottom one, which is half of what decides the set
   useEventListener(
-    ["resize", "scroll"],
+    "resize",
     () => {
       updateVisibleIds();
     },
     { passive: true },
   );
-
-  onMounted(() => {
-    updateVisibleIds();
-  });
 
   return visibleIds;
 };
