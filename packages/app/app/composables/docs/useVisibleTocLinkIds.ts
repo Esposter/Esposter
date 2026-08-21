@@ -23,7 +23,6 @@ export const useVisibleTocLinkIds = (links: MaybeRefOrGetter<TocLink[]>) => {
     // oxlint-disable-next-line unicorn/prefer-number-coercion -- computed styles are px-suffixed ("112px"), Number() would be NaN
     return Number.parseFloat(window.getComputedStyle(firstHeading.element).scrollMarginTop) || 0;
   });
-
   const updateVisibleIds = () => {
     if (headings.value.length === 0) return;
 
@@ -40,7 +39,6 @@ export const useVisibleTocLinkIds = (links: MaybeRefOrGetter<TocLink[]>) => {
       newVisibleIds.every((id, index) => id === visibleIds.value[index]);
     if (newVisibleIds.length > 0 && !isUnchanged) visibleIds.value = newVisibleIds;
   };
-
   // After render, so the headings the content renderer produced are in the document, and again whenever the
   // Page's own links change — which is what a doc-to-doc navigation does without remounting this
   watchPostEffect(() => {

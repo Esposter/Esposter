@@ -1,4 +1,7 @@
 <script setup lang="ts">
+// One mount per page, so setup — and with it the 404 guard — runs for every docs page rather than only the first
+definePageMeta({ key: (route) => route.path });
+
 const { category, categorySections, page, sections, surround, tocLinks } = await useDocsPage();
 
 useSeoMeta({ description: () => page.value?.description, title: () => page.value?.title });

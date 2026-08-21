@@ -54,6 +54,6 @@ The docs page (`pages/docs/[...slug].vue`) must feel instant when moving between
 | `app/components/Nuxt/InvisibleLink.vue`               | `NuxtInvisibleLink` — base link primitive, a `NuxtLink` clone with default styling stripped |
 | `packages/configuration/eslint/overrides/vueRules.js` | bans the raw `a` element and `router.push` in templates                                     |
 | `packages/configuration/eslint/typescriptRules.js`    | bans `router.push` in `.ts` + `.vue` script (`no-restricted-syntax`)                        |
-| `app/pages/docs/[...slug].vue`                        | reactive-key docs page — instant in-place navigation                                        |
+| `app/pages/docs/[...slug].vue`                        | docs page, keyed by route so setup and its 404 guard run per page                           |
 | `app/components/Docs/TableOfContents/Item.vue`        | in-page hash anchor — a plain `NuxtInvisibleLink`, no handler                               |
 | `configuration/router.ts`                             | `scrollBehaviorType: "smooth"` — the whole of our hash-scrolling code                       |
