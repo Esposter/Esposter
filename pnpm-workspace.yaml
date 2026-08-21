@@ -94,8 +94,8 @@ catalog:
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
   "@typescript/native-preview": ^7.0.0-dev.20260707.2
-  "@unocss/eslint-config": ^66.8.0
-  "@unocss/nuxt": ^66.8.0
+  "@unocss/eslint-config": ^66.8.1
+  "@unocss/nuxt": ^66.8.1
   "@vite-pwa/nuxt": ^1.1.1
   "@vitejs/plugin-vue": ^6.0.8
   "@vitest/coverage-v8": ^4.1.11
@@ -221,7 +221,7 @@ catalog:
   typescript: 6.0.3
   unconfig: ^7.5.0
   unicode-emoji-json: ^0.9.0
-  unocss: ^66.8.0
+  unocss: ^66.8.1
   unocss-preset-vuetify: ^0.4.0
   unplugin-auto-import: ^21.1.0
   unplugin-dts: ^1.0.3
