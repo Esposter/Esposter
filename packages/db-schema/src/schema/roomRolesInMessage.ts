@@ -47,10 +47,10 @@ export const RoomPermission = {
   ManageNicknames: 1n << 11n,
   ManageWebhooks: 1n << 12n,
   ManageEmojis: 1n << 13n,
-  // Pinned to the last bit the column can hold — `permissions` is a signed 64-bit bigint, so bit 63 is the sign
-  // And 62 is the ceiling. Administrator sits there so every permission added later takes the next free low bit
-  // Without moving it, which is what keeps a stored bitfield readable across the addition
-  Administrator: 1n << 62n,
+  // Last, and it moves up as the list grows: stored values are read as the current shape rather than migrated,
+  // So the bits are free to be the order the list should be in rather than the order it was written in.
+  // `permissions` is a signed 64-bit bigint, so bit 62 is the ceiling this can grow to
+  Administrator: 1n << 14n,
 } as const;
 /* eslint-enable perfectionist/sort-objects */
 

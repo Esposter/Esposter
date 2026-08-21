@@ -29,11 +29,11 @@ The rule has **no room-scoped exceptions** — a surface that renders a member's
 
 Where the plumbing is not obvious:
 
-| Location                       | How                                                                                                                                                                             |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Mention labels in message body | `useMessageWithMentions(message, roomId)` — pass `() => message.partitionKey` as second arg                                                                                     |
-| Profile card                   | `Message/Model/User/ProfileCard/Index.vue` — `computed(() => getDisplayName(user, currentRoomId.value))`, the room coming from the route rather than a prop                     |
-| Push notification title        | `server/trpc/routers/message/index.ts` queries `usersToRoomsInMessage.nickname` for the sender before publishing the EventGrid event, and passes it as the notification `title` |
+| Location                                        | How                                                                                                                                                                             |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mention labels and custom emoji in message body | `useMessageHtml(message, roomId)` — pass `() => message.partitionKey` as second arg                                                                                             |
+| Profile card                                    | `Message/Model/User/ProfileCard/Index.vue` — `computed(() => getDisplayName(user, currentRoomId.value))`, the room coming from the route rather than a prop                     |
+| Push notification title                         | `server/trpc/routers/message/index.ts` queries `usersToRoomsInMessage.nickname` for the sender before publishing the EventGrid event, and passes it as the notification `title` |
 
 ### `||` not `??` for nickname fallback
 

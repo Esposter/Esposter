@@ -1,10 +1,13 @@
 // @vitest-environment nuxt
+import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
 import type { VueWrapper } from "@vue/test-utils";
 
 import StyledEmojiPickerGrid from "@/components/Styled/EmojiPicker/Grid.vue";
 import StyledEmojiPickerPanel from "@/components/Styled/EmojiPicker/Panel.vue";
 import { EmojiGroup, EmojiGroups } from "@/models/message/emoji/EmojiGroup";
+import { EmojiType } from "@/models/message/emoji/EmojiType";
 import { SkinTone } from "@/models/message/emoji/SkinTone";
+import { getCustomEmojiTag } from "@/services/message/emoji/getCustomEmojiTag";
 import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
 import { searchEmojis } from "@/services/message/emoji/searchEmojis";
 import { useEmojiPickerStore } from "@/store/message/emojiPicker";
@@ -81,5 +84,23 @@ describe("styledEmojiPickerPanel", () => {
 
     expect(component.emitted("select")).toStrictEqual([["🧑🏽‍💻", takeOne(searchEmojis("technologist"))]]);
     expect(emojiPickerStore.recentEmojiSlugs).toStrictEqual(["technologist"]);
+  });
+
+  // A custom emoji emits the id-keyed tag a reaction stores, never its name — a rename must not strand one
+  test("emits a custom emoji as its id tag with its record", async () => {
+    expect.hasAssertions();
+
+    const customEmoji: CustomEmoji = {
+      id: crypto.randomUUID(),
+      name: "party_parrot",
+      sasUrl: "https://storage.test/emoji",
+      slug: "party_parrot",
+      type: EmojiType.Custom,
+    };
+    const component = await mountSuspended(StyledEmojiPickerPanel, { props: { customEmojis: [customEmoji] } });
+    await component.find("input").setValue("party_parrot");
+    await component.findComponent(StyledEmojiPickerGrid).find("button[aria-label]").trigger("click");
+
+    expect(component.emitted("select")).toStrictEqual([[getCustomEmojiTag(customEmoji.id), customEmoji]]);
   });
 });

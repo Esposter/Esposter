@@ -1,3 +1,5 @@
+import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
+
 import { EmojiGroups } from "@/models/message/emoji/EmojiGroup";
 import { EmojiType } from "@/models/message/emoji/EmojiType";
 import { SkinTone } from "@/models/message/emoji/SkinTone";
@@ -128,15 +130,31 @@ describe("applySkinTone", () => {
   });
 });
 
+// These assert on the dataset's own records, so they narrow to it — a room's uploaded emoji carry an image
+// Rather than a character and are searched in the same call
+const searchUnicodeEmojis = (query: string) => searchEmojis(query).filter((emoji) => emoji.type === EmojiType.Unicode);
+
 describe("searchEmojis", () => {
   const GRINNING_FACE = "😀";
   const MELTING_FACE = "🫠";
   const THUMBS_UP = "👍";
   const { bySlug } = getEmojiIndex();
-  // These assert on the dataset's own records, so they narrow to it — a room's uploaded emoji carry an image
-  // Rather than a character and are searched in the same call
-  const searchUnicodeEmojis = (query: string) =>
-    searchEmojis(query).filter((emoji) => emoji.type === EmojiType.Unicode);
+
+  // A room's own emoji lead the list, which is the ranking Discord gives a server's own, and they take slots
+  // From the cap rather than being appended past it
+  test("puts the room's own matches ahead of the dataset's", () => {
+    expect.hasAssertions();
+
+    const customEmoji: CustomEmoji = {
+      id: crypto.randomUUID(),
+      name: "thumbs_up_parrot",
+      sasUrl: "https://storage.test/emoji",
+      slug: "thumbs_up_parrot",
+      type: EmojiType.Custom,
+    };
+
+    expect(takeOne(searchEmojis("thumbs_up", [customEmoji]))).toStrictEqual(customEmoji);
+  });
 
   test("pins an exact shortcode ahead of everything that merely matched it", () => {
     expect.hasAssertions();

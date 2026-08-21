@@ -21,7 +21,7 @@ Take payments through a **merchant of record** (Paddle, Lemon Squeezy) rather th
 
 For a platform selling a small recurring add-on to consumers anywhere, that is the difference between a feature and a tax-compliance programme. A processor is the right answer only if the customers are known to be domestic, or a business already exists to carry the obligation.
 
-Either way the integration shape is the same and is chosen to keep card data and billing UI out of this codebase entirely: a **hosted checkout** the user is redirected to, and a **hosted customer portal** for changing the card, seeing invoices, and cancelling. No payment form, no invoice storage, no dunning logic, no PCI scope.
+Either way the integration shape is the same and is chosen to keep card data and billing UI out of this codebase entirely: a **hosted checkout** the user is redirected to, and a **hosted customer portal** for changing the card, seeing invoices, and cancelling. No payment form, no invoice storage, no dunning logic. Card data never reaches this codebase, which is what puts the integration in the smallest merchant category the provider's PCI DSS responsibility matrix defines — a scope the provider states, not one this page may declare away.
 
 ### Data
 
@@ -53,9 +53,15 @@ The provider's event stream is authoritative and our own UI is not: a checkout r
 
 The handler verifies the signature, is idempotent on the provider's event id (redelivery is normal, not exceptional), and writes the subscription row and the tier in one transaction. Failure handling is the provider's retry schedule plus our own standard: a failed handling retries on the event with an attempt cap and a quarantine, never a manual fix-up ([no manual recovery](/docs/architecture/no-manual-recovery)).
 
+Three properties the handler has to hold, each of which is a way of getting the wrong user on the wrong tier:
+
+- **Which user an event belongs to is decided before checkout, never afterwards.** The session that opens checkout is authenticated, so the provider's customer id is bound to that `userId` server-side at that moment and the binding is what every later event resolves through. Nothing derives identity from a return url, a query parameter, or an email address in the payload.
+- **An event is applied only if it is newer than what the row already holds.** Providers redeliver and reorder, so the subscription row stores the provider's own ordering field (Paddle's `occurred_at`) and an event carrying an older one is acknowledged and dropped. Event-id idempotency stops a duplicate; this stops a stale update reinstating a cancelled subscription.
+- **A quarantined event still resolves.** The quarantine is a queue with a drain, not a dead end: a periodic reconciliation reads the provider's current subscription state for every affected user and writes the tier from that. The provider is authoritative, so replay is never required to be in order — a cancelled subscription can never stay paid because the handler ran out of attempts.
+
 Two status decisions worth stating rather than discovering:
 
-- **A failed payment does not downgrade immediately.** The provider dunns for its retry window; the tier holds while the subscription is past due and drops when the provider finally cancels it. Downgrading on the first failure punishes an expired card.
+- **A failed payment does not downgrade immediately.** The provider runs dunning for its retry window; the tier holds while the subscription is past due and drops when the provider finally cancels it. Downgrading on the first failure punishes an expired card.
 - **A cancellation downgrades at period end**, not on the click, because the period is paid for.
 
 ### Being over quota is a legal state
@@ -72,7 +78,7 @@ This is the one place where a paid feature must not become a hostage mechanism, 
 
 ## Consequences beyond the feature
 
-Taking money changes obligations that are currently deferred on the grounds that nobody external is here yet. A paying user is unambiguously an external user, so **account deletion** and **data export** stop being someday-items and become the price of admission ([account deletion](/docs/users/deferred/account-deletion), [data export](/docs/users/deferred/data-export)). Refunds, a stated terms and privacy surface, and receipts are the merchant of record's to serve, which is most of why it is the recommended shape.
+Taking money changes obligations that are currently deferred on the grounds that nobody external is here yet. A paying user is unambiguously an external user, so **account deletion** and **data export** stop being someday-items and become the price of admission ([account deletion](/docs/users/deferred/account-deletion), [data export](/docs/users/deferred/data-export)). Refunds, published terms and privacy information, and receipts are the merchant of record's to serve, which is most of why it is the recommended shape.
 
 Ship this only alongside those, or not at all — a paid tier without a way out is the worst version of this feature.
 

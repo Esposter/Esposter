@@ -15,9 +15,8 @@ interface EmojiProps {
 
 const { room } = defineProps<EmojiProps>();
 const roomEmojiStore = useRoomEmojiStore();
-const { createRoomEmoji, readRoomEmojis } = roomEmojiStore;
+const { createRoomEmoji } = roomEmojiStore;
 const { items } = storeToRefs(roomEmojiStore);
-await readRoomEmojis(room.id);
 const rules = useVRules();
 const name = ref("");
 const file = ref<File>();

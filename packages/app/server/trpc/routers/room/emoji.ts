@@ -28,9 +28,10 @@ import {
   MimeCategory,
   roomEmojisInMessage,
   roomIdSchema,
+  roomsInMessage,
   RoomPermission,
 } from "@esposter/db-schema";
-import { Operation, takeOne } from "@esposter/shared";
+import { getResultAsync, Operation, takeOne } from "@esposter/shared";
 import { and, count, eq, ne, notExists } from "drizzle-orm";
 
 // Every surface renders an emoji from its row plus a read SAS for the blob the row's id names, so the two
@@ -72,16 +73,27 @@ export const roomEmojiRouter = router({
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
     // The row may only name a blob that landed. Nothing else proves the upload happened: the write SAS was
     // Handed out before the PUT, so a create that skipped it would list an emoji that renders as a broken image
-    const isUploaded = await containerClient.getBlockBlobClient(getRoomEmojiBlobName(roomId, id)).exists();
-    if (!isUploaded) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, id);
+    // The declared size is an input check the client could lie about, so the row is only created for a blob
+    // Whose bytes are actually within the cap — a write SAS cannot constrain what is PUT through it
+    const uploadedProperties = await getResultAsync(() =>
+      containerClient.getBlockBlobClient(getRoomEmojiBlobName(roomId, id)).getProperties(),
+    );
+    const contentLength = uploadedProperties.unwrapOr(undefined)?.contentLength;
+    if (contentLength === undefined || contentLength > MAX_ROOM_EMOJI_SIZE_BYTES)
+      throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, id);
 
     if (getIsUnicodeEmojiSlug(name))
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, name);
 
     const createdRoomEmoji = await ctx.db.transaction(async (tx) => {
-      // Counted and matched inside the transaction that inserts, so two uploads racing the last slot — or the
-      // Same name — cannot both take it. The unique index is the guarantee; this is what makes the refusal a
-      // Stated one rather than a constraint violation
+      // The room row is locked first, because the cap is a count and a count has no constraint behind it: two
+      // Transactions reading 49 would both insert. The unique index is what makes a duplicate name impossible;
+      // This is what makes the cap impossible to exceed, and it serializes only creates for the same room
+      await tx
+        .select({ id: roomsInMessage.id })
+        .from(roomsInMessage)
+        .where(eq(roomsInMessage.id, roomId))
+        .for("update");
       const roomEmojiCount = takeOne(
         await tx.select({ count: count() }).from(roomEmojisInMessage).where(eq(roomEmojisInMessage.roomId, roomId)),
       ).count;

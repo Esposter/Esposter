@@ -52,6 +52,8 @@ flowchart TD
 
 A slot whose blob is gone resolves to nothing and falls back to no background, which is the same state the picker's None entry selects — a missing image must never leave a call with a broken video track. Deleting a slot removes the blob through the standard blob-deletion event rather than inline ([file & media](/docs/esbabbler/file-media)), and the settings row keeps pointing at a slot that resolves to nothing until the user picks something else, which costs nothing and needs no cleanup pass.
 
+Because a slot's blob name is fixed, a replace and a delete name the same blob, and a deletion event still in flight would take the replacement with it. The deletion event therefore carries the ETag the slot held when it was deleted and the worker deletes only while the blob still matches — a slot that has since been re-uploaded keeps its new image, and the worst case is a blob nothing points at rather than a background that vanishes after being replaced.
+
 A browser without background processor support keeps today's behaviour: the picker's uploads are still stored, and applying one warns rather than failing.
 
 ## Key files

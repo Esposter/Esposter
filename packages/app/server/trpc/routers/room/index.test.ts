@@ -1,4 +1,3 @@
-import type { DeleteMemberInput } from "#shared/models/db/room/DeleteMemberInput";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { BlobDeletionEventGridData } from "@esposter/db-schema";
@@ -650,18 +649,6 @@ describe("room", () => {
     );
   });
 
-  test("fails kick member with direct message room", async () => {
-    expect.hasAssertions();
-
-    const { directMessage, user } = await createDirectMessageWithFriend(mockContext);
-
-    await expect(
-      roomCaller.deleteMember({ roomId: directMessage.id, userId: user.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, directMessage.id).message}]`,
-    );
-  });
-
   test("reads rooms excluding direct messages", async () => {
     expect.hasAssertions();
 
@@ -814,31 +801,5 @@ describe("room", () => {
     await expect(
       roomCaller.readMembersByIds({ ids: [userId], roomId: newRoom.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("kicks member with owner", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const member = await createRoomMember(mockContext, newRoom.id);
-    vi.advanceTimersByTime(1);
-
-    await roomCaller.deleteMember({ roomId: newRoom.id, userId: member.id });
-
-    const members = await roomCaller.readMembers({ roomId: newRoom.id });
-
-    expect(members.items.find(({ id }) => id === member.id)).toBeUndefined();
-  });
-
-  test("fails kick self with owner", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const userId = getMockSession().user.id;
-    const input: DeleteMemberInput = { roomId: newRoom.id, userId };
-
-    await expect(roomCaller.deleteMember(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, JSON.stringify(input)).message}]`,
-    );
   });
 });

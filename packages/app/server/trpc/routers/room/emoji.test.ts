@@ -3,7 +3,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { BlobDeletionEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
+import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { createCallerFactory } from "@@/server/trpc";
 import { mockSessionOnce } from "@@/server/trpc/context.test";
@@ -14,6 +14,10 @@ import { AzureContainer, DatabaseEntityType, roomEmojisInMessage, RoomPermission
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockEventGridDatabase } from "azure-mock";
 import { assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
+
+// Built from the same error the router throws, so an inline snapshot never bakes in a random id
+const getRoomEmojiErrorMessage = (operation: Operation, context: string) =>
+  new InvalidOperationError(operation, DatabaseEntityType.RoomEmoji, context).message;
 
 describe("room/emoji", () => {
   const { createMember, getMockContext, getRoomId, setupMemberWithRole } = setupRoomSuite();
@@ -27,13 +31,10 @@ describe("room/emoji", () => {
   // A slug the dataset owns, which a room may not shadow
   const UNICODE_EMOJI_SLUG = "fire";
   const position = 5;
-  // Built from the same error the router throws, so an inline snapshot never bakes in a random id
-  const getRoomEmojiErrorMessage = (operation: Operation, context: string) =>
-    new InvalidOperationError(operation, DatabaseEntityType.RoomEmoji, context).message;
   // The client's PUT, which is what makes the blob the create insists on exist
-  const uploadRoomEmojiBlob = async (id: string) => {
+  const uploadRoomEmojiBlob = async (id: string, body = "") => {
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-    await containerClient.getBlockBlobClient(getRoomEmojiBlobName(roomId, id)).upload("", 0);
+    await containerClient.getBlockBlobClient(getRoomEmojiBlobName(roomId, id)).upload(body, body.length);
   };
   const createRoomEmoji = async (emojiName = name) => {
     const { id } = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
@@ -132,6 +133,19 @@ describe("room/emoji", () => {
       );
     });
 
+    // The size the SAS was minted for is the client's word: a write SAS cannot cap what is PUT through it, so
+    // The row is only created for a blob whose bytes are within the cap
+    test("refuses a blob larger than the cap whatever size was declared", async () => {
+      expect.hasAssertions();
+
+      const { id } = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
+      await uploadRoomEmojiBlob(id, "a".repeat(MAX_ROOM_EMOJI_SIZE_BYTES + 1));
+
+      await expect(roomEmojiCaller.createRoomEmoji({ id, name, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, id)}]`,
+      );
+    });
+
     test("refuses a name the room already uses", async () => {
       expect.hasAssertions();
 
@@ -213,7 +227,7 @@ describe("room/emoji", () => {
       const blobDeletionEvents = MockEventGridDatabase.get("");
       assert(blobDeletionEvents);
 
-      expect(await roomEmojiCaller.readRoomEmojis({ roomId })).toStrictEqual([]);
+      await expect(roomEmojiCaller.readRoomEmojis({ roomId })).resolves.toStrictEqual([]);
       expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
         blobNames: [getRoomEmojiBlobName(roomId, roomEmoji.id)],
         containerName: AzureContainer.MessageAssets,

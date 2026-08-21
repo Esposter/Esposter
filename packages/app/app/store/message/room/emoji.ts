@@ -35,7 +35,12 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
     () => new Map(customEmojis.value.map((customEmoji) => [customEmoji.id, customEmoji])),
   );
   const readRoomEmojis = async (roomId: RoomInMessage["id"]) => {
-    items.value = await $trpc.room.emoji.readRoomEmojis.query({ roomId });
+    const roomEmojis = await $trpc.room.emoji.readRoomEmojis.query({ roomId });
+    // `items` is the current room's list, so a read that outlived its room would write one room's set into
+    // Another's
+    if (roomStore.currentRoomId !== roomId) return;
+
+    items.value = roomEmojis;
   };
   const { executeMutation: executeCreateRoomEmojiMutation } = useMutation();
   const { executeMutation: executeUpdateRoomEmojiMutation } = useMutation();

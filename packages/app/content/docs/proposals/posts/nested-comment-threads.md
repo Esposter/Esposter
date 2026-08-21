@@ -23,7 +23,10 @@ A branch is **collapsed until asked for**: a node with replies renders a reply-c
 
 Indentation is `depth` times one spacing step, applied by the card's container — the whole of the tree's visual structure. The step count **clamps** at a small maximum so a long chain does not squeeze its text into a column, while the nesting itself stays unbounded: past the clamp, replies keep nesting in the data and stop moving right on screen.
 
-At that clamp a node offers **continue this thread**, and that link needs no new route: a comment is a post, so `/post/[id]` on the comment's own id renders it as the root with its replies beneath — the same page, the same store, the same reads, one level of context shown instead of ten.
+At that clamp a node offers **continue this thread**, and that link needs no new route: a comment is a post, so `/post/[id]` on the comment's own id renders it as the root with its replies beneath — the same page, the same store, the same reads, one level of context shown instead of ten. Two things follow, and both are part of this work rather than consequences of it:
+
+- **`useReadPostFromRoute` must accept a post with a `parentId`.** It treats one as a 404 today, which is the whole of what stops a comment being opened as a root.
+- **Indentation is relative to the route, not to the stored `depth`.** `depth` is persisted as the parent's plus one, so rendering it directly would open a rerooted thread already clamped and already indented. The comment the route names renders at depth 0 and each descendant is indented by its distance below that comment; the maximum clamp and the unbounded nesting are unchanged.
 
 ### Replying
 
@@ -33,7 +36,7 @@ Each card gets a Reply action that opens the existing comment editor under it, w
 
 `noComments` is denormalized and written transactionally with the mutation, which is what keeps feed cards from aggregating ([likes](/docs/posts/likes) uses the same discipline for `noLikes`). Today every comment is a direct child, so a root post's counter happens to equal its total. Once replies nest, a counter that only counts direct children makes the feed under-report — a post with thirty comments showing three.
 
-So a create increments **every ancestor**, and a delete decrements them by the size of the subtree it removes, each as one recursive statement walking the `parentId` chain rather than a loop of round trips. The cost is stated plainly: a write is now proportional to the depth it happens at, and the delete path has to count the subtree the cascade takes with it. That is the price of keeping the counter honest, and it is paid on the write side where it belongs.
+So a create increments **every ancestor**, and a delete decrements them by the size of the subtree it removes, each as one recursive statement walking the `parentId` chain rather than a loop of round trips. The client reconciles the same way: a delete drops the removed comment **and every loaded descendant** from the branch maps and adjusts the counters by the size the server reports removing, because a store that removes one row and subtracts one leaves orphaned descendants rendering under a parent that no longer exists. The cost is stated plainly: a write is now proportional to the depth it happens at, and the delete path has to count the subtree the cascade takes with it. That is the price of keeping the counter honest, and it is paid on the write side where it belongs.
 
 ### The flow
 

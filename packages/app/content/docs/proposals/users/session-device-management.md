@@ -46,7 +46,9 @@ flowchart TD
 
 ### Push subscriptions follow
 
-Push subscriptions are scoped by device, and a device is a session id. A revoked session therefore has subscriptions that no longer name a live device — they must stop being delivered to rather than lingering as rows that resolve to nothing ([push notifications](/docs/esbabbler/push-notifications)). This is the one place the feature reaches beyond the auth tables, and it is the reason revoke is not purely better-auth's business.
+A push subscription is stored against a `userId` and an endpoint, so **per-session cleanup needs the session on the row first**: either the subscription table carries the session id that created it and revoke deletes by that, or revocation is account-wide and says so. Deleting the auth row alone leaves a subscription that still resolves and still delivers ([push notifications](/docs/esbabbler/push-notifications)).
+
+A revoked session's **live connections have to be closed too**. A Web PubSub client access url outlives the session that minted it, so `closeUserConnections` is part of revoke rather than a consequence of it, and it is idempotent — a connection that already went away is not a failure. This is the one place the feature reaches beyond the auth tables, and it is the reason revoke is not purely better-auth's business.
 
 ## Key files
 

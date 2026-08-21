@@ -41,11 +41,15 @@ Two constraints carry the whole shortcode contract:
 
 A name a Unicode slug already owns is **rejected at upload**, not shadowed at read. Shadowing would make the same `:fire:` render differently per room, and a room that later deleted its own entry would silently change every message that used it.
 
+That check reads the dataset as it stands, so a later Unicode release can still introduce a slug an existing room emoji already uses. Nothing breaks when it does: every reaction and every message resolves by id, so the room's own emoji renders exactly as before and only the shortcode becomes ambiguous in search and `:` completion, which a rename settles.
+
 ## What bounds the cost
 
 Room emoji are room-owned, exactly like attachments, so they sit outside the personal [storage quota](/docs/platform/storage-quotas) for the reason that mechanism states — a room's files belong to the room, not to whoever uploaded them. What bounds them instead is a **per-room count cap** plus the per-file size and mime caps the write SAS is minted under, which is also Discord's model.
 
 The cap is the whole accounting story: a room's worst case is a fixed number rather than an open-ended one, with nothing to meter, no ledger row per emoji, and no usage figure for a room owner to act on. It is checked twice on purpose — once when the write target is minted, so a full room never receives one it cannot use, and again inside the transaction that inserts, which is what stops two uploads racing the last slot.
+
+The cap counts **rows**, so a member with `ManageEmojis` who mints write targets and never creates the rows leaves blobs the cap cannot see, bounded per file by the size the SAS is signed with and swept only when the room is deleted. That is the known limit of counting rows rather than reservations; if abandoned uploads ever appear in a room's storage figures, the answer is a pending row that counts toward the cap and expires, not a sweeper.
 
 ## Identity: the id, never the name
 

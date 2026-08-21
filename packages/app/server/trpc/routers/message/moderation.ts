@@ -25,10 +25,13 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { readCursorPaginationDataAzureTable } from "@@/server/services/pagination/cursor/readCursorPaginationDataAzureTable";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { announceRoomMemberRemoval } from "@@/server/services/room/announceRoomMemberRemoval";
 import { assertIsManageable } from "@@/server/services/room/rbac/assertIsManageable";
 import { router } from "@@/server/trpc";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
+import { isRoom } from "@@/server/trpc/middleware/userToRoom/isRoom";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { createEntity, getTableNullClause, hasPermission } from "@esposter/db";
@@ -57,14 +60,19 @@ import { alias } from "drizzle-orm/pg-core";
 // The membership row an admin action removes, times out, or replaces
 const getRoomMembership = (roomId: string, userId: string) =>
   and(eq(usersToRoomsInMessage.userId, userId), eq(usersToRoomsInMessage.roomId, roomId));
-// A ban revokes membership and records the ban in one commit — both the ban and the soft ban start here
+// A ban revokes membership and records the ban in one commit — both the ban and the soft ban start here.
+// The membership row comes back so the caller can announce the removal, which is not part of the commit
 const banRoomMember = (db: Context["db"], actorUserId: string, roomId: string, targetUserId: string) =>
   db.transaction(async (tx) => {
-    await tx.delete(usersToRoomsInMessage).where(getRoomMembership(roomId, targetUserId));
+    const [deletedMember] = await tx
+      .delete(usersToRoomsInMessage)
+      .where(getRoomMembership(roomId, targetUserId))
+      .returning();
     await tx
       .insert(bansInMessage)
       .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
       .onConflictDoNothing();
+    return deletedMember;
   });
 
 export const moderationRouter = router({
@@ -117,29 +125,52 @@ export const moderationRouter = router({
   ),
   // oxlint-disable-next-line prefer-spread
   executeAdminAction: getMemberProcedure(executeAdminActionInputSchema, "roomId")
+    // A direct message has no roles and no moderators — the pair block each other instead, so an admin action
+    // Aimed at one is rejected before it can write a ban row and a log entry nothing will ever read
+    .use(isRoom)
     .concat(moderationLogPlugin)
     .mutation(async ({ ctx, input }) => {
       const { roomId, targetUserId } = input;
       const actorUserId = ctx.getSessionPayload.user.id;
+      // Moderating yourself is not a hierarchy question, so the comparison never reaches it — an owner
+      // Outranks themselves under every rule the comparison knows, and would be able to ban themselves out of
+      // The room they own
+      if (targetUserId === actorUserId)
+        throw getInvalidOperationError(
+          Operation.Update,
+          DatabaseEntityType.UserToRoom,
+          JSON.stringify({ roomId, targetUserId }),
+        );
+
       const [isPermitted] = await Promise.all([
         hasPermission(ctx.db, actorUserId, roomId, AdminActionPermissionMap[input.type]),
         assertIsManageable(ctx.db, actorUserId, targetUserId, roomId),
       ]);
       if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });
 
+      const sessionId = ctx.getSessionPayload.session.id;
+
       switch (input.type) {
-        case AdminActionType.CreateBan:
-          await banRoomMember(ctx.db, actorUserId, roomId, targetUserId);
+        case AdminActionType.CreateBan: {
+          const deletedMember = await banRoomMember(ctx.db, actorUserId, roomId, targetUserId);
+          if (deletedMember) await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, sessionId, "banned");
           break;
+        }
         case AdminActionType.ForceMute:
         case AdminActionType.ForceUnmute:
         case AdminActionType.KickFromCall:
           break;
-        case AdminActionType.KickFromRoom:
-          await ctx.db.delete(usersToRoomsInMessage).where(getRoomMembership(roomId, targetUserId));
+        case AdminActionType.KickFromRoom: {
+          const [deletedMember] = await ctx.db
+            .delete(usersToRoomsInMessage)
+            .where(getRoomMembership(roomId, targetUserId))
+            .returning();
+          if (deletedMember) await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, sessionId, "kicked");
           break;
+        }
         case AdminActionType.SoftBan: {
-          await banRoomMember(ctx.db, actorUserId, roomId, targetUserId);
+          const deletedMember = await banRoomMember(ctx.db, actorUserId, roomId, targetUserId);
+          if (deletedMember) await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, sessionId, "banned");
           // Best-effort after the ban commits: the ban is the effect that must not be lost, and rethrowing here
           // Would fail a mutation whose row already landed. Nothing re-runs the purge — re-issuing the ban hits
           // `onConflictDoNothing`, and there is no sweeper or retry queue — so a partial failure leaves some of

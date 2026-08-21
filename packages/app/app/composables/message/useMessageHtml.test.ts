@@ -16,6 +16,9 @@ import {
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
+const createMention = (id: string) =>
+  `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${id}">@stale</span>`;
+
 describe(useMessageHtml, () => {
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
@@ -23,8 +26,6 @@ describe(useMessageHtml, () => {
   const name = "party_parrot";
   const sasUrl = "https://storage.test/message-assets/emoji?sig=a&se=b";
   const displayName = "renamed";
-  const createMention = (id: string) =>
-    `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${id}">@stale</span>`;
   const roomEmoji: RoomEmojiWithSasUrl = {
     createdAt: new Date(0),
     deletedAt: null,

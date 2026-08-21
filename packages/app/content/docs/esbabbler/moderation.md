@@ -7,6 +7,8 @@ description: Unified admin action system — permission-gated actions, word filt
 
 One unified admin action system: every moderation operation is an `AdminActionType` executed through a single procedure, gated behind a specific `RoomPermission` bit (see [RBAC](/docs/esbabbler/rbac)), hierarchy-checked with `isManageable`, logged to an append-only audit table, and delivered live to the targeted user.
 
+**One procedure, and only one.** Everything that removes, mutes, times out or warns a member goes through `executeAdminAction` — which is why the permission is looked up per action type rather than fixed by the procedure. A second route to the same effect would be a second place to hold the hierarchy check, the audit row and the departure announcement.
+
 ## How it works
 
 ```mermaid
@@ -34,11 +36,17 @@ sequenceDiagram
 | `ForceMute` / `ForceUnmute` | `MuteMembers`    | targeted client's call store hook toggles local microphone + force-muted state                                                                                            |
 | `StopScreenShare`           | `MuteMembers`    | server revokes screen-share publish sources via the LiveKit Admin API and mutes active screen-share tracks; targeted client also calls `setScreenShare(false)` + snackbar |
 | `KickFromCall`              | `MoveMembers`    | targeted client calls `leaveCall()` through `AdminActionHookMap`; snackbar                                                                                                |
-| `KickFromRoom`              | `KickMembers`    | server deletes the `usersToRooms` row; targeted client navigates away                                                                                                     |
+| `KickFromRoom`              | `KickMembers`    | server deletes the `usersToRooms` row and announces the departure; targeted client navigates away                                                                         |
 | `TimeoutUser`               | `KickMembers`    | `durationMs` required; sets `timeoutUntil` on `usersToRooms`; all message-producing mutations reject while `timeoutUntil > now()`                                         |
-| `CreateBan`                 | `BanMembers`     | permanent; deletes `usersToRooms`, inserts into `bans`; join/invite flows reject banned users                                                                             |
+| `CreateBan`                 | `BanMembers`     | permanent; deletes `usersToRooms` and announces the departure, inserts into `bans`; join/invite flows reject banned users                                                 |
 | `SoftBan`                   | `BanMembers`     | ban + remove from room + mark the user's visible messages deleted                                                                                                         |
 | `Warn`                      | `ManageMessages` | records and emits the action; targeted client shows a warning notification                                                                                                |
+
+### A removal is a departure
+
+Kick, ban and soft ban all delete a membership row, and a deleted membership row that nobody is told about leaves every other client rendering a member the room no longer has. So each of them ends in the same announcement a voluntary leave makes — the `leaveRoom` event every member list prunes from, and the system line naming who went — through one `announceRoomMemberRemoval`, best-effort after the removal has committed ([persist then notify](/docs/architecture/persist-then-notify)).
+
+**Nobody moderates themselves.** The hierarchy comparison cannot express it: an actor and a target at the same position fail the strict comparison, but a room owner is above every rule it knows and would pass against their own row. The self-target rejection therefore sits in front of the comparison rather than inside it, and a direct message is rejected in front of both — a pair with no roles has no moderators, and blocking is what it has instead.
 
 ### Word filter
 
@@ -62,16 +70,17 @@ The moderation log is an append-only Azure Table (`AzureTable.ModerationLog`): `
 
 ## Key files
 
-| File                                                                          | Role                            |
-| :---------------------------------------------------------------------------- | :------------------------------ |
-| `packages/db-schema/src/models/message/AdminActionType.ts`                    | action type enum                |
-| `packages/app/server/trpc/routers/message/moderation.ts`                      | moderation router               |
-| `packages/app/server/services/message/moderation/AdminActionPermissionMap.ts` | action → required permission    |
-| `packages/app/shared/models/db/moderation/ExecuteAdminActionInput.ts`         | discriminated union input       |
-| `packages/app/app/composables/message/moderation/useAdminActionMap.ts`        | client-side per-action handlers |
-| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`  | shared message-creation gate    |
-| `packages/app/server/services/message/moderation/assertCanCreateMessage.ts`   | tRPC face — applies + rejects   |
-| `packages/app/server/trpc/routers/room/filter.ts`                             | word filter CRUD                |
+| File                                                                          | Role                              |
+| :---------------------------------------------------------------------------- | :-------------------------------- |
+| `packages/db-schema/src/models/message/AdminActionType.ts`                    | action type enum                  |
+| `packages/app/server/trpc/routers/message/moderation.ts`                      | moderation router                 |
+| `packages/app/server/services/message/moderation/AdminActionPermissionMap.ts` | action → required permission      |
+| `packages/app/server/services/room/announceRoomMemberRemoval.ts`              | the departure event + system line |
+| `packages/app/shared/models/db/moderation/ExecuteAdminActionInput.ts`         | discriminated union input         |
+| `packages/app/app/composables/message/moderation/useAdminActionMap.ts`        | client-side per-action handlers   |
+| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`  | shared message-creation gate      |
+| `packages/app/server/services/message/moderation/assertCanCreateMessage.ts`   | tRPC face — applies + rejects     |
+| `packages/app/server/trpc/routers/room/filter.ts`                             | word filter CRUD                  |
 
 ## Notes
 

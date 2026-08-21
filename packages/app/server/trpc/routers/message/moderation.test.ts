@@ -7,6 +7,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
+import { createDirectMessageWithFriend } from "@@/server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import {
   AdminActionType,
@@ -22,9 +23,10 @@ import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("moderation", () => {
-  const { createMember, getMockContext, getRoomId, setupMemberWithRole } = setupRoomSuite();
+  const { createMember, getMockContext, getRoomCaller, getRoomId, setupMemberWithRole } = setupRoomSuite();
   let mockContext: Context;
   let moderationCaller: DecorateRouterRecord<TRPCRouter["message"]["moderation"]>;
+  let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
   const durationMs = 1;
   const note = "note";
@@ -44,6 +46,7 @@ describe("moderation", () => {
   beforeAll(() => {
     mockContext = getMockContext();
     moderationCaller = createCallerFactory(moderationRouter)(mockContext);
+    roomCaller = getRoomCaller();
   });
 
   beforeEach(() => {
@@ -75,6 +78,20 @@ describe("moderation", () => {
       expect(banRows).toHaveLength(1);
       expect(takeOne(banRows).userId).toBe(member.id);
       expect(membershipRows).toHaveLength(0);
+    });
+
+    // Owner immunity is not a position comparison: the owner holds no role row, so every assigned role outranks
+    // Their floor position and a moderator would be able to ban the member who owns the room
+    test(`${AdminActionType.CreateBan}: moderator cannot ban the room owner`, async () => {
+      expect.hasAssertions();
+
+      const ownerId = getMockSession().user.id;
+      const { member } = await setupMemberWithRole(RoomPermission.BanMembers, position);
+      await mockSessionOnce(mockContext.db, member);
+
+      await expect(
+        moderationCaller.executeAdminAction({ roomId, targetUserId: ownerId, type: AdminActionType.CreateBan }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     });
 
     test(`${AdminActionType.KickFromRoom}: owner kicks member — usersToRoomsInMessage row deleted`, async () => {
@@ -116,6 +133,61 @@ describe("moderation", () => {
     // The action and resolve
     // `as const` keeps the rows as their own literals — a plain array widens to `AdminActionType`, which the
     // Discriminated input union rejects
+    // A moderation kick is still a departure, so it owes the room what a leave does — without the event every
+    // Other member's list keeps a member the room no longer has
+    test(`${AdminActionType.KickFromRoom}: announces the removal`, async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      const onLeaveRoom = await roomCaller.onLeaveRoom([roomId]);
+      const leaveRoom = await getFirstEmit(
+        () => onLeaveRoom,
+        () =>
+          moderationCaller.executeAdminAction({
+            roomId,
+            targetUserId: member.id,
+            type: AdminActionType.KickFromRoom,
+          }),
+      );
+      const messagesClient = await useTableClient(AzureTable.Messages);
+      const messages = await Array.fromAsync(messagesClient.listEntities<StandardMessageEntity>());
+
+      expect(leaveRoom).toStrictEqual({ roomId, userId: member.id });
+      expect(messages.map(({ message }) => message)).toContain(`${member.name} was kicked from the room.`);
+    });
+
+    // Moderating yourself is not a hierarchy question, and the comparison cannot answer it — an owner outranks
+    // Themselves under every rule it knows
+    test("rejects an action aimed at the actor", async () => {
+      expect.hasAssertions();
+
+      const targetUserId = getMockSession().user.id;
+      const input = { roomId, targetUserId };
+
+      await expect(
+        moderationCaller.executeAdminAction({ ...input, type: AdminActionType.KickFromRoom }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.UserToRoom, JSON.stringify(input)).message}]`,
+      );
+    });
+
+    // A direct message has no roles and no moderators — its pair block each other instead
+    test("rejects an action aimed at a direct message", async () => {
+      expect.hasAssertions();
+
+      const { directMessage, user } = await createDirectMessageWithFriend(mockContext);
+
+      await expect(
+        moderationCaller.executeAdminAction({
+          roomId: directMessage.id,
+          targetUserId: user.id,
+          type: AdminActionType.KickFromRoom,
+        }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, directMessage.id).message}]`,
+      );
+    });
+
     test.each([AdminActionType.ForceMute, AdminActionType.ForceUnmute, AdminActionType.KickFromCall] as const)(
       "%s: owner applies it to a member — succeeds with no error",
       async (type) => {
@@ -157,7 +229,11 @@ describe("moderation", () => {
       });
 
       const messagesClient = await useTableClient(AzureTable.Messages);
-      const memberMessages = await Array.fromAsync(messagesClient.listEntities<StandardMessageEntity>());
+      // The room's own lines are not the member's — their join and the ban that removed them both stay, so the
+      // Purge is asserted against what the member wrote
+      const memberMessages = (await Array.fromAsync(messagesClient.listEntities<StandardMessageEntity>())).filter(
+        ({ userId }) => userId === member.id,
+      );
 
       expect(memberMessages).toHaveLength(1);
       expect(memberMessages.every(({ deletedAt }) => deletedAt)).toBe(true);
@@ -400,10 +476,12 @@ describe("moderation", () => {
   ])("member without %s permission cannot %s — throws UNAUTHORIZED", async (_permission, _procedureName, moderate) => {
     expect.hasAssertions();
 
+    // A separate target, because moderating yourself is rejected before any permission is read
+    const target = await createMember();
     const member = await createMember();
     await mockSessionOnce(mockContext.db, member);
 
-    await expect(moderate(member.id)).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    await expect(moderate(target.id)).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   // Holding the permission is not enough: the target has to sit below the actor, and equal is not below. Each row

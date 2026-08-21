@@ -74,7 +74,7 @@ A store action that mutates goes through `useMutation` (`composables/shared/useM
 
 ## CRUD Conventions
 
-- **Prefer CRUD verbs over domain-specific verbs** — `deleteBan` not `unban`, `deleteMember` not `kick`. Reserve domain terms only when there's no clean CRUD mapping.
+- **Prefer CRUD verbs over domain-specific verbs** — `deleteBan` not `unban`, `deleteRole` not `removeRole`. Reserve domain terms only when there's no clean CRUD mapping.
 - **`store*` prefix for subscription-driven state-update counterparts** — `storeCreateFoo`/`storeDeleteFoo`. If the user action is only a direct tRPC call, don't add a matching non-`store*` wrapper. State-update methods use CRUD prefixes (`createXxx` to insert, `deleteXxx` to remove) — never `addXxx`.
 - **update**: `findIndex` first, guard `if (index === -1) return`, then mutate in place with `Object.assign(takeOne(items.value, index), updatedItem)`.
 - **delete**: reassign the array — `items.value = items.value.filter(...)` — never `splice`.

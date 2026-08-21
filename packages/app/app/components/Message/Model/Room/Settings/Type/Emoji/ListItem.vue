@@ -16,6 +16,14 @@ const roomEmojiStore = useRoomEmojiStore();
 const { updateRoomEmoji } = roomEmojiStore;
 const rules = useVRules();
 const name = ref(roomEmoji.name);
+// A rename from another device replaces the field, unless what is in it is an edit of the previous name that
+// Has not been committed yet — that edit is the one the user is still typing
+watch(
+  () => roomEmoji.name,
+  (newName, oldName) => {
+    if (name.value === oldName) name.value = newName;
+  },
+);
 </script>
 
 <template>

@@ -10,3 +10,4 @@ Repo-wide mechanisms we deliberately have not adopted. One page per idea with th
 - [Internationalization](/docs/architecture/deferred/i18n) — a translation layer for UI copy, which is hard-coded English today.
 - [Error monitoring](/docs/architecture/deferred/error-monitoring) — shipping client and server exceptions to a tracker instead of the console.
 - [Bundle budgets](/docs/architecture/deferred/bundle-budgets) — an enforced payload ceiling in CI instead of a manual analyze run.
+- [Upload content validation](/docs/architecture/deferred/upload-content-validation) — inspecting an uploaded file's bytes instead of trusting the content type its write SAS was signed with.
