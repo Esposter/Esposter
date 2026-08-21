@@ -71,4 +71,4 @@ A browser without background processor support keeps today's behaviour: the pick
 
 Cropping and aspect ratio are the processor's problem, not ours — it already composites a preset SVG behind an arbitrary camera aspect, and an uploaded image goes through the same path with no new fitting logic.
 
-The mime category is signed into the write SAS as the blob's content type, so a slot cannot hold anything but an image regardless of what the client declares — the same guarantee room attachments get, and the reason this needs no separate validation of what was uploaded.
+The mime category is signed into the write SAS as the blob's content type, so a slot is always **served** as an image whatever was PUT through it, which is the same property room attachments have. It is not a check on the bytes, and no upload path in the app has one ([upload content validation](/docs/architecture/deferred/upload-content-validation)) — a slot is composited into the uploader's own camera track and reaches nobody else, so the exposure is a decoder bug in their own browser.
