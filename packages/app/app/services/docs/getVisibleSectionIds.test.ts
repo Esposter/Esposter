@@ -46,6 +46,19 @@ describe(getVisibleSectionIds, () => {
     expect(getVisibleSectionIds(scrolledPast, VIEWPORT_TOP, VIEWPORT_HEIGHT)).toStrictEqual(["reading"]);
   });
 
+  // Clicking a table-of-contents link lands its heading on the top line, which leaves a sub-pixel sliver of the
+  // Section above still technically overlapping. Counting that sliver lit up the section before the one clicked
+  test("drops the section above when an anchor lands its heading on the top line", () => {
+    expect.hasAssertions();
+
+    const justLanded = [
+      { id: "previous", top: -700 },
+      { id: "clicked", top: VIEWPORT_TOP + 0.5 },
+    ];
+
+    expect(getVisibleSectionIds(justLanded, VIEWPORT_TOP, VIEWPORT_HEIGHT)).toStrictEqual(["clicked"]);
+  });
+
   test("runs the last section to the bottom of the document", () => {
     expect.hasAssertions();
 

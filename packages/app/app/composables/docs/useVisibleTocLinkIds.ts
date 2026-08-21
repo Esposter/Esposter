@@ -24,8 +24,6 @@ export const useVisibleTocLinkIds = (links: MaybeRefOrGetter<TocLink[]>) => {
     return Number.parseFloat(window.getComputedStyle(firstHeading.element).scrollMarginTop) || 0;
   });
   const updateVisibleIds = () => {
-    if (headings.value.length === 0) return;
-
     const newVisibleIds = getVisibleSectionIds(
       headings.value.map(({ element, id }) => ({ id, top: element.getBoundingClientRect().top })),
       viewportTop.value,
@@ -57,9 +55,14 @@ export const useVisibleTocLinkIds = (links: MaybeRefOrGetter<TocLink[]>) => {
     { rootMargin: () => `-${viewportTop.value}px 0px 0px 0px` },
   );
   // The observer reports a heading crossing the viewport's edges, never the edges themselves moving — and a
-  // Resize moves the bottom one, which is half of what decides the set
+  // Resize moves the bottom one, which is half of what decides the set.
+  //
+  // `scrollend` covers the observer's other blind spot: an anchor stops with its heading resting exactly on the
+  // Top line, an arrival the observer never sees, because the heading approaches that line from below and never
+  // Crosses it. The last crossing before it is the previous heading leaving, which is why clicking a link used
+  // To highlight the section above the one clicked
   useEventListener(
-    "resize",
+    ["resize", "scrollend"],
     () => {
       updateVisibleIds();
     },
