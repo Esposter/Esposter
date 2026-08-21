@@ -20,15 +20,7 @@ What is banned is the third option: defining the match as "everything except the
 
 ## Rewrite in one pass, keyed by a map
 
-Collect the tokens first, resolve their replacements, then rewrite the content in **one** pass over the same matcher, looking each match up in a `Map`:
-
-```mermaid
-flowchart LR
-  C["content"] --> M["match once — collect distinct tokens"]
-  M --> R["resolve replacements — signing, lookup, substitution"]
-  R --> P["one pass: replace each match via the map"]
-  P --> OUT["rewritten content"]
-```
+Collect the tokens first, resolve their replacements, then rewrite the content in **one** pass over the same matcher, looking each match up in a `Map`.
 
 Never loop a per-token search over the whole document instead. That shape is wrong twice over:
 

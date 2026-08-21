@@ -94,7 +94,7 @@ When adding a new feature: pick Postgres for anything relational or queryable; p
 ```mermaid
 flowchart TD
   CM["createMessage (tRPC mutation)"] --> AT["Azure Table write<br/>Messages + MessagesAscending"]
-  AT --> EE["messageEventEmitter.emit(#quot;createMessage#quot;)"]
+  AT --> EE["messageEventEmitter.emit — createMessage"]
   EE --> SUB["tRPC subscriptions (in-process)"]
   AT --> PS["getPushSubscriptionsForMessage()"]
   PS --> EG["EventGrid publish<br/>PushNotificationEventGridData"]

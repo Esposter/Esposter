@@ -1,6 +1,6 @@
 ---
 name: docs
-description: Esposter documentation conventions for packages/app/content/docs (the in-app /docs section rendered by @nuxt/content) — location-carries-status (area vs proposals vs deferred/rejected vs roadmap) and the one-time-change exception, single responsibility (one feature/idea per file, never merge), the two-field frontmatter, the Mermaid diagram mandate parse-validated by content/docs/index.test.ts (a syntax error fails pnpm test; no semicolons in labels), plain .md with GFM only (never .mdx, no MDC block components), fence languages registered in configuration/content.ts, registering every new page in the area index.md and, in a mapped section, DocsSectionGroupsMap.ts, the writing-style rules (prose first, magnitudes not measurements, never write down what the repo can count or restate a version a manifest declares, Key Files table, no deprecated content), docs moving with the code, and repo-wide standards belonging in architecture/ — plus deep dives on the directory layout, page templates and lifecycle, and how a per-area ideation/triage pass is run and chunked into PRs. Apply when creating, updating, or referencing any documentation page, proposal, roadmap, or deferred/rejected idea.
+description: Esposter documentation conventions for packages/app/content/docs (the in-app /docs section rendered by @nuxt/content) — location-carries-status (area vs proposals vs deferred/rejected vs roadmap) and the one-time-change exception, single responsibility (one feature/idea per file, never merge), the two-field frontmatter, the Mermaid diagram mandate parse-validated by content/docs/index.test.ts (a syntax error fails pnpm test) and the rule that a diagram carries a mechanism rather than a catalog, an inventory or a straight line, plain .md with GFM only (never .mdx, no MDC block components), fence languages registered in configuration/content.ts, registering every new page in the area index.md and, in a mapped section, DocsSectionGroupsMap.ts, the writing-style rules (prose first, magnitudes not measurements, never write down what the repo can count or restate a version a manifest declares, Key Files table, no deprecated content), docs moving with the code, and repo-wide standards belonging in architecture/ — plus deep dives on the directory layout, page templates and lifecycle, on diagrams (which pages owe one, what a node label may hold, the gotchas that parse and render wrong), and on how a per-area ideation/triage pass is run and chunked into PRs. Apply when creating, updating, or referencing any documentation page, proposal, roadmap, or deferred/rejected idea.
 ---
 
 # Docs — Esposter Conventions
@@ -65,13 +65,11 @@ Write for a new engineer reading in the browser, not for an agent grepping a rep
 
 ## Diagram mandate
 
-Any page describing a flow, lifecycle, or interaction between 3+ parts (components, procedures, storage, background workers) MUST carry a Mermaid diagram — `flowchart` for data/navigation flows, `stateDiagram-v2` for lifecycles, `sequenceDiagram` for request/event ordering. Prose says _why_; the diagram is the alignment artifact for _what talks to what_. Label edges with the procedure/event that drives them.
-
-Exemptions: `index.md` pages, `deferred/`/`rejected/` pages, `roadmap.md`, and static inventories (key-file tables, component lists). Never add a diagram as decoration.
-
-**The exemption is about the page's shape, not its length.** A short page describing one small flow still owes a diagram; a long page that is a list of rules owes none. When auditing an area, the question to ask each page is "does the prose name three parts and say what passes between them?" — if it does, a missing diagram is a finding, however tidy the page reads. Pages that only _feel_ exempt are the ones this survey keeps rediscovering, so record the verdict per page rather than per area.
-
-Every diagram is parse-validated by `packages/app/content/docs/index.test.ts` (`mermaid.parse` over all ` ```mermaid ` blocks), so a syntax error fails `pnpm test`. Two gotchas, both of which parse cleanly and fail only when rendered: `;` is a mermaid statement separator even inside message/note text — never use a semicolon in a label or note (use `—` or a comma) — and a label is one quoted string on one line, so a break inside it is written `<br/>` — a backslash-n draws those two characters into the box, and a real newline is swallowed and renders as one run-on line. Both of those are checked too, so they fail `pnpm test` rather than only the rendered page.
+Any page describing a flow, lifecycle, or interaction between **3+ parts** (components, procedures, storage,
+background workers) carries a Mermaid diagram, and a diagram carries a **mechanism** — an order, a gate, or a
+fan-out. The two halves fail in opposite directions and both are findings: a page that owes one and has none, and
+a page whose diagram is a catalog, an inventory or a straight line drawn as boxes. Which pages are exempt, what a
+node label may hold, and the two gotchas that parse cleanly and render wrong: `references/diagrams.md`.
 
 ## Standards vs feature pages
 
@@ -81,3 +79,4 @@ When a mechanism is the repo-wide answer to a class of problem ("whenever we nee
 
 - `references/page-shapes.md` — when creating a page and placing it in the tree: the directory layout, sidebar grouping, the feature-page and proposal templates, deferred/rejected and roadmap page bodies, and the lifecycle map.
 - `references/area-passes.md` — when ideating, triaging, or sweeping a whole product area's docs, and when splitting that sweep into PRs.
+- `references/diagrams.md` — when adding a diagram, judging whether a page owes one, or sweeping an area's diagrams.

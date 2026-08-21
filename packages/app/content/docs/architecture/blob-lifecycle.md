@@ -15,7 +15,7 @@ flowchart TD
   N -->|"fixed name — overwrite in place"| F["Nothing accumulates<br/>no teardown owner needed"]
   N -->|"unique name per upload"| U["Stale versions accumulate"]
   U --> R["Replace mutation sweeps every<br/>prior version except the current one"]
-  U --> D["Parent entity delete sweeps the<br/>whole prefix by listing, never by<br/>reconstructing names"]
+  U --> D["Parent entity delete sweeps<br/>the whole prefix by listing"]
   R --> P["publishBlobDeletion — durable best-effort"]
   D --> P
 ```

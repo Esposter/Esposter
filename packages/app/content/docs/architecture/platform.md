@@ -24,45 +24,13 @@ New products join the platform by adding one `ResourceType` and one `ResourceDef
 | **Events**     | tRPC mutation path = achievement trigger key (`achievementPlugin`) — every new procedure is automatically triggerable  |
 
 ```mermaid
-flowchart TB
-  subgraph explorer [Resource Explorer — /resource-explorer]
-    SHEET[Sheet<br/>datasetProvider · portable]
-    SURVEY[Survey<br/>publishable · datasetProvider · fileAssets]
-    TODO[TodoList]
-    DASH[Dashboard<br/>publishable]
-    EMAIL[Email<br/>publishable · fileAssets · portable]
-    WEB[Webpage<br/>publishable · fileAssets]
-    FLOW[Flowchart<br/>publishable]
-    NOTE[Note<br/>publishable]
-    PROG[Program<br/>datasetProvider]
-    BP[Blueprint]
-  end
-
-  subgraph platform [Platform layers]
-    RES["Resources<br/>identity row + content blob + ResourceDefinitionMap"]
-    DS["Datasets<br/>readDataset(reference) + provider map"]
-    PUB["Publishing<br/>snapshot + public /view/[type]/[id]"]
-  end
-
-  explorer --- RES
-  SHEET -- Sheet provider --> DS
-  SURVEY -- SurveyResponses provider --> DS
-  PROG -- ProgramStatus provider --> DS
-  DS -- bind / import / merge fields --> DASH
-  DS --> SHEET
-  DS --> EMAIL
-  SURVEY --> PUB
-  DASH --> PUB
-  WEB --> PUB
-  EMAIL --> PUB
-  FLOW --> PUB
-  NOTE --> PUB
-  PUB -- "public /view URLs (shareable in esbabbler)" --> WORLD((Viewers))
-
-  ACH[Achievements<br/>tRPC path middleware]
-  ID[(Identity<br/>better-auth users.id)]
-  platform --- ID
-  explorer -. every mutation .-> ACH
+flowchart LR
+  ID[("Identity — users.id")] --> RES["Resources<br/>identity row + content blob"]
+  RES -->|"declares datasetProvider"| DS["Datasets — readDataset(reference)"]
+  DS -->|"bind, import, merge fields"| RES
+  RES -->|"declares publishable"| PUB["Publishing — versioned snapshot"]
+  PUB -->|"public rate-limited read"| WORLD(("/view/[type]/[id]"))
+  RES -. "every mutation" .-> ACH["Achievements — tRPC path middleware"]
 ```
 
 ## Business-logic user journey

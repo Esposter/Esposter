@@ -15,24 +15,22 @@ A resource is three things: an identity row (Postgres), a content blob (Azure Bl
 flowchart LR
   subgraph pg [Postgres — identity and lifecycle]
     ROW["resources row<br/>id · type · name · userId · contentVersion"]
-    PUBROW["resource_publications row (exists iff published)<br/>resourceId · publishVersion · publishedAt"]
-    ROW -. "1:0..1 (Publishable)" .-> PUBROW
+    PUBROW["resource_publications row<br/>exists iff published"]
+    ROW -. "1:0..1, Publishable only" .-> PUBROW
   end
 
-  subgraph blob [Azure Blob resource-assets container]
-    CONTENT["{id}/content.json<br/>working copy — per-type Zod schema"]
-    PUB["{id}/published/{publishVersion}.json<br/>immutable snapshots (Publishable only)"]
-    FILES["{id}/files/…<br/>binary assets (FileAssets)"]
+  subgraph blob ["Azure Blob resource-assets — every path under {id}/"]
+    CONTENT["content.json — the working copy"]
+    PUB["published/{publishVersion}.json — immutable"]
+    FILES["files/… — binary assets, FileAssets only"]
   end
 
-  subgraph def [ResourceDefinitionMap entry — shared, as-const]
-    D["contentSchema · icon · title<br/>capabilities: publishable? datasetProvider? fileAssets? portable?"]
-  end
+  DEF["ResourceDefinitionMap entry"]
 
-  ROW -- "id = blob path prefix" --> CONTENT
+  ROW -- "id is the blob path prefix" --> CONTENT
   CONTENT -- "publishResource copies" --> PUB
-  D -- "validates" --> CONTENT
-  D -- "gates procedures, blades, commands" --> ROW
+  DEF -- "contentSchema validates" --> CONTENT
+  DEF -- "capabilities gate procedures, blades, commands" --> ROW
 ```
 
 **Settings vs data is a UX separation, not a storage separation.** A resource's parse settings and its actual data are distinct sections of one content blob, edited in distinct blades, saved through one procedure with one `contentVersion`. Never split one artifact across two write paths.
@@ -102,26 +100,26 @@ export type CapabilityResourceType<TCapability extends keyof ResourceCapabilitie
 
 ```mermaid
 flowchart TB
-  DEF["ResourceDefinitionMap[type].capabilities<br/>(shared, as-const-satisfies)"]
+  DEF["ResourceDefinitionMap[type].capabilities"]
 
   DEF -->|"derives literal unions"| UNIONS["PublishableResourceType<br/>FileAssetsResourceType<br/>PortableResourceType"]
 
   subgraph server [Server]
     FACTORY["createResourceProcedures(type, options?)"]
-    BASE["base: create/read/update/delete<br/>readResourceContent/saveResourceContent"]
-    PUBP["+ publishResource / unpublishResource /<br/>readResourcePublication / readPublishedResourceContent"]
-    FAP["+ generateUploadFileSasEntities / deleteFile"]
-    DPM["DatasetProviderMap<br/>Record&lt;DatasetProviderType, provider&gt;"]
+    BASE["base procedures — CRUD, read and save content"]
+    PUBP["publish procedures"]
+    FAP["file-asset procedures"]
+    DPM["DatasetProviderMap"]
   end
 
   subgraph client [Client]
-    BLADES["ResourceBladeDefinitionMap — type blades"]
-    CMDS["Toolbar commands<br/>Publish · Import · Export"]
-    VIEWS["ViewComponentMap<br/>Record&lt;PublishableResourceType, view page&gt;"]
-    FMT["PortableFormatMap<br/>Record&lt;PortableResourceType, formats&gt;"]
+    BLADES["ResourceBladeDefinitionMap"]
+    CMDS["Toolbar commands — Publish · Import · Export"]
+    VIEWS["ViewComponentMap"]
+    FMT["PortableFormatMap"]
   end
 
-  UNIONS -->|"conditional return type:<br/>publish procedures exist iff publishable"| FACTORY
+  UNIONS -->|"conditional return type:<br/>a procedure exists iff the type declares it"| FACTORY
   FACTORY --> BASE
   FACTORY -.->|"publishable types only<br/>(compile error otherwise)"| PUBP
   FACTORY -.->|"fileAssets types only"| FAP
