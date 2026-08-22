@@ -5,7 +5,7 @@ description: Proposal — a room's active invite links listed, revocable and pau
 
 # Invite Management
 
-A room's invite links are almost write-only today — [pausing](/docs/esbabbler/invites) is the one thing that can be done to all of them at once. Any member can mint one from the invite dialog and see their own in the settings panel ([invites](/docs/esbabbler/invites)), but nobody — the owner included — can see anyone else's: how many exist, who made them, how many joins they have taken, or stop any of them. The only way an invite stops working is expiry, its use cap, or the member who owns it replacing it with another.
+A room's invite links are almost write-only today — a member sees and revokes their own, and [pausing](/docs/esbabbler/invites) closes all of them at once. But nobody — the owner included — can see anyone else's: how many exist, who made them, how many joins they have taken, or kill one without closing the room. The only way an invite stops working is expiry, its use cap, or the member who owns it replacing it with another.
 
 That is also why `ManageInvites` reads as a permission and behaves as nothing: it is defined, described in the roles panel as "Create and revoke invite links", granted by the default role, and read by no procedure. `createInvite` is a plain member procedure. A room cannot restrict inviting, so the bit is a promise the server never keeps.
 
@@ -17,9 +17,9 @@ Both halves are the same missing surface. Discord's **Invites** settings panel i
 
 `readRoomInvites({ roomId })` — a `ManageInvites` procedure returning the room's usable rows, each joined to its creator so the panel can name who minted it. Cursor-paginated on `createdAt` like every other room-scoped list; expired and exhausted rows are already inert and stay out of the read, which `checkIsInviteUsable` decides today.
 
-### Revoking one
+### Revoking anyone's
 
-`revokeInvite({ id, roomId })` — `ManageInvites`, a delete of the row. Revoking is not a soft state: the token is the credential, and the row's absence is what makes it unusable, which `readInvite` already treats as "unknown". A member's own link is revocable by them without the permission, because replacing it already deletes it.
+`revokeInvite` already exists and deletes the caller's own row ([invites](/docs/esbabbler/invites)). What is missing is the `ManageInvites` widening: the same procedure dropping the `userId` predicate for a caller who holds the permission, so a moderator can kill a link they did not mint.
 
 ### Gating creation
 

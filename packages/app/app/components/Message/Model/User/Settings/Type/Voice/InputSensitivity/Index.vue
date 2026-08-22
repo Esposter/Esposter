@@ -19,18 +19,9 @@ const { audioInputs, ensurePermissions, permissionGranted } = useDevicesList({ r
   />
   <v-alert v-else density="compact" type="warning" variant="tonal">
     You do not have any input devices enabled. You must
-    <span
-      text-info
-      underline
-      cursor-pointer
-      role="button"
-      tabindex="0"
-      @click="ensurePermissions()"
-      @keydown.enter.prevent="ensurePermissions()"
-      @keydown.space.prevent="ensurePermissions()"
-    >
+    <StyledActionLink @click="ensurePermissions()">
       grant {{ MESSAGE_DISPLAY_NAME }} access to your microphone
-    </span>
+    </StyledActionLink>
     in order to observe input sensitivity.
   </v-alert>
 </template>

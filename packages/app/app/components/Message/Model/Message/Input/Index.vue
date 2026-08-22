@@ -65,8 +65,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
         <MessageModelMessageFileInputContainer :target />
       </template>
       <template #prepend-footer>
-        <MessageModelMessageInputActionsMenuButton />
-        <RichTextEditorCustomUploadFileButton @upload-file="uploadFiles" />
+        <MessageModelMessageInputActionsMenuButton @upload-file="uploadFiles" />
       </template>
       <template #append-footer="{ editor }">
         <RichTextEditorCustomAudioRecorderButton @upload-file="uploadFiles" />

@@ -40,20 +40,7 @@ useReadMyInvite(room.id);
         <div font-bold text-title-medium>Invites</div>
         <div op-medium-emphasis text-body-small>
           Here's a list of all active invite links. You can revoke any one or
-          <!-- The sentence is the affordance, as Discord writes it: a link-coloured word inside the copy, opening
-               the dialog rather than navigating -->
-          <button
-            text-info
-            text-inherit
-            p-0
-            b-none
-            bg-transparent
-            cursor-pointer
-            type="button"
-            @click="inviteRoomId = room.id"
-          >
-            create one</button
-          >.
+          <StyledActionLink @click="inviteRoomId = room.id">create one</StyledActionLink>.
         </div>
       </v-col>
     </v-row>
@@ -73,10 +60,21 @@ useReadMyInvite(room.id);
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" md="8" sm="10">
-        <v-list v-if="invite" rd>
-          <MessageModelRoomInviteListItem :invite :room-id="room.id" />
-        </v-list>
+      <v-col cols="12">
+        <v-table v-if="invite" density="comfortable">
+          <thead>
+            <tr>
+              <th>Inviter</th>
+              <th>Invite Code</th>
+              <th>Uses</th>
+              <th>Expires</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            <MessageModelRoomInviteTableRow :invite :room-id="room.id" />
+          </tbody>
+        </v-table>
         <StyledEmptyState
           v-else
           icon="mdi-send-outline"

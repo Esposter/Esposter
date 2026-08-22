@@ -8,6 +8,7 @@ import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
 import { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
+import { revokeInviteInputSchema } from "#shared/models/db/room/RevokeInviteInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -527,6 +528,29 @@ export const baseRoomRouter = router({
       const cursorPaginationData = getCursorPaginationData(readRooms, limit, sortBy);
       if (room) cursorPaginationData.items.push(room);
       return cursorPaginationData;
+    },
+  ),
+  revokeInvite: getMemberProcedure(revokeInviteInputSchema, "roomId").mutation<void>(
+    async ({ ctx, input: { id, roomId } }) => {
+      // Own link only: revoking anyone else's is the ManageInvites half of
+      // /docs/proposals/esbabbler/invite-management, which needs the read that lists them first
+      requireMutation(
+        (
+          await ctx.db
+            .delete(invitesInMessage)
+            .where(
+              and(
+                eq(invitesInMessage.id, id),
+                eq(invitesInMessage.roomId, roomId),
+                eq(invitesInMessage.userId, ctx.getSessionPayload.user.id),
+              ),
+            )
+            .returning()
+        )[0],
+        Operation.Delete,
+        DatabaseEntityType.Invite,
+        id,
+      );
     },
   ),
   updateRoom: addProfanityFilterMiddleware(
