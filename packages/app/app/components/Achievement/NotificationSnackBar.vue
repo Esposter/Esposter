@@ -2,6 +2,7 @@
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
 import { prettify } from "@/util/text/prettify";
+import { RoutePath } from "@esposter/shared";
 
 interface NotificationListItemProps {
   userAchievement: UserAchievementWithDefinition;
@@ -35,5 +36,11 @@ const displayName = computed(() => prettify(userAchievement.achievement.name));
         <div text-orange font-bold text-body-small>+{{ userAchievement.achievement.points }} points</div>
       </div>
     </div>
+    <!-- Unlocking one is the moment someone first wants the rest of them, and the toast is the only thing on
+      Screen that knows it happened — Steam and Xbox both hang the gallery off it. Without this the gallery is
+      Reachable only from the More dropdown, which is nowhere near the want -->
+    <template #actions>
+      <v-btn text="View all" variant="text" :to="RoutePath.Achievements" @click="emit('close')" />
+    </template>
   </v-snackbar>
 </template>

@@ -11,4 +11,5 @@ Prioritized top-down. Every item links a full proposal; the specs are the plan, 
 
 - [ ] [Member permission overrides](/docs/proposals/esbabbler/member-permission-overrides) — grant or deny one member a permission without minting a role for them, and make the roles panel a list of entries
 - [ ] [Invite management](/docs/proposals/esbabbler/invite-management) — a room's active invite links listed, revocable and pausable, and the `ManageInvites` permission that nothing reads
+- [ ] [Member and ban search](/docs/proposals/esbabbler/member-and-ban-search) — a search field over the Members and Bans panels, over the name predicate `readMembers` already has and `readBans` needs
 - [ ] [Custom video backgrounds](/docs/proposals/esbabbler/custom-video-backgrounds) — uploaded call backgrounds in fixed per-user slots, and a background that survives a reload

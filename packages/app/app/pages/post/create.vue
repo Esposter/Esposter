@@ -15,8 +15,11 @@ const { createPost } = postStore;
         is-create
         @submit="
           async (_event, values) => {
-            await createPost(values);
-            await navigateTo(RoutePath.Index);
+            const newPost = await createPost(values);
+            // A rejected create leaves the reader on their own draft rather than on a feed without it — the
+            // Error alert is already up, so there is nothing to say and everything still to submit
+            if (!newPost) return;
+            await navigateTo(RoutePath.Post(newPost.id));
           }
         "
       />

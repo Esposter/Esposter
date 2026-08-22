@@ -20,8 +20,12 @@ const { updatePost } = postStore;
         :initial-values="{ title: post.title, description: post.description }"
         @submit="
           async (_event, values) => {
-            await updatePost({ id: post.id, ...values });
-            await navigateTo(RoutePath.Index);
+            const updatedPost = await updatePost({ id: post.id, ...values });
+            // A rejected edit leaves the reader on what they wrote, exactly as a rejected create does
+            if (!updatedPost) return;
+            // Back to the post that was edited rather than the home feed: every entry point into this form is a
+            // Post someone was reading, and dropping them at the top of the feed loses the place they came from
+            await navigateTo(RoutePath.Post(post.id));
           }
         "
       />
