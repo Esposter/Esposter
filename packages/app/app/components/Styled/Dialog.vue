@@ -21,6 +21,9 @@ interface StyledDialogProps {
   dialogProps?: Except<VDialog["$props"], "fullscreen" | "modelValue">;
   // Informational dialogs only acknowledge — cancelling is meaningless when nothing is pending
   hideCancelButton?: boolean;
+  // A command palette carries no chrome: its own hotkey both opens and dismisses it, and a full-screen search
+  // Field is a larger version of nothing. Every other dialog keeps the pair.
+  hideToolbarActions?: boolean;
 }
 
 const CLOSE_BUTTON_PROPS: VBtn["$props"] = { density: "comfortable", variant: "text" };
@@ -32,6 +35,7 @@ const {
   confirmButtonProps,
   dialogProps = {},
   hideCancelButton,
+  hideToolbarActions,
 } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
 const slots = defineSlots<{
@@ -58,10 +62,12 @@ const confirm = () => {
       header slot → divider → padded, scrollable body slot → divider → actions. Consumers pass bare body
       content; the shell owns the layout. -->
     <StyledCard :card-props>
-      <template #append>
+      <!-- Dropped whole rather than emptied: v-card only draws its title row when one of these slots exists, so
+        a palette with no chrome starts at its search field instead of under a blank bar. -->
+      <template v-if="!hideToolbarActions" #append>
         <StyledToggleFullScreenDialogButton v-model="isFullScreen" />
-        <!-- Every dialog offers exactly one explicit dismissal: Cancel when there is an actions row, this when
-          there is not. Without it a read-only dialog could only be left by clicking outside it. -->
+        <!-- Every dialog that keeps the toolbar offers exactly one explicit dismissal: Cancel when there is an
+          actions row, this when there is not. Without it a read-only dialog could only be left by clicking outside it. -->
         <StyledTooltipIconButton
           v-if="!hasActions"
           :button-props="CLOSE_BUTTON_PROPS"

@@ -25,7 +25,7 @@ useVHotkey(hotkey, () => {
 
 <template>
   <!-- The field is the dialog's `header` rather than body content: results scroll, the thing you type in does not -->
-  <StyledDialog v-model="isOpen" :dialog-props="DIALOG_PROPS">
+  <StyledDialog v-model="isOpen" :dialog-props="DIALOG_PROPS" hide-toolbar-actions>
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />
     </template>
