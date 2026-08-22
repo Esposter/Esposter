@@ -72,6 +72,14 @@ export default {
     "error",
     ...restrictedSyntaxes,
     {
+      // oxlint's `unicorn/no-array-for-each`, `no-array-sort` and `no-array-reverse` cover the script block and
+      // Cannot see template expressions, so the same three bans are restated here for the half it does not read.
+      // A mutating sort in a render expression is worse than in script: it rewrites the array it is rendering.
+      message:
+        "Use `for...of` instead of `.forEach()`, and the copying `toSorted()`/`toReversed()` instead of the mutating `sort()`/`reverse()` — a render expression must not rewrite what it renders.",
+      selector: "CallExpression[callee.property.name=/^(forEach|reverse|sort)$/]",
+    },
+    {
       message:
         "Don't call Object.* inline in a template render expression — it allocates a new reference every render. Hoist it to a script-setup const (static) or computed (reactive). (Event handlers are exempt.)",
       selector: "CallExpression[callee.object.name='Object']:not(VAttribute[key.name.name='on'] CallExpression)",
