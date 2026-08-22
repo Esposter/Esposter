@@ -75,6 +75,8 @@ export default {
       // oxlint's `unicorn/no-array-for-each`, `no-array-sort` and `no-array-reverse` cover the script block and
       // Cannot see template expressions, so the same three bans are restated here for the half it does not read.
       // A mutating sort in a render expression is worse than in script: it rewrites the array it is rendering.
+      // The fourth of the set — splicing a fresh copy — is in `restrictedSyntaxes` instead, because no oxlint
+      // Rule covers either half of it, so one entry there reaches script and template alike.
       message:
         "Use `for...of` instead of `.forEach()`, and the copying `toSorted()`/`toReversed()` instead of the mutating `sort()`/`reverse()` — a render expression must not rewrite what it renders.",
       selector: "CallExpression[callee.property.name=/^(forEach|reverse|sort)$/]",
