@@ -21,6 +21,8 @@ const emit = defineEmits<{ "open:delete": [] }>();
 const roleStore = useRoleStore();
 const { getMyPermissions } = roleStore;
 const myPermissions = computed(() => getMyPermissions(room.id));
+// Deleting a room is guarded by ownership rather than by a permission, so no rail entry can express it
+const isRoomOwner = computed(() => myPermissions.value?.isRoomOwner ?? false);
 const checkIsVisible = (settingsType: SettingsType) => {
   const permission = SettingsPermissionMap[settingsType];
   if (!permission) return true;
@@ -71,14 +73,16 @@ const onClick = (settingsType: SettingsType) => {
           @click="onClick"
         />
       </v-list-group>
-      <v-divider my-2 />
-      <MessageModelRoomSettingsLeftSideBarItem
-        :color="SettingsListItemMap[SettingsType.Delete].color"
-        :icon="SettingsListItemMap[SettingsType.Delete].icon"
-        :is-active="false"
-        :settings-type="SettingsType.Delete"
-        @click="onClick"
-      />
+      <template v-if="isRoomOwner">
+        <v-divider my-2 />
+        <MessageModelRoomSettingsLeftSideBarItem
+          :color="SettingsListItemMap[SettingsType.Delete].color"
+          :icon="SettingsListItemMap[SettingsType.Delete].icon"
+          :is-active="false"
+          :settings-type="SettingsType.Delete"
+          @click="onClick"
+        />
+      </template>
     </v-list>
   </MessageModelSettingsLeftSideBar>
 </template>

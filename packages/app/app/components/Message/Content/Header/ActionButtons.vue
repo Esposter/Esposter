@@ -1,6 +1,6 @@
 <template>
   <MessageContentPinnedMessagesMenuButton />
-  <MessageContentAddFriendsDialogButton />
+  <MessageContentInvitePeopleDialogButton />
   <MessageContentShowFollowedThreadsButton />
   <MessageContentShowMemberListButton />
 </template>

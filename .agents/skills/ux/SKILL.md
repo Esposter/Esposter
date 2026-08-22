@@ -1,6 +1,6 @@
 ---
 name: ux
-description: Esposter UX conventions — where a feature's entry point goes (point-of-need beside management, never management alone), settings panels hold configuration rather than creation, one dialog shared by every surface that creates the same thing, standing controls that a transient value may never displace, punctuation a value is written with being field chrome rather than input, and following the reference product's wording, layout and interaction where the domain matches — deviating only for a demonstrably better arrangement, said out loud. Apply when adding any user-facing feature, deciding where an action lives, or reviewing a surface for reachability.
+description: Esposter UX conventions — where a feature's entry point goes (point-of-need beside management, never management alone), settings panels hold configuration rather than creation, one dialog shared by every surface that creates the same thing, standing controls that a transient value may never displace, a management surface existing only where its own actions can succeed, punctuation a value is written with being field chrome rather than input, and following the reference product's wording, layout and interaction where the domain matches — deviating only for a demonstrably better arrangement, said out loud. Apply when adding any user-facing feature, deciding where an action lives, or reviewing a surface for reachability.
 ---
 
 # UX Conventions
@@ -85,6 +85,21 @@ not.
 typed colon could only ever be an error; the field draws `:name:` with the colons fixed either side and stores the
 name alone. One field serves the create dialog and the settings rename, so the rules and the chrome cannot
 disagree between them.
+
+## A management surface exists only where its actions can succeed
+
+A panel, tab or menu entry whose every control is rejected server-side is worse than a missing one: the reader
+finds the thing they were looking for and then cannot use it, and the error arrives from a read they never asked
+for. So a surface listed behind a permission gate carries **the permission its own writes require**, and the gate
+on the container is the **union of what it holds** rather than a second list beside it — otherwise a reader who
+may manage exactly one thing cannot reach the surface that manages it.
+
+Where the guard is ownership rather than a permission, the entry is gated on ownership; a confirm dialog that
+refuses afterwards is not the gate, it is the second one.
+
+**Prime example — room settings.** Every panel except the reader's own profile names a `RoomPermission`, the
+dialog's own gate is derived from that map, and Delete is drawn only for the room owner, because deleting is
+guarded by `ownedBy` and no permission can express it.
 
 ## Follow the reference product where the domain matches
 

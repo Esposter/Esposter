@@ -66,7 +66,7 @@ All webhook procedures live in the `webhook` router.
 
 ## UI
 
-The webhook surface is the **Integrations → Webhooks** tab of the [room settings](/docs/esbabbler/room-settings) dialog, permission-gated like every other tab there. Each row is an inline-editable name, a copy button for the full url, rotate and delete buttons, and an active switch. Rotating is the revocation story — the url is a bearer credential, so the answer to a leak is a new token rather than an access list.
+The webhook surface is the **Integrations → Webhooks** tab of the [room settings](/docs/esbabbler/room-settings) dialog, permission-gated like every other tab there. **New Webhook** creates the row outright, named `DEFAULT_WEBHOOK_NAME` — Discord's arrangement, and the reason the panel holds no create form: the name is the only thing a create could ask for, and the row it lands on already renames it. Each row is an inline-editable name, a copy button for the full url, rotate and delete buttons, and an active switch. Rotating is the revocation story — the url is a bearer credential, so the answer to a leak is a new token rather than an access list.
 
 ## Key files
 

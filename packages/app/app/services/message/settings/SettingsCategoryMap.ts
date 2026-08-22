@@ -11,5 +11,5 @@ export const SettingsCategoryMap: Record<SettingsCategory, SettingsType[]> = {
     SettingsType.Bans,
     SettingsType.Attachments,
   ],
-  [SettingsCategory.UserManagement]: [SettingsType.Members, SettingsType.Invites],
+  [SettingsCategory.UserManagement]: [SettingsType.Members],
 };

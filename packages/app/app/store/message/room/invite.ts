@@ -6,8 +6,8 @@ import { useMutation } from "@/composables/shared/useMutation";
 export const useInviteStore = defineStore("message/room/invite", () => {
   const { $trpc } = useNuxtApp();
   const { executeMutation: executeCreateInviteMutation } = useMutation();
-  // The server keeps one live invite per member per room, so every surface (Add Friends dialog,
-  // Settings > Invites) reads this shared map — regenerating a link in one keeps the others current
+  // The server keeps one live invite per member per room, so every mount of the Invite People dialog reads this
+  // Shared map — regenerating a link in one keeps the others current
   const invites = ref(new Map<string, InviteInMessage | undefined>());
 
   const storeInvite = (roomId: string, invite: InviteInMessage | undefined) => {

@@ -18,6 +18,9 @@ const submit = async () => {
 };
 </script>
 
+<!-- Discord creates a placeholder role and has you rename it in the editor. Named here instead: a role's name is
+     the whole of it at creation, and one that exists before it has one shows up in every member's role list as
+     "new role" until someone finishes the job -->
 <template>
   <div>
     <v-text-field v-model="name" density="compact" placeholder="Create role..." @keyup.enter="submit()">

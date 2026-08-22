@@ -10,6 +10,5 @@ export enum SettingsType {
   Bans = "Bans",
   Attachments = "Attachments",
   Members = "Members",
-  Invites = "Invites",
   Delete = "Delete",
 }

@@ -11,7 +11,7 @@ Rooms are joined through invite links: an 8-character alphanumeric token (`invit
 
 ```mermaid
 flowchart TD
-    dialog["Add Friends dialog<br/>(expire-after + max-uses selects)"] -->|createInvite| create["createInvite<br/>deletes old link, computes expiresAt via dayjs"]
+    dialog["Invite People dialog<br/>(expire-after + max-uses selects)"] -->|createInvite| create["createInvite<br/>deletes old link, computes expiresAt via dayjs"]
     create --> row[("invitesInMessage<br/>expiresAt · maxUses · uses")]
     joiner["User with token"] -->|joinRoom| check{"one conditional UPDATE … RETURNING<br/>unexpired and under its cap?"}
     row --> check
@@ -20,7 +20,7 @@ flowchart TD
     row -.->|"inert when expired/exhausted"| reads["readInvite / readMyInvite<br/>treat as absent, lazily delete"]
 ```
 
-- **Create**: the Add Friends dialog's selects drive `createInvite`; option values come from the dayjs-computed `InviteExpireAfterMinutesMap` (never manual minute math) and `INVITE_MAX_USES_OPTIONS`. The `0` sentinel means never expires / unlimited uses; `maxUses` stores it as-is (the column is `notNull().default(0)`), while `expireAfterMinutes` maps to a null `expiresAt` since timestamps have no empty value. Changing an option with a live link regenerates it. The dialog shows the real state ("expires in 7 days", "5 uses remaining") from the returned row.
+- **Create**: the Invite People dialog's selects drive `createInvite`; option values come from the dayjs-computed `InviteExpireAfterMinutesMap` (never manual minute math) and `INVITE_MAX_USES_OPTIONS`. The `0` sentinel means never expires / unlimited uses; `maxUses` stores it as-is (the column is `notNull().default(0)`), while `expireAfterMinutes` maps to a null `expiresAt` since timestamps have no empty value. Changing an option with a live link regenerates it. The dialog shows the real state ("expires in 7 days", "5 uses remaining") from the returned row.
 - **Join**: `joinRoom` validates and consumes a use in one `UPDATE … RETURNING` statement — the row matches only while it is unexpired (`expiresAt` null or still in the future) and under its cap (`maxUses` zero, or `uses` below it), and the same statement is what increments `uses` — so two concurrent joins can't both consume the last use. Expired, exhausted, and unknown tokens all produce the same `NOT_FOUND` error.
 - **Cleanup**: no timer — expired/exhausted rows are inert. `readInvite` (the landing page) treats them as absent and `readMyInvite` lazily deletes them; `createInvite` replaces them.
 - DM rooms reject invites entirely (see [friends and DMs](/docs/esbabbler/friends-and-dms)); banned users are rejected at join.
@@ -38,16 +38,16 @@ All in `server/trpc/routers/room/index.ts`:
 
 ## Key files
 
-| File                                                                      | Role                                          |
-| :------------------------------------------------------------------------ | :-------------------------------------------- |
-| `packages/db-schema/src/schema/invitesInMessage.ts`                       | table + check constraints                     |
-| `packages/app/shared/services/room/invite/InviteExpireAfterMinutesMap.ts` | dayjs-computed expiry options (single source) |
-| `packages/app/shared/models/db/room/CreateInviteInput.ts`                 | Zod input — only the fixed option values      |
-| `packages/app/server/services/message/checkIsInviteUsable.ts`             | shared usability predicate                    |
-| `packages/app/server/services/message/readMyInvite.ts`                    | own-invite read + lazy delete                 |
-| `packages/app/app/store/message/room/invite.ts`                           | shared per-room invite map (all surfaces)     |
-| `packages/app/app/components/Message/Model/Room/Invite/Manager.vue`       | invite manager with option selects            |
-| `packages/app/app/components/Message/Content/AddFriendsDialogButton.vue`  | Add Friends dialog hosting the manager        |
-| `packages/app/app/pages/messages/invite/[code].vue`                       | invite landing page                           |
+| File                                                                       | Role                                          |
+| :------------------------------------------------------------------------- | :-------------------------------------------- |
+| `packages/db-schema/src/schema/invitesInMessage.ts`                        | table + check constraints                     |
+| `packages/app/shared/services/room/invite/InviteExpireAfterMinutesMap.ts`  | dayjs-computed expiry options (single source) |
+| `packages/app/shared/models/db/room/CreateInviteInput.ts`                  | Zod input — only the fixed option values      |
+| `packages/app/server/services/message/checkIsInviteUsable.ts`              | shared usability predicate                    |
+| `packages/app/server/services/message/readMyInvite.ts`                     | own-invite read + lazy delete                 |
+| `packages/app/app/store/message/room/invite.ts`                            | shared per-room invite map                    |
+| `packages/app/app/components/Message/Model/Room/Invite/Manager.vue`        | invite manager with option selects            |
+| `packages/app/app/components/Message/Content/InvitePeopleDialogButton.vue` | Invite People dialog hosting the manager      |
+| `packages/app/app/pages/messages/invite/[code].vue`                        | invite landing page                           |
 
-The invite manager renders in two surfaces (the Add Friends dialog and room settings → Invites). Both display from `useInviteStore`'s per-room map — the server keeps one live invite per member per room, so regenerating the link on either surface updates the other instead of leaving it copying a replaced, dead link.
+The manager has one surface, and it is inside the room: the Invite People dialog in the room header. Room settings holds no invite panel — a link is created rather than configured, and a settings panel configures. It still displays from `useInviteStore`'s per-room map, so a link regenerated while another mount of the dialog is open never leaves one of them copying a replaced, dead link.

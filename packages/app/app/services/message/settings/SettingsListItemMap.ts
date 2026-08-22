@@ -35,9 +35,6 @@ export const SettingsListItemMap: Record<SettingsType, Except<Item, "onClick" | 
   [SettingsType.Members]: {
     icon: "mdi-account-multiple-outline",
   },
-  [SettingsType.Invites]: {
-    icon: "mdi-account-plus-outline",
-  },
   [SettingsType.Delete]: {
     color: "error",
     icon: "mdi-trash-can-outline",

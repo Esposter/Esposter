@@ -20,7 +20,8 @@ const runtimeConfig = useRuntimeConfig();
 const inviteStore = useInviteStore();
 const { createInvite, seedInvite } = inviteStore;
 const { invites } = storeToRefs(inviteStore);
-// Display reads the shared per-room map so a link regenerated on any surface updates every mounted Manager
+// Display reads the shared per-room map so a link regenerated in one mount updates every other one open on the
+// Same room
 const invite = computed(() => invites.value.get(roomId));
 const expireAfterMinutes = ref<CreateInviteInput["expireAfterMinutes"]>(DEFAULT_INVITE_EXPIRE_AFTER_MINUTES);
 const maxUses = ref<CreateInviteInput["maxUses"]>(0);
