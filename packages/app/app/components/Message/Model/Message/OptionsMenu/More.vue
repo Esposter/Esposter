@@ -60,10 +60,10 @@ const moreMenuProps = computed(() => ({
           </v-tooltip>
         </div>
       </v-list-item>
-      <StyledEmojiPicker
+      <MessageModelMessageEmojiPicker
         @select="
-          (emoji) => {
-            emit('update:select-emoji', emoji);
+          (emojiTag) => {
+            emit('update:select-emoji', emojiTag);
             optionsMenu = undefined;
             emit('update:menu', false);
           }
@@ -77,7 +77,7 @@ const moreMenuProps = computed(() => ({
             </template>
           </v-list-item>
         </template>
-      </StyledEmojiPicker>
+      </MessageModelMessageEmojiPicker>
       <MessageModelMessageOptionsMenuSection :items="updateMessageMenuItems" />
       <MessageModelMessageOptionsMenuSection :items="actionMessageItems" />
       <MessageModelMessageOptionsMenuSection :items="deleteMessageItem ? [deleteMessageItem] : []" />

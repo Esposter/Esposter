@@ -22,7 +22,7 @@ Posts are Esposter's core product — "a nice and casual place for posting rando
 - [Likes](/docs/posts/likes) — the ±1 like model, viewer-scoped reads, and transactional counter updates.
 - [Feed block filtering](/docs/posts/feed-block-filtering) — blocked users' posts and comments are hidden from feeds.
 
-No open work. Decided ideas: [deferred](/docs/posts/deferred), [rejected](/docs/posts/rejected).
+Open work: [roadmap](/docs/posts/roadmap). Decided ideas: [deferred](/docs/posts/deferred), [rejected](/docs/posts/rejected).
 
 ## Shipped log
 

@@ -35,7 +35,6 @@ const canJoin = computed(() => selectCallSessionInMessageSchema.shape.id.safePar
       density="compact"
       label="Enter a code or link"
       prepend-inner-icon="mdi-keyboard"
-      hide-details
       max-w-80
       min-w-72
     />

@@ -51,7 +51,7 @@ The Tags entry is the one genuinely new read — a grouped count over tag names,
 
 The `☰` sits beside the breadcrumb trail, on the same row as the storage meter, since both are the layout's own chrome rather than any page's. The drawer opens over the content with **no scrim**, so Home stays readable and clickable while it is open, and closes again on the entry that was picked. Nothing about it is persisted: navigation is the drawer's whole purpose, so it has no reason to outlive the trip.
 
-The drawer is `StyledNavDrawer` and behaves identically at every breakpoint — a hamburger is already the narrow-viewport shape, so there is no second behaviour to keep in step. It is deliberately **not** the blade nav's `StyledCollapsibleNav`: a blade rail is used constantly while reading one resource and stays on screen, which is a different rule and so a different shell. Active entries are matched **exactly** — Home is a path prefix of every other entry, so a prefix match would leave it lit on every page in the area.
+The drawer is `StyledNavigationOverlay` and behaves identically at every breakpoint — a hamburger is already the narrow-viewport shape, so there is no second behaviour to keep in step. It is deliberately **not** the blade nav's `StyledNavigationRail`: a blade rail is used constantly while reading one resource and stays on screen, which is a different rule and so a different shell. Active entries are matched **exactly** — Home is a path prefix of every other entry, so a prefix match would leave it lit on every page in the area.
 
 Home keeps its Recent and Favorites card. The card and the routes are the same two sets at two sizes, so both take a `source` and read that source's icon and empty-state copy from `ResourceListSourceDefinitionMap` — a set is described identically wherever it renders.
 
@@ -62,7 +62,7 @@ Paths relative to `packages/app`.
 | File                                                            | Role                                                             |
 | --------------------------------------------------------------- | ---------------------------------------------------------------- |
 | `app/components/Resource/ServiceMenu.vue`                       | the entries and their exact-path active matching                 |
-| `app/components/Styled/NavDrawer.vue`                           | the drawer shell — slide-in, elevated, scrimless                 |
+| `app/components/Styled/Navigation/Overlay.vue`                  | the drawer shell — slide-in, elevated, scrimless                 |
 | `app/layouts/resource.vue`                                      | owns the `☰`, the open state and where the drawer mounts        |
 | `app/components/Resource/List/View.vue`                         | the one list surface, parameterised by `source`                  |
 | `app/services/resource/list/ResourceListSourceDefinitionMap.ts` | what each source filters, sorts and pins                         |

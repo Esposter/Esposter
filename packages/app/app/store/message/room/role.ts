@@ -6,7 +6,7 @@ import type { ReadMyPermissionsInput } from "#shared/models/db/role/ReadMyPermis
 import type { ReadRolesInput } from "#shared/models/db/role/ReadRolesInput";
 import type { RevokeRoleInput } from "#shared/models/db/role/RevokeRoleInput";
 import type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
-import type { RoomRoleInMessage } from "@esposter/db-schema";
+import type { RoomPermission, RoomRoleInMessage } from "@esposter/db-schema";
 
 import { checkIsManageable as checkIsManageableByPosition } from "#shared/services/room/rbac/checkIsManageable";
 import { useMutation } from "@/composables/shared/useMutation";
@@ -14,6 +14,7 @@ import { getTopRole } from "@/services/message/member/getTopRole";
 import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks";
 import { MANAGEMENT_PERMISSIONS } from "@/services/room/rbac/constants";
 import { useRoomStore } from "@/store/message/room";
+import { hasPermission } from "@esposter/db-schema";
 import { ID_SEPARATOR, noop } from "@esposter/shared";
 
 export const useRoleStore = defineStore("message/room/role", () => {
@@ -54,6 +55,13 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const { data: selectedMemberId } = useDataMap(() => roomStore.currentRoomId, "");
   const selectMember = (id: string) => {
     selectedMemberId.value = id;
+  };
+  // Owner bypass and the bitfield test are one question, and every surface that gates on a permission asks it
+  // The same way — a caller reading `permissions` on its own silently drops the bypass
+  const checkHasMyPermission = (roomId: string, permission: RoomPermission) => {
+    const myRoomPermissions = getMyPermissions(roomId);
+    if (!myRoomPermissions) return false;
+    return hasPermission(myRoomPermissions.permissions, permission, myRoomPermissions.isRoomOwner);
   };
   const checkIsManageable = (roomId: string) => {
     const roomPermissions = getMyPermissions(roomId);
@@ -223,6 +231,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   return {
     assignRole,
+    checkHasMyPermission,
     checkIsManageable,
     createRole,
     deleteRole,

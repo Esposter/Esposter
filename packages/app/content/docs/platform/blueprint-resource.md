@@ -15,7 +15,7 @@ The shape is the industry-standard declarative template (ARM/Bicep templates, Cl
 flowchart LR
   ED["Editor blade<br/>manifest JSON"] -->|saveResourceContent| BLOB[("{id}/content<br/>manifest")]
   CMD["Deploy command<br/>parameter form dialog"] -->|"deployBlueprint { id, parameterValues }"| SUB["substitute {{parameter:key}}<br/>in names and content strings"]
-  SUB --> VAL["pre-validate every entry against its<br/>type contentSchema (placeholder ids for {{entry:key}})"]
+  SUB --> VAL["pre-validate every entry<br/>against its type contentSchema"]
   VAL --> TOPO["topo-sort entries by<br/>{{entry:key}} references"]
   TOPO -->|"per entry: insert resources row +<br/>upload content blob (real ids substituted)"| RES[("created resources")]
   VAL -->|any entry invalid| REJECT["reject — nothing created"]

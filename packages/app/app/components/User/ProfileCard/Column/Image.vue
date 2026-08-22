@@ -43,7 +43,6 @@ const fileRules = [validateFileRule];
         prepend-inner-icon="mdi-upload"
         label="Upload image"
         density="compact"
-        hide-details
         show-size
         my-2
         @update:model-value="

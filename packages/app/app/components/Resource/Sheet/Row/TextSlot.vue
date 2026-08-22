@@ -7,7 +7,7 @@ const { search } = storeToRefs(rowStore);
 
 <template>
   <div flex gap-2 items-center>
-    <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" hide-details single-line />
+    <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" single-line />
     <ResourceSheetFindReplaceDialogButton />
   </div>
   <ResourceSheetFindReplaceBar />

@@ -1,25 +1,36 @@
 <script setup lang="ts">
-import type { Emoji } from "@/models/message/emoji/Emoji";
+import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
 import type { SkinTone } from "@/models/message/emoji/SkinTone";
 
-import { applySkinTone } from "@/services/message/emoji/applySkinTone";
-import { getEmojiDescription } from "@/services/message/emoji/getEmojiDescription";
+import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
 
 interface StyledEmojiPickerFooterProps {
-  emoji?: Emoji;
+  emoji?: PickableEmoji;
 }
 
+defineSlots<{ default?: () => VNode }>();
 const skinTone = defineModel<SkinTone>("skinTone", { required: true });
 const { emoji } = defineProps<StyledEmojiPickerFooterProps>();
 </script>
 
+<!-- A bar tinted against the panel's own surface the way the app bar is: the picker's background token is one step
+     off `surface`, so the footer separates itself in both themes without a colour of its own. It holds one thing at
+     a time, Slack's shape — the hovered emoji takes the whole bar and the standing controls take it back the moment
+     the pointer leaves the grid. The bar states its own height, so which of the two is showing never moves anything
+     around it -->
 <template>
-  <div px-2 flex gap-2 h-10 items-center>
+  <div h="[var(--app-bar-height)]" px-3 bg-background flex gap-3 items-center>
     <template v-if="emoji">
-      <span leading-none text-title-large>{{ applySkinTone(emoji, skinTone) }}</span>
-      <span font-semibold text-body-small>{{ getEmojiDescription(emoji.character) }}</span>
+      <span leading-none text-headline-small><StyledEmoji :emoji :skin-tone /></span>
+      <span font-semibold truncate text-body-medium>{{ getEmojiShortcode(emoji.slug) }}</span>
     </template>
-    <v-spacer />
-    <StyledEmojiPickerSkinToneMenu v-model="skinTone" />
+    <template v-else>
+      <slot />
+      <v-spacer />
+      <!-- Icon-only where Slack labels it: the panel is a third of the width of Slack's, and a label would come out
+       of the room the actions beside it need. The hand already carries the current tone, which is the whole of
+       what it reports -->
+      <StyledEmojiPickerSkinToneMenu v-model="skinTone" />
+    </template>
   </div>
 </template>

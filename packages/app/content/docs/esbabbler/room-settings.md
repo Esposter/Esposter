@@ -13,7 +13,7 @@ A Discord-style fullscreen settings dialog for a room, opened from the room list
 
 | Category                 | Panels                                       | Gated panels (permission)                                                 |
 | ------------------------ | -------------------------------------------- | ------------------------------------------------------------------------- |
-| _(room name)_            | Overview · Roles · Profile                   | —                                                                         |
+| _(room name)_            | Overview · Roles · Profile · Emojis          | Emojis (`ManageEmojis`)                                                   |
 | Integrations             | Webhooks                                     | —                                                                         |
 | Moderation               | Word Filter · Audit Log · Bans · Attachments | Word Filter + Audit Log + Attachments (`ManageRoom`), Bans (`BanMembers`) |
 | User Management          | Members · Invites                            | —                                                                         |

@@ -35,7 +35,7 @@ The component renders the name in a `v-code` block with a `StyledClipboardIconBu
 | `app/components/Styled/ConfirmDeleteDialogButton.vue`                | Icon-button activator + plain confirm, for toolbars                                                          |
 | `app/components/Styled/EditFormDialog/ConfirmDeleteDialogButton.vue` | Edit-form entity delete — passes the entity name as `confirmName`                                            |
 | `app/components/Resource/List/DeleteDialog.vue`                      | Singleton resource delete with `confirmName` = resource name                                                 |
-| `app/components/Resource/List/SelectionToolbar.vue`                  | Bulk delete with `confirmName` = `delete <count>`                                                            |
+| `app/components/Resource/List/Selection/Toolbar.vue`                 | Bulk delete with `confirmName` = `delete <count>`                                                            |
 
 ## Notes
 

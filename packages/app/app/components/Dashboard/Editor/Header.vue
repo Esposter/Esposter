@@ -15,7 +15,6 @@ const createVisualText = computed(() => `Add ${prettify(visualType.value)} Visua
     <v-select
       v-model="visualType"
       density="comfortable"
-      hide-details
       label="Visual Type"
       max-width="16rem"
       :items="VisualTypeItemCategoryDefinitions"

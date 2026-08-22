@@ -13,7 +13,7 @@ const {
   message,
 } = defineProps<MessageComponentProps>();
 const isSameBatch = computed(() => baseIsSameBatch && !isPreview);
-const messageHtml = useMessageWithMentions(
+const messageHtml = useMessageHtml(
   () => message.message,
   () => message.partitionKey,
 );

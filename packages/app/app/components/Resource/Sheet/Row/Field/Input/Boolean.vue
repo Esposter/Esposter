@@ -11,5 +11,5 @@ const modelValue = defineModel<boolean | null>({ required: true });
 </script>
 
 <template>
-  <v-checkbox v-model="modelValue" :hide-details="isInline" :label="isInline ? '' : column.name" />
+  <v-checkbox v-model="modelValue" :label="isInline ? '' : column.name" />
 </template>

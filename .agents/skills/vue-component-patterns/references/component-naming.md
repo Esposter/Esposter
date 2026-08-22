@@ -11,7 +11,7 @@ Nuxt builds the auto-import name from the directory words plus the filename word
 Fold when either holds:
 
 - the directory is **crowded** (roughly ≥10 flat components) — folding is what keeps it navigable; a 3-file feature folder is already readable and stays flat
-- a file sits **beside a folder whose name is its prefix** (`Foo/` + `FooBarBackground.vue`) — always untidy, fold regardless of size
+- a file sits **beside a folder whose name is its prefix** (`Foo/` + `FooBarBackground.vue`) — always untidy, fold regardless of size. This half needs no judgement, so it is a test: `packages/app/app/components/index.test.ts` fails on the stray and names the folder it belongs in
 
 Two carve-outs:
 

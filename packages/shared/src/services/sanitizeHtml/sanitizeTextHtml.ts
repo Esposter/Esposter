@@ -1,4 +1,6 @@
 import {
+  CUSTOM_EMOJI_ID_ATTRIBUTE,
+  CUSTOM_EMOJI_NAME_ATTRIBUTE,
   MENTION_ID_ATTRIBUTE,
   MENTION_ITEM_TYPE_ATTRIBUTE,
   MENTION_LABEL_ATTRIBUTE,
@@ -14,6 +16,8 @@ export const sanitizeTextHtml = (html: string): string =>
       pre: ["class"],
       span: [
         "class",
+        CUSTOM_EMOJI_ID_ATTRIBUTE,
+        CUSTOM_EMOJI_NAME_ATTRIBUTE,
         MENTION_ID_ATTRIBUTE,
         MENTION_ITEM_TYPE_ATTRIBUTE,
         MENTION_LABEL_ATTRIBUTE,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NavItem } from "@/models/shared/NavItem";
+import type { NavigationItem } from "@/models/shared/NavigationItem";
 
 import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
@@ -11,7 +11,7 @@ const { currentRoute } = useRouter();
 // Refresh-safe and back-button-safe, and the active entry is decided by the path rather than remembered.
 // Matched exactly — Home is a path prefix of every other entry, so a prefix match would leave it lit
 // Everywhere. The list routes come from the source registry, so adding a source adds a menu entry
-const items = computed<NavItem[]>(() =>
+const items = computed<NavigationItem[]>(() =>
   [
     { icon: "mdi-home-outline", title: "Home", to: RoutePath.ResourceExplorer },
     ...Object.values(ResourceListSource).map((source) => {
@@ -27,5 +27,5 @@ const items = computed<NavItem[]>(() =>
 <!-- The resource area's own menu. Every entry but Home and Tags opens the same list surface pointed at a
      different set, which is what keeps filters, columns, grouping and bulk selection built once -->
 <template>
-  <StyledNavDrawer v-model="isOpen" :items />
+  <StyledNavigationOverlay v-model="isOpen" :items />
 </template>

@@ -26,7 +26,6 @@ const name = ref(webhook.name);
       v-model="name"
       label="Name"
       density="compact"
-      hide-details
       @blur="updateWebhook(roomId, { id: webhook.id, name })"
     />
     <template #append>

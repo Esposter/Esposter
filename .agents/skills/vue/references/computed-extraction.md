@@ -61,6 +61,22 @@ diffs them against the DOM and there is no child component to re-render, so a fr
 patch and nothing else. `:style="{ color: topRoleColor }"` on a `<div>` stays inline; the same literal on a
 component does not.
 
+## Run it at the cadence the answer changes
+
+The sections above ask what an expression costs. This asks how often that cost is paid, and the two shapes that
+get it wrong look nothing alike in the code:
+
+- **A handler on a stream of events, doing work only a few of them can change.** A `scroll` listener that
+  re-measures a list computes several hundred times per section an answer that moves at a boundary. The boundary
+  usually has an event of its own — an `IntersectionObserver` crossing, a route change — and that is the thing to
+  listen to. Where it genuinely has none, the handler owes a cheap guard ahead of the expensive part.
+- **A fresh reference for a value that did not change.** A `watch` comparing by identity, or an array literal in
+  a binding, fires everything downstream on every render for a value nobody moved. Compare by value in the shared
+  consumer, and hoist the literal to a `computed` at the producer.
+
+Both are worth hunting because the price is not paid where it is incurred: a scroll handler's real cost was a
+slide indicator re-measuring layout on the next tick, in a different component.
+
 ## Traps
 
 **Identity applies only to a whole expression.** `:configuration="{ x: 30, y: 23, scaleY: isEnemy ? 0.8 : undefined }"`

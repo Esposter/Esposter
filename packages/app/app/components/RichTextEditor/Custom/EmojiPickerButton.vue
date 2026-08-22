@@ -1,13 +1,23 @@
 <script setup lang="ts">
+import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
 import type { Editor } from "@tiptap/vue-3";
+
+import { getPickableEmojiContent } from "@/services/message/emoji/getPickableEmojiContent";
 
 interface CustomEmojiPickerButtonProps {
   editor?: Editor;
 }
 
 const { editor } = defineProps<CustomEmojiPickerButtonProps>();
+// Empty wherever there is no room in scope — a post's comment editor gets the dataset alone
 </script>
 
 <template>
-  <StyledEmojiPicker :button-props="{ size: 'small' }" @select="editor?.chain().focus().insertContent($event).run()" />
+  <MessageModelMessageEmojiPicker
+    :button-props="{ size: 'small' }"
+    @select="
+      (emojiTag: string, emoji: PickableEmoji) =>
+        editor?.chain().focus().insertContent(getPickableEmojiContent(emoji, emojiTag)).run()
+    "
+  />
 </template>

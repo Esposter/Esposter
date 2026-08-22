@@ -59,7 +59,6 @@ onClickOutside(root, () => {
       prepend-inner-icon="mdi-magnify"
       role="combobox"
       clearable
-      hide-details
       @focus="isPanelVisible = true"
       @keydown.down.prevent="selectedIndex = itemCount > 0 ? (selectedIndex + 1) % itemCount : -1"
       @keydown.up.prevent="

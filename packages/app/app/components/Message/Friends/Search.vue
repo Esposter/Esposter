@@ -16,13 +16,7 @@ const { isPending } = useAutoSearch(searchQuery, {
   <MessageFriendsSection title="Add Friend">
     <!-- Plain wrapper: a bare v-input in a flex column stretches to the full column height -->
     <div>
-      <v-text-field
-        v-model="searchQuery"
-        placeholder="Search by name"
-        hide-details
-        clearable
-        @click:clear="searchQuery = ''"
-      />
+      <v-text-field v-model="searchQuery" placeholder="Search by name" clearable @click:clear="searchQuery = ''" />
     </div>
     <v-list v-if="searchResults.length > 0" rd>
       <MessageFriendsSearchResultListItem v-for="{ id, name, image } of searchResults" :id :key="id" :image :name />

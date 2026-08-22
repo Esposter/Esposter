@@ -19,7 +19,7 @@ const { emojis } = defineProps<MessageReactionsDialogRailProps>();
       @click="modelValue = emoji.emojiTag"
     >
       <div flex gap-2 items-center>
-        <span leading-none text-title-large>{{ emoji.emojiTag }}</span>
+        <span leading-none text-title-large><MessageModelMessageEmojiTag :emoji-tag="emoji.emojiTag" /></span>
         <span font-bold text-body-small>{{ emoji.userIds.length }}</span>
       </div>
     </v-list-item>

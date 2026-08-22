@@ -10,3 +10,7 @@ Azure-portal parity program for the Resource Explorer: every product is already 
 ## Next
 
 Nothing open. New ideas start as a [proposal](/docs/proposals) and get a prioritized checkbox here.
+
+## Later
+
+- [ ] [Paid storage tiers](/docs/proposals/platform/paid-storage-tiers) — sell a larger allowance through a merchant-of-record checkout, with the tier column staying the one input to the quota gate. Blocked on wanting to take money at all, and on shipping account deletion + data export alongside it

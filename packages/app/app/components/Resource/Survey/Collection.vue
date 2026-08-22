@@ -48,7 +48,6 @@ const save = async () => {
         :items="SurveyResponseModeItemCategoryDefinitions"
         label="Response mode"
         :disabled="isPending"
-        hide-details
         @update:model-value="save"
       />
       <!-- Modes are collection-time postures, not privacy promises about the answers themselves -->

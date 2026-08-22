@@ -54,7 +54,6 @@ const toolbarItems = computed<Item[]>(() => [
       v-model="search"
       clearable
       density="comfortable"
-      hide-details
       label="Search resources"
       max-width="24rem"
       min-width="12rem"

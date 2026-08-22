@@ -7,8 +7,8 @@ Read when pulling a PR's review feedback, counting what is still open, or replyi
 CodeRabbit's feedback is split across **three different endpoints**. Reading only one silently loses findings, and the loss is invisible — nothing tells you a category was missed.
 
 ```bash
-# 1. Review bodies -> "Actionable comments posted: N" + the collapsed NITPICK block.
-#    Nitpicks live ONLY here. They are not inline comments.
+# 1. Review bodies -> "Actionable comments posted: N", the collapsed NITPICK block, and the
+#    OUTSIDE DIFF RANGE block. Both of those live ONLY here. They are not inline comments.
 gh api "repos/Esposter/Esposter/pulls/<pr>/reviews?per_page=100" --paginate \
   --jq '.[] | select(.user.login=="coderabbitai[bot]") | select(.body|length > 0) | .body'
 
@@ -70,7 +70,9 @@ query($endCursor: String) {
 
 **The author filter is load-bearing in the other direction.** Unfiltered, the count is every unresolved thread on the PR — a human comment or another bot's thread then holds the drain gate shut against findings that were never CodeRabbit's, and the number stops reconciling against the review bodies' `Actionable comments posted: N`. Because the two mistakes are silent and point opposite ways, run it unfiltered too and read the gap as the human threads it is.
 
-Unresolved threads are the inline half only — reconcile against the stated counts (`SKILL.md`), since nitpicks never exist as threads and inline comments can fail to post outright.
+Unresolved threads are the inline half only — reconcile against the stated counts (`SKILL.md`), since neither nitpicks nor outside-diff-range findings ever exist as threads, and inline comments can fail to post outright.
+
+**Nothing marks a bodied finding done.** A thread carries `isResolved`, so the query above narrows to what is still open; a nitpick or an outside-diff finding has no such flag, and the review body it sits in is never edited. So an older review's blocks still list findings that later commits fixed, and a fetch that reaches back over several reviews re-surfaces them as if they were new. Read the **newest** review's blocks, and check each one against the current file before acting — the counts reconcile the fetch, not the state of the code.
 
 ## Probing whether the checkpoint covers the head
 

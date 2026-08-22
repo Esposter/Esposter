@@ -5,7 +5,6 @@ import type { SQL } from "drizzle-orm";
 
 import { createInviteInputSchema } from "#shared/models/db/room/CreateInviteInput";
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
-import { deleteMemberInputSchema } from "#shared/models/db/room/DeleteMemberInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
 import { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
@@ -44,6 +43,7 @@ import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermis
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
+import { roomEmojiRouter } from "@@/server/trpc/routers/room/emoji";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
 import { generateWriteSasUrl } from "@esposter/db";
 import {
@@ -199,36 +199,6 @@ export const baseRoomRouter = router({
       return newRoom;
     }),
   ),
-  deleteMember: getPermissionsProcedure(RoomPermission.KickMembers, deleteMemberInputSchema, "roomId")
-    .use(isRoom)
-    .mutation(async ({ ctx, input: { roomId, userId } }) => {
-      // Kicking yourself and kicking someone who is not a member are the same rejection — neither names a
-      // Membership this call can delete
-      const context = JSON.stringify({ roomId, userId });
-      if (userId === ctx.getSessionPayload.user.id)
-        throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, context);
-
-      const [[deletedMember], kickedMember] = await Promise.all([
-        ctx.db
-          .delete(usersToRoomsInMessage)
-          .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)))
-          .returning(),
-        ctx.db.query.users.findFirst({ columns: { name: true }, where: { id: { eq: userId } } }),
-      ]);
-
-      roomEventEmitter.emit("leaveRoom", {
-        ...requireMutation(deletedMember, Operation.Delete, DatabaseEntityType.UserToRoom, context),
-        sessionId: ctx.getSessionPayload.session.id,
-      });
-
-      if (kickedMember)
-        await createSystemRoomMessage(
-          roomId,
-          ctx.getSessionPayload.user.id,
-          `${kickedMember.name} was kicked from the room.`,
-          ctx.getSessionPayload.session.id,
-        );
-    }),
   deleteRoom: standardAuthedProcedure
     .input(deleteRoomInputSchema)
     .mutation<RoomInMessage>(({ ctx, input }) => deleteRoom(ctx.db, ctx.getSessionPayload, input)),
@@ -583,5 +553,10 @@ export const baseRoomRouter = router({
 
 export const roomRouter = mergeRouters(
   baseRoomRouter,
-  router({ category: categoryRouter, directMessage: directMessageRouter, filter: filterRouter }),
+  router({
+    category: categoryRouter,
+    directMessage: directMessageRouter,
+    emoji: roomEmojiRouter,
+    filter: filterRouter,
+  }),
 );

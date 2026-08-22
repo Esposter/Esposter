@@ -42,7 +42,6 @@ const applyLink = () => {
         v-model="linkUrl"
         min-width="16rem"
         density="compact"
-        hide-details
         placeholder="https://example.com"
         @keydown.enter="applyLink"
       />

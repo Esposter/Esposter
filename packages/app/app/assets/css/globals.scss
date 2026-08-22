@@ -72,6 +72,15 @@ canvas {
   ol {
     padding: 0 1rem;
   }
+  // A custom emoji is inline text, not a picture in a paragraph: it follows the line's own size the way a
+  // Unicode glyph does, so a message that mixes the two lines up whatever the reader's density setting is
+  .custom-emoji {
+    display: inline-block;
+    width: 1.375em;
+    height: 1.375em;
+    object-fit: contain;
+    vertical-align: text-bottom;
+  }
 }
 // https://vuetifyjs.com/en/getting-started/grid-legacy-mode/#css-override
 @layer vuetify-overrides {

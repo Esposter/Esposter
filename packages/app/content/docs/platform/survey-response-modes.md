@@ -19,7 +19,7 @@ flowchart LR
   VIEW -->|"Identified — no token"| GATE["token-required state"]
   OPEN & FORM -->|"createSurveyResponse with participantToken"| VALIDATE["SurveyResponseModeValidatorMap<br/>one arm per mode"]
   VALIDATE -->|"Anonymous: store empty token"| AT[("SurveyResponseEntity<br/>participantToken")]
-  VALIDATE -->|"Identified: token must resolve to a participant<br/>of a program bound to this survey, else reject"| AT
+  VALIDATE -->|"Identified: the token must name a participant<br/>of a program bound to this survey"| AT
 ```
 
 - **Setting** — `responseMode` joins the survey content `settings` section alongside the [response controls](/docs/platform/survey-response-controls) toggle. One settings object, one write path, one `contentVersion`. Default `Anonymous`.

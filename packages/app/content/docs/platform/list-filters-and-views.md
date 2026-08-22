@@ -67,7 +67,7 @@ flowchart LR
 | `app/components/Resource/List/View.vue`                         | the workbench orchestrator: toolbar, pills, selection, table, singletons |
 | `app/services/resource/list/ResourceListSourceDefinitionMap.ts` | per-source filter preset, default sort, pinned column, empty state       |
 | `app/components/Resource/List/FilterBar.vue`                    | pill row + `+ Add filter` menu                                           |
-| `app/components/Resource/List/SelectionToolbar.vue`             | `n selected · Delete (n) · Export CSV · Save as blueprint · Clear`       |
+| `app/components/Resource/List/Selection/Toolbar.vue`            | `n selected · Delete (n) · Export CSV · Save as blueprint · Clear`       |
 | `app/composables/resource/useResourceListFilters.ts`            | URL-synced filter state                                                  |
 | `app/composables/resource/useReadResources.ts`                  | filter input, chunked page reader for CSV export                         |
 | `app/composables/resource/list/useReadResourcesPage.ts`         | the shared paged reader: stale guard + filter-keyed count                |

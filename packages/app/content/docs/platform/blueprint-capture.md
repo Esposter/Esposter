@@ -15,7 +15,7 @@ This is the authoring path that makes blueprints practical: the Editor blade's s
 flowchart LR
   SEL["explorer multi-select or<br/>row menu command"] -->|"captureBlueprint { ids, name }"| READ["read each resource's<br/>content blob (owner-gated)"]
   READ --> KEYS["derive entry keys<br/>from resource names"]
-  KEYS --> REWRITE["deep-walk content strings —<br/>replace any selected resource's id<br/>with {{entry:key}} (exact match)"]
+  KEYS --> REWRITE["deep-walk content strings —<br/>a selected id becomes {{entry:key}}"]
   REWRITE --> CREATE["create Blueprint resource<br/>manifest = entries, parameters = []"]
   CREATE --> NAV["navigate to the new<br/>blueprint's Editor blade"]
 ```
@@ -41,7 +41,7 @@ flowchart LR
 | `packages/app/server/trpc/routers/blueprint.ts`                    | `captureBlueprint` joins the blueprint router  |
 | `packages/app/server/services/blueprint/captureBlueprint.ts`       | ownership check, key derivation, orchestration |
 | `packages/app/server/services/blueprint/rewriteIdsToAliases.ts`    | the deep-walk exact-match rewrite              |
-| `packages/app/app/components/Resource/List/SelectionToolbar.vue`   | bulk Save-as-blueprint entry point             |
+| `packages/app/app/components/Resource/List/Selection/Toolbar.vue`  | bulk Save-as-blueprint entry point             |
 | `packages/app/app/components/Resource/Blueprint/CaptureDialog.vue` | name prompt + create + navigate                |
 
 ## Notes

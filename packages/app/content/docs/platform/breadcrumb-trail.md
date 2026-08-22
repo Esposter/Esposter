@@ -35,14 +35,14 @@ flowchart TD
   BACKUP -->|yes| TRUNCATE["Truncate to it<br/>(a crumb, or a close affordance)"]
   BACKUP -->|no| DRILL{"Did it leave a page<br/>that can be a crumb?"}
   DRILL -->|yes| APPEND["Append that page"]
-  DRILL -->|no| CARRY["Carry the trail through<br/>(another blade, another resource,<br/>the same page under new filters —<br/>and an empty one is a direct arrival)"]
+  DRILL -->|no| CARRY["Carry the trail through unchanged"]
   ADOPT --> STORE
   EMPTY --> STORE
   TRUNCATE --> RECORD
   APPEND --> RECORD
   CARRY --> RECORD
   RECORD["history.replaceState — the entry<br/>remembers what it was left with"] --> STORE["navigationTrail store"]
-  STORE --> RENDER["Breadcrumbs render the trail·<br/>the close ✕ routes to its last crumb"]
+  STORE --> RENDER["Breadcrumbs render the trail<br/>the close ✕ routes to its last crumb"]
 ```
 
 The url stays the canonical address of the page and nothing else:

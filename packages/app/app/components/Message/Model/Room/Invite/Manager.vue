@@ -73,7 +73,6 @@ const isCopied = ref(false);
         label="Expire after"
         :items="InviteExpireAfterSelectItems"
         density="compact"
-        hide-details
         @update:model-value="onUpdateOptions"
       />
       <v-select
@@ -81,13 +80,11 @@ const isCopied = ref(false);
         label="Max uses"
         :items="InviteMaxUsesSelectItems"
         density="compact"
-        hide-details
         @update:model-value="onUpdateOptions"
       />
     </div>
     <v-text-field
       v-model="inviteLink"
-      hide-details
       readonly
       bg-color="background"
       :color="isCopied ? 'success' : undefined"

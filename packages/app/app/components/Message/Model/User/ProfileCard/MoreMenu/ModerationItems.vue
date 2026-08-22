@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { User } from "@esposter/db-schema";
 
-import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
+import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
+import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { AdminActionType, hasPermission, RoomPermission } from "@esposter/db-schema";
@@ -12,6 +13,7 @@ interface ModerationItemsProps {
 }
 
 const { roomId, user } = defineProps<ModerationItemsProps>();
+const roomStore = useRoomStore();
 const roleStore = useRoleStore();
 const { getMemberRoleMap, getMyPermissions } = roleStore;
 const userToRoomStore = useUserToRoomStore();
@@ -26,15 +28,16 @@ const targetTopPosition = computed(() => {
   if (!roles) return undefined;
   return Math.max(-1, ...roles.map(({ position }) => position));
 });
+// The owner is the one member no moderator may act on, and the server says so too — offering the actions here
+// Would only surface a rejection
+const isTargetOwner = computed(() => roomStore.rooms.find(({ id }) => id === roomId)?.userId === user.id);
 const manageablePermissions = computed(() => {
   const permissions = getMyPermissions(roomId);
-  if (
-    !permissions ||
-    targetTopPosition.value === undefined ||
-    !checkIsManageable(permissions.topRolePosition, targetTopPosition.value, permissions.isRoomOwner)
-  )
-    return undefined;
-  return permissions;
+  if (!permissions || targetTopPosition.value === undefined) return undefined;
+
+  const actor = { isOwner: permissions.isRoomOwner, topPosition: permissions.topRolePosition };
+  const target = { isOwner: isTargetOwner.value, topPosition: targetTopPosition.value };
+  return checkIsMemberManageable(actor, target) ? permissions : undefined;
 });
 const checkHasManageablePermission = (permission: RoomPermission) =>
   Boolean(

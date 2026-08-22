@@ -7,7 +7,7 @@ export const LocalStorageKey = {
   Draft: (composerKey: string) => `draft${LOCAL_STORAGE_KEY_SEPARATOR}${composerKey}`,
   DungeonsStore: "dungeons-store",
   EmojiSkinTone: "emoji-skin-tone",
-  IsResourceBladeNavCollapsed: "is-resource-blade-nav-collapsed",
+  IsResourceBladeNavigationCollapsed: "is-resource-blade-navigation-collapsed",
   MessageCategoryCollapsed: (categoryId: string) => `message-category-${categoryId}-collapsed`,
   MessageDisplayMode: "message-display-mode",
   MessageLeftSideBarWidth: "message-left-side-bar-width",

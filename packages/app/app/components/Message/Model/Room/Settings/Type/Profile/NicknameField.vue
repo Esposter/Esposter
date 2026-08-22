@@ -13,7 +13,6 @@ const emit = defineEmits<{ save: [] }>();
     <v-text-field
       v-model="modelValue"
       density="compact"
-      hide-details
       placeholder="Your display name in this room"
       :maxlength="NICKNAME_MAX_LENGTH"
       @blur="emit('save')"

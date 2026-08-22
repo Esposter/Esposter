@@ -71,7 +71,6 @@ const onUpdateFile = async (newFile?: File | File[]) => {
     <v-file-input
       :accept
       density="comfortable"
-      hide-details="auto"
       label="File"
       :error-messages="error"
       :loading="isParsing"

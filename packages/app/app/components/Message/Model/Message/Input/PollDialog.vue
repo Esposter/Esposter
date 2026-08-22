@@ -45,7 +45,6 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
           :model-value="option"
           :rules="requiredRules"
           :label="`Option ${index + 1}`"
-          hide-details="auto"
           @update:model-value="options[index] = $event"
         />
         <template #append>

@@ -16,6 +16,7 @@ import { modules } from "./configuration/modules";
 import { nitro } from "./configuration/nitro";
 import { ogImage } from "./configuration/ogImage";
 import { pwa } from "./configuration/pwa";
+import { router } from "./configuration/router";
 import { routeRules } from "./configuration/routeRules";
 import { runtimeConfig } from "./configuration/runtimeConfig";
 import { security } from "./configuration/security";
@@ -39,6 +40,7 @@ export default defineNuxtConfig({
   nitro,
   ogImage,
   pwa,
+  router,
   routeRules,
   runtimeConfig,
   security,

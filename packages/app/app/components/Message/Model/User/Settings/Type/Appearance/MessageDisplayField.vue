@@ -7,7 +7,7 @@ const { messageDisplayMode } = storeToRefs(appearanceStore);
 </script>
 
 <template>
-  <v-radio-group v-model="messageDisplayMode" hide-details>
+  <v-radio-group v-model="messageDisplayMode">
     <v-radio :value="MessageDisplayMode.Cozy">
       <template #label>
         <div flex flex-col>

@@ -1,6 +1,13 @@
 import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
 
+// The Vuetify inputs `vuetify.config.ts` declares `hideDetails: "auto"` for. Shared by the two halves of the
+// `hide-details` ban below so the static and bound forms can never cover different tags. A component missing from
+// This list is caught by neither, which is the failure to watch for: adding an input to `vuetify.config.ts` means
+// Adding it here in the same change, or its instances may quietly restate the default.
+const VUETIFY_INPUT_ELEMENT_PATTERN =
+  "/^v-(autocomplete|checkbox|color-input|combobox|file-input|radio-group|select|slider|switch|textarea|text-field)$/";
+
 export default {
   // Not covered by eslint-plugin-oxlint on vue files — its vue-svelte-astro-exceptions config
   // Deliberately keeps unused-vars rules enabled there, so this off is still load-bearing.
@@ -44,6 +51,20 @@ export default {
       message: "Don't hand-write <time>. Use <NuxtTime>, which renders one and formats it hydration-safely.",
     },
   ],
+  // Every input Vuetify renders in this app declares `hideDetails: "auto"` once in `vuetify.config.ts`, so a
+  // Per-field `hide-details` restates the default at best and defeats it at worst: the bare attribute means
+  // `true`, which silently swallows the validation message a field with rules exists to report. The bound form
+  // Is banned beside it in `vue/no-restricted-syntax` — a binding there computes what "auto" already answers
+  // Per render.
+  "vue/no-restricted-static-attribute": [
+    "error",
+    {
+      element: VUETIFY_INPUT_ELEMENT_PATTERN,
+      key: "hide-details",
+      message:
+        'Don\'t write `hide-details` on a Vuetify input — `vuetify.config.ts` already declares `hideDetails: "auto"` for it. The bare attribute is `true`, which hides the validation message a field with rules has to show.',
+    },
+  ],
   // Object.* calls in a render-evaluated template expression (bind, v-for, interpolation) allocate a fresh
   // Reference every render, breaking prop reference-equality and forcing needless re-renders. Hoist to a
   // Script-setup const (static maps) or computed (reactive). Event handlers (@on) run per-event, so exempt.
@@ -63,6 +84,15 @@ export default {
         "Use Vue event modifiers (@event.stop / @event.prevent, with key modifiers where applicable) instead of an unconditional event method call at the start of a handler. Raw calls are only for conditional use behind a guard.",
       selector:
         ":matches(VOnExpression, ArrowFunctionExpression > BlockStatement, FunctionExpression > BlockStatement) > ExpressionStatement:first-child > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/], ArrowFunctionExpression > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/]",
+    },
+    {
+      // The static form is banned in `vue/no-restricted-static-attribute`; this is the same ban for the bound
+      // One. A binding here computes what "auto" already answers per render — no row when there is no message,
+      // A row when there is — so the condition is either that rule restated or a field deliberately suppressing
+      // Its own validation message.
+      message:
+        'Don\'t bind `:hide-details`. `vuetify.config.ts` declares `hideDetails` as "auto" for every input, which already hides the details row exactly when there is no message to show.',
+      selector: `VElement[rawName=${VUETIFY_INPUT_ELEMENT_PATTERN}] > VStartTag > VAttribute[directive=true][key.name.name='bind'][key.argument.name='hide-details']`,
     },
     ...restrictedDateSyntaxes,
   ],

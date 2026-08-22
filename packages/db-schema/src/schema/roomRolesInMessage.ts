@@ -7,30 +7,10 @@ import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { bigint, boolean, check, index, integer, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-
-// What each bit grants, which the shift alone cannot say. Bit order is the wire format and is fixed by
-// `docs/esbabbler/rbac.md`; the sort is disabled because that order, not the alphabet, is the contract.
-// Text channel:
-// - ReadMessages — see message history / view channel
-// - SendMessages — post messages
-// - ManageMessages — delete/pin others' messages
-// - MentionEveryone — use @here / @everyone
-//
-// General:
-// - ManageRoom — edit room name, image, settings
-// - ManageRoles — create/edit/delete roles below own top position
-// - ManageInvites — create/delete invite codes
-//
-// Moderation:
-// - KickMembers — remove a member from room
-// - BanMembers — permanent ban
-// - MuteMembers — force-mute/unmute in call
-// - MoveMembers — kick from call
-// - ManageNicknames — set per-room nicknames for other members
-//
-// Advanced:
-// - ManageWebhooks — create/edit/delete webhooks
-// - Administrator — all permissions; bypasses hierarchy checks
+// Bit order is the wire format and is fixed by `packages/app/content/docs/esbabbler/rbac.md`; the sort is
+// Disabled because that order, not the alphabet, is the contract. It runs category by category — text channel,
+// General, moderation, advanced — and what each bit grants is said once, on the screen that grants it, by
+// `packages/app/app/services/message/room/role/RoomPermissionDefinitionMap.ts`.
 /* eslint-disable perfectionist/sort-objects */
 export const RoomPermission = {
   ReadMessages: 1n << 0n,
@@ -46,7 +26,11 @@ export const RoomPermission = {
   MoveMembers: 1n << 10n,
   ManageNicknames: 1n << 11n,
   ManageWebhooks: 1n << 12n,
-  Administrator: 1n << 13n,
+  ManageEmojis: 1n << 13n,
+  // Last, and it moves up as the list grows: stored values are read as the current shape rather than migrated,
+  // So the bits are free to be the order the list should be in rather than the order it was written in.
+  // `permissions` is a signed 64-bit bigint, so bit 62 is the ceiling this can grow to
+  Administrator: 1n << 14n,
 } as const;
 /* eslint-enable perfectionist/sort-objects */
 

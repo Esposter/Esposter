@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Except } from "type-fest";
 import type { CSSProperties } from "vue";
 import type { VNavigationDrawer } from "vuetify/components";
 
@@ -9,10 +10,14 @@ import { takeOne } from "@esposter/shared";
 interface DefaultProps {
   footerStyle?: CSSProperties;
   hideGlobalScrollbar?: true;
-  leftNavigationDrawerProps?: VNavigationDrawer["$props"];
+  leftNavigationDrawerProps?: NavigationDrawerProps;
   mainStyle?: CSSProperties;
-  rightNavigationDrawerProps?: VNavigationDrawer["$props"];
+  rightNavigationDrawerProps?: NavigationDrawerProps;
 }
+
+// `StyledNavigationDrawer` owns the open state, so a caller styles and positions the drawer through this bag
+// But never binds its model — passing one back would put two answers on the same prop
+type NavigationDrawerProps = Except<VNavigationDrawer["$props"], "modelValue" | "onUpdate:modelValue">;
 
 const slots = defineSlots<{
   default?: () => VNode;
@@ -57,36 +62,26 @@ defineExpose({ container: computed<HTMLElement>(() => container.value?.$el) });
 
 <template>
   <div contents>
-    <v-navigation-drawer
+    <StyledNavigationDrawer
       v-if="slots.left"
+      :model-value="isLeftDrawerOpen"
       :style="left"
-      :model-value="leftNavigationDrawerProps?.permanent ?? isLeftDrawerOpen"
       :="leftNavigationDrawerProps"
-      @update:model-value="
-        (value) => {
-          isLeftDrawerOpen = value;
-          isLeftDrawerOpenAuto = value;
-        }
-      "
+      @update:model-value="isLeftDrawerOpen = isLeftDrawerOpenAuto = $event"
     >
       <slot name="left" />
-    </v-navigation-drawer>
+    </StyledNavigationDrawer>
 
-    <v-navigation-drawer
+    <StyledNavigationDrawer
       v-if="slots.right"
+      :model-value="isRightDrawerOpen"
       :style="right"
-      :model-value="rightNavigationDrawerProps?.permanent ?? isRightDrawerOpen"
       location="right"
       :="rightNavigationDrawerProps"
-      @update:model-value="
-        (value) => {
-          isRightDrawerOpen = value;
-          isRightDrawerOpenAuto = value;
-        }
-      "
+      @update:model-value="isRightDrawerOpen = isRightDrawerOpenAuto = $event"
     >
       <slot name="right" />
-    </v-navigation-drawer>
+    </StyledNavigationDrawer>
     <!-- The max height here is what keeps the global window scrollbar hidden -->
     <v-main ref="container" pt="[--app-bar-height]" :style="mergedMainStyle">
       <slot />

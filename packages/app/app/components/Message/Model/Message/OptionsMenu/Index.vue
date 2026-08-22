@@ -36,7 +36,7 @@ const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProp
         </div>
       </v-tooltip>
       <v-divider thickness="2" vertical h-6 self-center />
-      <StyledEmojiPicker
+      <MessageModelMessageEmojiPicker
         :button-props="{ size: 'small', tile: true }"
         @update:menu="emit('update:menu', $event)"
         @select="selectEmoji"

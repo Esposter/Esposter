@@ -77,12 +77,17 @@ const theme: ThemeOptions = {
     lighten: 1,
   },
 };
-
+// Every input in the app renders its details row only when it has something to say. Vuetify's own default
+// Reserves the row unconditionally, which pads every form with a blank line for a message that is usually
+// Absent, and the alternative a caller reaches for — `hide-details` — silently swallows the validation error
+// A field with rules exists to report. "auto" is the one value that is right for both, so it is stated here
+// Once instead of per field
 const defaults: DefaultsOptions = {
-  VAutocomplete: { variant: "outlined" },
+  VAutocomplete: { hideDetails: "auto", variant: "outlined" },
   VBtn: { flat: true },
-  VColorInput: { variant: "outlined" },
-  VCombobox: { variant: "outlined" },
+  VCheckbox: { hideDetails: "auto" },
+  VColorInput: { hideDetails: "auto", variant: "outlined" },
+  VCombobox: { hideDetails: "auto", variant: "outlined" },
   VDataTable: {
     style: {
       borderRadius: ".25rem",
@@ -94,13 +99,15 @@ const defaults: DefaultsOptions = {
     },
   },
   VDialog: { maxWidth: "100%", width: 500 },
-  VFileInput: { variant: "outlined" },
-  VSelect: { variant: "outlined" },
-  // Every switch in the app is a primary-coloured toggle with no message slot below it — a switch reports its
-  // State by being on, so the grey default reads as disabled, and the reserved message row breaks list rhythm
-  VSwitch: { color: "primary", hideDetails: true },
-  VTextarea: { variant: "outlined" },
-  VTextField: { variant: "outlined" },
+  VFileInput: { hideDetails: "auto", variant: "outlined" },
+  VRadioGroup: { hideDetails: "auto" },
+  VSelect: { hideDetails: "auto", variant: "outlined" },
+  VSlider: { hideDetails: "auto" },
+  // A switch reports its state by being on, so the grey default reads as disabled. `hideDetails` is `"auto"` here
+  // For the same reason it is everywhere else: no row while there is no message, and the message when there is
+  VSwitch: { color: "primary", hideDetails: "auto" },
+  VTextarea: { hideDetails: "auto", variant: "outlined" },
+  VTextField: { hideDetails: "auto", variant: "outlined" },
   VToolbar: { color: "surface" },
   VToolbarTitle: {
     style: {

@@ -15,6 +15,7 @@ export enum DatabaseEntityType {
   ResourcePublication = "ResourcePublication",
   Room = "Room",
   RoomCategory = "RoomCategory",
+  RoomEmoji = "RoomEmoji",
   RoomFilter = "RoomFilter",
   RoomRole = "RoomRole",
   ScheduledMessageJob = "ScheduledMessageJob",

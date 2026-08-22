@@ -12,7 +12,6 @@ const { editedItem, editFormDialog, searchQuery } = storeToRefs(todoListStore);
       v-model="searchQuery"
       clearable
       density="compact"
-      hide-details
       label="Search"
       max-width="16rem"
       prepend-inner-icon="mdi-magnify"

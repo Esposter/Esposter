@@ -51,34 +51,11 @@ const stringValue = computed({
     v-model="booleanValue"
     :items="BooleanFilterValueItemCategoryDefinitions"
     density="compact"
-    hide-details
     variant="underlined"
   />
   <div v-else-if="column.type === ColumnType.Number" flex gap-1>
-    <v-text-field
-      v-model="minimumValue"
-      density="compact"
-      hide-details
-      placeholder="Minimum"
-      type="number"
-      variant="underlined"
-    />
-    <v-text-field
-      v-model="maximumValue"
-      density="compact"
-      hide-details
-      placeholder="Maximum"
-      type="number"
-      variant="underlined"
-    />
+    <v-text-field v-model="minimumValue" density="compact" placeholder="Minimum" type="number" variant="underlined" />
+    <v-text-field v-model="maximumValue" density="compact" placeholder="Maximum" type="number" variant="underlined" />
   </div>
-  <v-text-field
-    v-else
-    v-model="stringValue"
-    clearable
-    density="compact"
-    hide-details
-    placeholder="Filter..."
-    variant="underlined"
-  />
+  <v-text-field v-else v-model="stringValue" clearable density="compact" placeholder="Filter..." variant="underlined" />
 </template>

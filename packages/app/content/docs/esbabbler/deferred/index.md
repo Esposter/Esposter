@@ -9,8 +9,6 @@ One page per idea; each states why it waits and the concrete trigger to revisit.
 
 - [Call state reconciliation](/docs/esbabbler/deferred/call-state-reconciliation) — rebuild the call maps after a restart; revisit when a call routinely spans a deploy
 - [Cross-process event bridge](/docs/esbabbler/deferred/cross-process-event-bridge) — WebPubSub fan-out; revisit at multi-replica
-- [Custom emoji](/docs/esbabbler/deferred/custom-emoji) — per-room emoji/sticker uploads; revisit on room-branding demand
-- [Custom video backgrounds](/docs/esbabbler/deferred/custom-video-backgrounds) — user-uploaded call backgrounds; revisit with custom emoji
 - [/giphy](/docs/esbabbler/deferred/giphy) — GIF search command; revisit when accepting the external API dependency
 - [Message retention](/docs/esbabbler/deferred/message-retention) — per-room pruning; revisit when Table storage cost is material
 - [Message translation](/docs/esbabbler/deferred/message-translation) — inline translate; revisit when the community is multilingual
@@ -23,4 +21,5 @@ One page per idea; each states why it waits and the concrete trigger to revisit.
 - [Softban preview](/docs/esbabbler/deferred/softban-preview) — confirm-with-messages UX; revisit if softban misfires
 - [Speaker volume boost](/docs/esbabbler/deferred/speaker-volume-boost) — >100% master volume; revisit if calls stay too quiet
 - [Stage mode](/docs/esbabbler/deferred/stage-mode) — listener-by-default calls; revisit for presentation-style rooms
+- [Stickers](/docs/esbabbler/deferred/stickers) — per-room sticker uploads sent as their own message; revisit once custom emoji has shipped
 - [Virus scanning](/docs/esbabbler/deferred/virus-scanning) — revisit when uploads become an abuse risk

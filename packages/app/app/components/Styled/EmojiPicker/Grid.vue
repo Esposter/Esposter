@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import type { Emoji } from "@/models/message/emoji/Emoji";
+import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
 import type { SkinTone } from "@/models/message/emoji/SkinTone";
 
-import { applySkinTone } from "@/services/message/emoji/applySkinTone";
-
 interface StyledEmojiPickerGridProps {
-  emojis: Emoji[];
+  emojis: PickableEmoji[];
   skinTone: SkinTone;
 }
 
 const { emojis, skinTone } = defineProps<StyledEmojiPickerGridProps>();
-defineEmits<{ hover: [emoji: Emoji]; select: [emoji: Emoji] }>();
+// Hover is reported with no emoji when the pointer leaves an emoji, because whatever is showing the preview has
+// Standing content of its own to put back — a preview that outlived the pointer would hold that space for good.
+// Crossing from one emoji to the next reports the leave before the enter, which Vue renders as one update
+defineEmits<{ hover: [emoji?: PickableEmoji]; select: [emoji: PickableEmoji] }>();
 </script>
 
 <template>
@@ -26,15 +27,17 @@ defineEmits<{ hover: [emoji: Emoji]; select: [emoji: Emoji] }>();
       bg-transparent
       aspect-square
       cursor-pointer
-      active:bg-surface-opacity-80
-      hover:bg-surface-opacity-80
+      active:bg-activated
+      hover:bg-hover
       text-title-large
       type="button"
+      @blur="$emit('hover')"
       @click="$emit('select', emoji)"
       @focus="$emit('hover', emoji)"
       @mouseenter="$emit('hover', emoji)"
+      @mouseleave="$emit('hover')"
     >
-      {{ applySkinTone(emoji, skinTone) }}
+      <StyledEmoji :emoji :skin-tone />
     </button>
   </div>
 </template>

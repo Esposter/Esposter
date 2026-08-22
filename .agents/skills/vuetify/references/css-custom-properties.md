@@ -2,17 +2,22 @@
 
 Read when a component genuinely needs a `<style>` block (`:deep()`, `@keyframes`, element selectors) and a shared value inside it. SASS variables are banned there (SKILL.md § No SASS Variables in Component Styles); these are the `:root` properties in `globals.scss` to use instead.
 
-| Purpose                       | CSS custom property          | Value                                               |
-| ----------------------------- | ---------------------------- | --------------------------------------------------- |
-| App bar height                | `--app-bar-height`           | `56px`                                              |
-| Vuetify avatar width          | `--avatar-width`             | `40px`                                              |
-| Vuetify border width          | `--border-width`             | `thin`                                              |
-| Vuetify border style          | `--border-style`             | `solid`                                             |
-| Vuetify border radius         | `--border-radius`            | `4px`                                               |
-| Vuetify transition speed      | `--transition-duration`      | `0.3s`                                              |
-| Vuetify move transition speed | `--transition-move-duration` | `0.5s`                                              |
-| Vue gradient                  | `--vue-gradient`             | `linear-gradient(45deg, #42d392 25%, #647eff)`      |
-| Midnight bloom                | `--midnight-bloom`           | `linear-gradient(-20deg, #2b5876 0%, #4e4376 100%)` |
+| Purpose                       | CSS custom property          |
+| ----------------------------- | ---------------------------- |
+| App bar height                | `--app-bar-height`           |
+| Vuetify avatar width          | `--avatar-width`             |
+| Vuetify border width          | `--border-width`             |
+| Vuetify border style          | `--border-style`             |
+| Vuetify border radius         | `--border-radius`            |
+| Vuetify transition speed      | `--transition-duration`      |
+| Vuetify move transition speed | `--transition-move-duration` |
+| Vue gradient                  | `--vue-gradient`             |
+| Midnight bloom                | `--midnight-bloom`           |
+
+The values are in `globals.scss` and are deliberately not restated here — a copy of one in prose is how a page
+ends up quoting the `px` an earlier revision used, and they are not even all one kind of value: a length beside a
+keyword beside a duration beside a gradient. The `:root` block is the list; read it for anything not named above,
+including the ApexCharts tokens.
 
 The goal is always attributify — a scoped class that only restates utilities is still wrong, even with the right variables:
 

@@ -5,7 +5,7 @@ description: One in-repo emoji index behind the picker, reactions and the compos
 
 # Emoji
 
-Every emoji surface — the picker grid, a stored reaction, the composer's `:` autocomplete and the quick-reaction tooltips — resolves through **one index built from one dataset**. There is no emoji dependency: the picker is our own `<script setup>` components, and the lookups are three maps.
+Every emoji surface — the picker grid, a stored reaction, the composer's `:` autocomplete and the quick-reaction tooltips — resolves through **one index built from one dataset**, plus whatever the room itself has uploaded ([custom emoji](/docs/esbabbler/custom-emoji)), which every surface renders through the same records without knowing which vocabulary it was handed. There is no emoji dependency: the picker is our own `<script setup>` components, and the lookups are three maps.
 
 Owning the picker is what buys the single vocabulary. An off-the-shelf grid brings its own: one library's picker and another's shortcode resolver index different Unicode releases, so a glyph the picker offers has no shortcode to store and the round trip only appears to work because both directions fall back to their input. They also cost what a component dependency costs — a sprite sheet fetched from a CDN the CSP then has to whitelist, no dark mode without overriding theirs, and an Options API component that turns `vue.optionsApi` back on for the whole app. Three maps over one dataset have none of that surface.
 
@@ -86,26 +86,26 @@ The accepted limitation: Unicode allows a different tone per person in a sequenc
 
 - **Search** replaces the grid wholesale while a query is running. The rail stays live rather than being disabled by it — picking a category clears the query.
 - **One category renders at a time, and there is no virtualisation.** The largest CLDR group is under four hundred buttons, which a grid handles without help; the repo has no virtual-scroll primitive, and adding one for a cost that does not exist would be the opposite of lean. Discord scrolls continuously across all categories, which does need virtualisation — a deliberate deferral.
-- **Categories are data, not the enum.** `getEmojiCategories` pins Frequently Used ahead of the nine CLDR groups when it has anything in it. That is also the seam [custom emoji](/docs/esbabbler/deferred/custom-emoji) would append to.
+- **Categories are data, not the enum.** `getEmojiCategories` pins Frequently Used ahead of the nine CLDR groups when it has anything in it, and the room's own uploads sit between the two — where Discord puts a server's set.
 - **Recents and the chosen tone live in Pinia**, persisted through the `LocalStorageKey` registry. Recents are stored as slugs rather than characters so they survive a change of skin tone, and holding them in a store rather than a module singleton is what makes the category update the moment an emoji is picked.
 - **Both themes come free** — Vuetify components and theme tokens throughout, no hardcoded palette.
 - **The container is the viewport's, the panel is not.** On a desktop the picker is a `v-menu` anchored beside its activator; on `smAndDown` it is a `v-bottom-sheet` spanning the bottom edge, because a fixed panel anchored to a button near a phone's screen edge is dragged back into the viewport wherever it happens to fit. The sheet states its own width — a bottom sheet is a `v-dialog` underneath, so it would otherwise inherit the app's `VDialog` width default and sit centred rather than spanning. Inside it the panel fills the sheet, the category rail lies along the top instead of down the side so the grid keeps the full width, and the search field does not autofocus: raising the keyboard would cover the emoji the user opened the picker to tap.
 
 ## Key files
 
-| File                                                                           | Role                                                             |
-| ------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
-| `packages/app/app/services/message/emoji/getEmojiIndex.ts`                     | The three maps, built once on first use                          |
-| `packages/app/app/services/message/emoji/searchEmojis.ts`                      | MiniSearch index and the exact-shortcode pin                     |
-| `packages/app/app/services/message/emoji/getEmojiCharacterKey.ts`              | Normalisation that finds a glyph's record whatever form it is in |
-| `packages/app/app/services/message/emoji/applySkinTone.ts`                     | Tone synthesis, including the ZWJ rule                           |
-| `packages/app/app/services/message/emoji/getEmojiSlug.ts`                      | Reverse lookup — the shortcode behind a glyph, for tooltips      |
-| `packages/app/app/services/message/emoji/getEmojiCategories.ts`                | Frequently Used plus the nine CLDR groups                        |
-| `packages/app/app/services/message/emoji/EmojiSuggestion.ts`                   | The composer's `:` trigger, on the same index and ranking        |
-| `packages/app/app/components/Styled/EmojiPicker/Index.vue`                     | The overlay and its activator — menu, or bottom sheet on mobile  |
-| `packages/app/app/components/Styled/EmojiPicker/Panel.vue`                     | Search field, category rail, grid, footer                        |
-| `packages/app/app/store/message/emojiPicker.ts`                                | Recents and the chosen skin tone                                 |
-| `packages/app/app/components/Message/Model/Message/EmojiListItemHoverCard.vue` | The reaction chip's hover card                                   |
-| `packages/app/app/components/Message/Model/Message/ReactionsDialog/Index.vue`  | Singleton Reactions dialog — rail plus reactors                  |
-| `packages/app/app/services/message/emoji/getReactorNames.ts`                   | "Alice, Bob and 4 others", via `Intl.ListFormat`                 |
-| `packages/app/app/types/unicodeEmojiJson.d.ts`                                 | Declares the dataset's shape so TypeScript never reads the JSON  |
+| File                                                                            | Role                                                             |
+| ------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `packages/app/app/services/message/emoji/getEmojiIndex.ts`                      | The three maps, built once on first use                          |
+| `packages/app/app/services/message/emoji/searchEmojis.ts`                       | MiniSearch index and the exact-shortcode pin                     |
+| `packages/app/app/services/message/emoji/getEmojiCharacterKey.ts`               | Normalisation that finds a glyph's record whatever form it is in |
+| `packages/app/app/services/message/emoji/applySkinTone.ts`                      | Tone synthesis, including the ZWJ rule                           |
+| `packages/app/app/services/message/emoji/getEmojiSlug.ts`                       | Reverse lookup — the shortcode behind a glyph, for tooltips      |
+| `packages/app/app/services/message/emoji/getEmojiCategories.ts`                 | Frequently Used, the room's own set, then the nine CLDR groups   |
+| `packages/app/app/services/message/emoji/EmojiSuggestion.ts`                    | The composer's `:` trigger, on the same index and ranking        |
+| `packages/app/app/components/Styled/EmojiPicker/Index.vue`                      | The overlay and its activator — menu, or bottom sheet on mobile  |
+| `packages/app/app/components/Styled/EmojiPicker/Panel.vue`                      | Search field, category rail, grid, footer                        |
+| `packages/app/app/store/message/emojiPicker.ts`                                 | Recents and the chosen skin tone                                 |
+| `packages/app/app/components/Message/Model/Message/Emoji/ListItemHoverCard.vue` | The reaction chip's hover card                                   |
+| `packages/app/app/components/Message/Model/Message/ReactionsDialog/Index.vue`   | Singleton Reactions dialog — rail plus reactors                  |
+| `packages/app/app/services/message/emoji/getReactorNames.ts`                    | "Alice, Bob and 4 others", via `Intl.ListFormat`                 |
+| `packages/app/app/types/unicodeEmojiJson.d.ts`                                  | Declares the dataset's shape so TypeScript never reads the JSON  |

@@ -1,6 +1,6 @@
 ---
 name: vue
-description: Esposter Vue 3 SFC conventions — macro ordering, script-setup declaration order, template attribute ordering and template conventions, inlining single-use functions and handlers, v-model vs split bindings, never normalizeString in Vue, optional refs, useTemplateRef, computed by cost and identity, map lookups, the watch decision tree plus watch aliases and hook placement, browser globals via window., SSR guards via getIsServer, and every rendered date being a NuxtTime — plus deep dives on inline handlers, forms and upsert mode, the auth session, computed extraction, template gotchas (v-html, dotted slots, template casts), the compiled-out Options API runtime, and date rendering. Apply when writing or reviewing .vue files, or rendering a date or time.
+description: Esposter Vue 3 SFC conventions — macro ordering, script-setup declaration order, template attribute ordering and template conventions, inlining single-use functions and handlers, v-model vs split bindings, never normalizeString in Vue, optional refs, useTemplateRef, computed by cost, identity and cadence, map lookups, the watch decision tree plus watch aliases and hook placement, browser globals via window., SSR guards via getIsServer, and every rendered date being a NuxtTime — plus deep dives on inline handlers, forms and upsert mode, the auth session, computed extraction, template gotchas (v-html, dotted slots, template casts), the compiled-out Options API runtime, and date rendering. Apply when writing or reviewing .vue files, or rendering a date or time.
 ---
 
 # Vue Conventions
@@ -56,7 +56,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 2. **`class`** — static class string
 3. **UnoCSS attributify props** — shorthand utilities as props (`ma-2`, `flex`, `flex-col`)
 4. **Component props with values** — `:prop="value"` / `prop="string"` (alphabetical)
-5. **Shorthand boolean props** — bare names defaulting to `true` (`clearable`, `hide-details`)
+5. **Shorthand boolean props** — bare names defaulting to `true` (`clearable`, `autofocus`)
 6. **Event handlers** — `@event="..."` last
 
 ```vue
@@ -65,8 +65,8 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
   ma-2
   density="compact"
   label="Search"
+  autofocus
   clearable
-  hide-details
   @keydown.enter.stop="submit()"
 />
 ```
@@ -90,7 +90,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 - **Optional refs omit the initial value** — `ref<string>()` infers `Ref<string | undefined>`; never `ref<string | undefined>(undefined)`.
 - **Template refs always use `useTemplateRef`** — no generic (Vue 3.5+ infers from the template), no `Ref` suffix, name matching the `ref="..."` value (`const video = useTemplateRef("video")`). Drop any component type imported only for the generic. A generic is justified only where inference falls short: the element doesn't expose the property you want, or the inferred union is too complex to work with.
 - **Sort at display time** — apply `.toSorted()` in the `computed` that feeds the template; never in store ingestion (`readX`, `setX`, mutation helpers). Stores hold natural order; components transform for display. **Exception**: sort before the API call when sorted order is sent to the backend (message pagination cursors).
-- **Computed by cost and identity, never by use count — `references/computed-extraction.md`** — read it before extracting or inlining any `computed`. A computed is a cache with a price, so it earns its place on **reuse** (binds to 2+ props), **work** (parses, formats, filters, maps, sorts, reduces, walks a collection), or **identity** (allocates an object/array/function bound to a prop). Everything else inlines: comparisons, booleans, ternaries, template literals, property reads, arithmetic, map lookups. The page owns the traps and the keeps that override cost.
+- **Computed by cost and identity, never by use count — `references/computed-extraction.md`** — read it before extracting or inlining any `computed`. A computed is a cache with a price, so it earns its place on **reuse** (binds to 2+ props), **work** (parses, formats, filters, maps, sorts, reduces, walks a collection), or **identity** (allocates an object/array/function bound to a prop). Everything else inlines: comparisons, booleans, ternaries, template literals, property reads, arithmetic, map lookups. The page owns the traps, the keeps that override cost, and the cadence question — work run per event that only changes per boundary.
 - **Map lookups over computed** — when a value depends on an enum/discriminant key, use `Map[type]` directly in the template (`Map[type].value` for multiple properties). Fall back to a computed only when the lookup is duplicated in 2+ places.
 - **Writable computed over `watch` + local ref** — when a local value is entirely derived from and writes back to a store value, replace the `ref` + `watch` with a `computed({ get, set })`.
 

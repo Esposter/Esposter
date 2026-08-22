@@ -11,15 +11,21 @@ describe(defineVuetifyConfiguration, () => {
       {
         "defaults": {
           "VAutocomplete": {
+            "hideDetails": "auto",
             "variant": "outlined",
           },
           "VBtn": {
             "flat": true,
           },
+          "VCheckbox": {
+            "hideDetails": "auto",
+          },
           "VColorInput": {
+            "hideDetails": "auto",
             "variant": "outlined",
           },
           "VCombobox": {
+            "hideDetails": "auto",
             "variant": "outlined",
           },
           "VDataTable": {
@@ -37,19 +43,29 @@ describe(defineVuetifyConfiguration, () => {
             "width": 500,
           },
           "VFileInput": {
+            "hideDetails": "auto",
             "variant": "outlined",
           },
+          "VRadioGroup": {
+            "hideDetails": "auto",
+          },
           "VSelect": {
+            "hideDetails": "auto",
             "variant": "outlined",
+          },
+          "VSlider": {
+            "hideDetails": "auto",
           },
           "VSwitch": {
             "color": "primary",
-            "hideDetails": true,
+            "hideDetails": "auto",
           },
           "VTextField": {
+            "hideDetails": "auto",
             "variant": "outlined",
           },
           "VTextarea": {
+            "hideDetails": "auto",
             "variant": "outlined",
           },
           "VToolbar": {

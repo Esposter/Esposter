@@ -64,6 +64,7 @@ When a component tree has a "selected item" concept, the selected **id** is stor
 - Use `useDataMap<T>(currentId, defaultValue)` for state keyed by an id **when there's a meaningful "current" id** (e.g. `currentRoomId`). **Do NOT** use it when the store reads/writes arbitrary keys with no "current" concept — that is a plain `ref(new Map<string, T>())` with a manual getter.
 - **Pass a factory** (`() => new CursorPaginationData()`) when the default is a class instance: plain defaults are `structuredClone`d per key so keys never share state, and `structuredClone` strips prototypes.
 - **State describing one key must be keyed by it — a plain `ref` is only correct when the key cannot change under the store.** A global ref outlives the switch: at the moment the current id changes it still holds the previous key's value, so anything asking "is this the current key's data" reads a stale yes, and consumers grow guards over ambiguous state instead of getting an answer. Applies to **every field** of that state, not just the list — a keyed list beside global counts is the same bug, half-fixed (see `packages/app/content/docs/esbabbler/offline-cache.md`).
+- **A deferred callback writes to whichever key is current, never the one it was issued for.** The `items` a data map hands back tracks the current key, so an `onSuccess`, an optimistic rollback, or a late read response that lands after the key moved files one key's rows under another's — a room's emoji appearing in the room the user navigated to. Either guard each deferred callback on the key it was issued for (`getIsRoomCurrent(roomId)`, correct whenever re-entering re-reads the set, which is what makes dropping the write free) or bind the slice up front with `getBoundData()`, which files the result under the key it was issued for and is what `readItems` already does internally. Ordering is the separate half: a read of a target that can be re-entered passes `key: <that id>` to `executeQuery`, so re-entry supersedes the read it interrupted and an A→B→A round cannot land the oldest response last.
 - Pass the explicit type generic when the default alone can't infer the full type (unions, empty `{}`/`[]`); primitives with unambiguous defaults don't need one. Never an as-cast instead of the generic.
 
 ## tRPC Mutation Placement
@@ -74,7 +75,7 @@ A store action that mutates goes through `useMutation` (`composables/shared/useM
 
 ## CRUD Conventions
 
-- **Prefer CRUD verbs over domain-specific verbs** — `deleteBan` not `unban`, `deleteMember` not `kick`. Reserve domain terms only when there's no clean CRUD mapping.
+- **Prefer CRUD verbs over domain-specific verbs** — `deleteBan` not `unban`, `deleteRole` not `removeRole`. Reserve domain terms only when there's no clean CRUD mapping.
 - **`store*` prefix for subscription-driven state-update counterparts** — `storeCreateFoo`/`storeDeleteFoo`. If the user action is only a direct tRPC call, don't add a matching non-`store*` wrapper. State-update methods use CRUD prefixes (`createXxx` to insert, `deleteXxx` to remove) — never `addXxx`.
 - **update**: `findIndex` first, guard `if (index === -1) return`, then mutate in place with `Object.assign(takeOne(items.value, index), updatedItem)`.
 - **delete**: reassign the array — `items.value = items.value.filter(...)` — never `splice`.

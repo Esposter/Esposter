@@ -99,7 +99,6 @@ const save = async () => {
       v-model="editedStatus.message"
       label="What's on your mind?"
       density="compact"
-      hide-details
       :maxlength="STATUS_MESSAGE_MAX_LENGTH"
     />
     <StyledButton text="Save" @click="save()" />

@@ -12,7 +12,6 @@ const { findValue, isFindReplaceOpen } = storeToRefs(findReplaceStore);
     autofocus
     clearable
     density="compact"
-    hide-details
     label="Find"
     max-w-52
     @keydown="

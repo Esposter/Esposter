@@ -16,12 +16,9 @@ const emit = defineEmits<{
 }>();
 const dataStore = useDataStore();
 const { updateMessage } = dataStore;
-const editedMessageHtml = ref(
-  useMessageWithMentions(
-    () => message.message,
-    () => message.partitionKey,
-  ).value,
-);
+// The stored markup, never the rendered output: the render resolves a mention to the reader's own display name
+// And a custom emoji to a read SAS that expires, so saving what was rendered would persist both
+const editedMessageHtml = ref(message.message);
 const saveMessage = useSaveRichTextEdit(
   editedMessageHtml,
   () => message.message,
@@ -48,6 +45,9 @@ const keyboardExtension = new Extension({
   },
 });
 const mentionExtension = useMentionExtension();
+// Registered so the editor parses a custom emoji node back out of the stored markup — without it an edit
+// Silently drops every emoji in the message
+const customEmojiExtension = useCustomEmojiExtension();
 </script>
 
 <template>
@@ -55,7 +55,7 @@ const mentionExtension = useMentionExtension();
     v-model="editedMessageHtml"
     autofocus="end"
     placeholder="Edit message"
-    :extensions="[keyboardExtension, mentionExtension]"
+    :extensions="[keyboardExtension, mentionExtension, customEmojiExtension]"
     :limit="MESSAGE_MAX_LENGTH"
     @keydown.esc="emit('update:update-mode', false)"
   >

@@ -14,7 +14,7 @@ The shape is Logic-Apps-_positioned_ (orchestration is its own resource, the orc
 ```mermaid
 flowchart LR
   SETUP["Setup blade<br/>audience DatasetReference + key column<br/>emailId · surveyId"] -->|saveResourceContent| BLOB[("{id}/content.json")]
-  GEN["Generate participants (owner)"] -->|"resolve audience →<br/>one token per key value, idempotent"| INV[("ProgramParticipants table<br/>pk = programId, rk = sha256 of keyValue<br/>keyValue · publicId · token · createdAt")]
+  GEN["Generate participants (owner)"] -->|"resolve audience →<br/>one token per key value, idempotent"| INV[("ProgramParticipants table<br/>pk = programId, rk = sha256 of keyValue")]
   GEN -->|"token map to the owner client"| EXPORT["participant href<br/>/view/Survey/{surveyId}?t={token}"]
   EXPORT -.->|"sent outside the platform for now"| RESP["respondent"]
   RESP -->|"?t= → createSurveyResponse"| SR[("SurveyResponseEntity.participantToken")]

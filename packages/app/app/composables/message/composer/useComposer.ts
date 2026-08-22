@@ -11,9 +11,16 @@ export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
   const keyboardExtension = await useKeyboardShortcutsExtension((editor) => sendMessage(editor, toValue(target)));
   const codeBlockExtension = useCodeBlockExtension();
   const emojiExtension = useEmojiExtension();
+  const customEmojiExtension = useCustomEmojiExtension();
   // The mention extension restyles itself from the theme, so the stack is a computed rather than a fixed array
   const mentionExtension = useMentionExtension();
-  const extensions = computed(() => [keyboardExtension, codeBlockExtension, emojiExtension, mentionExtension.value]);
+  const extensions = computed(() => [
+    keyboardExtension,
+    codeBlockExtension,
+    emojiExtension,
+    customEmojiExtension,
+    mentionExtension.value,
+  ]);
   const inputStore = useInputStore();
   const { validateInput } = inputStore;
   return {

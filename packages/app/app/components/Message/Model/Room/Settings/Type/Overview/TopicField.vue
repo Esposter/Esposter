@@ -8,7 +8,6 @@ const emit = defineEmits<{ save: [] }>();
     <v-text-field
       v-model="modelValue"
       density="compact"
-      hide-details="auto"
       placeholder="Set a topic for this room"
       @blur="emit('save')"
       @keydown.enter.prevent="emit('save')"

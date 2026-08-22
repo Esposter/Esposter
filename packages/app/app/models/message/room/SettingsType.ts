@@ -3,6 +3,7 @@ export enum SettingsType {
   Overview = "Overview",
   Roles = "Roles",
   Profile = "Profile",
+  Emojis = "Emojis",
   Webhooks = "Webhooks",
   WordFilter = "Word Filter",
   AuditLog = "Audit Log",

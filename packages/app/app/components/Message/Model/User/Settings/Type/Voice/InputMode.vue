@@ -19,7 +19,6 @@ const { updateUserSettings } = userSettingsStore;
   <div flex flex-col gap-y-2>
     <v-radio-group
       :model-value="userSettings.voiceInputMode"
-      hide-details
       @update:model-value="updateUserSettings({ voiceInputMode: $event as VoiceInputMode })"
     >
       <v-radio

@@ -1,12 +1,18 @@
 // @vitest-environment nuxt
+import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
 import type { VueWrapper } from "@vue/test-utils";
 
 import StyledEmojiPickerGrid from "@/components/Styled/EmojiPicker/Grid.vue";
 import StyledEmojiPickerPanel from "@/components/Styled/EmojiPicker/Panel.vue";
 import { EmojiGroup, EmojiGroups } from "@/models/message/emoji/EmojiGroup";
+import { EmojiType } from "@/models/message/emoji/EmojiType";
 import { SkinTone } from "@/models/message/emoji/SkinTone";
+import { ROOM_EMOJI_CATEGORY_TITLE } from "@/services/message/emoji/constants";
+import { getCustomEmojiTag } from "@/services/message/emoji/getCustomEmojiTag";
 import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
+import { searchEmojis } from "@/services/message/emoji/searchEmojis";
 import { useEmojiPickerStore } from "@/store/message/emojiPicker";
+import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -20,6 +26,14 @@ const getGridEmojis = (component: VueWrapper) => {
 };
 
 describe("styledEmojiPickerPanel", () => {
+  const customEmoji: CustomEmoji = {
+    id: crypto.randomUUID(),
+    name: "party_parrot",
+    sasUrl: "https://storage.test/emoji",
+    slug: "party_parrot",
+    type: EmojiType.Custom,
+  };
+
   beforeEach(() => {
     setActivePinia(createPinia());
     window.localStorage.clear();
@@ -66,7 +80,9 @@ describe("styledEmojiPickerPanel", () => {
     expect(component.text()).toContain("No results");
   });
 
-  test("emits the toned character and records the pick as a recent", async () => {
+  // The tag leads and the record follows: reaction surfaces store the first, the composer needs the second to
+  // Know whether to insert a character or a custom-emoji node
+  test("emits the toned character with its record and stores the pick as a recent", async () => {
     expect.hasAssertions();
 
     const emojiPickerStore = useEmojiPickerStore();
@@ -75,7 +91,35 @@ describe("styledEmojiPickerPanel", () => {
     await component.find("input").setValue("technologist");
     await component.findComponent(StyledEmojiPickerGrid).find("button[aria-label]").trigger("click");
 
-    expect(component.emitted("select")).toStrictEqual([["🧑🏽‍💻"]]);
+    expect(component.emitted("select")).toStrictEqual([["🧑🏽‍💻", takeOne(searchEmojis("technologist"))]]);
     expect(emojiPickerStore.recentEmojiSlugs).toStrictEqual(["technologist"]);
+  });
+
+  // A custom emoji emits the id-keyed tag a reaction stores, never its name — a rename must not strand one
+  test("emits a custom emoji as its id tag with its record", async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(StyledEmojiPickerPanel, { props: { customEmojis: [customEmoji] } });
+    await component.find("input").setValue("party_parrot");
+    await component.findComponent(StyledEmojiPickerGrid).find("button[aria-label]").trigger("click");
+
+    expect(component.emitted("select")).toStrictEqual([[getCustomEmojiTag(customEmoji.id), customEmoji]]);
+  });
+
+  // The room's last emoji can be deleted while the picker sits on its category. `v-tabs` given a value no tab
+  // Carries shows no active tab at all, so the rail has to fall back with the grid rather than go blank over it
+  test("falls back to the first category when the active one leaves the rail", async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(StyledEmojiPickerPanel, { props: { customEmojis: [customEmoji] } });
+    await component.find(`.v-tab[aria-label="${ROOM_EMOJI_CATEGORY_TITLE}"]`).trigger("click");
+
+    expect(component.find(".v-tab--selected").attributes("aria-label")).toBe(ROOM_EMOJI_CATEGORY_TITLE);
+
+    await component.setProps({ customEmojis: [] });
+    const categoryTitles = component.findAll(".v-tab").map((tab) => tab.attributes("aria-label"));
+
+    expect(categoryTitles).not.toContain(ROOM_EMOJI_CATEGORY_TITLE);
+    expect(component.find(".v-tab--selected").attributes("aria-label")).toBe(takeOne(categoryTitles));
   });
 });

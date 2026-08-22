@@ -47,6 +47,11 @@ describe(mermaid.parse, () => {
   const MERMAID_REGEX = /```mermaid\r?\n(?<code>[\s\S]*?)```/gu;
   const ESCAPED_LINE_BREAK_REGEX = /\\n/u;
   const QUOTE_REGEX = /"/gu;
+  const LABEL_REGEX = /"(?<label>[^"]*)"/gu;
+  // A label is a name plus at most one qualifier. Past these it is a catalog entry or the paragraph the page
+  // Owes, and both belong outside the box (`docs` skill, `references/diagrams.md`)
+  const MAX_LABEL_LENGTH = 90;
+  const MAX_LABEL_LINE_BREAKS = 2;
 
   // Skills are checked here too, rather than in a test of their own: a skill diagram has no renderer to fail
   // In front of anyone — nothing loads a skill and draws it — so an unparseable one is invisible until an
@@ -85,6 +90,21 @@ describe(mermaid.parse, () => {
     const offenders = diagrams
       .filter(({ code }) => code.split("\n").some((line) => (line.match(QUOTE_REGEX)?.length ?? 0) % 2 === 1))
       .map(({ ordinal, page }) => `${page} diagram ${ordinal}`);
+
+    expect(offenders).toStrictEqual([]);
+  });
+
+  // The only half of "a diagram carries a mechanism" a pattern can see. What it cannot — a diagram that is a
+  // Catalog, an inventory or a straight line — stays a reading pass, tracked by the docs ledger
+  test("no diagram label outgrows a name and one qualifier", () => {
+    expect.hasAssertions();
+
+    const offenders = diagrams.flatMap(({ code, ordinal, page }) =>
+      [...code.matchAll(LABEL_REGEX)]
+        .map(({ groups }) => groups?.label ?? "")
+        .filter((label) => label.length > MAX_LABEL_LENGTH || label.split("<br/>").length > MAX_LABEL_LINE_BREAKS + 1)
+        .map((label) => `${page} diagram ${ordinal}: ${label}`),
+    );
 
     expect(offenders).toStrictEqual([]);
   });

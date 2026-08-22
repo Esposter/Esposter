@@ -23,7 +23,6 @@ const textValue = computed({
 <template>
   <v-text-field
     v-model="textValue"
-    :hide-details="isInline"
     :label="isInline ? '' : column.name"
     :single-line="isInline"
     :type="FieldInputTypeMap[column.type]"

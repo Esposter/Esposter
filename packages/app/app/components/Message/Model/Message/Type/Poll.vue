@@ -46,7 +46,6 @@ const { isVoting, vote } = await useVotePoll(
           :model-value="pollContent.votes[userId]"
           :disabled="isPreview || isVoting"
           color="primary"
-          hide-details
           @update:model-value="vote"
         >
           <MessageModelMessageTypePollOption

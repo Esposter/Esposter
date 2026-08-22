@@ -29,12 +29,8 @@ flowchart TD
   CV -->|"already visited (cycle)"| cyc["null"]
   CV -->|"type = Computed"| map["ColumnTransformationComputeMap[transformation.type]"]
   map -->|"computeSource(sourceColumnId)<br/>recurse for chained computed sources"| CV
-  map --> agg["computeAggregationValue<br/>→ AggregationTransformationComputeMap"]
-  map --> math["computeMathTransformation<br/>(mathjs evaluate)"]
-  map --> conv["computeConvertToTransformation<br/>(coerceValue)"]
-  map --> date["computeDatePartTransformation<br/>(uses source column format)"]
-  map --> regex["computeRegexMatchTransformation"]
-  map --> str["computeStringTransformation ·<br/>computeSplitTransformation ·<br/>computeStringPatternTransformation"]
+  map -->|"Aggregation"| agg["computeAggregationValue<br/>→ AggregationTransformationComputeMap"]
+  map --> computer["the transformation type's own computer<br/>— one per type, in the key files below"]
 ```
 
 Computed columns are created and edited through the same vjsf-driven column dialog as every other column type — `computedColumnFormSchema` renders the transformation as a form, with per-transformation Zod validation surfacing errors before save.

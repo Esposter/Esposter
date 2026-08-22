@@ -28,7 +28,7 @@ getNicknameMap(roomId)?.get(user.id) ?? user.name;
 getNicknameMap(roomId)?.get(user.id) || user.name;
 ```
 
-Applied in: mention labels (`useMessageWithMentions`), the member list sidebar (`MemberListItem`), the profile card that pops out of it (`ProfileCard/Index`), the room settings Members panel (`Settings/Type/Member/ListItem`), the push notification title (queried server-side before the EventGrid publish), and — through `useCreator` — every message in the timeline.
+Applied in: mention labels (`useMessageHtml`), the member list sidebar (`MemberListItem`), the profile card that pops out of it (`ProfileCard/Index`), the room settings Members panel (`Settings/Type/Member/ListItem`), the push notification title (queried server-side before the EventGrid publish), and — through `useCreator` — every message in the timeline.
 
 **`useCreator` resolves the nickname itself**, so every surface that renders a message author — avatar initials, the batch header, reply titles, forward and pin lines, the delete and pin confirmations — gets it from one place rather than each remembering to call `getDisplayName`. It reads the room from the message's own `partitionKey`, so a message rendered outside the current room — a search hit, a thread preview — resolves against the room it was written in rather than the room on screen. A webhook message is the one exception: its author is an app user, which is not a member of the room and therefore has no nickname to overlay.
 
@@ -74,12 +74,12 @@ Room settings → **My Profile** tab (visible to all members, no permission requ
 
 ## Key files
 
-| File                                                                      | Role                                     |
-| :------------------------------------------------------------------------ | :--------------------------------------- |
-| `packages/app/app/store/message/room/userToRoom.ts`                       | `useUserToRoomStore`, `getDisplayName`   |
-| `packages/app/app/composables/message/room/useCreator.ts`                 | message author, nickname already applied |
-| `packages/app/app/composables/message/mentions/useMessageWithMentions.ts` | mention label resolution                 |
-| `packages/app/app/components/Message/Model/Room/Settings/Type/Profile/`   | My Profile tab + nickname field          |
+| File                                                                    | Role                                     |
+| :---------------------------------------------------------------------- | :--------------------------------------- |
+| `packages/app/app/store/message/room/userToRoom.ts`                     | `useUserToRoomStore`, `getDisplayName`   |
+| `packages/app/app/composables/message/room/useCreator.ts`               | message author, nickname already applied |
+| `packages/app/app/composables/message/useMessageHtml.ts`                | mention label resolution                 |
+| `packages/app/app/components/Message/Model/Room/Settings/Type/Profile/` | My Profile tab + nickname field          |
 
 ## Notes
 

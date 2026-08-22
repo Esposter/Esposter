@@ -10,45 +10,14 @@ How tRPC router tests wire up an in-memory database, mocked Azure services, and 
 ## Overview
 
 ```mermaid
-flowchart TD
-    subgraph test["Test file (e.g. routers/user.test.ts)"]
-        bA["beforeAll<br/>createMockContext()"]
-        aE["afterEach<br/>clear Azure state<br/>delete DB rows<br/>restoreAllMocks"]
-        caller["createCallerFactory(router)(mockContext)<br/>→ direct tRPC calls, no HTTP"]
-    end
-
-    subgraph ctx["context.test.ts — wiring hub"]
-        cmc["createMockContext()"]
-        mso["mockSessionOnce(db)"]
-        gms["getMockSession()"]
-        rms["replayMockSession(payload)"]
-    end
-
-    subgraph db["@esposter/db-mock"]
-        pglite["PGlite<br/>in-memory PostgreSQL"]
-        snapshot["pre-migrated snapshot.tar.gz<br/>cached per worker"]
-    end
-
-    subgraph auth["Auth mock (vi.mock)"]
-        getSession["auth.api.getSession<br/>→ vi.fn returning default user"]
-    end
-
-    subgraph azure["Azure mocks (azure-mock)"]
-        tableClient["MockTableClient<br/>backed by MockTableDatabase"]
-        containerClient["MockContainerClient<br/>backed by MockContainerDatabase"]
-        eventGrid["MockEventGridPublisherClient"]
-    end
-
-    bA --> cmc
-    cmc --> db
-    cmc --> auth
-    cmc --> azure
-    snapshot --> pglite
-    caller --> ctx
-    mso --> auth
-    mso --> db
-    gms --> auth
-    rms --> auth
+flowchart LR
+  MOCK["vi.mock, hoisted above every import<br/>auth.api.getSession"] --> BA
+  AZ["azure-mock — table, container, EventGrid"] --> BA
+  BA["beforeAll<br/>createMockContext()"] --> DB["PGlite, loaded from<br/>the pre-migrated snapshot"]
+  DB --> CTX[("mockContext")]
+  CTX --> CALLER["createCallerFactory(router)(mockContext)<br/>procedures called directly, no HTTP"]
+  CALLER --> AE["afterEach<br/>clear Azure state, delete rows, restoreAllMocks"]
+  AE -->|"next test"| CALLER
 ```
 
 ## Components

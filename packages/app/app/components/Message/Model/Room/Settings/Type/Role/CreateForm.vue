@@ -20,7 +20,7 @@ const submit = async () => {
 
 <template>
   <div>
-    <v-text-field v-model="name" density="compact" hide-details placeholder="Create role..." @keyup.enter="submit()">
+    <v-text-field v-model="name" density="compact" placeholder="Create role..." @keyup.enter="submit()">
       <template #append-inner>
         <StyledTooltipIconButton
           :button-props="{

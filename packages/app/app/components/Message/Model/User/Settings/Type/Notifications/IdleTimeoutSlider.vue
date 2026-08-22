@@ -23,7 +23,6 @@ const { cloned: autoIdleThresholdMinutes } = useCloned(() => userSettings.autoId
     :max="MAX_AUTO_IDLE_THRESHOLD_MS / MS_PER_MINUTE"
     :min="MIN_AUTO_IDLE_THRESHOLD_MS / MS_PER_MINUTE"
     :step="1"
-    hide-details
     @end="(minutes) => updateUserSettings({ autoIdleThresholdMs: minutes * MS_PER_MINUTE })"
   />
 </template>

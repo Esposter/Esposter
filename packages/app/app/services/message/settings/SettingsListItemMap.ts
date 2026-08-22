@@ -14,6 +14,9 @@ export const SettingsListItemMap: Record<SettingsType, Except<Item, "onClick" | 
   [SettingsType.Profile]: {
     icon: "mdi-account-circle-outline",
   },
+  [SettingsType.Emojis]: {
+    icon: "mdi-emoticon-plus-outline",
+  },
   [SettingsType.Webhooks]: {
     icon: "mdi-webhook",
   },

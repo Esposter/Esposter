@@ -1,7 +1,8 @@
 # Vue Components
 
-The two reading rules that decide a component tree's shape, carried across the components written before them.
-Standing: a unit's date says both held there on that date, and the pass resumes from the files changed since.
+The reading rules that decide a component tree's shape — how much a component does, what it computes, and where
+its file sits — carried across the components written before them. Standing: a unit's date says they held there
+on that date, and the pass resumes from the files changed since.
 
 Consolidates the former **component-granularity** and **computed-extraction** ledgers. They always ran over the
 same files and handed work to each other in both directions, so reading a tree twice only meant reading it twice.
@@ -12,8 +13,9 @@ same files and handed work to each other in both directions, so reading a tree t
 | -------------------------------------------------------- | ---------------------------------------------------------- |
 | Maximal component granularity — one action per component | `vue-page-composition`, incl. its `v-for` item-body clause |
 | Computed by cost and identity, never by use count        | `vue`, `references/computed-extraction.md`                 |
+| The folder path is the prefix, and a prefix group folds  | `vue-component-patterns`, `references/component-naming.md` |
 
-**They meet at the `v-for` item body, which is why they are one ledger.** A loop variable has no script scope, so
+**The first two meet at the `v-for` item body, which is why they are one ledger.** A loop variable has no script scope, so
 an expression over it cannot become a `computed` however expensive it is. Extracting the item body into a
 component gives that expression a `<script setup>`, and the finding becomes an ordinary extraction there. A row
 body that calls a helper per render, or the same one twice, is a granularity finding first and a computed
@@ -23,7 +25,7 @@ Both directions are in scope: extract what earns a computed, inline what does no
 leave what holds one. The simplification sweeps ran the _opposite_ direction on granularity — collapsing
 duplicate components into shared primitives — so a tree dated there says nothing about this ledger.
 
-**Neither rule is satisfied by relocation.** A pass that lifts a long literal into `services/` or wraps a cheap
+**Neither of those two is satisfied by relocation.** A pass that lifts a long literal into `services/` or wraps a cheap
 expression in a `computed` has moved code without buying anything, and both rules exist to decide whether the far
 side pays for the move — a second caller, a loop, a cached evaluation, a type the inline form cannot carry. This
 is the finding the pass produces most often against itself, which is why it is stated here as well as in the
@@ -32,7 +34,10 @@ owning skill.
 Behaviour-preserving, except that restoring a stable `:rules` reference stops a Vuetify field re-validating
 every render. That is a fix, not a regression.
 
-Every row resets when a rule joins this table.
+Every row resets when a rule joins this table — except a rule whose whole scope is carried in the change that
+adds it, which leaves nothing behind to date. The naming rule joined that way on 2026-08-21: its mechanical half
+became the test below in the same commit, and its judgement half is one pass over the directory listing rather
+than over the files, so the whole tree was read at once. The dates above stand.
 
 | Unit                                                                                       | Swept      | Notes                                                                                                                                                |
 | ------------------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -88,6 +93,26 @@ the body is extracted; if that child's props are rebuilt per row, the fix is hoi
 
 - `app/assets/dashboard/demo/icon/*.vue` — chart-icon SVG markup with no script block, so there is no responsibility to split.
 - `packages/vue-phaserjs` — engine wrappers whose shape is fixed by Phaser's object model, not app UI.
+
+## Find recipe — naming
+
+`packages/app/app/components/index.test.ts` owns the half that needs no judgement: a file standing beside a folder
+whose name its own name opens with. Nothing here has to look for those.
+
+What is left is the crowded directory — roughly ten or more flat components — and whether a shared first word in
+one is a group to fold or a **suffix family** to leave alone. `Resource/List` is the standing example of both:
+`Selection*` folded, while `StatusFilterPill`/`TagFilterPill`/`TypeFilterPill` did not, because folding `Type/`
+scatters the `FilterPill` family and renames its members for the worse.
+
+```bash
+# directories carrying ten or more flat components — the only ones the rule asks about
+find packages/app/app/components -name '*.vue' -printf '%h
+' | sort | uniq -c | awk '$1 >= 10'
+```
+
+Read each hit's listing rather than its files: the rule is about the names beside each other, so a directory is
+answered in one look. Most crowded directories have no fold at all — `Styled`, `Message/Friends` and
+`Resource/Sheet/Row` are flat because everything in them is a suffix family.
 
 ## Find recipe — computed extraction
 

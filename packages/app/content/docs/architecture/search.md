@@ -78,6 +78,8 @@ This branch has no `isPending` and no abort, because there is nothing asynchrono
 
 `StyledSearchDialog` is the one Ctrl+K palette: a `v-dialog` wrapping a solo, autofocused, clearable `mdi-magnify` text field. It exposes `v-model` (open state), `v-model:search-query`, an `activator` slot receiving `updateIsOpen`, and results in the default slot. Its `hotkey` prop registers through Vuetify's `useVHotkey` — the **only** sanctioned hotkey mechanism for dialog search; never re-roll `onKeyStroke` or `useEventListener` listeners per feature.
 
+It passes `hideToolbarActions` to the shell, so a palette is a search field and its results with nothing above them: the hotkey that opened it closes it again ([dialog shell](/docs/architecture/dialog-shell)).
+
 ```vue
 <StyledSearchDialog v-model="isOpen" v-model:search-query="query" hotkey="ctrl+k" placeholder="Search docs">
   <template #activator="{ updateIsOpen }">

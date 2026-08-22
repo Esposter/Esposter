@@ -177,8 +177,16 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     throw new Error("Method not implemented.");
   }
 
+  // Only what a caller can act on: the stored buffer's length, which is how a server checks an upload's real
+  // Size rather than the one the client declared
   getProperties(): Promise<BlobGetPropertiesResponse> {
-    throw new Error("Method not implemented.");
+    const blob = this.container.get(this.name);
+    if (!blob) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
+    return Promise.resolve({
+      _response: createMockResponse(200),
+      contentLength: blob.byteLength,
+      createdOn: MockContainerCreatedOnDatabase.get(getMockContainerCreatedOnKey(this.containerName, this.name)),
+    } as BlobGetPropertiesResponse);
   }
 
   getTags(): Promise<BlobGetTagsResponse> {
