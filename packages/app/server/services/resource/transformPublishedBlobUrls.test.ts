@@ -55,10 +55,10 @@ describe(transformPublishedBlobUrls, () => {
   });
 
   const PUBLISHED_DIRECTORY_REGEX = new RegExp(`${resourceId}/${PUBLISHED_DIRECTORY_SEGMENT}/[^/]+`, "u");
-  const transform = () =>
-    transformPublishedBlobUrls(ctx, { id: resourceId } as Resource, content).then(
-      ({ html }) => PUBLISHED_DIRECTORY_REGEX.exec(html)?.[0],
-    );
+  const transform = async () => {
+    const { html } = await transformPublishedBlobUrls(ctx, { id: resourceId } as Resource, content);
+    return PUBLISHED_DIRECTORY_REGEX.exec(html)?.[0];
+  };
 
   // The rewrite's own output is what the serving endpoint has to decode, so the directory this mints and the
   // Shape parseResourceAssetPath accepts are one decision — split them and every published asset 400s

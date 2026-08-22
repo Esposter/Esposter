@@ -17,6 +17,14 @@ export default {
         ":matches(ForOfStatement, ForInStatement, ForStatement):has(CallExpression:matches([callee.name=/^(it|test)$/], [callee.object.name=/^(it|test)$/]))",
     },
     {
+      // A `catch` swallows the failure into a control-flow branch the type system cannot see, which is what
+      // Neverthrow's Result exists to replace; `try`/`finally` is `withFinalizer`/`withFinalizerAsync`. There is
+      // No standing exception — the repo holds none — so this rule has no disable convention to learn.
+      message:
+        "`try`/`catch`/`finally` is banned — use `getResult`/`getResultAsync` (+ `withFinalizer`/`withFinalizerAsync` for cleanup) and `.match` on the Result. See the error-handling skill.",
+      selector: "TryStatement",
+    },
+    {
       message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
       selector:
         ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",

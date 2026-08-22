@@ -43,10 +43,11 @@ describe(createResourceRow, () => {
       },
     };
     let isReturned = false;
-    const promise = createResourceRow(createContext(), { name, type: ResourceType.Sheet }).then((resource) => {
+    const promise = (async () => {
+      const resource = await createResourceRow(createContext(), { name, type: ResourceType.Sheet });
       isReturned = true;
       return resource;
-    });
+    })();
     // A timer boundary drains every pending microtask, so anything still unsettled is waiting on the gated write
     await new Promise((resolve) => {
       setTimeout(resolve, 0);

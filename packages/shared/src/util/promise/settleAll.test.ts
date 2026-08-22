@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-syntax -- `settleAll` rejects, so its own tests observe that rejection
+   Directly; a Result wrapper here would assert the wrapper rather than the primitive under test */
 import { noop } from "@/util/function/noop";
 import { settleAll } from "@/util/promise/settleAll";
 import { describe, expect, test } from "vitest";

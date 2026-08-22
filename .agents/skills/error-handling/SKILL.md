@@ -13,11 +13,25 @@ description: Esposter Error Handling Conventions — neverthrow getResult/getRes
 - `references/server-guards.md` — when a tRPC router or server route guards a nullable DB result, attaches a `cause` to a `TRPCError`, or has a fire-and-forget tail on a path a caller rolls back.
 - `references/azure-functions.md` — when writing or changing an Azure Functions handler, its dead-letter replay, or a handler that enumerates its own work from a query.
 
-## try / catch Are BANNED
+## try / catch and .then Are BANNED
 
-Never write `try` anywhere (no `try`/`catch`, no `try`/`finally`) in any code — components, composables, stores, server routes, tRPC routers. Use `getResult`/`getResultAsync` + chain methods; for cleanup use `withFinalizer`/`withFinalizerAsync`.
+`try` anywhere (no `try`/`catch`, no `try`/`finally`) and `.then()`/`.catch()`/`.finally()` on a promise are both
+`no-restricted-syntax` errors — the rules live in `packages/configuration/eslint/typescriptRules.js` and
+`restrictedSyntaxes.js`. Use `getResult`/`getResultAsync` + chain methods; for cleanup use
+`withFinalizer`/`withFinalizerAsync`.
 
 Only exception: published package README examples aimed at external consumers may use plain `try`/`finally` — a doc example shouldn't force consumers to install `@esposter/shared`.
+
+A `.then` disable is one of exactly three shapes, and says which in its reason:
+
+| Shape                                                       | Why nothing else works                                                           |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `Promise.resolve().then(fn)` inside a Result primitive      | It is what turns a **synchronous** throw in `fn` into a rejection to map         |
+| A promise queue — `chain = chain.then(async () => {...})`   | Serialises async work from a sync watcher/callback, where `await` is unavailable |
+| A trailing value map on a deliberately non-`async` function | The function stays sync so its guard throws at the call, so there is no `await`  |
+
+Anything else converts. The rule is what makes those three visible: before it they were indistinguishable from an
+ordinary `.then` someone had not got round to replacing.
 
 ## Throwing — never `new Error`
 

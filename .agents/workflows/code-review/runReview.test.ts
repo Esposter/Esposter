@@ -26,9 +26,10 @@ const parallel = (thunks: (() => Promise<unknown>)[]): Promise<unknown[]> =>
  */
 let bodyPromise: Promise<string> | undefined;
 const readBody = (): Promise<string> =>
-  (bodyPromise ??= readFile(SCRIPT_PATH, "utf8").then((source) =>
-    source.replace(/^export const meta/mu, "const meta"),
-  ));
+  (bodyPromise ??= (async () => {
+    const source = await readFile(SCRIPT_PATH, "utf8");
+    return source.replace(/^export const meta/mu, "const meta");
+  })());
 
 /**
  * Drives one whole run of the real script against stubbed agents, and hands back everything a test can assert
