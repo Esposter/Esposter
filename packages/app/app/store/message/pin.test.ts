@@ -26,11 +26,11 @@ describe(usePinStore, () => {
     expect.hasAssertions();
 
     const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
+    const { getSlice } = dataStore;
     const pinStore = usePinStore();
     const { messages } = storeToRefs(pinStore);
     const pinnedMessage = createMessage();
-    items.value = [pinnedMessage];
+    getSlice(pinnedMessage.partitionKey).items.value = [pinnedMessage];
     await MessageHookMap[Operation.Update].run({
       isPinned: true,
       partitionKey: pinnedMessage.partitionKey,
@@ -44,11 +44,11 @@ describe(usePinStore, () => {
     expect.hasAssertions();
 
     const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
+    const { getSlice } = dataStore;
     const pinStore = usePinStore();
     const { messages } = storeToRefs(pinStore);
     const pinnedMessage = createMessage();
-    items.value = [pinnedMessage];
+    getSlice(pinnedMessage.partitionKey).items.value = [pinnedMessage];
     const pinnedInput = {
       partitionKey: pinnedMessage.partitionKey,
       rowKey: pinnedMessage.rowKey,

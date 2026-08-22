@@ -12,20 +12,20 @@ Consequences that keep this boundary intact:
 
 **Generic cache composables** (`app/composables/cache/indexedDb/`) — each takes one options object and returns nothing. Both of its operations are fired from watchers through `getSynchronizedFunction`, so the completion signal is the repo-wide drain, `waitForSynchronizedFunctions()`; never give the cache (or the `useMutation` instance under it) a `flush` of its own for a test to await.
 
-- `usePaginationCache` — the base; takes `initializeItems`
-- `useCursorPaginationCache` / `useOffsetPaginationCache` — wrap it, taking `initializeCursorPaginationData` / the offset equivalent instead
+- `usePaginationCache` — the base; takes `getSlice(partitionKey)` → `{ initializeItems, isLoaded, items }`
+- `useCursorPaginationCache` / `useOffsetPaginationCache` — wrap it, taking a slice whose initializer is named `initializeCursorPaginationData` / the offset equivalent
+
+**The cache names its partition, it does not read the ambient one.** Both watchers act on a partition key the cache already has in hand, so the store hands over `getSlice` rather than `items`/`isLoaded`: a hydrate that finishes after the reader moved on lands in the partition it was read for instead of being dropped. That is why there is no "is this still the current partition" check anywhere in here.
 
 **Feature cache composable pattern** — a thin wrapper reading store refs and calling the generic composable:
 
 ```ts
 export const useFooCache = () => {
   const fooStore = useFooStore();
-  const { foos } = storeToRefs(fooStore);
-  const { initializeCursorPaginationData } = fooStore;
+  const { getSlice } = fooStore;
   useCursorPaginationCache({
     configuration: FooIndexedDbStoreConfiguration,
-    initializeCursorPaginationData,
-    items: foos,
+    getSlice,
     partitionKey: () => session.value.data?.user.id ?? "",
   });
 };

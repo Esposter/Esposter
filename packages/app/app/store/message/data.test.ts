@@ -387,14 +387,14 @@ describe(useDataStore, () => {
     );
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
-    const { updateMessage } = dataStore;
+    const { getSlice, updateMessage } = dataStore;
     const newMessage = createMessageEntity({
       message,
       roomId,
       type: MessageType.Message,
       userId: getMockSession().user.id,
     });
-    items.value = [newMessage];
+    getSlice(newMessage.partitionKey).items.value = [newMessage];
     const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
     await Promise.all([
       updateMessage({ ...compositeKey, message: updatedMessage }),
@@ -420,7 +420,7 @@ describe(useDataStore, () => {
     );
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
-    const { deleteFile } = dataStore;
+    const { deleteFile, getSlice } = dataStore;
     const newMessage = createMessageEntity({
       files: [acceptedFileId, rejectedFileId, keptFileId].map((id) => ({
         filename,
@@ -434,7 +434,7 @@ describe(useDataStore, () => {
       type: MessageType.Message,
       userId: getMockSession().user.id,
     });
-    items.value = [newMessage];
+    getSlice(newMessage.partitionKey).items.value = [newMessage];
     const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
     await Promise.all([
       deleteFile({ ...compositeKey, id: acceptedFileId }),

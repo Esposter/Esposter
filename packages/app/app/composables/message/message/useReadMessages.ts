@@ -16,7 +16,7 @@ export const useReadMessages = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
-  const { readItems, readMoreItems } = dataStore;
+  const { getSlice, readItems, readMoreItems } = dataStore;
   const { hasMoreNewer, nextCursorNewer } = storeToRefs(dataStore);
   const readMembersByIds = useReadMembersByIds();
   const readAppUsers = useReadAppUsers();
@@ -83,6 +83,9 @@ export const useReadMessages = () => {
   const readMoreNewerMessages = async (onComplete: () => void) => {
     if (!currentRoomId.value) return;
 
+    // The room this page was read for, resolved before the request goes out — the reader can open another room
+    // While it is in flight, and the page belongs to the room that asked for it either way
+    const { items: roomItems } = getSlice(currentRoomId.value);
     const { hasMore, items, nextCursor } = await $trpc.message.readMessages.query({
       cursor: nextCursorNewer.value,
       order: SortOrder.Asc,
@@ -95,12 +98,12 @@ export const useReadMessages = () => {
     const newerItems: MessageEntity[] = [];
     const olderItems: MessageEntity[] = [];
 
-    for (const item of dataStore.items)
+    for (const item of roomItems.value)
       if (!rowKeys.has(item.rowKey))
         if (items.length > 0 && item.rowKey < takeOne(items).rowKey) newerItems.push(item);
         else olderItems.push(item);
 
-    dataStore.items = [...newerItems, ...items, ...olderItems];
+    roomItems.value = [...newerItems, ...items, ...olderItems];
     await readMetadata(items);
     onComplete();
   };

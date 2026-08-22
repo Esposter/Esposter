@@ -1,6 +1,6 @@
 ---
 name: pagination
-description: Esposter paginated-list conventions — the three-layer cursor pagination pattern (store + useRead* composable + StyledWaypoint), a keyed read binding to its key when issued, infinite scroll instead of a Load-more button, the ban on hand-rolling search-as-you-type and MiniSearch being the one client-side index, bundling ancillary reads into the primary read, and the offline IndexedDB cache being self-contained, plus deep dives on wiring useAutoSearch/useCursorSearcher with its sanctioned exceptions and on the feature cache composables. Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache.
+description: Esposter paginated-list conventions — the three-layer cursor pagination pattern (store + useRead* composable + StyledWaypoint), a keyed write naming its key when issued (the ambient items being readonly), infinite scroll instead of a Load-more button, the ban on hand-rolling search-as-you-type and MiniSearch being the one client-side index, bundling ancillary reads into the primary read, and the offline IndexedDB cache being self-contained, plus deep dives on wiring useAutoSearch/useCursorSearcher with its sanctioned exceptions and on the feature cache composables. Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache.
 ---
 
 # Pagination, Search & Offline List Cache
@@ -67,18 +67,18 @@ await readFoos();
 - Which pagination helper a store uses (single list vs per-key lists) is the `pinia` skill's (`references/keyed-state-and-pagination.md`).
 - The endpoint-side input schemas are the `trpc` skill's (`references/read-endpoints.md`).
 
-### A keyed read is bound to its key when it is issued, not when it lands
+### A keyed write names its key when the operation is issued, not when it lands
 
-`useCursorPaginationDataMap` takes a **binder**, not a ref: it resolves the current key once, up front, and the operation writes through that. So a read issued for room A files under A even when the user has already switched to B — `readItems` and `readMoreItems` give this for free and a `useRead*` composable needs nothing.
+`useCursorPaginationDataMap`'s ambient `items` is the **reading** view — it follows whichever key is current, which is what a rendered list wants and exactly what a write must not use, because a response landing after the reader moved on would file one key's rows under another's: one member's private moderation notes rendered against another member, one room's messages appended to another's.
 
-This is why the ambient `data` ref must never be assigned after an await. `useDataMap`'s setter resolves `toValue(currentId)` at **write** time, so a slower response lands under whichever key is current by then — one member's private moderation notes rendered against another member, one room's messages appended to another's.
+So it is typed `readonly`, and the write does not compile. A writer comes from `getSlice(key)` alone, and obtaining one means naming the key — `readItems`/`readMoreItems` bind the current key up front and give this for free, so a `useRead*` composable needs nothing. Everything else resolves its slice where the operation is **issued**.
 
 Two corollaries that are easy to get backwards:
 
-- **Bind per operation, never per composable.** A composable that outlives one target (`useMessageCache` is constructed once and lives across every room switch) binds to the first key and stays there forever, which is worse than not binding at all.
-- **Confirm the defect before converging a call site.** A consumer that owns its own await may already re-check the key after it — `usePaginationCache` does exactly that and bails when the partition moved on. Converging it onto a binder breaks it.
+- **Resolve per operation, never per composable.** A composable that outlives one target (`useMessageCache` is constructed once and lives across every room switch) would bind to the first key and stay there forever, which is worse than not binding at all — so a long-lived consumer takes `getSlice` itself and resolves inside the operation.
+- **A partition that has already been named needs no re-check.** `usePaginationCache` used to bail when the partition moved on mid-hydrate; it now hydrates `getSlice(partitionKey)`, so the late write lands in the partition it was read for and re-opening that partition shows it. A guard added back on top would drop rows that are correctly filed.
 
-`initializeCursorPaginationData` still resolves the key when called, which is correct for synchronous seeding and wrong across an await. If a new consumer needs to write after its own await, it binds at the moment that operation begins — only it knows when that was.
+Why the readonly type rather than a convention everyone remembers: the `invariants` skill.
 
 ## StyledWaypoint — Infinite Scroll
 

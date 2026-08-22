@@ -19,8 +19,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMessageCache, () => {
   let wrapper: VueWrapper;
-  let items: Ref<MessageEntity[]>;
-  let initializeCursorPaginationData: (data: CursorPaginationData<MessageEntity>) => void;
+  let items: ComputedRef<readonly MessageEntity[]>;
+  let getSlice: ReturnType<typeof useDataStore>["getSlice"];
   const partitionKey = crypto.randomUUID();
   const secondPartitionKey = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
@@ -35,11 +35,11 @@ describe(useMessageCache, () => {
           setCurrentRoomId(initialRouteId);
           const dataStore = useDataStore();
           ({ items } = storeToRefs(dataStore));
-          ({ initializeCursorPaginationData } = dataStore);
+          ({ getSlice } = dataStore);
           useMessageCache();
 
           onUnmounted(() => {
-            items.value = [];
+            getSlice(initialRouteId).items.value = [];
           });
         },
       }),
@@ -68,7 +68,7 @@ describe(useMessageCache, () => {
     loadedData.items = [new StandardMessageEntity({ isLoading: true, message, partitionKey, rowKey, userId })];
     // Through the store hook a read would use, so the room counts as loaded — an unloaded room persists nothing
     // At all, which would leave the filter untested
-    initializeCursorPaginationData(loadedData);
+    getSlice(partitionKey).initializeCursorPaginationData(loadedData);
     await flushCache();
     const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
 

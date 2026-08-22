@@ -3,6 +3,7 @@ import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmoji
 
 import { useMessageHtml } from "@/composables/message/useMessageHtml";
 import { EmojiType } from "@/models/message/emoji/EmojiType";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { useUserStore } from "@/store/message/user";
@@ -40,6 +41,8 @@ describe(useMessageHtml, () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
+    // The rewrite reads the room on screen's emoji set, which is the room these messages are rendered in
+    setCurrentRoomId(roomId);
   });
 
   // The rewrite used to query a tree of its own and serialize a second one, so every mutation was made to a copy
@@ -60,7 +63,7 @@ describe(useMessageHtml, () => {
 
     const roomEmojiStore = useRoomEmojiStore();
     const { storeCreateRoomEmoji } = roomEmojiStore;
-    storeCreateRoomEmoji(roomEmoji);
+    storeCreateRoomEmoji(roomId, roomEmoji);
     const messageHtml = useMessageHtml(createCustomEmojiNode(roomEmojiId), roomId);
 
     expect(messageHtml.value).toContain(`src="${sasUrl.replaceAll("&", "&amp;")}"`);
@@ -82,7 +85,7 @@ describe(useMessageHtml, () => {
 
     const roomEmojiStore = useRoomEmojiStore();
     const { storeCreateRoomEmoji } = roomEmojiStore;
-    storeCreateRoomEmoji(roomEmoji);
+    storeCreateRoomEmoji(roomId, roomEmoji);
 
     expect(roomEmojiStore.customEmojis).toStrictEqual([
       { id: roomEmojiId, name, sasUrl, slug: name, type: EmojiType.Custom },

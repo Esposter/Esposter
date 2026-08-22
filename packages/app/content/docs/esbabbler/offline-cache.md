@@ -65,19 +65,18 @@ export const useFooCache = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const fooStore = useFooStore();
-  const { isLoaded, items } = storeToRefs(fooStore);
-  const { initializeCursorPaginationData } = fooStore;
+  const { getSlice } = fooStore;
 
   useCursorPaginationCache({
     configuration: FooIndexedDbStoreConfiguration,
+    getSlice,
     getWriteItems: (items) => items.filter((item) => !item.isLoading),
-    initializeCursorPaginationData,
-    isLoaded,
-    items,
     partitionKey: currentRoomId,
   });
 };
 ```
+
+The store hands over `getSlice`, not its `items` — the cache always has the partition key in hand, so both directions name it and a hydrate that finishes after the room changed lands under the room it was read for. The store's ambient `items` is `readonly` for exactly this reason (`pinia` skill, keyed state).
 
 Nothing in a fetch composable touches the cache: hydration is a watcher's job, fired on mount, on a partition switch and on going offline, so `readItems` stays an online query and the store's own hook is the only seam between them.
 

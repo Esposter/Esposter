@@ -14,13 +14,13 @@ export const useMemberStore = defineStore("message/user/member", () => {
   const roleStore = useRoleStore();
   const { mutateMemberRoles } = roleStore;
   const userStore = useUserStore();
-  const { storeUser, storeUsers } = userStore;
+  const { storeUser } = userStore;
   const userToRoomStore = useUserToRoomStore();
   const { getDisplayName } = userToRoomStore;
   // Keyed by room, like messages. A single global list would still hold the previous room's members after a
   // Switch, which is unreadable state for anything asking "are these rows this room's" — the offline cache asks
   // Exactly that before it hydrates or persists, and cannot answer it from a list that outlives the partition
-  const { items, ...restData } = useCursorPaginationDataMap<User>(() => roomStore.scopedRoomId);
+  const { getSlice, items, ...restData } = useCursorPaginationDataMap<User>(() => roomStore.scopedRoomId);
   const members = computed(() => items.value.toSorted((a, b) => EN_US_COMPARATOR.compare(a.name, b.name)));
   // Single source of truth for resolving a member id to its room display name (nickname over global name),
   // Falling back to the raw id for actors/targets no longer in the loaded member list.
@@ -34,7 +34,11 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // The read that fetches them binds this slice before its first await, the way it already binds the member
   // List — `memberCounts` itself tracks whichever room is current, which is what the rendered headers want and
   // Exactly what a response arriving after a room switch must not use
-  const { data: memberCounts, getBoundData: getBoundMemberCounts } = useDataMap(
+  const {
+    data: memberCounts,
+    getBoundData: getBoundMemberCounts,
+    getDataRef: getMemberCountsRef,
+  } = useDataMap(
     () => roomStore.scopedRoomId,
     () => new MemberCounts(),
   );
@@ -50,39 +54,30 @@ export const useMemberStore = defineStore("message/user/member", () => {
       memberCounts.value.countsByTopRole = newCountsByTopRole;
     },
   });
+  // The room the change happened in, which is not necessarily the room on screen: a role assigned from a profile
+  // Card in one room while another is open belongs to that room's totals. The roleless group derives from the
+  // Total, so a change with no room is written to a slice nothing reads and is thereby a no-op
   topRoleChangeHooks.register((roomId, previousTopRoleId, newTopRoleId) => {
-    // Counts track the currently open room; the roleless group derives from the total, so "" is a no-op
-    if (roomId !== roomStore.scopedRoomId) return;
+    const roomCountsByTopRole = getMemberCountsRef(roomId).value.countsByTopRole;
     for (const [roleId, delta] of [
       [previousTopRoleId, -1],
       [newTopRoleId, 1],
     ] as const) {
       if (!roleId) continue;
-      const countByTopRole = countsByTopRole.value.find((existingCount) => existingCount.roleId === roleId);
+      const countByTopRole = roomCountsByTopRole.find((existingCount) => existingCount.roleId === roleId);
       if (countByTopRole) countByTopRole.count += delta;
-      else if (delta > 0) countsByTopRole.value.push({ count: delta, roleId });
+      else if (delta > 0) roomCountsByTopRole.push({ count: delta, roleId });
     }
   });
-  const { createMember: baseStoreCreateMember, deleteMember: baseStoreDeleteMember } = createOperationData(
-    computed({
-      get: () => members.value,
-      set: (newMembers) => {
-        items.value = newMembers;
-        storeUsers(newMembers);
-      },
-    }),
-    ["id"],
-    "Member",
-  );
   // A join or a leave is subscribed for every room the user is in, so both handlers are told which room the
-  // Event happened in. The list and the running total describe the room that is open, and are left alone for
-  // Any other — that room's members are re-read when it is entered, which is the same rule the top-role hook
-  // Above follows for the per-role totals
+  // Event happened in — and that is the room its list and its running total are written to, whichever room is on
+  // Screen. `members` and `count` above are the reading views and neither can be written through: `members` is
+  // Sorted, so a write through it would land on the copy `toSorted` produced rather than the room's own rows
+  const getRoomOperationData = (roomId: string) => createOperationData(getSlice(roomId).items, ["id"], "Member");
   const storeCreateMember = (roomId: string, member: User) => {
     storeUser(member);
-    if (roomId !== roomStore.scopedRoomId) return;
-    baseStoreCreateMember(member);
-    count.value++;
+    getRoomOperationData(roomId).createMember(member);
+    getMemberCountsRef(roomId).value.count++;
   };
   const storeDeleteMember = (roomId: string, id: User["id"]) => {
     // A member who leaves is a member whose top role became "none", so the departure goes through the one
@@ -90,15 +85,15 @@ export const useMemberStore = defineStore("message/user/member", () => {
     // Total drops while the role group keeps the leaver, and the roleless remainder absorbs the whole error
     // (in a room where every member holds a role it goes negative).
     mutateMemberRoles(roomId, id, []);
-    if (roomId !== roomStore.scopedRoomId) return;
-    baseStoreDeleteMember({ id });
-    count.value--;
+    getRoomOperationData(roomId).deleteMember({ id });
+    getMemberCountsRef(roomId).value.count--;
   };
   return {
     count,
     countsByTopRole,
     getBoundMemberCounts,
     getMemberName,
+    getSlice,
     members,
     ...restData,
     storeCreateMember,

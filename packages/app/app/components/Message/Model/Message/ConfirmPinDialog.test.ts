@@ -33,8 +33,7 @@ describe("messageModelMessageConfirmPinDialog", () => {
     );
     const component = await mountSuspended(MessageModelMessageConfirmPinDialog, { shallow: true });
     setCurrentRoomId(roomId);
-    const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
+    const { getSlice } = useDataStore();
     const userStore = useUserStore();
     const { storeUser } = userStore;
     // The dialog renders only once the message's author resolves, and the confirm is emitted from it
@@ -42,7 +41,7 @@ describe("messageModelMessageConfirmPinDialog", () => {
     const messageDialogStore = useMessageDialogStore();
     const { pinningRowKey } = storeToRefs(messageDialogStore);
     const pinnedMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
-    items.value = [pinnedMessage];
+    getSlice(roomId).items.value = [pinnedMessage];
     pinningRowKey.value = pinnedMessage.rowKey;
     await flushPromises();
     // The pin a subscription delivered while the dialog was open

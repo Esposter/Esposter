@@ -22,7 +22,7 @@ export const useRoomEmojiSubscribables = () => {
       { roomId },
       {
         onData: (newRoomEmoji) => {
-          storeCreateRoomEmoji(newRoomEmoji);
+          storeCreateRoomEmoji(roomId, newRoomEmoji);
         },
       },
     );
@@ -30,7 +30,7 @@ export const useRoomEmojiSubscribables = () => {
       { roomId },
       {
         onData: ({ id }) => {
-          storeDeleteRoomEmoji({ id });
+          storeDeleteRoomEmoji(roomId, { id });
         },
       },
     );
@@ -38,7 +38,7 @@ export const useRoomEmojiSubscribables = () => {
       { roomId },
       {
         onData: (updatedRoomEmoji) => {
-          storeUpdateRoomEmoji(updatedRoomEmoji);
+          storeUpdateRoomEmoji(roomId, updatedRoomEmoji);
         },
       },
     );

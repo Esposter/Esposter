@@ -29,10 +29,10 @@ describe(useWebhookStore, () => {
     setCurrentRoomId(roomId);
   });
 
-  // The panel reads for the room whose settings opened it, while `items` follows whichever room is scoped — so a
-  // Response that lands after the reader moved on must not become the newly scoped room's list. That room reads
-  // Its own webhooks when its panel opens, so dropping the write loses nothing
-  test("leaves the newly scoped room's list alone when the previous room's read lands late", async () => {
+  // `items` is the reading view, so it follows whichever room is scoped — a read names its room when it is issued
+  // And stores its rows there whatever the reader has opened since, which is what makes the newly scoped room's
+  // List its own and the previous room's list still correct when it is opened again
+  test("files a read's rows under the room it was issued for, not the room scoped when it lands", async () => {
     expect.hasAssertions();
 
     const { promise: isRoomSwitched, resolve: onRoomSwitched } = Promise.withResolvers<void>();
@@ -51,6 +51,10 @@ describe(useWebhookStore, () => {
     await pendingRead;
 
     expect(items.value).toStrictEqual([]);
+
+    setCurrentRoomId(roomId);
+
+    expect(items.value).toStrictEqual([readWebhook(first), readWebhook(second)]);
   });
 
   // A row's name field and its active switch write different fields of one webhook through one target, so an
@@ -91,10 +95,10 @@ describe(useWebhookStore, () => {
       trpcMsw.webhook.deleteWebhook.mutation(() => second),
     );
     const webhookStore = useWebhookStore();
-    const { deleteWebhook, updateWebhook } = webhookStore;
+    const { deleteWebhook, getSlice, updateWebhook } = webhookStore;
     const { items } = storeToRefs(webhookStore);
     // Copies, since an optimistic update assigns onto the stored row in place
-    items.value = [{ ...first }, { ...second }];
+    getSlice(roomId).items.value = [{ ...first }, { ...second }];
     await Promise.all([
       updateWebhook(roomId, { id: first.id, name: "renamed" }),
       deleteWebhook(roomId, { id: second.id }),
@@ -113,9 +117,9 @@ describe(useWebhookStore, () => {
       }),
     );
     const webhookStore = useWebhookStore();
-    const { deleteWebhook } = webhookStore;
+    const { deleteWebhook, getSlice } = webhookStore;
     const { items } = storeToRefs(webhookStore);
-    items.value = [{ ...first }, { ...second }];
+    getSlice(roomId).items.value = [{ ...first }, { ...second }];
     await Promise.all([deleteWebhook(roomId, { id: first.id }), deleteWebhook(roomId, { id: second.id })]);
 
     expect(items.value).toStrictEqual([first]);

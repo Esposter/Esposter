@@ -47,8 +47,8 @@ describe(useSearchHistoryStore, () => {
     );
     const searchHistoryStore = useSearchHistoryStore();
     const { items } = storeToRefs(searchHistoryStore);
-    const { updateSearchHistory } = searchHistoryStore;
-    items.value = [createSearchHistory(originalQuery)];
+    const { getSlice, updateSearchHistory } = searchHistoryStore;
+    getSlice(roomId).items.value = [createSearchHistory(originalQuery)];
     await Promise.all([
       updateSearchHistory({ id, query: acceptedQuery }),
       updateSearchHistory({ id, query: rejectedQuery }),
@@ -71,8 +71,11 @@ describe(useSearchHistoryStore, () => {
     );
     const searchHistoryStore = useSearchHistoryStore();
     const { items } = storeToRefs(searchHistoryStore);
-    const { deleteSearchHistory } = searchHistoryStore;
-    items.value = [createSearchHistory(originalQuery), { ...createSearchHistory(originalQuery), id: otherId }];
+    const { deleteSearchHistory, getSlice } = searchHistoryStore;
+    getSlice(roomId).items.value = [
+      createSearchHistory(originalQuery),
+      { ...createSearchHistory(originalQuery), id: otherId },
+    ];
     await Promise.all([deleteSearchHistory(otherId), deleteSearchHistory(id)]);
 
     expect(items.value.map((searchHistory) => searchHistory.id)).toStrictEqual([id]);
@@ -95,8 +98,11 @@ describe(useSearchHistoryStore, () => {
     );
     const searchHistoryStore = useSearchHistoryStore();
     const { items } = storeToRefs(searchHistoryStore);
-    const { deleteSearchHistory, updateSearchHistory } = searchHistoryStore;
-    items.value = [createSearchHistory(originalQuery), { ...createSearchHistory(originalQuery), id: otherId }];
+    const { deleteSearchHistory, getSlice, updateSearchHistory } = searchHistoryStore;
+    getSlice(roomId).items.value = [
+      createSearchHistory(originalQuery),
+      { ...createSearchHistory(originalQuery), id: otherId },
+    ];
     await Promise.all([updateSearchHistory({ id, query: rejectedQuery }), deleteSearchHistory(otherId)]);
 
     expect(items.value.map((searchHistory) => searchHistory.id)).toStrictEqual([id]);
@@ -117,8 +123,11 @@ describe(useSearchHistoryStore, () => {
     );
     const searchHistoryStore = useSearchHistoryStore();
     const { items } = storeToRefs(searchHistoryStore);
-    const { deleteSearchHistory } = searchHistoryStore;
-    items.value = [createSearchHistory(originalQuery), { ...createSearchHistory(originalQuery), id: otherId }];
+    const { deleteSearchHistory, getSlice } = searchHistoryStore;
+    getSlice(roomId).items.value = [
+      createSearchHistory(originalQuery),
+      { ...createSearchHistory(originalQuery), id: otherId },
+    ];
     await Promise.all([deleteSearchHistory(id), deleteSearchHistory(otherId)]);
 
     expect(items.value.map((searchHistory) => searchHistory.id)).toStrictEqual([id]);

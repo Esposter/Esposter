@@ -38,9 +38,7 @@ describe.each<PaginationCacheVariant>([
     useCache: (initializeItems, isLoaded, items, partitionKey, onHydrate) => {
       useCursorPaginationCache({
         configuration: MessageIndexedDbStoreConfiguration,
-        initializeCursorPaginationData: initializeItems,
-        isLoaded,
-        items,
+        getSlice: () => ({ initializeCursorPaginationData: initializeItems, isLoaded, items }),
         onHydrate,
         partitionKey,
       });
@@ -51,9 +49,7 @@ describe.each<PaginationCacheVariant>([
     useCache: (initializeItems, isLoaded, items, partitionKey, onHydrate) => {
       useOffsetPaginationCache({
         configuration: MessageIndexedDbStoreConfiguration,
-        initializeOffsetPaginationData: initializeItems,
-        isLoaded,
-        items,
+        getSlice: () => ({ initializeOffsetPaginationData: initializeItems, isLoaded, items }),
         onHydrate,
         partitionKey,
       });

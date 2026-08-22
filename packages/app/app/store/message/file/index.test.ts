@@ -41,8 +41,8 @@ describe(useDownloadFileStore, () => {
     const dataStore = useDataStore();
     const downloadFileStore = useDownloadFileStore();
     const { fileUrlMap } = storeToRefs(downloadFileStore);
-    const { items } = storeToRefs(dataStore);
-    items.value.push(
+    const { getSlice } = dataStore;
+    getSlice(roomId).items.value.push(
       createMessageEntity({
         files: [{ filename, hasThumbnail: false, id: fileId, mimetype: "text/plain", size: 1 }],
         message: filename,
@@ -73,7 +73,7 @@ describe(useDownloadFileStore, () => {
     const dataStore = useDataStore();
     const downloadFileStore = useDownloadFileStore();
     const { fileUrlMap } = storeToRefs(downloadFileStore);
-    const { items } = storeToRefs(dataStore);
+    const { getSlice } = dataStore;
     const files = Array.from({ length: MAX_READ_LIMIT + 1 }, () => ({
       filename,
       hasThumbnail: false,
@@ -81,7 +81,7 @@ describe(useDownloadFileStore, () => {
       mimetype: "text/plain",
       size: 1,
     }));
-    items.value.push(
+    getSlice(roomId).items.value.push(
       createMessageEntity({ files, message: filename, roomId, type: MessageType.Message, userId: crypto.randomUUID() }),
     );
     for (const { id } of files)

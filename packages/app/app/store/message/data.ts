@@ -32,13 +32,12 @@ export const useDataStore = defineStore("message/data", () => {
   const roomStore = useRoomStore();
   const threadFollowStore = useThreadFollowStore();
   const { storeFollowThread } = threadFollowStore;
-  const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
-  const {
-    createMessage: baseStoreCreateMessage,
-    deleteMessage: baseStoreDeleteMessage,
-    updateMessage: baseStoreUpdateMessage,
-    ...restOperationData
-  } = createOperationData(items, CompositeAzureKeyPath, AzureEntityType.Message);
+  const { getSlice, items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
+  // `items` is the reading view — the room on screen. Every write names the room it is for, which a message
+  // Always carries as its partition key: a subscription echo, a rejected edit's rollback and an attachment
+  // Removal all belong to the room the message is in, whichever room the reader has moved to since
+  const getRoomOperationData = (roomId: MessageEntity["partitionKey"]) =>
+    createOperationData(getSlice(roomId).items, CompositeAzureKeyPath, AzureEntityType.Message);
   const files = computed(() => items.value.flatMap(({ files: messageFiles }) => messageFiles));
   // Keyed by room like the list they page, never global: a deep link into a room leaves a newer-cursor behind,
   // And a global one would still be pointing at that room's window after the switch — so the next room renders
@@ -120,12 +119,16 @@ export const useDataStore = defineStore("message/data", () => {
     );
   };
   const updateMessage = async (input: UpdateMessageInput) => {
+    const { items: roomItems } = getSlice(input.partitionKey);
+    const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(input.partitionKey);
     await executeMutation(() => $trpc.message.updateMessage.mutate(input), {
       // Apply only the raw reactive field change — the subscription echo re-runs MessageHookMap on success,
       // So calling storeUpdateMessage here would double-fire the update hooks. Read as the write is sent, so a
       // Rejected edit restores the body the edit ahead of it stored rather than the one on screen at the click
       applyOptimistic: () => {
-        const previousMessage = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input))?.message;
+        const previousMessage = roomItems.value.find(
+          getIsEntityIdEqualComparator(CompositeAzureKeyPath, input),
+        )?.message;
         baseStoreUpdateMessage(input);
         return () => {
           if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
@@ -137,7 +140,9 @@ export const useDataStore = defineStore("message/data", () => {
     });
   };
   const deleteFile = async ({ id, ...compositeKey }: DeleteFileInput) => {
-    const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, compositeKey));
+    const { items: roomItems } = getSlice(compositeKey.partitionKey);
+    const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(compositeKey.partitionKey);
+    const message = roomItems.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, compositeKey));
     if (!message) return;
 
     await executeMutation(() => $trpc.message.deleteFile.mutate({ id, ...compositeKey }), {
@@ -163,6 +168,7 @@ export const useDataStore = defineStore("message/data", () => {
   // A message arriving from anyone else has no bubble to keep responsive and nothing to roll back, so it waits for
   // Its urls — pushing it first renders every incoming attachment as a broken image until the fetch lands
   const storeCreateMessage = async (message: MessageEntity, isOptimistic = false) => {
+    const { createMessage: baseStoreCreateMessage } = getRoomOperationData(message.partitionKey);
     if (isOptimistic) {
       baseStoreCreateMessage(message, true);
       await MessageHookMap[Operation.Create].run(message);
@@ -172,10 +178,12 @@ export const useDataStore = defineStore("message/data", () => {
     }
   };
   const storeUpdateMessage = async (input: MessageEvents["updateMessage"][0][0]) => {
+    const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(input.partitionKey);
     await MessageHookMap[Operation.Update].run(input);
     baseStoreUpdateMessage(input);
   };
   const storeDeleteMessage = async (input: DeleteMessageInput) => {
+    const { deleteMessage: baseStoreDeleteMessage } = getRoomOperationData(input.partitionKey);
     await MessageHookMap[Operation.Delete].run(input);
     baseStoreDeleteMessage(input);
   };
@@ -225,16 +233,16 @@ export const useDataStore = defineStore("message/data", () => {
     createMessage,
     deleteFile,
     files,
+    getSlice,
     hasMoreNewer,
     items,
     nextCursorNewer,
+    sendMessage,
     storeCreateMessage,
     storeDeleteMessage,
+    storeSendMessage,
     storeUpdateMessage,
     updateMessage,
-    ...restOperationData,
-    sendMessage,
-    storeSendMessage,
     ...restData,
     typings,
   };
