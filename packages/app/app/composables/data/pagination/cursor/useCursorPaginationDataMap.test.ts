@@ -14,7 +14,7 @@ describe(useCursorPaginationDataMap, () => {
   const item = "item";
   let wrapper: VueWrapper;
   let currentId: Ref<string>;
-  let items: ReturnType<typeof useCursorPaginationOperationData<string>>["items"];
+  let items: ReturnType<typeof useCursorPaginationDataMap<string>>["items"];
   let readItems: ReturnType<typeof useCursorPaginationOperationData<string>>["readItems"];
   let readMoreItems: ReturnType<typeof useCursorPaginationOperationData<string>>["readMoreItems"];
 

@@ -9,21 +9,31 @@ import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 
+// The rows a partition holds are the rows its store keeps, which is the schema's own value type for that store —
+// There is no second item type to be generic over, and pretending otherwise made the slice a partition hands back
+// Un-assignable to the slice the cache asked for
 export interface PaginationCacheOptions<
   TStore extends IndexedDbStoreName,
   TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
-  TItem,
 > {
   configuration: IndexedDbStoreConfiguration<TStore, TIndex>;
-  getWriteItems?: (items: TItem[]) => IndexedDbDatabaseSchema[TStore]["value"][];
-  initializeItems: (cachedItems: IndexedDbDatabaseSchema[TStore]["value"][]) => void;
-  // Whether the rows this partition shows are its own. It is the one question both halves of the cache ask, and
-  // The list cannot answer it — an empty list is either "not loaded yet" or "loaded and genuinely empty". The
-  // Store that performed the load records it per partition, so it outlives every consumer of this composable
-  // Exactly as the rows do; a flag owned here would start fresh on a remount under a list that did not.
-  isLoaded: MaybeRefOrGetter<boolean>;
-  items: MaybeRefOrGetter<TItem[]>;
-  onHydrate?: (items: IndexedDbDatabaseSchema[TStore]["value"][]) => Promisable<void>;
+  // The rows of one partition and whether they are its own, resolved by naming that partition. Both halves of the
+  // Cache name it — the write names the partition it is persisting, the read names the partition it read for — so
+  // Neither can act on the list of a partition the reader has switched to since. Readiness cannot come from the
+  // List (an empty list is either "not loaded yet" or "loaded and genuinely empty"), so it rides along here,
+  // Owned by the store that performed the load and outliving every consumer of this composable.
+  getSlice: (partitionKey: PartitionKey<TStore, TIndex>) => {
+    initializeItems: (cachedItems: IndexedDbDatabaseSchema[TStore]["value"][]) => void;
+    isLoaded: MaybeRefOrGetter<boolean>;
+    items: MaybeRefOrGetter<IndexedDbDatabaseSchema[TStore]["value"][]>;
+  };
+  getWriteItems?: (items: IndexedDbDatabaseSchema[TStore]["value"][]) => IndexedDbDatabaseSchema[TStore]["value"][];
+  // The partition rides along, because a hydrate lands after its own await: companion state a consumer updates
+  // From it (a member count, a user map) belongs to the partition that was read, not to whichever is current now
+  onHydrate?: (
+    items: IndexedDbDatabaseSchema[TStore]["value"][],
+    partitionKey: PartitionKey<TStore, TIndex>,
+  ) => Promisable<void>;
   partitionKey: MaybeRefOrGetter<PartitionKey<TStore, TIndex> | undefined>;
 }
 // The schema types every index key as a string, which is what lets a partition double as a `useMutation` target
@@ -37,16 +47,13 @@ type PartitionKey<
 export const usePaginationCache = <
   TStore extends IndexedDbStoreName,
   TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
-  TItem extends IndexedDbDatabaseSchema[TStore]["value"] = IndexedDbDatabaseSchema[TStore]["value"],
 >({
   configuration,
+  getSlice,
   getWriteItems,
-  initializeItems,
-  isLoaded,
-  items,
   onHydrate,
   partitionKey,
-}: PaginationCacheOptions<TStore, TIndex, TItem>) => {
+}: PaginationCacheOptions<TStore, TIndex>) => {
   const online = useOnline();
   // The partition is the target: its writes run one at a time so each rewrite lands on the set the one before
   // It stored, while another partition's cache is a different target and never waits behind it
@@ -67,15 +74,15 @@ export const usePaginationCache = <
     await executeQuery(() => readIndexedDb(configuration, newPartitionKey), {
       key: newPartitionKey,
       onError,
-      // State is seeded here so the primitive's own staleness filter runs first; only the switch away needs a
-      // Guard of its own, because the read for the partition that replaced this one is a different target.
-      // Readiness answers the one question hydration turns on — has THIS partition produced rows since the
-      // Switch onto it, and would restoring the cache therefore overwrite live data
+      // The rows are restored into the partition they were read for, so switching away needs no guard of its own.
+      // What is left is the one question hydration turns on — has THIS partition produced rows since the switch
+      // Onto it, and would restoring the cache therefore overwrite live data
       onSuccess: async (cachedItems) => {
-        if (toValue(partitionKey) !== newPartitionKey || cachedItems.length === 0 || toValue(isLoaded)) return;
+        const { initializeItems, isLoaded } = getSlice(newPartitionKey);
+        if (cachedItems.length === 0 || toValue(isLoaded)) return;
 
         initializeItems(cachedItems);
-        await onHydrate?.(cachedItems);
+        await onHydrate?.(cachedItems, newPartitionKey);
       },
     });
   });
@@ -88,6 +95,10 @@ export const usePaginationCache = <
   // End of the tick
   watchDeep(
     () => {
+      const partitionKeyValue = toValue(partitionKey);
+      if (!partitionKeyValue) return { isLoaded: false, items: [] };
+
+      const { isLoaded, items } = getSlice(partitionKeyValue);
       const currentItems = toValue(items);
       const writeItems = getWriteItems?.(currentItems) ?? currentItems;
       return { isLoaded: toValue(isLoaded), items: getCachedItems(writeItems, configuration.limit) };

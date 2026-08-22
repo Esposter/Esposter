@@ -27,6 +27,7 @@ export const createPrepareLayer = (
       "no captured deps snapshot to fork for the prepare layer; run createSnapshot first",
     );
   // Not `async`: the guard above is a caller error rather than a failed capture, so it stays a synchronous throw
+  // eslint-disable-next-line no-restricted-syntax -- the trailing `then` maps the value, and the function is deliberately not `async` (see above), so `await` cannot
   return captureOverlayUpper(backend, prepareStep.command, options, {
     dir,
     failureLabel: "prepare command",

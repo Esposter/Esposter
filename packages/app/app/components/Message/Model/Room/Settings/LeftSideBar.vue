@@ -21,6 +21,9 @@ const emit = defineEmits<{ "open:delete": [] }>();
 const roleStore = useRoleStore();
 const { getMyPermissions } = roleStore;
 const myPermissions = computed(() => getMyPermissions(room.id));
+// Deleting a room is guarded by ownership rather than by a permission, and a member who cannot delete it can
+// Still leave it — the same row, doing the thing this reader is allowed to do
+const isRoomOwner = computed(() => myPermissions.value?.isRoomOwner ?? false);
 const checkIsVisible = (settingsType: SettingsType) => {
   const permission = SettingsPermissionMap[settingsType];
   if (!permission) return true;
@@ -74,9 +77,10 @@ const onClick = (settingsType: SettingsType) => {
       <v-divider my-2 />
       <MessageModelRoomSettingsLeftSideBarItem
         :color="SettingsListItemMap[SettingsType.Delete].color"
-        :icon="SettingsListItemMap[SettingsType.Delete].icon"
+        :icon="isRoomOwner ? SettingsListItemMap[SettingsType.Delete].icon : 'mdi-exit-run'"
         :is-active="false"
         :settings-type="SettingsType.Delete"
+        :title="isRoomOwner ? undefined : 'Leave'"
         @click="onClick"
       />
     </v-list>

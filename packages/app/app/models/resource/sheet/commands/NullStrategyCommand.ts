@@ -57,7 +57,11 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
         row.data[columnName] = originalValue;
       }
     } else {
-      for (const { index, row } of this.#affectedRows) dataSource.rows.splice(index, 0, row);
+      // Reinserted lowest index first, so each row lands at the index it was removed from — the same order
+      // The removal recorded them in
+      let restoredRows = dataSource.rows;
+      for (const { index, row } of this.#affectedRows) restoredRows = restoredRows.toSpliced(index, 0, row);
+      dataSource.rows = restoredRows;
       const columnsByNameMap = new Map(dataSource.columns.map((column) => [column.name, column]));
       for (const { row } of this.#affectedRows)
         for (const [columnName, value] of Object.entries(row.data)) {

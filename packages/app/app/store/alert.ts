@@ -47,7 +47,7 @@ export const useAlertStore = defineStore("alert", () => {
     const index = alerts.value.findIndex((alert) => alert.id === id);
     if (index === -1) return;
 
-    alerts.value.splice(index, 1);
+    alerts.value = alerts.value.toSpliced(index, 1);
     const timeoutId = alertTimeoutMap.get(id);
     if (!timeoutId) return;
 

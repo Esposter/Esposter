@@ -1,3 +1,4 @@
+import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
 import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
@@ -31,10 +32,6 @@ export const useReadSearchedMessages = () => {
           CompositeKeyPropertyNames.partitionKey,
         );
 
-      menu.value = false;
-      isSearching.value = true;
-      isRightDrawerOpen.value = true;
-      rightDrawer.value = RightDrawer.Search;
       // Everything this read writes back is resolved before its first await, exactly as the result slice it is
       // Issued against is: the room can move while it is in flight, and its totals, its page and its history
       // Entry all belong to the search that was actually run, not to whatever is on screen when the response lands
@@ -42,6 +39,15 @@ export const useReadSearchedMessages = () => {
       // Sent — both to the search and to the history entry the search earns, which stores what it actually ran
       const filters = getSearchableFilters(selectedFilters.value);
       const query = searchQuery.value;
+      // The input schema refuses a search with nothing in it, so the read that builds the request is where that
+      // Stops rather than at each of the surfaces that can issue one — an Enter, a history row, a page change.
+      // The field clearing itself on blur is what put an empty query here, and the answer to that is not a 400
+      if (getIsSearchQueryEmpty(query, filters)) return { hasMore: false, items: [] };
+
+      menu.value = false;
+      isSearching.value = true;
+      isRightDrawerOpen.value = true;
+      rightDrawer.value = RightDrawer.Search;
       const boundCount = getBoundCount();
       const boundPage = getBoundPage();
       const { count: newCount, data } = await $trpc.message.searchMessages.query({

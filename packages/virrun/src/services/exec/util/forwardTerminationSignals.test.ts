@@ -17,7 +17,7 @@ describe(forwardTerminationSignals, () => {
   // Track every fake child so afterEach can trigger the helper's own `close` cleanup — removing exactly the
   // Listeners it added. Never `process.removeAllListeners`: that would also wipe vitest's signal handlers and hang
   // The worker on teardown.
-  const children: EventEmitter[] = [];
+  let children: EventEmitter[] = [];
 
   const createFakeChild = () => {
     const child = new EventEmitter();
@@ -28,7 +28,9 @@ describe(forwardTerminationSignals, () => {
   };
 
   afterEach(() => {
-    for (const child of children.splice(0)) child.emit("close");
+    const startedChildren = children;
+    children = [];
+    for (const child of startedChildren) child.emit("close");
   });
 
   test("forwards SIGINT and SIGTERM to the child", () => {

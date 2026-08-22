@@ -12,21 +12,32 @@ import { Operation } from "@esposter/shared";
 
 export const usePinStore = defineStore("message/pin", () => {
   const roomStore = useRoomStore();
-  const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
-  const { createMessage, deleteMessage } = createOperationData(items, CompositeAzureKeyPath, AzureEntityType.Message);
+  const { getSlice, items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const messages = computed(() => items.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
   const dataStore = useDataStore();
+  // The pin belongs to the room the message is in, which is not necessarily the room on screen — a pin toggled
+  // From a search result or a thread in another room writes that room's list, and `messages` above only reads
   MessageHookMap[Operation.Update].register((input) => {
     if (!("isPinned" in input)) return;
 
+    const { createMessage, deleteMessage } = createOperationData(
+      getSlice(input.partitionKey).items,
+      CompositeAzureKeyPath,
+      AzureEntityType.Message,
+    );
     if (input.isPinned) {
-      const message = dataStore.items.find(getIsEntityIdEqualComparator<MessageEntity>(CompositeAzureKeyPath, input));
+      // The source message is read from its own room's slice for the same reason the pin is written to one:
+      // `dataStore.items` is the room on screen, so a pin toggled from elsewhere would find nothing there
+      const message = dataStore
+        .getSlice(input.partitionKey)
+        .items.value.find(getIsEntityIdEqualComparator<MessageEntity>(CompositeAzureKeyPath, input));
       if (!message) return;
 
       createMessage(message);
     } else deleteMessage(input);
   });
   return {
+    getSlice,
     messages,
     ...restData,
   };

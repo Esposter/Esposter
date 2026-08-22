@@ -30,7 +30,7 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
           const index = monsterPartySceneStore.monsters.findIndex(({ id }) => id === monsterId);
           if (index === -1) throw new InvalidOperationError(Operation.Read, onPlayerInput.name, monsterId);
 
-          monsterPartySceneStore.monsters.splice(index, 1);
+          monsterPartySceneStore.monsters = monsterPartySceneStore.monsters.toSpliced(index, 1);
           monsterPartySceneStore.sceneMode = SceneMode.Default;
           infoPanelStore.infoDialogMessage.text = `You released ${monsterPartyOptionGrid.value.key} into the wild.`;
           break;

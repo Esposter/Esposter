@@ -6,6 +6,7 @@ import type { VueWrapper } from "@vue/test-utils";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
 import { goOffline } from "@/composables/shared/network.test";
+import { MemberCounts } from "@/models/message/user/MemberCounts";
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
@@ -18,9 +19,10 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMemberCache, () => {
   let wrapper: VueWrapper;
-  let count: Ref<number>;
-  let countsByTopRole: Ref<MemberCountByTopRole[]>;
+  let count: ComputedRef<number>;
+  let countsByTopRole: ComputedRef<MemberCountByTopRole[]>;
   let members: Ref<User[]>;
+  let getMemberCountsRef: ReturnType<typeof useMemberStore>["getMemberCountsRef"];
   let initializeCursorPaginationData: (data: CursorPaginationData<User>) => void;
   const partitionKey = crypto.randomUUID();
   const secondPartitionKey = crypto.randomUUID();
@@ -33,12 +35,12 @@ describe(useMemberCache, () => {
           setCurrentRoomId(initialRouteId);
           const memberStore = useMemberStore();
           ({ count, countsByTopRole, members } = storeToRefs(memberStore));
-          ({ initializeCursorPaginationData } = memberStore);
+          ({ getMemberCountsRef, initializeCursorPaginationData } = memberStore);
           useMemberCache();
 
           onUnmounted(() => {
-            count.value = 0;
-            countsByTopRole.value = [];
+            for (const roomId of [initialRouteId, secondPartitionKey])
+              getMemberCountsRef(roomId).value = new MemberCounts();
             initializeCursorPaginationData(new CursorPaginationData<User>());
           });
         },
@@ -66,8 +68,8 @@ describe(useMemberCache, () => {
     await mountCache();
     // Both totals are server-computed, so the room left behind is the last thing that set them. Neither can be
     // Refetched offline, and the room being switched into must not inherit either
-    count.value = 5;
-    countsByTopRole.value = [{ count: 5, roleId: crypto.randomUUID() }];
+    getMemberCountsRef(partitionKey).value.count = 5;
+    getMemberCountsRef(partitionKey).value.countsByTopRole = [{ count: 5, roleId: crypto.randomUUID() }];
     setCurrentRoomId(secondPartitionKey);
     await flushCache();
 

@@ -2,7 +2,9 @@
 import type { StyledDeleteFormDialogProps } from "@/components/Styled/DeleteFormDialog.vue";
 import type { VBtn } from "vuetify/components";
 
-const DELETE_BUTTON_PROPS: VBtn["$props"] = { size: "small", tile: true };
+// The same shape every other icon button in a row or a toolbar has, so a delete never reads as a different kind of
+// Control beside the copy and edit buttons it sits with
+const DELETE_BUTTON_PROPS: VBtn["$props"] = { size: "small" };
 
 defineSlots<{ default?: () => VNode }>();
 const { cardProps } = defineProps<Pick<StyledDeleteFormDialogProps, "cardProps">>();

@@ -24,7 +24,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     data: roles,
     getData: baseGetRoles,
     setData: setRoles,
-  } = useDataMap<RoomRoleInMessage[]>(() => roomStore.currentRoomId, []);
+  } = useDataMap<RoomRoleInMessage[]>(() => roomStore.scopedRoomId, []);
   const getRoles = (roomId: string) => baseGetRoles(roomId) ?? [];
   // Replaces one role where it stands, so a rollback or a server copy never disturbs what a concurrent write —
   // Or the role subscription — did to the rest of the list while this one was in flight
@@ -38,7 +38,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     data: selectedRoleId,
     getData: getSelectedRoleId,
     setData: setSelectedRoleId,
-  } = useDataMap(() => roomStore.currentRoomId, "");
+  } = useDataMap(() => roomStore.scopedRoomId, "");
   const selectedRole = computed(() => roles.value.find(({ id }) => id === selectedRoleId.value));
   const selectRole = (id: string) => {
     selectedRoleId.value = id;
@@ -47,12 +47,12 @@ export const useRoleStore = defineStore("message/room/role", () => {
     data: myPermissions,
     getData: getMyPermissions,
     setData: setMyPermissions,
-  } = useDataMap(() => roomStore.currentRoomId, {
+  } = useDataMap(() => roomStore.scopedRoomId, {
     isRoomOwner: false,
     permissions: 0n,
     topRolePosition: -1,
   });
-  const { data: selectedMemberId } = useDataMap(() => roomStore.currentRoomId, "");
+  const { data: selectedMemberId } = useDataMap(() => roomStore.scopedRoomId, "");
   const selectMember = (id: string) => {
     selectedMemberId.value = id;
   };
@@ -75,7 +75,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     data: memberRoleMap,
     getData: getMemberRoleMap,
     setData: setMemberRoleMap,
-  } = useDataMap(() => roomStore.currentRoomId, new Map<string, RoomRoleInMessage[]>());
+  } = useDataMap(() => roomStore.scopedRoomId, new Map<string, RoomRoleInMessage[]>());
   const getMemberRoles = (roomId: string, userId: string) => getMemberRoleMap(roomId)?.get(userId) ?? [];
   const setMemberRoles = (roomId: string, userId: string, memberRoles: RoomRoleInMessage[]) => {
     const roomMemberRoleMap = getMemberRoleMap(roomId) ?? new Map<string, RoomRoleInMessage[]>();

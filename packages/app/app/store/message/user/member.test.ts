@@ -24,13 +24,13 @@ describe(useMemberStore, () => {
     const roleStore = useRoleStore();
     const { setMemberRoles } = roleStore;
     const memberStore = useMemberStore();
-    const { storeDeleteMember } = memberStore;
+    const { getMemberCountsRef, storeDeleteMember } = memberStore;
     const { count, countsByTopRole } = storeToRefs(memberStore);
     // The member list headers derive the roleless group as count - sum(role groups), so a departure that
     // Drops only the total leaves the leaver in their role group and takes the remainder negative
     setMemberRoles(roomId, member.id, [role]);
-    count.value = 1;
-    countsByTopRole.value = [{ count: 1, roleId: role.id }];
+    getMemberCountsRef(roomId).value.count = 1;
+    getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 1, roleId: role.id }];
     storeDeleteMember(roomId, member.id);
 
     expect(count.value).toBe(0);
@@ -45,11 +45,11 @@ describe(useMemberStore, () => {
     const roleStore = useRoleStore();
     const { setMemberRoles } = roleStore;
     const memberStore = useMemberStore();
-    const { storeCreateMember, storeDeleteMember } = memberStore;
+    const { getMemberCountsRef, storeCreateMember, storeDeleteMember } = memberStore;
     const { count, countsByTopRole, members } = storeToRefs(memberStore);
     setMemberRoles(roomId, member.id, [role]);
     storeCreateMember(roomId, member);
-    countsByTopRole.value = [{ count: 1, roleId: role.id }];
+    getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 1, roleId: role.id }];
     storeDeleteMember(otherRoomId, member.id);
 
     expect(members.value).toStrictEqual([member]);
@@ -90,10 +90,10 @@ describe(useMemberStore, () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { storeDeleteMember } = memberStore;
+    const { getMemberCountsRef, storeDeleteMember } = memberStore;
     const { count, countsByTopRole } = storeToRefs(memberStore);
-    count.value = 2;
-    countsByTopRole.value = [{ count: 1, roleId: role.id }];
+    getMemberCountsRef(roomId).value.count = 2;
+    getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 1, roleId: role.id }];
     storeDeleteMember(roomId, member.id);
 
     expect(count.value).toBe(1);

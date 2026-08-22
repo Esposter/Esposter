@@ -4,12 +4,20 @@ Read when a store keys state by an id, holds a list of entities, or paginates on
 
 ## `useDataMap`
 
-`useDataMap<T>(currentId, defaultValue)` provides `getDataMap`, `setDataMap`, `data`, `initializeData`, `resetData`; `data` is tied to the current key. `useCursorPaginationDataMap`/`useOffsetPaginationDataMap` are thin wrappers that pass a factory default for their class instance.
+`useDataMap<T>(currentId, defaultValue)` provides `data`, `getBoundData`, `getData`, `getDataRef`, `initializeData`, `resetData`, `setData`. `useCursorPaginationDataMap`/`useOffsetPaginationDataMap` are thin wrappers that pass a factory default for their class instance.
+
+Which of the three views you take is the whole of the keying rule (`SKILL.md`):
+
+| Accessor          | Points at                    | Use for                                                        |
+| ----------------- | ---------------------------- | -------------------------------------------------------------- |
+| `data`            | whichever key is current now | rendering, and nothing else                                    |
+| `getDataRef(key)` | the key you name             | any write — the operation names its key where it is **issued** |
+| `getBoundData()`  | the key current _right now_  | a read issued for the current key whose response lands later   |
 
 ```typescript
 // useDataMap — "current foo" concept applies
 const fooStore = useFooStore();
-const { data: barType, setDataMap } = useDataMap(() => fooStore.currentFooId, BarType.Baz);
+const { data: barType, setData } = useDataMap(() => fooStore.currentFooId, BarType.Baz);
 
 // Manual Map — an entity cache keyed by arbitrary id, with no "current" concept
 const entityMap = ref(new Map<string, Foo>());
@@ -39,6 +47,11 @@ Selection state uses the same primitive — the selected id is `useDataMap(() =>
 | `useCursorPaginationData<T>()`               | single list per store; any `T` (unconstrained)                                        |
 | `useCursorPaginationOperationData(ref(...))` | you already own the ref (e.g. from a keyed map); layer `createOperationData` for CRUD |
 | `useCursorPaginationDataMap<T>(currentId)`   | same store holds per-key lists (e.g. pinned messages per room); built on `useDataMap` |
+
+Both hand out a `CursorPaginationSlice<TItem>` — `{ initializeCursorPaginationData, isLoaded, items }` — through
+`getSlice`: `getSlice(key)` on the map, `getSlice()` on the single-list one, so a consumer that only needs one
+partition's rows (the IndexedDB pagination caches, above all) takes the same shape from either. That slice is the
+**only** writable `items` a keyed store has; the store's ambient `items` is `readonly` and rendering-only.
 
 ## `createOperationData`
 

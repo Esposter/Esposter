@@ -4,6 +4,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { pluralize } from "#shared/util/text/pluralize";
 import { InviteExpireAfterSelectItems } from "@/services/message/room/invite/InviteExpireAfterSelectItems";
 import { InviteMaxUsesSelectItems } from "@/services/message/room/invite/InviteMaxUsesSelectItems";
@@ -11,29 +12,30 @@ import { useInviteStore } from "@/store/message/room/invite";
 import { RoutePath } from "@esposter/shared";
 
 interface InviteManagerProps {
-  roomId: RoomInMessage["id"];
+  room: RoomInMessage;
 }
 
-const { roomId } = defineProps<InviteManagerProps>();
-const { $trpc } = useNuxtApp();
+const { room } = defineProps<InviteManagerProps>();
 const runtimeConfig = useRuntimeConfig();
 const inviteStore = useInviteStore();
-const { createInvite, seedInvite } = inviteStore;
+const { createInvite } = inviteStore;
 const { invites } = storeToRefs(inviteStore);
-// Display reads the shared per-room map so a link regenerated on any surface updates every mounted Manager
-const invite = computed(() => invites.value.get(roomId));
+// Display reads the shared per-room map so a link regenerated in one mount updates every other one open on the
+// Same room
+const invite = computed(() => invites.value.get(room.id));
 const expireAfterMinutes = ref<CreateInviteInput["expireAfterMinutes"]>(DEFAULT_INVITE_EXPIRE_AFTER_MINUTES);
 const maxUses = ref<CreateInviteInput["maxUses"]>(0);
-useQuery(() => $trpc.room.readMyInvite.query({ roomId }), {
+const onCreateInvite = () =>
+  createInvite({ expireAfterMinutes: expireAfterMinutes.value, maxUses: maxUses.value, roomId: room.id });
+useReadMyInvite(room.id, (newInvite) => {
   // Seed from the loaded invite so regenerating via one option doesn't silently reset the other to unlimited
   // (expireAfterMinutes can't be recovered from the absolute expiresAt, so it falls back to the default)
-  onSuccess: (newInvite) => {
-    seedInvite(roomId, newInvite ?? undefined);
-    maxUses.value = INVITE_MAX_USES_OPTIONS.find((uses) => uses === invite.value?.maxUses) ?? 0;
-  },
+  maxUses.value = INVITE_MAX_USES_OPTIONS.find((uses) => uses === newInvite?.maxUses) ?? 0;
+  // Discord hands the reader a link the moment the dialog opens rather than an empty field with a button on it.
+  // A member holds at most one, so a read that finds none mints it here — and one that finds a live link never
+  // Replaces it, which is what asking for the create would have risked
+  if (!newInvite && !room.isInvitePaused) getSynchronizedFunction(onCreateInvite)();
 });
-const onCreateInvite = () =>
-  createInvite({ expireAfterMinutes: expireAfterMinutes.value, maxUses: maxUses.value, roomId });
 // Changing options with a live link regenerates it — the old link is replaced (one invite per member per room)
 const onUpdateOptions = async () => {
   if (invite.value) await onCreateInvite();
@@ -66,7 +68,10 @@ const isCopied = ref(false);
 </script>
 
 <template>
-  <div>
+  <div v-if="room.isInvitePaused" op-medium-emphasis text-body-medium>
+    Invites are paused for this room, so no link works and no new one can be created.
+  </div>
+  <div v-else>
     <div mb-2 flex gap-2>
       <v-select
         v-model="expireAfterMinutes"

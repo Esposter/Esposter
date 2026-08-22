@@ -61,14 +61,16 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
             if (!removedParticipant) return;
             // Restore only this participant, ahead of the first one that still follows it. Reinstating a
             // Whole-list snapshot would re-add anyone a removal that overlapped this one had already taken out
-            const participantsNow = [...(directMessageParticipantsMap.value.get(roomId) ?? [])];
+            const participantsNow = directMessageParticipantsMap.value.get(roomId) ?? [];
             const followingIndex = participantsNow.findIndex(({ id }) => followingIds.has(id));
-            participantsNow.splice(
-              followingIndex === -1 ? participantsNow.length : followingIndex,
-              0,
-              removedParticipant,
+            directMessageParticipantsMap.value.set(
+              roomId,
+              participantsNow.toSpliced(
+                followingIndex === -1 ? participantsNow.length : followingIndex,
+                0,
+                removedParticipant,
+              ),
             );
-            directMessageParticipantsMap.value.set(roomId, participantsNow);
           };
         },
         // The target is the room-and-participant pair: the same person can be in more than one direct message,

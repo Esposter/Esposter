@@ -17,7 +17,7 @@ export const usePopupStore = defineStore("clicker/popup", () => {
     useTimeoutFn((popupId: string) => {
       const index = popups.value.findIndex((p) => p.id === popupId);
       if (index === -1) return;
-      popups.value.splice(index, 1);
+      popups.value = popups.value.toSpliced(index, 1);
     }, duration);
   };
   return { onClick, popups };

@@ -1,14 +1,9 @@
-<script setup lang="ts">
-import { useSheetStore } from "@/store/resource/sheet";
-
-const sheetStore = useSheetStore();
-const { settings } = storeToRefs(sheetStore);
-</script>
-
 <template>
+  <!-- Naming a format here would tie the empty state to the type set in Settings, which is exactly the hidden
+    dependency Import lost — and what a reader with nothing in the sheet needs is where importing happens -->
   <v-empty-state
     icon="mdi-file-table-outline"
-    headline="No file loaded"
-    :text="`Import a ${settings.type.toUpperCase()} file to get started`"
+    headline="No data yet"
+    text="Import a file from the toolbar above to get started"
   />
 </template>

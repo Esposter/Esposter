@@ -25,7 +25,8 @@ const isActive = ref(false);
     @click="
       () => {
         const index = roomIds.findIndex((id) => id === room.id);
-        index === -1 ? roomIds.push(room.id) : roomIds.splice(index, 1);
+        if (index === -1) roomIds.push(room.id);
+        else roomIds = roomIds.toSpliced(index, 1);
       }
     "
     @mouseenter="isActive = true"

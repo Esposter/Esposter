@@ -20,18 +20,17 @@ export class MoveRowCommand extends ADataSourceCommand<CommandType.MoveRow> {
   }
 
   execute(dataSource: DataSource) {
-    const rows = [...dataSource.rows];
-    const [moved] = rows.splice(this.#fromIndex, 1);
-    if (!moved) return;
-    rows.splice(this.#toIndex, 0, moved);
-    dataSource.rows = rows;
+    this.#moveRow(dataSource, this.#fromIndex, this.#toIndex);
   }
 
   undo(dataSource: DataSource) {
-    const rows = [...dataSource.rows];
-    const [moved] = rows.splice(this.#toIndex, 1);
+    this.#moveRow(dataSource, this.#toIndex, this.#fromIndex);
+  }
+
+  #moveRow(dataSource: DataSource, fromIndex: number, toIndex: number) {
+    const moved = dataSource.rows[fromIndex];
     if (!moved) return;
-    rows.splice(this.#fromIndex, 0, moved);
-    dataSource.rows = rows;
+
+    dataSource.rows = dataSource.rows.toSpliced(fromIndex, 1).toSpliced(toIndex, 0, moved);
   }
 }

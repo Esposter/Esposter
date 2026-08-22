@@ -54,7 +54,7 @@ const columnNames = computed(() => dataset.value?.columns.map(({ name }) => name
           :button-props="{ disabled: modelValue.query.series.length === 1 }"
           icon="mdi-delete"
           text="Remove series"
-          @click="modelValue.query.series.splice(index, 1)"
+          @click="modelValue.query.series = modelValue.query.series.toSpliced(index, 1)"
         />
       </div>
       <StyledTooltipIconButton

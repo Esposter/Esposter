@@ -24,6 +24,7 @@ If nothing fits, that may signal a missing single-responsibility skill — creat
 - `file-organization` — where files/exports/constants/classes live, alias imports, constant maps, package creation, refactoring, file length.
 - `naming` — identifier naming conventions (booleans, functions, variables). Framework-specific naming lives in the framework's own skill.
 - `typescript` — TypeScript language rules and type patterns.
+- `invariants` — how a rule that must hold in many places is made to hold: by construction, structurally, by an enforcer, and only last by a remembered guard. Owns the ladder; each convention stays owned by its own skill.
 - `error-handling` — neverthrow `getResult`, tRPC guards, Azure Functions logging/retry.
 - `string-utils` — `normalizeString` / `sanitizeTextHtml` boundaries.
 - `zod` — schema conventions. **Shares its topic with `~/.claude/rules/zod.md`** — see "Skills vs global rules".

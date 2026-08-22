@@ -36,6 +36,9 @@ export const roomsInMessage = pgTable(
     categoryId: uuid().references(() => roomCategoriesInMessage.id, { onDelete: "set null" }),
     id: uuid().primaryKey().defaultRandom(),
     image: text().notNull().default(""),
+    // Closes the room to every existing invite link at once, without deleting any of them — the control for a
+    // Raid in progress, which the links have to survive.
+    isInvitePaused: boolean().notNull().default(false),
     isReadOnly: boolean().notNull().default(false),
     // Per-room attachment size cap in bytes — null falls back to the global MAX_FILE_REQUEST_SIZE.
     maxFileSizeBytes: integer(),

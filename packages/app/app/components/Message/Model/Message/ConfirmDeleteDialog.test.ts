@@ -39,6 +39,7 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
     setCurrentRoomId(roomId);
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
+    const { getSlice } = dataStore;
     const userStore = useUserStore();
     const { storeUser } = userStore;
     // The dialog renders only once the message's author resolves, and the delete is emitted from it
@@ -46,7 +47,7 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
     const messageDialogStore = useMessageDialogStore();
     const { deletingRowKey } = storeToRefs(messageDialogStore);
     const deletedMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
-    items.value = [deletedMessage];
+    getSlice(roomId).items.value = [deletedMessage];
     deletingRowKey.value = deletedMessage.rowKey;
     await flushPromises();
 
@@ -54,7 +55,7 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
     await deleteRequested;
     // A message a subscription delivered while the delete was in flight
     const arrivedMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
-    items.value = [arrivedMessage];
+    getSlice(roomId).items.value = [arrivedMessage];
     releaseDelete();
     await flushPromises();
 

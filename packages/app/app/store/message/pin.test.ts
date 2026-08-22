@@ -26,11 +26,11 @@ describe(usePinStore, () => {
     expect.hasAssertions();
 
     const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
+    const { getSlice } = dataStore;
     const pinStore = usePinStore();
     const { messages } = storeToRefs(pinStore);
     const pinnedMessage = createMessage();
-    items.value = [pinnedMessage];
+    getSlice(pinnedMessage.partitionKey).items.value = [pinnedMessage];
     await MessageHookMap[Operation.Update].run({
       isPinned: true,
       partitionKey: pinnedMessage.partitionKey,
@@ -40,15 +40,36 @@ describe(usePinStore, () => {
     expect(messages.value.map(({ rowKey }) => rowKey)).toStrictEqual([pinnedMessage.rowKey]);
   });
 
+  // A pin toggled from a search result or a thread names a room the reader is not in. Read against the room on
+  // Screen the source message is not there at all, so the pin found nothing and silently did nothing
+  test("pins a message in a room the reader is not currently in", async () => {
+    expect.hasAssertions();
+
+    const otherRoomId = crypto.randomUUID();
+    const dataStore = useDataStore();
+    const { getSlice: getDataSlice } = dataStore;
+    const pinStore = usePinStore();
+    const { getSlice: getPinSlice } = pinStore;
+    const pinnedMessage = createMessageEntity({ message, roomId: otherRoomId, type: MessageType.Message, userId });
+    getDataSlice(otherRoomId).items.value = [pinnedMessage];
+    await MessageHookMap[Operation.Update].run({
+      isPinned: true,
+      partitionKey: pinnedMessage.partitionKey,
+      rowKey: pinnedMessage.rowKey,
+    });
+
+    expect(getPinSlice(otherRoomId).items.value.map(({ rowKey }) => rowKey)).toStrictEqual([pinnedMessage.rowKey]);
+  });
+
   test("drops a message the moment it is unpinned", async () => {
     expect.hasAssertions();
 
     const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
+    const { getSlice } = dataStore;
     const pinStore = usePinStore();
     const { messages } = storeToRefs(pinStore);
     const pinnedMessage = createMessage();
-    items.value = [pinnedMessage];
+    getSlice(pinnedMessage.partitionKey).items.value = [pinnedMessage];
     const pinnedInput = {
       partitionKey: pinnedMessage.partitionKey,
       rowKey: pinnedMessage.rowKey,

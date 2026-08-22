@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
+import { DEFAULT_WEBHOOK_NAME, WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { pluralize } from "#shared/util/text/pluralize";
 import { useWebhookStore } from "@/store/message/room/webhook";
 import { withFinalizerAsync } from "@esposter/shared";
@@ -15,23 +15,23 @@ const webhookStore = useWebhookStore();
 const { createWebhook, readWebhooks } = webhookStore;
 const { items } = storeToRefs(webhookStore);
 await readWebhooks(room.id);
-const name = ref("");
 const isLoading = ref(false);
 </script>
 
+<!-- Discord's arrangement: one button creates the webhook and every field of it is edited on its own row, so the
+     name is asked for where it is also changed rather than twice -->
 <template>
   <div flex flex-col gap-y-4>
-    <div flex gap-x-4 items-center justify-center>
-      <v-text-field v-model="name" :disabled="isLoading" label="Name" density="compact" />
+    <div flex justify-end>
       <StyledButton
         :loading="isLoading"
-        :disabled="!name || items.length >= WEBHOOK_MAX_LENGTH"
+        :disabled="items.length >= WEBHOOK_MAX_LENGTH"
         @click="
           async () => {
             isLoading = true;
             await withFinalizerAsync(
               async () => {
-                await createWebhook(room.id, { name });
+                await createWebhook(room.id, { name: DEFAULT_WEBHOOK_NAME });
               },
               () => {
                 isLoading = false;
@@ -40,7 +40,7 @@ const isLoading = ref(false);
           }
         "
       >
-        Create
+        New Webhook
       </StyledButton>
     </div>
     <div v-if="items.length >= WEBHOOK_MAX_LENGTH" text-red text-body-medium>

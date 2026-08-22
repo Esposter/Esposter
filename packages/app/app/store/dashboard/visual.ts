@@ -1,5 +1,4 @@
 import { Visual } from "#shared/models/dashboard/data/Visual";
-import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
 import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -10,7 +9,6 @@ import { toRawDeep } from "@esposter/shared";
 export const useVisualStore = defineStore("dashboard/visual", () => {
   const dashboardStore = useDashboardStore();
   const { saveDashboard } = dashboardStore;
-  const visualType = ref(VisualType.Area);
   const visuals = computed({
     get: () => dashboardStore.dashboard.visuals,
     set: (newVisuals) => {
@@ -26,7 +24,6 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   const createVisual = () => {
     storeCreateVisual(
       new Visual({
-        type: visualType.value,
         x: (visuals.value.length * 2) % DASHBOARD_NO_COLUMNS,
         // Puts the item at the bottom
         y: visuals.value.length + DASHBOARD_NO_COLUMNS,
@@ -69,7 +66,6 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     deleteVisual,
     updateVisual,
     visuals,
-    visualType,
     ...restOperationData,
     ...editFormData,
     save,

@@ -16,7 +16,7 @@ export const createTemporaryDirectoryTracker = (): {
   createWorkspace: (lockfileContent?: string) => string;
   track: (directory: string) => string;
 } => {
-  const directories: string[] = [];
+  let directories: string[] = [];
   const track = (directory: string): string => {
     directories.push(directory);
     return directory;
@@ -29,7 +29,9 @@ export const createTemporaryDirectoryTracker = (): {
   };
   return {
     cleanup: () => {
-      for (const directory of directories.splice(0)) rmSync(directory, { force: true, recursive: true });
+      const trackedDirectories = directories;
+      directories = [];
+      for (const directory of trackedDirectories) rmSync(directory, { force: true, recursive: true });
     },
     create,
     createWorkspace,

@@ -63,7 +63,7 @@ const readFooBars = async (input: ReadFooBarsInput) => {
   const fooBars = await $trpc.foo.readFooBars.query(input);
   const foosByKey = new Map<string, Foo[]>(input.userIds.map((userId) => [userId, []]));
   for (const { userId, ...foo } of fooBars) foosByKey.get(userId)?.push(foo);
-  for (const [userId, foos] of foosByKey) setDataMap(userId, foos);
+  for (const [userId, foos] of foosByKey) setData(userId, foos);
 };
 ```
 

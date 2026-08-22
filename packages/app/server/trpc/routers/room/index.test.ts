@@ -617,6 +617,56 @@ describe("room", () => {
     expect(readInvite).toBeNull();
   });
 
+  test("revoking own invite makes the link unknown, and another member's is not revocable", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    // The member who joined through the link holds no link of their own, so revoking that one matches no row
+    const { user: member } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInvite.id);
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(
+      roomCaller.revokeInvite({ id: newInvite.id, roomId: newRoom.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Invite, newInvite.id).message}]`,
+    );
+
+    await roomCaller.revokeInvite({ id: newInvite.id, roomId: newRoom.id });
+    const readInvite = await roomCaller.readInvite(newInvite.id);
+
+    expect(readInvite).toBeNull();
+  });
+
+  test("pausing invites refuses a create and answers a live link like an unknown token", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    // One use, so the join that resumes proves the paused one rolled its own increment back
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 1, roomId: newRoom.id });
+    await roomCaller.updateRoom({ id: newRoom.id, isInvitePaused: true });
+
+    await expect(
+      roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, newRoom.id).message}]`,
+    );
+
+    await mockSessionOnce(mockContext.db);
+
+    await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Invite, newInvite.id).message}]`,
+    );
+
+    // The link the paused room refused is live again the moment it resumes, and it never spent the use
+    await roomCaller.updateRoom({ id: newRoom.id, isInvitePaused: false });
+    await mockSessionOnce(mockContext.db);
+    const joinedRoom = await roomCaller.joinRoom(newInvite.id);
+
+    expect(joinedRoom.id).toBe(newRoom.id);
+  });
+
   test("fails create invite with direct message room", async () => {
     expect.hasAssertions();
 

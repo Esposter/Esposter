@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import type { PortableFormat } from "@/models/resource/PortableFormat";
 import type { Item } from "@/models/shared/Item";
 import type { Resource } from "@esposter/db-schema";
 
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { useResourceStore } from "@/store/resource";
+import { takeOne } from "@esposter/shared";
 
 interface ResourceBladeActionsProps {
   resource: Resource;
@@ -26,6 +28,34 @@ const isRenameOpen = ref(false);
 const isDeleteOpen = ref(false);
 const isShareOpen = ref(false);
 const { exportFormats, importFormats } = usePortableFormats(() => resource);
+// A type with several formats gets one command whose submenu names them, rather than one command per format —
+// Seven top-level buttons for a sheet is the same rail the Data blade just lost. A type with a single format
+// (Email's personalized HTML) stays a plain command, since a menu holding one item is a click that buys nothing
+const createFormatCommands = (
+  verb: string,
+  icon: string,
+  formats: PortableFormat[],
+  getRun: (format: PortableFormat) => (() => Promise<void>) | undefined,
+  isGroupStart: boolean,
+): Item[] => {
+  if (formats.length === 0) return [];
+  else if (formats.length === 1) {
+    const format = takeOne(formats);
+    return [{ icon, isGroupStart, onClick: () => getRun(format)?.(), title: `${verb} ${format.label}` }];
+  }
+  return [
+    {
+      icon,
+      isGroupStart,
+      items: formats.map<Item>((format) => ({
+        icon: format.icon,
+        onClick: () => getRun(format)?.(),
+        title: format.label,
+      })),
+      title: verb,
+    },
+  ];
+};
 // One command set rendered two ways — a labelled bar when there is room, the overflow menu when there is not.
 // Built once rather than written twice, so a label, an icon or a pending state cannot differ between them
 const commandItems = computed<Item[]>(() => [
@@ -88,27 +118,44 @@ const commandItems = computed<Item[]>(() => [
         },
       ]
     : []),
-  ...importFormats.value.map<Item>(({ import: importFormat, label }, index) => ({
-    icon: "mdi-import",
-    isGroupStart: index === 0,
-    onClick: () => importFormat?.(),
-    title: `Import ${label}`,
-  })),
-  ...exportFormats.value.map<Item>(({ export: exportFormat, label }) => ({
-    icon: "mdi-export",
-    onClick: () => exportFormat?.(),
-    title: `Export ${label}`,
-  })),
+  ...createFormatCommands("Import", "mdi-import", importFormats.value, ({ import: run }) => run, true),
+  ...createFormatCommands("Export", "mdi-export", exportFormats.value, ({ export: run }) => run, false),
 ]);
 </script>
 
 <template>
   <template
-    v-for="{ color, disabled, icon, isGroupStart, loading, onClick, title } of smAndDown ? [] : commandItems"
+    v-for="{ color, disabled, icon, isGroupStart, items, loading, onClick, title } of smAndDown ? [] : commandItems"
     :key="title"
   >
     <v-divider v-if="isGroupStart" vertical mx-1 />
-    <v-btn :color :disabled :loading :prepend-icon="icon" variant="text" @click="onClick?.($event)">
+    <v-menu v-if="items" :disabled>
+      <template #activator="{ props: menuActivatorProps }">
+        <v-btn
+          append-icon="mdi-menu-down"
+          :color
+          :disabled
+          :loading
+          :prepend-icon="icon"
+          variant="text"
+          :="menuActivatorProps"
+        >
+          {{ title }}
+        </v-btn>
+      </template>
+      <v-list density="compact">
+        <v-list-item
+          v-for="item of items"
+          :key="item.title"
+          :base-color="item.color"
+          :disabled="item.disabled"
+          :prepend-icon="item.icon"
+          :title="item.title"
+          @click="item.onClick?.($event)"
+        />
+      </v-list>
+    </v-menu>
+    <v-btn v-else :color :disabled :loading :prepend-icon="icon" variant="text" @click="onClick?.($event)">
       {{ title }}
     </v-btn>
   </template>

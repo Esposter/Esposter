@@ -44,7 +44,7 @@ The generic `StyledEmptyState` (icon + title + description) backs welcome-style 
 
 ## Mobile action bar
 
-On `smAndDown` a bottom action bar sits above the composer, keeping room actions within thumb reach: room-list toggle, pinned messages, add friends, member-list toggle, and search. It reuses the same header action-button components and is the **only** small-screen surface for them — the header hides its room-list/search buttons and has no overflow menu on `smAndDown`, so every action keeps exactly one affordance.
+On `smAndDown` a bottom action bar sits above the composer, keeping room actions within thumb reach: room-list toggle, pinned messages, member-list toggle, and search. It reuses the same header action-button components and is the **only** small-screen surface for them — the header hides its room-list/search buttons and has no overflow menu on `smAndDown`, so every action keeps exactly one affordance.
 
 ## Category drag-reorder
 

@@ -72,6 +72,7 @@ describe(useReadSearchedMessages, () => {
       }),
     );
     await mountRead();
+    searchQuery.value = query;
     const pendingSearch = readSearchedMessages();
     // The search is issued a microtask after the call, so let it go out before the room moves
     await flushPromises();
@@ -88,6 +89,27 @@ describe(useReadSearchedMessages, () => {
     expect(count.value).toBe(newCount);
     expect(page.value).toBe(1);
     expect(createSearchHistory).toHaveBeenCalledTimes(1);
+  });
+
+  // The schema refuses a search with nothing in it, so a read that would send one issues no request at all — the
+  // Field clears itself on blur, and every surface that can search would otherwise have to remember that
+  test("issues no request for a search with neither text nor a valued filter", async () => {
+    expect.hasAssertions();
+
+    const searchMessages = vi.fn<() => void>();
+    server.use(
+      trpcMsw.message.searchMessages.query(() => {
+        searchMessages();
+        return { count: newCount, data: { hasMore: false, items: [] } };
+      }),
+    );
+    await mountRead();
+    selectedFilters.value = [pendingFilter];
+    searchQuery.value = "";
+    await readSearchedMessages();
+
+    expect(searchMessages).not.toHaveBeenCalled();
+    expect(createSearchHistory).not.toHaveBeenCalled();
   });
 
   // A chip the user added by typing its keyword has no value until a picker gives it one, and the search input

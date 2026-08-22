@@ -36,8 +36,8 @@ describe(useCommentStore, () => {
     );
     const commentStore = useCommentStore();
     const { items } = storeToRefs(commentStore);
-    const { updateComment } = commentStore;
-    items.value = [createPost({ depth: 1, id: comment.id, parentId: postId })];
+    const { getSlice, updateComment } = commentStore;
+    getSlice(postId).items.value = [createPost({ depth: 1, id: comment.id, parentId: postId })];
     await Promise.all([
       updateComment({ description: newDescription, id: comment.id }),
       updateComment({ description: failingDescription, id: comment.id }),
@@ -61,9 +61,9 @@ describe(useCommentStore, () => {
     const parentPost = createPost({ id: postId, noComments: 2 });
     const commentStore = useCommentStore();
     const { currentPost, items } = storeToRefs(commentStore);
-    const { deleteComment } = commentStore;
+    const { deleteComment, getSlice } = commentStore;
     currentPost.value = parentPost;
-    items.value = [comment, otherComment];
+    getSlice(postId).items.value = [comment, otherComment];
     await Promise.all([deleteComment(comment.id), deleteComment(otherComment.id)]);
 
     expect(items.value).toStrictEqual([comment]);

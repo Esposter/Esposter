@@ -24,9 +24,6 @@ onMounted(async () => {
     <div flex gap-1 items-center>
       <ResourceSheetToolbarUndoButton />
       <ResourceSheetToolbarRedoButton />
-      <ResourceSheetToolbarImportButton />
-      <ResourceSheetToolbarImportDatasetButton />
-      <ResourceSheetToolbarExportButton />
     </div>
     <!-- "Not yet imported" is an empty data section (the blob is written on first save) -->
     <template v-if="dataSource.columns.length > 0 || dataSource.rows.length > 0">

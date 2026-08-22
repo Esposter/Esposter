@@ -9,25 +9,36 @@ import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPag
 interface OffsetPaginationCacheOptions<
   TStore extends IndexedDbStoreName,
   TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
-  TSourceItem,
-> extends Except<PaginationCacheOptions<TStore, TIndex, TSourceItem>, "initializeItems"> {
-  initializeOffsetPaginationData: (data: OffsetPaginationData<IndexedDbDatabaseSchema[TStore]["value"]>) => void;
+> extends Except<PaginationCacheOptions<TStore, TIndex>, "getSlice"> {
+  getSlice: (partitionKey: string) => {
+    initializeOffsetPaginationData: (data: OffsetPaginationData<IndexedDbDatabaseSchema[TStore]["value"]>) => void;
+    isLoaded: MaybeRefOrGetter<boolean>;
+    items: MaybeRefOrGetter<IndexedDbDatabaseSchema[TStore]["value"][]>;
+  };
 }
 
 export const useOffsetPaginationCache = <
   TStore extends IndexedDbStoreName,
   TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
-  TSourceItem extends IndexedDbDatabaseSchema[TStore]["value"] = IndexedDbDatabaseSchema[TStore]["value"],
 >({
-  initializeOffsetPaginationData,
+  getSlice,
   ...options
-}: OffsetPaginationCacheOptions<TStore, TIndex, TSourceItem>) => {
+}: OffsetPaginationCacheOptions<TStore, TIndex>) => {
   usePaginationCache({
     ...options,
-    initializeItems: (cachedItems) => {
-      const cachedData = new OffsetPaginationData<IndexedDbDatabaseSchema[TStore]["value"]>();
-      cachedData.items = cachedItems;
-      initializeOffsetPaginationData(cachedData);
+    // The cache stores rows and a slice stores a page of them, so the partition's slice is adapted here rather
+    // Than resolved twice — whichever partition the cache names is the one initialized
+    getSlice: (partitionKey) => {
+      const { initializeOffsetPaginationData, isLoaded, items } = getSlice(partitionKey);
+      return {
+        initializeItems: (cachedItems) => {
+          const cachedData = new OffsetPaginationData<IndexedDbDatabaseSchema[TStore]["value"]>();
+          cachedData.items = cachedItems;
+          initializeOffsetPaginationData(cachedData);
+        },
+        isLoaded,
+        items,
+      };
     },
   });
 };

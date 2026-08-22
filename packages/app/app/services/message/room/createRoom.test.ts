@@ -14,6 +14,7 @@ export const createRoom = (name: string, type = RoomType.Room): RoomInMessage =>
   deletedAt: null,
   id: crypto.randomUUID(),
   image: "",
+  isInvitePaused: false,
   isReadOnly: false,
   maxFileSizeBytes: null,
   name,

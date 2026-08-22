@@ -75,12 +75,14 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
   }
 
   undo(dataSource: DataSource) {
-    const { columns, rows } = dataSource;
+    const { columns } = dataSource;
     if (this.#appendedRows.length > 0) {
-      const removedRows = rows.splice(rows.length - this.#appendedRows.length, this.#appendedRows.length);
-      for (const removedRow of removedRows)
+      const keptCount = dataSource.rows.length - this.#appendedRows.length;
+      for (const removedRow of dataSource.rows.slice(keptCount))
         for (const column of columns) column.size -= getValueSize(removedRow.data[column.name]);
+      dataSource.rows = dataSource.rows.slice(0, keptCount);
     }
+    const { rows } = dataSource;
     for (const [rowOffset, originalRow] of this.#originalRows.entries()) {
       const rowIndex = this.#anchorRowIndex + rowOffset;
       const row = takeOne(rows, rowIndex);

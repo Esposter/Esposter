@@ -7,6 +7,7 @@ const pendingPromises = new Set<Promise<unknown>>();
 export const getSynchronizedFunction =
   <T extends unknown[]>(fn: (...args: T) => Promise<unknown>) =>
   (...args: T) => {
+    // eslint-disable-next-line no-restricted-syntax -- deregisters this promise from the drain set on both paths without touching its outcome, which is the one thing a Result wrapper cannot do here: this function must never reject
     const promise = fn(...args).finally(() => {
       pendingPromises.delete(promise);
     });

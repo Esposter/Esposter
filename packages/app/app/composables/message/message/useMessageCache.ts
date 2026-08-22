@@ -6,16 +6,13 @@ export const useMessageCache = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
-  const { isLoaded, items } = storeToRefs(dataStore);
-  const { initializeCursorPaginationData } = dataStore;
+  const { getSlice } = dataStore;
   useCursorPaginationCache({
     configuration: MessageIndexedDbStoreConfiguration,
+    // The room the cache is acting on names its own slice, so neither half can read or restore the list of a room
+    // The reader has switched to since
+    getSlice,
     getWriteItems: (messages) => messages.filter((message) => !message.isLoading),
-    // Unbound on purpose: usePaginationCache re-checks the partition key after its IndexedDB read and bails when
-    // The room has moved on, so the callback only ever runs while the key it hydrated for is still current
-    initializeCursorPaginationData,
-    isLoaded,
-    items,
     partitionKey: currentRoomId,
   });
 };

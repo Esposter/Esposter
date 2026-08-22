@@ -40,8 +40,10 @@ const blur = () => {
         // Is search text. It never fills a pending chip either — only a picker gives a filter its value
         if (isSearchQueryEmpty) return;
         menu = false;
-        blur();
+        // The read captures the query a microtask after this call, and blurring clears the field — so the search
+        // Goes out first and the field is left afterwards, or the capture reads the emptiness the blur caused
         await readSearchedMessages();
+        blur();
       }
     "
     @update:focused="

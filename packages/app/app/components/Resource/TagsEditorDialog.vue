@@ -36,7 +36,7 @@ const rows = ref(tags && Object.keys(tags).length > 0 ? getTagRows(tags) : [{ na
       <div v-for="(row, index) of rows" :key="index" flex gap-2 items-start>
         <v-text-field v-model="row.name" density="comfortable" label="Name" :rules="nameRules" />
         <v-text-field v-model="row.value" density="comfortable" label="Value" :rules="valueRules" />
-        <StyledTooltipIconButton icon="mdi-delete" text="Remove tag" @click="rows.splice(index, 1)" />
+        <StyledTooltipIconButton icon="mdi-delete" text="Remove tag" @click="rows = rows.toSpliced(index, 1)" />
       </div>
       <!-- Same reason as the Edit button that opens this dialog: transparent, it reads as a caption rather
            than as the control that adds a row -->

@@ -17,13 +17,23 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { items, ...restData } = useCursorPaginationDataMap<RoomEmojiWithSasUrl>(() => roomStore.currentRoomId);
-  const {
-    createRoomEmoji: storeCreateRoomEmoji,
-    deleteRoomEmoji: storeDeleteRoomEmoji,
-    updateRoomEmoji: storeUpdateRoomEmoji,
-    ...restOperationData
-  } = createOperationData(items, ["id"], DatabaseEntityType.RoomEmoji);
+  const { getSlice, items, ...restData } = useCursorPaginationDataMap<RoomEmojiWithSasUrl>(
+    () => roomStore.scopedRoomId,
+  );
+  // `items` is the reading view — whichever room the screen is scoped to. Writing through it would file a row
+  // Under whatever room is scoped when the write lands, so the write functions are only reachable by naming the
+  // Room they are for: a read, a mutation and a subscription all know their room, and each names it once up front
+  const getRoomOperationData = (roomId: RoomInMessage["id"]) =>
+    createOperationData(getSlice(roomId).items, ["id"], DatabaseEntityType.RoomEmoji);
+  const storeCreateRoomEmoji = (roomId: RoomInMessage["id"], newRoomEmoji: RoomEmojiWithSasUrl) => {
+    getRoomOperationData(roomId).createRoomEmoji(newRoomEmoji);
+  };
+  const storeDeleteRoomEmoji = (roomId: RoomInMessage["id"], ids: { id: RoomEmojiWithSasUrl["id"] }) => {
+    getRoomOperationData(roomId).deleteRoomEmoji(ids);
+  };
+  const storeUpdateRoomEmoji = (roomId: RoomInMessage["id"], updatedRoomEmoji: Partial<RoomEmojiWithSasUrl>) => {
+    getRoomOperationData(roomId).updateRoomEmoji(updatedRoomEmoji);
+  };
   // What every picking surface consumes. The name is the slug: it is already drawn from the dataset's slug
   // Charset, so search, `:` completion and the recents list treat both vocabularies identically
   const customEmojis = computed<CustomEmoji[]>(() =>
@@ -34,9 +44,6 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   const customEmojiMap = computed(
     () => new Map(customEmojis.value.map((customEmoji) => [customEmoji.id, customEmoji])),
   );
-  // `items` tracks whichever room is current, so a callback that outlives its room writes one room's set into
-  // Another's list. Re-entering the room reads the set again, so dropping the write there loses nothing
-  const getIsRoomCurrent = (roomId: RoomInMessage["id"]) => roomStore.currentRoomId === roomId;
   const { executeQuery: executeReadRoomEmojisQuery } = useMutation();
   const readRoomEmojis = async (roomId: RoomInMessage["id"]) => {
     // Keyed by the room, so re-entering it supersedes the read it interrupted: the room lifecycle issues one read
@@ -44,9 +51,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
     await executeReadRoomEmojisQuery(() => $trpc.room.emoji.readRoomEmojis.query({ roomId }), {
       key: roomId,
       onSuccess: (roomEmojis) => {
-        if (!getIsRoomCurrent(roomId)) return;
-
-        items.value = roomEmojis;
+        getSlice(roomId).items.value = roomEmojis;
       },
     });
   };
@@ -76,7 +81,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
         // Each other while their images are still writing
         key: Symbol("createRoomEmoji"),
         onSuccess: (newRoomEmoji) => {
-          if (getIsRoomCurrent(roomId)) storeCreateRoomEmoji(newRoomEmoji);
+          storeCreateRoomEmoji(roomId, newRoomEmoji);
         },
       },
     );
@@ -86,16 +91,16 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
       // Snapshot when the write is sent rather than when it was issued, and only this row: the same list is
       // Appended to by the room's own subscription, which a whole-list restore would undo
       applyOptimistic: () => {
-        const previousRoomEmoji = items.value.find(({ id }) => id === input.id);
+        const previousRoomEmoji = getSlice(roomId).items.value.find(({ id }) => id === input.id);
         const previousName = previousRoomEmoji ? { id: previousRoomEmoji.id, name: previousRoomEmoji.name } : undefined;
-        storeUpdateRoomEmoji(input);
+        storeUpdateRoomEmoji(roomId, input);
         return () => {
-          if (previousName && getIsRoomCurrent(roomId)) storeUpdateRoomEmoji(previousName);
+          if (previousName) storeUpdateRoomEmoji(roomId, previousName);
         };
       },
       key: input.id,
       onSuccess: (updatedRoomEmoji) => {
-        if (getIsRoomCurrent(roomId)) storeUpdateRoomEmoji(updatedRoomEmoji);
+        storeUpdateRoomEmoji(roomId, updatedRoomEmoji);
       },
     });
   };
@@ -104,13 +109,18 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
       // Put back only this row, at the position it held — reinstating a whole-list snapshot would resurrect an
       // Emoji another deletion already removed
       applyOptimistic: () => {
-        const deletedIndex = items.value.findIndex(({ id }) => id === input.id);
-        const deletedRoomEmoji = items.value[deletedIndex];
-        storeDeleteRoomEmoji({ id: input.id });
+        const { items: roomItems } = getSlice(roomId);
+        const deletedIndex = roomItems.value.findIndex(({ id }) => id === input.id);
+        const deletedRoomEmoji = roomItems.value[deletedIndex];
+        storeDeleteRoomEmoji(roomId, { id: input.id });
         return () => {
-          if (!deletedRoomEmoji || !getIsRoomCurrent(roomId)) return;
+          if (!deletedRoomEmoji) return;
 
-          items.value = items.value.toSpliced(Math.min(deletedIndex, items.value.length), 0, deletedRoomEmoji);
+          roomItems.value = roomItems.value.toSpliced(
+            Math.min(deletedIndex, roomItems.value.length),
+            0,
+            deletedRoomEmoji,
+          );
         };
       },
       key: input.id,
@@ -121,6 +131,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
     customEmojiMap,
     customEmojis,
     deleteRoomEmoji,
+    getSlice,
     items,
     readRoomEmojis,
     storeCreateRoomEmoji,
@@ -128,6 +139,5 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
     storeUpdateRoomEmoji,
     updateRoomEmoji,
     ...restData,
-    ...restOperationData,
   };
 });

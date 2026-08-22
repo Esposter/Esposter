@@ -80,6 +80,7 @@ const moveCategory = async (categoryId: RoomCategoryInMessage["id"], direction: 
       />
     </VueDraggable>
   </MessageModelRoomBaseList>
+  <MessageModelRoomInviteDialog />
   <MessageModelRoomSettingsDialog />
   <MessageModelRoomCategoryConfirmDeleteDialog />
 </template>

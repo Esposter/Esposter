@@ -16,6 +16,7 @@ export const createSnapshot = (
   const location = resolveSnapshotLocation(options.cwd);
   const { dir, upperDir } = location;
   // Not `async`, so a location that cannot be resolved throws where it is called rather than on the promise
+  // eslint-disable-next-line no-restricted-syntax -- the trailing `then` maps the value, and the function is deliberately not `async` (see above), so `await` cannot
   return captureOverlayUpper(backend, command, options, {
     dir,
     failureLabel: "snapshot setup command",

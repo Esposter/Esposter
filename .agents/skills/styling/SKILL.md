@@ -55,7 +55,9 @@ Only registered colors generate utilities — don't assume a Vuetify default the
 
 ### Links use `text-info` (the blue), never `text-primary`
 
-Hyperlinks / clickable inline text get `text-info` — that is the conventional link blue. `text-primary` is the brand/action accent, not a link colour. Applies to `<a>`, `NuxtLink`, and any inline "click here" affordance: `<a cursor-pointer text-info underline @click="…">grant access</a>`.
+Hyperlinks / clickable inline text get `text-info` — that is the conventional link blue, underlined on hover rather than always (`hover:underline`). `text-primary` is the brand/action accent, not a link colour. It applies to `NuxtLink`, `NuxtInvisibleLink` and every inline "click here" affordance, whichever of them a case calls for.
+
+**Inline text that runs an action rather than navigating is `StyledActionLink`, never a hand-styled span or a raw `<a>`.** A raw `<a>` is lint-banned, and hand-styling the span means re-deciding the colour, the hover underline, the pointer and the whole keyboard-and-role wiring at each call site — which is how one of them ends up unfocusable, or bold-with-a-hover-underline where its twin is permanently blue and underlined. It takes a `@click` and its children are the words in the sentence: `<StyledActionLink @click="isOpen = true">create one</StyledActionLink>`. A link that navigates stays a `NuxtLink`.
 
 ### State variants are utilities, not `&:hover` blocks
 

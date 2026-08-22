@@ -292,7 +292,10 @@ describe("moderation", () => {
     test("filters by targetUserId", async () => {
       expect.hasAssertions();
 
-      const [firstMember, secondMember] = await Promise.all([createMember(), createMember()]);
+      // Sequential: `createMember` replaces the room's invite for its caller and consumes a one-shot session,
+      // So the two cannot overlap
+      const firstMember = await createMember();
+      const secondMember = await createMember();
       await moderationCaller.executeAdminAction({
         roomId,
         targetUserId: firstMember.id,
@@ -389,7 +392,10 @@ describe("moderation", () => {
     test("returns only the target member's notes", async () => {
       expect.hasAssertions();
 
-      const [firstMember, secondMember] = await Promise.all([createMember(), createMember()]);
+      // Sequential: `createMember` replaces the room's invite for its caller and consumes a one-shot session,
+      // So the two cannot overlap
+      const firstMember = await createMember();
+      const secondMember = await createMember();
       await moderationCaller.createModerationNote({ note, roomId, targetUserId: firstMember.id });
       vi.setSystemTime(durationMs);
       await moderationCaller.createModerationNote({ note, roomId, targetUserId: secondMember.id });

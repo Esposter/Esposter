@@ -131,7 +131,11 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   }
 
   receiveMessages(_options?: QueueReceiveMessageOptions): Promise<QueueReceiveMessageResponse> {
-    const receivedMessageItems: DequeuedMessageItem[] = this.queue.splice(0).map((text) =>
+    // A receive takes the whole queue and leaves an empty one behind — swapping the map's array for a fresh
+    // One rather than emptying the array in place, so nothing already holding the old one sees it drain
+    const queuedTexts = this.queue;
+    MockQueueDatabase.set(this.name, []);
+    const receivedMessageItems: DequeuedMessageItem[] = queuedTexts.map((text) =>
       Object.assign(getMockQueueMessageItem(text), {
         dequeueCount: 1,
         nextVisibleOn: new Date(),

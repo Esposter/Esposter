@@ -1,4 +1,3 @@
-import { noop } from "@/util/function/noop";
 import { settleAll } from "@/util/promise/settleAll";
 import { describe, expect, test } from "vitest";
 
@@ -20,6 +19,7 @@ describe(settleAll, () => {
     expect.hasAssertions();
     const { promise, resolve } = Promise.withResolvers<string>();
     const events: string[] = [];
+    // eslint-disable-next-line no-restricted-syntax -- `settleAll` rejects, and this asserts that rejection directly: a Result wrapper would assert the wrapper rather than the primitive under test
     const settling = settleAll([
       async () => {
         await promise;
@@ -46,6 +46,7 @@ describe(settleAll, () => {
     expect.hasAssertions();
     const { promise, resolve } = Promise.withResolvers<string>();
     const events: string[] = [];
+    // eslint-disable-next-line no-restricted-syntax -- `settleAll` rejects, and this asserts that rejection directly: a Result wrapper would assert the wrapper rather than the primitive under test
     const settling = settleAll([
       async () => {
         await promise;
@@ -77,6 +78,7 @@ describe(settleAll, () => {
 
   test("carries every rejection of a wave under the first one's message", async () => {
     expect.hasAssertions();
+    // eslint-disable-next-line no-restricted-syntax -- `settleAll` rejects, and this asserts that rejection directly: a Result wrapper would assert the wrapper rather than the primitive under test
     const caughtError = await settleAll([
       () => Promise.reject(new Error("a")),
       () => Promise.reject(new Error("b")),
@@ -98,7 +100,7 @@ describe(settleAll, () => {
       startedCount += 1;
       return Promise.reject(new Error("a"));
     };
-    await settleAll([task, task], 1).catch(noop);
+    await expect(settleAll([task, task], 1)).rejects.toThrow("a");
 
     expect(startedCount).toBe(1);
   });

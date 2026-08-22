@@ -73,7 +73,10 @@ Collapsing parameter mode back to text (Escape, or Backspace in an empty command
 | `packages/app/app/services/message/slashCommands/SlashCommandSuggestion.ts`     | picker suggestion config                                      |
 | `packages/app/app/services/message/slashCommands/parseTextAndParameters.ts`     | text → parameterValues re-parsing                             |
 | `packages/app/app/store/message/input/slashCommand.ts`                          | pendingCommand + parameterValues + trailingMessage store      |
+| `packages/app/app/components/Message/Model/Message/Input/ActionsMenuButton.vue` | the composer's `+` menu over the dialog commands              |
 
 ## Notes
+
+The three commands that open a dialog rather than send something — `/poll`, `/schedule` and `/remind` — are also the composer's `+` menu, which is Discord's home for creating a poll. The menu runs the same `useExecuteSlashCommand` with the same type and takes each entry's icon from `SlashCommandDefinitionMap`, so a command and its menu entry cannot drift; only the entry's wording differs, because a command's title names the command (`/poll`) where a menu of actions wants a verb.
 
 The send pipeline is untouched by commands: `sendMessage`, `RichTextEditor`, and the mention suggestion know nothing about slash commands. Client-only commands go through the same `storeSendMessage` as a hand-typed message.

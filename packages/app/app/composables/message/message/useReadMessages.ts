@@ -16,8 +16,8 @@ export const useReadMessages = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
-  const { readItems, readMoreItems } = dataStore;
-  const { hasMoreNewer, nextCursorNewer } = storeToRefs(dataStore);
+  const { getSlice, readItems, readMoreItems } = dataStore;
+  const { getHasMoreNewerRef, getNextCursorNewerRef } = dataStore;
   const readMembersByIds = useReadMembersByIds();
   const readAppUsers = useReadAppUsers();
   const readReplies = useReadReplies();
@@ -46,6 +46,10 @@ export const useReadMessages = () => {
 
   const readMessages = () => {
     const roomId = requirePartitionKey(currentRoomId.value, readMessages.name);
+    // Both are written after an await, so they name the room this read was issued for rather than the one the
+    // Reader has open by the time it lands
+    const hasMoreNewer = getHasMoreNewerRef(roomId);
+    const nextCursorNewer = getNextCursorNewerRef(roomId);
     return readItems(async () => {
       const rowKey = getRouteParamString(currentRoute.value.params.rowKey);
       if (rowKey) {
@@ -83,10 +87,16 @@ export const useReadMessages = () => {
   const readMoreNewerMessages = async (onComplete: () => void) => {
     if (!currentRoomId.value) return;
 
+    // The room this page was read for, resolved before the request goes out — the reader can open another room
+    // While it is in flight, and the page and its cursor belong to the room that asked for them either way
+    const roomId = currentRoomId.value;
+    const { items: roomItems } = getSlice(roomId);
+    const hasMoreNewer = getHasMoreNewerRef(roomId);
+    const nextCursorNewer = getNextCursorNewerRef(roomId);
     const { hasMore, items, nextCursor } = await $trpc.message.readMessages.query({
       cursor: nextCursorNewer.value,
       order: SortOrder.Asc,
-      roomId: currentRoomId.value,
+      roomId,
     });
     hasMoreNewer.value = hasMore;
     nextCursorNewer.value = nextCursor ?? "";
@@ -95,12 +105,12 @@ export const useReadMessages = () => {
     const newerItems: MessageEntity[] = [];
     const olderItems: MessageEntity[] = [];
 
-    for (const item of dataStore.items)
+    for (const item of roomItems.value)
       if (!rowKeys.has(item.rowKey))
         if (items.length > 0 && item.rowKey < takeOne(items).rowKey) newerItems.push(item);
         else olderItems.push(item);
 
-    dataStore.items = [...newerItems, ...items, ...olderItems];
+    roomItems.value = [...newerItems, ...items, ...olderItems];
     await readMetadata(items);
     onComplete();
   };

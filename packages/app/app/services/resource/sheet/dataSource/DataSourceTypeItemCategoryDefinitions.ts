@@ -3,7 +3,9 @@ import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCa
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
-const DataSourceTypeItemCategoryDefinitionMap = {
+// Exported for the icon: the import and export submenus show each format against its own, and only this map
+// Knows which one that is
+export const DataSourceTypeItemCategoryDefinitionMap = {
   [DataSourceType.Csv]: {
     icon: "mdi-file-delimited",
     title: DataSourceType.Csv,

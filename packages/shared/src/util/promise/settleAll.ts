@@ -20,6 +20,7 @@ export const settleAll = async <T>(
     // Called directly, that throw escapes `map` itself — `allSettled` is never reached, the tasks map already
     // Started keep running unawaited, and the caller rolls back over the top of them: the one failure mode this
     // Whole helper exists to remove
+    // eslint-disable-next-line no-restricted-syntax -- `then` is the only shape that converts a synchronous throw
     const results = await Promise.allSettled(tasksChunk.map((task) => Promise.resolve().then(task)));
     const reasons: unknown[] = [];
     for (const result of results)

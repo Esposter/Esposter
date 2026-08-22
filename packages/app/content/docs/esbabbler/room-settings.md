@@ -5,7 +5,7 @@ description: The fullscreen room settings dialog — Discord Server Settings cat
 
 # Room Settings
 
-A Discord-style fullscreen settings dialog for a room, opened from the room list. Opening settings for a room other than the one being viewed navigates to that room first — the Roles and Members panels load and key their data (roles, members, permissions, selection) by the current room, so the dialog always targets the room whose data is live. Its information architecture matches Discord Server Settings: a two-level sidebar of category groups (`v-list-group`) whose items are the panels, with the first category headed by the room name itself and **Delete** kept as a standalone destructive item below the categories.
+A Discord-style fullscreen settings dialog for a room, opened from the cog on its row in the room list — including a room the reader is not in, without going there. The panels read the same keyed store slices the room list and the message list do, so those slices follow `useRoomStore.scopedRoomId`: the route's room, or the room settings is open over. Reading the route's room instead is what made the cog navigate first, and the navigation was visible as a flicker behind the dialog. Its information architecture matches Discord Server Settings: a two-level sidebar of category groups (`v-list-group`) whose items are the panels, with the first category headed by the room name itself and **Delete** kept as a standalone destructive item below the categories.
 
 ## Categories and panels
 
@@ -13,15 +13,19 @@ A Discord-style fullscreen settings dialog for a room, opened from the room list
 
 | Category                 | Panels                                       | Gated panels (permission)                                                 |
 | ------------------------ | -------------------------------------------- | ------------------------------------------------------------------------- |
-| _(room name)_            | Overview · Roles · Profile · Emojis          | Emojis (`ManageEmojis`)                                                   |
-| Integrations             | Webhooks                                     | —                                                                         |
+| _(room name)_            | Overview · Roles · Profile · Emojis          | Overview (`ManageRoom`), Roles (`ManageRoles`), Emojis (`ManageEmojis`)   |
+| Integrations             | Webhooks                                     | Webhooks (`ManageWebhooks`)                                               |
 | Moderation               | Word Filter · Audit Log · Bans · Attachments | Word Filter + Audit Log + Attachments (`ManageRoom`), Bans (`BanMembers`) |
-| User Management          | Members · Invites                            | —                                                                         |
-| _(below the categories)_ | Delete                                       | owner-only inside its confirm dialog                                      |
+| User Management          | Members · Invites                            | Members (`ManageRoles`)                                                   |
+| _(below the categories)_ | Delete · Leave                               | the owner deletes, every other member leaves                              |
 
-Gating lives in `SettingsPermissionMap` — a panel with an entry is hidden from members lacking that `RoomPermission`; a category with no visible panels disappears entirely. Room owners bypass all checks via `hasPermission`.
+The destructive row is the one whose label follows the reader rather than the panel: `Delete` for the owner, `Leave` for everyone else, over the same `StyledDeleteFormDialog` — the room-name confirmation guard is the owner's only, since leaving is not irreversible ([destructive confirmation](/docs/architecture/destructive-confirmation)).
 
-**Roles** edits roles and their permission bitfields; **Members** assigns/revokes member roles; **Invites** manages your invite link — the same manager component (`MessageModelRoomInviteManager`) the header's Add Friends dialog uses; **Attachments** edits the room's upload limits, described in [file & media](/docs/esbabbler/file-media).
+Gating lives in `SettingsPermissionMap` — a panel with an entry is hidden from members lacking that `RoomPermission`; a category with no visible panels disappears entirely. Room owners bypass all checks via `hasPermission`. Every panel except **Profile** and **Invites** carries an entry, because every write behind it is guarded by the same permission server-side: an ungated row is a rail entry whose every control rejects, and the Webhooks panel's own read rejects before it draws anything. Profile edits the reader's own membership and Invites shows the reader's own link, which every member may do.
+
+`MANAGEMENT_PERMISSIONS` — the gate on opening the dialog at all, and on the room list's settings button — is the union of that map plus `Administrator`, derived from it rather than listed beside it. A member who may only manage emoji or bans therefore reaches the rail that manages them, holding one row.
+
+**Roles** edits roles and their permission bitfields; **Members** assigns/revokes member roles; **Invites** lists the link the reader holds and links into the dialog that creates one, which is where creating stays ([invites](/docs/esbabbler/invites)); **Attachments** edits the room's upload limits, described in [file & media](/docs/esbabbler/file-media).
 
 ## How it works
 
@@ -49,14 +53,14 @@ The shared `MessageModelSettingsLeftSideBar` drawer is `permanent` only on deskt
 
 ## Key files
 
-| File                                                                  | Role                                                   |
-| :-------------------------------------------------------------------- | :----------------------------------------------------- |
-| `packages/app/app/models/message/room/SettingsType.ts`                | panel enum (values double as titles)                   |
-| `packages/app/app/models/message/room/SettingsCategory.ts`            | sidebar category enum                                  |
-| `packages/app/app/services/message/settings/SettingsCategoryMap.ts`   | category → panels grouping                             |
-| `packages/app/app/services/message/settings/SettingsListItemMap.ts`   | panel icons/colors                                     |
-| `packages/app/app/services/message/settings/SettingsContentMap.ts`    | panel → lazy component                                 |
-| `packages/app/app/services/message/settings/SettingsPermissionMap.ts` | panel → required `RoomPermission`                      |
-| `packages/app/app/composables/message/room/useSaveRoom.ts`            | shared optimistic room-row save + key-scoped rollback  |
-| `packages/app/app/components/Message/Model/Room/Settings/`            | dialog + sidebar + `Type/*` panels                     |
-| `packages/app/app/components/Message/Model/Room/Invite/Manager.vue`   | invite-link manager shared with the Add Friends dialog |
+| File                                                                  | Role                                                  |
+| :-------------------------------------------------------------------- | :---------------------------------------------------- |
+| `packages/app/app/models/message/room/SettingsType.ts`                | panel enum (values double as titles)                  |
+| `packages/app/app/models/message/room/SettingsCategory.ts`            | sidebar category enum                                 |
+| `packages/app/app/services/message/settings/SettingsCategoryMap.ts`   | category → panels grouping                            |
+| `packages/app/app/services/message/settings/SettingsListItemMap.ts`   | panel icons/colors                                    |
+| `packages/app/app/services/message/settings/SettingsContentMap.ts`    | panel → lazy component                                |
+| `packages/app/app/services/message/settings/SettingsPermissionMap.ts` | panel → required `RoomPermission`                     |
+| `packages/app/app/composables/message/room/useSaveRoom.ts`            | shared optimistic room-row save + key-scoped rollback |
+| `packages/app/app/components/Message/Model/Room/Settings/`            | dialog + sidebar + `Type/*` panels                    |
+| `packages/app/app/services/room/rbac/constants.ts`                    | the dialog's own gate, derived from the panel map     |
