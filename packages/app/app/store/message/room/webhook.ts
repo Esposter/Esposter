@@ -13,7 +13,7 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const useWebhookStore = defineStore("message/room/webhook", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { items, ...restData } = useCursorPaginationDataMap<WebhookInMessage>(() => roomStore.currentRoomId);
+  const { items, ...restData } = useCursorPaginationDataMap<WebhookInMessage>(() => roomStore.scopedRoomId);
   const {
     createWebhook: storeCreateWebhook,
     deleteWebhook: storeDeleteWebhook,

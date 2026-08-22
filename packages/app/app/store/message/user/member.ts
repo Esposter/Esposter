@@ -20,13 +20,13 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // Keyed by room, like messages. A single global list would still hold the previous room's members after a
   // Switch, which is unreadable state for anything asking "are these rows this room's" — the offline cache asks
   // Exactly that before it hydrates or persists, and cannot answer it from a list that outlives the partition
-  const { items, ...restData } = useCursorPaginationDataMap<User>(() => roomStore.currentRoomId);
+  const { items, ...restData } = useCursorPaginationDataMap<User>(() => roomStore.scopedRoomId);
   const members = computed(() => items.value.toSorted((a, b) => EN_US_COMPARATOR.compare(a.name, b.name)));
   // Single source of truth for resolving a member id to its room display name (nickname over global name),
   // Falling back to the raw id for actors/targets no longer in the loaded member list.
   const getMemberName = (userId: User["id"]): string => {
     const member = members.value.find(({ id }) => id === userId);
-    return member ? getDisplayName(member, roomStore.currentRoomId) : userId;
+    return member ? getDisplayName(member, roomStore.scopedRoomId) : userId;
   };
   // Server-computed totals for the member list headers — the paginated items only hold loaded pages. Keyed by
   // Room for the same reason the list is: they describe one room, only the network can produce them, and a
@@ -35,7 +35,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // List — `memberCounts` itself tracks whichever room is current, which is what the rendered headers want and
   // Exactly what a response arriving after a room switch must not use
   const { data: memberCounts, getBoundData: getBoundMemberCounts } = useDataMap(
-    () => roomStore.currentRoomId,
+    () => roomStore.scopedRoomId,
     () => new MemberCounts(),
   );
   const count = computed({
@@ -52,7 +52,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   });
   topRoleChangeHooks.register((roomId, previousTopRoleId, newTopRoleId) => {
     // Counts track the currently open room; the roleless group derives from the total, so "" is a no-op
-    if (roomId !== roomStore.currentRoomId) return;
+    if (roomId !== roomStore.scopedRoomId) return;
     for (const [roleId, delta] of [
       [previousTopRoleId, -1],
       [newTopRoleId, 1],
@@ -80,7 +80,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // Above follows for the per-role totals
   const storeCreateMember = (roomId: string, member: User) => {
     storeUser(member);
-    if (roomId !== roomStore.currentRoomId) return;
+    if (roomId !== roomStore.scopedRoomId) return;
     baseStoreCreateMember(member);
     count.value++;
   };
@@ -90,7 +90,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
     // Total drops while the role group keeps the leaver, and the roleless remainder absorbs the whole error
     // (in a room where every member holds a role it goes negative).
     mutateMemberRoles(roomId, id, []);
-    if (roomId !== roomStore.currentRoomId) return;
+    if (roomId !== roomStore.scopedRoomId) return;
     baseStoreDeleteMember({ id });
     count.value--;
   };

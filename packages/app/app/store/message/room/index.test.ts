@@ -2,6 +2,7 @@
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useRoomStore } from "@/store/message/room";
+import { useDialogStore } from "@/store/message/room/dialog";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -13,6 +14,28 @@ describe(useRoomStore, () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
+  });
+
+  // The cog on a room row opens settings for that room without taking the reader there, so every room-scoped
+  // Slice a panel reads has to follow the dialog rather than the route — reading the route's room instead is what
+  // Made the panels show the wrong room's members until the click navigated first
+  test("scopes room-scoped reads to the room settings is open for", () => {
+    expect.hasAssertions();
+
+    const roomStore = useRoomStore();
+    const { currentRoomId, scopedRoomId } = storeToRefs(roomStore);
+    const dialogStore = useDialogStore();
+    const { settingsRoomId } = storeToRefs(dialogStore);
+
+    expect(scopedRoomId.value).toBe(currentRoomId.value);
+
+    settingsRoomId.value = second.id;
+
+    expect(scopedRoomId.value).toBe(second.id);
+
+    settingsRoomId.value = "";
+
+    expect(scopedRoomId.value).toBe(currentRoomId.value);
   });
 
   // Every room is its own target, so removals overlap: the rejected one has to put back its own room only.

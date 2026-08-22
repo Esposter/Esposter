@@ -5,7 +5,7 @@ description: The fullscreen room settings dialog — Discord Server Settings cat
 
 # Room Settings
 
-A Discord-style fullscreen settings dialog for a room, opened from the room list. Opening settings for a room other than the one being viewed navigates to that room first — the Roles and Members panels load and key their data (roles, members, permissions, selection) by the current room, so the dialog always targets the room whose data is live. Its information architecture matches Discord Server Settings: a two-level sidebar of category groups (`v-list-group`) whose items are the panels, with the first category headed by the room name itself and **Delete** kept as a standalone destructive item below the categories.
+A Discord-style fullscreen settings dialog for a room, opened from the cog on its row in the room list — including a room the reader is not in, without going there. The panels read the same keyed store slices the room list and the message list do, so those slices follow `useRoomStore.scopedRoomId`: the route's room, or the room settings is open over. Reading the route's room instead is what made the cog navigate first, and the navigation was visible as a flicker behind the dialog. Its information architecture matches Discord Server Settings: a two-level sidebar of category groups (`v-list-group`) whose items are the panels, with the first category headed by the room name itself and **Delete** kept as a standalone destructive item below the categories.
 
 ## Categories and panels
 

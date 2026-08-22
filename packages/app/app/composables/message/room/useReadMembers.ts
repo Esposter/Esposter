@@ -9,7 +9,7 @@ import { useMemberStore } from "@/store/message/user/member";
 export const useReadMembers = () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { currentRoomId } = storeToRefs(roomStore);
+  const { scopedRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
   const { getBoundMemberCounts, readItems, readMoreItems } = memberStore;
   const userStore = useUserStore();
@@ -27,7 +27,7 @@ export const useReadMembers = () => {
     ]);
   };
   const readMembers = () => {
-    const roomId = requirePartitionKey(currentRoomId.value, readMembers.name);
+    const roomId = requirePartitionKey(scopedRoomId.value, readMembers.name);
     return readItems(async () => {
       // Bound before the first await for the same reason readItems binds the member list itself: a room switch
       // Made while these three are in flight must not file this room's totals under the one being entered,
@@ -49,7 +49,7 @@ export const useReadMembers = () => {
     });
   };
   const readMoreMembers = (onComplete: () => void) => {
-    const roomId = requirePartitionKey(currentRoomId.value, readMoreMembers.name);
+    const roomId = requirePartitionKey(scopedRoomId.value, readMoreMembers.name);
     return readMoreItems(async (cursor) => {
       const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId });
       await readMetadata(

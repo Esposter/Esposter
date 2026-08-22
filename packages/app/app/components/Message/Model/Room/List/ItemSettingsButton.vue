@@ -5,7 +5,6 @@ import { authClient } from "@/services/auth/authClient";
 import { useDialogStore } from "@/store/message/room/dialog";
 import { useRoleStore } from "@/store/message/room/role";
 import { DatabaseEntityType } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
 
 interface ListItemSettingsButtonProps {
   isActive: boolean;
@@ -34,14 +33,7 @@ const isVisible = computed(() => room.userId === session.value?.user.id || check
           icon="mdi-cog"
           variant="plain"
           size="small"
-          @click="
-            async () => {
-              // Settings panels (Roles, Members) load and key their data by the current room,
-              // so opening settings for another room navigates there first
-              if (!isActive) await navigateTo(RoutePath.Messages(room.id));
-              settingsRoomId = room.id;
-            }
-          "
+          @click="settingsRoomId = room.id"
         />
       </template>
     </v-tooltip>

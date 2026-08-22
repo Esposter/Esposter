@@ -17,7 +17,7 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { items, ...restData } = useCursorPaginationDataMap<RoomEmojiWithSasUrl>(() => roomStore.currentRoomId);
+  const { items, ...restData } = useCursorPaginationDataMap<RoomEmojiWithSasUrl>(() => roomStore.scopedRoomId);
   const {
     createRoomEmoji: storeCreateRoomEmoji,
     deleteRoomEmoji: storeDeleteRoomEmoji,
@@ -36,7 +36,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   );
   // `items` tracks whichever room is current, so a callback that outlives its room writes one room's set into
   // Another's list. Re-entering the room reads the set again, so dropping the write there loses nothing
-  const getIsRoomCurrent = (roomId: RoomInMessage["id"]) => roomStore.currentRoomId === roomId;
+  const getIsRoomCurrent = (roomId: RoomInMessage["id"]) => roomStore.scopedRoomId === roomId;
   const { executeQuery: executeReadRoomEmojisQuery } = useMutation();
   const readRoomEmojis = async (roomId: RoomInMessage["id"]) => {
     // Keyed by the room, so re-entering it supersedes the read it interrupted: the room lifecycle issues one read

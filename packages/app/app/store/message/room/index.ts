@@ -9,6 +9,7 @@ import { useMutation } from "@/composables/shared/useMutation";
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
+import { useDialogStore } from "@/store/message/room/dialog";
 import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
 import { Operation, RoutePath, takeOne, uuidValidateV4 } from "@esposter/shared";
 
@@ -27,6 +28,12 @@ export const useRoomStore = defineStore("message/room", () => {
     const roomId = router.currentRoute.value.params.id;
     return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : "";
   });
+  const dialogStore = useDialogStore();
+  // Which room the room-scoped surfaces are reading for. The route decides it, except while room settings is open
+  // Over another room: the dialog names its own room, and its panels read the same keyed slices the room list and
+  // The message list do — so without this the cog would have to navigate first, which is a flicker and a place
+  // The reader never asked to go
+  const scopedRoomId = computed(() => dialogStore.settingsRoomId || currentRoomId.value);
   // Every way a room leaves the list — deleted here, left here, or removed by a subscription — hands the user
   // To the next room when it was the one on screen. Read at the moment the removal lands, so the replacement
   // Is whatever is still there rather than what was there when the write was issued
@@ -131,6 +138,7 @@ export const useRoomStore = defineStore("message/room", () => {
     ...restData,
     currentRoom,
     currentRoomId,
+    scopedRoomId,
     isCreator,
   };
 });
