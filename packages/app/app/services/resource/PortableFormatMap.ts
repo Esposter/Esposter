@@ -6,6 +6,7 @@ import { getDatasetTruncation } from "@/services/dataset/getDatasetTruncation";
 import { OPEN_EMAIL_EDITOR_MESSAGE } from "@/services/emailEditor/constants";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
+import { DataSourceTypeItemCategoryDefinitionMap } from "@/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitions";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
@@ -46,7 +47,7 @@ const createSheetPortableFormat = (type: DataSourceType): PortableFormat => ({
       openPreview(result, trimFileExtension(result.metadata.name));
     });
   },
-  label: type,
+  label: DataSourceTypeItemCategoryDefinitionMap[type].title,
 });
 // Import/export formats per portable type
 export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> = {

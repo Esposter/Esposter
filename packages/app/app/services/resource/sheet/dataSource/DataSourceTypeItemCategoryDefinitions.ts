@@ -3,18 +3,21 @@ import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCa
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
-const DataSourceTypeItemCategoryDefinitionMap = {
+// The enum member is the storage name; the title is what a reader is shown, and a file format is written the way
+// The format is written — CSV, not Csv. Every surface that names a format takes it from here, so the import menu,
+// The export menu, the export dialog's own heading and the Settings type select cannot spell one three ways
+export const DataSourceTypeItemCategoryDefinitionMap = {
   [DataSourceType.Csv]: {
     icon: "mdi-file-delimited",
-    title: DataSourceType.Csv,
+    title: "CSV",
   },
   [DataSourceType.Json]: {
     icon: "mdi-code-json",
-    title: DataSourceType.Json,
+    title: "JSON",
   },
   [DataSourceType.Xlsx]: {
     icon: "mdi-file-excel",
-    title: DataSourceType.Xlsx,
+    title: "XLSX",
   },
 } as const satisfies Record<DataSourceType, { icon: string; title: string }>;
 

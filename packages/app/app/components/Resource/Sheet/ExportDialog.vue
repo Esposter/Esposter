@@ -3,6 +3,7 @@ import type { DataSourceType } from "#shared/models/resource/sheet/datasource/Da
 
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
+import { DataSourceTypeItemCategoryDefinitionMap } from "@/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitions";
 import { filterDataSourceColumns } from "@/services/resource/sheet/dataSource/filterDataSourceColumns";
 import { filterDataSourceRows } from "@/services/resource/sheet/dataSource/filterDataSourceRows";
 import { useResourceStore } from "@/store/resource";
@@ -36,7 +37,7 @@ const displayedSelectedColumnIds = computed(() => {
 <template>
   <StyledDialog
     v-model="isOpen"
-    :card-props="{ title: `Export as ${dataSourceType}` }"
+    :card-props="{ title: `Export as ${DataSourceTypeItemCategoryDefinitionMap[dataSourceType].title}` }"
     :confirm-button-props="{ text: 'Export' }"
     :confirm-button-attrs="{ disabled: displayedSelectedColumnIds.length === 0 }"
     @confirm="
