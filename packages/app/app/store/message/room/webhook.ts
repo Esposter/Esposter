@@ -13,6 +13,7 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const useWebhookStore = defineStore("message/room/webhook", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
+  const { checkIsRoomScoped } = roomStore;
   const { items, ...restData } = useCursorPaginationDataMap<WebhookInMessage>(() => roomStore.scopedRoomId);
   const {
     createWebhook: storeCreateWebhook,
@@ -20,8 +21,18 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
     updateWebhook: storeUpdateWebhook,
     ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.Webhook);
+  const { executeQuery: executeReadWebhooksQuery } = useMutation();
   const readWebhooks = async (roomId: RoomInMessage["id"]) => {
-    items.value = await $trpc.webhook.readWebhooks.query({ roomId });
+    // Keyed by the room, so re-opening its settings supersedes the read it interrupted: A→B→A would otherwise let
+    // The first A response land last and overwrite the newer list
+    await executeReadWebhooksQuery(() => $trpc.webhook.readWebhooks.query({ roomId }), {
+      key: roomId,
+      onSuccess: (webhooks) => {
+        if (!checkIsRoomScoped(roomId)) return;
+
+        items.value = webhooks;
+      },
+    });
   };
   const { executeMutation: executeCreateWebhookMutation } = useMutation();
   const { executeMutation: executeUpdateWebhookMutation } = useMutation();
@@ -33,7 +44,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
     await executeCreateWebhookMutation(() => $trpc.webhook.createWebhook.mutate({ ...input, roomId }), {
       key: Symbol("createWebhook"),
       onSuccess: (newWebhook) => {
-        storeCreateWebhook(newWebhook, true);
+        if (checkIsRoomScoped(roomId)) storeCreateWebhook(newWebhook, true);
       },
     });
   };
@@ -47,13 +58,13 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
         const previousValues = previousWebhook ? { ...previousWebhook } : undefined;
         storeUpdateWebhook({ ...input, roomId });
         return () => {
-          if (previousValues) storeUpdateWebhook(previousValues);
+          if (previousValues && checkIsRoomScoped(roomId)) storeUpdateWebhook(previousValues);
         };
       },
       // Keyed per webhook so writes to one row queue while different webhooks stay independent
       key: input.id,
       onSuccess: (updatedWebhook) => {
-        storeUpdateWebhook(updatedWebhook);
+        if (checkIsRoomScoped(roomId)) storeUpdateWebhook(updatedWebhook);
       },
     });
   };
@@ -62,7 +73,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
     await executeRotateTokenMutation(() => $trpc.webhook.rotateToken.mutate({ ...input, roomId }), {
       key: input.id,
       onSuccess: (updatedWebhook) => {
-        storeUpdateWebhook(updatedWebhook);
+        if (checkIsRoomScoped(roomId)) storeUpdateWebhook(updatedWebhook);
       },
     });
   };
@@ -75,7 +86,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
         const deletedWebhook = items.value[deletedIndex];
         storeDeleteWebhook({ id: input.id });
         return () => {
-          if (!deletedWebhook) return;
+          if (!deletedWebhook || !checkIsRoomScoped(roomId)) return;
 
           items.value = items.value.toSpliced(Math.min(deletedIndex, items.value.length), 0, deletedWebhook);
         };

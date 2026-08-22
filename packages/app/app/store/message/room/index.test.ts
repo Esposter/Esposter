@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import { createRoom } from "@/services/message/room/createRoom.test";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useRoomStore } from "@/store/message/room";
 import { useDialogStore } from "@/store/message/room/dialog";
@@ -22,12 +23,15 @@ describe(useRoomStore, () => {
   test("scopes room-scoped reads to the room settings is open for", () => {
     expect.hasAssertions();
 
+    // A room is on the route throughout, so the two states the scope can be in are distinguishable — read against
+    // An empty route both assertions would hold for a scope that ignores the route entirely
+    setCurrentRoomId(first.id);
     const roomStore = useRoomStore();
-    const { currentRoomId, scopedRoomId } = storeToRefs(roomStore);
+    const { scopedRoomId } = storeToRefs(roomStore);
     const dialogStore = useDialogStore();
     const { settingsRoomId } = storeToRefs(dialogStore);
 
-    expect(scopedRoomId.value).toBe(currentRoomId.value);
+    expect(scopedRoomId.value).toBe(first.id);
 
     settingsRoomId.value = second.id;
 
@@ -35,7 +39,7 @@ describe(useRoomStore, () => {
 
     settingsRoomId.value = "";
 
-    expect(scopedRoomId.value).toBe(currentRoomId.value);
+    expect(scopedRoomId.value).toBe(first.id);
   });
 
   // Every room is its own target, so removals overlap: the rejected one has to put back its own room only.

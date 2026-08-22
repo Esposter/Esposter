@@ -1,6 +1,6 @@
 ---
 name: ux
-description: Esposter UX conventions — where a feature's entry point goes (point-of-need beside management, never management alone), settings panels hold configuration rather than creation, one dialog shared by every surface that creates the same thing, standing controls that a transient value may never displace, a management surface existing only where its own actions can succeed, punctuation a value is written with being field chrome rather than input, and following the reference product's wording, layout and interaction where the domain matches — a handed-over screenshot being the specification, strings verbatim and nothing added, deviating only for a demonstrably better arrangement, said out loud. Apply when adding any user-facing feature, deciding where an action lives, or reviewing a surface for reachability.
+description: Esposter UX conventions — where a feature's entry point goes (point-of-need beside management, never management alone — unless the first want is administrative, or the act is already one click from where the want is felt), settings panels hold configuration rather than creation once a point of need exists outside them, one dialog shared by every surface that creates the same thing, standing controls that a transient value may never displace, a management surface existing only where its own actions can succeed, punctuation a value is written with being field chrome rather than input, and following the reference product's wording, layout and interaction where the domain matches — a handed-over screenshot being the specification, strings verbatim and nothing added, deviating only for a demonstrably better arrangement, said out loud. Apply when adding any user-facing feature, deciding where an action lives, or reviewing a surface for reachability.
 ---
 
 # UX Conventions
@@ -31,14 +31,24 @@ them is a chance to give up. Settings keeps the set and the deletes, and its emp
 Ask it for every new feature: **a saved view, a webhook, a tag, a template** — each has a moment of first want, and
 that moment is where its create action goes.
 
+**Two surfaces is what the answer usually is, not what the rule demands.** The rule is that the want is met from
+where it is felt; two surfaces is the shape that takes whenever the want is felt somewhere settings is not. Two
+cases collapse it back to one, and both are settled below rather than argued per feature: a want that only ever
+happens while configuring the room has no second place to put anything ([administrative first
+want](#a-feature-whose-first-want-is-administrative-has-no-second-surface)), and a want already met one click from
+where it is felt is met ([a second entry point a click
+away](#a-second-entry-point-a-click-away-is-not-a-missing-one)). Neither is a licence to ship management alone:
+each one has to be argued for the feature in hand, in the terms those sections set.
+
 ## A settings panel configures; it does not create
 
 Settings is the app's most tempting dumping ground because everything plausibly belongs there. It is also the
 surface a user visits least, so anything that lands there is the least discoverable version of itself.
 
 - A settings panel holds **configuration and management** — the whole list, rename, delete, the room-wide toggle.
-- **Creating does not belong there at all**, not even as a button. Once the point-of-need entry exists, a second
-  `Add` in settings is the same action in the place nobody reaches for it, and it is the copy that goes stale.
+- **Creating does not belong there at all once it lives at the point of need**, not even as a button — a second
+  `Add` in settings is the same action in the place nobody reaches for it, and it is the copy that goes stale. Where
+  there is no point of need outside settings, this rule has nothing to move and the create stays (below).
   What the panel owes instead is an **empty state that says where adding happens** — that is the one thing only it
   can say, because it is the surface a reader lands on with nothing in the list.
 - Adding a panel is a real cost: it lengthens the settings rail every reader scans, for a feature most of them will

@@ -34,6 +34,10 @@ export const useRoomStore = defineStore("message/room", () => {
   // The message list do — so without this the cog would have to navigate first, which is a flicker and a place
   // The reader never asked to go
   const scopedRoomId = computed(() => dialogStore.settingsRoomId || currentRoomId.value);
+  // Every room-scoped slice is keyed by the scope above, so a read or a write that lands after the scope moved
+  // Would file one room's rows under another's. Each of those stores asks the same question of its callbacks, and
+  // Dropping the write is the whole answer: re-entering the room reads it again
+  const checkIsRoomScoped = (roomId: RoomInMessage["id"]) => scopedRoomId.value === roomId;
   // Every way a room leaves the list — deleted here, left here, or removed by a subscription — hands the user
   // To the next room when it was the one on screen. Read at the moment the removal lands, so the replacement
   // Is whatever is still there rather than what was there when the write was issued
@@ -127,6 +131,7 @@ export const useRoomStore = defineStore("message/room", () => {
   });
 
   return {
+    checkIsRoomScoped,
     createRoom,
     deleteRoom,
     joinRoom,

@@ -17,6 +17,7 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
+  const { checkIsRoomScoped } = roomStore;
   const { items, ...restData } = useCursorPaginationDataMap<RoomEmojiWithSasUrl>(() => roomStore.scopedRoomId);
   const {
     createRoomEmoji: storeCreateRoomEmoji,
@@ -34,9 +35,6 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   const customEmojiMap = computed(
     () => new Map(customEmojis.value.map((customEmoji) => [customEmoji.id, customEmoji])),
   );
-  // `items` tracks whichever room is current, so a callback that outlives its room writes one room's set into
-  // Another's list. Re-entering the room reads the set again, so dropping the write there loses nothing
-  const getIsRoomCurrent = (roomId: RoomInMessage["id"]) => roomStore.scopedRoomId === roomId;
   const { executeQuery: executeReadRoomEmojisQuery } = useMutation();
   const readRoomEmojis = async (roomId: RoomInMessage["id"]) => {
     // Keyed by the room, so re-entering it supersedes the read it interrupted: the room lifecycle issues one read
@@ -44,7 +42,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
     await executeReadRoomEmojisQuery(() => $trpc.room.emoji.readRoomEmojis.query({ roomId }), {
       key: roomId,
       onSuccess: (roomEmojis) => {
-        if (!getIsRoomCurrent(roomId)) return;
+        if (!checkIsRoomScoped(roomId)) return;
 
         items.value = roomEmojis;
       },
@@ -76,7 +74,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
         // Each other while their images are still writing
         key: Symbol("createRoomEmoji"),
         onSuccess: (newRoomEmoji) => {
-          if (getIsRoomCurrent(roomId)) storeCreateRoomEmoji(newRoomEmoji);
+          if (checkIsRoomScoped(roomId)) storeCreateRoomEmoji(newRoomEmoji);
         },
       },
     );
@@ -90,12 +88,12 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
         const previousName = previousRoomEmoji ? { id: previousRoomEmoji.id, name: previousRoomEmoji.name } : undefined;
         storeUpdateRoomEmoji(input);
         return () => {
-          if (previousName && getIsRoomCurrent(roomId)) storeUpdateRoomEmoji(previousName);
+          if (previousName && checkIsRoomScoped(roomId)) storeUpdateRoomEmoji(previousName);
         };
       },
       key: input.id,
       onSuccess: (updatedRoomEmoji) => {
-        if (getIsRoomCurrent(roomId)) storeUpdateRoomEmoji(updatedRoomEmoji);
+        if (checkIsRoomScoped(roomId)) storeUpdateRoomEmoji(updatedRoomEmoji);
       },
     });
   };
@@ -108,7 +106,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
         const deletedRoomEmoji = items.value[deletedIndex];
         storeDeleteRoomEmoji({ id: input.id });
         return () => {
-          if (!deletedRoomEmoji || !getIsRoomCurrent(roomId)) return;
+          if (!deletedRoomEmoji || !checkIsRoomScoped(roomId)) return;
 
           items.value = items.value.toSpliced(Math.min(deletedIndex, items.value.length), 0, deletedRoomEmoji);
         };

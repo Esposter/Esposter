@@ -1,6 +1,10 @@
 // @vitest-environment nuxt
+import type { WebhookInMessage } from "@esposter/db-schema";
+
+import { createRoom } from "@/services/message/room/createRoom.test";
 import { createWebhook } from "@/services/message/room/createWebhook.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
+import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useWebhookStore } from "@/store/message/room/webhook";
@@ -10,14 +14,43 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useWebhookStore, () => {
   const roomId = crypto.randomUUID();
+  const otherRoomId = crypto.randomUUID();
 
   const server = setupMswTrpc();
   const first = createWebhook({ name: "first", roomId });
   const second = createWebhook({ name: "second", roomId });
+  // The read hands back each row with the room and the webhook's own user attached, the way the panel renders it
+  const room = createRoom("room");
+  const user = createUser();
+  const readWebhook = (webhook: WebhookInMessage) => ({ ...webhook, roomInMessage: room, user });
 
   beforeEach(() => {
     setActivePinia(createPinia());
     setCurrentRoomId(roomId);
+  });
+
+  // The panel reads for the room whose settings opened it, while `items` follows whichever room is scoped — so a
+  // Response that lands after the reader moved on must not become the newly scoped room's list. That room reads
+  // Its own webhooks when its panel opens, so dropping the write loses nothing
+  test("leaves the newly scoped room's list alone when the previous room's read lands late", async () => {
+    expect.hasAssertions();
+
+    const { promise: isRoomSwitched, resolve: onRoomSwitched } = Promise.withResolvers<void>();
+    server.use(
+      trpcMsw.webhook.readWebhooks.query(async () => {
+        await isRoomSwitched;
+        return [readWebhook(first), readWebhook(second)];
+      }),
+    );
+    const webhookStore = useWebhookStore();
+    const { readWebhooks } = webhookStore;
+    const { items } = storeToRefs(webhookStore);
+    const pendingRead = readWebhooks(roomId);
+    setCurrentRoomId(otherRoomId);
+    onRoomSwitched();
+    await pendingRead;
+
+    expect(items.value).toStrictEqual([]);
   });
 
   // A row's name field and its active switch write different fields of one webhook through one target, so an
