@@ -24,21 +24,28 @@ type MessageValue = IndexedDbDatabaseSchema[IndexedDbStoreName.Messages]["value"
 interface PaginationCacheVariant {
   name: string;
   useCache: (
-    initializeItems: (data: { items: MessageValue[] }) => void,
-    isLoaded: Ref<boolean>,
-    items: Ref<MessageValue[]>,
+    getSlice: (partitionKey: string) => TestSlice,
     partitionKey: Ref<string>,
     onHydrate?: () => Promise<void>,
   ) => void;
 }
 
+interface TestSlice {
+  initializeItems: (data: { items: MessageValue[] }) => void;
+  isLoaded: Ref<boolean>;
+  items: Ref<MessageValue[]>;
+}
+
 describe.each<PaginationCacheVariant>([
   {
     name: useCursorPaginationCache.name,
-    useCache: (initializeItems, isLoaded, items, partitionKey, onHydrate) => {
+    useCache: (getSlice, partitionKey, onHydrate) => {
       useCursorPaginationCache({
         configuration: MessageIndexedDbStoreConfiguration,
-        getSlice: () => ({ initializeCursorPaginationData: initializeItems, isLoaded, items }),
+        getSlice: (key) => {
+          const { initializeItems, isLoaded, items } = getSlice(key);
+          return { initializeCursorPaginationData: initializeItems, isLoaded, items };
+        },
         onHydrate,
         partitionKey,
       });
@@ -46,10 +53,13 @@ describe.each<PaginationCacheVariant>([
   },
   {
     name: useOffsetPaginationCache.name,
-    useCache: (initializeItems, isLoaded, items, partitionKey, onHydrate) => {
+    useCache: (getSlice, partitionKey, onHydrate) => {
       useOffsetPaginationCache({
         configuration: MessageIndexedDbStoreConfiguration,
-        getSlice: () => ({ initializeOffsetPaginationData: initializeItems, isLoaded, items }),
+        getSlice: (key) => {
+          const { initializeItems, isLoaded, items } = getSlice(key);
+          return { initializeOffsetPaginationData: initializeItems, isLoaded, items };
+        },
         onHydrate,
         partitionKey,
       });
@@ -57,20 +67,48 @@ describe.each<PaginationCacheVariant>([
   },
 ])("$name", ({ useCache }) => {
   let wrapper: VueWrapper;
-  const items = ref<MessageValue[]>([]);
-  // The store that performed the load owns this per partition; the harness drives it the way a store would —
-  // True once a read for the current partition has landed, false again on a switch onto one that has not
-  const isLoaded = ref(false);
   const partitionKeyRef = ref("");
+  // Keyed like the store the harness stands in for, so a read for one partition landing after a switch is
+  // Visible as rows in the wrong slice rather than hidden behind a single shared list
+  const sliceMap = new Map<string, TestSlice>();
+  const getTestSlice = (key: string): TestSlice => {
+    const existingSlice = sliceMap.get(key);
+    if (existingSlice) return existingSlice;
+
+    const sliceIsLoaded = ref(false);
+    const sliceItems = ref<MessageValue[]>([]);
+    // The store that performed the load owns readiness per partition; the harness drives it the way a store
+    // Would — true once a read for that partition has landed, false again on a switch onto one that has not
+    const slice: TestSlice = {
+      initializeItems: (data) => {
+        sliceItems.value = data.items;
+        sliceIsLoaded.value = true;
+      },
+      isLoaded: sliceIsLoaded,
+      items: sliceItems,
+    };
+    sliceMap.set(key, slice);
+    return slice;
+  };
+  // The current partition's view of the two, which is what a store's ambient refs are and what every test below
+  // Drives — the keyed slices exist so one test can name a partition the reader has left
+  const items = computed({
+    get: () => getTestSlice(partitionKeyRef.value).items.value,
+    set: (newItems) => {
+      getTestSlice(partitionKeyRef.value).items.value = newItems;
+    },
+  });
+  const isLoaded = computed({
+    get: () => getTestSlice(partitionKeyRef.value).isLoaded.value,
+    set: (newIsLoaded) => {
+      getTestSlice(partitionKeyRef.value).isLoaded.value = newIsLoaded;
+    },
+  });
   const partitionKey = crypto.randomUUID();
   const secondPartitionKey = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const message = "message";
   const secondMessage = "secondMessage";
-  const initializeItems = (data: { items: MessageValue[] }) => {
-    items.value = data.items;
-    isLoaded.value = true;
-  };
   const createMessageEntity = (entityPartitionKey: string = partitionKey, entityMessage: string = message) =>
     new StandardMessageEntity({
       message: entityMessage,
@@ -78,10 +116,13 @@ describe.each<PaginationCacheVariant>([
       rowKey,
       userId: getMockSession().user.id,
     });
-  // The load a store performs writes the rows and records readiness together, so the harness does both at once
-  const loadItems = (newItems: MessageValue[]) => {
-    items.value = newItems;
-    isLoaded.value = true;
+  // The load a store performs writes the rows and records readiness together, so the harness does both at once.
+  // The partition is named where a load happens before the key is on the ref — a store that already held rows
+  // When this composable mounted
+  const loadItems = (newItems: MessageValue[], key: string = partitionKeyRef.value) => {
+    const slice = getTestSlice(key);
+    slice.items.value = newItems;
+    slice.isLoaded.value = true;
   };
   const mountCache = async (initialKey: string = partitionKey, onHydrate?: () => Promise<void>) => {
     partitionKeyRef.value = initialKey;
@@ -89,7 +130,7 @@ describe.each<PaginationCacheVariant>([
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          useCache(initializeItems, isLoaded, items, partitionKeyRef, onHydrate);
+          useCache(getTestSlice, partitionKeyRef, onHydrate);
         },
       }),
     );
@@ -97,8 +138,13 @@ describe.each<PaginationCacheVariant>([
 
   beforeEach(() => {
     setActivePinia(createPinia());
-    items.value = [];
-    isLoaded.value = false;
+    // Emptied rather than dropped: `items` and `isLoaded` below are computeds over whichever slice the key
+    // Names, and a plain Map going away is not a reactive change — they would keep serving the last test's
+    // Slice until something else invalidated them
+    for (const slice of sliceMap.values()) {
+      slice.isLoaded.value = false;
+      slice.items.value = [];
+    }
     goOffline();
   });
 
@@ -180,9 +226,11 @@ describe.each<PaginationCacheVariant>([
     loadItems([createMessageEntity()]);
     await flushCache();
     partitionKeyRef.value = secondPartitionKey;
-    isLoaded.value = false;
     await flushCache();
     partitionKeyRef.value = partitionKey;
+    // The slice was reset while the reader was away, so the revisit starts unloaded and empty exactly as a
+    // First visit does — and the rows the previous session cached are still the only ones this partition has
+    isLoaded.value = false;
     items.value = [];
     await flushCache();
     const cachedItems = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
@@ -298,7 +346,7 @@ describe.each<PaginationCacheVariant>([
       partitionKey,
     );
     // The list and its readiness are what the store already held when this composable mounted
-    loadItems([createMessageEntity()]);
+    loadItems([createMessageEntity()], partitionKey);
     await mountCache();
     await flushCache();
 
@@ -351,5 +399,20 @@ describe.each<PaginationCacheVariant>([
     await flushCache();
 
     expect(items.value).toHaveLength(0);
+  });
+  // A hydrate lands after its own read, so the rows belong to the partition that was read rather than to
+  // Whichever one the reader switched to while it was in flight — read against a single shared list neither
+  // Half of that is visible
+
+  test("hydrates the partition its read was issued for rather than the current one", async () => {
+    expect.hasAssertions();
+
+    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createMessageEntity()], partitionKey);
+    await mountCache();
+    partitionKeyRef.value = secondPartitionKey;
+    await flushCache();
+
+    expect(getTestSlice(partitionKey).items.value).toHaveLength(1);
+    expect(getTestSlice(secondPartitionKey).items.value).toHaveLength(0);
   });
 });

@@ -15,7 +15,7 @@ let isCreating = false;
 // Joining a second user to a room is an invite, a session and a join — the dance every suite that needs a
 // Non-owner member was writing out at each call site. `mockUser` joins a member the suite already made to a
 // Further room, which is how one member comes to be in several rooms at once
-export const createRoomMember = async (mockContext: Context, roomId: string, mockUser?: User) => {
+export const createRoomMember = (mockContext: Context, roomId: string, mockUser?: User) => {
   if (isCreating)
     throw new InvalidOperationError(
       Operation.Create,

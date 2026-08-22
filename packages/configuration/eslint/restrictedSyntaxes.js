@@ -23,7 +23,7 @@ export default [
     // Error-handling skill names, and the two primitives that wrap a synchronously-throwing callback, disable
     // This rule on the line with their reason — there is nowhere else the shape is correct.
     message:
-      "Use `getResult`/`getResultAsync` + `.match` instead of `.then`/`.catch`/`.finally` (`withFinalizer` for cleanup) — see the error-handling skill.",
+      "Use `getResult`/`getResultAsync` + `.match` instead of `.then`/`.catch`/`.finally` (`withFinalizer`/`withFinalizerAsync` for cleanup) — see the error-handling skill.",
     selector: "CallExpression[callee.property.name=/^(catch|finally|then)$/]",
   },
   {

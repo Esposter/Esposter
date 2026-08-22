@@ -26,7 +26,11 @@ export const usePinStore = defineStore("message/pin", () => {
       AzureEntityType.Message,
     );
     if (input.isPinned) {
-      const message = dataStore.items.find(getIsEntityIdEqualComparator<MessageEntity>(CompositeAzureKeyPath, input));
+      // The source message is read from its own room's slice for the same reason the pin is written to one:
+      // `dataStore.items` is the room on screen, so a pin toggled from elsewhere would find nothing there
+      const message = dataStore
+        .getSlice(input.partitionKey)
+        .items.value.find(getIsEntityIdEqualComparator<MessageEntity>(CompositeAzureKeyPath, input));
       if (!message) return;
 
       createMessage(message);

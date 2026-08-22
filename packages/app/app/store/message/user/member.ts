@@ -42,18 +42,10 @@ export const useMemberStore = defineStore("message/user/member", () => {
     () => roomStore.scopedRoomId,
     () => new MemberCounts(),
   );
-  const count = computed({
-    get: () => memberCounts.value.count,
-    set: (newCount) => {
-      memberCounts.value.count = newCount;
-    },
-  });
-  const countsByTopRole = computed({
-    get: () => memberCounts.value.countsByTopRole,
-    set: (newCountsByTopRole) => {
-      memberCounts.value.countsByTopRole = newCountsByTopRole;
-    },
-  });
+  // Reading views, like `members` above: every write names its room — the read binds one up front, the join and
+  // Leave handlers take the event's room, and an offline hydrate takes the partition it was read for
+  const count = computed(() => memberCounts.value.count);
+  const countsByTopRole = computed(() => memberCounts.value.countsByTopRole);
   // The room the change happened in, which is not necessarily the room on screen: a role assigned from a profile
   // Card in one room while another is open belongs to that room's totals. The roleless group derives from the
   // Total, so a change with no room is written to a slice nothing reads and is thereby a no-op
@@ -92,6 +84,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
     count,
     countsByTopRole,
     getBoundMemberCounts,
+    getMemberCountsRef,
     getMemberName,
     getSlice,
     members,

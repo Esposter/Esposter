@@ -78,7 +78,7 @@ export default {
       // The fourth of the set — splicing a fresh copy — is in `restrictedSyntaxes` instead, because no oxlint
       // Rule covers either half of it, so one entry there reaches script and template alike.
       message:
-        "Use `for...of` instead of `.forEach()`, and the copying `toSorted()`/`toReversed()` instead of the mutating `sort()`/`reverse()` — a render expression must not rewrite what it renders.",
+        "Iterate with `v-for`, or move the loop into script/a computed — a template expression has no `for...of`, so `.forEach()` here has nowhere to go. Ordering takes the copying `toSorted()`/`toReversed()`: a render expression must not rewrite what it renders.",
       selector: "CallExpression[callee.property.name=/^(forEach|reverse|sort)$/]",
     },
     {

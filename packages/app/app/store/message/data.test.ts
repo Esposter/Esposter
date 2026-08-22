@@ -332,8 +332,9 @@ describe(useDataStore, () => {
     const otherRoomId = crypto.randomUUID();
     const dataStore = useDataStore();
     const { hasMoreNewer, nextCursorNewer } = storeToRefs(dataStore);
-    hasMoreNewer.value = true;
-    nextCursorNewer.value = message;
+    const { getHasMoreNewerRef, getNextCursorNewerRef } = dataStore;
+    getHasMoreNewerRef(roomId).value = true;
+    getNextCursorNewerRef(roomId).value = message;
     // Replaced rather than mutated in place: the route is a shallow ref, so only a new value re-runs the
     // Computed the room-keyed slices resolve their key through
     router.currentRoute.value = { ...router.currentRoute.value, params: { id: otherRoomId } };

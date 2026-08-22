@@ -24,12 +24,12 @@ Only exception: published package README examples aimed at external consumers ma
 
 A disable is one of exactly four shapes, and says which in its reason:
 
-| Shape                                                       | Why nothing else works                                                           |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `Promise.resolve().then(fn)` inside a Result primitive      | It is what turns a **synchronous** throw in `fn` into a rejection to map         |
-| A promise queue — `chain = chain.then(async () => {...})`   | Serialises async work from a sync watcher/callback, where `await` is unavailable |
-| A trailing value map on a deliberately non-`async` function | The function stays sync so its guard throws at the call, so there is no `await`  |
-| `.finally` deregistering a promise from its own registry    | It must run on both paths and leave the outcome alone; a finalizer rethrows      |
+| Shape                                                       | Why nothing else works                                                                                                                                  |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Promise.resolve().then(fn)` normalising a callback         | The only shape that turns a **synchronous** throw in `fn` into a rejection — `getResultAsync` maps it into an Err, `settleAll` hands it to `allSettled` |
+| A promise queue — `chain = chain.then(async () => {...})`   | Serialises async work from a sync watcher/callback, where `await` is unavailable                                                                        |
+| A trailing value map on a deliberately non-`async` function | The function stays sync so its guard throws at the call, so there is no `await`                                                                         |
+| `.finally` deregistering a promise from its own registry    | It must run on both paths and leave the outcome alone; a finalizer rethrows                                                                             |
 
 Anything else converts. The rule is what makes those three visible: before it they were indistinguishable from an
 ordinary `.then` someone had not got round to replacing.

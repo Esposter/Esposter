@@ -28,7 +28,12 @@ export interface PaginationCacheOptions<
     items: MaybeRefOrGetter<IndexedDbDatabaseSchema[TStore]["value"][]>;
   };
   getWriteItems?: (items: IndexedDbDatabaseSchema[TStore]["value"][]) => IndexedDbDatabaseSchema[TStore]["value"][];
-  onHydrate?: (items: IndexedDbDatabaseSchema[TStore]["value"][]) => Promisable<void>;
+  // The partition rides along, because a hydrate lands after its own await: companion state a consumer updates
+  // From it (a member count, a user map) belongs to the partition that was read, not to whichever is current now
+  onHydrate?: (
+    items: IndexedDbDatabaseSchema[TStore]["value"][],
+    partitionKey: PartitionKey<TStore, TIndex>,
+  ) => Promisable<void>;
   partitionKey: MaybeRefOrGetter<PartitionKey<TStore, TIndex> | undefined>;
 }
 // The schema types every index key as a string, which is what lets a partition double as a `useMutation` target
@@ -77,7 +82,7 @@ export const usePaginationCache = <
         if (cachedItems.length === 0 || toValue(isLoaded)) return;
 
         initializeItems(cachedItems);
-        await onHydrate?.(cachedItems);
+        await onHydrate?.(cachedItems, newPartitionKey);
       },
     });
   });

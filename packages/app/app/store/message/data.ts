@@ -42,8 +42,18 @@ export const useDataStore = defineStore("message/data", () => {
   // Keyed by room like the list they page, never global: a deep link into a room leaves a newer-cursor behind,
   // And a global one would still be pointing at that room's window after the switch — so the next room renders
   // A "load newer" waypoint it never earned and pages in a window cut from another room's timestamps
-  const { data: hasMoreNewer } = useDataMap(() => roomStore.currentRoomId, false);
-  const { data: nextCursorNewer } = useDataMap(() => roomStore.currentRoomId, "");
+  // The newer-page cursor belongs to its room exactly as the rows do, and every write of it happens after an
+  // Await — so the ambient pair is a reading view the waypoint renders, and a writer is obtained by naming a room
+  const { data: ambientHasMoreNewer, getDataRef: getHasMoreNewerRef } = useDataMap(
+    () => roomStore.currentRoomId,
+    false,
+  );
+  const { data: ambientNextCursorNewer, getDataRef: getNextCursorNewerRef } = useDataMap(
+    () => roomStore.currentRoomId,
+    "",
+  );
+  const hasMoreNewer = computed(() => ambientHasMoreNewer.value);
+  const nextCursorNewer = computed(() => ambientNextCursorNewer.value);
   const typings = ref<CreateTypingInput[]>([]);
   // `onOptimisticCreate` runs once the bubble is in the list and before anything reaches the server — the
   // Composer reset hangs off it rather than off the send, because the bubble is the sender's only copy of what
@@ -233,6 +243,8 @@ export const useDataStore = defineStore("message/data", () => {
     createMessage,
     deleteFile,
     files,
+    getHasMoreNewerRef,
+    getNextCursorNewerRef,
     getSlice,
     hasMoreNewer,
     items,
