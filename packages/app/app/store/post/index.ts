@@ -5,6 +5,7 @@ import type { PostWithRelations } from "@esposter/db-schema";
 
 import { useMutation } from "@/composables/shared/useMutation";
 import { PostSortType } from "@/models/post/PostSortType";
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
@@ -24,13 +25,17 @@ export const usePostStore = defineStore("post", () => {
   const { executeMutation: executeDeletePostMutation } = useMutation();
   // Server-generated post — non-optimistic, applied in onSuccess
   const createPost = async (input: CreatePostInput) => {
-    await executeCreatePostMutation(() => $trpc.post.createPost.mutate(input), {
+    const outcome = await executeCreatePostMutation(() => $trpc.post.createPost.mutate(input), {
       // Server-generated post with no id yet, so each create gets a per-call symbol
       key: Symbol("createPost"),
       onSuccess: (newPost) => {
         storeCreatePost(newPost);
       },
     });
+    // The id only exists once the server has written the row, and the page that submitted the form needs it to
+    // Open what was just posted. A write that did not land hands back nothing rather than a post that is not
+    // There — its alert has already been raised, so the caller's only job is to stay put
+    return outcome.status === MutationStatus.Succeeded ? outcome.result : undefined;
   };
   const updatePost = async (input: UpdatePostInput) => {
     await executeUpdatePostMutation(() => $trpc.post.updatePost.mutate(input), {

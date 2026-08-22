@@ -21,7 +21,9 @@ const { updatePost } = postStore;
         @submit="
           async (_event, values) => {
             await updatePost({ id: post.id, ...values });
-            await navigateTo(RoutePath.Index);
+            // Back to the post that was edited rather than the home feed: every entry point into this form is a
+            // Post someone was reading, and dropping them at the top of the feed loses the place they came from
+            await navigateTo(RoutePath.Post(post.id));
           }
         "
       />

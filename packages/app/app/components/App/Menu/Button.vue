@@ -1,17 +1,8 @@
 <script setup lang="ts">
-import type { ListLinkItem } from "@/models/shared/ListLinkItem";
-
+// `Create Post` used to lead this list, from before the feed had an entry point of its own. It is not a product,
+// And the feed the grid's own reader lands on now carries it — so what is left here is the products
 import { ProductListLinkItems } from "@/services/app/ProductListLinkItems";
-import { RoutePath } from "@esposter/shared";
 
-const items: ListLinkItem[] = [
-  {
-    href: RoutePath.PostCreate,
-    icon: "mdi-square-edit-outline",
-    title: "Create Post",
-  },
-  ...ProductListLinkItems,
-];
 const menu = ref(false);
 </script>
 
@@ -24,7 +15,7 @@ const menu = ref(false);
       text="Menu"
       :tooltip-props="{ location: 'bottom' }"
     >
-      <AppMenuLinkList :items @select="menu = false" />
+      <AppMenuLinkList :items="ProductListLinkItems" @select="menu = false" />
     </StyledTooltipMenuIconButton>
   </v-avatar>
 </template>

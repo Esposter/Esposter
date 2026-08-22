@@ -18,6 +18,34 @@ describe(usePostStore, () => {
     setActivePinia(createPinia());
   });
 
+  // The create page navigates to what was just written, which is the only place the server-generated id
+  // Reaches it — and a rejected create has no post to open, so it must hand back nothing rather than a row
+  test("hands the created post back to its caller", async () => {
+    expect.hasAssertions();
+
+    server.use(trpcMsw.post.createPost.mutation(({ input }) => createPost({ ...input, id: post.id })));
+    const postStore = usePostStore();
+    const { createPost: storeCreatePost } = postStore;
+
+    await expect(storeCreatePost({ description: "", title: newTitle })).resolves.toStrictEqual(
+      expect.objectContaining({ id: post.id }),
+    );
+  });
+
+  test("hands nothing back when the create is rejected", async () => {
+    expect.hasAssertions();
+
+    server.use(
+      trpcMsw.post.createPost.mutation(() => {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+    );
+    const postStore = usePostStore();
+    const { createPost: storeCreatePost } = postStore;
+
+    await expect(storeCreatePost({ description: "", title: newTitle })).resolves.toBeUndefined();
+  });
+
   // Two edits of one post queue under the same key, so the second's rollback has to undo its own edit — the
   // Title it read when the user clicked save predates the edit ahead of it, and restoring it leaves a title the
   // Server never accepted on the feed until some later read
