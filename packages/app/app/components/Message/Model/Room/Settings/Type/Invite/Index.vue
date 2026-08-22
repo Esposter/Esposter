@@ -39,7 +39,7 @@ useReadMyInvite(room.id);
       <v-col cols="12">
         <div font-bold text-title-medium>Invites</div>
         <div op-medium-emphasis text-body-small>
-          Here's a list of all active invite links. You can revoke any one or
+          Here's a list of all active invite links you've created. You can revoke any one or
           <StyledActionLink @click="inviteRoomId = room.id">create one</StyledActionLink>.
         </div>
       </v-col>

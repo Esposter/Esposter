@@ -1,7 +1,7 @@
 import type { Context } from "@@/server/trpc/context";
 import type { InviteInMessage } from "@esposter/db-schema";
 
-import { checkIsInviteUsable } from "@@/server/services/message/checkIsInviteUsable";
+import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { invitesInMessage } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 

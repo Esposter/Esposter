@@ -44,6 +44,17 @@ surface a user visits least, so anything that lands there is the least discovera
 - Adding a panel is a real cost: it lengthens the settings rail every reader scans, for a feature most of them will
   never configure. A new panel earns its row by being something a room **owner** manages, not by being new.
 
+### A feature whose first want is administrative has no second surface
+
+Some things are only ever reached for while configuring the room: a webhook, a word filter, an attachment cap. There
+is no moment in the message list where a reader wants a webhook, and the reference product keeps that creation in
+settings too — so settings **is** the point of need, and asking where else it should go invents a surface nobody
+would look at.
+
+What still bites there is the shape: it is a one-click action rather than a form (Discord's `New Webhook` creates
+the row and the row renames itself), and the panel still owes the empty state. The test is whether a moment of first
+want exists outside settings at all — not whether the create happens to live in one.
+
 ## One dialog per created thing
 
 Two surfaces that create the same row share one component — not two forms with the same fields. Two copies drift on

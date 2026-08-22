@@ -13,13 +13,13 @@ import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { dayjs } from "#shared/services/dayjs";
+import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
-import { checkIsInviteUsable } from "@@/server/services/message/checkIsInviteUsable";
 import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { readMyInvite } from "@@/server/services/message/readMyInvite";
@@ -149,34 +149,43 @@ export const baseRoomRouter = router({
   ),
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId")
     .use(isRoom)
-    .mutation<InviteInMessage>(async ({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) => {
-      // A paused room keeps its links and stops minting them too, otherwise it goes on handing out credentials
-      // Nobody can use
-      const { isInvitePaused } = await requireEntity(
-        ctx.db.query.roomsInMessage.findFirst({ columns: { isInvitePaused: true }, where: { id: { eq: roomId } } }),
-        DatabaseEntityType.Room,
-        roomId,
-      );
-      if (isInvitePaused) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId);
-      // Timestamps have no empty value, so the 0 sentinel (never expires) maps to null here
-      const expiresAt = expireAfterMinutes ? dayjs().add(expireAfterMinutes, "minutes").toDate() : null;
-      // One invite per member per room — creating with new options replaces the old link
-      await ctx.db
-        .delete(invitesInMessage)
-        .where(and(eq(invitesInMessage.roomId, roomId), eq(invitesInMessage.userId, ctx.getSessionPayload.user.id)));
+    .mutation<InviteInMessage>(({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) =>
+      ctx.db.transaction(async (tx) => {
+        // The room row is locked first, because the pause is a read with no constraint behind it: without the lock
+        // A pause can commit between the check and the insert, and the room mints a link after it closed
+        await tx
+          .select({ id: roomsInMessage.id })
+          .from(roomsInMessage)
+          .where(eq(roomsInMessage.id, roomId))
+          .for("update");
+        // A paused room keeps its links and stops minting them too, otherwise it goes on handing out credentials
+        // Nobody can use
+        const { isInvitePaused } = await requireEntity(
+          tx.query.roomsInMessage.findFirst({ columns: { isInvitePaused: true }, where: { id: { eq: roomId } } }),
+          DatabaseEntityType.Room,
+          roomId,
+        );
+        if (isInvitePaused) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId);
+        // Timestamps have no empty value, so the 0 sentinel (never expires) maps to null here
+        const expiresAt = expireAfterMinutes ? dayjs().add(expireAfterMinutes, "minutes").toDate() : null;
+        // One invite per member per room — creating with new options replaces the old link
+        await tx
+          .delete(invitesInMessage)
+          .where(and(eq(invitesInMessage.roomId, roomId), eq(invitesInMessage.userId, ctx.getSessionPayload.user.id)));
 
-      for (let i = 0; i < MAX_INVITE_ID_RETRIES; i++) {
-        const id = createId(INVITE_ID_LENGTH);
-        const invites = await getResultAsync(() =>
-          ctx.db
-            .insert(invitesInMessage)
-            .values({ expiresAt, id, maxUses, roomId, userId: ctx.getSessionPayload.user.id })
-            .returning(),
-        ).unwrapOr(undefined);
-        if (invites) return takeOne(invites);
-      }
-      throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId, "UNPROCESSABLE_CONTENT");
-    }),
+        for (let i = 0; i < MAX_INVITE_ID_RETRIES; i++) {
+          const id = createId(INVITE_ID_LENGTH);
+          const invites = await getResultAsync(() =>
+            tx
+              .insert(invitesInMessage)
+              .values({ expiresAt, id, maxUses, roomId, userId: ctx.getSessionPayload.user.id })
+              .returning(),
+          ).unwrapOr(undefined);
+          if (invites) return takeOne(invites);
+        }
+        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId, "UNPROCESSABLE_CONTENT");
+      }),
+    ),
   createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<RoomInMessage>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
       const newRoom = requireMutation(
@@ -224,6 +233,20 @@ export const baseRoomRouter = router({
   ),
   joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const { roomId, roomInMessage, user } = await ctx.db.transaction(async (tx) => {
+      // The room the token names is read and locked before a use is consumed, and the lock is held through the
+      // Membership insert: a pause committing between the check below and that insert would otherwise let one more
+      // Member in through a link the room had already closed
+      const invitedRoom = await tx.query.invitesInMessage.findFirst({
+        columns: { roomId: true },
+        where: { id: { eq: input } },
+      });
+      if (!invitedRoom) throw getNotFoundError(DatabaseEntityType.Invite, input);
+
+      await tx
+        .select({ id: roomsInMessage.id })
+        .from(roomsInMessage)
+        .where(eq(roomsInMessage.id, invitedRoom.roomId))
+        .for("update");
       // Usability check + use consumption in one statement so two concurrent joins can't both
       // Consume the last use. Expired/exhausted invites get the same error as unknown tokens.
       const [invite] = await tx
@@ -249,8 +272,8 @@ export const baseRoomRouter = router({
         DatabaseEntityType.Room,
         invite.roomId,
       );
-      // A paused room answers a live link exactly as it answers an unknown one — the use this statement consumed
-      // Rolls back with the transaction, so pausing costs the link nothing
+      // A paused room answers a live link exactly as it answers an unknown one — the use the statement above
+      // Consumed rolls back with the transaction, so pausing costs the link nothing
       if (isInvitePaused) throw getNotFoundError(DatabaseEntityType.Invite, input);
 
       const ban = await tx.query.bansInMessage.findFirst({

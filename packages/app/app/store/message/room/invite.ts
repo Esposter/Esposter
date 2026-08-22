@@ -39,7 +39,9 @@ export const useInviteStore = defineStore("message/room/invite", () => {
         const previousInvite = invites.value.get(input.roomId);
         storeInvite(input.roomId, undefined);
         return () => {
-          storeInvite(input.roomId, previousInvite);
+          // Only while the slot is still the empty one this revoke left: a create that landed in the meantime owns
+          // It, and a member holds one link, so putting the revoked one back would resurrect a dead token over it
+          if (!invites.value.get(input.roomId)) storeInvite(input.roomId, previousInvite);
         };
       },
       key: input.roomId,

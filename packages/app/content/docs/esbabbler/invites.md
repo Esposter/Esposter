@@ -47,7 +47,7 @@ All in `server/trpc/routers/room/index.ts`:
 | `packages/db-schema/src/schema/invitesInMessage.ts`                       | table + check constraints                     |
 | `packages/app/shared/services/room/invite/InviteExpireAfterMinutesMap.ts` | dayjs-computed expiry options (single source) |
 | `packages/app/shared/models/db/room/CreateInviteInput.ts`                 | Zod input — only the fixed option values      |
-| `packages/app/server/services/message/checkIsInviteUsable.ts`             | shared usability predicate                    |
+| `packages/app/shared/services/room/invite/checkIsInviteUsable.ts`         | shared usability predicate, client included   |
 | `packages/app/server/services/message/readMyInvite.ts`                    | own-invite read + lazy delete                 |
 | `packages/app/app/store/message/room/invite.ts`                           | shared per-room invite map                    |
 | `packages/app/app/components/Message/Model/Room/Invite/Manager.vue`       | invite manager with option selects            |

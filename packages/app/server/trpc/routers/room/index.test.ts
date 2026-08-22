@@ -643,7 +643,8 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    // One use, so the join that resumes proves the paused one rolled its own increment back
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 1, roomId: newRoom.id });
     await roomCaller.updateRoom({ id: newRoom.id, isInvitePaused: true });
 
     await expect(
