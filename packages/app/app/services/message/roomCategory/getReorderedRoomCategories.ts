@@ -13,8 +13,6 @@ export const getReorderedRoomCategories = (
   if (fromIndex === -1) return undefined;
   const toIndex = fromIndex + direction;
   if (toIndex < 0 || toIndex >= categories.length) return undefined;
-  const reorderedCategories = [...categories];
-  const movedCategory = takeOne(reorderedCategories.splice(fromIndex, 1));
-  reorderedCategories.splice(toIndex, 0, movedCategory);
-  return reorderedCategories;
+  const movedCategory = takeOne(categories, fromIndex);
+  return categories.toSpliced(fromIndex, 1).toSpliced(toIndex, 0, movedCategory);
 };

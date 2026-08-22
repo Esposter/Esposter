@@ -10,13 +10,12 @@ export default [
       "CallExpression[callee.property.name='push']:matches([callee.object.name=/^\\$?router$/], [callee.object.callee.name='useRouter'], [callee.object.property.name='$router'])",
   },
   {
-    // `splice` is the in-place operation, and stays legal on a store or reactive array — that is the whole of
-    // What it is for. Splicing a fresh **copy** is `toSpliced(...)` spelled the long way, and unlike
-    // `sort`/`reverse` (banned outright by oxlint, since their copying twins leave no in-place use behind) only
-    // That form can be decided from syntax, so it is the only one banned here.
-    message: "Splicing a fresh copy is `toSpliced(...)` — keep `splice` for mutating an array in place.",
-    selector:
-      "CallExpression[callee.property.name='splice']:matches([callee.object.type='ArrayExpression'], [callee.object.callee.property.name=/^(concat|filter|flatMap|map|slice|toReversed|toSorted|toSpliced)$/], [callee.object.callee.name='structuredClone'], [callee.object.callee.object.name='Array'][callee.object.callee.property.name='from'])",
+    // The last of the mutating four, and banned the same way as `sort`/`reverse` are by oxlint: an in-place
+    // Splice is a `toSpliced(...)` and an assignment back, which is the version a reader can follow — the old
+    // Array is never half-updated, and a caller holding it does not watch it change underneath them. Draining
+    // One (`splice(0)`) is the same rule: take the array, put a fresh one in its place.
+    message: "Use `toSpliced(...)` and assign the result — `splice` mutates the array every other holder can see.",
+    selector: "CallExpression[callee.property.name='splice']",
   },
   {
     // The `.then`/`.catch`/`.finally` ban is the other half of the try/catch one in typescriptRules: both shapes

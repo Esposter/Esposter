@@ -52,7 +52,7 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
             :button-props="{ disabled: options.length <= POLL_MIN_OPTIONS, size: 'small' }"
             icon="mdi-close"
             text="Remove option"
-            @click="options.splice(index, 1)"
+            @click="options = options.toSpliced(index, 1)"
           />
         </template>
       </v-list-item>

@@ -65,7 +65,8 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     else if (!previousItem) deleteItem({ id });
     // Clamped to the current length because the list can be shorter by the time the save comes back —
     // StoreSaveResourceContent adopts another device's content mid-flight, and that content is kept
-    else if (isDeleteAction) items.value.splice(Math.min(previousIndex, items.value.length), 0, previousItem);
+    else if (isDeleteAction)
+      items.value = items.value.toSpliced(Math.min(previousIndex, items.value.length), 0, previousItem);
     else updateItem(previousItem);
     return isSuccessful;
   };

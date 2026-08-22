@@ -51,7 +51,8 @@ export const usePhaserStore = defineStore("phaser", () => {
     const index = parallelSceneKeys.value.indexOf(targetSceneKey);
     if (index === -1) return;
 
-    const parallelSceneKey = parallelSceneKeys.value.splice(index, 1)[0];
+    const parallelSceneKey = parallelSceneKeys.value[index];
+    parallelSceneKeys.value = parallelSceneKeys.value.toSpliced(index, 1);
     scene.scene.stop(parallelSceneKey);
   };
 

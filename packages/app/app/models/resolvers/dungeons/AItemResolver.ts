@@ -24,7 +24,7 @@ export abstract class AItemResolver implements ItemEntityType<ItemEffectType> {
 
     const index = inventory.value.findIndex(({ id }) => id === item.value.id);
     if (index === -1) return;
-    inventory.value.splice(index, 1);
+    inventory.value = inventory.value.toSpliced(index, 1);
   }
 
   handleItem(_scene: SceneWithPlugins, _item: Ref<Item>, _monster: Ref<Monster>): Promisable<void> {}
