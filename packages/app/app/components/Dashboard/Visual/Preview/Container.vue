@@ -24,7 +24,17 @@ onClickExceptDrag(
 <template>
   <div ref="container">
     <DashboardVisualPreview :type />
-    <DashboardVisualPreviewDeleteButton :id :type />
+    <!-- Clicking the tile opens its edit form and nothing on screen said so, while deleting one has carried a
+      Visible control all along — Power BI puts both on the tile's own corner, so the pair sits together here -->
+    <div flex right-0 top-0 absolute>
+      <StyledTooltipIconButton
+        :button-props="{ size: 'small' }"
+        icon="mdi-pencil"
+        text="Edit Visual"
+        @click.stop="editItem({ id })"
+      />
+      <DashboardVisualPreviewDeleteButton :id :type />
+    </div>
     <DashboardVisualPreviewEditFormDialog v-if="editedItem?.id === id" v-model="editedItem" />
   </div>
 </template>
