@@ -129,9 +129,17 @@ const commandItems = computed<Item[]>(() => [
     :key="title"
   >
     <v-divider v-if="isGroupStart" vertical mx-1 />
-    <v-menu v-if="items">
+    <v-menu v-if="items" :disabled>
       <template #activator="{ props: menuActivatorProps }">
-        <v-btn append-icon="mdi-menu-down" :prepend-icon="icon" variant="text" :="menuActivatorProps">
+        <v-btn
+          append-icon="mdi-menu-down"
+          :color
+          :disabled
+          :loading
+          :prepend-icon="icon"
+          variant="text"
+          :="menuActivatorProps"
+        >
           {{ title }}
         </v-btn>
       </template>
@@ -139,6 +147,8 @@ const commandItems = computed<Item[]>(() => [
         <v-list-item
           v-for="item of items"
           :key="item.title"
+          :base-color="item.color"
+          :disabled="item.disabled"
           :prepend-icon="item.icon"
           :title="item.title"
           @click="item.onClick?.($event)"

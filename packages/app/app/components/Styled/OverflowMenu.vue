@@ -18,14 +18,23 @@ const { icon = "mdi-dots-vertical", items, text = "More commands" } = defineProp
         :key="title"
       >
         <v-divider v-if="isGroupStart" />
-        <v-menu v-if="childItems" location="end">
+        <v-menu v-if="childItems" :disabled location="end">
           <template #activator="{ props: submenuActivatorProps }">
-            <v-list-item append-icon="mdi-chevron-right" :prepend-icon="itemIcon" :title :="submenuActivatorProps" />
+            <v-list-item
+              append-icon="mdi-chevron-right"
+              :base-color="color"
+              :disabled
+              :prepend-icon="itemIcon"
+              :title
+              :="submenuActivatorProps"
+            />
           </template>
           <v-list density="compact">
             <v-list-item
               v-for="childItem of childItems"
               :key="childItem.title"
+              :base-color="childItem.color"
+              :disabled="childItem.disabled"
               :prepend-icon="childItem.icon"
               :title="childItem.title"
               @click="childItem.onClick?.($event)"
