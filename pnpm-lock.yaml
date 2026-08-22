@@ -634,8 +634,8 @@ catalogs:
       specifier: ^3.0.23
       version: 3.0.23
     viewerjs:
-      specifier: ^1.11.9
-      version: 1.11.9
+      specifier: ^1.12.0
+      version: 1.12.0
     vitest:
       specifier: ^4.1.11
       version: 4.1.11
@@ -1123,10 +1123,10 @@ importers:
         version: 0.9.0
       v-viewer:
         specifier: 'catalog:'
-        version: 3.0.23(viewerjs@1.11.9)(vue@3.5.41(typescript@6.0.3))
+        version: 3.0.23(viewerjs@1.12.0)(vue@3.5.41(typescript@6.0.3))
       viewerjs:
         specifier: 'catalog:'
-        version: 1.11.9
+        version: 1.12.0
       vue:
         specifier: 'catalog:'
         version: 3.5.41(typescript@6.0.3)
@@ -14331,8 +14331,8 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  viewerjs@1.11.9:
-    resolution: {integrity: sha512-ooK2OUVd2C59pmkWW5cX1OiGX9s2ATXZNlruhOYc43fkh4vgYXwCdLEwXBoP6sNNPHQbJQzMq0/vhOzlgFWBng==}
+  viewerjs@1.12.0:
+    resolution: {integrity: sha512-eQrV7FvqXj2Ysavd9LINI6bFAvXtw5YbdlMtdIo6Bmrv25hEOBeXoOX9E7cJwYuFAOPFzmppFvDn02QNHB120w==}
 
   vite-dev-rpc@2.0.0:
     resolution: {integrity: sha512-yKwbTwdHKSD2k/aGqyWpPHepo45OQc8lH3/6IfT4ZqeKE26ooKvi4WIEKzqWav8v+9Is8u1k8q54hvOmqASazA==}
@@ -29819,10 +29819,10 @@ snapshots:
 
   uuid@14.0.2: {}
 
-  v-viewer@3.0.23(viewerjs@1.11.9)(vue@3.5.41(typescript@6.0.3)):
+  v-viewer@3.0.23(viewerjs@1.12.0)(vue@3.5.41(typescript@6.0.3)):
     dependencies:
       lodash-es: 4.18.1
-      viewerjs: 1.11.9
+      viewerjs: 1.12.0
       vue: 3.5.41(typescript@6.0.3)
 
   valibot@1.4.2(typescript@6.0.3):
@@ -29865,7 +29865,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  viewerjs@1.11.9: {}
+  viewerjs@1.12.0: {}
 
   vite-dev-rpc@2.0.0(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)):
     dependencies:
