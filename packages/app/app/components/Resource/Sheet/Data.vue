@@ -25,7 +25,6 @@ onMounted(async () => {
       <ResourceSheetToolbarUndoButton />
       <ResourceSheetToolbarRedoButton />
       <ResourceSheetToolbarImportButton />
-      <ResourceSheetToolbarImportDatasetButton />
       <ResourceSheetToolbarExportButton />
     </div>
     <!-- "Not yet imported" is an empty data section (the blob is written on first save) -->
