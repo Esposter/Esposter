@@ -10,10 +10,8 @@ interface MemberEditorProps {
 
 const { member, roomId } = defineProps<MemberEditorProps>();
 const roleStore = useRoleStore();
-const { getMemberRoles, getMyPermissions, getRoles, readMemberRoles } = roleStore;
+const { getRoles, readMemberRoles } = roleStore;
 const allRoles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));
-const memberRoles = computed(() => getMemberRoles(roomId, member.id));
-const myPermissions = computed(() => getMyPermissions(roomId));
 
 await readMemberRoles({ roomId, userIds: [member.id] });
 </script>
@@ -26,16 +24,7 @@ await readMemberRoles({ roomId, userIds: [member.id] });
     </div>
     <div v-if="allRoles.length === 0" op-medium-emphasis>No roles available.</div>
     <v-list v-else density="compact" rd>
-      <MessageModelRoomSettingsTypeMemberRoleListItem
-        v-for="role of allRoles"
-        :key="role.id"
-        :is-room-owner="myPermissions?.isRoomOwner ?? false"
-        :member-roles
-        :role
-        :room-id
-        :top-role-position="myPermissions?.topRolePosition ?? -1"
-        :user-id="member.id"
-      />
+      <MessageModelRoomRoleMemberListItem v-for="role of allRoles" :key="role.id" :role :room-id :user-id="member.id" />
     </v-list>
   </div>
 </template>

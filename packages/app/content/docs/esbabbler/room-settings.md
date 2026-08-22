@@ -17,7 +17,9 @@ A Discord-style fullscreen settings dialog for a room, opened from the room list
 | Integrations             | Webhooks                                     | Webhooks (`ManageWebhooks`)                                               |
 | Moderation               | Word Filter · Audit Log · Bans · Attachments | Word Filter + Audit Log + Attachments (`ManageRoom`), Bans (`BanMembers`) |
 | User Management          | Members · Invites                            | Members (`ManageRoles`)                                                   |
-| _(below the categories)_ | Delete                                       | owner-only, rail item included                                            |
+| _(below the categories)_ | Delete · Leave                               | the owner deletes, every other member leaves                              |
+
+The destructive row is the one whose label follows the reader rather than the panel: `Delete` for the owner, `Leave` for everyone else, over the same `StyledDeleteFormDialog` — the room-name confirmation guard is the owner's only, since leaving is not irreversible ([destructive confirmation](/docs/architecture/destructive-confirmation)).
 
 Gating lives in `SettingsPermissionMap` — a panel with an entry is hidden from members lacking that `RoomPermission`; a category with no visible panels disappears entirely. Room owners bypass all checks via `hasPermission`. Every panel except **Profile** and **Invites** carries an entry, because every write behind it is guarded by the same permission server-side: an ungated row is a rail entry whose every control rejects, and the Webhooks panel's own read rejects before it draws anything. Profile edits the reader's own membership and Invites shows the reader's own link, which every member may do.
 

@@ -6,9 +6,12 @@ interface RoomSettingsLeftSideBarItemProps {
   icon: string;
   isActive: boolean;
   settingsType: SettingsType;
+  // The panel's own name is its title everywhere but the destructive row, which says what it does to *this*
+  // Reader: the owner deletes the room, everyone else leaves it
+  title?: string;
 }
 
-const { color, icon, isActive, settingsType } = defineProps<RoomSettingsLeftSideBarItemProps>();
+const { color, icon, isActive, settingsType, title } = defineProps<RoomSettingsLeftSideBarItemProps>();
 const emit = defineEmits<{ click: [settingsType: SettingsType] }>();
 </script>
 
@@ -17,6 +20,6 @@ const emit = defineEmits<{ click: [settingsType: SettingsType] }>();
     <template #prepend>
       <v-icon :icon />
     </template>
-    <v-list-item-title font-bold>{{ settingsType }}</v-list-item-title>
+    <v-list-item-title font-bold>{{ title ?? settingsType }}</v-list-item-title>
   </v-list-item>
 </template>
