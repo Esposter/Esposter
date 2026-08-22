@@ -44,8 +44,8 @@ catalog:
   "@fullcalendar/vue3": ^7.0.2
   "@json-layout/vocabulary": ^2.13.1
   "@koumoul/vjsf": ^4.5.4
-  "@lerna-lite/cli": ^5.6.0
-  "@lerna-lite/publish": ^5.6.0
+  "@lerna-lite/cli": ^5.6.1
+  "@lerna-lite/publish": ^5.6.1
   "@livekit/track-processors": ^0.7.2
   "@mdi/font": ^7.4.47
   "@nuxt/content": ^3.15.2
