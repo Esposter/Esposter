@@ -50,7 +50,7 @@ useResizeObserver(
 // Changed elsewhere, a literal in the binding — would otherwise cost a full remeasure for a selection that never
 // Moved, and measuring reads layout
 watch(
-  () => activeKeys.join(","),
+  () => JSON.stringify(activeKeys),
   async () => {
     await nextTick();
     measure();

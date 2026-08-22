@@ -25,7 +25,7 @@ Two fields can express a fourth state the model does not have — a bit set in b
 flowchart TD
   ask["hasPermission(userId, roomId, permission)"] --> owner{"room owner?"}
   owner -->|yes| yes["granted"]
-  owner -->|no| admin{"Administrator bit, from roles or an allow?"}
+  owner -->|no| admin{"Administrator bit, from a role?"}
   admin -->|yes| yes
   admin -->|no| base["@everyone bits, union every role the member holds"]
   base --> deny{"denied by the member's own row?"}
