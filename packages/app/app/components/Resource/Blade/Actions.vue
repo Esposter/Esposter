@@ -48,7 +48,7 @@ const createFormatCommands = (
       icon,
       isGroupStart,
       items: formats.map<Item>((format) => ({
-        icon,
+        icon: format.icon,
         onClick: () => getRun(format)?.(),
         title: format.label,
       })),

@@ -31,6 +31,7 @@ const createSheetPortableFormat = (type: DataSourceType): PortableFormat => ({
     const { openExport } = sheetPortableDialogStore;
     openExport(type);
   },
+  icon: DataSourceTypeItemCategoryDefinitionMap[type].icon,
   import: async () => {
     const sheetStore = useSheetStore();
     const { loadContent } = sheetStore;
@@ -47,7 +48,7 @@ const createSheetPortableFormat = (type: DataSourceType): PortableFormat => ({
       openPreview(result, trimFileExtension(result.metadata.name));
     });
   },
-  label: DataSourceTypeItemCategoryDefinitionMap[type].title,
+  label: type,
 });
 // Import/export formats per portable type
 export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> = {
@@ -90,6 +91,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
           createAlert(error.message, "error");
         });
       },
+      icon: "mdi-language-html5",
       label: "Personalized HTML",
     },
   ],
@@ -100,6 +102,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
     // A survey is a source rather than a file format, so it imports and never exports — but it is still one of
     // The ways a sheet is filled, and a peer button of its own only made that look like a different kind of act
     {
+      icon: "mdi-poll",
       import: async () => {
         const sheetStore = useSheetStore();
         const { loadContent } = sheetStore;
