@@ -53,4 +53,5 @@ a better arrangement of our own is an acceptable answer to it, as long as a comm
   [invite management](/docs/proposals/esbabbler/invite-management), which also carries the `ManageInvites`
   permission nothing reads. The dialog's friends list (invite a friend without copying a link) is in the same gap.
 - **Neither the Members nor the Bans panel can be searched**, and both paginate a whole room. Discord searches both.
-  Adding it needs a server-side predicate on the read, so it is a feature rather than a placement fix.
+  Specified in [member and ban search](/docs/proposals/esbabbler/member-and-ban-search) — `readMembers` already
+  carries the name predicate and no caller passes it; `readBans` needs one. A feature rather than a placement fix.
