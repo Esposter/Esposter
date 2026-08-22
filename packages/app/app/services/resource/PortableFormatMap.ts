@@ -11,38 +11,39 @@ import { useEmailEditorStore } from "@/store/emailEditor";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
 import { useResourceStore } from "@/store/resource";
 import { useSheetStore } from "@/store/resource/sheet";
+import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
+import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
-// Self-contained per-format import/export for Sheet, backed by the same client-side parse the Data blade uses
+// Per-format import/export for Sheet. Both hand off to the dialog the blade shell mounts rather than acting
+// Outright: an import shows what it is about to replace the sheet with, and an export asks which columns to take
+// And honours the row filter and selection — the two things the Data blade's own buttons used to be for, before
+// The command bar became the single place a sheet is imported to or exported from
 const createSheetPortableFormat = (type: DataSourceType): PortableFormat => ({
   export: async () => {
     const sheetStore = useSheetStore();
     const { loadContent } = sheetStore;
     // The command bar is reachable from any blade, so the content may not be loaded yet
     await loadContent();
-    const resourceStore = useResourceStore();
-    const configuration = DataSourceConfigurationMap[type];
-    const settings = sheetStore.settings.type === type ? sheetStore.settings : createDefaultSheetSettings(type);
-    const exportFile = useExportFile();
-    await exportFile(
-      (mimeType) => configuration.serialize(sheetStore.dataSource, settings, mimeType),
-      resourceStore.resource?.name ?? "export",
-      configuration.mimeType,
-      configuration.accept,
-    );
+    const sheetPortableDialogStore = useSheetPortableDialogStore();
+    const { openExport } = sheetPortableDialogStore;
+    openExport(type);
   },
   import: async () => {
     const sheetStore = useSheetStore();
     const { loadContent } = sheetStore;
     await loadContent();
     const configuration = DataSourceConfigurationMap[type];
+    // A format other than the sheet's own is read with that format's defaults rather than rewriting the settings
+    // The sheet already has — the same fallback the export dialog makes
     const settings = sheetStore.settings.type === type ? sheetStore.settings : createDefaultSheetSettings(type);
     const importFile = useImportFile();
-    const setDataSource = useSetDataSource();
+    const sheetPortableDialogStore = useSheetPortableDialogStore();
+    const { openPreview } = sheetPortableDialogStore;
     await importFile(configuration.mimeType, configuration.accept, async (file) => {
       const result = await configuration.deserialize(file, settings);
-      await setDataSource(result);
+      openPreview(result, trimFileExtension(result.metadata.name));
     });
   },
   label: type,
@@ -95,5 +96,18 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
     createSheetPortableFormat(DataSourceType.Csv),
     createSheetPortableFormat(DataSourceType.Json),
     createSheetPortableFormat(DataSourceType.Xlsx),
+    // A survey is a source rather than a file format, so it imports and never exports — but it is still one of
+    // The ways a sheet is filled, and a peer button of its own only made that look like a different kind of act
+    {
+      import: async () => {
+        const sheetStore = useSheetStore();
+        const { loadContent } = sheetStore;
+        await loadContent();
+        const sheetPortableDialogStore = useSheetPortableDialogStore();
+        const { openSurveyImport } = sheetPortableDialogStore;
+        openSurveyImport();
+      },
+      label: "survey responses",
+    },
   ],
 };

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
+import { ResourceDialogsComponentMap } from "@/services/resource/ResourceDialogsComponentMap";
+
 interface ResourceExplorerProps {
   activeBlade: string;
   resource: Resource;
@@ -30,5 +32,6 @@ const { smAndDown } = useVDisplay();
         </div>
       </div>
     </div>
+    <component :is="ResourceDialogsComponentMap[resource.type]" v-if="ResourceDialogsComponentMap[resource.type]" />
   </v-sheet>
 </template>

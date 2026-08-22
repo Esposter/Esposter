@@ -12,13 +12,8 @@ const { search } = storeToRefs(rowStore);
   </div>
   <ResourceSheetFindReplaceBar />
   <div flex flex-wrap gap-1 items-center>
-    <ResourceSheetColumnStatisticsDialogButton />
-    <ResourceSheetRowOutlierToggleButton />
+    <ResourceSheetRowToolsMenuButton />
     <ResourceSheetRowClearFiltersButton />
-    <ResourceSheetRowStringTransformationDialogButton />
-    <ResourceSheetRowNullStrategyDialogButton />
-    <ResourceSheetRowDeduplicateDialogButton />
     <ResourceSheetRowCreateDialogButton />
-    <ResourceSheetRowCopyIncludesHeadersButton />
   </div>
 </template>

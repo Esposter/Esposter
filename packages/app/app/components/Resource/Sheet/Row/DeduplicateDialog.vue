@@ -5,13 +5,12 @@ import { pluralize } from "#shared/util/text/pluralize";
 import { KeepDuplicateMode } from "@/models/resource/sheet/commands/KeepDuplicateMode";
 import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
 import { findDuplicateRows } from "@/services/resource/sheet/commands/findDuplicateRows";
-import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 import { useSheetStore } from "@/store/resource/sheet";
 import { takeOne } from "@esposter/shared";
 
 const sheetStore = useSheetStore();
 const { dataSource } = storeToRefs(sheetStore);
-const isOpen = ref(false);
+const isOpen = defineModel<boolean>({ default: false });
 const keepMode = ref(KeepDuplicateMode.First);
 const keepDuplicateModes = Object.values(KeepDuplicateMode);
 const deleteDuplicateRows = useDeleteDuplicateRows();
@@ -31,12 +30,6 @@ const duplicateHeaders = computed(() => [
 </script>
 
 <template>
-  <StyledTooltipIconButton
-    :button-props="DENSE_ICON_BUTTON_PROPS"
-    icon="mdi-table-row-remove"
-    text="Remove Duplicate Rows"
-    @click.stop="isOpen = true"
-  />
   <ResourceSheetDialog v-model="isOpen" close-button-text="Cancel" title="Duplicate Rows">
     <span v-if="duplicateCount === 0">No duplicate rows found.</span>
     <template v-else>
