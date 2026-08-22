@@ -16,14 +16,14 @@ A Discord-style fullscreen settings dialog for a room, opened from the room list
 | _(room name)_            | Overview · Roles · Profile · Emojis          | Overview (`ManageRoom`), Roles (`ManageRoles`), Emojis (`ManageEmojis`)   |
 | Integrations             | Webhooks                                     | Webhooks (`ManageWebhooks`)                                               |
 | Moderation               | Word Filter · Audit Log · Bans · Attachments | Word Filter + Audit Log + Attachments (`ManageRoom`), Bans (`BanMembers`) |
-| User Management          | Members                                      | Members (`ManageRoles`)                                                   |
+| User Management          | Members · Invites                            | Members (`ManageRoles`)                                                   |
 | _(below the categories)_ | Delete                                       | owner-only, rail item included                                            |
 
-Gating lives in `SettingsPermissionMap` — a panel with an entry is hidden from members lacking that `RoomPermission`; a category with no visible panels disappears entirely. Room owners bypass all checks via `hasPermission`. Every panel except **Profile** carries an entry, because every write behind it is guarded by the same permission server-side: an ungated row is a rail entry whose every control rejects, and the Webhooks panel's own read rejects before it draws anything. Profile edits the reader's own membership, which every member may do.
+Gating lives in `SettingsPermissionMap` — a panel with an entry is hidden from members lacking that `RoomPermission`; a category with no visible panels disappears entirely. Room owners bypass all checks via `hasPermission`. Every panel except **Profile** and **Invites** carries an entry, because every write behind it is guarded by the same permission server-side: an ungated row is a rail entry whose every control rejects, and the Webhooks panel's own read rejects before it draws anything. Profile edits the reader's own membership and Invites shows the reader's own link, which every member may do.
 
 `MANAGEMENT_PERMISSIONS` — the gate on opening the dialog at all, and on the room list's settings button — is the union of that map plus `Administrator`, derived from it rather than listed beside it. A member who may only manage emoji or bans therefore reaches the rail that manages them, holding one row.
 
-**Roles** edits roles and their permission bitfields; **Members** assigns/revokes member roles; **Attachments** edits the room's upload limits, described in [file & media](/docs/esbabbler/file-media). Invites are **not** a panel here: a link is created rather than configured, so it lives in the room header's Invite People dialog ([invites](/docs/esbabbler/invites)).
+**Roles** edits roles and their permission bitfields; **Members** assigns/revokes member roles; **Invites** lists the link the reader holds and links into the dialog that creates one, which is where creating stays ([invites](/docs/esbabbler/invites)); **Attachments** edits the room's upload limits, described in [file & media](/docs/esbabbler/file-media).
 
 ## How it works
 

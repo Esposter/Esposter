@@ -1,6 +1,6 @@
 ---
 name: ux
-description: Esposter UX conventions — where a feature's entry point goes (point-of-need beside management, never management alone), settings panels hold configuration rather than creation, one dialog shared by every surface that creates the same thing, standing controls that a transient value may never displace, a management surface existing only where its own actions can succeed, punctuation a value is written with being field chrome rather than input, and following the reference product's wording, layout and interaction where the domain matches — deviating only for a demonstrably better arrangement, said out loud. Apply when adding any user-facing feature, deciding where an action lives, or reviewing a surface for reachability.
+description: Esposter UX conventions — where a feature's entry point goes (point-of-need beside management, never management alone), settings panels hold configuration rather than creation, one dialog shared by every surface that creates the same thing, standing controls that a transient value may never displace, a management surface existing only where its own actions can succeed, punctuation a value is written with being field chrome rather than input, and following the reference product's wording, layout and interaction where the domain matches — a handed-over screenshot being the specification, strings verbatim and nothing added, deviating only for a demonstrably better arrangement, said out loud. Apply when adding any user-facing feature, deciding where an action lives, or reviewing a surface for reachability.
 ---
 
 # UX Conventions
@@ -117,6 +117,24 @@ Our version holding identical state and reading worse is a finding here, with ev
 **Deviating needs no permission — a better layout is a better layout.** It needs to be _better_ rather than merely
 different, and to be said out loud: a comment naming what the reference does and why this does not. A silent
 deviation reads as an oversight to the next reader comparing the two, and it is the one that gets "fixed" back.
+
+### A screenshot of the reference product is the specification
+
+When someone hands over a screenshot of Discord or Slack doing the thing, it is not an illustration of the general
+idea — it is the spec, and it is being handed over precisely because reading it is cheaper than describing it.
+
+- **Take the strings verbatim.** Every label, heading, empty state and helper line, down to the punctuation.
+  Substitute only the domain noun (`server` → `room`, `channel` → `room`), and only where leaving it would be
+  wrong.
+- **Build what is in the frame and nothing else.** No extra entry point, no extra button, no second explanatory
+  line of our own. An invented control is a deviation, and a deviation has to be _better_ and said out loud — an
+  addition nobody asked for is neither, and it is the first thing that gets deleted by the next reader comparing
+  the two.
+- **A control we cannot back yet is left out, not mocked.** A button whose write does not exist is worse than a
+  missing one, and it fails the rule above about a surface whose actions can succeed.
+- **A string that would be false here is a missing feature, not a wording problem.** Discord's `revoke any one`
+  says its panel can revoke. Either that ships or the line is adapted to what ours does — it is never quietly
+  rewritten into our own voice while the arrangement claims to be theirs.
 
 ## Where a whole-product pass is tracked
 

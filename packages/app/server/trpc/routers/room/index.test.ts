@@ -617,6 +617,33 @@ describe("room", () => {
     expect(readInvite).toBeNull();
   });
 
+  test("pausing invites refuses a create and answers a live link like an unknown token", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    await roomCaller.updateRoom({ id: newRoom.id, isInvitePaused: true });
+
+    await expect(
+      roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, newRoom.id).message}]`,
+    );
+
+    await mockSessionOnce(mockContext.db);
+
+    await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Invite, newInvite.id).message}]`,
+    );
+
+    // The link the paused room refused is live again the moment it resumes, and it never spent the use
+    await roomCaller.updateRoom({ id: newRoom.id, isInvitePaused: false });
+    await mockSessionOnce(mockContext.db);
+    const joinedRoom = await roomCaller.joinRoom(newInvite.id);
+
+    expect(joinedRoom.id).toBe(newRoom.id);
+  });
+
   test("fails create invite with direct message room", async () => {
     expect.hasAssertions();
 

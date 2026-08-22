@@ -149,6 +149,14 @@ export const baseRoomRouter = router({
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId")
     .use(isRoom)
     .mutation<InviteInMessage>(async ({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) => {
+      // A paused room keeps its links and stops minting them too, otherwise it goes on handing out credentials
+      // Nobody can use
+      const { isInvitePaused } = await requireEntity(
+        ctx.db.query.roomsInMessage.findFirst({ columns: { isInvitePaused: true }, where: { id: { eq: roomId } } }),
+        DatabaseEntityType.Room,
+        roomId,
+      );
+      if (isInvitePaused) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId);
       // Timestamps have no empty value, so the 0 sentinel (never expires) maps to null here
       const expiresAt = expireAfterMinutes ? dayjs().add(expireAfterMinutes, "minutes").toDate() : null;
       // One invite per member per room — creating with new options replaces the old link
@@ -231,6 +239,18 @@ export const baseRoomRouter = router({
       if (!invite) throw getNotFoundError(DatabaseEntityType.Invite, input);
 
       await assertIsRoom(tx, invite.roomId);
+
+      const { isInvitePaused } = await requireEntity(
+        tx.query.roomsInMessage.findFirst({
+          columns: { isInvitePaused: true },
+          where: { id: { eq: invite.roomId } },
+        }),
+        DatabaseEntityType.Room,
+        invite.roomId,
+      );
+      // A paused room answers a live link exactly as it answers an unknown one — the use this statement consumed
+      // Rolls back with the transaction, so pausing costs the link nothing
+      if (isInvitePaused) throw getNotFoundError(DatabaseEntityType.Invite, input);
 
       const ban = await tx.query.bansInMessage.findFirst({
         columns: { userId: true },

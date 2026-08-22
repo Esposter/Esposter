@@ -13,6 +13,9 @@ export const SettingsContentMap = {
   [SettingsType.Emojis]: defineAsyncComponent(
     () => import("@/components/Message/Model/Room/Settings/Type/Emoji/Index.vue"),
   ),
+  [SettingsType.Invites]: defineAsyncComponent(
+    () => import("@/components/Message/Model/Room/Settings/Type/Invite/Index.vue"),
+  ),
   [SettingsType.Members]: defineAsyncComponent(
     () => import("@/components/Message/Model/Room/Settings/Type/Member/Index.vue"),
   ),
