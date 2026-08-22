@@ -129,6 +129,17 @@ Our version holding identical state and reading worse is a finding here, with ev
 different, and to be said out loud: a comment naming what the reference does and why this does not. A silent
 deviation reads as an oversight to the next reader comparing the two, and it is the one that gets "fixed" back.
 
+### A second entry point a click away is not a missing one
+
+The point-of-need rule asks whether the want can be met from where it is felt, not whether every surface carries
+the action. Where creating is already one click from wherever the reader is standing — a card on the area's home,
+an entry in its own menu — a third copy on the list beside them is not reachability, it is a control to keep in
+sync with the other two. The reference product having one there is not enough on its own: what matters is the
+distance from the want to the act, and a click is not a distance.
+
+The finding is a **trip**: settings, another product area, a navigation the reader did not ask for. Count the
+clicks before adding the button.
+
 ### A screenshot of the reference product is the specification
 
 When someone hands over a screenshot of Discord or Slack doing the thing, it is not an illustration of the general
