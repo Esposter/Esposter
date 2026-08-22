@@ -107,7 +107,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
         const { openSurveyImport } = sheetPortableDialogStore;
         openSurveyImport();
       },
-      label: "survey responses",
+      label: "Survey responses",
     },
   ],
 };
