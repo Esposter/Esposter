@@ -161,18 +161,21 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const pinMessageItems = computed<Item[]>(() =>
     getIsOperationPermitted(MessageOperation.Pin) ? [pinMessageItem.value] : [],
   );
+  // Discord's hover bar carries the thread button beside reply, and burying it in the overflow menu is what made
+  // A thread something you had to know about rather than something the message offers
+  const threadMessageItems = computed<Item[]>(() => (message.type === MessageType.Message ? [viewThreadItem] : []));
   const updateMessageItems = computed<Item[]>(() =>
     isUpdateSupported.value
       ? isEditable.value
-        ? [editMessageItem, forwardMessageItem]
-        : [replyItem, forwardMessageItem]
+        ? [...threadMessageItems.value, editMessageItem, forwardMessageItem]
+        : [...threadMessageItems.value, replyItem, forwardMessageItem]
       : [],
   );
   const updateMessageMenuItems = computed<Item[]>(() =>
     isUpdateSupported.value
       ? isEditable.value
-        ? [editMessageItem, replyItem, forwardMessageItem]
-        : [replyItem, forwardMessageItem]
+        ? [...threadMessageItems.value, editMessageItem, replyItem, forwardMessageItem]
+        : [...threadMessageItems.value, replyItem, forwardMessageItem]
       : [],
   );
   const actionMessageItems = computed<Item[]>(() => {
@@ -182,7 +185,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
       case MessageType.EditRoom:
         return [copyTextItem, markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.Message:
-        return [copyTextItem, viewThreadItem, ...pinMessageItems.value, markUnreadFromHereItem, copyMessageLinkItem];
+        return [copyTextItem, ...pinMessageItems.value, markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.PinMessage:
         return [markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.Poll:
