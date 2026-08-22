@@ -1,14 +1,14 @@
 import type { SettingsSection } from "@/models/message/user/settings/SettingsSection";
 
-import { VoiceSettingsSection } from "@/models/message/user/settings/VoiceSettingsSection";
+import { AccountSettingsSection } from "@/models/message/user/settings/AccountSettingsSection";
 import { UserSettingsType } from "@/models/message/user/UserSettingsType";
 
 export const useUserSettingsDialogStore = defineStore("message/user/settings/dialog", () => {
   const isVisible = ref(false);
   // Mobile-only: the settings sidebar becomes a temporary drawer toggled from the content header
   const isDrawerOpen = ref(false);
-  const settingsType = ref(UserSettingsType.Voice);
-  const activeSectionId = ref<SettingsSection>(VoiceSettingsSection.Devices);
+  const settingsType = ref(UserSettingsType.Account);
+  const activeSectionId = ref<SettingsSection>(AccountSettingsSection.Profile);
   const isScrollingToSection = ref(false);
   const visibleSectionIds = ref(new Set<SettingsSection>());
   // Reassigned rather than mutated in place, unlike every other reactive collection here: the scrollspy watches

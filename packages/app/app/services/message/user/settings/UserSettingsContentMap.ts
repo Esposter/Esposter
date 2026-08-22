@@ -1,6 +1,9 @@
 import { UserSettingsType } from "@/models/message/user/UserSettingsType";
 
 export const UserSettingsContentMap = {
+  [UserSettingsType.Account]: defineAsyncComponent(
+    () => import("@/components/Message/Model/User/Settings/Type/Account/Index.vue"),
+  ),
   [UserSettingsType.Appearance]: defineAsyncComponent(
     () => import("@/components/Message/Model/User/Settings/Type/Appearance/Index.vue"),
   ),

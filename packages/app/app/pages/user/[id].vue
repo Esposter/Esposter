@@ -19,7 +19,7 @@ await readPosts();
       <Title>{{ user.name }}</Title>
     </Head>
     <v-container>
-      <UserProfileHeader :user />
+      <UserProfileHeader :user :user-id />
       <v-divider my-4 />
       <UserProfileAchievementSummary :user-achievements />
       <v-divider my-4 />
