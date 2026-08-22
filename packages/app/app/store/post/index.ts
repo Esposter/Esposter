@@ -38,7 +38,7 @@ export const usePostStore = defineStore("post", () => {
     return outcome.status === MutationStatus.Succeeded ? outcome.result : undefined;
   };
   const updatePost = async (input: UpdatePostInput) => {
-    await executeUpdatePostMutation(() => $trpc.post.updatePost.mutate(input), {
+    const outcome = await executeUpdatePostMutation(() => $trpc.post.updatePost.mutate(input), {
       // Read when the write is sent rather than when it was issued, and scoped to the one post this write
       // Edits: a second edit of a post queues behind the first, so its rollback has to restore what that one
       // Stored — and the same list is also appended to by the feed's own paging, which a whole-list restore
@@ -57,6 +57,10 @@ export const usePostStore = defineStore("post", () => {
         storeUpdatePost(updatedPost);
       },
     });
+    // Same contract as the create: the page leaves for the post only once the edit is on the server. A rejected
+    // Edit has already been rolled back on the feed, so navigating away would show the reader the old title and
+    // Throw away the one they wrote
+    return outcome.status === MutationStatus.Succeeded ? outcome.result : undefined;
   };
   const deletePost = async (input: DeletePostInput) => {
     await executeDeletePostMutation(() => $trpc.post.deletePost.mutate(input), {

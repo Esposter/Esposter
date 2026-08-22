@@ -1,6 +1,6 @@
 ---
 title: Member and ban search
-description: Proposal — a search field over the Members and Bans settings panels, over the name predicate one of the two reads already has and the other needs.
+description: Proposal — a search field over the Members and Bans settings panels, over the name predicate `readMembers` already has and `readBans` needs.
 ---
 
 # Member And Ban Search
@@ -10,7 +10,7 @@ Both panels paginate a whole room and neither can be searched. Discord searches 
 The two halves are not symmetric, which is the whole point of specifying them together:
 
 - **`readMembers` already takes the predicate.** Its input carries `filter: { name }` and the query applies `ilike(users.name, '%' || escapeLike(name) || '%')`. No caller has ever passed it, so the server half of member search shipped and has been dead ever since.
-- **`readBans` takes nothing.** Its input is a room id and a cursor, and the query filters on room and `deletedAt` alone — although it already `innerJoin`s `users`, so the predicate has the column it needs in scope.
+- **`readBans` takes no predicate.** Its input is a room id and a cursor and nothing else, and the query filters on room and `deletedAt` alone — although it already `innerJoin`s `users`, so the predicate has the column it needs in scope.
 
 ## What it adds
 
@@ -22,16 +22,20 @@ The ban reason is deliberately **not** searched. It is free text a moderator wro
 
 ### Wiring the field
 
-Search-as-you-type is not hand-rolled here — `useCursorSearcher` is the one place that stack lives (`pagination` skill), and both panels' results are cursor-paginated, so both wrap it:
+Search-as-you-type is not hand-rolled here — `useCursorSearcher` is the one place that stack lives (`pagination` skill), and both panels' results are cursor-paginated, so both wrap it. Both of its flags are set: the second turns the field into auto-search, and the third is what makes an emptied field list the room again instead of leaving the last term's results on screen — a panel whose default state is the whole list needs the empty query to be a query.
 
 ```ts
-useCursorSearcher((searchQuery, cursor, opts) => {
-  const normalizedSearchQuery = normalizeString(searchQuery);
-  return $trpc.message.moderation.readBans.query(
-    { cursor, filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined, roomId },
-    opts,
-  );
-}, true);
+useCursorSearcher(
+  (searchQuery, cursor, opts) => {
+    const normalizedSearchQuery = normalizeString(searchQuery);
+    return $trpc.message.moderation.readBans.query(
+      { cursor, filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined, roomId },
+      opts,
+    );
+  },
+  true,
+  true,
+);
 ```
 
 Bans is the straightforward one: the panel reads one list and renders it.
