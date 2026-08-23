@@ -85,11 +85,27 @@ The third is the one with history. A published package that imports a private si
 
 A private package gets none of these, because nobody installs it.
 
-## What private packages deliberately do not get
+## How a package refers to its own source
 
-tsdown can point a package's exports at `src` for workspace consumers and at `dist` only at publish time (`exports.devExports`), which would mean no rebuild ever stands between editing a package and a consumer seeing the change. **This repo cannot use it.**
+Through **Node subpath imports**, declared in its own manifest and written with an extension:
 
-Every package resolves its own source through the `@/*` path alias, and that alias resolves relative to whichever package the build is currently running in. The moment a sibling bundles one of these packages from source, its internal `@/...` imports resolve into the _bundling_ package and vanish. `azure-functions` and `azure-mock` both vendor siblings, so source exports stay unavailable while that alias convention stands.
+```json
+{ "imports": { "#src/*": "./src/*" } }
+```
+
+```ts
+import { escapeValue } from "#src/services/transformer/escapeValue.ts";
+```
+
+This replaces the `@/*` `paths` alias, and the difference is where the resolution is anchored. `paths` belongs to whichever tsconfig drives the current compilation — so when a sibling bundles a package from source, `@/models/Clause` re-points into the _bundling_ package and resolves to nothing. `azure-functions` and `azure-mock` both vendor siblings, so that was not hypothetical. A `#` specifier is instead resolved by walking up to the nearest `package.json`, which is always the one owning the importing file, so it survives being compiled by anyone. `paths` cannot be configured to do this; it is a compiler-level fiction with no runtime meaning, while `imports` is a resolution feature Node, TypeScript, Rolldown, Vite, esbuild and webpack all implement.
+
+The extension is not decoration. TypeScript performs no extension substitution through an `imports` target: it computes `./src/services/transformer/escapeValue`, finds no file there, and reports the module missing — while the bundler resolves it happily. That split is why `allowImportingTsExtensions` is on. The key cannot be `#/` either, which Node reserves; `#src/*` is the nearest legal spelling to the alias it replaces.
+
+### Which unlocks source exports
+
+A package on `#src/` sets `exports: { devExports: true }`. tsdown then points `exports` at `src` for the workspace and writes the `dist` mapping into `publishConfig.exports` for the registry, so a workspace consumer resolves source while npm still gets the bundle — and `publint` and `attw` keep gating, because both read the publish shape. No rebuild stands between an edit and a consumer seeing it, a fresh clone typechecks without building anything first, and go-to-definition lands on real source.
+
+Which packages have converted is tracked in `.agents/ledgers/package-imports.md`. The `paths` entries in `tsconfig.base.json` are what still resolves the rest, so they come out when the last row is dated.
 
 ## The output directory is wiped on every build
 

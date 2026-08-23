@@ -26,11 +26,18 @@
   "type": "module",
   "sideEffects": false,
   "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*"
+  },
   "exports": {
-    ".": "./dist/index.js",
+    ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    },
     "access": "public"
   },
   "scripts": {

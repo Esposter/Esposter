@@ -1,5 +1,5 @@
-import { escapeValue } from "@/services/transformer/escapeValue";
-import { serializeValue } from "@/services/transformer/serializeValue";
+import { escapeValue } from "#src/services/transformer/escapeValue.ts";
+import { serializeValue } from "#src/services/transformer/serializeValue.ts";
 import { describe, expect, test } from "vitest";
 
 describe(serializeValue, () => {

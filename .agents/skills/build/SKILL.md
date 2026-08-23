@@ -1,6 +1,6 @@
 ---
 name: build
-description: Esposter tsdown build conventions — the shared configuration factories and composing them with mergeConfig rather than a spread, dependencies being externalized while devDependencies are bundled and the two kinds of package that opt out, subpath-aware package patterns, inlinedDependencies as the record of what a bundle swallowed, dts.eager for ambient declarations the entrypoints never import, the publint/attw/onlyImport gates a published package gets and why a private one gets none, why exports.devExports is unavailable here, the tsconfig preset chain and the isolatedDeclarations exception, the bootstrap package, and why a declare-module augmentation never travels through a bundled .d.ts to a consuming package. Apply when adding packages, editing tsdown or tsconfig configs, changing a manifest's dependency placement, or wrapping a library whose types are augmented by a plugin.
+description: Esposter tsdown build conventions — the shared configuration factories and composing them with mergeConfig rather than a spread, dependencies being externalized while devDependencies are bundled and the two kinds of package that opt out, subpath-aware package patterns, inlinedDependencies as the record of what a bundle swallowed, dts.eager for ambient declarations the entrypoints never import, the publint/attw/onlyImport gates a published package gets and why a private one gets none, the #src/ subpath-imports self-alias that replaces the @/ paths alias and the devExports it unlocks, the tsconfig preset chain and the isolatedDeclarations exception, the bootstrap package, and why a declare-module augmentation never travels through a bundled .d.ts to a consuming package. Apply when adding packages, editing tsdown or tsconfig configs, changing a manifest's dependency placement, or wrapping a library whose types are augmented by a plugin.
 ---
 
 # Build Conventions (tsdown)
@@ -71,9 +71,39 @@ That last one exists because a published package importing a _private_ sibling p
 
 `deps.onlyImport` checks that imports are declared. It cannot check that a declared dependency is actually _publishable_, and neither can publint — a private sibling sitting in `dependencies` still ships a broken package. Adding a workspace sibling to a published package's `dependencies` is the case to think about by hand.
 
-## `exports.devExports` is unavailable here
+## Self-alias with `#src/`, not `@/`
 
-It would point a package's exports at `src` for workspace consumers and at `dist` only on publish, so no rebuild stood between an edit and a consumer seeing it. **Don't reach for it.** Every package resolves its own source through the `@/*` alias, which resolves relative to whichever package the build is running in — so as soon as a sibling bundles the package from source, its internal `@/...` imports resolve into the bundling package and vanish. `azure-functions` and `azure-mock` both vendor siblings. This stays true until the `@/*` self-alias convention changes.
+A package refers to its own source through **Node subpath imports**, declared in its own manifest:
+
+```json
+{ "imports": { "#src/*": "./src/*" } }
+```
+
+```ts
+import { escapeValue } from "#src/services/transformer/escapeValue.ts";
+```
+
+**Two details are load-bearing, and both fail silently if you get them wrong:**
+
+- **The extension is mandatory.** TypeScript does no extension substitution through an `imports` target — it computes `./src/services/transformer/escapeValue`, finds no such file, and reports the module missing while the bundler resolves it fine. `allowImportingTsExtensions` is on for exactly this.
+- **The key cannot be `#/`.** Node reserves that shape, and `#src/*` is the closest legal spelling to the `@/*` it replaces.
+
+`@/*` is a `paths` entry, which is resolved by whichever tsconfig drives the _current compilation_ — so the moment a sibling bundles the package from source, `@/models/Clause` re-points into the bundling package and resolves to nothing. A `#` specifier is resolved by walking up to the nearest `package.json`, which is the one owning the importing **file**, so it survives. That is not a tooling gap to wait out: `paths` is a compiler fiction with no runtime meaning, and no configuration makes it survive.
+
+### What it buys: `exports.devExports`
+
+A package on `#src/` sets `exports: { devExports: true }`, which points `exports` at `src` for the workspace and writes the `dist` mapping into `publishConfig.exports` for the registry. Consumers then resolve **source**:
+
+- No rebuild between an edit and a consumer seeing it — the "stale dist mimics a failed fix" trap disappears, and with it the watch task.
+- A fresh clone typechecks and tests without building packages first.
+- Go-to-definition, breakpoints and stack traces land on real source rather than a bundled declaration.
+- Typecheck sees real types, so anything a declaration bundler would flatten or widen surfaces immediately.
+
+`publint` and `attw` still gate the published shape, because both read `publishConfig.exports`.
+
+### Migration status
+
+`.agents/ledgers/package-imports.md` tracks which packages have converted. Until a package's row is dated it is still on `@/*` and must not set `devExports`. The `paths` entries in `tsconfig.base.json` come out when the last row is dated — not before, since they are what still resolves the unconverted packages.
 
 ## Dist size is the correctness signal
 
