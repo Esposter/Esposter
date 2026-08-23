@@ -99,7 +99,15 @@ import { escapeValue } from "#src/services/transformer/escapeValue";
 
 This replaces the `@/*` `paths` alias, and the difference is where the resolution is anchored. `paths` belongs to whichever tsconfig drives the current compilation — so when a sibling bundles a package from source, `@/models/Clause` re-points into the _bundling_ package and resolves to nothing. `azure-functions` and `azure-mock` both vendor siblings, so that was not hypothetical. A `#` specifier is instead resolved by walking up to the nearest `package.json`, which is always the one owning the importing file, so it survives being compiled by anyone. `paths` cannot be configured to do this; it is a compiler-level fiction with no runtime meaning, while `imports` is a resolution feature Node, TypeScript, Rolldown, Vite, esbuild and webpack all implement.
 
-The `.ts` in the **target** is what makes it resolve. TypeScript performs no extension substitution through an `imports` target, so a bare `"./src/*"` sends it looking for `./src/services/transformer/escapeValue`, where there is no file — it reports the module missing while the bundler resolves it happily, which is a green build and a red typecheck. The pattern substitutes into `./src/*.ts` instead, so specifiers stay extensionless and the fix lives in one character of the manifest rather than on every import line. The key cannot be `#/` either, which Node reserves; `#src/*` is the nearest legal spelling to the alias it replaces.
+The `.ts` in the **target** is what makes it resolve. Nothing in the chain does extension substitution through an `imports` target, so a bare `"./src/*"` sends TypeScript looking for `./src/services/transformer/escapeValue`, where there is no file. The pattern substitutes into `./src/*.ts` instead, so specifiers stay extensionless and the fix lives in one line of the manifest rather than on every import. The key cannot be `#/` either, which Node reserves; `#src/*` is the nearest legal spelling to the alias it replaces.
+
+`./src/*.ts` is the default arm rather than a claim that a package holds only `.ts`. A package that self-imports another kind of file adds a key whose suffix says so, and the longer suffix wins the match:
+
+```json
+{ "imports": { "#src/*": "./src/*.ts", "#src/*.vue": "./src/*.vue" } }
+```
+
+Those specifiers keep their own extension, which is what a `.vue` or `.json` import carries in any case. An **array** target looks like the tidier way to avoid the second key and is not one: TypeScript walks the fallbacks and Vite does not, so the package typechecks and then fails to resolve under Vitest.
 
 ### Which unlocks source exports
 

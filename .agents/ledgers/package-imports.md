@@ -15,12 +15,12 @@
 | `packages/shared`          |            |                                                             |
 | `packages/shared-node`     |            |                                                             |
 | `packages/virrun`          |            |                                                             |
-| `packages/vue-phaserjs`    |            |                                                             |
+| `packages/vue-phaserjs`    |            | a second `.vue` key; 204 files                              |
 | `packages/xml2js`          |            |                                                             |
 
 Carrying one package from the `@/*` `paths` alias to the `#src/*` subpath imports its own manifest declares, so
 its internal specifiers resolve against the file that wrote them rather than against whoever is compiling. The
-rule, the two ways it fails silently, and what it unlocks: the `build` skill.
+rule, the three details that carry it, and what it unlocks: the `build` skill.
 
 A unit is one package, and it converts whole. There is no partially-converted state: a package with both
 `@/models/Foo` and `#src/models/Foo` in it typechecks, so nothing would ever report the leftovers.
@@ -30,7 +30,9 @@ Per package:
 1. `"imports": { "#src/*": "./src/*.ts" }` in its `package.json`, written directly after `exports`. The `.ts`
    belongs to the target: TypeScript does no extension substitution through an `imports` target, and a bare
    `"./src/*"` resolves in the bundler but not in the compiler.
-2. `@/` → `#src/` across `src/**`. Specifiers stay extensionless.
+2. `@/` → `#src/` across `src/**`. Specifiers stay extensionless, except for a file type the package needs a
+   second key for — `vue-phaserjs` adds `"#src/*.vue": "./src/*.vue"` and its five `.vue` self-imports keep
+   their own extension.
 3. `exports: { devExports: true }` in its `tsdown.config.ts`, so workspace consumers resolve `src`.
 4. `pnpm build` the package **and everything that vendors it** — `azure-functions` and `azure-mock` vendor
    siblings, and they are the builds that would have broken under `@/*`.
