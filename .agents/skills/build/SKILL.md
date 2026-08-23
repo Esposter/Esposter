@@ -39,6 +39,12 @@ tsdown externalizes `dependencies` and `peerDependencies` and bundles `devDepend
 
 **Never bundle a dependency to save the consumer an install.** It saves nothing — they never install it by hand — and it costs deduplication, it strands them on a vendored copy when that dependency ships a fix, and it splits any type the dependency owns into two nominally distinct copies that fail `instanceof` against each other.
 
+### Minify only the deploy artifact
+
+`azure-functions` sets `minify: { compress: true, mangle: false, removeWhitespace: true }` — 7.25 MB to 5.00 MB on the file the Functions host parses at every cold start. Nothing else minifies: a library's consumer minifies for themselves, and readable output is what a stack trace is read through.
+
+Never widen it to `minify: true`. Mangling reaches 3.67 MB and renames every identifier, so the stack for an EventGrid delivery that already happened names `t` instead of the handler. `dce-only` is worth nothing — rolldown already tree-shakes. Note that no test covers minified output: tests import source, and only the size snapshot reads `dist`.
+
 ### What gets vendored is recorded, not allowlisted
 
 The base sets `deps: { onlyBundle: false }`, which silences tsdown's standing hint that an allowlist of inlinable packages is missing. The list it asks for already exists in a better form: tsdown writes every package it vendored into the manifest's `inlinedDependencies`, and that field is committed, so anything newly inlined turns up in a reviewed diff beside the change that caused it. A second, hand-maintained copy could only ever be bootstrapped by hand-writing the versions tsdown itself generates — the check runs before the manifest is written, so the first build of a new package could never pass. Read `inlinedDependencies` when you want to know what a bundle swallowed.

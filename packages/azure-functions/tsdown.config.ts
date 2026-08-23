@@ -20,6 +20,12 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode()
     onlyImport: getPackagePatterns(HOST_PROVIDED_PACKAGES),
   },
   dts: false,
+  // Nothing here is read by a human, so the artifact the host downloads is compressed: 7.25 MB to 5.00 MB.
+  // `mangle` stays off, which is the whole reason this is spelled out rather than `minify: true`. Mangling
+  // Takes it to 3.67 MB and renames every identifier, so a thrown error's stack names `t` instead of the
+  // Handler — and a handler's stack is the only diagnosis available for an EventGrid delivery that already
+  // Happened. `dce-only` was measured too and changes nothing: rolldown already tree-shakes.
+  minify: { compress: true, mangle: false, removeWhitespace: true },
 });
 
 export default tsdownConfiguration;

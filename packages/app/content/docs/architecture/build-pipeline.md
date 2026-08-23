@@ -67,6 +67,14 @@ Two kinds of package opt out, both in their own `tsdown.config.ts`:
 - **Self-contained bundles.** These are programs rather than libraries — something runs their `dist` directly — so they vendor what they use instead of leaving imports for a resolver. `virrun` is a CLI installed with one command, `azure-functions` is a deploy artifact dropped into a host that installs nothing, and `infra` is the program Pulumi runs. `infra` vendors only its workspace siblings, deriving them from its own `dependencies`; the `@pulumi/*` SDKs stay peers, because the engine hands the program its own instance and a vendored copy would not be it. `virrun` gets this for free — everything it bundles is a `devDependency` — and declares only that `unconfig` stays external, because `unconfig` resolves `jiti` through `createRequire` relative to its own installed file and vendoring rebases that lookup. `azure-functions` derives its `alwaysBundle` list from its own manifest, minus the `@azure/functions` the host provides.
 - **`@esposter/configuration` itself**, which externalizes everything including `devDependencies`. It is private, never published, and its dist imports nothing but build tooling every workspace member already has installed.
 
+### Only the deploy artifact is minified
+
+Nothing else is. A library ships readable output because whoever debugs it is reading a stack trace through it, and every consumer's own bundler minifies afterwards anyway. `azure-functions` is the exception: the Functions host downloads and parses `dist/index.js` on every cold start and no one reads it, so it is compressed — 7.25 MB to 5.00 MB.
+
+**Identifier mangling stays off**, which is why the option is spelled out rather than `minify: true`. Mangling reaches 3.67 MB and renames every identifier, so a thrown error's stack names `t` rather than the handler — and for an EventGrid delivery that has already happened, that stack is the whole diagnosis. `dce-only` was measured as well and changes nothing, because rolldown already tree-shakes.
+
+Minified output is the one thing the test suite cannot check: the tests import source, and only the size snapshot reads `dist`.
+
 ### What was vendored is written back into the manifest
 
 tsdown records every package a bundle swallowed under `inlinedDependencies` in that package's `package.json`, and the field is committed. That is the answer to "what is actually inside this dist" — and because it lands in a diff next to the change that caused it, it is also the review gate. tsdown will otherwise hint on every build that a `deps.onlyBundle` allowlist is missing; the base turns the hint off, because the allowlist would be a hand-maintained second copy of a list tsdown already writes, and one that could never be bootstrapped — the check runs before the manifest is written, so a new package's first build could not pass.
