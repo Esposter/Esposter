@@ -63,11 +63,12 @@ describe(usePostStore, () => {
     const { items } = storeToRefs(postStore);
     const { updatePost } = postStore;
     items.value = [createPost({ id: post.id })];
-    const [, failedPost] = await Promise.all([
+    const [updatedPost, failedPost] = await Promise.all([
       updatePost({ id: post.id, title: newTitle }),
       updatePost({ id: post.id, title: failingTitle }),
     ]);
 
+    expect(updatedPost).toStrictEqual(expect.objectContaining({ id: post.id, title: newTitle }));
     // Nothing back from the rejected edit, so the page it was submitted from stays on the draft
     expect(failedPost).toBeUndefined();
     expect(takeOne(items.value).title).toBe(newTitle);
