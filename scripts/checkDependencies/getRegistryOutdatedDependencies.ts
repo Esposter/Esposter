@@ -1,11 +1,11 @@
-import type { DependencyEntry } from "@/checkDependencies/models/DependencyEntry";
-import type { OutdatedDependency } from "@/checkDependencies/models/OutdatedDependency";
-import type { RegistryCheckError } from "@/checkDependencies/models/RegistryCheckError";
+import type { DependencyEntry } from "#scripts/checkDependencies/models/DependencyEntry";
+import type { OutdatedDependency } from "#scripts/checkDependencies/models/OutdatedDependency";
+import type { RegistryCheckError } from "#scripts/checkDependencies/models/RegistryCheckError";
 
-import { getSpecifierBase } from "@/checkDependencies/getSpecifierBase";
-import { getVersionChangeLevel } from "@/checkDependencies/getVersionChangeLevel";
-import { isVersionOutdated } from "@/checkDependencies/isVersionOutdated";
-import { getLatestVersion } from "@/services/getLatestVersion";
+import { getSpecifierBase } from "#scripts/checkDependencies/getSpecifierBase";
+import { getVersionChangeLevel } from "#scripts/checkDependencies/getVersionChangeLevel";
+import { isVersionOutdated } from "#scripts/checkDependencies/isVersionOutdated";
+import { getLatestVersion } from "#scripts/services/getLatestVersion";
 import { getResultAsync } from "@esposter/shared";
 
 const registryConcurrency = 4;

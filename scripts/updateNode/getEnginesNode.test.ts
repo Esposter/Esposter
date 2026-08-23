@@ -1,4 +1,4 @@
-import { getEnginesNode } from "@/updateNode/getEnginesNode";
+import { getEnginesNode } from "#scripts/updateNode/getEnginesNode";
 import { describe, expect, test } from "vitest";
 
 describe(getEnginesNode, () => {

@@ -1,9 +1,9 @@
-import { getLatestVersion } from "@/services/getLatestVersion";
-import { getRegistryLatestVersionForPrefix } from "@/services/getRegistryLatestVersionForPrefix";
-import { getVersionParts } from "@/services/getVersionParts";
-import { getEnginesNode } from "@/updateNode/getEnginesNode";
-import { setCatalogTypesNode } from "@/updateNode/setCatalogTypesNode";
-import { setEnginesNode } from "@/updateNode/setEnginesNode";
+import { getLatestVersion } from "#scripts/services/getLatestVersion";
+import { getRegistryLatestVersionForPrefix } from "#scripts/services/getRegistryLatestVersionForPrefix";
+import { getVersionParts } from "#scripts/services/getVersionParts";
+import { getEnginesNode } from "#scripts/updateNode/getEnginesNode";
+import { setCatalogTypesNode } from "#scripts/updateNode/setCatalogTypesNode";
+import { setEnginesNode } from "#scripts/updateNode/setEnginesNode";
 import { spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";

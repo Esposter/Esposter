@@ -36,7 +36,7 @@
   },
   "exports": {
     ".": {
-      "esposter-source": "./src/index.ts",
+      "source": "./src/index.ts",
       "default": "./dist/index.js"
     },
     "./package.json": "./package.json"

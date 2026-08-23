@@ -1,4 +1,4 @@
-import type { ColorPalette } from "@/checkDependencies/models/ColorPalette";
+import type { ColorPalette } from "#scripts/checkDependencies/models/ColorPalette";
 // ANSI SGR escape sequences for terminal color; the reset code returns the foreground to the default.
 const escape = String.fromCodePoint(27);
 const reset = `${escape}[39m`;

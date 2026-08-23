@@ -56,7 +56,7 @@
       }
     },
     {
-      "files": ["packages/*/src/**"],
+      "files": ["packages/*/src/**", "scripts/**", ".agents/**"],
       "rules": {
         "no-restricted-imports": [
           "error",
@@ -71,7 +71,7 @@
             "patterns": [
               {
                 "group": ["@/**", "~/**"],
-                "message": "A package addresses its own source through the `#src/*` subpath imports its manifest declares, never a tsconfig `paths` alias — a `paths` entry re-points into whichever package is compiling, so a sibling bundling this one from source resolves it to nothing. See /docs/architecture/build-pipeline. (`packages/app` keeps Nuxt's `@/`, and has no `src/`.)"
+                "message": "A package addresses its own source through the `#src/*` subpath imports its manifest declares, never a tsconfig `paths` alias — a `paths` entry re-points into whichever package is compiling, so a sibling bundling this one from source resolves it to nothing. See /docs/architecture/build-pipeline. (`packages/app` is the only tree that keeps `@/` — those are Nuxt's own aliases.)"
               }
             ]
           }

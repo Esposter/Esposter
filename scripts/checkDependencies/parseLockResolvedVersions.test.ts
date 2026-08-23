@@ -1,4 +1,4 @@
-import { parseLockResolvedVersions } from "@/checkDependencies/parseLockResolvedVersions";
+import { parseLockResolvedVersions } from "#scripts/checkDependencies/parseLockResolvedVersions";
 import { describe, expect, test } from "vitest";
 
 describe(parseLockResolvedVersions, () => {

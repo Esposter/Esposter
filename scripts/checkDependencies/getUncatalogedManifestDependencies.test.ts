@@ -1,6 +1,6 @@
-import type { ManifestDependency } from "@/checkDependencies/models/ManifestDependency";
+import type { ManifestDependency } from "#scripts/checkDependencies/models/ManifestDependency";
 
-import { getUncatalogedManifestDependencies } from "@/checkDependencies/getUncatalogedManifestDependencies";
+import { getUncatalogedManifestDependencies } from "#scripts/checkDependencies/getUncatalogedManifestDependencies";
 import { describe, expect, test } from "vitest";
 
 describe(getUncatalogedManifestDependencies, () => {

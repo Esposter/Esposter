@@ -1,6 +1,6 @@
-import { comparePrerelease } from "@/checkDependencies/comparePrerelease";
-import { compareVersionBase } from "@/services/compareVersionBase";
-import { getVersionParts } from "@/services/getVersionParts";
+import { comparePrerelease } from "#scripts/checkDependencies/comparePrerelease";
+import { compareVersionBase } from "#scripts/services/compareVersionBase";
+import { getVersionParts } from "#scripts/services/getVersionParts";
 
 export const isVersionOutdated = (current: string, latest: string): boolean => {
   const baseComparison = compareVersionBase(current, latest);

@@ -1,4 +1,4 @@
-import { getVersionChangeLevel } from "@/checkDependencies/getVersionChangeLevel";
+import { getVersionChangeLevel } from "#scripts/checkDependencies/getVersionChangeLevel";
 import { describe, expect, test } from "vitest";
 
 describe(getVersionChangeLevel, () => {

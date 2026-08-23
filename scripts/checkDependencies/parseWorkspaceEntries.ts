@@ -1,4 +1,4 @@
-import type { DependencyEntry } from "@/checkDependencies/models/DependencyEntry";
+import type { DependencyEntry } from "#scripts/checkDependencies/models/DependencyEntry";
 
 export const parseWorkspaceEntries = (group: string, section: string): DependencyEntry[] => {
   const entries: DependencyEntry[] = [];

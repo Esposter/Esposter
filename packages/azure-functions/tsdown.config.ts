@@ -24,8 +24,9 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode()
   // `mangle` stays off, which is the whole reason this is spelled out rather than `minify: true`. Mangling
   // Takes it to 3.67 MB and renames every identifier, so a thrown error's stack names `t` instead of the
   // Handler — and a handler's stack is the only diagnosis available for an EventGrid delivery that already
-  // Happened. `dce-only` was measured too and changes nothing: rolldown already tree-shakes.
-  minify: { compress: true, mangle: false, removeWhitespace: true },
+  // Happened. `dce-only` was measured too and changes nothing: rolldown already tree-shakes, and whitespace
+  // Removal is `codegen.removeWhitespace`, which is on by default and so is not restated here.
+  minify: { compress: true, mangle: false },
 });
 
 export default tsdownConfiguration;

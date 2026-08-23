@@ -1,8 +1,8 @@
-import type { ColorPalette } from "@/checkDependencies/models/ColorPalette";
+import type { ColorPalette } from "#scripts/checkDependencies/models/ColorPalette";
 
-import { createTableBorder } from "@/checkDependencies/createTableBorder";
-import { getVisibleLength } from "@/checkDependencies/getVisibleLength";
-import { padEndVisible } from "@/checkDependencies/padEndVisible";
+import { createTableBorder } from "#scripts/checkDependencies/createTableBorder";
+import { getVisibleLength } from "#scripts/checkDependencies/getVisibleLength";
+import { padEndVisible } from "#scripts/checkDependencies/padEndVisible";
 
 export const printTable = (headers: string[], rows: string[][], color: ColorPalette): void => {
   const widths = headers.map((header, index) =>

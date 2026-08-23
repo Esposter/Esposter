@@ -1,7 +1,7 @@
-import type { DependencyEntry } from "@/checkDependencies/models/DependencyEntry";
-import type { Mismatch } from "@/checkDependencies/models/Mismatch";
+import type { DependencyEntry } from "#scripts/checkDependencies/models/DependencyEntry";
+import type { Mismatch } from "#scripts/checkDependencies/models/Mismatch";
 
-import { getSpecifierBase } from "@/checkDependencies/getSpecifierBase";
+import { getSpecifierBase } from "#scripts/checkDependencies/getSpecifierBase";
 
 export const getMismatches = (entries: DependencyEntry[], resolvedVersions: Map<string, string>): Mismatch[] => {
   const mismatches: Mismatch[] = [];

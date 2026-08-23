@@ -112,9 +112,11 @@ import { escapeValue } from "#src/services/transformer/escapeValue";
 
 `@/*` was a `paths` entry, which is resolved by whichever tsconfig drives the _current compilation_ — so the moment a sibling bundles the package from source, `@/models/Clause` re-points into the bundling package and resolves to nothing. A `#` specifier is resolved by walking up to the nearest `package.json`, which is the one owning the importing **file**, so it survives. That is not a tooling gap to wait out: `paths` is a compiler fiction with no runtime meaning, and no configuration makes it survive. `imports` is in the Node ESM specification, implemented by Node, TypeScript, Rolldown, Vite, esbuild, webpack, Vitest and jiti alike, and it is private to the package by that same specification.
 
-**`packages/app` is the one exception and keeps `@/`.** Its `@/` and `~/` are Nuxt's own aliases, generated into `.nuxt/tsconfig.*.json`, not a `paths` entry anyone here wrote. Nothing bundles the app from source, publishes it, or resolves into it — it is the leaf — so none of the reasons above apply to it, and converting it would mean fighting generated configuration for a property it cannot use. Anywhere else in `packages/`, a `@/` specifier is a bug.
+**`packages/app` is the one tree that keeps `@/`.** Its `@/` and `~/` are Nuxt's own aliases, generated into `.nuxt/tsconfig.*.json`, not a `paths` entry anyone here wrote. Nothing bundles the app from source, publishes it, or resolves into it — it is the leaf — so none of the reasons above apply to it, and converting it would mean fighting generated configuration for a property it cannot use. Anywhere else — a package, `scripts/`, `.agents/` — a `@/` specifier is a bug, and oxlint says so.
 
-`tsconfig.base.json` carries **no `paths` block at all** now, deliberately. The one it used to carry also held a `"*": ["${configDir}/src/*"]` fallback, which shadowed real package names — a mistyped dependency resolved to a same-named local file instead of failing. Don't add either back.
+The repo-root `scripts/` tree converted too, to `#scripts/*` declared in the root manifest — so **no `paths` entry anyone here wrote survives**, and `resolve.tsconfigPaths` came out of `getVitestConfiguration` with it. The only `paths` left in the repo are the ones Nuxt generates for the app.
+
+`tsconfig.base.json` carries **no `paths` block at all**, deliberately. The one it used to carry also held a `"*": ["${configDir}/src/*"]` fallback, which shadowed real package names — a mistyped dependency resolved to a same-named local file instead of failing. Don't add either back.
 
 ### What it buys: source exports
 
@@ -129,13 +131,15 @@ import { escapeValue } from "#src/services/transformer/escapeValue";
 
 ```jsonc
 // devExports: SOURCE_CONDITION — every consumer that opts in gets source, everything else gets the build.
-"exports": { ".": { "esposter-source": "./src/index.ts", "default": "./dist/index.js" } }
+"exports": { ".": { "source": "./src/index.ts", "default": "./dist/index.js" } }
 
 // devExports: true — every condition points at source. Node gets TypeScript.
 "exports": { ".": "./src/index.ts" }
 ```
 
 Node's own ESM loader cannot read that second shape, twice over: it resolves no extensionless relative specifier, so the generated barrel's `export * from "./models/BinaryOperator"` fails outright, and its type-stripping cannot transform a TS `enum`. Nitro's prerender imports the built server through that loader and Pulumi runs `infra`'s `dist` through it, so both die — and the workarounds cost more than the feature is worth. Inlining into the Nitro server has to cover **every** workspace package rather than the source-exporting ones, because a `dist` sibling externalizes its own siblings (`db-schema`'s build emits `from "@esposter/azure"`), and `infra` has to vendor its siblings, which takes it from 127 kB to 1.27 MB. Both are standing configuration that a new consumer has to remember. A `default` arm costs none of it, because nothing has to be configured to stay working.
+
+**The condition is `source`**, the ecosystem's own spelling — Parcel and Metro resolve it, and it is what a workspace-source arm is called wherever one exists. Don't namespace it: a repo-prefixed name only protects against a stranger's resolver matching the arm, and no published package has one, because tsdown writes a `dist`-only map into `publishConfig.exports`.
 
 Two places opt in, and they are the whole mechanism:
 
@@ -144,7 +148,7 @@ Two places opt in, and they are the whole mechanism:
 | `tsconfig.base.json`     | `customConditions: [SOURCE_CONDITION]` |
 | `getVitestConfiguration` | `resolve.conditions`                   |
 
-`resolve.conditions` **replaces** Vite's defaults rather than adding to them, which is why `getVitestConfiguration` spreads `defaultServerConditions` back in — dropping `module` and `node` silently re-resolves half the dependency tree.
+`resolve.conditions` **replaces** Vite's defaults rather than adding to them, which is why `getVitestConfiguration` spreads `defaultServerConditions` back in — dropping `module` and `node` silently re-resolves half the dependency tree. The tsconfig spells the condition out as a literal because JSON cannot import `SOURCE_CONDITION`; renaming the constant means editing that file too, and nothing fails loudly if you forget — every package silently falls back to `dist`.
 
 The app deliberately stays out: neither Nuxt's Vite build nor Nitro carries the condition, so the app resolves every sibling's `dist` and the server bundle keeps externalizing them instead of pulling every package's TypeScript into one graph. That is why `watch:packages` still earns its keep — for the **app**, an edit to a package is invisible until that package is rebuilt.
 

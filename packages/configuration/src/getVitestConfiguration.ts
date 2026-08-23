@@ -14,7 +14,6 @@ export const getVitestConfiguration = (): ViteUserConfig => ({
     // Defaults are spread back in because this field replaces them rather than adding to it — dropping
     // `module` and `node` silently re-resolves half the dependency tree.
     conditions: [SOURCE_CONDITION, ...defaultServerConditions],
-    tsconfigPaths: true,
   },
   test: {
     ...getBenchmarkTestConfiguration(),

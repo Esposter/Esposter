@@ -1,5 +1,5 @@
-import { parseLockResolvedVersions } from "@/checkDependencies/parseLockResolvedVersions";
-import { sliceLockSection } from "@/checkDependencies/sliceLockSection";
+import { parseLockResolvedVersions } from "#scripts/checkDependencies/parseLockResolvedVersions";
+import { sliceLockSection } from "#scripts/checkDependencies/sliceLockSection";
 
 export const getLockCatalogVersions = (lockYaml: string): Map<string, string> =>
   parseLockResolvedVersions(

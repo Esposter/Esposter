@@ -1,4 +1,4 @@
-import { getSpecifierBase } from "@/checkDependencies/getSpecifierBase";
+import { getSpecifierBase } from "#scripts/checkDependencies/getSpecifierBase";
 import { describe, expect, test } from "vitest";
 
 describe(getSpecifierBase, () => {

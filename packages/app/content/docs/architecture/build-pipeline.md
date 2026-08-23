@@ -137,9 +137,11 @@ A **directory is not a specifier**, which is the one place the substitution is l
 - **It is declared once, where the package already declares everything else.** The manifest travels with the package, and a fresh clone resolves it before any configuration is loaded.
 - **It is private and cannot collide.** `#` specifiers are unreachable from outside the package by specification. `@/*` was reachable only because `tsconfig.base.json` mapped it, and it sat beside a `"*"` fallback that shadowed real package names — a mapping that turns a mistyped dependency into a same-named local file rather than an error.
 
-`packages/app` has none of those pressures. Nothing bundles it from source, nothing publishes it, nothing resolves into it; it is the leaf of the graph. Its `@/` and `~/` are **Nuxt's own aliases**, generated into `.nuxt/tsconfig.*.json` and understood by the Vite and Nitro builds without anything being configured — so they are the framework's convention rather than one of ours, and replacing them would mean fighting generated configuration for a property the app cannot use. The repo-root `scripts/` tree keeps its own `@/` for the same reason, mapped by the root `tsconfig.json` alone.
+`packages/app` has none of those pressures. Nothing bundles it from source, nothing publishes it, nothing resolves into it; it is the leaf of the graph. Its `@/` and `~/` are **Nuxt's own aliases**, generated into `.nuxt/tsconfig.*.json` and understood by the Vite and Nitro builds without anything being configured — so they are the framework's convention rather than one of ours, and replacing them would mean fighting generated configuration for a property the app cannot use.
 
-An `.oxlintrc.json` override bans `@/**` and `~/**` under `packages/*/src/**` — every package and no part of the app — so the split is enforced rather than remembered.
+The repo-root `scripts/` tree is not a package either, but it converted anyway — it declares `"#scripts/*": "./scripts/*.ts"` in the root manifest. It had no framework generating an alias for it, so keeping one meant keeping a `paths` block and the `resolve.tsconfigPaths` that made Vitest read it; converting deleted both. **There is now no `paths` entry anywhere in the repo that anyone here wrote** — only the ones Nuxt generates for the app.
+
+An `.oxlintrc.json` override bans `@/**` and `~/**` under `packages/*/src/**`, `scripts/**` and `.agents/**` — everything except the app — so the split is enforced rather than remembered.
 
 ## Which unlocks source exports
 
@@ -149,7 +151,7 @@ every package, so tsdown gives every generated entry two arms:
 
 ```json
 {
-  "exports": { ".": { "esposter-source": "./src/index.ts", "default": "./dist/index.js" } },
+  "exports": { ".": { "source": "./src/index.ts", "default": "./dist/index.js" } },
   "publishConfig": { "exports": { ".": "./dist/index.js" } }
 }
 ```
@@ -158,6 +160,8 @@ A tool that opts into the condition resolves TypeScript source; everything else 
 npm gets the `publishConfig` map, which is also what `publint` and `attw` gate against. No rebuild stands
 between an edit and a consumer seeing it, a fresh clone typechecks without building anything first, and
 go-to-definition lands on real source rather than a bundled declaration.
+
+The condition is called **`source`**, which is what the ecosystem calls this: Parcel and Metro both resolve a `source` condition, and it is the spelling every workspace-source setup uses. A repo-namespaced name (`esposter-source`) buys protection against a stranger's resolver matching it by accident — protection worth nothing here, because tsdown writes a `dist`-only map into `publishConfig.exports` and nothing published carries a source arm at all. Inside the workspace, no tool enables `source` unless told to: Vite's server defaults are `module`, `node` and `development`/`production`, and Nuxt adds nothing that would match.
 
 Two places opt in, and that is the entire mechanism: `customConditions` in `tsconfig.base.json` and
 `resolve.conditions` in `getVitestConfiguration`. Anything else that wants source says so explicitly.

@@ -3,7 +3,7 @@
     "allowImportingTsExtensions": true,
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
-    "customConditions": ["esposter-source"],
+    "customConditions": ["source"],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,

@@ -10,7 +10,7 @@ Read when adding or editing a file in `packages/db-schema/src/relations/`, or wr
 
 ```ts
 // packages/db-schema/src/relations/foosRelation.ts
-import { schema } from "@/schema";
+import { schema } from "#src/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
 export const foosRelation = defineRelationsPart(schema, (r) => ({
