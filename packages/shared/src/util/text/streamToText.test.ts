@@ -1,4 +1,4 @@
-import { streamToText } from "@/util/text/streamToText";
+import { streamToText } from "#src/util/text/streamToText";
 import { Readable } from "node:stream";
 import { describe, expect, test } from "vitest";
 

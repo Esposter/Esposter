@@ -1,8 +1,8 @@
-import { createKeyedCacheSchema } from "@/models/exec/KeyedCache";
-import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
-import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "@/services/exec/util/constants";
-import { readWslEnvironmentCache } from "@/services/exec/wsl/readWslEnvironmentCache";
-import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
+import { createKeyedCacheSchema } from "#src/models/exec/KeyedCache";
+import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
+import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "#src/services/exec/util/constants";
+import { readWslEnvironmentCache } from "#src/services/exec/wsl/readWslEnvironmentCache";
+import { writeWslEnvironmentCache } from "#src/services/exec/wsl/writeWslEnvironmentCache";
 import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";

@@ -1,7 +1,7 @@
-import type { ExecOptions } from "@/models/exec/ExecOptions";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
 
-import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
-import { withColorEnv } from "@/services/exec/util/withColorEnv";
+import { VIRRUN_ENV_KEY } from "#src/services/exec/util/constants";
+import { withColorEnv } from "#src/services/exec/util/withColorEnv";
 import { afterEach, describe, expect, test } from "vitest";
 
 const stubStdout = (isTTY: boolean, colorDepth: number): void => {

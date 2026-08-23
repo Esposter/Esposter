@@ -1,13 +1,13 @@
-import type { DiagnosticCheck } from "@/models/cli/DiagnosticCheck";
+import type { DiagnosticCheck } from "#src/models/cli/DiagnosticCheck";
 
-import { DiagnosticCheckType } from "@/models/cli/DiagnosticCheckType";
-import { DiagnosticStatus } from "@/models/cli/DiagnosticStatus";
-import { isVersionAtLeast } from "@/services/cli/run/isVersionAtLeast";
-import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import { PROBE_TIMEOUT_MS } from "@/services/exec/util/constants";
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
-import { getTarExecutable } from "@/services/exec/util/getTarExecutable";
-import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
+import { DiagnosticCheckType } from "#src/models/cli/DiagnosticCheckType";
+import { DiagnosticStatus } from "#src/models/cli/DiagnosticStatus";
+import { isVersionAtLeast } from "#src/services/cli/run/isVersionAtLeast";
+import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
+import { PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { execFileHidden } from "#src/services/exec/util/execFileHidden";
+import { getTarExecutable } from "#src/services/exec/util/getTarExecutable";
+import { buildWslLoginShellCommand } from "#src/services/exec/wsl/buildWslLoginShellCommand";
 import { getResult, takeOne } from "@esposter/shared";
 // The oldest bubblewrap exposing `--overlay-src` / `--tmp-overlay` (the RAM-overlay flags the os backend needs).
 const MINIMUM_BUBBLEWRAP_VERSION = "0.10.0";

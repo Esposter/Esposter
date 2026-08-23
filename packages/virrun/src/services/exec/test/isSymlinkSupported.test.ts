@@ -1,5 +1,5 @@
-import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { VIRRUN_TEMP_DIR_PREFIX } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { getResult, withFinalizer } from "@esposter/shared";
 import { mkdtempSync, rmSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";

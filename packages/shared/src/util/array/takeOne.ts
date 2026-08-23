@@ -1,4 +1,4 @@
-import type { TakeOne } from "@/models/shared/TakeOne";
+import type { TakeOne } from "#src/models/shared/TakeOne";
 // Workaround for noUncheckedIndexedAccess
 export const takeOne: TakeOne = <T extends readonly unknown[] | Record<PropertyKey, unknown>>(
   values: T,

@@ -1,4 +1,4 @@
-import { createNameSchema } from "@/models/shared/Name";
+import { createNameSchema } from "#src/models/shared/Name";
 import { normalizeString } from "@esposter/shared";
 import { z } from "zod";
 

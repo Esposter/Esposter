@@ -1,7 +1,7 @@
-import type { CompositeKeyEntityConstraint } from "@/models/azure/table/CompositeKeyEntity";
+import type { CompositeKeyEntityConstraint } from "#src/models/azure/table/CompositeKeyEntity";
 import type { ItemEntityType } from "@esposter/shared";
 
-import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/AzureEntity";
+import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 

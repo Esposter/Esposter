@@ -1,4 +1,4 @@
-import { getChangedExcludes } from "@/services/exec/wsl/getChangedExcludes";
+import { getChangedExcludes } from "#src/services/exec/wsl/getChangedExcludes";
 import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
 import { describe, expect, test } from "vitest";
 

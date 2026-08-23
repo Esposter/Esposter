@@ -1,6 +1,6 @@
 import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 
-import { createProvisionedClientCache } from "@/services/azure/createProvisionedClientCache";
+import { createProvisionedClientCache } from "#src/services/azure/createProvisionedClientCache";
 import { TableClient } from "@azure/data-tables";
 import { getResultAsync, noop } from "@esposter/shared";
 

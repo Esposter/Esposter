@@ -1,6 +1,6 @@
-import ApplicationTags from "@/azure/constants/ApplicationTags";
-import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLocation";
-import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import ApplicationTags from "#src/azure/constants/ApplicationTags";
+import AzureAustraliaEastLocation from "#src/azure/constants/AzureAustraliaEastLocation";
+import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import * as azure_native from "@pulumi/azure-native";
 
 const namespaceName = "prod-sbns-esposter-001";

@@ -1,9 +1,9 @@
-import type { CompositeKeyEntity } from "@/models/azure/table/CompositeKeyEntity";
-import type { User } from "@/schema/users";
+import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
+import type { User } from "#src/schema/users";
 import type { ToData } from "@esposter/shared";
 
-import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/AzureEntity";
-import { selectUserSchema } from "@/schema/users";
+import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
+import { selectUserSchema } from "#src/schema/users";
 import { createNormalizedStringSchema, getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 

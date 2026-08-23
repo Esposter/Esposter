@@ -15,10 +15,6 @@
     "noImplicitOverride": true,
     "noImplicitThis": true,
     "noUncheckedIndexedAccess": true,
-    "paths": {
-      "*": ["${configDir}/src/*"],
-      "@/*": ["${configDir}/src/*"]
-    },
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,

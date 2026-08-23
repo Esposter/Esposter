@@ -1,6 +1,6 @@
 import type { Clause } from "@esposter/azure";
 
-import { applyFilter } from "@/services/filter/applyFilter";
+import { applyFilter } from "#src/services/filter/applyFilter";
 import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { getTableNullClause } from "@esposter/db";
 import { takeOne } from "@esposter/shared";

@@ -1,6 +1,6 @@
 import type { InvocationContext as AInvocationContext, EventGridEvent } from "@azure/functions";
 
-import { createEventGridNotificationHandler } from "@/handlers/createEventGridNotificationHandler";
+import { createEventGridNotificationHandler } from "#src/handlers/createEventGridNotificationHandler";
 import { InvocationContext } from "@azure/functions";
 import { AzureFunction } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";

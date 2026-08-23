@@ -1,5 +1,5 @@
-import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
-import { getAcceptanceCacheHome } from "@/services/exec/test/getAcceptanceCacheHome";
+import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
+import { getAcceptanceCacheHome } from "#src/services/exec/test/getAcceptanceCacheHome";
 import { getResult, noop } from "@esposter/shared";
 import { existsSync, rmSync } from "node:fs";
 // Cleans the warm snapshot the heavy acceptance/equivalence tests share. They capture it lazily (ensureWarmSnapshot)

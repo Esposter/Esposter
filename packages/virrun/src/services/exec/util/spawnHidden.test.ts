@@ -1,6 +1,6 @@
 import type { spawn as baseSpawn } from "node:child_process";
 
-import { spawnHidden } from "@/services/exec/util/spawnHidden";
+import { spawnHidden } from "#src/services/exec/util/spawnHidden";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));

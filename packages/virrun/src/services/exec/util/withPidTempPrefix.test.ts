@@ -1,6 +1,6 @@
-import { VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
-import { parseTempOwnerPid } from "@/services/exec/util/parseTempOwnerPid";
-import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
+import { VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
+import { withPidTempPrefix } from "#src/services/exec/util/withPidTempPrefix";
 import { describe, expect, test } from "vitest";
 
 describe(withPidTempPrefix, () => {

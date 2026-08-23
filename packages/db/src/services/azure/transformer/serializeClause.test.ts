@@ -1,5 +1,5 @@
-import { serializeKey } from "@/services/azure/table/serializeKey";
-import { serializeClause } from "@/services/azure/transformer/serializeClause";
+import { serializeKey } from "#src/services/azure/table/serializeKey";
+import { serializeClause } from "#src/services/azure/transformer/serializeClause";
 import { BinaryOperator, CompositeKeyPropertyNames, escapeValue, SearchOperator } from "@esposter/azure";
 import { describe, expect, test } from "vitest";
 

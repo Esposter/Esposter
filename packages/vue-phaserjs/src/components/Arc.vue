@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { ArcConfiguration } from "@/models/configuration/ArcConfiguration";
-import type { ArcEventEmitsOptions } from "@/models/emit/ArcEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { ArcConfiguration } from "#src/models/configuration/ArcConfiguration";
+import type { ArcEventEmitsOptions } from "#src/models/emit/ArcEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { ArcSetterMap } from "@/util/setterMap/ArcSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { ArcSetterMap } from "#src/util/setterMap/ArcSetterMap";
 
 interface ArcEmits extends /** @vue-ignore */ ArcEventEmitsOptions {}
 

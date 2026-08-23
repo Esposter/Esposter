@@ -1,9 +1,9 @@
-import type { SourceMirrorDelta } from "@/models/exec/wsl/SourceMirrorDelta";
-import type { SourceMirrorPublication } from "@/models/exec/wsl/SourceMirrorPublication";
+import type { SourceMirrorDelta } from "#src/models/exec/wsl/SourceMirrorDelta";
+import type { SourceMirrorPublication } from "#src/models/exec/wsl/SourceMirrorPublication";
 
-import { getExcludeRelativePath } from "@/services/exec/util/getExcludeRelativePath";
-import { getIsBareNameExclude } from "@/services/exec/util/getIsBareNameExclude";
-import { getChangedExcludes } from "@/services/exec/wsl/getChangedExcludes";
+import { getExcludeRelativePath } from "#src/services/exec/util/getExcludeRelativePath";
+import { getIsBareNameExclude } from "#src/services/exec/util/getIsBareNameExclude";
+import { getChangedExcludes } from "#src/services/exec/wsl/getChangedExcludes";
 // Diff what the mirror published after its last sync against a fresh host walk into the minimal sync
 // (SourceMirrorDelta): a new or changed entry (size/mtimeMs/target — rsync's classic quick-check signal) is copied; a
 // Removed entry is deleted; a type flip (file → directory, …) is deleted first and then copied so the archive extract

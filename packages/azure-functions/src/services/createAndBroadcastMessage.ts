@@ -1,8 +1,8 @@
 import type { InvocationContext } from "@azure/functions";
 import type { CreateMessageInput, MessageEntityMap } from "@esposter/db-schema";
 
-import { getTableClient } from "@/services/getTableClient";
-import { getWebPubSubServiceClient } from "@/services/getWebPubSubServiceClient";
+import { getTableClient } from "#src/services/getTableClient";
+import { getWebPubSubServiceClient } from "#src/services/getWebPubSubServiceClient";
 import { createMessage } from "@esposter/db";
 import { AzureTable, AzureWebPubSubHub } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";

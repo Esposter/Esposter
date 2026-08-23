@@ -29,15 +29,18 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-import { BLOB_NOT_FOUND_MESSAGE } from "@/constants";
-import { MockRestError } from "@/models/MockRestError";
-import { getBlobUrl } from "@/services/container/getBlobUrl";
-import { getBlobUrlParts } from "@/services/container/getBlobUrlParts";
-import { getMockContainer } from "@/services/container/getMockContainer";
-import { createMockResponse } from "@/services/createMockResponse";
-import { getMockSasUrl } from "@/services/getMockSasUrl";
-import { getMockContainerCreatedOnKey, MockContainerCreatedOnDatabase } from "@/store/MockContainerCreatedOnDatabase";
-import { MockContainerDatabase } from "@/store/MockContainerDatabase";
+import { BLOB_NOT_FOUND_MESSAGE } from "#src/constants";
+import { MockRestError } from "#src/models/MockRestError";
+import { getBlobUrl } from "#src/services/container/getBlobUrl";
+import { getBlobUrlParts } from "#src/services/container/getBlobUrlParts";
+import { getMockContainer } from "#src/services/container/getMockContainer";
+import { createMockResponse } from "#src/services/createMockResponse";
+import { getMockSasUrl } from "#src/services/getMockSasUrl";
+import {
+  getMockContainerCreatedOnKey,
+  MockContainerCreatedOnDatabase,
+} from "#src/store/MockContainerCreatedOnDatabase";
+import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 import { noop } from "@esposter/shared";
 import { Readable } from "node:stream";

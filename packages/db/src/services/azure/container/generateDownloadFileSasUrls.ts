@@ -1,8 +1,8 @@
 import type { ContainerClient } from "@azure/storage-blob";
 import type { FileEntity } from "@esposter/db-schema";
 
-import { generateReadSasUrl } from "@/services/azure/container/generateReadSasUrl";
-import { getFileBlobNames } from "@/services/azure/container/getFileBlobNames";
+import { generateReadSasUrl } from "#src/services/azure/container/generateReadSasUrl";
+import { getFileBlobNames } from "#src/services/azure/container/getFileBlobNames";
 
 export const generateDownloadFileSasUrls = (
   containerClient: ContainerClient,

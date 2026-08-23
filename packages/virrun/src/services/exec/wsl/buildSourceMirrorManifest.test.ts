@@ -1,9 +1,9 @@
-import { SourceMirrorEntryType } from "@/models/exec/wsl/SourceMirrorEntryType";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { isSymlinkSupported } from "@/services/exec/test/isSymlinkSupported.test";
-import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { buildSourceMirrorManifest } from "@/services/exec/wsl/buildSourceMirrorManifest";
+import { SourceMirrorEntryType } from "#src/models/exec/wsl/SourceMirrorEntryType";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { isSymlinkSupported } from "#src/services/exec/test/isSymlinkSupported.test";
+import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { buildSourceMirrorManifest } from "#src/services/exec/wsl/buildSourceMirrorManifest";
 import { lstatSync, mkdirSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";

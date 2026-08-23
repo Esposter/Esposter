@@ -1,8 +1,8 @@
-import type { DiagnosticCheck } from "@/models/cli/DiagnosticCheck";
+import type { DiagnosticCheck } from "#src/models/cli/DiagnosticCheck";
 
-import { DiagnosticCheckType } from "@/models/cli/DiagnosticCheckType";
-import { DiagnosticStatus } from "@/models/cli/DiagnosticStatus";
-import { getDoctorExitCode } from "@/services/cli/doctor/getDoctorExitCode";
+import { DiagnosticCheckType } from "#src/models/cli/DiagnosticCheckType";
+import { DiagnosticStatus } from "#src/models/cli/DiagnosticStatus";
+import { getDoctorExitCode } from "#src/services/cli/doctor/getDoctorExitCode";
 import { describe, expect, test } from "vitest";
 
 const createCheck = (status: DiagnosticStatus): DiagnosticCheck => ({

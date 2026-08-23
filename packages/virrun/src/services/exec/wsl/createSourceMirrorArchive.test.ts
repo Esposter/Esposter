@@ -1,14 +1,14 @@
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { isSymlinkSupported } from "@/services/exec/test/isSymlinkSupported.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
-import { getTarExecutable } from "@/services/exec/util/getTarExecutable";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { isSymlinkSupported } from "#src/services/exec/test/isSymlinkSupported.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { execFileHidden } from "#src/services/exec/util/execFileHidden";
+import { getTarExecutable } from "#src/services/exec/util/getTarExecutable";
 import {
   VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
-} from "@/services/exec/wsl/constants";
-import { createSourceMirrorArchive } from "@/services/exec/wsl/createSourceMirrorArchive";
-import { readSourceMirrorArchiveMembers } from "@/services/exec/wsl/readSourceMirrorArchiveMembers";
+} from "#src/services/exec/wsl/constants";
+import { createSourceMirrorArchive } from "#src/services/exec/wsl/createSourceMirrorArchive";
+import { readSourceMirrorArchiveMembers } from "#src/services/exec/wsl/readSourceMirrorArchiveMembers";
 import { getResult } from "@esposter/shared";
 import { lstatSync, mkdirSync, readdirSync, readlinkSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

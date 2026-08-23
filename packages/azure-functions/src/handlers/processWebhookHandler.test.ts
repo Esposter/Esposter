@@ -1,16 +1,19 @@
-import type { WebhookEventGridData } from "@/models/WebhookEventGridData";
+import type { WebhookEventGridData } from "#src/models/WebhookEventGridData";
 import type { WebhookPayload } from "@esposter/db-schema";
 
-import { processWebhookHandler } from "@/handlers/processWebhookHandler";
-import { MOCK_EVENT_GRID_ENDPOINT } from "@/services/eventGridPublisherClient.test";
+import { processWebhookHandler } from "#src/handlers/processWebhookHandler";
+import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/eventGridPublisherClient.test";
 import { InvocationContext } from "@azure/functions";
 import { AzureTable } from "@esposter/db-schema";
 import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/eventGridPublisherClient"), () => import("@/services/eventGridPublisherClient.test"));
-vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableClient.test"));
-vi.mock(import("@/services/getWebPubSubServiceClient"), () => import("@/services/getWebPubSubServiceClient.test"));
+vi.mock(import("#src/services/eventGridPublisherClient"), () => import("#src/services/eventGridPublisherClient.test"));
+vi.mock(import("#src/services/getTableClient"), () => import("#src/services/getTableClient.test"));
+vi.mock(
+  import("#src/services/getWebPubSubServiceClient"),
+  () => import("#src/services/getWebPubSubServiceClient.test"),
+);
 
 describe(processWebhookHandler, () => {
   const context = new InvocationContext();

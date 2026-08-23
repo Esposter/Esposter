@@ -1,6 +1,6 @@
-import { BackendType } from "@/models/virrun/BackendType";
-import { Environment } from "@/models/virrun/Environment";
-import { parseVirrunConfiguration } from "@/services/configuration/parseVirrunConfiguration";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { Environment } from "#src/models/virrun/Environment";
+import { parseVirrunConfiguration } from "#src/services/configuration/parseVirrunConfiguration";
 import { InvalidOperationError } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

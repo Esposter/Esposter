@@ -1,9 +1,9 @@
-import { SourceMirrorEntryType } from "@/models/exec/wsl/SourceMirrorEntryType";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
-import { buildSourceMirrorManifest } from "@/services/exec/wsl/buildSourceMirrorManifest";
+import { SourceMirrorEntryType } from "#src/models/exec/wsl/SourceMirrorEntryType";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { toRootAnchoredExclude } from "#src/services/exec/util/toRootAnchoredExclude";
+import { buildSourceMirrorManifest } from "#src/services/exec/wsl/buildSourceMirrorManifest";
 import {
   VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
@@ -14,12 +14,12 @@ import {
   VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME,
   VIRRUN_SOURCES_DIRECTORY_NAME,
-} from "@/services/exec/wsl/constants";
-import { TEST_WSL_PREFIX } from "@/services/exec/wsl/constants.test";
-import { createWslSourceMirrorSync } from "@/services/exec/wsl/createWslSourceMirrorSync";
-import { getSourceMirrorKey } from "@/services/exec/wsl/getSourceMirrorKey";
-import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
-import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
+} from "#src/services/exec/wsl/constants";
+import { TEST_WSL_PREFIX } from "#src/services/exec/wsl/constants.test";
+import { createWslSourceMirrorSync } from "#src/services/exec/wsl/createWslSourceMirrorSync";
+import { getSourceMirrorKey } from "#src/services/exec/wsl/getSourceMirrorKey";
+import { getWslSourceMirrorPath } from "#src/services/exec/wsl/getWslSourceMirrorPath";
+import { resolveMirrorExcludes } from "#src/services/exec/wsl/resolveMirrorExcludes";
 import { jsonDateParse } from "@esposter/shared";
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -29,10 +29,12 @@ const state = vi.hoisted(() => ({ cacheRoot: "", unarchivedPaths: [] as string[]
 // The "UNC" cache root is just a real temp dir here, so the planner's host-side staging/reads — including the real
 // Host `tar` spawn building the archive — exercise real fs; the same TEST_WSL_PREFIX transform the sibling wsl tests
 // Use derives the Linux-side paths embedded in the script.
-vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({ getWslNativeCacheRoot: () => state.cacheRoot }));
+vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), () => ({
+  getWslNativeCacheRoot: () => state.cacheRoot,
+}));
 // Delegate to the real archive staging but let a test inject unarchived paths — a genuinely Windows-locked file can't
 // Be created portably from Node, whose open flags don't control the share mode.
-vi.mock(import("@/services/exec/wsl/createSourceMirrorArchive"), async (importOriginal) => {
+vi.mock(import("#src/services/exec/wsl/createSourceMirrorArchive"), async (importOriginal) => {
   const { createSourceMirrorArchive } = await importOriginal();
   return {
     createSourceMirrorArchive: (...args: Parameters<typeof createSourceMirrorArchive>) => ({
@@ -42,7 +44,7 @@ vi.mock(import("@/services/exec/wsl/createSourceMirrorArchive"), async (importOr
   };
 });
 
-vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
+vi.mock(import("#src/services/exec/wsl/readWslPath"), () => ({
   readWslPath: (path: string) => `${TEST_WSL_PREFIX}${path}`,
 }));
 

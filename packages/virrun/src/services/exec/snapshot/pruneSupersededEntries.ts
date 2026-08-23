@@ -1,5 +1,5 @@
-import { hasLiveLease } from "@/services/exec/snapshot/hasLiveLease";
-import { sweepStaleEntries } from "@/services/exec/snapshot/sweepStaleEntries";
+import { hasLiveLease } from "#src/services/exec/snapshot/hasLiveLease";
+import { sweepStaleEntries } from "#src/services/exec/snapshot/sweepStaleEntries";
 import { join } from "node:path";
 // The shared eviction behind pruneStaleSnapshots / pruneStalePrepareLayers: only `dir/<currentName>` is reused by
 // THIS run, so evict every superseded sibling to keep the host-global cache small — but that cache is shared across

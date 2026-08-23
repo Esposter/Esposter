@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { TriangleConfiguration } from "@/models/configuration/TriangleConfiguration";
-import type { TriangleEventEmitsOptions } from "@/models/emit/TriangleEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { TriangleConfiguration } from "#src/models/configuration/TriangleConfiguration";
+import type { TriangleEventEmitsOptions } from "#src/models/emit/TriangleEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { TriangleSetterMap } from "@/util/setterMap/TriangleSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { TriangleSetterMap } from "#src/util/setterMap/TriangleSetterMap";
 
 interface TriangleEmits extends /** @vue-ignore */ TriangleEventEmitsOptions {}
 

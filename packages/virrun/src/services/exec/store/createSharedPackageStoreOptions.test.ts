@@ -1,5 +1,5 @@
-import { createSharedPackageStoreOptions } from "@/services/exec/store/createSharedPackageStoreOptions";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { createSharedPackageStoreOptions } from "#src/services/exec/store/createSharedPackageStoreOptions";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import {
   GITIGNORE_FILENAME,
   PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY,
@@ -11,8 +11,8 @@ import {
   VIRRUN_GITIGNORE_ENTRY,
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
   VIRRUN_STORE_DIRECTORY_NAME,
-} from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+} from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";

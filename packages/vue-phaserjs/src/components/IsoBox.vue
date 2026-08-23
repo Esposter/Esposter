@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { IsoBoxConfiguration } from "@/models/configuration/IsoBoxConfiguration";
-import type { IsoBoxEventEmitsOptions } from "@/models/emit/IsoBoxEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { IsoBoxConfiguration } from "#src/models/configuration/IsoBoxConfiguration";
+import type { IsoBoxEventEmitsOptions } from "#src/models/emit/IsoBoxEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { IsoBoxSetterMap } from "@/util/setterMap/IsoBoxSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { IsoBoxSetterMap } from "#src/util/setterMap/IsoBoxSetterMap";
 
 interface IsoBoxEmits extends /** @vue-ignore */ IsoBoxEventEmitsOptions {}
 

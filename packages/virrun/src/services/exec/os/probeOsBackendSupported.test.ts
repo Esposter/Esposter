@@ -1,6 +1,6 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
-import { probeOsBackendSupported } from "@/services/exec/os/probeOsBackendSupported";
+import { probeOsBackendSupported } from "#src/services/exec/os/probeOsBackendSupported";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({

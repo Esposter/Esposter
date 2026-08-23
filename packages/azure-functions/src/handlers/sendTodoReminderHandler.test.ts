@@ -1,6 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
-import { sendTodoReminderHandler } from "@/handlers/sendTodoReminderHandler";
+import { sendTodoReminderHandler } from "#src/handlers/sendTodoReminderHandler";
 import { InvocationContext } from "@azure/functions";
 import { dayjs, getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
@@ -17,13 +17,13 @@ const { sendTodoReminderNotificationMock } = vi.hoisted(() => ({
     >(),
 }));
 
-vi.mock(import("@/services/db"), () => ({
+vi.mock(import("#src/services/db"), () => ({
   get db() {
     return mockDb;
   },
 }));
-vi.mock(import("@/services/getContainerClient"), () => import("@/services/getContainerClient.test"));
-vi.mock(import("@/services/sendTodoReminderNotification"), () => ({
+vi.mock(import("#src/services/getContainerClient"), () => import("#src/services/getContainerClient.test"));
+vi.mock(import("#src/services/sendTodoReminderNotification"), () => ({
   sendTodoReminderNotification: sendTodoReminderNotificationMock,
 }));
 

@@ -1,4 +1,4 @@
-import { selectResourceSchema } from "@/schema/resources";
+import { selectResourceSchema } from "#src/schema/resources";
 import { z } from "zod";
 
 // The scheduled Service Bus message is the reminder's entire state — no Postgres row backs it.

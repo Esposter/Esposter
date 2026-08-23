@@ -1,8 +1,8 @@
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
-import { getTarExecutable } from "@/services/exec/util/getTarExecutable";
-import { readSourceMirrorArchiveMembers } from "@/services/exec/wsl/readSourceMirrorArchiveMembers";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { execFileHidden } from "#src/services/exec/util/execFileHidden";
+import { getTarExecutable } from "#src/services/exec/util/getTarExecutable";
+import { readSourceMirrorArchiveMembers } from "#src/services/exec/wsl/readSourceMirrorArchiveMembers";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";

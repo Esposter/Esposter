@@ -1,4 +1,4 @@
-import type { TMXEmbeddedTilesetShared } from "@/models/tmx/shared/TMXEmbeddedTilesetShared";
+import type { TMXEmbeddedTilesetShared } from "#src/models/tmx/shared/TMXEmbeddedTilesetShared";
 
 import { describe } from "vitest";
 

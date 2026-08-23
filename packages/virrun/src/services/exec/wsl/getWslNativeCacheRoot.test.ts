@@ -1,16 +1,16 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
-import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
-import { WSL_CACHE_ROOT_CACHE_FILENAME } from "@/services/exec/util/constants";
-import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
+import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
+import { WSL_CACHE_ROOT_CACHE_FILENAME } from "#src/services/exec/util/constants";
+import { getHostFingerprint } from "#src/services/exec/util/getHostFingerprint";
 import {
   TEST_WSL_CACHE_ROOT_LINUX,
   TEST_WSL_DISTRO,
   TEST_WSL_DISTRO_SECONDARY,
   TEST_WSL_HOME,
-} from "@/services/exec/wsl/constants.test";
-import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
-import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
+} from "#src/services/exec/wsl/constants.test";
+import { createTestWslUnc } from "#src/services/exec/wsl/createTestWslUnc.test";
+import { writeWslEnvironmentCache } from "#src/services/exec/wsl/writeWslEnvironmentCache";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
@@ -41,7 +41,7 @@ describe("getWslNativeCacheRoot", () => {
     expect.hasAssertions();
 
     mockWsl(distroList, `${TEST_WSL_HOME}\n`);
-    const { getWslNativeCacheRoot } = await import("@/services/exec/wsl/getWslNativeCacheRoot");
+    const { getWslNativeCacheRoot } = await import("#src/services/exec/wsl/getWslNativeCacheRoot");
 
     expect(getWslNativeCacheRoot()).toBe(cacheRoot);
     expect(getWslNativeCacheRoot()).toBe(cacheRoot);
@@ -54,7 +54,7 @@ describe("getWslNativeCacheRoot", () => {
 
     writeWslEnvironmentCache(WSL_CACHE_ROOT_CACHE_FILENAME, { key: getHostFingerprint(), value: cacheRoot });
     mockWsl(distroList, `${TEST_WSL_HOME}\n`);
-    const { getWslNativeCacheRoot } = await import("@/services/exec/wsl/getWslNativeCacheRoot");
+    const { getWslNativeCacheRoot } = await import("#src/services/exec/wsl/getWslNativeCacheRoot");
 
     expect(getWslNativeCacheRoot()).toBe(cacheRoot);
     expect(execFileSync).toHaveBeenCalledTimes(0);
@@ -64,7 +64,7 @@ describe("getWslNativeCacheRoot", () => {
     expect.hasAssertions();
 
     mockWsl(distroList, "");
-    const { getWslNativeCacheRoot } = await import("@/services/exec/wsl/getWslNativeCacheRoot");
+    const { getWslNativeCacheRoot } = await import("#src/services/exec/wsl/getWslNativeCacheRoot");
 
     expect(() => getWslNativeCacheRoot()).toThrowErrorMatchingInlineSnapshot(unresolvedEnvironmentErrorMessage);
   });
@@ -74,7 +74,7 @@ describe("getWslNativeCacheRoot", () => {
     expect.hasAssertions();
 
     mockWsl("", `${TEST_WSL_HOME}\n`);
-    const { getWslNativeCacheRoot } = await import("@/services/exec/wsl/getWslNativeCacheRoot");
+    const { getWslNativeCacheRoot } = await import("#src/services/exec/wsl/getWslNativeCacheRoot");
 
     expect(() => getWslNativeCacheRoot()).toThrowErrorMatchingInlineSnapshot(unresolvedEnvironmentErrorMessage);
     expect(existsSync(join(getCacheHome(), WSL_CACHE_ROOT_CACHE_FILENAME))).toBe(false);

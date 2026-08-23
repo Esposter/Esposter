@@ -1,6 +1,6 @@
-import type { GetArrayProps } from "@/util/types/GetArrayProps";
-import type { GetObjectProps } from "@/util/types/GetObjectProps";
-import type { GetPrimitiveProps } from "@/util/types/GetPrimitiveProps";
+import type { GetArrayProps } from "#src/util/types/GetArrayProps";
+import type { GetObjectProps } from "#src/util/types/GetObjectProps";
+import type { GetPrimitiveProps } from "#src/util/types/GetPrimitiveProps";
 
 export type GetProperties<
   T,

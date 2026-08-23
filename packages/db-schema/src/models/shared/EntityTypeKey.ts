@@ -1,6 +1,6 @@
-import type { AzureEntityType } from "@/models/azure/table/AzureEntityType";
-import type { DatabaseEntityType } from "@/models/shared/DatabaseEntityType";
-import type { DerivedDatabaseEntityType } from "@/models/shared/DerivedDatabaseEntityType";
+import type { AzureEntityType } from "#src/models/azure/table/AzureEntityType";
+import type { DatabaseEntityType } from "#src/models/shared/DatabaseEntityType";
+import type { DerivedDatabaseEntityType } from "#src/models/shared/DerivedDatabaseEntityType";
 
 export type EntityTypeKey =
   | keyof typeof AzureEntityType

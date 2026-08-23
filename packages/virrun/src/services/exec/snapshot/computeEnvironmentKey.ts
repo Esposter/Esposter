@@ -1,5 +1,5 @@
-import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
-import { getSandboxNodeVersion } from "@/services/exec/util/getSandboxNodeVersion";
+import { computeLockfileHash } from "#src/services/exec/snapshot/computeLockfileHash";
+import { getSandboxNodeVersion } from "#src/services/exec/util/getSandboxNodeVersion";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { createHash } from "node:crypto";
 

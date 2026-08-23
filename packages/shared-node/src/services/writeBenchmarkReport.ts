@@ -1,7 +1,7 @@
-import type { BenchmarkTaskNode } from "@/models/BenchmarkTaskNode";
+import type { BenchmarkTaskNode } from "#src/models/BenchmarkTaskNode";
 
-import { buildBenchmarkFileReport } from "@/services/buildBenchmarkFileReport";
-import { formatBenchmarkMarkdown } from "@/services/formatBenchmarkMarkdown";
+import { buildBenchmarkFileReport } from "#src/services/buildBenchmarkFileReport";
+import { formatBenchmarkMarkdown } from "#src/services/formatBenchmarkMarkdown";
 import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { writeFile } from "node:fs/promises";
 

@@ -1,5 +1,5 @@
-import { ContentTypes } from "@/models/ContentType";
-import { filtersToClauses } from "@/services/azure/search/filtersToClauses";
+import { ContentTypes } from "#src/models/ContentType";
+import { filtersToClauses } from "#src/services/azure/search/filtersToClauses";
 import { BinaryOperator, CompositeKeyPropertyNames, SearchOperator } from "@esposter/azure";
 import {
   FileEntityPropertyNames,

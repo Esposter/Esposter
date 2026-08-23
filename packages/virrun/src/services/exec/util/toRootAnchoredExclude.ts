@@ -1,4 +1,4 @@
-import { ROOT_ANCHOR_PREFIX } from "@/services/exec/util/constants";
+import { ROOT_ANCHOR_PREFIX } from "#src/services/exec/util/constants";
 // Express a tree-relative path as a root-anchored exclude pattern. Every derived exclude — a linked worktree root, an
 // Environment's prepare outputs — names ONE place in the tree, but the pattern language reads a slash-free string as
 // A bare name matching at any depth, so a single-segment path (`git worktree add app`, a root nuxt.config's `.nuxt`)

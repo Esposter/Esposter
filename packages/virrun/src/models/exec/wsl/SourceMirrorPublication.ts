@@ -1,6 +1,6 @@
-import type { SourceMirrorManifest } from "@/models/exec/wsl/SourceMirrorManifest";
+import type { SourceMirrorManifest } from "#src/models/exec/wsl/SourceMirrorManifest";
 
-import { sourceMirrorManifestSchema } from "@/models/exec/wsl/SourceMirrorManifest";
+import { sourceMirrorManifestSchema } from "#src/models/exec/wsl/SourceMirrorManifest";
 import { z } from "zod";
 // What the mirror published beside `tree/` after its last successful sync (manifest.json): the tree state it holds
 // (`entries`) *and* the exclude set that state was walked under (`excludes`). Both halves are load-bearing, because

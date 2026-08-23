@@ -1,6 +1,6 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
+import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { getResult, noop } from "@esposter/shared";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 

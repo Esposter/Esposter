@@ -1,4 +1,4 @@
-import type { SourceType } from "@/models/source/SourceType";
+import type { SourceType } from "#src/models/source/SourceType";
 
 export interface GitSource {
   // Branch, tag, or commit to check out. Empty string clones the remote's default branch.

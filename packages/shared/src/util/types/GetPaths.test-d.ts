@@ -1,4 +1,4 @@
-import type { GetPaths } from "@/util/types/GetPaths";
+import type { GetPaths } from "#src/util/types/GetPaths";
 import type { TableEntity } from "@azure/data-tables";
 
 import { describe, expect, expectTypeOf, test } from "vitest";

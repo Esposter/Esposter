@@ -1,5 +1,5 @@
-import { computeSourceTreeHash } from "@/services/exec/cache/computeSourceTreeHash";
-import { computeEnvironmentKey } from "@/services/exec/snapshot/computeEnvironmentKey";
+import { computeSourceTreeHash } from "#src/services/exec/cache/computeSourceTreeHash";
+import { computeEnvironmentKey } from "#src/services/exec/snapshot/computeEnvironmentKey";
 import { getResult } from "@esposter/shared";
 import { createHash } from "node:crypto";
 // The task-cache address for one run: a sha256 over the four things that fully determine what it writes to the host —

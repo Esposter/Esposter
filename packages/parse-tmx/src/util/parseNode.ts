@@ -1,12 +1,12 @@
-import type { TMXGroupLayerNode } from "@/models/tmx/node/TMXGroupLayerNode";
-import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
-import type { TMXGroupLayerParsed } from "@/models/tmx/parsed/TMXGroupLayerParsed";
-import type { TMXLayerParsed } from "@/models/tmx/parsed/TMXLayerParsed";
+import type { TMXGroupLayerNode } from "#src/models/tmx/node/TMXGroupLayerNode";
+import type { TMXLayerNode } from "#src/models/tmx/node/TMXLayerNode";
+import type { TMXGroupLayerParsed } from "#src/models/tmx/parsed/TMXGroupLayerParsed";
+import type { TMXLayerParsed } from "#src/models/tmx/parsed/TMXLayerParsed";
 
-import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
-import { parseGroup } from "@/util/parseGroup";
-import { parseLayer } from "@/util/parseLayer";
-import { parseTileLayer } from "@/util/parseTileLayer";
+import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
+import { parseGroup } from "#src/util/parseGroup";
+import { parseLayer } from "#src/util/parseLayer";
+import { parseTileLayer } from "#src/util/parseTileLayer";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const parseNode = <

@@ -1,5 +1,5 @@
-import type { BackendType } from "@/models/virrun/BackendType";
-import type { Environment } from "@/models/virrun/Environment";
+import type { BackendType } from "#src/models/virrun/BackendType";
+import type { Environment } from "#src/models/virrun/Environment";
 import type { ArgDef } from "citty";
 
 export interface InitArgs {

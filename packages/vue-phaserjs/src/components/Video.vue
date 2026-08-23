@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { VideoConfiguration } from "@/models/configuration/VideoConfiguration";
-import type { VideoEventEmitsOptions } from "@/models/emit/VideoEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { VideoConfiguration } from "#src/models/configuration/VideoConfiguration";
+import type { VideoEventEmitsOptions } from "#src/models/emit/VideoEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { VideoSetterMap } from "@/util/setterMap/VideoSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { VideoSetterMap } from "#src/util/setterMap/VideoSetterMap";
 
 interface VideoEmits extends /** @vue-ignore */ VideoEventEmitsOptions {}
 

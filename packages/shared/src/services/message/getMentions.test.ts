@@ -1,7 +1,7 @@
-import { MENTION_ID_ATTRIBUTE } from "@/services/message/constants";
-import { createMention } from "@/services/message/createMention.test";
-import { getMentions } from "@/services/message/getMentions";
-import { takeOne } from "@/util/array/takeOne";
+import { MENTION_ID_ATTRIBUTE } from "#src/services/message/constants";
+import { createMention } from "#src/services/message/createMention.test";
+import { getMentions } from "#src/services/message/getMentions";
+import { takeOne } from "#src/util/array/takeOne";
 import { describe, expect, test } from "vitest";
 
 describe(getMentions, () => {

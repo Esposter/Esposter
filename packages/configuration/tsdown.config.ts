@@ -2,7 +2,11 @@ import type { UserConfig } from "tsdown";
 
 import { mergeConfig } from "tsdown";
 
+import { getPackagePatterns } from "./src/getPackagePatterns.ts";
 import { getTsdownConfigurationNode } from "./src/getTsdownConfigurationNode.ts";
+import { readPackageManifest } from "./src/readPackageManifest.ts";
+
+const { devDependencies } = readPackageManifest();
 // The bootstrap package, and the three ways it differs all follow from that.
 //
 // Its relative imports carry a `.ts` extension, which no other package needs. tsdown loads a config with a
@@ -17,7 +21,10 @@ import { getTsdownConfigurationNode } from "./src/getTsdownConfigurationNode.ts"
 // Encapsulates a package, so without this every `@esposter/configuration/eslint/*.js` import — the shared flat
 // Config each package symlinks — resolves to nothing.
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode(), {
-  deps: { neverBundle: true },
+  // The base derives `onlyImport` from the manifest's runtime dependency fields, which this package has none
+  // Of — everything it externalizes is a `devDependency`, so the allowlist has to be widened by exactly that
+  // Set or the gate would fail every import it makes. `mergeConfig` concatenates the two lists.
+  deps: { neverBundle: true, onlyImport: getPackagePatterns(Object.keys(devDependencies ?? {})) },
   exports: { customExports: { "./eslint/*": "./eslint/*" } },
 });
 

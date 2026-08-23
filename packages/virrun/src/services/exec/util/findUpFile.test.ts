@@ -1,6 +1,6 @@
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { findUpFile } from "@/services/exec/util/findUpFile";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { findUpFile } from "#src/services/exec/util/findUpFile";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";

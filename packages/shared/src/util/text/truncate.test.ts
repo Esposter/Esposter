@@ -1,4 +1,4 @@
-import { truncate } from "@/util/text/truncate";
+import { truncate } from "#src/util/text/truncate";
 import { describe, expect, test } from "vitest";
 
 describe(truncate, () => {

@@ -1,7 +1,7 @@
 import type { Clause } from "@esposter/azure";
 
-import { RangeOperators } from "@/services/azure/transformer/RangeOperators";
-import { serializeClause } from "@/services/azure/transformer/serializeClause";
+import { RangeOperators } from "#src/services/azure/transformer/RangeOperators";
+import { serializeClause } from "#src/services/azure/transformer/serializeClause";
 import { UnaryOperator } from "@esposter/azure";
 import { takeOne } from "@esposter/shared";
 

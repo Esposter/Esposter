@@ -1,4 +1,4 @@
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "#src/services/dayjs/index";
 
 export const RECYCLE_BIN_RETENTION_DAYS = 30;
 // A soft-deleted resource is destroyed for good this long after it lands in the Recycle bin.

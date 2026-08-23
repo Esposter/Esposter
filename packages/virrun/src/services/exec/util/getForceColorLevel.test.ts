@@ -1,4 +1,4 @@
-import { getForceColorLevel } from "@/services/exec/util/getForceColorLevel";
+import { getForceColorLevel } from "#src/services/exec/util/getForceColorLevel";
 import { describe, expect, test } from "vitest";
 
 describe(getForceColorLevel, () => {

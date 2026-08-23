@@ -1,4 +1,4 @@
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "#src/services/dayjs/index";
 
 // Reserved user id used as the actor for automatic moderation actions (word-filter Warn/Timeout).
 // It is a fixed v4-shaped UUID so it satisfies user-id validation, never collides with a real user,

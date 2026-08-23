@@ -1,7 +1,7 @@
 import type { ServiceBusMessage, ServiceBusMessageBatch, ServiceBusSender } from "@azure/service-bus";
 import type { MapValue } from "@esposter/shared";
 
-import { MockServiceBusDatabase } from "@/store/MockServiceBusDatabase";
+import { MockServiceBusDatabase } from "#src/store/MockServiceBusDatabase";
 import { getOrCreate } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure ServiceBusSender — no emulator and no network.

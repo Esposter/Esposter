@@ -1,8 +1,8 @@
 /* oxlint-disable typescript/require-await -- async wrappers intentional: converts sync throws into rejections so ResultAsync.fromPromise captures them */
 import type { Promisable } from "type-fest";
 
-import { getResultAsync } from "@/services/error/getResultAsync";
-import { noop } from "@/util/function/noop";
+import { getResultAsync } from "#src/services/error/getResultAsync";
+import { noop } from "#src/util/function/noop";
 
 export const withFinalizerAsync = async <T>(
   fn: () => Promisable<T>,

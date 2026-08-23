@@ -1,11 +1,11 @@
-import type { TaskCacheLocation } from "@/models/exec/cache/TaskCacheLocation";
+import type { TaskCacheLocation } from "#src/models/exec/cache/TaskCacheLocation";
 
 import {
   TASK_CACHE_META_FILENAME,
   TASK_CACHE_PAYLOAD_DIRECTORY_NAME,
   VIRRUN_TASKS_DIRECTORY_NAME,
-} from "@/services/exec/cache/constants";
-import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
+} from "#src/services/exec/cache/constants";
+import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheDirectory";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 // Resolve a task key to its host-global cache address (getGlobalCacheDirectory()/tasks/<key>/) without touching the

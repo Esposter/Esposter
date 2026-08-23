@@ -1,4 +1,4 @@
-import { parseMachineJson } from "@/services/exec/util/parseMachineJson";
+import { parseMachineJson } from "#src/services/exec/util/parseMachineJson";
 import { getResult } from "@esposter/shared";
 // Bubblewrap's --json-status-fd emits newline-separated JSON; an {"exit-code": N} document appears only once the
 // Sandboxed child has exited. Its absence means the child never ran (the sandbox failed to set up), so return

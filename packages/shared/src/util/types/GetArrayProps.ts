@@ -1,4 +1,4 @@
-import type { GetProperties } from "@/util/types/GetProperties";
+import type { GetProperties } from "#src/util/types/GetProperties";
 
 export type GetArrayProps<T extends unknown[], P extends string, D extends unknown[], R extends boolean> =
   | (D extends [unknown, ...infer Rest]

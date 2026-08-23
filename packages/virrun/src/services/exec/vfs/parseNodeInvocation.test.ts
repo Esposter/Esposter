@@ -1,5 +1,5 @@
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { parseNodeInvocation } from "@/services/exec/vfs/parseNodeInvocation";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { parseNodeInvocation } from "#src/services/exec/vfs/parseNodeInvocation";
 import { describe, expect, test } from "vitest";
 
 describe(parseNodeInvocation, () => {

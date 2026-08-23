@@ -1,7 +1,7 @@
-import type { TaskCacheEntry } from "@/models/exec/cache/TaskCacheEntry";
+import type { TaskCacheEntry } from "#src/models/exec/cache/TaskCacheEntry";
 
-import { taskCacheEntrySchema } from "@/models/exec/cache/TaskCacheEntry";
-import { parseJsonWithSchema } from "@/services/exec/util/parseJsonWithSchema";
+import { taskCacheEntrySchema } from "#src/models/exec/cache/TaskCacheEntry";
+import { parseJsonWithSchema } from "#src/services/exec/util/parseJsonWithSchema";
 // Validate the on-disk meta.json into a typed entry. Like parseOverlayManifest, the cache file is untrusted state
 // (hand-edited, corrupted, or an older shape), so parseJsonWithSchema JSON-parses then zod-validates it in one step;
 // Any malformed content throws an InvalidOperationError rather than replaying garbage as a command's result.

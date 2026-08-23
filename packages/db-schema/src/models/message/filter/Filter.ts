@@ -1,7 +1,7 @@
-import type { FilterType } from "@/models/message/filter/FilterType";
+import type { FilterType } from "#src/models/message/filter/FilterType";
 import type { SerializableValue } from "@esposter/azure";
 
-import { filterTypeSchema } from "@/models/message/filter/FilterType";
+import { filterTypeSchema } from "#src/models/message/filter/FilterType";
 import { serializableValueSchema } from "@esposter/azure";
 import { z } from "zod";
 

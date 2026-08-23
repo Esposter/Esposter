@@ -1,17 +1,17 @@
-import type { ExecOptions, ExecStdio } from "@/models/exec/ExecOptions";
+import type { ExecOptions, ExecStdio } from "#src/models/exec/ExecOptions";
 
-import { getOsCacheRoot } from "@/services/exec/os/getOsCacheRoot";
-import { createSharedPackageStoreOptions } from "@/services/exec/store/createSharedPackageStoreOptions";
+import { getOsCacheRoot } from "#src/services/exec/os/getOsCacheRoot";
+import { createSharedPackageStoreOptions } from "#src/services/exec/store/createSharedPackageStoreOptions";
 import {
   COREPACK_HOME_KEY,
   NODE_MODULES_BIN_DIRECTORY,
   VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
   VIRRUN_ENV_KEY,
   VIRRUN_STORE_DIRECTORY_NAME,
-} from "@/services/exec/util/constants";
-import { resolveCwd } from "@/services/exec/util/resolveCwd";
-import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
-import { readWslLoginEnvironment } from "@/services/exec/wsl/readWslLoginEnvironment";
+} from "#src/services/exec/util/constants";
+import { resolveCwd } from "#src/services/exec/util/resolveCwd";
+import { getWslSourceMirrorPath } from "#src/services/exec/wsl/getWslSourceMirrorPath";
+import { readWslLoginEnvironment } from "#src/services/exec/wsl/readWslLoginEnvironment";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";

@@ -1,9 +1,9 @@
-import type { ExecOptions } from "@/models/exec/ExecOptions";
-import type { ExecResult } from "@/models/exec/ExecResult";
-import type { NodeInvocation } from "@/models/exec/vfs/NodeInvocation";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
+import type { ExecResult } from "#src/models/exec/ExecResult";
+import type { NodeInvocation } from "#src/models/exec/vfs/NodeInvocation";
 
-import { ExitSignalError } from "@/models/exec/vfs/ExitSignalError";
-import { createPlatformaticFsProvider } from "@/services/vfs/createPlatformaticFsProvider";
+import { ExitSignalError } from "#src/models/exec/vfs/ExitSignalError";
+import { createPlatformaticFsProvider } from "#src/services/vfs/createPlatformaticFsProvider";
 import { getResult, withFinalizer } from "@esposter/shared";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";

@@ -1,7 +1,7 @@
-import { REMOVE_LIST_REAP_MINIMUM_AGE_MS } from "@/services/exec/util/constants";
-import { isProcessAlive } from "@/services/exec/util/isProcessAlive";
-import { parseTempOwnerPid } from "@/services/exec/util/parseTempOwnerPid";
-import { VIRRUN_REMOVE_LIST_TEMP_PREFIX } from "@/services/exec/wsl/constants";
+import { REMOVE_LIST_REAP_MINIMUM_AGE_MS } from "#src/services/exec/util/constants";
+import { isProcessAlive } from "#src/services/exec/util/isProcessAlive";
+import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
+import { VIRRUN_REMOVE_LIST_TEMP_PREFIX } from "#src/services/exec/wsl/constants";
 import { getResult, noop } from "@esposter/shared";
 import { readdirSync, rmSync, statSync } from "node:fs";
 import { join } from "node:path";

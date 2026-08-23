@@ -1,8 +1,8 @@
 import type { Database } from "@esposter/db-schema";
 
-import { createMention } from "@/services/message/createMention.test";
-import { createUser } from "@/services/message/createUser.test";
-import { getPushSubscriptionsForMessage } from "@/services/message/getPushSubscriptionsForMessage";
+import { createMention } from "#src/services/message/createMention.test";
+import { createUser } from "#src/services/message/createUser.test";
+import { getPushSubscriptionsForMessage } from "#src/services/message/getPushSubscriptionsForMessage";
 import { createMockDb } from "@esposter/db-mock";
 import {
   NotificationType,

@@ -1,4 +1,4 @@
-import { isNetworkFailure } from "@/services/exec/cache/isNetworkFailure";
+import { isNetworkFailure } from "#src/services/exec/cache/isNetworkFailure";
 import { describe, expect, test } from "vitest";
 
 describe(isNetworkFailure, () => {

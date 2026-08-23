@@ -1,4 +1,4 @@
-import type { GetProperties } from "@/util/types/GetProperties";
+import type { GetProperties } from "#src/util/types/GetProperties";
 import type { TableEntity } from "@azure/data-tables";
 
 import { describe, expect, expectTypeOf, test } from "vitest";

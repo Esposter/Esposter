@@ -1,10 +1,10 @@
-import type { CompositeKeyEntity } from "@/models/azure/table/CompositeKeyEntity";
-import type { User } from "@/schema/users";
+import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
+import type { User } from "#src/schema/users";
 import type { ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-import { BaseMessageEntity, baseMessageEntitySchema } from "@/models/message/BaseMessageEntity";
-import { userIdSchema } from "@/models/shared/UserId";
+import { BaseMessageEntity, baseMessageEntitySchema } from "#src/models/message/BaseMessageEntity";
+import { userIdSchema } from "#src/models/shared/UserId";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 

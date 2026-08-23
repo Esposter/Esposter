@@ -1,7 +1,7 @@
-import Text from "@/components/Text.vue";
-import { useTextStore } from "@/store/text";
-import { startTestScene } from "@/test/fixtures/headlessGame.test";
-import { setupGameObjectSuite } from "@/test/fixtures/setupGameObjectSuite.test";
+import Text from "#src/components/Text.vue";
+import { useTextStore } from "#src/store/text";
+import { startTestScene } from "#src/test/fixtures/headlessGame.test";
+import { setupGameObjectSuite } from "#src/test/fixtures/setupGameObjectSuite.test";
 import { GameObjects } from "phaser";
 import { assert, describe, expect, test } from "vitest";
 

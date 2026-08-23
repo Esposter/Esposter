@@ -1,7 +1,7 @@
-import type { SourceMirrorManifest } from "@/models/exec/wsl/SourceMirrorManifest";
+import type { SourceMirrorManifest } from "#src/models/exec/wsl/SourceMirrorManifest";
 
-import { SourceMirrorEntryType } from "@/models/exec/wsl/SourceMirrorEntryType";
-import { isExcludedPath } from "@/services/exec/util/isExcludedPath";
+import { SourceMirrorEntryType } from "#src/models/exec/wsl/SourceMirrorEntryType";
+import { isExcludedPath } from "#src/services/exec/util/isExcludedPath";
 import { getResult, noop } from "@esposter/shared";
 import { lstatSync, readdirSync, readlinkSync } from "node:fs";
 import { join } from "node:path";

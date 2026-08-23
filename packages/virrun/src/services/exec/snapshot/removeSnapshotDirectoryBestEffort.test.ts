@@ -1,10 +1,10 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
-import { removeSnapshotDirectoryBestEffort } from "@/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { TEST_WSL_CACHE_ROOT_LINUX } from "@/services/exec/wsl/constants.test";
-import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
+import { removeSnapshotDirectoryBestEffort } from "#src/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { TEST_WSL_CACHE_ROOT_LINUX } from "#src/services/exec/wsl/constants.test";
+import { createTestWslUnc } from "#src/services/exec/wsl/createTestWslUnc.test";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";

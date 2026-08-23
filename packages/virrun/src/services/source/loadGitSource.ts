@@ -1,8 +1,8 @@
-import type { GitSource } from "@/models/source/GitSource";
-import type { LoadedSource } from "@/models/source/LoadedSource";
+import type { GitSource } from "#src/models/source/GitSource";
+import type { LoadedSource } from "#src/models/source/LoadedSource";
 
-import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
-import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
+import { createNativeBackend } from "#src/services/exec/native/createNativeBackend";
+import { VIRRUN_TEMP_DIR_PREFIX } from "#src/services/exec/util/constants";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";

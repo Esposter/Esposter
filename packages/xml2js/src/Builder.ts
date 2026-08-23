@@ -2,7 +2,7 @@
 import type { BuilderOptions } from "xml2js";
 import type { XMLBuilder } from "xmlbuilder2/lib/interfaces";
 
-import { DefaultBuilderOptions } from "@/DefaultBuilderOptions";
+import { DefaultBuilderOptions } from "#src/DefaultBuilderOptions";
 import { takeOne } from "@esposter/shared";
 import { create } from "xmlbuilder2";
 

@@ -1,4 +1,4 @@
-import { formatByteSize } from "@/services/cli/cache/formatByteSize";
+import { formatByteSize } from "#src/services/cli/cache/formatByteSize";
 import { describe, expect, test } from "vitest";
 
 describe(formatByteSize, () => {

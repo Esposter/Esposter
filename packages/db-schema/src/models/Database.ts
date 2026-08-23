@@ -1,4 +1,4 @@
-import type { relations } from "@/relations";
+import type { relations } from "#src/relations";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 // The one spelling of the drizzle handle. It names the relations object rather than the schema object because

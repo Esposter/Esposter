@@ -1,8 +1,8 @@
 import type { Clause } from "@esposter/azure";
 
-import { deserializeKey } from "@/services/azure/table/deserializeKey";
-import { CLAUSE_REGEX } from "@/services/azure/transformer/constants";
-import { deserializeValue } from "@/services/azure/transformer/deserializeValue";
+import { deserializeKey } from "#src/services/azure/table/deserializeKey";
+import { CLAUSE_REGEX } from "#src/services/azure/transformer/constants";
+import { deserializeValue } from "#src/services/azure/transformer/deserializeValue";
 import { BinaryOperator } from "@esposter/azure";
 import { normalizeString, NotFoundError } from "@esposter/shared";
 

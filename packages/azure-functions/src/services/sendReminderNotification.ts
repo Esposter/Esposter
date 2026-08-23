@@ -1,8 +1,8 @@
 import type { InvocationContext } from "@azure/functions";
 
-import { db } from "@/services/db";
-import { getPushNotificationPayload } from "@/services/getPushNotificationPayload";
-import { sendWebPushNotifications } from "@/services/sendWebPushNotifications";
+import { db } from "#src/services/db";
+import { getPushNotificationPayload } from "#src/services/getPushNotificationPayload";
+import { sendWebPushNotifications } from "#src/services/sendWebPushNotifications";
 import { getPushSubscriptionsForUser } from "@esposter/db";
 import { RoutePath } from "@esposter/shared";
 

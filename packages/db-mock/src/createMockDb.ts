@@ -1,6 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
-import { SNAPSHOT_FILENAME } from "@/constants";
+import { SNAPSHOT_FILENAME } from "#src/constants";
 import { PGlite } from "@electric-sql/pglite";
 import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
 import { relations } from "@esposter/db-schema";

@@ -1,5 +1,5 @@
-import { getResult } from "@/services/error/getResult";
-import { noop } from "@/util/function/noop";
+import { getResult } from "#src/services/error/getResult";
+import { noop } from "#src/util/function/noop";
 
 export const withFinalizer = <T>(fn: () => T, finalizer?: () => void): T => {
   const result = getResult(fn);

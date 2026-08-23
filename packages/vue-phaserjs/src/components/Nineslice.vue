@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { NinesliceConfiguration } from "@/models/configuration/NinesliceConfiguration";
-import type { NinesliceEventEmitsOptions } from "@/models/emit/NinesliceEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { NinesliceConfiguration } from "#src/models/configuration/NinesliceConfiguration";
+import type { NinesliceEventEmitsOptions } from "#src/models/emit/NinesliceEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 import type { SetRequired } from "type-fest";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { NinesliceSetterMap } from "@/util/setterMap/NinesliceSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { NinesliceSetterMap } from "#src/util/setterMap/NinesliceSetterMap";
 
 interface NinesliceEmits extends /** @vue-ignore */ NinesliceEventEmitsOptions {}
 

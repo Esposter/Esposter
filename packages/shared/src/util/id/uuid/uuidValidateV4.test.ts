@@ -1,4 +1,4 @@
-import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
+import { uuidValidateV4 } from "#src/util/id/uuid/uuidValidateV4";
 import { describe, expect, test } from "vitest";
 
 describe(uuidValidateV4, () => {

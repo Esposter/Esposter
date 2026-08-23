@@ -1,7 +1,7 @@
 import type { ContainerClient } from "@azure/storage-blob";
 import type { AzureContainer, Database } from "@esposter/db-schema";
 
-import { releaseStorageBlobs } from "@/services/storage/releaseStorageBlobs";
+import { releaseStorageBlobs } from "#src/services/storage/releaseStorageBlobs";
 import { MAX_CONCURRENT_BLOB_DELETIONS } from "@esposter/db-schema";
 import { chunk, getResultAsync, takeOne } from "@esposter/shared";
 

@@ -1,6 +1,6 @@
-import { stripAnsi } from "@/services/cli/color/stripAnsi.test";
-import { writeVirrunDebug } from "@/services/cli/debug/writeVirrunDebug";
-import { VIRRUN_DEBUG_KEY } from "@/services/exec/util/constants";
+import { stripAnsi } from "#src/services/cli/color/stripAnsi.test";
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
+import { VIRRUN_DEBUG_KEY } from "#src/services/exec/util/constants";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(writeVirrunDebug, () => {

@@ -1,8 +1,8 @@
 import type { rm as baseRm } from "node:fs/promises";
 
-import { SourceType } from "@/models/source/SourceType";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { loadFilesSource } from "@/services/source/loadFilesSource";
+import { SourceType } from "#src/models/source/SourceType";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { loadFilesSource } from "#src/services/source/loadFilesSource";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";

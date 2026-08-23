@@ -3,7 +3,7 @@ import type { CompositeKey } from "@esposter/azure";
 import type { CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
-import { getTopNEntitiesByClass } from "@/services/azure/table/getTopNEntitiesByClass";
+import { getTopNEntitiesByClass } from "#src/services/azure/table/getTopNEntitiesByClass";
 
 export const getTopNEntities = <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,

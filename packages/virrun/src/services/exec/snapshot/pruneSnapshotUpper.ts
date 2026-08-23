@@ -1,5 +1,5 @@
-import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
-import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
+import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
+import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
 // A cheap structural probe: does this subtree hold a node_modules anywhere? Short-circuits on the first match and

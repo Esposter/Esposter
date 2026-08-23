@@ -1,8 +1,8 @@
 import type { Database } from "@esposter/db-schema";
 
-import { sendReminderNotification } from "@/services/sendReminderNotification";
-import { setupWebPushSuite } from "@/services/setupWebPushSuite.test";
-import { webpush } from "@/services/webpush.test";
+import { sendReminderNotification } from "#src/services/sendReminderNotification";
+import { setupWebPushSuite } from "#src/services/setupWebPushSuite.test";
+import { webpush } from "#src/services/webpush.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptionsInMessage, roomsInMessage, users, usersToRoomsInMessage } from "@esposter/db-schema";
@@ -10,13 +10,13 @@ import { beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
-vi.mock(import("@/services/db"), () => ({
+vi.mock(import("#src/services/db"), () => ({
   get db() {
     return mockDb;
   },
 }));
 
-vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
+vi.mock(import("#src/services/webpush"), () => import("#src/services/webpush.test"));
 
 // The generic web-push send/expiry matrix lives in sendWebPushNotifications.test.ts; here only the wiring.
 describe(sendReminderNotification, () => {

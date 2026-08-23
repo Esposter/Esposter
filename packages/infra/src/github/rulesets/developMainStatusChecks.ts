@@ -1,5 +1,5 @@
-import GitHubAdminRepositoryRoleActorId from "@/github/constants/GitHubAdminRepositoryRoleActorId";
-import { repository } from "@/github/repository";
+import GitHubAdminRepositoryRoleActorId from "#src/github/constants/GitHubAdminRepositoryRoleActorId";
+import { repository } from "#src/github/repository";
 import * as github from "@pulumi/github";
 // Must match the length of the `coverage` job's `matrix.shard` in .github/workflows/CI.yaml — each shard
 // Publishes its own `Coverage (n)` check context, and only contexts listed here are enforced.

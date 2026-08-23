@@ -1,6 +1,6 @@
-import type { AzureContainer } from "@/models/azure/container/AzureContainer";
+import type { AzureContainer } from "#src/models/azure/container/AzureContainer";
 
-import { getBlobSubjectPrefix } from "@/services/azure/container/getBlobSubjectPrefix";
+import { getBlobSubjectPrefix } from "#src/services/azure/container/getBlobSubjectPrefix";
 
 // The inverse of getBlobSubjectPrefix for a known set of containers: a storage event's subject back into the
 // (container, blob name) pair the ledger is keyed by. Returns undefined for anything outside the given set,

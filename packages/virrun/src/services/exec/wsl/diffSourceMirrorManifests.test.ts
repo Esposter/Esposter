@@ -1,11 +1,11 @@
-import type { SourceMirrorManifest } from "@/models/exec/wsl/SourceMirrorManifest";
-import type { SourceMirrorManifestEntry } from "@/models/exec/wsl/SourceMirrorManifestEntry";
-import type { SourceMirrorPublication } from "@/models/exec/wsl/SourceMirrorPublication";
+import type { SourceMirrorManifest } from "#src/models/exec/wsl/SourceMirrorManifest";
+import type { SourceMirrorManifestEntry } from "#src/models/exec/wsl/SourceMirrorManifestEntry";
+import type { SourceMirrorPublication } from "#src/models/exec/wsl/SourceMirrorPublication";
 
-import { SourceMirrorEntryType } from "@/models/exec/wsl/SourceMirrorEntryType";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
-import { diffSourceMirrorManifests } from "@/services/exec/wsl/diffSourceMirrorManifests";
+import { SourceMirrorEntryType } from "#src/models/exec/wsl/SourceMirrorEntryType";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { toRootAnchoredExclude } from "#src/services/exec/util/toRootAnchoredExclude";
+import { diffSourceMirrorManifests } from "#src/services/exec/wsl/diffSourceMirrorManifests";
 import { describe, expect, test } from "vitest";
 
 const file = (mtimeMs = 0, size = 0): SourceMirrorManifestEntry => ({

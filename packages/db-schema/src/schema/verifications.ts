@@ -1,4 +1,4 @@
-import { pgTable } from "@/pgTable";
+import { pgTable } from "#src/pgTable";
 import { text, timestamp } from "drizzle-orm/pg-core";
 
 export const verifications = pgTable("verifications", {

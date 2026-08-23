@@ -1,4 +1,4 @@
-import { createNameSchema } from "@/models/shared/Name";
+import { createNameSchema } from "#src/models/shared/Name";
 import { describe, expect, test } from "vitest";
 
 describe(createNameSchema, () => {

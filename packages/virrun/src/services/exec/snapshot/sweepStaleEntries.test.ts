@@ -1,7 +1,7 @@
-import { sweepStaleEntries } from "@/services/exec/snapshot/sweepStaleEntries";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { seedDirectory } from "@/services/exec/test/seedDirectory.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { sweepStaleEntries } from "#src/services/exec/snapshot/sweepStaleEntries";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { seedDirectory } from "#src/services/exec/test/seedDirectory.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -12,7 +12,7 @@ const { removeSnapshotDirectoriesDetached } = vi.hoisted(() => ({
 }));
 // Spied, not stubbed: the teardown still really runs (the removal assertions below are the point), while the batching
 // Test can see that a sweep of N entries reaches it as ONE call — the property that keeps a sweep to one wsl.exe.
-vi.mock(import("@/services/exec/snapshot/removeSnapshotDirectoriesDetached"), async (importOriginal) => {
+vi.mock(import("#src/services/exec/snapshot/removeSnapshotDirectoriesDetached"), async (importOriginal) => {
   const original = await importOriginal();
   removeSnapshotDirectoriesDetached.mockImplementation(original.removeSnapshotDirectoriesDetached);
   return { removeSnapshotDirectoriesDetached };

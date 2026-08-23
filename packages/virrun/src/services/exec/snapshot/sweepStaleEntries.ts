@@ -1,4 +1,4 @@
-import { removeSnapshotDirectoriesDetached } from "@/services/exec/snapshot/removeSnapshotDirectoriesDetached";
+import { removeSnapshotDirectoriesDetached } from "#src/services/exec/snapshot/removeSnapshotDirectoriesDetached";
 import { getResult } from "@esposter/shared";
 import { readdirSync } from "node:fs";
 import { join } from "node:path";

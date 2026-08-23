@@ -1,4 +1,4 @@
-import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
+import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
 // The inverse of pruneSnapshotUpper: a prepare capture's upper holds the framework's generated `outputs` (e.g.

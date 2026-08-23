@@ -1,6 +1,6 @@
-import type { Source } from "@/models/source/Source";
-import type { BackendType } from "@/models/virrun/BackendType";
-import type { Environment } from "@/models/virrun/Environment";
+import type { Source } from "#src/models/source/Source";
+import type { BackendType } from "#src/models/virrun/BackendType";
+import type { Environment } from "#src/models/virrun/Environment";
 
 export interface VirrunOptions {
   backend: BackendType;

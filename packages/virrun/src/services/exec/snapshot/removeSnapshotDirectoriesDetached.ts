@@ -1,10 +1,10 @@
-import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
-import { spawnBackground } from "@/services/exec/util/spawnBackground";
-import { VIRRUN_REMOVE_LIST_TEMP_PREFIX, WSL_REMOVE_LIST_SCRIPT, WSL_UNC_REGEX } from "@/services/exec/wsl/constants";
-import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
-import { joinNullDelimited } from "@/services/exec/wsl/joinNullDelimited";
-import { readWslPath } from "@/services/exec/wsl/readWslPath";
-import { reapStaleRemoveLists } from "@/services/exec/wsl/reapStaleRemoveLists";
+import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
+import { spawnBackground } from "#src/services/exec/util/spawnBackground";
+import { VIRRUN_REMOVE_LIST_TEMP_PREFIX, WSL_REMOVE_LIST_SCRIPT, WSL_UNC_REGEX } from "#src/services/exec/wsl/constants";
+import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheRoot";
+import { joinNullDelimited } from "#src/services/exec/wsl/joinNullDelimited";
+import { readWslPath } from "#src/services/exec/wsl/readWslPath";
+import { reapStaleRemoveLists } from "#src/services/exec/wsl/reapStaleRemoveLists";
 import { getResult, noop } from "@esposter/shared";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";

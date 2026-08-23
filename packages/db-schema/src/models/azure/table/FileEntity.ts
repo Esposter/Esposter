@@ -1,4 +1,4 @@
-import { BLOB_SEGMENT_REGEX, FILENAME_MAX_LENGTH } from "@/services/azure/container/constants";
+import { BLOB_SEGMENT_REGEX, FILENAME_MAX_LENGTH } from "#src/services/azure/container/constants";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 

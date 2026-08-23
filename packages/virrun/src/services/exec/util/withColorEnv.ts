@@ -1,6 +1,6 @@
-import type { ExecOptions } from "@/models/exec/ExecOptions";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
 
-import { getForceColorLevel } from "@/services/exec/util/getForceColorLevel";
+import { getForceColorLevel } from "#src/services/exec/util/getForceColorLevel";
 // Sets the child's FORCE_COLOR so its color output is a deterministic function of the run's shape, never of the
 // Parent's ambient env. A live "inherit" run to a real terminal forwards the host's color fidelity so pnpm/vitest/
 // Eslint keep emitting color (under the os backend the wsl/bwrap bridge hides the real TTY, so they'd otherwise

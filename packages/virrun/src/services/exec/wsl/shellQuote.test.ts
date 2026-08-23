@@ -1,4 +1,4 @@
-import { shellQuote } from "@/services/exec/wsl/shellQuote";
+import { shellQuote } from "#src/services/exec/wsl/shellQuote";
 import { describe, expect, test } from "vitest";
 
 describe(shellQuote, () => {

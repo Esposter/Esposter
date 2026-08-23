@@ -1,8 +1,8 @@
-import type { CompositeKeyEntity } from "@/models/azure/table/CompositeKeyEntity";
+import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
 import type { ToData } from "@esposter/shared";
 
-import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/AzureEntity";
-import { selectResourceSchema } from "@/schema/resources";
+import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
+import { selectResourceSchema } from "#src/schema/resources";
 import { z } from "zod";
 
 // One row per person in a program's audience: PartitionKey = program id, rowKey = the key value's hash.

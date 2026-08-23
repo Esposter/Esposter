@@ -1,7 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
-import { SNAPSHOT_FILENAME } from "@/constants";
-import { createMockDb } from "@/createMockDb";
+import { SNAPSHOT_FILENAME } from "#src/constants";
+import { createMockDb } from "#src/createMockDb";
 import { PGlite } from "@electric-sql/pglite";
 import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
 import { messageSchema, schema, users } from "@esposter/db-schema";

@@ -1,8 +1,8 @@
-import type { SnapshotLocation } from "@/models/exec/snapshot/SnapshotLocation";
+import type { SnapshotLocation } from "#src/models/exec/snapshot/SnapshotLocation";
 
-import { computeEnvironmentKey } from "@/services/exec/snapshot/computeEnvironmentKey";
-import { VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
-import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
+import { computeEnvironmentKey } from "#src/services/exec/snapshot/computeEnvironmentKey";
+import { VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheDirectory";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 // Resolves a repo's warm-snapshot address (environment-keyed: lockfile digest + sandbox node major, host-global) without materializing anything. It

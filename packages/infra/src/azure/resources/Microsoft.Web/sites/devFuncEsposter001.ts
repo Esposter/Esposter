@@ -1,8 +1,8 @@
-import ApplicationTags from "@/azure/constants/ApplicationTags";
-import AzureAustraliaEastDisplayLocation from "@/azure/constants/AzureAustraliaEastDisplayLocation";
-import { devEvgtEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/topics/devEvgtEsposterAe001";
-import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
-import { devAspEsposterAe001 } from "@/azure/resources/Microsoft.Web/serverFarms/devAspEsposterAe001";
+import ApplicationTags from "#src/azure/constants/ApplicationTags";
+import AzureAustraliaEastDisplayLocation from "#src/azure/constants/AzureAustraliaEastDisplayLocation";
+import { devEvgtEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/topics/devEvgtEsposterAe001";
+import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
+import { devAspEsposterAe001 } from "#src/azure/resources/Microsoft.Web/serverFarms/devAspEsposterAe001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 

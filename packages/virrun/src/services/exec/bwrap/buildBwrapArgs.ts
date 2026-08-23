@@ -1,5 +1,5 @@
-import type { ExecOptions } from "@/models/exec/ExecOptions";
-import type { OverlayLayers } from "@/models/exec/OverlayLayers";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
+import type { OverlayLayers } from "#src/models/exec/OverlayLayers";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 // Builds the bubblewrap argv (without the `bwrap` binary) wrapping a command in a RAM-overlay sandbox. Flag intent:

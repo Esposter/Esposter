@@ -1,5 +1,5 @@
-import { stripAnsi } from "@/services/cli/color/stripAnsi.test";
-import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
+import { stripAnsi } from "#src/services/cli/color/stripAnsi.test";
+import { createVfsBackend } from "#src/services/exec/vfs/createVfsBackend";
 import { describe, expect, test } from "vitest";
 
 describe(createVfsBackend, () => {

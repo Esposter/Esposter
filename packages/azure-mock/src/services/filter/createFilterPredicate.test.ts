@@ -1,4 +1,4 @@
-import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
+import { createFilterPredicate } from "#src/services/filter/createFilterPredicate";
 import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { getTableNullClause, serializeClause, serializeClauses } from "@esposter/db";
 import { describe, expect, test } from "vitest";

@@ -28,9 +28,18 @@
   ],
   "type": "module",
   "sideEffects": false,
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
   "exports": {
-    "./reporter": "./dist/reporter.js",
-    "./runner": "./dist/runner.js",
+    "./reporter": {
+      "esposter-source": "./src/services/BenchmarkMarkdownReporter.ts",
+      "default": "./dist/reporter.js"
+    },
+    "./runner": {
+      "esposter-source": "./src/services/StableBenchmarkRunner.ts",
+      "default": "./dist/runner.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {

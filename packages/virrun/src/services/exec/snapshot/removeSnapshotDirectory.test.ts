@@ -3,14 +3,14 @@ import type { execFileSync as baseExecFileSync } from "node:child_process";
 import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
-} from "@/services/exec/snapshot/constants";
-import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { CACHE_CLEAN_TIMEOUT_MS, WSL_WORK_TIMEOUT_MS } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { WSL_REMOVE_SCRIPT } from "@/services/exec/wsl/constants";
-import { TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_UNC_PREFIX } from "@/services/exec/wsl/constants.test";
-import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
+} from "#src/services/exec/snapshot/constants";
+import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { CACHE_CLEAN_TIMEOUT_MS, WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { WSL_REMOVE_SCRIPT } from "#src/services/exec/wsl/constants";
+import { TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_UNC_PREFIX } from "#src/services/exec/wsl/constants.test";
+import { createTestWslUnc } from "#src/services/exec/wsl/createTestWslUnc.test";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";

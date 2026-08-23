@@ -33,11 +33,21 @@
   "type": "module",
   "sideEffects": false,
   "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
   "exports": {
-    ".": "./dist/index.js",
+    ".": {
+      "esposter-source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    },
     "access": "public"
   },
   "scripts": {

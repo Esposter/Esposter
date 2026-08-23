@@ -3,12 +3,12 @@ import {
   VIRRUN_SNAPSHOT_TEMP_PREFIXES,
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
-} from "@/services/exec/snapshot/constants";
-import { reapStaleTemps } from "@/services/exec/snapshot/reapStaleTemps";
-import { DEAD_PID } from "@/services/exec/test/constants.test";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { seedDirectory } from "@/services/exec/test/seedDirectory.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+} from "#src/services/exec/snapshot/constants";
+import { reapStaleTemps } from "#src/services/exec/snapshot/reapStaleTemps";
+import { DEAD_PID } from "#src/services/exec/test/constants.test";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { seedDirectory } from "#src/services/exec/test/seedDirectory.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";

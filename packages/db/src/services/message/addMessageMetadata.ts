@@ -1,7 +1,7 @@
 import type { AzureUpdateEntity, MessageEntityMap } from "@esposter/db-schema";
 
-import { getLinkPreviewResponse } from "@/services/message/getLinkPreviewResponse";
-import { getMentionIds } from "@/services/message/getMentionIds";
+import { getLinkPreviewResponse } from "#src/services/message/getLinkPreviewResponse";
+import { getMentionIds } from "#src/services/message/getMentionIds";
 import { MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 

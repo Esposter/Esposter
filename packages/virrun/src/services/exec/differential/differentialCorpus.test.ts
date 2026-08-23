@@ -1,5 +1,5 @@
-import type { DifferentialCase } from "@/models/exec/differential/DifferentialCase";
-import type { NormalizationRule } from "@/models/exec/differential/NormalizationRule";
+import type { DifferentialCase } from "#src/models/exec/differential/DifferentialCase";
+import type { NormalizationRule } from "#src/models/exec/differential/NormalizationRule";
 
 import { describe } from "vitest";
 

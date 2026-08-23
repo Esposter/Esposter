@@ -1,6 +1,6 @@
-import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { getLocalCacheDirectory } from "@/services/exec/util/getLocalCacheDirectory";
+import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { getLocalCacheDirectory } from "#src/services/exec/util/getLocalCacheDirectory";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";

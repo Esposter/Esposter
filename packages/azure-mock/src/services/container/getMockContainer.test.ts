@@ -1,5 +1,5 @@
-import { getMockContainer } from "@/services/container/getMockContainer";
-import { MockContainerDatabase } from "@/store/MockContainerDatabase";
+import { getMockContainer } from "#src/services/container/getMockContainer";
+import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe(getMockContainer, () => {

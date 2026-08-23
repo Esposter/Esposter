@@ -1,11 +1,11 @@
-import { PACKAGES_DIRECTORY } from "@/services/exec/test/constants.test";
+import { PACKAGES_DIRECTORY } from "#src/services/exec/test/constants.test";
 import {
   HOME_CACHE_DIRECTORY_NAME,
   PACKAGE_JSON_FILENAME,
   PNPM_LOCKFILE_FILENAME,
   PNPM_WORKSPACE_FILENAME,
   VIRRUN_TEMP_DIR_PREFIX,
-} from "@/services/exec/util/constants";
+} from "#src/services/exec/util/constants";
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readdirSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";

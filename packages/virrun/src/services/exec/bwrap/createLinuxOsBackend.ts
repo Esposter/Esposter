@@ -1,7 +1,7 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
-import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
-import { createBwrapBackend } from "@/services/exec/bwrap/createBwrapBackend";
+import { buildBwrapArgs } from "#src/services/exec/bwrap/buildBwrapArgs";
+import { createBwrapBackend } from "#src/services/exec/bwrap/createBwrapBackend";
 
 export const createLinuxOsBackend = (errorName: string): ExecBackend =>
   createBwrapBackend(

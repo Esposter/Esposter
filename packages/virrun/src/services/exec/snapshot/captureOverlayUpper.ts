@@ -1,15 +1,15 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
-import type { ExecOptions } from "@/models/exec/ExecOptions";
-import type { ExecResult } from "@/models/exec/ExecResult";
-import type { CaptureOverlayUpperOptions } from "@/models/exec/snapshot/CaptureOverlayUpperOptions";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
+import type { ExecResult } from "#src/models/exec/ExecResult";
+import type { CaptureOverlayUpperOptions } from "#src/models/exec/snapshot/CaptureOverlayUpperOptions";
 
 import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
-} from "@/services/exec/snapshot/constants";
-import { getProvisionFailureMessage } from "@/services/exec/snapshot/getProvisionFailureMessage";
-import { removeSnapshotDirectoryBestEffort } from "@/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
-import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
+} from "#src/services/exec/snapshot/constants";
+import { getProvisionFailureMessage } from "#src/services/exec/snapshot/getProvisionFailureMessage";
+import { removeSnapshotDirectoryBestEffort } from "#src/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
+import { withPidTempPrefix } from "#src/services/exec/util/withPidTempPrefix";
 import { getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, mkdtempSync, renameSync } from "node:fs";
 import { join } from "node:path";

@@ -1,10 +1,10 @@
-import { dayjs } from "@/services/dayjs.test";
-import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
-import { persistRun } from "@/services/exec/snapshot/persistRun";
-import { ACCEPTANCE_TIMEOUT_MINUTES, PACKAGES_DIRECTORY } from "@/services/exec/test/constants.test";
-import { setupWarmSnapshotSuite } from "@/services/exec/test/setupWarmSnapshotSuite.test";
-import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { dayjs } from "#src/services/dayjs.test";
+import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
+import { persistRun } from "#src/services/exec/snapshot/persistRun";
+import { ACCEPTANCE_TIMEOUT_MINUTES, PACKAGES_DIRECTORY } from "#src/services/exec/test/constants.test";
+import { setupWarmSnapshotSuite } from "#src/services/exec/test/setupWarmSnapshotSuite.test";
+import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { takeOne } from "@esposter/shared";
 import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

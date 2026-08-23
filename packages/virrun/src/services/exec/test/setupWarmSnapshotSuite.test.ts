@@ -1,13 +1,13 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
-import { dayjs } from "@/services/dayjs.test";
-import { createOsBackend } from "@/services/exec/os/createOsBackend";
-import { ACCEPTANCE_TIMEOUT_MINUTES } from "@/services/exec/test/constants.test";
-import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
-import { ensureWarmSnapshot } from "@/services/exec/test/ensureWarmSnapshot.test";
-import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
-import { getAcceptanceCacheHome } from "@/services/exec/test/getAcceptanceCacheHome";
-import { VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
+import { dayjs } from "#src/services/dayjs.test";
+import { createOsBackend } from "#src/services/exec/os/createOsBackend";
+import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
+import { createWorkspaceCorpus } from "#src/services/exec/test/createWorkspaceCorpus.test";
+import { ensureWarmSnapshot } from "#src/services/exec/test/ensureWarmSnapshot.test";
+import { findRepoRoot } from "#src/services/exec/test/findRepoRoot.test";
+import { getAcceptanceCacheHome } from "#src/services/exec/test/getAcceptanceCacheHome";
+import { VIRRUN_CACHE_HOME_KEY } from "#src/services/exec/util/constants";
 import { rmSync } from "node:fs";
 import { afterAll, beforeAll, describe } from "vitest";
 // The shared beforeAll/afterAll behind every heavy warm-snapshot acceptance/equivalence suite: point the cache home

@@ -1,5 +1,5 @@
-import { RoomPermission } from "@/schema/roomRolesInMessage";
-import { hasPermission } from "@/services/room/rbac/hasPermission";
+import { RoomPermission } from "#src/schema/roomRolesInMessage";
+import { hasPermission } from "#src/services/room/rbac/hasPermission";
 import { describe, expect, test } from "vitest";
 
 describe(hasPermission, () => {

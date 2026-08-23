@@ -1,6 +1,6 @@
 import type { CompositeKey } from "@esposter/azure";
 
-import { serializeClauses } from "@/services/azure/transformer/serializeClauses";
+import { serializeClauses } from "#src/services/azure/transformer/serializeClauses";
 import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 
 // Every table partitions on its owning entity's id, so "everything under this key" is the filter a read,

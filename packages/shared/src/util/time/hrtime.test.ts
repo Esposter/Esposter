@@ -1,7 +1,7 @@
-import { hrtime } from "@/util/time/hrtime";
+import { hrtime } from "#src/util/time/hrtime";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/util/environment/getIsServer"), () => ({
+vi.mock(import("#src/util/environment/getIsServer"), () => ({
   getIsServer: () => false,
 }));
 

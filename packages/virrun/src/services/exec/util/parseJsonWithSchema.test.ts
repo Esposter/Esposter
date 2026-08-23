@@ -1,4 +1,4 @@
-import { parseJsonWithSchema } from "@/services/exec/util/parseJsonWithSchema";
+import { parseJsonWithSchema } from "#src/services/exec/util/parseJsonWithSchema";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 

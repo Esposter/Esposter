@@ -1,7 +1,7 @@
-import type { BenchmarkGroup } from "@/models/BenchmarkGroup";
-import type { BenchmarkReport } from "@/models/BenchmarkReport";
-import type { BenchmarkResult } from "@/models/BenchmarkResult";
-import type { BenchmarkTaskNode } from "@/models/BenchmarkTaskNode";
+import type { BenchmarkGroup } from "#src/models/BenchmarkGroup";
+import type { BenchmarkReport } from "#src/models/BenchmarkReport";
+import type { BenchmarkResult } from "#src/models/BenchmarkResult";
+import type { BenchmarkTaskNode } from "#src/models/BenchmarkTaskNode";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 

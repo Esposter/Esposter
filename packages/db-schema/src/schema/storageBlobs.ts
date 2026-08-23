@@ -1,6 +1,6 @@
-import { AzureContainer } from "@/models/azure/container/AzureContainer";
-import { pgTable } from "@/pgTable";
-import { users } from "@/schema/users";
+import { AzureContainer } from "#src/models/azure/container/AzureContainer";
+import { pgTable } from "#src/pgTable";
+import { users } from "#src/schema/users";
 import { sql } from "drizzle-orm";
 import { bigint, check, index, pgEnum, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
 

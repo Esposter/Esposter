@@ -1,21 +1,21 @@
-import type { PrepareStep } from "@/models/virrun/PrepareStep";
+import type { PrepareStep } from "#src/models/virrun/PrepareStep";
 
-import { NUXT_OUTPUT_DIRECTORY, NUXT_PREPARE_COMMAND } from "@/services/configuration/constants";
+import { NUXT_OUTPUT_DIRECTORY, NUXT_PREPARE_COMMAND } from "#src/services/configuration/constants";
 import {
   VIRRUN_PREPARE_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
-} from "@/services/exec/snapshot/constants";
-import { resolvePrepareLocation } from "@/services/exec/snapshot/resolvePrepareLocation";
-import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+} from "#src/services/exec/snapshot/constants";
+import { resolvePrepareLocation } from "#src/services/exec/snapshot/resolvePrepareLocation";
+import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {describe, expect, test, vi} from "vitest";
 
 vi.mock(
-  import("@/services/exec/util/getSandboxNodeVersion"),
-  () => import("@/services/exec/test/getSandboxNodeVersion.test"),
+  import("#src/services/exec/util/getSandboxNodeVersion"),
+  () => import("#src/services/exec/test/getSandboxNodeVersion.test"),
 );
 
 describe(resolvePrepareLocation, () => {

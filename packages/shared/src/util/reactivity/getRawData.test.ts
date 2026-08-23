@@ -1,4 +1,4 @@
-import { getRawData } from "@/util/reactivity/getRawData";
+import { getRawData } from "#src/util/reactivity/getRawData";
 import { describe, expect, test } from "vitest";
 import { reactive, readonly } from "vue";
 

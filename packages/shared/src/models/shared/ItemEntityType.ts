@@ -1,6 +1,6 @@
-import type { PropertyNames } from "@/util/types/PropertyNames";
+import type { PropertyNames } from "#src/util/types/PropertyNames";
 
-import { getPropertyNames } from "@/util/object/getPropertyNames";
+import { getPropertyNames } from "#src/util/object/getPropertyNames";
 import { z } from "zod";
 
 export interface ItemEntityType<T extends string> {

@@ -1,5 +1,5 @@
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { createPlatformaticFsProvider } from "@/services/vfs/createPlatformaticFsProvider";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { createPlatformaticFsProvider } from "#src/services/vfs/createPlatformaticFsProvider";
 import { getResult, withFinalizer } from "@esposter/shared";
 import * as fc from "fast-check";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";

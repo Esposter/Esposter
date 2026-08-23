@@ -1,7 +1,7 @@
-import type { ExecutionMode } from "@/models/virrun/ExecutionMode";
+import type { ExecutionMode } from "#src/models/virrun/ExecutionMode";
 import type { ArgsDef, CommandDef } from "citty";
 
-import { runVirrunCommand } from "@/services/cli/run/runVirrunCommand";
+import { runVirrunCommand } from "#src/services/cli/run/runVirrunCommand";
 import { showUsage } from "citty";
 // Shared body of the three passthrough commands. An empty command argv is a usage error — print citty's generated
 // Help and exit non-zero rather than hand an empty command to the backend. Generic over the caller's arg shape so a

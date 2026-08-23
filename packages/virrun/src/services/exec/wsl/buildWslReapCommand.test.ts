@@ -1,5 +1,5 @@
-import { buildWslReapCommand } from "@/services/exec/wsl/buildWslReapCommand";
-import { VIRRUN_WSL_PROCESS_MARKER } from "@/services/exec/wsl/constants";
+import { buildWslReapCommand } from "#src/services/exec/wsl/buildWslReapCommand";
+import { VIRRUN_WSL_PROCESS_MARKER } from "#src/services/exec/wsl/constants";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

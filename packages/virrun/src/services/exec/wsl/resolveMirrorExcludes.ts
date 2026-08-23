@@ -1,6 +1,6 @@
-import { GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
-import { readLinkedWorktreePaths } from "@/services/exec/util/readLinkedWorktreePaths";
-import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
+import { GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
+import { readLinkedWorktreePaths } from "#src/services/exec/util/readLinkedWorktreePaths";
+import { toRootAnchoredExclude } from "#src/services/exec/util/toRootAnchoredExclude";
 // What never enters the source mirror: node_modules (supplied by the snapshot RO lower — mirrors the write-back
 // Rule), .git (large, churns every commit, unread by dev-loop commands), this repository's linked worktrees nested
 // Inside the tree (readLinkedWorktreePaths — each is a whole parallel checkout and its own virrun cwd with its own

@@ -1,26 +1,26 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
-import type { Environment } from "@/models/virrun/Environment";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
+import type { Environment } from "#src/models/virrun/Environment";
 
-import { resolvePrepareStep } from "@/services/configuration/resolvePrepareStep";
+import { resolvePrepareStep } from "#src/services/configuration/resolvePrepareStep";
 import {
   WSL_BWRAP_STATUS_BEGIN,
   WSL_BWRAP_STATUS_END,
   WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER,
-} from "@/services/exec/bwrap/constants";
-import { createBwrapBackend } from "@/services/exec/bwrap/createBwrapBackend";
-import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "@/services/exec/util/constants";
-import { resolveCwd } from "@/services/exec/util/resolveCwd";
-import { spawnBackground } from "@/services/exec/util/spawnBackground";
-import { buildWslReapCommand } from "@/services/exec/wsl/buildWslReapCommand";
-import { createWslBwrapArgs } from "@/services/exec/wsl/createWslBwrapArgs";
-import { createWslEnvArgs } from "@/services/exec/wsl/createWslEnvArgs";
-import { createWslProcessMarker } from "@/services/exec/wsl/createWslProcessMarker";
-import { createWslSourceMirrorSync } from "@/services/exec/wsl/createWslSourceMirrorSync";
-import { getSourceMirrorKey } from "@/services/exec/wsl/getSourceMirrorKey";
-import { reapAbandonedSourceMirrors } from "@/services/exec/wsl/reapAbandonedSourceMirrors";
-import { reapOrphanedWslRuns } from "@/services/exec/wsl/reapOrphanedWslRuns";
-import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
-import { shellQuote } from "@/services/exec/wsl/shellQuote";
+} from "#src/services/exec/bwrap/constants";
+import { createBwrapBackend } from "#src/services/exec/bwrap/createBwrapBackend";
+import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "#src/services/exec/util/constants";
+import { resolveCwd } from "#src/services/exec/util/resolveCwd";
+import { spawnBackground } from "#src/services/exec/util/spawnBackground";
+import { buildWslReapCommand } from "#src/services/exec/wsl/buildWslReapCommand";
+import { createWslBwrapArgs } from "#src/services/exec/wsl/createWslBwrapArgs";
+import { createWslEnvArgs } from "#src/services/exec/wsl/createWslEnvArgs";
+import { createWslProcessMarker } from "#src/services/exec/wsl/createWslProcessMarker";
+import { createWslSourceMirrorSync } from "#src/services/exec/wsl/createWslSourceMirrorSync";
+import { getSourceMirrorKey } from "#src/services/exec/wsl/getSourceMirrorKey";
+import { reapAbandonedSourceMirrors } from "#src/services/exec/wsl/reapAbandonedSourceMirrors";
+import { reapOrphanedWslRuns } from "#src/services/exec/wsl/reapOrphanedWslRuns";
+import { resolveMirrorExcludes } from "#src/services/exec/wsl/resolveMirrorExcludes";
+import { shellQuote } from "#src/services/exec/wsl/shellQuote";
 // `environment` is the run's preset as the caller resolved it, threaded down rather than re-read from `virrun.config`
 // Here: a programmatically passed one is invisible to that file, and the mirror excludes derived from it are the same
 // Set createVirrun masks the write-back with — so guessing differs from the mask exactly when the two must agree.

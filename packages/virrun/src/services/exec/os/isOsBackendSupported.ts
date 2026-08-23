@@ -1,8 +1,8 @@
-import { isVirrunEnabled } from "@/services/configuration/isVirrunEnabled";
-import { probeOsBackendSupported } from "@/services/exec/os/probeOsBackendSupported";
-import { readCapabilityCache } from "@/services/exec/os/readCapabilityCache";
-import { writeCapabilityCache } from "@/services/exec/os/writeCapabilityCache";
-import { createProbeCache } from "@/services/exec/util/createProbeCache";
+import { isVirrunEnabled } from "#src/services/configuration/isVirrunEnabled";
+import { probeOsBackendSupported } from "#src/services/exec/os/probeOsBackendSupported";
+import { readCapabilityCache } from "#src/services/exec/os/readCapabilityCache";
+import { writeCapabilityCache } from "#src/services/exec/os/writeCapabilityCache";
+import { createProbeCache } from "#src/services/exec/util/createProbeCache";
 // A false verdict is persisted too — a host without bubblewrap is a stable fact of the fingerprint, and re-probing
 // It every process is exactly the cost the cache exists to skip. It is not stable on win32, where the verdict comes
 // From a WSL command under a timeout, so the entry is age-bounded (readCapabilityCache) rather than kept forever.

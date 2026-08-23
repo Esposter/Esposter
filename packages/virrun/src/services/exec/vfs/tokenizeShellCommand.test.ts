@@ -1,4 +1,4 @@
-import { tokenizeShellCommand } from "@/services/exec/vfs/tokenizeShellCommand";
+import { tokenizeShellCommand } from "#src/services/exec/vfs/tokenizeShellCommand";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

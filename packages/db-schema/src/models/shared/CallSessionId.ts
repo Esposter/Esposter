@@ -1,4 +1,4 @@
-import { selectCallSessionInMessageSchema } from "@/schema/callSessionsInMessage";
+import { selectCallSessionInMessageSchema } from "#src/schema/callSessionsInMessage";
 import { z } from "zod";
 
 export const callSessionIdSchema = z.object({

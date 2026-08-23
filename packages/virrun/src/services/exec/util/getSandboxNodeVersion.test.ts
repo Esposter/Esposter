@@ -1,8 +1,8 @@
-import { getSandboxNodeVersion } from "@/services/exec/util/getSandboxNodeVersion";
-import { readWslLoginEnvironment } from "@/services/exec/wsl/readWslLoginEnvironment";
+import { getSandboxNodeVersion } from "#src/services/exec/util/getSandboxNodeVersion";
+import { readWslLoginEnvironment } from "#src/services/exec/wsl/readWslLoginEnvironment";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/exec/wsl/readWslLoginEnvironment"), () => ({
+vi.mock(import("#src/services/exec/wsl/readWslLoginEnvironment"), () => ({
   readWslLoginEnvironment: vi.fn<typeof readWslLoginEnvironment>(() => ({ nodeVersion: "", path: "" })),
 }));
 

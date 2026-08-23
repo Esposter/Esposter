@@ -1,11 +1,11 @@
-import type { TMXDataNode } from "@/models/tmx/node/TMXDataNode";
-import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
+import type { TMXDataNode } from "#src/models/tmx/node/TMXDataNode";
+import type { TMXLayerNode } from "#src/models/tmx/node/TMXLayerNode";
 
-import { Encoding } from "@/models/Encoding";
-import { Flipped } from "@/models/Flipped";
-import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
-import { assertNode } from "@/test/assertNode.test";
-import { parseTileLayer } from "@/util/parseTileLayer";
+import { Encoding } from "#src/models/Encoding";
+import { Flipped } from "#src/models/Flipped";
+import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
+import { assertNode } from "#src/test/assertNode.test";
+import { parseTileLayer } from "#src/util/parseTileLayer";
 import { describe, expect, test } from "vitest";
 
 const createNode = (data: string) =>

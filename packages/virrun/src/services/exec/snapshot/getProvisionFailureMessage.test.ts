@@ -1,4 +1,4 @@
-import { getProvisionFailureMessage } from "@/services/exec/snapshot/getProvisionFailureMessage";
+import { getProvisionFailureMessage } from "#src/services/exec/snapshot/getProvisionFailureMessage";
 import { describe, expect, test } from "vitest";
 
 describe(getProvisionFailureMessage, () => {

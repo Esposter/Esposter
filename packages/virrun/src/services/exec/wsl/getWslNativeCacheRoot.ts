@@ -2,11 +2,11 @@ import {
   PROBE_TIMEOUT_MS,
   VIRRUN_CACHE_DIRECTORY_NAME,
   WSL_CACHE_ROOT_CACHE_FILENAME,
-} from "@/services/exec/util/constants";
-import { createProbeCache } from "@/services/exec/util/createProbeCache";
-import { execWsl } from "@/services/exec/wsl/execWsl";
-import { readWslEnvironmentCache } from "@/services/exec/wsl/readWslEnvironmentCache";
-import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
+} from "#src/services/exec/util/constants";
+import { createProbeCache } from "#src/services/exec/util/createProbeCache";
+import { execWsl } from "#src/services/exec/wsl/execWsl";
+import { readWslEnvironmentCache } from "#src/services/exec/wsl/readWslEnvironmentCache";
+import { writeWslEnvironmentCache } from "#src/services/exec/wsl/writeWslEnvironmentCache";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
 // The default WSL distro's ext4 home as a Windows UNC (`\\wsl.localhost\<distro>\home\<user>\.virrun`). virrun's

@@ -2,9 +2,9 @@ import type { ContainerClient } from "@azure/storage-blob";
 import type { CompositeKey } from "@esposter/azure";
 import type { CustomTableClient, Database, Resource } from "@esposter/db-schema";
 
-import { deleteDirectory } from "@/services/azure/container/deleteDirectory";
-import { deleteTablePartitionEntities } from "@/services/resource/deleteTablePartitionEntities";
-import { releaseStorageBlobsByPrefix } from "@/services/storage/releaseStorageBlobsByPrefix";
+import { deleteDirectory } from "#src/services/azure/container/deleteDirectory";
+import { deleteTablePartitionEntities } from "#src/services/resource/deleteTablePartitionEntities";
+import { releaseStorageBlobsByPrefix } from "#src/services/storage/releaseStorageBlobsByPrefix";
 import { AzureContainer, resources } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 

@@ -1,5 +1,5 @@
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { computeDirectoryByteSize } from "@/services/exec/util/computeDirectoryByteSize";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { computeDirectoryByteSize } from "#src/services/exec/util/computeDirectoryByteSize";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";

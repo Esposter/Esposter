@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { EllipseConfiguration } from "@/models/configuration/EllipseConfiguration";
-import type { EllipseEventEmitsOptions } from "@/models/emit/EllipseEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { EllipseConfiguration } from "#src/models/configuration/EllipseConfiguration";
+import type { EllipseEventEmitsOptions } from "#src/models/emit/EllipseEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { EllipseSetterMap } from "@/util/setterMap/EllipseSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { EllipseSetterMap } from "#src/util/setterMap/EllipseSetterMap";
 
 interface EllipseEmits extends /** @vue-ignore */ EllipseEventEmitsOptions {}
 

@@ -1,6 +1,6 @@
-import type { CompositeKeyEntityConstraint } from "@/models/azure/table/CompositeKeyEntity";
+import type { CompositeKeyEntityConstraint } from "#src/models/azure/table/CompositeKeyEntity";
 
-import { CompositeKeyEntity } from "@/models/azure/table/CompositeKeyEntity";
+import { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@esposter/shared";
 import { z } from "zod";
 

@@ -1,18 +1,18 @@
-import { dayjs } from "@/services/dayjs.test";
-import { createOsBackend } from "@/services/exec/os/createOsBackend";
-import { createOsInstallOptions } from "@/services/exec/os/createOsInstallOptions";
-import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
+import { dayjs } from "#src/services/dayjs.test";
+import { createOsBackend } from "#src/services/exec/os/createOsBackend";
+import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
+import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
 import {
   ACCEPTANCE_TIMEOUT_MINUTES,
   ESBUILD_VERSION_REGEX,
   FIND_ESBUILD_BINARY_COMMAND,
   RUN_ESBUILD_VERSION_COMMAND,
-} from "@/services/exec/test/constants.test";
-import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
-import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
-import { isSandboxInstallSupported } from "@/services/exec/test/isSandboxInstallSupported.test";
-import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+} from "#src/services/exec/test/constants.test";
+import { createWorkspaceCorpus } from "#src/services/exec/test/createWorkspaceCorpus.test";
+import { findRepoRoot } from "#src/services/exec/test/findRepoRoot.test";
+import { isSandboxInstallSupported } from "#src/services/exec/test/isSandboxInstallSupported.test";
+import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";

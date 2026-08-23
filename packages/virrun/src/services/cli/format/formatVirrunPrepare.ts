@@ -1,7 +1,7 @@
-import { Color } from "@/models/cli/Color";
-import { formatCacheHitLabel } from "@/services/cli/cache/formatCacheHitLabel";
-import { colorize } from "@/services/cli/color/colorize";
-import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
+import { Color } from "#src/models/cli/Color";
+import { formatCacheHitLabel } from "#src/services/cli/cache/formatCacheHitLabel";
+import { colorize } from "#src/services/cli/color/colorize";
+import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 // Printed after formatVirrunProvisioning when an environment preset is active, so the source-keyed prepare layer
 // (e.g. Nuxt's .nuxt) is as observable as the deps snapshot: a `prepare cache hit` (blue-bold) reuses the layer
 // Built for the current source state, while a `prepare cache miss` (yellowed) regenerates it — expected on a first

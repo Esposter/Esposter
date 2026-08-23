@@ -1,11 +1,11 @@
 import type { EventGridEvent } from "@azure/functions";
 import type { EventGridEventInput } from "@esposter/db-schema";
 
-import { replayDeadLetterEventHandler } from "@/handlers/replayDeadLetterEventHandler";
-import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "@/services/constants";
-import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
-import { MOCK_EVENT_GRID_ENDPOINT } from "@/services/eventGridPublisherClient.test";
-import { getContainerClient } from "@/services/getContainerClient";
+import { replayDeadLetterEventHandler } from "#src/handlers/replayDeadLetterEventHandler";
+import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/constants";
+import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
+import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/eventGridPublisherClient.test";
+import { getContainerClient } from "#src/services/getContainerClient";
 import { InvocationContext } from "@azure/functions";
 import {
   AzureContainer,
@@ -19,8 +19,8 @@ import { getResult, ID_SEPARATOR, jsonDateParse, noop } from "@esposter/shared";
 import { MockBlockBlobClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/eventGridPublisherClient"), () => import("@/services/eventGridPublisherClient.test"));
-vi.mock(import("@/services/getContainerClient"), () => import("@/services/getContainerClient.test"));
+vi.mock(import("#src/services/eventGridPublisherClient"), () => import("#src/services/eventGridPublisherClient.test"));
+vi.mock(import("#src/services/getContainerClient"), () => import("#src/services/getContainerClient.test"));
 
 const readContainer = () => {
   const container = MockContainerDatabase.get(AzureContainer.DeadLetter);

@@ -1,6 +1,6 @@
-import type { FlushOp } from "@/models/exec/FlushOp";
+import type { FlushOp } from "#src/models/exec/FlushOp";
 
-import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
+import { PNPM_LOCKFILE_FILENAME } from "#src/services/exec/util/constants";
 // Whether a persist run's flush plan mutated the dependency closure — i.e. the command was a write-network install
 // (`pnpm install`/`add`/`update`), which resolves and fetches versions from the registry. Such a run's output is NOT
 // Determined by the task-cache key (lockfile + source + command): it *changes* the lockfile the key is built from, and

@@ -1,10 +1,10 @@
-import { BackendType } from "@/models/virrun/BackendType";
-import { resolveBackend } from "@/services/configuration/resolveBackend";
-import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { resolveBackend } from "#src/services/configuration/resolveBackend";
+import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
+import { VIRRUN_ENV_KEY } from "#src/services/exec/util/constants";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/exec/os/isOsBackendSupported"));
+vi.mock(import("#src/services/exec/os/isOsBackendSupported"));
 
 describe(resolveBackend, () => {
   // Pass an explicit empty env so the suite is hermetic: `pnpm test` runs under `virrun -- vitest`, so the real

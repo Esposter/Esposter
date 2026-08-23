@@ -1,5 +1,5 @@
 // oxlint-disable typescript/no-explicit-any
-import { takeOne } from "@/util/array/takeOne";
+import { takeOne } from "#src/util/array/takeOne";
 
 const ISO_DATE_REGEX =
   /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})T(?<hours>\d{2}):(?<minutes>\d{2}):(?<seconds>\d{2}(?:\.{0,1}\d*))(?:Z|(?<sign>\+|-)(?<offset>[\d|:]*))?$/u;

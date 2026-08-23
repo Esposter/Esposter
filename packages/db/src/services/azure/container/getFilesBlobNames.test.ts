@@ -1,5 +1,5 @@
-import { getFileBlobNames } from "@/services/azure/container/getFileBlobNames";
-import { getFilesBlobNames } from "@/services/azure/container/getFilesBlobNames";
+import { getFileBlobNames } from "#src/services/azure/container/getFileBlobNames";
+import { getFilesBlobNames } from "#src/services/azure/container/getFilesBlobNames";
 import { describe, expect, test } from "vitest";
 
 describe(getFilesBlobNames, () => {

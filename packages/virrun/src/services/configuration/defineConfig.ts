@@ -1,4 +1,4 @@
-import type { VirrunConfigurationInput } from "@/models/virrun/VirrunConfigurationInput";
+import type { VirrunConfigurationInput } from "#src/models/virrun/VirrunConfigurationInput";
 // The vitest-style author-facing helper for `virrun.config.ts`: a typed identity function, so
 // `export default defineConfig({ ... })` gets full editor intelligence without a `$schema` pointer. The TS config
 // File is where platform branching lives (e.g. `backend: process.platform === "linux" ? "native" : "os"`) — the

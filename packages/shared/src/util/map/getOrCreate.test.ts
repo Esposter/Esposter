@@ -1,4 +1,4 @@
-import { getOrCreate } from "@/util/map/getOrCreate";
+import { getOrCreate } from "#src/util/map/getOrCreate";
 import { describe, expect, test } from "vitest";
 
 describe(getOrCreate, () => {

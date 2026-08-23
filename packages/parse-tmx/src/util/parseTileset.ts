@@ -1,11 +1,11 @@
-import type { TMXEmbeddedTilesetNode } from "@/models/tmx/node/TMXEmbeddedTilesetNode";
-import type { TMXTilesetNode } from "@/models/tmx/node/TMXTilesetNode";
-import type { TMXTilesetParsed } from "@/models/tmx/parsed/TMXTilesetParsed";
-import type { TMXImageShared } from "@/models/tmx/shared/TMXImageShared";
+import type { TMXEmbeddedTilesetNode } from "#src/models/tmx/node/TMXEmbeddedTilesetNode";
+import type { TMXTilesetNode } from "#src/models/tmx/node/TMXTilesetNode";
+import type { TMXTilesetParsed } from "#src/models/tmx/parsed/TMXTilesetParsed";
+import type { TMXImageShared } from "#src/models/tmx/shared/TMXImageShared";
 
-import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
-import { isExternalTileset } from "@/util/isExternalTileset";
-import { parseTile } from "@/util/parseTile";
+import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
+import { isExternalTileset } from "#src/util/isExternalTileset";
+import { parseTile } from "#src/util/parseTile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const parseTileset = (node: TMXTilesetNode): TMXTilesetParsed => {

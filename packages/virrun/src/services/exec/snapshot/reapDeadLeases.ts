@@ -1,5 +1,5 @@
-import { isProcessAlive } from "@/services/exec/util/isProcessAlive";
-import { parsePid } from "@/services/exec/util/parsePid";
+import { isProcessAlive } from "#src/services/exec/util/isProcessAlive";
+import { parsePid } from "#src/services/exec/util/parsePid";
 import { getResult, noop } from "@esposter/shared";
 import { readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";

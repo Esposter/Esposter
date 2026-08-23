@@ -1,12 +1,12 @@
-import { MentionType } from "@/models/message/MentionType";
-import { classifyMentions } from "@/services/message/classifyMentions";
+import { MentionType } from "#src/models/message/MentionType";
+import { classifyMentions } from "#src/services/message/classifyMentions";
 import {
   MENTION_EVERYONE_ID,
   MENTION_HERE_ID,
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
-} from "@/services/message/constants";
-import { createMention } from "@/services/message/createMention.test";
+} from "#src/services/message/constants";
+import { createMention } from "#src/services/message/createMention.test";
 import { describe, expect, test } from "vitest";
 
 describe(classifyMentions, () => {

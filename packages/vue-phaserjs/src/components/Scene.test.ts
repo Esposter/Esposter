@@ -1,9 +1,9 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
-import Scene from "@/components/Scene.vue";
-import { useCameraStore } from "@/store/camera";
-import { useInputStore } from "@/store/input";
-import { getTestGame, getTestPinia, removeTestScene } from "@/test/fixtures/headlessGame.test";
+import Scene from "#src/components/Scene.vue";
+import { useCameraStore } from "#src/store/camera";
+import { useInputStore } from "#src/store/input";
+import { getTestGame, getTestPinia, removeTestScene } from "#src/test/fixtures/headlessGame.test";
 import { mount } from "@vue/test-utils";
 import { Cameras } from "phaser";
 import { afterEach, describe, expect, test } from "vitest";

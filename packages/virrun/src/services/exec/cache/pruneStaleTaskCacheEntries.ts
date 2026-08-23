@@ -1,10 +1,10 @@
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "#src/services/dayjs";
 import {
   TASK_CACHE_MAX_AGE_DAYS,
   TASK_CACHE_META_FILENAME,
   TASK_CACHE_TEMP_PREFIX,
-} from "@/services/exec/cache/constants";
-import { sweepStaleEntries } from "@/services/exec/snapshot/sweepStaleEntries";
+} from "#src/services/exec/cache/constants";
+import { sweepStaleEntries } from "#src/services/exec/snapshot/sweepStaleEntries";
 import { getResult } from "@esposter/shared";
 import { statSync } from "node:fs";
 import { join } from "node:path";

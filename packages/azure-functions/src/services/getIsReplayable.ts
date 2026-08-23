@@ -1,4 +1,4 @@
-import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "@/services/constants";
+import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/constants";
 import { azureFunctionSchema, IsIdempotentAzureFunctionMap } from "@esposter/db-schema";
 
 // Whether a dead-lettered event may go back on the topic, or belongs in quarantine for a human. Two ways to fail it:

@@ -1,6 +1,6 @@
-import { AzureContainer } from "@/models/azure/container/AzureContainer";
-import { getBlobSubjectPrefix } from "@/services/azure/container/getBlobSubjectPrefix";
-import { dayjs } from "@/services/dayjs";
+import { AzureContainer } from "#src/models/azure/container/AzureContainer";
+import { getBlobSubjectPrefix } from "#src/services/azure/container/getBlobSubjectPrefix";
+import { dayjs } from "#src/services/dayjs/index";
 import { ID_SEPARATOR, UUID_LENGTH } from "@esposter/shared";
 
 export const DEAD_LETTER_ARCHIVED_PREFIX = "archived/";

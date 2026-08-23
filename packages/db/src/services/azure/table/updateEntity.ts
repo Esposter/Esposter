@@ -2,7 +2,7 @@ import type { TableUpdateEntityHeaders } from "@azure/data-tables";
 import type { AzureEntity, AzureUpdateEntity, CustomTableClient } from "@esposter/db-schema";
 import type { TupleSlice } from "@esposter/shared";
 
-import { serializeEntity } from "@/services/azure/transformer/serializeEntity";
+import { serializeEntity } from "#src/services/azure/transformer/serializeEntity";
 
 export const updateEntity = <TEntity extends AzureEntity>(
   tableClient: CustomTableClient<TEntity>,

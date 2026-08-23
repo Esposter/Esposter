@@ -1,6 +1,6 @@
 import type { Clause } from "@esposter/azure";
 
-import { isNullClause } from "@/services/filter/isNullClause";
+import { isNullClause } from "#src/services/filter/isNullClause";
 import { BinaryOperator } from "@esposter/azure";
 import { getTableNullClause } from "@esposter/db";
 import { describe, expect, test } from "vitest";

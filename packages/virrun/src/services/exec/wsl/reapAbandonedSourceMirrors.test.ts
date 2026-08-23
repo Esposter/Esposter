@@ -1,13 +1,13 @@
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { seedDirectory } from "@/services/exec/test/seedDirectory.test";
-import { SOURCE_MIRROR_UNMARKED_MAX_AGE_MS } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { seedDirectory } from "#src/services/exec/test/seedDirectory.test";
+import { SOURCE_MIRROR_UNMARKED_MAX_AGE_MS } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import {
   VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
   VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME,
   VIRRUN_SOURCES_DIRECTORY_NAME,
-} from "@/services/exec/wsl/constants";
-import { reapAbandonedSourceMirrors } from "@/services/exec/wsl/reapAbandonedSourceMirrors";
+} from "#src/services/exec/wsl/constants";
+import { reapAbandonedSourceMirrors } from "#src/services/exec/wsl/reapAbandonedSourceMirrors";
 import { existsSync, utimesSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -16,7 +16,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // Local path, so removeSnapshotDirectoriesDetached teardown stays synchronous and deterministic — no WSL round-trip).
 const { cacheRootHolder } = vi.hoisted(() => ({ cacheRootHolder: { value: "" } }));
 
-vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({
+vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), () => ({
   getWslNativeCacheRoot: () => cacheRootHolder.value,
 }));
 

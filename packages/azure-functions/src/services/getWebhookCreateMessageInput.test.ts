@@ -1,6 +1,6 @@
 import type { WebhookInMessage, WebhookPayload } from "@esposter/db-schema";
 
-import { getWebhookCreateMessageInput } from "@/services/getWebhookCreateMessageInput";
+import { getWebhookCreateMessageInput } from "#src/services/getWebhookCreateMessageInput";
 import { MessageType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

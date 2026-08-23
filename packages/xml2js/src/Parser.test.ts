@@ -1,5 +1,5 @@
-import { BUILTIN_NAME_KEY, TEXT_NODE_NAME } from "@/constants";
-import { parseStringPromise } from "@/Parser";
+import { BUILTIN_NAME_KEY, TEXT_NODE_NAME } from "#src/constants";
+import { parseStringPromise } from "#src/Parser";
 import { describe, expect, test } from "vitest";
 
 describe(parseStringPromise, () => {

@@ -1,7 +1,7 @@
-import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
-import { PROBE_TIMEOUT_MS } from "@/services/exec/util/constants";
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
-import { execWsl } from "@/services/exec/wsl/execWsl";
+import { buildBwrapArgs } from "#src/services/exec/bwrap/buildBwrapArgs";
+import { PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { execFileHidden } from "#src/services/exec/util/execFileHidden";
+import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { getResult, withFinalizer } from "@esposter/shared";
 // Whether this host can actually SET UP the overlay sandbox — not merely whether bwrap is on PATH. A `command -v
 // Bwrap` probe is insufficient: bubblewrap built without overlayfs support (some WSL2 builds), or a kernel with

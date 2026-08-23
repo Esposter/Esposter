@@ -1,4 +1,4 @@
-import { pushWebhookHandler } from "@/handlers/pushWebhookHandler";
+import { pushWebhookHandler } from "#src/handlers/pushWebhookHandler";
 import { app } from "@azure/functions";
 import { AzureFunction } from "@esposter/db-schema";
 

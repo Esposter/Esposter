@@ -1,5 +1,5 @@
-import ApplicationTags from "@/azure/constants/ApplicationTags";
-import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLocation";
+import ApplicationTags from "#src/azure/constants/ApplicationTags";
+import AzureAustraliaEastLocation from "#src/azure/constants/AzureAustraliaEastLocation";
 import * as azure_native from "@pulumi/azure-native";
 
 const resourceGroupName = "dev-rg-esposter-ae-001";

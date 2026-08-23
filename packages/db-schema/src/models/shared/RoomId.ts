@@ -1,4 +1,4 @@
-import { selectRoomInMessageSchema } from "@/schema/roomsInMessage";
+import { selectRoomInMessageSchema } from "#src/schema/roomsInMessage";
 import { z } from "zod";
 
 export const roomIdSchema = z.object({

@@ -1,8 +1,8 @@
 import type { Database, MessageEntity } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
-import { getMentionNotificationConditions } from "@/services/message/mention/getMentionNotificationConditions";
-import { PUSH_SUBSCRIPTION_COLUMNS } from "@/services/pushNotification/constants";
+import { getMentionNotificationConditions } from "#src/services/message/mention/getMentionNotificationConditions";
+import { PUSH_SUBSCRIPTION_COLUMNS } from "#src/services/pushNotification/constants";
 import {
   NotificationType,
   pushSubscriptionsInMessage,

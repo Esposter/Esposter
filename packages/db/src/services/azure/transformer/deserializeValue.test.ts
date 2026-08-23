@@ -1,4 +1,4 @@
-import { deserializeValue } from "@/services/azure/transformer/deserializeValue";
+import { deserializeValue } from "#src/services/azure/transformer/deserializeValue";
 import { escapeValue } from "@esposter/azure";
 import { describe, expect, test } from "vitest";
 

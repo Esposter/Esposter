@@ -1,4 +1,4 @@
-import { AzureFunction } from "@/models/azure/function/AzureFunction";
+import { AzureFunction } from "#src/models/azure/function/AzureFunction";
 
 // Whether running a handler twice on the same event leaves the same state as running it once. Event Grid delivery is
 // At-least-once, so this is what decides whether a dead-lettered event may be republished (replayDeadLetterEventHandler)

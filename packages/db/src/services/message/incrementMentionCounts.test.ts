@@ -1,8 +1,8 @@
 import type { Database } from "@esposter/db-schema";
 
-import { createMention } from "@/services/message/createMention.test";
-import { createUser } from "@/services/message/createUser.test";
-import { incrementMentionCounts } from "@/services/message/incrementMentionCounts";
+import { createMention } from "#src/services/message/createMention.test";
+import { createUser } from "#src/services/message/createUser.test";
+import { incrementMentionCounts } from "#src/services/message/incrementMentionCounts";
 import { createMockDb } from "@esposter/db-mock";
 import {
   NotificationType,

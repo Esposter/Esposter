@@ -1,4 +1,4 @@
-import { schema } from "@/schema";
+import { schema } from "#src/schema";
 import { is } from "drizzle-orm";
 import { getTableConfig, isPgEnum, PgDialect, PgTable } from "drizzle-orm/pg-core";
 import { describe, expect, test } from "vitest";

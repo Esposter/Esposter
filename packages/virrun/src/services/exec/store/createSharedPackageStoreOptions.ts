@@ -1,4 +1,4 @@
-import type { ExecOptions } from "@/models/exec/ExecOptions";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
 
 import {
   GITIGNORE_FILENAME,
@@ -11,8 +11,8 @@ import {
   VIRRUN_GITIGNORE_ENTRY,
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
   VIRRUN_STORE_DIRECTORY_NAME,
-} from "@/services/exec/util/constants";
-import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
+} from "#src/services/exec/util/constants";
+import { resolveWorkspaceRoot } from "#src/services/exec/util/resolveWorkspaceRoot";
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 

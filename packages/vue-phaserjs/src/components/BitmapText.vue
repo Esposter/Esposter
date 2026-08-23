@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { BitmapTextConfiguration } from "@/models/configuration/BitmapTextConfiguration";
-import type { BitmapTextEventEmitsOptions } from "@/models/emit/BitmapTextEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { BitmapTextConfiguration } from "#src/models/configuration/BitmapTextConfiguration";
+import type { BitmapTextEventEmitsOptions } from "#src/models/emit/BitmapTextEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { BitmapTextSetterMap } from "@/util/setterMap/BitmapTextSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { BitmapTextSetterMap } from "#src/util/setterMap/BitmapTextSetterMap";
 
 interface BitmapTextEmits extends /** @vue-ignore */ BitmapTextEventEmitsOptions {}
 

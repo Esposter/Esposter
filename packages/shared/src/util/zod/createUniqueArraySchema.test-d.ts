@@ -1,4 +1,4 @@
-import { createUniqueArraySchema } from "@/util/zod/createUniqueArraySchema";
+import { createUniqueArraySchema } from "#src/util/zod/createUniqueArraySchema";
 import { describe, expect, expectTypeOf, test } from "vitest";
 import { z } from "zod";
 

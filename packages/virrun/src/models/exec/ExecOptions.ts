@@ -1,4 +1,4 @@
-import type { OverlayLayers } from "@/models/exec/OverlayLayers";
+import type { OverlayLayers } from "#src/models/exec/OverlayLayers";
 
 export interface ExecOptions {
   // Host directories to bind writable into the sandbox (os backend only), e.g. the shared package store.

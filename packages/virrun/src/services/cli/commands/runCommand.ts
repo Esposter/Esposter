@@ -1,10 +1,10 @@
-import type { RunArgs } from "@/models/cli/RunArgs";
+import type { RunArgs } from "#src/models/cli/RunArgs";
 import type { ArgsDef, CommandDef } from "citty";
 
-import { CommandType } from "@/models/virrun/CommandType";
-import { ExecutionMode } from "@/models/virrun/ExecutionMode";
-import { runPassthrough } from "@/services/cli/run/runPassthrough";
-import { VIRRUN_DEBUG_KEY, VIRRUN_NO_CACHE_KEY } from "@/services/exec/util/constants";
+import { CommandType } from "#src/models/virrun/CommandType";
+import { ExecutionMode } from "#src/models/virrun/ExecutionMode";
+import { runPassthrough } from "#src/services/cli/run/runPassthrough";
+import { VIRRUN_DEBUG_KEY, VIRRUN_NO_CACHE_KEY } from "#src/services/exec/util/constants";
 import { defineCommand } from "citty";
 import dedent from "dedent";
 

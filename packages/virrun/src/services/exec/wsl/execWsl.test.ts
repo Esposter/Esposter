@@ -1,7 +1,7 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
-import { PROBE_TIMEOUT_MS, WSL_WORK_TIMEOUT_MS } from "@/services/exec/util/constants";
-import { execWsl } from "@/services/exec/wsl/execWsl";
+import { PROBE_TIMEOUT_MS, WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));

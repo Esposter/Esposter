@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { ParticlesConfiguration } from "@/models/configuration/ParticlesConfiguration";
-import type { ParticlesEventEmitsOptions } from "@/models/emit/ParticlesEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { ParticlesConfiguration } from "#src/models/configuration/ParticlesConfiguration";
+import type { ParticlesEventEmitsOptions } from "#src/models/emit/ParticlesEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { ParticlesSetterMap } from "@/util/setterMap/ParticlesSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { ParticlesSetterMap } from "#src/util/setterMap/ParticlesSetterMap";
 
 interface ParticlesEmits extends /** @vue-ignore */ ParticlesEventEmitsOptions {}
 

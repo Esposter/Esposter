@@ -1,7 +1,7 @@
-import type { ExecutedAutomodAction } from "@/models/message/moderation/ExecutedAutomodAction";
+import type { ExecutedAutomodAction } from "#src/models/message/moderation/ExecutedAutomodAction";
 import type { CustomTableClient, Database, ModerationLogEntity, RoomFilterInMessage } from "@esposter/db-schema";
 
-import { writeModerationLogEntry } from "@/services/message/moderation/writeModerationLogEntry";
+import { writeModerationLogEntry } from "#src/services/message/moderation/writeModerationLogEntry";
 import { AdminActionType, AUTOMOD_USER_ID, usersToRoomsInMessage, WordFilterAction } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq, sql } from "drizzle-orm";

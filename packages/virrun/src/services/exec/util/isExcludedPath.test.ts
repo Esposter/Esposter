@@ -1,7 +1,7 @@
-import { GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { isExcludedPath } from "@/services/exec/util/isExcludedPath";
-import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
+import { GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { isExcludedPath } from "#src/services/exec/util/isExcludedPath";
+import { toRootAnchoredExclude } from "#src/services/exec/util/toRootAnchoredExclude";
 import { describe, expect, test } from "vitest";
 
 describe(isExcludedPath, () => {

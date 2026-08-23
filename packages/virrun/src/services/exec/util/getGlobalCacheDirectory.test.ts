@@ -1,8 +1,8 @@
-import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
-import { TEST_WSL_CACHE_ROOT_LINUX } from "@/services/exec/wsl/constants.test";
-import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
+import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheDirectory";
+import { TEST_WSL_CACHE_ROOT_LINUX } from "#src/services/exec/wsl/constants.test";
+import { createTestWslUnc } from "#src/services/exec/wsl/createTestWslUnc.test";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -10,7 +10,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 const WSL_NATIVE_CACHE_ROOT = createTestWslUnc(TEST_WSL_CACHE_ROOT_LINUX);
 // On win32 the default routes to the WSL distro's ext4 home (which really spawns wsl.exe); stub it so the test
 // Stays hermetic and platform-independent.
-vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({
+vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), () => ({
   getWslNativeCacheRoot: () => WSL_NATIVE_CACHE_ROOT,
 }));
 

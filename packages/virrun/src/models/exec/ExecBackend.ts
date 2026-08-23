@@ -1,6 +1,6 @@
-import type { ExecOptions } from "@/models/exec/ExecOptions";
-import type { ExecResult } from "@/models/exec/ExecResult";
-import type { BackendType } from "@/models/virrun/BackendType";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
+import type { ExecResult } from "#src/models/exec/ExecResult";
+import type { BackendType } from "#src/models/virrun/BackendType";
 // The single seam the whole project is built on. Every execution strategy — native passthrough
 // Today, the in-process `vfs` backend and the RAM-backed `os` backend later — implements this one
 // Interface, so adding a backend never changes the public API. See

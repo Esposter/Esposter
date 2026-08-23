@@ -1,5 +1,5 @@
-import type { GetProperties } from "@/util/types/GetProperties";
-import type { KnownKeys } from "@/util/types/KnownKeys";
+import type { GetProperties } from "#src/util/types/GetProperties";
+import type { KnownKeys } from "#src/util/types/KnownKeys";
 
 export type GetObjectProps<T, P extends string, D extends unknown[], R extends boolean> = {
   [K in keyof KnownKeys<T> & (number | string)]: K extends `${number}`

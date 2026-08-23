@@ -1,11 +1,11 @@
-import type { RoomRoleInMessage } from "@/schema/roomRolesInMessage";
+import type { RoomRoleInMessage } from "#src/schema/roomRolesInMessage";
 
-import { pgTable } from "@/pgTable";
-import { messageSchema } from "@/schema/messageSchema";
-import { roomRolesInMessage } from "@/schema/roomRolesInMessage";
-import { roomsInMessage } from "@/schema/roomsInMessage";
-import { users } from "@/schema/users";
-import { usersToRoomsInMessage } from "@/schema/usersToRoomsInMessage";
+import { pgTable } from "#src/pgTable";
+import { messageSchema } from "#src/schema/messageSchema";
+import { roomRolesInMessage } from "#src/schema/roomRolesInMessage";
+import { roomsInMessage } from "#src/schema/roomsInMessage";
+import { users } from "#src/schema/users";
+import { usersToRoomsInMessage } from "#src/schema/usersToRoomsInMessage";
 import { foreignKey, index, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 
 export const usersToRoomRolesInMessage = pgTable(

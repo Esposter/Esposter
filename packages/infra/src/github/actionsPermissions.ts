@@ -1,4 +1,4 @@
-import { repository } from "@/github/repository";
+import { repository } from "#src/github/repository";
 import * as github from "@pulumi/github";
 
 export const actionsPermissions: github.ActionsRepositoryPermissions = new github.ActionsRepositoryPermissions(

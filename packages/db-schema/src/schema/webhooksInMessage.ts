@@ -1,9 +1,9 @@
-import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
-import { pgTable } from "@/pgTable";
-import { appUsersInMessage } from "@/schema/appUsersInMessage";
-import { messageSchema } from "@/schema/messageSchema";
-import { roomsInMessage } from "@/schema/roomsInMessage";
-import { users } from "@/schema/users";
+import { createNameCheckSql, createNameSchema } from "#src/models/shared/Name";
+import { pgTable } from "#src/pgTable";
+import { appUsersInMessage } from "#src/schema/appUsersInMessage";
+import { messageSchema } from "#src/schema/messageSchema";
+import { roomsInMessage } from "#src/schema/roomsInMessage";
+import { users } from "#src/schema/users";
 import { boolean, check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 

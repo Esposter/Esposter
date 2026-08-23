@@ -1,6 +1,6 @@
 import type { BlobGenerateSasUrlOptions, BlockBlobClient } from "@azure/storage-blob";
 
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "#src/services/dayjs/index";
 import { BlobSASPermissions } from "@azure/storage-blob";
 import { READ_SAS_DURATION_MS } from "@esposter/db-schema";
 import { encodeUrlSubDelimiters } from "@esposter/shared";

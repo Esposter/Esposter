@@ -1,4 +1,4 @@
-import { processBlobDeletionHandler } from "@/handlers/processBlobDeletionHandler";
+import { processBlobDeletionHandler } from "#src/handlers/processBlobDeletionHandler";
 import { app } from "@azure/functions";
 import { AzureFunction } from "@esposter/db-schema";
 

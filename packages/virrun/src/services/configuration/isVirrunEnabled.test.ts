@@ -1,5 +1,5 @@
-import { isVirrunEnabled } from "@/services/configuration/isVirrunEnabled";
-import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
+import { isVirrunEnabled } from "#src/services/configuration/isVirrunEnabled";
+import { VIRRUN_ENV_KEY } from "#src/services/exec/util/constants";
 import { describe, expect, test } from "vitest";
 
 describe(isVirrunEnabled, () => {

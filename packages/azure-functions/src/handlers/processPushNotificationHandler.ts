@@ -1,7 +1,7 @@
 import type { EventGridHandler } from "@azure/functions";
 
-import { createEventGridNotificationHandler } from "@/handlers/createEventGridNotificationHandler";
-import { sendPushNotification } from "@/services/sendPushNotification";
+import { createEventGridNotificationHandler } from "#src/handlers/createEventGridNotificationHandler";
+import { sendPushNotification } from "#src/services/sendPushNotification";
 import { AzureFunction, pushNotificationEventGridDataSchema } from "@esposter/db-schema";
 
 export const processPushNotificationHandler: EventGridHandler = createEventGridNotificationHandler(

@@ -1,9 +1,9 @@
-import { assertDifferential } from "@/services/exec/differential/assertDifferential.test";
-import { NODE_DIFFERENTIAL_CORPUS } from "@/services/exec/differential/differentialCorpus.test";
-import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
+import { assertDifferential } from "#src/services/exec/differential/assertDifferential.test";
+import { NODE_DIFFERENTIAL_CORPUS } from "#src/services/exec/differential/differentialCorpus.test";
+import { createNativeBackend } from "#src/services/exec/native/createNativeBackend";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { createVfsBackend } from "#src/services/exec/vfs/createVfsBackend";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";

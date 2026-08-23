@@ -1,14 +1,14 @@
 import type { CommandDef } from "citty";
 
-import { CommandType } from "@/models/virrun/CommandType";
-import { formatCacheListing } from "@/services/cli/cache/formatCacheListing";
-import { formatVirrunError } from "@/services/cli/format/formatVirrunError";
-import { VIRRUN_TASKS_DIRECTORY_NAME } from "@/services/exec/cache/constants";
-import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
-import { computeDirectoryByteSize } from "@/services/exec/util/computeDirectoryByteSize";
-import { VIRRUN_STORE_DIRECTORY_NAME } from "@/services/exec/util/constants";
-import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
-import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
+import { CommandType } from "#src/models/virrun/CommandType";
+import { formatCacheListing } from "#src/services/cli/cache/formatCacheListing";
+import { formatVirrunError } from "#src/services/cli/format/formatVirrunError";
+import { VIRRUN_TASKS_DIRECTORY_NAME } from "#src/services/exec/cache/constants";
+import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import { computeDirectoryByteSize } from "#src/services/exec/util/computeDirectoryByteSize";
+import { VIRRUN_STORE_DIRECTORY_NAME } from "#src/services/exec/util/constants";
+import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheDirectory";
+import { getRepoCacheDirectory } from "#src/services/exec/util/getRepoCacheDirectory";
 import { getResult } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { existsSync, readdirSync } from "node:fs";

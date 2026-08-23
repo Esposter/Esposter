@@ -1,9 +1,9 @@
-import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
-import { devAgEsposter001 } from "@/azure/resources/Microsoft.Insights/actionGroups/devAgEsposter001";
-import { devAgEsposter003 } from "@/azure/resources/Microsoft.Insights/actionGroups/devAgEsposter003";
-import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
-import { devFuncEsposter001 } from "@/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
-import { getBudgetGuardArguments } from "@/azure/services/getBudgetGuardArguments";
+import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
+import { devAgEsposter001 } from "#src/azure/resources/Microsoft.Insights/actionGroups/devAgEsposter001";
+import { devAgEsposter003 } from "#src/azure/resources/Microsoft.Insights/actionGroups/devAgEsposter003";
+import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
+import { devFuncEsposter001 } from "#src/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
+import { getBudgetGuardArguments } from "#src/azure/services/getBudgetGuardArguments";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 

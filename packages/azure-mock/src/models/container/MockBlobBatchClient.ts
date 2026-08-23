@@ -8,13 +8,16 @@ import type {
 } from "@azure/storage-blob";
 import type { MapValue } from "@esposter/shared";
 
-import { BLOB_NOT_FOUND_ERROR_CODE, BLOB_NOT_FOUND_MESSAGE } from "@/constants";
-import { getAzureErrorXml } from "@/services/container/getAzureErrorXml";
-import { getBlobUrlParts } from "@/services/container/getBlobUrlParts";
-import { getMockContainer } from "@/services/container/getMockContainer";
-import { createMockResponse } from "@/services/createMockResponse";
-import { getMockContainerCreatedOnKey, MockContainerCreatedOnDatabase } from "@/store/MockContainerCreatedOnDatabase";
-import { MockContainerDatabase } from "@/store/MockContainerDatabase";
+import { BLOB_NOT_FOUND_ERROR_CODE, BLOB_NOT_FOUND_MESSAGE } from "#src/constants";
+import { getAzureErrorXml } from "#src/services/container/getAzureErrorXml";
+import { getBlobUrlParts } from "#src/services/container/getBlobUrlParts";
+import { getMockContainer } from "#src/services/container/getMockContainer";
+import { createMockResponse } from "#src/services/createMockResponse";
+import {
+  getMockContainerCreatedOnKey,
+  MockContainerCreatedOnDatabase,
+} from "#src/store/MockContainerCreatedOnDatabase";
+import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders } from "@azure/core-rest-pipeline";
 

@@ -1,6 +1,6 @@
 import type { FileEntity } from "@esposter/db-schema";
 
-import { getFileBlobNames } from "@/services/azure/container/getFileBlobNames";
+import { getFileBlobNames } from "#src/services/azure/container/getFileBlobNames";
 
 // Every blob a set of uploaded files owns, flattened into the single list a delete publishes. Named through
 // GetFileBlobNames so a derivative added there is swept by every caller without a second edit.

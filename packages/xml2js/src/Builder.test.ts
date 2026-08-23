@@ -1,4 +1,4 @@
-import { Builder } from "@/Builder";
+import { Builder } from "#src/Builder";
 import { describe, expect, test } from "vitest";
 
 describe(Builder, () => {

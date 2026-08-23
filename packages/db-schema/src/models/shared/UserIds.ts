@@ -1,4 +1,4 @@
-import { selectUserSchema } from "@/schema/users";
+import { selectUserSchema } from "#src/schema/users";
 import { createUniqueArraySchema, MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 

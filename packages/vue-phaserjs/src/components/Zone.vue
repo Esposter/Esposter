@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { ZoneConfiguration } from "@/models/configuration/ZoneConfiguration";
-import type { ZoneEventEmitsOptions } from "@/models/emit/ZoneEventEmitsOptions";
+import type { ZoneConfiguration } from "#src/models/configuration/ZoneConfiguration";
+import type { ZoneEventEmitsOptions } from "#src/models/emit/ZoneEventEmitsOptions";
 import type { SetRequired } from "type-fest";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { ZoneSetterMap } from "@/util/setterMap/ZoneSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { ZoneSetterMap } from "#src/util/setterMap/ZoneSetterMap";
 
 interface ZoneEmits extends /** @vue-ignore */ ZoneEventEmitsOptions {}
 

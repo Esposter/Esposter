@@ -30,9 +30,19 @@
   "type": "module",
   "types": "dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js",
+    ".": {
+      "esposter-source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
     "./package.json": "./package.json",
     "./eslint/*": "./eslint/*"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json",
+      "./eslint/*": "./eslint/*"
+    }
   },
   "scripts": {
     "build": "pnpm export:gen && tsdown",

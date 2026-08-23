@@ -29,11 +29,11 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-import { MOCK_QUEUE_BASE_URL } from "@/constants";
-import { createMockResponse } from "@/services/createMockResponse";
-import { getMockSasUrl } from "@/services/getMockSasUrl";
-import { getMockQueueMessageItem } from "@/services/queue/getMockQueueMessageItem";
-import { MockQueueDatabase } from "@/store/MockQueueDatabase";
+import { MOCK_QUEUE_BASE_URL } from "#src/constants";
+import { createMockResponse } from "#src/services/createMockResponse";
+import { getMockSasUrl } from "#src/services/getMockSasUrl";
+import { getMockQueueMessageItem } from "#src/services/queue/getMockQueueMessageItem";
+import { MockQueueDatabase } from "#src/store/MockQueueDatabase";
 import { getOrCreate } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure QueueClient — no emulator and no network.

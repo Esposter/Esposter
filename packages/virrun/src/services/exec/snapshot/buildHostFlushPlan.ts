@@ -1,11 +1,11 @@
-import type { FlushOp } from "@/models/exec/FlushOp";
+import type { FlushOp } from "#src/models/exec/FlushOp";
 
-import { buildFlushPlan } from "@/services/exec/snapshot/buildFlushPlan";
-import { OVERLAY_PROBE_SCRIPT } from "@/services/exec/snapshot/constants";
-import { isUnderSnapshotLower } from "@/services/exec/snapshot/isUnderSnapshotLower";
-import { parseOverlayEntryKind } from "@/services/exec/snapshot/parseOverlayEntryKind";
-import { parseOverlayManifest } from "@/services/exec/snapshot/parseOverlayManifest";
-import { runOverlayScript } from "@/services/exec/snapshot/runOverlayScript";
+import { buildFlushPlan } from "#src/services/exec/snapshot/buildFlushPlan";
+import { OVERLAY_PROBE_SCRIPT } from "#src/services/exec/snapshot/constants";
+import { isUnderSnapshotLower } from "#src/services/exec/snapshot/isUnderSnapshotLower";
+import { parseOverlayEntryKind } from "#src/services/exec/snapshot/parseOverlayEntryKind";
+import { parseOverlayManifest } from "#src/services/exec/snapshot/parseOverlayManifest";
+import { runOverlayScript } from "#src/services/exec/snapshot/runOverlayScript";
 // Probe a persist run's overlay upper Linux-side and classify + order its entries into a host flush plan
 // (specs/write-back.md), skipping anything the snapshot lower supplies so node_modules never flushes, plus the
 // Caller's `maskedPaths` (prepare outputs, and the source-mirror excludes on win32 — isUnderSnapshotLower). Pure of

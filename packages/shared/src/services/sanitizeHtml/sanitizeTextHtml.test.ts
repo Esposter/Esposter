@@ -1,14 +1,14 @@
-import { MentionType } from "@/models/message/MentionType";
+import { MentionType } from "#src/models/message/MentionType";
 import {
   MENTION_ID_ATTRIBUTE,
   MENTION_ITEM_TYPE_ATTRIBUTE,
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
-} from "@/services/message/constants";
-import { createMention } from "@/services/message/createMention.test";
-import { getMentions } from "@/services/message/getMentions";
-import { sanitizeTextHtml } from "@/services/sanitizeHtml/sanitizeTextHtml";
-import { takeOne } from "@/util/array/takeOne";
+} from "#src/services/message/constants";
+import { createMention } from "#src/services/message/createMention.test";
+import { getMentions } from "#src/services/message/getMentions";
+import { sanitizeTextHtml } from "#src/services/sanitizeHtml/sanitizeTextHtml";
+import { takeOne } from "#src/util/array/takeOne";
 import { describe, expect, test } from "vitest";
 
 describe(sanitizeTextHtml, () => {

@@ -1,7 +1,7 @@
-import ApplicationTags from "@/azure/constants/ApplicationTags";
-import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLocation";
-import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
-import { devstesposter001 } from "@/azure/resources/Microsoft.Storage/storageAccounts/devstesposter001";
+import ApplicationTags from "#src/azure/constants/ApplicationTags";
+import AzureAustraliaEastLocation from "#src/azure/constants/AzureAustraliaEastLocation";
+import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
+import { devstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/devstesposter001";
 import * as azure_native from "@pulumi/azure-native";
 
 const systemTopicName = "dev-egst-esposter-ae-001";

@@ -1,6 +1,6 @@
-import { MOCK_BLOB_BASE_URL } from "@/constants";
-import { MockContainerClient } from "@/models/container/MockContainerClient";
-import { MockContainerDatabase } from "@/store/MockContainerDatabase";
+import { MOCK_BLOB_BASE_URL } from "#src/constants";
+import { MockContainerClient } from "#src/models/container/MockContainerClient";
+import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe(MockContainerClient, () => {

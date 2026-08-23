@@ -4,7 +4,7 @@ import {
   GIT_WORKTREE_GITDIR_FILENAME,
   GIT_WORKTREE_GITDIR_PREFIX,
   GIT_WORKTREES_DIRECTORY_NAME,
-} from "@/services/exec/util/constants";
+} from "#src/services/exec/util/constants";
 import { getResult } from "@esposter/shared";
 import { lstatSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";

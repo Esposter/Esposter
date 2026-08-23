@@ -1,5 +1,5 @@
-import { Color } from "@/models/cli/Color";
-import { isColorEnabled } from "@/services/cli/color/isColorEnabled";
+import { Color } from "#src/models/cli/Color";
+import { isColorEnabled } from "#src/services/cli/color/isColorEnabled";
 // The SGR open/close code pair per Color. Foreground colors reset with 39, bold/dim with 22, so a nested colorize
 // Never clobbers the outer style's reset.
 const COLOR_SGR_MAP = {

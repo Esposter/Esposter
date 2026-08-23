@@ -1,4 +1,4 @@
-import { encodeUrlSubDelimiters } from "@/util/text/encodeUrlSubDelimiters";
+import { encodeUrlSubDelimiters } from "#src/util/text/encodeUrlSubDelimiters";
 import { describe, expect, test } from "vitest";
 
 describe(encodeUrlSubDelimiters, () => {

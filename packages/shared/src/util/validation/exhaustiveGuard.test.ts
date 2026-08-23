@@ -1,6 +1,6 @@
-import { InvalidOperationError } from "@/models/error/InvalidOperationError";
-import { Operation } from "@/models/shared/Operation";
-import { exhaustiveGuard } from "@/util/validation/exhaustiveGuard";
+import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
+import { Operation } from "#src/models/shared/Operation";
+import { exhaustiveGuard } from "#src/util/validation/exhaustiveGuard";
 import { describe, expect, test } from "vitest";
 
 describe(exhaustiveGuard, () => {

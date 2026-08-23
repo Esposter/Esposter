@@ -37,13 +37,31 @@
   "type": "module",
   "sideEffects": false,
   "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
   "exports": {
-    ".": "./dist/index.js",
-    "./cli": "./dist/cli.js",
-    "./config": "./dist/config.js",
+    ".": {
+      "esposter-source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./cli": {
+      "esposter-source": "./src/cli.ts",
+      "default": "./dist/cli.js"
+    },
+    "./config": {
+      "esposter-source": "./src/services/configuration/defineConfig.ts",
+      "default": "./dist/config.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./cli": "./dist/cli.js",
+      "./config": "./dist/config.js",
+      "./package.json": "./package.json"
+    },
     "access": "public"
   },
   "scripts": {

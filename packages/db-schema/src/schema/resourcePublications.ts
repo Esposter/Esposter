@@ -1,5 +1,5 @@
-import { pgTable } from "@/pgTable";
-import { resources } from "@/schema/resources";
+import { pgTable } from "#src/pgTable";
+import { resources } from "#src/schema/resources";
 import { integer, timestamp, uuid } from "drizzle-orm/pg-core";
 
 // A row exists iff the resource is currently published — this is the Publishable capability's state.

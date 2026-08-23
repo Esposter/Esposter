@@ -1,4 +1,4 @@
-import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
+import { sanitizeHtml } from "#src/services/sanitizeHtml/sanitizeHtml";
 import { describe, expect, test } from "vitest";
 
 describe(sanitizeHtml, () => {

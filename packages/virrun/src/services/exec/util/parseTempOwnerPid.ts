@@ -1,4 +1,4 @@
-import { parsePid } from "@/services/exec/util/parsePid";
+import { parsePid } from "#src/services/exec/util/parsePid";
 // A pid-tagged temp dir name is `<reapPrefix><pid>.<mkdtempRandom>` (see withPidTempPrefix). Given the reap prefixes
 // Ordered longest-first (so a `upper.persist.` temp is not shadowed by the shorter `upper.` prefix), strip the matching
 // Prefix and read the leading pid. Returns undefined for a published bare name (`upper`/`work`, no trailing `.`), a

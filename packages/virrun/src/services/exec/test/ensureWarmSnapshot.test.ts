@@ -1,9 +1,9 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
-import { createOsInstallOptions } from "@/services/exec/os/createOsInstallOptions";
-import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
-import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
-import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
+import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
+import { createSnapshot } from "#src/services/exec/snapshot/createSnapshot";
+import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
+import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
 import { describe } from "vitest";
 // Captures the warm snapshot for `corpus` once, then reuses it: the heavy snapshot tests share one cache home, so
 // The first to run installs the closure and the rest fork the frozen upper for free. Guarded on `exists`, so a

@@ -1,7 +1,7 @@
 import type { EventGridEvent, EventGridPublisherClient } from "@azure/eventgrid";
 import type { Except } from "type-fest";
 
-import { MockEventGridDatabase } from "@/store/MockEventGridDatabase";
+import { MockEventGridDatabase } from "#src/store/MockEventGridDatabase";
 import { getOrCreate } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure EventGridPublisherClient — no emulator and no network.

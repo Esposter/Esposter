@@ -1,8 +1,8 @@
 import type { ContainerClient } from "@azure/storage-blob";
 import type { FileEntity, FileSasEntity } from "@esposter/db-schema";
 
-import { generateWriteSasUrl } from "@/services/azure/container/generateWriteSasUrl";
-import { getFileBlobNames } from "@/services/azure/container/getFileBlobNames";
+import { generateWriteSasUrl } from "#src/services/azure/container/generateWriteSasUrl";
+import { getFileBlobNames } from "#src/services/azure/container/getFileBlobNames";
 import { getMimeCategory, MimeCategory, THUMBNAIL_CONTENT_TYPE } from "@esposter/db-schema";
 
 export const generateUploadFileSasEntities = (

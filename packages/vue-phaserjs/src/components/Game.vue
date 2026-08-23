@@ -3,9 +3,9 @@ import type { Types } from "phaser";
 import type { Except } from "type-fest";
 import type { VNode } from "vue";
 
-import { useGame } from "@/composables/useGame";
-import { registerTiledJSONExternalLoader } from "@/plugins/registerTiledJSONExternalLoader";
-import { usePhaserStore } from "@/store";
+import { useGame } from "#src/composables/useGame";
+import { registerTiledJSONExternalLoader } from "#src/plugins/registerTiledJSONExternalLoader";
+import { usePhaserStore } from "#src/store/index";
 import { Game } from "phaser";
 
 interface GameProps {

@@ -1,6 +1,6 @@
-import { assertNode } from "@/test/assertNode.test";
-import { createEmbeddedTilesetShared } from "@/test/createEmbeddedTilesetShared.test";
-import { isExternalTileset } from "@/util/isExternalTileset";
+import { assertNode } from "#src/test/assertNode.test";
+import { createEmbeddedTilesetShared } from "#src/test/createEmbeddedTilesetShared.test";
+import { isExternalTileset } from "#src/util/isExternalTileset";
 import { describe, expect, test } from "vitest";
 
 describe(isExternalTileset, () => {

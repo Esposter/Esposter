@@ -1,9 +1,9 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
-import type { Environment } from "@/models/virrun/Environment";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
+import type { Environment } from "#src/models/virrun/Environment";
 
-import { createLinuxOsBackend } from "@/services/exec/bwrap/createLinuxOsBackend";
-import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import { createWslOsBackend } from "@/services/exec/wsl/createWslOsBackend";
+import { createLinuxOsBackend } from "#src/services/exec/bwrap/createLinuxOsBackend";
+import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
+import { createWslOsBackend } from "#src/services/exec/wsl/createWslOsBackend";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 // Runs every command (including native binaries) inside a bubblewrap RAM-overlay: reads fall through to the
 // Source, writes land in an invisible tmpfs upper. Unlike the vfs backend it NEVER falls back to native —

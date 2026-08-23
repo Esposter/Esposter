@@ -1,7 +1,7 @@
-import { computeSourceTreeHash } from "@/services/exec/cache/computeSourceTreeHash";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { initRepository } from "@/services/exec/test/initRepository.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { computeSourceTreeHash } from "#src/services/exec/cache/computeSourceTreeHash";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { initRepository } from "#src/services/exec/test/initRepository.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";

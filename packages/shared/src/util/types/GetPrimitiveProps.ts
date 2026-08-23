@@ -1,4 +1,4 @@
-import type { GetProperties } from "@/util/types/GetProperties";
+import type { GetProperties } from "#src/util/types/GetProperties";
 
 export type GetPrimitiveProps<T, P extends string, D extends unknown[], R extends boolean> = T extends string
   ? { path: R extends true ? "length" : `${P}.length`; value: number }

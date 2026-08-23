@@ -1,4 +1,4 @@
-import type { BenchmarkResult } from "@/models/BenchmarkResult";
+import type { BenchmarkResult } from "#src/models/BenchmarkResult";
 // The minimal structural slice of a Vitest runner task that buildBenchmarkFileReport reads. Declared as
 // Our own contract rather than importing Vitest's experimental (churn-prone) bench task types — a real
 // `File`/`Task` is structurally assignable to it. `meta.benchmark` flags a bench task, `result.benchmark`

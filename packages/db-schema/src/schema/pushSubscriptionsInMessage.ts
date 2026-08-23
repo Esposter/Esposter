@@ -1,6 +1,6 @@
-import { pgTable } from "@/pgTable";
-import { messageSchema } from "@/schema/messageSchema";
-import { users } from "@/schema/users";
+import { pgTable } from "#src/pgTable";
+import { messageSchema } from "#src/schema/messageSchema";
+import { users } from "#src/schema/users";
 import { text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 
 export const pushSubscriptionsInMessage = pgTable(

@@ -1,5 +1,5 @@
-import { SETUP_COMMAND_LINUX, SETUP_COMMAND_WIN32 } from "@/services/exec/snapshot/constants";
-import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
+import { SETUP_COMMAND_LINUX, SETUP_COMMAND_WIN32 } from "#src/services/exec/snapshot/constants";
+import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
 import { afterEach, describe, expect, test } from "vitest";
 
 const setPlatform = (platform: NodeJS.Platform) =>

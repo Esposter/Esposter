@@ -1,8 +1,8 @@
 import type { Database } from "@esposter/db-schema";
 
-import { sendWebPushNotifications } from "@/services/sendWebPushNotifications";
-import { setupWebPushSuite } from "@/services/setupWebPushSuite.test";
-import { webpush } from "@/services/webpush.test";
+import { sendWebPushNotifications } from "#src/services/sendWebPushNotifications";
+import { setupWebPushSuite } from "#src/services/setupWebPushSuite.test";
+import { webpush } from "#src/services/webpush.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptionsInMessage, users } from "@esposter/db-schema";
@@ -13,13 +13,13 @@ import { WebPushError } from "web-push";
 
 let mockDb: Database;
 
-vi.mock(import("@/services/db"), () => ({
+vi.mock(import("#src/services/db"), () => ({
   get db() {
     return mockDb;
   },
 }));
 
-vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
+vi.mock(import("#src/services/webpush"), () => import("#src/services/webpush.test"));
 
 describe(sendWebPushNotifications, () => {
   const context = new InvocationContext();

@@ -1,10 +1,10 @@
-import type { LoadedSource } from "@/models/source/LoadedSource";
-import type { Source } from "@/models/source/Source";
+import type { LoadedSource } from "#src/models/source/LoadedSource";
+import type { Source } from "#src/models/source/Source";
 
-import { SourceType } from "@/models/source/SourceType";
-import { loadDirSource } from "@/services/source/loadDirSource";
-import { loadFilesSource } from "@/services/source/loadFilesSource";
-import { loadGitSource } from "@/services/source/loadGitSource";
+import { SourceType } from "#src/models/source/SourceType";
+import { loadDirSource } from "#src/services/source/loadDirSource";
+import { loadFilesSource } from "#src/services/source/loadFilesSource";
+import { loadGitSource } from "#src/services/source/loadGitSource";
 import { exhaustiveGuard } from "@esposter/shared";
 // Normalizes any source spec into a LoadedSource (working dir + teardown) by dispatching on its type. A git/files
 // Clone's `mkdtemp` temp lives in `os.tmpdir()` and is torn down by its own in-process finalizer on a clean exit; a

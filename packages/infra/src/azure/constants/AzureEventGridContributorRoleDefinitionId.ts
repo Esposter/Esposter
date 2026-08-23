@@ -1,4 +1,4 @@
-import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
+import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
 
 // EventGrid Contributor, whose actions cover `Microsoft.EventGrid/*`, where the narrower EventGrid
 // EventSubscription Contributor stops at the standalone

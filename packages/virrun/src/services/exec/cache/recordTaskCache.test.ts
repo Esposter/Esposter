@@ -1,17 +1,19 @@
-import { TASK_CACHE_TEMP_PREFIX, VIRRUN_TASKS_DIRECTORY_NAME } from "@/services/exec/cache/constants";
-import { recordTaskCache } from "@/services/exec/cache/recordTaskCache";
-import { resolveTaskCacheLocation } from "@/services/exec/cache/resolveTaskCacheLocation";
-import { applyFlushPlan } from "@/services/exec/snapshot/applyFlushPlan";
-import { DEAD_PID } from "@/services/exec/test/constants.test";
-import { seedDirectory } from "@/services/exec/test/seedDirectory.test";
-import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { TASK_CACHE_TEMP_PREFIX, VIRRUN_TASKS_DIRECTORY_NAME } from "#src/services/exec/cache/constants";
+import { recordTaskCache } from "#src/services/exec/cache/recordTaskCache";
+import { resolveTaskCacheLocation } from "#src/services/exec/cache/resolveTaskCacheLocation";
+import { applyFlushPlan } from "#src/services/exec/snapshot/applyFlushPlan";
+import { DEAD_PID } from "#src/services/exec/test/constants.test";
+import { seedDirectory } from "#src/services/exec/test/seedDirectory.test";
+import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
 // Record just orchestrates the temp reap + atomic publish; the real Linux flush is exercised in taskCache.equivalence,
 // So stub applyFlushPlan to keep this host-agnostic.
-vi.mock(import("@/services/exec/snapshot/applyFlushPlan"), () => ({ applyFlushPlan: vi.fn<typeof applyFlushPlan>() }));
+vi.mock(import("#src/services/exec/snapshot/applyFlushPlan"), () => ({
+  applyFlushPlan: vi.fn<typeof applyFlushPlan>(),
+}));
 
 describe(recordTaskCache, () => {
   const { create, getCacheHome } = setupTemporaryCacheHome();

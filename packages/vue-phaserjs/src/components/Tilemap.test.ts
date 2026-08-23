@@ -1,9 +1,9 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { Tilemaps } from "phaser";
 
-import Tilemap from "@/components/Tilemap.vue";
-import { startTestScene } from "@/test/fixtures/headlessGame.test";
-import { setupGameObjectSuite } from "@/test/fixtures/setupGameObjectSuite.test";
+import Tilemap from "#src/components/Tilemap.vue";
+import { startTestScene } from "#src/test/fixtures/headlessGame.test";
+import { setupGameObjectSuite } from "#src/test/fixtures/setupGameObjectSuite.test";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test, vi } from "vitest";
 

@@ -5,8 +5,8 @@ import {
   MENTION_ITEM_TYPE_ATTRIBUTE,
   MENTION_LABEL_ATTRIBUTE,
   MENTION_TYPE_ATTRIBUTE,
-} from "@/services/message/constants";
-import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
+} from "#src/services/message/constants";
+import { sanitizeHtml } from "#src/services/sanitizeHtml/sanitizeHtml";
 
 export const sanitizeTextHtml = (html: string): string =>
   sanitizeHtml(html, {

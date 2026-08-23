@@ -1,9 +1,9 @@
-import type { MessageEntity } from "@/models/message/MessageEntity";
+import type { MessageEntity } from "#src/models/message/MessageEntity";
 import type { Class } from "type-fest";
 
-import { MessageType } from "@/models/message/MessageType";
-import { StandardMessageEntity } from "@/models/message/StandardMessageEntity";
-import { WebhookMessageEntity } from "@/models/message/WebhookMessageEntity";
+import { MessageType } from "#src/models/message/MessageType";
+import { StandardMessageEntity } from "#src/models/message/StandardMessageEntity";
+import { WebhookMessageEntity } from "#src/models/message/WebhookMessageEntity";
 
 export const MessageEntityMap = {
   [MessageType.Call]: StandardMessageEntity,

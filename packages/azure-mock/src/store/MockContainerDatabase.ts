@@ -1,4 +1,4 @@
-import { MockContainerCreatedOnDatabase } from "@/store/MockContainerCreatedOnDatabase";
+import { MockContainerCreatedOnDatabase } from "#src/store/MockContainerCreatedOnDatabase";
 
 // Clearing the blobs drops their creation instants too — a test resets by clearing this map, and a createdOn
 // That outlived its blob re-dates the next blob seeded under the same container/name key.

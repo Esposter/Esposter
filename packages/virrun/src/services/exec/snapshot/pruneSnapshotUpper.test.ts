@@ -1,8 +1,8 @@
-import { pruneSnapshotUpper } from "@/services/exec/snapshot/pruneSnapshotUpper";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { seedFile } from "@/services/exec/test/seedFile.test";
-import { NODE_MODULES_DIRECTORY, PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { pruneSnapshotUpper } from "#src/services/exec/snapshot/pruneSnapshotUpper";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { seedFile } from "#src/services/exec/test/seedFile.test";
+import { NODE_MODULES_DIRECTORY, PNPM_LOCKFILE_FILENAME } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";

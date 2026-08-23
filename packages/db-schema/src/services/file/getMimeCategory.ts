@@ -1,4 +1,4 @@
-import { MimeCategory } from "@/models/file/MimeCategory";
+import { MimeCategory } from "#src/models/file/MimeCategory";
 
 // Maps a raw mimetype to its coarse category — image/video/audio by prefix, everything else a document.
 export const getMimeCategory = (mimetype: string): MimeCategory => {

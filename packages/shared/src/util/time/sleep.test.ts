@@ -1,4 +1,4 @@
-import { sleep } from "@/util/time/sleep";
+import { sleep } from "#src/util/time/sleep";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(sleep, () => {

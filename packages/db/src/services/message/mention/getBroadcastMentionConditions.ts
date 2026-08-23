@@ -1,6 +1,6 @@
 import type { SQL } from "drizzle-orm";
 
-import { getBroadcastNotificationCondition } from "@/services/message/mention/getBroadcastNotificationCondition";
+import { getBroadcastNotificationCondition } from "#src/services/message/mention/getBroadcastNotificationCondition";
 import { or } from "drizzle-orm";
 
 export const getBroadcastMentionConditions = (

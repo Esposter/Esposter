@@ -1,8 +1,8 @@
-import { NUXT_OUTPUT_DIRECTORY } from "@/services/configuration/constants";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
-import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
-import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
+import { NUXT_OUTPUT_DIRECTORY } from "#src/services/configuration/constants";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
+import { toRootAnchoredExclude } from "#src/services/exec/util/toRootAnchoredExclude";
+import { resolveMirrorExcludes } from "#src/services/exec/wsl/resolveMirrorExcludes";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe(resolveMirrorExcludes, () => {

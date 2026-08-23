@@ -1,4 +1,4 @@
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "#src/services/dayjs/index";
 
 // The schema version every event this system publishes carries. One value across all publishers, so a consumer
 // Reading `dataVersion` is reading a single repo-wide contract rather than one literal per call site; it only moves

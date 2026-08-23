@@ -1,6 +1,6 @@
-import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
-import { findUpFile } from "@/services/exec/util/findUpFile";
-import { resolveCwd } from "@/services/exec/util/resolveCwd";
+import { PNPM_LOCKFILE_FILENAME } from "#src/services/exec/util/constants";
+import { findUpFile } from "#src/services/exec/util/findUpFile";
+import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { dirname } from "node:path";
 // The workspace root that anchors every repo-local artifact: the nearest ancestor of cwd holding the pnpm

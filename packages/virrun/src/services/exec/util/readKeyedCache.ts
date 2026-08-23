@@ -1,7 +1,7 @@
 import type { z } from "zod";
 
-import { createKeyedCacheSchema } from "@/models/exec/KeyedCache";
-import { parseMachineJson } from "@/services/exec/util/parseMachineJson";
+import { createKeyedCacheSchema } from "#src/models/exec/KeyedCache";
+import { parseMachineJson } from "#src/services/exec/util/parseMachineJson";
 import { getResult } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 // Read the persisted probe result in `file` for `key`, or undefined when there is nothing usable to reuse — a

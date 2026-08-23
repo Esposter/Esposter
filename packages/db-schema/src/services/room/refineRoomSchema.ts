@@ -1,5 +1,5 @@
-import { createNameSchema } from "@/models/shared/Name";
-import { ROOM_NAME_MAX_LENGTH, RoomType } from "@/schema/roomsInMessage";
+import { createNameSchema } from "#src/models/shared/Name";
+import { ROOM_NAME_MAX_LENGTH, RoomType } from "#src/schema/roomsInMessage";
 import { normalizeString } from "@esposter/shared";
 import { z } from "zod";
 

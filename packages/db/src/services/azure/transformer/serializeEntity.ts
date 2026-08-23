@@ -1,7 +1,7 @@
 import type { TableEntity } from "@azure/data-tables";
 import type { AzureEntity, AzureUpdateEntity } from "@esposter/db-schema";
 
-import { getIsSerializable } from "@/services/azure/transformer/getIsSerializable";
+import { getIsSerializable } from "#src/services/azure/transformer/getIsSerializable";
 
 export const serializeEntity = (entity: AzureUpdateEntity<AzureEntity>) =>
   Object.fromEntries(

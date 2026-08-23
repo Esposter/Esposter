@@ -1,7 +1,7 @@
-import AzureEventSubscriptionRetryPolicy from "@/azure/constants/AzureEventSubscriptionRetryPolicy";
-import { devEgstEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/systemTopics/devEgstEsposterAe001";
-import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
-import { devFuncEsposter001 } from "@/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
+import AzureEventSubscriptionRetryPolicy from "#src/azure/constants/AzureEventSubscriptionRetryPolicy";
+import { devEgstEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/systemTopics/devEgstEsposterAe001";
+import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
+import { devFuncEsposter001 } from "#src/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
 import {
   AzureFunction,
   DEAD_LETTER_ARCHIVED_PREFIX,

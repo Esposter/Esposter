@@ -1,9 +1,9 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
-import Container from "@/components/Container.vue";
-import Sprite from "@/components/Sprite.vue";
-import { startTestScene } from "@/test/fixtures/headlessGame.test";
-import { setupGameObjectSuite } from "@/test/fixtures/setupGameObjectSuite.test";
+import Container from "#src/components/Container.vue";
+import Sprite from "#src/components/Sprite.vue";
+import { startTestScene } from "#src/test/fixtures/headlessGame.test";
+import { setupGameObjectSuite } from "#src/test/fixtures/setupGameObjectSuite.test";
 import { GameObjects } from "phaser";
 import { assert, describe, expect, test } from "vitest";
 import { h } from "vue";

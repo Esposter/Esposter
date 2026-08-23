@@ -1,8 +1,8 @@
-import { dayjs } from "@/services/dayjs";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { readKeyedCache } from "@/services/exec/util/readKeyedCache";
-import { writeKeyedCache } from "@/services/exec/util/writeKeyedCache";
+import { dayjs } from "#src/services/dayjs";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { readKeyedCache } from "#src/services/exec/util/readKeyedCache";
+import { writeKeyedCache } from "#src/services/exec/util/writeKeyedCache";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";

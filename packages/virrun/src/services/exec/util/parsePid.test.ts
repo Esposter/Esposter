@@ -1,6 +1,6 @@
-import { PID } from "@/services/exec/test/constants.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { parsePid } from "@/services/exec/util/parsePid";
+import { PID } from "#src/services/exec/test/constants.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { parsePid } from "#src/services/exec/util/parsePid";
 import { describe, expect, test } from "vitest";
 
 describe(parsePid, () => {

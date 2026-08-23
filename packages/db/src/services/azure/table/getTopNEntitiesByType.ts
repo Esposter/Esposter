@@ -3,7 +3,7 @@ import type { AzureEntity, CustomTableClient } from "@esposter/db-schema";
 import type { ItemEntityType } from "@esposter/shared";
 import type { Class } from "type-fest";
 
-import { getTopNEntitiesByClass } from "@/services/azure/table/getTopNEntitiesByClass";
+import { getTopNEntitiesByClass } from "#src/services/azure/table/getTopNEntitiesByClass";
 
 export const getTopNEntitiesByType = <TType extends string, TEntity extends AzureEntity & ItemEntityType<TType>>(
   tableClient: CustomTableClient<TEntity>,

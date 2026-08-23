@@ -1,5 +1,5 @@
-import { AllSpecialValues } from "@/test/constants";
-import { checkIsPlainObject } from "@/util/object/checkIsPlainObject";
+import { AllSpecialValues } from "#src/test/constants";
+import { checkIsPlainObject } from "#src/util/object/checkIsPlainObject";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsPlainObject, () => {

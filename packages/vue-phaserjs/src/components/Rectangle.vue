@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { RectangleConfiguration } from "@/models/configuration/RectangleConfiguration";
-import type { RectangleEventEmitsOptions } from "@/models/emit/RectangleEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { RectangleConfiguration } from "#src/models/configuration/RectangleConfiguration";
+import type { RectangleEventEmitsOptions } from "#src/models/emit/RectangleEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { RectangleSetterMap } from "@/util/setterMap/RectangleSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { RectangleSetterMap } from "#src/util/setterMap/RectangleSetterMap";
 
 interface RectangleEmits extends /** @vue-ignore */ RectangleEventEmitsOptions {}
 

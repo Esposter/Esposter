@@ -3,9 +3,9 @@ import type { Clause, SerializableValue } from "@esposter/azure";
 /* eslint-disable perfectionist/sort-switch-case */
 import type { Filter, MessageEntity } from "@esposter/db-schema";
 
-import { ContentTypes } from "@/models/ContentType";
-import { getSearchNonNullClause } from "@/services/azure/search/getSearchNonNullClause";
-import { dayjs } from "@/services/dayjs";
+import { ContentTypes } from "#src/models/ContentType";
+import { getSearchNonNullClause } from "#src/services/azure/search/getSearchNonNullClause";
+import { dayjs } from "#src/services/dayjs/index";
 import { BinaryOperator, CompositeKeyPropertyNames, SearchOperator, serializeValue } from "@esposter/azure";
 import {
   FileEntityPropertyNames,

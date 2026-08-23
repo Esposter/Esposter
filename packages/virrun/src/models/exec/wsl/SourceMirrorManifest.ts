@@ -1,6 +1,6 @@
-import type { SourceMirrorManifestEntry } from "@/models/exec/wsl/SourceMirrorManifestEntry";
+import type { SourceMirrorManifestEntry } from "#src/models/exec/wsl/SourceMirrorManifestEntry";
 
-import { sourceMirrorManifestEntrySchema } from "@/models/exec/wsl/SourceMirrorManifestEntry";
+import { sourceMirrorManifestEntrySchema } from "#src/models/exec/wsl/SourceMirrorManifestEntry";
 import { z } from "zod";
 // The working tree's change signature at one point in time: every mirrored entry keyed by posix relative path
 // (buildSourceMirrorManifest walks the host tree with the same excludes the mirror sync uses). The copy published

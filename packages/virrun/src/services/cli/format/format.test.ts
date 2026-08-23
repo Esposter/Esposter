@@ -1,16 +1,16 @@
-import { Color } from "@/models/cli/Color";
-import { BackendType } from "@/models/virrun/BackendType";
-import { colorize } from "@/services/cli/color/colorize";
-import { stripAnsi } from "@/services/cli/color/stripAnsi.test";
-import { formatVirrunBanner } from "@/services/cli/format/formatVirrunBanner";
-import { formatVirrunCacheHit } from "@/services/cli/format/formatVirrunCacheHit";
-import { formatVirrunDebug } from "@/services/cli/format/formatVirrunDebug";
-import { formatVirrunError } from "@/services/cli/format/formatVirrunError";
-import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
-import { formatVirrunNetworkHint } from "@/services/cli/format/formatVirrunNetworkHint";
-import { formatVirrunPrepare } from "@/services/cli/format/formatVirrunPrepare";
-import { formatVirrunProvisioning } from "@/services/cli/format/formatVirrunProvisioning";
-import { formatVirrunResult } from "@/services/cli/format/formatVirrunResult";
+import { Color } from "#src/models/cli/Color";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { colorize } from "#src/services/cli/color/colorize";
+import { stripAnsi } from "#src/services/cli/color/stripAnsi.test";
+import { formatVirrunBanner } from "#src/services/cli/format/formatVirrunBanner";
+import { formatVirrunCacheHit } from "#src/services/cli/format/formatVirrunCacheHit";
+import { formatVirrunDebug } from "#src/services/cli/format/formatVirrunDebug";
+import { formatVirrunError } from "#src/services/cli/format/formatVirrunError";
+import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
+import { formatVirrunNetworkHint } from "#src/services/cli/format/formatVirrunNetworkHint";
+import { formatVirrunPrepare } from "#src/services/cli/format/formatVirrunPrepare";
+import { formatVirrunProvisioning } from "#src/services/cli/format/formatVirrunProvisioning";
+import { formatVirrunResult } from "#src/services/cli/format/formatVirrunResult";
 import { describe, expect, test, vi } from "vitest";
 // Every CLI line builder is a pure template-string over the shared formatVirrunLine tag, so each one's whole
 // Observable surface is a single color-stripped string — they share one file rather than one 1-test file each.

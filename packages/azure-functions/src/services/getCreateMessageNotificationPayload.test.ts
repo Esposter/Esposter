@@ -1,5 +1,5 @@
-import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
-import { getPushNotificationPayload } from "@/services/getPushNotificationPayload";
+import { getCreateMessageNotificationPayload } from "#src/services/getCreateMessageNotificationPayload";
+import { getPushNotificationPayload } from "#src/services/getPushNotificationPayload";
 import { InvocationContext } from "@azure/functions";
 import { describe, expect, test } from "vitest";
 

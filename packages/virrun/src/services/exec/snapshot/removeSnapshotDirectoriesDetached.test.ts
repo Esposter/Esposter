@@ -1,14 +1,14 @@
 import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
 import type { rmSync as baseRmSync, writeFileSync as baseWriteFileSync } from "node:fs";
 
-import { VIRRUN_PREPARE_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
-import { removeSnapshotDirectoriesDetached } from "@/services/exec/snapshot/removeSnapshotDirectoriesDetached";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { TEST_DIR, TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { VIRRUN_REMOVE_LIST_TEMP_PREFIX, WSL_REMOVE_LIST_SCRIPT } from "@/services/exec/wsl/constants";
-import { TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_LEGACY_UNC_PREFIX } from "@/services/exec/wsl/constants.test";
-import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
-import { joinNullDelimited } from "@/services/exec/wsl/joinNullDelimited";
+import { VIRRUN_PREPARE_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import { removeSnapshotDirectoriesDetached } from "#src/services/exec/snapshot/removeSnapshotDirectoriesDetached";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_DIR, TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { VIRRUN_REMOVE_LIST_TEMP_PREFIX, WSL_REMOVE_LIST_SCRIPT } from "#src/services/exec/wsl/constants";
+import { TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_LEGACY_UNC_PREFIX } from "#src/services/exec/wsl/constants.test";
+import { createTestWslUnc } from "#src/services/exec/wsl/createTestWslUnc.test";
+import { joinNullDelimited } from "#src/services/exec/wsl/joinNullDelimited";
 import { noop, takeOne } from "@esposter/shared";
 import { existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -36,7 +36,7 @@ vi.mock(import("node:fs"), async (importOriginal) => {
 // Returns one too — the staged list's own path goes through readWslPath exactly like the dirs it holds. Writes to a
 // UNC cannot land on a test machine, so the sweep cases capture the staged bytes through the writeFileSync mock
 // Instead of reading them back off disk.
-vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({
+vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), () => ({
   getWslNativeCacheRoot: () => cacheRootHolder.value,
 }));
 

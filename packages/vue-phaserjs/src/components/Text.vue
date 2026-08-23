@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { TextEventEmitsOptions } from "@/models/emit/TextEventEmitsOptions";
-import type { TextProps } from "@/models/text/TextProps";
+import type { TextEventEmitsOptions } from "#src/models/emit/TextEventEmitsOptions";
+import type { TextProps } from "#src/models/text/TextProps";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { useTextStore } from "@/store/text";
-import { TextSetterMap } from "@/util/setterMap/TextSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { useTextStore } from "#src/store/text";
+import { TextSetterMap } from "#src/util/setterMap/TextSetterMap";
 
 interface TextEmits extends /** @vue-ignore */ TextEventEmitsOptions {}
 

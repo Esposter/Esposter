@@ -1,5 +1,5 @@
-import { VIRRUN_CACHE_DIRECTORY_NAME } from "@/services/exec/util/constants";
-import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
+import { VIRRUN_CACHE_DIRECTORY_NAME } from "#src/services/exec/util/constants";
+import { resolveWorkspaceRoot } from "#src/services/exec/util/resolveWorkspaceRoot";
 import { join } from "node:path";
 // The consuming repo's gitignored cache root, `<workspace-root>/.virrun`. Holds the shared dep store, safe inside
 // The repo because it is bind-mounted (binds may overlap the overlay). Warm snapshots cannot live here — their

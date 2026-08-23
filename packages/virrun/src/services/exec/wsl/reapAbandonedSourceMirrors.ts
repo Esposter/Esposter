@@ -1,7 +1,7 @@
-import { sweepStaleEntries } from "@/services/exec/snapshot/sweepStaleEntries";
-import { SOURCE_MIRROR_UNMARKED_MAX_AGE_MS } from "@/services/exec/util/constants";
-import { VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME, VIRRUN_SOURCES_DIRECTORY_NAME } from "@/services/exec/wsl/constants";
-import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
+import { sweepStaleEntries } from "#src/services/exec/snapshot/sweepStaleEntries";
+import { SOURCE_MIRROR_UNMARKED_MAX_AGE_MS } from "#src/services/exec/util/constants";
+import { VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME, VIRRUN_SOURCES_DIRECTORY_NAME } from "#src/services/exec/wsl/constants";
+import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheRoot";
 import { getResult, noop } from "@esposter/shared";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";

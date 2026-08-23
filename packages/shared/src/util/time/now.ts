@@ -1,4 +1,4 @@
-import { hrtime } from "@/util/time/hrtime";
+import { hrtime } from "#src/util/time/hrtime";
 
 const loadNanoseconds = hrtime();
 const loadMilliseconds = Date.now();

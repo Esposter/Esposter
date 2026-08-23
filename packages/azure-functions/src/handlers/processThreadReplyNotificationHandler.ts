@@ -1,7 +1,7 @@
 import type { EventGridHandler } from "@azure/functions";
 
-import { createEventGridNotificationHandler } from "@/handlers/createEventGridNotificationHandler";
-import { sendThreadReplyNotification } from "@/services/sendThreadReplyNotification";
+import { createEventGridNotificationHandler } from "#src/handlers/createEventGridNotificationHandler";
+import { sendThreadReplyNotification } from "#src/services/sendThreadReplyNotification";
 import { AzureFunction, threadReplyNotificationEventGridDataSchema } from "@esposter/db-schema";
 
 export const processThreadReplyNotificationHandler: EventGridHandler = createEventGridNotificationHandler(

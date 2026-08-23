@@ -1,5 +1,5 @@
-import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { createNativeBackend } from "#src/services/exec/native/createNativeBackend";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 
 describe(createNativeBackend, () => {

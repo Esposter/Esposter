@@ -1,8 +1,8 @@
-import type { NotificationOptions } from "@/models/azure/eventGrid/NotificationOptions";
-import type { StandardMessageEntity } from "@/models/message/StandardMessageEntity";
+import type { NotificationOptions } from "#src/models/azure/eventGrid/NotificationOptions";
+import type { StandardMessageEntity } from "#src/models/message/StandardMessageEntity";
 
-import { notificationOptionsSchema } from "@/models/azure/eventGrid/NotificationOptions";
-import { standardMessageEntitySchema } from "@/models/message/StandardMessageEntity";
+import { notificationOptionsSchema } from "#src/models/azure/eventGrid/NotificationOptions";
+import { standardMessageEntitySchema } from "#src/models/message/StandardMessageEntity";
 import { z } from "zod";
 
 export interface ThreadReplyNotificationEventGridData {

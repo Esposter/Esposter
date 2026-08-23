@@ -1,8 +1,8 @@
-import type { RoomInMessage } from "@/schema/roomsInMessage";
-import type { User } from "@/schema/users";
-import type { UserToRoomInMessage } from "@/schema/usersToRoomsInMessage";
+import type { RoomInMessage } from "#src/schema/roomsInMessage";
+import type { User } from "#src/schema/users";
+import type { UserToRoomInMessage } from "#src/schema/usersToRoomsInMessage";
 
-import { schema } from "@/schema";
+import { schema } from "#src/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
 export const usersToRoomsInMessageRelation = defineRelationsPart(schema, (r) => ({

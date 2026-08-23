@@ -1,7 +1,7 @@
 import type { ItemEntityType } from "@esposter/shared";
 
-import { sanitizedMessageSchema } from "@/models/message/BaseMessageEntity";
-import { ScheduledMessageJobType } from "@/models/message/ScheduledMessageJobType";
+import { sanitizedMessageSchema } from "#src/models/message/BaseMessageEntity";
+import { ScheduledMessageJobType } from "#src/models/message/ScheduledMessageJobType";
 import { z } from "zod";
 
 export interface ReminderScheduledMessageJobPayload extends ItemEntityType<ScheduledMessageJobType.Reminder> {

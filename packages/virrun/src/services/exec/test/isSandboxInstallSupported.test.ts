@@ -1,7 +1,7 @@
-import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import { HOME_CACHE_DIRECTORY_NAME, VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
-import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
+import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
+import { HOME_CACHE_DIRECTORY_NAME, VIRRUN_TEMP_DIR_PREFIX } from "#src/services/exec/util/constants";
+import { execFileHidden } from "#src/services/exec/util/execFileHidden";
+import { buildWslLoginShellCommand } from "#src/services/exec/wsl/buildWslLoginShellCommand";
 import { getResult } from "@esposter/shared";
 import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { homedir } from "node:os";

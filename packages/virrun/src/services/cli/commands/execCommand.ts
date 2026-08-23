@@ -1,8 +1,8 @@
 import type { CommandDef } from "citty";
 
-import { CommandType } from "@/models/virrun/CommandType";
-import { ExecutionMode } from "@/models/virrun/ExecutionMode";
-import { runPassthrough } from "@/services/cli/run/runPassthrough";
+import { CommandType } from "#src/models/virrun/CommandType";
+import { ExecutionMode } from "#src/models/virrun/ExecutionMode";
+import { runPassthrough } from "#src/services/cli/run/runPassthrough";
 import { defineCommand } from "citty";
 import dedent from "dedent";
 // Forced plain exec: no snapshot reuse and no write-back even on the os backend — the cold sibling of `run`.

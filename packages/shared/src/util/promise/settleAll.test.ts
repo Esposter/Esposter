@@ -1,4 +1,4 @@
-import { settleAll } from "@/util/promise/settleAll";
+import { settleAll } from "#src/util/promise/settleAll";
 import { describe, expect, test } from "vitest";
 
 describe(settleAll, () => {

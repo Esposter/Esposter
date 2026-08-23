@@ -1,10 +1,13 @@
-import { VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME, VIRRUN_SOURCES_DIRECTORY_NAME } from "@/services/exec/wsl/constants";
-import { TEST_REPO_ROOT_WIN, TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_PREFIX } from "@/services/exec/wsl/constants.test";
-import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
-import { getSourceMirrorKey } from "@/services/exec/wsl/getSourceMirrorKey";
-import { getWslSourceMirrorEntryPath } from "@/services/exec/wsl/getWslSourceMirrorEntryPath";
-import { getWslSourceMirrorEntryUnc } from "@/services/exec/wsl/getWslSourceMirrorEntryUnc";
-import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
+import {
+  VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME,
+  VIRRUN_SOURCES_DIRECTORY_NAME,
+} from "#src/services/exec/wsl/constants";
+import { TEST_REPO_ROOT_WIN, TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_PREFIX } from "#src/services/exec/wsl/constants.test";
+import { createTestWslUnc } from "#src/services/exec/wsl/createTestWslUnc.test";
+import { getSourceMirrorKey } from "#src/services/exec/wsl/getSourceMirrorKey";
+import { getWslSourceMirrorEntryPath } from "#src/services/exec/wsl/getWslSourceMirrorEntryPath";
+import { getWslSourceMirrorEntryUnc } from "#src/services/exec/wsl/getWslSourceMirrorEntryUnc";
+import { getWslSourceMirrorPath } from "#src/services/exec/wsl/getWslSourceMirrorPath";
 import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
@@ -12,11 +15,11 @@ import { describe, expect, test, vi } from "vitest";
 // Mocked cache root, so they share a suite instead of each repeating these two vi.mock blocks: getWslNativeCacheRoot
 // Resolves to a UNC and readWslPath applies the shared `${TEST_WSL_PREFIX}${path}` transform, so every expected path
 // Is derived from the shared constants. Same mocks as createWslSourceMirrorSync.test.
-vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({
+vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), () => ({
   getWslNativeCacheRoot: () => createTestWslUnc(TEST_WSL_CACHE_ROOT_LINUX),
 }));
 
-vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
+vi.mock(import("#src/services/exec/wsl/readWslPath"), () => ({
   readWslPath: (path: string) => `${TEST_WSL_PREFIX}${path}`,
 }));
 

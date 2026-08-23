@@ -1,6 +1,6 @@
-import type { KeyedCache } from "@/models/exec/KeyedCache";
+import type { KeyedCache } from "#src/models/exec/KeyedCache";
 
-import { writeFileAtomicSync } from "@/services/exec/util/writeFileAtomicSync";
+import { writeFileAtomicSync } from "#src/services/exec/util/writeFileAtomicSync";
 import { getResult } from "@esposter/shared";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";

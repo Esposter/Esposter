@@ -1,5 +1,5 @@
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { getIsTolerableArchiveFailure } from "@/services/exec/wsl/getIsTolerableArchiveFailure";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { getIsTolerableArchiveFailure } from "#src/services/exec/wsl/getIsTolerableArchiveFailure";
 import { describe, expect, test } from "vitest";
 
 describe(getIsTolerableArchiveFailure, () => {

@@ -1,4 +1,4 @@
-import type { ReplayId } from "@/models/ReplayId";
+import type { ReplayId } from "#src/models/ReplayId";
 
 import { ID_SEPARATOR } from "@esposter/shared";
 // The id a republished event is sent with: its original identity plus the attempt this republish is. Rewriting the

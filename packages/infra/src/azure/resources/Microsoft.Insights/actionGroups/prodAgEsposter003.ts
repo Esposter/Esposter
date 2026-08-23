@@ -1,7 +1,7 @@
-import ApplicationTags from "@/azure/constants/ApplicationTags";
-import AzureGlobalDisplayLocation from "@/azure/constants/AzureGlobalDisplayLocation";
-import { prodLogicEsposterAe003 } from "@/azure/resources/Microsoft.Logic/workflows/prodLogicEsposterAe003";
-import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import ApplicationTags from "#src/azure/constants/ApplicationTags";
+import AzureGlobalDisplayLocation from "#src/azure/constants/AzureGlobalDisplayLocation";
+import { prodLogicEsposterAe003 } from "#src/azure/resources/Microsoft.Logic/workflows/prodLogicEsposterAe003";
+import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 

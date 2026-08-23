@@ -1,15 +1,15 @@
-import type { BwrapCommand } from "@/models/exec/bwrap/BwrapCommand";
-import type { ExecBackend } from "@/models/exec/ExecBackend";
-import type { ExecOptions } from "@/models/exec/ExecOptions";
+import type { BwrapCommand } from "#src/models/exec/bwrap/BwrapCommand";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
 import type { StdioOptions } from "node:child_process";
 
-import { BackendType } from "@/models/virrun/BackendType";
-import { WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER } from "@/services/exec/bwrap/constants";
-import { createStderrLiveWriter } from "@/services/exec/bwrap/createStderrLiveWriter";
-import { parseBwrapExitCode } from "@/services/exec/bwrap/parseBwrapExitCode";
-import { parseBwrapStderrStatus } from "@/services/exec/bwrap/parseBwrapStderrStatus";
-import { forwardTerminationSignals } from "@/services/exec/util/forwardTerminationSignals";
-import { spawnHidden } from "@/services/exec/util/spawnHidden";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER } from "#src/services/exec/bwrap/constants";
+import { createStderrLiveWriter } from "#src/services/exec/bwrap/createStderrLiveWriter";
+import { parseBwrapExitCode } from "#src/services/exec/bwrap/parseBwrapExitCode";
+import { parseBwrapStderrStatus } from "#src/services/exec/bwrap/parseBwrapStderrStatus";
+import { forwardTerminationSignals } from "#src/services/exec/util/forwardTerminationSignals";
+import { spawnHidden } from "#src/services/exec/util/spawnHidden";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const createBwrapBackend = (

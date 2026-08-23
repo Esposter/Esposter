@@ -37,10 +37,17 @@
     "#src/*.vue": "./src/*.vue"
   },
   "exports": {
-    ".": "./dist/index.js",
+    ".": {
+      "esposter-source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    },
     "access": "public"
   },
   "scripts": {
