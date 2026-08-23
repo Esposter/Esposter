@@ -513,9 +513,6 @@ catalogs:
     p-progress:
       specifier: ^1.0.0
       version: 1.0.0
-    pathe:
-      specifier: ^2.0.3
-      version: 2.0.3
     phaser:
       specifier: ^4.2.1
       version: 4.2.1
@@ -615,9 +612,6 @@ catalogs:
     unplugin-vue:
       specifier: ^7.2.0
       version: 7.2.0
-    v-viewer:
-      specifier: ^3.0.23
-      version: 3.0.23
     viewerjs:
       specifier: ^1.12.0
       version: 1.12.0
@@ -1040,9 +1034,6 @@ importers:
       parse-tmx:
         specifier: workspace:*
         version: link:../parse-tmx
-      pathe:
-        specifier: 'catalog:'
-        version: 2.0.3
       pdfjs-dist:
         specifier: ^6.2.108
         version: 6.2.108
@@ -1100,9 +1091,6 @@ importers:
       unicode-emoji-json:
         specifier: 'catalog:'
         version: 0.9.0
-      v-viewer:
-        specifier: 'catalog:'
-        version: 3.0.23(viewerjs@1.12.0)(vue@3.5.41(typescript@6.0.3))
       viewerjs:
         specifier: 'catalog:'
         version: 1.12.0
@@ -14352,12 +14340,6 @@ packages:
   uuid@14.0.2:
     resolution: {integrity: sha512-xZe/16rV4aa+HGSOCiY2YeLT1OybRLrrkL/Rqaq7p7GMVXjFh+6wN4oMYgjFmnSnhY8t6Xpdl2l9qmnHYuMHwQ==}
     hasBin: true
-
-  v-viewer@3.0.23:
-    resolution: {integrity: sha512-u/Zd/FXTdtdE2k2YeYMf6mU4oL0ILEZ9STHnZT7myyfRwQot68GO3O+6DwxNnHTaATiiAJTrz2MXjaqYKoB7iA==}
-    peerDependencies:
-      viewerjs: ^1.11.0
-      vue: ^3.0.0
 
   valibot@1.4.2:
     resolution: {integrity: sha512-gjdCvJ6d3RyHAneqxMYMW9QMCwYMb3jpOO0IyHZV1bnRHFBHrX3VkIILt5XYR0WhwHiH7Mty8ovuPZ/O3gamrg==}
@@ -29830,12 +29812,6 @@ snapshots:
       which-typed-array: 1.1.22
 
   uuid@14.0.2: {}
-
-  v-viewer@3.0.23(viewerjs@1.12.0)(vue@3.5.41(typescript@6.0.3)):
-    dependencies:
-      lodash-es: 4.18.1
-      viewerjs: 1.12.0
-      vue: 3.5.41(typescript@6.0.3)
 
   valibot@1.4.2(typescript@6.0.3):
     optionalDependencies:

@@ -3,13 +3,13 @@ import type { FileEntity } from "@esposter/db-schema";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { getInferredMimetype } from "@/services/file/getInferredMimetype";
+import { showImageViewer } from "@/services/file/showImageViewer";
 import { getHasThumbnail } from "@/services/message/file/getHasThumbnail";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 import { chunk, getIsServer, getResultAsync, MAX_READ_LIMIT, noop, Operation } from "@esposter/shared";
-import { api as viewerApi } from "v-viewer";
 
 export const useDownloadFileStore = defineStore("message/file", () => {
   const roomStore = useRoomStore();
@@ -98,7 +98,7 @@ export const useDownloadFileStore = defineStore("message/file", () => {
     return viewerImages;
   });
   const viewFiles = (initialViewIndex: number) => {
-    viewerApi({ images: viewableFiles.value, options: { initialViewIndex } });
+    showImageViewer(viewableFiles.value, initialViewIndex);
   };
 
   return { fileUrlMap, storeReadFileUrls, viewableFiles, viewFiles };

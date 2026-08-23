@@ -185,7 +185,6 @@ catalog:
   oxlint: ^1.79.0
   oxlint-tsgolint: ^7.0.2001
   p-progress: ^1.0.0
-  pathe: ^2.0.3
   pdfjs-dist: ^6.2.108
   phaser: ^4.2.1
   phaser4-rex-plugins: ^4.2.0
@@ -220,7 +219,6 @@ catalog:
   unocss-preset-vuetify: ^0.4.0
   unplugin-auto-import: ^21.1.0
   unplugin-vue: ^7.2.0
-  v-viewer: ^3.0.23
   viewerjs: ^1.12.0
   vite: ^8.2.2
   vitest: ^4.1.11
