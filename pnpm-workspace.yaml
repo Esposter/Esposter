@@ -44,8 +44,8 @@ catalog:
   "@fullcalendar/vue3": ^7.0.2
   "@json-layout/vocabulary": ^2.13.1
   "@koumoul/vjsf": ^4.5.4
-  "@lerna-lite/cli": ^5.6.0
-  "@lerna-lite/publish": ^5.6.0
+  "@lerna-lite/cli": ^5.6.1
+  "@lerna-lite/publish": ^5.6.1
   "@livekit/track-processors": ^0.7.2
   "@mdi/font": ^7.4.47
   "@nuxt/content": ^3.15.2
@@ -131,7 +131,7 @@ catalog:
   drizzle-kit: 1.0.0-rc.4
   drizzle-orm: 1.0.0-rc.4
   emojilib: ^4.0.3
-  eslint: ^10.8.1
+  eslint: ^10.9.0
   eslint-plugin-depend: ^1.5.0
   eslint-plugin-oxlint: ^1.79.0
   eslint-plugin-perfectionist: ^5.10.1
@@ -226,7 +226,7 @@ catalog:
   unplugin-auto-import: ^21.1.0
   unplugin-dts: ^1.0.3
   v-viewer: ^3.0.23
-  viewerjs: ^1.11.9
+  viewerjs: ^1.12.0
   vite: ^8.2.2
   vitest: ^4.1.11
   vue: ^3.5.41
