@@ -80,12 +80,10 @@ catalog:
   "@trpc/client": ^11.18.0
   "@trpc/server": ^11.18.0
   "@types/data-urls": ^3.0.5
-  "@types/dedent": ^0.7.2
   "@types/fs-extra": ^11.0.4
   "@types/howler": ^2.2.13
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
-  "@types/mjml-browser": ^5.0.0
   "@types/node": ^26.2.0
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
@@ -177,7 +175,6 @@ catalog:
   mermaid: ^11.17.0
   mime-types: ^3.0.2
   minisearch: ^7.2.0
-  mjml-browser: ^5.4.0
   msw: ^2.15.0
   msw-trpc: ^2.0.1
   neverthrow: ^8.2.0
@@ -188,7 +185,6 @@ catalog:
   oxlint: ^1.79.0
   oxlint-tsgolint: ^7.0.2001
   p-progress: ^1.0.0
-  pathe: ^2.0.3
   pdfjs-dist: ^6.2.108
   phaser: ^4.2.1
   phaser4-rex-plugins: ^4.2.0
@@ -209,7 +205,6 @@ catalog:
   survey-creator-core: ^3.0.1
   survey-creator-vue: ^3.0.1
   survey-vue3-ui: ^3.0.1
-  temporal-polyfill: ^1.0.4
   three: ^0.185.1
   three-globe: ^2.45.2
   trpc-nuxt: ^2.1.2
@@ -224,7 +219,6 @@ catalog:
   unocss-preset-vuetify: ^0.4.0
   unplugin-auto-import: ^21.1.0
   unplugin-vue: ^7.2.0
-  v-viewer: ^3.0.23
   viewerjs: ^1.12.0
   vite: ^8.2.2
   vitest: ^4.1.11

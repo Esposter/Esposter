@@ -70,24 +70,7 @@ Four kinds of package are never absorbed, whatever their size or call-site count
 
 Applying the gate across the catalog. Only entries with a verdict worth recording appear — everything absent from these tables passed the gate as an ordinary keep, and `pnpm-workspace.yaml` is the list.
 
-### Remove — nothing to design
-
-| Entry               | Finding                                                                                                                                                                                                                                                                               |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `temporal-polyfill` | A production dependency of the app with no import anywhere in the workspace                                                                                                                                                                                                           |
-| `mjml-browser`      | Declared directly but never imported — it is the email editor plugin's own dependency, and the direct entry only forces a major above the range that plugin asks for. Either the pin is deliberate and belongs beside the others in the workspace `overrides` block, or it is residue |
-| `sql-highlight`     | A production dependency used only by the development query logger — the entry is in the wrong section rather than wrong to exist                                                                                                                                                      |
-
-### Absorb — small, bounded, no spec
-
-Each is a single behaviour we would write once into `@esposter/shared` and stop tracking. None is worth a proposal page.
-
-| Entry             | Call sites | What replaces it                                                                                                             |
-| ----------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `lodash-omitdeep` | one        | A recursive omit over the clicker snapshot, which is the only shape it is ever given                                         |
-| `pathe/utils`     | one        | The `filename` helper alone — a basename without its extension                                                               |
-| `dedent`          | a handful  | A template tag stripping the common indent, used by two request bodies and the query logger                                  |
-| `p-progress`      | one        | The block-upload aggregate, which our own conventions want expressed as a `Result` chain rather than as a subclassed promise |
+A `@types/x` entry is read against the package it types rather than against a call site of its own: one whose runtime package now ships its own declarations is residue, and one whose major trails the package it types is describing an API we no longer install.
 
 ### Thin — keep the engine, drop the adapter
 
@@ -96,8 +79,8 @@ The wrapper here is a component file we could write, and its cost is the version
 | Cluster              | Finding                                                                                                                                                                                                                                                                                                                                                                                                   |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | PDF rendering        | Three packages serve one component — a thumbnail embed, a full viewer, and the renderer both are built on, which we ship regardless. One renderer copy is installed, because an `overrides` entry forces both wrappers onto a major above what either declares. The renderer is a permanent keep; the two adapters are a page canvas and a dialog shell, and removing them retires the override with them |
-| Media viewing        | An image lightbox and its Vue adapter, reached through one call that hands it a list and an index. The library is images-only, which is the actual gap — a video attachment opens in nothing                                                                                                                                                                                                              |
-| 3D visual            | A declarative renderer, its helper library and its Nuxt module serve two decorative components, on top of the 3D engine already shipped for the globe                                                                                                                                                                                                                                                     |
+| Media viewing        | The lightbox engine is constructed directly, over a hidden element built for it, by the one service that opens it — its Vue adapter is gone, and with it a bundled copy of a utility library. The engine is images-only, which is the remaining gap: a video attachment opens in nothing                                                                                                                  |
+| 3D visual            | A declarative renderer, its helper library and its Nuxt module serve one decorative component on one page, on top of the 3D engine already shipped for the globe                                                                                                                                                                                                                                          |
 | Charts               | The chart wrapper is a thin component over the chart engine, and our own component already sits in front of it                                                                                                                                                                                                                                                                                            |
 | Page-builder plugins | Around a dozen single-purpose plugins around the page builder, several unmaintained and two imported through `@ts-expect-error`. The large ones — the webpage preset, the image editor, the exporter — are engines; the small ones register a block and a trait                                                                                                                                           |
 
@@ -110,17 +93,18 @@ Recording these matters as much as the backlog, because each is a candidate some
 - **The worker-backed timers**, behind the recording indicator and the interval composable. Their whole value is surviving background-tab throttling, and the failure mode of a naive replacement is silent drift that no test notices.
 - **The file-picker ponyfill**, behind import, export and attachment selection. Its value is the fallback path for browsers without the File System Access API, which is exactly the part a replacement would skip.
 - **The spreadsheet reader and writer.** Two packages for one feature reads like duplication, but the format is a specification and this is the stop list's first rule.
+- **The deep omit**, behind the clicker's save trigger. What it produces is compared against the previous snapshot to decide whether to save, so a replacement that treats a class instance or a nested array even slightly differently either saves on every tick or stops saving, and neither announces itself.
+- **The indent-stripping template tag**, behind a request body, the query logger and the virtual runner's command help. The tag is a few lines; the part that is not is escape handling, and getting it wrong corrupts a payload rather than a message.
+- **The progress aggregate**, behind block upload. Counting settled blocks ourselves is small, but the counter needs a per-promise continuation and our conventions route those through `Result`, which makes this a rewrite of the upload path rather than a swap. It goes with whatever next touches that path.
 
 ## Backlog
 
-Ranked by what each buys, not by size. The first two need no design and should not wait for the rest.
+Ranked by what each buys, not by size. What is left all needs a design first — the cleanups are done.
 
-1. **Drain the removals.** Delete the unimported entry, resolve the pin, and move the logger's highlighter to development dependencies. One commit, no behaviour change.
-2. **Absorb the four utilities.** One commit per helper into `@esposter/shared`, each landing with the test that pins the behaviour its call site depends on.
-3. **Own the media viewer.** The strongest item, because it is a feature gap rather than a cleanup: one lightbox carrying images and video, keyboard and gesture navigation, a caption from the filename, and download — the behaviour the reference products have and the current library structurally cannot grow. Graduates to its own proposal page before any code.
-4. **Consolidate PDF onto the renderer.** Removes two adapters, the question of which one answers what, and the override holding both above the major they declare. The scope has to be stated before it starts: a page canvas with navigation and zoom is bounded, and the text layer, annotations and in-document search are where it stops being bounded. Own proposal page.
-5. **Question the 3D visual, then decide its dependencies.** Whether two decorative components earn a declarative renderer is a product question, and the dependency answer follows it rather than leading it. No work until that is answered.
-6. **Prune the page-builder plugin belt.** Absorb the block-registering plugins that are unmaintained or untyped, keep the engines. Lowest value per unit of effort, so it goes last.
+1. **Own the media viewer.** The strongest item, because it is a feature gap rather than a cleanup: one lightbox carrying images and video, keyboard and gesture navigation, a caption from the filename, and download — the behaviour the reference products have and the current library structurally cannot grow. Graduates to its own proposal page before any code.
+2. **Consolidate PDF onto the renderer.** Removes two adapters, the question of which one answers what, and the override holding both above the major they declare. The scope has to be stated before it starts: a page canvas with navigation and zoom is bounded, and the text layer, annotations and in-document search are where it stops being bounded. Own proposal page.
+3. **Question the 3D visual, then decide its dependencies.** Whether one decorative component earns a declarative renderer is a product question, and the dependency answer follows it rather than leading it. No work until that is answered.
+4. **Prune the page-builder plugin belt.** Absorb the block-registering plugins that are unmaintained or untyped, keep the engines. Lowest value per unit of effort, so it goes last.
 
 The chart wrapper is deliberately absent. It is the cheapest item in the analysis and it buys the least, which makes it something to fold into whichever change next touches that component rather than a task of its own.
 

@@ -35,7 +35,7 @@ flowchart TD
   thumb --> upthumb[Thumbnail blob PUT to thumbnailSasUrl]
   upload --> render[Message list renders the thumbnail]
   upthumb --> render
-  render -->|click| lightbox[v-viewer opens the original]
+  render -->|click| lightbox[showImageViewer opens the original]
 ```
 
 ## Data model
@@ -67,6 +67,7 @@ Removing an attachment (`deleteFile`), deleting a message with attachments, or d
 | `packages/app/app/services/file/uploadFileToSas.ts`                                  | The one SAS upload round-trip every site funnels through    |
 | `packages/app/app/services/file/validateFile.ts`                                     | Single file validator returning a discriminated result      |
 | `packages/app/app/services/file/generateImageThumbnail.ts`                           | Canvas downscale to a WebP thumbnail blob                   |
+| `packages/app/app/services/file/showImageViewer.ts`                                  | Builds the hidden gallery element the lightbox engine reads |
 | `packages/app/app/composables/message/file/useUploadFiles.ts`                        | Composer path — validate, upload original, upload thumbnail |
 | `packages/app/app/composables/message/file/useReadFileUrls.ts`                       | Batch-resolves originals and thumbnails into read urls      |
 | `packages/app/app/components/Message/Model/FileRenderer/Image.vue`                   | Renders the thumbnail inline, original in the lightbox      |
