@@ -70,13 +70,7 @@ Four kinds of package are never absorbed, whatever their size or call-site count
 
 Applying the gate across the catalog. Only entries with a verdict worth recording appear — everything absent from these tables passed the gate as an ordinary keep, and `pnpm-workspace.yaml` is the list.
 
-### Remove — nothing to design
-
-| Entry               | Finding                                                                                                                                                                                                                                                                               |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `temporal-polyfill` | A production dependency of the app with no import anywhere in the workspace                                                                                                                                                                                                           |
-| `mjml-browser`      | Declared directly but never imported — it is the email editor plugin's own dependency, and the direct entry only forces a major above the range that plugin asks for. Either the pin is deliberate and belongs beside the others in the workspace `overrides` block, or it is residue |
-| `sql-highlight`     | A production dependency used only by the development query logger — the entry is in the wrong section rather than wrong to exist                                                                                                                                                      |
+A `@types/x` entry is read against the package it types rather than against a call site of its own: one whose runtime package now ships its own declarations is residue, and one whose major trails the package it types is describing an API we no longer install.
 
 ### Absorb — small, bounded, no spec
 
@@ -86,7 +80,7 @@ Each is a single behaviour we would write once into `@esposter/shared` and stop 
 | ----------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | `lodash-omitdeep` | one        | A recursive omit over the clicker snapshot, which is the only shape it is ever given                                         |
 | `pathe/utils`     | one        | The `filename` helper alone — a basename without its extension                                                               |
-| `dedent`          | a handful  | A template tag stripping the common indent, used by two request bodies and the query logger                                  |
+| `dedent`          | a handful  | A template tag stripping the common indent, behind a request body, the query logger and the virtual runner's command help    |
 | `p-progress`      | one        | The block-upload aggregate, which our own conventions want expressed as a `Result` chain rather than as a subclassed promise |
 
 ### Thin — keep the engine, drop the adapter
@@ -113,14 +107,13 @@ Recording these matters as much as the backlog, because each is a candidate some
 
 ## Backlog
 
-Ranked by what each buys, not by size. The first two need no design and should not wait for the rest.
+Ranked by what each buys, not by size. The first needs no design and should not wait for the rest.
 
-1. **Drain the removals.** Delete the unimported entry, resolve the pin, and move the logger's highlighter to development dependencies. One commit, no behaviour change.
-2. **Absorb the four utilities.** One commit per helper into `@esposter/shared`, each landing with the test that pins the behaviour its call site depends on.
-3. **Own the media viewer.** The strongest item, because it is a feature gap rather than a cleanup: one lightbox carrying images and video, keyboard and gesture navigation, a caption from the filename, and download — the behaviour the reference products have and the current library structurally cannot grow. Graduates to its own proposal page before any code.
-4. **Consolidate PDF onto the renderer.** Removes two adapters, the question of which one answers what, and the override holding both above the major they declare. The scope has to be stated before it starts: a page canvas with navigation and zoom is bounded, and the text layer, annotations and in-document search are where it stops being bounded. Own proposal page.
-5. **Question the 3D visual, then decide its dependencies.** Whether two decorative components earn a declarative renderer is a product question, and the dependency answer follows it rather than leading it. No work until that is answered.
-6. **Prune the page-builder plugin belt.** Absorb the block-registering plugins that are unmaintained or untyped, keep the engines. Lowest value per unit of effort, so it goes last.
+1. **Absorb the four utilities.** One commit per helper into `@esposter/shared`, each landing with the test that pins the behaviour its call site depends on.
+2. **Own the media viewer.** The strongest item, because it is a feature gap rather than a cleanup: one lightbox carrying images and video, keyboard and gesture navigation, a caption from the filename, and download — the behaviour the reference products have and the current library structurally cannot grow. Graduates to its own proposal page before any code.
+3. **Consolidate PDF onto the renderer.** Removes two adapters, the question of which one answers what, and the override holding both above the major they declare. The scope has to be stated before it starts: a page canvas with navigation and zoom is bounded, and the text layer, annotations and in-document search are where it stops being bounded. Own proposal page.
+4. **Question the 3D visual, then decide its dependencies.** Whether two decorative components earn a declarative renderer is a product question, and the dependency answer follows it rather than leading it. No work until that is answered.
+5. **Prune the page-builder plugin belt.** Absorb the block-registering plugins that are unmaintained or untyped, keep the engines. Lowest value per unit of effort, so it goes last.
 
 The chart wrapper is deliberately absent. It is the cheapest item in the analysis and it buys the least, which makes it something to fold into whichever change next touches that component rather than a task of its own.
 
