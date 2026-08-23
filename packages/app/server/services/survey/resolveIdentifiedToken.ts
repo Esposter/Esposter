@@ -1,18 +1,13 @@
 import type { SurveyResponseModeValidator } from "@@/server/models/survey/SurveyResponseModeValidator";
-import type { Clause } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
 
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { invalidParticipantTokenError } from "@@/server/services/survey/invalidParticipantTokenError";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { getTopNEntities, serializeClauses } from "@esposter/db";
-import {
-  AzureTable,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
-  ProgramParticipantEntity,
-  ResourceType,
-} from "@esposter/db-schema";
+import { AzureTable, ProgramParticipantEntity, ResourceType } from "@esposter/db-schema";
 
 // The program is the issuer, the survey is the gate — a token only passes when it was issued by a
 // Program actually bound to this survey, so another survey's token is as good as a forged one

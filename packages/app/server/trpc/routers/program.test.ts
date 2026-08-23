@@ -2,7 +2,7 @@ import type { ProgramResource } from "#shared/models/resource/program/ProgramRes
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { Clause } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
@@ -18,13 +18,11 @@ import { programRouter } from "@@/server/trpc/routers/program";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
+import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { getTopNEntities, serializeClauses } from "@esposter/db";
 import {
-  AZURE_MAX_PAGE_SIZE,
   AzureEntityType,
   AzureTable,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
   ProgramParticipantEntity,
   resources,
   ResourceType,

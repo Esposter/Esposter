@@ -1,14 +1,10 @@
-import type { Clause, RoomInMessage, User } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
+import type { RoomInMessage, User } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { countEntities, getTableNullClause, serializeClauses } from "@esposter/db";
-import {
-  AzureTable,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
-  ModerationNoteEntity,
-  ModerationNoteEntityPropertyNames,
-} from "@esposter/db-schema";
+import { AzureTable, ModerationNoteEntity, ModerationNoteEntityPropertyNames } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 // The paginated read only returns the loaded page, so the notes badge needs a true total. A target's

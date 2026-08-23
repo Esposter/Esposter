@@ -1,11 +1,13 @@
-/* eslint-disable perfectionist/sort-switch-case */
-import type { Filter, SerializableValue } from "@esposter/db-schema";
+import type { SerializableValue } from "@esposter/azure";
+import type { Filter } from "@esposter/db-schema";
 
+/* eslint-disable perfectionist/sort-switch-case */
 import { getIsFilterPending } from "#shared/services/message/getIsFilterPending";
 import { getFilterKeyword } from "@/services/message/filter/getFilterKeyword";
 import { useRoomStore } from "@/store/message/room";
 import { useUserStore } from "@/store/message/user";
-import { FilterType, serializeValue } from "@esposter/db-schema";
+import { serializeValue } from "@esposter/azure";
+import { FilterType } from "@esposter/db-schema";
 import { exhaustiveGuard, InvalidOperationError, Operation, uncapitalize } from "@esposter/shared";
 
 // Every picker writes the shape its own filter type declares, so a value of any other shape is a bug in the

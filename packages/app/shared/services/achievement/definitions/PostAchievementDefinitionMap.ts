@@ -2,7 +2,8 @@ import { AchievementCategory } from "#shared/models/achievement/AchievementCateg
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
-import { BinaryOperator, PostAchievementName } from "@esposter/db-schema";
+import { BinaryOperator } from "@esposter/azure";
+import { PostAchievementName } from "@esposter/db-schema";
 
 export const PostAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Post, {
   [PostAchievementName.BriefComment]: defineAchievementDefinition({

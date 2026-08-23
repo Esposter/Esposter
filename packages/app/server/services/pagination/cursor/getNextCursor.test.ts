@@ -1,4 +1,4 @@
-import type { CompositeKey } from "@esposter/db-schema";
+import type { CompositeKey } from "@esposter/azure";
 
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCursor";

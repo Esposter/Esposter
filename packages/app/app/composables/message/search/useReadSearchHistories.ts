@@ -1,6 +1,6 @@
 import { useRoomStore } from "@/store/message/room";
 import { useSearchHistoryStore } from "@/store/message/search/history";
-import { CompositeKeyPropertyNames } from "@esposter/db-schema";
+import { CompositeKeyPropertyNames } from "@esposter/azure";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadSearchHistories = () => {

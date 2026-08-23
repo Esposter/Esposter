@@ -1,6 +1,7 @@
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
 import { getFilterKeyword } from "@/services/message/filter/getFilterKeyword";
-import { FilterType, FilterTypeHas, serializeValue } from "@esposter/db-schema";
+import { serializeValue } from "@esposter/azure";
+import { FilterType, FilterTypeHas } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, uncapitalize } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

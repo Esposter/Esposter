@@ -1,6 +1,7 @@
 import type { ReadMessagesInput } from "#shared/models/db/message/ReadMessagesInput";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { Clause, MessageEntity } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
+import type { MessageEntity } from "@esposter/db-schema";
 import type { SetOptional } from "type-fest";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -8,12 +9,10 @@ import { DEFAULT_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/p
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
+import { BinaryOperator, CompositeKey, CompositeKeyPropertyNames } from "@esposter/azure";
 import { getTableNullClause, getTopNEntities, getTopNEntitiesByType, serializeClauses } from "@esposter/db";
 import {
   AzureTable,
-  BinaryOperator,
-  CompositeKey,
-  CompositeKeyPropertyNames,
   getReverseTickedTimestamp,
   MessageEntityMap,
   StandardMessageEntityPropertyNames,

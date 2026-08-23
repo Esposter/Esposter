@@ -14,7 +14,8 @@ import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test"
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
-import { AZURE_MAX_PAGE_SIZE, resources } from "@esposter/db-schema";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
+import { resources } from "@esposter/db-schema";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 

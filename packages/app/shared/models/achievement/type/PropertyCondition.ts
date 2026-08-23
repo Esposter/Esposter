@@ -2,7 +2,7 @@ import type { AchievementOperator } from "#shared/models/achievement/Achievement
 import type { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import type { TRPCPaths } from "#shared/models/trpc/TRPCPaths";
 import type { TRPCRouterInputs } from "#shared/models/trpc/TRPCRouterInputs";
-import type { BinaryOperator } from "@esposter/db-schema";
+import type { BinaryOperator } from "@esposter/azure";
 import type { GetProperties, ItemEntityType } from "@esposter/shared";
 import type { Get } from "type-fest";
 

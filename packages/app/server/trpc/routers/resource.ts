@@ -5,7 +5,8 @@ import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount"
 import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCount";
 import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
 import type { Context } from "@@/server/trpc/context";
-import type { Clause, Resource } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
+import type { Resource } from "@esposter/db-schema";
 
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
@@ -35,12 +36,11 @@ import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { purgeResource } from "@esposter/db";
 import {
   AzureContainer,
   AzureTable,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
   DatabaseEntityType,
   getResourceOwnedTableNames,
   RESOURCE_NAME_MAX_LENGTH,

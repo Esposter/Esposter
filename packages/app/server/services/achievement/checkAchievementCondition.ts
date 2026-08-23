@@ -3,7 +3,7 @@ import { AchievementConditionType } from "#shared/models/achievement/type/Achiev
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import { dayjs } from "#shared/services/dayjs";
 import { EN_US_SEGMENTER } from "#shared/services/intl/constants";
-import { BinaryOperator } from "@esposter/db-schema";
+import { BinaryOperator } from "@esposter/azure";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const checkAchievementCondition = (

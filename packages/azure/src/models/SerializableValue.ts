@@ -4,7 +4,7 @@ export const SERIALIZABLE_VALUE_MAX_LENGTH = 100;
 
 export type SerializableValue = boolean | Date | null | number | string;
 
-export const serializableValueSchema: z.ZodType<SerializableValue> = z.union([
+export const serializableValueSchema: z.ZodType<SerializableValue, SerializableValue> = z.union([
   z.boolean(),
   z.date(),
   z.null(),

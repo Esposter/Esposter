@@ -1,8 +1,9 @@
-import type { Clause } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
+import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import {
   deserializeEntity,
   getFilesBlobNames,
@@ -12,11 +13,8 @@ import {
   submitTransactionBatches,
 } from "@esposter/db";
 import {
-  AZURE_MAX_PAGE_SIZE,
   AzureContainer,
   AzureTable,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";

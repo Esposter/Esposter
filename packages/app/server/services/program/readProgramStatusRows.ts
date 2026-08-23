@@ -5,8 +5,9 @@ import { programResourceSchema } from "#shared/models/resource/program/ProgramRe
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { readSurveyResponseEntities } from "@@/server/services/survey/readSurveyResponseEntities";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { getPartitionKeyFilter, getTopNEntities } from "@esposter/db";
-import { AZURE_MAX_PAGE_SIZE, AzureTable, ProgramParticipantEntity } from "@esposter/db-schema";
+import { AzureTable, ProgramParticipantEntity } from "@esposter/db-schema";
 
 // The canonical participants × responses join, purpose-built rather than routed through a generic join engine.
 // A response with no matching participant (an anonymous-era row) carries nobody, so it never appears here

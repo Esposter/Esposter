@@ -1,4 +1,4 @@
-import type { CompositeKey } from "@esposter/db-schema";
+import type { CompositeKey } from "@esposter/azure";
 
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCursor";

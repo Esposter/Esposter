@@ -1,10 +1,11 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { AzureEntity, Clause } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
+import type { AzureEntity } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
+import { BinaryOperator } from "@esposter/azure";
 import { serializeKey } from "@esposter/db";
-import { BinaryOperator } from "@esposter/db-schema";
 import { exhaustiveGuard, NotFoundError } from "@esposter/shared";
 
 export const getCursorWhereAzureTable = <TItem extends AzureEntity>(

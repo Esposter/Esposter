@@ -1,4 +1,5 @@
-import type { CompositeKey, MessageEntity, RoomInMessage, User } from "@esposter/db-schema";
+import type { CompositeKey } from "@esposter/azure";
+import type { MessageEntity, RoomInMessage, User } from "@esposter/db-schema";
 import type { ItemMetadata } from "@esposter/shared";
 import type { DBSchema } from "idb";
 

@@ -5,7 +5,7 @@ import type { IndexKey, IndexNames } from "idb";
 
 import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
-import { CompositeKeyPropertyNames } from "@esposter/db-schema";
+import { CompositeKeyPropertyNames } from "@esposter/azure";
 import { toRawDeep } from "@esposter/shared";
 
 // A refused write is reported to whoever asked for it rather than swallowed here — the caller that runs this

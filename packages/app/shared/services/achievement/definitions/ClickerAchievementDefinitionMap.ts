@@ -5,7 +5,8 @@ import { AchievementConditionType } from "#shared/models/achievement/type/Achiev
 import { BuildingIds } from "#shared/models/clicker/data/building/BuildingId";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
-import { BinaryOperator, ClickerAchievementName } from "@esposter/db-schema";
+import { BinaryOperator } from "@esposter/azure";
+import { ClickerAchievementName } from "@esposter/db-schema";
 
 export const ClickerAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Clicker, {
   [ClickerAchievementName.ClickerAddict]: defineAchievementDefinition({

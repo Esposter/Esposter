@@ -1,6 +1,7 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { BlobDeletionEventGridData, Clause } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
+import type { BlobDeletionEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
@@ -15,13 +16,11 @@ import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
+import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { getBlobName, getTopNEntities, serializeClauses } from "@esposter/db";
 import {
-  AZURE_MAX_PAGE_SIZE,
   AzureContainer,
   AzureTable,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
   DatabaseEntityType,
   resources,
   ResourceType,
