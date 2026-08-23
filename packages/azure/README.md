@@ -61,8 +61,9 @@ the boolean structure by hand. `deserializeClause` is the inverse, and is what l
 filter it was handed rather than pattern-matching the string.
 
 ```ts
-import { getTableNullClause, serializeClauses } from "@esposter/azure";
+import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause, serializeClauses } from "@esposter/azure";
 
+const roomId = "00000000-0000-0000-0000-000000000000";
 const filter = serializeClauses([
   { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
   getTableNullClause("deletedAt"),

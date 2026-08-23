@@ -15,7 +15,7 @@ This file is the canonical guidance for AI coding agents working in this reposit
 
 - **Framework**: Nuxt 4
 - **UI Library**: Vue 3.5+
-- **Build System**: Vite, Rolldown
+- **Build System**: Vite (app), tsdown (packages)
 - **Styling**: UnoCSS (Attributify Mode), Vuetify 4, Sass
 - **State Management**: Pinia
 - **API**: tRPC, Nuxt Server Routes
