@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.38.0](https://github.com/Esposter/Esposter/compare/v2.37.2...v2.38.0) (2026-08-23)
+
+### Bug Fixes
+
+* **lint:** disable the .then ban where a fire-and-forget deregisters itself ([d8f76db](https://github.com/Esposter/Esposter/commit/d8f76db0818d0b3eed9dc60762906ad4e19ee612))
+
 ## [2.37.2](https://github.com/Esposter/Esposter/compare/v2.37.1...v2.37.2) (2026-08-14)
 
 **Note:** Version bump only for package vue-phaserjs

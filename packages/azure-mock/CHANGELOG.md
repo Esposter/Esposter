@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.38.0](https://github.com/Esposter/Esposter/compare/v2.37.2...v2.38.0) (2026-08-23)
+
+### Bug Fixes
+
+* **azure-mock:** refresh bundle size snapshot for MockBlobClient.getProperties ([9d3d902](https://github.com/Esposter/Esposter/commit/9d3d902a1f6ea39c7f06d6d939ae6f91d34e9168))
+* **rbac,moderation:** close the two hierarchy bypasses and answer the review ([3583254](https://github.com/Esposter/Esposter/commit/3583254f9c703b1a78b073078e16cfce55a1db61))
+
 ## [2.37.2](https://github.com/Esposter/Esposter/compare/v2.37.1...v2.37.2) (2026-08-14)
 
 **Note:** Version bump only for package azure-mock

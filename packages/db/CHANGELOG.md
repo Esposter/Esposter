@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.38.0](https://github.com/Esposter/Esposter/compare/v2.37.2...v2.38.0) (2026-08-23)
+
+### Bug Fixes
+
+* answer the docs review, and correct three claims it caught ([934d624](https://github.com/Esposter/Esposter/commit/934d624f43ef339ea14f2b8e0b29867611c3f8ba))
+* **db:** reshape the clause serializer the autofix flattened ([4f595c4](https://github.com/Esposter/Esposter/commit/4f595c4463a6caa53dbf7a6e4c30b8de75566c5f))
+* green up CI, and close the review findings it did not catch ([dde8ffe](https://github.com/Esposter/Esposter/commit/dde8ffebb357415245186d6e803242608bcaf53e))
+* **pagination:** single-flight the appending read ([18a343e](https://github.com/Esposter/Esposter/commit/18a343ee4b3c4f1614b26f5f9cbc76f7e9a9eec0))
+
+### Features
+
+* **search:** allow many filters of one type, and add has:file ([6cd4b39](https://github.com/Esposter/Esposter/commit/6cd4b390abfd99b8a6aced9a6ffb5846d4575682))
+
 ## [2.37.2](https://github.com/Esposter/Esposter/compare/v2.37.1...v2.37.2) (2026-08-14)
 
 **Note:** Version bump only for package @esposter/db

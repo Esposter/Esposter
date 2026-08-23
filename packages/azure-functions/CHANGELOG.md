@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.38.0](https://github.com/Esposter/Esposter/compare/v2.37.2...v2.38.0) (2026-08-23)
+
+### Bug Fixes
+
+* address the CodeRabbit findings from the 0b65d92f7..db14d8d76 review ([5a3df2e](https://github.com/Esposter/Esposter/commit/5a3df2e8ac07c6ce502b253c76d355c6a4d2575b))
+* **auth:** name the adapter test block after its export, drop the useless fallback ([c993bd6](https://github.com/Esposter/Esposter/commit/c993bd67bfa97ffa9323c8370fabad9f7c4cd2d8))
+* **ci:** make Merge Coverage fail instead of skip, and unstick main ([0f78c22](https://github.com/Esposter/Esposter/commit/0f78c2277f9d15a3b7f85a82b3d74281dd1f2253)), closes [#1070](https://github.com/Esposter/Esposter/issues/1070)
+* green up CI, and close the review findings it did not catch ([dde8ffe](https://github.com/Esposter/Esposter/commit/dde8ffebb357415245186d6e803242608bcaf53e))
+* **invites:** answer the review — lock the room around the pause check, and stop two rollbacks resurrecting dead state ([d287e80](https://github.com/Esposter/Esposter/commit/d287e80c9d5e8649022a768fd921bacf89412563))
+* **rbac,moderation:** close the two hierarchy bypasses and answer the review ([3583254](https://github.com/Esposter/Esposter/commit/3583254f9c703b1a78b073078e16cfce55a1db61))
+* **skills,docs:** answer the fifth review and refresh the azure-functions bundle ([2f48e76](https://github.com/Esposter/Esposter/commit/2f48e76e2dfd34068d8ab415dba90441612e9e56))
+
+### Features
+
+* **esbabbler:** make a thread a place you work in ([ee35826](https://github.com/Esposter/Esposter/commit/ee3582692730b4806a2453d5cea8523201cf4ecd))
+
 ## [2.37.2](https://github.com/Esposter/Esposter/compare/v2.37.1...v2.37.2) (2026-08-14)
 
 **Note:** Version bump only for package @esposter/azure-functions

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.38.0](https://github.com/Esposter/Esposter/compare/v2.37.2...v2.38.0) (2026-08-23)
+
+### Bug Fixes
+
+* **rbac,moderation:** close the two hierarchy bypasses and answer the review ([3583254](https://github.com/Esposter/Esposter/commit/3583254f9c703b1a78b073078e16cfce55a1db61))
+
+### Features
+
+* **esbabbler:** make a thread a place you work in ([ee35826](https://github.com/Esposter/Esposter/commit/ee3582692730b4806a2453d5cea8523201cf4ecd))
+* **esbabbler:** per-room custom emoji ([350c183](https://github.com/Esposter/Esposter/commit/350c18335ae63516a2aa259de1a369481aaf1077))
+* **invites:** Discord's invite surfaces — a panel that lists and pauses, a dialog that hands over a link ([7f5fdec](https://github.com/Esposter/Esposter/commit/7f5fdecf4e028a9320fd70dea3062c97e05c9927))
+
 ## [2.37.2](https://github.com/Esposter/Esposter/compare/v2.37.1...v2.37.2) (2026-08-14)
 
 **Note:** Version bump only for package @esposter/db-mock

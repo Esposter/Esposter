@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.38.0](https://github.com/Esposter/Esposter/compare/v2.37.2...v2.38.0) (2026-08-23)
+
+### Bug Fixes
+
+* answer the docs review, and correct three claims it caught ([934d624](https://github.com/Esposter/Esposter/commit/934d624f43ef339ea14f2b8e0b29867611c3f8ba))
+* **coderabbit:** drain the review's findings at every severity ([3f6be53](https://github.com/Esposter/Esposter/commit/3f6be536a74978ad5bff2a71f10750ac01b8c0dc))
+* **coderabbit:** drain the second review's findings ([9bba2f2](https://github.com/Esposter/Esposter/commit/9bba2f23688e9aa0c23046b61499093bc486ed7e))
+* **dates:** correct what NuxtTime actually does on the server ([409e6da](https://github.com/Esposter/Esposter/commit/409e6dac74685ad7e71ea12ffaada49b563ec046))
+* keep content.config.ts on a literal, since postinstall runs before the build ([c73e6df](https://github.com/Esposter/Esposter/commit/c73e6dfcaf9de1db7b4f10dac419a6397dbdf7e5))
+* **store:** name the partition for the last four ambient writes ([7ea7b8c](https://github.com/Esposter/Esposter/commit/7ea7b8c26d254b8371337f4236d85e40ed3d0fe0))
+* **vuetify:** ban per-field hide-details now every call site is clean ([81ddab2](https://github.com/Esposter/Esposter/commit/81ddab209b28d8846ad013e8fba56df1adb9a33a))
+
+### Features
+
+* **image:** move every image onto NuxtImg, and ban v-img ([7465881](https://github.com/Esposter/Esposter/commit/74658817bc9d9ff8b500f45caffd9999791824c4))
+* **lint:** ban the bare `vi.fn()` in test files ([a4be8df](https://github.com/Esposter/Esposter/commit/a4be8df768b364537fd404d2de99df0c78d12ed8))
+* **lint:** ban try/catch and .then, and stop restating what oxlint enforces ([5263dd3](https://github.com/Esposter/Esposter/commit/5263dd373647adeb3dc1c03290bf24b731db31fd))
+* **lint:** decide the mutating-array bans that were still left to review ([d564d98](https://github.com/Esposter/Esposter/commit/d564d983c122c5144f9126df79c6c526ded9f576))
+
 ## [2.37.2](https://github.com/Esposter/Esposter/compare/v2.37.1...v2.37.2) (2026-08-14)
 
 **Note:** Version bump only for package @esposter/configuration

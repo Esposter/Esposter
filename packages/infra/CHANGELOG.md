@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.38.0](https://github.com/Esposter/Esposter/compare/v2.37.2...v2.38.0) (2026-08-23)
+
+### Bug Fixes
+
+* **ci:** make Merge Coverage fail instead of skip, and unstick main ([0f78c22](https://github.com/Esposter/Esposter/commit/0f78c2277f9d15a3b7f85a82b3d74281dd1f2253)), closes [#1070](https://github.com/Esposter/Esposter/issues/1070)
+
 ## [2.37.2](https://github.com/Esposter/Esposter/compare/v2.37.1...v2.37.2) (2026-08-14)
 
 **Note:** Version bump only for package @esposter/infra

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.38.0](https://github.com/Esposter/Esposter/compare/v2.37.2...v2.38.0) (2026-08-23)
+
+### Bug Fixes
+
+* answer the docs review, and correct three claims it caught ([934d624](https://github.com/Esposter/Esposter/commit/934d624f43ef339ea14f2b8e0b29867611c3f8ba))
+
+### Features
+
+* **emoji:** tone-sensitive reactions, a reaction hover card and the Reactions dialog ([6ae1cbf](https://github.com/Esposter/Esposter/commit/6ae1cbfbde31b955572f2d9eb8c0119620fd3f07))
+* **lint:** ban try/catch and .then, and stop restating what oxlint enforces ([5263dd3](https://github.com/Esposter/Esposter/commit/5263dd373647adeb3dc1c03290bf24b731db31fd))
+
 ## [2.37.2](https://github.com/Esposter/Esposter/compare/v2.37.1...v2.37.2) (2026-08-14)
 
 **Note:** Version bump only for package virrun

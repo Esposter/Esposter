@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.38.0](https://github.com/Esposter/Esposter/compare/v2.37.2...v2.38.0) (2026-08-23)
+
+### Bug Fixes
+
+* **message:** keep drafts and thread replies that a race would drop ([f460e0c](https://github.com/Esposter/Esposter/commit/f460e0cea54e160efb7d4ca48dfc385ebb10bf8b))
+* **store:** name the partition for the last four ambient writes ([7ea7b8c](https://github.com/Esposter/Esposter/commit/7ea7b8c26d254b8371337f4236d85e40ed3d0fe0))
+
+### Features
+
+* **esbabbler:** make a thread a place you work in ([ee35826](https://github.com/Esposter/Esposter/commit/ee3582692730b4806a2453d5cea8523201cf4ecd))
+* **esbabbler:** per-room custom emoji ([350c183](https://github.com/Esposter/Esposter/commit/350c18335ae63516a2aa259de1a369481aaf1077))
+* **lint:** ban try/catch and .then, and stop restating what oxlint enforces ([5263dd3](https://github.com/Esposter/Esposter/commit/5263dd373647adeb3dc1c03290bf24b731db31fd))
+
 ## [2.37.2](https://github.com/Esposter/Esposter/compare/v2.37.1...v2.37.2) (2026-08-14)
 
 **Note:** Version bump only for package @esposter/shared
