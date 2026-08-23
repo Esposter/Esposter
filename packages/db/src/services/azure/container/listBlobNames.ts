@@ -1,6 +1,6 @@
 import type { ContainerClient } from "@azure/storage-blob";
 
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 
 interface ListBlobNamesOptions {
   // Keeps only blobs created strictly before this instant — the filter a prefix sweep needs so a blob that was

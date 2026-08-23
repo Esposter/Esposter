@@ -1,5 +1,6 @@
 import type { TableEntityQueryOptions } from "@azure/data-tables";
-import type { CompositeKey, CustomTableClient } from "@esposter/db-schema";
+import type { CompositeKey } from "@esposter/azure";
+import type { CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
 import { getTopNEntitiesByClass } from "@/services/azure/table/getTopNEntitiesByClass";

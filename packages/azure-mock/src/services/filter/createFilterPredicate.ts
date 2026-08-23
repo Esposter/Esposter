@@ -1,7 +1,7 @@
 import { compare } from "@/services/filter/compare";
 import { isNullClause } from "@/services/filter/isNullClause";
+import { BinaryOperator } from "@esposter/azure";
 import { deserializeClause } from "@esposter/db";
-import { BinaryOperator } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 export const createFilterPredicate = (filter: string): ((document: Record<string, unknown>) => boolean) => {

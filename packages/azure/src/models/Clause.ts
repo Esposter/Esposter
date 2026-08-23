@@ -1,6 +1,6 @@
-import type { BinaryOperator } from "@/models/azure/BinaryOperator";
-import type { SearchOperator } from "@/models/azure/search/SearchOperator";
-import type { SerializableValue } from "@/models/azure/SerializableValue";
+import type { BinaryOperator } from "@/models/BinaryOperator";
+import type { SearchOperator } from "@/models/search/SearchOperator";
+import type { SerializableValue } from "@/models/SerializableValue";
 
 export type Clause<T extends object> = {
   key: keyof T & string;

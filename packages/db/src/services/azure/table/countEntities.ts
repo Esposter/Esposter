@@ -1,8 +1,9 @@
 import type { TableEntityQueryOptions } from "@azure/data-tables";
-import type { CompositeKey, CustomTableClient } from "@esposter/db-schema";
+import type { CompositeKey } from "@esposter/azure";
+import type { CustomTableClient } from "@esposter/db-schema";
 
 import { serializeKey } from "@/services/azure/table/serializeKey";
-import { AZURE_MAX_PAGE_SIZE, CompositeKeyPropertyNames } from "@esposter/db-schema";
+import { AZURE_MAX_PAGE_SIZE, CompositeKeyPropertyNames } from "@esposter/azure";
 
 // Azure Table Storage has no count API, so every matching row still has to be walked; the keys-only
 // Projection keeps that walk at its smallest possible payload. It is never free — reach for it only once

@@ -1,6 +1,6 @@
 import { serializeKey } from "@/services/azure/table/serializeKey";
 import { serializeClause } from "@/services/azure/transformer/serializeClause";
-import { BinaryOperator, CompositeKeyPropertyNames, escapeValue, SearchOperator } from "@esposter/db-schema";
+import { BinaryOperator, CompositeKeyPropertyNames, escapeValue, SearchOperator } from "@esposter/azure";
 import { describe, expect, test } from "vitest";
 
 // The isTableFilter value matrix lives in serializeValue.test.ts; here only the clause assembly.

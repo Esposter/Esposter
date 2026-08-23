@@ -1,4 +1,4 @@
-import type { SerializableValue } from "@esposter/db-schema";
+import type { SerializableValue } from "@esposter/azure";
 import type { ExcludeFunctionProperties } from "@esposter/shared";
 
 import { deserializeEntity } from "@/services/azure/transformer/deserializeEntity";

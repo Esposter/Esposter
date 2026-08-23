@@ -1,4 +1,4 @@
-import { CompositeKeyPropertyNames } from "@esposter/db-schema";
+import { CompositeKeyPropertyNames } from "@esposter/azure";
 import { capitalize } from "@esposter/shared";
 
 // Stupid Azure and Javascript property name casing conventions

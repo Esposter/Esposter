@@ -1,5 +1,6 @@
 import type { ContainerClient } from "@azure/storage-blob";
-import type { CompositeKey, CustomTableClient, Database, Resource } from "@esposter/db-schema";
+import type { CompositeKey } from "@esposter/azure";
+import type { CustomTableClient, Database, Resource } from "@esposter/db-schema";
 
 import { deleteDirectory } from "@/services/azure/container/deleteDirectory";
 import { deleteTablePartitionEntities } from "@/services/resource/deleteTablePartitionEntities";

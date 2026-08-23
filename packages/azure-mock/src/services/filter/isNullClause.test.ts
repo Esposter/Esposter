@@ -1,8 +1,8 @@
-import type { Clause } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
 
 import { isNullClause } from "@/services/filter/isNullClause";
+import { BinaryOperator } from "@esposter/azure";
 import { getTableNullClause } from "@esposter/db";
-import { BinaryOperator } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(isNullClause, () => {

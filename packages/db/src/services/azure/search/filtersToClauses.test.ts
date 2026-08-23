@@ -1,14 +1,12 @@
 import { ContentTypes } from "@/models/ContentType";
 import { filtersToClauses } from "@/services/azure/search/filtersToClauses";
+import { BinaryOperator, CompositeKeyPropertyNames, SearchOperator } from "@esposter/azure";
 import {
-  BinaryOperator,
-  CompositeKeyPropertyNames,
   FileEntityPropertyNames,
   FilterType,
   FilterTypeHas,
   getMimeCategory,
   MimeCategory,
-  SearchOperator,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";

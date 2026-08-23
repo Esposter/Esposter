@@ -22,7 +22,7 @@ import { MockRestError } from "@/models/MockRestError";
 import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
 import { compareByCompositeKey } from "@/services/table/compareByCompositeKey";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { chunk, exhaustiveGuard, getOrCreate, getResult, ID_SEPARATOR, noop } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure TableClient — no emulator and no network.

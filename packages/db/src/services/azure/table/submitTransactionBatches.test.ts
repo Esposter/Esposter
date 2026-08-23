@@ -1,7 +1,7 @@
 import type { TableClient, TableTransactionResponse, TransactionAction } from "@azure/data-tables";
 
 import { submitTransactionBatches } from "@/services/azure/table/submitTransactionBatches";
-import { AZURE_MAX_BATCH_SIZE } from "@esposter/db-schema";
+import { AZURE_MAX_BATCH_SIZE } from "@esposter/azure";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 

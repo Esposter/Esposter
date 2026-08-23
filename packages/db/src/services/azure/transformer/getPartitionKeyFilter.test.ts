@@ -1,6 +1,6 @@
 import { serializeKey } from "@/services/azure/table/serializeKey";
 import { getPartitionKeyFilter } from "@/services/azure/transformer/getPartitionKeyFilter";
-import { BinaryOperator, CompositeKeyPropertyNames, escapeValue } from "@esposter/db-schema";
+import { BinaryOperator, CompositeKeyPropertyNames, escapeValue } from "@esposter/azure";
 import { describe, expect, test } from "vitest";
 
 describe(getPartitionKeyFilter, () => {

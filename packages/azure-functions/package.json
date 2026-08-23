@@ -54,6 +54,7 @@
     "@azure/service-bus": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@azure/web-pubsub": "catalog:",
+    "@esposter/azure": "workspace:*",
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",

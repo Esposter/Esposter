@@ -1,4 +1,5 @@
-import type { AzureTable, AzureTableEntityMap, CompositeKey, CustomTableClient } from "@esposter/db-schema";
+import type { CompositeKey } from "@esposter/azure";
+import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 
 import { createMessage } from "@/services/message/createMessage";
 import { getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";

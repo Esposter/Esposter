@@ -1,8 +1,8 @@
-import type { Clause } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
 
 import { applyFilter } from "@/services/filter/applyFilter";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { getTableNullClause } from "@esposter/db";
-import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

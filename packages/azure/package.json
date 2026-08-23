@@ -1,23 +1,16 @@
 {
-  "name": "azure-mock",
+  "name": "@esposter/azure",
   "version": "2.38.0",
-  "description": "A library that contains azure mock classes.",
+  "description": "The Azure wire conventions Esposter's clients and its mocks both speak — OData filter clauses, entity key casing, and service limits.",
   "keywords": [
     "azure",
-    "azure-storage",
-    "blob-storage",
-    "data-tables",
-    "eventgrid",
-    "mock",
-    "search",
-    "service-bus",
-    "storage-queue",
-    "table-storage",
-    "testing",
-    "typescript",
-    "web-pubsub"
+    "azure-search",
+    "azure-table-storage",
+    "filter",
+    "odata",
+    "typescript"
   ],
-  "homepage": "https://github.com/Esposter/Esposter#readme",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/azure#readme",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"
   },
@@ -51,10 +44,7 @@
     "typecheck": "tsgo"
   },
   "dependencies": {
-    "@esposter/azure": "workspace:*",
-    "@esposter/db": "workspace:*",
-    "@esposter/shared": "workspace:*",
-    "fast-deep-equal": "catalog:"
+    "@esposter/shared": "workspace:*"
   },
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",
@@ -63,18 +53,11 @@
     "publint": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
-    "typedoc": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "@azure/core-http-compat": "catalog:",
-    "@azure/core-rest-pipeline": "catalog:",
     "@azure/data-tables": "catalog:",
-    "@azure/eventgrid": "catalog:",
-    "@azure/search-documents": "catalog:",
-    "@azure/service-bus": "catalog:",
-    "@azure/storage-blob": "catalog:",
-    "@azure/storage-queue": "catalog:"
+    "zod": "catalog:"
   },
   "inlinedDependencies": {
     "type-fest": "5.8.0"

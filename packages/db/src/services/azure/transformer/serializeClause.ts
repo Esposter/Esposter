@@ -1,7 +1,7 @@
-import type { Clause } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
 
 import { serializeKey } from "@/services/azure/table/serializeKey";
-import { SearchOperator, serializeValue, UnaryOperator } from "@esposter/db-schema";
+import { SearchOperator, serializeValue, UnaryOperator } from "@esposter/azure";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const serializeClause = (clause: Clause<Record<string, unknown>>, isTableFilter = false): string => {

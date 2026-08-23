@@ -1,4 +1,4 @@
-import type { CompositeKey } from "@esposter/db-schema";
+import type { CompositeKey } from "@esposter/azure";
 
 import { getIsSerializable } from "@/services/azure/transformer/getIsSerializable";
 import { jsonDateParse } from "@esposter/shared";

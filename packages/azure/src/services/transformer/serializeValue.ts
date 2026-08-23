@@ -1,6 +1,6 @@
-import type { SerializableValue } from "@/models/azure/SerializableValue";
+import type { SerializableValue } from "@/models/SerializableValue";
 
-import { escapeValue } from "@/services/azure/transformer/escapeValue";
+import { escapeValue } from "@/services/transformer/escapeValue";
 
 // Azure Table Storage OData requires DateTime comparisons wrapped as datetime'<iso>' literals; Azure
 // Search filters take the bare ISO string. isTableFilter selects the Date rendering the target service
