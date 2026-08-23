@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.38.1](https://github.com/Esposter/Esposter/compare/v2.38.0...v2.38.1) (2026-08-23)
+
+### Bug Fixes
+
+* **build:** export source under a condition, so Node still resolves the build ([42fb8d4](https://github.com/Esposter/Esposter/commit/42fb8d471a8917cc53d9b105fddfc481fc58ddaf))
+* **build:** keep workspace source out of Node's own module loader ([4c3bfdd](https://github.com/Esposter/Esposter/commit/4c3bfddaf246c21f03d103a7aac44c7de9b8f97d))
+* **build:** type auto-imported symbols in the shipped declarations ([ba64193](https://github.com/Esposter/Esposter/commit/ba64193d34aeba0c1223bc1e6c7e2ee814e1b5a9)), closes [#1089](https://github.com/Esposter/Esposter/issues/1089)
+* **parse-tmx:** narrow getDecompressedBytes to Uint8Array<ArrayBuffer> ([97765c8](https://github.com/Esposter/Esposter/commit/97765c8ef32a13c909d58919b30466a737d48a6b))
+
+### Performance Improvements
+
+* **azure-functions:** compress the deploy artifact ([838aae4](https://github.com/Esposter/Esposter/commit/838aae4d7684adf4c661ed2e63b6dc39fd711be5))
+
 # [2.38.0](https://github.com/Esposter/Esposter/compare/v2.37.2...v2.38.0) (2026-08-23)
 
 ### Bug Fixes

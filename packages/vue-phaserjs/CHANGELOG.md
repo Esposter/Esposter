@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.38.1](https://github.com/Esposter/Esposter/compare/v2.38.0...v2.38.1) (2026-08-23)
+
+### Bug Fixes
+
+* **build:** type auto-imported symbols in the shipped declarations ([ba64193](https://github.com/Esposter/Esposter/commit/ba64193d34aeba0c1223bc1e6c7e2ee814e1b5a9)), closes [#1089](https://github.com/Esposter/Esposter/issues/1089)
+
 # [2.38.0](https://github.com/Esposter/Esposter/compare/v2.37.2...v2.38.0) (2026-08-23)
 
 ### Bug Fixes

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.38.1](https://github.com/Esposter/Esposter/compare/v2.38.0...v2.38.1) (2026-08-23)
+
+### Bug Fixes
+
+* **parse-tmx:** narrow getDecompressedBytes to Uint8Array<ArrayBuffer> ([97765c8](https://github.com/Esposter/Esposter/commit/97765c8ef32a13c909d58919b30466a737d48a6b))
+
 # [2.38.0](https://github.com/Esposter/Esposter/compare/v2.37.2...v2.38.0) (2026-08-23)
 
 **Note:** Version bump only for package parse-tmx
