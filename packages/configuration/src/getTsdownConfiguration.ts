@@ -24,7 +24,13 @@ import { readPackageManifest } from "./readPackageManifest.ts";
 // Bundling package instead and vanish. `azure-functions` and `azure-mock` both vendor siblings, so source
 // Exports are not available to this repo while that alias convention stands.
 export const getTsdownConfiguration = (): UserConfig => {
-  const { dependencies, optionalDependencies, peerDependencies, private: isPrivate } = readPackageManifest();
+  const {
+    dependencies,
+    optionalDependencies,
+    peerDependencies,
+    peerDependenciesMeta,
+    private: isPrivate,
+  } = readPackageManifest();
   // `platform: "neutral"` is the real "no platform assumption": tsdown defaults to `node`, which would let a
   // Package reach for a node builtin without the build ever objecting. A package that genuinely targets node
   // Says so with `getTsdownConfigurationNode`.
@@ -60,6 +66,7 @@ export const getTsdownConfiguration = (): UserConfig => {
             ...Object.keys(dependencies ?? {}),
             ...Object.keys(optionalDependencies ?? {}),
             ...Object.keys(peerDependencies ?? {}),
+            ...Object.keys(peerDependenciesMeta ?? {}),
           ]),
         },
         // Publishability is a build-time error rather than a release-time surprise: this fails a build whose

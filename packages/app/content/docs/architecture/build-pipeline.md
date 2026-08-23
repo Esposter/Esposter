@@ -53,6 +53,8 @@ A library externalizes exactly what its consumer installs, and tsdown's defaults
 
 - **`dependencies` are externalized.** The consumer's package manager installs them transitively and dedupes them against everything else in the tree. Nobody types their names.
 - **`peerDependencies` are externalized too, but they are a demand rather than a delivery** — the consumer supplies the copy, and gets a warning instead of an install if they do not. That is the point for anything that must be a singleton in the consumer's tree: `vue` and `pinia` bundled, or even installed twice, are two reactivity systems that do not see each other's state.
+- **`optionalDependencies` are externalized as well**, and are the one entry that may simply not be there. The consumer installs them when their platform allows it, so runtime code has to reach for one behind a check rather than assume it resolved.
+- **`peerDependenciesMeta` counts too**, which is how a peer is declared optional — tsdown reads it alongside the other three, so a name listed only there is still external.
 - **`devDependencies` are bundled** when the source imports them.
 - **Workspace siblings follow the same rule** — a published sibling is a normal dependency and stays external.
 
