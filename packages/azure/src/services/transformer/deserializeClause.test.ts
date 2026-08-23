@@ -1,8 +1,8 @@
+import { BinaryOperator } from "#src/models/BinaryOperator";
+import { CompositeKeyPropertyNames } from "#src/models/table/CompositeKey";
+import { UnaryOperator } from "#src/models/UnaryOperator";
 import { serializeKey } from "#src/services/table/serializeKey";
 import { deserializeClause } from "#src/services/transformer/deserializeClause";
-import { BinaryOperator } from "#src/models/BinaryOperator";
-import { UnaryOperator } from "#src/models/UnaryOperator";
-import { CompositeKeyPropertyNames } from "#src/models/table/CompositeKey";
 import { escapeValue } from "#src/services/transformer/escapeValue";
 import { serializeValue } from "#src/services/transformer/serializeValue";
 import { describe, expect, test } from "vitest";

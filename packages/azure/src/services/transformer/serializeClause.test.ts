@@ -1,9 +1,9 @@
-import { serializeKey } from "#src/services/table/serializeKey";
-import { serializeClause } from "#src/services/transformer/serializeClause";
 import { BinaryOperator } from "#src/models/BinaryOperator";
 import { SearchOperator } from "#src/models/search/SearchOperator";
 import { CompositeKeyPropertyNames } from "#src/models/table/CompositeKey";
+import { serializeKey } from "#src/services/table/serializeKey";
 import { escapeValue } from "#src/services/transformer/escapeValue";
+import { serializeClause } from "#src/services/transformer/serializeClause";
 import { describe, expect, test } from "vitest";
 
 // The isTableFilter value matrix lives in serializeValue.test.ts; here only the clause assembly.

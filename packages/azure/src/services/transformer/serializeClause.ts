@@ -1,8 +1,8 @@
 import type { Clause } from "#src/models/Clause";
 
-import { serializeKey } from "#src/services/table/serializeKey";
-import { UnaryOperator } from "#src/models/UnaryOperator";
 import { SearchOperator } from "#src/models/search/SearchOperator";
+import { UnaryOperator } from "#src/models/UnaryOperator";
+import { serializeKey } from "#src/services/table/serializeKey";
 import { serializeValue } from "#src/services/transformer/serializeValue";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 

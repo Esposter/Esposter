@@ -6,8 +6,13 @@ import type { MessageEntity } from "@esposter/db-schema";
 import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
 import { readMessageSearchDocuments } from "@@/server/services/message/readMessageSearchDocuments";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
-import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
-import { filtersToClauses, getSearchNullClause, serializeSearchClauses } from "@esposter/db";
+import {
+  BinaryOperator,
+  CompositeKeyPropertyNames,
+  getSearchNullClause,
+  serializeSearchClauses,
+} from "@esposter/azure";
+import { filtersToClauses } from "@esposter/db";
 import { FilterType, SearchIndex, SearchIndexSearchableFieldsMap } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 

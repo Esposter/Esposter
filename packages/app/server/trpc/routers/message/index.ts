@@ -65,7 +65,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { scheduledMessageJobRouter } from "@@/server/trpc/routers/message/scheduledMessageJob";
-import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
+import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause, serializeClauses } from "@esposter/azure";
 import {
   cloneFiles,
   createMessage,
@@ -75,9 +75,7 @@ import {
   getEntity,
   getFileBlobNames,
   getFilesBlobNames,
-  getTableNullClause,
   getTopNEntitiesByType,
-  serializeClauses,
   updateEntity,
 } from "@esposter/db";
 import {

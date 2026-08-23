@@ -24,7 +24,6 @@
     "dist"
   ],
   "type": "module",
-  "sideEffects": false,
   "types": "dist/index.d.ts",
   "imports": {
     "#src/*": "./src/*.ts"
@@ -54,7 +53,8 @@
     "typecheck": "tsgo"
   },
   "dependencies": {
-    "@esposter/shared": "workspace:*"
+    "@esposter/shared": "workspace:*",
+    "dayjs": "catalog:"
   },
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",

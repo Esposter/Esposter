@@ -1,7 +1,7 @@
-import { serializeKey } from "#src/services/table/serializeKey";
-import { serializeSearchClauses } from "#src/services/transformer/serializeSearchClauses";
 import { BinaryOperator } from "#src/models/BinaryOperator";
 import { CompositeKeyPropertyNames } from "#src/models/table/CompositeKey";
+import { serializeKey } from "#src/services/table/serializeKey";
+import { serializeSearchClauses } from "#src/services/transformer/serializeSearchClauses";
 import { describe, expect, test } from "vitest";
 
 describe(serializeSearchClauses, () => {

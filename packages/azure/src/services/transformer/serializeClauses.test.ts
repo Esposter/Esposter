@@ -1,9 +1,9 @@
-import { serializeKey } from "#src/services/table/serializeKey";
-import { serializeClauses } from "#src/services/transformer/serializeClauses";
 import { BinaryOperator } from "#src/models/BinaryOperator";
-import { UnaryOperator } from "#src/models/UnaryOperator";
 import { CompositeKeyPropertyNames } from "#src/models/table/CompositeKey";
+import { UnaryOperator } from "#src/models/UnaryOperator";
+import { serializeKey } from "#src/services/table/serializeKey";
 import { escapeValue } from "#src/services/transformer/escapeValue";
+import { serializeClauses } from "#src/services/transformer/serializeClauses";
 import { describe, expect, test } from "vitest";
 
 describe(serializeClauses, () => {

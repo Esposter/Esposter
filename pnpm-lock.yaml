@@ -1311,6 +1311,9 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
+      dayjs:
+        specifier: 'catalog:'
+        version: 1.11.23
       zod:
         specifier: 'catalog:'
         version: 4.4.3
@@ -1445,9 +1448,6 @@ importers:
       '@esposter/azure':
         specifier: workspace:*
         version: link:../azure
-      '@esposter/db':
-        specifier: workspace:*
-        version: link:../db
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared

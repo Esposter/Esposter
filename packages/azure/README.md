@@ -52,19 +52,43 @@ literal and append filter syntax of its own.
 import { escapeValue, serializeValue } from "@esposter/azure";
 ```
 
+### Filters
+
+`serializeClauses` turns a clause array into a Table Storage filter string and `serializeSearchClauses` into a
+Search one; the two differ only in how a `Date` renders, which is why they share a single core. Clauses on the
+same key are grouped — a range pair is joined with `and`, anything else with `or` — so a caller never assembles
+the boolean structure by hand. `deserializeClause` is the inverse, and is what lets a fake client evaluate a
+filter it was handed rather than pattern-matching the string.
+
+```ts
+import { getTableNullClause, serializeClauses } from "@esposter/azure";
+
+const filter = serializeClauses([
+  { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+  getTableNullClause("deletedAt"),
+]);
+```
+
+Null is where the two services diverge and the helpers carry the difference: Table Storage cannot compare
+against null at all, so `getTableNullClause` expresses "is null" as a negated `NaN` comparison, while Search
+supports it directly through `getSearchNullClause` / `getSearchNonNullClause`. `getPartitionKeyFilter` is the
+one-clause case worth naming, since a read, a count and a purge of the same entity must all start from it.
+
 ### Keys
 
 `CompositeKey` is the `partitionKey`/`rowKey` pair every Table entity carries, and `CompositeKeyPropertyNames`
-is how those names are referred to without restating the strings.
+is how those names are referred to without restating the strings. The wire spells those two capitalized and
+JavaScript does not, so `serializeKey` and `deserializeKey` convert at the boundary and nothing in between has
+to know.
 
 ```ts
-import { CompositeKey, CompositeKeyPropertyNames } from "@esposter/azure";
+import { CompositeKey, CompositeKeyPropertyNames, serializeKey } from "@esposter/azure";
 ```
 
 ### Limits
 
-`AZURE_MAX_BATCH_SIZE` and `AZURE_MAX_PAGE_SIZE` are the service's own ceilings, named so a caller paginating or
-batching does not hard-code them.
+`AZURE_MAX_BATCH_SIZE`, `AZURE_MAX_PAGE_SIZE` and `AZURE_MAX_QUEUE_VISIBILITY_TIMEOUT_MS` are the service's own
+ceilings, named so a caller paginating, batching or enqueueing does not hard-code them.
 
 ### Commands
 

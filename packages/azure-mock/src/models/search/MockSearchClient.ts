@@ -23,7 +23,7 @@ import type { Except } from "type-fest";
 import { MOCK_SEARCH_BASE_URL } from "#src/constants";
 import { createFilterPredicate } from "#src/services/filter/createFilterPredicate";
 import { MockSearchDatabase } from "#src/store/MockSearchDatabase";
-import { deserializeKey } from "@esposter/db";
+import { deserializeKey } from "@esposter/azure";
 import { getOrCreate } from "@esposter/shared";
 
 const toComparable = (value: unknown): number | string => {

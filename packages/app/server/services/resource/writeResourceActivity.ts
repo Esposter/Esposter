@@ -4,8 +4,8 @@ import type { ResourceActivityEntity as AResourceActivityEntity } from "@esposte
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
-import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
-import { createEntity, getTopNEntities, serializeClauses } from "@esposter/db";
+import { BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
+import { createEntity, getTopNEntities } from "@esposter/db";
 import {
   AzureTable,
   getReverseTickedTimestamp,

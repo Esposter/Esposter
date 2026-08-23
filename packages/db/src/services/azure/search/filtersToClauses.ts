@@ -4,9 +4,14 @@ import type { Clause, SerializableValue } from "@esposter/azure";
 import type { Filter, MessageEntity } from "@esposter/db-schema";
 
 import { ContentTypes } from "#src/models/ContentType";
-import { getSearchNonNullClause } from "#src/services/azure/search/getSearchNonNullClause";
 import { dayjs } from "#src/services/dayjs/index";
-import { BinaryOperator, CompositeKeyPropertyNames, SearchOperator, serializeValue } from "@esposter/azure";
+import {
+  BinaryOperator,
+  CompositeKeyPropertyNames,
+  getSearchNonNullClause,
+  SearchOperator,
+  serializeValue,
+} from "@esposter/azure";
 import {
   FileEntityPropertyNames,
   FilterType,

@@ -4,8 +4,7 @@ import type { AzureEntity } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
-import { BinaryOperator } from "@esposter/azure";
-import { serializeKey } from "@esposter/db";
+import { BinaryOperator, serializeKey } from "@esposter/azure";
 import { exhaustiveGuard, NotFoundError } from "@esposter/shared";
 
 export const getCursorWhereAzureTable = <TItem extends AzureEntity>(
