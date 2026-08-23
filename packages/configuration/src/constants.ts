@@ -42,3 +42,9 @@ export const BUILD_TSCONFIG = "tsconfig.build.json";
 // Shared by the SFC build and the SFC test run, so a component cannot compile against one set of ambient
 // Imports and be tested against another.
 export const VUE_AUTO_IMPORTS = ["pinia", "vue"] as const;
+
+// The export condition under which a package resolves to its own TypeScript source rather than its build.
+// Every tool that can read source opts into it — the tsconfig preset, the shared Vitest config — while Node's
+// Own loader knows nothing about it and falls through to `dist`, which is what keeps a workspace package
+// Loadable by anything that runs a `dist` directly.
+export const SOURCE_CONDITION = "esposter-source";

@@ -37,14 +37,15 @@ Per package:
    their own extension. A specifier naming a **directory** has to name the file instead: `@/store` resolved to
    `src/store/index.ts` by directory lookup, and `#src/store` asks for `./src/store.ts`, so it becomes
    `#src/store/index`.
-3. `exports: { devExports: true }` in its `tsdown.config.ts`, so workspace consumers resolve `src`.
+3. `exports: { devExports: SOURCE_CONDITION }` in its `tsdown.config.ts`, so a consumer that opts into that
+   condition resolves `src` and everything else falls through to `dist`. Never `true` — that drops the
+   `default` arm and hands Node's own loader TypeScript, which it cannot read.
 4. `pnpm build` the package **and everything that vendors it** — `azure-functions` and `azure-mock` vendor
    siblings, and they are the builds that would have broken under `@/*`.
 5. `pnpm --filter @esposter/app run build`. This is the step that catches what a package build cannot: Nitro's
-   prerender imports the built server through Node's own ESM loader, which resolves neither the barrel's
-   extensionless re-exports nor a TS `enum`. The app inlines everything under `packages/` into its server
-   bundle so that loader never sees a workspace package, and that rule covers a new package on its own — but a
-   consumer that starts handing one to plain Node would fail here and nowhere earlier.
+   prerender imports the built server through Node's own ESM loader, and a `pulumi preview` runs `infra`'s
+   `dist` through the same one. Neither opts into the source condition, so both should resolve `dist` and
+   neither should notice the conversion — this build is what proves it.
 
 `packages/app` has no row date to earn: it is the leaf nobody resolves, and its `@/`-shaped specifiers are
 Nuxt's own aliases rather than a `paths` self-alias. It is listed so the table is countable against

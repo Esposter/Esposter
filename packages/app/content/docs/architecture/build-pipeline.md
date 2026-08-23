@@ -111,18 +111,24 @@ Those specifiers keep their own extension, which is what a `.vue` or `.json` imp
 
 ### Which unlocks source exports
 
-A package on `#src/` sets `exports: { devExports: true }`. tsdown then points `exports` at `src` for the workspace and writes the `dist` mapping into `publishConfig.exports` for the registry, so a workspace consumer resolves source while npm still gets the bundle — and `publint` and `attw` keep gating, because both read the publish shape. No rebuild stands between an edit and a consumer seeing it, a fresh clone typechecks without building anything first, and go-to-definition lands on real source.
+A package on `#src/` sets `exports: { devExports: SOURCE_CONDITION }`, and tsdown gives its exports two arms:
 
-Source exports hold only while every consumer resolves them through a bundler or TypeScript. Vite, Vitest, `tsc`, `vue-tsc` and tsdown do; Node's own ESM loader does not, and twice over — it resolves no extensionless relative specifier, so the generated barrel's `export * from "./models/BinaryOperator"` fails, and its type-stripping cannot transform a TS `enum`. Nitro's prerender imports the built server through that loader, so the app inlines every workspace package into its server bundle:
-
-```ts
-// packages/app/configuration/nitro.ts
-externals: { inline: [getIsWorkspaceModule] },
+```json
+{
+  "exports": { ".": { "esposter-source": "./src/index.ts", "default": "./dist/index.js" } },
+  "publishConfig": { "exports": { ".": "./dist/index.js" } }
+}
 ```
 
-It has to be a **function**, and the reason is Nitro's own scoring: every matcher gets a score and the highest one decides whether a module is inlined or externalized. Nitro's default `external` list holds the absolute `node_modules` directories, scored by path length. A RegExp is scored by the length of its source and loses to that every time — silently, since nothing reports a matcher that did not win. A function is scored above both.
+A tool that opts into the condition resolves TypeScript source; everything else falls through to the build; and npm gets the `publishConfig` map, which is also what `publint` and `attw` gate against. No rebuild stands between an edit and a consumer seeing it, a fresh clone typechecks without building anything first, and go-to-definition lands on real source.
 
-Matching the workspace directory rather than a list of names also means nothing has to be remembered: a package added under `packages/` is covered by the same rule. A name list would go stale, and a `@esposter/` prefix would silently miss `parse-tmx`, `vue-phaserjs` and `azure-mock`. Inlining is what a serverless artifact wants regardless — the deploy stops depending on `node_modules` resolution for code we wrote.
+Three places opt in, and that is the entire mechanism: `customConditions` in `tsconfig.base.json`, `resolve.conditions` in `getVitestConfiguration`, and anything else that wants source saying so explicitly.
+
+**The `default` arm is the load-bearing half.** `devExports: true` omits it and points every condition at source, which reads as the simpler configuration and is not: Node's own ESM loader cannot read TypeScript source, twice over. It resolves no extensionless relative specifier, so the generated barrel's `export * from "./models/BinaryOperator"` fails outright, and its type-stripping cannot transform a TS `enum`. Two things here hand a package to that loader — Nitro's prerender, which imports the built server, and Pulumi, which runs `infra`'s `dist` — so both break.
+
+Neither breaks anywhere near its cause. The prerender failure names a module path nobody edited, and the Pulumi one surfaces as a failed `preview` in CI. The workarounds cost more than the feature is worth: inlining every workspace package into the Nitro server bundle runs it out of heap at 8 GB, and making `infra` vendor its siblings takes it from 127 kB to 1.27 MB. A `default` arm costs nothing, because nothing has to be configured to keep working.
+
+One consequence worth holding onto: **a `dist` sibling externalizes its own siblings.** `db-schema`'s build emits `from "@esposter/azure"`, so that import resolves independently, under whatever conditions the resolver is running with. There is no single consumer where the decision can be made once — which is exactly why the answer belongs in the exports map rather than in a bundler's config.
 
 Which packages have converted is tracked in `.agents/ledgers/package-imports.md`. The `paths` entries in `tsconfig.base.json` are what still resolves the rest, so they come out when the last row is dated.
 

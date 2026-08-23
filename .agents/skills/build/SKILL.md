@@ -98,20 +98,41 @@ import { escapeValue } from "#src/services/transformer/escapeValue";
 
 `@/*` is a `paths` entry, which is resolved by whichever tsconfig drives the _current compilation_ — so the moment a sibling bundles the package from source, `@/models/Clause` re-points into the bundling package and resolves to nothing. A `#` specifier is resolved by walking up to the nearest `package.json`, which is the one owning the importing **file**, so it survives. That is not a tooling gap to wait out: `paths` is a compiler fiction with no runtime meaning, and no configuration makes it survive.
 
-### What it buys: `exports.devExports`
+### What it buys: source exports
 
-A package on `#src/` sets `exports: { devExports: true }`, which points `exports` at `src` for the workspace and writes the `dist` mapping into `publishConfig.exports` for the registry. Consumers then resolve **source**:
+A package on `#src/` sets `exports: { devExports: SOURCE_CONDITION }`, and workspace consumers then resolve **source**:
 
 - No rebuild between an edit and a consumer seeing it — the "stale dist mimics a failed fix" trap disappears, and with it the watch task.
 - A fresh clone typechecks and tests without building packages first.
 - Go-to-definition, breakpoints and stack traces land on real source rather than a bundled declaration.
 - Typecheck sees real types, so anything a declaration bundler would flatten or widen surfaces immediately.
 
-`publint` and `attw` still gate the published shape, because both read `publishConfig.exports`.
+**Pass the condition name, never `true`.** `devExports` takes `boolean | string`, and the two do very different things:
 
-**Every consumer must resolve it through a bundler or TypeScript.** Vite, Vitest, `tsc`, `vue-tsc` and tsdown all do. Node's own ESM loader does not, twice over: it resolves no extensionless relative specifier, so the generated barrel's `export * from "./models/BinaryOperator"` fails outright, and its type-stripping cannot transform a TS `enum` without `--experimental-transform-types`. Nitro's prerender imports the built server through exactly that loader, so `packages/app` inlines every workspace package into the server bundle (`nitro.externals.inline`) and the loader never sees one. Pass a **function** there, never a RegExp: Nitro scores matchers and the highest score decides, its own `external` list holds the absolute `node_modules` directories scored by path length, and a RegExp is scored by the length of its source — so it loses, silently. The function matches anything resolving under `packages/`, which needs no list to maintain and cannot miss `parse-tmx`, `vue-phaserjs` or `azure-mock` the way a `@esposter/` prefix would.
+```jsonc
+// devExports: SOURCE_CONDITION — every consumer that opts in gets source, everything else gets the build.
+"exports": { ".": { "esposter-source": "./src/index.ts", "default": "./dist/index.js" } }
 
-A new consumer that runs a workspace package through plain Node has the same two problems and needs the same answer. Reaching for extensions in the barrel instead does not work: the enum survives neither way.
+// devExports: true — every condition points at source. Node gets TypeScript.
+"exports": { ".": "./src/index.ts" }
+```
+
+Node's own ESM loader cannot read that second shape, twice over: it resolves no extensionless relative specifier, so the generated barrel's `export * from "./models/BinaryOperator"` fails outright, and its type-stripping cannot transform a TS `enum`. Nitro's prerender imports the built server through that loader and Pulumi runs `infra`'s `dist` through it, so both die — and the workarounds are worse than the problem: inlining every workspace package into the Nitro server runs it out of heap at 8 GB, and making `infra` vendor its siblings takes it from 127 kB to 1.27 MB. A `default` arm costs none of that, because nothing has to be configured to stay working.
+
+Three places opt in, and they are the whole mechanism:
+
+| Where                           | How                                    |
+| :------------------------------ | :------------------------------------- |
+| `tsconfig.base.json`            | `customConditions: [SOURCE_CONDITION]` |
+| `getVitestConfiguration`        | `resolve.conditions`                   |
+| Anything else resolving with it | the same, explicitly                   |
+
+`publint` and `attw` still gate the published shape, because both read `publishConfig.exports`, where tsdown writes the `dist`-only map.
+
+Two things that follow, and are easy to get wrong:
+
+- **A `dist` sibling externalizes its own siblings.** `db-schema`'s dist emits `from "@esposter/azure"`, so whatever resolves _that_ decides which arm it gets. This is why the `default` arm has to exist rather than being handled at the consumer: every hop resolves independently.
+- **Never point a condition-less export at source to "make it simpler".** The failure lands in Nitro's prerender or a `pulumi preview`, a phase away from the change that caused it, naming a module path nobody edited.
 
 ### Migration status
 

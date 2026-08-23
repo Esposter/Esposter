@@ -30,7 +30,10 @@
     "#src/*": "./src/*.ts"
   },
   "exports": {
-    ".": "./src/index.ts",
+    ".": {
+      "esposter-source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
