@@ -92,6 +92,7 @@ Existing users start at `storageBytesUsed = 0`, so for them the gate is **adviso
 
 Three kinds of blob exist outside the ledger and are deliberately uncounted:
 
+- **Resource content itself** — the `{id}/content.json` blob every save writes goes through `saveResourceContent` → `useUpload`, a server-side write with no SAS and so no reserve. Its `BlobCreated` is delivered (the subscription covers the whole container) and finds no ledger row, so it is a no-op. Deliberate: the meter reads "used by your resource files", and a note or a sheet's own JSON is kilobytes against a gibibyte quota — what fills an allowance is the files a visitor uploads into a resource, which is exactly what the chokepoint charges.
 - **Publish and duplicate clones** (`cloneContentAssets`) — copies written server-side, never through a reserve. Their `BlobCreated` arrives and finds no ledger row, which is a no-op by design.
 - **Blobs uploaded before this shipped** — nothing backfills them ([persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only)).
 - **Room attachments** — the quota counts what a user keeps in their own resources, and a room's files belong to the room. Charging them to whoever uploaded made one person's allowance depend on how much they contribute to shared rooms, and put a number about chat in the resource explorer. The room-scoped replacement is written up as [room attachment quota](/docs/esbabbler/deferred/room-attachment-quota); until it lands, message uploads are bounded by nothing here.

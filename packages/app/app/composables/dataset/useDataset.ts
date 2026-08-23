@@ -29,6 +29,6 @@ export const useDataset = (reference: MaybeRefOrGetter<DatasetReference | undefi
       },
     );
   };
-  watch(() => toValue(reference), refresh, { deep: true, immediate: true });
+  watchDeep(() => toValue(reference), refresh, { immediate: true });
   return { dataset, error, isPending, refresh };
 };

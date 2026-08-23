@@ -28,16 +28,18 @@ flowchart LR
   UR["useResourceStore actions<br/>publish · delete · rename · duplicate · save"] --> ST
   LST["/all list dialogs + bulk delete + CSV export"] --> ST
   CV["saveResourceContent<br/>stale contentVersion"] -->|warning + Refresh action| ST["store/notification"]
-  ST --> BELL["app-bar bell + badge<br/>(G N opens panel)"]
+  ST --> BELL["app-bar bell + count badge<br/>(G N opens panel)"]
+  ST --> APPICON["PWA icon badge<br/>(navigator.setAppBadge)"]
   ST --> SNACK["snackbar queue<br/>(~5s, errors persist)"]
   ST -.->|"session-scoped, never persisted"| X[("gone on reload")]
 ```
 
 ## UI
 
-- **Bell** (`AppNotificationBell`, app bar, authed sessions): `v-badge` unread count, click opens a `v-menu` panel — newest first, severity icon, relative time, per-item dismiss, "Dismiss all", per-notification action button. Closing the panel marks everything read. Empty state: "No notifications".
+- **Bell** (`AppNotificationBell`, app bar, authed sessions): `v-badge` unread count — rendered through VAvatar's `badge` **slot**, because the `badge` prop forces `dot` on whenever that slot is absent and a dot drops the number it was handed — click opens a `v-menu` panel — newest first, severity icon, relative time, per-item dismiss, "Dismiss all", per-notification action button. Closing the panel marks everything read. Empty state: "No notifications".
 - **Toasts** (`AppNotificationSnackbar`): one `v-snackbar` rendering the store's queue head (~5s, dismissible); errors persist until dismissed. One snackbar queue, never stacked ad-hoc snackbars.
 - `G N` opens the panel ([global search](/docs/platform/global-search) chords).
+- **App icon badge**: the same unread count is mirrored onto the installed PWA's icon through the Badging API, so an install that is not in the foreground still shows what is waiting. Best-effort — the write is feature-detected and its rejection is logged, never surfaced. It carries only what the running tab knows: a push delivered while the app is closed is the service worker's notification, and nothing is running to count it, so badging those would need the count on the push payload and a service-worker writer.
 
 ## Key files
 
@@ -48,6 +50,7 @@ flowchart LR
 | `app/components/App/Notification/Snackbar.vue` | single snackbar queue rendering the store head       |
 | `app/components/App/Notification/BellItem.vue` | one panel row (severity icon, time, action, dismiss) |
 | `app/models/notification/AppNotification.ts`   | client model                                         |
+| `app/plugins/appBadge.client.ts`               | mirrors the unread count onto the PWA icon badge     |
 
 ## Notes
 

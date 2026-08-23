@@ -20,7 +20,7 @@ Four rules follow:
 3. **The hub leads every trail.** The portal keeps a root crumb on every blade, and so do we: `Resource Explorer` claims no ancestry — it is the one page everything in the area genuinely sits under — so a resource opened from a link still has a way out and the header does not change shape between that and a drilled-in one. A visitor who came through the hub already carries it, so it is never doubled; the hub itself renders no crumb at all, because rule 1 outranks this one. **Home is not a crumb** — the logo is that link on every route, and a second one would spend the row on a control the chrome already has.
 4. **One writer.** A router hook resolves the trail after every navigation and records it on the entry. Links stay plain — a trail appended by hand at each drill-down is one the next link silently drops, and a page that lost it looks exactly like a page nobody drilled into.
 
-**The trail also decides where a close ✕ goes.** The store exposes the last crumb as `closeTo`, so the ✕ on the list page and the one in a resource's command bar both peel back exactly one layer — to the page the visitor came through, or to the hub when they arrived directly. Closing and clicking the last crumb are one move, and neither needs a destination hardcoded at its call site.
+**The trail also decides where a close ✕ goes.** The store exposes the last crumb as `closeTo`, so every ✕ in the area (the list page, the recycle bin, and a resource's command bar) peels back exactly one layer — to the page the visitor came through, or to the hub when they arrived directly. Closing and clicking the last crumb are one move, and neither needs a destination hardcoded at its call site.
 
 ## How it works
 
@@ -77,6 +77,8 @@ The resource page passes no title at all — its blade header already names the 
 | `/resource-explorer/[id]`                 | row click, All opened directly      | `Resource Explorer › All` | —                 | `/resource-explorer/all` |
 | `/resource-explorer/[id]`                 | favourite, search, shared link      | `Resource Explorer`       | —                 | `/resource-explorer`     |
 | `/resource-explorer/[id]` (another blade) | blade nav inside the page           | unchanged                 | —                 | unchanged                |
+| `/resource-explorer/recycle-bin`          | Resource Explorer → Recycle bin     | `Resource Explorer`       | Recycle bin       | `/resource-explorer`     |
+| `/resource-explorer/recycle-bin`          | All → Recycle bin                   | `Resource Explorer › All` | Recycle bin       | `/resource-explorer/all` |
 
 A link you send someone lands them on the direct view: they did not walk your path, and the address never claimed they did.
 

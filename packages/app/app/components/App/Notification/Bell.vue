@@ -7,7 +7,7 @@ const { data: session } = await authClient.useSession(useFetch);
 const notificationStore = useNotificationStore();
 const { isPanelOpen, notifications, unreadCount } = storeToRefs(notificationStore);
 const { deleteNotifications, markAllAsRead } = notificationStore;
-const badge = computed(() => ({ color: "error", content: unreadCount.value, modelValue: unreadCount.value > 0 }));
+const badge = computed(() => ({ color: "error", modelValue: unreadCount.value > 0 }));
 </script>
 
 <template>
@@ -31,6 +31,9 @@ const badge = computed(() => ({ color: "error", content: unreadCount.value, mode
             <v-btn aria-label="Notifications" icon :="mergeProps(menuProps, tooltipProps)">
               <v-icon icon="mdi-bell-outline" />
             </v-btn>
+            <!-- The count rides the slot rather than `content`: VAvatar forces `dot` on whenever no badge slot
+              Is given, which renders the marker as a bare dot and drops whatever content it was handed -->
+            <template #badge>{{ unreadCount }}</template>
           </v-avatar>
         </template>
       </v-tooltip>
