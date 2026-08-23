@@ -118,7 +118,7 @@ A package on `#src/` sets `exports: { devExports: SOURCE_CONDITION }`, and works
 "exports": { ".": "./src/index.ts" }
 ```
 
-Node's own ESM loader cannot read that second shape, twice over: it resolves no extensionless relative specifier, so the generated barrel's `export * from "./models/BinaryOperator"` fails outright, and its type-stripping cannot transform a TS `enum`. Nitro's prerender imports the built server through that loader and Pulumi runs `infra`'s `dist` through it, so both die — and the workarounds are worse than the problem: inlining every workspace package into the Nitro server runs it out of heap at 8 GB, and making `infra` vendor its siblings takes it from 127 kB to 1.27 MB. A `default` arm costs none of that, because nothing has to be configured to stay working.
+Node's own ESM loader cannot read that second shape, twice over: it resolves no extensionless relative specifier, so the generated barrel's `export * from "./models/BinaryOperator"` fails outright, and its type-stripping cannot transform a TS `enum`. Nitro's prerender imports the built server through that loader and Pulumi runs `infra`'s `dist` through it, so both die — and the workarounds cost more than the feature is worth. Inlining into the Nitro server has to cover **every** workspace package rather than the source-exporting ones, because a `dist` sibling externalizes its own siblings (`db-schema`'s build emits `from "@esposter/azure"`), and `infra` has to vendor its siblings, which takes it from 127 kB to 1.27 MB. Both are standing configuration that a new consumer has to remember. A `default` arm costs none of it, because nothing has to be configured to stay working.
 
 Three places opt in, and they are the whole mechanism:
 
