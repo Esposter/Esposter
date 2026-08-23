@@ -21,9 +21,11 @@ flowchart LR
   T --> D["rolldown-plugin-dts — bundle declarations"]
   D --> Y["dist/index.d.ts"]
   T --> M["package.json — write the exports field"]
+  J --> O["deps.onlyImport — every external is declared"]
   Y --> G{"published?"}
   M --> G
-  G -->|yes| P["publint + attw + deps.onlyImport"]
+  O --> G
+  G -->|yes| P["publint + attw"]
   G -->|no| Z["done"]
   P --> Z
 ```
@@ -73,19 +75,26 @@ tsdown records every package a bundle swallowed under `inlinedDependencies` in t
 
 A bare package name never matches a subpath import, and plenty of packages are only ever reached through one — `drizzle-orm/pg-core`, `@electric-sql/pglite/contrib/pg_trgm`, `vitest/node`. `getPackagePatterns` turns a list of names into prefix patterns so an entry covers the package _and everything under it_. A name handed to `deps` verbatim silently misses exactly those imports.
 
-## The published surface is gated, not reviewed
+## Every bundle's externals are gated
 
-A published package owes an installable promise to a stranger, and three options hold it to that promise. They are switched on by the absence of `private` in the manifest, so no package opts into them by hand:
+`deps.onlyImport` fails a build whose emitted chunks leave external anything the package's own manifest does not name. It is on for every package, published or not, because the same check answers two different questions.
 
-| Gate              | Fails the build when                                                          |
-| ----------------- | ----------------------------------------------------------------------------- |
-| `publint`         | the manifest points at a file the package does not ship                       |
-| `attw`            | the declarations break under a resolution mode a consumer might use           |
-| `deps.onlyImport` | an emitted chunk imports a package the manifest never told the consumer about |
+For a **published** package it is an installability promise. A package that imports a private sibling resolves nothing on a fresh `npm install`, and nothing in the repo notices — the workspace has the sibling on disk, so every local build, test and typecheck passes. That is an install-time failure for a stranger and a build-time failure for us, and the gate is what moves it.
 
-The third is the one with history. A published package that imports a private sibling resolves nothing on a fresh `npm install`, and nothing in the repo notices — the workspace has the sibling on disk, so every local build, test and typecheck passes. That is an install-time failure for a stranger and a build-time failure for us, and the gate is what moves it.
+For **any** package it is the only thing that notices a specifier which resolved to nothing. Rolldown treats an unresolvable `#src/...` as external rather than failing, so the built `dist` ships an import that Node later resolves through the package's own `imports` map to a `.ts` file it cannot load. The error then lands in a consumer at runtime, naming a source path that consumer never referenced — `Cannot find module .../packages/db-schema/src/services/dayjs.ts imported from .../db-schema/dist/index.js` — a phase and a package away from the typo that caused it.
 
-A private package gets none of these, because nobody installs it.
+`@esposter/configuration` is the single package that widens the allowlist, adding its `devDependencies`: it externalizes everything, and the base derives the list from the runtime dependency fields alone.
+
+## The published surface is gated further
+
+A published package owes an installable promise to a stranger, and two more options hold it to that promise. They are switched on by the absence of `private` in the manifest, so no package opts into them by hand:
+
+| Gate      | Fails the build when                                                |
+| --------- | ------------------------------------------------------------------- |
+| `publint` | the manifest points at a file the package does not ship             |
+| `attw`    | the declarations break under a resolution mode a consumer might use |
+
+A private package gets neither, because nobody installs it.
 
 ## How a package refers to its own source
 
@@ -99,8 +108,6 @@ Through **Node subpath imports**, declared in its own manifest:
 import { escapeValue } from "#src/services/transformer/escapeValue";
 ```
 
-This replaces the `@/*` `paths` alias, and the difference is where the resolution is anchored. `paths` belongs to whichever tsconfig drives the current compilation — so when a sibling bundles a package from source, `@/models/Clause` re-points into the _bundling_ package and resolves to nothing. `azure-functions` and `azure-mock` both vendor siblings, so that was not hypothetical. A `#` specifier is instead resolved by walking up to the nearest `package.json`, which is always the one owning the importing file, so it survives being compiled by anyone. `paths` cannot be configured to do this; it is a compiler-level fiction with no runtime meaning, while `imports` is a resolution feature Node, TypeScript, Rolldown, Vite, esbuild and webpack all implement.
-
 The `.ts` in the **target** is what makes it resolve. Nothing in the chain does extension substitution through an `imports` target, so a bare `"./src/*"` sends TypeScript looking for `./src/services/transformer/escapeValue`, where there is no file. The pattern substitutes into `./src/*.ts` instead, so specifiers stay extensionless and the fix lives in one line of the manifest rather than on every import. The key cannot be `#/` either, which Node reserves; `#src/*` is the nearest legal spelling to the alias it replaces.
 
 `./src/*.ts` is the default arm rather than a claim that a package holds only `.ts`. A package that self-imports another kind of file adds a key whose suffix says so, and the longer suffix wins the match:
@@ -111,9 +118,26 @@ The `.ts` in the **target** is what makes it resolve. Nothing in the chain does 
 
 Those specifiers keep their own extension, which is what a `.vue` or `.json` import carries in any case. An **array** target looks like the tidier way to avoid the second key and is not one: TypeScript walks the fallbacks and Vite does not, so the package typechecks and then fails to resolve under Vitest.
 
-### Which unlocks source exports
+A **directory is not a specifier**, which is the one place the substitution is less forgiving than the alias it replaced. `@/store` resolved by directory lookup to `src/store/index.ts`; `#src/store` substitutes to the literal `./src/store.ts` and nothing else, so a directory has to be spelled `#src/store/index`. Where a file and a directory share a name — `db-schema` has both `src/schema.ts` and `src/schema/` — the file is what the alias used to mean, so only the barrel takes the `/index`.
 
-A package on `#src/` sets `exports: { devExports: SOURCE_CONDITION }`, and tsdown gives its exports two arms:
+## Why a library uses `#src/` and the app uses `@/`
+
+`#src/` wins on four counts, and every one of them is about a package being consumed by something other than itself:
+
+- **The resolution is anchored to the file, not to the compiler.** A `paths` entry belongs to whichever tsconfig drives the current compilation, so when a sibling bundles a package from source, `@/models/Clause` re-points into the _bundling_ package and resolves to nothing. `azure-functions`, `virrun` and `infra` all vendor siblings, so that was never hypothetical. A `#` specifier is resolved by walking up to the nearest `package.json`, which is always the one owning the importing file, so it survives being compiled by anyone. This is the reason source exports are possible at all.
+- **It is a real resolution feature rather than a compiler fiction.** `imports` is in the Node ESM specification and is implemented by Node itself, TypeScript, Rolldown, Vite, esbuild, webpack, Vitest and jiti. `paths` has no runtime meaning whatsoever — it is a typecheck-time mapping every bundler has to be told about separately, which is why an alias convention costs one entry per tool and drifts the moment a tool is added.
+- **It is declared once, where the package already declares everything else.** The manifest travels with the package, and a fresh clone resolves it before any configuration is loaded.
+- **It is private and cannot collide.** `#` specifiers are unreachable from outside the package by specification. `@/*` was reachable only because `tsconfig.base.json` mapped it, and it sat beside a `"*"` fallback that shadowed real package names — a mapping that turns a mistyped dependency into a same-named local file rather than an error.
+
+`packages/app` has none of those pressures. Nothing bundles it from source, nothing publishes it, nothing resolves into it; it is the leaf of the graph. Its `@/` and `~/` are **Nuxt's own aliases**, generated into `.nuxt/tsconfig.*.json` and understood by the Vite and Nitro builds without anything being configured — so they are the framework's convention rather than one of ours, and replacing them would mean fighting generated configuration for a property the app cannot use. The repo-root `scripts/` tree keeps its own `@/` for the same reason, mapped by the root `tsconfig.json` alone.
+
+An `.oxlintrc.json` override bans `@/**` and `~/**` under `packages/*/src/**` — every package and no part of the app — so the split is enforced rather than remembered.
+
+## Which unlocks source exports
+
+Because a `#` specifier resolves the same way no matter who is compiling, a package can safely publish a second
+view of itself: its own source. `getTsdownConfiguration` sets `exports: { devExports: SOURCE_CONDITION }` for
+every package, so tsdown gives every generated entry two arms:
 
 ```json
 {
@@ -122,17 +146,36 @@ A package on `#src/` sets `exports: { devExports: SOURCE_CONDITION }`, and tsdow
 }
 ```
 
-A tool that opts into the condition resolves TypeScript source; everything else falls through to the build; and npm gets the `publishConfig` map, which is also what `publint` and `attw` gate against. No rebuild stands between an edit and a consumer seeing it, a fresh clone typechecks without building anything first, and go-to-definition lands on real source.
+A tool that opts into the condition resolves TypeScript source; everything else falls through to the build; and
+npm gets the `publishConfig` map, which is also what `publint` and `attw` gate against. No rebuild stands
+between an edit and a consumer seeing it, a fresh clone typechecks without building anything first, and
+go-to-definition lands on real source rather than a bundled declaration.
 
-Three places opt in, and that is the entire mechanism: `customConditions` in `tsconfig.base.json`, `resolve.conditions` in `getVitestConfiguration`, and anything else that wants source saying so explicitly.
+Two places opt in, and that is the entire mechanism: `customConditions` in `tsconfig.base.json` and
+`resolve.conditions` in `getVitestConfiguration`. Anything else that wants source says so explicitly.
 
-**The `default` arm is the load-bearing half.** `devExports: true` omits it and points every condition at source, which reads as the simpler configuration and is not: Node's own ESM loader cannot read TypeScript source, twice over. It resolves no extensionless relative specifier, so the generated barrel's `export * from "./models/BinaryOperator"` fails outright, and its type-stripping cannot transform a TS `enum`. Two things here hand a package to that loader — Nitro's prerender, which imports the built server, and Pulumi, which runs `infra`'s `dist` — so both break.
+**The `default` arm is the load-bearing half.** `devExports: true` omits it and points every condition at
+source, which reads as the simpler configuration and is not: Node's own ESM loader cannot read TypeScript
+source, twice over. It resolves no extensionless relative specifier, so the generated barrel's
+`export * from "./models/BinaryOperator"` fails outright, and its type-stripping cannot transform a TS `enum`.
+Two things here hand a package to that loader — Nitro's prerender, which imports the built server, and Pulumi,
+which runs `infra`'s `dist` — so both break.
 
-Neither breaks anywhere near its cause. The prerender failure names a module path nobody edited, and the Pulumi one surfaces as a failed `preview` in CI. The workarounds cost more than the feature is worth. Inlining into the Nitro server cannot be limited to the source-exporting packages — a `dist` sibling externalizes its own siblings, so it has to cover all of them — and `infra` has to vendor its siblings, taking it from 127 kB to 1.27 MB. Both are standing configuration a new consumer has to know about. A `default` arm costs nothing, because nothing has to be configured to keep working.
+Neither breaks anywhere near its cause. The prerender failure names a module path nobody edited, and the Pulumi
+one surfaces as a failed `preview` in CI. The workarounds cost more than the feature is worth. Inlining into
+the Nitro server cannot be limited to the source-exporting packages — a `dist` sibling externalizes its own
+siblings, so it has to cover all of them — and `infra` has to vendor its siblings, taking it from 127 kB to
+1.27 MB. Both are standing configuration a new consumer has to know about. A `default` arm costs nothing,
+because nothing has to be configured to keep working.
 
-One consequence worth holding onto: **a `dist` sibling externalizes its own siblings.** `db-schema`'s build emits `from "@esposter/azure"`, so that import resolves independently, under whatever conditions the resolver is running with. There is no single consumer where the decision can be made once — which is exactly why the answer belongs in the exports map rather than in a bundler's config.
+One consequence worth holding onto: **a `dist` sibling externalizes its own siblings.** `db-schema`'s build
+emits `from "@esposter/azure"`, so that import resolves independently, under whatever conditions the resolver
+is running with. There is no single consumer where the decision can be made once — which is exactly why the
+answer belongs in the exports map rather than in a bundler's config.
 
-Which packages have converted is tracked in `.agents/ledgers/package-imports.md`. The `paths` entries in `tsconfig.base.json` are what still resolves the rest, so they come out when the last row is dated.
+The app is the deliberate non-participant. Nuxt's Vite and Nitro builds do not carry the condition, so the app resolves every sibling's `dist` — which is what keeps the Nitro server bundle externalizing them rather than pulling every package's TypeScript into a single graph. The practical consequence: a package's own tests see a sibling's edit immediately, and the app does not until that sibling is rebuilt, which is what `watch:packages` is still for.
+
+**A build that vendors a sibling now vendors its source.** Rolldown reads `customConditions` from the tsconfig it was handed, so the self-contained bundles pull their siblings' TypeScript rather than their `dist`. That is the behaviour worth having — a deploy artifact can no longer be built from a stale sibling — and it is also precisely what `paths` made impossible, because a `@/` inside the vendored package would have re-anchored to the bundling package. It is why `isolatedDeclarations` has to be off in a package that vendors one of the packages that cannot satisfy it: the transform runs over the whole module graph, and those files are now inputs to it.
 
 ## The output directory is wiped on every build
 
@@ -170,7 +213,7 @@ The `index.d.ts` size snapshot in each package's `src/index.test.ts` is what mak
 
 ## The bootstrap package
 
-`@esposter/configuration` is built by the same factories it exports, and two things follow from that. Its relative imports carry a `.ts` extension, because tsdown loads a config with a native import that will not guess one — every other package resolves this one as a built `.js` file, while this config has to reach TypeScript source before any build has run. And it keeps its exports pointing at `dist` for the same reason.
+`@esposter/configuration` is built by the same factories it exports, and two things follow from that. Its relative imports carry a `.ts` extension rather than the `#src/` every other package uses, because tsdown loads a config with a native import that will not guess an extension, and this is the one config that has to reach TypeScript source before any build has run. Its `default` export arm still points at `dist`, which is what every other package's config resolves it through.
 
 ## Key files
 
