@@ -27,7 +27,7 @@
   "sideEffects": false,
   "types": "dist/index.d.ts",
   "imports": {
-    "#src/*": "./src/*"
+    "#src/*": "./src/*.ts"
   },
   "exports": {
     ".": "./src/index.ts",

@@ -1,6 +1,6 @@
-import type { BinaryOperator } from "#src/models/BinaryOperator.ts";
-import type { SearchOperator } from "#src/models/search/SearchOperator.ts";
-import type { SerializableValue } from "#src/models/SerializableValue.ts";
+import type { BinaryOperator } from "#src/models/BinaryOperator";
+import type { SearchOperator } from "#src/models/search/SearchOperator";
+import type { SerializableValue } from "#src/models/SerializableValue";
 
 export type Clause<T extends object> = {
   key: keyof T & string;

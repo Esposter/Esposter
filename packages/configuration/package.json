@@ -11,9 +11,9 @@
     "formatting",
     "linting",
     "oxlint",
-    "rolldown",
     "shared-config",
     "tsconfig",
+    "tsdown",
     "typescript",
     "vite"
   ],

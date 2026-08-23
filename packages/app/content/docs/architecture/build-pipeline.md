@@ -87,19 +87,19 @@ A private package gets none of these, because nobody installs it.
 
 ## How a package refers to its own source
 
-Through **Node subpath imports**, declared in its own manifest and written with an extension:
+Through **Node subpath imports**, declared in its own manifest:
 
 ```json
-{ "imports": { "#src/*": "./src/*" } }
+{ "imports": { "#src/*": "./src/*.ts" } }
 ```
 
 ```ts
-import { escapeValue } from "#src/services/transformer/escapeValue.ts";
+import { escapeValue } from "#src/services/transformer/escapeValue";
 ```
 
 This replaces the `@/*` `paths` alias, and the difference is where the resolution is anchored. `paths` belongs to whichever tsconfig drives the current compilation — so when a sibling bundles a package from source, `@/models/Clause` re-points into the _bundling_ package and resolves to nothing. `azure-functions` and `azure-mock` both vendor siblings, so that was not hypothetical. A `#` specifier is instead resolved by walking up to the nearest `package.json`, which is always the one owning the importing file, so it survives being compiled by anyone. `paths` cannot be configured to do this; it is a compiler-level fiction with no runtime meaning, while `imports` is a resolution feature Node, TypeScript, Rolldown, Vite, esbuild and webpack all implement.
 
-The extension is not decoration. TypeScript performs no extension substitution through an `imports` target: it computes `./src/services/transformer/escapeValue`, finds no file there, and reports the module missing — while the bundler resolves it happily. That split is why `allowImportingTsExtensions` is on. The key cannot be `#/` either, which Node reserves; `#src/*` is the nearest legal spelling to the alias it replaces.
+The `.ts` in the **target** is what makes it resolve. TypeScript performs no extension substitution through an `imports` target, so a bare `"./src/*"` sends it looking for `./src/services/transformer/escapeValue`, where there is no file — it reports the module missing while the bundler resolves it happily, which is a green build and a red typecheck. The pattern substitutes into `./src/*.ts` instead, so specifiers stay extensionless and the fix lives in one character of the manifest rather than on every import line. The key cannot be `#/` either, which Node reserves; `#src/*` is the nearest legal spelling to the alias it replaces.
 
 ### Which unlocks source exports
 

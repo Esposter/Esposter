@@ -23,13 +23,14 @@ its internal specifiers resolve against the file that wrote them rather than aga
 rule, the two ways it fails silently, and what it unlocks: the `build` skill.
 
 A unit is one package, and it converts whole. There is no partially-converted state: a package with both
-`@/models/Foo` and `#src/models/Foo.ts` in it typechecks, so nothing would ever report the leftovers.
+`@/models/Foo` and `#src/models/Foo` in it typechecks, so nothing would ever report the leftovers.
 
 Per package:
 
-1. `"imports": { "#src/*": "./src/*" }` in its `package.json`, written directly after `exports`.
-2. `@/` → `#src/` across `src/**`, and **add the `.ts`** — TypeScript does no extension substitution through an
-   `imports` target, so an extensionless specifier resolves in the bundler and not in the compiler.
+1. `"imports": { "#src/*": "./src/*.ts" }` in its `package.json`, written directly after `exports`. The `.ts`
+   belongs to the target: TypeScript does no extension substitution through an `imports` target, and a bare
+   `"./src/*"` resolves in the bundler but not in the compiler.
+2. `@/` → `#src/` across `src/**`. Specifiers stay extensionless.
 3. `exports: { devExports: true }` in its `tsdown.config.ts`, so workspace consumers resolve `src`.
 4. `pnpm build` the package **and everything that vendors it** — `azure-functions` and `azure-mock` vendor
    siblings, and they are the builds that would have broken under `@/*`.
