@@ -1,6 +1,6 @@
-import type { Clause } from "@esposter/azure";
+import type { Clause } from "#src/models/Clause";
 
-import { BinaryOperator } from "@esposter/azure";
+import { BinaryOperator } from "#src/models/BinaryOperator";
 
 export const getSearchNonNullClause = <T extends object>(key: keyof T & string): Clause<T> => ({
   key,

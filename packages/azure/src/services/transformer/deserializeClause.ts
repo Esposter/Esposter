@@ -1,9 +1,9 @@
-import type { Clause } from "@esposter/azure";
+import type { Clause } from "#src/models/Clause";
 
-import { deserializeKey } from "#src/services/azure/table/deserializeKey";
-import { CLAUSE_REGEX } from "#src/services/azure/transformer/constants";
-import { deserializeValue } from "#src/services/azure/transformer/deserializeValue";
-import { BinaryOperator } from "@esposter/azure";
+import { deserializeKey } from "#src/services/table/deserializeKey";
+import { CLAUSE_REGEX } from "#src/services/transformer/constants";
+import { deserializeValue } from "#src/services/transformer/deserializeValue";
+import { BinaryOperator } from "#src/models/BinaryOperator";
 import { normalizeString, NotFoundError } from "@esposter/shared";
 
 export const deserializeClause = (

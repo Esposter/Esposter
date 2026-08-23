@@ -1,7 +1,9 @@
-import type { Clause } from "@esposter/azure";
+import type { Clause } from "#src/models/Clause";
 
-import { serializeKey } from "#src/services/azure/table/serializeKey";
-import { SearchOperator, serializeValue, UnaryOperator } from "@esposter/azure";
+import { serializeKey } from "#src/services/table/serializeKey";
+import { UnaryOperator } from "#src/models/UnaryOperator";
+import { SearchOperator } from "#src/models/search/SearchOperator";
+import { serializeValue } from "#src/services/transformer/serializeValue";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const serializeClause = (clause: Clause<Record<string, unknown>>, isTableFilter = false): string => {

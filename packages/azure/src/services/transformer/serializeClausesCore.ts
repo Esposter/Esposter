@@ -1,8 +1,8 @@
-import type { Clause } from "@esposter/azure";
+import type { Clause } from "#src/models/Clause";
 
-import { RangeOperators } from "#src/services/azure/transformer/RangeOperators";
-import { serializeClause } from "#src/services/azure/transformer/serializeClause";
-import { UnaryOperator } from "@esposter/azure";
+import { RangeOperators } from "#src/services/transformer/RangeOperators";
+import { serializeClause } from "#src/services/transformer/serializeClause";
+import { UnaryOperator } from "#src/models/UnaryOperator";
 import { takeOne } from "@esposter/shared";
 
 // The isTableFilter flag threads down to serializeValue so Date literals render as the target service expects:

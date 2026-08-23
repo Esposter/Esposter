@@ -41,9 +41,9 @@ tsdown externalizes `dependencies` and `peerDependencies` and bundles `devDepend
 
 ### Minify only the deploy artifact
 
-`azure-functions` sets `minify: { compress: true, mangle: false, removeWhitespace: true }` — 7.25 MB to 5.00 MB on the file the Functions host parses at every cold start. Nothing else minifies: a library's consumer minifies for themselves, and readable output is what a stack trace is read through.
+Only an artifact a host downloads and parses at every cold start is worth compressing. Nothing else minifies: a library's consumer minifies for themselves, and readable output is what a stack trace is read through.
 
-Never widen it to `minify: true`. Mangling reaches 3.67 MB and renames every identifier, so the stack for an EventGrid delivery that already happened names `t` instead of the handler. `dce-only` is worth nothing — rolldown already tree-shakes. Note that no test covers minified output: tests import source, and only the size snapshot reads `dist`.
+**Compression on, mangling off** — which is why it is spelled out as options rather than `minify: true`. Compression takes roughly a third off. Mangling takes off about that much again and renames every identifier, so the stack for a delivery that already happened names `t` instead of the handler — and for a fire-and-forget event, that stack is the whole diagnosis. `dce-only` is worth nothing (rolldown already tree-shakes), and whitespace removal is `codegen.removeWhitespace`, on by default and never restated. No test covers minified output: tests import source, and only the size snapshot reads `dist`.
 
 ### What gets vendored is recorded, not allowlisted
 

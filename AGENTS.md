@@ -30,9 +30,10 @@ This file is the canonical guidance for AI coding agents working in this reposit
 | Package Path               | npm name                    | Description                                                                |
 | :------------------------- | :-------------------------- | :------------------------------------------------------------------------- |
 | `packages/app`             | `@esposter/app`             | Main Nuxt 4 web application (frontend, server routes, tRPC)                |
+| `packages/azure`           | `@esposter/azure`           | Azure wire conventions shared by the real clients and the mocks            |
 | `packages/azure-functions` | `@esposter/azure-functions` | Serverless backend (EventGrid, Timers) — push notifications, webhooks      |
 | `packages/azure-mock`      | `azure-mock`                | Mock Azure service classes for local dev and testing                       |
-| `packages/configuration`   | `@esposter/configuration`   | Shared ESLint, TSConfig, and Rolldown build configs                        |
+| `packages/configuration`   | `@esposter/configuration`   | Shared ESLint, TSConfig, and tsdown build configs                          |
 | `packages/db`              | `@esposter/db`              | DB connection utilities (Drizzle ORM, Azure Table, Blob, WebPubSub)        |
 | `packages/db-mock`         | `@esposter/db-mock`         | In-memory PGlite database factory for unit/integration tests               |
 | `packages/db-schema`       | `@esposter/db-schema`       | **Source of truth** for DB: Drizzle ORM schemas, migrations                |
