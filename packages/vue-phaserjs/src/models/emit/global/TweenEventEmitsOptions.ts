@@ -1,4 +1,4 @@
-import type { TweenConfiguration } from "@/models/configuration/global/TweenConfiguration";
-import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
+import type { TweenConfiguration } from "#src/models/configuration/global/TweenConfiguration";
+import type { EmitsOptionsFor } from "#src/util/types/EmitsOptionsFor";
 
 export type TweenEventEmitsOptions = EmitsOptionsFor<TweenConfiguration>;

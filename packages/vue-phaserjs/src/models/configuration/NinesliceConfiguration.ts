@@ -1,14 +1,14 @@
-import type { AlphaSingleConfiguration } from "@/models/configuration/components/AlphaSingleConfiguration";
-import type { BlendModeConfiguration } from "@/models/configuration/components/BlendModeConfiguration";
-import type { DepthConfiguration } from "@/models/configuration/components/DepthConfiguration";
-import type { MaskConfiguration } from "@/models/configuration/components/MaskConfiguration";
-import type { OriginConfiguration } from "@/models/configuration/components/OriginConfiguration";
-import type { RenderNodesConfiguration } from "@/models/configuration/components/RenderNodesConfiguration";
-import type { ScrollFactorConfiguration } from "@/models/configuration/components/ScrollFactorConfiguration";
-import type { TextureConfiguration } from "@/models/configuration/components/TextureConfiguration";
-import type { TransformConfiguration } from "@/models/configuration/components/TransformConfiguration";
-import type { VisibleConfiguration } from "@/models/configuration/components/VisibleConfiguration";
-import type { GlobalConfiguration } from "@/models/configuration/global/GlobalConfiguration";
+import type { AlphaSingleConfiguration } from "#src/models/configuration/components/AlphaSingleConfiguration";
+import type { BlendModeConfiguration } from "#src/models/configuration/components/BlendModeConfiguration";
+import type { DepthConfiguration } from "#src/models/configuration/components/DepthConfiguration";
+import type { MaskConfiguration } from "#src/models/configuration/components/MaskConfiguration";
+import type { OriginConfiguration } from "#src/models/configuration/components/OriginConfiguration";
+import type { RenderNodesConfiguration } from "#src/models/configuration/components/RenderNodesConfiguration";
+import type { ScrollFactorConfiguration } from "#src/models/configuration/components/ScrollFactorConfiguration";
+import type { TextureConfiguration } from "#src/models/configuration/components/TextureConfiguration";
+import type { TransformConfiguration } from "#src/models/configuration/components/TransformConfiguration";
+import type { VisibleConfiguration } from "#src/models/configuration/components/VisibleConfiguration";
+import type { GlobalConfiguration } from "#src/models/configuration/global/GlobalConfiguration";
 import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
