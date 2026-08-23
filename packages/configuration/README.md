@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Shared build and lint configuration for all Esposter packages. Provides ESLint configs, TSConfig bases, and Rolldown build configurations for browser, isomorphic, and Node.js targets.
+Shared build and lint configuration for all Esposter packages. Provides ESLint configs, TSConfig bases, and the tsdown build configurations every package's `tsdown.config.ts` composes.
 
 ## Table of Contents
 
@@ -17,13 +17,13 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### What's Included
 
-| Config                | File                              | Purpose                                                          |
-| --------------------- | --------------------------------- | ---------------------------------------------------------------- |
-| ESLint                | `eslint/`                         | Shared ESLint rules (oxlint + typescript-eslint + perfectionist) |
-| Rolldown (browser)    | `rolldownConfigurationBrowser`    | Vite-compatible browser bundle config                            |
-| Rolldown (isomorphic) | `rolldownConfigurationIsomorphic` | Browser bundle config with Node built-in polyfills               |
-| tsdown (Node)         | `getTsdownConfigurationNode`      | Server-only package bundle config                                |
-| ctix                  | `.ctirc-ts`                       | Barrel file generation config for `packages/*/src/index.ts`      |
+| Config        | File                         | Purpose                                                                 |
+| ------------- | ---------------------------- | ----------------------------------------------------------------------- |
+| ESLint        | `eslint/`                    | Shared ESLint rules (oxlint + typescript-eslint + perfectionist)        |
+| tsdown (base) | `getTsdownConfiguration`     | Platform-neutral bundle config, plus the gates a published package owes |
+| tsdown (Node) | `getTsdownConfigurationNode` | The base, targeting Node                                                |
+| tsdown (Vue)  | `getTsdownConfigurationVue`  | The base, compiling `.vue` files and emitting their declarations        |
+| ctix          | `.ctirc-ts`                  | Barrel file generation config for `packages/*/src/index.ts`             |
 
 ### Usage in other packages
 

@@ -1,6 +1,6 @@
 ---
 name: build
-description: Esposter tsdown build conventions — the shared configuration factories and composing them with mergeConfig rather than a spread, dependencies being externalized while devDependencies are bundled and the two kinds of package that opt out, subpath-aware package patterns, the publint/attw/onlyImport gates a published package gets and why a private one gets none, why exports.devExports is unavailable here, the tsconfig preset chain and the isolatedDeclarations exception, the bootstrap package, and why a declare-module augmentation never travels through a bundled .d.ts to a consuming package. Apply when adding packages, editing tsdown or tsconfig configs, changing a manifest's dependency placement, or wrapping a library whose types are augmented by a plugin.
+description: Esposter tsdown build conventions — the shared configuration factories and composing them with mergeConfig rather than a spread, dependencies being externalized while devDependencies are bundled and the two kinds of package that opt out, subpath-aware package patterns, inlinedDependencies as the record of what a bundle swallowed, dts.eager for ambient declarations the entrypoints never import, the publint/attw/onlyImport gates a published package gets and why a private one gets none, why exports.devExports is unavailable here, the tsconfig preset chain and the isolatedDeclarations exception, the bootstrap package, and why a declare-module augmentation never travels through a bundled .d.ts to a consuming package. Apply when adding packages, editing tsdown or tsconfig configs, changing a manifest's dependency placement, or wrapping a library whose types are augmented by a plugin.
 ---
 
 # Build Conventions (tsdown)
@@ -13,7 +13,7 @@ Everything lives in `packages/configuration/src/`. Each export is a **factory** 
 
 A package's `tsdown.config.ts` is one factory call plus only what is genuinely specific to it. If you are about to repeat a plugin, an exclude or a `deps` entry across two packages, it belongs in `configuration` instead. Which package calls which factory is countable from the repo — never restate it here.
 
-The build script is bare `tsdown`. It finds `tsdown.config.ts` by name; never pass `--config`.
+The build script runs `export:gen`, then bare `tsdown`. tsdown finds `tsdown.config.ts` by name; never pass `--config`.
 
 ### Compose with `mergeConfig`, never a spread
 
@@ -38,6 +38,10 @@ tsdown externalizes `dependencies` and `peerDependencies` and bundles `devDepend
 
 **Never bundle a dependency to save the consumer an install.** It saves nothing — they never install it by hand — and it costs deduplication, it strands them on a vendored copy when that dependency ships a fix, and it splits any type the dependency owns into two nominally distinct copies that fail `instanceof` against each other.
 
+### What gets vendored is recorded, not allowlisted
+
+The base sets `deps: { onlyBundle: false }`, which silences tsdown's standing hint that an allowlist of inlinable packages is missing. The list it asks for already exists in a better form: tsdown writes every package it vendored into the manifest's `inlinedDependencies`, and that field is committed, so anything newly inlined turns up in a reviewed diff beside the change that caused it. A second, hand-maintained copy could only ever be bootstrapped by hand-writing the versions tsdown itself generates — the check runs before the manifest is written, so the first build of a new package could never pass. Read `inlinedDependencies` when you want to know what a bundle swallowed.
+
 ### Patterns, not bare names
 
 Anything handed to `deps` goes through `getPackagePatterns`. A bare name never matches a subpath import, and `drizzle-orm/pg-core`, `@electric-sql/pglite/contrib/pg_trgm` and `vitest/node` are all reached only that way. A list passed verbatim misses exactly those and the failure looks like an unrelated missing export.
@@ -48,6 +52,12 @@ Declared in the package's own `tsdown.config.ts`, never in `configuration`:
 
 - **Self-contained bundles** (`virrun`, `azure-functions`) vendor what they use so consumers manage no peers. `virrun` needs no `alwaysBundle` at all — everything it vendors is already a `devDependency` — and declares only that `unconfig` stays external, because `unconfig` resolves `jiti` through `createRequire` relative to its own installed file and vendoring rebases that lookup. `azure-functions` derives `alwaysBundle` from its own manifest minus what the Functions host provides, and sets `dts: false` because nothing consumes its types.
 - **`@esposter/configuration`** uses `deps: { neverBundle: true }`. It is private, never published, and its dist imports nothing but build tooling every workspace member already has installed.
+
+### Ambient declarations need `dts.eager`
+
+The declaration build seeds its TypeScript program from the **entrypoints**, not from the tsconfig's `include`. An ambient `.d.ts` that nothing imports — `auto-imports.d.ts`, generated by `unplugin-auto-import` — is therefore invisible to it, and every symbol it declares resolves to `any` in the shipped types. This fails silently in the worst way: `vue-tsc` passes, the build passes, and the consumer gets `declare const useCameraStore: any`.
+
+`dts: { eager: true }` loads every file the tsconfig lists instead, which is how the ambient file gets in. It is set in `getTsdownConfigurationVue` because that is where auto-imports are used. Any package that grows an ambient declaration owes the same option, and `src/index.test.ts`'s `index.d.ts` snapshot is what catches the regression — a declaration file that suddenly gets _smaller_ is types collapsing to `any`.
 
 ## A published package is gated
 

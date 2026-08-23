@@ -9,7 +9,7 @@ How `src/` becomes `dist/` for every workspace package, and what an individual p
 
 ## One bundler
 
-Every package builds with **tsdown**, which is Rolldown plus the things a library build needs on top of it: declaration bundling, a generated `exports` field, and the publishability gates below. Every package's build script is bare `tsdown` — the config file is found by name, never named on the command line.
+Every package builds with **tsdown**, which is Rolldown plus the things a library build needs on top of it: declaration bundling, a generated `exports` field, and the publishability gates below. Every package's build script runs `export:gen` and then bare `tsdown` — the config file is found by name, never named on the command line.
 
 There is no second build path. The package that ships `.vue` files used to reach Rolldown through Vite for SFC compilation and a `vue-tsc` declaration build; tsdown does both directly, so a component can no longer compile one way for the build and another way for its tests.
 
@@ -51,7 +51,8 @@ Which package calls which factory is a question the repo answers — read the `t
 
 A library externalizes exactly what its consumer installs, and tsdown's defaults already say so:
 
-- **`dependencies` and `peerDependencies` are externalized.** The consumer's package manager installs them transitively and dedupes them against everything else in the tree. Nobody types their names.
+- **`dependencies` are externalized.** The consumer's package manager installs them transitively and dedupes them against everything else in the tree. Nobody types their names.
+- **`peerDependencies` are externalized too, but they are a demand rather than a delivery** — the consumer supplies the copy, and gets a warning instead of an install if they do not. That is the point for anything that must be a singleton in the consumer's tree: `vue` and `pinia` bundled, or even installed twice, are two reactivity systems that do not see each other's state.
 - **`devDependencies` are bundled** when the source imports them.
 - **Workspace siblings follow the same rule** — a published sibling is a normal dependency and stays external.
 
@@ -61,6 +62,10 @@ Two kinds of package opt out, both in their own `tsdown.config.ts`:
 
 - **Self-contained bundles.** `virrun` is a CLI installed with one command and `azure-functions` is a deploy artifact dropped into a host that installs nothing, so both vendor what they use. `virrun` gets this for free — everything it bundles is a `devDependency` — and declares only that `unconfig` stays external, because `unconfig` resolves `jiti` through `createRequire` relative to its own installed file and vendoring rebases that lookup. `azure-functions` derives its `alwaysBundle` list from its own manifest, minus the `@azure/functions` the host provides.
 - **`@esposter/configuration` itself**, which externalizes everything including `devDependencies`. It is private, never published, and its dist imports nothing but build tooling every workspace member already has installed.
+
+### What was vendored is written back into the manifest
+
+tsdown records every package a bundle swallowed under `inlinedDependencies` in that package's `package.json`, and the field is committed. That is the answer to "what is actually inside this dist" — and because it lands in a diff next to the change that caused it, it is also the review gate. tsdown will otherwise hint on every build that a `deps.onlyBundle` allowlist is missing; the base turns the hint off, because the allowlist would be a hand-maintained second copy of a list tsdown already writes, and one that could never be bootstrapped — the check runs before the manifest is written, so a new package's first build could not pass.
 
 ### Every entry matches subpaths
 
@@ -113,6 +118,12 @@ The build preset contributes **excludes and nothing else** — no `compilerOptio
 What the build excludes: config files, `scripts/`, and every `*.test.ts` / `*.test-d.ts` / `*.bench.ts`.
 
 `isolatedDeclarations` is on by default and off in the packages that cannot satisfy it: a Drizzle table type cannot be written out by hand, and a package that vendors one of those from source makes their files inputs to its own build. The transform runs over the whole module graph, so this is a property of the tsconfig rather than something a declaration-generator option can waive for one package.
+
+## Declarations see the entrypoints, not the tsconfig
+
+The declaration build seeds its TypeScript program from the entry files and follows imports out from there — it does not load everything the tsconfig's `include` lists. An ambient `.d.ts` that no entry imports is therefore absent from that program, and every symbol it declares resolves to `any` in the emitted types while `vue-tsc` and the bundle both pass. `vue-phaserjs`'s `auto-imports.d.ts` is exactly that file, which is why the Vue factory sets `dts: { eager: true }` to load the tsconfig's full file list instead.
+
+The `index.d.ts` size snapshot in each package's `src/index.test.ts` is what makes this visible: types collapsing to `any` make a declaration file _smaller_, not larger.
 
 ## The bootstrap package
 

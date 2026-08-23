@@ -24,11 +24,17 @@ import { readPackageManifest } from "./readPackageManifest.ts";
 // Bundling package instead and vanish. `azure-functions` and `azure-mock` both vendor siblings, so source
 // Exports are not available to this repo while that alias convention stands.
 export const getTsdownConfiguration = (): UserConfig => {
-  const { dependencies, peerDependencies, private: isPrivate } = readPackageManifest();
+  const { dependencies, optionalDependencies, peerDependencies, private: isPrivate } = readPackageManifest();
   // `platform: "neutral"` is the real "no platform assumption": tsdown defaults to `node`, which would let a
   // Package reach for a node builtin without the build ever objecting. A package that genuinely targets node
   // Says so with `getTsdownConfigurationNode`.
   const commonConfiguration = {
+    // Tsdown otherwise hints on every build that an allowlist of what may be inlined is missing. The list it
+    // Asks for already exists: tsdown itself writes every vendored package into the manifest's
+    // `inlinedDependencies`, which is committed, so a newly inlined package lands in a reviewed diff. A second
+    // Hand-maintained copy could only ever be bootstrapped by hand-writing the versions tsdown generates — the
+    // Check runs before the manifest is written, so a first build of a new package could never pass.
+    deps: { onlyBundle: false },
     dts: { tsconfig: BUILD_TSCONFIG },
     // Generated rather than hand-written, so a new entrypoint cannot ship without the manifest reaching it.
     exports: true,
@@ -50,7 +56,11 @@ export const getTsdownConfiguration = (): UserConfig => {
         // Sibling left as an import is unresolvable for anyone installing from npm, and invisible until they
         // Try — this turns that into a build failure instead.
         deps: {
-          onlyImport: getPackagePatterns([...Object.keys(dependencies ?? {}), ...Object.keys(peerDependencies ?? {})]),
+          onlyImport: getPackagePatterns([
+            ...Object.keys(dependencies ?? {}),
+            ...Object.keys(optionalDependencies ?? {}),
+            ...Object.keys(peerDependencies ?? {}),
+          ]),
         },
         // Publishability is a build-time error rather than a release-time surprise: this fails a build whose
         // Manifest points at a file it does not ship.
