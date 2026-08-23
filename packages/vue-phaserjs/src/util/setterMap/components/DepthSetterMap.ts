@@ -1,9 +1,9 @@
-import type { DepthConfiguration } from "@/models/configuration/components/DepthConfiguration";
-import type { DepthEventEmitsOptions } from "@/models/emit/components/DepthEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { DepthConfiguration } from "#src/models/configuration/components/DepthConfiguration";
+import type { DepthEventEmitsOptions } from "#src/models/emit/components/DepthEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { getDepthInsertIndex } from "@/util/getDepthInsertIndex";
+import { getDepthInsertIndex } from "#src/util/getDepthInsertIndex";
 
 export const DepthSetterMap = {
   depth: (gameObject) => (value) => {

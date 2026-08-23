@@ -1,4 +1,4 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
 import { NotInitializedError } from "@esposter/shared";
 import { Game } from "phaser";

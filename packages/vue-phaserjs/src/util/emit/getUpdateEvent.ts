@@ -1,4 +1,4 @@
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { UpdateEvent } from "#src/util/types/UpdateEvent";
 import type { KebabCase } from "type-fest";
 
 import { toKebabCase } from "@esposter/shared";

@@ -1,9 +1,9 @@
-import type { TextureConfiguration } from "@/models/configuration/components/TextureConfiguration";
-import type { TextureEventEmitsOptions } from "@/models/emit/components/TextureEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { TextureConfiguration } from "#src/models/configuration/components/TextureConfiguration";
+import type { TextureEventEmitsOptions } from "#src/models/emit/components/TextureEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { BaseTextureSetterMap } from "@/util/setterMap/components/BaseTextureSetterMap";
+import { BaseTextureSetterMap } from "#src/util/setterMap/components/BaseTextureSetterMap";
 
 export const TextureSetterMap = {
   ...BaseTextureSetterMap,

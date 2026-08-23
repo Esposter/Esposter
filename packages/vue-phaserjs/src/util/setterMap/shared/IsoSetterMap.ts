@@ -1,6 +1,6 @@
-import type { IsoBoxConfiguration } from "@/models/configuration/IsoBoxConfiguration";
-import type { IsoBoxEventEmitsOptions } from "@/models/emit/IsoBoxEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { IsoBoxConfiguration } from "#src/models/configuration/IsoBoxConfiguration";
+import type { IsoBoxEventEmitsOptions } from "#src/models/emit/IsoBoxEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 // The faces and fill of an isometric shape, shared by IsoBox and IsoTriangle. The game object is typed structurally
 // So both satisfy it: a Pick of either concrete class pins the setters' `this` return type to that class alone.
 export const IsoSetterMap = {

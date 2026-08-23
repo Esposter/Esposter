@@ -32,6 +32,10 @@
   "type": "module",
   "sideEffects": false,
   "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#src/*.vue": "./src/*.vue"
+  },
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"

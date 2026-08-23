@@ -1,5 +1,5 @@
-import { onNextTick } from "@/hooks/onNextTick";
-import { removeTestScene, startTestScene, stepScene } from "@/test/fixtures/headlessGame.test";
+import { onNextTick } from "#src/hooks/onNextTick";
+import { removeTestScene, startTestScene, stepScene } from "#src/test/fixtures/headlessGame.test";
 import { describe, expect, test, vi } from "vitest";
 
 describe(onNextTick, () => {

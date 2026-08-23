@@ -1,5 +1,5 @@
-import { onUpdate } from "@/hooks/onUpdate";
-import { removeTestScene, startTestScene, stepScene } from "@/test/fixtures/headlessGame.test";
+import { onUpdate } from "#src/hooks/onUpdate";
+import { removeTestScene, startTestScene, stepScene } from "#src/test/fixtures/headlessGame.test";
 import { describe, expect, test, vi } from "vitest";
 
 describe(onUpdate, () => {

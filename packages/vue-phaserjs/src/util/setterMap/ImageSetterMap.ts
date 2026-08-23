@@ -1,22 +1,22 @@
-import type { ImageConfiguration } from "@/models/configuration/ImageConfiguration";
-import type { ImageEventEmitsOptions } from "@/models/emit/ImageEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { ImageConfiguration } from "#src/models/configuration/ImageConfiguration";
+import type { ImageEventEmitsOptions } from "#src/models/emit/ImageEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { AlphaSetterMap } from "@/util/setterMap/components/AlphaSetterMap";
-import { BlendModeSetterMap } from "@/util/setterMap/components/BlendModeSetterMap";
-import { DepthSetterMap } from "@/util/setterMap/components/DepthSetterMap";
-import { FlipSetterMap } from "@/util/setterMap/components/FlipSetterMap";
-import { MaskSetterMap } from "@/util/setterMap/components/MaskSetterMap";
-import { OriginSetterMap } from "@/util/setterMap/components/OriginSetterMap";
-import { RenderNodesSetterMap } from "@/util/setterMap/components/RenderNodesSetterMap";
-import { ScrollFactorSetterMap } from "@/util/setterMap/components/ScrollFactorSetterMap";
-import { SizeSetterMap } from "@/util/setterMap/components/SizeSetterMap";
-import { TextureCropSetterMap } from "@/util/setterMap/components/TextureCropSetterMap";
-import { TintSetterMap } from "@/util/setterMap/components/TintSetterMap";
-import { TransformSetterMap } from "@/util/setterMap/components/TransformSetterMap";
-import { VisibleSetterMap } from "@/util/setterMap/components/VisibleSetterMap";
-import { GlobalSetterMap } from "@/util/setterMap/global/GlobalSetterMap";
+import { AlphaSetterMap } from "#src/util/setterMap/components/AlphaSetterMap";
+import { BlendModeSetterMap } from "#src/util/setterMap/components/BlendModeSetterMap";
+import { DepthSetterMap } from "#src/util/setterMap/components/DepthSetterMap";
+import { FlipSetterMap } from "#src/util/setterMap/components/FlipSetterMap";
+import { MaskSetterMap } from "#src/util/setterMap/components/MaskSetterMap";
+import { OriginSetterMap } from "#src/util/setterMap/components/OriginSetterMap";
+import { RenderNodesSetterMap } from "#src/util/setterMap/components/RenderNodesSetterMap";
+import { ScrollFactorSetterMap } from "#src/util/setterMap/components/ScrollFactorSetterMap";
+import { SizeSetterMap } from "#src/util/setterMap/components/SizeSetterMap";
+import { TextureCropSetterMap } from "#src/util/setterMap/components/TextureCropSetterMap";
+import { TintSetterMap } from "#src/util/setterMap/components/TintSetterMap";
+import { TransformSetterMap } from "#src/util/setterMap/components/TransformSetterMap";
+import { VisibleSetterMap } from "#src/util/setterMap/components/VisibleSetterMap";
+import { GlobalSetterMap } from "#src/util/setterMap/global/GlobalSetterMap";
 
 export const ImageSetterMap: SetterMap<ImageConfiguration, GameObjects.Image, ImageEventEmitsOptions> = {
   ...AlphaSetterMap,

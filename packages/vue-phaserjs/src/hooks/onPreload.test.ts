@@ -1,7 +1,7 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
-import { onPreload } from "@/hooks/onPreload";
-import { removeTestScene, startTestScene } from "@/test/fixtures/headlessGame.test";
+import { onPreload } from "#src/hooks/onPreload";
+import { removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
 import { describe, expect, test, vi } from "vitest";
 
 describe(onPreload, () => {

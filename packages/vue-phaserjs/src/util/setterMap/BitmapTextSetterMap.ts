@@ -1,19 +1,19 @@
-import type { BitmapTextConfiguration } from "@/models/configuration/BitmapTextConfiguration";
-import type { BitmapTextEventEmitsOptions } from "@/models/emit/BitmapTextEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { BitmapTextConfiguration } from "#src/models/configuration/BitmapTextConfiguration";
+import type { BitmapTextEventEmitsOptions } from "#src/models/emit/BitmapTextEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { AlphaSetterMap } from "@/util/setterMap/components/AlphaSetterMap";
-import { BlendModeSetterMap } from "@/util/setterMap/components/BlendModeSetterMap";
-import { DepthSetterMap } from "@/util/setterMap/components/DepthSetterMap";
-import { MaskSetterMap } from "@/util/setterMap/components/MaskSetterMap";
-import { OriginSetterMap } from "@/util/setterMap/components/OriginSetterMap";
-import { RenderNodesSetterMap } from "@/util/setterMap/components/RenderNodesSetterMap";
-import { ScrollFactorSetterMap } from "@/util/setterMap/components/ScrollFactorSetterMap";
-import { TintSetterMap } from "@/util/setterMap/components/TintSetterMap";
-import { TransformSetterMap } from "@/util/setterMap/components/TransformSetterMap";
-import { VisibleSetterMap } from "@/util/setterMap/components/VisibleSetterMap";
-import { GlobalSetterMap } from "@/util/setterMap/global/GlobalSetterMap";
+import { AlphaSetterMap } from "#src/util/setterMap/components/AlphaSetterMap";
+import { BlendModeSetterMap } from "#src/util/setterMap/components/BlendModeSetterMap";
+import { DepthSetterMap } from "#src/util/setterMap/components/DepthSetterMap";
+import { MaskSetterMap } from "#src/util/setterMap/components/MaskSetterMap";
+import { OriginSetterMap } from "#src/util/setterMap/components/OriginSetterMap";
+import { RenderNodesSetterMap } from "#src/util/setterMap/components/RenderNodesSetterMap";
+import { ScrollFactorSetterMap } from "#src/util/setterMap/components/ScrollFactorSetterMap";
+import { TintSetterMap } from "#src/util/setterMap/components/TintSetterMap";
+import { TransformSetterMap } from "#src/util/setterMap/components/TransformSetterMap";
+import { VisibleSetterMap } from "#src/util/setterMap/components/VisibleSetterMap";
+import { GlobalSetterMap } from "#src/util/setterMap/global/GlobalSetterMap";
 
 export const BitmapTextSetterMap: SetterMap<
   BitmapTextConfiguration,

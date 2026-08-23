@@ -1,6 +1,6 @@
 import type { GameObjects } from "phaser";
 
-import { getDepthInsertIndex } from "@/util/getDepthInsertIndex";
+import { getDepthInsertIndex } from "#src/util/getDepthInsertIndex";
 import { describe, expect, test } from "vitest";
 
 const createList = (depths: (number | undefined)[]): GameObjects.GameObject[] =>

@@ -1,6 +1,6 @@
-import type { BaseTextureConfiguration } from "@/models/configuration/components/BaseTextureConfiguration";
-import type { BaseTextureEventEmitsOptions } from "@/models/emit/components/BaseTextureEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { BaseTextureConfiguration } from "#src/models/configuration/components/BaseTextureConfiguration";
+import type { BaseTextureEventEmitsOptions } from "#src/models/emit/components/BaseTextureEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 export const BaseTextureSetterMap = {

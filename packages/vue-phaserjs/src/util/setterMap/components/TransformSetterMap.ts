@@ -1,6 +1,6 @@
-import type { TransformConfiguration } from "@/models/configuration/components/TransformConfiguration";
-import type { TransformEventEmitsOptions } from "@/models/emit/components/TransformEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { TransformConfiguration } from "#src/models/configuration/components/TransformConfiguration";
+import type { TransformEventEmitsOptions } from "#src/models/emit/components/TransformEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 export const TransformSetterMap = {
