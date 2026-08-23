@@ -1,8 +1,11 @@
 import type { PluginOption } from "vite";
 
-import vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
+import Vue from "unplugin-vue/vite";
 
-// The SFC pipeline a `.vue` package needs in both of its Vite runs — the library build and its Vitest config —
-// So the two can never drift into compiling components differently from how the tests mount them.
-export const getVuePlugins = (): PluginOption[] => [AutoImport({ imports: ["pinia", "vue"] }), vue()];
+import { VUE_AUTO_IMPORTS } from "./constants";
+
+// The SFC pipeline a `.vue` package needs in its Vitest run. It is the same pair `getTsdownConfigurationVue`
+// Gives the build, through each plugin's Vite entry rather than its rolldown one, so the tests can never
+// Compile a component differently from how the build ships it.
+export const getVuePlugins = (): PluginOption[] => [AutoImport({ imports: [...VUE_AUTO_IMPORTS] }), Vue()];

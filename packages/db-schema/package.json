@@ -34,10 +34,19 @@
     "dist"
   ],
   "type": "module",
-  "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
   "scripts": {
-    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "build": "pnpm export:gen && tsdown",
     "db:gen": "pnpm db:run generate",
     "db:pull": "pnpm db:run pull",
     "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
@@ -59,7 +68,7 @@
     "@trpc/server": "catalog:",
     "ctix": "catalog:",
     "drizzle-kit": "catalog:",
-    "rolldown": "catalog:",
+    "tsdown": "catalog:",
     "type-fest": "catalog:",
     "vitest": "catalog:"
   },
@@ -70,5 +79,8 @@
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
     "zod": "catalog:"
+  },
+  "inlinedDependencies": {
+    "type-fest": "5.8.0"
   }
 }

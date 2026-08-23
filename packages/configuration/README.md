@@ -22,16 +22,16 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | ESLint                | `eslint/`                         | Shared ESLint rules (oxlint + typescript-eslint + perfectionist) |
 | Rolldown (browser)    | `rolldownConfigurationBrowser`    | Vite-compatible browser bundle config                            |
 | Rolldown (isomorphic) | `rolldownConfigurationIsomorphic` | Browser bundle config with Node built-in polyfills               |
-| Rolldown (Node)       | `rolldownConfigurationNode`       | Server-only package bundle config                                |
+| tsdown (Node)         | `getTsdownConfigurationNode`      | Server-only package bundle config                                |
 | ctix                  | `.ctirc-ts`                       | Barrel file generation config for `packages/*/src/index.ts`      |
 
 ### Usage in other packages
 
 ```ts
-// rolldown.config.ts
-import { rolldownConfigurationBrowser } from "@esposter/configuration";
+// tsdown.config.ts
+import { getTsdownConfiguration } from "@esposter/configuration";
 
-export default rolldownConfigurationBrowser;
+export default getTsdownConfiguration();
 ```
 
 ```js

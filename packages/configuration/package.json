@@ -28,10 +28,14 @@
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
   "type": "module",
-  "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json",
+    "./eslint/*": "./eslint/*"
+  },
   "scripts": {
-    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "build": "pnpm export:gen && tsdown",
     "export:gen": "ctix build --config .ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -45,10 +49,8 @@
     "@dxup/unimport": "catalog:",
     "@eslint/core": "catalog:",
     "@eslint/json": "catalog:",
-    "@rolldown/plugin-node-polyfills": "catalog:",
     "@types/node": "catalog:",
     "@unocss/eslint-config": "catalog:",
-    "@vitejs/plugin-vue": "catalog:",
     "@vue/language-core": "catalog:",
     "ctix": "catalog:",
     "eslint-plugin-depend": "catalog:",
@@ -56,11 +58,10 @@
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
     "eslint-plugin-vuejs-accessibility": "catalog:",
-    "rolldown": "catalog:",
-    "rolldown-plugin-dts": "catalog:",
+    "tsdown": "catalog:",
     "type-fest": "catalog:",
     "unplugin-auto-import": "catalog:",
-    "unplugin-dts": "catalog:",
+    "unplugin-vue": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"
   }

@@ -35,25 +35,20 @@
     "schema.json"
   ],
   "type": "module",
-  "main": "dist/index.js",
+  "sideEffects": false,
   "types": "dist/index.d.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./config": {
-      "types": "./dist/config.d.ts",
-      "default": "./dist/config.js"
-    },
-    "./schema.json": "./schema.json"
+    ".": "./dist/index.js",
+    "./cli": "./dist/cli.js",
+    "./config": "./dist/config.js",
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "bench": "vitest bench --run",
-    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "build": "pnpm export:gen && tsdown",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -66,6 +61,7 @@
     "unconfig": "catalog:"
   },
   "devDependencies": {
+    "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/shared": "workspace:*",
     "@esposter/shared-node": "workspace:*",
@@ -76,8 +72,17 @@
     "dayjs": "catalog:",
     "dedent": "catalog:",
     "fast-check": "catalog:",
-    "rolldown": "catalog:",
+    "publint": "catalog:",
+    "tsdown": "catalog:",
     "vitest": "catalog:",
     "zod": "catalog:"
+  },
+  "inlinedDependencies": {
+    "@platformatic/vfs": "0.4.0",
+    "citty": "0.2.2",
+    "dayjs": "1.11.23",
+    "dedent": "1.7.2",
+    "neverthrow": "8.2.0",
+    "zod": "4.4.3"
   }
 }

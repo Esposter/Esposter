@@ -28,13 +28,17 @@
     "dist"
   ],
   "type": "module",
-  "main": "dist/index.js",
+  "sideEffects": false,
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "build": "pnpm export:gen && tsdown",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -49,12 +53,18 @@
     "xmlbuilder2": "catalog:"
   },
   "devDependencies": {
+    "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/sax": "catalog:",
     "@types/xml2js": "catalog:",
     "ctix": "catalog:",
-    "rolldown": "catalog:",
+    "publint": "catalog:",
+    "tsdown": "catalog:",
     "type-fest": "catalog:",
     "vitest": "catalog:"
+  },
+  "inlinedDependencies": {
+    "@types/xml2js": "0.4.14",
+    "type-fest": "5.8.0"
   }
 }

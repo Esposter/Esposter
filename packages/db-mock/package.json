@@ -34,10 +34,20 @@
     "dist"
   ],
   "type": "module",
-  "main": "dist/index.js",
+  "sideEffects": false,
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
   "scripts": {
-    "build": "pnpm export:gen && rolldown --config rolldown.config.ts && tsx scripts/copySnapshot.ts",
+    "build": "pnpm export:gen && tsdown && tsx scripts/copySnapshot.ts",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -52,7 +62,7 @@
     "@types/node": "catalog:",
     "ctix": "catalog:",
     "drizzle-kit": "catalog:",
-    "rolldown": "catalog:",
+    "tsdown": "catalog:",
     "tsx": "catalog:",
     "vitest": "catalog:"
   },

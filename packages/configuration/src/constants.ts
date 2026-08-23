@@ -34,3 +34,11 @@ export const DOCS_API_DIRECTORY: string = `${DOCS_DIRECTORY}/api`;
 export const DISTRIBUTION_DIRECTORY = "dist";
 
 export const KIBIBYTE: number = 2 ** 10;
+
+// Every package build — the bundle, the declarations and the ctix barrel — reads this one tsconfig, so the
+// Program that emits a package is always the program its source was typechecked with.
+export const BUILD_TSCONFIG = "tsconfig.build.json";
+
+// Shared by the SFC build and the SFC test run, so a component cannot compile against one set of ambient
+// Imports and be tested against another.
+export const VUE_AUTO_IMPORTS = ["pinia", "vue"] as const;

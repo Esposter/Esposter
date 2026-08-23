@@ -1,6 +1,6 @@
 ---
 title: Build pipeline
-description: How a package becomes a dist — one bundler, one shared configuration package, and an external list derived from the manifest rather than declared.
+description: How a package becomes a dist — one bundler, one shared configuration package, and a published surface the build refuses to get wrong.
 ---
 
 # Build Pipeline
@@ -9,58 +9,88 @@ How `src/` becomes `dist/` for every workspace package, and what an individual p
 
 ## One bundler
 
-Every package bundles with **Rolldown**. Most reach it directly through `rolldown --config rolldown.config.ts`. `vue-phaserjs` reaches it through **Vite**, because Vite 8 bundles with Rolldown anyway and adds the two things bare Rolldown cannot do for a package that ships `.vue` files: SFC compilation and a `vue-tsc`-backed declaration build. So "we use Vite there" is a statement about the plugin ecosystem, not about the bundler — there is no second bundler in this repo.
+Every package builds with **tsdown**, which is Rolldown plus the things a library build needs on top of it: declaration bundling, a generated `exports` field, and the publishability gates below. Every package's build script is bare `tsdown` — the config file is found by name, never named on the command line.
+
+There is no second build path. The package that ships `.vue` files used to reach Rolldown through Vite for SFC compilation and a `vue-tsc` declaration build; tsdown does both directly, so a component can no longer compile one way for the build and another way for its tests.
 
 ```mermaid
 flowchart LR
   S["src/**"] --> C["ctix — generate the index.ts barrel"]
-  C --> R["rolldown — bundle from src/index.ts"]
-  R --> J["dist/index.js"]
-  R --> D["rolldown-plugin-dts — bundle declarations"]
-  D --> T["dist/index.d.ts"]
+  C --> T["tsdown — bundle from src/index.ts"]
+  T --> J["dist/index.js"]
+  T --> D["rolldown-plugin-dts — bundle declarations"]
+  D --> Y["dist/index.d.ts"]
+  T --> M["package.json — write the exports field"]
+  Y --> G{"published?"}
+  M --> G
+  G -->|yes| P["publint + attw + deps.onlyImport"]
+  G -->|no| Z["done"]
+  P --> Z
 ```
 
 The barrel is generated, never committed: `export:gen` runs `ctix` against `tsconfig.build.json` immediately before the bundle, which is why CI caches the generated `src/**/index.ts` files alongside `dist`.
 
 ## The shared configuration package
 
-`@esposter/configuration` owns every build input. A package's `rolldown.config.ts` is one factory call plus whatever is genuinely specific to it, and nothing else.
+`@esposter/configuration` owns every build input. A package's `tsdown.config.ts` is one factory call plus whatever is genuinely specific to it.
 
-| Factory                              | For                                                     |
-| ------------------------------------ | ------------------------------------------------------- |
-| `getRolldownConfigurationBrowser`    | The base — no platform assumption                       |
-| `getRolldownConfigurationNode`       | The base plus `platform: "node"`                        |
-| `getRolldownConfigurationIsomorphic` | The base plus `@rolldown/plugin-node-polyfills`         |
-| `getViteConfiguration`               | The one package that ships `.vue` files                 |
-| `getVuePlugins`                      | The SFC plugin pair, shared by that build and its tests |
-| `getVitestConfiguration`             | The Vitest config every package's tests run on          |
-| `getBenchmarkTestConfiguration`      | Just the bench wiring, for configs built from scratch   |
+| Factory                         | For                                              |
+| ------------------------------- | ------------------------------------------------ |
+| `getTsdownConfiguration`        | The base — `platform: "neutral"`                 |
+| `getTsdownConfigurationNode`    | The base plus `platform: "node"`                 |
+| `getTsdownConfigurationVue`     | The base plus SFC compilation and `dts.vue`      |
+| `getVuePlugins`                 | The SFC plugin pair, shared with the Vitest run  |
+| `getVitestConfiguration`        | The Vitest config every package's tests run on   |
+| `getBenchmarkTestConfiguration` | Just the bench wiring, for configs built scratch |
 
-The last one exists because the app builds its Vitest config through `defineVitestProject`, which cannot take `getVitestConfiguration` wholesale. It spreads the bench options instead of restating them, so the reporter and runner cannot drift between the app and everything else.
+**Compose these with `mergeConfig`, never by spreading one into an object literal.** A spread replaces a key outright, so a config that adds a single `deps` or `dts` field silently drops every other field the base set on it — which is a build that quietly stops externalizing, or stops reading the build tsconfig, with nothing to show for it. `mergeConfig` merges into those keys instead.
 
-Which package calls which factory is a question the repo answers — read the `rolldown.config.ts` files rather than a table that goes stale.
+Which package calls which factory is a question the repo answers — read the `tsdown.config.ts` files rather than a table that goes stale.
 
-## Bundled or externalized is derived, not declared
+## Bundled or externalized
 
-A library externalizes exactly what it does not ship: the contract its consumer supplies, plus its workspace siblings. Both are already written down in the package's own manifest, so `getExternal` reads them from there rather than from a hand-maintained registry.
+A library externalizes exactly what its consumer installs, and tsdown's defaults already say so:
 
-- **`dependencies` are bundled.** They are the package's own implementation detail.
-- **`peerDependencies` are externalized.** They appear in the published runtime or declaration surface, so the consumer must supply exactly one copy — framework singletons, SDKs mirrored in a public API, the Drizzle and Pulumi runtimes.
-- **Workspace siblings are always externalized**, whether or not they are declared.
-- Every entry externalizes the package _and everything under it_, because plenty of them are only ever reached through a subpath.
+- **`dependencies` and `peerDependencies` are externalized.** The consumer's package manager installs them transitively and dedupes them against everything else in the tree. Nobody types their names.
+- **`devDependencies` are bundled** when the source imports them.
+- **Workspace siblings follow the same rule** — a published sibling is a normal dependency and stays external.
 
-Deriving the list rather than declaring one means a newly added peer can never be silently vendored into a bundle, and no entry can outlive the dependency it named.
+Bundling a dependency instead is not a saving. It defeats the consumer's deduplication, strands the package on a vendored copy until the next republish when that dependency ships a fix, and splits any type the dependency owns into two nominally distinct copies — a vendored `Result` and the consumer's own `Result` fail `instanceof` against each other.
 
-Two kinds of package opt out, both in their own `rolldown.config.ts`:
+Two kinds of package opt out, both in their own `tsdown.config.ts`:
 
-- **Self-contained bundles.** `virrun` and `azure-functions` vendor almost everything so that installing them needs no peer management at all — `virrun` externalizes only `unconfig`, whose runtime `createRequire` resolution breaks if it is inlined, and `azure-functions` only `@azure/functions`, which the Functions host provides.
-- **`@esposter/configuration` itself**, which externalizes its `devDependencies`. It is private, never published, and its dist imports nothing but build tooling that every workspace member already has installed — so declaring `rolldown`/`vite`/`vitest` as peers would invent a contract nobody consumes.
+- **Self-contained bundles.** `virrun` is a CLI installed with one command and `azure-functions` is a deploy artifact dropped into a host that installs nothing, so both vendor what they use. `virrun` gets this for free — everything it bundles is a `devDependency` — and declares only that `unconfig` stays external, because `unconfig` resolves `jiti` through `createRequire` relative to its own installed file and vendoring rebases that lookup. `azure-functions` derives its `alwaysBundle` list from its own manifest, minus the `@azure/functions` the host provides.
+- **`@esposter/configuration` itself**, which externalizes everything including `devDependencies`. It is private, never published, and its dist imports nothing but build tooling every workspace member already has installed.
+
+### Every entry matches subpaths
+
+A bare package name never matches a subpath import, and plenty of packages are only ever reached through one — `drizzle-orm/pg-core`, `@electric-sql/pglite/contrib/pg_trgm`, `vitest/node`. `getPackagePatterns` turns a list of names into prefix patterns so an entry covers the package _and everything under it_. A name handed to `deps` verbatim silently misses exactly those imports.
+
+## The published surface is gated, not reviewed
+
+A published package owes an installable promise to a stranger, and three options hold it to that promise. They are switched on by the absence of `private` in the manifest, so no package opts into them by hand:
+
+| Gate              | Fails the build when                                                          |
+| ----------------- | ----------------------------------------------------------------------------- |
+| `publint`         | the manifest points at a file the package does not ship                       |
+| `attw`            | the declarations break under a resolution mode a consumer might use           |
+| `deps.onlyImport` | an emitted chunk imports a package the manifest never told the consumer about |
+
+The third is the one with history. A published package that imports a private sibling resolves nothing on a fresh `npm install`, and nothing in the repo notices — the workspace has the sibling on disk, so every local build, test and typecheck passes. That is an install-time failure for a stranger and a build-time failure for us, and the gate is what moves it.
+
+A private package gets none of these, because nobody installs it.
+
+## What private packages deliberately do not get
+
+tsdown can point a package's exports at `src` for workspace consumers and at `dist` only at publish time (`exports.devExports`), which would mean no rebuild ever stands between editing a package and a consumer seeing the change. **This repo cannot use it.**
+
+Every package resolves its own source through the `@/*` path alias, and that alias resolves relative to whichever package the build is currently running in. The moment a sibling bundles one of these packages from source, its internal `@/...` imports resolve into the _bundling_ package and vanish. `azure-functions` and `azure-mock` both vendor siblings, so source exports stay unavailable while that alias convention stands.
 
 ## The output directory is wiped on every build
 
-Rolldown never clears `output.dir`, and every emitted chunk carries a content hash in its filename. A build whose chunks changed therefore writes new files _beside_ the previous ones rather than replacing them, forever — left alone the orphans grow without bound and any size measurement of `dist` stops meaning anything. `getCleanDistributionPlugin` removes the directory in `buildStart`, so a `dist` is always exactly one build's output. The Vite path needs no equivalent: Vite empties `outDir` itself.
+tsdown cleans `outDir` before each build. Every emitted chunk carries a content hash, so without that a build whose chunks changed would write new files beside the previous ones rather than replacing them, and any size measurement of `dist` would stop meaning anything.
 
-This is what makes the committed `dist` size snapshots (`*/src/index.test.ts`) a real signal — a jump in one of them means something genuinely started being bundled.
+This is what makes the committed size snapshots (`*/src/index.test.ts`) a real signal — a jump in one of them means something genuinely started being bundled.
 
 ## TypeScript configuration layers
 
@@ -82,13 +112,19 @@ The build preset contributes **excludes and nothing else** — no `compilerOptio
 
 What the build excludes: config files, `scripts/`, and every `*.test.ts` / `*.test-d.ts` / `*.bench.ts`.
 
+`isolatedDeclarations` is on by default and off in the packages that cannot satisfy it: a Drizzle table type cannot be written out by hand, and a package that vendors one of those from source makes their files inputs to its own build. The transform runs over the whole module graph, so this is a property of the tsconfig rather than something a declaration-generator option can waive for one package.
+
+## The bootstrap package
+
+`@esposter/configuration` is built by the same factories it exports, and two things follow from that. Its relative imports carry a `.ts` extension, because tsdown loads a config with a native import that will not guess one — every other package resolves this one as a built `.js` file, while this config has to reach TypeScript source before any build has run. And it keeps its exports pointing at `dist` for the same reason.
+
 ## Key files
 
-| File                                                            | Role                                        |
-| --------------------------------------------------------------- | ------------------------------------------- |
-| `packages/configuration/src/getExternal.ts`                     | Derives the external list from the manifest |
-| `packages/configuration/src/getCleanDistributionPlugin.ts`      | Wipes `dist` before each build              |
-| `packages/configuration/src/getRolldownConfigurationBrowser.ts` | The base every rolldown config extends      |
-| `packages/configuration/tsconfig.base.json`                     | Root of the preset chain                    |
-| `packages/configuration/tsconfig.build.base.json`               | The build excludes, shared by every package |
-| `packages/configuration/.ctirc-ts`                              | Barrel generation config                    |
+| File                                                   | Role                                            |
+| ------------------------------------------------------ | ----------------------------------------------- |
+| `packages/configuration/src/getTsdownConfiguration.ts` | The base every config composes onto             |
+| `packages/configuration/src/getPackagePatterns.ts`     | Turns package names into subpath-aware patterns |
+| `packages/configuration/src/readPackageManifest.ts`    | Reads the manifest every derivation starts from |
+| `packages/configuration/tsconfig.base.json`            | Root of the preset chain                        |
+| `packages/configuration/tsconfig.build.base.json`      | The build excludes, shared by every package     |
+| `packages/configuration/.ctirc-ts`                     | Barrel generation config                        |
