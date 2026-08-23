@@ -1,5 +1,5 @@
-import { compareVersionBase } from "@/services/compareVersionBase";
-import { getVersionParts } from "@/services/getVersionParts";
+import { compareVersionBase } from "#scripts/services/compareVersionBase";
+import { getVersionParts } from "#scripts/services/getVersionParts";
 /** Highest stable version in `versions` whose `major.minor.patch` matches every segment of `prefix` (e.g. `26`, `26.4`). */
 export const getLatestVersionForPrefix = (versions: string[], prefix: string): string => {
   const segments = prefix.split(".").map(Number);

@@ -1,4 +1,4 @@
-import { getPushNotificationPayload } from "@/services/getPushNotificationPayload";
+import { getPushNotificationPayload } from "#src/services/getPushNotificationPayload";
 import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 

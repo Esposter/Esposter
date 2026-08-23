@@ -2,7 +2,7 @@ import type { EventGridHandler, InvocationContext } from "@azure/functions";
 import type { AzureFunction } from "@esposter/db-schema";
 import type { z } from "zod";
 
-import { logAndRethrow } from "@/services/logAndRethrow";
+import { logAndRethrow } from "#src/services/logAndRethrow";
 import { getResultAsync, noop } from "@esposter/shared";
 
 export const createEventGridNotificationHandler =

@@ -1,4 +1,4 @@
-import { unpackTileBytes } from "@/util/unpackTileBytes";
+import { unpackTileBytes } from "#src/util/unpackTileBytes";
 import { describe, expect, test } from "vitest";
 
 describe(unpackTileBytes, () => {

@@ -1,6 +1,6 @@
-import GitHubAdminRepositoryRoleActorId from "@/github/constants/GitHubAdminRepositoryRoleActorId";
-import GitHubRenovateAppActorId from "@/github/constants/GitHubRenovateAppActorId";
-import { repository } from "@/github/repository";
+import GitHubAdminRepositoryRoleActorId from "#src/github/constants/GitHubAdminRepositoryRoleActorId";
+import GitHubRenovateAppActorId from "#src/github/constants/GitHubRenovateAppActorId";
+import { repository } from "#src/github/repository";
 import * as github from "@pulumi/github";
 
 // Modern ruleset replacing the classic branch protection on develop + main.

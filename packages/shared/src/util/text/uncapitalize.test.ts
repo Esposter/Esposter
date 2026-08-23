@@ -1,4 +1,4 @@
-import { uncapitalize } from "@/util/text/uncapitalize";
+import { uncapitalize } from "#src/util/text/uncapitalize";
 import { describe, expect, test } from "vitest";
 
 describe(uncapitalize, () => {

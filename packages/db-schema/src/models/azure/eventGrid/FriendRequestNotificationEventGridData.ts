@@ -1,6 +1,6 @@
-import type { NotificationOptions } from "@/models/azure/eventGrid/NotificationOptions";
+import type { NotificationOptions } from "#src/models/azure/eventGrid/NotificationOptions";
 
-import { notificationOptionsSchema } from "@/models/azure/eventGrid/NotificationOptions";
+import { notificationOptionsSchema } from "#src/models/azure/eventGrid/NotificationOptions";
 import { z } from "zod";
 
 export interface FriendRequestNotificationEventGridData {

@@ -1,11 +1,11 @@
-import type { ScheduledMessageJobPayload } from "@/models/message/scheduledMessageJob/ScheduledMessageJobPayload";
+import type { ScheduledMessageJobPayload } from "#src/models/message/scheduledMessageJob/ScheduledMessageJobPayload";
 
-import { scheduledMessageJobPayloadSchema } from "@/models/message/scheduledMessageJob/ScheduledMessageJobPayload";
-import { ScheduledMessageJobType } from "@/models/message/ScheduledMessageJobType";
-import { pgTable } from "@/pgTable";
-import { messageSchema } from "@/schema/messageSchema";
-import { roomsInMessage } from "@/schema/roomsInMessage";
-import { users } from "@/schema/users";
+import { scheduledMessageJobPayloadSchema } from "#src/models/message/scheduledMessageJob/ScheduledMessageJobPayload";
+import { ScheduledMessageJobType } from "#src/models/message/ScheduledMessageJobType";
+import { pgTable } from "#src/pgTable";
+import { messageSchema } from "#src/schema/messageSchema";
+import { roomsInMessage } from "#src/schema/roomsInMessage";
+import { users } from "#src/schema/users";
 import { sql } from "drizzle-orm";
 import { check, index, jsonb, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";

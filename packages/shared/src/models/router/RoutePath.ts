@@ -1,4 +1,4 @@
-import { SITE_NAME } from "@/services/app/constants";
+import { SITE_NAME } from "#src/services/app/constants";
 
 export const RoutePath: {
   readonly About: "/about";

@@ -1,9 +1,9 @@
 import type { InvocationContext } from "@azure/functions";
 import type { PushNotificationEventGridData } from "@esposter/db-schema";
 
-import { db } from "@/services/db";
-import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
-import { sendWebPushNotifications } from "@/services/sendWebPushNotifications";
+import { db } from "#src/services/db";
+import { getCreateMessageNotificationPayload } from "#src/services/getCreateMessageNotificationPayload";
+import { sendWebPushNotifications } from "#src/services/sendWebPushNotifications";
 import { getPushSubscriptionsForMessage } from "@esposter/db";
 import { RoutePath } from "@esposter/shared";
 

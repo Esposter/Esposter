@@ -1,6 +1,6 @@
-import type { TintConfiguration } from "@/models/configuration/components/TintConfiguration";
-import type { TintEventEmitsOptions } from "@/models/emit/components/TintEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { TintConfiguration } from "#src/models/configuration/components/TintConfiguration";
+import type { TintEventEmitsOptions } from "#src/models/emit/components/TintEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 export const TintSetterMap = {

@@ -1,15 +1,15 @@
-import type { TMX } from "@/models/tmx/node/TMX";
-import type { TMXGroupLayerNode } from "@/models/tmx/node/TMXGroupLayerNode";
-import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
-import type { TMXPropertyNode } from "@/models/tmx/node/TMXPropertyNode";
-import type { TMXTilesetNode } from "@/models/tmx/node/TMXTilesetNode";
+import type { TMX } from "#src/models/tmx/node/TMX";
+import type { TMXGroupLayerNode } from "#src/models/tmx/node/TMXGroupLayerNode";
+import type { TMXLayerNode } from "#src/models/tmx/node/TMXLayerNode";
+import type { TMXPropertyNode } from "#src/models/tmx/node/TMXPropertyNode";
+import type { TMXTilesetNode } from "#src/models/tmx/node/TMXTilesetNode";
 
-import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
-import { TMXMapParsed } from "@/models/tmx/parsed/TMXMapParsed";
-import { TMXParsed } from "@/models/tmx/parsed/TMXParsed";
-import { parseNode } from "@/util/parseNode";
-import { parseTileset } from "@/util/parseTileset";
-import { parseXmlString } from "@/util/parseXmlString";
+import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
+import { TMXMapParsed } from "#src/models/tmx/parsed/TMXMapParsed";
+import { TMXParsed } from "#src/models/tmx/parsed/TMXParsed";
+import { parseNode } from "#src/util/parseNode";
+import { parseTileset } from "#src/util/parseTileset";
+import { parseXmlString } from "#src/util/parseXmlString";
 import { exhaustiveGuard } from "@esposter/shared";
 // We will match phaser's tmx => json tilemap export transformation
 // But also support extra functionality like using external tilesets

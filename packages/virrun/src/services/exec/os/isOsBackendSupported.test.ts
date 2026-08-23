@@ -1,6 +1,6 @@
-import { isVirrunEnabled } from "@/services/configuration/isVirrunEnabled";
-import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import { probeOsBackendSupported } from "@/services/exec/os/probeOsBackendSupported";
+import { isVirrunEnabled } from "#src/services/configuration/isVirrunEnabled";
+import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
+import { probeOsBackendSupported } from "#src/services/exec/os/probeOsBackendSupported";
 import { describe, expect, test } from "vitest";
 
 describe(isOsBackendSupported, () => {

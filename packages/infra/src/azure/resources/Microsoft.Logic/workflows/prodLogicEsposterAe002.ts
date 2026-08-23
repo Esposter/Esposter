@@ -1,12 +1,12 @@
-import ApplicationTags from "@/azure/constants/ApplicationTags";
-import AzureAppServiceManagedApiId from "@/azure/constants/AzureAppServiceManagedApiId";
-import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLocation";
-import AzureLogicAppEndpointsConfiguration from "@/azure/constants/AzureLogicAppEndpointsConfiguration";
-import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
-import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
-import { prodApicEsposterAe002 } from "@/azure/resources/Microsoft.Web/connections/prodApicEsposterAe002";
-import { prodFuncEsposter001 } from "@/azure/resources/Microsoft.Web/sites/prodFuncEsposter001";
-import { getWorkflowConnectionParameters } from "@/azure/services/getWorkflowConnectionParameters";
+import ApplicationTags from "#src/azure/constants/ApplicationTags";
+import AzureAppServiceManagedApiId from "#src/azure/constants/AzureAppServiceManagedApiId";
+import AzureAustraliaEastLocation from "#src/azure/constants/AzureAustraliaEastLocation";
+import AzureLogicAppEndpointsConfiguration from "#src/azure/constants/AzureLogicAppEndpointsConfiguration";
+import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
+import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import { prodApicEsposterAe002 } from "#src/azure/resources/Microsoft.Web/connections/prodApicEsposterAe002";
+import { prodFuncEsposter001 } from "#src/azure/resources/Microsoft.Web/sites/prodFuncEsposter001";
+import { getWorkflowConnectionParameters } from "#src/azure/services/getWorkflowConnectionParameters";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 

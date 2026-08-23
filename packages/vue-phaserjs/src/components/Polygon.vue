@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { PolygonConfiguration } from "@/models/configuration/PolygonConfiguration";
-import type { PolygonEventEmitsOptions } from "@/models/emit/PolygonEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { PolygonConfiguration } from "#src/models/configuration/PolygonConfiguration";
+import type { PolygonEventEmitsOptions } from "#src/models/emit/PolygonEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { PolygonSetterMap } from "@/util/setterMap/PolygonSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { PolygonSetterMap } from "#src/util/setterMap/PolygonSetterMap";
 
 interface PolygonEmits extends /** @vue-ignore */ PolygonEventEmitsOptions {}
 

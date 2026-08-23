@@ -1,10 +1,10 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
-import type { ExecOptions } from "@/models/exec/ExecOptions";
-import type { SnapshotCapture } from "@/models/exec/snapshot/SnapshotCapture";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
+import type { SnapshotCapture } from "#src/models/exec/snapshot/SnapshotCapture";
 
-import { captureOverlayUpper } from "@/services/exec/snapshot/captureOverlayUpper";
-import { pruneSnapshotUpper } from "@/services/exec/snapshot/pruneSnapshotUpper";
-import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
+import { captureOverlayUpper } from "#src/services/exec/snapshot/captureOverlayUpper";
+import { pruneSnapshotUpper } from "#src/services/exec/snapshot/pruneSnapshotUpper";
+import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
 // Captures warm post-install state into the snapshot's overlay upper (keyed by lockfile hash) instead of letting
 // `command`'s writes vanish in tmpfs (specs/snapshot-fork.md). The capture-and-publish barrier is
 // `captureOverlayUpper`'s. The capture result is returned so the cold-path fork need not re-run.

@@ -1,4 +1,4 @@
-import { Flippeds } from "@/models/Flipped";
+import { Flippeds } from "#src/models/Flipped";
 
 const FLIPPED_MASK = ~Flippeds.reduce((acc, curr) => acc | curr, 0);
 

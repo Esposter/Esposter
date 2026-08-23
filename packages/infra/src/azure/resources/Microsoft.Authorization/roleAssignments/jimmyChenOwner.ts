@@ -1,5 +1,5 @@
-import AzureOwnerRoleDefinitionId from "@/azure/constants/AzureOwnerRoleDefinitionId";
-import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
+import AzureOwnerRoleDefinitionId from "#src/azure/constants/AzureOwnerRoleDefinitionId";
+import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
 import * as azure_native from "@pulumi/azure-native";
 
 export const jimmyChenOwner: azure_native.authorization.RoleAssignment = new azure_native.authorization.RoleAssignment(

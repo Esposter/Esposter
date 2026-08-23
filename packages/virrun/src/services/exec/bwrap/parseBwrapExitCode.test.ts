@@ -1,4 +1,4 @@
-import { parseBwrapExitCode } from "@/services/exec/bwrap/parseBwrapExitCode";
+import { parseBwrapExitCode } from "#src/services/exec/bwrap/parseBwrapExitCode";
 import { describe, expect, test } from "vitest";
 
 describe(parseBwrapExitCode, () => {

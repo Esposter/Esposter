@@ -1,16 +1,16 @@
-import type { SourceMirrorArchive } from "@/models/exec/wsl/SourceMirrorArchive";
+import type { SourceMirrorArchive } from "#src/models/exec/wsl/SourceMirrorArchive";
 
-import { ExecFileError } from "@/models/exec/util/ExecFileError";
-import { SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS } from "@/services/exec/util/constants";
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
-import { getTarExecutable } from "@/services/exec/util/getTarExecutable";
+import { ExecFileError } from "#src/models/exec/util/ExecFileError";
+import { SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { execFileHidden } from "#src/services/exec/util/execFileHidden";
+import { getTarExecutable } from "#src/services/exec/util/getTarExecutable";
 import {
   VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
-} from "@/services/exec/wsl/constants";
-import { getIsTolerableArchiveFailure } from "@/services/exec/wsl/getIsTolerableArchiveFailure";
-import { joinNullDelimited } from "@/services/exec/wsl/joinNullDelimited";
-import { readSourceMirrorArchiveMembers } from "@/services/exec/wsl/readSourceMirrorArchiveMembers";
+} from "#src/services/exec/wsl/constants";
+import { getIsTolerableArchiveFailure } from "#src/services/exec/wsl/getIsTolerableArchiveFailure";
+import { joinNullDelimited } from "#src/services/exec/wsl/joinNullDelimited";
+import { readSourceMirrorArchiveMembers } from "#src/services/exec/wsl/readSourceMirrorArchiveMembers";
 import { getResult } from "@esposter/shared";
 import { unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

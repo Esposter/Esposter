@@ -1,6 +1,6 @@
-import { IsoBoxSetterMap } from "@/util/setterMap/IsoBoxSetterMap";
-import { IsoTriangleSetterMap } from "@/util/setterMap/IsoTriangleSetterMap";
-import { IsoSetterMap } from "@/util/setterMap/shared/IsoSetterMap";
+import { IsoBoxSetterMap } from "#src/util/setterMap/IsoBoxSetterMap";
+import { IsoTriangleSetterMap } from "#src/util/setterMap/IsoTriangleSetterMap";
+import { IsoSetterMap } from "#src/util/setterMap/shared/IsoSetterMap";
 import { describe, expect, test } from "vitest";
 
 describe("isoSetterMap", () => {

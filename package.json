@@ -35,6 +35,9 @@
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
   "type": "module",
+  "imports": {
+    "#scripts/*": "./scripts/*.ts"
+  },
   "scripts": {
     "bench": "vitest bench --run --project scripts && pnpm -r --if-present run bench",
     "build": "pnpm build:packages && pnpm build:docs && pnpm build:app",

@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import type { SceneProps } from "@/models/scene/SceneProps";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneProps } from "#src/models/scene/SceneProps";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { VNode } from "vue";
 
-import { useGame } from "@/composables/useGame";
-import { Lifecycle } from "@/models/lifecycle/Lifecycle";
-import { usePhaserStore } from "@/store";
-import { useCameraStore } from "@/store/camera";
-import { useInputStore } from "@/store/input";
-import { ExternalSceneStore } from "@/store/scene";
-import { createSceneClass } from "@/util/createSceneClass";
-import { getScene } from "@/util/getScene";
-import { resetLifecycleListeners } from "@/util/hooks/resetLifecycleListeners";
-import { runLifecycleListeners } from "@/util/hooks/runLifecycleListeners";
-import { InjectionKeyMap } from "@/util/InjectionKeyMap";
+import { useGame } from "#src/composables/useGame";
+import { Lifecycle } from "#src/models/lifecycle/Lifecycle";
+import { useCameraStore } from "#src/store/camera";
+import { usePhaserStore } from "#src/store/index";
+import { useInputStore } from "#src/store/input";
+import { ExternalSceneStore } from "#src/store/scene";
+import { createSceneClass } from "#src/util/createSceneClass";
+import { getScene } from "#src/util/getScene";
+import { resetLifecycleListeners } from "#src/util/hooks/resetLifecycleListeners";
+import { runLifecycleListeners } from "#src/util/hooks/runLifecycleListeners";
+import { InjectionKeyMap } from "#src/util/InjectionKeyMap";
 import { Cameras, Scenes } from "phaser";
 
 defineSlots<{ default: () => VNode }>();

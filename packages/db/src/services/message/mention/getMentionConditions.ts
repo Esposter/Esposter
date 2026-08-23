@@ -1,4 +1,4 @@
-import type { MentionConditionBuilder } from "@/models/message/MentionConditionBuilder";
+import type { MentionConditionBuilder } from "#src/models/message/MentionConditionBuilder";
 import type { Database } from "@esposter/db-schema";
 import type { ClassifiedMentions } from "@esposter/shared";
 import type { SQL } from "drizzle-orm";

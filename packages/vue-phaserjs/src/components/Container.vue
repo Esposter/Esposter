@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { ContainerConfiguration } from "@/models/configuration/ContainerConfiguration";
-import type { ContainerEventEmitsOptions } from "@/models/emit/ContainerEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { ContainerConfiguration } from "#src/models/configuration/ContainerConfiguration";
+import type { ContainerEventEmitsOptions } from "#src/models/emit/ContainerEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 import type { VNode } from "vue";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { InjectionKeyMap } from "@/util/InjectionKeyMap";
-import { ContainerSetterMap } from "@/util/setterMap/ContainerSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { InjectionKeyMap } from "#src/util/InjectionKeyMap";
+import { ContainerSetterMap } from "#src/util/setterMap/ContainerSetterMap";
 
 interface ContainerEmits extends /** @vue-ignore */ ContainerEventEmitsOptions {}
 

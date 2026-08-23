@@ -1,4 +1,4 @@
-import { purgeDeletedResourcesHandler } from "@/handlers/purgeDeletedResourcesHandler";
+import { purgeDeletedResourcesHandler } from "#src/handlers/purgeDeletedResourcesHandler";
 import { app } from "@azure/functions";
 import { AzureFunction } from "@esposter/db-schema";
 

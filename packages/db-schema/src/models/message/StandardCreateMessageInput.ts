@@ -1,6 +1,6 @@
-import { standardMessageEntitySchema } from "@/models/message/StandardMessageEntity";
-import { roomIdSchema } from "@/models/shared/RoomId";
-import { refineMessageSchema } from "@/services/message/refineMessageSchema";
+import { standardMessageEntitySchema } from "#src/models/message/StandardMessageEntity";
+import { roomIdSchema } from "#src/models/shared/RoomId";
+import { refineMessageSchema } from "#src/services/message/refineMessageSchema";
 import { z } from "zod";
 
 export const standardCreateMessageInputSchema = refineMessageSchema(

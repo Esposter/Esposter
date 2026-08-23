@@ -1,4 +1,4 @@
-import { PNPM_LOCKFILE_FILENAME, VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
+import { PNPM_LOCKFILE_FILENAME, VIRRUN_TEMP_DIR_PREFIX } from "#src/services/exec/util/constants";
 import { mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";

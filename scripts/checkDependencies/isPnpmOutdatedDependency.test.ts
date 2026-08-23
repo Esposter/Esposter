@@ -1,4 +1,4 @@
-import { isPnpmOutdatedDependency } from "@/checkDependencies/isPnpmOutdatedDependency";
+import { isPnpmOutdatedDependency } from "#scripts/checkDependencies/isPnpmOutdatedDependency";
 import { describe, expect, test } from "vitest";
 
 describe(isPnpmOutdatedDependency, () => {

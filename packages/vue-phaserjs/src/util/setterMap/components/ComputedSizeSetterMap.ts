@@ -1,9 +1,9 @@
-import type { ComputedSizeConfiguration } from "@/models/configuration/components/ComputedSizeConfiguration";
-import type { ComputedSizeEventEmitsOptions } from "@/models/emit/components/ComputedSizeEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { ComputedSizeConfiguration } from "#src/models/configuration/components/ComputedSizeConfiguration";
+import type { ComputedSizeEventEmitsOptions } from "#src/models/emit/components/ComputedSizeEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { DisplaySizeSetterMap } from "@/util/setterMap/components/DisplaySizeSetterMap";
+import { DisplaySizeSetterMap } from "#src/util/setterMap/components/DisplaySizeSetterMap";
 
 export const ComputedSizeSetterMap = {
   ...DisplaySizeSetterMap,

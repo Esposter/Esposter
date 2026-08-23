@@ -1,6 +1,6 @@
-import { CAPABILITY_CACHE_FILENAME, PROBE_CACHE_MAX_AGE_MS } from "@/services/exec/util/constants";
-import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
-import { readKeyedCache } from "@/services/exec/util/readKeyedCache";
+import { CAPABILITY_CACHE_FILENAME, PROBE_CACHE_MAX_AGE_MS } from "#src/services/exec/util/constants";
+import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheDirectory";
+import { readKeyedCache } from "#src/services/exec/util/readKeyedCache";
 import { join } from "node:path";
 import { z } from "zod";
 // The persisted os-backend capability verdict for `key` (host fingerprint), or undefined when there is nothing

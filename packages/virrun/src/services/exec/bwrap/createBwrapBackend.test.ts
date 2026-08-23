@@ -1,16 +1,16 @@
 // oxlint-disable vitest/prefer-mock-return-shorthand -- the fake child replays its streams on a microtask
 // Scheduled at creation, so it must be created lazily inside the mock — an eager `mockReturnValue(createFakeChild(...))`
 // Would fire the events before `exec` attaches its listeners.
-import type { ExecStdio, ExecTeeTarget } from "@/models/exec/ExecOptions";
+import type { ExecStdio, ExecTeeTarget } from "#src/models/exec/ExecOptions";
 import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
 
 import {
   WSL_BWRAP_STATUS_BEGIN,
   WSL_BWRAP_STATUS_END,
   WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER,
-} from "@/services/exec/bwrap/constants";
-import { createBwrapBackend } from "@/services/exec/bwrap/createBwrapBackend";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+} from "#src/services/exec/bwrap/constants";
+import { createBwrapBackend } from "#src/services/exec/bwrap/createBwrapBackend";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { getResultAsync } from "@esposter/shared";
 import { EventEmitter } from "node:events";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";

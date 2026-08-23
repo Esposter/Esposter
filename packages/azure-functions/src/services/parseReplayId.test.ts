@@ -1,7 +1,7 @@
-import type { ReplayId } from "@/models/ReplayId";
+import type { ReplayId } from "#src/models/ReplayId";
 
-import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "@/services/constants";
-import { parseReplayId } from "@/services/parseReplayId";
+import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/constants";
+import { parseReplayId } from "#src/services/parseReplayId";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

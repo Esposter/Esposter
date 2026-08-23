@@ -1,4 +1,4 @@
-import { parseBooleans, parseNumbers, stripPrefix } from "@/processors";
+import { parseBooleans, parseNumbers, stripPrefix } from "#src/processors";
 import { describe, expect, test } from "vitest";
 
 describe(stripPrefix, () => {

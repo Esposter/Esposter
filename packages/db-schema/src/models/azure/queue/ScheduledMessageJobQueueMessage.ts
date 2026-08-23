@@ -1,4 +1,4 @@
-import { selectScheduledMessageJobInMessageSchema } from "@/schema/scheduledMessageJobsInMessage";
+import { selectScheduledMessageJobInMessageSchema } from "#src/schema/scheduledMessageJobsInMessage";
 import { z } from "zod";
 
 export const scheduledMessageJobQueueMessageSchema = z.object({

@@ -1,4 +1,4 @@
-import { WSL_BWRAP_STATUS_BEGIN } from "@/services/exec/bwrap/constants";
+import { WSL_BWRAP_STATUS_BEGIN } from "#src/services/exec/bwrap/constants";
 // Streams a wsl-backend child's stderr to the host live under "inherit". The wsl bridge can't pipe bwrap's status
 // Fd across `wsl.exe`, so it appends a status block (BEGIN…JSON…END) to stderr after exit; everything before BEGIN
 // Is real child output to surface immediately, the rest must never reach the terminal. Given the full accumulated

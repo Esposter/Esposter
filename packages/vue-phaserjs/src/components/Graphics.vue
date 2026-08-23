@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { GraphicsConfiguration } from "@/models/configuration/GraphicsConfiguration";
-import type { GraphicsEventEmitsOptions } from "@/models/emit/GraphicsEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { GraphicsConfiguration } from "#src/models/configuration/GraphicsConfiguration";
+import type { GraphicsEventEmitsOptions } from "#src/models/emit/GraphicsEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { GraphicsSetterMap } from "@/util/setterMap/GraphicsSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { GraphicsSetterMap } from "#src/util/setterMap/GraphicsSetterMap";
 
 interface GraphicsEmits extends /** @vue-ignore */ GraphicsEventEmitsOptions {}
 

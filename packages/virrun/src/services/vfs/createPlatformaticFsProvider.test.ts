@@ -1,6 +1,6 @@
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { TEST_DIR, TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { createPlatformaticFsProvider } from "@/services/vfs/createPlatformaticFsProvider";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_DIR, TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { createPlatformaticFsProvider } from "#src/services/vfs/createPlatformaticFsProvider";
 import { withFinalizer } from "@esposter/shared";
 import { readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";

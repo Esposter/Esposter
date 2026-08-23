@@ -1,8 +1,8 @@
-import { createMaxLengthCheckSql } from "@/models/shared/Check";
-import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
-import { pgTable } from "@/pgTable";
-import { messageSchema } from "@/schema/messageSchema";
-import { roomsInMessage } from "@/schema/roomsInMessage";
+import { createMaxLengthCheckSql } from "#src/models/shared/Check";
+import { createNameCheckSql, createNameSchema } from "#src/models/shared/Name";
+import { pgTable } from "#src/pgTable";
+import { messageSchema } from "#src/schema/messageSchema";
+import { roomsInMessage } from "#src/schema/roomsInMessage";
 import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { bigint, boolean, check, index, integer, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";

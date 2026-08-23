@@ -1,5 +1,5 @@
-import { AzureTable } from "@/models/azure/table/AzureTable";
-import { ResourceType } from "@/models/resource/ResourceType";
+import { AzureTable } from "#src/models/azure/table/AzureTable";
+import { ResourceType } from "#src/models/resource/ResourceType";
 
 // Azure Table partitions a resource type owns under its own resource id, cleared when the resource is
 // Purged. ResourceViews is deliberately absent: it belongs to the factory's own view-counting

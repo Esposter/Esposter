@@ -1,5 +1,5 @@
-import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
-import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
+import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "#src/services/exec/util/constants";
+import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheRoot";
 import { homedir } from "node:os";
 import { join } from "node:path";
 // The host-global cache root for warm snapshots. Outside the repo because a snapshot's overlay layer may not nest

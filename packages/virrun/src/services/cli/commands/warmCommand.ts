@@ -1,7 +1,7 @@
 import type { CommandDef } from "citty";
 
-import { CommandType } from "@/models/virrun/CommandType";
-import { warmCache } from "@/services/cli/run/warmCache";
+import { CommandType } from "#src/models/virrun/CommandType";
+import { warmCache } from "#src/services/cli/run/warmCache";
 import { defineCommand } from "citty";
 // Provisions the warm cache ahead of time (the CI warm-up, equivalent to `virrun -- true`); a no-op announcing
 // Itself on any non-os backend.

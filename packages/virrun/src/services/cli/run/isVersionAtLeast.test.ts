@@ -1,4 +1,4 @@
-import { isVersionAtLeast } from "@/services/cli/run/isVersionAtLeast";
+import { isVersionAtLeast } from "#src/services/cli/run/isVersionAtLeast";
 import { describe, expect, test } from "vitest";
 
 describe(isVersionAtLeast, () => {

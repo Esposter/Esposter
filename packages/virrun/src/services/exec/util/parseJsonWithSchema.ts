@@ -1,4 +1,4 @@
-import { parseMachineJson } from "@/services/exec/util/parseMachineJson";
+import { parseMachineJson } from "#src/services/exec/util/parseMachineJson";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
 // Parse untrusted JSON text (a probe's stdout, an on-disk cache/manifest file) into a typed value in one step:

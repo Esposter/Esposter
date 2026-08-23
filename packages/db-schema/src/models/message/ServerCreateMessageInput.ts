@@ -1,6 +1,6 @@
-import type { StandardCreateMessageInput } from "@/models/message/StandardCreateMessageInput";
+import type { StandardCreateMessageInput } from "#src/models/message/StandardCreateMessageInput";
 
-import { StandardMessageEntity } from "@/models/message/StandardMessageEntity";
+import { StandardMessageEntity } from "#src/models/message/StandardMessageEntity";
 
 export type ServerCreateMessageInput = Pick<StandardMessageEntity, "isForward" | "isLoading" | "userId"> &
   StandardCreateMessageInput;

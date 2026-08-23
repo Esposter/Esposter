@@ -4,7 +4,8 @@ import { sheetResourceSchema } from "#shared/models/resource/sheet/SheetResource
 import { dataSourceToDataset } from "#shared/services/resource/sheet/dataSourceToDataset";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { requireOwnedResource } from "@@/server/services/resource/requireOwnedResource";
-import { AZURE_MAX_PAGE_SIZE, ResourceType } from "@esposter/db-schema";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
+import { ResourceType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 
 export const readSheetDataset: DatasetProvider = async (ctx, reference) => {

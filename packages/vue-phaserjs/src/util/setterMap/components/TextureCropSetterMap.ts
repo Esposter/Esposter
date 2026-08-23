@@ -1,9 +1,9 @@
-import type { TextureCropConfiguration } from "@/models/configuration/components/TextureCropConfiguration";
-import type { TextureCropEventEmitsOptions } from "@/models/emit/components/TextureCropEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { TextureCropConfiguration } from "#src/models/configuration/components/TextureCropConfiguration";
+import type { TextureCropEventEmitsOptions } from "#src/models/emit/components/TextureCropEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { BaseTextureSetterMap } from "@/util/setterMap/components/BaseTextureSetterMap";
+import { BaseTextureSetterMap } from "#src/util/setterMap/components/BaseTextureSetterMap";
 
 export const TextureCropSetterMap = {
   ...BaseTextureSetterMap,

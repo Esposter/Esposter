@@ -1,9 +1,9 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
-import { BackendType } from "@/models/virrun/BackendType";
-import { forwardTerminationSignals } from "@/services/exec/util/forwardTerminationSignals";
-import { spawnHidden } from "@/services/exec/util/spawnHidden";
-import { toExitCode } from "@/services/exec/util/toExitCode";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { forwardTerminationSignals } from "#src/services/exec/util/forwardTerminationSignals";
+import { spawnHidden } from "#src/services/exec/util/spawnHidden";
+import { toExitCode } from "#src/services/exec/util/toExitCode";
 // The only backend today: run the real command on the host, unchanged. It does not isolate or
 // Virtualize anything - it is the baseline the future `vfs`/`os` backends must beat on speed and
 // Match on correctness, and the fallback every higher backend defers to when it can't run a command.

@@ -35,10 +35,25 @@
     "dist"
   ],
   "type": "module",
-  "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
   "scripts": {
-    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "build": "pnpm export:gen && tsdown",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -60,7 +75,7 @@
     "@esposter/db-mock": "workspace:*",
     "@types/mime-types": "catalog:",
     "ctix": "catalog:",
-    "rolldown": "catalog:",
+    "tsdown": "catalog:",
     "type-fest": "catalog:",
     "vitest": "catalog:"
   },
@@ -73,7 +88,11 @@
     "@azure/storage-blob": "catalog:",
     "@azure/storage-queue": "catalog:",
     "@azure/web-pubsub": "catalog:",
+    "@esposter/azure": "workspace:*",
     "@esposter/db-schema": "workspace:*",
     "drizzle-orm": "catalog:"
+  },
+  "inlinedDependencies": {
+    "type-fest": "5.8.0"
   }
 }

@@ -1,12 +1,12 @@
-import { isProcessAlive } from "@/services/exec/util/isProcessAlive";
-import { parseTempOwnerPid } from "@/services/exec/util/parseTempOwnerPid";
+import { isProcessAlive } from "#src/services/exec/util/isProcessAlive";
+import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
 import {
   VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
-} from "@/services/exec/wsl/constants";
+} from "#src/services/exec/wsl/constants";
 import { getResult, noop } from "@esposter/shared";
 import { readdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";

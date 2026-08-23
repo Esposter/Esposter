@@ -1,5 +1,5 @@
-import { createColor } from "@/checkDependencies/createColor";
-import { padEndVisible } from "@/checkDependencies/padEndVisible";
+import { createColor } from "#scripts/checkDependencies/createColor";
+import { padEndVisible } from "#scripts/checkDependencies/padEndVisible";
 import { describe, expect, test } from "vitest";
 
 describe(padEndVisible, () => {

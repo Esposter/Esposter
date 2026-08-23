@@ -1,7 +1,7 @@
-import type { ColorPalette } from "@/checkDependencies/models/ColorPalette";
-import type { RegistryCheckError } from "@/checkDependencies/models/RegistryCheckError";
+import type { ColorPalette } from "#scripts/checkDependencies/models/ColorPalette";
+import type { RegistryCheckError } from "#scripts/checkDependencies/models/RegistryCheckError";
 
-import { printTable } from "@/checkDependencies/printTable";
+import { printTable } from "#scripts/checkDependencies/printTable";
 
 export const printRegistryErrors = (errors: RegistryCheckError[], color: ColorPalette): void => {
   if (errors.length === 0) return;

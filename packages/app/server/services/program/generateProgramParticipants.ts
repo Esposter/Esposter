@@ -8,6 +8,7 @@ import { DatasetProviderMap } from "@@/server/services/dataset/DatasetProviderMa
 import { danglingProgramBindingError } from "@@/server/services/program/danglingProgramBindingError";
 import { getProgramParticipantId } from "@@/server/services/program/getProgramParticipantId";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
+import { AZURE_MAX_BATCH_SIZE, AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import {
   createEntity,
   getEntity,
@@ -16,7 +17,7 @@ import {
   getTopNEntities,
   serializeEntity,
 } from "@esposter/db";
-import { AZURE_MAX_BATCH_SIZE, AZURE_MAX_PAGE_SIZE, AzureTable, ProgramParticipantEntity } from "@esposter/db-schema";
+import { AzureTable, ProgramParticipantEntity } from "@esposter/db-schema";
 import { chunk, getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 

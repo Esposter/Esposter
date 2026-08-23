@@ -1,4 +1,4 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { Cameras } from "phaser";
 
 export const useCameraStore = defineStore("phaser/camera", () => {

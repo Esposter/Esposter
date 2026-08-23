@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { PathFollowerConfiguration } from "@/models/configuration/PathFollowerConfiguration";
-import type { PathFollowerEventEmitsOptions } from "@/models/emit/PathFollowerEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { PathFollowerConfiguration } from "#src/models/configuration/PathFollowerConfiguration";
+import type { PathFollowerEventEmitsOptions } from "#src/models/emit/PathFollowerEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 import type { SetRequired } from "type-fest";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { PathFollowerSetterMap } from "@/util/setterMap/PathFollowerSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { PathFollowerSetterMap } from "#src/util/setterMap/PathFollowerSetterMap";
 
 interface PathFollowerEmits extends /** @vue-ignore */ PathFollowerEventEmitsOptions {}
 

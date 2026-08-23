@@ -1,8 +1,8 @@
-import type { Lifecycle } from "@/models/lifecycle/Lifecycle";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { Lifecycle } from "#src/models/lifecycle/Lifecycle";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
-import { useInjectSceneKey } from "@/composables/useInjectSceneKey";
-import { ExternalSceneStore } from "@/store/scene";
+import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
+import { ExternalSceneStore } from "#src/store/scene";
 
 export const pushListener = (lifecycle: Lifecycle, listener: (scene: SceneWithPlugins) => void, key?: string) => {
   const sceneKey = key ?? useInjectSceneKey();

@@ -1,13 +1,13 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
-import type { FlushOp } from "@/models/exec/FlushOp";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
+import type { FlushOp } from "#src/models/exec/FlushOp";
 
-import { BackendType } from "@/models/virrun/BackendType";
-import { applyFlushPlan } from "@/services/exec/snapshot/applyFlushPlan";
-import { buildHostFlushPlan } from "@/services/exec/snapshot/buildHostFlushPlan";
-import { persistRun } from "@/services/exec/snapshot/persistRun";
-import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
-import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { applyFlushPlan } from "#src/services/exec/snapshot/applyFlushPlan";
+import { buildHostFlushPlan } from "#src/services/exec/snapshot/buildHostFlushPlan";
+import { persistRun } from "#src/services/exec/snapshot/persistRun";
+import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
+import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { takeOne } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -16,14 +16,14 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // EVERY exit code (native-equivalence — a failed eslint --fix still wrote real files), while the task-cache record
 // (onPersist) fires only on a clean exit. An all-or-nothing gate coupling both to one exit-code check flips one of
 // These assertions.
-vi.mock(import("@/services/exec/snapshot/resolveSnapshotLocation"), () => ({
+vi.mock(import("#src/services/exec/snapshot/resolveSnapshotLocation"), () => ({
   resolveSnapshotLocation: vi.fn<typeof resolveSnapshotLocation>(),
 }));
-vi.mock(import("@/services/exec/snapshot/buildHostFlushPlan"), () => ({
+vi.mock(import("#src/services/exec/snapshot/buildHostFlushPlan"), () => ({
   buildHostFlushPlan: vi.fn<typeof buildHostFlushPlan>(),
 }));
-vi.mock(import("@/services/exec/snapshot/applyFlushPlan"), () => ({ applyFlushPlan: vi.fn<typeof applyFlushPlan>() }));
-vi.mock(import("@/services/exec/snapshot/removeSnapshotDirectory"), () => ({
+vi.mock(import("#src/services/exec/snapshot/applyFlushPlan"), () => ({ applyFlushPlan: vi.fn<typeof applyFlushPlan>() }));
+vi.mock(import("#src/services/exec/snapshot/removeSnapshotDirectory"), () => ({
   removeSnapshotDirectory: vi.fn<typeof removeSnapshotDirectory>(),
 }));
 

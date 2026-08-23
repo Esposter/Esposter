@@ -1,7 +1,7 @@
-import type { BenchmarkResult } from "@/models/BenchmarkResult";
-import type { BenchmarkTaskNode } from "@/models/BenchmarkTaskNode";
+import type { BenchmarkResult } from "#src/models/BenchmarkResult";
+import type { BenchmarkTaskNode } from "#src/models/BenchmarkTaskNode";
 
-import { buildBenchmarkFileReport } from "@/services/buildBenchmarkFileReport";
+import { buildBenchmarkFileReport } from "#src/services/buildBenchmarkFileReport";
 import { describe, expect, test } from "vitest";
 
 describe(buildBenchmarkFileReport, () => {

@@ -1,7 +1,7 @@
-import type { OverlayManifestEntry } from "@/models/exec/snapshot/OverlayManifestEntry";
+import type { OverlayManifestEntry } from "#src/models/exec/snapshot/OverlayManifestEntry";
 
-import { overlayManifestEntrySchema } from "@/models/exec/snapshot/OverlayManifestEntry";
-import { parseJsonWithSchema } from "@/services/exec/util/parseJsonWithSchema";
+import { overlayManifestEntrySchema } from "#src/models/exec/snapshot/OverlayManifestEntry";
+import { parseJsonWithSchema } from "#src/services/exec/util/parseJsonWithSchema";
 import { createUniqueArraySchema } from "@esposter/shared";
 
 const overlayManifestSchema = createUniqueArraySchema(overlayManifestEntrySchema, "relativePath");

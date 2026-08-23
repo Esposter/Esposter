@@ -1,5 +1,5 @@
-import { formatCacheListing } from "@/services/cli/cache/formatCacheListing";
-import { stripAnsi } from "@/services/cli/color/stripAnsi.test";
+import { formatCacheListing } from "#src/services/cli/cache/formatCacheListing";
+import { stripAnsi } from "#src/services/cli/color/stripAnsi.test";
 import { describe, expect, test } from "vitest";
 
 describe(formatCacheListing, () => {

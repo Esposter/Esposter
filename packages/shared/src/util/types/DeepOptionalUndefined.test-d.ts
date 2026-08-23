@@ -1,4 +1,4 @@
-import type { DeepOptionalUndefined } from "@/util/types/DeepOptionalUndefined";
+import type { DeepOptionalUndefined } from "#src/util/types/DeepOptionalUndefined";
 import type { Primitive } from "type-fest";
 
 import { describe, expect, expectTypeOf, test } from "vitest";

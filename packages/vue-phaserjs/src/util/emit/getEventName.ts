@@ -1,4 +1,4 @@
-import { EVENT_PREFIX } from "@/util/emit/constants";
+import { EVENT_PREFIX } from "#src/util/emit/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const getEventName = (event: string): string => {

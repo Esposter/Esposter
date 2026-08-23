@@ -1,7 +1,7 @@
-import type { FilesSource } from "@/models/source/FilesSource";
-import type { LoadedSource } from "@/models/source/LoadedSource";
+import type { FilesSource } from "#src/models/source/FilesSource";
+import type { LoadedSource } from "#src/models/source/LoadedSource";
 
-import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
+import { VIRRUN_TEMP_DIR_PREFIX } from "#src/services/exec/util/constants";
 import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";

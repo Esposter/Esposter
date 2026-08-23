@@ -1,4 +1,4 @@
-import type { TweenBuilderConfiguration } from "@/models/configuration/shared/TweenBuilderConfiguration";
+import type { TweenBuilderConfiguration } from "#src/models/configuration/shared/TweenBuilderConfiguration";
 
 export interface TweenConfiguration {
   tween: TweenBuilderConfiguration;

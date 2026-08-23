@@ -1,9 +1,9 @@
-import type { FlushOp } from "@/models/exec/FlushOp";
+import type { FlushOp } from "#src/models/exec/FlushOp";
 
-import { FlushOpType } from "@/models/exec/FlushOp";
-import { hasDependencyClosureMutation } from "@/services/exec/cache/hasDependencyClosureMutation";
-import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { FlushOpType } from "#src/models/exec/FlushOp";
+import { hasDependencyClosureMutation } from "#src/services/exec/cache/hasDependencyClosureMutation";
+import { PNPM_LOCKFILE_FILENAME } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 
 describe(hasDependencyClosureMutation, () => {

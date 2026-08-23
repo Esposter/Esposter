@@ -1,9 +1,9 @@
 import type { TimerHandler } from "@azure/functions";
 
-import { db } from "@/services/db";
-import { getContainerClient } from "@/services/getContainerClient";
-import { getTableClient } from "@/services/getTableClient";
-import { logAndRethrow } from "@/services/logAndRethrow";
+import { db } from "#src/services/db";
+import { getContainerClient } from "#src/services/getContainerClient";
+import { getTableClient } from "#src/services/getTableClient";
+import { logAndRethrow } from "#src/services/logAndRethrow";
 import { purgeResource } from "@esposter/db";
 import {
   AzureContainer,

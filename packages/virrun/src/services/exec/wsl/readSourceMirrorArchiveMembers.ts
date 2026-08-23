@@ -1,6 +1,6 @@
-import { SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS } from "@/services/exec/util/constants";
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
-import { getTarExecutable } from "@/services/exec/util/getTarExecutable";
+import { SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { execFileHidden } from "#src/services/exec/util/execFileHidden";
+import { getTarExecutable } from "#src/services/exec/util/getTarExecutable";
 // Cap above the default 1 MB so a full materialize's member list (one line per mirrored path) never overflows the
 // Exec buffer.
 const ARCHIVE_MEMBERS_MAX_BUFFER = 256 * 1024 * 1024;

@@ -1,10 +1,10 @@
-import type { TriangleConfiguration } from "@/models/configuration/TriangleConfiguration";
-import type { TriangleEventEmitsOptions } from "@/models/emit/TriangleEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { TriangleConfiguration } from "#src/models/configuration/TriangleConfiguration";
+import type { TriangleEventEmitsOptions } from "#src/models/emit/TriangleEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { GlobalSetterMap } from "@/util/setterMap/global/GlobalSetterMap";
-import { ShapeSetterMap } from "@/util/setterMap/shared/ShapeSetterMap";
+import { GlobalSetterMap } from "#src/util/setterMap/global/GlobalSetterMap";
+import { ShapeSetterMap } from "#src/util/setterMap/shared/ShapeSetterMap";
 
 export const TriangleSetterMap: SetterMap<TriangleConfiguration, GameObjects.Triangle, TriangleEventEmitsOptions> = {
   to: (gameObject) => (value) => {

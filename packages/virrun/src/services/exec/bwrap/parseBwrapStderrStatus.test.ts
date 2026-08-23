@@ -1,5 +1,5 @@
-import { WSL_BWRAP_STATUS_BEGIN, WSL_BWRAP_STATUS_END } from "@/services/exec/bwrap/constants";
-import { parseBwrapStderrStatus } from "@/services/exec/bwrap/parseBwrapStderrStatus";
+import { WSL_BWRAP_STATUS_BEGIN, WSL_BWRAP_STATUS_END } from "#src/services/exec/bwrap/constants";
+import { parseBwrapStderrStatus } from "#src/services/exec/bwrap/parseBwrapStderrStatus";
 import { describe, expect, test } from "vitest";
 
 describe(parseBwrapStderrStatus, () => {

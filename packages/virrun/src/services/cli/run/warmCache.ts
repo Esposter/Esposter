@@ -1,13 +1,13 @@
-import { Color } from "@/models/cli/Color";
-import { BackendType } from "@/models/virrun/BackendType";
-import { colorize } from "@/services/cli/color/colorize";
-import { formatVirrunError } from "@/services/cli/format/formatVirrunError";
-import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
-import { formatVirrunProvisioning } from "@/services/cli/format/formatVirrunProvisioning";
-import { resolveBackend } from "@/services/configuration/resolveBackend";
-import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
-import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { createVirrun } from "@/services/virrun/createVirrun";
+import { Color } from "#src/models/cli/Color";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { colorize } from "#src/services/cli/color/colorize";
+import { formatVirrunError } from "#src/services/cli/format/formatVirrunError";
+import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
+import { formatVirrunProvisioning } from "#src/services/cli/format/formatVirrunProvisioning";
+import { resolveBackend } from "#src/services/configuration/resolveBackend";
+import { resolveVirrunConfiguration } from "#src/services/configuration/resolveVirrunConfiguration";
+import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
+import { createVirrun } from "#src/services/virrun/createVirrun";
 import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 // Backs `virrun warm`. Forking the `true` no-op triggers the cold-path capture (Virrun.fork): cold installs and
 // Freezes the snapshot, warm reuses it — either way `true` exits 0, so the first real routed run pays nothing.

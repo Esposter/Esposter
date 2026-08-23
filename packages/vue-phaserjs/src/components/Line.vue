@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { LineConfiguration } from "@/models/configuration/LineConfiguration";
-import type { LineEventEmitsOptions } from "@/models/emit/LineEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { LineConfiguration } from "#src/models/configuration/LineConfiguration";
+import type { LineEventEmitsOptions } from "#src/models/emit/LineEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { LineSetterMap } from "@/util/setterMap/LineSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { LineSetterMap } from "#src/util/setterMap/LineSetterMap";
 
 interface LineEmits extends /** @vue-ignore */ LineEventEmitsOptions {}
 

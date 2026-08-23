@@ -1,8 +1,8 @@
 import type { TableEntity } from "@azure/data-tables";
 
-import { MockTableClient } from "@/models/table/MockTableClient";
-import { MockTableDatabase } from "@/store/MockTableDatabase";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
+import { MockTableClient } from "#src/models/table/MockTableClient";
+import { MockTableDatabase } from "#src/store/MockTableDatabase";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { afterEach, describe, expect, test } from "vitest";
 
 const readByPage = async (client: MockTableClient, maxPageSize?: number) => {

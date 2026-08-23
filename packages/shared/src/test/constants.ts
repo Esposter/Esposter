@@ -1,4 +1,4 @@
-import { noop } from "@/util/function/noop";
+import { noop } from "#src/util/function/noop";
 
 export const AllSpecialValues: { isPlainObject: boolean; value: unknown }[] = [
   { isPlainObject: true, value: {} },

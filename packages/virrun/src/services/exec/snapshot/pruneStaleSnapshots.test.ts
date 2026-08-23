@@ -1,7 +1,7 @@
-import { VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
-import { pruneStaleSnapshots } from "@/services/exec/snapshot/pruneStaleSnapshots";
-import { seedDirectory } from "@/services/exec/test/seedDirectory.test";
-import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
+import { VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import { pruneStaleSnapshots } from "#src/services/exec/snapshot/pruneStaleSnapshots";
+import { seedDirectory } from "#src/services/exec/test/seedDirectory.test";
+import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";

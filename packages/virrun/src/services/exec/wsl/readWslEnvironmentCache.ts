@@ -1,7 +1,7 @@
 import type { z } from "zod";
 
-import { getLocalCacheDirectory } from "@/services/exec/util/getLocalCacheDirectory";
-import { readKeyedCache } from "@/services/exec/util/readKeyedCache";
+import { getLocalCacheDirectory } from "#src/services/exec/util/getLocalCacheDirectory";
+import { readKeyedCache } from "#src/services/exec/util/readKeyedCache";
 import { join } from "node:path";
 // The persisted win32 WSL environment probe result (`filename`) for `key`, or undefined when there is nothing usable
 // To reuse so the caller falls through to a fresh probe — see readKeyedCache, including the optional `maxAgeMs` a

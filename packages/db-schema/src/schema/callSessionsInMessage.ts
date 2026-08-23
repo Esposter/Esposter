@@ -1,8 +1,8 @@
-import { createExactLengthCheckSql } from "@/models/shared/Check";
-import { pgTable } from "@/pgTable";
-import { messageSchema } from "@/schema/messageSchema";
-import { roomsInMessage } from "@/schema/roomsInMessage";
-import { users } from "@/schema/users";
+import { createExactLengthCheckSql } from "#src/models/shared/Check";
+import { pgTable } from "#src/pgTable";
+import { messageSchema } from "#src/schema/messageSchema";
+import { roomsInMessage } from "#src/schema/roomsInMessage";
+import { users } from "#src/schema/users";
 import { check, text, unique, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 

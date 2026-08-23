@@ -1,7 +1,7 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
-import { onShutdown } from "@/hooks/onShutdown";
-import { getTestGame, removeTestScene, startTestScene } from "@/test/fixtures/headlessGame.test";
+import { onShutdown } from "#src/hooks/onShutdown";
+import { getTestGame, removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
 import { describe, expect, test, vi } from "vitest";
 
 describe(onShutdown, () => {

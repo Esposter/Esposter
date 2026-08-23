@@ -1,4 +1,4 @@
-import { getSection } from "@/checkDependencies/getSection";
+import { getSection } from "#scripts/checkDependencies/getSection";
 import { describe, expect, test } from "vitest";
 
 describe(getSection, () => {

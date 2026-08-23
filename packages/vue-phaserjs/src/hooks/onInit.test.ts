@@ -1,7 +1,7 @@
-import { onCreate } from "@/hooks/onCreate";
-import { onInit } from "@/hooks/onInit";
-import { Lifecycle } from "@/models/lifecycle/Lifecycle";
-import { removeTestScene, startTestScene } from "@/test/fixtures/headlessGame.test";
+import { onCreate } from "#src/hooks/onCreate";
+import { onInit } from "#src/hooks/onInit";
+import { Lifecycle } from "#src/models/lifecycle/Lifecycle";
+import { removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
 import { describe, expect, test } from "vitest";
 
 describe(onInit, () => {

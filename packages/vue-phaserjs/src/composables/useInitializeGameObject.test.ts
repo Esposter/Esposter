@@ -1,10 +1,10 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import Sprite from "@/components/Sprite.vue";
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { startTestScene, stepScene } from "@/test/fixtures/headlessGame.test";
-import { setupGameObjectSuite } from "@/test/fixtures/setupGameObjectSuite.test";
+import Sprite from "#src/components/Sprite.vue";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { startTestScene, stepScene } from "#src/test/fixtures/headlessGame.test";
+import { setupGameObjectSuite } from "#src/test/fixtures/setupGameObjectSuite.test";
 import { assert, describe, expect, test } from "vitest";
 
 describe(useInitializeGameObject, () => {

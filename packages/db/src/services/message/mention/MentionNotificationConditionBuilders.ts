@@ -1,8 +1,8 @@
-import type { MentionConditionBuilder } from "@/models/message/MentionConditionBuilder";
+import type { MentionConditionBuilder } from "#src/models/message/MentionConditionBuilder";
 import type { ClassifiedMentions } from "@esposter/shared";
 
-import { createMentionConditionBuilders } from "@/services/message/mention/createMentionConditionBuilders";
-import { getDirectMessageNotificationCondition } from "@/services/message/mention/getDirectMessageNotificationCondition";
+import { createMentionConditionBuilders } from "#src/services/message/mention/createMentionConditionBuilders";
+import { getDirectMessageNotificationCondition } from "#src/services/message/mention/getDirectMessageNotificationCondition";
 
 export const MentionNotificationConditionBuilders: Record<keyof ClassifiedMentions, MentionConditionBuilder> =
   createMentionConditionBuilders(getDirectMessageNotificationCondition);

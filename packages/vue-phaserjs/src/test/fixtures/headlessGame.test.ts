@@ -1,11 +1,11 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
-import { Lifecycle } from "@/models/lifecycle/Lifecycle";
-import { usePhaserStore } from "@/store";
-import { ExternalSceneStore } from "@/store/scene";
-import { createSceneClass } from "@/util/createSceneClass";
-import { resetLifecycleListeners } from "@/util/hooks/resetLifecycleListeners";
-import { runLifecycleListeners } from "@/util/hooks/runLifecycleListeners";
+import { Lifecycle } from "#src/models/lifecycle/Lifecycle";
+import { usePhaserStore } from "#src/store/index";
+import { ExternalSceneStore } from "#src/store/scene";
+import { createSceneClass } from "#src/util/createSceneClass";
+import { resetLifecycleListeners } from "#src/util/hooks/resetLifecycleListeners";
+import { runLifecycleListeners } from "#src/util/hooks/runLifecycleListeners";
 import { Game, HEADLESS, Scenes } from "phaser";
 import { createPinia, setActivePinia } from "pinia";
 import { afterAll, beforeAll, describe } from "vitest";

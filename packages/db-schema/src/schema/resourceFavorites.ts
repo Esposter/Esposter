@@ -1,6 +1,6 @@
-import { pgTable } from "@/pgTable";
-import { resources } from "@/schema/resources";
-import { users } from "@/schema/users";
+import { pgTable } from "#src/pgTable";
+import { resources } from "#src/schema/resources";
+import { users } from "#src/schema/users";
 import { primaryKey, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 

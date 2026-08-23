@@ -1,6 +1,6 @@
 import type { Database, RoomFilterInMessage } from "@esposter/db-schema";
 
-import { hasPermission } from "@/services/room/rbac/hasPermission";
+import { hasPermission } from "#src/services/room/rbac/hasPermission";
 import { MessageCreationRejectionType, RoomPermission } from "@esposter/db-schema";
 
 export type MessageCreationRejection =

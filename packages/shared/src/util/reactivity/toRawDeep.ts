@@ -1,4 +1,4 @@
-import { getRawData } from "@/util/reactivity/getRawData";
+import { getRawData } from "#src/util/reactivity/getRawData";
 
 export const toRawDeep = <T extends object>(data: T): T => {
   const rawData = getRawData(data);

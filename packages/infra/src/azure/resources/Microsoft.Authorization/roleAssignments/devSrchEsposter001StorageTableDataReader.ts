@@ -1,7 +1,7 @@
-import AzureStorageTableDataReaderRoleDefinitionId from "@/azure/constants/AzureStorageTableDataReaderRoleDefinitionId";
-import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
-import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
-import { devstesposter001 } from "@/azure/resources/Microsoft.Storage/storageAccounts/devstesposter001";
+import AzureStorageTableDataReaderRoleDefinitionId from "#src/azure/constants/AzureStorageTableDataReaderRoleDefinitionId";
+import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
+import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
+import { devstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/devstesposter001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 

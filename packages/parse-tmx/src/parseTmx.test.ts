@@ -1,6 +1,6 @@
-import { TMXParsed } from "@/models/tmx/parsed/TMXParsed";
-import { parseTmx } from "@/parseTmx";
-import { dayjs } from "@/services/dayjs.test";
+import { TMXParsed } from "#src/models/tmx/parsed/TMXParsed";
+import { parseTmx } from "#src/parseTmx";
+import { dayjs } from "#src/services/dayjs.test";
 import { readdir, readFile } from "node:fs/promises";
 import { extname, join } from "node:path";
 import { describe, expect, test } from "vitest";

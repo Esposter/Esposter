@@ -1,8 +1,8 @@
-import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
-import AzureWebsiteContributorRoleDefinitionId from "@/azure/constants/AzureWebsiteContributorRoleDefinitionId";
-import DevLogicEsposterAe002PrincipalId from "@/azure/constants/DevLogicEsposterAe002PrincipalId";
-import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
-import { devFuncEsposter001 } from "@/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
+import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
+import AzureWebsiteContributorRoleDefinitionId from "#src/azure/constants/AzureWebsiteContributorRoleDefinitionId";
+import DevLogicEsposterAe002PrincipalId from "#src/azure/constants/DevLogicEsposterAe002PrincipalId";
+import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
+import { devFuncEsposter001 } from "#src/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 

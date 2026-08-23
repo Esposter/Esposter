@@ -1,9 +1,9 @@
-import type { NotificationOptions } from "@/models/azure/eventGrid/NotificationOptions";
-import type { MessageEntity } from "@/models/message/MessageEntity";
+import type { NotificationOptions } from "#src/models/azure/eventGrid/NotificationOptions";
+import type { MessageEntity } from "#src/models/message/MessageEntity";
 
-import { notificationOptionsSchema } from "@/models/azure/eventGrid/NotificationOptions";
-import { standardMessageEntitySchema } from "@/models/message/StandardMessageEntity";
-import { webhookMessageEntitySchema } from "@/models/message/WebhookMessageEntity";
+import { notificationOptionsSchema } from "#src/models/azure/eventGrid/NotificationOptions";
+import { standardMessageEntitySchema } from "#src/models/message/StandardMessageEntity";
+import { webhookMessageEntitySchema } from "#src/models/message/WebhookMessageEntity";
 import { z } from "zod";
 
 export interface PushNotificationEventGridData {

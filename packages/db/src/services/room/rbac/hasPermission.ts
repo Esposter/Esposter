@@ -1,6 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
-import { getPermissions } from "@/services/room/rbac/getPermissions";
+import { getPermissions } from "#src/services/room/rbac/getPermissions";
 import { hasPermission as getHasPermission, RoomPermission } from "@esposter/db-schema";
 
 export const hasPermission = async (

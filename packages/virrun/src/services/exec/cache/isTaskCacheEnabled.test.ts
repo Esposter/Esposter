@@ -1,5 +1,5 @@
-import { isTaskCacheEnabled } from "@/services/exec/cache/isTaskCacheEnabled";
-import { CI_ENV_KEY, VIRRUN_NO_CACHE_KEY } from "@/services/exec/util/constants";
+import { isTaskCacheEnabled } from "#src/services/exec/cache/isTaskCacheEnabled";
+import { CI_ENV_KEY, VIRRUN_NO_CACHE_KEY } from "#src/services/exec/util/constants";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(isTaskCacheEnabled, () => {

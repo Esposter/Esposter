@@ -1,4 +1,4 @@
-import { getVersionParts } from "@/services/getVersionParts";
+import { getVersionParts } from "#scripts/services/getVersionParts";
 import { describe, expect, test } from "vitest";
 
 describe(getVersionParts, () => {

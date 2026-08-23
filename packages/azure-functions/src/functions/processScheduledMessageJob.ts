@@ -1,5 +1,5 @@
-import { processScheduledMessageJobHandler } from "@/handlers/processScheduledMessageJobHandler";
-import { ProcessProperties } from "@/services/process";
+import { processScheduledMessageJobHandler } from "#src/handlers/processScheduledMessageJobHandler";
+import { ProcessProperties } from "#src/services/process";
 import { app } from "@azure/functions";
 import { AzureFunction, AzureQueue } from "@esposter/db-schema";
 

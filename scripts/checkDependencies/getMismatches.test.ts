@@ -1,4 +1,4 @@
-import { getMismatches } from "@/checkDependencies/getMismatches";
+import { getMismatches } from "#scripts/checkDependencies/getMismatches";
 import { describe, expect, test } from "vitest";
 
 describe(getMismatches, () => {

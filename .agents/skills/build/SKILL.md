@@ -1,9 +1,9 @@
 ---
 name: build
-description: Esposter rolldown build conventions — the shared configuration factories, the external list derived from each package's own manifest and the two kinds of package that opt out, why dist is wiped every build, the tsconfig preset chain and the build preset that carries excludes only, and why a declare-module augmentation never travels through a bundled .d.ts to a consuming package. Apply when adding packages, editing rolldown or tsconfig configs, changing a manifest's dependency placement, or wrapping a library whose types are augmented by a plugin.
+description: Esposter tsdown build conventions — the shared configuration factories and composing them with mergeConfig rather than a spread, dependencies being externalized while devDependencies are bundled and the two kinds of package that opt out, subpath-aware package patterns, inlinedDependencies as the record of what a bundle swallowed, dts.eager for ambient declarations the entrypoints never import, the publint/attw/onlyImport gates a published package gets and why a private one gets none, the #src/ subpath-imports self-alias that replaced the @/ paths alias everywhere except the app, the oxlint override enforcing that split, and the devExports every package now gets from the base config, the tsconfig preset chain and the isolatedDeclarations exception, the bootstrap package, and why a declare-module augmentation never travels through a bundled .d.ts to a consuming package. Apply when adding packages, editing tsdown or tsconfig configs, changing a manifest's dependency placement, or wrapping a library whose types are augmented by a plugin.
 ---
 
-# Build Conventions (Rolldown)
+# Build Conventions (tsdown)
 
 The mechanism — what runs, in what order, and why — is `packages/app/content/docs/architecture/build-pipeline.md`. This skill is the conventions you apply when editing it.
 
@@ -11,47 +11,175 @@ The mechanism — what runs, in what order, and why — is `packages/app/content
 
 Everything lives in `packages/configuration/src/`. Each export is a **factory** — call it, don't spread the export.
 
-A package's `rolldown.config.ts` is one call plus only what is genuinely specific to it. If you are about to repeat a plugin, an exclude or an external across two packages, it belongs in `configuration` instead. Which package calls which factory is countable from the repo — never restate it here.
+A package's `tsdown.config.ts` is one factory call plus only what is genuinely specific to it. If you are about to repeat a plugin, an exclude or a `deps` entry across two packages, it belongs in `configuration` instead. Which package calls which factory is countable from the repo — never restate it here.
 
-Base browser config passes only `tsconfig` to `dts()`; the DTS generator is left inferred, and `rolldown-plugin-dts` picks `oxc` where `isolatedDeclarations` is on and `tsc` otherwise. Don't pass a `generator`/`tsgo` option unless a package genuinely needs a specific one.
+The build script runs `export:gen`, then bare `tsdown`. tsdown finds `tsdown.config.ts` by name; never pass `--config`.
 
-`getViteConfiguration` is for `.vue` packages only. It is still a Rolldown build (Vite 8 bundles with Rolldown — hence `build.rolldownOptions`); Vite is there for SFC compilation and the `vue-tsc` declaration build. Don't "migrate it to rolldown" — that trade was already made and the bundler is the same one.
+### Compose with `mergeConfig`, never a spread
 
-## External is derived — never hand-listed
+```ts
+// Wrong — replaces `deps` wholesale, silently dropping the base's onlyImport gate.
+const configuration: UserConfig = { ...getTsdownConfigurationNode(), deps: { alwaysBundle: ["x"] } };
 
-`getExternal()` reads the **calling package's own `package.json`** (rolldown runs with that package as cwd) and returns its `peerDependencies` plus every workspace sibling, each as a prefix pattern so subpath imports are covered too.
+// Right.
+const configuration: UserConfig = mergeConfig(getTsdownConfigurationNode(), { deps: { alwaysBundle: ["x"] } });
+```
 
-So the only thing you edit to change what a package externalizes is **that package's manifest**:
+A spread replaces a key outright. Every nested option the base set on `deps`, `dts` or `exports` disappears the moment a package adds one field of its own, and nothing fails — the build just stops doing something it used to. This applies to the factories in `configuration` as much as to a package config.
 
-- `dependencies` → bundled. The package's own implementation detail.
-- `peerDependencies` → externalized. Anything in the published runtime or declaration surface the consumer must supply exactly one copy of — framework singletons (`vue`, `pinia`), SDKs mirrored in a public API, the Drizzle/Pulumi runtimes.
-- `devDependencies` → build, lint, test, codegen and typecheck tooling, plus anything used only by types that never reach the generated declarations.
+## Externalized is the default — bundling is the exception
+
+tsdown externalizes `dependencies` and `peerDependencies` and bundles `devDependencies` that the source imports. That is already the right answer, so **the thing you edit is the manifest, not the config**:
+
+- `dependencies` → externalized. The consumer's package manager installs them transitively; nobody types their names, and they dedupe against the rest of the consumer's tree.
+- `peerDependencies` → externalized, and additionally a demand on the consumer. Reserve them for things that must be a single instance — framework singletons (`vue`, `pinia`), the Drizzle and Pulumi runtimes. A dependency that merely appears in a signature does not need to be a peer.
+- `optionalDependencies` → externalized, and the only kind that may be absent at runtime: the consumer installs one when their platform allows it. Reach for it behind a check, never as though it resolved. `peerDependenciesMeta` is read the same way, so a name appearing only there is external too — both are in the `onlyImport` allowlist for that reason.
+- `devDependencies` → build, lint, test, codegen and typecheck tooling, plus anything a self-contained bundle deliberately vendors.
 - Don't redeclare a transitive peer. If `azure-mock` imports `@esposter/db-schema` which imports `zod`, `zod` is db-schema's peer, not azure-mock's.
 
-There is no list to audit against any more, and no ordering convention to maintain. **Do not reintroduce one** — a shared registry is exactly what let a forgotten entry silently vendor a dependency into a bundle.
+**Never bundle a dependency to save the consumer an install.** It saves nothing — they never install it by hand — and it costs deduplication, it strands them on a vendored copy when that dependency ships a fix, and it splits any type the dependency owns into two nominally distinct copies that fail `instanceof` against each other.
+
+### Minify only the deploy artifact
+
+`azure-functions` sets `minify: { compress: true, mangle: false, removeWhitespace: true }` — 7.25 MB to 5.00 MB on the file the Functions host parses at every cold start. Nothing else minifies: a library's consumer minifies for themselves, and readable output is what a stack trace is read through.
+
+Never widen it to `minify: true`. Mangling reaches 3.67 MB and renames every identifier, so the stack for an EventGrid delivery that already happened names `t` instead of the handler. `dce-only` is worth nothing — rolldown already tree-shakes. Note that no test covers minified output: tests import source, and only the size snapshot reads `dist`.
+
+### What gets vendored is recorded, not allowlisted
+
+The base sets `deps: { onlyBundle: false }`, which silences tsdown's standing hint that an allowlist of inlinable packages is missing. The list it asks for already exists in a better form: tsdown writes every package it vendored into the manifest's `inlinedDependencies`, and that field is committed, so anything newly inlined turns up in a reviewed diff beside the change that caused it. A second, hand-maintained copy could only ever be bootstrapped by hand-writing the versions tsdown itself generates — the check runs before the manifest is written, so the first build of a new package could never pass. Read `inlinedDependencies` when you want to know what a bundle swallowed.
+
+### Patterns, not bare names
+
+Anything handed to `deps` goes through `getPackagePatterns`. A bare name never matches a subpath import, and `drizzle-orm/pg-core`, `@electric-sql/pglite/contrib/pg_trgm` and `vitest/node` are all reached only that way. A list passed verbatim misses exactly those and the failure looks like an unrelated missing export.
 
 ### The opt-outs
 
-Both are declared in the package's own `rolldown.config.ts`, not in `configuration`:
+Declared in the package's own `tsdown.config.ts`, never in `configuration`:
 
-- **Self-contained bundles** (`virrun`, `azure-functions`) vendor almost everything so consumers manage no peers. `virrun` externalizes only `unconfig` — its synchronous TS loading does `createRequire(import.meta.url)("jiti")` relative to its own installed file, so vendoring rebases that resolution and breaks config loading in consumer repos. `azure-functions` externalizes only `@azure/functions`, supplied by the Functions host, and skips `dts` entirely because nothing consumes its types. Never spread a derived external list into either — `@esposter/*` would come back as peer deps.
-- **`@esposter/configuration`** calls `getExternal("devDependencies")`. It is private, never published, and its dist imports nothing but build tooling every workspace member already has installed, so peers would invent a contract nobody consumes. This is the one package where an externalized import is correctly a devDependency.
+- **Self-contained bundles** (`virrun`, `azure-functions`, `infra`) are programs, not libraries — something runs their `dist` directly, so they vendor what they use rather than leave imports for a resolver. `infra` is the one that only vendors its workspace siblings, derived from its own `dependencies`: Pulumi runs `dist/index.js` under plain Node, so a sibling exporting source would die on the first import, while the `@pulumi/*` SDKs have to stay peers because the engine supplies its own instance. `virrun` needs no `alwaysBundle` at all — everything it vendors is already a `devDependency` — and declares only that `unconfig` stays external, because `unconfig` resolves `jiti` through `createRequire` relative to its own installed file and vendoring rebases that lookup. `azure-functions` derives `alwaysBundle` from its own manifest minus what the Functions host provides, and sets `dts: false` because nothing consumes its types.
+- **`@esposter/configuration`** uses `deps: { neverBundle: true }`. It is private, never published, and its dist imports nothing but build tooling every workspace member already has installed.
 
-An `INVALID_ANNOTATION` warning is never our code — it comes from a bundled third-party `dist` (`@vueuse/core`). **Do not "fix" it by externalizing that dep**: virrun's config records that trade-off as rejected. Never edit the third-party comments either.
+### Ambient declarations need `dts.eager`
 
-## dist is wiped every build
+The declaration build seeds its TypeScript program from the **entrypoints**, not from the tsconfig's `include`. An ambient `.d.ts` that nothing imports — `auto-imports.d.ts`, generated by `unplugin-auto-import` — is therefore invisible to it, and every symbol it declares resolves to `any` in the shipped types. This fails silently in the worst way: `vue-tsc` passes, the build passes, and the consumer gets `declare const useCameraStore: any`.
 
-`getCleanDistributionPlugin` is in the base config's `plugins`. Rolldown never clears `output.dir` and chunk filenames are content-hashed, so without it every build leaves its predecessor's chunks behind forever. Keep it first in any `plugins` array a package overrides. The Vite path doesn't need it — Vite empties `outDir` itself.
+`dts: { eager: true }` loads every file the tsconfig lists instead, which is how the ambient file gets in. It is set in `getTsdownConfigurationVue` because that is where auto-imports are used. Any package that grows an ambient declaration owes the same option, and `src/index.test.ts`'s `index.d.ts` snapshot is what catches the regression — a declaration file that suddenly gets _smaller_ is types collapsing to `any`.
 
-**Dist size is the correctness signal for anything touching externals.** Every package snapshots its `dist/index.js` size in `src/index.test.ts`, and its `index.d.ts` too unless it skips `dts`. After changing a manifest, an external, or a config factory, rebuild and run those — a jump means something started being bundled that shouldn't be, and a `-u` that "fixes" a large jump is hiding the bug.
+## Every bundle's externals are gated
+
+`deps.onlyImport` applies to **every** package: a bundle may leave external only what its own manifest names. It catches two different failures with one check.
+
+- **A published package importing a _private_ sibling** passes every local check — the workspace has the sibling on disk — and resolves nothing on a fresh `npm install`. If it fires, the fix is to make the import legitimate (publish what it needs, or move the shared code somewhere published), never to widen the list.
+- **A specifier that resolved to nothing.** Rolldown externalizes an unresolvable `#src/...` rather than failing, so the `dist` ships an import Node then resolves through the package's own `imports` map to a `.ts` file it cannot load. That surfaces in a _consumer_, at runtime, naming a source path the consumer never referenced — `Cannot find module .../packages/db-schema/src/services/dayjs.ts imported from .../db-schema/dist/index.js`. The gate turns it into a build error in the package that caused it.
+
+`@esposter/configuration` is the one package that widens the list, because everything it externalizes is a `devDependency` and the base derives the allowlist from the runtime fields only.
+
+`deps.onlyImport` checks that imports are declared. It cannot check that a declared dependency is actually _publishable_, and neither can publint — a private sibling sitting in `dependencies` still ships a broken package. Adding a workspace sibling to a published package's `dependencies` is the case to think about by hand.
+
+## A published package is gated further
+
+Absence of `private` in the manifest switches on `publint` and `attw`. Never disable one to get a build through — each marks a package that would fail on someone else's machine:
+
+- `publint` — the manifest points at a file the package does not ship.
+- `attw` — the declarations break under a resolution mode a consumer might use.
+
+## Self-alias with `#src/`, not `@/`
+
+A package refers to its own source through **Node subpath imports**, declared in its own manifest:
+
+```json
+{ "imports": { "#src/*": "./src/*.ts" } }
+```
+
+```ts
+import { escapeValue } from "#src/services/transformer/escapeValue";
+```
+
+**Four details are load-bearing:**
+
+- **The extension goes in the target, not the specifier.** Nothing here does extension substitution through an `imports` target: given `"./src/*"`, TypeScript computes `./src/services/transformer/escapeValue`, finds no such file, and reports the module missing. Carrying `.ts` on every specifier also fixes it, and is the wrong fix — the pattern substitutes into `./src/*.ts`, so one line in the manifest does what hundreds of edits would, and specifiers stay extensionless like everything else in the repo.
+- **One key per extension the package self-imports.** `./src/*.ts` is the default arm, not a claim that a package only ever holds `.ts`. A package that self-imports something else adds a key whose suffix says so, and the longer suffix wins the match:
+
+  ```json
+  { "imports": { "#src/*": "./src/*.ts", "#src/*.vue": "./src/*.vue" } }
+  ```
+
+  Those specifiers keep their own extension — `#src/components/Container.vue` — which is what a `.vue` or `.json` import carries anyway. Don't reach for an **array** target (`["./src/*.ts", "./src/*.vue"]`) to avoid the second key: TypeScript walks the fallbacks, Vite does not, so it typechecks and then fails to resolve under Vitest.
+
+- **The key cannot be `#/`.** Node reserves that shape, and `#src/*` is the closest legal spelling to the `@/*` it replaces.
+- **A directory is not a specifier.** `paths` resolved `@/store` by directory lookup to `src/store/index.ts`; `#src/store` substitutes to the literal `./src/store.ts` and nothing else, so a directory has to be named as `#src/store/index`. Where both exist — `db-schema` has `src/schema.ts` **and** `src/schema/` — the file is what `@/schema` used to mean, so it stays `#src/schema` and only the barrel takes the `/index`. Getting that one backwards leaves the specifier unresolved, and rolldown reports it as an _external_ import the `onlyImport` gate rejects, naming a package that has nothing to do with it.
+
+`@/*` was a `paths` entry, which is resolved by whichever tsconfig drives the _current compilation_ — so the moment a sibling bundles the package from source, `@/models/Clause` re-points into the bundling package and resolves to nothing. A `#` specifier is resolved by walking up to the nearest `package.json`, which is the one owning the importing **file**, so it survives. That is not a tooling gap to wait out: `paths` is a compiler fiction with no runtime meaning, and no configuration makes it survive. `imports` is in the Node ESM specification, implemented by Node, TypeScript, Rolldown, Vite, esbuild, webpack, Vitest and jiti alike, and it is private to the package by that same specification.
+
+**`packages/app` is the one tree that keeps `@/`.** Its `@/` and `~/` are Nuxt's own aliases, generated into `.nuxt/tsconfig.*.json`, not a `paths` entry anyone here wrote. Nothing bundles the app from source, publishes it, or resolves into it — it is the leaf — so none of the reasons above apply to it, and converting it would mean fighting generated configuration for a property it cannot use. Anywhere else — a package, `scripts/`, `.agents/` — a `@/` specifier is a bug, and oxlint says so.
+
+The repo-root `scripts/` tree converted too, to `#scripts/*` declared in the root manifest — so **no `paths` entry anyone here wrote survives**, and `resolve.tsconfigPaths` came out of `getVitestConfiguration` with it. The only `paths` left in the repo are the ones Nuxt generates for the app.
+
+`tsconfig.base.json` carries **no `paths` block at all**, deliberately. The one it used to carry also held a `"*": ["${configDir}/src/*"]` fallback, which shadowed real package names — a mistyped dependency resolved to a same-named local file instead of failing. Don't add either back.
+
+### What it buys: source exports
+
+`getTsdownConfiguration` sets `exports: { devExports: SOURCE_CONDITION }` for every package — no package declares it — and workspace consumers then resolve **source**:
+
+- No rebuild between an edit and a **package** consumer seeing it — the "stale dist mimics a failed fix" trap is gone from every package's tests.
+- A fresh clone typechecks and tests the packages without building them first.
+- Go-to-definition, breakpoints and stack traces land on real source rather than a bundled declaration.
+- Typecheck sees real types, so anything a declaration bundler would flatten or widen surfaces immediately.
+
+**Pass the condition name, never `true`.** `devExports` takes `boolean | string`, and the two do very different things:
+
+```jsonc
+// devExports: SOURCE_CONDITION — every consumer that opts in gets source, everything else gets the build.
+"exports": { ".": { "source": "./src/index.ts", "default": "./dist/index.js" } }
+
+// devExports: true — every condition points at source. Node gets TypeScript.
+"exports": { ".": "./src/index.ts" }
+```
+
+Node's own ESM loader cannot read that second shape, twice over: it resolves no extensionless relative specifier, so the generated barrel's `export * from "./models/BinaryOperator"` fails outright, and its type-stripping cannot transform a TS `enum`. Nitro's prerender imports the built server through that loader and Pulumi runs `infra`'s `dist` through it, so both die — and the workarounds cost more than the feature is worth. Inlining into the Nitro server has to cover **every** workspace package rather than the source-exporting ones, because a `dist` sibling externalizes its own siblings (`db-schema`'s build emits `from "@esposter/azure"`), and `infra` has to vendor its siblings, which takes it from 127 kB to 1.27 MB. Both are standing configuration that a new consumer has to remember. A `default` arm costs none of it, because nothing has to be configured to stay working.
+
+**The condition is `source`**, the ecosystem's own spelling — Parcel and Metro resolve it, and it is what a workspace-source arm is called wherever one exists. Don't namespace it: a repo-prefixed name only protects against a stranger's resolver matching the arm, and no published package has one, because tsdown writes a `dist`-only map into `publishConfig.exports`.
+
+Two places opt in, and they are the whole mechanism:
+
+| Where                    | How                                    |
+| :----------------------- | :------------------------------------- |
+| `tsconfig.base.json`     | `customConditions: [SOURCE_CONDITION]` |
+| `getVitestConfiguration` | `resolve.conditions`                   |
+
+`resolve.conditions` **replaces** Vite's defaults rather than adding to them, which is why `getVitestConfiguration` spreads `defaultServerConditions` back in — dropping `module` and `node` silently re-resolves half the dependency tree. The tsconfig spells the condition out as a literal because JSON cannot import `SOURCE_CONDITION`; renaming the constant means editing that file too, and nothing fails loudly if you forget — every package silently falls back to `dist`.
+
+The app deliberately stays out: neither Nuxt's Vite build nor Nitro carries the condition, so the app resolves every sibling's `dist` and the server bundle keeps externalizing them instead of pulling every package's TypeScript into one graph. That is why `watch:packages` still earns its keep — for the **app**, an edit to a package is invisible until that package is rebuilt.
+
+`publint` and `attw` still gate the published shape, because both read `publishConfig.exports`, where tsdown writes the `dist`-only map.
+
+**A build that vendors a sibling vendors its source.** Rolldown reads `customConditions` from the tsconfig it is handed, so `virrun`, `azure-functions` and `infra` bundle their siblings' TypeScript rather than their `dist` — which is why `isolatedDeclarations` is off in any package vendoring one that cannot satisfy it, and why a `@/` inside a vendored package was never going to work.
+
+Two things that follow, and are easy to get wrong:
+
+- **A `dist` sibling externalizes its own siblings.** `db-schema`'s dist emits `from "@esposter/azure"`, so whatever resolves _that_ decides which arm it gets. This is why the `default` arm has to exist rather than being handled at the consumer: every hop resolves independently.
+- **Never point a condition-less export at source to "make it simpler".** The failure lands in Nitro's prerender or a `pulumi preview`, a phase away from the change that caused it, naming a module path nobody edited.
+
+## Dist size is the correctness signal
+
+Every package snapshots its `dist/index.js` size in `src/index.test.ts`, and its `index.d.ts` too unless it skips `dts`. After changing a manifest, a `deps` entry or a config factory, rebuild and run those — a jump means something started being bundled that shouldn't be, and a `-u` that "fixes" a large jump is hiding the bug.
+
+`sideEffects: false` is a claim, not a formality. Declare it only where the package genuinely has no top-level side effects; `db` and `db-schema` carry a `baseDayjs.extend(duration)` at module scope and so declare nothing.
 
 ## tsconfig presets
 
-`tsconfig.base.json` → `tsconfig.library.json` (composite + isolatedDeclarations) → `tsconfig.node.json` (`types: ["node"]`), with `tsconfig.vue.json` a sibling leaf off the base. The base carries **no framework assumption** — anything Vue-specific (`jsx`, DOM libs, the dxup language-service plugins, the `.vue` include) belongs in the Vue leaf, never at the root where every Node package inherits it.
+`tsconfig.base.json` → `tsconfig.library.json` (composite + isolatedDeclarations) → `tsconfig.node.json` (`types: ["node"]`), with `tsconfig.vue.json` a sibling leaf off the base. The base carries **no framework assumption** — anything Vue-specific belongs in the Vue leaf, never at the root where every Node package inherits it.
 
-`tsconfig.build.base.json` holds **excludes and nothing else** — no `compilerOptions`, deliberately. A package's `tsconfig.build.json` extends `["./tsconfig.json", "../configuration/tsconfig.build.base.json"]`, so its build program inherits the same platform, libs and `types` as the program it is typechecked with. The preset is a separate file from the build config that extends it because `configuration` is built by the same factories: `dts()` and `ctix` read `tsconfig.build.json` from the package being built, so a preset sitting at that path would leave that one package building with no `compilerOptions` at all. Adding a `compilerOptions` block back there re-creates the bug it was written to remove: declarations emitted against a different lib set than the source was written for, invisible until something downstream fails to resolve.
+`tsconfig.build.base.json` holds **excludes and nothing else** — no `compilerOptions`, deliberately. A package's `tsconfig.build.json` extends `["./tsconfig.json", "../configuration/tsconfig.build.base.json"]`, so its build program inherits the same platform, libs and `types` as the program it is typechecked with. Adding a `compilerOptions` block back there re-creates the bug it was written to remove: declarations emitted against a different lib set than the source was written for, invisible until something downstream fails to resolve.
+
+`isolatedDeclarations` is off in the packages that cannot satisfy it — a Drizzle table type cannot be written out by hand — and in any package that **vendors one of those from source**, because the transform runs over the whole module graph rather than per package. That is a tsconfig property; no declaration-generator option waives it for one build.
 
 These are `**/*.json` under a strict `json/json` ESLint language — **no comments**. Rationale goes in the docs page, not the file.
+
+## The bootstrap package
+
+`@esposter/configuration` is built by the factories it exports. Its relative imports carry a `.ts` extension because tsdown loads a config with a native import that will not guess one, and it keeps its exports pointing at `dist` for the same reason. Both are specific to it — don't copy either into another package.
 
 ## Module augmentations do not cross a package boundary
 

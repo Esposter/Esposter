@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { CurveConfiguration } from "@/models/configuration/CurveConfiguration";
-import type { CurveEventEmitsOptions } from "@/models/emit/CurveEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { CurveConfiguration } from "#src/models/configuration/CurveConfiguration";
+import type { CurveEventEmitsOptions } from "#src/models/emit/CurveEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { CurveSetterMap } from "@/util/setterMap/CurveSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { CurveSetterMap } from "#src/util/setterMap/CurveSetterMap";
 
 interface CurveEmits extends /** @vue-ignore */ CurveEventEmitsOptions {}
 

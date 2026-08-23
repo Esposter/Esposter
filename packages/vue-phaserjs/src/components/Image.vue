@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { ImageConfiguration } from "@/models/configuration/ImageConfiguration";
-import type { ImageEventEmitsOptions } from "@/models/emit/ImageEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { ImageConfiguration } from "#src/models/configuration/ImageConfiguration";
+import type { ImageEventEmitsOptions } from "#src/models/emit/ImageEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 import type { SetRequired } from "type-fest";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { ImageSetterMap } from "@/util/setterMap/ImageSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { ImageSetterMap } from "#src/util/setterMap/ImageSetterMap";
 
 interface ImageEmits extends /** @vue-ignore */ ImageEventEmitsOptions {}
 

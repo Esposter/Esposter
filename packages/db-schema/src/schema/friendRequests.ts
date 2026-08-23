@@ -1,7 +1,7 @@
-import type { User } from "@/schema/users";
+import type { User } from "#src/schema/users";
 
-import { pgTable } from "@/pgTable";
-import { users } from "@/schema/users";
+import { pgTable } from "#src/pgTable";
+import { users } from "#src/schema/users";
 import { sql } from "drizzle-orm";
 import { check, index, text } from "drizzle-orm/pg-core";
 

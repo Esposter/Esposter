@@ -1,4 +1,4 @@
-import { getResult } from "@/services/error/getResult";
+import { getResult } from "#src/services/error/getResult";
 
 // `decodeURIComponent` throws a URIError on a lone `%`, which is legal in a blob name, a filename and any other
 // User-chosen text that reaches us through a url. Every caller wants a value back rather than an exception —

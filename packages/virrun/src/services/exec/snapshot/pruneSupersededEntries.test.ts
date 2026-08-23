@@ -1,10 +1,10 @@
-import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
-import { pruneSupersededEntries } from "@/services/exec/snapshot/pruneSupersededEntries";
-import { DEAD_PID } from "@/services/exec/test/constants.test";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { seedDirectory } from "@/services/exec/test/seedDirectory.test";
-import { writeLeaseFile } from "@/services/exec/test/writeLeaseFile.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import { pruneSupersededEntries } from "#src/services/exec/snapshot/pruneSupersededEntries";
+import { DEAD_PID } from "#src/services/exec/test/constants.test";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { seedDirectory } from "#src/services/exec/test/seedDirectory.test";
+import { writeLeaseFile } from "#src/services/exec/test/writeLeaseFile.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";

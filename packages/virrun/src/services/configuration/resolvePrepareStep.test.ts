@@ -1,8 +1,8 @@
-import { Environment } from "@/models/virrun/Environment";
-import { NUXT_OUTPUT_DIRECTORY, NUXT_PREPARE_COMMAND } from "@/services/configuration/constants";
-import { resolvePrepareStep } from "@/services/configuration/resolvePrepareStep";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { Environment } from "#src/models/virrun/Environment";
+import { NUXT_OUTPUT_DIRECTORY, NUXT_PREPARE_COMMAND } from "#src/services/configuration/constants";
+import { resolvePrepareStep } from "#src/services/configuration/resolvePrepareStep";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";

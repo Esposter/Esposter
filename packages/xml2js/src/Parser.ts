@@ -1,9 +1,9 @@
 import type { QualifiedTag, SAXParser, Tag } from "sax";
 import type { convertableToString, ParserOptions } from "xml2js";
 
-import { BUILTIN_NAME_KEY, TEXT_NODE_NAME } from "@/constants";
-import { DefaultParserOptions } from "@/DefaultParserOptions";
-import { stripBOM } from "@/stripBOM";
+import { BUILTIN_NAME_KEY, TEXT_NODE_NAME } from "#src/constants";
+import { DefaultParserOptions } from "#src/DefaultParserOptions";
+import { stripBOM } from "#src/stripBOM";
 import { takeOne } from "@esposter/shared";
 import { parser } from "sax";
 

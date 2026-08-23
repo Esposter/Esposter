@@ -1,4 +1,4 @@
-import { readWslLoginEnvironment } from "@/services/exec/wsl/readWslLoginEnvironment";
+import { readWslLoginEnvironment } from "#src/services/exec/wsl/readWslLoginEnvironment";
 // The node a sandboxed command actually runs under. On win32 that is the WSL guest's node (the sandbox is a Linux
 // Guest whose PATH comes from readWslLoginEnvironment), a different install — and often a different version — from the
 // Windows node hosting this process; everywhere else the sandbox inherits the caller's own node.

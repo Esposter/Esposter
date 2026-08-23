@@ -1,7 +1,7 @@
-import { Color } from "@/models/cli/Color";
-import { colorize } from "@/services/cli/color/colorize";
-import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
-import { parseMachineJson } from "@/services/exec/util/parseMachineJson";
+import { Color } from "#src/models/cli/Color";
+import { colorize } from "#src/services/cli/color/colorize";
+import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
+import { parseMachineJson } from "#src/services/exec/util/parseMachineJson";
 import { getResult, takeOne } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";

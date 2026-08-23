@@ -1,19 +1,19 @@
-import type { WslLoginEnvironment } from "@/models/exec/wsl/WslLoginEnvironment";
+import type { WslLoginEnvironment } from "#src/models/exec/wsl/WslLoginEnvironment";
 
-import { dayjs } from "@/services/dayjs";
-import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "@/services/exec/util/constants";
-import { createProbeCache } from "@/services/exec/util/createProbeCache";
-import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
+import { dayjs } from "#src/services/dayjs";
+import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "#src/services/exec/util/constants";
+import { createProbeCache } from "#src/services/exec/util/createProbeCache";
+import { buildWslLoginShellCommand } from "#src/services/exec/wsl/buildWslLoginShellCommand";
 import {
   VIRRUN_LOGIN_NODE_BEGIN_MARKER,
   VIRRUN_LOGIN_NODE_END_MARKER,
   VIRRUN_LOGIN_PATH_BEGIN_MARKER,
   VIRRUN_LOGIN_PATH_END_MARKER,
-} from "@/services/exec/wsl/constants";
-import { execWsl } from "@/services/exec/wsl/execWsl";
-import { readWslLoginEnvironmentCache } from "@/services/exec/wsl/readWslLoginEnvironmentCache";
-import { sliceBetweenMarkers } from "@/services/exec/wsl/sliceBetweenMarkers";
-import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
+} from "#src/services/exec/wsl/constants";
+import { execWsl } from "#src/services/exec/wsl/execWsl";
+import { readWslLoginEnvironmentCache } from "#src/services/exec/wsl/readWslLoginEnvironmentCache";
+import { sliceBetweenMarkers } from "#src/services/exec/wsl/sliceBetweenMarkers";
+import { writeWslEnvironmentCache } from "#src/services/exec/wsl/writeWslEnvironmentCache";
 import { getResult } from "@esposter/shared";
 // Cap the interactive-login capture: a blocking rc/profile (a prompt, a hung version-manager hook) would
 // Otherwise stall createVirrun indefinitely. On timeout execFileSync throws, getResult turns it into the empty

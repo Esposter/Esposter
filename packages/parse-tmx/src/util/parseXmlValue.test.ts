@@ -1,4 +1,4 @@
-import { parseXmlValue } from "@/util/parseXmlValue";
+import { parseXmlValue } from "#src/util/parseXmlValue";
 import { describe, expect, test } from "vitest";
 
 describe(parseXmlValue, () => {

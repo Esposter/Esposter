@@ -1,6 +1,6 @@
 import type { InvocationContext } from "@azure/functions";
 
-import { getPushNotificationPayload } from "@/services/getPushNotificationPayload";
+import { getPushNotificationPayload } from "#src/services/getPushNotificationPayload";
 import { getResult, normalizeString } from "@esposter/shared";
 import { parse } from "node-html-parser";
 

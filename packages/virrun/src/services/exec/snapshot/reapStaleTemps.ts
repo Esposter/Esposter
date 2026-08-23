@@ -1,6 +1,6 @@
-import { sweepStaleEntries } from "@/services/exec/snapshot/sweepStaleEntries";
-import { isProcessAlive } from "@/services/exec/util/isProcessAlive";
-import { parseTempOwnerPid } from "@/services/exec/util/parseTempOwnerPid";
+import { sweepStaleEntries } from "#src/services/exec/snapshot/sweepStaleEntries";
+import { isProcessAlive } from "#src/services/exec/util/isProcessAlive";
+import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
 // A capture/persist run writes into a private pid-tagged `mkdtemp` sibling of the live snapshot/prepare hash dir
 // (`<base>.<pid>.<rand>`, withPidTempPrefix) and its in-process finalizer removes it on a clean exit. A hard kill
 // (SIGKILL, crash, `wsl --shutdown`) skips that finalizer, stranding the temp; and pruneStale* only evicts whole

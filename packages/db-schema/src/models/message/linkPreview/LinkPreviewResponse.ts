@@ -1,4 +1,4 @@
-import type { DefaultLinkPreviewResponse } from "@/models/message/linkPreview/DefaultLinkPreviewResponse";
-import type { URLLinkPreviewResponse } from "@/models/message/linkPreview/URLLinkPreviewResponse";
+import type { DefaultLinkPreviewResponse } from "#src/models/message/linkPreview/DefaultLinkPreviewResponse";
+import type { URLLinkPreviewResponse } from "#src/models/message/linkPreview/URLLinkPreviewResponse";
 
 export type LinkPreviewResponse = DefaultLinkPreviewResponse | URLLinkPreviewResponse;

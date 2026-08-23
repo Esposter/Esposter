@@ -1,7 +1,7 @@
 import type { Database, ScheduledMessageJobPayload } from "@esposter/db-schema";
 
-import { processScheduledMessageJobHandler } from "@/handlers/processScheduledMessageJobHandler";
-import { sendPushNotification } from "@/services/sendPushNotification";
+import { processScheduledMessageJobHandler } from "#src/handlers/processScheduledMessageJobHandler";
+import { sendPushNotification } from "#src/services/sendPushNotification";
 import { InvocationContext } from "@azure/functions";
 import { dayjs } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
@@ -24,19 +24,22 @@ import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, t
 
 let mockDb: Database;
 
-vi.mock(import("@/services/db"), () => ({
+vi.mock(import("#src/services/db"), () => ({
   get db() {
     return mockDb;
   },
 }));
 
-vi.mock(import("@/services/getServiceBusSender"), () => import("@/services/getServiceBusSender.test"));
-vi.mock(import("@/services/sendPushNotification"), () => ({
+vi.mock(import("#src/services/getServiceBusSender"), () => import("#src/services/getServiceBusSender.test"));
+vi.mock(import("#src/services/sendPushNotification"), () => ({
   sendPushNotification: vi.fn<typeof sendPushNotification>(),
 }));
-vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableClient.test"));
-vi.mock(import("@/services/getWebPubSubServiceClient"), () => import("@/services/getWebPubSubServiceClient.test"));
-vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
+vi.mock(import("#src/services/getTableClient"), () => import("#src/services/getTableClient.test"));
+vi.mock(
+  import("#src/services/getWebPubSubServiceClient"),
+  () => import("#src/services/getWebPubSubServiceClient.test"),
+);
+vi.mock(import("#src/services/webpush"), () => import("#src/services/webpush.test"));
 
 describe(processScheduledMessageJobHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });

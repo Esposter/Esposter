@@ -1,13 +1,13 @@
 import type { WriteResourceActivityInput } from "@@/server/models/resource/WriteResourceActivityInput";
-import type { ResourceActivityEntity as AResourceActivityEntity, Clause } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
+import type { ResourceActivityEntity as AResourceActivityEntity } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { createEntity, getTopNEntities, serializeClauses } from "@esposter/db";
 import {
   AzureTable,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
   getReverseTickedTimestamp,
   ResourceActivityEntity,
   ResourceActivityEntityPropertyNames,

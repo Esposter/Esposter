@@ -1,4 +1,4 @@
-import { seedFile } from "@/services/exec/test/seedFile.test";
+import { seedFile } from "#src/services/exec/test/seedFile.test";
 import { join } from "node:path";
 import { describe } from "vitest";
 // Seeds an empty lease file named by pid into leasesDir (created if absent) and returns its path — the shared atom

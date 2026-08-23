@@ -1,8 +1,8 @@
-import type { EventGridEventInput } from "@/models/azure/eventGrid/EventGridEventInput";
-import type { AzureFunction } from "@/models/azure/function/AzureFunction";
+import type { EventGridEventInput } from "#src/models/azure/eventGrid/EventGridEventInput";
+import type { AzureFunction } from "#src/models/azure/function/AzureFunction";
 import type { Except } from "type-fest";
 
-import { EVENT_GRID_DATA_VERSION } from "@/services/azure/eventGrid/constants";
+import { EVENT_GRID_DATA_VERSION } from "#src/services/azure/eventGrid/constants";
 // The envelope every publisher sends. Publishers differ only in event type, subject and payload, so those are the
 // Arguments and the rest of the shape — including the schema version every event in this system carries — is stated
 // Once here. Generic over the payload so the call site keeps its exact data type rather than widening to unknown.

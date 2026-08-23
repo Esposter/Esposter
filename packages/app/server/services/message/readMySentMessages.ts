@@ -1,12 +1,14 @@
 import type { ReadMySentMessagesInput } from "#shared/models/db/message/ReadMySentMessagesInput";
 import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMySentMessagesResult";
 import type { SelectFields } from "@azure/search-documents";
-import type { Clause, Database, MessageEntity } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
+import type { Database, MessageEntity } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { readMessageSearchDocuments } from "@@/server/services/message/readMessageSearchDocuments";
+import { BinaryOperator } from "@esposter/azure";
 import { getSearchNullClause, serializeSearchClauses } from "@esposter/db";
-import { BinaryOperator, roomsInMessage, StandardMessageEntityPropertyNames } from "@esposter/db-schema";
+import { roomsInMessage, StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 import { inArray } from "drizzle-orm";
 

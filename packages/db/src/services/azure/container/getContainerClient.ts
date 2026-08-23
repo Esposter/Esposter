@@ -1,8 +1,8 @@
 import type { ContainerClient } from "@azure/storage-blob";
 import type { AzureContainer } from "@esposter/db-schema";
 
-import { syncProperties } from "@/services/azure/container/syncProperties";
-import { createProvisionedClientCache } from "@/services/azure/createProvisionedClientCache";
+import { syncProperties } from "#src/services/azure/container/syncProperties";
+import { createProvisionedClientCache } from "#src/services/azure/createProvisionedClientCache";
 import { BlobServiceClient } from "@azure/storage-blob";
 import { AzureContainerPropertiesMap } from "@esposter/db-schema";
 

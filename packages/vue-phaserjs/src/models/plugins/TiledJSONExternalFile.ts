@@ -1,9 +1,9 @@
 /* oxlint-disable no-param-reassign -- Phaser file-plugin base contract reassigns loader params */
-import type { TilemapFile } from "@/models/plugins/TilemapFile";
+import type { TilemapFile } from "#src/models/plugins/TilemapFile";
 import type { TMXEmbeddedTilesetNode, TMXEmbeddedTilesetParsed, TMXExternalTilesetParsed } from "parse-tmx";
 import type { Types } from "phaser";
 
-import { TilesetFile } from "@/models/plugins/TilesetFile";
+import { TilesetFile } from "#src/models/plugins/TilesetFile";
 import { checkIsPlainObject, ID_SEPARATOR, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { parseTileset, parseXmlString } from "parse-tmx";
 import { Loader, Tilemaps, Utils } from "phaser";

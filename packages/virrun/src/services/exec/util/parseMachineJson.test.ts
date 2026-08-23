@@ -1,4 +1,4 @@
-import { parseMachineJson } from "@/services/exec/util/parseMachineJson";
+import { parseMachineJson } from "#src/services/exec/util/parseMachineJson";
 import { describe, expect, test } from "vitest";
 
 describe(parseMachineJson, () => {

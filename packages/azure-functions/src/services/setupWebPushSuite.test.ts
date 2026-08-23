@@ -1,6 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
-import { MOCK_ENDPOINT } from "@/services/constants.test";
+import { MOCK_ENDPOINT } from "#src/services/constants.test";
 import { pushSubscriptionsInMessage, users } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, describe, vi } from "vitest";

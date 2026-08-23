@@ -1,9 +1,9 @@
-import type { DiagnosticCheck } from "@/models/cli/DiagnosticCheck";
+import type { DiagnosticCheck } from "#src/models/cli/DiagnosticCheck";
 
-import { DiagnosticCheckType } from "@/models/cli/DiagnosticCheckType";
-import { DiagnosticStatus } from "@/models/cli/DiagnosticStatus";
-import { stripAnsi } from "@/services/cli/color/stripAnsi.test";
-import { formatDoctorReport } from "@/services/cli/doctor/formatDoctorReport";
+import { DiagnosticCheckType } from "#src/models/cli/DiagnosticCheckType";
+import { DiagnosticStatus } from "#src/models/cli/DiagnosticStatus";
+import { stripAnsi } from "#src/services/cli/color/stripAnsi.test";
+import { formatDoctorReport } from "#src/services/cli/doctor/formatDoctorReport";
 import { describe, expect, test } from "vitest";
 
 describe(formatDoctorReport, () => {

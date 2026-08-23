@@ -1,6 +1,6 @@
-import type { OverlayManifestEntry } from "@/models/exec/snapshot/OverlayManifestEntry";
+import type { OverlayManifestEntry } from "#src/models/exec/snapshot/OverlayManifestEntry";
 
-import { parseOverlayManifest } from "@/services/exec/snapshot/parseOverlayManifest";
+import { parseOverlayManifest } from "#src/services/exec/snapshot/parseOverlayManifest";
 import { describe, expect, test } from "vitest";
 
 describe(parseOverlayManifest, () => {

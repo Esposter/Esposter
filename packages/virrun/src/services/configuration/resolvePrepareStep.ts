@@ -1,9 +1,9 @@
-import type { PrepareStep } from "@/models/virrun/PrepareStep";
+import type { PrepareStep } from "#src/models/virrun/PrepareStep";
 
-import { Environment } from "@/models/virrun/Environment";
-import { NUXT_OUTPUT_DIRECTORY, NUXT_PREPARE_COMMAND } from "@/services/configuration/constants";
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
-import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
+import { Environment } from "#src/models/virrun/Environment";
+import { NUXT_OUTPUT_DIRECTORY, NUXT_PREPARE_COMMAND } from "#src/services/configuration/constants";
+import { execFileHidden } from "#src/services/exec/util/execFileHidden";
+import { resolveWorkspaceRoot } from "#src/services/exec/util/resolveWorkspaceRoot";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { basename, dirname } from "node:path";
 // Matches nuxt.config.{js,ts,mjs,cjs,mts,cts} — the config file whose owning package `nuxt prepare` regenerates.

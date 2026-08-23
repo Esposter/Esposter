@@ -1,8 +1,8 @@
 import type { AzureEntity, CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
-import { getIsNotFound } from "@/services/azure/getIsNotFound";
-import { deserializeEntity } from "@/services/azure/transformer/deserializeEntity";
+import { getIsNotFound } from "#src/services/azure/getIsNotFound";
+import { deserializeEntity } from "#src/services/azure/transformer/deserializeEntity";
 import { getResultAsync } from "@esposter/shared";
 
 // GetEntity strips the etag for callers that don't need it; optimistic-concurrency callers read through

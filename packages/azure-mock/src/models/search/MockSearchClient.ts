@@ -20,9 +20,9 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-import { MOCK_SEARCH_BASE_URL } from "@/constants";
-import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
-import { MockSearchDatabase } from "@/store/MockSearchDatabase";
+import { MOCK_SEARCH_BASE_URL } from "#src/constants";
+import { createFilterPredicate } from "#src/services/filter/createFilterPredicate";
+import { MockSearchDatabase } from "#src/store/MockSearchDatabase";
 import { deserializeKey } from "@esposter/db";
 import { getOrCreate } from "@esposter/shared";
 

@@ -1,0 +1,75 @@
+{
+  "name": "@esposter/azure",
+  "version": "2.38.0",
+  "description": "The Azure wire conventions Esposter's clients and its mocks both speak — OData filter clauses, entity key casing, and service limits.",
+  "keywords": [
+    "azure",
+    "azure-search",
+    "azure-table-storage",
+    "filter",
+    "odata",
+    "typescript"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/azure#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "pnpm export:gen && tsdown",
+    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsgo"
+  },
+  "dependencies": {
+    "@esposter/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "catalog:",
+    "@esposter/configuration": "workspace:*",
+    "ctix": "catalog:",
+    "publint": "catalog:",
+    "tsdown": "catalog:",
+    "type-fest": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@azure/data-tables": "catalog:",
+    "zod": "catalog:"
+  },
+  "inlinedDependencies": {
+    "type-fest": "5.8.0"
+  }
+}

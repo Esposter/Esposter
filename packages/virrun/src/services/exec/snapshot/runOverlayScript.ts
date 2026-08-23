@@ -1,6 +1,6 @@
-import { OVERLAY_WRITE_BACK_TIMEOUT_MS } from "@/services/exec/util/constants";
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
-import { readWslPath } from "@/services/exec/wsl/readWslPath";
+import { OVERLAY_WRITE_BACK_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { execFileHidden } from "#src/services/exec/util/execFileHidden";
+import { readWslPath } from "#src/services/exec/wsl/readWslPath";
 // Cap above the default 1 MB so a large diff's JSON manifest never overflows the buffer.
 const OVERLAY_SCRIPT_MAX_BUFFER = 256 * 1024 * 1024;
 // Run a Linux-side overlay python program (specs/write-back.md → "Execution locus"): python3 directly on Linux, via

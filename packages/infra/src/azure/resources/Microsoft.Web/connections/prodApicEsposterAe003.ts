@@ -1,8 +1,8 @@
-import ApplicationTags from "@/azure/constants/ApplicationTags";
-import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLocation";
-import AzureManagedApiType from "@/azure/constants/AzureManagedApiType";
-import AzureResourceManagerManagedApiId from "@/azure/constants/AzureResourceManagerManagedApiId";
-import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import ApplicationTags from "#src/azure/constants/ApplicationTags";
+import AzureAustraliaEastLocation from "#src/azure/constants/AzureAustraliaEastLocation";
+import AzureManagedApiType from "#src/azure/constants/AzureManagedApiType";
+import AzureResourceManagerManagedApiId from "#src/azure/constants/AzureResourceManagerManagedApiId";
+import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import * as azure_native from "@pulumi/azure-native";
 
 const connectionName = "prod-apic-esposter-ae-003";

@@ -1,5 +1,5 @@
-import { OverlayEntryKind } from "@/models/exec/snapshot/OverlayEntryKind";
-import { parseOverlayEntryKind } from "@/services/exec/snapshot/parseOverlayEntryKind";
+import { OverlayEntryKind } from "#src/models/exec/snapshot/OverlayEntryKind";
+import { parseOverlayEntryKind } from "#src/services/exec/snapshot/parseOverlayEntryKind";
 import { describe, expect, test } from "vitest";
 
 describe(parseOverlayEntryKind, () => {

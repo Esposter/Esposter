@@ -1,6 +1,6 @@
 import type { ContainerClient } from "@azure/storage-blob";
 
-import { cloneFiles } from "@/services/azure/container/cloneFiles";
+import { cloneFiles } from "#src/services/azure/container/cloneFiles";
 import { AzureContainer, FileEntity } from "@esposter/db-schema";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";

@@ -1,11 +1,11 @@
-import type { PrepareLocation } from "@/models/exec/snapshot/PrepareLocation";
-import type { PrepareStep } from "@/models/virrun/PrepareStep";
+import type { PrepareLocation } from "#src/models/exec/snapshot/PrepareLocation";
+import type { PrepareStep } from "#src/models/virrun/PrepareStep";
 
-import { computeSourceTreeHash } from "@/services/exec/cache/computeSourceTreeHash";
-import { computeEnvironmentKey } from "@/services/exec/snapshot/computeEnvironmentKey";
-import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
-import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
-import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
+import { computeSourceTreeHash } from "#src/services/exec/cache/computeSourceTreeHash";
+import { computeEnvironmentKey } from "#src/services/exec/snapshot/computeEnvironmentKey";
+import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheDirectory";
+import { resolveWorkspaceRoot } from "#src/services/exec/util/resolveWorkspaceRoot";
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { join } from "node:path";

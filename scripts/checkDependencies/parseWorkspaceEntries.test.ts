@@ -1,4 +1,4 @@
-import { parseWorkspaceEntries } from "@/checkDependencies/parseWorkspaceEntries";
+import { parseWorkspaceEntries } from "#scripts/checkDependencies/parseWorkspaceEntries";
 import { describe, expect, test } from "vitest";
 
 describe(parseWorkspaceEntries, () => {

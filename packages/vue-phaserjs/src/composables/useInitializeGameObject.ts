@@ -1,15 +1,15 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 import type { SetupContext } from "vue";
 
-import { useInitializeGameObjectEvents } from "@/composables/useInitializeGameObjectEvents";
-import { useInitializeGameObjectSetters } from "@/composables/useInitializeGameObjectSetters";
-import { useInjectSceneKey } from "@/composables/useInjectSceneKey";
-import { pushGameObject } from "@/pushGameObject";
-import { getScene } from "@/util/getScene";
-import { getInitializeGameObjectLifecycleHook } from "@/util/hooks/getInitializeGameObjectLifecycleHook";
-import { InjectionKeyMap } from "@/util/InjectionKeyMap";
+import { useInitializeGameObjectEvents } from "#src/composables/useInitializeGameObjectEvents";
+import { useInitializeGameObjectSetters } from "#src/composables/useInitializeGameObjectSetters";
+import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
+import { pushGameObject } from "#src/pushGameObject";
+import { getScene } from "#src/util/getScene";
+import { getInitializeGameObjectLifecycleHook } from "#src/util/hooks/getInitializeGameObjectLifecycleHook";
+import { InjectionKeyMap } from "#src/util/InjectionKeyMap";
 
 export const useInitializeGameObject = <
   TConfiguration extends object,

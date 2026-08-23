@@ -1,6 +1,6 @@
-import type { AnimationConfiguration } from "@/models/configuration/shared/AnimationConfiguration";
-import type { SpriteEventEmitsOptions } from "@/models/emit/SpriteEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { AnimationConfiguration } from "#src/models/configuration/shared/AnimationConfiguration";
+import type { SpriteEventEmitsOptions } from "#src/models/emit/SpriteEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";

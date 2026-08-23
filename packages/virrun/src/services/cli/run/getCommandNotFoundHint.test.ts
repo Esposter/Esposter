@@ -1,6 +1,6 @@
-import { stripAnsi } from "@/services/cli/color/stripAnsi.test";
-import { getCommandNotFoundHint } from "@/services/cli/run/getCommandNotFoundHint";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { stripAnsi } from "#src/services/cli/color/stripAnsi.test";
+import { getCommandNotFoundHint } from "#src/services/cli/run/getCommandNotFoundHint";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, assert, beforeEach, describe, expect, test } from "vitest";

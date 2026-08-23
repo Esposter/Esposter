@@ -2,9 +2,9 @@ import {
   TASK_CACHE_META_FILENAME,
   TASK_CACHE_PAYLOAD_DIRECTORY_NAME,
   VIRRUN_TASKS_DIRECTORY_NAME,
-} from "@/services/exec/cache/constants";
-import { resolveTaskCacheLocation } from "@/services/exec/cache/resolveTaskCacheLocation";
-import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
+} from "#src/services/exec/cache/constants";
+import { resolveTaskCacheLocation } from "#src/services/exec/cache/resolveTaskCacheLocation";
+import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";

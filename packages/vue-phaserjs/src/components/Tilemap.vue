@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { Tilemaps, Types } from "phaser";
 import type { VNode } from "vue";
 
-import { useInjectSceneKey } from "@/composables/useInjectSceneKey";
-import { onCreate } from "@/hooks/onCreate";
-import { getScene } from "@/util/getScene";
+import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
+import { onCreate } from "#src/hooks/onCreate";
+import { getScene } from "#src/util/getScene";
 
 interface TilemapProps {
   configuration: Types.Tilemaps.TilemapConfig;

@@ -1,17 +1,17 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
-import type { ExecOptions } from "@/models/exec/ExecOptions";
-import type { ExecResult } from "@/models/exec/ExecResult";
-import type { FlushOp } from "@/models/exec/FlushOp";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
+import type { ExecResult } from "#src/models/exec/ExecResult";
+import type { FlushOp } from "#src/models/exec/FlushOp";
 
-import { applyFlushPlan } from "@/services/exec/snapshot/applyFlushPlan";
-import { buildHostFlushPlan } from "@/services/exec/snapshot/buildHostFlushPlan";
+import { applyFlushPlan } from "#src/services/exec/snapshot/applyFlushPlan";
+import { buildHostFlushPlan } from "#src/services/exec/snapshot/buildHostFlushPlan";
 import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
-} from "@/services/exec/snapshot/constants";
-import { removeSnapshotDirectoryBestEffort } from "@/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
-import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
+} from "#src/services/exec/snapshot/constants";
+import { removeSnapshotDirectoryBestEffort } from "#src/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
+import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
+import { withPidTempPrefix } from "#src/services/exec/util/withPidTempPrefix";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
 import { join } from "node:path";

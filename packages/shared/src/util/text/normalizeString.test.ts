@@ -1,4 +1,4 @@
-import { createNormalizedStringSchema, normalizeString } from "@/util/text/normalizeString";
+import { createNormalizedStringSchema, normalizeString } from "#src/util/text/normalizeString";
 import { describe, expect, test } from "vitest";
 
 describe(normalizeString, () => {

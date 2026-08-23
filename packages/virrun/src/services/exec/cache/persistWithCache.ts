@@ -1,19 +1,19 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
-import type { ExecOptions } from "@/models/exec/ExecOptions";
-import type { ExecResult } from "@/models/exec/ExecResult";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
+import type { ExecResult } from "#src/models/exec/ExecResult";
 
-import { writeVirrunDebug } from "@/services/cli/debug/writeVirrunDebug";
-import { formatVirrunCacheHit } from "@/services/cli/format/formatVirrunCacheHit";
-import { formatVirrunNetworkHint } from "@/services/cli/format/formatVirrunNetworkHint";
-import { computeTaskCacheKey } from "@/services/exec/cache/computeTaskCacheKey";
-import { hasDependencyClosureMutation } from "@/services/exec/cache/hasDependencyClosureMutation";
-import { isNetworkFailure } from "@/services/exec/cache/isNetworkFailure";
-import { isTaskCacheEnabled } from "@/services/exec/cache/isTaskCacheEnabled";
-import { recordTaskCache } from "@/services/exec/cache/recordTaskCache";
-import { replayTaskCache } from "@/services/exec/cache/replayTaskCache";
-import { resolveTaskCacheLocation } from "@/services/exec/cache/resolveTaskCacheLocation";
-import { persistRun } from "@/services/exec/snapshot/persistRun";
-import { resolveCwd } from "@/services/exec/util/resolveCwd";
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
+import { formatVirrunCacheHit } from "#src/services/cli/format/formatVirrunCacheHit";
+import { formatVirrunNetworkHint } from "#src/services/cli/format/formatVirrunNetworkHint";
+import { computeTaskCacheKey } from "#src/services/exec/cache/computeTaskCacheKey";
+import { hasDependencyClosureMutation } from "#src/services/exec/cache/hasDependencyClosureMutation";
+import { isNetworkFailure } from "#src/services/exec/cache/isNetworkFailure";
+import { isTaskCacheEnabled } from "#src/services/exec/cache/isTaskCacheEnabled";
+import { recordTaskCache } from "#src/services/exec/cache/recordTaskCache";
+import { replayTaskCache } from "#src/services/exec/cache/replayTaskCache";
+import { resolveTaskCacheLocation } from "#src/services/exec/cache/resolveTaskCacheLocation";
+import { persistRun } from "#src/services/exec/snapshot/persistRun";
+import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 // PersistRun wrapped with the task cache — the "skip unchanged builds" dev-loop lever (roadmap.md). On a hit the
 // Sandbox is skipped: the recorded diff is flushed to the host and the recorded streams + exit code reproduced. On a
 // Miss the run executes (capturing output) and its exit-0 result is recorded. Falls back to a plain persistRun when

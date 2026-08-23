@@ -1,14 +1,14 @@
-import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
-import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { createRecordingBackend } from "@/services/exec/test/createRecordingBackend.test";
-import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
+import { forkSnapshot } from "#src/services/exec/snapshot/forkSnapshot";
+import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
+import { createRecordingBackend } from "#src/services/exec/test/createRecordingBackend.test";
+import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync } from "node:fs";
 import {beforeEach, describe, expect, test, vi} from "vitest";
 
 vi.mock(
-  import("@/services/exec/util/getSandboxNodeVersion"),
-  () => import("@/services/exec/test/getSandboxNodeVersion.test"),
+  import("#src/services/exec/util/getSandboxNodeVersion"),
+  () => import("#src/services/exec/test/getSandboxNodeVersion.test"),
 );
 
 describe(forkSnapshot, () => {

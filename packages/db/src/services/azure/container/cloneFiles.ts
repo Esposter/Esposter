@@ -1,8 +1,8 @@
 import type { ContainerClient } from "@azure/storage-blob";
 import type { FileEntity } from "@esposter/db-schema";
 
-import { copyBlob } from "@/services/azure/container/copyBlob";
-import { getFileBlobNames } from "@/services/azure/container/getFileBlobNames";
+import { copyBlob } from "#src/services/azure/container/copyBlob";
+import { getFileBlobNames } from "#src/services/azure/container/getFileBlobNames";
 import { getResultAsync, settleAll } from "@esposter/shared";
 
 // Returns each clone's minted id alongside the thumbnail state its blobs actually carry, so the caller

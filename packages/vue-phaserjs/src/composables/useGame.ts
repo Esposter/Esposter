@@ -1,4 +1,4 @@
-import { usePhaserStore } from "@/store";
+import { usePhaserStore } from "#src/store/index";
 import { NotInitializedError } from "@esposter/shared";
 import { Game } from "phaser";
 

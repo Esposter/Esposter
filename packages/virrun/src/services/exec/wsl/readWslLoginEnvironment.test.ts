@@ -1,16 +1,16 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
-import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
-import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "@/services/exec/util/constants";
-import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
+import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
+import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "#src/services/exec/util/constants";
+import { getHostFingerprint } from "#src/services/exec/util/getHostFingerprint";
 import {
   VIRRUN_LOGIN_NODE_BEGIN_MARKER,
   VIRRUN_LOGIN_NODE_END_MARKER,
   VIRRUN_LOGIN_PATH_BEGIN_MARKER,
   VIRRUN_LOGIN_PATH_END_MARKER,
-} from "@/services/exec/wsl/constants";
-import { TEST_WSL_LOGIN_ENVIRONMENT } from "@/services/exec/wsl/constants.test";
-import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
+} from "#src/services/exec/wsl/constants";
+import { TEST_WSL_LOGIN_ENVIRONMENT } from "#src/services/exec/wsl/constants.test";
+import { writeWslEnvironmentCache } from "#src/services/exec/wsl/writeWslEnvironmentCache";
 import { takeOne } from "@esposter/shared";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -40,7 +40,7 @@ describe("readWslLoginEnvironment", () => {
   test("extracts the PATH and node version between their markers, memoizes them, and persists the capture", async () => {
     expect.hasAssertions();
 
-    const { readWslLoginEnvironment } = await import("@/services/exec/wsl/readWslLoginEnvironment");
+    const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
 
     expect(readWslLoginEnvironment()).toStrictEqual(environment);
     expect(readWslLoginEnvironment()).toStrictEqual(environment);
@@ -51,7 +51,7 @@ describe("readWslLoginEnvironment", () => {
   test("captures through the user's interactive login shell", async () => {
     expect.hasAssertions();
 
-    const { readWslLoginEnvironment } = await import("@/services/exec/wsl/readWslLoginEnvironment");
+    const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
     readWslLoginEnvironment();
     const { calls } = execFileSync.mock;
     const [file, args] = takeOne(calls, calls.length - 1);
@@ -68,7 +68,7 @@ describe("readWslLoginEnvironment", () => {
     expect.hasAssertions();
 
     writeWslEnvironmentCache(WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, { key: getHostFingerprint(), value: environment });
-    const { readWslLoginEnvironment } = await import("@/services/exec/wsl/readWslLoginEnvironment");
+    const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
 
     expect(readWslLoginEnvironment()).toStrictEqual(environment);
     expect(execFileSync).toHaveBeenCalledTimes(0);
@@ -87,7 +87,7 @@ describe("readWslLoginEnvironment", () => {
         value: { nodeVersion: "v26.4.0", path: "/stale/bin" },
       }),
     );
-    const { readWslLoginEnvironment } = await import("@/services/exec/wsl/readWslLoginEnvironment");
+    const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
 
     expect(readWslLoginEnvironment()).toStrictEqual(environment);
     expect(execFileSync).toHaveBeenCalledTimes(1);
@@ -97,7 +97,7 @@ describe("readWslLoginEnvironment", () => {
     expect.hasAssertions();
 
     execFileSync.mockReturnValue("");
-    const { readWslLoginEnvironment } = await import("@/services/exec/wsl/readWslLoginEnvironment");
+    const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
 
     expect(readWslLoginEnvironment()).toStrictEqual({ nodeVersion: "", path: "" });
   });
@@ -108,7 +108,7 @@ describe("readWslLoginEnvironment", () => {
     execFileSync.mockImplementation(() => {
       throw new Error("wsl.exe not found");
     });
-    const { readWslLoginEnvironment } = await import("@/services/exec/wsl/readWslLoginEnvironment");
+    const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
 
     expect(readWslLoginEnvironment()).toStrictEqual({ nodeVersion: "", path: "" });
   });
@@ -117,7 +117,7 @@ describe("readWslLoginEnvironment", () => {
     expect.hasAssertions();
 
     execFileSync.mockReturnValue("");
-    const { readWslLoginEnvironment } = await import("@/services/exec/wsl/readWslLoginEnvironment");
+    const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
     readWslLoginEnvironment();
 
     expect(existsSync(join(getCacheHome(), WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME))).toBe(false);
@@ -129,7 +129,7 @@ describe("readWslLoginEnvironment", () => {
     execFileSync.mockReturnValue(
       `${VIRRUN_LOGIN_PATH_BEGIN_MARKER}${path}${VIRRUN_LOGIN_PATH_END_MARKER}${VIRRUN_LOGIN_NODE_BEGIN_MARKER}${VIRRUN_LOGIN_NODE_END_MARKER}`,
     );
-    const { readWslLoginEnvironment } = await import("@/services/exec/wsl/readWslLoginEnvironment");
+    const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
 
     expect(readWslLoginEnvironment()).toStrictEqual({ nodeVersion: "", path });
     // Persisting it would pin every later process to a version computeEnvironmentKey refuses to key on, for the

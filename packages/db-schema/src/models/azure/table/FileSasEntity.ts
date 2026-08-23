@@ -1,4 +1,4 @@
-import type { FileEntity } from "@/models/azure/table/FileEntity";
+import type { FileEntity } from "#src/models/azure/table/FileEntity";
 
 export interface FileSasEntity extends Pick<FileEntity, "id"> {
   sasUrl: string;

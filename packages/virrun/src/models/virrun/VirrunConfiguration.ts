@@ -1,5 +1,5 @@
-import { BackendType } from "@/models/virrun/BackendType";
-import { Environment } from "@/models/virrun/Environment";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { Environment } from "#src/models/virrun/Environment";
 import { z } from "zod";
 // The repo-root `virrun.config.{ts,mts,js,mjs,json}` (specs/config-and-cache.md): a checked-in, reviewable selection
 // Of which backend a sandboxed command runs through and which framework environment it targets — the TS form

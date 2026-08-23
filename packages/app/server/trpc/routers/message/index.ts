@@ -3,7 +3,8 @@ import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessa
 import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
 import type { ReadFollowedThreadsOutput } from "#shared/models/message/thread/ReadFollowedThreadsOutput";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { AzureUpdateEntity, Clause, MessageEntity } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
+import type { AzureUpdateEntity, MessageEntity } from "@esposter/db-schema";
 import type { TrackedEnvelope } from "@trpc/server";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
@@ -64,6 +65,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { scheduledMessageJobRouter } from "@@/server/trpc/routers/message/scheduledMessageJob";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import {
   cloneFiles,
   createMessage,
@@ -83,8 +85,6 @@ import {
   AzureEntityType,
   AzureTable,
   AzureWebPubSubHub,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
   DatabaseEntityType,
   FileEntity,
   FilterType,

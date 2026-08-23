@@ -1,10 +1,10 @@
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 import type { SetupContext, WatchHandle } from "vue";
 
-import { useInjectSceneKey } from "@/composables/useInjectSceneKey";
-import { onNextTick } from "@/hooks/onNextTick";
-import { getUpdateEvent } from "@/util/emit/getUpdateEvent";
+import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
+import { onNextTick } from "#src/hooks/onNextTick";
+import { getUpdateEvent } from "#src/util/emit/getUpdateEvent";
 
 export const useInitializeGameObjectSetters = <
   TConfiguration extends object,

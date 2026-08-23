@@ -1,7 +1,7 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
-import { onCreate } from "@/hooks/onCreate";
-import { removeTestScene, startTestScene } from "@/test/fixtures/headlessGame.test";
+import { onCreate } from "#src/hooks/onCreate";
+import { removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
 import { describe, expect, test, vi } from "vitest";
 
 describe(onCreate, () => {

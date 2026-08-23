@@ -1,8 +1,9 @@
 import type { TableMergeEntityHeaders } from "@azure/data-tables";
-import type { CompositeKey, CustomTableClient } from "@esposter/db-schema";
+import type { CompositeKey } from "@esposter/azure";
+import type { CustomTableClient } from "@esposter/db-schema";
 import type { TupleSlice } from "@esposter/shared";
 
-import { serializeEntity } from "@/services/azure/transformer/serializeEntity";
+import { serializeEntity } from "#src/services/azure/transformer/serializeEntity";
 
 export const upsertEntity = <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,

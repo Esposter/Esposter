@@ -1,4 +1,4 @@
-import type { AlphaConfiguration } from "@/models/configuration/components/AlphaConfiguration";
-import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
+import type { AlphaConfiguration } from "#src/models/configuration/components/AlphaConfiguration";
+import type { EmitsOptionsFor } from "#src/util/types/EmitsOptionsFor";
 
 export type AlphaEventEmitsOptions = EmitsOptionsFor<AlphaConfiguration>;

@@ -1,4 +1,4 @@
-import type { ShapeConfiguration } from "@/models/configuration/shared/ShapeConfiguration";
-import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
+import type { ShapeConfiguration } from "#src/models/configuration/shared/ShapeConfiguration";
+import type { EmitsOptionsFor } from "#src/util/types/EmitsOptionsFor";
 
 export type ShapeEventEmitsOptions = EmitsOptionsFor<ShapeConfiguration>;

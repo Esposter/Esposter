@@ -1,9 +1,9 @@
-import { computeTaskCacheKey } from "@/services/exec/cache/computeTaskCacheKey";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { initRepository } from "@/services/exec/test/initRepository.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { getSandboxNodeVersion } from "@/services/exec/util/getSandboxNodeVersion";
-import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
+import { computeTaskCacheKey } from "#src/services/exec/cache/computeTaskCacheKey";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { initRepository } from "#src/services/exec/test/initRepository.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { getSandboxNodeVersion } from "#src/services/exec/util/getSandboxNodeVersion";
+import { toRootAnchoredExclude } from "#src/services/exec/util/toRootAnchoredExclude";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe(computeTaskCacheKey, () => {

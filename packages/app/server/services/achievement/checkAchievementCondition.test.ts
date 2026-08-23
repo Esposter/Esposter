@@ -5,7 +5,7 @@ import type { PropertyCondition } from "#shared/models/achievement/type/Property
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { checkAchievementCondition } from "@@/server/services/achievement/checkAchievementCondition";
-import { BinaryOperator } from "@esposter/db-schema";
+import { BinaryOperator } from "@esposter/azure";
 import { describe, expect, test } from "vitest";
 
 describe(checkAchievementCondition, () => {

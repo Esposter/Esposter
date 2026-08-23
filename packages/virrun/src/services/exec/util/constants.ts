@@ -1,5 +1,5 @@
 /* oxlint-disable typescript/no-inferrable-types */
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "#src/services/dayjs";
 
 export const GITIGNORE_FILENAME = ".gitignore";
 export const VIRRUN_CACHE_DIRECTORY_NAME = ".virrun";

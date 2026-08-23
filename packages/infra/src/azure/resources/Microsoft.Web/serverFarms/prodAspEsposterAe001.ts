@@ -1,6 +1,6 @@
-import ApplicationTags from "@/azure/constants/ApplicationTags";
-import AzureAustraliaEastDisplayLocation from "@/azure/constants/AzureAustraliaEastDisplayLocation";
-import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import ApplicationTags from "#src/azure/constants/ApplicationTags";
+import AzureAustraliaEastDisplayLocation from "#src/azure/constants/AzureAustraliaEastDisplayLocation";
+import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import * as azure_native from "@pulumi/azure-native";
 
 const appServicePlanName = "prod-asp-esposter-ae-001";

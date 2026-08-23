@@ -1,4 +1,4 @@
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
+import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { describe } from "vitest";
 
 // Makes a temp dir a git repository, which is what a source-tree hash needs to exist at all — quiet, so the

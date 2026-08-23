@@ -1,8 +1,8 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
-import type { ExecOptions } from "@/models/exec/ExecOptions";
-import type { ExecResult } from "@/models/exec/ExecResult";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
+import type { ExecResult } from "#src/models/exec/ExecResult";
 
-import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
+import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 // Runs a command over a captured warm snapshot: stacks the frozen overlay upper as a read-only lower beside
 // The source with a fresh tmpfs upper, so the run reuses the post-install dep tree without reinstalling and

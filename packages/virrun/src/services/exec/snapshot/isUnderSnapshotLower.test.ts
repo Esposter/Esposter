@@ -1,6 +1,6 @@
-import { isUnderSnapshotLower } from "@/services/exec/snapshot/isUnderSnapshotLower";
-import { GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { isUnderSnapshotLower } from "#src/services/exec/snapshot/isUnderSnapshotLower";
+import { GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 
 describe(isUnderSnapshotLower, () => {

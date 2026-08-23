@@ -1,4 +1,4 @@
-import type { PropertyNames } from "@/util/types/PropertyNames";
+import type { PropertyNames } from "#src/util/types/PropertyNames";
 
 export const getPropertyNames = <T>(): PropertyNames<T> =>
   new Proxy(

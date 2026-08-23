@@ -1,19 +1,19 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
-import type { PrepareStep } from "@/models/virrun/PrepareStep";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
+import type { PrepareStep } from "#src/models/virrun/PrepareStep";
 
-import { NUXT_PREPARE_COMMAND } from "@/services/configuration/constants";
+import { NUXT_PREPARE_COMMAND } from "#src/services/configuration/constants";
 import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
-} from "@/services/exec/snapshot/constants";
-import { createPrepareLayer } from "@/services/exec/snapshot/createPrepareLayer";
-import { resolvePrepareLocation } from "@/services/exec/snapshot/resolvePrepareLocation";
-import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { createRecordingBackend } from "@/services/exec/test/createRecordingBackend.test";
-import { seedFile } from "@/services/exec/test/seedFile.test";
-import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
-import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+} from "#src/services/exec/snapshot/constants";
+import { createPrepareLayer } from "#src/services/exec/snapshot/createPrepareLayer";
+import { resolvePrepareLocation } from "#src/services/exec/snapshot/resolvePrepareLocation";
+import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
+import { createRecordingBackend } from "#src/services/exec/test/createRecordingBackend.test";
+import { seedFile } from "#src/services/exec/test/seedFile.test";
+import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
+import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -31,8 +31,8 @@ const createFakeBackend = (exitCode: number): ExecBackend & ReturnType<typeof cr
   });
 
 vi.mock(
-  import("@/services/exec/util/getSandboxNodeVersion"),
-  () => import("@/services/exec/test/getSandboxNodeVersion.test"),
+  import("#src/services/exec/util/getSandboxNodeVersion"),
+  () => import("#src/services/exec/test/getSandboxNodeVersion.test"),
 );
 
 describe(createPrepareLayer, () => {

@@ -1,6 +1,6 @@
-import type { Clause } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
 
-import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
+import { createFilterPredicate } from "#src/services/filter/createFilterPredicate";
 import { serializeClauses } from "@esposter/db";
 
 export const applyFilter = <T extends Record<string, unknown>>(documents: T[], clauses: Clause<T>[]): T[] => {

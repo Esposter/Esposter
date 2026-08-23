@@ -1,4 +1,4 @@
-import { toExitCode } from "@/services/exec/util/toExitCode";
+import { toExitCode } from "#src/services/exec/util/toExitCode";
 import { describe, expect, test } from "vitest";
 
 describe(toExitCode, () => {

@@ -1,4 +1,4 @@
-import { isColorEnabled } from "@/services/cli/color/isColorEnabled";
+import { isColorEnabled } from "#src/services/cli/color/isColorEnabled";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 const stubIsTTY = (isTTY: boolean): void => {

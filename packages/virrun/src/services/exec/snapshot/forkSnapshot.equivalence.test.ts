@@ -1,18 +1,18 @@
-import type { ExecOptions } from "@/models/exec/ExecOptions";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
 
-import { dayjs } from "@/services/dayjs.test";
-import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
-import { createOsInstallOptions } from "@/services/exec/os/createOsInstallOptions";
-import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
-import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
+import { dayjs } from "#src/services/dayjs.test";
+import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
+import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
+import { forkSnapshot } from "#src/services/exec/snapshot/forkSnapshot";
+import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
 import {
   ACCEPTANCE_TIMEOUT_MINUTES,
   ESBUILD_VERSION_REGEX,
   FIND_ESBUILD_BINARY_COMMAND,
   PNPM_MODULES_DIRECTORY,
   RUN_ESBUILD_VERSION_COMMAND,
-} from "@/services/exec/test/constants.test";
-import { setupWarmSnapshotSuite } from "@/services/exec/test/setupWarmSnapshotSuite.test";
+} from "#src/services/exec/test/constants.test";
+import { setupWarmSnapshotSuite } from "#src/services/exec/test/setupWarmSnapshotSuite.test";
 import { describe, expect, test } from "vitest";
 
 // Correctness layer 4 snapshot/fork equivalence (specs/correctness.md): a forked warm sandbox must be observably

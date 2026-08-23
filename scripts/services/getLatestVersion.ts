@@ -1,6 +1,6 @@
-import type { PackumentVersion } from "@/services/models/PackumentVersion";
+import type { PackumentVersion } from "#scripts/services/models/PackumentVersion";
 
-import { fetchRegistry } from "@/services/fetchRegistry";
+import { fetchRegistry } from "#scripts/services/fetchRegistry";
 import { getResultAsync } from "@esposter/shared";
 
 export const getLatestVersion = (pkg: string): Promise<string> =>

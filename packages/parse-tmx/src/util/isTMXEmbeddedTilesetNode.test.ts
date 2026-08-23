@@ -1,10 +1,10 @@
-import type { TMXDataNode } from "@/models/tmx/node/TMXDataNode";
-import type { TMXEmbeddedTilesetNode } from "@/models/tmx/node/TMXEmbeddedTilesetNode";
+import type { TMXDataNode } from "#src/models/tmx/node/TMXDataNode";
+import type { TMXEmbeddedTilesetNode } from "#src/models/tmx/node/TMXEmbeddedTilesetNode";
 
-import { Encoding } from "@/models/Encoding";
-import { assertNode } from "@/test/assertNode.test";
-import { createEmbeddedTilesetShared } from "@/test/createEmbeddedTilesetShared.test";
-import { isTMXEmbeddedTilesetNode } from "@/util/isTMXEmbeddedTilesetNode";
+import { Encoding } from "#src/models/Encoding";
+import { assertNode } from "#src/test/assertNode.test";
+import { createEmbeddedTilesetShared } from "#src/test/createEmbeddedTilesetShared.test";
+import { isTMXEmbeddedTilesetNode } from "#src/util/isTMXEmbeddedTilesetNode";
 import { describe, expect, test } from "vitest";
 
 describe(isTMXEmbeddedTilesetNode, () => {

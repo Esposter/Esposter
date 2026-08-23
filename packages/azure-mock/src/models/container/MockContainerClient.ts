@@ -1,5 +1,5 @@
-import type { BlobHierarchyItem } from "@/models/container/BlobHierarchyItem";
-import type { PagedAsyncIterableIterator } from "@/models/PagedAsyncIterableIterator";
+import type { BlobHierarchyItem } from "#src/models/container/BlobHierarchyItem";
+import type { PagedAsyncIterableIterator } from "#src/models/PagedAsyncIterableIterator";
 import type {
   AppendBlobClient,
   BlobBatchClient,
@@ -31,23 +31,23 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-import { BLOB_NOT_FOUND_MESSAGE, MOCK_BLOB_BASE_URL } from "@/constants";
-import { MockBlobBatchClient } from "@/models/container/MockBlobBatchClient";
-import { MockBlockBlobClient } from "@/models/container/MockBlockBlobClient";
-import { MockRestError } from "@/models/MockRestError";
-import { getBlobItemXml } from "@/services/container/getBlobItemXml";
-import { getBlobPrefixXml } from "@/services/container/getBlobPrefixXml";
-import { getBlobUrl } from "@/services/container/getBlobUrl";
-import { getListBlobsSegmentResponse } from "@/services/container/getListBlobsSegmentResponse";
-import { getMockContainer } from "@/services/container/getMockContainer";
-import { createMockResponse } from "@/services/createMockResponse";
-import { getMockSasUrl } from "@/services/getMockSasUrl";
+import { BLOB_NOT_FOUND_MESSAGE, MOCK_BLOB_BASE_URL } from "#src/constants";
+import { MockBlobBatchClient } from "#src/models/container/MockBlobBatchClient";
+import { MockBlockBlobClient } from "#src/models/container/MockBlockBlobClient";
+import { MockRestError } from "#src/models/MockRestError";
+import { getBlobItemXml } from "#src/services/container/getBlobItemXml";
+import { getBlobPrefixXml } from "#src/services/container/getBlobPrefixXml";
+import { getBlobUrl } from "#src/services/container/getBlobUrl";
+import { getListBlobsSegmentResponse } from "#src/services/container/getListBlobsSegmentResponse";
+import { getMockContainer } from "#src/services/container/getMockContainer";
+import { createMockResponse } from "#src/services/createMockResponse";
+import { getMockSasUrl } from "#src/services/getMockSasUrl";
 import {
   getMockContainerCreatedOnKey,
   MOCK_BLOB_SEEDED_CREATED_ON,
   MockContainerCreatedOnDatabase,
-} from "@/store/MockContainerCreatedOnDatabase";
-import { MockContainerDatabase } from "@/store/MockContainerDatabase";
+} from "#src/store/MockContainerCreatedOnDatabase";
+import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 /**
  * An in-memory mock of the Azure ContainerClient — no emulator and no network.

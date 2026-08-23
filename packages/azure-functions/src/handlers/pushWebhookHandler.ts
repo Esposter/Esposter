@@ -1,8 +1,8 @@
-import type { WebhookEventGridData } from "@/models/WebhookEventGridData";
+import type { WebhookEventGridData } from "#src/models/WebhookEventGridData";
 import type { HttpHandler } from "@azure/functions";
 
-import { db } from "@/services/db";
-import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
+import { db } from "#src/services/db";
+import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
 import {
   AzureFunction,
   createEventGridEvent,

@@ -1,6 +1,6 @@
 import type { AzureContainer, Database } from "@esposter/db-schema";
 
-import { releaseStorageBlobsWhere } from "@/services/storage/releaseStorageBlobsWhere";
+import { releaseStorageBlobsWhere } from "#src/services/storage/releaseStorageBlobsWhere";
 import { storageBlobs } from "@esposter/db-schema";
 import { and, eq, sql } from "drizzle-orm";
 

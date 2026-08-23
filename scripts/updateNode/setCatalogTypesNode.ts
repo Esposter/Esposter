@@ -1,4 +1,4 @@
-import { TYPES_NODE_CATALOG_REGEX } from "@/updateNode/constants";
+import { TYPES_NODE_CATALOG_REGEX } from "#scripts/updateNode/constants";
 
 /** Rewrite the `@types/node` catalog entry in a pnpm-workspace.yaml string to `^${version}`. */
 export const setCatalogTypesNode = (workspaceYaml: string, version: string): string => {

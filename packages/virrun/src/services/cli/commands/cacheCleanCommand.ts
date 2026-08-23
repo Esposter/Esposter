@@ -1,25 +1,25 @@
-import type { CleanArgs } from "@/models/cli/CleanArgs";
+import type { CleanArgs } from "#src/models/cli/CleanArgs";
 import type { ArgsDef, CommandDef } from "citty";
 
-import { Color } from "@/models/cli/Color";
-import { CommandType } from "@/models/virrun/CommandType";
-import { colorize } from "@/services/cli/color/colorize";
-import { formatVirrunError } from "@/services/cli/format/formatVirrunError";
-import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
-import { VIRRUN_TASKS_DIRECTORY_NAME } from "@/services/exec/cache/constants";
-import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
-import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
+import { Color } from "#src/models/cli/Color";
+import { CommandType } from "#src/models/virrun/CommandType";
+import { colorize } from "#src/services/cli/color/colorize";
+import { formatVirrunError } from "#src/services/cli/format/formatVirrunError";
+import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
+import { VIRRUN_TASKS_DIRECTORY_NAME } from "#src/services/exec/cache/constants";
+import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
 import {
   CACHE_CLEAN_TIMEOUT_MS,
   CAPABILITY_CACHE_FILENAME,
   WSL_CACHE_ROOT_CACHE_FILENAME,
   WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME,
-} from "@/services/exec/util/constants";
-import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
-import { getLocalCacheDirectory } from "@/services/exec/util/getLocalCacheDirectory";
-import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
-import { VIRRUN_SOURCES_DIRECTORY_NAME } from "@/services/exec/wsl/constants";
-import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
+} from "#src/services/exec/util/constants";
+import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheDirectory";
+import { getLocalCacheDirectory } from "#src/services/exec/util/getLocalCacheDirectory";
+import { getRepoCacheDirectory } from "#src/services/exec/util/getRepoCacheDirectory";
+import { VIRRUN_SOURCES_DIRECTORY_NAME } from "#src/services/exec/wsl/constants";
+import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheRoot";
 import { getResult, noop } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { rmSync } from "node:fs";

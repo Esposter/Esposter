@@ -1,6 +1,6 @@
 import type { ContainerCreateOptions } from "@azure/storage-blob";
 
-import { AzureContainer } from "@/models/azure/container/AzureContainer";
+import { AzureContainer } from "#src/models/azure/container/AzureContainer";
 
 export const AzureContainerPropertiesMap: Partial<Record<AzureContainer, ContainerCreateOptions>> = {
   [AzureContainer.AppAssets]: { access: "blob" },

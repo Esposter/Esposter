@@ -1,9 +1,9 @@
-import { BackendType } from "@/models/virrun/BackendType";
-import { Environment } from "@/models/virrun/Environment";
-import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { VIRRUN_CONFIGURATION_FILENAME, VIRRUN_CONFIGURATION_NAME } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { Environment } from "#src/models/virrun/Environment";
+import { resolveVirrunConfiguration } from "#src/services/configuration/resolveVirrunConfiguration";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { VIRRUN_CONFIGURATION_FILENAME, VIRRUN_CONFIGURATION_NAME } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { InvalidOperationError } from "@esposter/shared";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

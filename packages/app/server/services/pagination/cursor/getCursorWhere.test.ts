@@ -5,7 +5,8 @@ import type { BinaryOperator as DrizzleBinaryOperator } from "drizzle-orm";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
-import { BinaryOperator, StorageTier, users } from "@esposter/db-schema";
+import { BinaryOperator } from "@esposter/azure";
+import { StorageTier, users } from "@esposter/db-schema";
 import { and, eq, gt, gte, lt, lte, or } from "drizzle-orm";
 import { describe, expect, test } from "vitest";
 

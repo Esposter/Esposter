@@ -1,5 +1,5 @@
-import { MockSearchClient } from "@/models/search/MockSearchClient";
-import { MockSearchDatabase } from "@/store/MockSearchDatabase";
+import { MockSearchClient } from "#src/models/search/MockSearchClient";
+import { MockSearchDatabase } from "#src/store/MockSearchDatabase";
 import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test } from "vitest";
 

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { TileSpriteConfiguration } from "@/models/configuration/TileSpriteConfiguration";
-import type { TileSpriteEventEmitsOptions } from "@/models/emit/TileSpriteEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { TileSpriteConfiguration } from "#src/models/configuration/TileSpriteConfiguration";
+import type { TileSpriteEventEmitsOptions } from "#src/models/emit/TileSpriteEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 import type { SetRequired } from "type-fest";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { TileSpriteSetterMap } from "@/util/setterMap/TileSpriteSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { TileSpriteSetterMap } from "#src/util/setterMap/TileSpriteSetterMap";
 
 interface TileSpriteEmits extends /** @vue-ignore */ TileSpriteEventEmitsOptions {}
 

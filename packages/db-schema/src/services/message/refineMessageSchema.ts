@@ -1,4 +1,4 @@
-import type { StandardMessageEntity } from "@/models/message/StandardMessageEntity";
+import type { StandardMessageEntity } from "#src/models/message/StandardMessageEntity";
 import type { z } from "zod";
 
 export const refineMessageSchema = <T extends z.ZodType<Partial<Pick<StandardMessageEntity, "files" | "message">>>>(

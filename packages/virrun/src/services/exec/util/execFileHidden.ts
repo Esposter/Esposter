@@ -1,6 +1,6 @@
-import type { ExecFileHiddenOptions } from "@/models/exec/util/ExecFileHiddenOptions";
+import type { ExecFileHiddenOptions } from "#src/models/exec/util/ExecFileHiddenOptions";
 
-import { ExecFileError } from "@/models/exec/util/ExecFileError";
+import { ExecFileError } from "#src/models/exec/util/ExecFileError";
 import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 // Bytes of a stderr buffer sampled to recognise its encoding — enough for the shortest diagnostic, cheap for a

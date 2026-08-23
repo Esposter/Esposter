@@ -1,5 +1,5 @@
-import { WSL_UNC_REGEX } from "@/services/exec/wsl/constants";
-import { execWsl } from "@/services/exec/wsl/execWsl";
+import { WSL_UNC_REGEX } from "#src/services/exec/wsl/constants";
+import { execWsl } from "#src/services/exec/wsl/execWsl";
 // A WSL UNC (WSL_UNC_REGEX) already points at the distro's own Linux filesystem, so the path inside it is just the
 // Linux path with backslashes — `\\wsl.localhost\<distro>\home\x` is `/home/x`. wslpath can't translate these (it
 // Mangles the UNC into a bogus `/mnt/c/wsl.localhost...`), so map them here instead via the regex's `linuxPath` group:

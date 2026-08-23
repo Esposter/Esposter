@@ -1,7 +1,7 @@
 import type { TableClient, TransactionAction } from "@azure/data-tables";
 import type { Promisable } from "type-fest";
 
-import { AZURE_MAX_BATCH_SIZE } from "@esposter/db-schema";
+import { AZURE_MAX_BATCH_SIZE } from "@esposter/azure";
 import { chunk } from "@esposter/shared";
 
 // A transaction is capped at 100 actions and may not span partitions, so a page of entities is split into

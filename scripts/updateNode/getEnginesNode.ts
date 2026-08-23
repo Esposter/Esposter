@@ -1,4 +1,4 @@
-import { ENGINES_NODE_REGEX } from "@/updateNode/constants";
+import { ENGINES_NODE_REGEX } from "#scripts/updateNode/constants";
 
 /** Current `engines.node` version from a package.json string, with any leading `^` stripped. */
 export const getEnginesNode = (packageJson: string): string => {

@@ -1,5 +1,5 @@
-import { AZURE_SELF_DESTRUCT_TIMER } from "@/services/azure/table/constants";
-import { getReverseTickedTimestamp } from "@/services/azure/table/getReverseTickedTimestamp";
+import { AZURE_SELF_DESTRUCT_TIMER } from "#src/services/azure/table/constants";
+import { getReverseTickedTimestamp } from "#src/services/azure/table/getReverseTickedTimestamp";
 import { describe, expect, test } from "vitest";
 
 describe(getReverseTickedTimestamp, () => {

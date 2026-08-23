@@ -1,6 +1,7 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { Context } from "@@/server/trpc/context";
-import type { BanInMessage, BanInMessageWithRelations, Clause } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
+import type { BanInMessage, BanInMessageWithRelations } from "@esposter/db-schema";
 
 import { countModerationNotesInputSchema } from "#shared/models/db/moderation/CountModerationNotesInput";
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
@@ -34,13 +35,12 @@ import { isRoom } from "@@/server/trpc/middleware/userToRoom/isRoom";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { createEntity, getTableNullClause, hasPermission } from "@esposter/db";
 import {
   AdminActionType,
   AzureTable,
   bansInMessage,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
   DatabaseEntityType,
   getReverseTickedTimestamp,
   ModerationLogEntity,

@@ -4,10 +4,10 @@ Read when adding a package under `packages/`, adding a `bin` entrypoint, or deci
 
 New packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
 
-1. **`package.json`** — set `name`, `private: true` (internal) or omit (publishable), `"type": "module"`, `"main": "dist/index.js"`, `"types": "dist/index.d.ts"`, `"files": ["dist"]`. Standard scripts: `build` (`pnpm export:gen && rolldown --config rolldown.config.ts`), `export:gen`, `format`, `format:check`, `lint`, `lint:fix`, `typecheck`. If it has tests, add a `test` script + `vitest`/`@types/node` devDeps and an `src/index.test.ts` bundle-size snapshot (see the `testing` skill). Coverage runs only from the repo root, so don't add a per-package `coverage` script or `@vitest/coverage-v8`.
+1. **`package.json`** — set `name`, `private: true` (internal) or omit (publishable), `"type": "module"`, `"types": "dist/index.d.ts"`, `"files": ["dist"]`, `"sideEffects": false` if it genuinely has none (the build generates `exports`). Standard scripts: `build` (`pnpm export:gen && tsdown`), `export:gen`, `format`, `format:check`, `lint`, `lint:fix`, `typecheck`. If it has tests, add a `test` script + `vitest`/`@types/node` devDeps and an `src/index.test.ts` bundle-size snapshot (see the `testing` skill). Coverage runs only from the repo root, so don't add a per-package `coverage` script or `@vitest/coverage-v8`.
 2. **`tsconfig.json`** — `{ "extends": "../configuration/tsconfig.node.json" }` (node) or `"../configuration/tsconfig.vue.json"` (browser/Vue).
 3. **`tsconfig.build.json`** — `{ "extends": ["./tsconfig.json", "../configuration/tsconfig.build.base.json"] }`.
-4. **`rolldown.config.ts`** — call the matching factory from `@esposter/configuration`: `getRolldownConfigurationNode()` (server-only), `getRolldownConfigurationBrowser()`, or `getRolldownConfigurationIsomorphic()`. They are functions, not constants. See the `build` skill.
+4. **`tsdown.config.ts`** — call the matching factory from `@esposter/configuration`: `getTsdownConfigurationNode()` (server-only), `getTsdownConfiguration()` (platform-neutral), or `getTsdownConfigurationVue()`. They are functions, not constants, and are composed with `mergeConfig` rather than a spread. See the `build` skill.
 5. **`eslint.config.js`** — symlink to the shared config (`index.typescript.js` for TS-only, `index.vue.js` for Vue), created per the SKILL's symlink rule:
    ```powershell
    New-Item -ItemType SymbolicLink -Path "packages\db-mock\eslint.config.js" -Target "..\configuration\eslint\index.typescript.js"
@@ -21,9 +21,9 @@ New packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
 
 Don't add `#!/usr/bin/env node` to source files, including `bin` entrypoints (`src/cli.ts`). pnpm generates the bin shim that invokes `node` for the target, so the shebang is dead weight. Only add one if a file is genuinely meant to be executed directly (`chmod +x ./file`), which workspace bins are not.
 
-## Rolldown externals
+## Externals
 
-Nothing to configure: `getExternal()` derives the external array from the new package's own `peerDependencies` plus its workspace siblings. Declare the peer in `package.json` and it is externalized. See the `build` skill for the two kinds of package that override this in their own `rolldown.config.ts`.
+Nothing to configure: tsdown externalizes `dependencies` and `peerDependencies` and bundles the `devDependencies` the source imports. Declare it in `package.json` and the placement decides. See the `build` skill for the two kinds of package that override this in their own `tsdown.config.ts`.
 
 ## peerDependencies vs dependencies
 

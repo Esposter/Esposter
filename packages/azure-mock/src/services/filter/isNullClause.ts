@@ -1,4 +1,4 @@
-import type { Clause } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
 
 import { getTableNullClause } from "@esposter/db";
 import deepEqual from "fast-deep-equal";

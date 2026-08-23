@@ -1,8 +1,8 @@
 import type { EventGridEvent } from "@azure/functions";
 import type { BlobDeletionEventGridData, Database } from "@esposter/db-schema";
 
-import { processBlobDeletionHandler } from "@/handlers/processBlobDeletionHandler";
-import { getContainerClient } from "@/services/getContainerClient";
+import { processBlobDeletionHandler } from "#src/handlers/processBlobDeletionHandler";
+import { getContainerClient } from "#src/services/getContainerClient";
 import { InvocationContext } from "@azure/functions";
 import { dayjs } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
@@ -14,13 +14,13 @@ let mockDb: Database;
 
 // The handler releases each deleted blob's storage hold, so it reaches the database even when this suite
 // Only cares about the blobs — the module-scope client would otherwise dial a real Postgres at import
-vi.mock(import("@/services/db"), () => ({
+vi.mock(import("#src/services/db"), () => ({
   get db() {
     return mockDb;
   },
 }));
 
-vi.mock(import("@/services/getContainerClient"), () => import("@/services/getContainerClient.test"));
+vi.mock(import("#src/services/getContainerClient"), () => import("#src/services/getContainerClient.test"));
 
 const readContainer = () => {
   const container = MockContainerDatabase.get(AzureContainer.MessageAssets);

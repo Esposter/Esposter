@@ -1,4 +1,4 @@
-import type { PagedAsyncIterableIterator } from "@/models/PagedAsyncIterableIterator";
+import type { PagedAsyncIterableIterator } from "#src/models/PagedAsyncIterableIterator";
 import type {
   CreateTableEntityResponse,
   GetAccessPolicyResponse,
@@ -17,12 +17,12 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-import { MOCK_TABLE_BASE_URL } from "@/constants";
-import { MockRestError } from "@/models/MockRestError";
-import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
-import { compareByCompositeKey } from "@/services/table/compareByCompositeKey";
-import { MockTableDatabase } from "@/store/MockTableDatabase";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
+import { MOCK_TABLE_BASE_URL } from "#src/constants";
+import { MockRestError } from "#src/models/MockRestError";
+import { createFilterPredicate } from "#src/services/filter/createFilterPredicate";
+import { compareByCompositeKey } from "#src/services/table/compareByCompositeKey";
+import { MockTableDatabase } from "#src/store/MockTableDatabase";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { chunk, exhaustiveGuard, getOrCreate, getResult, ID_SEPARATOR, noop } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure TableClient — no emulator and no network.

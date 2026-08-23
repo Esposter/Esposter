@@ -1,4 +1,4 @@
-import { getDependencyType } from "@/checkDependencies/getDependencyType";
+import { getDependencyType } from "#scripts/checkDependencies/getDependencyType";
 import { describe, expect, test } from "vitest";
 
 describe(getDependencyType, () => {

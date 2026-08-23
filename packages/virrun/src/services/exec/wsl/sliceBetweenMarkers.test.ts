@@ -1,4 +1,4 @@
-import { sliceBetweenMarkers } from "@/services/exec/wsl/sliceBetweenMarkers";
+import { sliceBetweenMarkers } from "#src/services/exec/wsl/sliceBetweenMarkers";
 import { describe, expect, test } from "vitest";
 
 describe(sliceBetweenMarkers, () => {

@@ -1,7 +1,7 @@
 import type { SetRequired } from "type-fest";
 import type { ParserOptions } from "xml2js";
 
-import { DefaultCommonOptions } from "@/DefaultCommonOptions";
+import { DefaultCommonOptions } from "#src/DefaultCommonOptions";
 
 export const DefaultParserOptions: SetRequired<
   ParserOptions,

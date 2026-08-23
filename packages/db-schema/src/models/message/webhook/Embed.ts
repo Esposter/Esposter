@@ -1,10 +1,10 @@
-import type { EmbedAuthor } from "@/models/message/webhook/EmbedAuthor";
-import type { EmbedField } from "@/models/message/webhook/EmbedField";
-import type { EmbedFooter } from "@/models/message/webhook/EmbedFooter";
+import type { EmbedAuthor } from "#src/models/message/webhook/EmbedAuthor";
+import type { EmbedField } from "#src/models/message/webhook/EmbedField";
+import type { EmbedFooter } from "#src/models/message/webhook/EmbedFooter";
 
-import { embedAuthorSchema } from "@/models/message/webhook/EmbedAuthor";
-import { embedFieldSchema } from "@/models/message/webhook/EmbedField";
-import { embedFooterSchema } from "@/models/message/webhook/EmbedFooter";
+import { embedAuthorSchema } from "#src/models/message/webhook/EmbedAuthor";
+import { embedFieldSchema } from "#src/models/message/webhook/EmbedField";
+import { embedFooterSchema } from "#src/models/message/webhook/EmbedFooter";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 

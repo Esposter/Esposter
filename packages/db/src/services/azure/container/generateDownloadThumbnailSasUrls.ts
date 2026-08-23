@@ -1,8 +1,8 @@
 import type { ContainerClient } from "@azure/storage-blob";
 import type { FileEntity } from "@esposter/db-schema";
 
-import { generateReadSasUrl } from "@/services/azure/container/generateReadSasUrl";
-import { getThumbnailBlobName } from "@/services/azure/container/getThumbnailBlobName";
+import { generateReadSasUrl } from "#src/services/azure/container/generateReadSasUrl";
+import { getThumbnailBlobName } from "#src/services/azure/container/getThumbnailBlobName";
 import { THUMBNAIL_CONTENT_TYPE } from "@esposter/db-schema";
 
 export const generateDownloadThumbnailSasUrls = (

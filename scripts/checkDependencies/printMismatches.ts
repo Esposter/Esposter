@@ -1,7 +1,7 @@
-import type { ColorPalette } from "@/checkDependencies/models/ColorPalette";
-import type { Mismatch } from "@/checkDependencies/models/Mismatch";
+import type { ColorPalette } from "#scripts/checkDependencies/models/ColorPalette";
+import type { Mismatch } from "#scripts/checkDependencies/models/Mismatch";
 
-import { printTable } from "@/checkDependencies/printTable";
+import { printTable } from "#scripts/checkDependencies/printTable";
 
 export const printMismatches = (mismatches: Mismatch[], color: ColorPalette): void => {
   if (mismatches.length === 0) return;

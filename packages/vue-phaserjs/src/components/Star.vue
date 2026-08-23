@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { StarConfiguration } from "@/models/configuration/StarConfiguration";
-import type { StarEventEmitsOptions } from "@/models/emit/StarEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { StarConfiguration } from "#src/models/configuration/StarConfiguration";
+import type { StarEventEmitsOptions } from "#src/models/emit/StarEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { StarSetterMap } from "@/util/setterMap/StarSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { StarSetterMap } from "#src/util/setterMap/StarSetterMap";
 
 interface StarEmits extends /** @vue-ignore */ StarEventEmitsOptions {}
 

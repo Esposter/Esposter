@@ -1,14 +1,14 @@
 import type { EventGridHandler } from "@azure/functions";
 
-import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "@/services/constants";
-import { deleteReplayedBlob } from "@/services/deleteReplayedBlob";
-import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
-import { formatReplayId } from "@/services/formatReplayId";
-import { getContainerClient } from "@/services/getContainerClient";
-import { getIsReplayable } from "@/services/getIsReplayable";
-import { logAndRethrow } from "@/services/logAndRethrow";
-import { parseReplayId } from "@/services/parseReplayId";
-import { writeDeadLetterBlob } from "@/services/writeDeadLetterBlob";
+import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/constants";
+import { deleteReplayedBlob } from "#src/services/deleteReplayedBlob";
+import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
+import { formatReplayId } from "#src/services/formatReplayId";
+import { getContainerClient } from "#src/services/getContainerClient";
+import { getIsReplayable } from "#src/services/getIsReplayable";
+import { logAndRethrow } from "#src/services/logAndRethrow";
+import { parseReplayId } from "#src/services/parseReplayId";
+import { writeDeadLetterBlob } from "#src/services/writeDeadLetterBlob";
 import {
   AzureContainer,
   AzureFunction,

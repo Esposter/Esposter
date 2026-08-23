@@ -1,7 +1,7 @@
-import type { KeyedCache } from "@/models/exec/KeyedCache";
+import type { KeyedCache } from "#src/models/exec/KeyedCache";
 
-import { getLocalCacheDirectory } from "@/services/exec/util/getLocalCacheDirectory";
-import { writeKeyedCache } from "@/services/exec/util/writeKeyedCache";
+import { getLocalCacheDirectory } from "#src/services/exec/util/getLocalCacheDirectory";
+import { writeKeyedCache } from "#src/services/exec/util/writeKeyedCache";
 import { join } from "node:path";
 // Persist a win32 WSL environment probe result (`filename`) so later `virrun -- <cmd>` processes skip the probe —
 // Best-effort and atomic, see writeKeyedCache. Stored Windows-side (getLocalCacheDirectory) to avoid a circular

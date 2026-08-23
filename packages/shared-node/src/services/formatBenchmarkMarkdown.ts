@@ -1,5 +1,5 @@
-import type { BenchmarkReport } from "@/models/BenchmarkReport";
-import type { BenchmarkResult } from "@/models/BenchmarkResult";
+import type { BenchmarkReport } from "#src/models/BenchmarkReport";
+import type { BenchmarkResult } from "#src/models/BenchmarkResult";
 
 import { takeOne } from "@esposter/shared";
 // The baseline each group's `vs base` multiplier is measured against: the task named "native" when the

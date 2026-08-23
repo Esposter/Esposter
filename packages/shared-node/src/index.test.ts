@@ -11,21 +11,21 @@ describe("@esposter/shared-node", () => {
 
   test("reporter bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distReporterFile)).toMatchInlineSnapshot(`"reporter.js: 5.30 KB (5429 bytes)"`);
+    expect(getFileSize(distReporterFile)).toMatchInlineSnapshot(`"reporter.js: 5.61 KB (5745 bytes)"`);
   });
 
   test("reporter types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distReporterDtsFile)).toMatchInlineSnapshot(`"reporter.d.ts: 0.31 KB (319 bytes)"`);
+    expect(getFileSize(distReporterDtsFile)).toMatchInlineSnapshot(`"reporter.d.ts: 0.42 KB (428 bytes)"`);
   });
 
   test("runner bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distRunnerFile)).toMatchInlineSnapshot(`"runner.js: 0.45 KB (463 bytes)"`);
+    expect(getFileSize(distRunnerFile)).toMatchInlineSnapshot(`"runner.js: 0.57 KB (581 bytes)"`);
   });
 
   test("runner types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distRunnerDtsFile)).toMatchInlineSnapshot(`"runner.d.ts: 0.19 KB (190 bytes)"`);
+    expect(getFileSize(distRunnerDtsFile)).toMatchInlineSnapshot(`"runner.d.ts: 0.28 KB (291 bytes)"`);
   });
 });

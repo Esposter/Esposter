@@ -1,4 +1,4 @@
-import { createStableBench } from "@/services/createStableBench";
+import { createStableBench } from "#src/services/createStableBench";
 import { BenchmarkRunner } from "vitest";
 // Vitest builds each bench as `new Bench(getBenchOptions(benchmark))`, and `getBenchOptions` (module-private)
 // Returns only the per-bench `options` arg — it injects no config-level defaults. The one overridable seam is

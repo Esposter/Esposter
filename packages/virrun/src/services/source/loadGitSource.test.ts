@@ -1,8 +1,8 @@
-import { SourceType } from "@/models/source/SourceType";
-import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { loadGitSource } from "@/services/source/loadGitSource";
+import { SourceType } from "#src/models/source/SourceType";
+import { createNativeBackend } from "#src/services/exec/native/createNativeBackend";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { loadGitSource } from "#src/services/source/loadGitSource";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";

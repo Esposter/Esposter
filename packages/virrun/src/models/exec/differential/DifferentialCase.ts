@@ -1,4 +1,4 @@
-import type { NormalizationRule } from "@/models/exec/differential/NormalizationRule";
+import type { NormalizationRule } from "#src/models/exec/differential/NormalizationRule";
 
 // One entry in a differential correctness corpus: a command run identically through a candidate backend and
 // The native baseline, whose normalized results must match. The corpus is the source of truth for the

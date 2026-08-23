@@ -1,12 +1,12 @@
 import type { CommandDef } from "citty";
 
-import { CommandType } from "@/models/virrun/CommandType";
-import { cacheCommand } from "@/services/cli/commands/cacheCommand";
-import { doctorCommand } from "@/services/cli/commands/doctorCommand";
-import { execCommand } from "@/services/cli/commands/execCommand";
-import { initCommand } from "@/services/cli/commands/initCommand";
-import { runCommand } from "@/services/cli/commands/runCommand";
-import { warmCommand } from "@/services/cli/commands/warmCommand";
+import { CommandType } from "#src/models/virrun/CommandType";
+import { cacheCommand } from "#src/services/cli/commands/cacheCommand";
+import { doctorCommand } from "#src/services/cli/commands/doctorCommand";
+import { execCommand } from "#src/services/cli/commands/execCommand";
+import { initCommand } from "#src/services/cli/commands/initCommand";
+import { runCommand } from "#src/services/cli/commands/runCommand";
+import { warmCommand } from "#src/services/cli/commands/warmCommand";
 import { defineCommand } from "citty";
 import dedent from "dedent";
 // `default: CommandType.Run` routes the bare `virrun -- <cmd>` prefix to `run` via citty's default-subcommand

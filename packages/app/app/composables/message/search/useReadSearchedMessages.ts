@@ -6,7 +6,7 @@ import { useRoomStore } from "@/store/message/room";
 import { useSearchMessageStore } from "@/store/message/search";
 import { useSearchHistoryStore } from "@/store/message/search/history";
 import { useMessageLayoutStore } from "@/store/message/ui/layout";
-import { CompositeKeyPropertyNames } from "@esposter/db-schema";
+import { CompositeKeyPropertyNames } from "@esposter/azure";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadSearchedMessages = () => {

@@ -1,4 +1,4 @@
-import { createTableBorder } from "@/checkDependencies/createTableBorder";
+import { createTableBorder } from "#scripts/checkDependencies/createTableBorder";
 import { describe, expect, test } from "vitest";
 
 describe(createTableBorder, () => {

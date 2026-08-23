@@ -1,4 +1,4 @@
-import { toKebabCase } from "@/util/text/toKebabCase";
+import { toKebabCase } from "#src/util/text/toKebabCase";
 import { describe, expect, test } from "vitest";
 
 describe(toKebabCase, () => {

@@ -1,5 +1,5 @@
-import { AzureContainer } from "@/models/azure/container/AzureContainer";
-import { MAX_BLOB_DELETION_EVENT_BLOB_NAMES } from "@/services/azure/eventGrid/constants";
+import { AzureContainer } from "#src/models/azure/container/AzureContainer";
+import { MAX_BLOB_DELETION_EVENT_BLOB_NAMES } from "#src/services/azure/eventGrid/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 

@@ -1,15 +1,15 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
-import type { ExecOptions } from "@/models/exec/ExecOptions";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
 
-import { dayjs } from "@/services/dayjs.test";
-import { computeTaskCacheKey } from "@/services/exec/cache/computeTaskCacheKey";
-import { persistWithCache } from "@/services/exec/cache/persistWithCache";
-import { resolveTaskCacheLocation } from "@/services/exec/cache/resolveTaskCacheLocation";
-import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
-import { ACCEPTANCE_TIMEOUT_MINUTES } from "@/services/exec/test/constants.test";
-import { setupWarmSnapshotSuite } from "@/services/exec/test/setupWarmSnapshotSuite.test";
-import { CI_ENV_KEY, VIRRUN_NO_CACHE_KEY } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { dayjs } from "#src/services/dayjs.test";
+import { computeTaskCacheKey } from "#src/services/exec/cache/computeTaskCacheKey";
+import { persistWithCache } from "#src/services/exec/cache/persistWithCache";
+import { resolveTaskCacheLocation } from "#src/services/exec/cache/resolveTaskCacheLocation";
+import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
+import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
+import { setupWarmSnapshotSuite } from "#src/services/exec/test/setupWarmSnapshotSuite.test";
+import { CI_ENV_KEY, VIRRUN_NO_CACHE_KEY } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { execFileSync } from "node:child_process";
 import { existsSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

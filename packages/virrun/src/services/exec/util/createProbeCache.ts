@@ -1,7 +1,7 @@
-import type { KeyedCache } from "@/models/exec/KeyedCache";
+import type { KeyedCache } from "#src/models/exec/KeyedCache";
 
-import { VIRRUN_FORCE_PROBE_KEY } from "@/services/exec/util/constants";
-import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
+import { VIRRUN_FORCE_PROBE_KEY } from "#src/services/exec/util/constants";
+import { getHostFingerprint } from "#src/services/exec/util/getHostFingerprint";
 // The three-tier control flow every host probe shares, so the caching contract lives in exactly one place: the
 // In-process memo short-circuits repeat calls within a run; the persisted cross-process cache (getHostFingerprint-
 // Keyed so it self-invalidates on a kernel change; VIRRUN_FORCE_PROBE bypasses it but never the memo, which is

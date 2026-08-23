@@ -1,21 +1,21 @@
-import type { TextConfiguration } from "@/models/configuration/TextConfiguration";
-import type { TextEventEmitsOptions } from "@/models/emit/TextEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { TextConfiguration } from "#src/models/configuration/TextConfiguration";
+import type { TextEventEmitsOptions } from "#src/models/emit/TextEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { AlphaSetterMap } from "@/util/setterMap/components/AlphaSetterMap";
-import { BlendModeSetterMap } from "@/util/setterMap/components/BlendModeSetterMap";
-import { ComputedSizeSetterMap } from "@/util/setterMap/components/ComputedSizeSetterMap";
-import { DepthSetterMap } from "@/util/setterMap/components/DepthSetterMap";
-import { FlipSetterMap } from "@/util/setterMap/components/FlipSetterMap";
-import { MaskSetterMap } from "@/util/setterMap/components/MaskSetterMap";
-import { OriginSetterMap } from "@/util/setterMap/components/OriginSetterMap";
-import { RenderNodesSetterMap } from "@/util/setterMap/components/RenderNodesSetterMap";
-import { ScrollFactorSetterMap } from "@/util/setterMap/components/ScrollFactorSetterMap";
-import { TintSetterMap } from "@/util/setterMap/components/TintSetterMap";
-import { TransformSetterMap } from "@/util/setterMap/components/TransformSetterMap";
-import { VisibleSetterMap } from "@/util/setterMap/components/VisibleSetterMap";
-import { GlobalSetterMap } from "@/util/setterMap/global/GlobalSetterMap";
+import { AlphaSetterMap } from "#src/util/setterMap/components/AlphaSetterMap";
+import { BlendModeSetterMap } from "#src/util/setterMap/components/BlendModeSetterMap";
+import { ComputedSizeSetterMap } from "#src/util/setterMap/components/ComputedSizeSetterMap";
+import { DepthSetterMap } from "#src/util/setterMap/components/DepthSetterMap";
+import { FlipSetterMap } from "#src/util/setterMap/components/FlipSetterMap";
+import { MaskSetterMap } from "#src/util/setterMap/components/MaskSetterMap";
+import { OriginSetterMap } from "#src/util/setterMap/components/OriginSetterMap";
+import { RenderNodesSetterMap } from "#src/util/setterMap/components/RenderNodesSetterMap";
+import { ScrollFactorSetterMap } from "#src/util/setterMap/components/ScrollFactorSetterMap";
+import { TintSetterMap } from "#src/util/setterMap/components/TintSetterMap";
+import { TransformSetterMap } from "#src/util/setterMap/components/TransformSetterMap";
+import { VisibleSetterMap } from "#src/util/setterMap/components/VisibleSetterMap";
+import { GlobalSetterMap } from "#src/util/setterMap/global/GlobalSetterMap";
 
 export const TextSetterMap: SetterMap<TextConfiguration, GameObjects.Text, TextEventEmitsOptions> = {
   padding: (gameObject) => (value) => {

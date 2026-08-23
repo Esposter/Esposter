@@ -1,10 +1,10 @@
-import type { OverlayEntry } from "@/models/exec/snapshot/OverlayEntry";
+import type { OverlayEntry } from "#src/models/exec/snapshot/OverlayEntry";
 
-import { FlushOpType } from "@/models/exec/FlushOp";
-import { OverlayEntryKind } from "@/models/exec/snapshot/OverlayEntryKind";
-import { buildFlushPlan } from "@/services/exec/snapshot/buildFlushPlan";
-import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { FlushOpType } from "#src/models/exec/FlushOp";
+import { OverlayEntryKind } from "#src/models/exec/snapshot/OverlayEntryKind";
+import { buildFlushPlan } from "#src/services/exec/snapshot/buildFlushPlan";
+import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 
 const checkNever = (): boolean => false;

@@ -1,6 +1,6 @@
-import { pgTable } from "@/pgTable";
-import { messageSchema } from "@/schema/messageSchema";
-import { roomsInMessage } from "@/schema/roomsInMessage";
+import { pgTable } from "#src/pgTable";
+import { messageSchema } from "#src/schema/messageSchema";
+import { roomsInMessage } from "#src/schema/roomsInMessage";
 import { sql } from "drizzle-orm";
 import { check, integer, pgEnum, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";

@@ -5,7 +5,8 @@ import { getUtcDateString } from "#shared/services/dayjs/getUtcDateString";
 import { countProgramParticipantEntities } from "@@/server/services/program/countProgramParticipantEntities";
 import { readProgramStatusRows } from "@@/server/services/program/readProgramStatusRows";
 import { requireOwnedResource } from "@@/server/services/resource/requireOwnedResource";
-import { AZURE_MAX_PAGE_SIZE, ResourceType } from "@esposter/db-schema";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
+import { ResourceType } from "@esposter/db-schema";
 // A dataset flows into dashboards and a dashboard is publishable, so its snapshot is a public read.
 // The participant column is therefore their non-secret publicId — never keyValue, which is the
 // Participant list, and never the token, which is the bearer credential survey writes accept.

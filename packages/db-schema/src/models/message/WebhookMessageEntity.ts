@@ -1,11 +1,11 @@
-import type { CompositeKeyEntity } from "@/models/azure/table/CompositeKeyEntity";
-import type { AppUserInMessage } from "@/schema/appUsersInMessage";
+import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
+import type { AppUserInMessage } from "#src/schema/appUsersInMessage";
 import type { ToData } from "@esposter/shared";
 import type { Except, SetOptional } from "type-fest";
 
-import { BaseMessageEntity, baseMessageEntitySchema } from "@/models/message/BaseMessageEntity";
-import { MessageType } from "@/models/message/MessageType";
-import { selectAppUserInMessageSchema } from "@/schema/appUsersInMessage";
+import { BaseMessageEntity, baseMessageEntitySchema } from "#src/models/message/BaseMessageEntity";
+import { MessageType } from "#src/models/message/MessageType";
+import { selectAppUserInMessageSchema } from "#src/schema/appUsersInMessage";
 import { z } from "zod";
 
 export class WebhookMessageEntity extends BaseMessageEntity<MessageType.Webhook> {

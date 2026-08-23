@@ -1,9 +1,9 @@
-import type { SourceMirrorPublication } from "@/models/exec/wsl/SourceMirrorPublication";
+import type { SourceMirrorPublication } from "#src/models/exec/wsl/SourceMirrorPublication";
 
-import { sourceMirrorPublicationSchema } from "@/models/exec/wsl/SourceMirrorPublication";
-import { parseMachineJson } from "@/services/exec/util/parseMachineJson";
-import { VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME } from "@/services/exec/wsl/constants";
-import { getWslSourceMirrorEntryUnc } from "@/services/exec/wsl/getWslSourceMirrorEntryUnc";
+import { sourceMirrorPublicationSchema } from "#src/models/exec/wsl/SourceMirrorPublication";
+import { parseMachineJson } from "#src/services/exec/util/parseMachineJson";
+import { VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME } from "#src/services/exec/wsl/constants";
+import { getWslSourceMirrorEntryUnc } from "#src/services/exec/wsl/getWslSourceMirrorEntryUnc";
 import { getResult } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";

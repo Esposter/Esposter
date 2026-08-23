@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SerializableValue } from "@esposter/db-schema";
+import type { SerializableValue } from "@esposter/azure";
 
 import { dayjs } from "#shared/services/dayjs";
 

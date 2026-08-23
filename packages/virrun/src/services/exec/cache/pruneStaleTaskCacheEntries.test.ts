@@ -2,10 +2,10 @@ import {
   TASK_CACHE_MAX_AGE_DAYS,
   TASK_CACHE_META_FILENAME,
   TASK_CACHE_TEMP_PREFIX,
-} from "@/services/exec/cache/constants";
-import { pruneStaleTaskCacheEntries } from "@/services/exec/cache/pruneStaleTaskCacheEntries";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { seedDirectory } from "@/services/exec/test/seedDirectory.test";
+} from "#src/services/exec/cache/constants";
+import { pruneStaleTaskCacheEntries } from "#src/services/exec/cache/pruneStaleTaskCacheEntries";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { seedDirectory } from "#src/services/exec/test/seedDirectory.test";
 import { existsSync, utimesSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";

@@ -1,7 +1,7 @@
 import {
   VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
   VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
-} from "@/services/exec/wsl/constants";
+} from "#src/services/exec/wsl/constants";
 import { getResult, noop } from "@esposter/shared";
 import { renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

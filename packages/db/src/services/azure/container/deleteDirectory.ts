@@ -1,6 +1,6 @@
 import type { ContainerClient } from "@azure/storage-blob";
 
-import { listBlobNames } from "@/services/azure/container/listBlobNames";
+import { listBlobNames } from "#src/services/azure/container/listBlobNames";
 import { MAX_BLOB_BATCH_DELETIONS } from "@esposter/db-schema";
 import { chunk, InvalidOperationError, normalizeString, Operation } from "@esposter/shared";
 

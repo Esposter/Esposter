@@ -1,4 +1,4 @@
-import { takeOne } from "@/util/array/takeOne";
+import { takeOne } from "#src/util/array/takeOne";
 import { describe, expect, test } from "vitest";
 
 describe(takeOne, () => {

@@ -1,8 +1,8 @@
-import type { KeyedCache } from "@/models/exec/KeyedCache";
+import type { KeyedCache } from "#src/models/exec/KeyedCache";
 
-import { VIRRUN_FORCE_PROBE_KEY } from "@/services/exec/util/constants";
-import { createProbeCache } from "@/services/exec/util/createProbeCache";
-import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
+import { VIRRUN_FORCE_PROBE_KEY } from "#src/services/exec/util/constants";
+import { createProbeCache } from "#src/services/exec/util/createProbeCache";
+import { getHostFingerprint } from "#src/services/exec/util/getHostFingerprint";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 type WritePersistedCache = (cache: Pick<KeyedCache<string>, "key" | "value">) => undefined;

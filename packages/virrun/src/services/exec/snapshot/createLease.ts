@@ -1,7 +1,7 @@
-import type { Lease } from "@/models/exec/snapshot/Lease";
+import type { Lease } from "#src/models/exec/snapshot/Lease";
 
-import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
-import { reapDeadLeases } from "@/services/exec/snapshot/reapDeadLeases";
+import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import { reapDeadLeases } from "#src/services/exec/snapshot/reapDeadLeases";
 import { getResult, noop } from "@esposter/shared";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

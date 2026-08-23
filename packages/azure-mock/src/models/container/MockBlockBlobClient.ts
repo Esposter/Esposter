@@ -13,11 +13,14 @@ import type {
 } from "@azure/storage-blob";
 import type { Except } from "type-fest";
 
-import { MockBlobClient } from "@/models/container/MockBlobClient";
-import { MockRestError } from "@/models/MockRestError";
-import { bodyToBuffer } from "@/services/container/bodyToBuffer";
-import { createMockResponse } from "@/services/createMockResponse";
-import { getMockContainerCreatedOnKey, MockContainerCreatedOnDatabase } from "@/store/MockContainerCreatedOnDatabase";
+import { MockBlobClient } from "#src/models/container/MockBlobClient";
+import { MockRestError } from "#src/models/MockRestError";
+import { bodyToBuffer } from "#src/services/container/bodyToBuffer";
+import { createMockResponse } from "#src/services/createMockResponse";
+import {
+  getMockContainerCreatedOnKey,
+  MockContainerCreatedOnDatabase,
+} from "#src/store/MockContainerCreatedOnDatabase";
 
 export class MockBlockBlobClient extends MockBlobClient implements Except<BlockBlobClient, "accountName"> {
   commitBlockList(): Promise<BlockBlobCommitBlockListResponse> {

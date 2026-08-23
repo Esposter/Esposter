@@ -1,5 +1,5 @@
-import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
-import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
+import { PNPM_LOCKFILE_FILENAME } from "#src/services/exec/util/constants";
+import { resolveWorkspaceRoot } from "#src/services/exec/util/resolveWorkspaceRoot";
 import { createHash } from "node:crypto";
 import { readFileSync, statSync } from "node:fs";
 import { join } from "node:path";

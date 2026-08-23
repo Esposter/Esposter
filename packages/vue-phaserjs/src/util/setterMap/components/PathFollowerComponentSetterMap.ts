@@ -1,6 +1,6 @@
-import type { PathFollowerComponentConfiguration } from "@/models/configuration/components/PathFollowerComponentConfiguration";
-import type { PathFollowerComponentEventEmitsOptions } from "@/models/emit/components/PathFollowerComponentEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { PathFollowerComponentConfiguration } from "#src/models/configuration/components/PathFollowerComponentConfiguration";
+import type { PathFollowerComponentEventEmitsOptions } from "#src/models/emit/components/PathFollowerComponentEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 export const PathFollowerComponentSetterMap = {

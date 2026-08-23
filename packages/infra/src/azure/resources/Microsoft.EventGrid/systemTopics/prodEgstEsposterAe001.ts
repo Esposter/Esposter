@@ -1,7 +1,7 @@
-import ApplicationTags from "@/azure/constants/ApplicationTags";
-import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLocation";
-import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
-import { prodstesposter001 } from "@/azure/resources/Microsoft.Storage/storageAccounts/prodstesposter001";
+import ApplicationTags from "#src/azure/constants/ApplicationTags";
+import AzureAustraliaEastLocation from "#src/azure/constants/AzureAustraliaEastLocation";
+import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import { prodstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/prodstesposter001";
 import * as azure_native from "@pulumi/azure-native";
 
 const systemTopicName = "prod-egst-esposter-ae-001";

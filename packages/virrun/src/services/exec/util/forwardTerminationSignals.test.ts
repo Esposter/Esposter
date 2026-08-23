@@ -1,6 +1,6 @@
 import type { ChildProcess } from "node:child_process";
 
-import { forwardTerminationSignals } from "@/services/exec/util/forwardTerminationSignals";
+import { forwardTerminationSignals } from "#src/services/exec/util/forwardTerminationSignals";
 import { takeOne } from "@esposter/shared";
 import { EventEmitter } from "node:events";
 import { afterEach, describe, expect, test, vi } from "vitest";

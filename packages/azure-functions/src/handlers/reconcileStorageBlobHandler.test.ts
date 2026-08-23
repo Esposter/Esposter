@@ -1,7 +1,7 @@
 import type { EventGridEvent } from "@azure/functions";
 import type { BlobCreatedEventGridData, Database } from "@esposter/db-schema";
 
-import { reconcileStorageBlobHandler } from "@/handlers/reconcileStorageBlobHandler";
+import { reconcileStorageBlobHandler } from "#src/handlers/reconcileStorageBlobHandler";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer, getBlobSubjectPrefix, storageBlobs, users } from "@esposter/db-schema";
@@ -9,7 +9,7 @@ import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
-vi.mock(import("@/services/db"), () => ({
+vi.mock(import("#src/services/db"), () => ({
   get db() {
     return mockDb;
   },

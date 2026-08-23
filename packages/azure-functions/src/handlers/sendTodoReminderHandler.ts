@@ -1,10 +1,10 @@
 import type { ServiceBusQueueHandler } from "@azure/functions";
 
-import { todoReminderContentSchema } from "@/models/TodoReminderContent";
-import { db } from "@/services/db";
-import { getContainerClient } from "@/services/getContainerClient";
-import { logAndRethrow } from "@/services/logAndRethrow";
-import { sendTodoReminderNotification } from "@/services/sendTodoReminderNotification";
+import { todoReminderContentSchema } from "#src/models/TodoReminderContent";
+import { db } from "#src/services/db";
+import { getContainerClient } from "#src/services/getContainerClient";
+import { logAndRethrow } from "#src/services/logAndRethrow";
+import { sendTodoReminderNotification } from "#src/services/sendTodoReminderNotification";
 import { RestError } from "@azure/storage-blob";
 import { getContentBlobName } from "@esposter/db";
 import { AzureContainer, AzureFunction, ResourceType, todoReminderQueueMessageSchema } from "@esposter/db-schema";

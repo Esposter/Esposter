@@ -1,11 +1,11 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
-import type { ExecOptions } from "@/models/exec/ExecOptions";
-import type { PrepareLocation } from "@/models/exec/snapshot/PrepareLocation";
-import type { PrepareStep } from "@/models/virrun/PrepareStep";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
+import type { PrepareLocation } from "#src/models/exec/snapshot/PrepareLocation";
+import type { PrepareStep } from "#src/models/virrun/PrepareStep";
 
-import { captureOverlayUpper } from "@/services/exec/snapshot/captureOverlayUpper";
-import { pruneToOutputs } from "@/services/exec/snapshot/pruneToOutputs";
-import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
+import { captureOverlayUpper } from "#src/services/exec/snapshot/captureOverlayUpper";
+import { pruneToOutputs } from "#src/services/exec/snapshot/pruneToOutputs";
+import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
 import { InvalidOperationError, noop, Operation } from "@esposter/shared";
 // Captures a framework's generated artifacts into the source-keyed prepare layer. Forks the deps snapshot as a
 // Read-only lower (so `nuxt prepare` sees the sandbox's own Linux dep closure), keeps only the declared

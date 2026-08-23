@@ -1,8 +1,8 @@
-import AzureStorageAccountContributorRoleDefinitionId from "@/azure/constants/AzureStorageAccountContributorRoleDefinitionId";
-import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
-import ProdLogicEsposterAe004PrincipalId from "@/azure/constants/ProdLogicEsposterAe004PrincipalId";
-import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
-import { prodstesposter001 } from "@/azure/resources/Microsoft.Storage/storageAccounts/prodstesposter001";
+import AzureStorageAccountContributorRoleDefinitionId from "#src/azure/constants/AzureStorageAccountContributorRoleDefinitionId";
+import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
+import ProdLogicEsposterAe004PrincipalId from "#src/azure/constants/ProdLogicEsposterAe004PrincipalId";
+import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import { prodstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/prodstesposter001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 

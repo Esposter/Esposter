@@ -1,8 +1,10 @@
-import type { Clause, MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
+import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { getTableNullClause, getTopNEntitiesByType, serializeClauses } from "@esposter/db";
-import { AzureTable, BinaryOperator, CompositeKeyPropertyNames, MessageEntityMap } from "@esposter/db-schema";
+import { AzureTable, MessageEntityMap } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 // A named set of a room's messages in one table scan rather than a point read each, with the deleted ones

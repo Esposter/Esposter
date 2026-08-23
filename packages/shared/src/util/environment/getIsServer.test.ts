@@ -1,4 +1,4 @@
-import { getIsServer } from "@/util/environment/getIsServer";
+import { getIsServer } from "#src/util/environment/getIsServer";
 import { describe, expect, test, vi } from "vitest";
 
 describe(getIsServer, () => {

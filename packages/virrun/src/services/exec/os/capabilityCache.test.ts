@@ -1,8 +1,8 @@
-import { createKeyedCacheSchema } from "@/models/exec/KeyedCache";
-import { readCapabilityCache } from "@/services/exec/os/readCapabilityCache";
-import { writeCapabilityCache } from "@/services/exec/os/writeCapabilityCache";
-import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
-import { CAPABILITY_CACHE_FILENAME } from "@/services/exec/util/constants";
+import { createKeyedCacheSchema } from "#src/models/exec/KeyedCache";
+import { readCapabilityCache } from "#src/services/exec/os/readCapabilityCache";
+import { writeCapabilityCache } from "#src/services/exec/os/writeCapabilityCache";
+import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
+import { CAPABILITY_CACHE_FILENAME } from "#src/services/exec/util/constants";
 import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";

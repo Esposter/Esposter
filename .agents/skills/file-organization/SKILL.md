@@ -12,6 +12,7 @@ description: Esposter file and folder organisation — the alias imports (shared
   - `@@/` — project root (`packages/app/`); `server/` and other root-level paths.
   - `@/` — app source dir (`packages/app/app/`); `composables/`, `components/`, `store/`, `services/`, etc.
   - Never use `~~/` (old Nuxt alias) — replace with `@@/`.
+  - Those are the **app's** aliases and Nuxt generates them. Everywhere else — every `packages/*` and the repo-root `scripts/` — a tree addresses its own source through the `#src/*` / `#scripts/*` subpath imports its manifest declares, and oxlint bans `@/` there (`build` skill).
 - **`shared/` may never import `@/` or `~/`** — it is parsed by the server as well as shipped to the browser, so a client import drags UI-library types and browser-only values into the server's graph. Banned by a root `.oxlintrc.json` override, type-only imports included. When a `shared/` module needs a client concern, give it a **twin**: `shared/` keeps the validating schema, `app/` derives the form schema from it with `safeExtend` and `satisfies z.ZodType<TSharedType>`. Moving the client module down into `shared/` relocates the boundary instead of restoring it. See `packages/app/content/docs/architecture/module-boundaries.md`.
 - Import grouping, blank lines, ordering, and line endings — see the `formatting` skill.
 

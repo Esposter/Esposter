@@ -1,6 +1,6 @@
-import type { TMXObjectNode } from "@/models/tmx/node/TMXObjectNode";
+import type { TMXObjectNode } from "#src/models/tmx/node/TMXObjectNode";
 
-import { Shape } from "@/models/Shape";
+import { Shape } from "#src/models/Shape";
 
 export const parseObjectShape = (node: TMXObjectNode): Shape => {
   if ("point" in node) return Shape.Point;

@@ -1,5 +1,5 @@
-import { ACCEPTANCE_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_DIRECTORY_NAME } from "@/services/exec/util/constants";
-import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
+import { ACCEPTANCE_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_DIRECTORY_NAME } from "#src/services/exec/util/constants";
+import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheRoot";
 import { homedir } from "node:os";
 import { join } from "node:path";
 // The one cache home every heavy acceptance/equivalence test shares, so the lockfile-hash-keyed warm snapshot is

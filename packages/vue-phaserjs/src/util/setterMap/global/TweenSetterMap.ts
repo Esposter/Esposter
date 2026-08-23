@@ -1,6 +1,6 @@
-import type { TweenConfiguration } from "@/models/configuration/global/TweenConfiguration";
-import type { TweenEventEmitsOptions } from "@/models/emit/global/TweenEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { TweenConfiguration } from "#src/models/configuration/global/TweenConfiguration";
+import type { TweenEventEmitsOptions } from "#src/models/emit/global/TweenEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 import { Tweens } from "phaser";

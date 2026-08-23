@@ -1,4 +1,4 @@
-import { ORPHAN_REAP_MINIMUM_AGE_SECONDS } from "@/services/exec/util/constants";
+import { ORPHAN_REAP_MINIMUM_AGE_SECONDS } from "#src/services/exec/util/constants";
 // Build the argv for the startup orphan reaper: a `wsl.exe --exec` that finds every virrun run's shell by the shared
 // Base `$0` marker and group-kills only the *orphaned* ones. A run's onTerminate reaper (buildWslReapCommand) fires
 // Only on a handled SIGINT/SIGTERM — a hard kill (SIGKILL, crash, terminal close, `wsl --shutdown`) skips it, so the

@@ -1,8 +1,8 @@
 import type { Database } from "@esposter/db-schema";
 
-import { reconcileStorageBlob } from "@/services/storage/reconcileStorageBlob";
-import { releaseStorageBlobs } from "@/services/storage/releaseStorageBlobs";
-import { releaseStorageBlobsByPrefix } from "@/services/storage/releaseStorageBlobsByPrefix";
+import { reconcileStorageBlob } from "#src/services/storage/reconcileStorageBlob";
+import { releaseStorageBlobs } from "#src/services/storage/releaseStorageBlobs";
+import { releaseStorageBlobsByPrefix } from "#src/services/storage/releaseStorageBlobsByPrefix";
 import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer, storageBlobs, users } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";

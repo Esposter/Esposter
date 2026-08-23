@@ -1,6 +1,6 @@
 import type { CustomTableClient, ModerationLogEntity } from "@esposter/db-schema";
 
-import { createEntity } from "@/services/azure/table/createEntity";
+import { createEntity } from "#src/services/azure/table/createEntity";
 import { getReverseTickedTimestamp, ModerationLogEntity as ModerationLogEntityClass } from "@esposter/db-schema";
 
 // Appends one row to the moderation audit log. Shared by the manual admin-action plugin, by automod, and by

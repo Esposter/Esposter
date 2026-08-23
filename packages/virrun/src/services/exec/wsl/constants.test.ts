@@ -1,12 +1,12 @@
 // oxlint-disable typescript/no-inferrable-types
-import type { WslLoginEnvironment } from "@/models/exec/wsl/WslLoginEnvironment";
+import type { WslLoginEnvironment } from "#src/models/exec/wsl/WslLoginEnvironment";
 
 import {
   VIRRUN_CACHE_DIRECTORY_NAME,
   VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
   VIRRUN_STORE_DIRECTORY_NAME,
-} from "@/services/exec/util/constants";
+} from "#src/services/exec/util/constants";
 import { describe } from "vitest";
 
 // The one login capture every suite that mocks `readWslLoginEnvironment` hands back. Non-empty by construction:

@@ -1,6 +1,6 @@
-import type { MockResponse } from "@/models/MockResponse";
+import type { MockResponse } from "#src/models/MockResponse";
 
-import { toWebResourceLike } from "@/services/container/toWebResourceLike";
+import { toWebResourceLike } from "#src/services/container/toWebResourceLike";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 

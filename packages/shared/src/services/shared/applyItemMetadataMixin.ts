@@ -1,5 +1,5 @@
-import type { ItemMetadata } from "@/models/shared/ItemMetadata";
-import type { WithMetadata } from "@/models/shared/WithMetadata";
+import type { ItemMetadata } from "#src/models/shared/ItemMetadata";
+import type { WithMetadata } from "#src/models/shared/WithMetadata";
 import type { Class } from "type-fest";
 
 export const applyItemMetadataMixin = <TBase extends Class<NonNullable<unknown>>>(Base: TBase): WithMetadata<TBase> =>

@@ -1,6 +1,6 @@
-import { serializeKey } from "@/services/azure/table/serializeKey";
-import { serializeSearchClauses } from "@/services/azure/transformer/serializeSearchClauses";
-import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/db-schema";
+import { serializeKey } from "#src/services/azure/table/serializeKey";
+import { serializeSearchClauses } from "#src/services/azure/transformer/serializeSearchClauses";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { describe, expect, test } from "vitest";
 
 describe(serializeSearchClauses, () => {

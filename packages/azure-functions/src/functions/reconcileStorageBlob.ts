@@ -1,4 +1,4 @@
-import { reconcileStorageBlobHandler } from "@/handlers/reconcileStorageBlobHandler";
+import { reconcileStorageBlobHandler } from "#src/handlers/reconcileStorageBlobHandler";
 import { app } from "@azure/functions";
 import { AzureFunction } from "@esposter/db-schema";
 

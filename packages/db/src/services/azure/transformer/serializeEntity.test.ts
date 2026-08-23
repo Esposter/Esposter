@@ -1,6 +1,6 @@
 import type { AzureEntity, AzureUpdateEntity } from "@esposter/db-schema";
 
-import { serializeEntity } from "@/services/azure/transformer/serializeEntity";
+import { serializeEntity } from "#src/services/azure/transformer/serializeEntity";
 import { describe, expect, test } from "vitest";
 
 describe(serializeEntity, () => {

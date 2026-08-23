@@ -1,6 +1,6 @@
-import { MOCK_BLOB_BASE_URL } from "@/constants";
-import { MockBlobBatchClient } from "@/models/container/MockBlobBatchClient";
-import { MockContainerDatabase } from "@/store/MockContainerDatabase";
+import { MOCK_BLOB_BASE_URL } from "#src/constants";
+import { MockBlobBatchClient } from "#src/models/container/MockBlobBatchClient";
+import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 import { afterEach, describe, expect, test } from "vitest";
 

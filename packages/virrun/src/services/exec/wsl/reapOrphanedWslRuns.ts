@@ -1,6 +1,6 @@
-import { spawnBackground } from "@/services/exec/util/spawnBackground";
-import { buildWslOrphanReapCommand } from "@/services/exec/wsl/buildWslOrphanReapCommand";
-import { VIRRUN_WSL_PROCESS_MARKER } from "@/services/exec/wsl/constants";
+import { spawnBackground } from "#src/services/exec/util/spawnBackground";
+import { buildWslOrphanReapCommand } from "#src/services/exec/wsl/buildWslOrphanReapCommand";
+import { VIRRUN_WSL_PROCESS_MARKER } from "#src/services/exec/wsl/constants";
 // Fire the startup orphan sweep: a hidden, unref'd `wsl.exe` that group-kills virrun runs a hard kill left reparented
 // Off the `wsl.exe` Relay (buildWslOrphanReapCommand). spawnBackground runs it Linux-side off the 9p bridge, outliving
 // This process (see there for why it must not be `detached`). Passing the shared base marker (not a per-run uuid)

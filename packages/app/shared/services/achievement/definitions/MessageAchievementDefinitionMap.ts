@@ -4,7 +4,8 @@ import { AchievementConditionType } from "#shared/models/achievement/type/Achiev
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
 import { countEmojis } from "#shared/util/text/countEmojis";
-import { BinaryOperator, MessageAchievementName } from "@esposter/db-schema";
+import { BinaryOperator } from "@esposter/azure";
+import { MessageAchievementName } from "@esposter/db-schema";
 
 export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Message, {
   [MessageAchievementName.CenturyClub]: defineAchievementDefinition({

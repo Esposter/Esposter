@@ -1,8 +1,8 @@
-import { dayjs } from "@/services/dayjs.test";
-import { createOsBackend } from "@/services/exec/os/createOsBackend";
-import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import { ACCEPTANCE_TIMEOUT_MINUTES } from "@/services/exec/test/constants.test";
-import { TEST_DIR } from "@/services/exec/util/constants.test";
+import { dayjs } from "#src/services/dayjs.test";
+import { createOsBackend } from "#src/services/exec/os/createOsBackend";
+import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
+import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
+import { TEST_DIR } from "#src/services/exec/util/constants.test";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

@@ -1,10 +1,10 @@
-import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
+import { buildBwrapArgs } from "#src/services/exec/bwrap/buildBwrapArgs";
 import {
   VIRRUN_CACHE_DIRECTORY_NAME,
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
   VIRRUN_STORE_DIRECTORY_NAME,
-} from "@/services/exec/util/constants";
-import { TEST_DIR, TEST_FILENAME } from "@/services/exec/util/constants.test";
+} from "#src/services/exec/util/constants";
+import { TEST_DIR, TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

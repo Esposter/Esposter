@@ -1,7 +1,7 @@
 import type { EventGridHandler } from "@azure/functions";
 
-import { createEventGridNotificationHandler } from "@/handlers/createEventGridNotificationHandler";
-import { sendFriendRequestNotification } from "@/services/sendFriendRequestNotification";
+import { createEventGridNotificationHandler } from "#src/handlers/createEventGridNotificationHandler";
+import { sendFriendRequestNotification } from "#src/services/sendFriendRequestNotification";
 import { AzureFunction, friendRequestNotificationEventGridDataSchema } from "@esposter/db-schema";
 
 export const processFriendRequestNotificationHandler: EventGridHandler = createEventGridNotificationHandler(

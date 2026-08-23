@@ -1,8 +1,8 @@
-import type { ExecResult } from "@/models/exec/ExecResult";
+import type { ExecResult } from "#src/models/exec/ExecResult";
 
-import { parseTaskCacheEntry } from "@/services/exec/cache/parseTaskCacheEntry";
-import { resolveTaskCacheLocation } from "@/services/exec/cache/resolveTaskCacheLocation";
-import { applyFlushPlan } from "@/services/exec/snapshot/applyFlushPlan";
+import { parseTaskCacheEntry } from "#src/services/exec/cache/parseTaskCacheEntry";
+import { resolveTaskCacheLocation } from "#src/services/exec/cache/resolveTaskCacheLocation";
+import { applyFlushPlan } from "#src/services/exec/snapshot/applyFlushPlan";
 import { getResult, noop } from "@esposter/shared";
 import { readFileSync, utimesSync } from "node:fs";
 // Replay a task-cache hit: reconcile the recorded payload onto the host exactly as the original write-back did, then

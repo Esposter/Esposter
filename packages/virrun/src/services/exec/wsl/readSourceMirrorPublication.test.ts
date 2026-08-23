@@ -1,16 +1,16 @@
-import { SourceMirrorEntryType } from "@/models/exec/wsl/SourceMirrorEntryType";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME } from "@/services/exec/wsl/constants";
-import { readSourceMirrorPublication } from "@/services/exec/wsl/readSourceMirrorPublication";
+import { SourceMirrorEntryType } from "#src/models/exec/wsl/SourceMirrorEntryType";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME } from "#src/services/exec/wsl/constants";
+import { readSourceMirrorPublication } from "#src/services/exec/wsl/readSourceMirrorPublication";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const state = vi.hoisted(() => ({ entryUnc: "" }));
 
-vi.mock(import("@/services/exec/wsl/getWslSourceMirrorEntryUnc"), () => ({
+vi.mock(import("#src/services/exec/wsl/getWslSourceMirrorEntryUnc"), () => ({
   getWslSourceMirrorEntryUnc: () => state.entryUnc,
 }));
 

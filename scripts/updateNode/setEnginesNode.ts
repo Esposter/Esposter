@@ -1,4 +1,4 @@
-import { ENGINES_NODE_REGEX } from "@/updateNode/constants";
+import { ENGINES_NODE_REGEX } from "#scripts/updateNode/constants";
 
 /** Rewrite a package.json string's `engines.node` to `^${version}`. */
 export const setEnginesNode = (packageJson: string, version: string): string => {

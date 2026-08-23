@@ -1,4 +1,5 @@
-import type { Clause, CustomTableClient } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
+import type { CustomTableClient } from "@esposter/db-schema";
 
 import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
 import { deleteEmojiInputSchema } from "#shared/models/db/message/metadata/DeleteEmojiInput";
@@ -17,14 +18,9 @@ import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
+import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { createEntity, getEntity, getTopNEntities, serializeClauses, updateEntity } from "@esposter/db";
-import {
-  AZURE_MAX_PAGE_SIZE,
-  AzureTable,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
-  MessageMetadataType,
-} from "@esposter/db-schema";
+import { AzureTable, MessageMetadataType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 

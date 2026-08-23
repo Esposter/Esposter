@@ -1,7 +1,7 @@
-import { BackendType } from "@/models/virrun/BackendType";
-import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { createNativeBackend } from "#src/services/exec/native/createNativeBackend";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { createVfsBackend } from "#src/services/exec/vfs/createVfsBackend";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, bench, describe } from "vitest";

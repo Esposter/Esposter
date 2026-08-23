@@ -1,8 +1,9 @@
-import type { CompositeKey, CustomTableClient } from "@esposter/db-schema";
+import type { CompositeKey } from "@esposter/azure";
+import type { CustomTableClient } from "@esposter/db-schema";
 
-import { submitTransactionBatches } from "@/services/azure/table/submitTransactionBatches";
-import { getPartitionKeyFilter } from "@/services/azure/transformer/getPartitionKeyFilter";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
+import { submitTransactionBatches } from "#src/services/azure/table/submitTransactionBatches";
+import { getPartitionKeyFilter } from "#src/services/azure/transformer/getPartitionKeyFilter";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 
 // Azure Table has no partition-drop, so clearing a partition means enumerating it and batch-deleting.
 // Every page is walked, unlike the capped reads elsewhere: a purge that stopped at the cap would leave

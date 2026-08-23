@@ -1,10 +1,10 @@
-import type { LineConfiguration } from "@/models/configuration/LineConfiguration";
-import type { LineEventEmitsOptions } from "@/models/emit/LineEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { LineConfiguration } from "#src/models/configuration/LineConfiguration";
+import type { LineEventEmitsOptions } from "#src/models/emit/LineEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { GlobalSetterMap } from "@/util/setterMap/global/GlobalSetterMap";
-import { ShapeSetterMap } from "@/util/setterMap/shared/ShapeSetterMap";
+import { GlobalSetterMap } from "#src/util/setterMap/global/GlobalSetterMap";
+import { ShapeSetterMap } from "#src/util/setterMap/shared/ShapeSetterMap";
 
 export const LineSetterMap: SetterMap<LineConfiguration, GameObjects.Line, LineEventEmitsOptions> = {
   lineWidth: (gameObject) => (value) => {

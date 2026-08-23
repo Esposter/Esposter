@@ -1,7 +1,7 @@
-import type { CompositeKey } from "@esposter/db-schema";
+import type { CompositeKey } from "@esposter/azure";
 
-import { serializeClauses } from "@/services/azure/transformer/serializeClauses";
-import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/db-schema";
+import { serializeClauses } from "#src/services/azure/transformer/serializeClauses";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 
 // Every table partitions on its owning entity's id, so "everything under this key" is the filter a read,
 // A count and a purge all start from. Written once here so those three can never disagree about it —

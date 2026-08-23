@@ -1,5 +1,5 @@
-import { sendTodoReminderHandler } from "@/handlers/sendTodoReminderHandler";
-import { ProcessProperties } from "@/services/process";
+import { sendTodoReminderHandler } from "#src/handlers/sendTodoReminderHandler";
+import { ProcessProperties } from "#src/services/process";
 import { app } from "@azure/functions";
 import { AzureFunction, AzureQueue } from "@esposter/db-schema";
 

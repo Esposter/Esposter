@@ -1,13 +1,13 @@
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import {
   GIT_COMMON_DIRECTORY_FILENAME,
   GIT_DIRECTORY,
   GIT_WORKTREE_GITDIR_FILENAME,
   GIT_WORKTREE_GITDIR_PREFIX,
   GIT_WORKTREES_DIRECTORY_NAME,
-} from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { readLinkedWorktreePaths } from "@/services/exec/util/readLinkedWorktreePaths";
+} from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { readLinkedWorktreePaths } from "#src/services/exec/util/readLinkedWorktreePaths";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";

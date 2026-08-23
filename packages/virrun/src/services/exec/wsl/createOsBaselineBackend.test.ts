@@ -1,13 +1,13 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
-import { BackendType } from "@/models/virrun/BackendType";
-import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
-import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { spawnHidden } from "@/services/exec/util/spawnHidden";
-import { toExitCode } from "@/services/exec/util/toExitCode";
-import { createWslEnvArgs } from "@/services/exec/wsl/createWslEnvArgs";
-import { readWslPath } from "@/services/exec/wsl/readWslPath";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { createNativeBackend } from "#src/services/exec/native/createNativeBackend";
+import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { spawnHidden } from "#src/services/exec/util/spawnHidden";
+import { toExitCode } from "#src/services/exec/util/toExitCode";
+import { createWslEnvArgs } from "#src/services/exec/wsl/createWslEnvArgs";
+import { readWslPath } from "#src/services/exec/wsl/readWslPath";
 import { describe, expect, test } from "vitest";
 
 export const createOsBaselineBackend = (): ExecBackend => {

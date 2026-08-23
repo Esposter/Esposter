@@ -1,4 +1,4 @@
-import { getLatestVersionForPrefix } from "@/services/getLatestVersionForPrefix";
+import { getLatestVersionForPrefix } from "#scripts/services/getLatestVersionForPrefix";
 import { describe, expect, test } from "vitest";
 
 describe(getLatestVersionForPrefix, () => {

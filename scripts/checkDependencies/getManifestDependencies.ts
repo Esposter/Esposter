@@ -1,6 +1,6 @@
-import type { ManifestDependency } from "@/checkDependencies/models/ManifestDependency";
+import type { ManifestDependency } from "#scripts/checkDependencies/models/ManifestDependency";
 
-import { getPackageJsonPaths } from "@/checkDependencies/getPackageJsonPaths";
+import { getPackageJsonPaths } from "#scripts/checkDependencies/getPackageJsonPaths";
 import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 

@@ -1,7 +1,7 @@
-import { Color } from "@/models/cli/Color";
-import { formatCacheHitLabel } from "@/services/cli/cache/formatCacheHitLabel";
-import { colorize } from "@/services/cli/color/colorize";
-import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
+import { Color } from "#src/models/cli/Color";
+import { formatCacheHitLabel } from "#src/services/cli/cache/formatCacheHitLabel";
+import { colorize } from "#src/services/cli/color/colorize";
+import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 // Printed before an os-backend run so the (sometimes minutes-long) one-time install is never a silent stall: the
 // First run for a given environment installs the toolchain inside the sandbox, later runs reuse the frozen snapshot.
 // Turbo-style hit/miss vocabulary — a `snapshot cache hit` is blue-bold (the fast route, emphasized) while a

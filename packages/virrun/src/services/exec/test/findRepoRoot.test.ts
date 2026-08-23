@@ -1,4 +1,4 @@
-import { PNPM_WORKSPACE_FILENAME } from "@/services/exec/util/constants";
+import { PNPM_WORKSPACE_FILENAME } from "#src/services/exec/util/constants";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { describe } from "vitest";

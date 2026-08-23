@@ -1,7 +1,7 @@
-import type { ExecFileHiddenOptions } from "@/models/exec/util/ExecFileHiddenOptions";
+import type { ExecFileHiddenOptions } from "#src/models/exec/util/ExecFileHiddenOptions";
 
-import { PROBE_TIMEOUT_MS } from "@/services/exec/util/constants";
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
+import { PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 // Every wsl.exe probe goes through here so exactly one place knows how wsl.exe writes: its OWN output — the distro
 // List, and every launch failure ("Catastrophic failure  Error code: Wsl/Service/E_UNEXPECTED" when the WSL service
 // Is wedged) — is UTF-16LE, while an `--exec` child's stdout is that child's raw bytes (utf8). Stderr needs nothing

@@ -1,8 +1,8 @@
-import type { VirrunConfiguration } from "@/models/virrun/VirrunConfiguration";
+import type { VirrunConfiguration } from "#src/models/virrun/VirrunConfiguration";
 
-import { parseVirrunConfiguration } from "@/services/configuration/parseVirrunConfiguration";
-import { VIRRUN_CONFIGURATION_EXTENSIONS, VIRRUN_CONFIGURATION_NAME } from "@/services/exec/util/constants";
-import { resolveCwd } from "@/services/exec/util/resolveCwd";
+import { parseVirrunConfiguration } from "#src/services/configuration/parseVirrunConfiguration";
+import { VIRRUN_CONFIGURATION_EXTENSIONS, VIRRUN_CONFIGURATION_NAME } from "#src/services/exec/util/constants";
+import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { loadConfigSync } from "unconfig";
 // Walks up from cwd to the first `virrun.config.{ts,mts,js,mjs,json}` (nearest directory wins; within a directory the

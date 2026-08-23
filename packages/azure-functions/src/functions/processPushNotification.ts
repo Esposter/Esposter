@@ -1,4 +1,4 @@
-import { processPushNotificationHandler } from "@/handlers/processPushNotificationHandler";
+import { processPushNotificationHandler } from "#src/handlers/processPushNotificationHandler";
 import { app } from "@azure/functions";
 import { AzureFunction } from "@esposter/db-schema";
 

@@ -1,49 +1,49 @@
-import type { ExecResult } from "@/models/exec/ExecResult";
-import type { SnapshotLocation } from "@/models/exec/snapshot/SnapshotLocation";
+import type { ExecResult } from "#src/models/exec/ExecResult";
+import type { SnapshotLocation } from "#src/models/exec/snapshot/SnapshotLocation";
 
-import { SourceType } from "@/models/source/SourceType";
-import { BackendType } from "@/models/virrun/BackendType";
-import { createOsBackend } from "@/services/exec/os/createOsBackend";
-import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
-import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
-import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
-import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { createRecordingBackend } from "@/services/exec/test/createRecordingBackend.test";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { TEST_WSL_CACHE_DIR_NAME } from "@/services/exec/wsl/constants.test";
-import { createVirrun } from "@/services/virrun/createVirrun";
+import { SourceType } from "#src/models/source/SourceType";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { createOsBackend } from "#src/services/exec/os/createOsBackend";
+import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import { createSnapshot } from "#src/services/exec/snapshot/createSnapshot";
+import { forkSnapshot } from "#src/services/exec/snapshot/forkSnapshot";
+import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
+import { createRecordingBackend } from "#src/services/exec/test/createRecordingBackend.test";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { TEST_WSL_CACHE_DIR_NAME } from "#src/services/exec/wsl/constants.test";
+import { createVirrun } from "#src/services/virrun/createVirrun";
 import { existsSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // Mock the os backend factory so the network/store wiring can be asserted without bubblewrap on the host.
-vi.mock(import("@/services/exec/os/createOsBackend"));
+vi.mock(import("#src/services/exec/os/createOsBackend"));
 // Mock the snapshot layer so the cold/warm fork provisioning is asserted without a real install:
 // ResolveSnapshotLocation drives the branch, the other two are spied.
-vi.mock(import("@/services/exec/snapshot/createSnapshot"));
-vi.mock(import("@/services/exec/snapshot/forkSnapshot"));
-vi.mock(import("@/services/exec/snapshot/resolveSnapshotLocation"));
+vi.mock(import("#src/services/exec/snapshot/createSnapshot"));
+vi.mock(import("#src/services/exec/snapshot/forkSnapshot"));
+vi.mock(import("#src/services/exec/snapshot/resolveSnapshotLocation"));
 // Mock the WSL login-PATH capture: the real one spawns wsl.exe on win32, which this mocked-backend test mustn't
 // Depend on. The shared capture, never an empty one — createOsExecOptions reads an empty path on win32 as a failed
 // Capture and throws, which every os-backend case here would then die on.
-vi.mock(import("@/services/exec/wsl/readWslLoginEnvironment"), async () => {
-  const { TEST_WSL_LOGIN_ENVIRONMENT: testWslLoginEnvironment } = await import("@/services/exec/wsl/constants.test");
+vi.mock(import("#src/services/exec/wsl/readWslLoginEnvironment"), async () => {
+  const { TEST_WSL_LOGIN_ENVIRONMENT: testWslLoginEnvironment } = await import("#src/services/exec/wsl/constants.test");
   return { readWslLoginEnvironment: () => testWslLoginEnvironment };
 });
 // And the path translation those options reach for on win32: a non-empty login capture puts createOsExecOptions on
 // The win32 branch, which resolves the source mirror through readWslPath — the real one spawns wsl.exe, so mocking
 // Only the capture above left this suite still depending on a live distro answering inside the test timeout.
-vi.mock(import("@/services/exec/wsl/readWslPath"), async () => {
-  const { TEST_WSL_PREFIX: testWslPrefix } = await import("@/services/exec/wsl/constants.test");
+vi.mock(import("#src/services/exec/wsl/readWslPath"), async () => {
+  const { TEST_WSL_PREFIX: testWslPrefix } = await import("#src/services/exec/wsl/constants.test");
   return { readWslPath: (path: string) => `${testWslPrefix}${path}` };
 });
 // Same for the WSL native cache root: the real one spawns wsl.exe and would create dirs in the live WSL home.
 // Point it at an in-temp dir.
-vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), async () => {
+vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), async () => {
   const { tmpdir: osTmpdir } = await import("node:os");
   const { join: joinPath } = await import("node:path");
-  const { TEST_WSL_CACHE_DIR_NAME: testWslCacheDirName } = await import("@/services/exec/wsl/constants.test");
+  const { TEST_WSL_CACHE_DIR_NAME: testWslCacheDirName } = await import("#src/services/exec/wsl/constants.test");
   return { getWslNativeCacheRoot: () => joinPath(osTmpdir(), testWslCacheDirName) };
 });
 

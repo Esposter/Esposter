@@ -6,9 +6,9 @@ import {
   TEST_WSL_PREFIX,
   TEST_WSL_STORE_LINUX,
   TEST_WSL_UNC_PREFIX,
-} from "@/services/exec/wsl/constants.test";
-import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
-import { readWslPath } from "@/services/exec/wsl/readWslPath";
+} from "#src/services/exec/wsl/constants.test";
+import { createTestWslUnc } from "#src/services/exec/wsl/createTestWslUnc.test";
+import { readWslPath } from "#src/services/exec/wsl/readWslPath";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({

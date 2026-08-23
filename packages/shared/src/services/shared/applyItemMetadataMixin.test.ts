@@ -1,4 +1,4 @@
-import { applyItemMetadataMixin } from "@/services/shared/applyItemMetadataMixin";
+import { applyItemMetadataMixin } from "#src/services/shared/applyItemMetadataMixin";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(applyItemMetadataMixin, () => {

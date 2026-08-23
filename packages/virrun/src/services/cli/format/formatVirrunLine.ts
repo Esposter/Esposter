@@ -1,5 +1,5 @@
-import { Color } from "@/models/cli/Color";
-import { colorize } from "@/services/cli/color/colorize";
+import { Color } from "#src/models/cli/Color";
+import { colorize } from "#src/services/cli/color/colorize";
 // The `[virrun]` line prefix every CLI diagnostic shares: a bold-cyan tag, then a space, then the message. Centralized
 // So the tag's text and styling live in exactly one place and every stderr line (banners, results, cache/doctor/init/
 // Warm/hint output) reads consistently — and is colorized identically, instead of some lines hardcoding a plain,

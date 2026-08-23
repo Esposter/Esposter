@@ -26,6 +26,10 @@ Absorbed: **simplification/skills**, folded into [docs](docs.md) on 2026-08-20 �
 against `skill-authoring`, so the tree was being read twice and each pass handed findings to the other. Its
 structural check went with it.
 
+Retired: **package-imports**, finished on 2026-08-23 and now enforced by an `.oxlintrc.json` override that bans
+`@/**` under `packages/*/src/**` — every package addresses its own source through `#src/*`, and the alias it
+replaced no longer exists to fall back to, since `tsconfig.base.json` has no `paths` block.
+
 Retired: **pass-through-helpers**, swept out on 2026-08-12 and now enforced by
 `pass-through-helper/no-forwarding-wrapper` — a forwarding wrapper fails the lint on the line that writes it, so
 there is nothing left to track. A sweep whose whole scope becomes enforceable is deleted rather than maintained

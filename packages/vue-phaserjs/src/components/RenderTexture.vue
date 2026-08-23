@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { RenderTextureConfiguration } from "@/models/configuration/RenderTextureConfiguration";
-import type { RenderTextureEventEmitsOptions } from "@/models/emit/RenderTextureEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { RenderTextureConfiguration } from "#src/models/configuration/RenderTextureConfiguration";
+import type { RenderTextureEventEmitsOptions } from "#src/models/emit/RenderTextureEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { RenderTextureSetterMap } from "@/util/setterMap/RenderTextureSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { RenderTextureSetterMap } from "#src/util/setterMap/RenderTextureSetterMap";
 
 interface RenderTextureEmits extends /** @vue-ignore */ RenderTextureEventEmitsOptions {}
 

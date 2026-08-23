@@ -1,4 +1,4 @@
-import { chunkBySerializedSize } from "@/util/array/chunkBySerializedSize";
+import { chunkBySerializedSize } from "#src/util/array/chunkBySerializedSize";
 import { describe, expect, test } from "vitest";
 
 describe(chunkBySerializedSize, () => {

@@ -1,15 +1,15 @@
-import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
-import type { TMXLayerParsed } from "@/models/tmx/parsed/TMXLayerParsed";
+import type { TMXLayerNode } from "#src/models/tmx/node/TMXLayerNode";
+import type { TMXLayerParsed } from "#src/models/tmx/parsed/TMXLayerParsed";
 
-import { Compression } from "@/models/Compression";
-import { Encoding } from "@/models/Encoding";
-import { cloneNodeWithType } from "@/util/cloneNodeWithType";
-import { getDecompressedBytes } from "@/util/getDecompressedBytes";
-import { isTMXEmbeddedTilesetNode } from "@/util/isTMXEmbeddedTilesetNode";
-import { parseFlips } from "@/util/parseFlips";
-import { parseProperties } from "@/util/parseProperties";
-import { parseTileId } from "@/util/parseTileId";
-import { unpackTileBytes } from "@/util/unpackTileBytes";
+import { Compression } from "#src/models/Compression";
+import { Encoding } from "#src/models/Encoding";
+import { cloneNodeWithType } from "#src/util/cloneNodeWithType";
+import { getDecompressedBytes } from "#src/util/getDecompressedBytes";
+import { isTMXEmbeddedTilesetNode } from "#src/util/isTMXEmbeddedTilesetNode";
+import { parseFlips } from "#src/util/parseFlips";
+import { parseProperties } from "#src/util/parseProperties";
+import { parseTileId } from "#src/util/parseTileId";
+import { unpackTileBytes } from "#src/util/unpackTileBytes";
 import { exhaustiveGuard, normalizeString, takeOne } from "@esposter/shared";
 
 export const parseTileLayer = async (

@@ -1,5 +1,5 @@
-import { useCameraStore } from "@/store/camera";
-import { getTestPinia, removeTestScene, startTestScene } from "@/test/fixtures/headlessGame.test";
+import { useCameraStore } from "#src/store/camera";
+import { getTestPinia, removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
 import { describe, expect, test, vi } from "vitest";
 
 describe(useCameraStore, () => {

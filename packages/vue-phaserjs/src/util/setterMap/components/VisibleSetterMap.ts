@@ -1,6 +1,6 @@
-import type { VisibleConfiguration } from "@/models/configuration/components/VisibleConfiguration";
-import type { VisibleEventEmitsOptions } from "@/models/emit/components/VisibleEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { VisibleConfiguration } from "#src/models/configuration/components/VisibleConfiguration";
+import type { VisibleEventEmitsOptions } from "#src/models/emit/components/VisibleEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 export const VisibleSetterMap = {

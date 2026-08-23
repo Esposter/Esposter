@@ -1,6 +1,6 @@
-import { pgTable } from "@/pgTable";
-import { achievements } from "@/schema/achievements";
-import { users } from "@/schema/users";
+import { pgTable } from "#src/pgTable";
+import { achievements } from "#src/schema/achievements";
+import { users } from "#src/schema/users";
 import { sql } from "drizzle-orm";
 import { check, integer, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 

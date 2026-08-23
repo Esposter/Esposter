@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { IsoTriangleConfiguration } from "@/models/configuration/IsoTriangleConfiguration";
-import type { IsoTriangleEventEmitsOptions } from "@/models/emit/IsoTriangleEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { IsoTriangleConfiguration } from "#src/models/configuration/IsoTriangleConfiguration";
+import type { IsoTriangleEventEmitsOptions } from "#src/models/emit/IsoTriangleEventEmitsOptions";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
-import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { IsoTriangleSetterMap } from "@/util/setterMap/IsoTriangleSetterMap";
+import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { IsoTriangleSetterMap } from "#src/util/setterMap/IsoTriangleSetterMap";
 
 interface IsoTriangleEmits extends /** @vue-ignore */ IsoTriangleEventEmitsOptions {}
 

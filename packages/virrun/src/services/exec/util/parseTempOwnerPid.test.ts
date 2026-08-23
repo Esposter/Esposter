@@ -3,10 +3,10 @@ import {
   VIRRUN_SNAPSHOT_TEMP_PREFIXES,
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
-} from "@/services/exec/snapshot/constants";
-import { PID } from "@/services/exec/test/constants.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { parseTempOwnerPid } from "@/services/exec/util/parseTempOwnerPid";
+} from "#src/services/exec/snapshot/constants";
+import { PID } from "#src/services/exec/test/constants.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
 import { describe, expect, test } from "vitest";
 
 describe(parseTempOwnerPid, () => {

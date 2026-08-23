@@ -1,6 +1,6 @@
-import { VIRRUN_SOURCES_DIRECTORY_NAME } from "@/services/exec/wsl/constants";
-import { getSourceMirrorKey } from "@/services/exec/wsl/getSourceMirrorKey";
-import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
+import { VIRRUN_SOURCES_DIRECTORY_NAME } from "#src/services/exec/wsl/constants";
+import { getSourceMirrorKey } from "#src/services/exec/wsl/getSourceMirrorKey";
+import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheRoot";
 import { join } from "node:path";
 // The ext4 mirror entry as a Windows UNC (`\\wsl.localhost\...\sources\<sha256(cwd)>`) — the host-side view of the
 // Same entry getWslSourceMirrorEntryPath addresses Linux-side. The planner reads/stages the manifest and the sync's

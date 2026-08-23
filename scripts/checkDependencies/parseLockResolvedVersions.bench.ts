@@ -1,5 +1,5 @@
-import { parseLockResolvedVersions } from "@/checkDependencies/parseLockResolvedVersions";
-import { sliceLockSection } from "@/checkDependencies/sliceLockSection";
+import { parseLockResolvedVersions } from "#scripts/checkDependencies/parseLockResolvedVersions";
+import { sliceLockSection } from "#scripts/checkDependencies/sliceLockSection";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { bench, describe } from "vitest";

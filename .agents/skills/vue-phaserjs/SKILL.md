@@ -81,4 +81,4 @@ Any Phaser class that chains to `Scene → TextureManager → Texture → Frame 
 
 `phaser` and `phaser4-rex-plugins` must stay externalized, subpaths included. A bundled `phaser4-rex-plugins/plugins/*.js` reads `Phaser.Scene`/`Phaser.Game` as globals at module-eval time and throws under Node SSR.
 
-Nothing in this package configures that: they are its `peerDependencies`, and `getExternal()` turns every peer into a prefix pattern that covers subpath imports. Keep them peers.
+Nothing in this package configures that: they are its `peerDependencies`, which tsdown externalizes. Keep them peers.

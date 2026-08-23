@@ -1,5 +1,5 @@
-import type { FsProvider } from "@/models/vfs/FsProvider";
-import type { FsProviderOptions } from "@/models/vfs/FsProviderOptions";
+import type { FsProvider } from "#src/models/vfs/FsProvider";
+import type { FsProviderOptions } from "#src/models/vfs/FsProviderOptions";
 
 import { create } from "@platformatic/vfs";
 // The swap shim: the ONLY module that imports @platformatic/vfs, to be replaced by core node:vfs when it

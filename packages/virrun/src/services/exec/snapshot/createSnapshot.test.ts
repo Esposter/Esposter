@@ -1,21 +1,21 @@
 import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
-} from "@/services/exec/snapshot/constants";
-import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
-import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { createRecordingBackend } from "@/services/exec/test/createRecordingBackend.test";
-import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
-import { VIRRUN_STORE_DIRECTORY_NAME } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+} from "#src/services/exec/snapshot/constants";
+import { createSnapshot } from "#src/services/exec/snapshot/createSnapshot";
+import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
+import { createRecordingBackend } from "#src/services/exec/test/createRecordingBackend.test";
+import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
+import { VIRRUN_STORE_DIRECTORY_NAME } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {beforeEach, describe, expect, test, vi} from "vitest";
 
 vi.mock(
-  import("@/services/exec/util/getSandboxNodeVersion"),
-  () => import("@/services/exec/test/getSandboxNodeVersion.test"),
+  import("#src/services/exec/util/getSandboxNodeVersion"),
+  () => import("#src/services/exec/test/getSandboxNodeVersion.test"),
 );
 
 describe(createSnapshot, () => {

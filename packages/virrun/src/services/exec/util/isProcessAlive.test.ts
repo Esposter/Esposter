@@ -1,5 +1,5 @@
-import { DEAD_PID } from "@/services/exec/test/constants.test";
-import { isProcessAlive } from "@/services/exec/util/isProcessAlive";
+import { DEAD_PID } from "#src/services/exec/test/constants.test";
+import { isProcessAlive } from "#src/services/exec/util/isProcessAlive";
 import { describe, expect, test } from "vitest";
 
 describe(isProcessAlive, () => {

@@ -1,7 +1,7 @@
-import { WSL_WORK_TIMEOUT_MS } from "@/services/exec/util/constants";
-import { WSL_REMOVE_SCRIPT, WSL_UNC_REGEX } from "@/services/exec/wsl/constants";
-import { execWsl } from "@/services/exec/wsl/execWsl";
-import { readWslPath } from "@/services/exec/wsl/readWslPath";
+import { WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { WSL_REMOVE_SCRIPT, WSL_UNC_REGEX } from "#src/services/exec/wsl/constants";
+import { execWsl } from "#src/services/exec/wsl/execWsl";
+import { readWslPath } from "#src/services/exec/wsl/readWslPath";
 import { chmodSync, existsSync, lstatSync, readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 // Removes a snapshot dir, restoring +rwx top-down first: a capture overlay's on-disk `work/work` scratch is left at

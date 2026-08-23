@@ -1,5 +1,5 @@
 name: 🏗️ Build Packages
-# Reusable workflow: build every non-app package once (ctix barrels + rolldown/vite bundles) and publish the
+# Reusable workflow: build every non-app package once (ctix barrels + tsdown bundles) and publish the
 # output as the `package-builds` artifact for the caller's downstream jobs. Called by both 🏗️ CI and 🏎️ Bench
 # via `uses: ./.github/workflows/build-packages.yaml`, so there is a single definition of the build + its cache
 # key. Artifacts are run-scoped (a reusable workflow shares the caller's run, so the artifact reaches the
@@ -28,7 +28,7 @@ jobs:
       - name: 📦 Install dependencies
         run: pnpm i
       # Cache key = a content hash (mode + blob hash + path) of only the TRACKED files that actually feed
-      # `pnpm build:packages` (ctix barrel gen + rolldown/vite bundle of each package's src/index.ts), plus the
+      # `pnpm build:packages` (ctix barrel gen + tsdown bundle of each package's src/index.ts), plus the
       # root package.json (infra bundles it via `import packageJson from "../../../../package.json"`), the lockfile
       # and the catalog. This is an allowlist, not a denylist: every non-app package builds with the same fixed
       # stack, so the build inputs are a small, stable set and we enumerate them explicitly rather than hashing
@@ -41,7 +41,7 @@ jobs:
       # adding a build input of a new shape (e.g. a new root-level config a package's build reads) means adding
       # it to the allowlist below.
       #
-      # Allowed per non-app package: package.json, rolldown.config.ts, vite.config.ts, auto-imports.d.ts (any vue
+      # Allowed per non-app package: package.json, tsdown.config.ts, auto-imports.d.ts (any vue
       # package's generated ambient imports), tsconfig*.json, src/** (minus *.test.ts/*.test-d.ts/*.bench.ts),
       # types/**; plus configuration/.ctirc-* (drives every package's barrel gen).
       - name: 🔑 Compute package build cache key
@@ -51,7 +51,7 @@ jobs:
             git ls-tree -r HEAD packages | awk -F'\t' '
               $2 ~ /^packages\/app\// { next }
               $2 ~ /\.(test|test-d|bench)\.ts$/ { next }
-              $2 ~ /^packages\/[^/]+\/(package\.json|rolldown\.config\.ts|vite\.config\.ts|auto-imports\.d\.ts)$/ { print; next }
+              $2 ~ /^packages\/[^/]+\/(package\.json|tsdown\.config\.ts|auto-imports\.d\.ts)$/ { print; next }
               $2 ~ /^packages\/[^/]+\/tsconfig[^/]*\.json$/ { print; next }
               $2 ~ /^packages\/[^/]+\/(src|types)\// { print; next }
               $2 ~ /^packages\/configuration\/\.ctirc-/ { print; next }

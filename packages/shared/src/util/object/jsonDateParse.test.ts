@@ -1,4 +1,4 @@
-import { jsonDateParse } from "@/util/object/jsonDateParse";
+import { jsonDateParse } from "#src/util/object/jsonDateParse";
 import { describe, expect, test } from "vitest";
 
 describe(jsonDateParse, () => {

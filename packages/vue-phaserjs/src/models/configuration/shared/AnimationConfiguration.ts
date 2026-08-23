@@ -1,4 +1,4 @@
-import type { AnimationKey } from "@/models/keys/AnimationKey";
+import type { AnimationKey } from "#src/models/keys/AnimationKey";
 import type { Types } from "phaser";
 
 export interface AnimationConfiguration {

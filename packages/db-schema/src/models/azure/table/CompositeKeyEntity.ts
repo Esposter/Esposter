@@ -1,4 +1,4 @@
-import type { CompositeKey } from "@/models/azure/table/CompositeKey";
+import type { CompositeKey } from "@esposter/azure";
 import type { z, ZodRawShape } from "zod";
 
 import { Serializable } from "@esposter/shared";

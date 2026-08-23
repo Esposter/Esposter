@@ -1,9 +1,9 @@
-import { DEAD_PID } from "@/services/exec/test/constants.test";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { REMOVE_LIST_REAP_MINIMUM_AGE_MS } from "@/services/exec/util/constants";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { VIRRUN_REMOVE_LIST_TEMP_PREFIX } from "@/services/exec/wsl/constants";
-import { reapStaleRemoveLists } from "@/services/exec/wsl/reapStaleRemoveLists";
+import { DEAD_PID } from "#src/services/exec/test/constants.test";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { REMOVE_LIST_REAP_MINIMUM_AGE_MS } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { VIRRUN_REMOVE_LIST_TEMP_PREFIX } from "#src/services/exec/wsl/constants";
+import { reapStaleRemoveLists } from "#src/services/exec/wsl/reapStaleRemoveLists";
 import { existsSync, mkdirSync, utimesSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";

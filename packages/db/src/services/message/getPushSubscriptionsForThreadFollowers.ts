@@ -1,6 +1,6 @@
 import type { Database, ThreadFollowInMessage } from "@esposter/db-schema";
 
-import { PUSH_SUBSCRIPTION_COLUMNS } from "@/services/pushNotification/constants";
+import { PUSH_SUBSCRIPTION_COLUMNS } from "#src/services/pushNotification/constants";
 import {
   NotificationType,
   pushSubscriptionsInMessage,

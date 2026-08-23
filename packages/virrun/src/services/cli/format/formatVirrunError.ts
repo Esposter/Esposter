@@ -1,6 +1,6 @@
-import { Color } from "@/models/cli/Color";
-import { colorize } from "@/services/cli/color/colorize";
-import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
+import { Color } from "#src/models/cli/Color";
+import { colorize } from "#src/services/cli/color/colorize";
+import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 // A failure line: the shared `[virrun]` tag with the whole body reddened — the palette's failure role, the sibling of
 // FormatVirrunDebug's dimmed one. Every surface that reports a failure renders through this (the cache commands, warm,
 // A run whose backend threw, the doctor's unavailable verdict), so one failure reads identically wherever it is raised

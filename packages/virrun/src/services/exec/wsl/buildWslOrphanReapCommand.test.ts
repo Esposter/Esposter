@@ -1,5 +1,5 @@
-import { buildWslOrphanReapCommand } from "@/services/exec/wsl/buildWslOrphanReapCommand";
-import { VIRRUN_WSL_PROCESS_MARKER } from "@/services/exec/wsl/constants";
+import { buildWslOrphanReapCommand } from "#src/services/exec/wsl/buildWslOrphanReapCommand";
+import { VIRRUN_WSL_PROCESS_MARKER } from "#src/services/exec/wsl/constants";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

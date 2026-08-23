@@ -1,7 +1,7 @@
-import { DEAD_PID } from "@/services/exec/test/constants.test";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { seedFile } from "@/services/exec/test/seedFile.test";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { DEAD_PID } from "#src/services/exec/test/constants.test";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { seedFile } from "#src/services/exec/test/seedFile.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import {
   VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
@@ -10,8 +10,8 @@ import {
   VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
   VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
-} from "@/services/exec/wsl/constants";
-import { reapStaleSourceMirrorTemps } from "@/services/exec/wsl/reapStaleSourceMirrorTemps";
+} from "#src/services/exec/wsl/constants";
+import { reapStaleSourceMirrorTemps } from "#src/services/exec/wsl/reapStaleSourceMirrorTemps";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";

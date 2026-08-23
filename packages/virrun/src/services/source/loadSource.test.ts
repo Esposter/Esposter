@@ -1,6 +1,6 @@
-import { SourceType } from "@/models/source/SourceType";
-import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { loadSource } from "@/services/source/loadSource";
+import { SourceType } from "#src/models/source/SourceType";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
+import { loadSource } from "#src/services/source/loadSource";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";

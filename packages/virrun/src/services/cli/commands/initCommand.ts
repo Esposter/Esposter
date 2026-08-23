@@ -1,14 +1,14 @@
-import type { InitArgs } from "@/models/cli/InitArgs";
+import type { InitArgs } from "#src/models/cli/InitArgs";
 import type { ArgsDef, CommandDef } from "citty";
 
-import { Color } from "@/models/cli/Color";
-import { BackendType } from "@/models/virrun/BackendType";
-import { CommandType } from "@/models/virrun/CommandType";
-import { Environment } from "@/models/virrun/Environment";
-import { colorize } from "@/services/cli/color/colorize";
-import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
-import { buildVirrunConfigurationContent } from "@/services/configuration/buildVirrunConfigurationContent";
-import { VIRRUN_CONFIGURATION_FILENAME } from "@/services/exec/util/constants";
+import { Color } from "#src/models/cli/Color";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { CommandType } from "#src/models/virrun/CommandType";
+import { Environment } from "#src/models/virrun/Environment";
+import { colorize } from "#src/services/cli/color/colorize";
+import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
+import { buildVirrunConfigurationContent } from "#src/services/configuration/buildVirrunConfigurationContent";
+import { VIRRUN_CONFIGURATION_FILENAME } from "#src/services/exec/util/constants";
 import { defineCommand } from "citty";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

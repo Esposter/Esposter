@@ -1,5 +1,5 @@
-import { writeVirrunDebug } from "@/services/cli/debug/writeVirrunDebug";
-import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
+import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
 import { getResult, noop } from "@esposter/shared";
 // Teardown of a temp THIS invocation owns: never throws. Every such removal is housekeeping rather than correctness —
 // The pid-tagged temp convention exists precisely so a corpse left behind is reclaimed later (reapStaleTemps,

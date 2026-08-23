@@ -1,10 +1,10 @@
-import type { ArcConfiguration } from "@/models/configuration/ArcConfiguration";
-import type { ArcEventEmitsOptions } from "@/models/emit/ArcEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { ArcConfiguration } from "#src/models/configuration/ArcConfiguration";
+import type { ArcEventEmitsOptions } from "#src/models/emit/ArcEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { GlobalSetterMap } from "@/util/setterMap/global/GlobalSetterMap";
-import { ShapeSetterMap } from "@/util/setterMap/shared/ShapeSetterMap";
+import { GlobalSetterMap } from "#src/util/setterMap/global/GlobalSetterMap";
+import { ShapeSetterMap } from "#src/util/setterMap/shared/ShapeSetterMap";
 
 export const ArcSetterMap: SetterMap<ArcConfiguration, GameObjects.Arc, ArcEventEmitsOptions> = {
   closePath: (gameObject) => (value) => {

@@ -7,7 +7,7 @@ import type {
   PgTableWithColumns,
 } from "drizzle-orm/pg-core";
 
-import { metadataSchema } from "@/metadataSchema";
+import { metadataSchema } from "#src/metadataSchema";
 import { camelCase } from "drizzle-orm/pg-core";
 
 export interface PgTable {

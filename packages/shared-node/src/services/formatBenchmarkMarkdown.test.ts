@@ -1,6 +1,6 @@
-import type { BenchmarkReport } from "@/models/BenchmarkReport";
+import type { BenchmarkReport } from "#src/models/BenchmarkReport";
 
-import { formatBenchmarkMarkdown } from "@/services/formatBenchmarkMarkdown";
+import { formatBenchmarkMarkdown } from "#src/services/formatBenchmarkMarkdown";
 import { describe, expect, test } from "vitest";
 
 describe(formatBenchmarkMarkdown, () => {

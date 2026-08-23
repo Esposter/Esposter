@@ -1,5 +1,5 @@
-import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
-import { devSbnsEsposter001 } from "@/azure/resources/Microsoft.ServiceBus/namespaces/devSbnsEsposter001";
+import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
+import { devSbnsEsposter001 } from "#src/azure/resources/Microsoft.ServiceBus/namespaces/devSbnsEsposter001";
 import { AzureQueue } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 

@@ -6,22 +6,13 @@ describe("vue-phaserjs", () => {
   const distFile = resolve(import.meta.dirname, "../dist/index.js");
   const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
 
-  // The only package whose bundle differs across OSes: it is large enough that the minifier's single-character
-  // Identifiers run out, and which module gets the two-character name follows a module order that a Windows and
-  // A POSIX build resolve differently — two bytes apart, every time. The types bundle is byte-identical, so it
-  // Stays unguarded
-  test.skipIf(process.platform !== "win32")("bundle size (Windows)", () => {
+  test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 32.41 KB (33186 bytes)"`);
-  });
-
-  test.skipIf(process.platform === "win32")("bundle size (POSIX)", () => {
-    expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 32.41 KB (33188 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 59.64 KB (61074 bytes)"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 10.70 KB (10961 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 526.77 KB (539417 bytes)"`);
   });
 });

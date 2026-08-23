@@ -1,8 +1,8 @@
-import AzureEventGridDataSenderRoleDefinitionId from "@/azure/constants/AzureEventGridDataSenderRoleDefinitionId";
-import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
-import DevFuncEsposter001PrincipalId from "@/azure/constants/DevFuncEsposter001PrincipalId";
-import { devEvgtEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/topics/devEvgtEsposterAe001";
-import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
+import AzureEventGridDataSenderRoleDefinitionId from "#src/azure/constants/AzureEventGridDataSenderRoleDefinitionId";
+import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
+import DevFuncEsposter001PrincipalId from "#src/azure/constants/DevFuncEsposter001PrincipalId";
+import { devEvgtEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/topics/devEvgtEsposterAe001";
+import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 

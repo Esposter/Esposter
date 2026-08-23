@@ -1,17 +1,17 @@
-import { computeEnvironmentKey } from "@/services/exec/snapshot/computeEnvironmentKey";
+import { computeEnvironmentKey } from "#src/services/exec/snapshot/computeEnvironmentKey";
 import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
-} from "@/services/exec/snapshot/constants";
-import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
+} from "#src/services/exec/snapshot/constants";
+import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
+import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import {describe, expect, test, vi} from "vitest";
 
 vi.mock(
-  import("@/services/exec/util/getSandboxNodeVersion"),
-  () => import("@/services/exec/test/getSandboxNodeVersion.test"),
+  import("#src/services/exec/util/getSandboxNodeVersion"),
+  () => import("#src/services/exec/test/getSandboxNodeVersion.test"),
 );
 
 describe(resolveSnapshotLocation, () => {

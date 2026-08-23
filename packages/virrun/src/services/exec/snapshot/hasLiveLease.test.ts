@@ -1,8 +1,8 @@
-import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
-import { hasLiveLease } from "@/services/exec/snapshot/hasLiveLease";
-import { DEAD_PID } from "@/services/exec/test/constants.test";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { writeLeaseFile } from "@/services/exec/test/writeLeaseFile.test";
+import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import { hasLiveLease } from "#src/services/exec/snapshot/hasLiveLease";
+import { DEAD_PID } from "#src/services/exec/test/constants.test";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { writeLeaseFile } from "#src/services/exec/test/writeLeaseFile.test";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";

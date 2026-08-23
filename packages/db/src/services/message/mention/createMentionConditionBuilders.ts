@@ -1,9 +1,9 @@
-import type { MentionConditionBuilder } from "@/models/message/MentionConditionBuilder";
+import type { MentionConditionBuilder } from "#src/models/message/MentionConditionBuilder";
 import type { ClassifiedMentions } from "@esposter/shared";
 import type { SQL } from "drizzle-orm";
 
-import { getBroadcastMentionConditions } from "@/services/message/mention/getBroadcastMentionConditions";
-import { getRoleMemberIds } from "@/services/message/mention/getRoleMemberIds";
+import { getBroadcastMentionConditions } from "#src/services/message/mention/getBroadcastMentionConditions";
+import { getRoleMemberIds } from "#src/services/message/mention/getRoleMemberIds";
 // Badge targeting and notification targeting resolve the same three mention kinds and differ only in the
 // Condition a resolved set of user ids becomes, so that condition is the factory's one parameter.
 export const createMentionConditionBuilders = (

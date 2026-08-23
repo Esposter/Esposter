@@ -1,6 +1,6 @@
-import type { ScrollFactorConfiguration } from "@/models/configuration/components/ScrollFactorConfiguration";
-import type { ScrollFactorEventEmitsOptions } from "@/models/emit/components/ScrollFactorEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { ScrollFactorConfiguration } from "#src/models/configuration/components/ScrollFactorConfiguration";
+import type { ScrollFactorEventEmitsOptions } from "#src/models/emit/components/ScrollFactorEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 export const ScrollFactorSetterMap = {

@@ -1,4 +1,4 @@
-import { TMXMapParsed } from "@/models/tmx/parsed/TMXMapParsed";
+import { TMXMapParsed } from "#src/models/tmx/parsed/TMXMapParsed";
 
 export class TMXParsed {
   map: TMXMapParsed = new TMXMapParsed();

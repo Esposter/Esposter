@@ -1,13 +1,13 @@
 import type { ServiceBusQueueHandler } from "@azure/functions";
 
-import { assertCanCreateMessage } from "@/services/assertCanCreateMessage";
-import { createAndBroadcastMessage } from "@/services/createAndBroadcastMessage";
-import { db } from "@/services/db";
-import { getPushNotificationData } from "@/services/getPushNotificationData";
-import { getServiceBusSender } from "@/services/getServiceBusSender";
-import { logAndRethrow } from "@/services/logAndRethrow";
-import { sendPushNotification } from "@/services/sendPushNotification";
-import { sendReminderNotification } from "@/services/sendReminderNotification";
+import { assertCanCreateMessage } from "#src/services/assertCanCreateMessage";
+import { createAndBroadcastMessage } from "#src/services/createAndBroadcastMessage";
+import { db } from "#src/services/db";
+import { getPushNotificationData } from "#src/services/getPushNotificationData";
+import { getServiceBusSender } from "#src/services/getServiceBusSender";
+import { logAndRethrow } from "#src/services/logAndRethrow";
+import { sendPushNotification } from "#src/services/sendPushNotification";
+import { sendReminderNotification } from "#src/services/sendReminderNotification";
 import { enqueueScheduledMessageJob } from "@esposter/db";
 import {
   AzureFunction,

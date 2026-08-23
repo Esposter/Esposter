@@ -1,4 +1,4 @@
-import { BinaryOperators } from "@esposter/db-schema";
+import { BinaryOperators } from "@esposter/azure";
 import { ID_SEPARATOR } from "@esposter/shared";
 
 const VALUE_REGEX = [

@@ -1,5 +1,5 @@
-import { pgTable } from "@/pgTable";
-import { users } from "@/schema/users";
+import { pgTable } from "#src/pgTable";
+import { users } from "#src/schema/users";
 import { sql } from "drizzle-orm";
 import { check, index, primaryKey, text } from "drizzle-orm/pg-core";
 

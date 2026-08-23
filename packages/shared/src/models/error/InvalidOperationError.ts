@@ -1,4 +1,4 @@
-import type { Operation } from "@/models/shared/Operation";
+import type { Operation } from "#src/models/shared/Operation";
 
 export class InvalidOperationError extends Error {
   constructor(operation: Operation, name: string, message: string) {

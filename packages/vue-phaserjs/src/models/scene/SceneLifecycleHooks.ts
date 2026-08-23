@@ -1,4 +1,4 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
 export interface SceneLifecycleHooks {
   onCreate?: (scene: SceneWithPlugins) => void;

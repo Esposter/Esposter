@@ -1,8 +1,8 @@
-import type { Like } from "@/schema/likes";
-import type { Post } from "@/schema/posts";
-import type { User } from "@/schema/users";
+import type { Like } from "#src/schema/likes";
+import type { Post } from "#src/schema/posts";
+import type { User } from "#src/schema/users";
 
-import { schema } from "@/schema";
+import { schema } from "#src/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
 export const postsRelation = defineRelationsPart(schema, (r) => ({

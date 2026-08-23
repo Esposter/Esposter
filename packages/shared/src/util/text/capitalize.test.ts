@@ -1,4 +1,4 @@
-import { capitalize } from "@/util/text/capitalize";
+import { capitalize } from "#src/util/text/capitalize";
 import { describe, expect, test } from "vitest";
 
 describe(capitalize, () => {

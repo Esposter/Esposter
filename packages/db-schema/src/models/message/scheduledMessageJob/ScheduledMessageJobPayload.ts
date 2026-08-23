@@ -1,8 +1,8 @@
-import type { ReminderScheduledMessageJobPayload } from "@/models/message/scheduledMessageJob/ReminderScheduledMessageJobPayload";
-import type { ScheduledMessageScheduledMessageJobPayload } from "@/models/message/scheduledMessageJob/ScheduledMessageScheduledMessageJobPayload";
+import type { ReminderScheduledMessageJobPayload } from "#src/models/message/scheduledMessageJob/ReminderScheduledMessageJobPayload";
+import type { ScheduledMessageScheduledMessageJobPayload } from "#src/models/message/scheduledMessageJob/ScheduledMessageScheduledMessageJobPayload";
 
-import { reminderScheduledMessageJobPayloadSchema } from "@/models/message/scheduledMessageJob/ReminderScheduledMessageJobPayload";
-import { scheduledMessageScheduledMessageJobPayloadSchema } from "@/models/message/scheduledMessageJob/ScheduledMessageScheduledMessageJobPayload";
+import { reminderScheduledMessageJobPayloadSchema } from "#src/models/message/scheduledMessageJob/ReminderScheduledMessageJobPayload";
+import { scheduledMessageScheduledMessageJobPayloadSchema } from "#src/models/message/scheduledMessageJob/ScheduledMessageScheduledMessageJobPayload";
 import { z } from "zod";
 
 export type ScheduledMessageJobPayload =

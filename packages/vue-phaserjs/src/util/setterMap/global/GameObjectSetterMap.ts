@@ -1,6 +1,6 @@
-import type { GameObjectConfiguration } from "@/models/configuration/global/GameObjectConfiguration";
-import type { GameObjectEventEmitsOptions } from "@/models/emit/global/GameObjectEventEmitsOptions";
-import type { SetterMap } from "@/models/setterMap/SetterMap";
+import type { GameObjectConfiguration } from "#src/models/configuration/global/GameObjectConfiguration";
+import type { GameObjectEventEmitsOptions } from "#src/models/emit/global/GameObjectEventEmitsOptions";
+import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 export const GameObjectSetterMap = {

@@ -1,9 +1,9 @@
-import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
-import type { TMXLayerParsed } from "@/models/tmx/parsed/TMXLayerParsed";
+import type { TMXLayerNode } from "#src/models/tmx/node/TMXLayerNode";
+import type { TMXLayerParsed } from "#src/models/tmx/parsed/TMXLayerParsed";
 
-import { cloneNodeWithType } from "@/util/cloneNodeWithType";
-import { parseObject } from "@/util/parseObject";
-import { parseProperties } from "@/util/parseProperties";
+import { cloneNodeWithType } from "#src/util/cloneNodeWithType";
+import { parseObject } from "#src/util/parseObject";
+import { parseProperties } from "#src/util/parseProperties";
 import { takeOne } from "@esposter/shared";
 
 export const parseLayer = (node: TMXLayerNode): TMXLayerParsed => {

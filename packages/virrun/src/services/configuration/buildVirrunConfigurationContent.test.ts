@@ -1,6 +1,6 @@
-import { BackendType } from "@/models/virrun/BackendType";
-import { Environment } from "@/models/virrun/Environment";
-import { buildVirrunConfigurationContent } from "@/services/configuration/buildVirrunConfigurationContent";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { Environment } from "#src/models/virrun/Environment";
+import { buildVirrunConfigurationContent } from "#src/services/configuration/buildVirrunConfigurationContent";
 import { describe, expect, test } from "vitest";
 
 describe(buildVirrunConfigurationContent, () => {

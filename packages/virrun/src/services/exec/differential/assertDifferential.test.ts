@@ -1,7 +1,7 @@
-import type { NormalizationRule } from "@/models/exec/differential/NormalizationRule";
-import type { ExecBackend } from "@/models/exec/ExecBackend";
+import type { NormalizationRule } from "#src/models/exec/differential/NormalizationRule";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
-import { normalizeExecResult } from "@/services/exec/differential/normalizeExecResult";
+import { normalizeExecResult } from "#src/services/exec/differential/normalizeExecResult";
 import { describe, expect } from "vitest";
 
 // The shared body of every differential correctness test: run the same command through the candidate backend

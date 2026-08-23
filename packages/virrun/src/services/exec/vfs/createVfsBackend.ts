@@ -1,9 +1,9 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
+import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
-import { BackendType } from "@/models/virrun/BackendType";
-import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
-import { parseNodeInvocation } from "@/services/exec/vfs/parseNodeInvocation";
-import { runNodeInProcess } from "@/services/exec/vfs/runNodeInProcess";
+import { BackendType } from "#src/models/virrun/BackendType";
+import { createNativeBackend } from "#src/services/exec/native/createNativeBackend";
+import { parseNodeInvocation } from "#src/services/exec/vfs/parseNodeInvocation";
+import { runNodeInProcess } from "#src/services/exec/vfs/runNodeInProcess";
 // The vfs backend: run recognised pure-JS node invocations in the current process (no child spawn, no disk) and
 // Fall back to native for everything else. Every path it can't run faithfully in-process defers to native, so
 // Correctness always matches the baseline; the speed win exists only on the in-process path.

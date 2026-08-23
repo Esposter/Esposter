@@ -1,8 +1,8 @@
-import { dayjs } from "@/services/dayjs.test";
-import { createOsBackend } from "@/services/exec/os/createOsBackend";
-import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import { ACCEPTANCE_TIMEOUT_MINUTES } from "@/services/exec/test/constants.test";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { dayjs } from "#src/services/dayjs.test";
+import { createOsBackend } from "#src/services/exec/os/createOsBackend";
+import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
+import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
+import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import * as fc from "fast-check";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

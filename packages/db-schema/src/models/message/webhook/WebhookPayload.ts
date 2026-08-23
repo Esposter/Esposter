@@ -1,8 +1,8 @@
-import type { Embed } from "@/models/message/webhook/Embed";
+import type { Embed } from "#src/models/message/webhook/Embed";
 
-import { embedSchema } from "@/models/message/webhook/Embed";
-import { USER_NAME_MAX_LENGTH } from "@/schema/users";
-import { FILE_MAX_LENGTH } from "@/services/azure/container/constants";
+import { embedSchema } from "#src/models/message/webhook/Embed";
+import { USER_NAME_MAX_LENGTH } from "#src/schema/users";
+import { FILE_MAX_LENGTH } from "#src/services/azure/container/constants";
 import { z } from "zod";
 
 export interface WebhookPayload {

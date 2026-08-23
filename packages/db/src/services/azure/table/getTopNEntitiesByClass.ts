@@ -1,9 +1,10 @@
 import type { TableEntityQueryOptions } from "@azure/data-tables";
-import type { CompositeKey, CustomTableClient } from "@esposter/db-schema";
+import type { CompositeKey } from "@esposter/azure";
+import type { CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
-import { deserializeEntity } from "@/services/azure/transformer/deserializeEntity";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
+import { deserializeEntity } from "#src/services/azure/transformer/deserializeEntity";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 
 export const getTopNEntitiesByClass = async <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,

@@ -1,5 +1,6 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { AzureEntity, Clause, CustomTableClient } from "@esposter/db-schema";
+import type { Clause } from "@esposter/azure";
+import type { AzureEntity, CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";

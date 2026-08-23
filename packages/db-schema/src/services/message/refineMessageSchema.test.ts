@@ -1,7 +1,7 @@
-import type { FileEntity } from "@/models/azure/table/FileEntity";
+import type { FileEntity } from "#src/models/azure/table/FileEntity";
 
-import { fileEntitySchema } from "@/models/azure/table/FileEntity";
-import { refineMessageSchema } from "@/services/message/refineMessageSchema";
+import { fileEntitySchema } from "#src/models/azure/table/FileEntity";
+import { refineMessageSchema } from "#src/services/message/refineMessageSchema";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 

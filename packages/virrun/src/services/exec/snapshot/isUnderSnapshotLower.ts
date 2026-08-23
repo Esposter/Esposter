@@ -1,5 +1,5 @@
-import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
-import { isExcludedPath } from "@/services/exec/util/isExcludedPath";
+import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
+import { isExcludedPath } from "#src/services/exec/util/isExcludedPath";
 // Whether an overlay-upper path is cache-owned (drop) vs real source the persist flush must reconcile
 // (specs/write-back.md). Two masked classes: (1) the snapshot lower materialises node_modules AND the shared
 // Parents housing the per-package ones (`packages/<pkg>`), so an ancestor-walk over lower paths wrongly masks a

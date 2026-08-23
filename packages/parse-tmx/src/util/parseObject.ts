@@ -1,10 +1,10 @@
-import type { TMXObjectNode } from "@/models/tmx/node/TMXObjectNode";
-import type { TMXObjectParsed } from "@/models/tmx/parsed/TMXObjectParsed";
+import type { TMXObjectNode } from "#src/models/tmx/node/TMXObjectNode";
+import type { TMXObjectParsed } from "#src/models/tmx/parsed/TMXObjectParsed";
 
-import { parseFlips } from "@/util/parseFlips";
-import { parseObjectShape } from "@/util/parseObjectShape";
-import { parseProperties } from "@/util/parseProperties";
-import { parseTileId } from "@/util/parseTileId";
+import { parseFlips } from "#src/util/parseFlips";
+import { parseObjectShape } from "#src/util/parseObjectShape";
+import { parseProperties } from "#src/util/parseProperties";
+import { parseTileId } from "#src/util/parseTileId";
 import { takeOne } from "@esposter/shared";
 
 export const parseObject = (node: TMXObjectNode): TMXObjectParsed => {

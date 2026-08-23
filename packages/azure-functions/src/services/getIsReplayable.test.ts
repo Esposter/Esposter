@@ -1,5 +1,5 @@
-import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "@/services/constants";
-import { getIsReplayable } from "@/services/getIsReplayable";
+import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/constants";
+import { getIsReplayable } from "#src/services/getIsReplayable";
 import { AzureFunction, IsIdempotentAzureFunctionMap } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

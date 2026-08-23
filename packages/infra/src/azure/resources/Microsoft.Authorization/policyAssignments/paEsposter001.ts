@@ -1,5 +1,5 @@
-import ApplicationTagName from "@/azure/constants/ApplicationTagName";
-import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
+import ApplicationTagName from "#src/azure/constants/ApplicationTagName";
+import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
 import * as azure_native from "@pulumi/azure-native";
 
 const policyAssignmentName = "pa-esposter-001";

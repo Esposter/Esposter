@@ -1,4 +1,4 @@
-import { processThreadReplyNotificationHandler } from "@/handlers/processThreadReplyNotificationHandler";
+import { processThreadReplyNotificationHandler } from "#src/handlers/processThreadReplyNotificationHandler";
 import { app } from "@azure/functions";
 import { AzureFunction } from "@esposter/db-schema";
 

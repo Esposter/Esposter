@@ -1,4 +1,4 @@
-import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
+import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "#src/services/exec/util/constants";
 import { homedir } from "node:os";
 import { join } from "node:path";
 // The same-OS, spawn-free cache root: `~/.virrun` on the host virrun's process actually runs on (VIRRUN_CACHE_HOME
