@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SerializableValue } from "@esposter/azure";
+
 interface MessageRightSideBarSearchFilterOptionListProps {
   items: { icon: string; label: string; value: SerializableValue }[];
 }

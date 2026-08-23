@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SerializableValue } from "@esposter/azure";
+
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
 const items = [
   { icon: "mdi-pin", label: "true", value: true },

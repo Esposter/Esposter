@@ -60,7 +60,7 @@ Bundling a dependency instead is not a saving. It defeats the consumer's dedupli
 
 Two kinds of package opt out, both in their own `tsdown.config.ts`:
 
-- **Self-contained bundles.** `virrun` is a CLI installed with one command and `azure-functions` is a deploy artifact dropped into a host that installs nothing, so both vendor what they use. `virrun` gets this for free — everything it bundles is a `devDependency` — and declares only that `unconfig` stays external, because `unconfig` resolves `jiti` through `createRequire` relative to its own installed file and vendoring rebases that lookup. `azure-functions` derives its `alwaysBundle` list from its own manifest, minus the `@azure/functions` the host provides.
+- **Self-contained bundles.** These are programs rather than libraries — something runs their `dist` directly — so they vendor what they use instead of leaving imports for a resolver. `virrun` is a CLI installed with one command, `azure-functions` is a deploy artifact dropped into a host that installs nothing, and `infra` is the program Pulumi runs. `infra` vendors only its workspace siblings, deriving them from its own `dependencies`; the `@pulumi/*` SDKs stay peers, because the engine hands the program its own instance and a vendored copy would not be it. `virrun` gets this for free — everything it bundles is a `devDependency` — and declares only that `unconfig` stays external, because `unconfig` resolves `jiti` through `createRequire` relative to its own installed file and vendoring rebases that lookup. `azure-functions` derives its `alwaysBundle` list from its own manifest, minus the `@azure/functions` the host provides.
 - **`@esposter/configuration` itself**, which externalizes everything including `devDependencies`. It is private, never published, and its dist imports nothing but build tooling every workspace member already has installed.
 
 ### What was vendored is written back into the manifest
@@ -112,6 +112,17 @@ Those specifiers keep their own extension, which is what a `.vue` or `.json` imp
 ### Which unlocks source exports
 
 A package on `#src/` sets `exports: { devExports: true }`. tsdown then points `exports` at `src` for the workspace and writes the `dist` mapping into `publishConfig.exports` for the registry, so a workspace consumer resolves source while npm still gets the bundle — and `publint` and `attw` keep gating, because both read the publish shape. No rebuild stands between an edit and a consumer seeing it, a fresh clone typechecks without building anything first, and go-to-definition lands on real source.
+
+Source exports hold only while every consumer resolves them through a bundler or TypeScript. Vite, Vitest, `tsc`, `vue-tsc` and tsdown do; Node's own ESM loader does not, and twice over — it resolves no extensionless relative specifier, so the generated barrel's `export * from "./models/BinaryOperator"` fails, and its type-stripping cannot transform a TS `enum`. Nitro's prerender imports the built server through that loader, so the app inlines every workspace package into its server bundle:
+
+```ts
+// packages/app/configuration/nitro.ts
+externals: { inline: [getIsWorkspaceModule] },
+```
+
+It has to be a **function**, and the reason is Nitro's own scoring: every matcher gets a score and the highest one decides whether a module is inlined or externalized. Nitro's default `external` list holds the absolute `node_modules` directories, scored by path length. A RegExp is scored by the length of its source and loses to that every time — silently, since nothing reports a matcher that did not win. A function is scored above both.
+
+Matching the workspace directory rather than a list of names also means nothing has to be remembered: a package added under `packages/` is covered by the same rule. A name list would go stale, and a `@esposter/` prefix would silently miss `parse-tmx`, `vue-phaserjs` and `azure-mock`. Inlining is what a serverless artifact wants regardless — the deploy stops depending on `node_modules` resolution for code we wrote.
 
 Which packages have converted is tracked in `.agents/ledgers/package-imports.md`. The `paths` entries in `tsconfig.base.json` are what still resolves the rest, so they come out when the last row is dated.
 

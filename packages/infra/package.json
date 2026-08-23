@@ -69,5 +69,27 @@
     "@pulumi/azure-native": "catalog:",
     "@pulumi/github": "catalog:",
     "@pulumi/pulumi": "catalog:"
+  },
+  "inlinedDependencies": {
+    "dayjs": "1.11.23",
+    "deepmerge": "4.3.1",
+    "dom-serializer": "3.1.1",
+    "domelementtype": "3.0.0",
+    "domhandler": "6.0.1",
+    "domutils": "4.0.2",
+    "drizzle-orm": "1.0.0-rc.4",
+    "entities": "8.0.0",
+    "escape-string-regexp": "4.0.0",
+    "htmlparser2": "12.0.0",
+    "is-plain-object": "5.1.0",
+    "launder": "1.7.1",
+    "nanoid": "3.3.18",
+    "neverthrow": "8.2.0",
+    "parse-srcset": "1.0.2",
+    "picocolors": "1.1.1",
+    "postcss": "8.5.26",
+    "sanitize-html": "2.17.7",
+    "source-map-js": "1.2.1",
+    "zod": "4.4.3"
   }
 }

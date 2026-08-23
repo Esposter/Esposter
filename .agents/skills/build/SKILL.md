@@ -50,7 +50,7 @@ Anything handed to `deps` goes through `getPackagePatterns`. A bare name never m
 
 Declared in the package's own `tsdown.config.ts`, never in `configuration`:
 
-- **Self-contained bundles** (`virrun`, `azure-functions`) vendor what they use so consumers manage no peers. `virrun` needs no `alwaysBundle` at all — everything it vendors is already a `devDependency` — and declares only that `unconfig` stays external, because `unconfig` resolves `jiti` through `createRequire` relative to its own installed file and vendoring rebases that lookup. `azure-functions` derives `alwaysBundle` from its own manifest minus what the Functions host provides, and sets `dts: false` because nothing consumes its types.
+- **Self-contained bundles** (`virrun`, `azure-functions`, `infra`) are programs, not libraries — something runs their `dist` directly, so they vendor what they use rather than leave imports for a resolver. `infra` is the one that only vendors its workspace siblings, derived from its own `dependencies`: Pulumi runs `dist/index.js` under plain Node, so a sibling exporting source would die on the first import, while the `@pulumi/*` SDKs have to stay peers because the engine supplies its own instance. `virrun` needs no `alwaysBundle` at all — everything it vendors is already a `devDependency` — and declares only that `unconfig` stays external, because `unconfig` resolves `jiti` through `createRequire` relative to its own installed file and vendoring rebases that lookup. `azure-functions` derives `alwaysBundle` from its own manifest minus what the Functions host provides, and sets `dts: false` because nothing consumes its types.
 - **`@esposter/configuration`** uses `deps: { neverBundle: true }`. It is private, never published, and its dist imports nothing but build tooling every workspace member already has installed.
 
 ### Ambient declarations need `dts.eager`
@@ -108,6 +108,10 @@ A package on `#src/` sets `exports: { devExports: true }`, which points `exports
 - Typecheck sees real types, so anything a declaration bundler would flatten or widen surfaces immediately.
 
 `publint` and `attw` still gate the published shape, because both read `publishConfig.exports`.
+
+**Every consumer must resolve it through a bundler or TypeScript.** Vite, Vitest, `tsc`, `vue-tsc` and tsdown all do. Node's own ESM loader does not, twice over: it resolves no extensionless relative specifier, so the generated barrel's `export * from "./models/BinaryOperator"` fails outright, and its type-stripping cannot transform a TS `enum` without `--experimental-transform-types`. Nitro's prerender imports the built server through exactly that loader, so `packages/app` inlines every workspace package into the server bundle (`nitro.externals.inline`) and the loader never sees one. Pass a **function** there, never a RegExp: Nitro scores matchers and the highest score decides, its own `external` list holds the absolute `node_modules` directories scored by path length, and a RegExp is scored by the length of its source — so it loses, silently. The function matches anything resolving under `packages/`, which needs no list to maintain and cannot miss `parse-tmx`, `vue-phaserjs` or `azure-mock` the way a `@esposter/` prefix would.
+
+A new consumer that runs a workspace package through plain Node has the same two problems and needs the same answer. Reaching for extensions in the barrel instead does not work: the enum survives neither way.
 
 ### Migration status
 
