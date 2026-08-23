@@ -1,6 +1,6 @@
 import type { Clause } from "@esposter/azure";
 
-import { getTableNullClause } from "@esposter/db";
+import { getTableNullClause } from "@esposter/azure";
 import deepEqual from "fast-deep-equal";
 
 export const isNullClause = (clause: Clause<Record<string, unknown>>): boolean => {

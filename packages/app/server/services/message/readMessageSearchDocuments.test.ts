@@ -1,6 +1,5 @@
 import { readMessageSearchDocuments } from "@@/server/services/message/readMessageSearchDocuments";
-import { CompositeKeyPropertyNames } from "@esposter/azure";
-import { serializeKey } from "@esposter/db";
+import { CompositeKeyPropertyNames, serializeKey } from "@esposter/azure";
 import { MessageType, SearchIndex, StandardMessageEntity } from "@esposter/db-schema";
 import { MockSearchClient, MockSearchDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";

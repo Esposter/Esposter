@@ -9,7 +9,7 @@ How `src/` becomes `dist/` for every workspace package, and what an individual p
 
 ## One bundler
 
-Every package builds with **tsdown**, which is Rolldown plus the things a library build needs on top of it: declaration bundling, a generated `exports` field, and the publishability gates below. Every package's build script runs `export:gen` and then bare `tsdown` — the config file is found by name, never named on the command line.
+Every package builds with **tsdown**, which is Rolldown plus the things a library build needs on top of it: declaration bundling, a generated `exports` field, and the publishability gates below. A build script generates the barrel with `export:gen` and then runs bare `tsdown` — the config file is found by name, never named on the command line. A package with no barrel to generate runs `tsdown` alone.
 
 There is no second build path. The package that ships `.vue` files used to reach Rolldown through Vite for SFC compilation and a `vue-tsc` declaration build; tsdown does both directly, so a component can no longer compile one way for the build and another way for its tests.
 
@@ -36,14 +36,14 @@ The barrel is generated, never committed: `export:gen` runs `ctix` against `tsco
 
 `@esposter/configuration` owns every build input. A package's `tsdown.config.ts` is one factory call plus whatever is genuinely specific to it.
 
-| Factory                         | For                                              |
-| ------------------------------- | ------------------------------------------------ |
-| `getTsdownConfiguration`        | The base — `platform: "neutral"`                 |
-| `getTsdownConfigurationNode`    | The base plus `platform: "node"`                 |
-| `getTsdownConfigurationVue`     | The base plus SFC compilation and `dts.vue`      |
-| `getVuePlugins`                 | The SFC plugin pair, shared with the Vitest run  |
-| `getVitestConfiguration`        | The Vitest config every package's tests run on   |
-| `getBenchmarkTestConfiguration` | Just the bench wiring, for configs built scratch |
+| Factory                         | For                                                    |
+| ------------------------------- | ------------------------------------------------------ |
+| `getTsdownConfiguration`        | The base — `platform: "neutral"`                       |
+| `getTsdownConfigurationNode`    | The base plus `platform: "node"`                       |
+| `getTsdownConfigurationVue`     | The base plus SFC compilation and `dts.vue`            |
+| `getVuePlugins`                 | The SFC plugin pair, shared with the Vitest run        |
+| `getVitestConfiguration`        | The Vitest config every package's tests run on         |
+| `getBenchmarkTestConfiguration` | Just the bench wiring, for a config built from scratch |
 
 **Compose these with `mergeConfig`, never by spreading one into an object literal.** A spread replaces a key outright, so a config that adds a single `deps` or `dts` field silently drops every other field the base set on it — which is a build that quietly stops externalizing, or stops reading the build tsconfig, with nothing to show for it. `mergeConfig` merges into those keys instead.
 
@@ -64,14 +64,14 @@ Bundling a dependency instead is not a saving. It defeats the consumer's dedupli
 
 Two kinds of package opt out, both in their own `tsdown.config.ts`:
 
-- **Self-contained bundles.** These are programs rather than libraries — something runs their `dist` directly — so they vendor what they use instead of leaving imports for a resolver. `virrun` is a CLI installed with one command, `azure-functions` is a deploy artifact dropped into a host that installs nothing, and `infra` is the program Pulumi runs. `infra` vendors only its workspace siblings, deriving them from its own `dependencies`; the `@pulumi/*` SDKs stay peers, because the engine hands the program its own instance and a vendored copy would not be it. `virrun` gets this for free — everything it bundles is a `devDependency` — and declares only that `unconfig` stays external, because `unconfig` resolves `jiti` through `createRequire` relative to its own installed file and vendoring rebases that lookup. `azure-functions` derives its `alwaysBundle` list from its own manifest, minus the `@azure/functions` the host provides.
+- **Self-contained bundles.** These are programs rather than libraries — something runs their `dist` directly, with no package manager on the other side to resolve an import with — so they vendor what they use instead of leaving imports for a resolver. A CLI installed with one command and a deploy artifact dropped into a host that installs nothing are both this. The `alwaysBundle` list is derived from the manifest rather than typed out, so a newly added dependency is vendored without anyone remembering to. Three things stay external anyway: whatever the host itself provides (a vendored copy of the host's runtime API is not the instance the host hands the handler), anything that resolves a peer through `createRequire` relative to its own installed file (vendoring rebases that lookup into the bundle, where the peer is not), and a dependency that already resolves on disk wherever the program runs — a workspace sibling among `dependencies` is one, because Node reads its `default` arm and finds `dist`. That last case needs no opt-out at all, which is why a program can turn out to need none.
 - **`@esposter/configuration` itself**, which externalizes everything including `devDependencies`. It is private, never published, and its dist imports nothing but build tooling every workspace member already has installed.
 
 ### Only the deploy artifact is minified
 
-Nothing else is. A library ships readable output because whoever debugs it is reading a stack trace through it, and every consumer's own bundler minifies afterwards anyway. `azure-functions` is the exception: the Functions host downloads and parses `dist/index.js` on every cold start and no one reads it, so it is compressed — 7.25 MB to 5.00 MB.
+Nothing else is. A library ships readable output because whoever debugs it is reading a stack trace through it, and every consumer's own bundler minifies afterwards anyway. The deploy artifact is the exception: the host downloads and parses it on every cold start and no one reads it, so it is compressed — roughly a third off.
 
-**Identifier mangling stays off**, which is why the option is spelled out rather than `minify: true`. Mangling reaches 3.67 MB and renames every identifier, so a thrown error's stack names `t` rather than the handler — and for an EventGrid delivery that has already happened, that stack is the whole diagnosis. `dce-only` was measured as well and changes nothing, because rolldown already tree-shakes.
+**Identifier mangling stays off**, which is why the option is spelled out rather than `minify: true`. Mangling saves about that much again and renames every identifier, so a thrown error's stack names `t` rather than the handler — and for an EventGrid delivery that has already happened, that stack is the whole diagnosis. `dce-only` was measured as well and changes nothing, because rolldown already tree-shakes; whitespace removal is `codegen.removeWhitespace`, on by default and so never restated.
 
 Minified output is the one thing the test suite cannot check: the tests import source, and only the size snapshot reads `dist`.
 
@@ -132,7 +132,7 @@ A **directory is not a specifier**, which is the one place the substitution is l
 
 `#src/` wins on four counts, and every one of them is about a package being consumed by something other than itself:
 
-- **The resolution is anchored to the file, not to the compiler.** A `paths` entry belongs to whichever tsconfig drives the current compilation, so when a sibling bundles a package from source, `@/models/Clause` re-points into the _bundling_ package and resolves to nothing. `azure-functions`, `virrun` and `infra` all vendor siblings, so that was never hypothetical. A `#` specifier is resolved by walking up to the nearest `package.json`, which is always the one owning the importing file, so it survives being compiled by anyone. This is the reason source exports are possible at all.
+- **The resolution is anchored to the file, not to the compiler.** A `paths` entry belongs to whichever tsconfig drives the current compilation, so when a sibling bundles a package from source, `@/models/Clause` re-points into the _bundling_ package and resolves to nothing. The self-contained bundles vendor siblings, so that was never hypothetical. A `#` specifier is resolved by walking up to the nearest `package.json`, which is always the one owning the importing file, so it survives being compiled by anyone. This is the reason source exports are possible at all.
 - **It is a real resolution feature rather than a compiler fiction.** `imports` is in the Node ESM specification and is implemented by Node itself, TypeScript, Rolldown, Vite, esbuild, webpack, Vitest and jiti. `paths` has no runtime meaning whatsoever — it is a typecheck-time mapping every bundler has to be told about separately, which is why an alias convention costs one entry per tool and drifts the moment a tool is added.
 - **It is declared once, where the package already declares everything else.** The manifest travels with the package, and a fresh clone resolves it before any configuration is loaded.
 - **It is private and cannot collide.** `#` specifiers are unreachable from outside the package by specification. `@/*` was reachable only because `tsconfig.base.json` mapped it, and it sat beside a `"*"` fallback that shadowed real package names — a mapping that turns a mistyped dependency into a same-named local file rather than an error.
@@ -169,25 +169,25 @@ Two places opt in, and that is the entire mechanism: `customConditions` in `tsco
 **The `default` arm is the load-bearing half.** `devExports: true` omits it and points every condition at
 source, which reads as the simpler configuration and is not: Node's own ESM loader cannot read TypeScript
 source, twice over. It resolves no extensionless relative specifier, so the generated barrel's
-`export * from "./models/BinaryOperator"` fails outright, and its type-stripping cannot transform a TS `enum`.
+`export * from "./models/Foo"` fails outright, and its type-stripping cannot transform a TS `enum`.
 Two things here hand a package to that loader — Nitro's prerender, which imports the built server, and Pulumi,
-which runs `infra`'s `dist` — so both break.
+which runs the infrastructure program's `dist` — so both break.
 
 Neither breaks anywhere near its cause. The prerender failure names a module path nobody edited, and the Pulumi
 one surfaces as a failed `preview` in CI. The workarounds cost more than the feature is worth. Inlining into
 the Nitro server cannot be limited to the source-exporting packages — a `dist` sibling externalizes its own
-siblings, so it has to cover all of them — and `infra` has to vendor its siblings, taking it from 127 kB to
-1.27 MB. Both are standing configuration a new consumer has to know about. A `default` arm costs nothing,
+siblings, so it has to cover all of them — and the Pulumi program has to vendor its siblings, multiplying its
+bundle by an order of magnitude. Both are standing configuration a new consumer has to know about. A `default` arm costs nothing,
 because nothing has to be configured to keep working.
 
-One consequence worth holding onto: **a `dist` sibling externalizes its own siblings.** `db-schema`'s build
-emits `from "@esposter/azure"`, so that import resolves independently, under whatever conditions the resolver
-is running with. There is no single consumer where the decision can be made once — which is exactly why the
+One consequence worth holding onto: **a `dist` sibling externalizes its own siblings.** A package's build
+emits its sibling's bare specifier, so that import resolves independently, under whatever conditions the
+resolver is running with. There is no single consumer where the decision can be made once — which is exactly why the
 answer belongs in the exports map rather than in a bundler's config.
 
 The app is the deliberate non-participant. Nuxt's Vite and Nitro builds do not carry the condition, so the app resolves every sibling's `dist` — which is what keeps the Nitro server bundle externalizing them rather than pulling every package's TypeScript into a single graph. The practical consequence: a package's own tests see a sibling's edit immediately, and the app does not until that sibling is rebuilt, which is what `watch:packages` is still for.
 
-**A build that vendors a sibling now vendors its source.** Rolldown reads `customConditions` from the tsconfig it was handed, so the self-contained bundles pull their siblings' TypeScript rather than their `dist`. That is the behaviour worth having — a deploy artifact can no longer be built from a stale sibling — and it is also precisely what `paths` made impossible, because a `@/` inside the vendored package would have re-anchored to the bundling package. It is why `isolatedDeclarations` has to be off in a package that vendors one of the packages that cannot satisfy it: the transform runs over the whole module graph, and those files are now inputs to it.
+**A build that vendors a sibling vendors its source.** Rolldown reads `customConditions` from the tsconfig it was handed, so the self-contained bundles pull their siblings' TypeScript rather than their `dist`. That is the behaviour worth having — a deploy artifact can no longer be built from a stale sibling — and it is also precisely what `paths` made impossible, because a `@/` inside the vendored package would have re-anchored to the bundling package. It is why `isolatedDeclarations` has to be off in a package that vendors one of the packages that cannot satisfy it: the transform runs over the whole module graph, and those files are now inputs to it.
 
 ## The output directory is wiped on every build
 

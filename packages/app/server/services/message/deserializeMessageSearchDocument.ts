@@ -1,6 +1,6 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { deserializeKey } from "@esposter/db";
+import { deserializeKey } from "@esposter/azure";
 import { MessageType, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
 
 // A search document holds the entity under serialized keys, so deserializing is a rename of the ones

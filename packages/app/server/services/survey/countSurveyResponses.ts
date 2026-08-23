@@ -3,7 +3,8 @@ import type { Resource } from "@esposter/db-schema";
 
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { countEntities, getPartitionKeyFilter } from "@esposter/db";
+import { getPartitionKeyFilter } from "@esposter/azure";
+import { countEntities } from "@esposter/db";
 import { AzureTable } from "@esposter/db-schema";
 
 // The one response count, for the overview blade and the Responses dataset alike. It counts keys-only rows up

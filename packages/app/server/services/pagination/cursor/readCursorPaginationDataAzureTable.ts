@@ -5,7 +5,8 @@ import type { Class } from "type-fest";
 
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
-import { getTopNEntities, serializeClauses } from "@esposter/db";
+import { serializeClauses } from "@esposter/azure";
+import { getTopNEntities } from "@esposter/db";
 
 interface ReadCursorPaginationDataAzureTableOptions<TEntity extends AzureEntity> {
   clauses: Clause<TEntity>[];

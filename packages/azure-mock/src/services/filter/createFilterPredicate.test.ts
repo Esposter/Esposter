@@ -1,6 +1,11 @@
 import { createFilterPredicate } from "#src/services/filter/createFilterPredicate";
-import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
-import { getTableNullClause, serializeClause, serializeClauses } from "@esposter/db";
+import {
+  BinaryOperator,
+  CompositeKeyPropertyNames,
+  getTableNullClause,
+  serializeClause,
+  serializeClauses,
+} from "@esposter/azure";
 import { describe, expect, test } from "vitest";
 
 describe(createFilterPredicate, () => {

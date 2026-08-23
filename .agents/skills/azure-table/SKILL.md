@@ -51,7 +51,7 @@ A rejected conditional write is a `412`, meaning only that the version is stale 
 
 ## Filter Clauses
 
-Build OData filter strings with `serializeClauses` from `@esposter/db`.
+Build OData filter strings with `serializeClauses` from `@esposter/azure`.
 
 - **`Clause<T extends Record<string, unknown>>` has no default** — type the array with the entity being queried (`const clauses: Clause<FooEntity>[] = [...]`), never a bare `Clause[]`.
 - **Always `CompositeKeyPropertyNames` for `partitionKey`/`rowKey`** — never an entity's own `PropertyNames`, never a string literal.
@@ -66,7 +66,7 @@ const filter = serializeClauses([
 ] as Clause<StandardMessageEntity>[]);
 ```
 
-**"Everything under this partition" is `getPartitionKeyFilter(id)`** (`@esposter/db`), never a hand-built one-clause `serializeClauses` call and never a template literal. Every table partitions on its owning entity's id, so a read, a count and a purge of the same entity all start from that one filter — writing it once is what keeps the three from disagreeing after a key-shape change. A feature that also filters on its own columns drops back to the clause array above; a feature that only re-labels the partition filter for its domain (`getSurveyResponseFilter`) is a one-line named wrapper over it, not a second implementation.
+**"Everything under this partition" is `getPartitionKeyFilter(id)`** (`@esposter/azure`), never a hand-built one-clause `serializeClauses` call and never a template literal. Every table partitions on its owning entity's id, so a read, a count and a purge of the same entity all start from that one filter — writing it once is what keeps the three from disagreeing after a key-shape change. A feature that also filters on its own columns drops back to the clause array above; a feature that only re-labels the partition filter for its domain (`getSurveyResponseFilter`) is a one-line named wrapper over it, not a second implementation.
 
 ## Counting — Only After a Capped Read, and Bounded
 
