@@ -1,5 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
+import { dayjs } from "#src/services/dayjs/index";
 import { createMention } from "#src/services/message/createMention.test";
 import { createUser } from "#src/services/message/createUser.test";
 import { getPushSubscriptionsForMessage } from "#src/services/message/getPushSubscriptionsForMessage";
@@ -9,6 +10,7 @@ import {
   pushSubscriptionsInMessage,
   roomsInMessage,
   RoomType,
+  sessions,
   users,
   UserStatus,
   userStatusesInMessage,
@@ -18,6 +20,9 @@ import { MENTION_EVERYONE_ID, MENTION_HERE_ID } from "@esposter/shared";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 const getEndpoint = (userId: string) => `https://push.example.com/${userId}`;
+// A subscription names the session that created it, so each user gets one — derived rather than mapped, so
+// Nothing has to look an id back up
+const getSessionId = (userId: string) => `session-${userId}`;
 
 describe(getPushSubscriptionsForMessage, () => {
   let db: Database;
@@ -31,23 +36,29 @@ describe(getPushSubscriptionsForMessage, () => {
   const neverUserId = crypto.randomUUID();
   const senderUserId = crypto.randomUUID();
   const sender = { partitionKey: roomId, userId: senderUserId };
+  const userIds = [
+    allOnlineUserId,
+    allOfflineUserId,
+    allNullStatusUserId,
+    directMessageOnlineUserId,
+    directMessageOfflineUserId,
+    neverUserId,
+    senderUserId,
+  ];
 
   beforeAll(async () => {
     db = await createMockDb();
     const createdAt = new Date();
-    await db
-      .insert(users)
-      .values(
-        [
-          allOnlineUserId,
-          allOfflineUserId,
-          allNullStatusUserId,
-          directMessageOnlineUserId,
-          directMessageOfflineUserId,
-          neverUserId,
-          senderUserId,
-        ].map((id) => createUser(id, createdAt, name)),
-      );
+    await db.insert(users).values(userIds.map((id) => createUser(id, createdAt, name)));
+    await db.insert(sessions).values(
+      userIds.map((userId) => ({
+        expiresAt: dayjs(createdAt).add(1, "day").toDate(),
+        id: getSessionId(userId),
+        token: getSessionId(userId),
+        updatedAt: createdAt,
+        userId,
+      })),
+    );
 
     await db.insert(roomsInMessage).values({
       id: roomId,
@@ -66,19 +77,15 @@ describe(getPushSubscriptionsForMessage, () => {
       { notificationType: NotificationType.All, roomId, userId: senderUserId },
     ]);
 
-    await db
-      .insert(pushSubscriptionsInMessage)
-      .values(
-        [
-          allOnlineUserId,
-          allOfflineUserId,
-          allNullStatusUserId,
-          directMessageOnlineUserId,
-          directMessageOfflineUserId,
-          neverUserId,
-          senderUserId,
-        ].map((userId) => ({ auth: "", endpoint: getEndpoint(userId), p256dh: "", userId })),
-      );
+    await db.insert(pushSubscriptionsInMessage).values(
+      userIds.map((userId) => ({
+        auth: "",
+        endpoint: getEndpoint(userId),
+        p256dh: "",
+        sessionId: getSessionId(userId),
+        userId,
+      })),
+    );
 
     await db.insert(userStatusesInMessage).values([
       { status: UserStatus.Online, userId: allOnlineUserId },

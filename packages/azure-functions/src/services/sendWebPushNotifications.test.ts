@@ -26,13 +26,14 @@ describe(sendWebPushNotifications, () => {
   const name = "name";
   const payload = "";
   const userId = crypto.randomUUID();
-  const { pushSubscription } = setupWebPushSuite(() => mockDb, userId);
+  const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, userId);
   const seedSubscription = async () =>
     takeOne(await mockDb.insert(pushSubscriptionsInMessage).values(pushSubscription).returning(), 0);
 
   beforeAll(async () => {
     mockDb = await createMockDb();
     await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
+    await seedSession();
   });
 
   test("sends payload to subscription", async () => {

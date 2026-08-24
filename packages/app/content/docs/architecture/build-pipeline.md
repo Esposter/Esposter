@@ -79,6 +79,19 @@ Minified output is the one thing the test suite cannot check: the tests import s
 
 tsdown records every package a bundle swallowed under `inlinedDependencies` in that package's `package.json`, and the field is committed. That is the answer to "what is actually inside this dist" — and because it lands in a diff next to the change that caused it, it is also the review gate. tsdown will otherwise hint on every build that a `deps.onlyBundle` allowlist is missing; the base turns the hint off, because the allowlist would be a hand-maintained second copy of a list tsdown already writes, and one that could never be bootstrapped — the check runs before the manifest is written, so a new package's first build could not pass.
 
+### A host-loaded artifact keeps its own entry field
+
+tsdown writes the `exports` map into the manifest of the package it builds, and removes entry fields it does not
+own. That is right for a library, where `exports` supersedes `main` for every resolver here — and wrong for an
+artifact whose **runtime host** reads a fixed field instead of resolving it. The Azure Functions v4 model loads an
+app by `main`, so generation deletes the field the artifact needs, and nothing in the repo notices: no import
+resolves through it, a private package is not gated by publint, and every check passes. The deployed app then
+reports Running while registering no functions at all, which stops every trigger with no error anywhere.
+
+`@esposter/azure-functions` therefore sets `exports: false` and declares `main` itself. Nothing resolves it as a
+dependency — it is a deploy artifact — so the map it gives up was never doing anything, and its
+`src/index.test.ts` asserts the field, which is the only check that can fail on its absence.
+
 ### Every entry matches subpaths
 
 A bare package name never matches a subpath import, and plenty of packages are only ever reached through one — `drizzle-orm/pg-core`, `@electric-sql/pglite/contrib/pg_trgm`, `vitest/node`. `getPackagePatterns` turns a list of names into prefix patterns so an entry covers the package _and everything under it_. A name handed to `deps` verbatim silently misses exactly those imports.

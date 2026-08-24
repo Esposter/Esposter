@@ -1,6 +1,5 @@
 import ApplicationTags from "#src/azure/constants/ApplicationTags";
 import AzureAustraliaEastDisplayLocation from "#src/azure/constants/AzureAustraliaEastDisplayLocation";
-import AzureRunFromPackageIdentitySetting from "#src/azure/constants/AzureRunFromPackageIdentitySetting";
 import { prodEvgtEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/topics/prodEvgtEsposterAe001";
 import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { prodAspEsposterAe001 } from "#src/azure/resources/Microsoft.Web/serverFarms/prodAspEsposterAe001";
@@ -94,7 +93,6 @@ export const prodFuncEsposter001: azure_native.web.WebApp = new azure_native.web
           name: "WEBSITE_RUN_FROM_PACKAGE",
           value: `https://prodstesposter001.blob.core.windows.net/${siteName}/release.zip`,
         },
-        AzureRunFromPackageIdentitySetting,
       ],
       use32BitWorkerProcess: false,
     },
