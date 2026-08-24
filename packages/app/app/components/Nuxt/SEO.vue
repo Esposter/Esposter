@@ -32,8 +32,10 @@ useSeoMeta({
   ogType: "website",
   ogUrl: runtimeConfig.public.baseUrl,
   themeColor: surface,
+  // No `twitterSite`: it names an @handle, and this site has no account to name — a url there is rejected
+  // Outright, so the tag was doing nothing but failing validation. `twitterCard` stays despite unhead calling
+  // It deprecated, because Open Graph alone gets a small card and this is what selects the large one
   twitterCard: "summary_large_image",
-  twitterSite: runtimeConfig.public.baseUrl,
 });
 </script>
 

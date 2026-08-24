@@ -248,6 +248,9 @@ export const app: NuxtConfig["app"] = {
     ],
     script: [
       {
+        // Deferred so it stops blocking the parser for 800 bytes. It still runs before the app: deferred
+        // Classic scripts and module scripts share one queue in document order, and this tag leads it
+        defer: true,
         src: "/sbaPolyfill.js",
       },
     ],
