@@ -7,7 +7,7 @@ description: Esposter benchmarking conventions — colocated *.bench.ts files on
 
 Benchmarks run on Vitest's built-in `bench()` (tinybench underneath). There is no separate bench runner, bin, or direct `tinybench` dependency.
 
-`pnpm bench` runs plain tinybench and a reporter writes colocated `*.bench.{json,md}` you commit and diff — the offline gate. 🏎️ Bench (CI) runs sharded `vitest bench --run` every push as an executes-clean smoke signal only: no reporter commit, no dashboard.
+`pnpm bench` is `vitest bench --run` in a package (from the root it is the chain under Running below), and a reporter writes colocated `*.bench.{json,md}` you commit and diff — the offline gate. 🏎️ Bench (CI) runs one unsharded `vitest bench --run` every push as an executes-clean smoke signal only: no reporter commit, no dashboard. Sharding it would buy nothing but repeated setup, since nothing reads its numbers.
 
 ## Deep dive
 

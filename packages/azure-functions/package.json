@@ -31,16 +31,10 @@
     "dist"
   ],
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": true,
+  "main": "dist/index.js",
   "imports": {
     "#src/*": "./src/*.ts"
-  },
-  "exports": {
-    ".": {
-      "source": "./src/index.ts",
-      "default": "./dist/index.js"
-    },
-    "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {

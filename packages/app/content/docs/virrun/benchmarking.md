@@ -21,7 +21,7 @@ Keep **one** `.bench.ts` source per workload — never fork the logic into per-h
 
 - Same host, same corpus, alternate sandbox vs baseline to cancel drift; report median-style stats over multiple runs.
 - **A "cold install" bench must run over a source with no `node_modules`.** The overlay lower _is_ the source, so a cold task pointed at the live repo installs into an already-populated `node_modules` — pnpm no-ops and "cold" silently measures the warm path. The cache-layer bench clones HEAD into a gitignored-free checkout (`createCleanRepositoryCheckout`) as its source; it is deliberately **store-warm cold**, so it installs offline and measures the materialise cost rather than a flaky network download.
-- Track results over time — regressions are bugs. The 🏎️ Bench CI job runs plain `vitest bench` shards every push as an executes-clean smoke signal only; a hard wall-clock CI gate is rejected as runner-noise-flaky ([CI wall-time gate](/docs/virrun/rejected/ci-walltime-gate)).
+- Track results over time — regressions are bugs. The 🏎️ Bench CI job runs plain `vitest bench` every push as an executes-clean smoke signal only; a hard wall-clock CI gate is rejected as runner-noise-flaky ([CI wall-time gate](/docs/virrun/rejected/ci-walltime-gate)).
 - No silent wins: if a speedup only appears in an unrealistic state (everything pre-warmed by the bench itself), say so. There is **no install bench group** — the os install feeds the fork snapshot, not host disk, so a head-to-head vs native install would imply a substitution that can't be made ([materialize node_modules](/docs/virrun/rejected/materialize-node-modules)).
 
 ## What the numbers say

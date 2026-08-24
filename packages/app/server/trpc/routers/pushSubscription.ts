@@ -25,6 +25,7 @@ export const pushSubscriptionRouter = router({
               endpoint,
               expirationTime: expirationTime ? new Date(expirationTime) : null,
               p256dh,
+              sessionId: ctx.getSessionPayload.session.id,
               userId: ctx.getSessionPayload.user.id,
             })
             .onConflictDoUpdate({
@@ -32,6 +33,9 @@ export const pushSubscriptionRouter = router({
                 auth,
                 expirationTime: expirationTime ? new Date(expirationTime) : null,
                 p256dh,
+                // The same browser resubscribing under a new session claims the row for it, so a revoke of the
+                // Session that is actually using this endpoint is the one that takes its pushes away
+                sessionId: ctx.getSessionPayload.session.id,
               },
               target: [pushSubscriptionsInMessage.endpoint, pushSubscriptionsInMessage.userId],
             })

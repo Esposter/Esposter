@@ -3,7 +3,13 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockNoSessionOnce, mockSessionOnce } from "@@/server/trpc/context.test";
+import {
+  consumeMockSessionOnce,
+  createMockContext,
+  getMockSession,
+  mockNoSessionOnce,
+  mockSessionOnce,
+} from "@@/server/trpc/context.test";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { userRouter } from "@@/server/trpc/routers/user";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
@@ -162,7 +168,7 @@ describe("user", () => {
     const { user } = await mockSessionOnce(mockContext.db);
     // It's stupid I know, but we need to refresh back to our original user
     // Since we need to listen to a new mock user with a valid id using our original user
-    getMockSession();
+    await consumeMockSessionOnce();
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
     const status = UserStatus.Online;
@@ -179,7 +185,7 @@ describe("user", () => {
     expect.hasAssertions();
 
     const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
+    await consumeMockSessionOnce();
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
     const data = await getFirstEmit(
@@ -195,7 +201,7 @@ describe("user", () => {
     expect.hasAssertions();
 
     const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
+    await consumeMockSessionOnce();
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
     const data = await getFirstEmit(

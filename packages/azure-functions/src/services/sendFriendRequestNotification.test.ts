@@ -24,11 +24,12 @@ describe(sendFriendRequestNotification, () => {
   const name = "name";
   const notificationOptions = { icon: "", title: "" };
   const receiverId = crypto.randomUUID();
-  const { pushSubscription } = setupWebPushSuite(() => mockDb, receiverId);
+  const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, receiverId);
 
   beforeAll(async () => {
     mockDb = await createMockDb();
     await mockDb.insert(users).values({ email: "", emailVerified: true, id: receiverId, name });
+    await seedSession();
   });
 
   test("completes without error when user has no push subscriptions", async () => {

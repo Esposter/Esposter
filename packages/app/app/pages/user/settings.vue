@@ -9,6 +9,7 @@ const { smAndDown } = useVDisplay();
 const sections: SideBarItem[] = [
   { href: RoutePath.UserSettings, title: "General" },
   { href: `${RoutePath.UserSettings}#linked-accounts`, title: "Linked Accounts" },
+  { href: `${RoutePath.UserSettings}#sessions`, title: "Sessions" },
 ];
 </script>
 
@@ -27,6 +28,7 @@ const sections: SideBarItem[] = [
         <v-col :cols="smAndDown ? 12 : 7">
           <UserProfileCard />
           <UserLinkedAccountsCard />
+          <UserSessionsCard />
         </v-col>
       </v-row>
     </v-container>

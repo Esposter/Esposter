@@ -20,6 +20,12 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode()
     onlyImport: getPackagePatterns(HOST_PROVIDED_PACKAGES),
   },
   dts: false,
+  // No generated exports map either, and this is the one package where that matters: the Functions host loads the
+  // App by reading "main" from this manifest, and tsdown's exports generation rewrites the entry fields on every
+  // Build — which is how "main" silently disappeared here once, registering zero functions on a host that still
+  // Reported Running. Nothing resolves this package as a dependency, so an exports map buys it nothing, and
+  // Leaving the manifest alone is what keeps the host's own contract in it
+  exports: false,
   // Nothing here is read by a human, so the artifact the host downloads is compressed: 7.25 MB to 5.00 MB.
   // `mangle` stays off, which is the whole reason this is spelled out rather than `minify: true`. Mangling
   // Takes it to 3.67 MB and renames every identifier, so a thrown error's stack names `t` instead of the

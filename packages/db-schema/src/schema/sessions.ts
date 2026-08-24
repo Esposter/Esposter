@@ -10,5 +10,5 @@ export const sessions = pgTable("sessions", {
   userAgent: text(),
   userId: text()
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: "cascade" }),
 });

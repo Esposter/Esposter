@@ -26,11 +26,12 @@ describe(sendReminderNotification, () => {
   const text = "text";
   const userId = crypto.randomUUID();
   const reminder = { roomId, text, userId };
-  const { pushSubscription } = setupWebPushSuite(() => mockDb, userId);
+  const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, userId);
 
   beforeAll(async () => {
     mockDb = await createMockDb();
     await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
+    await seedSession();
     await mockDb.insert(roomsInMessage).values({ id: roomId, name, userId });
     await mockDb.insert(usersToRoomsInMessage).values({ roomId, userId });
   });

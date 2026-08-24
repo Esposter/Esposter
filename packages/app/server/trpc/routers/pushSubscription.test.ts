@@ -91,7 +91,6 @@ describe("pushSubscription", () => {
 
   test("subscribes updates existing endpoint", async () => {
     expect.hasAssertions();
-
     const newPushSubscription = await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
     const updatedPushSubscription = await pushSubscriptionCaller.subscribe({
       endpoint,
@@ -105,7 +104,6 @@ describe("pushSubscription", () => {
 
   test("unsubscribes", async () => {
     expect.hasAssertions();
-
     const pushSubscription = await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
     const deletedPushSubscription = await pushSubscriptionCaller.unsubscribe(endpoint);
 

@@ -36,7 +36,7 @@ describe(sendPushNotification, () => {
   const notificationOptions = { icon: "", title: "" };
   const baseMessage = { message, partitionKey: roomId, rowKey };
   const standardMessage = { ...baseMessage, userId: senderUserId };
-  const { pushSubscription } = setupWebPushSuite(() => mockDb, subscriberUserId);
+  const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, subscriberUserId);
 
   beforeAll(async () => {
     mockDb = await createMockDb();
@@ -44,6 +44,7 @@ describe(sendPushNotification, () => {
       { email: "", emailVerified: true, id: senderUserId, name },
       { email: " ", emailVerified: true, id: subscriberUserId, name },
     ]);
+    await seedSession();
     await mockDb.insert(roomsInMessage).values({ id: roomId, name, userId: senderUserId });
     await mockDb.insert(usersToRoomsInMessage).values([
       { notificationType: NotificationType.All, roomId, userId: senderUserId },

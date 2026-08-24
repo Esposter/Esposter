@@ -20,6 +20,7 @@ export enum DatabaseEntityType {
   RoomRole = "RoomRole",
   ScheduledMessageJob = "ScheduledMessageJob",
   SearchHistory = "SearchHistory",
+  Session = "Session",
   User = "User",
   UserAchievement = "UserAchievement",
   UserSettings = "UserSettings",

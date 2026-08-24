@@ -110,3 +110,23 @@ Getting this wrong is invisible until a call-count assertion reads a neighbour's
 - **Globals use `vi.stubGlobal`**, never `Object.defineProperty`; unstub with `vi.unstubAllGlobals()` in `afterEach` (per-test stubs) or `afterAll` (set once in `beforeAll`). `vi.restoreAllMocks()` does **not** undo a `stubGlobal`.
 - **`vi.stubEnv` needs no teardown** — `unstubEnvs: true` in `getVitestConfiguration` restores the env after every test, so never write an `unstubAllEnvs` hook. The globals flag stays off deliberately: it would restore a `beforeAll` `stubGlobal` after the file's first test.
 - **A test must never read a color/TTY env var it did not stub.** `isColorEnabled` consults `NO_COLOR`/`FORCE_COLOR`, so an ambient one from the dev's shell repaints CLI output; virrun's `vitest.config.ts` pins both empty for the package, and a test wanting color stubs `FORCE_COLOR` itself.
+
+## A double that fabricates an entity id owes it a row
+
+A mock standing in for something that returns a persisted entity — a session, a user, anything an id names —
+must write the row as well as the object, whenever the suite has a database. A double that invents an id nothing
+stored is a lie the suite cannot see: every read passes, and the **first foreign key added over that id turns
+every write path red at once**, a package away from the mock that caused it.
+
+When that happens, the constraint is the thing that is right. Fix the double, not the schema: an id that names
+another table's row earns a foreign key, and tests fighting one are reporting their own fixture. Dropping the
+constraint to make them pass buys a green suite and keeps the impossible state representable.
+
+Two properties to preserve while making such a double truthful, because both are load-bearing elsewhere:
+
+- **Freshness, where a suite drives one request per device.** Memoising the fabricated entity makes every
+  "other device" the current one, and the tests that relied on per-call identity fail somewhere unrelated.
+  Insert per call instead — if the real function is `async` and its callers await it, the mock can be too.
+- **The harness's own writes must outlive a test's spies.** A suite stubbing `db.insert` to make application
+  code fail will otherwise break the bookkeeping as collateral. Bind the real method once, when the database is
+  created, and use that reference.
