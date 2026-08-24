@@ -7,7 +7,7 @@ description: Per-user blob-storage quotas (Free = 10 GiB) held atomically at SAS
 
 Every user has a bounded, tier-derived allowance for the files they keep in their own resources — Free = 10 GiB — that they genuinely cannot exceed by hammering uploads, shown back to them as a "X of Y used" meter in the [Resource Explorer](/docs/platform/resource-explorer)'s header. The bar and the limit shipped together: a usage number nobody can act on was the reason the display was deferred on its own.
 
-Nothing is scheduled. The counter moves only when Azure tells us a blob landed or one of our own deletions removes it, and an abandoned upload needs no cleanup at all because its hold expires as a **predicate** rather than as a state some job flips.
+Nothing is scheduled. The counter moves only on a write it is told about — the server charging bytes it wrote itself, Azure telling us a client's blob landed, or one of our own deletions removing one — and an abandoned upload needs no cleanup at all because its hold expires as a **predicate** rather than as a state some job flips.
 
 ## Why a plain pre-flight check is not enough
 
