@@ -7,7 +7,7 @@ description: Esposter file and folder organisation — the alias imports (shared
 
 ## Imports
 
-- **Always use alias imports** — never relative imports (`./`, `../`), even for same-folder files.
+- **Always use alias imports** — never relative imports (`./`, `../`), even for same-folder files. Enforced by oxlint `no-restricted-imports` for `packages/*/src/**` (the `#src/*` half) — three trees are exempt because no alias reaches them: `packages/configuration` declares no `#src/*` map, the ctix-generated `src/index.ts` barrel is not hand-written, and `scripts/**`/`.agents/**` have no per-file map at all. Reaching the repo-root manifest is the one in-package exception, and it carries an `oxlint-disable-next-line` saying so.
   - `#shared/` — the app's shared dir (`packages/app/shared/`, **not** `app/shared/`); models, services, constants shared between client and server.
   - `@@/` — project root (`packages/app/`); `server/` and other root-level paths.
   - `@/` — app source dir (`packages/app/app/`); `composables/`, `components/`, `store/`, `services/`, etc.

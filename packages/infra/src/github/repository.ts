@@ -2,6 +2,7 @@ import * as github from "@pulumi/github";
 
 // Single source of truth: GitHub topics mirror the root package.json keywords.
 // Keep both lists curated to valid topic syntax (lowercase, hyphenated, <=20 entries).
+// oxlint-disable-next-line no-restricted-imports -- the repo-root manifest, which no `#src/*` map can reach
 import packageJson from "../../../../package.json" with { type: "json" };
 
 export const repository: github.Repository = new github.Repository(
