@@ -72,26 +72,19 @@ describe("session", () => {
     vi.clearAllMocks();
   });
 
-  test("reads the sessions without the stored address", async () => {
-    expect.hasAssertions();
-
-    const readSessions = await caller.readSessions();
-
-    // toStrictEqual is the assertion: an `ipAddress` that leaked through would show up as an extra key
-    expect(readSessions).toStrictEqual([
-      { id: currentSession.id, isCurrent: true, updatedAt: currentSession.updatedAt, userAgent },
-      { id: otherSession.id, isCurrent: false, updatedAt: otherSession.updatedAt, userAgent },
-    ]);
-  });
-
-  test("reads no session that has expired", async () => {
+  test("reads the caller's unexpired sessions, without the stored address", async () => {
     expect.hasAssertions();
     const expiredSession = { ...createMockSession(userId), token: "expiredToken" };
     await insertSession(expiredSession, dayjs().subtract(1, "day").toDate());
 
     const readSessions = await caller.readSessions();
 
-    expect(readSessions.map(({ id }) => id)).toStrictEqual([currentSession.id, otherSession.id]);
+    // toStrictEqual is doing two jobs: an `ipAddress` that leaked through shows up as an extra key, and a
+    // Session nobody is signed in with any more shows up as an extra row
+    expect(readSessions).toStrictEqual([
+      { id: currentSession.id, isCurrent: true, updatedAt: currentSession.updatedAt, userAgent },
+      { id: otherSession.id, isCurrent: false, updatedAt: otherSession.updatedAt, userAgent },
+    ]);
   });
 
   test("revokes by the token it resolved rather than the id the client named", async () => {
