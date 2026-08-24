@@ -50,7 +50,7 @@ The suite runs **once per coherent chunk, on `develop`, before that chunk is pus
 
 ## Key Rules
 
-- **Lint locally** with the fix scripts — never hand-edit to satisfy the linter. Reserve the check-only `pnpm lint` for CI.
+- **Lint locally** with the fix scripts — never hand-edit to satisfy the linter. The check-only root `pnpm lint` is not a substitute for them: it is the extra pass an app change owes before it is pushed, because it is the only one that runs oxlint over the app (see the check suite above).
 - **Vitest loads a minimal Nuxt module allowlist** (`packages/app/configuration/modules.ts`, under `process.env.VITEST`) — the full set crashes config startup on Windows. A test that needs an excluded module adds it to that branch rather than widening the allowlist for every run.
 - **Long-running** (`dev`, `build`, `test`, `typecheck`): use `run_in_background: true` (2+ min).
 - **Never use `pnpm <script> -- <args>`**: pnpm forwards the literal `--`, so trailing flags become post-`--` positionals and are dropped. Use `pnpm exec <binary> <args>` or direct args (`pnpm test -u`).

@@ -79,6 +79,20 @@ Minified output is the one thing the test suite cannot check: the tests import s
 
 tsdown records every package a bundle swallowed under `inlinedDependencies` in that package's `package.json`, and the field is committed. That is the answer to "what is actually inside this dist" — and because it lands in a diff next to the change that caused it, it is also the review gate. tsdown will otherwise hint on every build that a `deps.onlyBundle` allowlist is missing; the base turns the hint off, because the allowlist would be a hand-maintained second copy of a list tsdown already writes, and one that could never be bootstrapped — the check runs before the manifest is written, so a new package's first build could not pass.
 
+### Tree-shaking and a package whose product is a side effect
+
+`sideEffects: false` is what lets a consumer drop the parts of a library they never import, so every package
+here carries it — except the one whose entry exists to run rather than to export. The Functions app registers
+each of its handlers with a bare `app.eventGrid(...)`-style call whose result nothing uses, in a module whose
+only export is `export default {}`, which the barrel's `export *` does not re-export. That is a pure side effect
+by every rule a bundler has: told the package has none, rolldown removes all of them, keeps the handler exports,
+and drops the `@azure/functions` import with them. The bundle still loads cleanly and registers nothing, so the
+app deploys, starts, reports `Running` and never runs a trigger again — with no error anywhere to read.
+
+It therefore declares `sideEffects: true`, and its `src/index.test.ts` counts the registrations in `dist` against
+the files in `src/functions`. The infrastructure program needs neither: its resources are `export const`
+bindings, so the exports keep them alive.
+
 ### A host-loaded artifact keeps its own entry field
 
 tsdown writes the `exports` map into the manifest of the package it builds, and removes entry fields it does not

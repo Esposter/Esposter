@@ -71,6 +71,25 @@ A package nothing consumes as a library also sets `dts: false`; declarations wou
 
 **`@esposter/configuration`** is the exception: `deps: { neverBundle: true }`. It is private, never published, and its dist imports nothing but build tooling every workspace member already has installed.
 
+### A package whose product is a side effect declares it
+
+`sideEffects: false` is right for a library — it is what lets a consumer's bundler drop the parts of it they do
+not import. It is fatal for a package whose **entry exists to run**, and the failure is silent in a way worth
+recognising: a registration written as a bare call whose result nothing uses, in a module with no named export
+for the barrel to keep alive, is a pure side effect by every rule a bundler has. Told the package has none, it
+removes them all, keeps the exports, and drops the import of the host library entirely. What ships is a bundle
+that loads without error and does nothing — for the Functions app, one that deploys, starts, reports `Running`
+and never runs a trigger again.
+
+So such a package sets `sideEffects: true`. Declaring it beats relying on the absence of the field, because the
+absence is what a repo-wide sweep adding `false` everywhere overwrites without anyone reading the diff twice.
+A package whose side effects each land in an exported binding — the infrastructure program's
+`export const x = new Resource(...)` — needs nothing: the export is what keeps it alive.
+
+**Assert it in that package's own `src/index.test.ts`.** Count the registrations in the built bundle against the
+source files that should have produced them; nothing else can see the difference, because every other test
+imports source rather than `dist`, and the bundle still loads either way.
+
 ### The manifest's entry fields are generated — except where a host reads them
 
 tsdown rewrites the entry fields of the package it builds: it writes the `exports` map (and the type entry a

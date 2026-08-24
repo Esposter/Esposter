@@ -1,9 +1,11 @@
 import type { PackageManifest } from "@esposter/configuration";
 
 import { getFileSize } from "@esposter/configuration";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
+
+const REGISTRATION_REGEX = /app\.(?:eventGrid|http|serviceBusQueue|timer)\(/gu;
 
 describe("@esposter/azure-functions", () => {
   const packageDirectory = resolve(import.meta.dirname, "..");
@@ -11,7 +13,7 @@ describe("@esposter/azure-functions", () => {
 
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4879.46 KB (4996567 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4880.83 KB (4997970 bytes)"`);
   });
 
   // The Functions host loads a v4-model app by reading "main", and never consults the generated exports map, so
@@ -28,5 +30,20 @@ describe("@esposter/azure-functions", () => {
 
     expect(main).toBe("dist/index.js");
     expect(existsSync(resolve(packageDirectory, main ?? ""))).toBe(true);
+  });
+
+  // Every function is registered by a bare app.* call whose result nothing uses, and `export default {}` leaves
+  // The module without a named export for the barrel to keep alive either — so the registration is a pure side
+  // Effect, and a bundler told the package has none tree-shakes all of them away. The dist then exports the
+  // Handlers, imports nothing from the host, and registers no functions: an app that deploys, starts, reports
+  // Running and never runs a trigger again. Counting them against the source files is what catches that, and
+  // Nothing else can — the bundle still loads, and every other test imports source rather than dist
+  test("registers one function per source file in the bundle", () => {
+    expect.hasAssertions();
+    const functionCount = readdirSync(resolve(packageDirectory, "src/functions")).filter((entry) =>
+      entry.endsWith(".ts"),
+    ).length;
+
+    expect(readFileSync(distFile, "utf8").match(REGISTRATION_REGEX)).toHaveLength(functionCount);
   });
 });
