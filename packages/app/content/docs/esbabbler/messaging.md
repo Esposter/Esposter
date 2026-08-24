@@ -37,7 +37,7 @@ sequenceDiagram
 Real-time delivery is two-layered:
 
 - **In-process** — `messageEventEmitter` / `roomEventEmitter` drive tRPC subscriptions (`onCreateMessage`, `onUpdateMessage`, `onDeleteMessage`, `onCreateTyping`). The app runs a single Node process, so this is sufficient (see [cross-process event bridge](/docs/esbabbler/deferred/cross-process-event-bridge)).
-- **Azure Web PubSub** — used for inbound webhook message delivery; clients get a scoped access URL via `getWebPubSubClientAccessUrl`.
+- **Azure Web PubSub** — used for inbound webhook message delivery; clients get a scoped access URL via `generateWebPubSubClientAccessUrl`.
 
 Push notification filtering and delivery detail lives in [push notifications](/docs/esbabbler/push-notifications).
 

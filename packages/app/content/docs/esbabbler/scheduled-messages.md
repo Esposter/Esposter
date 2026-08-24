@@ -80,7 +80,7 @@ All under `message.scheduledMessageJob.`:
 | `sendScheduledMessageNow({ id })`                   | guards first, then tombstones the job and posts via `createUserMessage` — a guard rejection leaves it scheduled, and a failed send lifts the tombstone and re-enqueues the delivery the tombstone may have already consumed, so the message is never lost |
 | `readScheduledJobs({ roomId })`                     | per-room listing                                                                                                                                                                                                                                          |
 | `readMyScheduledJobs({ offset, limit })`            | cross-room listing (Scheduled tab → [drafts & sent](/docs/esbabbler/drafts-and-sent))                                                                                                                                                                     |
-| `readMyScheduledJobsCount()`                        | tab badge count                                                                                                                                                                                                                                           |
+| `countMyScheduledJobs()`                            | tab badge count                                                                                                                                                                                                                                           |
 
 ## Notes
 
