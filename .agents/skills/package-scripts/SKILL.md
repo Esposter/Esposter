@@ -9,16 +9,16 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 
 ## `packages/app`
 
-| Command             | Runs                  | When to use                                     |
-| ------------------- | --------------------- | ----------------------------------------------- |
-| `pnpm lint`         | `eslint .`            | CI/check-only lint verification                 |
-| `pnpm lint:fix`     | `eslint --fix .`      | **Local lint verification** — use this directly |
-| `pnpm typecheck`    | `nuxt typecheck`      | TypeScript type checking                        |
-| `pnpm test`         | `vitest` (watch mode) | Run this package's tests in watch mode          |
-| `pnpm format`       | `oxfmt`               | Format code                                     |
-| `pnpm format:check` | `oxfmt --check`       | Check formatting without writing                |
-| `pnpm dev`          | `nuxt dev`            | Start dev server                                |
-| `pnpm build`        | `nuxt build`          | Build for production                            |
+| Command             | Runs                      | When to use                                     |
+| ------------------- | ------------------------- | ----------------------------------------------- |
+| `pnpm lint`         | `TIMING=1 eslint .`       | CI/check-only lint verification                 |
+| `pnpm lint:fix`     | `TIMING=1 eslint --fix .` | **Local lint verification** — use this directly |
+| `pnpm typecheck`    | `nuxt typecheck`          | TypeScript type checking                        |
+| `pnpm test`         | `vitest` (watch mode)     | Run this package's tests in watch mode          |
+| `pnpm format`       | `oxfmt`                   | Format code                                     |
+| `pnpm format:check` | `oxfmt --check`           | Check formatting without writing                |
+| `pnpm dev`          | `nuxt dev`                | Start dev server                                |
+| `pnpm build`        | `nuxt build`              | Build for production                            |
 
 > `oxfmt` formats code, not markdown, and no prettier binary is installed — reaching for `npx prettier` or
 > `pnpm exec prettier` fails. A `.md` file's own layout is therefore hand-maintained: a table whose cells changed
@@ -29,14 +29,14 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 
 ## Root Scripts
 
-| Command                      | Runs                                              | Notes                                                                                                                              |
-| ---------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm i`                     | —                                                 | Refresh deps/lockfile after manifest changes.                                                                                      |
-| `pnpm test`                  | `virrun -- vitest run`                            | Whole suite once via unified root vitest `projects` config (all packages + scripts). **CI only** — never run bare locally.         |
-| `pnpm test:packages`         | `virrun -- vitest run --project "!@esposter/app"` | All projects except the app — fast local run, skips Nuxt. Local-only.                                                              |
-| `pnpm coverage`              | `vitest run --coverage` (no virrun)               | Root-only (packages have no `coverage` script). CI shards via `--reporter=blob` + `--merge-reports`.                               |
-| `pnpm outdated:dependencies` | `tsx scripts/checkDependencies/index.ts`          | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest. |
-| `pnpm depcruise:graph`       | `virrun -- depcruise … \| graphviz -Tsvg`         | Generate `dependency-graph.svg`.                                                                                                   |
+| Command                      | Runs                                              | Notes                                                                                                                                   |
+| ---------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm i`                     | —                                                 | Refresh deps/lockfile after manifest changes.                                                                                           |
+| `pnpm test`                  | `virrun -- vitest run`                            | Whole suite once via the root vitest `projects` config (every package + `scripts/` + `.agents/`). **CI only** — never run bare locally. |
+| `pnpm test:packages`         | `virrun -- vitest run --project "!@esposter/app"` | All projects except the app — fast local run, skips Nuxt. Local-only.                                                                   |
+| `pnpm coverage`              | `vitest run --coverage` (no virrun)               | Root-only (packages have no `coverage` script). CI shards via `--reporter=blob` + `--merge-reports`.                                    |
+| `pnpm outdated:dependencies` | `tsx scripts/checkDependencies/index.ts`          | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest.      |
+| `pnpm depcruise:graph`       | `virrun -- depcruise … \| graphviz -Tsvg`         | Generate `dependency-graph.svg`.                                                                                                        |
 
 ## Check Suite (after edits)
 
