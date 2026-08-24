@@ -1,13 +1,13 @@
 ---
 name: oxlint
-description: Esposter oxlint + ESLint linting conventions — which lint script to run locally vs in CI (oxlint is repo-wide, per-package scripts are ESLint only), never hand-fixing lint errors, the require-await autofix that breaks a Promise-returning function, picking oxlint-disable vs eslint-disable and spelling the rule the reporting linter's way, method-signature-style and its overload exceptions, the expect.any and JSON.parse no-restricted-syntax bans and when a JSON.parse disable is earned, prefer-named-capture-group, why nothing type-aware can be linted, and the vuejs-accessibility template rules (which are staged off and what promotes them, component-tag false positives, template disable comments), plus deep dives on editing .oxlintrc.json (categories, prefixed rule names, vitest entries, ignorePatterns, stale-directive audits) and on authoring a custom JS plugin. Apply when fixing lint errors, editing .oxlintrc.json, configuring vitest lint rules, investigating slow ESLint rules, writing a custom lint rule, adding an accessibility attribute to a template, or adding regexes, interface declarations or JSON parsing.
+description: Esposter oxlint + ESLint linting conventions — which lint script to run locally vs in CI (oxlint is repo-wide, per-package scripts are ESLint only), never hand-fixing lint errors, the require-await autofix that breaks a Promise-returning function, picking oxlint-disable vs eslint-disable and spelling the rule the reporting linter's way, method-signature-style and its overload exceptions, the expect.any and JSON.parse no-restricted-syntax bans and when a JSON.parse disable is earned, prefer-named-capture-group, why nothing type-aware can be linted, and the vuejs-accessibility template rules (which are staged off and what promotes them, component-tag false positives, template disable comments), plus deep dives on editing .oxlintrc.json (categories, prefixed rule names, vitest and promise entries, ignorePatterns, stale-directive audits) and on authoring a custom JS plugin. Apply when fixing lint errors, editing .oxlintrc.json, configuring vitest lint rules, investigating slow ESLint rules, writing a custom lint rule, adding an accessibility attribute to a template, or adding regexes, interface declarations or JSON parsing.
 ---
 
 # Oxlint + ESLint Conventions
 
 ## Deep Dives
 
-- `references/lint-configuration.md` — when editing `.oxlintrc.json` (a category, a rule entry, a vitest option, `ignorePatterns`, an `overrides` scope), deleting a manual ESLint disable, or hunting stale disable directives.
+- `references/lint-configuration.md` — when editing `.oxlintrc.json` (a category, a rule entry, a vitest or promise option, `ignorePatterns`, an `overrides` scope), deleting a manual ESLint disable, or hunting stale disable directives.
 - `references/custom-js-plugins.md` — when a repo-specific convention needs its own lint rule under `scripts/oxlint/`.
 
 ## Running lint
@@ -31,7 +31,7 @@ That fix restores the return type but not the rejection path: without `async`, a
 
 Pick the directive by **which linter reports the rule**, and spell the rule the way that linter names it:
 
-- **Oxlint rule** → `oxlint-disable`, using oxlint's plugin prefix: `typescript/`, `unicorn/`, `import/`, `oxc/`, `vitest/`, `vue/`. Never `@typescript-eslint/` — oxlint accepts it as an alias, so it silently works and drifts. Core rules take no prefix (`no-void`, `prefer-spread`). `no-inferrable-types` and `require-await` exist under both a core and a `typescript/` name — prefix them.
+- **Oxlint rule** → `oxlint-disable`, using oxlint's plugin prefix: `typescript/`, `unicorn/`, `import/`, `oxc/`, `promise/`, `vitest/`, `vue/`. Never `@typescript-eslint/` — oxlint accepts it as an alias, so it silently works and drifts. Core rules take no prefix (`no-void`, `prefer-spread`). `no-inferrable-types` and `require-await` exist under both a core and a `typescript/` name — prefix them.
 - **ESLint-only rule** → `eslint-disable`, using the plugin's real name (`perfectionist/sort-objects`, `@typescript-eslint/no-misused-spread`). Rules oxlint owns are switched off in ESLint by `eslint-plugin-oxlint`, so an `eslint-disable` for one is dead weight.
 - Oxlint honours **both** prefixes; ESLint honours only its own. A rule needing both (e.g. `no-control-regex`) needs one directive each — see `stripAnsi.test.ts`.
 - Format: file-level on the first line, `/* oxlint-disable <rule> -- reason */`; line-level, `// oxlint-disable-next-line <rule>`. Always state the reason.
