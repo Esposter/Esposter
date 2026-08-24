@@ -44,7 +44,7 @@ export const sessionRouter = router({
     await closeDeviceConnections({ sessionId: session.id, userId: user.id });
   }),
   readSessions: standardAuthedProcedure.query<SessionSummary[]>(async ({ ctx }) => {
-    const { session: currentSession, user } = ctx.getSessionPayload;
+    const { session: currentSession } = ctx.getSessionPayload;
     const sessions = await readOwnSessions(ctx);
     return sessions.map(({ id, updatedAt, userAgent }) => ({
       id,

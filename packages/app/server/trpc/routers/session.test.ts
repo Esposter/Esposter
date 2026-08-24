@@ -79,7 +79,7 @@ describe("session", () => {
 
     const readSessions = await caller.readSessions();
 
-    // toStrictEqual is doing two jobs: an `ipAddress` that leaked through shows up as an extra key, and a
+    // Two jobs fall to toStrictEqual here: an `ipAddress` that leaked through shows up as an extra key, and a
     // Session nobody is signed in with any more shows up as an extra row
     expect(readSessions).toStrictEqual([
       { id: currentSession.id, isCurrent: true, updatedAt: currentSession.updatedAt, userAgent },

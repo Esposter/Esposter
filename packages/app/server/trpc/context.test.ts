@@ -133,7 +133,7 @@ export const mockNoSessionOnce = () => {
 
 // Spends the queued session without a request to spend it on, so the next real request runs as the default
 // Identity again. Reading who you are is `getMockSession`, which consumes nothing
-export const consumeMockSessionOnce = async () => await mocks.getSession();
+export const consumeMockSessionOnce = () => mocks.getSession();
 
 export const getMockSession = () => defaultGetSessionPayload;
 
