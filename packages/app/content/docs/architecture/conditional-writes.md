@@ -55,17 +55,21 @@ The loop back to `getUpdateEntity` is the whole design: **the retry re-applies t
 - **Notify with the delta.** The subscription payload stays the fields that changed, so a client merges one property instead of adopting a whole entity it may hold newer state for.
 - **Derive follow-up work from the attempt that won.** `deleteFile` captures the removed file's name inside `getUpdateEntity`, so the blobs it publishes for deletion belong to the file it actually removed.
 
-## The same rule where the version is not an etag
+## The same hazard where the version is not an etag
 
-An etag is one spelling of a general thing: **a token saying which version the write depends on, checked at the moment the write lands.** Anywhere a second writer can get in between, the write carries one — only the name changes.
+The hazard an etag answers is general: **a write derived from a view that another writer can invalidate before it lands.** There are two ways to be safe from it, and they are not the same mechanism.
 
-| Where                                          | The version token              | What it rejects                                        |
-| ---------------------------------------------- | ------------------------------ | ------------------------------------------------------ |
-| Azure Table read-modify-write                  | the entity `etag`              | a body computed against a version that has since moved |
-| Postgres read-modify-write                     | the row lock (`FOR UPDATE`)    | a concurrent reader computing from the same value      |
-| An event handler writing what an event reports | the event's own ordering value | an older event delivered after a newer one             |
+**Serialize**, so no stale view can exist. `FOR UPDATE` takes the row and makes competing transactions wait, so the second one reads after the first has committed rather than beside it. Nothing is compared and nothing is rejected — the read and the write are simply not interleaved. This is what the storage ledger's reconcile uses to stop two events computing their deltas from the same `countedBytes`.
 
-The third row is the one that gets missed, because a handler can pass every idempotency check and still be wrong. **Idempotent is not order-independent.** Idempotency asks "does running this twice differ from running it once" — a redelivery computing a zero delta answers yes and is genuinely safe. Ordering asks a question idempotency never poses: _does an older event arriving after a newer one leave the wrong state behind?_ Replaying the stale event is a well-behaved no-op by every idempotency measure and still overwrites the current value with a superseded one.
+**Or carry a version token**, where waiting is impossible because the competing writer is not a transaction you can block — it is another process, or an event that has already been delivered. Then the write states which version it depends on and is rejected if that has moved.
+
+| Where                                          | How it is made safe                | What that stops                                        |
+| ---------------------------------------------- | ---------------------------------- | ------------------------------------------------------ |
+| Postgres read-modify-write                     | serialized — `FOR UPDATE`          | two transactions computing from one value concurrently |
+| Azure Table read-modify-write                  | token — the entity `etag`          | a body computed against a version that has since moved |
+| An event handler writing what an event reports | token — the event's ordering value | an older event delivered after a newer one             |
+
+The last row is the one that gets missed, because a handler can pass every idempotency check and still be wrong. **Idempotent is not order-independent.** Idempotency asks "does running this twice differ from running it once" — a redelivery computing a zero delta answers yes and is genuinely safe. Ordering asks a question idempotency never poses: _does an older event arriving after a newer one leave the wrong state behind?_ Replaying the stale event is a well-behaved no-op by every idempotency measure and still overwrites the current value with a superseded one.
 
 Event Grid guarantees at-least-once delivery and **no ordering at all** ([dead-letter handling](/docs/infra/eventgrid-dead-letter) covers the delivery half). So a handler whose write depends on _when_ its event happened needs the event to say so:
 
@@ -75,7 +79,7 @@ Event Grid guarantees at-least-once delivery and **no ordering at all** ([dead-l
 
 A handler that writes nothing derived from its event's moment — one that deletes by name, or sets a flag — needs none of this. The question to answer per handler is whether two events for the same subject can carry _different_ values for what it writes; if they can, order decides which is right.
 
-### Testing it
+### Testing delivery order
 
 The delivery order is an argument, so the test is the two calls in the wrong order — no mock of Event Grid required. Assert the newest value survives **and** that the stale event still reports having found its subject, or a caller that retries on a miss will retry forever on a correctly-dropped event.
 

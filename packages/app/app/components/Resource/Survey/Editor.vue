@@ -9,6 +9,6 @@ const { creator } = useSurveyCreator();
 
 <style scoped>
 :deep(.svc-creator__banner) {
-  display: none;
+  display: none !important;
 }
 </style>
