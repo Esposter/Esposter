@@ -1,8 +1,6 @@
 import type { ViteUserConfig } from "vitest/config";
 
 import { SOURCE_CONDITION } from "#src/constants";
-// Extension-ful relative imports on this path only: Vite's native config loader reads it while resolving a
-// Consumer's vitest.config.ts and warns on every extensionless specifier it has to guess at.
 import { getBenchmarkTestConfiguration } from "#src/getBenchmarkTestConfiguration";
 import { defaultServerConditions } from "vite";
 
