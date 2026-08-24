@@ -14,8 +14,8 @@ import { getDecodedUriComponent, getResultAsync, noop } from "@esposter/shared";
 // Event from anywhere else is dropped rather than mis-attributed. See /docs/platform/storage-quotas
 const STORAGE_BLOB_CONTAINERS = [AzureContainer.ResourceAssets];
 
-export const reconcileStorageBlobHandler: EventGridHandler = (event, context) => {
-  context.log(`${AzureFunction.ReconcileStorageBlob} processed subject: `, event.subject);
+export const reconcileStorageLedgerEntryHandler: EventGridHandler = (event, context) => {
+  context.log(`${AzureFunction.ReconcileStorageLedgerEntry} processed subject: `, event.subject);
   return getResultAsync(async () => {
     const parsedBlobSubject = parseBlobSubject(event.subject, STORAGE_BLOB_CONTAINERS);
     if (!parsedBlobSubject) return;
@@ -31,5 +31,5 @@ export const reconcileStorageBlobHandler: EventGridHandler = (event, context) =>
     const decodedBlobName = getDecodedUriComponent(blobName, blobName);
     if (decodedBlobName !== blobName)
       await reconcileStorageLedgerEntry(db, containerName, decodedBlobName, contentLength);
-  }).match(noop, logAndRethrow(context, AzureFunction.ReconcileStorageBlob));
+  }).match(noop, logAndRethrow(context, AzureFunction.ReconcileStorageLedgerEntry));
 };

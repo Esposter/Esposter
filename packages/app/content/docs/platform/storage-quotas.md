@@ -34,7 +34,7 @@ flowchart TD
   del["Blob deletion / purge"] -->|"counter -= countedBytes, row dropped"| counter
   save["Server-side writes, no SAS<br/>content · publish snapshot · cloned assets"] -->|"chargeStorageLedgerEntry<br/>row + counter += actual - countedBytes"| counter
   ledger -.->|"expiresAt passes with no BlobCreated —<br/>the hold simply stops counting"| gone(["Nothing runs"])
-  counter -->|storage.getUsage| ui["Usage bar — 3.2 GB of 10 GB"]
+  counter -->|storage.readUsage| ui["Usage bar — 3.2 GB of 10 GB"]
   tier[("users.storageTier")] -->|StorageTierQuotaMap| quota[Quota bytes]
   quota --> reserve
   quota --> ui
@@ -128,9 +128,9 @@ Closing these needs a recompute that lists real object sizes per user. Worth doi
 | `packages/db/src/services/storage/reconcileStorageLedgerEntry.ts`                                    | declared hold → charged bytes                     |
 | `packages/db/src/services/storage/deleteStorageBlobs.ts`                                             | delete a set of blobs and release what it removed |
 | `packages/db/src/services/storage/releaseStorageLedgerEntriesWhere.ts`                               | the one place bytes leave the counter             |
-| `packages/azure-functions/src/handlers/reconcileStorageBlobHandler.ts`                               | the `BlobCreated` handler                         |
+| `packages/azure-functions/src/handlers/reconcileStorageLedgerEntryHandler.ts`                        | the `BlobCreated` handler                         |
 | `packages/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe007.ts` | the subscription, filtered to resource assets     |
-| `packages/app/server/trpc/routers/storage.ts`                                                        | `getUsage`                                        |
+| `packages/app/server/trpc/routers/storage.ts`                                                        | `readUsage`                                       |
 | `packages/app/app/components/Resource/StorageMeter.vue`                                              | the usage meter in the explorer shell             |
 | `packages/app/app/store/storage.ts`                                                                  | the usage the meter renders, read once            |
 | `packages/app/app/layouts/resource.vue`                                                              | the shell that mounts it on every resource page   |

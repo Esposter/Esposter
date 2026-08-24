@@ -1,7 +1,7 @@
 import type { EventGridEvent } from "@azure/functions";
 import type { BlobCreatedEventGridData, Database } from "@esposter/db-schema";
 
-import { reconcileStorageBlobHandler } from "#src/handlers/reconcileStorageBlobHandler";
+import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStorageLedgerEntryHandler";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer, getBlobSubjectPrefix, storageLedger, users } from "@esposter/db-schema";
@@ -15,7 +15,7 @@ vi.mock(import("#src/services/db"), () => ({
   },
 }));
 
-describe(reconcileStorageBlobHandler, () => {
+describe(reconcileStorageLedgerEntryHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const userId = crypto.randomUUID();
   const containerName = AzureContainer.ResourceAssets;
@@ -68,7 +68,7 @@ describe(reconcileStorageBlobHandler, () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    await reconcileStorageBlobHandler(
+    await reconcileStorageLedgerEntryHandler(
       createEventGridEvent(`${getBlobSubjectPrefix(containerName)}${blobName}`),
       context,
     );
@@ -80,7 +80,7 @@ describe(reconcileStorageBlobHandler, () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    await reconcileStorageBlobHandler(
+    await reconcileStorageLedgerEntryHandler(
       createEventGridEvent(`${getBlobSubjectPrefix(containerName)}${encodeURIComponent(blobName)}`),
       context,
     );
@@ -94,7 +94,7 @@ describe(reconcileStorageBlobHandler, () => {
     expect.hasAssertions();
 
     await expect(
-      reconcileStorageBlobHandler(
+      reconcileStorageLedgerEntryHandler(
         createEventGridEvent(`${getBlobSubjectPrefix(containerName)}roomId/id|50%off.png`),
         context,
       ),
@@ -106,7 +106,7 @@ describe(reconcileStorageBlobHandler, () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    await reconcileStorageBlobHandler(
+    await reconcileStorageLedgerEntryHandler(
       createEventGridEvent(`${getBlobSubjectPrefix(AzureContainer.MessageAssets)}${blobName}`),
       context,
     );

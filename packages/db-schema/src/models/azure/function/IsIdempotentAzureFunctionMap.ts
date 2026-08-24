@@ -29,7 +29,7 @@ export const IsIdempotentAzureFunctionMap = {
   // EventType (`Microsoft.Storage.BlobCreated`) rather than an AzureFunction, and getIsReplayable quarantines
   // Anything it cannot resolve to a function. The value is its honest answer, not a reachable path
   // (/docs/platform/storage-quotas).
-  [AzureFunction.ReconcileStorageBlob]: true,
+  [AzureFunction.ReconcileStorageLedgerEntry]: true,
   // Republishes a dead-letter blob it then deletes; a rerun of the same blob is a no-op, but it is never itself
   // Dead-lettered onto a topic, so the value is only here for exhaustiveness.
   [AzureFunction.ReplayDeadLetterEvent]: true,

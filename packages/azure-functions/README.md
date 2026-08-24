@@ -27,7 +27,7 @@ Most functions are triggered by **Azure EventGrid** events published by the main
 | `ProcessFriendRequestNotification` | EventGrid                            | Notifies users of incoming friend requests                                  |
 | `ProcessThreadReplyNotification`   | EventGrid                            | Notifies thread followers of a reply, excluding the generic push recipients |
 | `ProcessBlobDeletion`              | EventGrid                            | Deletes blobs durably once their owning row is gone                         |
-| `ReconcileStorageBlob`             | EventGrid (storage system topic)     | Charges a user's storage counter the blob's real size on `BlobCreated`      |
+| `ReconcileStorageLedgerEntry`      | EventGrid (storage system topic)     | Charges a user's storage counter the blob's real size on `BlobCreated`      |
 | `ReplayDeadLetterEvent`            | EventGrid                            | Replays dead-lettered events it can route, quarantining the rest            |
 | `ProcessScheduledMessageJob`       | Service Bus (`ScheduledMessageJobs`) | Delivers `/schedule` and `/remind` messages at their due time               |
 | `SendTodoReminder`                 | Service Bus (`TodoReminders`)        | Sends web-push when a TodoList item comes due                               |

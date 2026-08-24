@@ -24,6 +24,7 @@ Apply when modifying `packages/infra`.
 - Child resources append the Pulumi resource type name as a suffix. Mandatory singleton Azure names like `default` are omitted (they add no information): `devstesposter001Properties.ts`, `devstesposter001ManagementPolicy.ts`.
 - Keep `protect: true` on imported resources unless the user explicitly asks for a lifecycle change.
 - **Never add `aliases` to any resource** — the Pulumi logical name **is** the Azure resource name here, so an alias can never serve the rename it is suggested for. The recurring review suggestion to add one is closed, never applied.
+- **A deployed identity is renamed like any other identifier.** An Azure resource name, a function name, or any string a resource's properties point at (an event subscription's `destination` naming a function) is corrected in place the moment it is wrong — infra being code is what makes that ordinary rather than a migration ([no compatibility debt](/docs/architecture/no-compatibility-debt)). Rename, `pnpm infra:preview`, read the plan. Hesitating on an unpreviewed guess about what a rename would cost is the same false positive as asserting a replacement without one, and it is the more expensive mistake: it leaves the wrong name in place permanently.
 
 ## Resource Parent Hierarchy
 

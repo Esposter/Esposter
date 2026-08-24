@@ -14,6 +14,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "async-operations",
       "caching",
       "persisted-data-latest-shape-only",
+      "no-compatibility-debt",
       "content-token-rewriting",
       "dialog-shell",
       "destructive-confirmation",

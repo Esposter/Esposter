@@ -22,6 +22,7 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Async operations](/docs/architecture/async-operations)                                   | Concurrency by declaration — reads are latest-wins, writes queue, nothing drops silently |
 | [Caching](/docs/architecture/caching)                                                     | One cached-read primitive, invalidated by tag when a write says what it changed          |
 | [Persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only) | No legacy-shape schemas or migration code — parse the latest shape or reset              |
+| [No compatibility debt](/docs/architecture/no-compatibility-debt)                         | A wrong name, shape or deployed identity is corrected in place — never aliased           |
 | [Content token rewriting](/docs/architecture/content-token-rewriting)                     | Finding tokens in authored content — self-delimiting matches, one pass, converge on read |
 | [Monorepo tooling](/docs/architecture/monorepo-tooling)                                   | pnpm workspace orchestration, virrun routing, publishing, installs, and CI job shape     |
 | [Build pipeline](/docs/architecture/build-pipeline)                                       | One bundler, shared build presets, and an external list derived from each manifest       |
