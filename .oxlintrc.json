@@ -112,7 +112,7 @@
       }
     }
   ],
-  "plugins": ["import", "oxc", "typescript", "unicorn", "vitest", "vue"],
+  "plugins": ["import", "oxc", "promise", "typescript", "unicorn", "vitest", "vue"],
   "rules": {
     "class-methods-use-this": "off",
     "complexity": "off",
@@ -197,6 +197,17 @@
     "prefer-add-event-listener": "off",
     "prefer-destructuring": "off",
     "prefer-global-this": "off",
+    "promise/avoid-new": "off",
+    "promise/no-return-wrap": "off",
+    "promise/param-names": [
+      "error",
+      {
+        "rejectPattern": "^_?reject",
+        "resolvePattern": "^_?resolve"
+      }
+    ],
+    "promise/prefer-await-to-callbacks": "off",
+    "promise/prefer-await-to-then": "off",
     "sort-imports": "off",
     "sort-keys": "off",
     "typescript/ban-types": "off",
