@@ -1,5 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
+import { chargeStorageBlob } from "#src/services/storage/chargeStorageBlob";
 import { reconcileStorageBlob } from "#src/services/storage/reconcileStorageBlob";
 import { releaseStorageBlobs } from "#src/services/storage/releaseStorageBlobs";
 import { releaseStorageBlobsByPrefix } from "#src/services/storage/releaseStorageBlobsByPrefix";
@@ -87,6 +88,39 @@ describe("storage blob ledger", () => {
     await reconcileStorageBlob(db, containerName, blobName, overwrittenBytes);
 
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
+  });
+
+  // The server's own writes — a resource's content blob — have no reserve to ledger them, so the charge is
+  // What both counts them and makes them releasable by the paths that already exist
+  test("counts a blob the server wrote for itself", async () => {
+    expect.hasAssertions();
+
+    await chargeStorageBlob(db, userId, containerName, blobName, actualBytes);
+
+    await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
+    await expect(db.query.storageBlobs.findMany()).resolves.toMatchObject([
+      { countedBytes: actualBytes, declaredBytes: 0 },
+    ]);
+  });
+
+  test("corrects rather than adds when the server rewrites the same blob", async () => {
+    expect.hasAssertions();
+
+    await chargeStorageBlob(db, userId, containerName, blobName, actualBytes);
+    // Every save rewrites one blob name, so a second charge that summed would grow the counter without bound
+    await chargeStorageBlob(db, userId, containerName, blobName, overwrittenBytes);
+
+    await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
+  });
+
+  test("gives a server-written blob back with the directory it sits in", async () => {
+    expect.hasAssertions();
+
+    await chargeStorageBlob(db, userId, containerName, blobName, actualBytes);
+    await releaseStorageBlobsByPrefix(db, containerName, `${resourceId}/`);
+
+    await expect(readStorageBytesUsed()).resolves.toBe(0);
+    await expect(db.query.storageBlobs.findMany()).resolves.toStrictEqual([]);
   });
 
   test("accounts a blob nothing reserved to nobody", async () => {

@@ -12,7 +12,7 @@ import { ResourceAfterSaveContentMap } from "@@/server/services/resource/Resourc
 import { ResourceBoundResourceIdMap } from "@@/server/services/resource/ResourceBoundResourceIdMap";
 import { runAfterSaveResourceContent } from "@@/server/services/resource/runAfterSaveResourceContent";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
-import { getContentBlobName } from "@esposter/db";
+import { chargeStorageBlob, getContentBlobName } from "@esposter/db";
 import { AzureContainer, resources } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
@@ -65,9 +65,11 @@ export const saveResourceContent = async (
   // Are not equal — clearing a binding whose upload never landed costs one fallback blob read, while leaving one
   // Whose upload did land is the fail-open case this whole dance exists to prevent
   let isContentBlobWriteAttempted = false;
+  const serializedContent = JSON.stringify(parsedContent);
+  const contentBlobName = getContentBlobName(id);
   const writeContentBlob = async () => {
     isContentBlobWriteAttempted = true;
-    await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(parsedContent));
+    await useUpload(AzureContainer.ResourceAssets, contentBlobName, serializedContent);
   };
   // Projected here rather than in an after-save hook, and written in the same transaction as the blob. Every
   // Hook in `ResourceAfterSaveContentMap` is best-effort by contract, and this column is read by
@@ -130,6 +132,19 @@ export const saveResourceContent = async (
     if (hasBoundResourceIdChanged) await writeBoundResourceId(ctx.db, null);
     await writeContentBlob();
   }
+  // The owner is charged for their own content the same way they are for the files they upload into it — from
+  // Here, because this write knows its own size, and a blob with no reserve behind it has no ledger row for
+  // `BlobCreated` to find. `resource.userId`, not the caller: a blueprint deploy or a restore writes on the
+  // Owner's behalf. After the transaction rather than inside it — the charge takes the ledger row's lock and
+  // Then the user's, and holding a save's transaction open across those is a second connection waiting on
+  // Locks this one is not going to release. See /docs/platform/storage-quotas
+  await chargeStorageBlob(
+    ctx.db,
+    resource.userId,
+    AzureContainer.ResourceAssets,
+    contentBlobName,
+    Buffer.byteLength(serializedContent),
+  );
   // Guarded on the version this save established: the bump is what orders two saves, and this write lands after
   // The transaction that made it, so without the guard a save that committed first can still overwrite the
   // Binding of one that committed after it. No row back means superseded — the newer binding stands

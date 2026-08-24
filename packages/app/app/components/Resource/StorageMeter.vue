@@ -40,6 +40,6 @@ onMounted(() => storageStore.readStorageUsage());
         <span op-70 whitespace-nowrap text-body-medium>{{ usageText }}</span>
       </div>
     </template>
-    {{ storageUsage.tier }} plan — {{ usageText }} by your resource files
+    {{ storageUsage.tier }} plan — {{ usageText }} by your resources
   </v-tooltip>
 </template>
