@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
 
+// oxlint-disable-next-line no-restricted-imports -- the repo-root manifest, which no `#` map can reach
 import packageJsonType from "../package.json" with { type: "json" };
 
 const minArgv = 3;

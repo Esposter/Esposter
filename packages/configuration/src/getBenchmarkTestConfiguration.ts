@@ -1,6 +1,6 @@
 import type { ViteUserConfig } from "vitest/config";
 
-import { getBenchmarkRunner } from "./getBenchmarkRunner.ts";
+import { getBenchmarkRunner } from "#src/getBenchmarkRunner";
 // The bench wiring on its own, because `defineVitestProject` (the app) builds its Vitest config from scratch
 // And so can't take `getVitestConfiguration` — it spreads this instead of restating the fields.
 export const getBenchmarkTestConfiguration = (): NonNullable<ViteUserConfig["test"]> => ({

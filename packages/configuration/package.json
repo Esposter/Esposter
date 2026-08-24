@@ -29,6 +29,9 @@
   },
   "type": "module",
   "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
   "exports": {
     ".": {
       "source": "./src/index.ts",

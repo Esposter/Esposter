@@ -1,6 +1,6 @@
 import type { ViteUserConfig } from "vitest/config";
 
-import { getVitestConfiguration } from "./src/getVitestConfiguration.ts";
+import { getVitestConfiguration } from "#src/getVitestConfiguration";
 
 const vitestConfiguration: ViteUserConfig = getVitestConfiguration();
 
