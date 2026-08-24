@@ -27,7 +27,7 @@ vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () =
 // Asserted against a real database in the publish router test rather than faked into this one
 vi.mock(import("@esposter/db"), async (importOriginal) => ({
   ...(await importOriginal()),
-  chargeStorageBlob: () => Promise.resolve(),
+  chargeStorageLedgerEntry: () => Promise.resolve(),
 }));
 
 describe(transformPublishedBlobUrls, () => {

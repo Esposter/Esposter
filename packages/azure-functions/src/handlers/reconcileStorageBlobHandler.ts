@@ -2,7 +2,7 @@ import type { EventGridHandler } from "@azure/functions";
 
 import { db } from "#src/services/db";
 import { logAndRethrow } from "#src/services/logAndRethrow";
-import { reconcileStorageBlob } from "@esposter/db";
+import { reconcileStorageLedgerEntry } from "@esposter/db";
 import { AzureContainer, AzureFunction, blobCreatedEventGridDataSchema, parseBlobSubject } from "@esposter/db-schema";
 import { getDecodedUriComponent, getResultAsync, noop } from "@esposter/shared";
 
@@ -22,13 +22,14 @@ export const reconcileStorageBlobHandler: EventGridHandler = (event, context) =>
 
     const { blobName, containerName } = parsedBlobSubject;
     const { contentLength } = blobCreatedEventGridDataSchema.parse(event.data);
-    if (await reconcileStorageBlob(db, containerName, blobName, contentLength)) return;
+    if (await reconcileStorageLedgerEntry(db, containerName, blobName, contentLength)) return;
     // A blob name reaches us through a url path, and whether storage percent-encodes it in the subject depends
     // On the characters in it — our names carry a `|` separator and a user-chosen filename. Rather than guess
     // Which form a given event used, the decoded form is tried only once the raw one has found no row.
     // A filename holding a lone `%` decodes to nothing valid, and falling back to the raw name keeps that a
     // No-op — throwing would turn an unreserved blob, which is not an error, into a poison event
     const decodedBlobName = getDecodedUriComponent(blobName, blobName);
-    if (decodedBlobName !== blobName) await reconcileStorageBlob(db, containerName, decodedBlobName, contentLength);
+    if (decodedBlobName !== blobName)
+      await reconcileStorageLedgerEntry(db, containerName, decodedBlobName, contentLength);
   }).match(noop, logAndRethrow(context, AzureFunction.ReconcileStorageBlob));
 };

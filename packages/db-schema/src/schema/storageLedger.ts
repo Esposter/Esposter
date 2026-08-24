@@ -16,8 +16,8 @@ export const azureContainerEnum = pgEnum("azureContainer", AzureContainer);
 // Size. Nothing settles the rest: past `expiresAt` the write SAS is dead, so a hold that never landed simply
 // Stops counting. The row itself outlives that, because a `BlobCreated` for a blob that did land can still be
 // Inside the delivery window — a later reserve by that user drops it only once no such event can still arrive.
-export const storageBlobs = pgTable(
-  "storageBlobs",
+export const storageLedger = pgTable(
+  "storageLedger",
   {
     blobName: text().notNull(),
     containerName: azureContainerEnum().notNull(),
@@ -35,13 +35,13 @@ export const storageBlobs = pgTable(
   {
     extraConfig: ({ blobName, containerName, countedBytes, declaredBytes, reconciledAt, userId }) => [
       primaryKey({ columns: [containerName, blobName] }),
-      check("storageBlobs_declaredBytes_check", sql`${declaredBytes} >= 0`),
-      check("storageBlobs_countedBytes_check", sql`${countedBytes} >= 0`),
+      check("storageLedger_declaredBytes_check", sql`${declaredBytes} >= 0`),
+      check("storageLedger_countedBytes_check", sql`${countedBytes} >= 0`),
       // Backs the outstanding-reservation cap and the expired-hold collection, both of which lead with the
       // User on every reserve. No index leads with `reconciledAt`: nothing scans the ledger account-wide
-      index("storageBlobs_userId_reconciledAt_index").on(userId, reconciledAt),
+      index("storageLedger_userId_reconciledAt_index").on(userId, reconciledAt),
     ],
   },
 );
 
-export type StorageBlob = typeof storageBlobs.$inferSelect;
+export type StorageLedgerEntry = typeof storageLedger.$inferSelect;

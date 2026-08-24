@@ -1,13 +1,13 @@
 import type { Context } from "@@/server/trpc/context";
 
-import { MAX_UNRECONCILED_STORAGE_BLOBS } from "#shared/services/storage/constants";
+import { MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES } from "#shared/services/storage/constants";
 import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import { reserveStorageBytes } from "@@/server/services/storage/reserveStorageBytes";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import {
   AzureContainer,
   EVENT_GRID_DELIVERY_TTL_MS,
-  storageBlobs,
+  storageLedger,
   StorageTier,
   users,
   WRITE_SAS_DURATION_MS,
@@ -34,7 +34,7 @@ describe("reserveStorageBytes", () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(storageBlobs);
+    await mockContext.db.delete(storageLedger);
     await mockContext.db.update(users).set({ storageBytesUsed: 0, storageTier: StorageTier.Free });
   });
 
@@ -46,10 +46,10 @@ describe("reserveStorageBytes", () => {
     // Nothing is stored yet, so nothing is charged — storage reporting the blob is what moves the counter
     await expect(readStorageBytesUsed()).resolves.toBe(0);
 
-    const ledgeredStorageBlobs = await mockContext.db.query.storageBlobs.findMany();
+    const ledgeredStorageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
 
-    expect(ledgeredStorageBlobs).toHaveLength(1);
-    expect(ledgeredStorageBlobs[0]).toMatchObject({
+    expect(ledgeredStorageLedgerEntries).toHaveLength(1);
+    expect(ledgeredStorageLedgerEntries[0]).toMatchObject({
       blobName,
       containerName,
       countedBytes: 0,
@@ -64,7 +64,7 @@ describe("reserveStorageBytes", () => {
 
     await reserveStorageBytes(mockContext.db, userId, containerName, []);
 
-    await expect(mockContext.db.query.storageBlobs.findMany()).resolves.toStrictEqual([]);
+    await expect(mockContext.db.query.storageLedger.findMany()).resolves.toStrictEqual([]);
   });
 
   test("rejects a reservation that would cross the tier's quota", async () => {
@@ -76,7 +76,7 @@ describe("reserveStorageBytes", () => {
       reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes }]),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: You have run out of storage.]`);
     // The whole transaction rolls back, so a rejected reserve leaves no hold behind either
-    await expect(mockContext.db.query.storageBlobs.findMany()).resolves.toStrictEqual([]);
+    await expect(mockContext.db.query.storageLedger.findMany()).resolves.toStrictEqual([]);
   });
 
   test("counts a hold that has not landed yet against the quota", async () => {
@@ -97,7 +97,7 @@ describe("reserveStorageBytes", () => {
   test("stops counting a hold whose write sas has expired while a blob created event for it can still arrive", async () => {
     expect.hasAssertions();
 
-    await mockContext.db.insert(storageBlobs).values({
+    await mockContext.db.insert(storageLedger).values({
       blobName,
       containerName,
       countedBytes: 0,
@@ -109,9 +109,9 @@ describe("reserveStorageBytes", () => {
       { blobName: `${blobName}Second`, declaredBytes },
     ]);
 
-    const ledgeredStorageBlobs = await mockContext.db.query.storageBlobs.findMany();
+    const ledgeredStorageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
 
-    expect(ledgeredStorageBlobs.map(({ blobName: name }) => name).toSorted()).toStrictEqual([
+    expect(ledgeredStorageLedgerEntries.map(({ blobName: name }) => name).toSorted()).toStrictEqual([
       blobName,
       `${blobName}Second`,
     ]);
@@ -120,7 +120,7 @@ describe("reserveStorageBytes", () => {
   test("drops a hold once no blob created event for it can still be redelivered", async () => {
     expect.hasAssertions();
 
-    await mockContext.db.insert(storageBlobs).values({
+    await mockContext.db.insert(storageLedger).values({
       blobName,
       containerName,
       countedBytes: 0,
@@ -134,16 +134,16 @@ describe("reserveStorageBytes", () => {
       { blobName: `${blobName}Second`, declaredBytes },
     ]);
 
-    const ledgeredStorageBlobs = await mockContext.db.query.storageBlobs.findMany();
+    const ledgeredStorageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
 
-    expect(ledgeredStorageBlobs).toHaveLength(1);
-    expect(ledgeredStorageBlobs[0]?.blobName).toBe(`${blobName}Second`);
+    expect(ledgeredStorageLedgerEntries).toHaveLength(1);
+    expect(ledgeredStorageLedgerEntries[0]?.blobName).toBe(`${blobName}Second`);
   });
 
   test("rejects once too many holds are outstanding", async () => {
     expect.hasAssertions();
 
-    const outstandingReservations = Array.from({ length: MAX_UNRECONCILED_STORAGE_BLOBS }, (_, index) => ({
+    const outstandingReservations = Array.from({ length: MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES }, (_, index) => ({
       blobName: `${blobName}${index}`,
       declaredBytes,
     }));

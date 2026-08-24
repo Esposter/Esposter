@@ -22,7 +22,7 @@ Which Azure services are used, what each one owns, and which package accesses it
 
 EventGrid vs Service Bus: EventGrid is fire-and-forget **now** (push a notification the moment a message lands); Service Bus is fire **later** (a scheduled message job or TodoList reminder must run at its `runAt`/`dueAt`). Both terminate in Azure Functions handlers.
 
-Not every EventGrid handler consumes an event this app published. `reconcileStorageBlob` subscribes to the storage account's own **system topic**, so `Microsoft.Storage.BlobCreated` is what replaces a client's declared upload size with the stored object's real length in the per-user storage ledger — a fact no server of ours ever observes, because the block PUT never passes through one ([storage quotas](/docs/platform/storage-quotas)).
+Not every EventGrid handler consumes an event this app published. `reconcileStorageLedgerEntry` subscribes to the storage account's own **system topic**, so `Microsoft.Storage.BlobCreated` is what replaces a client's declared upload size with the stored object's real length in the per-user storage ledger — a fact no server of ours ever observes, because the block PUT never passes through one ([storage quotas](/docs/platform/storage-quotas)).
 
 ## Blob Storage containers
 

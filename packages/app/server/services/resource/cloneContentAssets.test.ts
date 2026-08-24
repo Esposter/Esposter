@@ -21,7 +21,7 @@ vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () =
 // So it is asserted where one exists — the publish and duplicate router tests — rather than faked into this one
 vi.mock(import("@esposter/db"), async (importOriginal) => ({
   ...(await importOriginal()),
-  chargeStorageBlob: () => Promise.resolve(),
+  chargeStorageLedgerEntry: () => Promise.resolve(),
 }));
 
 describe(cloneContentAssets, () => {

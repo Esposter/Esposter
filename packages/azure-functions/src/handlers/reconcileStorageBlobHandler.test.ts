@@ -4,7 +4,7 @@ import type { BlobCreatedEventGridData, Database } from "@esposter/db-schema";
 import { reconcileStorageBlobHandler } from "#src/handlers/reconcileStorageBlobHandler";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, getBlobSubjectPrefix, storageBlobs, users } from "@esposter/db-schema";
+import { AzureContainer, getBlobSubjectPrefix, storageLedger, users } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -50,12 +50,12 @@ describe(reconcileStorageBlobHandler, () => {
   });
 
   afterEach(async () => {
-    await mockDb.delete(storageBlobs);
+    await mockDb.delete(storageLedger);
     await mockDb.update(users).set({ storageBytesUsed: 0 });
   });
 
-  const createStorageBlob = () =>
-    mockDb.insert(storageBlobs).values({
+  const createStorageLedgerEntry = () =>
+    mockDb.insert(storageLedger).values({
       blobName,
       containerName,
       countedBytes: 0,
@@ -67,7 +67,7 @@ describe(reconcileStorageBlobHandler, () => {
   test("charges the owner what storage reported", async () => {
     expect.hasAssertions();
 
-    await createStorageBlob();
+    await createStorageLedgerEntry();
     await reconcileStorageBlobHandler(
       createEventGridEvent(`${getBlobSubjectPrefix(containerName)}${blobName}`),
       context,
@@ -79,7 +79,7 @@ describe(reconcileStorageBlobHandler, () => {
   test("recovers a blob name storage percent-encoded into the subject", async () => {
     expect.hasAssertions();
 
-    await createStorageBlob();
+    await createStorageLedgerEntry();
     await reconcileStorageBlobHandler(
       createEventGridEvent(`${getBlobSubjectPrefix(containerName)}${encodeURIComponent(blobName)}`),
       context,
@@ -105,7 +105,7 @@ describe(reconcileStorageBlobHandler, () => {
   test("ignores a container no upload reserves against", async () => {
     expect.hasAssertions();
 
-    await createStorageBlob();
+    await createStorageLedgerEntry();
     await reconcileStorageBlobHandler(
       createEventGridEvent(`${getBlobSubjectPrefix(AzureContainer.MessageAssets)}${blobName}`),
       context,

@@ -13,7 +13,7 @@ import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 import { deepVisitStrings } from "#shared/util/object/deepVisitStrings";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getIsResourceAssetReadable } from "@@/server/services/resource/getIsResourceAssetReadable";
-import { chargeStorageBlob, copyBlob } from "@esposter/db";
+import { chargeStorageLedgerEntry, copyBlob } from "@esposter/db";
 import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
 import { getOrCreate, getResultAsync, ID_SEPARATOR, settleAll } from "@esposter/shared";
 
@@ -42,7 +42,7 @@ const cloneAsset = async (
   // For — the publisher, or the owner of the duplicate or the restored working copy. Charged here rather than
   // Through `BlobCreated`, which a server-side copy raises for a blob no reserve ever ledgered.
   // See /docs/platform/storage-quotas
-  await chargeStorageBlob(db, userId, AzureContainer.ResourceAssets, destinationBlobName, contentLength);
+  await chargeStorageLedgerEntry(db, userId, AzureContainer.ResourceAssets, destinationBlobName, contentLength);
   return [[url, getResourceAssetUrl(destinationBlobName)] as const];
 };
 // Publish, duplicate and restore all snapshot content whose assets must survive the source's working copies

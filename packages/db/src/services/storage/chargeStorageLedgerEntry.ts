@@ -1,7 +1,7 @@
-import type { AzureContainer, Database, StorageBlob, User } from "@esposter/db-schema";
+import type { AzureContainer, Database, StorageLedgerEntry, User } from "@esposter/db-schema";
 
-import { reconcileStorageBlob } from "#src/services/storage/reconcileStorageBlob";
-import { storageBlobs } from "@esposter/db-schema";
+import { reconcileStorageLedgerEntry } from "#src/services/storage/reconcileStorageLedgerEntry";
+import { storageLedger } from "@esposter/db-schema";
 
 // The counter's other writer: a blob the server itself wrote, whose size it already knows. There is no SAS and
 // So no reserve — the bytes are stored by the time this runs, and the client was never in the data path, so
@@ -10,14 +10,14 @@ import { storageBlobs } from "@esposter/db-schema";
 // Happened, and refusing the charge would only make the counter lie. See /docs/platform/storage-quotas
 //
 // The row is what attributes a blob to an owner, and every release reads its amount off that row — so writing
-// One here is what lets `deleteStorageBlobs` and `releaseStorageBlobsByPrefix` give these bytes back with no
+// One here is what lets `deleteStorageBlobs` and `releaseStorageLedgerEntriesByPrefix` give these bytes back with no
 // Path of their own. Born already expired: `expiresAt` bounds a write target's life, and this one's write is
 // Behind it, so the hold must never count toward another reserve's pending sum.
-export const chargeStorageBlob = async (
+export const chargeStorageLedgerEntry = async (
   db: Database,
   userId: User["id"],
   containerName: AzureContainer,
-  blobName: StorageBlob["blobName"],
+  blobName: StorageLedgerEntry["blobName"],
   actualBytes: number,
 ): Promise<void> => {
   // Nothing is charged by the insert itself — `countedBytes` starts at zero and the reconcile below moves the
@@ -25,8 +25,8 @@ export const chargeStorageBlob = async (
   // `BlobCreated` for one write target does. A concurrent charge of the same blob finds the row already there
   // And takes the same path.
   await db
-    .insert(storageBlobs)
+    .insert(storageLedger)
     .values({ blobName, containerName, countedBytes: 0, declaredBytes: 0, expiresAt: new Date(), userId })
     .onConflictDoNothing();
-  await reconcileStorageBlob(db, containerName, blobName, actualBytes);
+  await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes);
 };

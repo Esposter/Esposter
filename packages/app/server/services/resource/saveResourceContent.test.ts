@@ -19,7 +19,7 @@ import {
   ResourceActivityType,
   resources,
   ResourceType,
-  storageBlobs,
+  storageLedger,
   users,
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne } from "@esposter/shared";
@@ -111,7 +111,7 @@ describe(saveResourceContent, () => {
     await mockContext.db.delete(resources);
     // The ledger is keyed by user, not by resource, so it outlives the rows above — and every test here saves
     // Content, which now charges the counter
-    await mockContext.db.delete(storageBlobs);
+    await mockContext.db.delete(storageLedger);
     await mockContext.db.update(users).set({ storageBytesUsed: 0 });
   });
 

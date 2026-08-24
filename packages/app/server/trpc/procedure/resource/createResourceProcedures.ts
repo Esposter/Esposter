@@ -10,7 +10,7 @@ import { PUBLISHED_DIRECTORY_SEGMENT, staleContentVersionErrorMessage } from "#s
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { MAX_UNRECONCILED_STORAGE_BLOBS } from "#shared/services/storage/constants";
+import { MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES } from "#shared/services/storage/constants";
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
@@ -36,7 +36,7 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { chargeStorageBlob } from "@esposter/db";
+import { chargeStorageLedgerEntry } from "@esposter/db";
 import {
   AzureContainer,
   BLOB_SEGMENT_MAX_LENGTH,
@@ -85,7 +85,7 @@ const generateUploadFileSasEntitiesInputSchema = z.object({
     "filename",
   )
     .min(1)
-    .max(MAX_UNRECONCILED_STORAGE_BLOBS),
+    .max(MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES),
   id: selectResourceSchema.shape.id,
 });
 
@@ -382,7 +382,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // Its cloned assets charge themselves as each copy lands. After the transaction, never inside: the
         // Charge locks the ledger row and then the user's, and a transaction held open across that waits on
         // Locks it is itself holding. See /docs/platform/storage-quotas
-        await chargeStorageBlob(
+        await chargeStorageLedgerEntry(
           ctx.db,
           ctx.getSessionPayload.user.id,
           AzureContainer.ResourceAssets,

@@ -73,8 +73,8 @@ describe("schema", () => {
                 OR ("message"."scheduledMessageJobs"."payload"->>'type' = 'ScheduledMessage' AND "message"."scheduledMessageJobs"."payload" ? 'message')
               
       searchHistories_query_length_check: LENGTH("message"."searchHistories"."query") <= 10000
-      storageBlobs_declaredBytes_check: "storageBlobs"."declaredBytes" >= 0
-      storageBlobs_countedBytes_check: "storageBlobs"."countedBytes" >= 0
+      storageLedger_declaredBytes_check: "storageLedger"."declaredBytes" >= 0
+      storageLedger_countedBytes_check: "storageLedger"."countedBytes" >= 0
       userAchievements_amount_check: "userAchievements"."amount" >= 1
       users_biography_length_check: LENGTH("users"."biography") <= 160
       users_name_length_check: LENGTH(TRIM("users"."name")) BETWEEN 1 AND 100

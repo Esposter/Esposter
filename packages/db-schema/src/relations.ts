@@ -22,7 +22,7 @@ import { roomsInMessageRelation } from "#src/relations/roomsInMessageRelation";
 import { scheduledMessageJobsInMessageRelation } from "#src/relations/scheduledMessageJobsInMessageRelation";
 import { searchHistoriesInMessageRelation } from "#src/relations/searchHistoriesInMessageRelation";
 import { sessionsRelation } from "#src/relations/sessionsRelation";
-import { storageBlobsRelation } from "#src/relations/storageBlobsRelation";
+import { storageLedgerRelation } from "#src/relations/storageLedgerRelation";
 import { threadFollowsInMessageRelation } from "#src/relations/threadFollowsInMessageRelation";
 import { userAchievementsRelation } from "#src/relations/userAchievementsRelation";
 import { usersRelation } from "#src/relations/usersRelation";
@@ -56,7 +56,7 @@ export const relations = {
   ...scheduledMessageJobsInMessageRelation,
   ...searchHistoriesInMessageRelation,
   ...sessionsRelation,
-  ...storageBlobsRelation,
+  ...storageLedgerRelation,
   ...threadFollowsInMessageRelation,
   ...userAchievementsRelation,
   ...userStatusesInMessageRelation,
