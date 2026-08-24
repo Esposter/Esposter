@@ -5,11 +5,13 @@ import type { Resource } from "@esposter/db-schema";
 
 import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
 import { DeletedResourceHeaders } from "@/services/resource/DeletedResourceHeaders";
+import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { useRecycleBinDialogStore } from "@/store/resource/recycleBinDialog";
 import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
 
 const { count, error, isPending, items, readDeletedResources, refresh } = useReadDeletedResources();
+const navigationTrailStore = useNavigationTrailStore();
+const { closeTo } = storeToRefs(navigationTrailStore);
 const recycleBinDialogStore = useRecycleBinDialogStore();
 const { purgingId } = storeToRefs(recycleBinDialogStore);
 const purgingResource = computed(() => items.value.find(({ id }) => id === purgingId.value));
@@ -42,7 +44,7 @@ const onUpdateOptions = (options: ReadResourcesOptions) => readDeletedResources(
       >
       <v-spacer />
       <StyledTooltipIconButton icon="mdi-refresh" text="Refresh" @click="refresh()" />
-      <StyledTooltipIconButton :to="RoutePath.ResourceExplorerAll" icon="mdi-close" text="Close" />
+      <StyledTooltipIconButton :to="closeTo" icon="mdi-close" text="Close" />
     </v-toolbar>
     <v-alert v-if="error && items.length > 0" density="compact" type="error" :text="error" :rounded="0">
       <template #append>

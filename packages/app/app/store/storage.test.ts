@@ -26,7 +26,7 @@ describe(useStorageStore, () => {
     expect.hasAssertions();
 
     const handler = vi.fn<() => StorageUsage>(() => storageUsage);
-    server.use(trpcMsw.storage.getUsage.query(handler));
+    server.use(trpcMsw.storage.readUsage.query(handler));
     const storageStore = useStorageStore();
     const { readStorageUsage } = storageStore;
     await Promise.all([readStorageUsage(), readStorageUsage()]);

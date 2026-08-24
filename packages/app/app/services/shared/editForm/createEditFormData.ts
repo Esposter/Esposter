@@ -58,19 +58,15 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
     });
   };
   // Restores the edit dialog from the id query params (e.g. on refresh/deep-link) once items are loaded
-  watch(
-    items,
-    async () => {
-      if (editFormDialog.value || editedItem.value) return;
-      const queryIdEntries = idKeys.flatMap((key) => {
-        const value = router.currentRoute.value.query[key as string];
-        return typeof value === "string" ? [[key, value] as const] : [];
-      });
-      if (queryIdEntries.length !== idKeys.length) return;
-      await editItem(Object.fromEntries(queryIdEntries) as { [P in keyof TItem & TIdKeys[number]]: TItem[P] });
-    },
-    { immediate: true },
-  );
+  watchImmediate(items, async () => {
+    if (editFormDialog.value || editedItem.value) return;
+    const queryIdEntries = idKeys.flatMap((key) => {
+      const value = router.currentRoute.value.query[key as string];
+      return typeof value === "string" ? [[key, value] as const] : [];
+    });
+    if (queryIdEntries.length !== idKeys.length) return;
+    await editItem(Object.fromEntries(queryIdEntries) as { [P in keyof TItem & TIdKeys[number]]: TItem[P] });
+  });
 
   return {
     editedItem,

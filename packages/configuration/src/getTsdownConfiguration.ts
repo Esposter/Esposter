@@ -1,10 +1,9 @@
 import type { UserConfig } from "tsdown";
 
+import { BUILD_TSCONFIG, SOURCE_CONDITION } from "#src/constants";
+import { getPackagePatterns } from "#src/getPackagePatterns";
+import { readPackageManifest } from "#src/readPackageManifest";
 import { mergeConfig } from "tsdown";
-
-import { BUILD_TSCONFIG, SOURCE_CONDITION } from "./constants.ts";
-import { getPackagePatterns } from "./getPackagePatterns.ts";
-import { readPackageManifest } from "./readPackageManifest.ts";
 
 // The base every package's `tsdown.config.ts` calls. tsdown already defaults `entry` to `src/index.ts`,
 // `outDir` to `dist`, `format` to `esm` and `clean` to true, so none of those are restated here.

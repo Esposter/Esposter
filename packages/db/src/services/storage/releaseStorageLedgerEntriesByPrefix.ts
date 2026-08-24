@@ -1,7 +1,7 @@
 import type { AzureContainer, Database } from "@esposter/db-schema";
 
-import { releaseStorageBlobsWhere } from "#src/services/storage/releaseStorageBlobsWhere";
-import { storageBlobs } from "@esposter/db-schema";
+import { releaseStorageLedgerEntriesWhere } from "#src/services/storage/releaseStorageLedgerEntriesWhere";
+import { storageLedger } from "@esposter/db-schema";
 import { and, eq, sql } from "drizzle-orm";
 
 // The directory-wide release behind `purgeResource`, its only caller — the one teardown that never enumerates
@@ -10,12 +10,12 @@ import { and, eq, sql } from "drizzle-orm";
 // Through `deleteStorageBlobs`, which releases exactly the names each wave removed.
 // `starts_with` rather than LIKE: a prefix is an interpolated path, and `_` in a LIKE pattern is a wildcard
 // That would silently widen the release to a sibling directory.
-export const releaseStorageBlobsByPrefix = (
+export const releaseStorageLedgerEntriesByPrefix = (
   db: Database,
   containerName: AzureContainer,
   prefix: string,
 ): Promise<void> =>
-  releaseStorageBlobsWhere(
+  releaseStorageLedgerEntriesWhere(
     db,
-    and(eq(storageBlobs.containerName, containerName), sql`starts_with(${storageBlobs.blobName}, ${prefix})`),
+    and(eq(storageLedger.containerName, containerName), sql`starts_with(${storageLedger.blobName}, ${prefix})`),
   );

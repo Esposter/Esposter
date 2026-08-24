@@ -23,7 +23,7 @@ import { mimeCategoryEnum, roomsInMessage, roomTypeEnum } from "#src/schema/room
 import { scheduledMessageJobsInMessage } from "#src/schema/scheduledMessageJobsInMessage";
 import { searchHistoriesInMessage } from "#src/schema/searchHistoriesInMessage";
 import { sessions } from "#src/schema/sessions";
-import { azureContainerEnum, storageBlobs } from "#src/schema/storageBlobs";
+import { azureContainerEnum, storageLedger } from "#src/schema/storageLedger";
 import { threadFollowsInMessage } from "#src/schema/threadFollowsInMessage";
 import { userAchievements } from "#src/schema/userAchievements";
 import { storageTierEnum, users } from "#src/schema/users";
@@ -67,7 +67,7 @@ export const schema = {
   scheduledMessageJobsInMessage,
   searchHistoriesInMessage,
   sessions,
-  storageBlobs,
+  storageLedger,
   storageTierEnum,
   threadFollowsInMessage,
   userAchievements,

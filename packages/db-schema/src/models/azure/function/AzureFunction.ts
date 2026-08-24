@@ -9,7 +9,7 @@ export enum AzureFunction {
   ProcessWebhook = "ProcessWebhook",
   PurgeDeletedResources = "PurgeDeletedResources",
   PushWebhook = "PushWebhook",
-  ReconcileStorageBlob = "ReconcileStorageBlob",
+  ReconcileStorageLedgerEntry = "ReconcileStorageLedgerEntry",
   ReplayDeadLetterEvent = "ReplayDeadLetterEvent",
   SendTodoReminder = "SendTodoReminder",
 }

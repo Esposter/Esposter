@@ -13,21 +13,38 @@ import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 import { deepVisitStrings } from "#shared/util/object/deepVisitStrings";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getIsResourceAssetReadable } from "@@/server/services/resource/getIsResourceAssetReadable";
-import { copyBlob } from "@esposter/db";
+import { chargeStorageLedgerEntry, copyBlob } from "@esposter/db";
 import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
-import { getOrCreate, ID_SEPARATOR, settleAll } from "@esposter/shared";
+import { getOrCreate, getResultAsync, ID_SEPARATOR, settleAll } from "@esposter/shared";
 
 // The rewrite entry for one working-copy asset url, or nothing when the referenced blob is missing — a
 // Dangling reference (the asset was deleted but the content still embeds its url) is data like an
 // Unparseable url, carried verbatim instead of failing the whole clone
 const cloneAsset = async (
+  db: Database,
+  userId: string,
   containerClient: ContainerClient,
   url: string,
   blobName: string,
   destinationBlobName: string,
 ): Promise<(readonly [string, string])[]> => {
-  if (!(await containerClient.getBlockBlobClient(blobName).exists())) return [];
+  // The properties answer both questions the copy needs — whether the source is there, and how many bytes the
+  // Clone will cost its new owner — in the one HEAD an existence check already paid for. Any failure reads as
+  // Missing, which is what an unfollowable reference has always degraded to here
+  const contentLength = await getResultAsync(() => containerClient.getBlockBlobClient(blobName).getProperties()).match(
+    (properties) => properties.contentLength,
+    () => undefined,
+  );
+  if (contentLength === undefined) return [];
+
   await copyBlob(containerClient, blobName, destinationBlobName);
+  // A clone is stored bytes like any other, and the destination directory belongs to whoever this clone is
+  // For — the publisher, or the owner of the duplicate or the restored working copy. The source's length is a
+  // Provisional figure, not a measurement of the copy: the copy raises its own `BlobCreated`, which now finds
+  // The row this charge wrote and replaces the figure with what actually landed. So a source overwritten under
+  // A still-valid write SAS between the read and the copy costs a few seconds of a wrong number rather than a
+  // Second HEAD on every clone. See /docs/platform/storage-quotas
+  await chargeStorageLedgerEntry(db, userId, AzureContainer.ResourceAssets, destinationBlobName, contentLength);
   return [[url, getResourceAssetUrl(destinationBlobName)] as const];
 };
 // Publish, duplicate and restore all snapshot content whose assets must survive the source's working copies
@@ -136,7 +153,7 @@ export const cloneContentAssets = async <TContent>(
     clones.map(
       ({ blobName, destinationBlobName, url }) =>
         () =>
-          cloneAsset(containerClient, url, blobName, destinationBlobName),
+          cloneAsset(db, userId, containerClient, url, blobName, destinationBlobName),
     ),
     MAX_CONCURRENT_BLOB_COPIES,
   );

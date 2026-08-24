@@ -7,7 +7,7 @@ import type { StorageUsage } from "#shared/models/storage/StorageUsage";
 export const useStorageStore = defineStore("storage", () => {
   const { $trpc } = useNuxtApp();
   const storageUsage = ref<StorageUsage>();
-  const { read: readStorageUsage } = useCachedRead(() => $trpc.storage.getUsage.query(), {
+  const { read: readStorageUsage } = useCachedRead(() => $trpc.storage.readUsage.query(), {
     // Deliberately untagged. The counter only moves when storage's own BlobCreated event lands seconds after
     // The PUT, so there is no moment a write here could invalidate this and read a different number — the
     // Read is per session, not per navigation, and no tag would make it truer

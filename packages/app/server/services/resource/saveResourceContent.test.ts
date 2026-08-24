@@ -11,7 +11,17 @@ import { resourceEventEmitter } from "@@/server/services/resource/events/resourc
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
-import { AzureQueue, AzureTable, ResourceActivityType, resources, ResourceType } from "@esposter/db-schema";
+import { getContentBlobName } from "@esposter/db";
+import {
+  AzureContainer,
+  AzureQueue,
+  AzureTable,
+  ResourceActivityType,
+  resources,
+  ResourceType,
+  storageLedger,
+  users,
+} from "@esposter/db-schema";
 import { jsonDateParse, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
@@ -58,6 +68,13 @@ describe(saveResourceContent, () => {
         .values({ boundResourceId: surveyId, name, type: ResourceType.Program, userId: ctx.getSessionPayload.user.id })
         .returning(),
     );
+  const readStorageBytesUsed = async () =>
+    (
+      await mockContext.db.query.users.findFirst({
+        columns: { storageBytesUsed: true },
+        where: { id: { eq: ctx.getSessionPayload.user.id } },
+      })
+    )?.storageBytesUsed;
   const readBoundResourceId = async (id: Resource["id"]) =>
     (await ctx.db.query.resources.findFirst({ where: { id: { eq: id } } }))?.boundResourceId;
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
@@ -92,6 +109,10 @@ describe(saveResourceContent, () => {
     MockServiceBusDatabase.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(resources);
+    // The ledger is keyed by user, not by resource, so it outlives the rows above — and every test here saves
+    // Content, which now charges the counter
+    await mockContext.db.delete(storageLedger);
+    await mockContext.db.update(users).set({ storageBytesUsed: 0 });
   });
 
   test("writes the content, emits the save, records the activity and runs the after-save hook as one unit", async () => {
@@ -128,6 +149,20 @@ describe(saveResourceContent, () => {
     expect(saveEvent.content).toStrictEqual(jsonDateParse(JSON.stringify(content)));
     expect(readActivityTypes()).toStrictEqual([ResourceActivityType.ContentSaved]);
     expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([createReminder(resource.id)]);
+  });
+
+  // A content blob has no reserve behind it to ledger it, so the save itself is what charges the owner — and
+  // For the blob's own size, which is the only number the meter can be right about
+  test("charges the owner for the content blob it stored", async () => {
+    expect.hasAssertions();
+
+    await saveResourceContent(ctx, { content, resource });
+    const storedContent = MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(
+      getContentBlobName(resource.id),
+    );
+    assert.exists(storedContent);
+
+    await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength);
   });
 
   // The prior content is read before the write overwrites it, so a hook that diffs sees what it replaced —

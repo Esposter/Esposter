@@ -6,7 +6,7 @@ import { getContainerClient } from "#src/services/getContainerClient";
 import { InvocationContext } from "@azure/functions";
 import { dayjs } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, storageBlobs, users } from "@esposter/db-schema";
+import { AzureContainer, storageLedger, users } from "@esposter/db-schema";
 import { MockBlockBlobClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -59,8 +59,8 @@ describe(processBlobDeletionHandler, () => {
     await containerClient.getBlockBlobClient(name).upload(content, content.length);
   };
   // A blob storage has already reported, so the counter is carrying its bytes and a release gives them back
-  const seedStorageBlob = (name: string) =>
-    mockDb.insert(storageBlobs).values({
+  const seedStorageLedgerEntry = (name: string) =>
+    mockDb.insert(storageLedger).values({
       blobName: name,
       containerName: AzureContainer.MessageAssets,
       countedBytes,
@@ -90,7 +90,7 @@ describe(processBlobDeletionHandler, () => {
   afterEach(async () => {
     MockContainerDatabase.clear();
     vi.restoreAllMocks();
-    await mockDb.delete(storageBlobs);
+    await mockDb.delete(storageLedger);
     await mockDb.update(users).set({ storageBytesUsed: 0 });
   });
 
@@ -156,8 +156,8 @@ describe(processBlobDeletionHandler, () => {
 
     await seedBlob(blobName);
     await seedBlob(secondBlobName);
-    await seedStorageBlob(blobName);
-    await seedStorageBlob(secondBlobName);
+    await seedStorageLedgerEntry(blobName);
+    await seedStorageLedgerEntry(secondBlobName);
     await mockDb.update(users).set({ storageBytesUsed: countedBytes * 2 });
     vi.spyOn(MockBlockBlobClient.prototype, "deleteIfExists").mockRejectedValueOnce(new Error(" "));
 
@@ -167,7 +167,7 @@ describe(processBlobDeletionHandler, () => {
 
     expect(readContainer()).toStrictEqual([blobName]);
     await expect(readStorageBytesUsed()).resolves.toBe(countedBytes);
-    await expect(mockDb.query.storageBlobs.findMany({ columns: { blobName: true } })).resolves.toStrictEqual([
+    await expect(mockDb.query.storageLedger.findMany({ columns: { blobName: true } })).resolves.toStrictEqual([
       { blobName },
     ]);
   });

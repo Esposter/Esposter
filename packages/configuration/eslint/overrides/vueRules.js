@@ -12,6 +12,12 @@ export default {
   // Not covered by eslint-plugin-oxlint on vue files — its vue-svelte-astro-exceptions config
   // Deliberately keeps unused-vars rules enabled there, so this off is still load-bearing.
   "@typescript-eslint/no-unused-vars": "off",
+  // `<script setup>` is the only component authoring style here. The Options API runtime is compiled out of the
+  // Bundle entirely (`future.compatibilityVersion: 5` defaults `vue.optionsApi` off), so an options component of
+  // Ours would mount against a runtime that cannot apply it and fail at render rather than at build. Plain
+  // `defineComponent(...)` composition is banned with it: it buys nothing script setup does not, and leaving it
+  // Allowed is what lets an options block back in one property at a time.
+  "vue/component-api-style": ["error", ["script-setup"]],
   // PascalCase for our components and PascalCase third-party (VueFlow, VuePdfEmbed); kebab-case is only for
   // Third-party libraries that ship kebab tags (Vuetify's v-*) and TresJS's lowercase <primitive> special
   // Element. registeredComponentsOnly is useless under Nuxt auto-imports (nothing is locally registered),

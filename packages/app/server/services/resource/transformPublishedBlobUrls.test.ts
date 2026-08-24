@@ -23,6 +23,13 @@ vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () =
   useContainerClient: () => Promise.resolve(containerClientMock.current),
 }));
 
+// The context here is a stub answering the clone's readability questions, so the charge every clone makes is
+// Asserted against a real database in the publish router test rather than faked into this one
+vi.mock(import("@esposter/db"), async (importOriginal) => ({
+  ...(await importOriginal()),
+  chargeStorageLedgerEntry: () => Promise.resolve(),
+}));
+
 describe(transformPublishedBlobUrls, () => {
   const resourceId = crypto.randomUUID();
   const fileId = crypto.randomUUID();

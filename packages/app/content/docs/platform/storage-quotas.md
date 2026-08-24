@@ -1,13 +1,13 @@
 ---
 title: Storage quotas
-description: Per-user blob-storage quotas (Free = 10 GiB) held atomically at SAS issuance and charged by Storage's own BlobCreated event, with a usage meter in the resource explorer's header.
+description: Per-user blob-storage quotas (Free = 10 GiB) held atomically at SAS issuance, charged by Storage's own BlobCreated event for client uploads and at write time for the server's own, with a usage meter in the resource explorer's header.
 ---
 
 # Storage quotas
 
 Every user has a bounded, tier-derived allowance for the files they keep in their own resources — Free = 10 GiB — that they genuinely cannot exceed by hammering uploads, shown back to them as a "X of Y used" meter in the [Resource Explorer](/docs/platform/resource-explorer)'s header. The bar and the limit shipped together: a usage number nobody can act on was the reason the display was deferred on its own.
 
-Nothing is scheduled. The counter moves only when Azure tells us a blob landed or one of our own deletions removes it, and an abandoned upload needs no cleanup at all because its hold expires as a **predicate** rather than as a state some job flips.
+Nothing is scheduled. The counter moves only on a write it is told about — the server charging bytes it wrote itself, Azure telling us a client's blob landed, or one of our own deletions removing one — and an abandoned upload needs no cleanup at all because its hold expires as a **predicate** rather than as a state some job flips.
 
 ## Why a plain pre-flight check is not enough
 
@@ -25,15 +25,16 @@ flowchart TD
   client[Client upload] -->|"generateUploadFileSasEntities (declared size)"| sign[Sign write SAS locally]
   sign --> reserve{"Lock user row<br/>used + live holds + declared &lt;= quota?"}
   reserve -->|no| reject["FORBIDDEN — You have run out of storage"]
-  reserve -->|yes| ledger[("storage_blobs hold<br/>countedBytes = 0<br/>expiresAt = SAS ttl")]
+  reserve -->|yes| ledger[("storageLedger hold<br/>countedBytes = 0<br/>expiresAt = SAS ttl")]
   ledger --> respond[SAS returned to client]
   respond --> put[Client PUTs bytes to Azure Blob]
   put --> created["Storage emits BlobCreated<br/>with contentLength"]
-  created --> reconcile["ReconcileStorageBlob<br/>counter += actual - countedBytes"]
+  created --> reconcile["ReconcileStorageLedgerEntry<br/>counter += actual - countedBytes"]
   reconcile --> counter[("users.storageBytesUsed")]
   del["Blob deletion / purge"] -->|"counter -= countedBytes, row dropped"| counter
+  save["Server-side writes, no SAS<br/>content · publish snapshot · cloned assets"] -->|"chargeStorageLedgerEntry<br/>row + counter += actual - countedBytes"| counter
   ledger -.->|"expiresAt passes with no BlobCreated —<br/>the hold simply stops counting"| gone(["Nothing runs"])
-  counter -->|storage.getUsage| ui["Usage bar — 3.2 GB of 10 GB"]
+  counter -->|storage.readUsage| ui["Usage bar — 3.2 GB of 10 GB"]
   tier[("users.storageTier")] -->|StorageTierQuotaMap| quota[Quota bytes]
   quota --> reserve
   quota --> ui
@@ -41,9 +42,15 @@ flowchart TD
 
 **The counter holds stored bytes and nothing else.** `users.storageBytesUsed` is the sum of what is actually in blob storage for that user. A declaration the client has not yet made good on is not in it — that lives in the ledger and is summed at reserve time.
 
-**Reserve.** The SAS is signed first — signing is local and touches nothing in Azure — and the reserve runs before the response is returned, so a rejection is a write target the client never receives. The resource upload chokepoint goes through `generateReservedUploadFileSasEntities`, which mints and reserves in one call: a new upload path cannot hand out write targets nothing accounts for. In one transaction: this user's collectable holds are deleted (pure garbage collection — they never entered the counter); the user row is taken `FOR UPDATE`, which is what makes concurrent reserves serialize instead of race; the live holds are summed; and `storageBytesUsed + pending + declared <= quota` decides. Then one `storage_blobs` row per write target, with `countedBytes = 0`.
+**Reserve.** The SAS is signed first — signing is local and touches nothing in Azure — and the reserve runs before the response is returned, so a rejection is a write target the client never receives. The resource upload chokepoint goes through `generateReservedUploadFileSasEntities`, which mints and reserves in one call: a new upload path cannot hand out write targets nothing accounts for. In one transaction: this user's collectable holds are deleted (pure garbage collection — they never entered the counter); the user row is taken `FOR UPDATE`, which is what makes concurrent reserves serialize instead of race; the live holds are summed; and `storageBytesUsed + pending + declared <= quota` decides. Then one `storageLedger` row per write target, with `countedBytes = 0`.
 
-**Lock order: `storage_blobs` before `users`, on every path that touches both.** A release deletes the ledger rows and then decrements their owners; a reconcile locks the ledger row and then moves the counter; so the reserve collects expired holds _before_ it takes the user row rather than after, even though it is the one path that could hold the user lock the whole way. Taking the user row first would close a cycle with a concurrent release or reconcile of that user's rows, and Postgres resolves that by aborting one side — a 500 on an upload the user could retry, or a dead-lettered `BlobCreated` whose bytes are never charged. Nothing decides anything before the user lock: the collection moves no bytes, and the sum and the gate that read it both sit behind it. Within a release, the owners are locked in sorted order for the same reason.
+**Lock order: `storageLedger` before `users`, on every path that touches both.** A release deletes the ledger rows and then decrements their owners; a reconcile locks the ledger row and then moves the counter; so the reserve collects expired holds _before_ it takes the user row rather than after, even though it is the one path that could hold the user lock the whole way. Taking the user row first would close a cycle with a concurrent release or reconcile of that user's rows, and Postgres resolves that by aborting one side — a 500 on an upload the user could retry, or a dead-lettered `BlobCreated` whose bytes are never charged. Nothing decides anything before the user lock: the collection moves no bytes, and the sum and the gate that read it both sit behind it. Within a release, the owners are locked in sorted order for the same reason.
+
+**The server's own writes charge themselves.** A resource's `{id}/content.json`, a publish snapshot, and every asset `cloneContentAssets` copies for a publish, a duplicate or a restore have no SAS and so no reserve — the server holds the bytes, knows their length, and the client was never in the data path, so there is nothing to gate and nothing to overshoot. `chargeStorageLedgerEntry` writes the ledger row and applies the same delta a `BlobCreated` would, which is what makes a save that rewrites the same blob correct the counter instead of growing it. Two consequences worth stating: a save is never rejected for being over quota (the bytes are already stored, and refusing the charge would only make the counter lie — the next _upload_ is what gets refused), and the row is what lets the existing releases hand these bytes back, so purge needs no path of its own. Each clone charges as its copy lands, for the source blob's own `contentLength` — the properties read that already had to say whether the source exists. The snapshot is charged **after** the publish transaction, and content **after** the save's, never inside either: the charge takes the ledger row's lock and then the user's, and a transaction held open across that is a second connection waiting on locks the first will not release until it returns.
+
+**A charge is provisional, and the container's own event is what settles it.** Every write to `resource-assets` raises `BlobCreated` — a server-side copy included — and now that the server's writes leave a ledger row, those events find one instead of falling through. So the byte count a charge supplies is a starting position, not the last word: whatever actually landed is what the reconcile writes seconds later, by the same difference-against-`countedBytes` that makes a redelivery a no-op. A charge therefore claims no position in the blob's write order and passes no `sequencer`, which is what marks its figure as a guess. Once any event has spoken for the blob, a charge is **dropped** rather than applied: a charge delayed past a newer write's event would otherwise restore the size that event superseded, and its own older event would then be correctly rejected behind it, stranding the wrong size for good. Skipping it costs nothing, because every write to this container raises its own event to settle the blob again.
+
+**Which event is last is a question the events themselves answer, not the order they arrive in.** Event Grid delivers at-least-once and in no order, so two writes to one blob name can have their events delivered reversed, and the older size would otherwise be the one left on the counter — permanently, since nothing revisits a blob that is not written again. Being idempotent does not cover this and is a different property: replaying the earlier event is a perfectly well-behaved no-op that still leaves the counter wrong. So the reconcile carries the event's `sequencer`, Storage's own per-blob ordering value, on the ledger row and drops any event not newer than the one already applied — the general rule in [conditional writes](/docs/architecture/conditional-writes). Both delivery orders then converge on the size of the write that actually happened last.
 
 **Charge.** Storage's own `Microsoft.Storage.BlobCreated` event carries the stored object's `contentLength`, and arrives seconds after the PUT. The handler moves the counter by `actual − countedBytes` and sets `countedBytes = actual`. That one expression is correct in all three cases at once: the first event adds the whole object, a redelivery computes a **zero** delta instead of double-counting, and a second upload to the same still-valid write target corrects the counter rather than stranding the old size on it.
 
@@ -73,7 +80,7 @@ A lost `BlobCreated` would leave a blob stored but uncharged. The subscription d
 
 Between the PUT and the `BlobCreated` event, a client that under-declared is holding less space than it is about to use. The size of that gap is **not** bounded: Azure blob SAS has no upload-length option, and the PUT never passes back through Nitro, so `MAX_FILE_REQUEST_SIZE` constrains the declaration the client sends us and nothing about the bytes it sends Azure.
 
-What is bounded is the gap's **shape**. `MAX_UNRECONCILED_STORAGE_BLOBS` caps how many under-declared uploads one user can have in flight at once, and `BlobCreated` charges each one's real size within seconds of its PUT completing — after which the counter is truthful and every further reserve is rejected. So abuse is a single burst, not a sustained drain, and it only ever exhausts **their own** allowance — never another user's.
+What is bounded is the gap's **shape**. `MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES` caps how many under-declared uploads one user can have in flight at once, and `BlobCreated` charges each one's real size within seconds of its PUT completing — after which the counter is truthful and every further reserve is rejected. So abuse is a single burst, not a sustained drain, and it only ever exhausts **their own** allowance — never another user's.
 
 The cap counts **live holds**, which is one per write target and so one per upload — the resource upload chokepoint mints no thumbnail targets, so there is nothing riding alongside a file to distort it. The same number bounds each upload request's `files` array, because a batch larger than the cap can never pass the reserve however long the client waits.
 
@@ -84,18 +91,17 @@ True Gmail-style hard enforcement would require **proxying uploads through our o
 - `StorageTier` — pg enum, `Free` only for now. The enum exists so a paid tier is a value add rather than a schema change.
 - `StorageTierQuotaMap` — `{ [StorageTier.Free]: 10 * GIBIBYTE }`, `as const satisfies Record<StorageTier, number>`.
 - `users.storageTier` + `users.storageBytesUsed` — the tier and the stored-bytes total. `bigint` in `number` mode: 10 GiB is ~1e10, far under the 2^53 safe-integer ceiling.
-- `storage_blobs` — the ledger, keyed `(containerName, blobName)`. `declaredBytes` is the hold, `countedBytes` is what the counter is carrying for this blob right now (zero until the first `BlobCreated`), `expiresAt` is the SAS TTL, `reconciledAt` records that it landed at least once. One index, `(userId, reconciledAt)`: every query against the ledger leads with the user, and nothing scans it account-wide.
+- `storageLedger` — one row per write target, keyed `(containerName, blobName)`, and a row is in one of two states rather than one. A **reserved** row is a hold on a blob that may never exist: the reserve writes it with `countedBytes = 0`, `declaredBytes` = what the client said it would upload, `expiresAt` = the SAS TTL and `reconciledAt` null. It holds space only through the reserve's pending sum — the counter has not moved for it at all, which is why an expired one can simply stop counting. A **settled** row is stored bytes: `countedBytes` is what the counter is carrying for this blob right now, and `reconciledAt` is when that last moved. `BlobCreated` settles a hold in place and stamps the `sequencer` it was ordered by; a server-side charge writes its own row already settled, with `declaredBytes = 0`, `expiresAt` already past and no `sequencer` — it never held space, because its bytes were stored before it ran. A charge and a release find their row on the primary key, so the only index is `(userId, reconciledAt)`, for the two questions a reserve asks about one user — their live holds and their collectable ones. Nothing scans the ledger account-wide.
 
 Existing users start at `storageBytesUsed = 0`, so for them the gate is **advisory until their real usage accumulates** — a user already over 10 GiB keeps uploading until enough of their blobs are ledgered. Under-counting only ever _under_-rejects, so the advisory window never wrongly rejects a legitimate upload. New users are accurate from their first upload.
 
 ## What is not counted
 
-Three kinds of blob exist outside the ledger and are deliberately uncounted:
+These blobs stay outside the ledger and are deliberately uncounted:
 
-- **Publish and duplicate clones** (`cloneContentAssets`) — copies written server-side, never through a reserve. Their `BlobCreated` arrives and finds no ledger row, which is a no-op by design.
 - **Blobs uploaded before this shipped** — nothing backfills them ([persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only)).
 - **Room attachments** — the quota counts what a user keeps in their own resources, and a room's files belong to the room. Charging them to whoever uploaded made one person's allowance depend on how much they contribute to shared rooms, and put a number about chat in the resource explorer. The room-scoped replacement is written up as [room attachment quota](/docs/esbabbler/deferred/room-attachment-quota); until it lands, message uploads are bounded by nothing here.
-- **Everything outside the resource upload chokepoint** — avatars and room images go through their own SAS paths, and the subscription filter does not even deliver their events.
+- **Everything outside the two charge paths** — avatars, room images and the per-user game-save blobs go through their own writes, and the subscription filter does not even deliver most of their events. A server-side write joins the ledger by calling `chargeStorageLedgerEntry`; one that does not is uncounted by omission rather than by design, which is the trade each new write path has to make deliberately.
 
 Closing these needs a recompute that lists real object sizes per user. Worth doing once the counter has drifted enough to matter, and it is a one-shot backfill rather than a recurring sweep.
 
@@ -106,6 +112,8 @@ Closing these needs a recompute that lists real object sizes per user. Worth doi
 - **`BlobCreated` redelivered:** the delta is zero.
 - **`BlobCreated` dead-lettered:** quarantined for an operator, not replayed — see above. The blob stays uncharged.
 - **`BlobCreated` for a blob nothing reserved** (a clone, a name that will not percent-decode): a no-op, never an error. The handler tries the raw name, then the decoded one, and a name that cannot be decoded keeps its raw form rather than throwing — a throw would make an unaccounted blob a poison event that retries to the dead letter.
+- **`BlobCreated` beats the charge that ledgers its blob:** the reconcile finds no row, no-ops, and is never retried — a successful delivery — so the charge, not the event, is what the counter ends up carrying. The figure is still right: the server wrote those bytes and knows their length. What the blob loses is its place in the write order, because a charge stamps no `sequencer`: until some later event lands on that row, a retrying event for an _earlier_ write of the same name is treated as the first to speak and applied over it. The counter then holds a superseded size until the newest write's event arrives and wins on rank. Nothing is built for it — closing it means reserving a ledger row before every server-side write and releasing it if the write fails, which is the whole hold machinery spent on bytes that were never in doubt, to shorten a window that ends on the next event either way.
+- **A server-side charge fails after its write committed:** the blob is stored and the counter has not moved. The same shape as a dead-lettered `BlobCreated` and accepted on the same terms — under-counting only over-serves that one user. It self-corrects where the same blob name is written again, which is the case for `{id}/content.json`: the charge writes an absolute size rather than a delta, so the next save charges it in full. A **publish snapshot does not self-correct**, because a later publish writes a new `publishVersion` at its own `{id}/published/{version}.json` rather than rewriting the last one — that blob is never charged again, and only a usage recompute closes it. What is deliberately not built for it is a durable outbox: a byte counter that self-corrects on the next write does not earn a second write path, a queue and a retry policy.
 - **A release is missed:** the counter stays high, which only _under_-serves that user (rejects slightly early) — the safe direction. Only a whole wave can be missed, never part of one.
 
 ## Key files
@@ -114,19 +122,21 @@ Closing these needs a recompute that lists real object sizes per user. Worth doi
 | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
 | `packages/db-schema/src/models/user/StorageTier.ts`                                                  | tier enum                                         |
 | `packages/db-schema/src/schema/users.ts`                                                             | `storageTier` + `storageBytesUsed`                |
-| `packages/db-schema/src/schema/storageBlobs.ts`                                                      | the ledger                                        |
+| `packages/db-schema/src/schema/storageLedger.ts`                                                     | the ledger                                        |
 | `packages/db-schema/src/services/azure/container/getBlobSubjectPrefix.ts`                            | storage's event subject shape, read by both ends  |
 | `packages/db-schema/src/services/azure/container/parseBlobSubject.ts`                                | subject → (container, blob name)                  |
 | `packages/app/shared/services/storage/StorageTierQuotaMap.ts`                                        | tier → quota bytes                                |
+| `packages/db/src/services/storage/chargeStorageLedgerEntry.ts`                                       | ledgers and charges a server-written blob         |
+| `packages/app/server/services/resource/cloneContentAssets.ts`                                        | charges each clone as its copy lands              |
 | `packages/app/server/services/storage/generateReservedUploadFileSasEntities.ts`                      | the upload chokepoint — mint and reserve as one   |
 | `packages/app/server/services/storage/reserveStorageBytes.ts`                                        | GC expired holds, lock, gate, write holds         |
 | `packages/app/server/services/storage/getStorageBlobReservations.ts`                                 | SAS batch → the holds it needs                    |
-| `packages/db/src/services/storage/reconcileStorageBlob.ts`                                           | declared hold → charged bytes                     |
+| `packages/db/src/services/storage/reconcileStorageLedgerEntry.ts`                                    | declared hold → charged bytes                     |
 | `packages/db/src/services/storage/deleteStorageBlobs.ts`                                             | delete a set of blobs and release what it removed |
-| `packages/db/src/services/storage/releaseStorageBlobsWhere.ts`                                       | the one place bytes leave the counter             |
-| `packages/azure-functions/src/handlers/reconcileStorageBlobHandler.ts`                               | the `BlobCreated` handler                         |
+| `packages/db/src/services/storage/releaseStorageLedgerEntriesWhere.ts`                               | the one place bytes leave the counter             |
+| `packages/azure-functions/src/handlers/reconcileStorageLedgerEntryHandler.ts`                        | the `BlobCreated` handler                         |
 | `packages/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe007.ts` | the subscription, filtered to resource assets     |
-| `packages/app/server/trpc/routers/storage.ts`                                                        | `getUsage`                                        |
+| `packages/app/server/trpc/routers/storage.ts`                                                        | `readUsage`                                       |
 | `packages/app/app/components/Resource/StorageMeter.vue`                                              | the usage meter in the explorer shell             |
 | `packages/app/app/store/storage.ts`                                                                  | the usage the meter renders, read once            |
 | `packages/app/app/layouts/resource.vue`                                                              | the shell that mounts it on every resource page   |

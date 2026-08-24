@@ -10,7 +10,7 @@ import { PUBLISHED_DIRECTORY_SEGMENT, staleContentVersionErrorMessage } from "#s
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { MAX_UNRECONCILED_STORAGE_BLOBS } from "#shared/services/storage/constants";
+import { MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES } from "#shared/services/storage/constants";
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
@@ -36,6 +36,7 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
+import { chargeStorageLedgerEntry } from "@esposter/db";
 import {
   AzureContainer,
   BLOB_SEGMENT_MAX_LENGTH,
@@ -84,7 +85,7 @@ const generateUploadFileSasEntitiesInputSchema = z.object({
     "filename",
   )
     .min(1)
-    .max(MAX_UNRECONCILED_STORAGE_BLOBS),
+    .max(MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES),
   id: selectResourceSchema.shape.id,
 });
 
@@ -296,12 +297,22 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // One expression for the publish write, since the repair below repeats it at the same version: a change
         // To where or how the snapshot is written that landed in only one of the two would diverge silently,
         // And the copy that only runs on the rare concurrency path is the one nobody would notice
-        const uploadPublishedContent = (publishVersion: ResourcePublication["publishVersion"], value: unknown) =>
-          useUpload(
+        // The snapshot's own size, recorded rather than returned so both call sites stay the one expression.
+        // Charged once after the transaction — the repair below rewrites the same blob, and the counter must
+        // Carry whichever write was last
+        let publishedContentBytes = 0;
+        const uploadPublishedContent = async (
+          publishVersion: ResourcePublication["publishVersion"],
+          value: unknown,
+        ) => {
+          const serializedContent = JSON.stringify(value);
+          await useUpload(
             AzureContainer.ResourceAssets,
             getPublishedContentBlobName(id, publishVersion),
-            JSON.stringify(value),
+            serializedContent,
           );
+          publishedContentBytes = Buffer.byteLength(serializedContent);
+        };
         // Bump the version and write the blob in one transaction so a failed upload rolls the version bump back,
         // The publication row can never point at a publishVersion whose blob was never written.
         const publication = await ctx.db.transaction(async (tx) => {
@@ -367,6 +378,17 @@ export const createResourceProcedures = <TType extends ResourceType>(
               ).message,
             });
           });
+        // A snapshot is stored bytes the owner keeps, so it is charged like the working copy it was taken from —
+        // Its cloned assets charge themselves as each copy lands. After the transaction, never inside: the
+        // Charge locks the ledger row and then the user's, and a transaction held open across that waits on
+        // Locks it is itself holding. See /docs/platform/storage-quotas
+        await chargeStorageLedgerEntry(
+          ctx.db,
+          ctx.getSessionPayload.user.id,
+          AzureContainer.ResourceAssets,
+          getPublishedContentBlobName(id, publication.publishVersion),
+          publishedContentBytes,
+        );
         // Fire-and-forget: the activity trail is best-effort and the publish must not wait on telemetry
         getSynchronizedFunction(writeResourceActivity)({
           activityType: ResourceActivityType.Published,

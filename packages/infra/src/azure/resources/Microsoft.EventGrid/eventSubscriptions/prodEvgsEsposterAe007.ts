@@ -28,7 +28,7 @@ export const prodEvgsEsposterAe007: azure_native.eventgrid.SystemTopicEventSubsc
         endpointType: "AzureFunction",
         maxEventsPerBatch: 1,
         preferredBatchSizeInKilobytes: 64,
-        resourceId: pulumi.interpolate`${prodFuncEsposter001.id}/functions/${AzureFunction.ReconcileStorageBlob}`,
+        resourceId: pulumi.interpolate`${prodFuncEsposter001.id}/functions/${AzureFunction.ReconcileStorageLedgerEntry}`,
       },
       eventDeliverySchema: azure_native.eventgrid.EventDeliverySchema.EventGridSchema,
       eventSubscriptionName,

@@ -6,7 +6,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
-import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
+import { FILES_DIRECTORY_SEGMENT, PUBLISHED_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
@@ -41,6 +41,16 @@ const readFilesBlobNames = (id: string): string[] => {
   return [...container.keys()].filter((blobName) => blobName.startsWith(`${getFilesDirectoryName(id)}/`));
 };
 
+// Everything a publish writes lands under the resource's published prefix — the snapshot itself beside a
+// Directory of cloned assets — so the bytes it stored are read back off the container rather than restated
+const readPublishedBlobSizes = (id: string): number[] => {
+  const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+  assert(container);
+  return [...container.entries()]
+    .filter(([blobName]) => blobName.startsWith(`${id}/${PUBLISHED_DIRECTORY_SEGMENT}/`))
+    .map(([, data]) => data.byteLength);
+};
+
 describe("resource", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["resource"]>;
@@ -53,6 +63,10 @@ describe("resource", () => {
   const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
   const dueAt = new Date(1);
+
+  const readStorageBytesUsed = async (userId: Resource["userId"]) =>
+    (await mockContext.db.query.users.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
+      ?.storageBytesUsed;
 
   // Every webpage fixture is the same write against the resource it just created, so the version rides the row
   // Rather than being restated — only a test writing a second time has to say which version it is claiming
@@ -315,6 +329,30 @@ describe("resource", () => {
     const deletedResources = await caller.deleteResources({ ids: [otherUserResource.id, ownResource.id] });
 
     expect(deletedResources.map(({ id }) => id)).toStrictEqual([ownResource.id]);
+  });
+
+  // A snapshot and its cloned assets are stored bytes the owner keeps, and nothing else charges them: a
+  // Server-side write raises a BlobCreated for a blob no reserve ever ledgered, so the counter would never move
+  test("charges the owner for the snapshot and the assets a publish clones", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    await saveWebpageContent(
+      webpageResource,
+      new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
+    );
+    const storageBytesUsedBeforePublish = await readStorageBytesUsed(webpageResource.userId);
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    const publishedBlobSizes = readPublishedBlobSizes(webpageResource.id);
+    assert.exists(storageBytesUsedBeforePublish);
+
+    // The snapshot and the one asset it references
+    expect(publishedBlobSizes).toHaveLength(2);
+    await expect(readStorageBytesUsed(webpageResource.userId)).resolves.toBe(
+      storageBytesUsedBeforePublish + publishedBlobSizes.reduce((total, bytes) => total + bytes, 0),
+    );
   });
 
   test("duplicates a resource with content as a draft copy", async () => {

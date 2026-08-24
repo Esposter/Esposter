@@ -1,7 +1,7 @@
 import type { ContainerClient } from "@azure/storage-blob";
 import type { AzureContainer, Database } from "@esposter/db-schema";
 
-import { releaseStorageBlobs } from "#src/services/storage/releaseStorageBlobs";
+import { releaseStorageLedgerEntries } from "#src/services/storage/releaseStorageLedgerEntries";
 import { MAX_CONCURRENT_BLOB_DELETIONS } from "@esposter/db-schema";
 import { chunk, getResultAsync, takeOne } from "@esposter/shared";
 
@@ -38,7 +38,7 @@ export const deleteStorageBlobs = async (
       ),
     );
     // After the blobs are gone, so a release can never hand bytes back for a blob still stored
-    await releaseStorageBlobs(db, containerName, deletedBlobNames);
+    await releaseStorageLedgerEntries(db, containerName, deletedBlobNames);
     // Rethrown once the release has landed, never before it: the failure is what makes Event Grid redeliver,
     // And the blobs this wave did remove must not wait for that redelivery to be given back
     if (errors.length > 0) throw takeOne(errors);

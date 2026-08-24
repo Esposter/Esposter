@@ -21,7 +21,7 @@ export const users = pgTable(
     id: text().primaryKey(),
     image: text().notNull().default(""),
     name: text().notNull(),
-    // The running total of blob bytes this user is accountable for, moved only through the storageBlobs
+    // The running total of blob bytes this user is accountable for, moved only through the storageLedger
     // Ledger so every increment has a row that can later give it back. Stored rather than recomputed:
     // There is no per-user blob prefix or size index, so recomputing means enumerating every directory.
     // `number` mode is safe — a 10 GiB quota is ~1e10, far under the 2^53 integer ceiling.

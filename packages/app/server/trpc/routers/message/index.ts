@@ -337,7 +337,7 @@ export const baseMessageRouter = router({
       }),
     );
   }),
-  getWebPubSubClientAccessUrl: getMemberProcedure(roomIdSchema, "roomId").query<string>(
+  generateWebPubSubClientAccessUrl: getMemberProcedure(roomIdSchema, "roomId").query<string>(
     async ({ ctx, input: { roomId }, signal }) => {
       const webPubSubServiceClient = useWebPubSubServiceClient(AzureWebPubSubHub.Messages);
       const { url } = await webPubSubServiceClient.getClientAccessToken({

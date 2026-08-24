@@ -3,12 +3,15 @@ import type { Context } from "@@/server/trpc/context";
 import type { AzureContainer, User } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
-import { MAX_UNRECONCILED_STORAGE_BLOBS, storageQuotaExceededErrorMessage } from "#shared/services/storage/constants";
+import {
+  MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES,
+  storageQuotaExceededErrorMessage,
+} from "#shared/services/storage/constants";
 import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import {
   DatabaseEntityType,
   EVENT_GRID_DELIVERY_TTL_MS,
-  storageBlobs,
+  storageLedger,
   users,
   WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
@@ -46,7 +49,7 @@ export const reserveStorageBytes = async (
     .subtract(EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS, "ms")
     .toDate();
   await db.transaction(async (tx) => {
-    // `storageBlobs` before `users`, the order every path that touches both takes — a release and a reconcile
+    // `storageLedger` before `users`, the order every path that touches both takes — a release and a reconcile
     // Lock the ledger row first and move the counter second, so a reserve that took the user row first would
     // Close a lock cycle with them and deadlock. See /docs/platform/storage-quotas
     //
@@ -54,12 +57,12 @@ export const reserveStorageBytes = async (
     // Entered the counter, so removing them moves nothing — it is pure garbage collection, and it rides the one
     // Write path this user already makes
     await tx
-      .delete(storageBlobs)
+      .delete(storageLedger)
       .where(
         and(
-          eq(storageBlobs.userId, userId),
-          isNull(storageBlobs.reconciledAt),
-          lte(storageBlobs.expiresAt, collectableBefore),
+          eq(storageLedger.userId, userId),
+          isNull(storageLedger.reconciledAt),
+          lte(storageLedger.expiresAt, collectableBefore),
         ),
       );
     const [user] = await tx
@@ -73,20 +76,22 @@ export const reserveStorageBytes = async (
     // Late `BlobCreated` can still find it, and a dead write target must never hold space or a slot in the
     // Meantime
     const [outstanding] = await tx
-      .select({ pendingBytes: sum(storageBlobs.declaredBytes), value: count() })
-      .from(storageBlobs)
-      .where(and(eq(storageBlobs.userId, userId), isNull(storageBlobs.reconciledAt), gt(storageBlobs.expiresAt, now)));
+      .select({ pendingBytes: sum(storageLedger.declaredBytes), value: count() })
+      .from(storageLedger)
+      .where(
+        and(eq(storageLedger.userId, userId), isNull(storageLedger.reconciledAt), gt(storageLedger.expiresAt, now)),
+      );
     // `sum` is a bigint aggregate, so postgres hands it back as a string — and as null for an empty set
     const pendingBytes = Number(outstanding?.pendingBytes ?? 0);
     if (user.storageBytesUsed + pendingBytes + declaredBytes > StorageTierQuotaMap[user.storageTier])
       throw new TRPCError({ code: "FORBIDDEN", message: storageQuotaExceededErrorMessage });
-    else if ((outstanding?.value ?? 0) + reservations.length > MAX_UNRECONCILED_STORAGE_BLOBS)
+    else if ((outstanding?.value ?? 0) + reservations.length > MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES)
       throw new TRPCError({
         code: "TOO_MANY_REQUESTS",
         message: "Too many uploads are still in flight — wait for them to finish.",
       });
 
-    await tx.insert(storageBlobs).values(
+    await tx.insert(storageLedger).values(
       reservations.map(({ blobName, declaredBytes: bytes }) => ({
         blobName,
         containerName,

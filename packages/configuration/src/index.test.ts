@@ -1,7 +1,6 @@
+import { getFileSize } from "#src/getFileSize";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
-
-import { getFileSize } from "./getFileSize";
 
 describe("@esposter/configuration", () => {
   const distFile = resolve(import.meta.dirname, "../dist/index.js");

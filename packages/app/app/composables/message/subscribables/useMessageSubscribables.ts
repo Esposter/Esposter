@@ -48,7 +48,7 @@ export const useMessageSubscribables = () => {
     );
     const webPubSubClient = new WebPubSubClient({
       getClientAccessUrl: (options) =>
-        $trpc.message.getWebPubSubClientAccessUrl.query(
+        $trpc.message.generateWebPubSubClientAccessUrl.query(
           { roomId },
           { signal: options?.abortSignal as AbortSignal | undefined },
         ),

@@ -2,7 +2,7 @@
 // Through Nitro, so MAX_FILE_REQUEST_SIZE bounds the declaration and not the payload: one under-declared upload
 // Overshoots by however much the client sends, until BlobCreated charges its real size. What this caps is how
 // Many such uploads a user may have in flight at once — without it a tiny declaration buys unlimited holds.
-export const MAX_UNRECONCILED_STORAGE_BLOBS = 64;
+export const MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES = 64;
 
 export const storageQuotaExceededErrorMessage = "You have run out of storage.";
 
