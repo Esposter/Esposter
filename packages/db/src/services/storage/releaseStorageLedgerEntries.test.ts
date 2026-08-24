@@ -20,6 +20,9 @@ describe("storage blob ledger", () => {
   const declaredBytes = 10;
   const actualBytes = 4;
   const overwrittenBytes = 7;
+  // Storage's per-blob ordering values, as they would arrive: the earlier write's event carries the lower one
+  const sequencer = "0000000000000abc000000000000000000001";
+  const laterSequencer = "0000000000000abc000000000000000000002";
   const readStorageBytesUsed = async () =>
     (await db.query.users.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
       ?.storageBytesUsed;
@@ -88,6 +91,54 @@ describe("storage blob ledger", () => {
     await reconcileStorageLedgerEntry(db, containerName, blobName, overwrittenBytes);
 
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
+  });
+
+  // Event Grid delivers at-least-once and in no order at all, so the later write's event can land first. The
+  // Handler being idempotent does not cover this: replaying the earlier event is a well-behaved no-op that
+  // Still leaves the counter holding a size the blob stopped having
+  test("keeps the newest size when events for one blob arrive in reverse order", async () => {
+    expect.hasAssertions();
+
+    await createStorageLedgerEntry();
+    await reconcileStorageLedgerEntry(db, containerName, blobName, overwrittenBytes, laterSequencer);
+    // The earlier write's event, delayed past the one that superseded it
+    await expect(reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes, sequencer)).resolves.toBe(true);
+
+    await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
+
+    const [storageLedgerEntry] = await db.query.storageLedger.findMany();
+
+    expect(storageLedgerEntry).toMatchObject({ countedBytes: overwrittenBytes, sequencer: laterSequencer });
+  });
+
+  test("applies both sizes in turn when the same events arrive in order", async () => {
+    expect.hasAssertions();
+
+    await createStorageLedgerEntry();
+    await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes, sequencer);
+
+    await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
+
+    await reconcileStorageLedgerEntry(db, containerName, blobName, overwrittenBytes, laterSequencer);
+
+    await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
+  });
+
+  // A charge claims no position in the write order, so it must not overwrite the one an event recorded —
+  // Otherwise the next stale event compares against nothing and is applied
+  test("leaves the recorded order alone when a charge follows an event", async () => {
+    expect.hasAssertions();
+
+    await createStorageLedgerEntry();
+    await reconcileStorageLedgerEntry(db, containerName, blobName, overwrittenBytes, laterSequencer);
+    await chargeStorageLedgerEntry(db, userId, containerName, blobName, declaredBytes);
+    await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes, sequencer);
+
+    await expect(readStorageBytesUsed()).resolves.toBe(declaredBytes);
+
+    const [storageLedgerEntry] = await db.query.storageLedger.findMany();
+
+    expect(storageLedgerEntry?.sequencer).toBe(laterSequencer);
   });
 
   // The server's own writes — a resource's content blob — have no reserve to ledger them, so the charge is

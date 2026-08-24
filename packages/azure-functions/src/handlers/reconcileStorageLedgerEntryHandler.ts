@@ -21,8 +21,8 @@ export const reconcileStorageLedgerEntryHandler: EventGridHandler = (event, cont
     if (!parsedBlobSubject) return;
 
     const { blobName, containerName } = parsedBlobSubject;
-    const { contentLength } = blobCreatedEventGridDataSchema.parse(event.data);
-    if (await reconcileStorageLedgerEntry(db, containerName, blobName, contentLength)) return;
+    const { contentLength, sequencer } = blobCreatedEventGridDataSchema.parse(event.data);
+    if (await reconcileStorageLedgerEntry(db, containerName, blobName, contentLength, sequencer)) return;
     // A blob name reaches us through a url path, and whether storage percent-encodes it in the subject depends
     // On the characters in it — our names carry a `|` separator and a user-chosen filename. Rather than guess
     // Which form a given event used, the decoded form is tried only once the raw one has found no row.
@@ -30,6 +30,6 @@ export const reconcileStorageLedgerEntryHandler: EventGridHandler = (event, cont
     // No-op — throwing would turn an unreserved blob, which is not an error, into a poison event
     const decodedBlobName = getDecodedUriComponent(blobName, blobName);
     if (decodedBlobName !== blobName)
-      await reconcileStorageLedgerEntry(db, containerName, decodedBlobName, contentLength);
+      await reconcileStorageLedgerEntry(db, containerName, decodedBlobName, contentLength, sequencer);
   }).match(noop, logAndRethrow(context, AzureFunction.ReconcileStorageLedgerEntry));
 };

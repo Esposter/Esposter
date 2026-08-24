@@ -21,8 +21,9 @@ describe(reconcileStorageLedgerEntryHandler, () => {
   const containerName = AzureContainer.ResourceAssets;
   const blobName = `roomId/id|file name.png`;
   const contentLength = 4;
+  const sequencer = "0000000000000abc000000000000000000001";
   const createEventGridEvent = (subject: string): EventGridEvent => ({
-    data: { contentLength } satisfies BlobCreatedEventGridData,
+    data: { contentLength, sequencer } satisfies BlobCreatedEventGridData,
     dataVersion: "1.0",
     eventTime: "1970-01-01T00:00:00.000Z",
     eventType: "Microsoft.Storage.BlobCreated",

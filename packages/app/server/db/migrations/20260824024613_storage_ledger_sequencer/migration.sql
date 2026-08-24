@@ -1,0 +1,1 @@
+ALTER TABLE "storageLedger" ADD COLUMN "sequencer" text;

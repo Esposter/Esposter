@@ -28,6 +28,11 @@ export const storageLedger = pgTable(
     declaredBytes: bigint({ mode: "number" }).notNull(),
     expiresAt: timestamp().notNull(),
     reconciledAt: timestamp(),
+    // Storage's own per-blob ordering value, carried by every `BlobCreated`. Event Grid guarantees delivery but
+    // Not order, so two writes to one name can have their events arrive reversed and leave the older size
+    // Counted. Held here so a reconcile can reject an event older than the one already applied. Null until the
+    // First event lands — a provisional charge writes bytes without one, having no ordering to claim.
+    sequencer: text(),
     userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
