@@ -124,9 +124,11 @@ describe("storage blob ledger", () => {
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
   });
 
-  // A charge claims no position in the write order, so it must not overwrite the one an event recorded —
-  // Otherwise the next stale event compares against nothing and is applied
-  test("leaves the recorded order alone when a charge follows an event", async () => {
+  // A charge is a guess about a write storage has already measured, so once an event has spoken for the blob
+  // The charge yields to it. Otherwise a save whose charge is delayed past a newer save's event would put its
+  // Own size back on the counter, and its own event — being older — would then be correctly rejected, leaving
+  // The superseded size there for good
+  test("ignores a charge that lands after an event has settled the blob", async () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
@@ -134,11 +136,11 @@ describe("storage blob ledger", () => {
     await chargeStorageLedgerEntry(db, userId, containerName, blobName, declaredBytes);
     await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes, sequencer);
 
-    await expect(readStorageBytesUsed()).resolves.toBe(declaredBytes);
+    await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
 
     const [storageLedgerEntry] = await db.query.storageLedger.findMany();
 
-    expect(storageLedgerEntry?.sequencer).toBe(laterSequencer);
+    expect(storageLedgerEntry).toMatchObject({ countedBytes: overwrittenBytes, sequencer: laterSequencer });
   });
 
   // The server's own writes — a resource's content blob — have no reserve to ledger them, so the charge is

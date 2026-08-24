@@ -10,9 +10,12 @@ import { storageLedger } from "@esposter/db-schema";
 // Happened, and refusing the charge would only make the counter lie. See /docs/platform/storage-quotas
 //
 // The amount is provisional: the write raises its own `BlobCreated`, which finds the row this wrote and
-// Replaces the figure with the stored object's real size. Two charges for one blob landing out of order, or a
-// Figure that was already stale when it was supplied, therefore converge rather than needing a causal key —
-// The event is the last writer, and it measures rather than declares.
+// Replaces the figure with the stored object's real size. It measures where this declares, so it always wins —
+// And it wins by rank rather than by arrival, because Event Grid orders nothing. The event carries storage's
+// Per-blob `sequencer`; this carries none, which is what marks the figure as a guess. Once any event has
+// Spoken for the blob, `reconcileStorageLedgerEntry` therefore drops a charge instead of applying it: a charge
+// Delayed past a newer write's event would otherwise restore the size that event superseded, and its own
+// Event — being older — would be correctly rejected behind it, stranding the wrong size for good.
 //
 // The row is what attributes a blob to an owner, and every release reads its amount off that row — so writing
 // One here is what lets `deleteStorageBlobs` and `releaseStorageLedgerEntriesByPrefix` give these bytes back with no

@@ -10,11 +10,10 @@ import { and, eq, sql } from "drizzle-orm";
 // Redelivery computes a zero delta instead of double-counting, and a re-upload to the same write target (the
 // SAS outlives one PUT) corrects the counter rather than stranding the old size on it.
 //
-// `sequencer` is the event's place in this blob's write order, and an event older than the one already applied
-// Is dropped. Event Grid delivers at-least-once and unordered, so two saves to one name can have their events
-// Arrive reversed — and being idempotent does not save this: replaying the older event is a perfectly
-// Well-behaved no-op that still leaves the counter holding a size the blob no longer has. A provisional charge
-// Passes none, claiming no position in that order: it writes bytes the next event supersedes.
+// `sequencer` is the event's place in this blob's write order. Event Grid delivers at-least-once and unordered,
+// So two writes to one name can have their events arrive reversed — and being idempotent does not save this:
+// Replaying the older event is a perfectly well-behaved no-op that still leaves the counter holding a size the
+// Blob no longer has. A provisional charge passes none, claiming no position in that order.
 // Returns whether a ledger row matched, so a caller holding an ambiguous blob name can try its other form.
 export const reconcileStorageLedgerEntry = (
   db: Database,
@@ -40,15 +39,25 @@ export const reconcileStorageLedgerEntry = (
     if (!storageLedgerEntry) return false;
 
     const { countedBytes, sequencer: countedSequencer, userId } = storageLedgerEntry;
-    // The row matched, so the caller has no other name to try — a superseded event is answered like an applied
-    // One, because it found its row and there is nothing left to do with it
-    // Coalesced because a nullable column reads back as `null` — the boundary drizzle owns, not a shape we pass on
-    if (sequencer !== undefined && !getIsNewerSequencer(sequencer, countedSequencer ?? undefined)) return true;
+    // Two writes are dropped here, and both answer `true` because the row matched — the caller has no other
+    // Blob-name form to try, and there is nothing left to do with the write either way.
+    //
+    // An event older than the one already applied is stale, since the newer write's event can land first.
+    // A charge is dropped once any event has spoken, because it is a guess about a write storage has already
+    // Measured — a charge delayed past a newer write's event would otherwise put back the size that event
+    // Superseded. Skipping it costs nothing: every write to this container raises its own event, so the next
+    // One settles the blob again.
+    // `?? undefined` because a nullable column reads back as `null` — drizzle's boundary, not a shape we pass on
+    if (
+      sequencer === undefined
+        ? countedSequencer !== null
+        : !getIsNewerSequencer(sequencer, countedSequencer ?? undefined)
+    )
+      return true;
 
     await tx
       .update(storageLedger)
-      // A charge carries no sequencer and must not clear the position an event already recorded, or the next
-      // Stale event would compare against nothing and be applied
+      // A charge writes no sequencer rather than a null one, so the column keeps meaning "an event has spoken"
       .set({ countedBytes: actualBytes, reconciledAt: new Date(), ...(sequencer !== undefined && { sequencer }) })
       .where(and(eq(storageLedger.containerName, containerName), eq(storageLedger.blobName, blobName)));
     if (actualBytes !== countedBytes)
