@@ -13,7 +13,7 @@ describe("vue-phaserjs", () => {
 
   test.skipIf(process.platform === "win32")("bundle size (POSIX)", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 59.64 KB (61074 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 59.61 KB (61038 bytes)"`);
   });
 
   test.skipIf(process.platform !== "win32")("types size (Windows)", () => {
@@ -23,6 +23,6 @@ describe("vue-phaserjs", () => {
 
   test.skipIf(process.platform === "win32")("types size (POSIX)", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 526.77 KB (539417 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 526.93 KB (539581 bytes)"`);
   });
 });
