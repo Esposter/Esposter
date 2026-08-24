@@ -39,9 +39,11 @@ const cloneAsset = async (
 
   await copyBlob(containerClient, blobName, destinationBlobName);
   // A clone is stored bytes like any other, and the destination directory belongs to whoever this clone is
-  // For — the publisher, or the owner of the duplicate or the restored working copy. Charged here rather than
-  // Through `BlobCreated`, which a server-side copy raises for a blob no reserve ever ledgered.
-  // See /docs/platform/storage-quotas
+  // For — the publisher, or the owner of the duplicate or the restored working copy. The source's length is a
+  // Provisional figure, not a measurement of the copy: the copy raises its own `BlobCreated`, which now finds
+  // The row this charge wrote and replaces the figure with what actually landed. So a source overwritten under
+  // A still-valid write SAS between the read and the copy costs a few seconds of a wrong number rather than a
+  // Second HEAD on every clone. See /docs/platform/storage-quotas
   await chargeStorageLedgerEntry(db, userId, AzureContainer.ResourceAssets, destinationBlobName, contentLength);
   return [[url, getResourceAssetUrl(destinationBlobName)] as const];
 };

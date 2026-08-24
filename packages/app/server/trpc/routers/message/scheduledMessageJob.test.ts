@@ -129,7 +129,7 @@ describe("scheduledMessageJob", () => {
     expect.hasAssertions();
 
     await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
-    const scheduledMessageJobCount = await scheduledMessageJobCaller.countMyScheduledJobs();
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
 
     expect(scheduledMessageJobCount).toBe(1);
   });
@@ -141,7 +141,7 @@ describe("scheduledMessageJob", () => {
     const { user } = await mockSessionOnce(mockContext.db);
     const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledJobs();
     await mockSessionOnce(mockContext.db, user);
-    const scheduledMessageJobCount = await scheduledMessageJobCaller.countMyScheduledJobs();
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
 
     expect(scheduledMessageJobs.items).toStrictEqual([]);
     expect(scheduledMessageJobCount).toBe(0);
@@ -213,7 +213,7 @@ describe("scheduledMessageJob", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: FORBIDDEN]`);
 
     await mockSessionOnce(mockContext.db, member);
-    const scheduledMessageJobCount = await scheduledMessageJobCaller.countMyScheduledJobs();
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
 
     expect(scheduledMessageJobCount).toBe(1);
   });
@@ -235,7 +235,7 @@ describe("scheduledMessageJob", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
     await mockSessionOnce(mockContext.db, member);
-    const scheduledMessageJobCount = await scheduledMessageJobCaller.countMyScheduledJobs();
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
 
     expect(scheduledMessageJobCount).toBe(0);
   });
@@ -257,7 +257,7 @@ describe("scheduledMessageJob", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
     await mockSessionOnce(mockContext.db, member);
-    const scheduledMessageJobCount = await scheduledMessageJobCaller.countMyScheduledJobs();
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
 
     expect(scheduledMessageJobCount).toBe(0);
   });

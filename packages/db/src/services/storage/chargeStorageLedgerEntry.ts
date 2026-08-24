@@ -9,6 +9,11 @@ import { storageLedger } from "@esposter/db-schema";
 // Which is also why a save is never rejected for being over quota: the upload it would refuse has already
 // Happened, and refusing the charge would only make the counter lie. See /docs/platform/storage-quotas
 //
+// The amount is provisional: the write raises its own `BlobCreated`, which finds the row this wrote and
+// Replaces the figure with the stored object's real size. Two charges for one blob landing out of order, or a
+// Figure that was already stale when it was supplied, therefore converge rather than needing a causal key —
+// The event is the last writer, and it measures rather than declares.
+//
 // The row is what attributes a blob to an owner, and every release reads its amount off that row — so writing
 // One here is what lets `deleteStorageBlobs` and `releaseStorageLedgerEntriesByPrefix` give these bytes back with no
 // Path of their own. Born already expired: `expiresAt` bounds a write target's life, and this one's write is

@@ -10,7 +10,7 @@ export const useReadScheduledMessageJobs = () => {
       async () => {
         const [data, total] = await Promise.all([
           $trpc.message.scheduledMessageJob.readMyScheduledJobs.query(),
-          $trpc.message.scheduledMessageJob.countMyScheduledJobs.query(),
+          $trpc.message.scheduledMessageJob.readMyScheduledJobsCount.query(),
         ]);
         count.value = total;
         return data;

@@ -101,7 +101,7 @@ export const scheduledMessageJobRouter = router({
         limit,
       );
     }),
-  countMyScheduledJobs: standardAuthedProcedure.query<number>(
+  readMyScheduledJobsCount: standardAuthedProcedure.query<number>(
     async ({ ctx }) =>
       (
         await ctx.db

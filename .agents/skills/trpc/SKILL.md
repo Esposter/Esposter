@@ -56,7 +56,8 @@ Routers nested by domain. Root merger: `server/trpc/routers/index.ts`. The clien
 
 ## Procedure & Result Naming
 
-- **Every query names its verb**: `read*` for a fetch, `count*` for a bare count (`countMyScheduledJobs`, never `read*Count`), `search*` for a ranked query, `generate*` for a minted credential (a SAS entity, a Web PubSub access url). A bare noun (`buildVersion`) and a `get*` procedure are both wrong — `get*` is for derivation, which is not what a network round trip is.
+- **Every query names its verb**: `read*` for a fetch, `search*` for a ranked query, `generate*` for a minted credential (a SAS entity, a Web PubSub access url). A bare noun (`buildVersion`) and a `get*` procedure are both wrong — `get*` is for derivation, which is not what a network round trip is.
+- **A query returning a number is a read of that number**: `readMyScheduledJobsCount`, `readResourceViewCount`. The `count*` family (`countMembers`, `countsByTag`) is for a procedure whose subject _is_ the aggregation — a grouping, or a filtered tally the caller asks for instead of the rows.
 - `upsert*` for procedures that do `insert().onConflictDoUpdate()` — never `update*` (update implies the record already exists). Domain operation names (`subscribe`, `connect`) are exempt.
 - Subscription naming: `on` + exact mutation name (camelCase): `createFoo` → `onCreateFoo`.
 - DB result variables named after the entity: `newFoo`, `updatedFoo`, `existingFoo` — never `created`, `updated`, `existing`.
