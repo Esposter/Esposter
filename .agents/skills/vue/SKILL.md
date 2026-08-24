@@ -128,7 +128,7 @@ Read it before writing any `watch`, or when a local `ref` mirrors a prop/store v
 
 ## The Options API runtime is compiled out — `references/options-api.md`
 
-`vue.optionsApi` is **off** and stays off, so a dependency shipping Options API `.vue` components mounts and then dereferences off `undefined` with nothing thrown to name the cause. Read the page before adding one, or when a `node_modules` component renders blank — it also covers why a component test of it still passes.
+Ours are `<script setup>` only (`vue/component-api-style`, which bans plain `defineComponent(…)` with it). `vue.optionsApi` is **off** and stays off, so a _dependency_ shipping Options API `.vue` components mounts and then dereferences off `undefined` with nothing thrown to name the cause. Read the page before adding one, or when a `node_modules` component renders blank — it also covers why a component test of it still passes.
 
 ## Dates Are `<NuxtTime>` — `references/dates.md`
 
