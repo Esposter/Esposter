@@ -16,13 +16,13 @@ import {
   userStatusesInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { MENTION_EVERYONE_ID, MENTION_HERE_ID } from "@esposter/shared";
+import { ID_SEPARATOR, MENTION_EVERYONE_ID, MENTION_HERE_ID } from "@esposter/shared";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 const getEndpoint = (userId: string) => `https://push.example.com/${userId}`;
 // A subscription names the session that created it, so each user gets one — derived rather than mapped, so
 // Nothing has to look an id back up
-const getSessionId = (userId: string) => `session-${userId}`;
+const getSessionId = (userId: string) => `session${ID_SEPARATOR}${userId}`;
 
 describe(getPushSubscriptionsForMessage, () => {
   let db: Database;
