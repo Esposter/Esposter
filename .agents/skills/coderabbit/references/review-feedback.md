@@ -35,9 +35,9 @@ The walkthrough issue-comment is **edited in place** across reviews, so its `cre
 ## One call for every bodied finding
 
 Call 1 returns the review body as raw Markdown with HTML tags embedded in it — rendered HTML comes back in
-`body_html` under `application/vnd.github.html+json`, which is not what the default request asks for. The findings
-inside it sit in collapsed `<details>` blocks whose headings carry an emoji and a count, hence the tag strip and
-the emoji handling below. **Grepping that body for a category name is how they get missed** — the
+`body_html` under `application/vnd.github-commitcomment.html+json`, which is not what the default request asks for.
+The findings inside it sit in collapsed `<details>` blocks whose headings carry an emoji and a count, hence the
+tag strip and the emoji handling below. **Grepping that body for a category name is how they get missed** — the
 categories are not a fixed set: nitpicks and outside-diff-range findings are the two constants, and CodeRabbit
 moves findings into further buckets of its own (duplicates, refactor suggestions, an additional-comments block
 once a review carries many) whose names nobody has written down. So the filter runs the other way: suppress the
