@@ -16,6 +16,14 @@ vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () =
   useContainerClient: () => Promise.resolve(containerClientMock.current),
 }));
 
+// The database here is a stub answering the two readability questions, which is what lets these cases count the
+// Queries the cache is meant to collapse. The charge every clone makes is a real write against a real database,
+// So it is asserted where one exists — the publish and duplicate router tests — rather than faked into this one
+vi.mock(import("@esposter/db"), async (importOriginal) => ({
+  ...(await importOriginal()),
+  chargeStorageBlob: () => Promise.resolve(),
+}));
+
 describe(cloneContentAssets, () => {
   const userId = crypto.randomUUID();
   const sourceResourceId = crypto.randomUUID();
