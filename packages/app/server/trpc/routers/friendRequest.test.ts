@@ -4,7 +4,13 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
+import {
+  consumeMockSessionOnce,
+  createMockContext,
+  getMockSession,
+  mockSessionOnce,
+  replayMockSession,
+} from "@@/server/trpc/context.test";
 import { blockRouter } from "@@/server/trpc/routers/block";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
@@ -116,7 +122,7 @@ describe("friendRequest", () => {
     const receiverUser = getMockSession().user;
     const { user: blockerUser } = await mockSessionOnce(mockContext.db);
     await blockCaller.blockUser(receiverUser.id);
-    getMockSession();
+    await consumeMockSessionOnce();
 
     await expect(friendRequestCaller.sendFriendRequest(blockerUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, blockerUser.id).message}]`,
@@ -165,7 +171,7 @@ describe("friendRequest", () => {
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
     const friendshipId = getFriendshipId(userId, user.id);
-    getMockSession();
+    await consumeMockSessionOnce();
 
     await expect(friendRequestCaller.declineFriendRequest(user.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.FriendRequest, friendshipId).message}]`,
@@ -179,7 +185,7 @@ describe("friendRequest", () => {
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(receiverUser.id);
     await mockContext.db.delete(users).where(eq(users.id, senderUser.id));
-    getMockSession();
+    await consumeMockSessionOnce();
 
     await expect(friendRequestCaller.acceptFriendRequest(senderUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.User, senderUser.id).message}]`,
