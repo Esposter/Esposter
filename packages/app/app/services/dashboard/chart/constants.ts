@@ -1,7 +1,8 @@
 import type { ApexOptions } from "apexcharts";
 
 // Each option below names a feature v7 ships opt-in, so the registration travels with the option that needs it:
-// Importing this file is what makes these four exist, and using them without it silently configures nothing
+// Importing this file is what makes these four exist. Setting one of them without its import configures nothing
+// And says so on the console — which is the whole warning, on a surface nobody watches on a phone
 import "apexcharts/features/context-menu";
 import "apexcharts/features/history";
 import "apexcharts/features/ink";

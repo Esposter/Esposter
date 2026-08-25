@@ -30,7 +30,9 @@ On dashboard visuals only:
 
 ## Every feature here is registered where it is configured
 
-ApexCharts v7 ships these as **opt-in modules**: the default bundle registers only the baseline set, and a feature that has not been imported is not present. The failure mode is the dangerous kind — an unregistered feature makes its option a config key nothing reads, so the chart renders perfectly and does nothing new, with no error and no warning anywhere.
+ApexCharts v7 ships these as **opt-in modules**: the default bundle registers only the baseline set, and a feature that has not been imported is not present. Its option then configures nothing and the chart renders perfectly without it — nothing throws, and nothing on the page changes.
+
+How loudly that is announced depends on the feature, and the difference matters when you are diagnosing one. `chart.history`, `chart.contextMenu`, `chart.measure`, `chart.ink` and `chart.link` each `console.warn` on render naming the exact import to add. **`perspectives` does not** — the library's own configuration calls it passive, so `chart.perspectives` is simply absent from the instance and a capture returns nothing. A console warning is also a weak signal for the surfaces here: a dashboard read on a phone, or a published `/view/Dashboard/[id]` page, has nobody watching a console.
 
 So the `import "apexcharts/features/…"` sits beside the option that needs it rather than in one setup file:
 
@@ -40,7 +42,7 @@ So the `import "apexcharts/features/…"` sits beside the option that needs it r
 | `features/link`                                      | `getVisualLinkChartOptions` — `chart.link` and the group      |
 | `features/perspectives`                              | `useVisualPerspective` — `chart.perspectives` on the instance |
 
-Importing the module that builds an option is what makes that option real, so a new consumer of any of them cannot pick up the config without the feature. Adding an option from a module not listed above means adding its import next to it — the v7 upgrade turned every one of these off silently, which is why they are colocated rather than gathered.
+Importing the module that builds an option is what makes that option real, so a new consumer of any of them cannot pick up the config without the feature. Adding an option from a module not listed above means adding its import next to it — the v7 upgrade turned every one of these off at once, which is why they are colocated rather than gathered.
 
 ## The watermark
 
