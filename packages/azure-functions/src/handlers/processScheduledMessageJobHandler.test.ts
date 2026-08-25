@@ -14,6 +14,7 @@ import {
   roomsInMessage,
   scheduledMessageJobsInMessage,
   ScheduledMessageJobType,
+  threadFollowsInMessage,
   users,
   usersToRoomsInMessage,
   WordFilterAction,
@@ -99,6 +100,7 @@ describe(processScheduledMessageJobHandler, () => {
     vi.useRealTimers();
     await mockDb.delete(scheduledMessageJobsInMessage);
     await mockDb.delete(roomFiltersInMessage);
+    await mockDb.delete(threadFollowsInMessage);
     MockServiceBusDatabase.clear();
     MockTableDatabase.clear();
     vi.restoreAllMocks();
@@ -211,6 +213,27 @@ describe(processScheduledMessageJobHandler, () => {
     assert.exists(messagesTable);
 
     expect(takeOne([...messagesTable.values()])).toMatchObject({ replyRowKey });
+  });
+
+  // The follow rows are what ProcessNotification resolves a reply's recipients from, so a scheduled reply that
+  // Skipped them would notify the thread as if nobody had ever replied to it
+  test("follows the thread it replies into", async () => {
+    expect.hasAssertions();
+
+    const replyRowKey = "replyRowKey";
+    const job = await insertJob({ ...scheduledMessagePayload, replyRowKey });
+    await processScheduledMessageJobHandler({ id: job.id }, context);
+
+    const follows = await mockDb
+      .select({
+        isUnfollowed: threadFollowsInMessage.isUnfollowed,
+        roomId: threadFollowsInMessage.roomId,
+        threadRootRowKey: threadFollowsInMessage.threadRootRowKey,
+        userId: threadFollowsInMessage.userId,
+      })
+      .from(threadFollowsInMessage);
+
+    expect(follows).toStrictEqual([{ isUnfollowed: false, roomId, threadRootRowKey: replyRowKey, userId }]);
   });
 
   test("completes job when notifying fails after the message is created", async () => {

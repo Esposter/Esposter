@@ -42,6 +42,8 @@ const mentionedUsersToRooms = await getResultAsync(() => incrementMentionCounts(
 
 The comment is part of the pattern: state what the failure actually costs, so the next reader can see the trade was made deliberately rather than by omission.
 
+**Best-effort does not mean unordered.** Where one tail step writes what a later one reads, the order between them is still load-bearing: the thread-follow rows a reply creates (`createReplyThreadFollows`) are what `ProcessNotification` resolves recipients from, so they are written before the `publishNotification` that triggers it. Each is independently best-effort — either may fail without costing the message — but a publish that overtakes the follows notifies a follower set one reply out of date.
+
 A tail step that nothing downstream reads may be fired rather than awaited — `getSynchronizedFunction(writeResourceActivity)(...)` returns immediately and still lets tests drain it deterministically ([no polling](/docs/architecture/no-polling)). Same rule, one less `await`.
 
 Where the side effect is a write with its own event — a system message announcing that someone left a room — the write and its emit are wrapped **together** as one unit (`createSystemRoomMessage`), because relative to the mutation that triggered it the pair is a single best-effort effect.

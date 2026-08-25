@@ -50,7 +50,6 @@ import { readMessages } from "@@/server/services/message/readMessages";
 import { readMessagesByRowKeys } from "@@/server/services/message/readMessagesByRowKeys";
 import { readMySentMessages } from "@@/server/services/message/readMySentMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
-import { createThreadFollow } from "@@/server/services/message/thread/createThreadFollow";
 import { createThreadUnfollow } from "@@/server/services/message/thread/createThreadUnfollow";
 import { readFollowedThreadRootRowKeys } from "@@/server/services/message/thread/readFollowedThreadRootRowKeys";
 import { updateMessage } from "@@/server/services/message/updateMessage";
@@ -69,6 +68,7 @@ import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause, serializ
 import {
   cloneFiles,
   createMessage,
+  createThreadFollow,
   generateDownloadFileSasUrls,
   generateDownloadThumbnailSasUrls,
   generateUploadFileSasEntities,

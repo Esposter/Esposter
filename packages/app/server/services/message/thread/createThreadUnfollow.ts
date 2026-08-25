@@ -1,7 +1,7 @@
 import type { Context } from "@@/server/trpc/context";
 import type { ThreadFollowInMessage } from "@esposter/db-schema";
 
-import { THREAD_FOLLOW_CONFLICT_TARGET } from "@@/server/services/message/thread/constants";
+import { THREAD_FOLLOW_CONFLICT_TARGET } from "@esposter/db";
 import { threadFollowsInMessage } from "@esposter/db-schema";
 
 // Records the member's decision to stop following, rather than deleting the row: a deleted row is

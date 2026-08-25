@@ -5,12 +5,14 @@ import { createAndBroadcastMessage } from "#src/services/createAndBroadcastMessa
 import { db } from "#src/services/db";
 import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
 import { getServiceBusSender } from "#src/services/getServiceBusSender";
+import { getTableClient } from "#src/services/getTableClient";
 import { logAndRethrow } from "#src/services/logAndRethrow";
-import { enqueueScheduledMessageJob } from "@esposter/db";
+import { createReplyThreadFollows, enqueueScheduledMessageJob } from "@esposter/db";
 import {
   AppNotificationType,
   AzureFunction,
   AzureQueue,
+  AzureTable,
   MessageType,
   publishNotification,
   roomsInMessage,
@@ -154,6 +156,9 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       // Rethrow here cannot retry these steps anyway — the claim above is single-shot, so the redelivery it asks
       // For is skipped — it would only leave the job stuck mid-delivery with `completedAt` never stamped
       await getResultAsync(async () => {
+        // A message scheduled into a thread is a reply like any other, so it owes the same follow rows — and
+        // Owes them before the publish that reads them
+        await createReplyThreadFollows(db, await getTableClient(AzureTable.Messages), newMessage);
         await publishNotification(eventGridPublisherClient, {
           message: {
             message: newMessage.message,

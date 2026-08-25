@@ -39,7 +39,7 @@ Both reads — `readFollowedThreadRootRowKeys` (follow state) and `getThreadFoll
 
 A root message with no author at all (a webhook message carries none) contributes no root-author follow: `userId` is `NOT NULL`, so the reply would otherwise fail its insert on every reply to a webhook message.
 
-Auto-follow and the notification both sit in the reply's best-effort tail ([persist then notify](/docs/architecture/persist-then-notify)), so a lost follow costs one subscription and a lost publish costs one notification — and the follows are written first, because they are what the Function reads. A reply raises **one** notification, not a second one aimed at followers: the followers widen the message's recipient set inside the Function, which is where the live follower list is ([notifications](/docs/architecture/notifications)).
+Auto-follow and the notification both sit in the reply's best-effort tail ([persist then notify](/docs/architecture/persist-then-notify)), so a lost follow costs one subscription and a lost publish costs one notification — and the follows are written first, because they are what the Function reads. Both follows are one shared step (`createReplyThreadFollows`) rather than something each sender re-implements: a reply sent from the app and a scheduled message delivered into a thread by its Function are the same reply, and a path that had to remember this is a path that eventually forgets it. A reply raises **one** notification, not a second one aimed at followers: the followers widen the message's recipient set inside the Function, which is where the live follower list is ([notifications](/docs/architecture/notifications)).
 
 ## Data model
 
@@ -61,7 +61,8 @@ All under `message.` in `server/trpc/routers/message/index.ts`, member-gated:
 | :-------------------------------------------------------------------------- | :----------------------------------- |
 | `packages/db-schema/src/schema/threadFollowsInMessage.ts`                   | follow table                         |
 | `packages/db/src/services/notification/getThreadFollowerUserIds.ts`         | follower recipient query             |
-| `packages/app/server/services/message/thread/createThreadFollow.ts`         | idempotent follow insert             |
+| `packages/db/src/services/message/thread/createThreadFollow.ts`             | idempotent follow insert             |
+| `packages/db/src/services/message/thread/createReplyThreadFollows.ts`       | the follows a reply owes             |
 | `packages/app/server/services/message/thread/createThreadUnfollow.ts`       | records the unfollow on the row      |
 | `packages/azure-functions/src/services/notification/resolveNotification.ts` | unions followers into the recipients |
 | `packages/app/app/store/message/threadFollow.ts`                            | client follow state + drawer list    |
