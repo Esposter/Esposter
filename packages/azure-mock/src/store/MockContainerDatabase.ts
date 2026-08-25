@@ -1,11 +1,11 @@
-import { MockContainerCreatedOnDatabase } from "#src/store/MockContainerCreatedOnDatabase";
+import { MockContainerBlobDatesDatabase } from "#src/store/MockContainerBlobDatesDatabase";
 
 // Clearing the blobs drops their creation instants too — a test resets by clearing this map, and a createdOn
 // That outlived its blob re-dates the next blob seeded under the same container/name key.
 class MockContainerDatabaseMap extends Map<string, Map<string, Buffer>> {
   override clear(): void {
     super.clear();
-    MockContainerCreatedOnDatabase.clear();
+    MockContainerBlobDatesDatabase.clear();
   }
 }
 // Map<container, Map<name, blob>>

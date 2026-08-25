@@ -1,5 +1,6 @@
 import type { BlobHierarchyItem } from "#src/models/container/BlobHierarchyItem";
 import type { PagedAsyncIterableIterator } from "#src/models/PagedAsyncIterableIterator";
+import type { MockBlobDates } from "#src/store/MockContainerBlobDatesDatabase";
 import type {
   AppendBlobClient,
   BlobBatchClient,
@@ -43,10 +44,10 @@ import { getMockContainer } from "#src/services/container/getMockContainer";
 import { createMockResponse } from "#src/services/createMockResponse";
 import { getMockSasUrl } from "#src/services/getMockSasUrl";
 import {
-  getMockContainerCreatedOnKey,
-  MOCK_BLOB_SEEDED_CREATED_ON,
-  MockContainerCreatedOnDatabase,
-} from "#src/store/MockContainerCreatedOnDatabase";
+  getMockContainerBlobDatesKey,
+  MOCK_BLOB_SEEDED_PROPERTIES,
+  MockContainerBlobDatesDatabase,
+} from "#src/store/MockContainerBlobDatesDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 /**
@@ -89,7 +90,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   deleteBlob(blobName: string): Promise<BlobDeleteResponse> {
     if (!this.container.has(blobName)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
     this.container.delete(blobName);
-    MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(this.containerName, blobName));
+    MockContainerBlobDatesDatabase.delete(getMockContainerBlobDatesKey(this.containerName, blobName));
     return Promise.resolve({ _response: createMockResponse(200, getBlobUrl(this.containerName, blobName)) });
   }
 
@@ -284,7 +285,6 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     for (const blobItem of blobsInCurrentLevel) yield await Promise.resolve({ kind: "blob", ...blobItem });
   }
 
-  // Both listings report the same blob the same way, so the properties are described in exactly one place
   #getBlobItem(name: string, buffer: Buffer): BlobItem {
     return {
       deleted: false,
@@ -293,22 +293,31 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
         blobType: "BlockBlob",
         contentLength: buffer.length,
         contentType: "application/octet-stream",
-        createdOn:
-          MockContainerCreatedOnDatabase.get(getMockContainerCreatedOnKey(this.containerName, name)) ??
-          MOCK_BLOB_SEEDED_CREATED_ON,
-        etag: `"${crypto.randomUUID()}"`,
-        lastModified: new Date(),
+        createdOn: this.#readBlobDates(name).createdOn,
+        etag: this.#readBlobDates(name).etag,
+        lastModified: this.#readBlobDates(name).lastModified,
         leaseState: "available",
         leaseStatus: "unlocked",
       },
       snapshot: "",
     };
   }
+
   async *#getBlobItemIterator(options?: ContainerListBlobsOptions): AsyncGenerator<BlobItem> {
     const prefix = options?.prefix ?? "";
     for (const [name, buffer] of this.container.entries()) {
       if (!name.startsWith(prefix)) continue;
       yield await Promise.resolve(this.#getBlobItem(name, buffer));
     }
+  }
+  // Both listings report the same blob the same way, so the properties are described in exactly one place
+  // Content seeded straight into MockContainerDatabase was never written through a client, so it has no dates of
+  // Its own and reads as pre-existing on both axes — older than any cutoff an age-filtered listing compares
+  // Against, including under fake timers pinned to the epoch
+  #readBlobDates(name: string): MockBlobDates {
+    return (
+      MockContainerBlobDatesDatabase.get(getMockContainerBlobDatesKey(this.containerName, name)) ??
+      MOCK_BLOB_SEEDED_PROPERTIES
+    );
   }
 }

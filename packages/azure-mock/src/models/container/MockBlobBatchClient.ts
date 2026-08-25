@@ -14,9 +14,9 @@ import { getBlobUrlParts } from "#src/services/container/getBlobUrlParts";
 import { getMockContainer } from "#src/services/container/getMockContainer";
 import { createMockResponse } from "#src/services/createMockResponse";
 import {
-  getMockContainerCreatedOnKey,
-  MockContainerCreatedOnDatabase,
-} from "#src/store/MockContainerCreatedOnDatabase";
+  getMockContainerBlobDatesKey,
+  MockContainerBlobDatesDatabase,
+} from "#src/store/MockContainerBlobDatesDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders } from "@azure/core-rest-pipeline";
@@ -56,7 +56,7 @@ export class MockBlobBatchClient implements BlobBatchClient {
 
       if (container.has(blobName)) {
         container.delete(blobName);
-        MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(containerName, blobName));
+        MockContainerBlobDatesDatabase.delete(getMockContainerBlobDatesKey(containerName, blobName));
         subResponses.push({
           _request: { credential, url: this.url },
           headers: toHttpHeadersLike(createHttpHeaders()),

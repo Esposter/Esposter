@@ -37,9 +37,10 @@ import { getMockContainer } from "#src/services/container/getMockContainer";
 import { createMockResponse } from "#src/services/createMockResponse";
 import { getMockSasUrl } from "#src/services/getMockSasUrl";
 import {
-  getMockContainerCreatedOnKey,
-  MockContainerCreatedOnDatabase,
-} from "#src/store/MockContainerCreatedOnDatabase";
+  getMockContainerBlobDatesKey,
+  MockContainerBlobDatesDatabase,
+  storeMockBlobWrite,
+} from "#src/store/MockContainerBlobDatesDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 import { noop } from "@esposter/shared";
@@ -82,8 +83,8 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     const sourceData = sourceContainer.get(sourceBlobName);
     if (!sourceData) throw new MockRestError("Source blob not found", 404);
 
+    storeMockBlobWrite(this.containerName, this.name, this.container.has(this.name));
     this.container.set(this.name, Buffer.from(sourceData));
-    MockContainerCreatedOnDatabase.set(getMockContainerCreatedOnKey(this.containerName, this.name), new Date());
     const response: BlobBeginCopyFromURLResponse = { _response: createMockResponse(202, `${this.url}?comp=copy`) };
     return Promise.resolve({
       cancelOperation: () => Promise.resolve(),
@@ -105,7 +106,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   delete(): Promise<BlobDeleteResponse> {
     if (!this.container.has(this.name)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
     this.container.delete(this.name);
-    MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(this.containerName, this.name));
+    MockContainerBlobDatesDatabase.delete(getMockContainerBlobDatesKey(this.containerName, this.name));
     return Promise.resolve({ _response: createMockResponse(200) });
   }
 
@@ -113,7 +114,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     const succeeded = this.container.has(this.name);
     if (succeeded) {
       this.container.delete(this.name);
-      MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(this.containerName, this.name));
+      MockContainerBlobDatesDatabase.delete(getMockContainerBlobDatesKey(this.containerName, this.name));
     }
     return Promise.resolve({ _response: createMockResponse(succeeded ? 200 : 404), succeeded });
   }
@@ -188,7 +189,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     return Promise.resolve({
       _response: createMockResponse(200),
       contentLength: blob.byteLength,
-      createdOn: MockContainerCreatedOnDatabase.get(getMockContainerCreatedOnKey(this.containerName, this.name)),
+      ...MockContainerBlobDatesDatabase.get(getMockContainerBlobDatesKey(this.containerName, this.name)),
     } as BlobGetPropertiesResponse);
   }
 
