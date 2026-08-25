@@ -1,18 +1,13 @@
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
 
-import ResourceDashboardView from "@/components/Resource/Dashboard/View.vue";
-import ResourceEmailView from "@/components/Resource/Email/View.vue";
-import ResourceFlowchartView from "@/components/Resource/Flowchart/View.vue";
-import ResourceNoteView from "@/components/Resource/Note/View.vue";
-import ResourceSurveyView from "@/components/Resource/Survey/View.vue";
-import ResourceWebpageView from "@/components/Resource/Webpage/View.vue";
 import { ResourceType } from "@esposter/db-schema";
-// Public view renderers dispatched by /view/[type]/[id]
+// Public view renderers dispatched by /view/[type]/[id]. Loaded on demand for the same reason as the editors: a
+// Visitor opening one published resource has no use for the renderers of the five types they did not open
 export const ViewComponentMap: Record<PublishableResourceType, Component> = {
-  [ResourceType.Dashboard]: ResourceDashboardView,
-  [ResourceType.Email]: ResourceEmailView,
-  [ResourceType.Flowchart]: ResourceFlowchartView,
-  [ResourceType.Note]: ResourceNoteView,
-  [ResourceType.Survey]: ResourceSurveyView,
-  [ResourceType.Webpage]: ResourceWebpageView,
+  [ResourceType.Dashboard]: defineAsyncComponent(() => import("@/components/Resource/Dashboard/View.vue")),
+  [ResourceType.Email]: defineAsyncComponent(() => import("@/components/Resource/Email/View.vue")),
+  [ResourceType.Flowchart]: defineAsyncComponent(() => import("@/components/Resource/Flowchart/View.vue")),
+  [ResourceType.Note]: defineAsyncComponent(() => import("@/components/Resource/Note/View.vue")),
+  [ResourceType.Survey]: defineAsyncComponent(() => import("@/components/Resource/Survey/View.vue")),
+  [ResourceType.Webpage]: defineAsyncComponent(() => import("@/components/Resource/Webpage/View.vue")),
 };
