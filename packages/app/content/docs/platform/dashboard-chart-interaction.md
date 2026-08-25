@@ -33,6 +33,21 @@ On dashboard visuals only:
 - **Linked highlighting** — `getVisualLinkChartOptions` groups visuals **by the dataset reference and the `query.xColumn` they categorise it by**, not by the dashboard they sit on. Both halves are load-bearing: the reference is what makes two charts describe the same rows, and the x column is what makes one chart's axis mean the same thing as another's. One sheet grouped by month and the same sheet grouped by region share every row and no axis at all, so linking them would dim each other's marks by coincidence of position. A visual with no binding renders demo data and joins no group, and a chart type with no x axis to brush (pie, donut, polar area, radar, radial bar, treemap) is left out.
 - **Shareable view state** — `useVisualPerspective` captures a visual's zoom window, hidden series and selection into a token and puts it in the url as `?view=<visualId>~<token>`. The parameter repeats, so a link carries the state of every chart its sender touched, and a token that no longer decodes opens the dashboard unfiltered rather than failing.
 
+## Every feature here is registered where it is configured
+
+ApexCharts v7 ships these as **opt-in modules**: the default bundle registers only the baseline set, and a feature that has not been imported is not present. The failure mode is the dangerous kind — an unregistered feature makes its option a config key nothing reads, so the chart renders perfectly and does nothing new, with no error and no warning anywhere.
+
+So the `import "apexcharts/features/…"` sits beside the option that needs it rather than in one setup file:
+
+| Registration                                         | Declared by                                                   |
+| ---------------------------------------------------- | ------------------------------------------------------------- |
+| `features/renderer-canvas`                           | `StyledApexChart` — `chart.renderer`                          |
+| `features/history`, `context-menu`, `ink`, `measure` | `services/dashboard/chart/constants.ts`                       |
+| `features/link`                                      | `getVisualLinkChartOptions` — `chart.link` and the group      |
+| `features/perspectives`                              | `useVisualPerspective` — `chart.perspectives` on the instance |
+
+Importing the module that builds an option is what makes that option real, so a new consumer of any of them cannot pick up the config without the feature. Adding an option from a module not listed above means adding its import next to it — the v7 upgrade turned every one of these off silently, which is why they are colocated rather than gathered.
+
 ## The watermark
 
 `history`, `contextMenu`, `measure`, `ink`, linked highlighting and perspectives are gated by the vendor. They work as documented above, and every chart carrying one renders a repeating "APEXCHARTS" watermark over it — on the editor and on the published `/view/Dashboard/[id]` page alike.

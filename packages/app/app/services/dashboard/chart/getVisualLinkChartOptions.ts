@@ -1,6 +1,8 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 import type { ApexOptions } from "apexcharts";
 
+// Registers the linked-views feature the `link` option below is read by; opt-in since v7
+import "apexcharts/features/link";
 import { ID_SEPARATOR } from "@esposter/shared";
 
 // Brushing a range only says something where there is an x axis to brush. A pie, a radial, a radar and a treemap

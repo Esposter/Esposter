@@ -3,6 +3,9 @@ import type ApexCharts from "apexcharts";
 import type { VueApexChartsComponentProps } from "vue3-apexcharts";
 
 import { defu } from "defu";
+// v7 ships the renderer opt-in, so `chart.renderer` below is inert without it — and inert silently, because an
+// Unregistered feature is a config key nothing reads rather than an error
+import "apexcharts/features/renderer-canvas";
 import VueApexCharts from "vue3-apexcharts";
 
 type ApexChartProps = Pick<VueApexChartsComponentProps, "options" | "series" | "type">;
