@@ -36,7 +36,7 @@ sequenceDiagram
   Grid->>Proc: deliver the event
   Proc->>Table: createMessage with MessageType.Webhook
   Proc->>Client: Web PubSub broadcast — best effort
-  Proc->>Grid: publish ProcessPushNotification — best effort
+  Proc->>Grid: publishNotification — best effort
 ```
 
 The url a member copies points at the **app**, not at Azure: `server/api/webhooks/[id]/[token].post.ts` validates the two route parameters against the schema shapes, spends a point from the per-webhook budget described in [rate limiting](/docs/architecture/rate-limiting), and forwards the body to the Function App with the function key. It forwards the **answer** as faithfully as the request: the function's own status and body are passed straight back (`ignoreResponseError`), because the statuses below are its to give and a proxy that turned each of them into a 500 would leave a sender unable to tell a rotated token from an Esposter outage. Keying the budget on the webhook id rather than on a caller is the point — a webhook is a machine identity, and one misconfigured integration should exhaust only its own allowance.

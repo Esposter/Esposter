@@ -15,7 +15,8 @@ sequenceDiagram
     participant T as tRPC (scheduledMessageJob)
     participant DB as Postgres
     participant Q as Azure Service Bus
-    participant F as processScheduledMessageJob (Azure Function)
+    participant F as ProcessScheduledMessageJob (Azure Function)
+    participant EG as Azure Event Grid
 
     U->>T: scheduleReminder / scheduleMessage({ roomId, runAt, … })
     T->>DB: INSERT scheduledMessageJobsInMessage
@@ -35,16 +36,16 @@ sequenceDiagram
         else claimed
             F->>F: ScheduledMessage → re-check membership + read-only/slowmode — a rejection releases the claim and rethrows, so redelivery retries
             F->>DB: word filter blocked → apply the room's automod action, UPDATE cancelledAt = now(), exit
-            F->>F: Reminder → web-push
+            F->>EG: Reminder → publishNotification — best-effort, logged
             F->>DB: ScheduledMessage → UPDATE lastMessageAt = now() (slowmode clock, ahead of the write)
             F->>F: ScheduledMessage → createAndBroadcastMessage
-            F->>DB: push notification + room updatedAt touch — best-effort, logged
+            F->>EG: publishNotification + room updatedAt touch — best-effort, logged
             F->>DB: UPDATE completedAt = now()
         end
     end
 ```
 
-Failure semantics: the `processingStartedAt` update is a **single-shot claim** — it stamps the job only while `cancelledAt`, `completedAt` and `processingStartedAt` are all still null, so of two concurrent deliveries exactly one proceeds. The claim is what lets `IsIdempotentAzureFunctionMap` mark the handler idempotent: a posted message carries a fresh reverse-ticked `rowKey`, so an unclaimed rerun would duplicate it rather than repair it. The claim also splits retries in two: a failure that throws **before the claim** leaves the job unstamped, so Service Bus redelivers and the job retries — while a failure **after the claim** can no longer be retried at all, since the redelivery it would ask for is skipped by the claim itself. So everything past the message write is best-effort rather than fatal ([persist then notify](/docs/architecture/persist-then-notify)): the push notification and the room's `updatedAt` touch are logged through `context.error` and the job still reaches `completedAt`. The slowmode clock (`lastMessageAt`) is deliberately **not** in that block — it is what the next send is checked against, so it advances ahead of the write like [`createUserMessage`](/docs/esbabbler/messaging) does; behind the write a swallowed failure would leave a stale clock that keeps passing, and slowmode would silently stop applying to that member. Only a failure of the delivery itself — the reminder push, the message write, or the `completedAt` stamp — leaves the job stuck mid-delivery, which is the cost of never posting twice. Cancellation is DB-only (tombstone): `cancelScheduledJob` sets `cancelledAt`, the scheduled Service Bus message still fires, and the worker guard skips it.
+Failure semantics: the `processingStartedAt` update is a **single-shot claim** — it stamps the job only while `cancelledAt`, `completedAt` and `processingStartedAt` are all still null, so of two concurrent deliveries exactly one proceeds. The claim is what lets `IsIdempotentAzureFunctionMap` mark the handler idempotent: a posted message carries a fresh reverse-ticked `rowKey`, so an unclaimed rerun would duplicate it rather than repair it. The claim also splits retries in two: a failure that throws **before the claim** leaves the job unstamped, so Service Bus redelivers and the job retries — while a failure **after the claim** can no longer be retried at all, since the redelivery it would ask for is skipped by the claim itself. So everything past the message write is best-effort rather than fatal ([persist then notify](/docs/architecture/persist-then-notify)): the push notification and the room's `updatedAt` touch are logged through `context.error` and the job still reaches `completedAt`. The slowmode clock (`lastMessageAt`) is deliberately **not** in that block — it is what the next send is checked against, so it advances ahead of the write like [`createUserMessage`](/docs/esbabbler/messaging) does; behind the write a swallowed failure would leave a stale clock that keeps passing, and slowmode would silently stop applying to that member. Only a failure of the delivery itself — the message write or the `completedAt` stamp — leaves the job stuck mid-delivery, which is the cost of never posting twice. The reminder is no longer among them: it is published like every other notification, so its retries and its dead letter belong to Event Grid ([notifications](/docs/architecture/notifications)) rather than to this handler's one claim. Cancellation is DB-only (tombstone): `cancelScheduledJob` sets `cancelledAt`, the scheduled Service Bus message still fires, and the worker guard skips it.
 
 The same three tombstones gate the owner's side: `cancel`, `reschedule` and `send now` only touch a job the delivery handler has not claimed, so neither path can post the message the other is already sending.
 
@@ -73,7 +74,7 @@ All under `message.scheduledMessageJob.`:
 
 | Procedure                                           | Notes                                                                                                                                                                                                                                                     |
 | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scheduleReminder({ roomId, runAt, text })`         | self-addressed push at `runAt` → [push notifications](/docs/esbabbler/push-notifications)                                                                                                                                                                 |
+| `scheduleReminder({ roomId, runAt, text })`         | self-addressed notification at `runAt` → [notifications](/docs/architecture/notifications)                                                                                                                                                                |
 | `scheduleMessage({ roomId, runAt, message })`       | behind `SendMessages` + read-only/slowmode checks at creation **and** execution time                                                                                                                                                                      |
 | `cancelScheduledJob({ id })`                        | sets `cancelledAt` tombstone                                                                                                                                                                                                                              |
 | `rescheduleMessage({ id, roomId, runAt, message })` | one transaction: tombstones the old row, inserts the replacement, re-enqueues — guards re-checked                                                                                                                                                         |
