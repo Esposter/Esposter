@@ -11,7 +11,6 @@ A dashboard tile is something a reader interrogates, not only a picture they loo
 
 ```mermaid
 flowchart TD
-  SHARED["StyledApexChart<br/>every chart in the app"] -->|"renderer: auto"| CANVAS["dense series paint to canvas<br/>axes · tooltips · exports stay SVG"]
   VIS["Dashboard visual only"] --> INT["VISUAL_INTERACTION_CHART_OPTIONS<br/>history · contextMenu · measure · ink"]
   INT --> WM["each is watermarked<br/>editor and published view alike"]
   VIS --> LINK["getVisualLinkChartOptions<br/>group = dataset reference + x column"]
@@ -19,10 +18,6 @@ flowchart TD
   VIS --> PERS["useVisualPerspective<br/>?view=visualId~token"]
   PERS -->|"on mounted"| APPLY["zoom · hidden series · selection restored"]
 ```
-
-Everywhere a chart renders (`StyledApexChart`):
-
-- **Canvas rendering** — `chart.renderer: "auto"`. The series layer paints to canvas past the point threshold; axes, tooltips, annotations and exports stay SVG. Nothing else changes shape, which is why it is on for every chart rather than opted into per surface. It buys nothing at today's dataset row cap — it is what would let that cap rise.
 
 On dashboard visuals only:
 
@@ -32,6 +27,22 @@ On dashboard visuals only:
 - **Annotation authoring** (`ink`) — drag, resize and restyle annotations, wired into undo. Annotations are not persisted: they are the reader's working marks, and a dashboard's saved content holds visuals, not notes.
 - **Linked highlighting** — `getVisualLinkChartOptions` groups visuals **by the dataset reference and the `query.xColumn` they categorise it by**, not by the dashboard they sit on. Both halves are load-bearing: the reference is what makes two charts describe the same rows, and the x column is what makes one chart's axis mean the same thing as another's. One sheet grouped by month and the same sheet grouped by region share every row and no axis at all, so linking them would dim each other's marks by coincidence of position. A visual with no binding renders demo data and joins no group, and a chart type with no x axis to brush (pie, donut, polar area, radar, radial bar, treemap) is left out.
 - **Shareable view state** — `useVisualPerspective` captures a visual's zoom window, hidden series and selection into a token and puts it in the url as `?view=<visualId>~<token>`. The parameter repeats, so a link carries the state of every chart its sender touched, and a token that no longer decodes opens the dashboard unfiltered rather than failing.
+
+## Every feature here is registered where it is configured
+
+ApexCharts v7 ships these as **opt-in modules**: the default bundle registers only the baseline set, and a feature that has not been imported is not present. Its option then configures nothing and the chart renders perfectly without it — nothing throws, and nothing on the page changes.
+
+How loudly that is announced depends on the feature, and the difference matters when you are diagnosing one. `chart.history`, `chart.contextMenu`, `chart.measure`, `chart.ink` and `chart.link` each `console.warn` on render naming the exact import to add. **`perspectives` does not** — the library's own configuration calls it passive, so `chart.perspectives` is simply absent from the instance and a capture returns nothing. A console warning is also a weak signal for the surfaces here: a dashboard read on a phone, or a published `/view/Dashboard/[id]` page, has nobody watching a console.
+
+So the `import "apexcharts/features/…"` sits beside the option that needs it rather than in one setup file:
+
+| Registration                                         | Declared by                                                   |
+| ---------------------------------------------------- | ------------------------------------------------------------- |
+| `features/history`, `context-menu`, `ink`, `measure` | `services/dashboard/chart/constants.ts`                       |
+| `features/link`                                      | `getVisualLinkChartOptions` — `chart.link` and the group      |
+| `features/perspectives`                              | `useVisualPerspective` — `chart.perspectives` on the instance |
+
+Importing the module that builds an option is what makes that option real, so a new consumer of any of them cannot pick up the config without the feature. Adding an option from a module not listed above means adding its import next to it — the v7 upgrade turned every one of these off at once, which is why they are colocated rather than gathered.
 
 ## The watermark
 
@@ -44,6 +55,8 @@ The consequence for editing this page's features is that they move as a set: the
 ## What is deliberately off
 
 - **Crossfilter FILTER mode** — the mode where clicking a bucket re-aggregates every linked chart. It asks each chart for one `dimension` and one `reduce`, which is a single derived series; a visual here declares `query.series[]` and can carry several. Expressing a multi-series visual through it is not possible, and running it alongside `computeDatasetVisualPropsData` would put two aggregation engines in the same tile. HIGHLIGHT mode, above, needs no aggregation change and is what ships.
+- **Canvas rendering** (`chart.renderer`, `features/renderer-canvas`) — on while v6 bundled it for free, and removed when v7 priced it. It is a 10.9 KB gzipped module on every surface that draws a chart, and it is unreachable: `rendererThreshold` defaults to 8000 points, a dataset read caps at 1000 rows, and a visual aggregates those rows into categories, so a series cannot approach the threshold. Add the module back when the row cap rises, not before.
+- **The lean core bundle** (`apexcharts/core` plus per-type registration) — measured rather than assumed. The sixteen chart-type entries this app needs come to 285 KB gzipped against the full bundle's 219 KB, because the entries overlap heavily: every line-family type carries the same 16.7 KB and every pie-family type the same 14.5 KB. Lean pays for a surface drawing two or three types and costs about 66 KB here.
 - **OS-aware themes** (`theme.follow`) — Vuetify owns the theme, and `StyledApexChart` pins the mode to it deliberately. Following the OS instead would fight the app's own switch.
 - **Streaming** (`chart.streaming`) — bounds memory for `appendData` on a live feed. Datasets are read and refreshed, never appended to; there is no feed to bound.
 - **Scrollytelling** (`chart.storyboard`) — pairs prose sections with saved chart views. Nothing in the app puts a chart inside prose.
