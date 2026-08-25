@@ -133,7 +133,16 @@
     "import/no-unassigned-import": [
       "error",
       {
-        "allow": ["**/*.css", "**/*.d.ts", "**/*.i18n", "crossws", "nuxt/schema", "phaser", "vue-phaserjs"]
+        "allow": [
+          "**/*.css",
+          "**/*.d.ts",
+          "**/*.i18n",
+          "apexcharts/features/*",
+          "crossws",
+          "nuxt/schema",
+          "phaser",
+          "vue-phaserjs"
+        ]
       }
     ],
     "import/prefer-default-export": "off",
