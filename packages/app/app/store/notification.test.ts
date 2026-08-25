@@ -95,7 +95,9 @@ describe(useNotificationStore, () => {
 
   // A push re-reads the whole first page, so the rows that just arrived are the ones newer than the newest row the
   // Tab already held — never the newest row overall, which is the local notification created while it was in
-  // Flight, and which toasted when it was created
+  // Flight, and which toasted when it was created. Postgres writes microseconds and a `Date` keeps milliseconds,
+  // So a row can tie with the watermark and still be one that just arrived: the ids the tab already held are what
+  // Settle those ties, and `held` staying silent is that exclusion
   test("toasts every delivered row a push brought back, oldest first", async () => {
     expect.hasAssertions();
 
@@ -113,7 +115,7 @@ describe(useNotificationStore, () => {
         hasMore: false,
         items: [
           createDeliveredNotification("newest", new Date(3)),
-          createDeliveredNotification("newer", new Date(2)),
+          createDeliveredNotification("tied", new Date(1)),
           heldNotification,
         ],
         nextCursor: "",
@@ -121,31 +123,10 @@ describe(useNotificationStore, () => {
       return Promise.resolve();
     });
 
-    expect(snackbarNotification.value?.id).toBe("newer");
-    deleteSnackbar("newer");
+    expect(snackbarNotification.value?.id).toBe("tied");
+    deleteSnackbar("tied");
 
     expect(snackbarNotification.value?.id).toBe("newest");
-  });
-
-  // Postgres writes microseconds and a `Date` keeps milliseconds, so two rows written close together arrive with
-  // The same `createdAt` — the row that ties with the watermark is the one a push just delivered
-  test("toasts a delivered row whose timestamp ties with the newest row already held", async () => {
-    expect.hasAssertions();
-
-    const { initializeCursorPaginationData, storeDeliveredNotifications } = notificationStore;
-    const heldNotification = createDeliveredNotification("held", new Date(1));
-    initializeCursorPaginationData({ hasMore: false, items: [heldNotification], nextCursor: "" });
-
-    await storeDeliveredNotifications(() => {
-      initializeCursorPaginationData({
-        hasMore: false,
-        items: [createDeliveredNotification("tied", new Date(1)), heldNotification],
-        nextCursor: "",
-      });
-      return Promise.resolve();
-    });
-
-    expect(snackbarNotification.value?.id).toBe("tied");
   });
 
   test("marks all notifications as read", async () => {
