@@ -44,6 +44,20 @@ The comment is part of the pattern: state what the failure actually costs, so th
 
 **Best-effort does not mean unordered.** Where one tail step writes what a later one reads, the order between them is still load-bearing: the thread-follow rows a reply creates (`createReplyThreadFollows`) are what `ProcessNotification` resolves recipients from, so they are written before the `publishNotification` that triggers it. Each is independently best-effort — either may fail without costing the message — but a publish that overtakes the follows notifies a follower set one reply out of date.
 
+**Independently best-effort means one wrapper each.** A single `getResultAsync` closure around several tail steps
+reads as economical and silently makes every step after the first conditional on it: the ordering above is
+preserved, but a failure in the first step returns from the whole closure, so the publish and the bookkeeping
+behind it never run and the log names only the step that broke. The tail is a list of siblings, so it is written
+as one wrapped call per step, each with its own log line saying what that step cost. The shape is only shared
+where two effects are genuinely one unit — a write and the emit that announces it, below.
+
+**A write that changed nothing has no tail.** The steps after the notify report a state change, so they are
+gated on evidence that one happened — the row a delete actually removed, the row count an update actually
+touched — and not on reaching the end of the handler. A mutation that legitimately matched nothing (a stale tab
+re-issuing an operation someone already performed) is not an error and must not be reported as an event: an
+activity entry for work nobody did, or a push telling the owner's other devices about a change that never
+landed, is a lie the tail invented. Return early instead; the caller still gets its answer.
+
 A tail step that nothing downstream reads may be fired rather than awaited — `getSynchronizedFunction(writeResourceActivity)(...)` returns immediately and still lets tests drain it deterministically ([no polling](/docs/architecture/no-polling)). Same rule, one less `await`.
 
 Where the side effect is a write with its own event — a system message announcing that someone left a room — the write and its emit are wrapped **together** as one unit (`createSystemRoomMessage`), because relative to the mutation that triggered it the pair is a single best-effort effect.

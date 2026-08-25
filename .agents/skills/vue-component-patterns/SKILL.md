@@ -1,6 +1,6 @@
 ---
 name: vue-component-patterns
-description: Esposter Vue 3 component authoring — the shared Styled/App shell primitives (StyledPageHeader one per route, StyledEmptyState, StyledSkeleton, StyledSearchDialog, AppBreadcrumbs) and registering a new product, same level of abstraction in script setup, selection read from the store instead of threaded props, :key-remount and props-down initialisation of local state, the wrapper + pure-child pattern for async data, useCloned for local copies, is-prefixed boolean props typed as the non-default literal, present-tense emit names, the folder-path-is-the-prefix naming rule, defineSlots on every component that renders a slot, plus deep dives on generic SFCs and per-variant prop/model typing, component folder naming with Nuxt auto-import name collapse, and slot declaration, conditional forwarding and extraction. Apply when writing, typing, naming, or refactoring an individual Vue component.
+description: Esposter Vue 3 component authoring — the shared Styled/App shell primitives (StyledPageHeader one per route, StyledEmptyState, StyledSkeleton, StyledSearchDialog, AppBreadcrumbs) and registering a new product, same level of abstraction in script setup, selection read from the store instead of threaded props, :key-remount and props-down initialisation of local state, the wrapper + pure-child pattern for async data, useCloned for local copies, a registry of heavy components holding defineAsyncComponent loaders with a Suspense boundary at every render site, is-prefixed boolean props typed as the non-default literal, present-tense emit names, the folder-path-is-the-prefix naming rule, defineSlots on every component that renders a slot, plus deep dives on generic SFCs and per-variant prop/model typing, component folder naming with Nuxt auto-import name collapse, and slot declaration, conditional forwarding and extraction. Apply when writing, typing, naming, or refactoring an individual Vue component.
 ---
 
 # Vue Component Patterns (Esposter)
@@ -76,6 +76,31 @@ const bar = ref(foo.bar);
 **When to apply:** any component that reads from a store/API and initializes a local editable `ref` from that data, where the store can be empty at component creation time.
 
 A local editable copy of a reactive source is always VueUse `useCloned`, never `ref` + `watch` — the `vue` skill's watch decision tree owns that rule and its `sync`/`clone` options.
+
+## A Registry of Heavy Components Loads on Demand
+
+A map that dispatches a component by type or route — one entry per resource type, per file kind, per renderer —
+puts **every** entry in the chunk of whoever imports the map, because a static import is unconditional. Where the
+entries carry heavyweight vendors (a canvas library, an editor engine, a viewer) that means opening one type
+downloads all of them, and a public page ships five renderers to a visitor who asked for one.
+
+So a registry whose entries are heavy holds loaders, not components — `defineAsyncComponent(() => import(...))`
+per entry — and consumers are unaffected, since a registry is read for presence (`if (Map[type])`) or for one
+entry at a time.
+
+```typescript
+export const FooComponentMap: Record<FooType, Component> = {
+  [FooType.Bar]: defineAsyncComponent(() => import("@/components/Foo/Bar.vue")),
+};
+```
+
+**The render site then owns the wait.** An async component renders nothing until its chunk arrives, so the
+`<component :is>` goes inside a `<Suspense>` whose fallback is `StyledSkeleton` — every render site of the
+registry, not just the one whose blank region someone noticed. SSR is unaffected (the server renderer resolves
+the loader before it emits html, so a server-rendered page keeps its markup and its crawlability); the boundary
+is for client-side navigation, where the chunk is fetched with the visitor watching.
+
+A registry of small components stays static: the split buys nothing and costs a request per entry.
 
 ## Boolean Props — `is` Prefix + Default-Aware Literal Typing
 
