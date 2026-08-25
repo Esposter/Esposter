@@ -6,14 +6,14 @@ import type { PrepareStep } from "#src/models/virrun/PrepareStep";
 import { captureOverlayUpper } from "#src/services/exec/snapshot/captureOverlayUpper";
 import { pruneToOutputs } from "#src/services/exec/snapshot/pruneToOutputs";
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
-import { InvalidOperationError, noop, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 // Captures a framework's generated artifacts into the source-keyed prepare layer. Forks the deps snapshot as a
 // Read-only lower (so `nuxt prepare` sees the sandbox's own Linux dep closure), keeps only the declared
 // `outputs` (pruneToOutputs — the inverse of pruneSnapshotUpper), and publishes through the same barrier
 // `createSnapshot` uses. Requires the deps snapshot to exist (the caller provisions it first). The publish
 // Target is the caller's already-resolved `location`, not a re-resolve: the layer is published to the exact
 // Path the caller will mount, so a source-hash shift between resolves can never leave the mounted upper unbuilt.
-export const createPrepareLayer = (
+export const createPrepareLayer = async (
   backend: ExecBackend,
   prepareStep: PrepareStep,
   options: ExecOptions,
@@ -26,9 +26,7 @@ export const createPrepareLayer = (
       createPrepareLayer.name,
       "no captured deps snapshot to fork for the prepare layer; run createSnapshot first",
     );
-  // Not `async`: the guard above is a caller error rather than a failed capture, so it stays a synchronous throw
-  // eslint-disable-next-line no-restricted-syntax -- the trailing `then` maps the value, and the function is deliberately not `async` (see above), so `await` cannot
-  return captureOverlayUpper(backend, prepareStep.command, options, {
+  await captureOverlayUpper(backend, prepareStep.command, options, {
     dir,
     failureLabel: "prepare command",
     lowerDirs: [depsLocation.upperDir],
@@ -38,5 +36,5 @@ export const createPrepareLayer = (
       pruneToOutputs(captureUpperDir, prepareStep.outputs);
     },
     upperDir,
-  }).then(noop);
+  });
 };

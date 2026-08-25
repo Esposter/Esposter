@@ -28,15 +28,19 @@ becomes a rejection (`settleAll` hands the result to `allSettled`); `ResultAsync
 covers the same case when the outcome is a Result (`getResultAsync`). Never reach back for
 `Promise.resolve().then(fn)`, which only earned a disable before those two existed.
 
-A disable is one of exactly three shapes, and says which in its reason:
+**A trailing value map is not one of them either.** Keeping a function non-`async` so its guard throws
+synchronously buys nothing when every caller awaits it — the two are indistinguishable there, and the only place
+the difference shows is a test, which asserts `rejects` just as happily. Make it `async`, `await` the call and
+return the mapped value; never shape production code so a test can assert the throw one way rather than the other.
 
-| Shape                                                       | Why nothing else works                                                                    |
-| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| A trailing value map on a deliberately non-`async` function | The function stays sync so its guard throws at the call, so there is no `await`           |
-| `.finally` deregistering a promise from its own registry    | It must run on both paths and leave the outcome alone; a finalizer rethrows               |
-| `.catch` on the promise under test, in that promise's test  | The test asserts the primitive's own rejection; a Result wrapper would assert the wrapper |
+A disable is one of exactly two shapes, and says which in its reason:
 
-Anything else converts. The rule is what makes these three visible: before it they were indistinguishable from an
+| Shape                                                      | Why nothing else works                                                                    |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `.finally` deregistering a promise from its own registry   | It must run on both paths and leave the outcome alone; a finalizer rethrows               |
+| `.catch` on the promise under test, in that promise's test | The test asserts the primitive's own rejection; a Result wrapper would assert the wrapper |
+
+Anything else converts. The rule is what makes these two visible: before it they were indistinguishable from an
 ordinary `.then` someone had not got round to replacing.
 
 ## Throwing — never `new Error`
