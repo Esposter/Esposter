@@ -24,8 +24,9 @@ Only exception: published package README examples aimed at external consumers ma
 
 **Normalising a callback that may throw synchronously is not one of them** — `Promise.try(fn)` is the primitive
 for that, and it trips no ban. Use it wherever a task has to be called through a promise so a synchronous throw
-becomes a rejection (`settleAll` hands the result to `allSettled`); `ResultAsync.fromThrowable(fn, toAppError)()`
-covers the same case when the outcome is a Result (`getResultAsync`). Never reach back for
+becomes a rejection (`settleAll` hands the result to `allSettled`). When the outcome is a Result, `getResultAsync`
+already covers it — it is built on `ResultAsync.fromThrowable`, which awaits the callback inside its own `try` —
+so a call site keeps calling `getResultAsync` and never the raw primitive. Never reach back for
 `Promise.resolve().then(fn)`, which only earned a disable before those two existed.
 
 **A trailing value map is not one of them either.** Keeping a function non-`async` so its guard throws
