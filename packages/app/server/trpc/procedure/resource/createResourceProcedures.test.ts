@@ -302,8 +302,9 @@ describe("createResourceProcedures", () => {
 
   // A sweep is bounded at the instant it is decided, so one published for a resource that has nothing published
   // Takes whatever a concurrent first publish has just cloned — and a delete that removed no row leaves the
-  // Version sequence untouched, so nothing downstream can tell it happened
-  test("publishes no snapshot sweep when nothing was published", async () => {
+  // Version sequence untouched, so nothing downstream can tell it happened. The whole tail is gated the same
+  // Way, so the unpublish notification is counted here too: it would report a state change that never happened
+  test("publishes nothing when nothing was published", async () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });

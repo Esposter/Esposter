@@ -468,16 +468,18 @@ export const createResourceProcedures = <TType extends ResourceType>(
       // The snapshot directory grows with every retained publication, so the handler enumerates it — walking
       // It here would put an unbounded listing on the unpublish request itself.
       // Only when a row was actually removed: an unpublish that deletes nothing was never publishing anything,
-      // And sweeping regardless is what let a stale tab wipe the assets a concurrent FIRST publish had just
-      // Cloned — the sweep's bound is stamped after those clones, and a delete that removed no row leaves the
-      // Version sequence untouched, so the publish's own successor check below cannot see it either
-      if (deletedPublication)
-        await publishBlobPrefixDeletion(
-          id,
-          AzureContainer.ResourceAssets,
-          `${id}/${PUBLISHED_DIRECTORY_SEGMENT}`,
-          new Date(),
-        );
+      // So every effect below it is a phantom — sweeping regardless is what let a stale tab wipe the assets a
+      // Concurrent FIRST publish had just cloned (the sweep's bound is stamped after those clones, and a delete
+      // That removed no row leaves the version sequence untouched, so the publish's own successor check cannot
+      // See it either), and an activity entry or a push to the owner's other devices would report a state
+      // Change that never happened
+      if (!deletedPublication) return ctx.resource;
+      await publishBlobPrefixDeletion(
+        id,
+        AzureContainer.ResourceAssets,
+        `${id}/${PUBLISHED_DIRECTORY_SEGMENT}`,
+        new Date(),
+      );
       // Fire-and-forget: the activity trail is best-effort and the unpublish must not wait on telemetry
       getSynchronizedFunction(writeResourceActivity)({
         activityType: ResourceActivityType.Unpublished,

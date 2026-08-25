@@ -26,7 +26,7 @@ Local sources (fired from `useResourceStore` and the `/all` list dialogs) are th
 - any mutation error → error severity with the message
 - CSV export completed/truncated, and the file exports that produce a local artifact
 
-Resource operations — published, unpublished, duplicated, deleted, restored, purged — are both: the acting tab shows its toast synchronously with its undo action, and the same operation is published so the owner's other devices hear about it. One wording, `ResourceOperationTitleMap`, is what keeps the two from drifting.
+Resource operations — published, unpublished, duplicated, deleted, restored, purged — are both: the acting tab shows its toast synchronously with its undo action, and the same operation is published so the owner's other devices hear about it. One wording, `ResourceOperationTitleMap`, is what keeps the two from drifting. An operation that turned out to be a no-op — an unpublish of a resource nothing was published for — publishes nothing at all, since a push reporting a state change that never happened is worse than silence.
 
 ## Flow
 
