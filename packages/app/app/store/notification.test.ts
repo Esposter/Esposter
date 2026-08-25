@@ -9,6 +9,15 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useNotificationStore, () => {
   const title = "title";
+  const createDeliveredNotification = (id: string, createdAt: Date): AppNotification => ({
+    body: "",
+    createdAt,
+    id,
+    isRead: false,
+    path: "",
+    severity: NotificationSeverity.Info,
+    title,
+  });
   let notificationStore: ReturnType<typeof useNotificationStore>;
   let notifications: Ref<AppNotification[]>;
   let snackbarNotification: ComputedRef<AppNotification | undefined>;
@@ -70,6 +79,52 @@ describe(useNotificationStore, () => {
     expect(notifications.value).toStrictEqual([]);
     expect(unreadCount.value).toBe(0);
     expect(snackbarNotification.value).toBeUndefined();
+  });
+
+  // The delivered half is paginated, so a badge counting loaded rows reads low for every unread row still on a
+  // Page the panel has not scrolled to
+  test("counts the unread total the server stated, not the rows a page holds", () => {
+    expect.hasAssertions();
+
+    const { createNotification, storeUnreadCount } = notificationStore;
+    storeUnreadCount(3);
+    createNotification({ severity: NotificationSeverity.Info, title });
+
+    expect(unreadCount.value).toBe(4);
+  });
+
+  // A push re-reads the whole first page, so the rows that just arrived are the ones newer than the newest row the
+  // Tab already held — never the newest row overall, which is the local notification created while it was in
+  // Flight, and which toasted when it was created
+  test("toasts every delivered row a push brought back, oldest first", async () => {
+    expect.hasAssertions();
+
+    const { createNotification, deleteSnackbar, initializeCursorPaginationData, storeDeliveredNotifications } =
+      notificationStore;
+    const heldNotification = createDeliveredNotification("held", new Date(1));
+    initializeCursorPaginationData({ hasMore: false, items: [heldNotification], nextCursor: "" });
+    createNotification({ severity: NotificationSeverity.Info, title });
+    const [localNotification] = notifications.value;
+    assert.exists(localNotification);
+    deleteSnackbar(localNotification.id);
+
+    await storeDeliveredNotifications(() => {
+      initializeCursorPaginationData({
+        hasMore: false,
+        items: [
+          createDeliveredNotification("newest", new Date(3)),
+          createDeliveredNotification("newer", new Date(2)),
+          heldNotification,
+        ],
+        nextCursor: "",
+      });
+      return Promise.resolve();
+    });
+
+    expect(snackbarNotification.value?.id).toBe("newer");
+    deleteSnackbar("newer");
+
+    expect(snackbarNotification.value?.id).toBe("newest");
   });
 
   test("marks all notifications as read", async () => {

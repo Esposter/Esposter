@@ -15,17 +15,12 @@ export default defineNuxtPlugin(() => {
   if (!("serviceWorker" in window.navigator)) return;
 
   const { readNotifications } = useReadNotifications();
-  const notificationStore = useNotificationStore();
-  const { createSnackbar } = notificationStore;
-  const { notifications } = storeToRefs(notificationStore);
+  const { storeDeliveredNotifications } = useNotificationStore();
   // The listener slot is synchronous, so the read is handed to the one sanctioned fire-and-forget rather than
-  // Left floating — which is also what lets a test drain it instead of waiting for the panel to change
+  // Left floating — which is also what lets a test drain it instead of waiting for the panel to change. Which of
+  // The rows it brings back are new is the store's to decide: it is the half of the list that owns them
   const storeDeliveredNotification = getSynchronizedFunction(() =>
-    getResultAsync(async () => {
-      await readNotifications();
-      const [newestNotification] = notifications.value;
-      if (newestNotification) createSnackbar(newestNotification.id);
-    }).match(noop, console.error),
+    getResultAsync(() => storeDeliveredNotifications(readNotifications)).match(noop, console.error),
   );
   window.navigator.serviceWorker.addEventListener("message", (event) => {
     // The payload crosses a postMessage boundary, so it is parsed rather than trusted — an extension or another

@@ -24,12 +24,33 @@ export const useNotificationStore = defineStore("notification", () => {
     ),
   );
   const isPanelOpen = ref(false);
-  const unreadCount = computed(() => notifications.value.filter(({ isRead }) => !isRead).length);
+  // The server's total, not the loaded pages': unread rows sit on pages the bell has never read, and a badge that
+  // Counted only what is loaded reads low until the panel is scrolled to the bottom. Every page read restates it
+  const unreadDeliveredCount = ref(0);
+  const unreadCount = computed(
+    () => localNotifications.value.filter(({ isRead }) => !isRead).length + unreadDeliveredCount.value,
+  );
   // One snackbar queue: every pushed notification also toasts, newer ones wait behind the current head
   const snackbarIds = ref<string[]>([]);
   const snackbarNotification = computed(() => notifications.value.find(({ id }) => id === snackbarIds.value[0]));
   const createSnackbar = (id: string) => {
     snackbarIds.value = [...snackbarIds.value, id];
+  };
+  const storeUnreadCount = (count: number) => {
+    unreadDeliveredCount.value = count;
+  };
+  // What a delivered push does to the bell, kept here because only the store can tell the two halves apart. The
+  // Read replaces the whole first page, so the rows that just arrived are the ones newer than the newest row the
+  // Tab already held — never `notifications[0]`, which is the combined list: a local notification created while
+  // The read was in flight is newer than the pushed row, and it has already toasted once when it was created.
+  // Two pushes landing inside one read both toast, oldest first, and neither row can toast twice
+  const storeDeliveredNotifications = async (readDeliveredNotifications: () => Promise<unknown>) => {
+    const [previousNewestNotification] = deliveredNotifications.value;
+    await readDeliveredNotifications();
+    for (const { id } of deliveredNotifications.value
+      .filter(({ createdAt }) => !previousNewestNotification || createdAt > previousNewestNotification.createdAt)
+      .toReversed())
+      createSnackbar(id);
   };
   const createNotification = (
     newNotification: SetOptional<Except<AppNotification, "createdAt" | "id" | "isRead">, "body" | "path">,
@@ -77,9 +98,15 @@ export const useNotificationStore = defineStore("notification", () => {
     await executeDeleteNotificationMutation(() => $trpc.notification.deleteNotification.mutate(id), {
       applyOptimistic: () => {
         const previousNotifications = deliveredNotifications.value;
+        const previousUnreadDeliveredCount = unreadDeliveredCount.value;
         deliveredNotifications.value = previousNotifications.filter((notification) => notification.id !== id);
+        // A deleted row is one fewer unread, and the total is the server's — so it is adjusted here rather than
+        // Re-read, exactly as the list itself is
+        if (previousNotifications.some((notification) => notification.id === id && !notification.isRead))
+          unreadDeliveredCount.value = previousUnreadDeliveredCount - 1;
         return () => {
           deliveredNotifications.value = previousNotifications;
+          unreadDeliveredCount.value = previousUnreadDeliveredCount;
         };
       },
       key: id,
@@ -91,9 +118,12 @@ export const useNotificationStore = defineStore("notification", () => {
     await executeDeleteNotificationsMutation(() => $trpc.notification.deleteNotifications.mutate(), {
       applyOptimistic: () => {
         const previousNotifications = deliveredNotifications.value;
+        const previousUnreadDeliveredCount = unreadDeliveredCount.value;
         deliveredNotifications.value = [];
+        unreadDeliveredCount.value = 0;
         return () => {
           deliveredNotifications.value = previousNotifications;
+          unreadDeliveredCount.value = previousUnreadDeliveredCount;
         };
       },
       key: DatabaseEntityType.Notification,
@@ -105,16 +135,21 @@ export const useNotificationStore = defineStore("notification", () => {
     localNotifications.value = localNotifications.value.map((notification) =>
       notification.isRead ? notification : { ...notification, isRead: true },
     );
-    if (deliveredNotifications.value.every(({ isRead }) => isRead)) return;
+    // The statement marks every unread row read, on the loaded pages and beyond them, so the total it clears is
+    // The server's one — which is also the only thing that says there is anything to clear at all
+    if (unreadDeliveredCount.value === 0) return;
 
     await executeReadStatusMutation(() => $trpc.notification.updateNotificationsReadStatus.mutate(), {
       applyOptimistic: () => {
         const previousNotifications = deliveredNotifications.value;
+        const previousUnreadDeliveredCount = unreadDeliveredCount.value;
         deliveredNotifications.value = previousNotifications.map((notification) =>
           notification.isRead ? notification : { ...notification, isRead: true },
         );
+        unreadDeliveredCount.value = 0;
         return () => {
           deliveredNotifications.value = previousNotifications;
+          unreadDeliveredCount.value = previousUnreadDeliveredCount;
         };
       },
       key: DatabaseEntityType.Notification,
@@ -133,6 +168,8 @@ export const useNotificationStore = defineStore("notification", () => {
     markAllAsRead,
     notifications,
     snackbarNotification,
+    storeDeliveredNotifications,
+    storeUnreadCount,
     unreadCount,
   };
 });
