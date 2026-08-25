@@ -2,7 +2,7 @@ import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFu
 import { useReadNotifications } from "@/composables/notification/useReadNotifications";
 import { useNotificationStore } from "@/store/notification";
 import { NotificationChannel, NotificationChannelMap, pushNotificationPayloadSchema } from "@esposter/db-schema";
-import { getResult, getResultAsync, noop } from "@esposter/shared";
+import { getResult } from "@esposter/shared";
 
 // The other end of the wire the service worker has always had: every delivered push is posted to each open tab
 // Before the OS notification is shown, and this is what listens. Without it a notification delivered while the
@@ -18,10 +18,9 @@ export default defineNuxtPlugin(() => {
   const { storeDeliveredNotifications } = useNotificationStore();
   // The listener slot is synchronous, so the read is handed to the one sanctioned fire-and-forget rather than
   // Left floating — which is also what lets a test drain it instead of waiting for the panel to change. Which of
-  // The rows it brings back are new is the store's to decide: it is the half of the list that owns them
-  const storeDeliveredNotification = getSynchronizedFunction(() =>
-    getResultAsync(() => storeDeliveredNotifications(readNotifications)).match(noop, console.error),
-  );
+  // The rows it brings back are new is the store's to decide: it is the half of the list that owns them, and it
+  // Also owns queueing overlapping pushes and reporting a read that failed
+  const storeDeliveredNotification = getSynchronizedFunction(() => storeDeliveredNotifications(readNotifications));
   window.navigator.serviceWorker.addEventListener("message", (event) => {
     // The payload crosses a postMessage boundary, so it is parsed rather than trusted — an extension or another
     // Worker can post here too, and everything below reads fields off it

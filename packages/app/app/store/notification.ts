@@ -15,6 +15,7 @@ export const useNotificationStore = defineStore("notification", () => {
   const { executeMutation: executeDeleteNotificationMutation } = useMutation();
   const { executeMutation: executeDeleteNotificationsMutation } = useMutation();
   const { executeMutation: executeReadStatusMutation } = useMutation();
+  const { executeMutation: executeStoreDeliveredNotificationsMutation } = useMutation();
   const localNotifications = ref<AppNotification[]>([]);
   // Sorted at display time rather than kept in order by every writer: the two halves arrive independently — a
   // Page appends, a local notification prepends — and only the rendered list has an opinion about their order
@@ -43,25 +44,40 @@ export const useNotificationStore = defineStore("notification", () => {
   // Read replaces the whole first page, so the rows that just arrived are the ones newer than the newest row the
   // Tab already held — never `notifications[0]`, which is the combined list: a local notification created while
   // The read was in flight is newer than the pushed row, and it has already toasted once when it was created.
-  // Two pushes landing inside one read both toast, oldest first, and neither row can toast twice
-  const storeDeliveredNotifications = async (readDeliveredNotifications: () => Promise<unknown>) => {
-    const [previousNewestNotification] = deliveredNotifications.value;
-    // The watermark alone cannot separate a row that arrived from the row it ties with: postgres writes
-    // Microseconds and a `Date` keeps milliseconds, so two rows written inside the same millisecond compare equal
-    // Once they cross the wire, and the second to be pushed would be dropped as "not newer" and never toast. The
-    // Ids the tab already held settle those ties, and the watermark still keeps a page the read grew — rows the
-    // Tab never held because it held fewer than a page — from toasting a backlog nobody was pushed
-    const previousNotificationIds = new Set(deliveredNotifications.value.map(({ id }) => id));
-    await readDeliveredNotifications();
-    for (const { id } of deliveredNotifications.value
-      .filter(
-        ({ createdAt, id: deliveredNotificationId }) =>
-          !previousNotificationIds.has(deliveredNotificationId) &&
-          (!previousNewestNotification || createdAt >= previousNewestNotification.createdAt),
-      )
-      .toReversed())
-      createSnackbar(id);
-  };
+  // Two pushes landing inside one read both toast, oldest first, and neither row can toast twice — which is also
+  // Why the calls are queued rather than run side by side: the ids below are snapshotted before the read and
+  // Compared after it, so two overlapping calls would snapshot the same list and both claim the row the first
+  // Read brought back, re-toasting it after it was dismissed. Queued, the second reads a list that already holds
+  // It — and still reads, so a row written while the first was in flight arrives rather than being joined away
+  const storeDeliveredNotifications = (readDeliveredNotifications: () => Promise<unknown>) =>
+    executeStoreDeliveredNotificationsMutation(
+      async () => {
+        const [previousNewestNotification] = deliveredNotifications.value;
+        // The watermark alone cannot separate a row that arrived from the row it ties with: postgres writes
+        // Microseconds and a `Date` keeps milliseconds, so two rows written inside the same millisecond compare
+        // Equal once they cross the wire, and the second to be pushed would be dropped as "not newer" and never
+        // Toast. The ids the tab already held settle those ties, and the watermark still keeps a page the read
+        // Grew — rows the tab never held because it held fewer than a page — from toasting a backlog nobody was pushed
+        const previousNotificationIds = new Set(deliveredNotifications.value.map(({ id }) => id));
+        await readDeliveredNotifications();
+        for (const { id } of deliveredNotifications.value
+          .filter(
+            ({ createdAt, id: deliveredNotificationId }) =>
+              !previousNotificationIds.has(deliveredNotificationId) &&
+              (!previousNewestNotification || createdAt >= previousNewestNotification.createdAt),
+          )
+          .toReversed())
+          createSnackbar(id);
+      },
+      {
+        key: DatabaseEntityType.Notification,
+        // Nobody asked for this read — it rides a push — so a failure is logged rather than put in front of
+        // Someone who did nothing to cause it
+        onError: (error) => {
+          console.error(error);
+        },
+      },
+    );
   const createNotification = (
     newNotification: SetOptional<Except<AppNotification, "createdAt" | "id" | "isRead">, "body" | "path">,
   ) => {

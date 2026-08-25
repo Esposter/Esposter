@@ -1,6 +1,6 @@
 ---
 name: pagination
-description: Esposter paginated-list conventions — the three-layer cursor pagination pattern (store + useRead* composable + StyledWaypoint), a keyed write naming its key when issued (the ambient items being readonly), infinite scroll instead of a Load-more button, the ban on hand-rolling search-as-you-type and MiniSearch being the one client-side index, bundling ancillary reads into the primary read, a total over the list being the server's rather than a count of the loaded rows (and moving under every optimistic write's rollback), a keyed read's query closure never running on the hydrating client so only Pinia state survives it, re-reading a list after a push (compare against the server half, and pair the timestamp watermark with the ids already held because equal timestamps tie), and the offline IndexedDB cache being self-contained, plus deep dives on wiring useAutoSearch/useCursorSearcher with its sanctioned exceptions and on the feature cache composables. Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache.
+description: Esposter paginated-list conventions — the three-layer cursor pagination pattern (store + useRead* composable + StyledWaypoint), a keyed write naming its key when issued (the ambient items being readonly), infinite scroll instead of a Load-more button, the ban on hand-rolling search-as-you-type and MiniSearch being the one client-side index, bundling ancillary reads into the primary read, a total over the list being the server's rather than a count of the loaded rows (and moving under every optimistic write's rollback), a keyed read's query closure never running on the hydrating client so only Pinia state survives it, re-reading a list after a push (compare against the server half, pair the timestamp watermark with the ids already held because equal timestamps tie, and queue overlapping re-reads), and the offline IndexedDB cache being self-contained, plus deep dives on wiring useAutoSearch/useCursorSearcher with its sanctioned exceptions and on the feature cache composables. Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache.
 ---
 
 # Pagination, Search & Offline List Cache
@@ -129,8 +129,9 @@ that exists solely in the tab), and it fails in the direction nobody notices: it
 the whole time the list is short enough to fit one page. So it survives every manual check and breaks for the
 users with the most rows.
 
-Return it in the same query as the page rather than adding a second endpoint — one round trip, and a total that
-cannot disagree with the rows beside it:
+Return it from the same endpoint as the page rather than adding a second one — one round trip, and a total the
+client cannot forget to ask for. The two statements still run against separate snapshots, so a write landing
+between them can move the total by a row; put both in one statement or one transaction where that matters:
 
 ```typescript
 // endpoint: the page and the total it belongs to, resolved together
@@ -156,7 +157,8 @@ nothing else.
 ## Re-reading a List After a Push
 
 A delivered push says "something arrived", never what: the tab re-reads the first page and works out which rows
-are new. Two rules make that reliable, and both come from the list being shared rather than owned by the push.
+are new. Three rules make that reliable, and the first two come from the list being shared rather than owned by
+the push.
 
 - **Compare against the half the push writes, never the merged list.** A surface that renders server rows
   alongside locally-created ones has two halves with different lifetimes; the newest row overall is routinely the
@@ -167,8 +169,13 @@ are new. Two rules make that reliable, and both come from the list being shared 
   `>` drops the second one for good — it is not newer, and no later read will ever call it new again. Compare
   `>=` and exclude the ids the tab already held: the ids settle the ties, and the watermark still stops a page
   that simply grew (a tab holding fewer rows than a page) from replaying a backlog nobody was pushed.
+- **Queue the re-reads, never run them side by side.** Both comparisons snapshot the list _before_ the read and
+  test against it _after_, so two pushes landing together snapshot the same list and both claim the row the first
+  read brought back. Put the whole snapshot-read-compare through `executeMutation` under one key — its per-key
+  queue is what makes the second call read a list that already holds that row. Joining the in-flight read instead
+  (`isExclusive`) is the wrong shape here: a row written after that read was issued would never arrive.
 
-Both belong in the **store**, not the plugin or component that receives the push: only the owner of the list can
+All three belong in the **store**, not the plugin or component that receives the push: only the owner of the list can
 tell its halves apart, and the receiver's job is to hand over the read.
 
 ## Offline IndexedDB Cache — self-contained

@@ -129,6 +129,45 @@ describe(useNotificationStore, () => {
     expect(snackbarNotification.value?.id).toBe("newest");
   });
 
+  // Two pushes landing together each snapshot the list before their read and compare against it after, so
+  // Unqueued the second claims the row the first already brought back — and toasts it again, after the user has
+  // Dismissed it. Queued, the second reads a list that already holds the row and stays silent
+  test("does not re-toast a dismissed row when two pushes overlap", async () => {
+    expect.hasAssertions();
+
+    const { deleteSnackbar, initializeCursorPaginationData, storeDeliveredNotifications } = notificationStore;
+    const heldNotification = createDeliveredNotification("held", new Date(1));
+    initializeCursorPaginationData({ hasMore: false, items: [heldNotification], nextCursor: "" });
+    const pushedNotification = createDeliveredNotification("pushed", new Date(2));
+    const storePushedPage = () => {
+      initializeCursorPaginationData({ hasMore: false, items: [pushedNotification, heldNotification], nextCursor: "" });
+    };
+    // Both reads are held open, and each stores its page only once its own response lands — the shape a network
+    // Read has, and the one that lets the second call snapshot the list before the first has grown it. The second
+    // Response is released after the dismissal below, which is the only interleaving where a duplicate enqueue is
+    // Visible: two toasts for one row otherwise collapse when either is dismissed
+    const { promise: firstResponse, resolve: completeFirstRead } = Promise.withResolvers<void>();
+    const { promise: secondResponse, resolve: completeSecondRead } = Promise.withResolvers<void>();
+    const firstStore = storeDeliveredNotifications(async () => {
+      await firstResponse;
+      storePushedPage();
+    });
+    const secondStore = storeDeliveredNotifications(async () => {
+      await secondResponse;
+      storePushedPage();
+    });
+    completeFirstRead();
+    await firstStore;
+
+    expect(snackbarNotification.value?.id).toBe(pushedNotification.id);
+
+    deleteSnackbar(pushedNotification.id);
+    completeSecondRead();
+    await secondStore;
+
+    expect(snackbarNotification.value).toBeUndefined();
+  });
+
   test("marks all notifications as read", async () => {
     expect.hasAssertions();
 
