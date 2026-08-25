@@ -127,6 +127,27 @@ describe(useNotificationStore, () => {
     expect(snackbarNotification.value?.id).toBe("newest");
   });
 
+  // Postgres writes microseconds and a `Date` keeps milliseconds, so two rows written close together arrive with
+  // The same `createdAt` — the row that ties with the watermark is the one a push just delivered
+  test("toasts a delivered row whose timestamp ties with the newest row already held", async () => {
+    expect.hasAssertions();
+
+    const { initializeCursorPaginationData, storeDeliveredNotifications } = notificationStore;
+    const heldNotification = createDeliveredNotification("held", new Date(1));
+    initializeCursorPaginationData({ hasMore: false, items: [heldNotification], nextCursor: "" });
+
+    await storeDeliveredNotifications(() => {
+      initializeCursorPaginationData({
+        hasMore: false,
+        items: [createDeliveredNotification("tied", new Date(1)), heldNotification],
+        nextCursor: "",
+      });
+      return Promise.resolve();
+    });
+
+    expect(snackbarNotification.value?.id).toBe("tied");
+  });
+
   test("marks all notifications as read", async () => {
     expect.hasAssertions();
 

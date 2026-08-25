@@ -46,9 +46,19 @@ export const useNotificationStore = defineStore("notification", () => {
   // Two pushes landing inside one read both toast, oldest first, and neither row can toast twice
   const storeDeliveredNotifications = async (readDeliveredNotifications: () => Promise<unknown>) => {
     const [previousNewestNotification] = deliveredNotifications.value;
+    // The watermark alone cannot separate a row that arrived from the row it ties with: postgres writes
+    // Microseconds and a `Date` keeps milliseconds, so two rows written inside the same millisecond compare equal
+    // Once they cross the wire, and the second to be pushed would be dropped as "not newer" and never toast. The
+    // Ids the tab already held settle those ties, and the watermark still keeps a page the read grew — rows the
+    // Tab never held because it held fewer than a page — from toasting a backlog nobody was pushed
+    const previousNotificationIds = new Set(deliveredNotifications.value.map(({ id }) => id));
     await readDeliveredNotifications();
     for (const { id } of deliveredNotifications.value
-      .filter(({ createdAt }) => !previousNewestNotification || createdAt > previousNewestNotification.createdAt)
+      .filter(
+        ({ createdAt, id: deliveredNotificationId }) =>
+          !previousNotificationIds.has(deliveredNotificationId) &&
+          (!previousNewestNotification || createdAt >= previousNewestNotification.createdAt),
+      )
       .toReversed())
       createSnackbar(id);
   };
