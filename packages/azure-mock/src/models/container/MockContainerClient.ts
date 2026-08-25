@@ -1,6 +1,5 @@
 import type { BlobHierarchyItem } from "#src/models/container/BlobHierarchyItem";
 import type { PagedAsyncIterableIterator } from "#src/models/PagedAsyncIterableIterator";
-import type { MockBlobDates } from "#src/store/MockContainerBlobDatesDatabase";
 import type {
   AppendBlobClient,
   BlobBatchClient,
@@ -45,8 +44,8 @@ import { createMockResponse } from "#src/services/createMockResponse";
 import { getMockSasUrl } from "#src/services/getMockSasUrl";
 import {
   getMockContainerBlobDatesKey,
-  MOCK_BLOB_SEEDED_PROPERTIES,
   MockContainerBlobDatesDatabase,
+  readMockBlobDates,
 } from "#src/store/MockContainerBlobDatesDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
@@ -286,6 +285,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   #getBlobItem(name: string, buffer: Buffer): BlobItem {
+    const { createdOn, etag, lastModified } = readMockBlobDates(this.containerName, name);
     return {
       deleted: false,
       name,
@@ -293,9 +293,9 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
         blobType: "BlockBlob",
         contentLength: buffer.length,
         contentType: "application/octet-stream",
-        createdOn: this.#readBlobDates(name).createdOn,
-        etag: this.#readBlobDates(name).etag,
-        lastModified: this.#readBlobDates(name).lastModified,
+        createdOn,
+        etag,
+        lastModified,
         leaseState: "available",
         leaseStatus: "unlocked",
       },
@@ -309,15 +309,5 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
       if (!name.startsWith(prefix)) continue;
       yield await Promise.resolve(this.#getBlobItem(name, buffer));
     }
-  }
-  // Both listings report the same blob the same way, so the properties are described in exactly one place
-  // Content seeded straight into MockContainerDatabase was never written through a client, so it has no dates of
-  // Its own and reads as pre-existing on both axes — older than any cutoff an age-filtered listing compares
-  // Against, including under fake timers pinned to the epoch
-  #readBlobDates(name: string): MockBlobDates {
-    return (
-      MockContainerBlobDatesDatabase.get(getMockContainerBlobDatesKey(this.containerName, name)) ??
-      MOCK_BLOB_SEEDED_PROPERTIES
-    );
   }
 }

@@ -39,6 +39,7 @@ import { getMockSasUrl } from "#src/services/getMockSasUrl";
 import {
   getMockContainerBlobDatesKey,
   MockContainerBlobDatesDatabase,
+  readMockBlobDates,
   storeMockBlobWrite,
 } from "#src/store/MockContainerBlobDatesDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
@@ -189,7 +190,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     return Promise.resolve({
       _response: createMockResponse(200),
       contentLength: blob.byteLength,
-      ...MockContainerBlobDatesDatabase.get(getMockContainerBlobDatesKey(this.containerName, this.name)),
+      ...readMockBlobDates(this.containerName, this.name),
     } as BlobGetPropertiesResponse);
   }
 
