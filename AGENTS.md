@@ -148,7 +148,7 @@ Two parallel real-time systems:
 - **NodeJS EventEmitter** (`messageEventEmitter`, `moderationEventEmitter`, `roomEventEmitter`) — drives tRPC subscriptions (`onCreateMessage`, `onAdminAction`, etc.); server-side only, in-process
 - **Azure WebPubSub** — handles webhook message delivery and cross-process fan-out; accessed via `useWebPubSubServiceClient` composable
 
-When a message is created: `createMessage` → Azure Table write → `messageEventEmitter.emit` → tRPC subscription delivers to connected clients → `getPushSubscriptionsForMessage` → EventGrid → `ProcessPushNotification` Azure Function → web-push to offline users.
+When a message is created: `createMessage` → Azure Table write → `messageEventEmitter.emit` → tRPC subscription delivers to connected clients → `publishNotification` → EventGrid → `ProcessNotification` Azure Function → recipients resolved at delivery → web-push to their subscribed devices.
 
 ### Where the feature detail lives
 
@@ -158,6 +158,7 @@ and this file is the one that goes stale first. Each of these owns its own subje
 | Subject                                                       | Owner                                                           |
 | :------------------------------------------------------------ | :-------------------------------------------------------------- |
 | RBAC — permission bitfield, hierarchy, the service functions  | `packages/app/content/docs/esbabbler/rbac.md`                   |
+| Notifications — the one event, Function and delivery path     | `packages/app/content/docs/architecture/notifications.md`       |
 | Moderation — `AdminActionType` and the five places it touches | `packages/app/content/docs/esbabbler/moderation.md`             |
 | Slash commands — the registry and adding one                  | `slash-commands` skill                                          |
 | Message types — `MessageComponentMap` and the shared shells   | `packages/app/content/docs/esbabbler/message-list-rendering.md` |
@@ -167,7 +168,7 @@ and this file is the one that goes stale first. Each of these owns its own subje
 
 ### Azure Functions
 
-Background handlers, mostly triggered by EventGrid events or Service Bus queues rather than called from the app. Located in `packages/azure-functions/src/functions/`. The app publishes events via `EventGrid` for fire-and-forget async work (push notifications, friend request notifications, webhook delivery) and enqueues Service Bus messages for delayed/scheduled work (scheduled message jobs, which need `scheduleMessages` delivery at a future `runAt`). Two timer triggers run on their own schedules (`PurgeDeletedResources`, `SendTodoReminder`), and one HTTP trigger is routed publicly — `PushWebhook` (`POST webhooks/{id}/{token}`, `authLevel: "function"`), which validates its token from the url. No other HTTP surface exists here, and the app never calls these handlers directly.
+Background handlers, mostly triggered by EventGrid events or Service Bus queues rather than called from the app. Located in `packages/azure-functions/src/functions/`. The app publishes events via `EventGrid` for fire-and-forget async work (notifications of every kind, webhook delivery) and enqueues Service Bus messages for delayed/scheduled work (scheduled message jobs, which need `scheduleMessages` delivery at a future `runAt`). One timer trigger runs on its own schedule (`PurgeDeletedResources`), `SendTodoReminder` runs off the `TodoReminders` Service Bus queue, and one HTTP trigger is routed publicly — `PushWebhook` (`POST webhooks/{id}/{token}`, `authLevel: "function"`), which validates its token from the url. No other HTTP surface exists here, and the app never calls these handlers directly.
 
 ## Agent skills
 
