@@ -14,8 +14,9 @@ describe(MockBlockBlobClient, () => {
     MockContainerBlobDatesDatabase.clear();
   });
 
-  // A seeded blob reports the seeded etag, so a caller that read one can claim it exactly once
-  test("accepts an ifMatch write carrying a seeded blob's etag", async () => {
+  // A seeded blob reports the seeded etag, so a caller that read one can claim it exactly once: the write mints a
+  // Real etag for the blob, so the seeded value is spent and the second claim loses the race it is meant to lose
+  test("accepts an ifMatch write carrying a seeded blob's etag exactly once", async () => {
     expect.hasAssertions();
 
     MockContainerDatabase.set(containerName, new Map([[blobName, Buffer.from("")]]));
@@ -24,6 +25,11 @@ describe(MockBlockBlobClient, () => {
     await expect(
       client.upload("", 0, { conditions: { ifMatch: MOCK_BLOB_SEEDED_PROPERTIES.etag } }),
     ).resolves.toMatchObject({ _response: { status: 201 } });
+    await expect(
+      client.upload("", 0, { conditions: { ifMatch: MOCK_BLOB_SEEDED_PROPERTIES.etag } }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[MockRestError: The condition specified using HTTP conditional header(s) is not met.]`,
+    );
   });
 
   // The etag of a blob that is not there is nobody's to hold: falling back to the seeded value would let a

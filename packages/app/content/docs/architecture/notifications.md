@@ -5,7 +5,7 @@ description: One notification concept — a typed event published once, delivere
 
 # Notifications
 
-Everything that tells a person something happened is one thing here: a typed event, published through `publishNotification`, delivered by the `ProcessNotification` Function, and fanned out to the surfaces its type declares. A chat message, a thread reply, a friend request, a `/remind` reminder, a todo that came due and a resource that was published all travel that one path — so "is this a notification?" has exactly one answer, and a new one cannot accidentally pick a different pipeline.
+Everything that tells a person something happened is one thing here: a typed event, published through `publishNotification`, delivered by the `ProcessNotification` Function, and fanned out to the surfaces its type declares. A chat message, a thread reply, a friend request, a `/remind` reminder, a todo that came due and a resource operation all travel that one path — so "is this a notification?" has exactly one answer, and a new one cannot accidentally pick a different pipeline.
 
 The publisher states **what happened and who it concerns**. Everything about how it renders and where it lands is resolved at delivery, off the request path the person is waiting on.
 
@@ -63,7 +63,7 @@ Rows are trimmed to `NOTIFICATION_RETENTION_MS` on the write path, where the rec
 
 A subscription is per-session, which is what lets a resource operation exclude the session that caused it: that tab showed the toast synchronously, and every other device of the same user is still owed the push.
 
-Failure is Event Grid's, not the publisher's. Every notification now has a dead-letter destination and a replay ([dead-letter replay](/docs/infra/eventgrid-dead-letter)) — including the reminder path, which used to call `web-push` inline and therefore had neither. Publishes sit after the write they report and never fail it ([persist then notify](/docs/architecture/persist-then-notify)).
+Failure is Event Grid's once it has the event, not the publisher's. Every notification now has a dead-letter destination and a replay ([dead-letter replay](/docs/infra/eventgrid-dead-letter)) — including the reminder path, which used to call `web-push` inline and therefore had neither. That covers accepted events only: a publish that fails before Event Grid accepts it has no event to retry and no dead letter to alert on, so it reaches the publisher's `console.error` and nothing else. Publishes sit after the write they report and never fail it ([persist then notify](/docs/architecture/persist-then-notify)).
 
 ## Adding a notification type
 

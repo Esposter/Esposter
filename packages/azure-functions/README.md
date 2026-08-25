@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Serverless Azure Functions backend for Esposter. Handles asynchronous workloads triggered by Azure EventGrid events, Service Bus queues, and timers — push notifications, webhook delivery, friend request notifications, scheduled message jobs, and resource purging.
+Serverless Azure Functions backend for Esposter. Handles asynchronous workloads triggered by Azure EventGrid events, Service Bus queues, and timers — notification delivery, webhook delivery, scheduled message jobs, and resource purging.
 
 ## Table of Contents
 
@@ -36,8 +36,8 @@ Most functions are triggered by **Azure EventGrid** events published by the main
 One flow of several — the message-created path. The Service Bus and timer triggers in the table above are entered on their own schedules, not from this chain.
 
 ```text
-App (createMessage) → Azure EventGrid → processPushNotification
-                                      → processWebhook
+App (createMessage) → Azure EventGrid → ProcessNotification
+                                      → ProcessWebhook
 ```
 
 ### Dependencies
