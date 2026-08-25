@@ -8,23 +8,35 @@ import { describe, expect, test } from "vitest";
 
 describe(getVisualLinkChartOptions, () => {
   const id = crypto.randomUUID();
-  const createBoundVisual = (type = VisualType.Area) =>
+  const xColumn = "xColumn";
+  const createBoundVisual = (visualXColumn = xColumn, type = VisualType.Area) =>
     new Visual({
       dataset: {
-        query: { series: [{ aggregation: DatasetAggregationType.Sum, column: "column" }], xColumn: "xColumn" },
+        query: { series: [{ aggregation: DatasetAggregationType.Sum, column: "column" }], xColumn: visualXColumn },
         reference: { id, type: DatasetProviderType.Sheet },
       },
       type,
     });
 
-  test("groups visuals by the dataset they read, so a range brushed on one names the same rows on the others", () => {
+  test("groups visuals by the dataset and the column it is categorised by", () => {
     expect.hasAssertions();
 
     expect(getVisualLinkChartOptions(createBoundVisual(), "bar")).toStrictEqual({
-      group: `${DatasetProviderType.Sheet}${ID_SEPARATOR}${id}`,
+      group: [DatasetProviderType.Sheet, id, xColumn].join(ID_SEPARATOR),
       link: { enabled: true },
       selection: { enabled: true },
     });
+  });
+
+  // One sheet grouped by month and the same sheet grouped by region share every row and no axis at all, so a
+  // Range brushed on either would dim the other's marks by coincidence of position
+  test("keeps two visuals over one dataset apart when they are categorised by different columns", () => {
+    expect.hasAssertions();
+
+    const { group } = getVisualLinkChartOptions(createBoundVisual(), "bar") ?? {};
+    const { group: otherGroup } = getVisualLinkChartOptions(createBoundVisual("otherXColumn"), "bar") ?? {};
+
+    expect(group).not.toBe(otherGroup);
   });
 
   // Grouping a chart with no x axis asks it to draw a selection it has no geometry for

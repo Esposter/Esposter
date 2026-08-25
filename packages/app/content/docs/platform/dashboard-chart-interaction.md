@@ -14,8 +14,8 @@ flowchart TD
   SHARED["StyledApexChart<br/>every chart in the app"] -->|"renderer: auto"| CANVAS["dense series paint to canvas<br/>axes · tooltips · exports stay SVG"]
   VIS["Dashboard visual only"] --> INT["VISUAL_INTERACTION_CHART_OPTIONS<br/>history · contextMenu · measure · ink"]
   INT --> WM["each is watermarked<br/>editor and published view alike"]
-  VIS --> LINK["getVisualLinkChartOptions<br/>group = the dataset reference"]
-  LINK -->|"brush a range on one"| DIM["out-of-range marks dim<br/>on every visual over that dataset"]
+  VIS --> LINK["getVisualLinkChartOptions<br/>group = dataset reference + x column"]
+  LINK -->|"brush a range on one"| DIM["out-of-range marks dim<br/>on every visual in that set"]
   VIS --> PERS["useVisualPerspective<br/>?view=visualId~token"]
   PERS -->|"on mounted"| APPLY["zoom · hidden series · selection restored"]
 ```
@@ -30,7 +30,7 @@ On dashboard visuals only:
 - **Context menu** (`contextMenu`) — right-click a point for actions that operate at that point.
 - **Ruler** (`measure`) — hold and drag to read the change, percent and slope between two points.
 - **Annotation authoring** (`ink`) — drag, resize and restyle annotations, wired into undo. Annotations are not persisted: they are the reader's working marks, and a dashboard's saved content holds visuals, not notes.
-- **Linked highlighting** — `getVisualLinkChartOptions` groups visuals **by the dataset they read**, not by the dashboard they sit on. Two visuals over one dataset share an x column, so a range brushed on either names the same rows on the other; two unrelated datasets would dim each other's marks by coincidence of number. A visual with no binding renders demo data and joins no group, and a chart type with no x axis to brush (pie, donut, polar area, radar, radial bar, treemap) is left out.
+- **Linked highlighting** — `getVisualLinkChartOptions` groups visuals **by the dataset reference and the `query.xColumn` they categorise it by**, not by the dashboard they sit on. Both halves are load-bearing: the reference is what makes two charts describe the same rows, and the x column is what makes one chart's axis mean the same thing as another's. One sheet grouped by month and the same sheet grouped by region share every row and no axis at all, so linking them would dim each other's marks by coincidence of position. A visual with no binding renders demo data and joins no group, and a chart type with no x axis to brush (pie, donut, polar area, radar, radial bar, treemap) is left out.
 - **Shareable view state** — `useVisualPerspective` captures a visual's zoom window, hidden series and selection into a token and puts it in the url as `?view=<visualId>~<token>`. The parameter repeats, so a link carries the state of every chart its sender touched, and a token that no longer decodes opens the dashboard unfiltered rather than failing.
 
 ## The watermark
