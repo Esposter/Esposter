@@ -20,17 +20,16 @@ sequenceDiagram
     participant AT as Azure Table Storage
     participant E as messageEventEmitter
     participant EG as Azure Event Grid
-    participant F as processPushNotification (Azure Function)
+    participant F as ProcessNotification (Azure Function)
 
     C->>T: createMessage({ roomId, message })
     T->>T: assertCanCreateMessage, then advance the slowmode clock
     T->>AT: insert Messages + MessagesAscending rows
     T->>E: emit("createMessage", entity)
     E-->>C: onCreateMessage subscription delivers to connected members
-    T->>T: getPushSubscriptionsForMessage(db, entity)
-    T->>EG: publish PushNotificationEventGridData (only if recipients exist)
+    T->>EG: publishNotification — one typed event, unconditionally
     EG->>F: event delivered
-    F->>F: web-push to each subscription
+    F->>F: resolve recipients, then web-push to each subscription
     T->>T: roomEventEmitter.emit("updateRoom") — bumps room.updatedAt
 ```
 

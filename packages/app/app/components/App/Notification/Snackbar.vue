@@ -5,6 +5,7 @@ import {
 } from "@/services/notification/constants";
 import { NotificationSeverityIconMap } from "@/services/notification/NotificationSeverityIconMap";
 import { useNotificationStore } from "@/store/notification";
+import { NotificationSeverity } from "@esposter/db-schema";
 
 const notificationStore = useNotificationStore();
 const { snackbarNotification } = storeToRefs(notificationStore);
@@ -25,7 +26,7 @@ const isOpen = computed({
     :key="snackbarNotification.id"
     v-model="isOpen"
     :timeout="
-      snackbarNotification.severity === 'error'
+      snackbarNotification.severity === NotificationSeverity.Error
         ? NOTIFICATION_SNACKBAR_PERSISTENT_TIMEOUT
         : NOTIFICATION_SNACKBAR_TIMEOUT_MS
     "

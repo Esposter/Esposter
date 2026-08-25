@@ -3,11 +3,10 @@ import type { Context } from "@@/server/trpc/context";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { createUserMessage } from "@@/server/services/message/createUserMessage";
-import { createThreadFollow } from "@@/server/services/message/thread/createThreadFollow";
 import { createThreadUnfollow } from "@@/server/services/message/thread/createThreadUnfollow";
 import { readFollowedThreadRootRowKeys } from "@@/server/services/message/thread/readFollowedThreadRootRowKeys";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { createMessage } from "@esposter/db";
+import { createMessage, createThreadFollow } from "@esposter/db";
 import { AzureTable, MessageType, roomsInMessage, users, usersToRoomsInMessage } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";

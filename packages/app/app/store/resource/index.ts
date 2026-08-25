@@ -1,11 +1,14 @@
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { Resource, ResourcePublication, ResourceTags, ResourceType } from "@esposter/db-schema";
 
+import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
+import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { NotificationSeverity } from "@esposter/db-schema";
 import { RoutePath, uuidValidateV4, withFinalizerAsync } from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
@@ -144,7 +147,7 @@ export const useResourceStore = defineStore("resource", () => {
                 },
                 title: "Refresh",
               },
-              severity: "warning",
+              severity: NotificationSeverity.Warning,
               title: `"${current.name}" was modified elsewhere — refresh to load the latest`,
             });
           } else createErrorNotification(error);
@@ -215,7 +218,10 @@ export const useResourceStore = defineStore("resource", () => {
       key: current.id,
       onError: createErrorNotification,
       onSuccess: () => {
-        createNotification({ severity: "success", title: `Deleted "${current.name}"` });
+        createNotification({
+          severity: NotificationSeverity.Success,
+          title: ResourceOperationTitleMap[ResourceOperationType.Deleted](current.name, 1),
+        });
         isSuccessful = true;
       },
     });
@@ -231,8 +237,8 @@ export const useResourceStore = defineStore("resource", () => {
       onSuccess: async (newResource) => {
         createNotification({
           action: { title: "Go to resource", to: RoutePath.Resource(newResource.id) },
-          severity: "success",
-          title: `Created "${newResource.name}"`,
+          severity: NotificationSeverity.Success,
+          title: ResourceOperationTitleMap[ResourceOperationType.Duplicated](newResource.name),
         });
         await navigateTo(RoutePath.Resource(newResource.id));
       },
@@ -253,8 +259,11 @@ export const useResourceStore = defineStore("resource", () => {
             handler: () => copyLinkToClipboard(RoutePath.View(current.type, current.id)),
             title: "Copy public link",
           },
-          severity: "success",
-          title: `Published "${current.name}" (v${newPublication.publishVersion})`,
+          severity: NotificationSeverity.Success,
+          title: ResourceOperationTitleMap[ResourceOperationType.Published](
+            current.name,
+            newPublication.publishVersion,
+          ),
         });
       },
     });
@@ -278,7 +287,10 @@ export const useResourceStore = defineStore("resource", () => {
       key: current.id,
       onError: createErrorNotification,
       onSuccess: () => {
-        createNotification({ severity: "success", title: `Unpublished "${current.name}"` });
+        createNotification({
+          severity: NotificationSeverity.Success,
+          title: ResourceOperationTitleMap[ResourceOperationType.Unpublished](current.name),
+        });
       },
     });
   };

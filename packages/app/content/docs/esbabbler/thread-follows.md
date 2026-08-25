@@ -16,9 +16,9 @@ flowchart TD
   R["createMessage with replyRowKey"] --> P["persist the reply — Azure Table"]
   P --> AF["auto-follow the replier — clears their own unfollow"]
   P --> AR["auto-follow the root's author — insert only, never clears theirs"]
-  P --> Q["getPushSubscriptionsForThreadFollowers"]
-  Q -->|followers exist| E["EventGrid ProcessThreadReplyNotification"]
-  E --> F["azure-functions web-push to followers"]
+  P --> Q["publishNotification — the reply names its thread root"]
+  Q --> E["ProcessNotification unions followers into the room's recipients"]
+  E --> F["azure-functions web-push to the union"]
   F --> D["notification deep-links to the thread root"]
   B["thread menu notification toggle"] --> FT["followThread / unfollowThread"]
 ```
@@ -35,11 +35,11 @@ Which follows may clear that tombstone is decided by whose action the follow is,
 | the replier's own reply          | yes            | cleared — Discord parity      |
 | the root author, someone replies | no             | left alone                    |
 
-Both reads — `readFollowedThreadRootRowKeys` (follow state) and `getPushSubscriptionsForThreadFollowers` (the push recipients) — skip unfollowed rows, so a tombstone is neither a follow nor a notification.
+Both reads — `readFollowedThreadRootRowKeys` (follow state) and `getThreadFollowerUserIds` (the notification recipients) — skip unfollowed rows, so a tombstone is neither a follow nor a notification.
 
 A root message with no author at all (a webhook message carries none) contributes no root-author follow: `userId` is `NOT NULL`, so the reply would otherwise fail its insert on every reply to a webhook message.
 
-Auto-follow and the follower notification both sit in the reply's best-effort tail ([persist then notify](/docs/architecture/persist-then-notify)), so a lost follow costs one subscription and a lost push costs one notification. The notification's recipient set is recomputed inside the Azure Function, so it always reflects the live follower list.
+Auto-follow and the notification both sit in the reply's best-effort tail ([persist then notify](/docs/architecture/persist-then-notify)), so a lost follow costs one subscription and a lost publish costs one notification — and the follows are written first, because they are what the Function reads. Both follows are one shared step (`createReplyThreadFollows`) rather than something each sender re-implements: a reply sent from the app and a scheduled message delivered into a thread by its Function are the same reply, and a path that had to remember this is a path that eventually forgets it. A reply raises **one** notification, not a second one aimed at followers: the followers widen the message's recipient set inside the Function, which is where the live follower list is ([notifications](/docs/architecture/notifications)).
 
 ## Data model
 
@@ -57,14 +57,14 @@ All under `message.` in `server/trpc/routers/message/index.ts`, member-gated:
 
 ## Key files
 
-| File                                                                             | Role                                   |
-| :------------------------------------------------------------------------------- | :------------------------------------- |
-| `packages/db-schema/src/schema/threadFollowsInMessage.ts`                        | follow table                           |
-| `packages/db/src/services/message/getPushSubscriptionsForThreadFollowers.ts`     | follower push-subscription query       |
-| `packages/app/server/services/message/thread/createThreadFollow.ts`              | idempotent follow insert               |
-| `packages/app/server/services/message/thread/createThreadUnfollow.ts`            | records the unfollow on the row        |
-| `packages/app/server/services/message/thread/notifyThreadReplyFollowers.ts`      | publishes the reply notification event |
-| `packages/azure-functions/src/handlers/processThreadReplyNotificationHandler.ts` | web-push worker                        |
-| `packages/app/app/store/message/threadFollow.ts`                                 | client follow state + drawer list      |
-| `packages/app/app/components/Message/RightSideBar/Threads/`                      | Followed Threads drawer                |
-| `packages/app/app/composables/message/thread/useThreadActionItems.ts`            | thread menu's notification toggle      |
+| File                                                                        | Role                                 |
+| :-------------------------------------------------------------------------- | :----------------------------------- |
+| `packages/db-schema/src/schema/threadFollowsInMessage.ts`                   | follow table                         |
+| `packages/db/src/services/notification/getThreadFollowerUserIds.ts`         | follower recipient query             |
+| `packages/db/src/services/message/thread/createThreadFollow.ts`             | idempotent follow insert             |
+| `packages/db/src/services/message/thread/createReplyThreadFollows.ts`       | the follows a reply owes             |
+| `packages/app/server/services/message/thread/createThreadUnfollow.ts`       | records the unfollow on the row      |
+| `packages/azure-functions/src/services/notification/resolveNotification.ts` | unions followers into the recipients |
+| `packages/app/app/store/message/threadFollow.ts`                            | client follow state + drawer list    |
+| `packages/app/app/components/Message/RightSideBar/Threads/`                 | Followed Threads drawer              |
+| `packages/app/app/composables/message/thread/useThreadActionItems.ts`       | thread menu's notification toggle    |

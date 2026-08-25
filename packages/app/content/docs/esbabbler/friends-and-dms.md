@@ -71,5 +71,5 @@ DMs are invisible to non-participants: invite links are rejected for `RoomType.D
 
 ## Notes
 
-- DMs are not a special case in the push path: `getPushSubscriptionsForMessage` has no room-type branch, so a DM is filtered exactly like a room. What makes DMs feel different is the default value of `usersToRooms.notificationType` — `NotificationType.DirectMessage`, whose UI label is **Only @mentions**. That enum value names the _notification preference_, not `RoomType.DirectMessage`, and the two are unrelated: it means notify me when I am mentioned by id. A member who wants every message opts into `All`. See [push notifications](/docs/esbabbler/push-notifications).
+- DMs are not a special case in the push path: `getMessageRecipientUserIds` has no room-type branch, so a DM is filtered exactly like a room. What makes DMs feel different is the default value of `usersToRooms.notificationType` — `NotificationType.DirectMessage`, whose UI label is **Only @mentions**. That enum value names the _notification preference_, not `RoomType.DirectMessage`, and the two are unrelated: it means notify me when I am mentioned by id. A member who wants every message opts into `All`. See [push notifications](/docs/esbabbler/push-notifications).
 - Re-adding someone to a group DM they hid works because their `usersToRooms` row is kept (soft-hide, not delete).

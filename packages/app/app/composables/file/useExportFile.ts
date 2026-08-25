@@ -2,6 +2,7 @@ import type { MimeType } from "#shared/models/file/MimeType";
 
 import { getFilePickerTypes } from "@/services/file/getFilePickerTypes";
 import { useNotificationStore } from "@/store/notification";
+import { NotificationSeverity } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { showSaveFilePicker } from "show-open-file-picker";
 
@@ -39,7 +40,10 @@ export const useExportFile = () => {
         (error) => {
           // A cancelled save picker is not a completed export, so it reports false without a notification
           if (!(error instanceof Error && error.name === "AbortError"))
-            createNotification({ severity: "error", title: error instanceof Error ? error.message : String(error) });
+            createNotification({
+              severity: NotificationSeverity.Error,
+              title: error instanceof Error ? error.message : String(error),
+            });
           return false;
         },
       );

@@ -8,6 +8,7 @@ export enum DatabaseEntityType {
   FriendRequest = "FriendRequest",
   Invite = "Invite",
   Like = "Like",
+  Notification = "Notification",
   Post = "Post",
   PushSubscription = "PushSubscription",
   Resource = "Resource",

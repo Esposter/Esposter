@@ -8,16 +8,14 @@ import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnap
 // Captures warm post-install state into the snapshot's overlay upper (keyed by lockfile hash) instead of letting
 // `command`'s writes vanish in tmpfs (specs/snapshot-fork.md). The capture-and-publish barrier is
 // `captureOverlayUpper`'s. The capture result is returned so the cold-path fork need not re-run.
-export const createSnapshot = (
+export const createSnapshot = async (
   backend: ExecBackend,
   command: readonly string[] | string,
   options: ExecOptions,
 ): Promise<SnapshotCapture> => {
   const location = resolveSnapshotLocation(options.cwd);
   const { dir, upperDir } = location;
-  // Not `async`, so a location that cannot be resolved throws where it is called rather than on the promise
-  // eslint-disable-next-line no-restricted-syntax -- the trailing `then` maps the value, and the function is deliberately not `async` (see above), so `await` cannot
-  return captureOverlayUpper(backend, command, options, {
+  const result = await captureOverlayUpper(backend, command, options, {
     dir,
     failureLabel: "snapshot setup command",
     operationName: createSnapshot.name,
@@ -27,5 +25,6 @@ export const createSnapshot = (
     // On — instead the fork reads them from the host source tree stacked underneath as the `--overlay-src` lower
     prune: pruneSnapshotUpper,
     upperDir,
-  }).then((result) => ({ location: { ...location, exists: true }, result }));
+  });
+  return { location: { ...location, exists: true }, result };
 };

@@ -2,7 +2,7 @@
 
 Read when writing or changing an Azure Functions handler, its dead-letter replay, or a handler that enumerates its own work from a query. The `console.*` ban in favour of `context.error` is stated in `SKILL.md`; this page covers the two phases and what a replay must do.
 
-Handlers receive an `InvocationContext`. Log through it — `context.error(...)` / `context.log(...)`. When a service needs to log, `context` is its **first** parameter (`sendPushNotification`, `sendWebPushNotifications`, `createAndBroadcastMessage`).
+Handlers receive an `InvocationContext`. Log through it — `context.error(...)` / `context.log(...)`. When a service needs to log, `context` is its **first** parameter (`sendNotification`, `sendWebPushNotifications`, `createAndBroadcastMessage`).
 
 Which steps may fail the caller is the repo-wide **persist then notify** standard (`packages/app/content/docs/architecture/persist-then-notify.md`) — guards and the primary write are fatal, everything after the notify is best-effort. In `packages/app/server` that tail is lint-enforced (the `persist-then-notify` oxlint plugin errors on an unwrapped `await` after an `emit`), so don't re-prescribe it here — this section covers only what the linter can't: a handler adds one mechanic on top — EventGrid delivery is at-least-once, so here a throw is a _retry request_, and the two phases get different loggers.
 

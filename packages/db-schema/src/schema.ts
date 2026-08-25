@@ -8,8 +8,9 @@ import { friendRequests } from "#src/schema/friendRequests";
 import { friends } from "#src/schema/friends";
 import { invitesInMessage } from "#src/schema/invitesInMessage";
 import { likes } from "#src/schema/likes";
+import { appNotificationTypeEnum, notifications, notificationSeverityEnum } from "#src/schema/notifications";
 import { posts } from "#src/schema/posts";
-import { pushSubscriptionsInMessage } from "#src/schema/pushSubscriptionsInMessage";
+import { pushSubscriptions } from "#src/schema/pushSubscriptions";
 import { rateLimiterFlexible } from "#src/schema/rateLimiterFlexible";
 import { resourceAccesses } from "#src/schema/resourceAccesses";
 import { resourceFavorites } from "#src/schema/resourceFavorites";
@@ -38,6 +39,7 @@ export const schema = {
   accounts,
   achievementNameEnum,
   achievements,
+  appNotificationTypeEnum,
   appUsersInMessage,
   azureContainerEnum,
   bansInMessage,
@@ -49,9 +51,11 @@ export const schema = {
   likes,
   mimeCategoryEnum,
   noiseSuppressionModeEnum,
+  notifications,
+  notificationSeverityEnum,
   notificationTypeEnum,
   posts,
-  pushSubscriptionsInMessage,
+  pushSubscriptions,
   rateLimiterFlexible,
   resourceAccesses,
   resourceFavorites,

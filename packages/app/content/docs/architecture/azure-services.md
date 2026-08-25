@@ -89,20 +89,20 @@ Use **Postgres (Drizzle)** for relational, queryable data — users, rooms, role
 
 When adding a new feature: pick Postgres for anything relational or queryable; pick Azure Table for anything message-like (high write volume, time-ordered, no complex joins).
 
-## Event flow: createMessage → push notification
+## Event flow: createMessage → notification
 
 ```mermaid
 flowchart TD
   CM["createMessage (tRPC mutation)"] --> AT["Azure Table write<br/>Messages + MessagesAscending"]
   AT --> EE["messageEventEmitter.emit — createMessage"]
   EE --> SUB["tRPC subscriptions (in-process)"]
-  AT --> PS["getPushSubscriptionsForMessage()"]
-  PS --> EG["EventGrid publish<br/>PushNotificationEventGridData"]
-  EG --> FN["ProcessPushNotification<br/>(Azure Function)"]
-  FN --> WP["web-push to offline users"]
+  AT --> EG["publishNotification<br/>one typed event, unconditionally"]
+  EG --> FN["ProcessNotification<br/>(Azure Function)"]
+  FN --> RES["resolve recipients + channels"]
+  RES --> WP["web-push to each subscription"]
 ```
 
-EventGrid decouples the HTTP response from push delivery. The Function handles retries independently of the tRPC request lifecycle.
+EventGrid decouples the HTTP response from delivery. The Function handles retries independently of the tRPC request lifecycle, and it is the only place that asks who a notification reaches — which is why the mutation publishes without first resolving recipients ([notifications](/docs/architecture/notifications)).
 
 ## Real-time architecture (three layers)
 

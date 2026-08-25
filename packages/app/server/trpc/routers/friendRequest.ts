@@ -1,4 +1,4 @@
-import type { FriendRequestNotificationEventGridData, FriendRequestWithRelations, User } from "@esposter/db-schema";
+import type { FriendRequestWithRelations, User } from "@esposter/db-schema";
 
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
@@ -10,14 +10,13 @@ import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { getPushSubscriptionsForUser } from "@esposter/db";
 import {
-  AzureFunction,
-  createEventGridEvent,
+  AppNotificationType,
   DatabaseEntityType,
   FriendRequestRelations,
   friendRequests,
   friends,
+  publishNotification,
 } from "@esposter/db-schema";
 import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
@@ -152,24 +151,15 @@ export const friendRequestRouter = router({
         sender: senderUser,
       };
       friendEventEmitter.emit("sendFriendRequest", { friendRequest, receiverId, senderId: userId });
-      // Best-effort after the insert — a failed read skips this request's pushes, never the friend request that
+      // Best-effort after the insert — a failed publish loses one notification, never the friend request that
       // Already landed.
-      const readPushSubscriptions = await getResultAsync(() => getPushSubscriptionsForUser(ctx.db, receiverId))
-        .orTee(console.error)
-        .unwrapOr([]);
-      if (readPushSubscriptions.length > 0) {
-        const eventGridPublisherClient = useEventGridPublisherClient();
-        const data: FriendRequestNotificationEventGridData = {
-          notificationOptions: { icon: senderUser.image, title: senderUser.name },
+      await getResultAsync(() =>
+        publishNotification(useEventGridPublisherClient(), {
           receiverId,
-        };
-        // Best-effort after the insert — a failed publish loses one push, never the friend request that already landed.
-        await getResultAsync(() =>
-          eventGridPublisherClient.send([
-            createEventGridEvent(AzureFunction.ProcessFriendRequestNotification, `${userId}/${receiverId}`, data),
-          ]),
-        ).match(noop, console.error);
-      }
+          senderId: userId,
+          type: AppNotificationType.FriendRequest,
+        }),
+      ).match(noop, console.error);
       return friendRequest;
     }),
 });

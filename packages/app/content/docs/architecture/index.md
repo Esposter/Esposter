@@ -33,6 +33,7 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Singleton dialogs](/docs/architecture/singleton-dialogs)                                 | Store-driven singleton dialogs — one mounted dialog per feature, never one per list item |
 | [Navigation](/docs/architecture/navigation)                                               | NuxtLink/navigateTo for every link — never a raw anchor — and instant docs routing       |
 | [Persist then notify](/docs/architecture/persist-then-notify)                             | Guard, persist, notify — then best-effort bookkeeping that can never fail the caller     |
+| [Notifications](/docs/architecture/notifications)                                         | One typed event, one Function, fanned out to the surfaces its type declares              |
 | [Conditional writes](/docs/architecture/conditional-writes)                               | A write derived from a read is conditional on that version, and a lost race re-applies   |
 | [Blob lifecycle ownership](/docs/architecture/blob-lifecycle)                             | Every blob prefix's naming discipline and single teardown owner per lifecycle event      |
 | [No polling](/docs/architecture/no-polling)                                               | Polling banned repo-wide — every wait is event-driven or awaits a completion handle      |

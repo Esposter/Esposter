@@ -43,10 +43,10 @@ import { getMockContainer } from "#src/services/container/getMockContainer";
 import { createMockResponse } from "#src/services/createMockResponse";
 import { getMockSasUrl } from "#src/services/getMockSasUrl";
 import {
-  getMockContainerCreatedOnKey,
-  MOCK_BLOB_SEEDED_CREATED_ON,
-  MockContainerCreatedOnDatabase,
-} from "#src/store/MockContainerCreatedOnDatabase";
+  getMockContainerBlobDatesKey,
+  MockContainerBlobDatesDatabase,
+  readMockBlobDates,
+} from "#src/store/MockContainerBlobDatesDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 /**
@@ -89,7 +89,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   deleteBlob(blobName: string): Promise<BlobDeleteResponse> {
     if (!this.container.has(blobName)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
     this.container.delete(blobName);
-    MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(this.containerName, blobName));
+    MockContainerBlobDatesDatabase.delete(getMockContainerBlobDatesKey(this.containerName, blobName));
     return Promise.resolve({ _response: createMockResponse(200, getBlobUrl(this.containerName, blobName)) });
   }
 
@@ -284,8 +284,8 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     for (const blobItem of blobsInCurrentLevel) yield await Promise.resolve({ kind: "blob", ...blobItem });
   }
 
-  // Both listings report the same blob the same way, so the properties are described in exactly one place
   #getBlobItem(name: string, buffer: Buffer): BlobItem {
+    const { createdOn, etag, lastModified } = readMockBlobDates(this.containerName, name);
     return {
       deleted: false,
       name,
@@ -293,17 +293,16 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
         blobType: "BlockBlob",
         contentLength: buffer.length,
         contentType: "application/octet-stream",
-        createdOn:
-          MockContainerCreatedOnDatabase.get(getMockContainerCreatedOnKey(this.containerName, name)) ??
-          MOCK_BLOB_SEEDED_CREATED_ON,
-        etag: `"${crypto.randomUUID()}"`,
-        lastModified: new Date(),
+        createdOn,
+        etag,
+        lastModified,
         leaseState: "available",
         leaseStatus: "unlocked",
       },
       snapshot: "",
     };
   }
+
   async *#getBlobItemIterator(options?: ContainerListBlobsOptions): AsyncGenerator<BlobItem> {
     const prefix = options?.prefix ?? "";
     for (const [name, buffer] of this.container.entries()) {

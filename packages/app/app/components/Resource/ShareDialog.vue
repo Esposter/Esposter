@@ -4,7 +4,7 @@ import type { Resource } from "@esposter/db-schema";
 
 import { getShareMessage } from "@/services/resource/getShareMessage";
 import { useNotificationStore } from "@/store/notification";
-import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
+import { MESSAGE_MAX_LENGTH, NotificationSeverity } from "@esposter/db-schema";
 import { getResultAsync, MAX_READ_LIMIT, noop, RoutePath } from "@esposter/shared";
 
 interface ResourceShareDialogProps {
@@ -52,7 +52,7 @@ const share = async () => {
       onSuccess: () => {
         createNotification({
           action: { title: "Open room", to: RoutePath.Messages(room.value) },
-          severity: "success",
+          severity: NotificationSeverity.Success,
           title: `Shared to ${room.title}`,
         });
         isOpen.value = false;

@@ -4,6 +4,7 @@ import type { Resource } from "@esposter/db-schema";
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import { useNotificationStore } from "@/store/notification";
 import { usePublishHistoryDialogStore } from "@/store/resource/publishHistoryDialog";
+import { NotificationSeverity } from "@esposter/db-schema";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 interface ResourcePublishHistoryRestoreDialogProps {
@@ -25,7 +26,10 @@ const restore = async () => {
     key: resource.id,
     onError: createErrorNotification,
     onSuccess: async () => {
-      createNotification({ severity: "success", title: `Restored "${resource.name}" from v${version} into a draft` });
+      createNotification({
+        severity: NotificationSeverity.Success,
+        title: `Restored "${resource.name}" from v${version} into a draft`,
+      });
       // Land in the editor so the owner reviews the restored draft before deciding to re-publish
       await navigateTo(`${RoutePath.Resource(resource.id)}/${ResourceBladeType.Editor}`);
     },

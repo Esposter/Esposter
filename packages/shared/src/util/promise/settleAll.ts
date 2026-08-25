@@ -16,12 +16,11 @@ export const settleAll = async <T>(
 
   const values: T[] = [];
   for (const tasksChunk of chunk(tasks, concurrencyLimit)) {
-    // Called through `then`, so a task that throws SYNCHRONOUSLY becomes a rejected promise like any other.
-    // Called directly, that throw escapes `map` itself — `allSettled` is never reached, the tasks map already
-    // Started keep running unawaited, and the caller rolls back over the top of them: the one failure mode this
-    // Whole helper exists to remove
-    // eslint-disable-next-line no-restricted-syntax -- `then` is the only shape that converts a synchronous throw
-    const results = await Promise.allSettled(tasksChunk.map((task) => Promise.resolve().then(task)));
+    // `Promise.try` runs the task inside a promise, so one that throws SYNCHRONOUSLY becomes a rejected promise
+    // Like any other. Called directly, that throw escapes `map` itself — `allSettled` is never reached, the tasks
+    // Map already started keep running unawaited, and the caller rolls back over the top of them: the one failure
+    // Mode this whole helper exists to remove
+    const results = await Promise.allSettled(tasksChunk.map((task) => Promise.try(task)));
     const reasons: unknown[] = [];
     for (const result of results)
       if (result.status === "rejected") reasons.push(result.reason);

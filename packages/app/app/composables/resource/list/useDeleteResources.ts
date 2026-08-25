@@ -1,10 +1,12 @@
 import type { Resource } from "@esposter/db-schema";
 
-import { pluralize } from "#shared/util/text/pluralize";
+import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
+import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { CacheTag } from "@/models/cache/CacheTag";
 import { useCacheStore } from "@/store/cache";
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { NotificationSeverity } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
 
 export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, refresh: () => Promise<void>) => {
@@ -20,10 +22,10 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
   const deleteResources = async (resources: Resource[]) => {
     const ids = resources.map(({ id }) => id);
     // Read up front — the optimistic removal drops the rows before the notification fires
-    const deletedNotificationTitle =
-      resources.length === 1
-        ? `Deleted "${takeOne(resources).name}"`
-        : `Deleted ${resources.length} ${pluralize("resource", resources.length)}`;
+    const deletedNotificationTitle = ResourceOperationTitleMap[ResourceOperationType.Deleted](
+      takeOne(resources).name,
+      resources.length,
+    );
     // The batch procedure with one id shares the exact cleanup path (row + publication + blob directory).
     // Selection accumulates across pages, so the ids are chunked to the server's per-call cap and sent in order
     await executeDeleteResourcesMutation(
@@ -73,7 +75,7 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
                   // No longer in the bin, so the action consumes itself on success
                   { handler: () => restoreResource(takeOne(resources)), isSingleUse: true, title: "Restore" }
                 : { title: "Go to Recycle bin", to: RoutePath.ResourceExplorerRecycleBin },
-            severity: "success",
+            severity: NotificationSeverity.Success,
             title: deletedNotificationTitle,
           });
           // This list also drives the blade's Explorer, so deleting the resource the blade is open on has to

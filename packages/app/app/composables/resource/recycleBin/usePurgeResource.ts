@@ -1,7 +1,10 @@
 import type { Resource } from "@esposter/db-schema";
 
+import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
+import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { CacheTag } from "@/models/cache/CacheTag";
 import { useNotificationStore } from "@/store/notification";
+import { NotificationSeverity } from "@esposter/db-schema";
 
 export const usePurgeResource = (refresh: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
@@ -15,7 +18,10 @@ export const usePurgeResource = (refresh: () => Promise<void>) => {
       key: resource.id,
       onError: createErrorNotification,
       onSuccess: async () => {
-        createNotification({ severity: "success", title: `Permanently deleted "${resource.name}"` });
+        createNotification({
+          severity: NotificationSeverity.Success,
+          title: ResourceOperationTitleMap[ResourceOperationType.Purged](resource.name),
+        });
         await refresh();
       },
     });

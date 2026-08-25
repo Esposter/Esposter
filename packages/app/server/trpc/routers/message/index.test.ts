@@ -1042,6 +1042,8 @@ describe("message", () => {
       roomId,
     });
 
+    // Drop the send's own notification event so the assertion below is about the deletion and nothing else
+    MockEventGridDatabase.clear();
     await messageCaller.deleteFile({ id, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
 
     const blobDeletionEvents = MockEventGridDatabase.get("");
@@ -1063,6 +1065,8 @@ describe("message", () => {
       roomId,
     });
 
+    // Drop the send's own notification event so the assertion below is about the deletion and nothing else
+    MockEventGridDatabase.clear();
     await messageCaller.deleteMessage(getCompositeKey(newMessage));
 
     const blobDeletionEvents = MockEventGridDatabase.get("");

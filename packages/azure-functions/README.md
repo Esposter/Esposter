@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Serverless Azure Functions backend for Esposter. Handles asynchronous workloads triggered by Azure EventGrid events, Service Bus queues, and timers — push notifications, webhook delivery, friend request notifications, scheduled message jobs, and resource purging.
+Serverless Azure Functions backend for Esposter. Handles asynchronous workloads triggered by Azure EventGrid events, Service Bus queues, and timers — notification delivery, webhook delivery, scheduled message jobs, and resource purging.
 
 ## Table of Contents
 
@@ -19,27 +19,25 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 Most functions are triggered by **Azure EventGrid** events published by the main app; the rest run on Service Bus queues or timers. `PushWebhook` is the one publicly routed HTTP trigger. Each function handles one async concern:
 
-| Function                           | Trigger                              | Description                                                                 |
-| ---------------------------------- | ------------------------------------ | --------------------------------------------------------------------------- |
-| `ProcessPushNotification`          | EventGrid                            | Sends web-push notifications to offline users when a new message is created |
-| `ProcessWebhook`                   | EventGrid                            | Delivers outgoing webhook payloads to registered endpoints                  |
-| `PushWebhook`                      | HTTP (`POST webhooks/{id}/{token}`)  | Accepts inbound webhook pushes, validating the token from the url           |
-| `ProcessFriendRequestNotification` | EventGrid                            | Notifies users of incoming friend requests                                  |
-| `ProcessThreadReplyNotification`   | EventGrid                            | Notifies thread followers of a reply, excluding the generic push recipients |
-| `ProcessBlobDeletion`              | EventGrid                            | Deletes blobs durably once their owning row is gone                         |
-| `ReconcileStorageLedgerEntry`      | EventGrid (storage system topic)     | Charges a user's storage counter the blob's real size on `BlobCreated`      |
-| `ReplayDeadLetterEvent`            | EventGrid                            | Replays dead-lettered events it can route, quarantining the rest            |
-| `ProcessScheduledMessageJob`       | Service Bus (`ScheduledMessageJobs`) | Delivers `/schedule` and `/remind` messages at their due time               |
-| `SendTodoReminder`                 | Service Bus (`TodoReminders`)        | Sends web-push when a TodoList item comes due                               |
-| `PurgeDeletedResources`            | Timer (daily, 03:00)                 | Purges recycle-bin resources past their retention window                    |
+| Function                      | Trigger                              | Description                                                                 |
+| ----------------------------- | ------------------------------------ | --------------------------------------------------------------------------- |
+| `ProcessNotification`         | EventGrid                            | Delivers every notification — resolves recipients, writes bell rows, pushes |
+| `ProcessWebhook`              | EventGrid                            | Delivers outgoing webhook payloads to registered endpoints                  |
+| `PushWebhook`                 | HTTP (`POST webhooks/{id}/{token}`)  | Accepts inbound webhook pushes, validating the token from the url           |
+| `ProcessBlobDeletion`         | EventGrid                            | Deletes blobs durably once their owning row is gone                         |
+| `ReconcileStorageLedgerEntry` | EventGrid (storage system topic)     | Charges a user's storage counter the blob's real size on `BlobCreated`      |
+| `ReplayDeadLetterEvent`       | EventGrid                            | Replays dead-lettered events it can route, quarantining the rest            |
+| `ProcessScheduledMessageJob`  | Service Bus (`ScheduledMessageJobs`) | Delivers `/schedule` and `/remind` messages at their due time               |
+| `SendTodoReminder`            | Service Bus (`TodoReminders`)        | Publishes a `TodoReminder` notification when a TodoList item comes due      |
+| `PurgeDeletedResources`       | Timer (daily, 03:00)                 | Purges recycle-bin resources past their retention window                    |
 
 ### Flow
 
 One flow of several — the message-created path. The Service Bus and timer triggers in the table above are entered on their own schedules, not from this chain.
 
 ```text
-App (createMessage) → Azure EventGrid → processPushNotification
-                                      → processWebhook
+App (createMessage) → Azure EventGrid → ProcessNotification
+                                      → ProcessWebhook
 ```
 
 ### Dependencies

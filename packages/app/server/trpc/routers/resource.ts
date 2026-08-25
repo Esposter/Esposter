@@ -8,15 +8,18 @@ import type { Context } from "@@/server/trpc/context";
 import type { Clause } from "@esposter/azure";
 import type { Resource } from "@esposter/db-schema";
 
+import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { resourceListSortKeySchema } from "#shared/models/resource/ResourceListItem";
+import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { escapeLike } from "@@/server/services/db/escapeLike";
+import { publishResourceOperation } from "@@/server/services/notification/publishResourceOperation";
 import { readCursorPaginationDataAzureTable } from "@@/server/services/pagination/cursor/readCursorPaginationDataAzureTable";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -54,7 +57,7 @@ import {
   resourceTypeSchema,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
+import { createUniqueArraySchema, MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
 import {
   and,
   asc,
@@ -238,16 +241,25 @@ export const resourceRouter = router({
   deleteResources: standardAuthedProcedure
     .input(deleteResourcesInputSchema)
     // Owner-scoped where so callers can only ever soft-delete their own rows
-    .mutation<Resource[]>(({ ctx, input: { ids } }) =>
-      softDeleteResources(
+    .mutation<Resource[]>(async ({ ctx, input: { ids } }) => {
+      const deletedResources = await softDeleteResources(
         ctx.db,
         and(
           eq(resources.userId, ctx.getSessionPayload.user.id),
           inArray(resources.id, ids),
           isNull(resources.deletedAt),
         ),
-      ),
-    ),
+      );
+      if (deletedResources.length > 0)
+        await publishResourceOperation(ctx.getSessionPayload, {
+          path: RoutePath.ResourceExplorerRecycleBin,
+          title: ResourceOperationTitleMap[ResourceOperationType.Deleted](
+            takeOne(deletedResources).name,
+            deletedResources.length,
+          ),
+        });
+      return deletedResources;
+    }),
   duplicateResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
     const { name, tags, type } = ctx.resource;
     const newResource = await createResourceRow(
@@ -278,6 +290,10 @@ export const resourceRouter = router({
       // A ContentSaved beside it would claim the owner edited a copy they have not opened yet
       await saveResourceContent(ctx, { content: clonedContent, resource: newResource });
     });
+    await publishResourceOperation(ctx.getSessionPayload, {
+      path: RoutePath.Resource(newResource.id),
+      title: ResourceOperationTitleMap[ResourceOperationType.Duplicated](newResource.name),
+    });
     return newResource;
   }),
   purgeResource: getOwnerProcedure(undefined, readResourceInputSchema, "id", true).mutation<Resource>(
@@ -288,6 +304,10 @@ export const resourceRouter = router({
         getResourceOwnedTableNames(ctx.resource.type).map((tableName) => useTableClient(tableName)),
       );
       await purgeResource(ctx.db, containerClient, tableClients, id);
+      await publishResourceOperation(ctx.getSessionPayload, {
+        path: RoutePath.ResourceExplorerRecycleBin,
+        title: ResourceOperationTitleMap[ResourceOperationType.Purged](ctx.resource.name),
+      });
       return ctx.resource;
     },
   ),
@@ -460,6 +480,10 @@ export const resourceRouter = router({
         activityType: ResourceActivityType.Restored,
         resourceId: id,
         userId: ctx.getSessionPayload.user.id,
+      });
+      await publishResourceOperation(ctx.getSessionPayload, {
+        path: RoutePath.Resource(id),
+        title: ResourceOperationTitleMap[ResourceOperationType.Restored](restoredResource.name),
       });
       return restoredResource;
     },

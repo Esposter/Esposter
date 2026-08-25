@@ -3,16 +3,18 @@ import type { ServiceBusQueueHandler } from "@azure/functions";
 import { assertCanCreateMessage } from "#src/services/assertCanCreateMessage";
 import { createAndBroadcastMessage } from "#src/services/createAndBroadcastMessage";
 import { db } from "#src/services/db";
-import { getPushNotificationData } from "#src/services/getPushNotificationData";
+import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
 import { getServiceBusSender } from "#src/services/getServiceBusSender";
+import { getTableClient } from "#src/services/getTableClient";
 import { logAndRethrow } from "#src/services/logAndRethrow";
-import { sendPushNotification } from "#src/services/sendPushNotification";
-import { sendReminderNotification } from "#src/services/sendReminderNotification";
-import { enqueueScheduledMessageJob } from "@esposter/db";
+import { createReplyThreadFollows, enqueueScheduledMessageJob } from "@esposter/db";
 import {
+  AppNotificationType,
   AzureFunction,
   AzureQueue,
+  AzureTable,
   MessageType,
+  publishNotification,
   roomsInMessage,
   scheduledMessageJobPayloadSchema,
   scheduledMessageJobQueueMessageSchema,
@@ -110,10 +112,19 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
     }
 
     if (payload.type === ScheduledMessageJobType.Reminder)
-      await sendReminderNotification(context, {
-        roomId: processingJob.roomId,
-        text: payload.text,
-        userId: processingJob.userId,
+      // Best-effort for the same reason as the message branch below: the claim is single-shot, so a rethrow asks
+      // For a redelivery that is skipped and leaves the job holding a claim it can never release. The delivery
+      // Itself is no longer what is at risk — it is published now, so a failure past this point is Event Grid's
+      // To retry and dead-letter ([dead-letter replay](/docs/infra/eventgrid-dead-letter))
+      await getResultAsync(() =>
+        publishNotification(eventGridPublisherClient, {
+          roomId: processingJob.roomId,
+          text: payload.text,
+          type: AppNotificationType.Reminder,
+          userId: processingJob.userId,
+        }),
+      ).match(noop, (error) => {
+        context.error(`${AzureFunction.ProcessScheduledMessageJob} failed to notify`, { error, id });
       });
     else {
       // The slowmode clock is what the NEXT send is checked against, so it advances with the guards rather than
@@ -143,30 +154,36 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       });
       // Best-effort after the message write ([persist then notify](/docs/architecture/persist-then-notify)). A
       // Rethrow here cannot retry these steps anyway — the claim above is single-shot, so the redelivery it asks
-      // For is skipped — it would only leave the job stuck mid-delivery with `completedAt` never stamped
-      await getResultAsync(async () => {
-        const userToRoom = await db.query.usersToRoomsInMessage.findFirst({
-          columns: { nickname: true },
-          where: { roomId: { eq: processingJob.roomId }, userId: { eq: processingJob.userId } },
-          with: { user: { columns: { image: true, name: true } } },
-        });
-        if (userToRoom)
-          await sendPushNotification(
-            context,
-            getPushNotificationData(newMessage, {
-              icon: userToRoom.user.image,
-              title: userToRoom.nickname || userToRoom.user.name,
-            }),
-          );
-        // A room-list sort order, not a guard input — so unlike the slowmode clock above this one stays here,
-        // Where a failure leaves the room list one send behind until the next one lands
-        await db
-          .update(roomsInMessage)
-          .set({ updatedAt: new Date() })
-          .where(eq(roomsInMessage.id, processingJob.roomId));
-      }).match(noop, (error) => {
-        context.error(`${AzureFunction.ProcessScheduledMessageJob} failed to notify`, { error, id });
-      });
+      // For is skipped — it would only leave the job stuck mid-delivery with `completedAt` never stamped.
+      // One Result each, exactly as `createUserMessage` does: sharing one closure makes every step after the
+      // First failure conditional on it, so a follow that could not be written would silently cost the
+      // Notification and the room's sort order too
+      const logFailure = (step: string) => (error: unknown) => {
+        context.error(`${AzureFunction.ProcessScheduledMessageJob} failed to ${step}`, { error, id });
+      };
+      // A message scheduled into a thread is a reply like any other, so it owes the same follow rows — and
+      // Owes them before the publish that reads them
+      await getResultAsync(async () =>
+        createReplyThreadFollows(db, await getTableClient(AzureTable.Messages), newMessage),
+      ).match(noop, logFailure("follow the thread"));
+      await getResultAsync(() =>
+        publishNotification(eventGridPublisherClient, {
+          message: {
+            message: newMessage.message,
+            partitionKey: newMessage.partitionKey,
+            rowKey: newMessage.rowKey,
+            userId: newMessage.userId,
+          },
+          // A message scheduled into a thread notifies that thread's followers, exactly as sending it there would
+          threadRootRowKey: payload.replyRowKey,
+          type: AppNotificationType.Message,
+        }),
+      ).match(noop, logFailure("notify"));
+      // A room-list sort order, not a guard input — so unlike the slowmode clock above this one stays here,
+      // Where a failure leaves the room list one send behind until the next one lands
+      await getResultAsync(() =>
+        db.update(roomsInMessage).set({ updatedAt: new Date() }).where(eq(roomsInMessage.id, processingJob.roomId)),
+      ).match(noop, logFailure("touch the room"));
     }
 
     await updateJob({ completedAt: new Date() });

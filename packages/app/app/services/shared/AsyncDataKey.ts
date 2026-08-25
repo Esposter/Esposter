@@ -12,6 +12,7 @@ export const AsyncDataKey = {
   DocsSearchSections: "docs-search-sections",
   ReadComments: (postId: Post["id"]) =>
     `${Operation.Read}${ID_SEPARATOR}${DerivedDatabaseEntityType.Comment}${ID_SEPARATOR}${postId}`,
+  ReadNotifications: `${Operation.Read}${ID_SEPARATOR}${DatabaseEntityType.Notification}`,
   // The sort and the profile both change which page the server rendered, so both are part of the key
   ReadPosts: (sortType: PostSortType, userId?: User["id"]) =>
     `${Operation.Read}${ID_SEPARATOR}${DatabaseEntityType.Post}${ID_SEPARATOR}${sortType}${userId ? `${ID_SEPARATOR}${userId}` : ""}`,

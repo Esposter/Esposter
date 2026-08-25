@@ -48,6 +48,7 @@ The standards the platform applies live in architecture: the layer model ([the p
 - [Survey response management](/docs/platform/survey-response-management) — response detail, owner delete, response count on Overview
 - [Published view analytics](/docs/platform/published-view-analytics) — best-effort view counts on public reads for every publishable type
 - [Dashboard data binding](/docs/platform/dashboard-data-binding) — visuals bound to datasets with client aggregation and publish-time snapshots
+- [Dashboard chart interaction](/docs/platform/dashboard-chart-interaction) — the ApexCharts v6 investigation surface on visuals: linked highlighting, shareable view state, annotations
 - [Email personalization](/docs/platform/email-personalization) — merge fields, survey invite blocks, personalized HTML export
 - [Dataset row-cap warning](/docs/platform/dataset-row-cap-warning) — "showing N of M" wherever a dataset read hits the 1000-row cap
 - [Email web view](/docs/platform/email-web-view) — Email is Publishable: save-time HTML capture, `/view/Email/[id]` browser copy

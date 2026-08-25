@@ -63,6 +63,7 @@ The `vue` / `vue-component-patterns` / `vue-page-composition` / `vue-composable-
 - `oxlint` — lint rule exceptions and disable directives.
 - `package-scripts` — which `pnpm` script to run, and from where.
 - `context-efficiency` — how the main session spends its own context/turns: delegating wide reads, batching verification, polling vs sleeping, baselining before chasing an error.
+- `runtime-efficiency` — where runtime work is placed and how it is shaped: resolve once at the consumer, keep derivable work off the request path, index by the lookup, one statement per set, bound growth on the write path.
 - `run-app` — launching the dev server and driving the app in a real browser to verify UI: session seeding, Chrome/CDP, the dev-build and async-render traps.
 - `build` — rolldown configs and external lists.
 - `bench` — colocated `*.bench.ts` and the benchmark reporter.

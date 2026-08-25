@@ -1,6 +1,6 @@
 ---
 name: pagination
-description: Esposter paginated-list conventions — the three-layer cursor pagination pattern (store + useRead* composable + StyledWaypoint), a keyed write naming its key when issued (the ambient items being readonly), infinite scroll instead of a Load-more button, the ban on hand-rolling search-as-you-type and MiniSearch being the one client-side index, bundling ancillary reads into the primary read, and the offline IndexedDB cache being self-contained, plus deep dives on wiring useAutoSearch/useCursorSearcher with its sanctioned exceptions and on the feature cache composables. Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache.
+description: Esposter paginated-list conventions — the three-layer cursor pagination pattern (store + useRead* composable + StyledWaypoint), a keyed write naming its key when issued (the ambient items being readonly), infinite scroll instead of a Load-more button, the ban on hand-rolling search-as-you-type and MiniSearch being the one client-side index, bundling ancillary reads into the primary read, a total over the list being the server's rather than a count of the loaded rows (and moving under every optimistic write's rollback), a keyed read's query closure never running on the hydrating client so only Pinia state survives it, re-reading a list after a push (compare against the server half, pair the timestamp watermark with the ids already held because equal timestamps tie, and queue overlapping re-reads), and the offline IndexedDB cache being self-contained, plus deep dives on wiring useAutoSearch/useCursorSearcher with its sanctioned exceptions and on the feature cache composables. Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache.
 ---
 
 # Pagination, Search & Offline List Cache
@@ -119,6 +119,64 @@ const readFoos = () =>
 ```
 
 Follow the `useReadBars` shape for batch ancillary reads — a composable taking an **array** of ids, early-returning when it is empty, and issuing one batched query rather than N per-id calls.
+
+### A total over a paginated list is the server's, never the loaded rows
+
+Any number a surface shows _about the whole list_ — an unread badge, a "N items" summary, a filtered tally — is
+computed by the endpoint and returned with the page, because the client holds one page and the answer is about
+all of them. A `computed` counting `items` is right only for a list that is never paginated (a client-owned half
+that exists solely in the tab), and it fails in the direction nobody notices: it reads low, and it reads correct
+the whole time the list is short enough to fit one page. So it survives every manual check and breaks for the
+users with the most rows.
+
+Return it from the same endpoint as the page rather than adding a second one — one round trip, and a total the
+client cannot forget to ask for. The two statements still run against separate snapshots, so a write landing
+between them can move the total by a row; put both in one statement or one transaction where that matters:
+
+```typescript
+// endpoint: the page and the total it belongs to, resolved together
+const [items, [total]] = await Promise.all([findManyPage(), countMatchingRows()]);
+return { paginationData: getCursorPaginationData(items, limit, sortBy), total: total?.count ?? 0 };
+```
+
+The store then holds the server's number and **every optimistic write that changes it moves it under the same
+rollback as the list** — a delete decrements it, a clear-all zeroes it, and each rollback restores the previous
+value alongside the previous rows. A write that gates on the loaded rows (`items.every(...)`) is the same bug one
+layer down: gate on the total, which is the only value that speaks for the pages nobody has read.
+
+### A keyed read's query closure does not run on the hydrating client
+
+`readItems(query, { key })` adopts the payload on the hydrating render and **never calls `query`** there, so
+anything the closure writes besides its returned page is written on the server only. That is fine — and the
+reason the aggregate above may live in the closure — **as long as the destination is Pinia store state**, which
+rides the payload and is restored on hydration. A closure that writes a module-level ref, a component ref or
+anything else outside a store loses that value at hydration and leaves the surface rendering a default nobody
+can explain. Anything read on the client goes in the store; the closure returns the page and writes store state,
+nothing else.
+
+## Re-reading a List After a Push
+
+A delivered push says "something arrived", never what: the tab re-reads the first page and works out which rows
+are new. Three rules make that reliable, and the first two come from the list being shared rather than owned by
+the push.
+
+- **Compare against the half the push writes, never the merged list.** A surface that renders server rows
+  alongside locally-created ones has two halves with different lifetimes; the newest row overall is routinely the
+  local one, which has already been acted on. Snapshot the newest **server** row before the read, and act on the
+  server rows past it.
+- **A timestamp watermark needs the ids alongside it.** Postgres stores microseconds and a `Date` keeps
+  milliseconds, so two rows written inside the same millisecond arrive with **equal** timestamps and a strict
+  `>` drops the second one for good — it is not newer, and no later read will ever call it new again. Compare
+  `>=` and exclude the ids the tab already held: the ids settle the ties, and the watermark still stops a page
+  that simply grew (a tab holding fewer rows than a page) from replaying a backlog nobody was pushed.
+- **Queue the re-reads, never run them side by side.** Both comparisons snapshot the list _before_ the read and
+  test against it _after_, so two pushes landing together snapshot the same list and both claim the row the first
+  read brought back. Put the whole snapshot-read-compare through `executeMutation` under one key — its per-key
+  queue is what makes the second call read a list that already holds that row. Joining the in-flight read instead
+  (`isExclusive`) is the wrong shape here: a row written after that read was issued would never arrive.
+
+All three belong in the **store**, not the plugin or component that receives the push: only the owner of the list can
+tell its halves apart, and the receiver's job is to hand over the read.
 
 ## Offline IndexedDB Cache — self-contained
 

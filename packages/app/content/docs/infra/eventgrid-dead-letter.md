@@ -19,9 +19,25 @@ The handler repeats those two prefix exclusions itself, so a hand-fired or mis-s
 
 Event Grid delivers only events raised **while a subscription exists**, and nothing re-enumerates the container behind it. A dead letter written while the replay subscription is gone is therefore stranded permanently — recreating the subscription replays no backlog.
 
-So the budget guard leaves this subscription alone, and that is load-bearing rather than an oversight. The guard stops the Function App and deletes the two highest-volume **application** subscriptions; the ones it leaves alive (friend requests, thread replies, blob deletions) keep dead-lettering into the container while the app is down, which is exactly the outcome that makes those events recoverable — they are replayed once the app is back rather than dropped. Deleting the replay subscription for the duration would convert that recovery into permanent loss, in trade for the delivery attempts it would have made against a stopped endpoint: a per-operation charge bounded by the dead-letter rate, and orders of magnitude below the account-wide ingress described in the notes below, which no subscription change affects.
+So the budget guard leaves this subscription alone, and that is load-bearing rather than an oversight. The guard stops the Function App and deletes the two highest-volume **application** subscriptions; the ones it leaves alive (friend requests, thread replies, blob deletions) keep dead-lettering into the container while the app is down, so their payloads survive as blobs rather than being dropped. Deleting the replay subscription for the duration would lose even that, in trade for the delivery attempts it would have made against a stopped endpoint: a per-operation charge bounded by the dead-letter rate, and orders of magnitude below the account-wide ingress described in the notes below, which no subscription change affects.
 
-That trade is why there is no timer sweeping the container for stranded blobs. A poller would run forever, listing an empty container on every run, to cover a window that only exists if the subscription is torn down — so not tearing it down removes the window and the poller together.
+### A living subscription is not a delivered trigger
+
+Surviving as a blob is **not** the same as being replayed once the app is back, and the difference is the whole reason the drain below exists. The replay is triggered by an ordinary Event Grid delivery, and that delivery is aimed at the very Function App that is down: ten attempts over `EVENT_GRID_DELIVERY_TTL_MINUTES`, all refused. The replay subscription deliberately carries no `deadLetterDestination` of its own — one would write into the container it watches — so when those attempts run out the trigger is **dropped**, not preserved. The blob then sits at the container root with nothing left to notice it.
+
+So the stranding window is not only the one above, where the subscription is torn down. It opens whenever the **endpoint** is unavailable for longer than the delivery window, with the subscription alive and correct throughout — which is what the guard's own `/stop` does on every activation that outlasts an hour, and what any full outage of the app does. The container's lifecycle rule deletes dead letters after 30 days, so a stranded blob is recoverable until then and lost afterwards.
+
+### The drain closes it at app start
+
+There is still no timer sweeping the container, because a schedule is the wrong signal: nothing can be replayed until the app is running, and **the app starting is itself the event that says it is**. So `appStart.ts` registers an `app.hook.appStart` hook that runs `drainDeadLetterContainer` once per worker start, listing the container and re-uploading whatever is stranded. The re-upload raises a fresh `BlobCreated` — the same one-move remediation an operator would perform by hand, made automatic at the one moment it is known to work.
+
+Three rules keep it from doing anything else:
+
+- The `archived/` and `quarantine/` prefixes are skipped, exactly as the subscription's advanced filter skips them. Re-uploading one would retrigger nothing and would only rewrite a record an operator reads.
+- A blob younger than `EVENT_GRID_DELIVERY_TTL_MS` is skipped, because its own trigger still has attempts left. Without that bound, every cold start of a busy app would race the deliveries already coming and publish those batches twice. Past the window, no delivery of that trigger can still arrive, which is what makes the blob provably stranded rather than merely recent. A re-upload dates the blob, so it falls back inside the window it was just given and a second start does not repeat the work.
+- It can never reject. A start hook that throws is one that can stop the app registering its functions — the exact failure the drain exists to recover from — so a container that cannot be read leaves the app starting normally and the blobs for the next start.
+
+Nothing about the cap is reset by this: the attempt counter rides on each event's `id` rather than on the blob, so a drained payload resumes where it left off and a poison one still quarantines on schedule.
 
 The function downloads the blob and validates it against a Zod schema. A payload that is not an array of dead-lettered events can never become publishable, so it is copied straight under `quarantine/`, the original is deleted, and the parse error is logged — republishing a broken payload would only dead-letter it again. The schema deliberately allows a repeated event id: delivery is at-least-once, so a send retried whole after a partial failure puts two copies of one id on the topic, and rejecting the array over that would quarantine every replayable event batched alongside them.
 
@@ -59,6 +75,8 @@ flowchart TD
   topic[Event Grid topic] -->|deliver| sub[Event Grid subscription]
   sub -->|10 attempts or 1h, whichever comes first| dead[deadletter blob container]
   dead -->|BlobCreated| egst[Event Grid system topic]
+  egst -->|"endpoint down past the delivery TTL —<br/>trigger dropped, never dead-lettered"| stranded["blob stranded at the container root"]
+  stranded -->|"app start — drainDeadLetterContainer re-uploads"| dead
   egst -->|filtered subscription| guard{"subject under the dead-letter container<br/>and not an archived/ or quarantine/ copy"}
   guard -->|no| ignored["return — nothing downloaded, nothing deleted"]
   guard -->|yes| exists{"blob still present?"}

@@ -6,14 +6,17 @@ import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
 const REGISTRATION_REGEX = /app\.(?:eventGrid|http|serviceBusQueue|timer)\(/gu;
+const HOOK_REGISTRATION_REGEX = /app\.hook\.\w+\(/gu;
 
 describe("@esposter/azure-functions", () => {
   const packageDirectory = resolve(import.meta.dirname, "..");
   const distFile = resolve(packageDirectory, "dist/index.js");
+  const readRegistrationCount = (directory: string) =>
+    readdirSync(resolve(packageDirectory, "src", directory)).filter((entry) => entry.endsWith(".ts")).length;
 
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4880.83 KB (4997970 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4886.70 KB (5003982 bytes)"`);
   });
 
   // The Functions host loads a v4-model app by reading "main", and never consults the generated exports map, so
@@ -40,10 +43,16 @@ describe("@esposter/azure-functions", () => {
   // Nothing else can — the bundle still loads, and every other test imports source rather than dist
   test("registers one function per source file in the bundle", () => {
     expect.hasAssertions();
-    const functionCount = readdirSync(resolve(packageDirectory, "src/functions")).filter((entry) =>
-      entry.endsWith(".ts"),
-    ).length;
 
-    expect(readFileSync(distFile, "utf8").match(REGISTRATION_REGEX)).toHaveLength(functionCount);
+    expect(readFileSync(distFile, "utf8").match(REGISTRATION_REGEX)).toHaveLength(readRegistrationCount("functions"));
+  });
+
+  // An app-level hook is registered by the same bare, result-unused `app.*` call as a trigger, so it tree-shakes
+  // Away in exactly the same silence — and the one hook here is the recovery for an app that registered nothing,
+  // Which is precisely the failure that must not depend on itself surviving the bundler
+  test("registers one hook per source file in the bundle", () => {
+    expect.hasAssertions();
+
+    expect(readFileSync(distFile, "utf8").match(HOOK_REGISTRATION_REGEX)).toHaveLength(readRegistrationCount("hooks"));
   });
 });

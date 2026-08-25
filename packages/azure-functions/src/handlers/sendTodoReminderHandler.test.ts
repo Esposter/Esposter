@@ -1,31 +1,23 @@
 import type { Database } from "@esposter/db-schema";
 
 import { sendTodoReminderHandler } from "#src/handlers/sendTodoReminderHandler";
+import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/eventGridPublisherClient.test";
 import { InvocationContext } from "@azure/functions";
 import { dayjs, getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, resources, ResourceType, users } from "@esposter/db-schema";
-import { MockContainerClient, MockContainerDatabase } from "azure-mock";
+import { AppNotificationType, AzureContainer, resources, ResourceType, users } from "@esposter/db-schema";
+import { MockContainerClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
-
-const { sendTodoReminderNotificationMock } = vi.hoisted(() => ({
-  sendTodoReminderNotificationMock:
-    vi.fn<
-      (context: InvocationContext, input: { itemName: string; resourceId: string; userId: string }) => Promise<void>
-    >(),
-}));
 
 vi.mock(import("#src/services/db"), () => ({
   get db() {
     return mockDb;
   },
 }));
+vi.mock(import("#src/services/eventGridPublisherClient"), () => import("#src/services/eventGridPublisherClient.test"));
 vi.mock(import("#src/services/getContainerClient"), () => import("#src/services/getContainerClient.test"));
-vi.mock(import("#src/services/sendTodoReminderNotification"), () => ({
-  sendTodoReminderNotification: sendTodoReminderNotificationMock,
-}));
 
 const seedContent = (resourceId: string, items: { dueAt: string; id: string; name: string }[]) => {
   const containerClient = new MockContainerClient("", AzureContainer.ResourceAssets);
@@ -54,6 +46,7 @@ describe(sendTodoReminderHandler, () => {
   afterEach(async () => {
     vi.clearAllMocks();
     MockContainerDatabase.clear();
+    MockEventGridDatabase.clear();
     await mockDb.delete(resources);
   });
 
@@ -69,11 +62,9 @@ describe(sendTodoReminderHandler, () => {
     await seedContent(resource.id, [{ dueAt: dueAt.toISOString(), id: itemId, name }]);
     await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id }, context);
 
-    expect(sendTodoReminderNotificationMock).toHaveBeenCalledWith(context, {
-      itemName: name,
-      resourceId: resource.id,
-      userId,
-    });
+    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)?.map(({ data }) => data)).toStrictEqual([
+      { itemName: name, resourceId: resource.id, type: AppNotificationType.TodoReminder, userId },
+    ]);
   });
 
   test("skips when the resource is gone", async () => {
@@ -81,7 +72,7 @@ describe(sendTodoReminderHandler, () => {
 
     await sendTodoReminderHandler({ dueAt, itemId: crypto.randomUUID(), resourceId: crypto.randomUUID() }, context);
 
-    expect(sendTodoReminderNotificationMock).not.toHaveBeenCalled();
+    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
   });
 
   test("skips when the item was deleted", async () => {
@@ -91,7 +82,7 @@ describe(sendTodoReminderHandler, () => {
     await seedContent(resource.id, []);
     await sendTodoReminderHandler({ dueAt, itemId: crypto.randomUUID(), resourceId: resource.id }, context);
 
-    expect(sendTodoReminderNotificationMock).not.toHaveBeenCalled();
+    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
   });
 
   test("skips when the item was re-dated", async () => {
@@ -103,6 +94,6 @@ describe(sendTodoReminderHandler, () => {
     await seedContent(resource.id, [{ dueAt: reDatedAt.toISOString(), id: itemId, name }]);
     await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id }, context);
 
-    expect(sendTodoReminderNotificationMock).not.toHaveBeenCalled();
+    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
   });
 });

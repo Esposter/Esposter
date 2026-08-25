@@ -14,13 +14,15 @@ const { consumeNotificationAction, deleteNotification } = notificationStore;
 </script>
 
 <template>
-  <v-list-item :title="notification.title">
+  <!-- A delivered notification carries its destination rather than an action button, so the row itself is the
+    Link — there is nothing else on it to click -->
+  <v-list-item :title="notification.title" :to="notification.path || undefined">
     <template #prepend>
       <v-icon :color="notification.severity" :icon="NotificationSeverityIconMap[notification.severity]" />
     </template>
     <template #subtitle>
       <div pt-1 flex flex-col gap-1 items-start>
-        <span v-if="notification.message">{{ notification.message }}</span>
+        <span v-if="notification.body">{{ notification.body }}</span>
         <NuxtTime :datetime="notification.createdAt" relative op-medium-emphasis />
         <AppNotificationActionButton
           v-if="notification.action"
@@ -30,7 +32,12 @@ const { consumeNotificationAction, deleteNotification } = notificationStore;
       </div>
     </template>
     <template #append>
-      <StyledTooltipIconButton icon="mdi-close" text="Dismiss" @click="deleteNotification(notification.id)" />
+      <!-- The row is a link, so the dismiss stops the click reaching it — dismissing must not navigate -->
+      <StyledTooltipIconButton
+        icon="mdi-close"
+        text="Dismiss"
+        @click.stop.prevent="deleteNotification(notification.id)"
+      />
     </template>
   </v-list-item>
 </template>

@@ -19,6 +19,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "dialog-shell",
       "destructive-confirmation",
       "persist-then-notify",
+      "notifications",
       "conditional-writes",
       "blob-lifecycle",
       "no-polling",
@@ -100,6 +101,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     ],
     Editors: [
       "dashboard-data-binding",
+      "dashboard-chart-interaction",
       "email-personalization",
       "email-web-view",
       "flowchart-publish",

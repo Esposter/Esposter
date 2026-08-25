@@ -17,6 +17,13 @@ if (!viewComponent) throw createError({ statusCode: 404, statusMessage: "Resourc
 
 <template>
   <NuxtLayout>
-    <component :is="viewComponent" :id :version />
+    <!-- The renderers load on demand, so the boundary is the editor blade's: a skeleton stands in while the chunk
+      Arrives on a client-side navigation, rather than the region rendering empty -->
+    <Suspense>
+      <component :is="viewComponent" :id :version />
+      <template #fallback>
+        <StyledSkeleton />
+      </template>
+    </Suspense>
   </NuxtLayout>
 </template>

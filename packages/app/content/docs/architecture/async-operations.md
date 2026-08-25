@@ -86,6 +86,16 @@ Two opt-ins narrow this, and nothing else does:
 
 Everything else queues. If a write is worth issuing, it is worth landing.
 
+### A read whose own side effect depends on what it snapshotted is not a read
+
+The split above is about **outcomes**, not about HTTP verbs. A read loses nothing when it is discarded — but a read that snapshots state before it fires and acts on the difference afterwards is holding a value across its own await, and two of them interleaved both snapshot the same "before".
+
+The bell's re-read after a delivered push is the case: it records the notification ids the tab already holds, re-reads the first page, and toasts whatever came back that was not in that set. Run side by side, two pushes both snapshot the pre-read list and both toast the row the first read brought back, re-toasting it after the reader has dismissed it. So the whole snapshot-read-compare goes through `executeMutation` under one key, and its queue is what makes the second call compare against a list that already holds the row.
+
+`isExclusive` is the wrong shape here, and it is the tempting one: joining the read in flight would collapse the duplicate, and it would also drop any row written after that read was issued — which is exactly the row the second push was announcing. Queueing keeps both properties: one comparison at a time, and every push still causes a read of its own.
+
+The test is not "does this fetch" but **"does discarding this lose information?"** — the same question the whole page turns on. A comparison against a snapshot is information, so the operation queues.
+
 ## The two opt-ins at a glance
 
 | Opt-in        | On a read                                                         | On a write                          |

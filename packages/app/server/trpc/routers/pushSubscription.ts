@@ -2,7 +2,7 @@ import { pushSubscriptionSchema } from "@@/server/models/pushSubscription/PushSu
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { DatabaseEntityType, pushSubscriptionsInMessage } from "@esposter/db-schema";
+import { DatabaseEntityType, pushSubscriptions } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
@@ -19,7 +19,7 @@ export const pushSubscriptionRouter = router({
       const newPushSubscription = requireMutation(
         (
           await ctx.db
-            .insert(pushSubscriptionsInMessage)
+            .insert(pushSubscriptions)
             .values({
               auth,
               endpoint,
@@ -37,7 +37,7 @@ export const pushSubscriptionRouter = router({
                 // Session that is actually using this endpoint is the one that takes its pushes away
                 sessionId: ctx.getSessionPayload.session.id,
               },
-              target: [pushSubscriptionsInMessage.endpoint, pushSubscriptionsInMessage.userId],
+              target: [pushSubscriptions.endpoint, pushSubscriptions.userId],
             })
             .returning()
         )[0],
@@ -52,12 +52,9 @@ export const pushSubscriptionRouter = router({
     const deletedPushSubscription = requireMutation(
       (
         await ctx.db
-          .delete(pushSubscriptionsInMessage)
+          .delete(pushSubscriptions)
           .where(
-            and(
-              eq(pushSubscriptionsInMessage.endpoint, input),
-              eq(pushSubscriptionsInMessage.userId, ctx.getSessionPayload.user.id),
-            ),
+            and(eq(pushSubscriptions.endpoint, input), eq(pushSubscriptions.userId, ctx.getSessionPayload.user.id)),
           )
           .returning()
       )[0],

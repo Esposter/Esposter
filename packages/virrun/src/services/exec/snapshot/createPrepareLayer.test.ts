@@ -80,12 +80,12 @@ describe(createPrepareLayer, () => {
     expect(workDir?.startsWith(join(directory, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`))).toBe(true);
   });
 
-  test("throws when there is no deps snapshot to fork", () => {
+  test("throws when there is no deps snapshot to fork", async () => {
     expect.hasAssertions();
 
     const backend = createFakeBackend(0);
 
-    expect(() => prepare(backend)).toThrowErrorMatchingInlineSnapshot(
+    await expect(prepare(backend)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${
         new InvalidOperationError(
           Operation.Create,

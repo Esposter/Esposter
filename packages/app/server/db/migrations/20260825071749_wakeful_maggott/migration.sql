@@ -1,0 +1,1 @@
+CREATE INDEX "notifications_userId_isRead_index" ON "notifications" ("userId") WHERE "isRead" = false;

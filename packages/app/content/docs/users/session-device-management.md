@@ -83,5 +83,5 @@ No admin-facing counterpart. An operator terminating another user's sessions is 
 | `packages/app/app/components/User/SessionsCard/`              | the card, its row, and the two confirm dialogs       |
 | `packages/app/app/services/auth/getDeviceLabel.ts`            | ordered user-agent markers → a readable device label |
 | `packages/app/app/store/user/sessionDialog.ts`                | the singleton revoke target                          |
-| `packages/db-schema/src/schema/pushSubscriptionsInMessage.ts` | `sessionId`, cascading on the session row            |
+| `packages/db-schema/src/schema/pushSubscriptions.ts`          | `sessionId`, cascading on the session row            |
 | `packages/db-schema/src/schema/sessions.ts`                   | the session rows, now cascading on the user          |

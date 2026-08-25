@@ -1,9 +1,9 @@
 import type { Database, ScheduledMessageJobPayload } from "@esposter/db-schema";
 
 import { processScheduledMessageJobHandler } from "#src/handlers/processScheduledMessageJobHandler";
-import { sendPushNotification } from "#src/services/sendPushNotification";
+import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
 import { InvocationContext } from "@azure/functions";
-import { dayjs } from "@esposter/db";
+import { createReplyThreadFollows, dayjs } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AzureFunction,
@@ -14,6 +14,7 @@ import {
   roomsInMessage,
   scheduledMessageJobsInMessage,
   ScheduledMessageJobType,
+  threadFollowsInMessage,
   users,
   usersToRoomsInMessage,
   WordFilterAction,
@@ -30,10 +31,17 @@ vi.mock(import("#src/services/db"), () => ({
   },
 }));
 
+// Wrapped rather than replaced, so the follow rows are still written for every test that reads them back and only
+// The one asserting a failed write can reject it
+vi.mock(import("@esposter/db"), async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    createReplyThreadFollows: vi.fn<typeof actual.createReplyThreadFollows>(actual.createReplyThreadFollows),
+  };
+});
+vi.mock(import("#src/services/eventGridPublisherClient"), () => import("#src/services/eventGridPublisherClient.test"));
 vi.mock(import("#src/services/getServiceBusSender"), () => import("#src/services/getServiceBusSender.test"));
-vi.mock(import("#src/services/sendPushNotification"), () => ({
-  sendPushNotification: vi.fn<typeof sendPushNotification>(),
-}));
 vi.mock(import("#src/services/getTableClient"), () => import("#src/services/getTableClient.test"));
 vi.mock(
   import("#src/services/getWebPubSubServiceClient"),
@@ -101,6 +109,7 @@ describe(processScheduledMessageJobHandler, () => {
     vi.useRealTimers();
     await mockDb.delete(scheduledMessageJobsInMessage);
     await mockDb.delete(roomFiltersInMessage);
+    await mockDb.delete(threadFollowsInMessage);
     MockServiceBusDatabase.clear();
     MockTableDatabase.clear();
     vi.restoreAllMocks();
@@ -215,10 +224,50 @@ describe(processScheduledMessageJobHandler, () => {
     expect(takeOne([...messagesTable.values()])).toMatchObject({ replyRowKey });
   });
 
+  // The follow rows are what ProcessNotification resolves a reply's recipients from, so a scheduled reply that
+  // Skipped them would notify the thread as if nobody had ever replied to it
+  test("follows the thread it replies into", async () => {
+    expect.hasAssertions();
+
+    const replyRowKey = "replyRowKey";
+    const job = await insertJob({ ...scheduledMessagePayload, replyRowKey });
+    await processScheduledMessageJobHandler({ id: job.id }, context);
+
+    const follows = await mockDb
+      .select({
+        isUnfollowed: threadFollowsInMessage.isUnfollowed,
+        roomId: threadFollowsInMessage.roomId,
+        threadRootRowKey: threadFollowsInMessage.threadRootRowKey,
+        userId: threadFollowsInMessage.userId,
+      })
+      .from(threadFollowsInMessage);
+
+    expect(follows).toStrictEqual([{ isUnfollowed: false, roomId, threadRootRowKey: replyRowKey, userId }]);
+  });
+
+  // Each step of the best-effort tail owns its own Result, so the one that failed is the only one skipped —
+  // Sharing one made the notification and the room's sort order conditional on a follow write nothing waits for
+  test("notifies when following the thread fails after the message is created", async () => {
+    expect.hasAssertions();
+
+    const sendSpy = vi.spyOn(eventGridPublisherClient, "send");
+    vi.mocked(createReplyThreadFollows).mockRejectedValueOnce(new Error(" "));
+    const job = await insertJob({ ...scheduledMessagePayload, replyRowKey: "replyRowKey" });
+    await processScheduledMessageJobHandler({ id: job.id }, context);
+
+    const room = await mockDb.query.roomsInMessage.findFirst({
+      columns: { updatedAt: true },
+      where: { id: { eq: roomId } },
+    });
+
+    expect(sendSpy).toHaveBeenCalledTimes(1);
+    expect(room?.updatedAt).toStrictEqual(new Date(0));
+  });
+
   test("completes job when notifying fails after the message is created", async () => {
     expect.hasAssertions();
 
-    vi.mocked(sendPushNotification).mockRejectedValueOnce(new Error(" "));
+    vi.spyOn(eventGridPublisherClient, "send").mockRejectedValueOnce(new Error(" "));
     const job = await insertJob(scheduledMessagePayload);
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
@@ -233,7 +282,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("advances the slowmode clock when notifying fails after the message is created", async () => {
     expect.hasAssertions();
 
-    vi.mocked(sendPushNotification).mockRejectedValueOnce(new Error(" "));
+    vi.spyOn(eventGridPublisherClient, "send").mockRejectedValueOnce(new Error(" "));
     const job = await insertJob(scheduledMessagePayload);
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
