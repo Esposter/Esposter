@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import { useReadNotifications } from "@/composables/notification/useReadNotifications";
 import { authClient } from "@/services/auth/authClient";
 import { useNotificationStore } from "@/store/notification";
 import { mergeProps } from "vue";
 
 const { data: session } = await authClient.useSession(useFetch);
 const notificationStore = useNotificationStore();
-const { isPanelOpen, notifications, unreadCount } = storeToRefs(notificationStore);
+const { hasMore, isPanelOpen, notifications, unreadCount } = storeToRefs(notificationStore);
 const { deleteNotifications, markAllAsRead } = notificationStore;
+const { readMoreNotifications, readNotifications } = useReadNotifications();
 const badge = computed(() => ({ color: "error", modelValue: unreadCount.value > 0 }));
+// The delivered half is the caller's own rows, so there is nothing to read for a visitor who is not signed in
+if (session.value) await readNotifications();
 </script>
 
 <template>
@@ -49,6 +53,7 @@ const badge = computed(() => ({ color: "error", modelValue: unreadCount.value > 
       <StyledEmptyState v-if="notifications.length === 0" icon="mdi-bell-outline" title="No notifications" />
       <v-list v-else max-h-120 overflow-y-auto>
         <AppNotificationBellItem v-for="notification of notifications" :key="notification.id" :notification />
+        <StyledWaypoint :is-active="hasMore" @change="readMoreNotifications" />
       </v-list>
     </v-card>
   </v-menu>
