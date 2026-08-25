@@ -3,7 +3,7 @@ import { MAX_BLUEPRINT_ENTRIES } from "#shared/services/resource/blueprint/const
 import { pluralize } from "#shared/util/text/pluralize";
 import { useNotificationStore } from "@/store/notification";
 import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
-import { RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
+import { NotificationSeverity, RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 const rules = useVRules();
@@ -51,7 +51,7 @@ onUnmounted(() => {
           onSuccess: async (newBlueprint) => {
             createNotification({
               action: { title: 'Go to blueprint', to: RoutePath.Resource(newBlueprint.id) },
-              severity: 'success',
+              severity: NotificationSeverity.Success,
               title: `Created blueprint “${newBlueprint.name}”`,
             });
             isSuccessful = true;

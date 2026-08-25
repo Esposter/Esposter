@@ -4,6 +4,7 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_CSV_EXPORT_ROWS } from "@/services/resource/constants";
 import { getResourcesCsv } from "@/services/resource/list/getResourcesCsv";
 import { useNotificationStore } from "@/store/notification";
+import { NotificationSeverity } from "@esposter/db-schema";
 import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
 
 const CSV_ACCEPT = ".csv";
@@ -20,7 +21,10 @@ export const useExportResourcesCsv = () => {
       CSV_ACCEPT,
     );
     if (isExported)
-      createNotification({ severity: "success", title: `Exported ${resourceItems.length} resources to CSV` });
+      createNotification({
+        severity: NotificationSeverity.Success,
+        title: `Exported ${resourceItems.length} resources to CSV`,
+      });
     return isExported;
   };
   // Re-queries the current filter in page-sized chunks up to the export cap, so export cost stays bounded
@@ -46,7 +50,7 @@ export const useExportResourcesCsv = () => {
       const isExported = await exportResourcesCsv(allResources.slice(0, MAX_CSV_EXPORT_ROWS));
       if (isExported && isTruncated)
         createNotification({
-          severity: "warning",
+          severity: NotificationSeverity.Warning,
           title: `Export truncated to the first ${MAX_CSV_EXPORT_ROWS} resources`,
         });
     }).match(noop, createErrorNotification);

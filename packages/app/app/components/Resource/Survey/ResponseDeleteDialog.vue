@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useNotificationStore } from "@/store/notification";
 import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
+import { NotificationSeverity } from "@esposter/db-schema";
 import { withFinalizerAsync } from "@esposter/shared";
 
 interface ResourceSurveyResponseDeleteDialogProps {
@@ -22,7 +23,7 @@ const deleteSurveyResponse = async () => {
     key: rowKey,
     onError: createErrorNotification,
     onSuccess: () => {
-      createNotification({ severity: "success", title: "Deleted response" });
+      createNotification({ severity: NotificationSeverity.Success, title: "Deleted response" });
       emit("delete");
     },
   });

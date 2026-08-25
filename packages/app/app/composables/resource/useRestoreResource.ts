@@ -1,7 +1,10 @@
 import type { Resource } from "@esposter/db-schema";
 
+import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
+import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { CacheTag } from "@/models/cache/CacheTag";
 import { useNotificationStore } from "@/store/notification";
+import { NotificationSeverity } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 // A restore returns a Draft, so the row reappears in the list but its publication does not come back
@@ -20,9 +23,8 @@ export const useRestoreResource = (refresh: () => Promise<void>) => {
       onSuccess: async () => {
         createNotification({
           action: { title: "Go to resource", to: RoutePath.Resource(resource.id) },
-          severity: "success",
-          // A restore returns a Draft — saying so up front beats a surprise when the public link 404s
-          title: `Restored "${resource.name}" as a draft`,
+          severity: NotificationSeverity.Success,
+          title: ResourceOperationTitleMap[ResourceOperationType.Restored](resource.name),
         });
         await refresh();
       },

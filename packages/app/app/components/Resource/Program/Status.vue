@@ -5,6 +5,7 @@ import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { useNotificationStore } from "@/store/notification";
 import { useProgramStore } from "@/store/resource/program";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { NotificationSeverity } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
 const { currentRoute } = useRouter();
@@ -35,7 +36,10 @@ const generateParticipants = async () => {
     key: id.value,
     onError: createErrorNotification,
     onSuccess: async (participants) => {
-      createNotification({ severity: "success", title: `${participants.length} participants ready` });
+      createNotification({
+        severity: NotificationSeverity.Success,
+        title: `${participants.length} participants ready`,
+      });
       await readStatus();
     },
   });

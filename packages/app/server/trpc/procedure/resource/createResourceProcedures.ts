@@ -4,8 +4,10 @@ import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
 import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
+import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
+import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { PUBLISHED_DIRECTORY_SEGMENT, staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { hasCapability } from "#shared/services/resource/hasCapability";
@@ -18,6 +20,7 @@ import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "@@/server/services/azure/eventGrid/publishBlobPrefixDeletion";
 import { on } from "@@/server/services/events/on";
+import { publishResourceOperation } from "@@/server/services/notification/publishResourceOperation";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
@@ -48,7 +51,14 @@ import {
   resources,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
+import {
+  createUniqueArraySchema,
+  getResultAsync,
+  InvalidOperationError,
+  noop,
+  Operation,
+  RoutePath,
+} from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -152,13 +162,19 @@ export const createResourceProcedures = <TType extends ResourceType>(
     // The blobs and the type's table partitions survive until purge — destroying them here would
     // Make restore hand back an empty resource
     deleteResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(
-      async ({ ctx, input: { id } }) =>
-        requireMutation(
+      async ({ ctx, input: { id } }) => {
+        const deletedResource = requireMutation(
           (await softDeleteResources(ctx.db, eq(resources.id, id)))[0],
           Operation.Delete,
           DatabaseEntityType.Resource,
           id,
-        ),
+        );
+        await publishResourceOperation(ctx.getSessionPayload, {
+          path: RoutePath.ResourceExplorerRecycleBin,
+          title: ResourceOperationTitleMap[ResourceOperationType.Deleted](deletedResource.name, 1),
+        });
+        return deletedResource;
+      },
     ),
     // Every content write funnels through saveResourceContent, so one save event stream is all it
     // Takes to keep every other device's view of this resource live
@@ -396,6 +412,13 @@ export const createResourceProcedures = <TType extends ResourceType>(
           resourceId: id,
           userId: ctx.getSessionPayload.user.id,
         });
+        await publishResourceOperation(ctx.getSessionPayload, {
+          path: RoutePath.Resource(id),
+          title: ResourceOperationTitleMap[ResourceOperationType.Published](
+            ctx.resource.name,
+            publication.publishVersion,
+          ),
+        });
         return publication;
       },
     ),
@@ -460,6 +483,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
         activityType: ResourceActivityType.Unpublished,
         resourceId: id,
         userId: ctx.getSessionPayload.user.id,
+      });
+      await publishResourceOperation(ctx.getSessionPayload, {
+        path: RoutePath.Resource(id),
+        title: ResourceOperationTitleMap[ResourceOperationType.Unpublished](ctx.resource.name),
       });
       return ctx.resource;
     }),
