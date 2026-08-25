@@ -1,8 +1,6 @@
 import { toAppError } from "#src/services/error/toAppError";
 import { ResultAsync } from "neverthrow";
-
+// This is the replacement the `.then`/try-catch ban points at. `fromThrowable` awaits `fn` inside its own
+// `try`, so a callback that throws SYNCHRONOUSLY lands in the same Err as one whose promise rejects
 export const getResultAsync = <T>(fn: () => Promise<T>): ResultAsync<T, Error> =>
-  // This is the replacement the ban points at, and `then` is what turns a callback throwing SYNCHRONOUSLY into
-  // A rejected promise `fromPromise` can map into an Err
-  // eslint-disable-next-line no-restricted-syntax -- the primitive the ban is written in terms of
-  ResultAsync.fromPromise(Promise.resolve().then(fn), toAppError);
+  ResultAsync.fromThrowable(fn, toAppError)();

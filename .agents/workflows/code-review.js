@@ -1539,28 +1539,26 @@ const readCandidates = (result, label) => {
 };
 
 const finderOuts = await parallel(
-  FINDERS.map(
-    (f) => () =>
-      agent(FINDER_PROMPT(f), {
-        // A conventions pass reads rules and matches lines against them — its verifiers already run low for the
-        // Same reason. Reasoning depth is what correctness angles need, so they get the level's own effort and
-        // The `cleanup` kind overrides it downward.
-        effort: isCheapToSettle(f) ? "low" : P.effort,
-        label: f.label,
-        model: AGENT_MODEL,
-        phase: "Find",
-        schema: CANDIDATES_SCHEMA,
-      }).then((r) => {
-        const candidates = readCandidates(r, f.label);
-        if (!candidates) return [];
-        // Counted here, on the finders that actually returned. A claim recorded while the prompt was being built
-        // Is counted even when its finder dies, so stats.claimsChecked — the one number saying how much of the
-        // Record was audited — reads as full coverage on exactly the session-limited runs that audited least.
-        for (const c of f.claims ?? []) claimsShown.add(c);
-        log(`${f.label}: ${candidates.length} candidates`);
-        return ingest(candidates, f.cap, f.kind, f.label);
-      }),
-  ),
+  FINDERS.map((f) => async () => {
+    const r = await agent(FINDER_PROMPT(f), {
+      // A conventions pass reads rules and matches lines against them — its verifiers already run low for the
+      // Same reason. Reasoning depth is what correctness angles need, so they get the level's own effort and
+      // The `cleanup` kind overrides it downward.
+      effort: isCheapToSettle(f) ? "low" : P.effort,
+      label: f.label,
+      model: AGENT_MODEL,
+      phase: "Find",
+      schema: CANDIDATES_SCHEMA,
+    });
+    const candidates = readCandidates(r, f.label);
+    if (!candidates) return [];
+    // Counted here, on the finders that actually returned. A claim recorded while the prompt was being built
+    // Is counted even when its finder dies, so stats.claimsChecked — the one number saying how much of the
+    // Record was audited — reads as full coverage on exactly the session-limited runs that audited least.
+    for (const c of f.claims ?? []) claimsShown.add(c);
+    log(`${f.label}: ${candidates.length} candidates`);
+    return ingest(candidates, f.cap, f.kind, f.label);
+  }),
 );
 const allCandidates = finderOuts.filter(Boolean).flat();
 let candidatesSeen = allCandidates.length;

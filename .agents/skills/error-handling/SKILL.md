@@ -22,16 +22,21 @@ description: Esposter Error Handling Conventions — neverthrow getResult/getRes
 
 Only exception: published package README examples aimed at external consumers may use plain `try`/`finally` — a doc example shouldn't force consumers to install `@esposter/shared`.
 
-A disable is one of exactly four shapes, and says which in its reason:
+**Normalising a callback that may throw synchronously is not one of them** — `Promise.try(fn)` is the primitive
+for that, and it trips no ban. Use it wherever a task has to be called through a promise so a synchronous throw
+becomes a rejection (`settleAll` hands the result to `allSettled`); `ResultAsync.fromThrowable(fn, toAppError)()`
+covers the same case when the outcome is a Result (`getResultAsync`). Never reach back for
+`Promise.resolve().then(fn)`, which only earned a disable before those two existed.
 
-| Shape                                                       | Why nothing else works                                                                                                                                  |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Promise.resolve().then(fn)` normalising a callback         | The only shape that turns a **synchronous** throw in `fn` into a rejection — `getResultAsync` maps it into an Err, `settleAll` hands it to `allSettled` |
-| A promise queue — `chain = chain.then(async () => {...})`   | Serialises async work from a sync watcher/callback, where `await` is unavailable                                                                        |
-| A trailing value map on a deliberately non-`async` function | The function stays sync so its guard throws at the call, so there is no `await`                                                                         |
-| `.finally` deregistering a promise from its own registry    | It must run on both paths and leave the outcome alone; a finalizer rethrows                                                                             |
+A disable is one of exactly three shapes, and says which in its reason:
 
-Anything else converts. The rule is what makes these four visible: before it they were indistinguishable from an
+| Shape                                                       | Why nothing else works                                                                    |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| A trailing value map on a deliberately non-`async` function | The function stays sync so its guard throws at the call, so there is no `await`           |
+| `.finally` deregistering a promise from its own registry    | It must run on both paths and leave the outcome alone; a finalizer rethrows               |
+| `.catch` on the promise under test, in that promise's test  | The test asserts the primitive's own rejection; a Result wrapper would assert the wrapper |
+
+Anything else converts. The rule is what makes these three visible: before it they were indistinguishable from an
 ordinary `.then` someone had not got round to replacing.
 
 ## Throwing — never `new Error`
