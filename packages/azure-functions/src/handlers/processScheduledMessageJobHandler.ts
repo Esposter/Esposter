@@ -154,12 +154,20 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       });
       // Best-effort after the message write ([persist then notify](/docs/architecture/persist-then-notify)). A
       // Rethrow here cannot retry these steps anyway — the claim above is single-shot, so the redelivery it asks
-      // For is skipped — it would only leave the job stuck mid-delivery with `completedAt` never stamped
-      await getResultAsync(async () => {
-        // A message scheduled into a thread is a reply like any other, so it owes the same follow rows — and
-        // Owes them before the publish that reads them
-        await createReplyThreadFollows(db, await getTableClient(AzureTable.Messages), newMessage);
-        await publishNotification(eventGridPublisherClient, {
+      // For is skipped — it would only leave the job stuck mid-delivery with `completedAt` never stamped.
+      // One Result each, exactly as `createUserMessage` does: sharing one closure makes every step after the
+      // First failure conditional on it, so a follow that could not be written would silently cost the
+      // Notification and the room's sort order too
+      const logFailure = (step: string) => (error: unknown) => {
+        context.error(`${AzureFunction.ProcessScheduledMessageJob} failed to ${step}`, { error, id });
+      };
+      // A message scheduled into a thread is a reply like any other, so it owes the same follow rows — and
+      // Owes them before the publish that reads them
+      await getResultAsync(async () =>
+        createReplyThreadFollows(db, await getTableClient(AzureTable.Messages), newMessage),
+      ).match(noop, logFailure("follow the thread"));
+      await getResultAsync(() =>
+        publishNotification(eventGridPublisherClient, {
           message: {
             message: newMessage.message,
             partitionKey: newMessage.partitionKey,
@@ -169,16 +177,13 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
           // A message scheduled into a thread notifies that thread's followers, exactly as sending it there would
           threadRootRowKey: payload.replyRowKey,
           type: AppNotificationType.Message,
-        });
-        // A room-list sort order, not a guard input — so unlike the slowmode clock above this one stays here,
-        // Where a failure leaves the room list one send behind until the next one lands
-        await db
-          .update(roomsInMessage)
-          .set({ updatedAt: new Date() })
-          .where(eq(roomsInMessage.id, processingJob.roomId));
-      }).match(noop, (error) => {
-        context.error(`${AzureFunction.ProcessScheduledMessageJob} failed to notify`, { error, id });
-      });
+        }),
+      ).match(noop, logFailure("notify"));
+      // A room-list sort order, not a guard input — so unlike the slowmode clock above this one stays here,
+      // Where a failure leaves the room list one send behind until the next one lands
+      await getResultAsync(() =>
+        db.update(roomsInMessage).set({ updatedAt: new Date() }).where(eq(roomsInMessage.id, processingJob.roomId)),
+      ).match(noop, logFailure("touch the room"));
     }
 
     await updateJob({ completedAt: new Date() });

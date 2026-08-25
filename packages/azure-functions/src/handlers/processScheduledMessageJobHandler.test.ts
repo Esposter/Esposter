@@ -3,7 +3,7 @@ import type { Database, ScheduledMessageJobPayload } from "@esposter/db-schema";
 import { processScheduledMessageJobHandler } from "#src/handlers/processScheduledMessageJobHandler";
 import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
 import { InvocationContext } from "@azure/functions";
-import { dayjs } from "@esposter/db";
+import { createReplyThreadFollows, dayjs } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AzureFunction,
@@ -31,6 +31,15 @@ vi.mock(import("#src/services/db"), () => ({
   },
 }));
 
+// Wrapped rather than replaced, so the follow rows are still written for every test that reads them back and only
+// The one asserting a failed write can reject it
+vi.mock(import("@esposter/db"), async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    createReplyThreadFollows: vi.fn<typeof actual.createReplyThreadFollows>(actual.createReplyThreadFollows),
+  };
+});
 vi.mock(import("#src/services/eventGridPublisherClient"), () => import("#src/services/eventGridPublisherClient.test"));
 vi.mock(import("#src/services/getServiceBusSender"), () => import("#src/services/getServiceBusSender.test"));
 vi.mock(import("#src/services/getTableClient"), () => import("#src/services/getTableClient.test"));
@@ -234,6 +243,25 @@ describe(processScheduledMessageJobHandler, () => {
       .from(threadFollowsInMessage);
 
     expect(follows).toStrictEqual([{ isUnfollowed: false, roomId, threadRootRowKey: replyRowKey, userId }]);
+  });
+
+  // Each step of the best-effort tail owns its own Result, so the one that failed is the only one skipped —
+  // Sharing one made the notification and the room's sort order conditional on a follow write nothing waits for
+  test("notifies when following the thread fails after the message is created", async () => {
+    expect.hasAssertions();
+
+    const sendSpy = vi.spyOn(eventGridPublisherClient, "send");
+    vi.mocked(createReplyThreadFollows).mockRejectedValueOnce(new Error(" "));
+    const job = await insertJob({ ...scheduledMessagePayload, replyRowKey: "replyRowKey" });
+    await processScheduledMessageJobHandler({ id: job.id }, context);
+
+    const room = await mockDb.query.roomsInMessage.findFirst({
+      columns: { updatedAt: true },
+      where: { id: { eq: roomId } },
+    });
+
+    expect(sendSpy).toHaveBeenCalledTimes(1);
+    expect(room?.updatedAt).toStrictEqual(new Date(0));
   });
 
   test("completes job when notifying fails after the message is created", async () => {
