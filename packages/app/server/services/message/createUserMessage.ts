@@ -1,11 +1,6 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
-import type {
-  MessageEntity,
-  NotificationOptions,
-  PushNotificationEventGridData,
-  StandardCreateMessageInput,
-} from "@esposter/db-schema";
+import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
 
 import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -14,14 +9,13 @@ import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmi
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
 import { createThreadFollow } from "@@/server/services/message/thread/createThreadFollow";
-import { notifyThreadReplyFollowers } from "@@/server/services/message/thread/notifyThreadReplyFollowers";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
-import { createMessage, getEntity, getPushSubscriptionsForMessage, incrementMentionCounts } from "@esposter/db";
+import { createMessage, getEntity, incrementMentionCounts } from "@esposter/db";
 import {
-  AzureFunction,
+  AppNotificationType,
   AzureTable,
-  createEventGridEvent,
   DatabaseEntityType,
+  publishNotification,
   roomsInMessage,
   StandardMessageEntity,
 } from "@esposter/db-schema";
@@ -55,59 +49,9 @@ export const createUserMessage = async (
     .unwrapOr([]);
   for (const mentionedUserToRoom of mentionedUsersToRooms)
     userToRoomEventEmitter.emit("updateUserToRoom", mentionedUserToRoom);
-  // Best-effort after the Table write — a failed read skips this send's push notifications, never the message.
-  const readPushSubscriptions = await getResultAsync(() => getPushSubscriptionsForMessage(db, newMessageEntity))
-    .orTee(console.error)
-    .unwrapOr([]);
-  // Resolve the sender's room title once — shared by the generic message push and the thread-reply push, so
-  // A reply never runs the same nickname lookup twice. Skip it entirely when no push path needs it.
-  let title = user.name;
-  if (readPushSubscriptions.length > 0 || newMessageEntity.replyRowKey) {
-    // Best-effort after the Table write — a failed lookup shows the push under the account name instead of the
-    // Room nickname, never costs the message.
-    const nickname = await getResultAsync(
-      async () =>
-        (
-          await db.query.usersToRoomsInMessage.findFirst({
-            columns: { nickname: true },
-            where: {
-              roomId: newMessageEntity.partitionKey,
-              userId: user.id,
-            },
-          })
-        )?.nickname,
-    )
-      .orTee(console.error)
-      .unwrapOr(undefined);
-    title = nickname || user.name;
-  }
-  const notificationOptions: NotificationOptions = { icon: user.image, title };
-
-  if (readPushSubscriptions.length > 0) {
-    const eventGridPublisherClient = useEventGridPublisherClient();
-    const data: PushNotificationEventGridData = {
-      message: {
-        message: newMessageEntity.message,
-        partitionKey: newMessageEntity.partitionKey,
-        rowKey: newMessageEntity.rowKey,
-        userId: newMessageEntity.userId,
-      },
-      notificationOptions,
-    };
-    // Best-effort after the Table write — a failed publish loses one push, never the message that already landed.
-    await getResultAsync(() =>
-      eventGridPublisherClient.send([
-        createEventGridEvent(
-          AzureFunction.ProcessPushNotification,
-          `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
-          data,
-        ),
-      ]),
-    ).match(noop, console.error);
-  }
-  // A reply auto-follows its thread (Discord behaviour) and notifies existing followers. Both run post-persist
-  // And best-effort — a follow/notify failure must never fail the reply that already landed. Anyone already
-  // Reached by the generic message push above is excluded so a single reply never double-notifies a recipient.
+  // A reply auto-follows its thread (Discord behaviour). Post-persist and best-effort — a follow failure must
+  // Never fail the reply that already landed — but strictly BEFORE the publish below, because the follow rows are
+  // What ProcessNotification reads to decide who the reply reaches
   if (newMessageEntity.replyRowKey) {
     const threadRootRowKey = newMessageEntity.replyRowKey;
     // The root's author is followed alongside the replier: Discord tells you when someone replies to your
@@ -129,11 +73,23 @@ export const createUserMessage = async (
     if (threadRootMessage?.userId && threadRootMessage.userId !== user.id)
       threadFollows.push(createThreadFollow(db, { roomId, threadRootRowKey, userId: threadRootMessage.userId }, false));
     await getResultAsync(() => Promise.all(threadFollows)).match(noop, console.error);
-    const excludedUserIds = [...new Set(readPushSubscriptions.map((pushSubscription) => pushSubscription.userId))];
-    await getResultAsync(() =>
-      notifyThreadReplyFollowers(db, newMessageEntity, notificationOptions, excludedUserIds),
-    ).match(noop, console.error);
   }
+  // One notification for the send, thread reply or not: the room's own recipients and the thread's followers are
+  // One recipient set resolved by ProcessNotification, so a reply can no longer notify a follower twice and this
+  // Path no longer pays for a recipient query it was only running to decide whether to publish at all.
+  // Best-effort after the Table write — a failed publish loses one notification, never the message that landed
+  await getResultAsync(() =>
+    publishNotification(useEventGridPublisherClient(), {
+      message: {
+        message: newMessageEntity.message,
+        partitionKey: newMessageEntity.partitionKey,
+        rowKey: newMessageEntity.rowKey,
+        userId: newMessageEntity.userId,
+      },
+      threadRootRowKey: newMessageEntity.replyRowKey,
+      type: AppNotificationType.Message,
+    }),
+  ).match(noop, console.error);
   // Best-effort after the Table write — a failed touch leaves the room list sorted one send behind until the
   // Next one lands, never costs the message that already landed
   const updatedRoom = await getResultAsync(

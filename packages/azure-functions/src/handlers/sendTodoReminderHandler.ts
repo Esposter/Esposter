@@ -2,12 +2,19 @@ import type { ServiceBusQueueHandler } from "@azure/functions";
 
 import { todoReminderContentSchema } from "#src/models/TodoReminderContent";
 import { db } from "#src/services/db";
+import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
 import { getContainerClient } from "#src/services/getContainerClient";
 import { logAndRethrow } from "#src/services/logAndRethrow";
-import { sendTodoReminderNotification } from "#src/services/sendTodoReminderNotification";
 import { RestError } from "@azure/storage-blob";
 import { getContentBlobName } from "@esposter/db";
-import { AzureContainer, AzureFunction, ResourceType, todoReminderQueueMessageSchema } from "@esposter/db-schema";
+import {
+  AppNotificationType,
+  AzureContainer,
+  AzureFunction,
+  publishNotification,
+  ResourceType,
+  todoReminderQueueMessageSchema,
+} from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 export const sendTodoReminderHandler: ServiceBusQueueHandler = (message, context) =>
@@ -48,5 +55,10 @@ export const sendTodoReminderHandler: ServiceBusQueueHandler = (message, context
       return;
     }
 
-    await sendTodoReminderNotification(context, { itemName: item.name, resourceId, userId: resource.userId });
+    await publishNotification(eventGridPublisherClient, {
+      itemName: item.name,
+      resourceId,
+      type: AppNotificationType.TodoReminder,
+      userId: resource.userId,
+    });
   }).match(noop, logAndRethrow(context, AzureFunction.SendTodoReminder));

@@ -8,8 +8,9 @@ import { friendRequestsRelation } from "#src/relations/friendRequestsRelation";
 import { friendsRelation } from "#src/relations/friendsRelation";
 import { invitesInMessageRelation } from "#src/relations/invitesInMessageRelation";
 import { likesRelation } from "#src/relations/likesRelation";
+import { notificationsRelation } from "#src/relations/notificationsRelation";
 import { postsRelation } from "#src/relations/postsRelation";
-import { pushSubscriptionsInMessageRelation } from "#src/relations/pushSubscriptionsInMessageRelation";
+import { pushSubscriptionsRelation } from "#src/relations/pushSubscriptionsRelation";
 import { resourceAccessesRelation } from "#src/relations/resourceAccessesRelation";
 import { resourceFavoritesRelation } from "#src/relations/resourceFavoritesRelation";
 import { resourcePublicationsRelation } from "#src/relations/resourcePublicationsRelation";
@@ -42,8 +43,9 @@ export const relations = {
   ...friendsRelation,
   ...invitesInMessageRelation,
   ...likesRelation,
+  ...notificationsRelation,
   ...postsRelation,
-  ...pushSubscriptionsInMessageRelation,
+  ...pushSubscriptionsRelation,
   ...resourceAccessesRelation,
   ...resourceFavoritesRelation,
   ...resourcePublicationsRelation,

@@ -39,7 +39,7 @@ describe(replayDeadLetterEventHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const data = "data";
   const dataVersion = "1.0";
-  const eventType = AzureFunction.ProcessPushNotification;
+  const eventType = AzureFunction.ProcessNotification;
   const subject = "subject";
   const eventId = crypto.randomUUID();
   const secondEventId = crypto.randomUUID();

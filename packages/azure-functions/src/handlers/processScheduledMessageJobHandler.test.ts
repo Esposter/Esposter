@@ -1,7 +1,7 @@
 import type { Database, ScheduledMessageJobPayload } from "@esposter/db-schema";
 
 import { processScheduledMessageJobHandler } from "#src/handlers/processScheduledMessageJobHandler";
-import { sendPushNotification } from "#src/services/sendPushNotification";
+import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
 import { InvocationContext } from "@azure/functions";
 import { dayjs } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
@@ -30,10 +30,8 @@ vi.mock(import("#src/services/db"), () => ({
   },
 }));
 
+vi.mock(import("#src/services/eventGridPublisherClient"), () => import("#src/services/eventGridPublisherClient.test"));
 vi.mock(import("#src/services/getServiceBusSender"), () => import("#src/services/getServiceBusSender.test"));
-vi.mock(import("#src/services/sendPushNotification"), () => ({
-  sendPushNotification: vi.fn<typeof sendPushNotification>(),
-}));
 vi.mock(import("#src/services/getTableClient"), () => import("#src/services/getTableClient.test"));
 vi.mock(
   import("#src/services/getWebPubSubServiceClient"),
@@ -218,7 +216,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("completes job when notifying fails after the message is created", async () => {
     expect.hasAssertions();
 
-    vi.mocked(sendPushNotification).mockRejectedValueOnce(new Error(" "));
+    vi.spyOn(eventGridPublisherClient, "send").mockRejectedValueOnce(new Error(" "));
     const job = await insertJob(scheduledMessagePayload);
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
@@ -233,7 +231,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("advances the slowmode clock when notifying fails after the message is created", async () => {
     expect.hasAssertions();
 
-    vi.mocked(sendPushNotification).mockRejectedValueOnce(new Error(" "));
+    vi.spyOn(eventGridPublisherClient, "send").mockRejectedValueOnce(new Error(" "));
     const job = await insertJob(scheduledMessagePayload);
     await processScheduledMessageJobHandler({ id: job.id }, context);
 

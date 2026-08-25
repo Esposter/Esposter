@@ -1,40 +1,37 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { PushNotificationEventGridData } from "@esposter/db-schema";
+import type { MessageNotificationData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { createMentionMessage } from "@@/server/trpc/routers/createMentionMessage.test";
+import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { userToRoomRouter } from "@@/server/trpc/routers/userToRoom";
-import { AzureFunction, NotificationType, pushSubscriptionsInMessage, roomsInMessage } from "@esposter/db-schema";
+import { AppNotificationType, AzureFunction, pushSubscriptions, roomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
-// What the Azure Function receives: the message as stored plus the sender rendered as the notification's title
-// And icon, which is the whole contract between the two
-const createPushNotificationData = (
+// What the Azure Function receives: the message as stored, and the thread root when the send was a reply. Who it
+// Reaches is resolved at delivery from these fields alone — the recipient rules are getMessageRecipientUserIds'
+// Own suite, and nothing on the request path answers them any more
+const createMessageNotificationData = (
   messageText: string,
   partitionKey: string,
   rowKey: string,
-): PushNotificationEventGridData => {
-  const sender = getMockSession().user;
-  return {
-    message: { message: messageText, partitionKey, rowKey, userId: sender.id },
-    notificationOptions: { icon: sender.image, title: sender.name },
-  };
-};
+  threadRootRowKey?: string,
+): MessageNotificationData => ({
+  message: { message: messageText, partitionKey, rowKey, userId: getMockSession().user.id },
+  threadRootRowKey,
+  type: AppNotificationType.Message,
+});
 
 describe("pushSubscription", () => {
   let mockContext: Context;
   let pushSubscriptionCaller: DecorateRouterRecord<TRPCRouter["pushSubscription"]>;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  let userToRoomCaller: DecorateRouterRecord<TRPCRouter["userToRoom"]>;
   const name = "name";
   const message = "message";
   const endpoint = "https://.";
@@ -43,34 +40,18 @@ describe("pushSubscription", () => {
   const p256dh = "p256dh";
   const updatedP256dh = "updatedP256dh";
 
-  // A second member of the room, subscribed to push and opted into what the test is about, with the session
-  // Left back on the owner — the sender every notification test posts as
-  const joinSubscribedMember = async (roomId: string, notificationType?: NotificationType) => {
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
-    const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(newInvite.id);
-    await mockSessionOnce(mockContext.db, user);
-    await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
-    if (notificationType) {
-      await mockSessionOnce(mockContext.db, user);
-      await userToRoomCaller.updateUserToRoom({ notificationType, roomId });
-    }
-    return user;
-  };
-
   beforeAll(async () => {
     mockContext = await createMockContext();
     pushSubscriptionCaller = createCallerFactory(pushSubscriptionRouter)(mockContext);
     messageCaller = createCallerFactory(messageRouter)(mockContext);
     roomCaller = createCallerFactory(roomRouter)(mockContext);
-    userToRoomCaller = createCallerFactory(userToRoomRouter)(mockContext);
   });
 
   afterEach(async () => {
     MockEventGridDatabase.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(roomsInMessage);
-    await mockContext.db.delete(pushSubscriptionsInMessage);
+    await mockContext.db.delete(pushSubscriptions);
   });
 
   test("subscribes", async () => {
@@ -111,101 +92,38 @@ describe("pushSubscription", () => {
     expect(deletedPushSubscription.endpoint).toBe(endpoint);
   });
 
-  test(`createMessage notifies ${NotificationType.All} member (excludes sender)`, async () => {
+  test("createMessage publishes one notification", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
-    await userToRoomCaller.updateUserToRoom({ notificationType: NotificationType.All, roomId: newRoom.id });
-
-    await joinSubscribedMember(newRoom.id, NotificationType.All);
-
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-
-    const processPushNotificationEvents = MockEventGridDatabase.get("");
-    assert(processPushNotificationEvents);
-
-    expect(processPushNotificationEvents).toHaveLength(1);
-    expect(takeOne(processPushNotificationEvents).data).toStrictEqual(
-      createPushNotificationData(message, newRoom.id, newMessage.rowKey),
-    );
-  });
-
-  test(`createMessage notifies ${NotificationType.DirectMessage} member when mentioned`, async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
-
-    const user = await joinSubscribedMember(newRoom.id);
-
-    const messageText = createMentionMessage(user.id);
-    const newMessage = await messageCaller.createMessage({
-      message: messageText,
-      roomId: newRoom.id,
-    });
-
-    const processPushNotificationEvents = MockEventGridDatabase.get("");
-    assert(processPushNotificationEvents);
-
-    expect(processPushNotificationEvents).toHaveLength(1);
-    expect(takeOne(processPushNotificationEvents).data).toStrictEqual(
-      createPushNotificationData(messageText, newRoom.id, newMessage.rowKey),
-    );
-  });
-
-  test(`createMessage does not notify ${NotificationType.DirectMessage} member when not mentioned`, async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
-
-    await joinSubscribedMember(newRoom.id);
-
-    await messageCaller.createMessage({ message, roomId: newRoom.id });
-
-    const processPushNotificationEvents = MockEventGridDatabase.get("");
-
-    expect(processPushNotificationEvents).toBeUndefined();
-  });
-
-  test(`createMessage does not notify ${NotificationType.Never} member`, async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
-
-    const user = await joinSubscribedMember(newRoom.id, NotificationType.Never);
-
-    await messageCaller.createMessage({ message: createMentionMessage(user.id), roomId: newRoom.id });
-
-    const processPushNotificationEvents = MockEventGridDatabase.get("");
-
-    expect(processPushNotificationEvents).toBeUndefined();
-  });
-
-  test(`createMessage reply notifies a thread follower who is also a ${NotificationType.All} member only once`, async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const user = await joinSubscribedMember(newRoom.id, NotificationType.All);
-
-    // The owner posts a thread root the follower follows.
-    const root = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db, user);
-    await messageCaller.followThread({ roomId: newRoom.id, threadRootRowKey: root.rowKey });
-
-    // Ignore the root message's push; assert only on the reply.
-    MockEventGridDatabase.clear();
-
-    const reply = await messageCaller.createMessage({ message, replyRowKey: root.rowKey, roomId: newRoom.id });
-
     const events = MockEventGridDatabase.get("");
     assert(events);
 
-    // Reached once — by the generic message push; the thread-reply push excludes them, so no second event fires.
+    // Published unconditionally: whether anyone is subscribed is not a question the request path asks any more,
+    // Which is what removed a recipient query from every send
     expect(events).toHaveLength(1);
-    expect(takeOne(events).eventType).toBe(AzureFunction.ProcessPushNotification);
-    expect(takeOne(events).data).toStrictEqual(createPushNotificationData(message, newRoom.id, reply.rowKey));
+    expect(takeOne(events).eventType).toBe(AzureFunction.ProcessNotification);
+    expect(takeOne(events).data).toStrictEqual(createMessageNotificationData(message, newRoom.id, newMessage.rowKey));
+  });
+
+  test("createMessage reply publishes one notification carrying the thread root", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const root = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    // Ignore the root message's notification; assert only on the reply
+    MockEventGridDatabase.clear();
+
+    const reply = await messageCaller.createMessage({ message, replyRowKey: root.rowKey, roomId: newRoom.id });
+    const events = MockEventGridDatabase.get("");
+    assert(events);
+
+    // One event rather than two: a thread's followers widen the reply's recipient set instead of raising a
+    // Second notification that the first has to be de-duplicated against
+    expect(events).toHaveLength(1);
+    expect(takeOne(events).data).toStrictEqual(
+      createMessageNotificationData(message, newRoom.id, reply.rowKey, root.rowKey),
+    );
   });
 });

@@ -32,7 +32,7 @@ describe(createEventGridNotificationHandler, () => {
     const send = vi
       .fn<(context: AInvocationContext, data: z.infer<typeof schema>) => Promise<void>>()
       .mockResolvedValue();
-    const handler = createEventGridNotificationHandler(AzureFunction.ProcessPushNotification, schema, send, () => "");
+    const handler = createEventGridNotificationHandler(AzureFunction.ProcessNotification, schema, send, () => "");
 
     await handler(createEvent(), context);
 
@@ -46,7 +46,7 @@ describe(createEventGridNotificationHandler, () => {
     const send = vi
       .fn<(context: AInvocationContext, data: z.infer<typeof schema>) => Promise<void>>()
       .mockRejectedValue(error);
-    const handler = createEventGridNotificationHandler(AzureFunction.ProcessPushNotification, schema, send, () => "");
+    const handler = createEventGridNotificationHandler(AzureFunction.ProcessNotification, schema, send, () => "");
 
     await expect(handler(createEvent(), context)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[Error: ${error.message}]`,

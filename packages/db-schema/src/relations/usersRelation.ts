@@ -38,9 +38,9 @@ export const usersRelation = defineRelationsPart(schema, (r) => ({
       from: r.users.id.through(r.posts.userId),
       to: r.posts.id.through(r.posts.parentId),
     }),
-    pushSubscriptionsInMessages: r.many.pushSubscriptionsInMessage({
+    pushSubscriptionss: r.many.pushSubscriptions({
       from: r.users.id,
-      to: r.pushSubscriptionsInMessage.userId,
+      to: r.pushSubscriptions.userId,
     }),
     receivedFriendRequests: r.many.friendRequests({
       from: r.users.id,
