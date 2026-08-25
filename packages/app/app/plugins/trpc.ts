@@ -3,7 +3,6 @@ import type { TRPCLink } from "@trpc/client";
 
 import { transformer } from "#shared/services/trpc/transformer";
 import { IS_PRODUCTION, IS_TEST } from "#shared/util/environment/constants";
-import { TRPCOfflineClientError } from "@/models/trpc/TRPCOfflineClientError";
 import { TRPC_CLIENT_PATH, TRPC_WS_PATH } from "@/services/trpc/constants";
 import { errorLink } from "@/services/trpc/errorLink";
 import { createOfflineLink } from "@/services/trpc/offlineLink";
@@ -18,15 +17,7 @@ import {
 } from "@trpc/client";
 import { createTRPCNuxtClient, httpBatchLink, httpLink } from "trpc-nuxt/client";
 
-export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.hook("vue:error", (error) => {
-    if (error instanceof TRPCOfflineClientError) return;
-  });
-  if (!getIsServer())
-    window.addEventListener("unhandledrejection", (event) => {
-      if (event.reason instanceof TRPCOfflineClientError) event.preventDefault();
-    });
-
+export default defineNuxtPlugin(() => {
   const online = useOnline();
   const links: TRPCLink<TRPCRouter>[] = [
     // Log to your console in development and only log errors in production
