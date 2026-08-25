@@ -36,8 +36,18 @@ export const notifications = pgTable(
   {
     // Every read of this table is the same shape — one user's own bell, newest first — so the index carries the
     // Order too and a page is a range scan rather than a scan plus a sort. `createdAt` comes from the metadata
-    // Columns the pgTable wrapper adds, which are outside what extraConfig is handed, so it is named in SQL
-    extraConfig: ({ userId }) => [index("notifications_userId_createdAt_index").on(userId, sql`"createdAt" DESC`)],
+    // Columns the pgTable wrapper adds, which are outside what extraConfig is handed, so it is named in SQL.
+    //
+    // The unread total is the second read, and the composite index is the wrong shape for it: it would scan one
+    // User's whole history to count the unread rows in it, and that history only grows — nothing purges a
+    // Notification once it is read. The partial index is the size of the answer instead, and the answer is what a
+    // Bell shows. Its predicate is spelled exactly as the query's, so the planner needs no implication proof
+    extraConfig: ({ isRead, userId }) => [
+      index("notifications_userId_createdAt_index").on(userId, sql`"createdAt" DESC`),
+      index("notifications_userId_isRead_index")
+        .on(userId)
+        .where(sql`${isRead} = false`),
+    ],
   },
 );
 
