@@ -20,7 +20,7 @@ export const devLogicEsposterAe003: azure_native.logic.Workflow = new azure_nati
       $schema:
         "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
       actions: {
-        [`Delete_${AzureFunction.ProcessPushNotification}_Event_Subscription`]: {
+        [`Delete_${AzureFunction.ProcessNotification}_Event_Subscription`]: {
           inputs: {
             host: {
               connection: {

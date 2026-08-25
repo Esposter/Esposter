@@ -24,7 +24,7 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
       $schema:
         "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
       actions: {
-        [`Create_${AzureFunction.ProcessPushNotification}_Event_Subscription`]: {
+        [`Create_${AzureFunction.ProcessNotification}_Event_Subscription`]: {
           inputs: {
             body: {
               properties: {
@@ -42,13 +42,13 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
                   properties: {
                     maxEventsPerBatch: 1,
                     preferredBatchSizeInKilobytes: 64,
-                    resourceId: pulumi.interpolate`${prodFuncEsposter001.id}/functions/${AzureFunction.ProcessPushNotification}`,
+                    resourceId: pulumi.interpolate`${prodFuncEsposter001.id}/functions/${AzureFunction.ProcessNotification}`,
                   },
                 },
                 eventDeliverySchema: "EventGridSchema",
                 filter: {
                   enableAdvancedFilteringOnArrays: true,
-                  includedEventTypes: [AzureFunction.ProcessPushNotification],
+                  includedEventTypes: [AzureFunction.ProcessNotification],
                   subjectBeginsWith: "",
                   subjectEndsWith: "",
                 },
@@ -72,7 +72,7 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
             },
           },
           runAfter: {
-            [`Read_${AzureFunction.ProcessPushNotification}_Event_Subscription`]: ["Failed"],
+            [`Read_${AzureFunction.ProcessNotification}_Event_Subscription`]: ["Failed"],
           },
           type: "ApiConnection",
         },
@@ -128,7 +128,7 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
           },
           type: "ApiConnection",
         },
-        [`Read_${AzureFunction.ProcessPushNotification}_Event_Subscription`]: {
+        [`Read_${AzureFunction.ProcessNotification}_Event_Subscription`]: {
           inputs: {
             host: {
               connection: {
