@@ -69,7 +69,8 @@ description: Esposter Vitest testing conventions — a test file colocated with 
 ## Running Tests
 
 - **Always use `run_in_background: true`** for `pnpm lint`, `pnpm typecheck`, and test commands.
-- **Never run the full suite locally** — `pnpm test <paths> -u --run` with the paths the change touched. The scoping rule is the `package-scripts` skill's; full-run-only failures and the Windows module allowlist are `references/running-the-suite.md`.
+- **Never run the full suite locally** — `pnpm test <paths> -u --run` with the paths the change touched. CI is the regression net and shards it across runners; a local run answers one question about one change. The scoping rule is the `package-scripts` skill's; full-run-only failures and the Windows module allowlist are `references/running-the-suite.md`.
+- **`-t "name"` is not a scope — pass paths as well.** A name filter picks which tests _execute_; every test file in range is still collected, transformed and imported first, so `-t` alone spends a full suite's startup to run a handful of assertions. Whenever a run is narrowed by name — refreshing the bundle-size snapshots is the standing case, `-t "size" index.test.ts` (`references/platform-and-bundle-tests.md`) — narrow it by path in the same command.
 - **`-u` can rewrite a snapshot belonging to a test it never ran.** `packages/vue-phaserjs/src/index.test.ts` splits its size snapshots by platform with `test.skipIf(process.platform === "win32")`, and a broad `-u` on Windows wrote the Windows byte counts into the **POSIX** slots — the two then read identically, which is the one thing that file exists to prevent, and it fails on CI's ubuntu runner rather than locally. So `-u` gets the narrowest path list that can produce the diff, and **`git diff` on the updated snapshots is read before committing**: a snapshot that moved in a file the change never touched is the tell.
 
 ## What to Test
