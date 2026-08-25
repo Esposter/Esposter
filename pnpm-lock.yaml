@@ -628,8 +628,8 @@ catalogs:
       specifier: ^0.6.1
       version: 0.6.1
     vue-pdf-embed:
-      specifier: ^2.1.5
-      version: 2.1.5
+      specifier: ^2.1.6
+      version: 2.1.6
     vue-router:
       specifier: ^5.2.0
       version: 5.2.0
@@ -1105,7 +1105,7 @@ importers:
         version: 0.6.1(@types/sortablejs@1.15.9)
       vue-pdf-embed:
         specifier: 'catalog:'
-        version: 2.1.5(vue@3.5.41(typescript@6.0.3))
+        version: 2.1.6(vue@3.5.41(typescript@6.0.3))
       vue-phaserjs:
         specifier: workspace:*
         version: link:../vue-phaserjs
@@ -14618,8 +14618,8 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
 
-  vue-pdf-embed@2.1.5:
-    resolution: {integrity: sha512-IGFVBYlnOz2zSql1zk4YJyBu584EZa6RUykk5f8wkHF/AR31khCa+ruJoRag+Ff2UyntkWu0brENIKoikQ7F8g==}
+  vue-pdf-embed@2.1.6:
+    resolution: {integrity: sha512-cNmclL9jGuRIqgm13fx/3ZZd1nW/Nn0zXfQUo/yd8AQU9GTFLLYRgFc5HM41v1+bMoj1wW59mZoB/cNQx8Y2Rw==}
     peerDependencies:
       vue: ^3.3.0
 
@@ -30064,7 +30064,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vue-pdf-embed@2.1.5(vue@3.5.41(typescript@6.0.3)):
+  vue-pdf-embed@2.1.6(vue@3.5.41(typescript@6.0.3)):
     dependencies:
       pdfjs-dist: 6.2.108
       vue: 3.5.41(typescript@6.0.3)
