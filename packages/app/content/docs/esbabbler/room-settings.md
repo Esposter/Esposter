@@ -25,7 +25,7 @@ Gating lives in `SettingsPermissionMap` — a panel with an entry is hidden from
 
 `MANAGEMENT_PERMISSIONS` — the gate on opening the dialog at all, and on the room list's settings button — is the union of that map plus `Administrator`, derived from it rather than listed beside it. A member who may only manage emoji or bans therefore reaches the rail that manages them, holding one row.
 
-**Roles** edits roles and their permission bitfields; **Members** assigns/revokes member roles; **Invites** lists the link the reader holds and links into the dialog that creates one, which is where creating stays ([invites](/docs/esbabbler/invites)); **Attachments** edits the room's upload limits, described in [file & media](/docs/esbabbler/file-media).
+**Roles** edits roles and their permission bitfields; **Members** assigns/revokes member roles and searches the room by name, over the `readMembers` predicate the room list has always accepted — the room's own totals are read once and never re-read against a filtered page, since the roleless group is derived from a count of everybody; **Invites** lists the link the reader holds and links into the dialog that creates one, which is where creating stays ([invites](/docs/esbabbler/invites)); **Attachments** edits the room's upload limits, described in [file & media](/docs/esbabbler/file-media).
 
 ## How it works
 

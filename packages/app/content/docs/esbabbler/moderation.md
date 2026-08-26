@@ -56,6 +56,8 @@ Rooms can define filtered words (`room.filter` router, `roomFiltersInMessage`). 
 
 The moderation log is an append-only Azure Table (`AzureTable.ModerationLog`): `partitionKey = roomId`, `rowKey = reverseTickedTimestamp`, fields `type`, `actorUserId`, `targetUserId`, `durationMs?`. It is surfaced in the room settings **Audit Log** tab (behind `ManageRoom`), with a filter bar over action type, actor, and target — the filters become extra `$filter` clauses on the partition query (a partition scan, fine at room-log scale), so filtered pagination stays stateless through the same cursor. The empty state distinguishes "no entries" from "no matches". Bans are relational (`bans` table in Postgres: `roomId`, `userId`, `bannedByUserId`).
 
+The **Bans** tab searches by the banned user's name, over the join that already renders the row, so the predicate costs nothing beyond the `ilike`. The ban reason is deliberately not matched: it is free text a moderator wrote, searching it makes the panel feel like a log search, and the want the tab serves is whether a person is banned — which is a name. An emptied field lists the room's bans again rather than leaving the last term's rows on screen, because the empty query is issued as a query rather than treated as a reset, and paging carries the term with the cursor so a ban placed mid-scroll cannot appear in a page of a search it does not match.
+
 ## Procedures
 
 `moderation` router (`server/trpc/routers/message/moderation.ts`):
@@ -64,7 +66,7 @@ The moderation log is an append-only Azure Table (`AzureTable.ModerationLog`): `
 | :-------------------------------------------------------------------------- | :-------------------------- | :-------------------------------------------------- |
 | `executeAdminAction({ roomId, targetUserId, type, durationMs? })`           | per-action gate + hierarchy | Execute any admin action                            |
 | `onAdminAction({ roomId })`                                                 | member                      | Subscription; targeted `userId` receives the action |
-| `readBans({ roomId, cursor, limit })`                                       | `BanMembers`                | Cursor-paginated ban list                           |
+| `readBans({ roomId, cursor, filter, limit })`                               | `BanMembers`                | Cursor-paginated ban list, searchable by name       |
 | `deleteBan({ roomId, userId })`                                             | `BanMembers`                | Unban                                               |
 | `readModerationLog({ roomId, cursor, type?, actorUserId?, targetUserId? })` | `ManageRoom`                | Cursor-paginated audit log, optionally filtered     |
 

@@ -14,6 +14,7 @@ import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPag
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
 import { stopLiveKitScreenShare } from "@@/server/services/livekit/stopLiveKitScreenShare";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
@@ -54,7 +55,7 @@ import {
 } from "@esposter/db-schema";
 import { exhaustiveGuard, getResultAsync, ItemMetadataPropertyNames, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, getColumns, isNull, SQL } from "drizzle-orm";
+import { and, eq, getColumns, ilike, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
 // The membership row an admin action removes, times out, or replaces
@@ -222,12 +223,14 @@ export const moderationRouter = router({
   }),
   readBans: getPermissionsProcedure(RoomPermission.BanMembers, readBansInputSchema, "roomId").query<
     CursorPaginationData<BanInMessageWithRelations>
-  >(async ({ ctx, input: { cursor, limit, roomId } }) => {
+  >(async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
     const sortBy: SortItem<keyof BanInMessage>[] = [
       { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
     ];
     const wheres: (SQL | undefined)[] = [eq(bansInMessage.roomId, roomId), isNull(bansInMessage.deletedAt)];
     if (cursor) wheres.push(getCursorWhere(bansInMessage, cursor, sortBy));
+    // The join below already brings the banned user's name into scope, so the predicate costs nothing extra
+    if (filter?.name) wheres.push(ilike(users.name, `%${escapeLike(filter.name)}%`));
 
     const bannedByUsers = alias(users, "bannedByUsers");
     const readBans = await ctx.db
