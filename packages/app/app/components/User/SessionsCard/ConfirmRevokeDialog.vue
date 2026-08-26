@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { getDeviceLabel } from "@/services/auth/getDeviceLabel";
 import { useUserSessionDialogStore } from "@/store/user/sessionDialog";
 
 export interface UserSessionsCardConfirmRevokeDialogProps {
+  deviceLabel: string;
   isCurrent?: true;
-  userAgent: string;
 }
 
-const { isCurrent, userAgent } = defineProps<UserSessionsCardConfirmRevokeDialogProps>();
+const { deviceLabel, isCurrent } = defineProps<UserSessionsCardConfirmRevokeDialogProps>();
 const emit = defineEmits<{ revoke: [onComplete: (isSuccessful?: boolean) => void] }>();
 const userSessionDialogStore = useUserSessionDialogStore();
 const { revokingId } = storeToRefs(userSessionDialogStore);
@@ -23,8 +22,6 @@ const { isOpen } = useSingletonDialog(revokingId);
     @delete="(onComplete) => emit('revoke', onComplete)"
   >
     <template v-if="isCurrent">Sign this device out of your account? You will be sent back to the login page.</template>
-    <template v-else>
-      Sign {{ getDeviceLabel(userAgent) }} out of this account? Whoever is using it has to sign in again.
-    </template>
+    <template v-else> Sign {{ deviceLabel }} out of this account? Whoever is using it has to sign in again. </template>
   </StyledDeleteFormDialog>
 </template>

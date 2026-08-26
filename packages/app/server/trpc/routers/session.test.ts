@@ -34,6 +34,8 @@ describe("session", () => {
   let userId: string;
   const userAgent =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36";
+  // The agent above as the endpoint hands it out — the raw string is stored, never returned
+  const deviceLabel = "Chrome 141 on Windows";
 
   // The row as better-auth writes it, minus the token the client is never handed
   const insertSession = async (session: Session, expiresAt = dayjs().add(1, "day").toDate()) => {
@@ -79,11 +81,11 @@ describe("session", () => {
 
     const readSessions = await caller.readSessions();
 
-    // Two jobs fall to toStrictEqual here: an `ipAddress` that leaked through shows up as an extra key, and a
-    // Session nobody is signed in with any more shows up as an extra row
+    // Three jobs fall to toStrictEqual here: an `ipAddress` or a raw `userAgent` that leaked through shows up
+    // As an extra key, and a session nobody is signed in with any more shows up as an extra row
     expect(readSessions).toStrictEqual([
-      { id: currentSession.id, isCurrent: true, updatedAt: currentSession.updatedAt, userAgent },
-      { id: otherSession.id, isCurrent: false, updatedAt: otherSession.updatedAt, userAgent },
+      { deviceLabel, id: currentSession.id, isCurrent: true, updatedAt: currentSession.updatedAt },
+      { deviceLabel, id: otherSession.id, isCurrent: false, updatedAt: otherSession.updatedAt },
     ]);
   });
 

@@ -33,11 +33,11 @@ const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) 
     <template v-else>
       <v-list py-6>
         <UserSessionsCardRow
-          v-for="{ id, isCurrent, updatedAt, userAgent } of sessions"
+          v-for="{ deviceLabel, id, isCurrent, updatedAt } of sessions"
           :key="id"
+          :device-label
           :is-current="isCurrent ? true : undefined"
           :updated-at
-          :user-agent
           @revoke="revokingId = id"
         />
       </v-list>
@@ -65,8 +65,8 @@ const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) 
   </StyledCard>
   <UserSessionsCardConfirmRevokeDialog
     v-if="revokingSession"
+    :device-label="revokingSession.deviceLabel"
     :is-current="revokingSession.isCurrent ? true : undefined"
-    :user-agent="revokingSession.userAgent"
     @revoke="
       async (onComplete) => {
         if (!revokingSession) return;

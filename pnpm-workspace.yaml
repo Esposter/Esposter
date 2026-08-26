@@ -114,6 +114,7 @@ catalog:
   ajv-i18n: ^4.2.0
   apexcharts: ^7.0.0
   better-auth: ^1.7.1
+  bowser: ^2.14.1
   citty: ^0.2.2
   codemirror: ^6.0.2
   crossws: ^0.4.12
