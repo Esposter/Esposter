@@ -1,7 +1,7 @@
 import { noop } from "@esposter/shared";
 import { afterAll, vi } from "vitest";
 // Happy-dom reports readyState as "loading"; Phaser requires "complete" to boot synchronously.
-vi.spyOn(document, "readyState", "get").mockReturnValue("complete");
+vi.spyOn(window.document, "readyState", "get").mockReturnValue("complete");
 // Happy-dom never fires Image load events; call onload synchronously so Phaser's
 // TextureManager resolves its 3 default base64 images and emits READY.
 vi.spyOn(HTMLImageElement.prototype, "src", "set").mockImplementation(function (this: HTMLImageElement) {
@@ -10,7 +10,7 @@ vi.spyOn(HTMLImageElement.prototype, "src", "set").mockImplementation(function (
 // Happy-dom has no canvas, and its instance method resolution bypasses a prototype spy on getContext,
 // So store the original createElement and spy per-instance instead.
 // oxlint-disable-next-line typescript/no-deprecated
-const createElement = document.createElement.bind(document);
+const createElement = window.document.createElement.bind(window.document);
 const mockCanvasContext: CanvasRenderingContext2D = {
   arc: noop,
   arcTo: noop,
@@ -99,7 +99,7 @@ const mockCanvasContext: CanvasRenderingContext2D = {
   wordSpacing: "0px",
 };
 
-vi.spyOn(document, "createElement").mockImplementation((tagName, options) => {
+vi.spyOn(window.document, "createElement").mockImplementation((tagName, options) => {
   const element = createElement(tagName, options);
   if (tagName.toLowerCase() === "canvas")
     vi.spyOn(element as HTMLCanvasElement, "getContext").mockImplementation((contextId) =>

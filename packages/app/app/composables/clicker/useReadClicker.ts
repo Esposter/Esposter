@@ -29,7 +29,7 @@ export const useReadClicker = async () => {
 
   await useReadData(
     async () => {
-      const clickerJson = localStorage.getItem(LocalStorageKey.ClickerStore);
+      const clickerJson = window.localStorage.getItem(LocalStorageKey.ClickerStore);
       setClicker(
         clickerJson
           ? getResult(() => jsonDateParse(clickerJson))

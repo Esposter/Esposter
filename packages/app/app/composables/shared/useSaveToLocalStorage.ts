@@ -9,7 +9,7 @@ export const useSaveToLocalStorage = () => {
       alertStore.createAlert(z.prettifyError(result.error), "error");
       return false;
     }
-    localStorage.setItem(key, JSON.stringify(result.data));
+    window.localStorage.setItem(key, JSON.stringify(result.data));
     return true;
   };
 };

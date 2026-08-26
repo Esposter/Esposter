@@ -9,7 +9,7 @@ export const useReadDungeons = async () => {
   const { setDungeons } = dungeonsStore;
   await useReadData(
     () => {
-      const dungeonsJson = localStorage.getItem(LocalStorageKey.DungeonsStore);
+      const dungeonsJson = window.localStorage.getItem(LocalStorageKey.DungeonsStore);
       setDungeons(dungeonsJson ? new Dungeons(jsonDateParse(dungeonsJson)) : new Dungeons());
     },
     async () => {

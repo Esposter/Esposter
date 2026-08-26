@@ -57,8 +57,8 @@ export const useInputStore = defineStore("message/input", () => {
     // Collected before anything is written, because restoring removes the keys that sanitize away and
     // `localStorage.key(index)` would then walk past a shifted entry
     const draftComposerKeys: string[] = [];
-    for (let index = 0; index < localStorage.length; index++) {
-      const key = localStorage.key(index);
+    for (let index = 0; index < window.localStorage.length; index++) {
+      const key = window.localStorage.key(index);
       if (key?.startsWith(draftKeyPrefix)) draftComposerKeys.push(key.slice(draftKeyPrefix.length));
     }
 

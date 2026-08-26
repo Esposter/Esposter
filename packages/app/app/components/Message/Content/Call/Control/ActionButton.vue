@@ -14,7 +14,7 @@ const wrapper = useTemplateRef("wrapper");
 const attach = ref<HTMLElement>();
 
 onMounted(() => {
-  if (wrapper.value && wrapper.value.ownerDocument !== document) attach.value = wrapper.value;
+  if (wrapper.value && wrapper.value.ownerDocument !== window.document) attach.value = wrapper.value;
 });
 </script>
 

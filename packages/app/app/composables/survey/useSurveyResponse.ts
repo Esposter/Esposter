@@ -50,7 +50,7 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
         key: id,
         onSuccess: (newSurveyResponse) => {
           surveyResponse = newSurveyResponse;
-          localStorage.setItem(LocalStorageKey.SurveyResponseId(id, participantToken), newSurveyResponse.rowKey);
+          window.localStorage.setItem(LocalStorageKey.SurveyResponseId(id, participantToken), newSurveyResponse.rowKey);
         },
       },
     );
@@ -60,7 +60,7 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
   // A failed resume falls back to a blank survey rather than stranding the respondent on the skeleton
   const resumeSurveyResponse = (model: Model) =>
     getResultAsync(async () => {
-      const surveyResponseId = localStorage.getItem(LocalStorageKey.SurveyResponseId(id, participantToken));
+      const surveyResponseId = window.localStorage.getItem(LocalStorageKey.SurveyResponseId(id, participantToken));
       if (!surveyResponseId) return;
 
       surveyResponse = await $trpc.survey.readSurveyResponse.query({
@@ -77,7 +77,7 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
     }).match(noop, console.error);
   // The resume id must not outlive the submission — a shared device could otherwise reopen the answers
   const clearSurveyResponseId = () => {
-    localStorage.removeItem(LocalStorageKey.SurveyResponseId(id, participantToken));
+    window.localStorage.removeItem(LocalStorageKey.SurveyResponseId(id, participantToken));
   };
   return { clearSurveyResponseId, resumeSurveyResponse, saveSurveyResponse };
 };
