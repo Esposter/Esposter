@@ -31,6 +31,7 @@ describe(useUserSettingsStore, () => {
     speakerVolumePercentage: DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
     updatedAt: new Date("1970-01-01"),
     userId: crypto.randomUUID(),
+    virtualBackground: "",
     voiceInputMode: VoiceInputMode.VoiceActivity,
   };
 

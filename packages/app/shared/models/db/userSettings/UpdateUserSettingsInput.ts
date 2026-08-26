@@ -14,6 +14,7 @@ export const updateUserSettingsInputSchema = refineAtLeastOne(
       pushToTalkKeybind: true,
       pushToTalkReleaseDelayMs: true,
       speakerVolumePercentage: true,
+      virtualBackground: true,
       voiceInputMode: true,
     })
     .partial(),
@@ -27,6 +28,7 @@ export const updateUserSettingsInputSchema = refineAtLeastOne(
     "pushToTalkKeybind",
     "pushToTalkReleaseDelayMs",
     "speakerVolumePercentage",
+    "virtualBackground",
     "voiceInputMode",
   ],
 );

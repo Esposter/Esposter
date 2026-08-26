@@ -1,0 +1,1 @@
+ALTER TABLE "message"."userSettings" ADD COLUMN "virtualBackground" text DEFAULT '' NOT NULL;

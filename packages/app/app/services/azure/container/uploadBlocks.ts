@@ -33,5 +33,6 @@ export const uploadBlocks = async (file: Blob, sasUrl: string, progressNotifier?
   const allProgressPromises = PProgress.all(promises);
   if (progressNotifier) allProgressPromises.onProgress(progressNotifier);
   await allProgressPromises;
-  await commitBlockList(sasUrl, blockIds);
+  // The blob keeps the file's own type, not the commit request's — see commitBlockList
+  await commitBlockList(sasUrl, blockIds, file.type);
 };

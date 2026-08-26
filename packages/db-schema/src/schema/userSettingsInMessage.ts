@@ -39,6 +39,9 @@ export const DEFAULT_AUTO_IDLE_THRESHOLD_MS = 600_000;
 export const MIN_PUSH_TO_TALK_RELEASE_DELAY_MS = 0;
 export const MAX_PUSH_TO_TALK_RELEASE_DELAY_MS = 2000;
 export const DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS = 20;
+// The selection is a preset's path or a slot name, and neither is long. Nothing resolves an unknown value to
+// Anything but "no background", so this bounds what a client can store rather than deciding what is valid.
+export const MAX_VIRTUAL_BACKGROUND_LENGTH = 128;
 
 export const userSettingsInMessage = pgTable(
   "userSettings",
@@ -55,6 +58,9 @@ export const userSettingsInMessage = pgTable(
     userId: text()
       .primaryKey()
       .references(() => users.id, { onDelete: "cascade" }),
+    // Empty means no background, which is exactly what the picker's None entry already selects, so a value
+    // That no longer resolves - a deleted slot - degrades to the same state rather than to a broken track
+    virtualBackground: text().notNull().default(""),
     voiceInputMode: voiceInputModeEnum().notNull().default(VoiceInputMode.VoiceActivity),
   },
   {
@@ -103,5 +109,6 @@ export const selectUserSettingsInMessageSchema = createSelectSchema(userSettings
   pushToTalkReleaseDelayMs: (schema) =>
     schema.min(MIN_PUSH_TO_TALK_RELEASE_DELAY_MS).max(MAX_PUSH_TO_TALK_RELEASE_DELAY_MS),
   speakerVolumePercentage: (schema) => schema.min(0).max(MAX_USER_VOLUME_PERCENTAGE),
+  virtualBackground: (schema) => schema.max(MAX_VIRTUAL_BACKGROUND_LENGTH),
   voiceInputMode: voiceInputModeSchema,
 });

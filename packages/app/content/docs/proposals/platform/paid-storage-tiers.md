@@ -72,7 +72,7 @@ This is the one place where a paid feature must not become a hostage mechanism, 
 
 ### What a tier may and may not buy
 
-**Capacity and cosmetics only.** A tier may raise a numeric allowance — storage bytes, the per-room custom emoji count ([custom emoji](/docs/esbabbler/custom-emoji)), the number of call-background slots ([custom video backgrounds](/docs/proposals/esbabbler/custom-video-backgrounds)) — or unlock a cosmetic, which is the shape Discord's Nitro takes and the reason it is uncontroversial.
+**Capacity and cosmetics only.** A tier may raise a numeric allowance — storage bytes, the per-room custom emoji count ([custom emoji](/docs/esbabbler/custom-emoji)), the number of call-background slots ([virtual backgrounds](/docs/esbabbler/calls/virtual-backgrounds)) — or unlock a cosmetic, which is the shape Discord's Nitro takes and the reason it is uncontroversial.
 
 **A tier may never gate behaviour, moderation, or safety.** The moment a room's rules, a permission, or an abuse control depends on who paid, the platform's trust model becomes tier-dependent and every moderation guarantee acquires an asterisk. Allowances are per-user and derived from one map; that is the mechanism, and it is deliberately incapable of expressing anything else.
 
