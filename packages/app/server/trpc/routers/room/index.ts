@@ -1,6 +1,7 @@
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { InviteInMessage, RoomInMessage, User } from "@esposter/db-schema";
+import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { InviteInMessage, InviteInMessageWithCreator, RoomInMessage, User } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { createInviteInputSchema } from "#shared/models/db/room/CreateInviteInput";
@@ -8,6 +9,7 @@ import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
 import { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
+import { readRoomInvitesInputSchema } from "#shared/models/db/room/ReadRoomInvitesInput";
 import { revokeInviteInputSchema } from "#shared/models/db/room/RevokeInviteInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
@@ -46,7 +48,7 @@ import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { roomEmojiRouter } from "@@/server/trpc/routers/room/emoji";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
-import { generateWriteSasUrl } from "@esposter/db";
+import { generateWriteSasUrl, hasPermission } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -147,7 +149,7 @@ export const baseRoomRouter = router({
       return ctx.db.select({ count: count(), roleId: topRoles.roleId }).from(topRoles).groupBy(topRoles.roleId);
     },
   ),
-  createInvite: getMemberProcedure(createInviteInputSchema, "roomId")
+  createInvite: getPermissionsProcedure(RoomPermission.ManageInvites, createInviteInputSchema, "roomId")
     .use(isRoom)
     .mutation<InviteInMessage>(({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) =>
       ctx.db.transaction(async (tx) => {
@@ -516,6 +518,26 @@ export const baseRoomRouter = router({
     )[0];
     return readRoom ?? null;
   }),
+  readRoomInvites: getPermissionsProcedure(RoomPermission.ManageRoom, readRoomInvitesInputSchema, "roomId").query<
+    CursorPaginationData<InviteInMessageWithCreator>
+  >(async ({ ctx, input: { cursor, limit, roomId } }) => {
+    const sortBy: SortItem<keyof InviteInMessage>[] = [
+      { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
+    ];
+    const wheres: (SQL | undefined)[] = [eq(invitesInMessage.roomId, roomId)];
+    if (cursor) wheres.push(getCursorWhere(invitesInMessage, cursor, sortBy));
+
+    const readInvites = await ctx.db
+      .select({ ...getColumns(invitesInMessage), user: getColumns(users) })
+      .from(invitesInMessage)
+      .innerJoin(users, eq(invitesInMessage.userId, users.id))
+      .where(and(...wheres))
+      .orderBy(...parseSortByToSql(invitesInMessage, sortBy))
+      .limit(limit + 1);
+    // Expiry and exhaustion are decided by the same predicate every other reader uses rather than by a second
+    // Copy of it in SQL — a lapsed row is inert wherever it is read, and the panel lists what a joiner could use
+    return getCursorPaginationData(readInvites.filter(checkIsInviteUsable), limit, sortBy);
+  }),
   readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const innerJoinCondition = and(
@@ -555,19 +577,19 @@ export const baseRoomRouter = router({
   ),
   revokeInvite: getMemberProcedure(revokeInviteInputSchema, "roomId").mutation<void>(
     async ({ ctx, input: { id, roomId } }) => {
-      // Own link only: revoking anyone else's is the ManageInvites half of
-      // /docs/proposals/esbabbler/invite-management, which needs the read that lists them first
+      // A member revokes their own link; revoking anybody's is `ManageRoom`, not `ManageInvites`. The default
+      // Role carries `ManageInvites` so that every member can mint a link at all, which makes it the wrong gate
+      // For a control over other people's — Discord splits the same two acts the same way
+      const { user } = ctx.getSessionPayload;
+      const isInviteManager = await hasPermission(ctx.db, user.id, roomId, RoomPermission.ManageRoom);
+      const wheres = [eq(invitesInMessage.id, id), eq(invitesInMessage.roomId, roomId)];
+      if (!isInviteManager) wheres.push(eq(invitesInMessage.userId, user.id));
+
       requireMutation(
         (
           await ctx.db
             .delete(invitesInMessage)
-            .where(
-              and(
-                eq(invitesInMessage.id, id),
-                eq(invitesInMessage.roomId, roomId),
-                eq(invitesInMessage.userId, ctx.getSessionPayload.user.id),
-              ),
-            )
+            .where(and(...wheres))
             .returning()
         )[0],
         Operation.Delete,

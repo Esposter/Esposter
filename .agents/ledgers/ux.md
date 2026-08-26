@@ -48,7 +48,6 @@ a better arrangement of our own is an acceptable answer to it, as long as a comm
 
 ## Open findings
 
-- **The Invites panel lists only the reader's own link** — Discord's lists the room's, with a revoke per row and a
-  pause for all of them. That needs two procedures and a room field, specified in
-  [invite management](/docs/proposals/esbabbler/invite-management), which also carries the `ManageInvites`
-  permission nothing reads. The dialog's friends list (invite a friend without copying a link) is in the same gap.
+- **The invite dialog has no friends list** — Discord's offers the people you could invite directly, so inviting
+  one does not go through copying a link and pasting it somewhere else. The panel half of this gap is closed; this
+  half is a picker over the friends list, and it is a feature rather than a placement fix.

@@ -1,50 +1,42 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { authClient } from "@/services/auth/authClient";
 import { useDialogStore } from "@/store/message/room/dialog";
-import { useInviteStore } from "@/store/message/room/invite";
-import { useRoleStore } from "@/store/message/room/role";
-import { hasPermission, RoomPermission } from "@esposter/db-schema";
+import { useRoomInviteStore } from "@/store/message/room/roomInvite";
 
 interface InvitesProps {
   room: RoomInMessage;
 }
 
 const { room } = defineProps<InvitesProps>();
+const { data: session } = await authClient.useSession(useFetch);
 const dialogStore = useDialogStore();
 const { inviteRoomId } = storeToRefs(dialogStore);
-const inviteStore = useInviteStore();
-const { invites } = storeToRefs(inviteStore);
-const invite = computed(() => invites.value.get(room.id));
-const roleStore = useRoleStore();
-const { getMyPermissions } = roleStore;
-const myPermissions = computed(() => getMyPermissions(room.id));
-// Pausing is a write to the room row, so only the members who may write one are shown the control
-const hasManageRoom = computed(() => {
-  if (!myPermissions.value) return false;
-  return hasPermission(myPermissions.value.permissions, RoomPermission.ManageRoom, myPermissions.value.isRoomOwner);
-});
+const roomInviteStore = useRoomInviteStore();
+const { hasMore, items } = storeToRefs(roomInviteStore);
+const { readMoreRoomInvites, readRoomInvites } = useReadRoomInvites(room.id);
 const saveRoom = useSaveRoom(() => room);
-// The panel reads without ever mounting the manager, so landing here shows the link a member already holds and
-// Mints nothing — creating is the dialog's, reached by the link in the copy below
-useReadMyInvite(room.id);
+
+// The panel is gated on ManageRoom, so anyone who reaches it may act on every row it lists — the pause below and
+// The revokes beside each link are the same authority
+await readRoomInvites();
 </script>
 
-<!-- Discord's Invites panel, wording included: the links themselves, with creating spelled as a link into the
-     dialog that does it. Ours lists the one link a member may hold rather than the room's whole set, and revoking
-     one is the read and write we do not have yet — see /docs/proposals/esbabbler/invite-management -->
+<!-- Discord's Invites panel, wording included: the room's active links, with creating spelled as a link into the
+     dialog that does it — creating stays where the want is -->
 <template>
   <v-container fluid>
     <v-row>
       <v-col cols="12">
         <div font-bold text-title-medium>Invites</div>
         <div op-medium-emphasis text-body-small>
-          Here's a list of all active invite links you've created. You can revoke any one or
+          Here's a list of all active invite links in this room. You can revoke any one or
           <StyledActionLink @click="inviteRoomId = room.id">create one</StyledActionLink>.
         </div>
       </v-col>
     </v-row>
-    <v-row v-if="hasManageRoom">
+    <v-row>
       <v-col cols="12">
         <StyledButton
           :button-props="{
@@ -61,7 +53,7 @@ useReadMyInvite(room.id);
     </v-row>
     <v-row>
       <v-col cols="12">
-        <v-table v-if="invite" density="comfortable">
+        <v-table v-if="items.length > 0" density="comfortable">
           <thead>
             <tr>
               <th>Inviter</th>
@@ -72,11 +64,18 @@ useReadMyInvite(room.id);
             </tr>
           </thead>
           <tbody>
-            <MessageModelRoomInviteTableRow :invite :room-id="room.id" />
+            <MessageModelRoomInviteTableRow
+              v-for="invite of items"
+              :key="invite.id"
+              :invite
+              :is-creator="invite.userId === session?.user.id"
+              :room-id="room.id"
+            />
           </tbody>
         </v-table>
+        <StyledWaypoint :is-active="hasMore" @change="readMoreRoomInvites" />
         <StyledEmptyState
-          v-else
+          v-if="items.length === 0"
           icon="mdi-send-outline"
           title="No invites yet"
           description="Feeling aimless? Like a paper plane drifting through the skies? Get some friends in here by creating an invite link!"
