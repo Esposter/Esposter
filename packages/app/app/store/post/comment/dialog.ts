@@ -9,9 +9,14 @@ export const useCommentDialogStore = defineStore("post/comment/dialog", () => {
   // One reply editor is open at a time, the same way one delete dialog is: a tree renders every node it has read,
   // And an editor per node is a form tree nobody asked for
   const replyingId = ref<PostWithRelations["id"]>("");
+  const setDeletingComment = ({ id, parentId }: Pick<PostWithRelations, "id" | "parentId">) => {
+    deletingParentId.value = parentId ?? "";
+    deletingId.value = id;
+  };
   return {
     deletingId,
     deletingParentId,
     replyingId,
+    setDeletingComment,
   };
 });

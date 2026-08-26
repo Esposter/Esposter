@@ -24,16 +24,19 @@ export const useCommentStore = defineStore("post/comment", () => {
     useCursorPaginationDataMap<PostWithRelations>(currentPostId);
   const getPostOperationData = (parentId: string) =>
     createOperationData(getSlice(parentId).items, ["id"], DerivedDatabaseEntityType.Comment);
+  // Every comment on screen, across every open branch — a row the tree is holding ten levels down is in none of
+  // The lists above it, and both a counter and a vote have to reach it wherever it sits
+  const allComments = computed(() => {
+    const comments = currentPost.value ? [currentPost.value] : [];
+    for (const key of keys.value) comments.push(...getSlice(key).items.value);
+    return comments;
+  });
   // The posts the server says it counted against, applied in one pass over the rows on screen. The chain itself
   // Is never walked here: the write already established it, and rediscovering it client-side would mean scanning
   // The loaded branches once per level to learn what the response already carries
   const updateCommentCounts = (ancestorIds: string[], delta: number) => {
     const ancestorIdSet = new Set(ancestorIds);
-    const post = currentPost.value;
-    if (post && ancestorIdSet.has(post.id)) post.noComments += delta;
-
-    for (const key of keys.value)
-      for (const comment of getSlice(key).items.value) if (ancestorIdSet.has(comment.id)) comment.noComments += delta;
+    for (const comment of allComments.value) if (ancestorIdSet.has(comment.id)) comment.noComments += delta;
   };
   // Every loaded reply beneath a comment, which is what the delete cascade removes from under it. A store that
   // Dropped the one row would leave its descendants rendering under a parent that no longer exists.
@@ -120,6 +123,7 @@ export const useCommentStore = defineStore("post/comment", () => {
   };
 
   return {
+    allComments,
     createComment,
     currentPost,
     deleteComment,
@@ -127,7 +131,6 @@ export const useCommentStore = defineStore("post/comment", () => {
     getIsLoadedRef,
     getSlice,
     items,
-    keys,
     updateComment,
     ...restData,
   };

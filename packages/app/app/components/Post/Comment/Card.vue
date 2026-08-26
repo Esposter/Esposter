@@ -16,19 +16,21 @@ const { comment, depth } = defineProps<PostCommentCardProps>();
 // Content, and a tree renders one of these per node — an awaited session makes every node an async boundary
 const session = authClient.useSession();
 const commentDialogStore = useCommentDialogStore();
-const { deletingId, deletingParentId, replyingId } = storeToRefs(commentDialogStore);
+const { replyingId } = storeToRefs(commentDialogStore);
+const { setDeletingComment } = commentDialogStore;
 const isCreator = computed(() => comment.userId === session.value.data?.user.id);
 const isUpdateMode = ref(false);
 const isExpanded = ref(false);
 // Indentation stops moving right at the clamp while the nesting carries on, so a thread deeper than the screen
 // Is wide offers its own page instead of a column of text one word across
 const isClamped = computed(() => depth >= MAX_COMMENT_INDENT_DEPTH);
+const indent = computed(() => (depth === 0 || isClamped.value ? "" : COMMENT_INDENT_STEP));
 const deleteLabel = computed(() => (comment.noComments > 0 ? "Delete Comment And Replies" : "Delete Comment"));
 const replyLabel = computed(() => `${comment.noComments} ${comment.noComments === 1 ? "reply" : "replies"}`);
 </script>
 
 <template>
-  <div :style="{ marginLeft: depth === 0 || isClamped ? undefined : COMMENT_INDENT_STEP }">
+  <div :style="{ marginLeft: indent }">
     <div flex>
       <PostLikeSection :post="comment" is-comment-store pt-2 />
       <v-card px-2 pt-2 flex-1 shadow-none>
@@ -38,12 +40,7 @@ const replyLabel = computed(() => `${comment.noComments} ${comment.noComments ==
           mt-2
           :comment
           @update:update-mode="isUpdateMode = $event"
-          @update:delete-mode="
-            () => {
-              deletingParentId = comment.parentId ?? '';
-              deletingId = comment.id;
-            }
-          "
+          @update:delete-mode="setDeletingComment(comment)"
         />
         <PostDescription v-else :description="comment.description" />
         <v-card-actions p-0>
@@ -66,12 +63,7 @@ const replyLabel = computed(() => `${comment.noComments} ${comment.noComments ==
             :button-props="{ size: 'small', tile: true }"
             icon="mdi-delete"
             :text="deleteLabel"
-            @click="
-              () => {
-                deletingParentId = comment.parentId ?? '';
-                deletingId = comment.id;
-              }
-            "
+            @click="setDeletingComment(comment)"
           />
           <!-- Collapsed until asked for, so opening a branch is what reads it. Past the indent clamp the thread
           carries on somewhere it has room, which is its own page — a comment is a post and already has one -->
@@ -95,6 +87,13 @@ const replyLabel = computed(() => `${comment.noComments} ${comment.noComments ==
         <PostCommentCreateRichTextEditor v-if="replyingId === comment.id" :parent-id="comment.id" pb-2 />
       </v-card>
     </div>
-    <PostCommentBranch v-if="isExpanded" :parent-id="comment.id" :depth="depth + 1" />
+    <!-- The read is the branch's own, so the boundary is too: without one every expansion anywhere in the tree
+    suspends the page that mounted it -->
+    <Suspense v-if="isExpanded">
+      <PostCommentBranch :parent-id="comment.id" :depth="depth + 1" />
+      <template #fallback>
+        <StyledSkeleton />
+      </template>
+    </Suspense>
   </div>
 </template>

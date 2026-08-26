@@ -42,7 +42,21 @@ The two guards are why a post procedure cannot touch a comment and vice versa, e
 
 **Reading** — the post page loads the post by route param, then pages its comments through the same `readPosts` procedure with `parentId`; an empty banner shows for zero comments, and the comment editor only renders for a signed-in session.
 
-**The tree** — every node is a branch that pages independently, keyed in the store by the comment whose replies it holds. The route's own post is simply the branch keyed by its id, so the page and a reply ten levels down mount the same component and run the same read. A branch is collapsed until asked for: expanding one is what reads it, and re-expanding costs nothing because the rows outlive the component. Indentation is one step per level below the comment the route names — the **route**, not the stored `depth`, so a rerooted thread opens at zero rather than already clamped. Past the indent clamp a node offers to continue the thread on its own page, which needs no route of its own: a comment is a post, so `/post/[id]` on its id renders it as a root with one level of context instead of ten. `posts` carries a `(parentId, ranking DESC, id DESC)` index for exactly this read — a foreign key gets none of its own in Postgres, and the tree asks the same question once per open branch, as does the feed, whose parent is simply null. A GIN index over `ancestorIds` serves the one question that is about a whole subtree rather than one level: how many rows a delete is about to take.
+**The tree** — every node is a branch that pages independently, keyed in the store by the comment whose replies it holds. The route's own post is simply the branch keyed by its id, so the page and a reply ten levels down mount the same component and run the same read. A branch is collapsed until asked for: expanding one is what reads it, and re-expanding costs nothing because the rows outlive the component that read them. Indentation is one step per level below the comment the **route** names rather than the stored `depth`, so a rerooted thread opens at zero rather than already clamped. Past the indent clamp a node offers to continue the thread on its own page, which needs no route of its own: a comment is a post, so `/post/[id]` on its id renders it as a root with one level of context instead of ten.
+
+```mermaid
+flowchart TD
+  ROUTE["/post/[id]"] -->|"readPosts — parentId is the route id"| BRANCH["a branch — one node's replies, keyed by that node"]
+  BRANCH --> CARD["a card per reply, indented one step below the route"]
+  CARD -->|"expand — the read is the expansion"| BRANCH
+  CARD -->|"scroll — the waypoint on that branch"| BRANCH
+  CARD -->|"past the indent clamp — continue this thread"| ROUTE
+  CARD -->|"reply, delete"| WRITE["createComment, deleteComment"]
+  WRITE -->|"id IN ancestorIds"| COUNT[("noComments on every post above")]
+  WRITE -->|"returns the ids it counted against"| CARD
+```
+
+**Indexes** — `(parentId, ranking DESC, id DESC)` serves the question every read asks: one parent's children, best first. The tree asks it once per open branch and the feed asks it with a null parent, and a foreign key gets no index of its own in Postgres. A GIN index over `ancestorIds` serves the only question that is about a whole subtree rather than one level — how many rows a delete is about to take.
 
 ## Procedures
 
