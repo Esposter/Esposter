@@ -24,5 +24,7 @@ Repo-wide refactor plans have no area roadmap and live here directly:
 
 - [ESLint → oxlint migration](/docs/proposals/refactors/eslint-to-oxlint-migration) — move rules to oxlint as coverage lands, prioritized by ESLint rule time.
 - [dependency reduction](/docs/proposals/refactors/dependency-reduction) — what a third-party package must earn to stay in the catalog, and the ranked backlog of absorptions.
+- [media viewer](/docs/proposals/refactors/media-viewer) — one lightbox over images and video, replacing the images-only library a video attachment opens in nothing.
+- [PDF viewer consolidation](/docs/proposals/refactors/pdf-viewer-consolidation) — one renderer for the thumbnail and the dialog, retiring the second viewer and its renderer override.
 
 Sweeps are not proposals. A proposal designs behaviour that does not exist yet; a sweep carries a settled convention across code that already works and changes nothing about what it does. They are tracked as repo state in `.agents/ledgers/`, one ledger file per sweep — or one coverage folder, once a sweep outgrows a single file.
