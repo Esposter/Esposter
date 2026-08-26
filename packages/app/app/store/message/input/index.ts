@@ -44,10 +44,13 @@ export const useInputStore = defineStore("message/input", () => {
   // Returns the stored draft, or undefined when the room now has none. Whether `input` follows is left to the
   // Caller, because that is the only thing the three writers disagree on: the editor's own debounced save must
   // Not write the sanitized text back into the editor the user is still typing in.
-  const syncDraft = (composerKey: string, content: string): Draft | undefined => {
+  // `updatedAt` is a parameter so restoring a stored draft can hand back the stamp it was written with: the
+  // Drafts list is ordered by it, and a fresh stamp per boot would reorder every draft into whatever order the
+  // Map happened to restore in.
+  const syncDraft = (composerKey: string, content: string, updatedAt = new Date()): Draft | undefined => {
     const sanitizedContent = content && !EMPTY_TEXT_REGEX.test(content) ? sanitizeTextHtml(content) : "";
     if (sanitizedContent && !EMPTY_TEXT_REGEX.test(sanitizedContent)) {
-      const draft: Draft = { content: sanitizedContent, updatedAt: new Date() };
+      const draft: Draft = { content: sanitizedContent, updatedAt };
       drafts.value.set(composerKey, draft);
       return draft;
     }
@@ -59,7 +62,7 @@ export const useInputStore = defineStore("message/input", () => {
   // Restoring is re-sanitizing what a previous session stored, so a draft whose content no longer survives the
   // Sanitizer is dropped here rather than shown. On the server the Map is empty and this does nothing
   for (const [composerKey, storedDraft] of drafts.value)
-    setInput(composerKey, syncDraft(composerKey, storedDraft.content)?.content ?? "");
+    setInput(composerKey, syncDraft(composerKey, storedDraft.content, storedDraft.updatedAt)?.content ?? "");
 
   const storeDraft = (composerKey: string, content: string) => {
     setInput(composerKey, syncDraft(composerKey, content)?.content ?? "");

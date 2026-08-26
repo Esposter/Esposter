@@ -47,6 +47,18 @@ describe(useInputStore, () => {
     expect(drafts.value.has(roomId1)).toBe(true);
   });
 
+  test("restores a draft under the stamp the previous session stored", () => {
+    expect.hasAssertions();
+
+    setStoredDraft(roomId1, draftContent);
+    // The clock moves between the write and the boot that restores it, so a re-stamped draft is visible: the
+    // Drafts list is ordered by this, and re-stamping on boot would reorder every draft
+    vi.advanceTimersByTime(debounceMs);
+    useInputStore();
+
+    expect(readStoredDraft(roomId1)?.updatedAt).toStrictEqual(new Date(0));
+  });
+
   test("ignores empty draft content in localStorage", () => {
     expect.hasAssertions();
 
