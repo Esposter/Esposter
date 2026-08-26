@@ -47,6 +47,7 @@ const readMoreNewerMessages = async (onComplete: () => void) => {
 
 <template>
   <MessageModelMessageConfirmDeleteDialog />
+  <MessageModelMessageFileViewerDialog />
   <MessageModelMessageConfirmPinDialog />
   <MessageModelMessageReactionsDialog />
   <v-list

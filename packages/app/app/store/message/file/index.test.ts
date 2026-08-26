@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 
+import { MimeType } from "#shared/models/file/MimeType";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
@@ -58,6 +59,57 @@ describe(useDownloadFileStore, () => {
     await waitForSynchronizedFunctions();
 
     expect(fileUrlMap.value.get(fileId)?.url).toBe(freshUrl);
+  });
+
+  // The viewer walks this list, so what it holds is what a click can open. A video used to be filtered out with
+  // The documents, which left a video card bound to no click at all
+  test("gathers the media a viewer can open, and nothing it cannot", () => {
+    expect.hasAssertions();
+
+    const dataStore = useDataStore();
+    const downloadFileStore = useDownloadFileStore();
+    const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
+    const { getSlice } = dataStore;
+    const files = [
+      { mimetype: "image/png", name: "image" },
+      { mimetype: "video/mp4", name: "video" },
+      { mimetype: MimeType.Pdf, name: "document" },
+      { mimetype: "audio/mpeg", name: "audio" },
+    ].map(({ mimetype, name }) => ({
+      filename: name,
+      hasThumbnail: false,
+      id: crypto.randomUUID(),
+      mimetype,
+      size: 1,
+    }));
+    getSlice(roomId).items.value.push(
+      createMessageEntity({ files, message: filename, roomId, type: MessageType.Message, userId: crypto.randomUUID() }),
+    );
+    for (const { id } of files) fileUrlMap.value.set(id, { expiresAt: Date.now(), url: freshUrl });
+
+    expect(viewableFiles.value.map(({ filename: name }) => name)).toStrictEqual(["image", "video"]);
+  });
+
+  // A card is only clickable once its url is in hand, so a file still waiting on the batched read is not yet
+  // Something the viewer can be opened over
+  test("holds back a file whose url has not landed", () => {
+    expect.hasAssertions();
+
+    const dataStore = useDataStore();
+    const downloadFileStore = useDownloadFileStore();
+    const { viewableFiles } = storeToRefs(downloadFileStore);
+    const { getSlice } = dataStore;
+    getSlice(roomId).items.value.push(
+      createMessageEntity({
+        files: [{ filename, hasThumbnail: false, id: fileId, mimetype: "image/png", size: 1 }],
+        message: filename,
+        roomId,
+        type: MessageType.Message,
+        userId: crypto.randomUUID(),
+      }),
+    );
+
+    expect(viewableFiles.value).toStrictEqual([]);
   });
 
   // The query caps `files` at MAX_READ_LIMIT, and the long-open room this sweep exists for is exactly the one

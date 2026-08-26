@@ -76,12 +76,11 @@ A `@types/x` entry is read against the package it types rather than against a ca
 
 The wrapper here is a component file we could write, and its cost is the version lock rather than the styling. Ordered by what the thinning buys.
 
-| Cluster              | Finding                                                                                                                                                                                                                                                                                  |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Media viewing        | The lightbox engine is constructed directly, over a hidden element built for it, by the one service that opens it — its Vue adapter is gone, and with it a bundled copy of a utility library. The engine is images-only, which is the remaining gap: a video attachment opens in nothing |
-| 3D visual            | A declarative renderer, its helper library and its Nuxt module serve one decorative component on one page, on top of the 3D engine already shipped for the globe                                                                                                                         |
-| Charts               | The chart wrapper is a thin component over the chart engine, and our own component already sits in front of it                                                                                                                                                                           |
-| Page-builder plugins | Around a dozen single-purpose plugins around the page builder, several unmaintained and two imported through `@ts-expect-error`. The large ones — the webpage preset, the image editor, the exporter — are engines; the small ones register a block and a trait                          |
+| Cluster              | Finding                                                                                                                                                                                                                                                         |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 3D visual            | A declarative renderer, its helper library and its Nuxt module serve one decorative component on one page, on top of the 3D engine already shipped for the globe                                                                                                |
+| Charts               | The chart wrapper is a thin component over the chart engine, and our own component already sits in front of it                                                                                                                                                  |
+| Page-builder plugins | Around a dozen single-purpose plugins around the page builder, several unmaintained and two imported through `@ts-expect-error`. The large ones — the webpage preset, the image editor, the exporter — are engines; the small ones register a block and a trait |
 
 ### Keep — the ones that look absorbable and are not
 
@@ -101,9 +100,10 @@ Recording these matters as much as the backlog, because each is a candidate some
 
 Ranked by what each buys, not by size. What is left all needs a design first — the cleanups are done.
 
-1. **Own the media viewer.** The strongest item, because it is a feature gap rather than a cleanup: one lightbox carrying images and video, keyboard and gesture navigation, a caption from the filename, and download — the behaviour the reference products have and the current library structurally cannot grow. Specified in [media viewer](/docs/proposals/refactors/media-viewer).
-2. **Question the 3D visual, then decide its dependencies.** Whether one decorative component earns a declarative renderer is a product question, and the dependency answer follows it rather than leading it. No work until that is answered.
-3. **Prune the page-builder plugin belt.** Absorb the block-registering plugins that are unmaintained or untyped, keep the engines. Lowest value per unit of effort, so it goes last.
+1. **Question the 3D visual, then decide its dependencies.** Whether one decorative component earns a declarative renderer is a product question, and the dependency answer follows it rather than leading it. No work until that is answered.
+2. **Prune the page-builder plugin belt.** Absorb the block-registering plugins that are unmaintained or untyped, keep the engines. Lowest value per unit of effort, so it goes last.
+
+The media viewer was the first item off this list, and the shape the rest should follow: the lightbox library owned what opening an attachment does, could not grow the video half of it, and what replaced it is a dialog over the two elements the message row already renders — no engine kept, because there was none to keep. It is described in [file & media](/docs/esbabbler/file-media).
 
 The chart wrapper is deliberately absent. It is the cheapest item in the analysis and it buys the least, which makes it something to fold into whichever change next touches that component rather than a task of its own.
 
