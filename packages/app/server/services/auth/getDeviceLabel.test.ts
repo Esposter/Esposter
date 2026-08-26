@@ -15,10 +15,15 @@ describe(getDeviceLabel, () => {
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
       "Chrome 141 on macOS",
     ],
-    // Apple is the one vendor still publishing a model, so it wins over the OS name
+    // A model is the more specific claim, so it wins over the OS name wherever bowser has one
     [
       "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1",
       "Safari 18 on iPhone",
+    ],
+    // Not only Apple: bowser carries a table of older handsets it still names, so an Android can beat `Android`
+    [
+      "Mozilla/5.0 (Linux; Android 7.0; CAN-L01 Build/HUAWEICAN-L01) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36",
+      "Chrome 141 on Nova",
     ],
     // Chrome froze the Android model to `K`, so the OS name is genuinely all that is left to say
     [
