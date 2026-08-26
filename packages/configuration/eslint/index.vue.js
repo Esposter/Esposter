@@ -2,6 +2,7 @@ import nuxtOverrides from "@esposter/configuration/eslint/overrides/nuxt.js";
 import oxlint from "@esposter/configuration/eslint/oxlint.js";
 import plugins from "@esposter/configuration/eslint/plugins/index.js";
 import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
+import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
 import restrictedTestSyntaxes from "@esposter/configuration/eslint/restrictedTestSyntaxes.js";
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
 
@@ -20,7 +21,12 @@ export default withNuxt(plugins)
   .append({
     files: ["**/*.vue"],
     rules: {
-      "no-restricted-syntax": ["error", ...typescriptRules["no-restricted-syntax"].slice(1), ...restrictedDateSyntaxes],
+      "no-restricted-syntax": [
+        "error",
+        ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...restrictedDateSyntaxes,
+        ...restrictedStoreSyntaxes,
+      ],
     },
   })
   // `public` is generated/static assets (incl. generated tileset `.tsx`); oxlint already ignores it,

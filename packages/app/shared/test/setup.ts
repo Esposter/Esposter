@@ -2,6 +2,9 @@ import { Environment } from "#shared/models/environment/Environment";
 import { getIsServer } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { afterAll, afterEach, beforeEach, vi } from "vitest";
+/* eslint-disable no-restricted-syntax -- module scope is where a vitest setup file runs, and the environment it
+   runs in is the one its config names rather than one SSR decides. The ban this suspends is about a browser
+   global read before any phase could have chosen a branch, which is not a question a setup file has */
 
 // The nuxt test env provides `window`/`document`/`DOMParser` but not `localStorage`/`sessionStorage`,
 // So install a minimal in-memory `Storage` — cheaper than registering a full DOM, harmless in node.
@@ -139,3 +142,4 @@ afterEach(() => {
 afterAll(() => {
   vi.restoreAllMocks();
 });
+/* eslint-enable no-restricted-syntax */
