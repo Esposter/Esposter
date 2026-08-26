@@ -16,14 +16,18 @@ sequenceDiagram
   participant B as Azure Blob
 
   C->>S: generate*UploadUrl(input)
-  S-->>C: { sasUrl, publicUrl } — SAS scoped to exact blob path and content type
+  S-->>C: { sasUrl, publicUrl } — SAS scoped to an exact blob path
   C->>B: uploadBlocks(file, sasUrl)
-  Note over B: Azure enforces the content type but not any size
+  Note over B: Azure enforces neither the content type nor the size
   C->>S: update*(entity, { image: publicUrl })
   Note over S: saves the deterministic blob URL
 ```
 
 Client helper: `uploadBlocks(file, sasUrl)` in `app/services/azure/container/uploadBlocks.ts` — chunks into 4 MB blocks, uploads in parallel, commits the block list.
+
+**The commit is what sets the blob's own headers.** Put Block ignores blob headers, so only the Put Block List call at the end decides what the blob is stored as, and it carries two different content types: `Content-Type` describes that request's XML body, `x-ms-blob-content-type` describes the bytes just committed. Sending the first as the second stored every blob this app uploaded as `application/xml`; `commitBlockList` now takes the file's type explicitly, and omits the blob header entirely when the browser could not type the file.
+
+**The content type a write SAS carries is not a constraint on the upload.** `contentType` on `generateWriteSasUrl` sets the SAS's `rsct` — a _response_ header override applied when the url is read — so it neither restricts what may be PUT nor what the blob is stored as. The mime check on the procedures that mint a write target therefore bounds an honest client only, exactly like the size check below, and the stored content type stays the client's own claim. Read paths that need to be sure what they are serving override it at read time from something trustworthy: the persisted `FileEntity.mimetype` for attachments, the filename extension for resource assets, a fixed type for thumbnails.
 
 ## Upload procedures
 
