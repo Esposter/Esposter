@@ -17,7 +17,7 @@ flowchart LR
   shared -. banned .-> app
 ```
 
-`app/` (reached as `@/` or `~/`) is client code. `server/` is Nitro code. `shared/` (reached as `#shared`) is the ground both stand on: every module in it is parsed by the server **and** shipped to the browser. So `app/` and `server/` may import `shared/` freely, and `shared/` may import neither.
+`app/` (reached as `@/` or `~/`) is client code — meaning no server module may import it, **not** that it only ever executes in a browser: the SSR render evaluates it in Node, which is [browser execution](/docs/architecture/browser-execution)'s subject rather than this page's. `server/` is Nitro code. `shared/` (reached as `#shared`) is the ground both stand on: every module in it is parsed by the server **and** shipped to the browser. So `app/` and `server/` may import `shared/` freely, and `shared/` may import neither.
 
 ## Why the direction matters
 

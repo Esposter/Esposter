@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 
 import { dayjs } from "#shared/services/dayjs";
-import { getDraft } from "@/services/message/draft/getDraft";
+import { draftsSerializer } from "@/services/message/draft/draftsSerializer";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useInputStore } from "@/store/message/input";
@@ -9,8 +9,14 @@ import { marked } from "marked";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-const setStoredDraft = (roomId: string, content: string) => {
-  localStorage.setItem(LocalStorageKey.Draft(roomId), JSON.stringify({ content, updatedAt: new Date() }));
+// Both helpers go through the serializer the store itself uses, so the test speaks the persisted format rather
+// Than a second spelling of it
+const readStoredDrafts = () => draftsSerializer.read(localStorage.getItem(LocalStorageKey.Drafts) ?? "{}");
+const readStoredDraft = (composerKey: string) => readStoredDrafts().get(composerKey);
+const setStoredDraft = (composerKey: string, content: string) => {
+  const storedDrafts = readStoredDrafts();
+  storedDrafts.set(composerKey, { content, updatedAt: new Date() });
+  localStorage.setItem(LocalStorageKey.Drafts, draftsSerializer.write(storedDrafts));
 };
 
 describe(useInputStore, () => {
@@ -50,17 +56,17 @@ describe(useInputStore, () => {
 
     expect(drafts.value.has(roomId1)).toBe(false);
     // And drops the key rather than leaving it to be re-scanned on every boot
-    expect(getDraft(roomId1)).toBeUndefined();
+    expect(readStoredDraft(roomId1)).toBeUndefined();
   });
 
   test("ignores unparseable draft content", () => {
     expect.hasAssertions();
 
-    localStorage.setItem(LocalStorageKey.Draft(roomId1), draftContent);
+    localStorage.setItem(LocalStorageKey.Drafts, draftContent);
     const inputStore = useInputStore();
     const { drafts, input } = storeToRefs(inputStore);
 
-    expect(getDraft(roomId1)).toBeUndefined();
+    expect(readStoredDraft(roomId1)).toBeUndefined();
     expect(input.value).toBe("");
     expect(drafts.value.has(roomId1)).toBe(false);
   });
@@ -72,7 +78,7 @@ describe(useInputStore, () => {
     const inputStore = useInputStore();
     const { drafts, input } = storeToRefs(inputStore);
 
-    expect(getDraft(roomId1)).toBeUndefined();
+    expect(readStoredDraft(roomId1)).toBeUndefined();
     expect(input.value).toBe("");
     expect(drafts.value.has(roomId1)).toBe(false);
   });
@@ -109,7 +115,7 @@ describe(useInputStore, () => {
     const { clearDraft } = inputStore;
     clearDraft(roomId1);
 
-    expect(getDraft(roomId1)).toBeUndefined();
+    expect(readStoredDraft(roomId1)).toBeUndefined();
   });
 
   test("clearDraft clears input data for the room", () => {
@@ -134,9 +140,9 @@ describe(useInputStore, () => {
     vi.advanceTimersByTime(debounceMs);
     await nextTick();
 
-    expect(getDraft(roomId1)?.content).toBe(draftContent);
+    expect(readStoredDraft(roomId1)?.content).toBe(draftContent);
     // The debounce is what elapsed the frozen clock, so the stamp is that instant exactly
-    expect(getDraft(roomId1)?.updatedAt).toStrictEqual(new Date(debounceMs));
+    expect(readStoredDraft(roomId1)?.updatedAt).toStrictEqual(new Date(debounceMs));
     expect(input.value).toBe(draftContent);
     expect(drafts.value.has(roomId1)).toBe(true);
   });
@@ -149,8 +155,8 @@ describe(useInputStore, () => {
     const { storeDraft } = inputStore;
     storeDraft(roomId1, draftContent);
 
-    expect(getDraft(roomId1)?.content).toBe(draftContent);
-    expect(getDraft(roomId1)?.updatedAt).toStrictEqual(new Date(0));
+    expect(readStoredDraft(roomId1)?.content).toBe(draftContent);
+    expect(readStoredDraft(roomId1)?.updatedAt).toStrictEqual(new Date(0));
     expect(input.value).toBe(draftContent);
     expect(drafts.value.has(roomId1)).toBe(true);
   });
@@ -166,7 +172,7 @@ describe(useInputStore, () => {
     storeDraft(roomId1, updatedDraftContent);
 
     expect(drafts.value.get(roomId1)?.content).toBe(updatedDraftContent);
-    expect(getDraft(roomId1)?.content).toBe(updatedDraftContent);
+    expect(readStoredDraft(roomId1)?.content).toBe(updatedDraftContent);
   });
 
   test("storeDraft removes draft content that sanitizes to empty", () => {
@@ -177,7 +183,7 @@ describe(useInputStore, () => {
     const { storeDraft } = inputStore;
     storeDraft(roomId1, "<script>alert(1)</script>");
 
-    expect(getDraft(roomId1)).toBeUndefined();
+    expect(readStoredDraft(roomId1)).toBeUndefined();
     expect(input.value).toBe("");
     expect(drafts.value.has(roomId1)).toBe(false);
   });
@@ -193,7 +199,7 @@ describe(useInputStore, () => {
     vi.advanceTimersByTime(debounceMs);
     await nextTick();
 
-    expect(getDraft(roomId1)).toBeUndefined();
+    expect(readStoredDraft(roomId1)).toBeUndefined();
     expect(drafts.value.has(roomId1)).toBe(false);
   });
 
@@ -207,7 +213,7 @@ describe(useInputStore, () => {
     vi.advanceTimersByTime(debounceMs);
     await nextTick();
 
-    expect(getDraft(roomId1)).toBeUndefined();
+    expect(readStoredDraft(roomId1)).toBeUndefined();
     expect(drafts.value.has(roomId1)).toBe(false);
   });
 
@@ -227,7 +233,7 @@ describe(useInputStore, () => {
 
     expect(input.value).toBe(unsafeContent);
     expect(drafts.value.get(roomId1)?.content).toBe(draftContent);
-    expect(getDraft(roomId1)?.content).toBe(draftContent);
+    expect(readStoredDraft(roomId1)?.content).toBe(draftContent);
   });
 
   // The room is one of the watched sources, so switching it inside the debounce window cancels the pending save
@@ -246,7 +252,7 @@ describe(useInputStore, () => {
     vi.advanceTimersByTime(debounceMs);
     await nextTick();
 
-    expect(getDraft(roomId1)?.content).toBe(draftContent);
+    expect(readStoredDraft(roomId1)?.content).toBe(draftContent);
   });
 
   test("does not save before debounce delay elapses", async () => {
@@ -259,6 +265,6 @@ describe(useInputStore, () => {
     vi.advanceTimersByTime(debounceMs - 1);
     await nextTick();
 
-    expect(getDraft(roomId1)).toBeUndefined();
+    expect(readStoredDraft(roomId1)).toBeUndefined();
   });
 });

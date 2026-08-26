@@ -29,6 +29,7 @@ export const useReadClicker = async () => {
 
   await useReadData(
     async () => {
+      // eslint-disable-next-line no-restricted-syntax -- the offline save system reads and writes this key imperatively through `useSaveToLocalStorage`; a ref would be a second owner of it. The read is already client-only, inside `useReadData`'s `onMounted` — see the browser-boundary ledger
       const clickerJson = window.localStorage.getItem(LocalStorageKey.ClickerStore);
       setClicker(
         clickerJson

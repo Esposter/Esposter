@@ -4,7 +4,9 @@ import { LOCAL_STORAGE_KEY_SEPARATOR } from "@/services/shared/constants";
 // Values are kept byte-identical to their historical strings to preserve existing persisted data.
 export const LocalStorageKey = {
   ClickerStore: "clicker-store",
-  Draft: (composerKey: string) => `draft${LOCAL_STORAGE_KEY_SEPARATOR}${composerKey}`,
+  // Every composer's draft in one entry, keyed by composer inside it: the store holds them as a single Map and
+  // That Map is the storage, rather than a key per composer the store has to enumerate to find
+  Drafts: "drafts",
   DungeonsStore: "dungeons-store",
   EmojiSkinTone: "emoji-skin-tone",
   IsResourceBladeNavigationCollapsed: "is-resource-blade-navigation-collapsed",

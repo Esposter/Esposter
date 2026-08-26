@@ -7,6 +7,9 @@ import { getResultAsync, noop } from "@esposter/shared";
 
 export const useSurveyResponse = (id: string, participantToken: string) => {
   const { $trpc } = useNuxtApp();
+  // Respondent progress is tracked per browser, and scoped by participant token so a shared device cannot
+  // Resume someone else's answers — see /docs/architecture/browser-execution
+  const surveyResponseId = useLocalStorage(LocalStorageKey.SurveyResponseId(id, participantToken), "");
   let surveyResponse: SurveyResponseEntity | undefined;
   const { executeMutation } = useMutation();
   // Server-generated response row (modelVersion) — non-optimistic, applied in onSuccess.
@@ -50,23 +53,22 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
         key: id,
         onSuccess: (newSurveyResponse) => {
           surveyResponse = newSurveyResponse;
-          window.localStorage.setItem(LocalStorageKey.SurveyResponseId(id, participantToken), newSurveyResponse.rowKey);
+          surveyResponseId.value = newSurveyResponse.rowKey;
         },
       },
     );
     return status === MutationStatus.Succeeded;
   };
-  // Respondent progress is tracked per browser, so an interrupted survey resumes where it left off.
-  // A failed resume falls back to a blank survey rather than stranding the respondent on the skeleton
+  // An interrupted survey resumes where it left off. A failed resume falls back to a blank survey rather than
+  // Stranding the respondent on the skeleton
   const resumeSurveyResponse = (model: Model) =>
     getResultAsync(async () => {
-      const surveyResponseId = window.localStorage.getItem(LocalStorageKey.SurveyResponseId(id, participantToken));
-      if (!surveyResponseId) return;
+      if (!surveyResponseId.value) return;
 
       surveyResponse = await $trpc.survey.readSurveyResponse.query({
         participantToken,
         partitionKey: id,
-        rowKey: surveyResponseId,
+        rowKey: surveyResponseId.value,
       });
       if (!surveyResponse) return;
 
@@ -77,7 +79,7 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
     }).match(noop, console.error);
   // The resume id must not outlive the submission — a shared device could otherwise reopen the answers
   const clearSurveyResponseId = () => {
-    window.localStorage.removeItem(LocalStorageKey.SurveyResponseId(id, participantToken));
+    surveyResponseId.value = "";
   };
   return { clearSurveyResponseId, resumeSurveyResponse, saveSurveyResponse };
 };
