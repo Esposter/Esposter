@@ -3,16 +3,18 @@ import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
+const stubFetch = () => {
+  const fetchMock = vi.fn<(input: string, init: RequestInit) => Promise<Response>>(() =>
+    Promise.resolve(new Response()),
+  );
+  vi.stubGlobal("fetch", fetchMock);
+  return fetchMock;
+};
+// The commit is the last request the upload makes, after one PUT per block
+const getCommitCall = (fetchMock: ReturnType<typeof stubFetch>) => takeOne(fetchMock.mock.calls.slice(-1));
+
 describe(uploadBlocks, () => {
   const sasUrl = "https://mock/blob?sig=mock";
-  const stubFetch = () => {
-    const fetchMock = vi.fn<(input: string, init: RequestInit) => Promise<Response>>(() =>
-      Promise.resolve(new Response()),
-    );
-    vi.stubGlobal("fetch", fetchMock);
-    return fetchMock;
-  };
-  const getCommitCall = (fetchMock: ReturnType<typeof stubFetch>) => takeOne(fetchMock.mock.calls.slice(-1));
 
   afterEach(() => {
     vi.unstubAllGlobals();

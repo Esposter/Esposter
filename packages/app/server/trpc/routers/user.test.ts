@@ -22,6 +22,16 @@ import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@espos
 import { MOCK_BLOB_BASE_URL, MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
+// Built from the same error the router throws, so an inline snapshot never bakes in a random id
+const getCallBackgroundErrorMessage = (context: string) =>
+  new InvalidOperationError(Operation.Create, DatabaseEntityType.CallBackground, context).message;
+const seedSlots = (userId: string, slots: number[], slotSize: number) => {
+  MockContainerDatabase.set(
+    AzureContainer.PrivateUserAssets,
+    new Map(slots.map((slot) => [getCallBackgroundBlobName(userId, slot), Buffer.alloc(slotSize)])),
+  );
+};
+
 describe("user", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["user"]>;
@@ -300,26 +310,12 @@ describe("user", () => {
   describe("call backgrounds", () => {
     const mimetype = "image/png";
     const size = 1;
-    // Built from the same error the router throws, so an inline snapshot never bakes in a random id
-    const getCallBackgroundErrorMessage = (context: string) =>
-      new InvalidOperationError(Operation.Create, DatabaseEntityType.CallBackground, context).message;
-    const seedSlots = (userId: string, sizeBySlot: Record<number, number>) => {
-      MockContainerDatabase.set(
-        AzureContainer.PrivateUserAssets,
-        new Map(
-          Object.entries(sizeBySlot).map(([slot, slotSize]) => [
-            getCallBackgroundBlobName(userId, Number(slot)),
-            Buffer.alloc(slotSize),
-          ]),
-        ),
-      );
-    };
 
     test("lists the slots under the caller's own prefix", async () => {
       expect.hasAssertions();
 
       const userId = getMockSession().user.id;
-      seedSlots(userId, { 0: size, 2: size });
+      seedSlots(userId, [0, 2], size);
 
       await expect(caller.readCallBackgrounds()).resolves.toStrictEqual([
         { sasUrl: expect.stringContaining(getCallBackgroundBlobName(userId, 0)) as string, slot: 0 },
@@ -346,7 +342,7 @@ describe("user", () => {
       expect.hasAssertions();
 
       const userId = getMockSession().user.id;
-      seedSlots(userId, { 0: MAX_CALL_BACKGROUND_SIZE_BYTES + 1 });
+      seedSlots(userId, [0], MAX_CALL_BACKGROUND_SIZE_BYTES + 1);
       const callBackgrounds = await caller.readCallBackgrounds();
       const blobDeletionEvents = MockEventGridDatabase.get("");
       assert(blobDeletionEvents);
@@ -364,7 +360,11 @@ describe("user", () => {
       expect.hasAssertions();
 
       const userId = getMockSession().user.id;
-      seedSlots(userId, Object.fromEntries(Array.from({ length: MAX_CALL_BACKGROUNDS }, (_, slot) => [slot, size])));
+      seedSlots(
+        userId,
+        Array.from({ length: MAX_CALL_BACKGROUNDS }, (_, slot) => slot),
+        size,
+      );
 
       await expect(caller.generateCallBackgroundUploadUrl({ mimetype, size, slot: 3 })).resolves.toContain(
         getCallBackgroundBlobName(userId, 3),
@@ -397,7 +397,7 @@ describe("user", () => {
       expect.hasAssertions();
 
       const userId = getMockSession().user.id;
-      seedSlots(userId, { 0: size });
+      seedSlots(userId, [0], size);
       await caller.deleteCallBackground({ slot: 0 });
       const blobDeletionEvents = MockEventGridDatabase.get("");
       assert(blobDeletionEvents);
