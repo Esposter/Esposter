@@ -192,7 +192,7 @@ export const postRouter = router({
         .update(posts)
         .set({ noComments: sql`${posts.noComments} - ${noRemovedComments}` })
         .where(inArray(posts.id, ancestorIds));
-      return { ancestorIds, comment: deletedComment, noRemovedComments };
+      return { ancestorIds, noRemovedComments };
     }),
   ),
   deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<Post>(async ({ ctx, input }) => {

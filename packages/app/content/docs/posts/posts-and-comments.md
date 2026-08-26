@@ -20,7 +20,6 @@ flowchart TD
   COMMENT --> COMMENTWRITE["updateComment, deleteComment"]
   POSTWRITE --> GUARD["ownedBy plus a parentId IS NULL check"]
   COMMENTWRITE --> GUARDC["ownedBy plus a parentId IS NOT NULL check"]
-  POSTCREATE --> COUNT
   COMMENTCREATE --> COUNT["createComment and deleteComment move noComments on every post above"]
   COMMENTWRITE --> COUNT
   POSTWRITE --> CASCADE["deleting a post cascades to its comments"]
@@ -67,7 +66,7 @@ flowchart TD
 | `post.deletePost`    | authed, own             | id                    | delete own post (cascades) |
 | `post.createComment` | authed + profanity      | parentId, description | comment + the ids counted  |
 | `post.updateComment` | authed + profanity, own | id + description      | edit own comment           |
-| `post.deleteComment` | authed, own             | id                    | comment, ids, subtree size |
+| `post.deleteComment` | authed, own             | id                    | ids counted + subtree size |
 
 ## Key files
 

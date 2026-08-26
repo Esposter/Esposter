@@ -2,7 +2,7 @@
 import { createPost } from "@/services/post/createPost.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useCommentStore } from "@/store/post/comment";
-import { RoutePath, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -15,10 +15,8 @@ describe(useCommentStore, () => {
   const newDescription = "newDescription";
   const failingDescription = "failingDescription";
 
-  beforeEach(async () => {
+  beforeEach(() => {
     setActivePinia(createPinia());
-    // The store keys a list by the comment whose replies it holds, and the route's own post is one of those keys
-    await navigateTo(RoutePath.Post(postId));
   });
 
   // Two edits of one comment queue under the same key, so the second's rollback has to undo its own edit rather
@@ -35,7 +33,6 @@ describe(useCommentStore, () => {
       }),
     );
     const commentStore = useCommentStore();
-    const { items } = storeToRefs(commentStore);
     const { getSlice, updateComment } = commentStore;
     getSlice(postId).items.value = [createPost({ depth: 1, id: comment.id, parentId: postId })];
     await Promise.all([
@@ -43,7 +40,7 @@ describe(useCommentStore, () => {
       updateComment({ description: failingDescription, id: comment.id }, postId),
     ]);
 
-    expect(takeOne(items.value).description).toBe(newDescription);
+    expect(takeOne(getSlice(postId).items.value).description).toBe(newDescription);
   });
 
   // Deletes of different comments carry different keys, so they run beside each other — restoring a copy of the
@@ -55,18 +52,18 @@ describe(useCommentStore, () => {
       trpcMsw.post.deleteComment.mutation(({ input }) => {
         if (input === comment.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
 
-        return { ancestorIds: [postId], comment: otherComment, noRemovedComments: 1 };
+        return { ancestorIds: [postId], noRemovedComments: 1 };
       }),
     );
     const parentPost = createPost({ id: postId, noComments: 2 });
     const commentStore = useCommentStore();
-    const { currentPost, items } = storeToRefs(commentStore);
+    const { currentPost } = storeToRefs(commentStore);
     const { deleteComment, getSlice } = commentStore;
     currentPost.value = parentPost;
     getSlice(postId).items.value = [comment, otherComment];
     await Promise.all([deleteComment(comment.id, postId), deleteComment(otherComment.id, postId)]);
 
-    expect(items.value).toStrictEqual([comment]);
+    expect(getSlice(postId).items.value).toStrictEqual([comment]);
     expect(parentPost.noComments).toBe(1);
   });
 
@@ -77,13 +74,7 @@ describe(useCommentStore, () => {
     expect.hasAssertions();
 
     const reply = createPost({ depth: 2, parentId: comment.id });
-    server.use(
-      trpcMsw.post.deleteComment.mutation(() => ({
-        ancestorIds: [postId],
-        comment,
-        noRemovedComments: 2,
-      })),
-    );
+    server.use(trpcMsw.post.deleteComment.mutation(() => ({ ancestorIds: [postId], noRemovedComments: 2 })));
     const parentPost = createPost({ id: postId, noComments: 2 });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);

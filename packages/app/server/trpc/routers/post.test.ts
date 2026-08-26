@@ -169,7 +169,7 @@ describe("post", () => {
     const deleted = await postCaller.deleteComment(newComment.id);
     const readPost = await postCaller.readPost(newPost.id);
 
-    expect(deleted.comment.id).toBe(newComment.id);
+    expect(deleted.noRemovedComments).toBe(1);
     expect(readPost.noComments).toBe(0);
   });
 

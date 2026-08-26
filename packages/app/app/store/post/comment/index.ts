@@ -7,21 +7,14 @@ import { useMutation } from "@/composables/shared/useMutation";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
-import { uuidValidateV4 } from "@esposter/shared";
 
 export const useCommentStore = defineStore("post/comment", () => {
   const { $trpc } = useNuxtApp();
-  const router = useRouter();
-  const currentPostId = computed(() => {
-    const postId = router.currentRoute.value.params.id;
-    return typeof postId === "string" && uuidValidateV4(postId) ? postId : "";
-  });
   const currentPost = ref<PostWithRelations>();
-  // Keyed by the post whose replies the partition holds rather than by the post in the route, so every node in
-  // The tree pages independently through the read the root already used. The route's own post is simply the
-  // Branch whose key is its id — one code path for the page and for every reply beneath it
-  const { getDataRef, getIsLoadedRef, getSlice, items, keys, ...restData } =
-    useCursorPaginationDataMap<PostWithRelations>(currentPostId);
+  // Keyed by the post whose replies the partition holds, and read against a named key rather than a current one:
+  // Every node in the tree pages independently, so no partition is ever the current one. The route's own post is
+  // Simply the branch whose key is its id — one code path for the page and for every reply beneath it
+  const { getDataRef, getIsLoadedRef, getSlice, keys } = useCursorPaginationDataMap<PostWithRelations>("");
   const getPostOperationData = (parentId: string) =>
     createOperationData(getSlice(parentId).items, ["id"], DerivedDatabaseEntityType.Comment);
   // Every comment on screen, across every open branch — a row the tree is holding ten levels down is in none of
@@ -130,8 +123,6 @@ export const useCommentStore = defineStore("post/comment", () => {
     getDataRef,
     getIsLoadedRef,
     getSlice,
-    items,
     updateComment,
-    ...restData,
   };
 });
