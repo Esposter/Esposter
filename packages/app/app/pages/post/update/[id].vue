@@ -1,11 +1,20 @@
 <script setup lang="ts">
 import { validate } from "@/services/router/validate";
+import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { usePostStore } from "@/store/post";
+import { DatabaseEntityType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth", validate });
 
 const post = await useReadPostFromRoute();
+// This form edits a title, and a comment has none — reading one as a root is the thread page's business, not
+// This page's
+if (post.parentId)
+  throw createError({
+    status: 404,
+    statusText: `${getEntityNotFoundStatusMessage(DatabaseEntityType.Post, post.id)}, you might be trying to find a comment`,
+  });
 const postStore = usePostStore();
 const { updatePost } = postStore;
 </script>

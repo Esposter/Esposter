@@ -12,6 +12,7 @@ export const createPost = (overrides: Partial<PostWithRelations> = {}): PostWith
   const createdAt = new Date(0);
   const user = createUser({ emailVerified: true, id: "userId" });
   return {
+    ancestorIds: [],
     createdAt,
     deletedAt: null,
     depth: 0,

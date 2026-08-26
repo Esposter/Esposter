@@ -18,7 +18,7 @@ const editedDescriptionHtml = ref(comment.description);
 const saveComment = useSaveRichTextEdit(
   editedDescriptionHtml,
   () => comment.description,
-  () => updateComment({ description: editedDescriptionHtml.value, id: comment.id }),
+  () => updateComment({ description: editedDescriptionHtml.value, id: comment.id }, comment.parentId ?? ""),
   emit,
 );
 </script>

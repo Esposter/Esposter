@@ -1,3 +1,5 @@
+import type { CreatedComment } from "#shared/models/db/post/CreatedComment";
+import type { DeletedComment } from "#shared/models/db/post/DeletedComment";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { Post, PostWithRelations, relations } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
@@ -32,8 +34,8 @@ import {
   posts,
   selectPostSchema,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { and, eq, isNotNull, isNull } from "drizzle-orm";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { and, arrayContains, count, eq, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
@@ -50,15 +52,15 @@ const readPostsInputSchema = z
   .prefault({});
 
 export const postRouter = router({
-  createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"]).mutation<PostWithRelations>(
+  createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"]).mutation<CreatedComment>(
     ({ ctx, input }) =>
       ctx.db.transaction(async (tx) => {
         const parentPost = await requireEntity(
           tx.query.posts.findFirst({
             columns: {
+              ancestorIds: true,
               depth: true,
               id: true,
-              noComments: true,
             },
             where: {
               id: {
@@ -69,6 +71,9 @@ export const postRouter = router({
           DatabaseEntityType.Post,
           input.parentId,
         );
+        // The parent's chain plus the parent itself, which is the whole of what this reply inherits — and the
+        // Exact set of posts whose counters it moves
+        const ancestorIds = [...parentPost.ancestorIds, parentPost.id];
 
         const createdAt = new Date();
         const newComment = requireMutation(
@@ -77,6 +82,7 @@ export const postRouter = router({
               .insert(posts)
               .values({
                 ...input,
+                ancestorIds,
                 createdAt,
                 depth: parentPost.depth + 1,
                 ranking: getPostRanking(0, createdAt),
@@ -89,25 +95,30 @@ export const postRouter = router({
           JSON.stringify(input),
         );
 
+        // Every ancestor, not just the parent: once replies nest, a counter that only counts direct children
+        // Makes a feed card under-report its own thread — thirty comments showing as three
         await tx
           .update(posts)
-          .set({ noComments: parentPost.noComments + 1 })
-          .where(eq(posts.id, parentPost.id));
+          .set({ noComments: sql`${posts.noComments} + 1` })
+          .where(inArray(posts.id, ancestorIds));
 
-        return getPostWithViewerLike(
-          await requireEntity(
-            tx.query.posts.findFirst({
-              where: {
-                id: {
-                  eq: newComment.id,
+        return {
+          ancestorIds,
+          comment: getPostWithViewerLike(
+            await requireEntity(
+              tx.query.posts.findFirst({
+                where: {
+                  id: {
+                    eq: newComment.id,
+                  },
                 },
-              },
-              with: getViewerPostRelations(ctx.getSessionPayload.user.id),
-            }),
-            DerivedDatabaseEntityType.Comment,
-            newComment.id,
+                with: getViewerPostRelations(ctx.getSessionPayload.user.id),
+              }),
+              DerivedDatabaseEntityType.Comment,
+              newComment.id,
+            ),
           ),
-        );
+        };
       }),
   ),
   createPost: getProfanityFilterProcedure(createPostInputSchema, ["title", "description"]).mutation<PostWithRelations>(
@@ -147,8 +158,17 @@ export const postRouter = router({
         );
       }),
   ),
-  deleteComment: standardAuthedProcedure.input(deleteCommentInputSchema).mutation<Post>(({ ctx, input }) =>
+  deleteComment: standardAuthedProcedure.input(deleteCommentInputSchema).mutation<DeletedComment>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
+      // Counted before the delete, because the cascade takes the descendants with it and nothing afterwards
+      // Could say how many rows left. Containment reads the whole subtree in one predicate — the chain is on
+      // Every row, so nothing has to be walked to find out what is under this one
+      const noDescendants = takeOne(
+        await tx
+          .select({ count: count() })
+          .from(posts)
+          .where(arrayContains(posts.ancestorIds, [input])),
+      ).count;
       const deletedComment = requireMutation(
         (
           await tx
@@ -160,30 +180,19 @@ export const postRouter = router({
         DerivedDatabaseEntityType.Comment,
         input,
       );
-      const { parentId: postId } = deletedComment;
-      if (!postId) throw getInvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, input);
+      if (!deletedComment.parentId)
+        throw getInvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, input);
 
-      const post = await requireEntity(
-        tx.query.posts.findFirst({
-          columns: {
-            id: true,
-            noComments: true,
-          },
-          where: {
-            id: {
-              eq: postId,
-            },
-          },
-        }),
-        DatabaseEntityType.Post,
-        postId,
-      );
-
+      // `parentId` cascades, so the replies beneath this one are already gone and the count read before the
+      // Delete is the only record of how many that was. Every ancestor loses all of them, and the row that was
+      // Deleted carries the list of which
+      const { ancestorIds } = deletedComment;
+      const noRemovedComments = noDescendants + 1;
       await tx
         .update(posts)
-        .set({ noComments: post.noComments - 1 })
-        .where(eq(posts.id, post.id));
-      return deletedComment;
+        .set({ noComments: sql`${posts.noComments} - ${noRemovedComments}` })
+        .where(inArray(posts.id, ancestorIds));
+      return { ancestorIds, comment: deletedComment, noRemovedComments };
     }),
   ),
   deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<Post>(async ({ ctx, input }) => {

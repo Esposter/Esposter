@@ -58,6 +58,9 @@ export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultVa
     getData,
     getDataRef,
     initializeData,
+    // Every key the map has been asked about, which is every key it holds — reading one creates its default, so
+    // A caller that needs to look across partitions has this rather than a registry kept in step by hand
+    keys: computed(() => [...dataMap.value.keys()]),
     resetData,
     setData,
   };
