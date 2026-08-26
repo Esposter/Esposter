@@ -17,6 +17,7 @@ import { rasterizeSvg } from "@/services/message/room/liveKit/rasterizeSvg";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useUserSettingsStore } from "@/store/message/user/settings";
+import { useCallBackgroundStore } from "@/store/message/user/settings/callBackground";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
 import {
   DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
@@ -73,6 +74,9 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
   const participantStore = useParticipantStore();
   const userSettingsStore = useUserSettingsStore();
+  const { updateUserSettings } = userSettingsStore;
+  const callBackgroundStore = useCallBackgroundStore();
+  const { readVirtualBackgroundImagePath } = callBackgroundStore;
   // Persisted (localStorage) device selections are the single source of truth, shared with the settings
   // Panel, mic test, and pre-join preview - so the call captures the device the user actually picked.
   const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
@@ -183,7 +187,11 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     localCameraTrack = publication.videoTrack;
     mediaStore.localVideoStream = publication.videoTrack.mediaStream;
     mediaStore.isCameraEnabled = true;
-    if (mediaStore.selectedVirtualBackground) await setVirtualBackground(mediaStore.selectedVirtualBackground);
+    // The persisted pick is what a camera starting mid-call has to composite, because the ref is per-call and
+    // A user who chose a background last session never touched the picker this one. Applied rather than set:
+    // Restoring a selection is not the user making it again, so it owes the settings row no write
+    const virtualBackground = mediaStore.selectedVirtualBackground || userSettingsStore.userSettings?.virtualBackground;
+    if (virtualBackground) await applyVirtualBackground(virtualBackground);
   };
   const onLocalTrackPublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
     if (publication.source === Track.Source.Camera) await setLocalCameraTrack(publication);
@@ -234,10 +242,10 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   };
   // Local media pipeline work rather than a server write: clicking through the background picker means only
   // The last pick matters, and the picks before it have nothing to unwind, so they supersede rather than queue
-  const setVirtualBackground = async (imagePath: string) => {
+  const applyVirtualBackground = async (virtualBackground: string) => {
     await executeSetVirtualBackgroundMutation(
       async (checkIsStale) => {
-        mediaStore.selectedVirtualBackground = imagePath;
+        mediaStore.selectedVirtualBackground = virtualBackground;
         if (!localCameraTrack) return;
         else if (!supportsBackgroundProcessors()) {
           console.warn("Background processors are not supported in this browser.");
@@ -251,18 +259,28 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
           if (virtualBackgroundProcessor.processedTrack)
             mediaStore.localVideoStream = new MediaStream([virtualBackgroundProcessor.processedTrack]);
         }
-        if (!imagePath) {
-          if (checkIsStale()) return;
+        // A slot that has been deleted resolves to nothing, which lands here as the same disabled processor the
+        // None entry selects - a missing image must never leave a call with a broken video track
+        const imagePath = await readVirtualBackgroundImagePath(virtualBackground);
+        if (checkIsStale()) return;
+        else if (!imagePath) {
           await virtualBackgroundProcessor.switchTo({ mode: "disabled" });
           return;
         }
 
+        // Only the presets are SVGs; an uploaded slot arrives as a signed url the processor can take directly
         const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
         if (checkIsStale() || !resolvedPath) return;
         await virtualBackgroundProcessor.switchTo({ imagePath: resolvedPath, mode: "virtual-background" });
       },
       { isSupersede: true, key: "virtualBackground" },
     );
+  };
+  // The pick the user actually made, which is the only one worth remembering. Persisted after the pipeline has
+  // Taken it, so a background that could not be applied is not stored as the one in force
+  const setVirtualBackground = async (virtualBackground: string) => {
+    await applyVirtualBackground(virtualBackground);
+    await updateUserSettings({ virtualBackground });
   };
   // Selecting a device just writes the persisted ref (via setActiveDevice); these watchers restart the
   // Live track on change. The guard skips no-op switches - including the echo from LiveKit's own
