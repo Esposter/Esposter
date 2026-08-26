@@ -36,6 +36,14 @@ Some reads are genuinely not state: the offline save system reads one JSON blob 
 
 `window.localStorage` is a `no-restricted-syntax` error, so this is enforced rather than remembered. The offline save system is the standing exception and disables the rule on the line, with its reason: the key is a parameter there, so no ref can own it. Tests need no exemption either, because a test addresses the global bare (`localStorage.clear()`): the `window.` prefix the rule requires of `app/` source would be a `ReferenceError` in a Node-environment test.
 
+## Module scope is the one position a rule can see
+
+The position this page is about is enforced too. A browser global read at the **top level of a module** is read while the module is being evaluated, which on the server happens before any phase could have decided anything — so it is the one place the environment question provably has not been answered yet, and the ban says so. Inside a function it may well have been answered: `onMounted`, an event handler, a `.client.ts` plugin's own export. The rule therefore stops at the function boundary, and telling a real phase from a leaf that merely sits inside one stays a reading pass.
+
+A genuine top-level fork disables the rule on the line with its reason, the same way the storage ban is excepted — the test setup's viewport stub is the one that does, because the `getIsServer()` branch above it has already decided.
+
+What this leaves unenforced is the subtler half, and it is worth naming: a browser global inside a `computed` is inside a function, so nothing flags it, and it survives SSR only for as long as nothing reads that computed during the server render. A dialog that happens to be closed on the server is not a guard, and the share dialog's link was built that way until a sweep read it.
+
 ## What `getIsServer()` is still for
 
 A genuine fork, where both branches are real and reachable: `serialize`/`deserialize` choosing `Buffer` over `btoa`, `getTextFromHtml` returning raw HTML where there is no `DOMParser`, `useCursorPaginationOperationData` writing into the Nuxt payload only on the server. These are the only hand-written uses left, and each one exists because the _answer_ differs by environment, not because the _API_ is missing.
@@ -49,5 +57,5 @@ A genuine fork, where both branches are real and reachable: `serialize`/`deseria
 | `app/services/shared/LocalStorageKey.ts`              | Every persisted key, so two features cannot collide     |
 | `app/services/message/draft/draftsSerializer.ts`      | Map ⇄ storage with schema validation on read            |
 | `app/composables/useReadData.ts`                      | The client-only phase for an unauthenticated local read |
-| `packages/configuration/eslint/restrictedSyntaxes.js` | The `window.localStorage` ban                           |
+| `packages/configuration/eslint/restrictedSyntaxes.js` | The `window.localStorage` and module-scope bans         |
 | `packages/shared/src/util/environment/getIsServer.ts` | The fork primitive                                      |

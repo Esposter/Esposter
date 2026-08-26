@@ -5,6 +5,7 @@ import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFu
 import { THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE } from "@/services/message/composer/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadStore } from "@/store/message/thread";
+import { defaultDocument } from "@vueuse/core";
 
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
@@ -20,7 +21,7 @@ const getDropTarget = ({ target }: DragEvent): ComposerTarget =>
     : { roomId: currentRoomId.value, threadRootRowKey: "" };
 const dropTarget = ref<ComposerTarget>({ roomId: "", threadRootRowKey: "" });
 const uploadFiles = useUploadFiles(dropTarget);
-const { isOverDropZone } = useDropZone(window.document, {
+const { isOverDropZone } = useDropZone(defaultDocument, {
   onDrop: getSynchronizedFunction(async (files: File[] | null, event: DragEvent) => {
     dropTarget.value = getDropTarget(event);
     await uploadFiles(files);

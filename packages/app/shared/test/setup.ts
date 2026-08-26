@@ -43,6 +43,8 @@ globalThis.sessionStorage = new MemoryStorage();
 if (!getIsServer() && !("visualViewport" in globalThis))
   globalThis.visualViewport = {
     addEventListener: () => {},
+    // The `getIsServer` fork above is the sanctioned third branch, so the environment is already decided here
+    // eslint-disable-next-line no-restricted-syntax -- decided by the fork, not by this leaf
     height: window.innerHeight,
     offsetLeft: 0,
     offsetTop: 0,
@@ -50,6 +52,7 @@ if (!getIsServer() && !("visualViewport" in globalThis))
     pageTop: 0,
     removeEventListener: () => {},
     scale: 1,
+    // eslint-disable-next-line no-restricted-syntax -- decided by the fork, not by this leaf
     width: window.innerWidth,
   } as unknown as VisualViewport;
 
