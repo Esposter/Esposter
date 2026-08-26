@@ -51,6 +51,8 @@ export default [
     // Disables this on the line with its reason, the same way the ban above is excepted.
     message:
       "A browser global at module scope is evaluated during SSR — move it into a phase (`onMounted`, `.client.ts`) or a ref — see /docs/architecture/browser-execution.",
-    selector: "MemberExpression[object.name='window']:not(:function *)",
+    // `localStorage` is excluded rather than left to match both: the ban above names the replacement for it, and
+    // A module-scope `window.localStorage` matching both selectors reports the same node twice
+    selector: "MemberExpression[object.name='window'][property.name!='localStorage']:not(:function *)",
   },
 ];

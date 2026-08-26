@@ -3,7 +3,6 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { useDialogStore } from "@/store/message/room/dialog";
-import { useRoomInviteStore } from "@/store/message/room/roomInvite";
 
 interface InvitesProps {
   room: RoomInMessage;
@@ -13,9 +12,7 @@ const { room } = defineProps<InvitesProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const dialogStore = useDialogStore();
 const { inviteRoomId } = storeToRefs(dialogStore);
-const roomInviteStore = useRoomInviteStore();
-const { hasMore, items } = storeToRefs(roomInviteStore);
-const { readMoreRoomInvites, readRoomInvites } = useReadRoomInvites(room.id);
+const { hasMore, items, readMoreRoomInvites, readRoomInvites } = useReadRoomInvites(room.id);
 const saveRoom = useSaveRoom(() => room);
 
 // The panel is gated on ManageRoom, so anyone who reaches it may act on every row it lists — the pause below and
@@ -53,35 +50,35 @@ await readRoomInvites();
     </v-row>
     <v-row>
       <v-col cols="12">
-        <template v-if="items.length > 0">
-          <v-table density="comfortable">
-            <thead>
-              <tr>
-                <th>Inviter</th>
-                <th>Invite Code</th>
-                <th>Uses</th>
-                <th>Expires</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              <MessageModelRoomInviteTableRow
-                v-for="invite of items"
-                :key="invite.id"
-                :invite
-                :is-creator="invite.userId === session?.user.id"
-                :room-id="room.id"
-              />
-            </tbody>
-          </v-table>
-          <StyledWaypoint :is-active="hasMore" @change="readMoreRoomInvites" />
-        </template>
+        <v-table v-if="items.length > 0" density="comfortable">
+          <thead>
+            <tr>
+              <th>Inviter</th>
+              <th>Invite Code</th>
+              <th>Uses</th>
+              <th>Expires</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            <MessageModelRoomInviteTableRow
+              v-for="invite of items"
+              :key="invite.id"
+              :invite
+              :is-creator="invite.userId === session?.user.id"
+              :room-id="room.id"
+            />
+          </tbody>
+        </v-table>
+        <!-- A page of lapsed links filters down to nothing while older usable ones are still to come, so the
+             empty state waits until the walk is over rather than announcing itself between pages -->
         <StyledEmptyState
-          v-else
+          v-else-if="!hasMore"
           icon="mdi-send-outline"
           title="No invites yet"
           description="Feeling aimless? Like a paper plane drifting through the skies? Get some friends in here by creating an invite link!"
         />
+        <StyledWaypoint :is-active="hasMore" @change="readMoreRoomInvites" />
       </v-col>
     </v-row>
   </v-container>

@@ -26,6 +26,9 @@ missing one, and a joiner who loses a race against a revoke gets the same error 
 
 The list reads what a joiner could actually use — expired and exhausted rows are filtered by
 `checkIsInviteUsable`, the same predicate every other reader applies, rather than by a second copy of it in SQL.
+The filter runs after the page is cut rather than before, so a page can render fewer rows than it read and the
+cursor still names the oldest row read: a batch of lapsed links narrows one page instead of ending the walk short
+of the usable links behind it.
 
 ## How it works
 
@@ -52,14 +55,14 @@ flowchart TD
 
 All in `server/trpc/routers/room/index.ts`:
 
-| Procedure                                               | Auth                                 | Purpose                                                        |
-| :------------------------------------------------------ | :----------------------------------- | :------------------------------------------------------------- |
-| `createInvite({ roomId, expireAfterMinutes, maxUses })` | `ManageInvites`                      | replace own invite with a new token + options; returns the row |
-| `revokeInvite({ id, roomId })`                          | member, or any row with `ManageRoom` | delete an invite — the row's absence is what kills the token   |
-| `readRoomInvites({ roomId, cursor })`                   | `ManageRoom`                         | the room's usable links, each joined to its creator            |
-| `readMyInvite({ roomId })`                              | member                               | own invite row for the dialog (`null` if none/expired)         |
-| `readInvite(id)`                                        | authed                               | landing-page info; `null` for unknown/expired/exhausted        |
-| `joinRoom(id)`                                          | authed                               | atomic validate + consume + insert membership                  |
+| Procedure                                               | Auth                                 | Purpose                                                                        |
+| :------------------------------------------------------ | :----------------------------------- | :----------------------------------------------------------------------------- |
+| `createInvite({ roomId, expireAfterMinutes, maxUses })` | `ManageInvites`                      | replace own invite with a new token + options; returns the row and its creator |
+| `revokeInvite({ id, roomId })`                          | member, or any row with `ManageRoom` | delete an invite — the row's absence is what kills the token                   |
+| `readRoomInvites({ roomId, cursor })`                   | `ManageRoom`                         | the room's usable links, each joined to its creator                            |
+| `readMyInvite({ roomId })`                              | member                               | own invite row for the dialog (`null` if none/expired)                         |
+| `readInvite(id)`                                        | authed                               | landing-page info; `null` for unknown/expired/exhausted                        |
+| `joinRoom(id)`                                          | authed                               | atomic validate + consume + insert membership                                  |
 
 ## Key files
 
@@ -71,6 +74,8 @@ All in `server/trpc/routers/room/index.ts`:
 | `packages/app/shared/services/room/invite/checkIsInviteUsable.ts`         | shared usability predicate, client included   |
 | `packages/app/server/services/message/readMyInvite.ts`                    | own-invite read + lazy delete                 |
 | `packages/app/app/store/message/room/invite.ts`                           | shared per-room invite map                    |
+| `packages/app/app/store/message/room/roomInvite.ts`                       | the panel's room-keyed list of every link     |
+| `packages/app/app/services/message/room/invite/inviteCreateHooks.ts`      | create fan-out from the dialog to the panel   |
 | `packages/app/app/components/Message/Model/Room/Invite/Manager.vue`       | invite manager with option selects            |
 | `packages/app/app/components/Message/Model/Room/Invite/Dialog.vue`        | the dialog hosting the manager                |
 | `packages/app/app/components/Message/Model/Room/Invite/TableRow.vue`      | the settings panel's row for a live link      |
@@ -82,6 +87,6 @@ All in `server/trpc/routers/room/index.ts`:
 Discord's arrangement, and the reason there are two: creating is a dialog, and settings lists what was created.
 
 - **The dialog** — `Invite friends to <room>` — is opened from the room's own row in the sidebar (hover, beside its settings cog) and from the settings panel's `create one` link. It hands over a usable link the moment it opens: the read that finds no live link mints one, and a read that finds one never replaces it, because a live link may already be in someone's inbox. Its option selects then regenerate deliberately.
-- **The settings panel** — **User Management → Invites** — is the management side, and where a room's invites are paused and resumed. It reads through the same `useReadMyInvite` without mounting the manager, so opening it creates nothing: it is Discord's table — inviter, invite code, uses, expires — over the link the reader holds, with copy, an `Edit invite link` button into the dialog and a revoke, and Discord's empty state when there is none.
+- **The settings panel** — **User Management → Invites** — is the management side, and where a room's invites are paused and resumed. It reads the room's whole set through `readRoomInvites` and never mounts the manager, so opening it mints nothing: it is Discord's table — inviter, invite code, uses, expires — one row per live link, with copy, an `Edit invite link` into the dialog on the reader's own row, a revoke on any of them, and Discord's empty state when there are none.
 
-Both display from `useInviteStore`'s per-room map, so a link regenerated on one surface never leaves the other copying a replaced, dead link. The settings panel reads the room's whole set through a store of its own, and a revoke there reaches back into that map when the row it killed was the reader's own — otherwise the dialog goes on offering a token the panel has already deleted.
+The dialog displays from `useInviteStore`'s per-room map; the panel reads the room's whole set through a store of its own, keyed by room so a read for the room the reader just left cannot land over the list on screen. Neither may go on showing what the other replaced, so the two are kept in step in both directions: creating from the dialog fires `inviteCreateHooks`, which is how the panel's table gains the new link and loses the one it replaced without the invite store having to know the panel exists, and a revoke in the panel reaches back into that map when the row it killed was the reader's own — otherwise the dialog goes on offering a token the panel has already deleted.

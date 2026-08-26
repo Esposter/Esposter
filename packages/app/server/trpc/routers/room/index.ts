@@ -152,7 +152,7 @@ export const baseRoomRouter = router({
   ),
   createInvite: getPermissionsProcedure(RoomPermission.ManageInvites, createInviteInputSchema, "roomId")
     .use(isRoom)
-    .mutation<InviteInMessage>(({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) =>
+    .mutation<InviteInMessageWithCreator>(({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) =>
       ctx.db.transaction(async (tx) => {
         // The room row is locked first, because the pause is a read with no constraint behind it: without the lock
         // A pause can commit between the check and the insert, and the room mints a link after it closed
@@ -176,6 +176,15 @@ export const baseRoomRouter = router({
           .delete(invitesInMessage)
           .where(and(eq(invitesInMessage.roomId, roomId), eq(invitesInMessage.userId, ctx.getSessionPayload.user.id)));
 
+        // The creator rides back with the row because the management panel lists one column of them, and the
+        // Session carries the auth user rather than this table's — the row a card renders is the server's to hand
+        // Over whole rather than the client's to assemble from what it happens to hold
+        const user = await requireEntity(
+          tx.query.users.findFirst({ where: { id: { eq: ctx.getSessionPayload.user.id } } }),
+          DatabaseEntityType.User,
+          ctx.getSessionPayload.user.id,
+        );
+
         for (let i = 0; i < MAX_INVITE_ID_RETRIES; i++) {
           const id = createId(INVITE_ID_LENGTH);
           const invites = await getResultAsync(() =>
@@ -184,7 +193,7 @@ export const baseRoomRouter = router({
               .values({ expiresAt, id, maxUses, roomId, userId: ctx.getSessionPayload.user.id })
               .returning(),
           ).unwrapOr(undefined);
-          if (invites) return takeOne(invites);
+          if (invites) return { ...takeOne(invites), user };
         }
         throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId, "UNPROCESSABLE_CONTENT");
       }),
@@ -534,12 +543,11 @@ export const baseRoomRouter = router({
       .orderBy(...parseSortByToSql(invitesInMessage, sortBy))
       .limit(limit + 1);
     // Expiry and exhaustion are decided by the same predicate every other reader uses rather than by a second
-    // Copy of it in SQL — a lapsed row is inert wherever it is read, and the panel lists what a joiner could use
-    return getCursorPaginationData(
-      readInvites.filter((invite) => checkIsInviteUsable(invite)),
-      limit,
-      sortBy,
-    );
+    // Copy of it in SQL — a lapsed row is inert wherever it is read, and the panel lists what a joiner could use.
+    // The page is cut over every row and only then filtered, so a batch of lapsed links narrows what this page
+    // Shows without ending the walk: the cursor still names the oldest row read rather than the oldest usable one
+    const { hasMore, items, nextCursor } = getCursorPaginationData(readInvites, limit, sortBy);
+    return { hasMore, items: items.filter((invite) => checkIsInviteUsable(invite)), nextCursor };
   }),
   readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {

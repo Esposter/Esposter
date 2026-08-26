@@ -40,9 +40,12 @@ export const useCommentStore = defineStore("post/comment", () => {
     const removeLoadedBranch = (key: string) => {
       if (!branchKeys.has(key)) return;
 
-      const { items: branchItems } = getSlice(key);
+      const { isLoaded, items: branchItems } = getSlice(key);
       for (const { id } of branchItems.value) removeLoadedBranch(id);
       branchItems.value = [];
+      // Emptied rather than answered: a branch that keeps saying it is loaded is one a re-expansion will not read
+      // Again, so a delete the server rejects would leave the replies underneath it invisible until a reload
+      isLoaded.value = false;
     };
     removeLoadedBranch(parentId);
   };
@@ -103,8 +106,8 @@ export const useCommentStore = defineStore("post/comment", () => {
         storeDeleteComment({ id: input });
         return () => {
           // The row comes back at the end rather than in its sorted place — cosmetic next to dropping rows the
-          // Branch gained while the delete was in flight. Its own replies stay gone: they were never this
-          // Write to restore, and re-opening the branch reads them again
+          // Branch gained while the delete was in flight. Its own replies are not restored here: `removeBranch`
+          // Left every branch beneath it unread, so re-opening one reads it again
           if (deletedComment) storeCreateComment(deletedComment);
         };
       },

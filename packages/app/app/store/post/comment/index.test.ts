@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { createPost } from "@/services/post/createPost.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useCommentStore } from "@/store/post/comment";
@@ -88,6 +89,33 @@ describe(useCommentStore, () => {
     expect(getSlice(postId).items.value).toStrictEqual([]);
     expect(getSlice(comment.id).items.value).toStrictEqual([]);
     expect(parentPost.noComments).toBe(0);
+  });
+
+  // The rows beneath a deleted comment go optimistically, and a branch that still claims to be loaded is one a
+  // Re-expansion will not read again — so a rejected delete has to leave those branches unread rather than merely
+  // Empty, or the replies stay invisible while they are still there
+  test("leaves the branches under a rejected delete unread", async () => {
+    expect.hasAssertions();
+
+    const reply = createPost({ depth: 2, parentId: comment.id });
+    server.use(
+      trpcMsw.post.deleteComment.mutation(() => {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+    );
+    const commentStore = useCommentStore();
+    const { currentPost } = storeToRefs(commentStore);
+    const { deleteComment, getSlice } = commentStore;
+    currentPost.value = createPost({ id: postId, noComments: 2 });
+    getSlice(postId).items.value = [comment];
+    const replyBranch = getSlice(comment.id);
+    replyBranch.initializeCursorPaginationData(new CursorPaginationData({ hasMore: false, items: [reply] }));
+
+    await deleteComment(comment.id, postId);
+
+    expect(getSlice(postId).items.value).toStrictEqual([comment]);
+    expect(replyBranch.items.value).toStrictEqual([]);
+    expect(replyBranch.isLoaded.value).toBe(false);
   });
 
   // The counters the server moved are the ones on screen, so a reply has to reach the post above its own parent

@@ -3,6 +3,7 @@ import type { RevokeInviteInput } from "#shared/models/db/room/RevokeInviteInput
 import type { InviteInMessage } from "@esposter/db-schema";
 
 import { useMutation } from "@/composables/shared/useMutation";
+import { inviteCreateHooks } from "@/services/message/room/invite/inviteCreateHooks";
 
 export const useInviteStore = defineStore("message/room/invite", () => {
   const { $trpc } = useNuxtApp();
@@ -26,8 +27,9 @@ export const useInviteStore = defineStore("message/room/invite", () => {
     // Button queues against that one target, while invites for different rooms stay independent
     await executeCreateInviteMutation(() => $trpc.room.createInvite.mutate(input), {
       key: input.roomId,
-      onSuccess: (newInvite) => {
+      onSuccess: async (newInvite) => {
         storeInvite(input.roomId, newInvite);
+        await inviteCreateHooks.run(input.roomId, newInvite);
       },
     });
   };

@@ -36,8 +36,8 @@ import {
   posts,
   selectPostSchema,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { and, arrayContains, count, inArray, isNotNull, isNull, sql } from "drizzle-orm";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+import { and, arrayContains, eq, inArray, isNotNull, isNull, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
@@ -165,15 +165,22 @@ export const postRouter = router({
   ),
   deleteComment: standardAuthedProcedure.input(deleteCommentInputSchema).mutation<DeletedComment>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
-      // Counted before the delete, because the cascade takes the descendants with it and nothing afterwards
-      // Could say how many rows left. Containment reads the whole subtree in one predicate — the chain is on
-      // Every row, so nothing has to be walked to find out what is under this one
-      const noDescendants = takeOne(
-        await tx
-          .select({ count: count() })
-          .from(posts)
-          .where(arrayContains(posts.ancestorIds, [input])),
-      ).count;
+      // Counted before the delete, because the cascade takes these rows with it and nothing afterwards could say
+      // How many there were. Containment reads the whole subtree in one predicate — the chain is on every row, so
+      // Nothing has to be walked to find out what is under this one — and the row itself is counted with them,
+      // Which makes the count the number every ancestor loses.
+      // The rows are locked rather than merely counted: a delete of a reply beneath this one would otherwise
+      // Commit between this read and the decrement below, and both writes would subtract that same reply from
+      // Every ancestor above it. Ascending id is the order every such delete acquires them in, so an overlap
+      // Waits here — and one that still collides further in, over an ancestor a second delete is decrementing,
+      // Is aborted by the deadlock detector rather than allowed to double-count
+      const removedComments = await tx
+        .select({ id: posts.id })
+        .from(posts)
+        .where(or(eq(posts.id, input), arrayContains(posts.ancestorIds, [input])))
+        .orderBy(posts.id)
+        .for("update");
+      const noRemovedComments = removedComments.length;
       const deletedComment = requireMutation(
         (
           await tx
@@ -192,7 +199,6 @@ export const postRouter = router({
       // Delete is the only record of how many that was. Every ancestor loses all of them, and the row that was
       // Deleted carries the list of which
       const { ancestorIds } = deletedComment;
-      const noRemovedComments = noDescendants + 1;
       await tx
         .update(posts)
         .set({ noComments: sql`${posts.noComments} - ${noRemovedComments}` })
