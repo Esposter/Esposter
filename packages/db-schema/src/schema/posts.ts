@@ -33,7 +33,7 @@ export const posts = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ ancestorIds, description, parentId, ranking, title }) => [
+    extraConfig: ({ ancestorIds, description, parentId, title }) => [
       // We don't check if title is min(1) here because posts can be comments that have no title
       check("posts_title_length_check", createMaxLengthCheckSql(title, POST_TITLE_MAX_LENGTH)),
       check("posts_description_length_check", createMaxLengthCheckSql(description, POST_DESCRIPTION_MAX_LENGTH)),

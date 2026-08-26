@@ -5,10 +5,10 @@ import { describe, expect, test } from "vitest";
 
 // The two states are the whole component: a route that never existed, and a failure that might not repeat. What
 // Separates them is which way back is offered, so that is what these assert rather than the copy around it
-describe("errorPage", () => {
-  const mountErrorPage = async (statusCode: number, statusMessage: string) =>
-    mountSuspended(ErrorPage, { props: { error: createError({ statusCode, statusMessage }) } });
+const mountErrorPage = (statusCode: number, statusMessage: string) =>
+  mountSuspended(ErrorPage, { props: { error: createError({ statusCode, statusMessage }) } });
 
+describe("errorPage", () => {
   test("offers a missing page only the way home", async () => {
     expect.hasAssertions();
 

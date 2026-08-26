@@ -42,7 +42,7 @@ export const invitesInMessage = pgTable(
 export type InviteInMessage = typeof invitesInMessage.$inferSelect;
 // The row plus whoever minted it, which is what a management surface lists — a code with no author beside it
 // Says nothing about who to ask when it turns up somewhere it should not have
-export type InviteInMessageWithCreator = { user: User } & InviteInMessage;
+export type InviteInMessageWithCreator = InviteInMessage & { user: User };
 
 export const selectInviteInMessageSchema = createSelectSchema(invitesInMessage, {
   id: (schema) => schema.length(INVITE_ID_LENGTH).regex(INVITE_ID_REGEX),
