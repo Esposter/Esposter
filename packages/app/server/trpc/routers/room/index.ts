@@ -15,6 +15,7 @@ import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { dayjs } from "#shared/services/dayjs";
+import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -521,9 +522,7 @@ export const baseRoomRouter = router({
   readRoomInvites: getPermissionsProcedure(RoomPermission.ManageRoom, readRoomInvitesInputSchema, "roomId").query<
     CursorPaginationData<InviteInMessageWithCreator>
   >(async ({ ctx, input: { cursor, limit, roomId } }) => {
-    const sortBy: SortItem<keyof InviteInMessage>[] = [
-      { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
-    ];
+    const sortBy: SortItem<keyof InviteInMessage>[] = [CREATED_AT_DESCENDING_SORT_ITEM];
     const wheres: (SQL | undefined)[] = [eq(invitesInMessage.roomId, roomId)];
     if (cursor) wheres.push(getCursorWhere(invitesInMessage, cursor, sortBy));
 
@@ -536,7 +535,11 @@ export const baseRoomRouter = router({
       .limit(limit + 1);
     // Expiry and exhaustion are decided by the same predicate every other reader uses rather than by a second
     // Copy of it in SQL — a lapsed row is inert wherever it is read, and the panel lists what a joiner could use
-    return getCursorPaginationData(readInvites.filter(checkIsInviteUsable), limit, sortBy);
+    return getCursorPaginationData(
+      readInvites.filter((invite) => checkIsInviteUsable(invite)),
+      limit,
+      sortBy,
+    );
   }),
   readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {

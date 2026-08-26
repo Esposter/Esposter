@@ -1,7 +1,9 @@
 import type { CreatedComment } from "#shared/models/db/post/CreatedComment";
 import type { DeletedComment } from "#shared/models/db/post/DeletedComment";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { Post, PostWithRelations, relations } from "@esposter/db-schema";
+import type { Transaction } from "@@/server/models/db/Transaction";
+import type { Context } from "@@/server/trpc/context";
+import type { Post, PostWithRelations, relations, User } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
 
 import { createCommentInputSchema } from "#shared/models/db/post/CreateCommentInput";
@@ -35,7 +37,7 @@ import {
   selectPostSchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { and, arrayContains, count, eq, inArray, isNotNull, isNull, sql } from "drizzle-orm";
+import { and, arrayContains, count, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
@@ -50,6 +52,30 @@ const readPostsInputSchema = z
     [selectPostSchema.keyof().enum.userId]: selectPostSchema.shape.userId.optional(),
   })
   .prefault({});
+
+// Every write returns an id and every reader wants the row a card renders — the author beside it, and the
+// Viewer's own like when there is a viewer to have one. Signed out there is no like to look up, so the read
+// Drops the filtered relation rather than filtering on nobody
+const readPostWithRelations = async (
+  db: Context["db"] | Transaction,
+  id: Post["id"],
+  entityType: string,
+  userId?: User["id"],
+): Promise<PostWithRelations> =>
+  getPostWithViewerLike(
+    await requireEntity(
+      db.query.posts.findFirst({
+        where: {
+          id: {
+            eq: id,
+          },
+        },
+        with: userId ? getViewerPostRelations(userId) : PostRelations,
+      }),
+      entityType,
+      id,
+    ),
+  );
 
 export const postRouter = router({
   createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"]).mutation<CreatedComment>(
@@ -104,19 +130,11 @@ export const postRouter = router({
 
         return {
           ancestorIds,
-          comment: getPostWithViewerLike(
-            await requireEntity(
-              tx.query.posts.findFirst({
-                where: {
-                  id: {
-                    eq: newComment.id,
-                  },
-                },
-                with: getViewerPostRelations(ctx.getSessionPayload.user.id),
-              }),
-              DerivedDatabaseEntityType.Comment,
-              newComment.id,
-            ),
+          comment: await readPostWithRelations(
+            tx,
+            newComment.id,
+            DerivedDatabaseEntityType.Comment,
+            ctx.getSessionPayload.user.id,
           ),
         };
       }),
@@ -142,20 +160,7 @@ export const postRouter = router({
           JSON.stringify(input),
         );
 
-        return getPostWithViewerLike(
-          await requireEntity(
-            tx.query.posts.findFirst({
-              where: {
-                id: {
-                  eq: newPost.id,
-                },
-              },
-              with: getViewerPostRelations(ctx.getSessionPayload.user.id),
-            }),
-            DatabaseEntityType.Post,
-            newPost.id,
-          ),
-        );
+        return readPostWithRelations(tx, newPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
       }),
   ),
   deleteComment: standardAuthedProcedure.input(deleteCommentInputSchema).mutation<DeletedComment>(({ ctx, input }) =>
@@ -209,40 +214,12 @@ export const postRouter = router({
     );
     return deletedPost;
   }),
-  readPost: standardRateLimitedProcedure.input(readPostInputSchema).query<PostWithRelations>(async ({ ctx, input }) => {
+  readPost: standardRateLimitedProcedure
+    .input(readPostInputSchema)
     // The procedure is rate-limited, so a session may be absent — no viewer means no like lookup at all
-    const userId = ctx.getSessionPayload?.user.id;
-    if (!userId)
-      return getPostWithViewerLike(
-        await requireEntity(
-          ctx.db.query.posts.findFirst({
-            where: {
-              id: {
-                eq: input,
-              },
-            },
-            with: PostRelations,
-          }),
-          DatabaseEntityType.Post,
-          input,
-        ),
-      );
-
-    return getPostWithViewerLike(
-      await requireEntity(
-        ctx.db.query.posts.findFirst({
-          where: {
-            id: {
-              eq: input,
-            },
-          },
-          with: getViewerPostRelations(userId),
-        }),
-        DatabaseEntityType.Post,
-        input,
-      ),
-    );
-  }),
+    .query<PostWithRelations>(({ ctx, input }) =>
+      readPostWithRelations(ctx.db, input, DatabaseEntityType.Post, ctx.getSessionPayload?.user.id),
+    ),
   readPosts: standardRateLimitedProcedure
     .input(readPostsInputSchema)
     .query<CursorPaginationData<PostWithRelations>>(
@@ -265,19 +242,12 @@ export const postRouter = router({
               throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Post, JSON.stringify({ cursor }));
             return rawWhere;
           };
-        const resultPosts = userId
-          ? await ctx.db.query.posts.findMany({
-              limit: limit + 1,
-              orderBy: (post) => parseSortByToSql(post, sortBy),
-              where,
-              with: getViewerPostRelations(userId),
-            })
-          : await ctx.db.query.posts.findMany({
-              limit: limit + 1,
-              orderBy: (post) => parseSortByToSql(post, sortBy),
-              where,
-              with: PostRelations,
-            });
+        const resultPosts = await ctx.db.query.posts.findMany({
+          limit: limit + 1,
+          orderBy: (post) => parseSortByToSql(post, sortBy),
+          where,
+          with: userId ? getViewerPostRelations(userId) : PostRelations,
+        });
         return getCursorPaginationData(
           resultPosts.map((post) => getPostWithViewerLike(post)),
           limit,
@@ -301,25 +271,11 @@ export const postRouter = router({
           id,
         );
 
-        return getPostWithViewerLike(
-          await requireEntity(
-            tx.query.posts.findFirst({
-              where: {
-                id: {
-                  eq: updatedComment.id,
-                },
-                parentId: {
-                  isNotNull: true,
-                },
-                userId: {
-                  eq: ctx.getSessionPayload.user.id,
-                },
-              },
-              with: getViewerPostRelations(ctx.getSessionPayload.user.id),
-            }),
-            DerivedDatabaseEntityType.Comment,
-            id,
-          ),
+        return readPostWithRelations(
+          tx,
+          updatedComment.id,
+          DerivedDatabaseEntityType.Comment,
+          ctx.getSessionPayload.user.id,
         );
       }),
   ),
@@ -339,26 +295,7 @@ export const postRouter = router({
           id,
         );
 
-        return getPostWithViewerLike(
-          await requireEntity(
-            tx.query.posts.findFirst({
-              where: {
-                id: {
-                  eq: updatedPost.id,
-                },
-                parentId: {
-                  isNull: true,
-                },
-                userId: {
-                  eq: ctx.getSessionPayload.user.id,
-                },
-              },
-              with: getViewerPostRelations(ctx.getSessionPayload.user.id),
-            }),
-            DatabaseEntityType.Post,
-            id,
-          ),
-        );
+        return readPostWithRelations(tx, updatedPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
       }),
   ),
 });

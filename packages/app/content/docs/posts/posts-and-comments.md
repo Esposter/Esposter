@@ -79,7 +79,8 @@ Paths relative to `packages/app`, except those starting with `packages/`, which 
 | `server/trpc/procedure/getProfanityFilterProcedure.ts` | text censoring middleware              |
 | `app/pages/post/create.vue`, `app/pages/post/[id].vue` | create + detail pages                  |
 | `app/components/Post/`                                 | card, forms, comment components        |
-| `app/store/post/comment/index.ts`                      | comment list store                     |
+| `app/components/Post/Comment/Branch.vue`               | one node's replies — the recursion     |
+| `app/store/post/comment/index.ts`                      | the branch-keyed comment map           |
 
 ## Notes
 

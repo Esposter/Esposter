@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "@esposter/db-schema";
 
+import { pluralize } from "#shared/util/text/pluralize";
 import { authClient } from "@/services/auth/authClient";
 import { COMMENT_INDENT_STEP, MAX_COMMENT_INDENT_DEPTH } from "@/services/post/constants";
 import { useCommentDialogStore } from "@/store/post/comment/dialog";
@@ -26,7 +27,7 @@ const isExpanded = ref(false);
 const isClamped = computed(() => depth >= MAX_COMMENT_INDENT_DEPTH);
 const indent = computed(() => (depth === 0 || isClamped.value ? "" : COMMENT_INDENT_STEP));
 const deleteLabel = computed(() => (comment.noComments > 0 ? "Delete Comment And Replies" : "Delete Comment"));
-const replyLabel = computed(() => `${comment.noComments} ${comment.noComments === 1 ? "reply" : "replies"}`);
+const replyLabel = computed(() => `${comment.noComments} ${pluralize("reply", comment.noComments, "replies")}`);
 </script>
 
 <template>

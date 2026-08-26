@@ -11,8 +11,7 @@ import { readBansInputSchema } from "#shared/models/db/moderation/ReadBansInput"
 import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadModerationLogInput";
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { CREATED_AT_DESCENDING_SORT_ITEM, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
@@ -224,9 +223,7 @@ export const moderationRouter = router({
   readBans: getPermissionsProcedure(RoomPermission.BanMembers, readBansInputSchema, "roomId").query<
     CursorPaginationData<BanInMessageWithRelations>
   >(async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
-    const sortBy: SortItem<keyof BanInMessage>[] = [
-      { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
-    ];
+    const sortBy: SortItem<keyof BanInMessage>[] = [CREATED_AT_DESCENDING_SORT_ITEM];
     const wheres: (SQL | undefined)[] = [eq(bansInMessage.roomId, roomId), isNull(bansInMessage.deletedAt)];
     if (cursor) wheres.push(getCursorWhere(bansInMessage, cursor, sortBy));
     // The join below already brings the banned user's name into scope, so the predicate costs nothing extra

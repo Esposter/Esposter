@@ -53,29 +53,31 @@ await readRoomInvites();
     </v-row>
     <v-row>
       <v-col cols="12">
-        <v-table v-if="items.length > 0" density="comfortable">
-          <thead>
-            <tr>
-              <th>Inviter</th>
-              <th>Invite Code</th>
-              <th>Uses</th>
-              <th>Expires</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            <MessageModelRoomInviteTableRow
-              v-for="invite of items"
-              :key="invite.id"
-              :invite
-              :is-creator="invite.userId === session?.user.id"
-              :room-id="room.id"
-            />
-          </tbody>
-        </v-table>
-        <StyledWaypoint :is-active="hasMore" @change="readMoreRoomInvites" />
+        <template v-if="items.length > 0">
+          <v-table density="comfortable">
+            <thead>
+              <tr>
+                <th>Inviter</th>
+                <th>Invite Code</th>
+                <th>Uses</th>
+                <th>Expires</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              <MessageModelRoomInviteTableRow
+                v-for="invite of items"
+                :key="invite.id"
+                :invite
+                :is-creator="invite.userId === session?.user.id"
+                :room-id="room.id"
+              />
+            </tbody>
+          </v-table>
+          <StyledWaypoint :is-active="hasMore" @change="readMoreRoomInvites" />
+        </template>
         <StyledEmptyState
-          v-if="items.length === 0"
+          v-else
           icon="mdi-send-outline"
           title="No invites yet"
           description="Feeling aimless? Like a paper plane drifting through the skies? Get some friends in here by creating an invite link!"
