@@ -33,6 +33,12 @@
       }
     },
     {
+      "files": ["**/*.test.ts"],
+      "rules": {
+        "no-restricted-globals": "off"
+      }
+    },
+    {
       "files": ["packages/app/shared/**"],
       "rules": {
         "no-restricted-imports": [
@@ -180,6 +186,41 @@
             "name": "node:crypto"
           }
         ]
+      }
+    ],
+    "no-restricted-globals": [
+      "error",
+      {
+        "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+        "name": "document"
+      },
+      {
+        "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+        "name": "history"
+      },
+      {
+        "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+        "name": "localStorage"
+      },
+      {
+        "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+        "name": "location"
+      },
+      {
+        "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+        "name": "matchMedia"
+      },
+      {
+        "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+        "name": "navigator"
+      },
+      {
+        "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+        "name": "screen"
+      },
+      {
+        "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+        "name": "sessionStorage"
       }
     ],
     "no-ternary": "off",

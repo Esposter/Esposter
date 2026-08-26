@@ -57,18 +57,18 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
   let styleObserver: MutationObserver | undefined;
   const bridgeStyles = async (target: Window) => {
     const pendingSheets = [
-      ...Array.from(document.styleSheets, (styleSheet) => cloneStyleSheet(target, styleSheet)),
-      ...Array.from(document.adoptedStyleSheets, (styleSheet) => cloneStyleSheet(target, styleSheet)),
+      ...Array.from(window.document.styleSheets, (styleSheet) => cloneStyleSheet(target, styleSheet)),
+      ...Array.from(window.document.adoptedStyleSheets, (styleSheet) => cloneStyleSheet(target, styleSheet)),
     ];
     // Vuetify scopes its theme variables (--v-theme-*) to the .v-theme--* class, so the PiP body
     // Must carry it for bg-background / theme colours to resolve. Only the theme class is copied —
     // Not the full .v-application className — to avoid pulling in its flex layout CSS.
-    const themeClass = [...(document.querySelector(".v-application")?.classList ?? [])].find((className) =>
+    const themeClass = [...(window.document.querySelector(".v-application")?.classList ?? [])].find((className) =>
       className.startsWith("v-theme--"),
     );
     if (themeClass) target.document.body.classList.add(themeClass);
-    target.document.documentElement.className = document.documentElement.className;
-    const rootStyle = document.documentElement.getAttribute("style");
+    target.document.documentElement.className = window.document.documentElement.className;
+    const rootStyle = window.document.documentElement.getAttribute("style");
     if (rootStyle) target.document.documentElement.setAttribute("style", rootStyle);
     // The fresh PiP document has no layout height, so size-full content would collapse.
     target.document.documentElement.style.height = "100%";
@@ -82,7 +82,7 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
             if (isStyleNode(node) && node.sheet) await cloneStyleSheet(target, node.sheet);
       }),
     );
-    styleObserver.observe(document.head, { childList: true });
+    styleObserver.observe(window.document.head, { childList: true });
     // Wait for re-linked sheets to finish loading so content isn't revealed before its CSS (FOUC).
     await Promise.all(pendingSheets);
   };

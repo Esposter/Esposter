@@ -3,6 +3,7 @@ import type { SessionSummary } from "@@/server/models/session/SessionSummary";
 
 import { auth } from "@@/server/auth";
 import { closeDeviceConnections } from "@@/server/services/auth/closeDeviceConnections";
+import { getDeviceLabel } from "@@/server/services/auth/getDeviceLabel";
 import { router } from "@@/server/trpc";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
@@ -47,10 +48,10 @@ export const sessionRouter = router({
     const { session: currentSession } = ctx.getSessionPayload;
     const sessions = await readOwnSessions(ctx);
     return sessions.map(({ id, updatedAt, userAgent }) => ({
+      deviceLabel: getDeviceLabel(userAgent ?? ""),
       id,
       isCurrent: id === currentSession.id,
       updatedAt,
-      userAgent: userAgent ?? "",
     }));
   }),
 });

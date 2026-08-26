@@ -11,11 +11,11 @@ A Sessions section at `/user/settings` lists the account's active sessions — w
 
 A row renders what the session row already stores, and nothing more:
 
-- **The browser and platform**, from `getDeviceLabel`, which reads the ordered marker list rather than the raw `userAgent`. Order is the whole trick — every Chromium browser still claims `Chrome` and every one of those still claims `Safari`, so the most specific claim has to be read first or Edge reports itself as Chrome. A string it recognises nothing in reads as `Unknown device` instead of being echoed back raw.
+- **The browser and device**, from `getDeviceLabel`, which parses the stored `userAgent` with `bowser` on the server: a browser and its major version (`Chrome 141`), then the most specific device the string still knows. A model wins wherever bowser has one — every Apple device, and the table of older handsets it still recognises by name — and everything else lands on the OS name, because Chrome froze the model out of the modern Android agent string. No OS version is shown, because none can be trusted: Windows 11 still sends `NT 10.0`, and Safari and Chrome both freeze macOS at `10_15_7`. When bowser recognises nothing in the string, the row reads `Unknown device` rather than echoing the agent back raw.
 - **Last active**, as a `NuxtTime` like every rendered date ([date and time display](/docs/architecture/date-time-display)). The value is the session's `updatedAt`, which better-auth refreshes on its own session-update age rather than on every request — so this is "recently" rather than "to the second", and reads as such.
 - **This device**, marked on the current row, because that is the one whose button signs the reader out rather than removing someone else.
 
-**The stored `ipAddress` never leaves the server.** `SessionSummary` is the shape the endpoint returns and it has no address field: an address does not help the holder recognise a session, and a shared screenshot would carry it. Place at city granularity would be worth showing, but it is a lookup dependency rather than a computation — until something in the stack can answer it, the row shows a device and a time, which is enough to recognise.
+**Neither the address nor the raw user agent leaves the server.** `SessionSummary` is the shape the endpoint returns: a `deviceLabel` the parse has already produced, and no address field at all. An address does not help the holder recognise a session, and a shared screenshot would carry it; the agent string is unreadable and states more than the reader asked for. Parsing server-side is also what keeps `bowser` out of the client bundle. Place would be worth showing, and stays out for a settled reason: Railway hands the app no geo header, so it would take a database — and every free one is a multi-megabyte file committed here and refreshed by hand, or a credential and a third party the address gets sent to. That is a dependency rather than a computation. Until the trade changes, the row shows a device and a time, which is enough to recognise.
 
 ## Revoking
 
@@ -75,13 +75,13 @@ No admin-facing counterpart. An operator terminating another user's sessions is 
 
 ## Key files
 
-| File                                                          | Role                                                 |
-| ------------------------------------------------------------- | ---------------------------------------------------- |
-| `packages/app/server/trpc/routers/session.ts`                 | the three procedures                                 |
-| `packages/app/server/models/session/SessionSummary.ts`        | what a row is allowed to say — no address            |
-| `packages/app/server/services/auth/closeDeviceConnections.ts` | best-effort per-device Web PubSub close              |
-| `packages/app/app/components/User/SessionsCard/`              | the card, its row, and the two confirm dialogs       |
-| `packages/app/app/services/auth/getDeviceLabel.ts`            | ordered user-agent markers → a readable device label |
-| `packages/app/app/store/user/sessionDialog.ts`                | the singleton revoke target                          |
-| `packages/db-schema/src/schema/pushSubscriptions.ts`          | `sessionId`, cascading on the session row            |
-| `packages/db-schema/src/schema/sessions.ts`                   | the session rows, now cascading on the user          |
+| File                                                          | Role                                            |
+| ------------------------------------------------------------- | ----------------------------------------------- |
+| `packages/app/server/trpc/routers/session.ts`                 | the three procedures                            |
+| `packages/app/server/models/session/SessionSummary.ts`        | what a row is allowed to say — no address       |
+| `packages/app/server/services/auth/closeDeviceConnections.ts` | best-effort per-device Web PubSub close         |
+| `packages/app/app/components/User/SessionsCard/`              | the card, its row, and the two confirm dialogs  |
+| `packages/app/server/services/auth/getDeviceLabel.ts`         | the stored user agent → a readable device label |
+| `packages/app/app/store/user/sessionDialog.ts`                | the singleton revoke target                     |
+| `packages/db-schema/src/schema/pushSubscriptions.ts`          | `sessionId`, cascading on the session row       |
+| `packages/db-schema/src/schema/sessions.ts`                   | the session rows, now cascading on the user     |

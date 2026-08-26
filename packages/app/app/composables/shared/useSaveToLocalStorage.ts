@@ -9,7 +9,8 @@ export const useSaveToLocalStorage = () => {
       alertStore.createAlert(z.prettifyError(result.error), "error");
       return false;
     }
-    localStorage.setItem(key, JSON.stringify(result.data));
+    // eslint-disable-next-line no-restricted-syntax -- the writer half of the offline save system: the key is a parameter, so there is no ref to own it. Called from a user-driven save, which is client-only — see the browser-boundary ledger
+    window.localStorage.setItem(key, JSON.stringify(result.data));
     return true;
   };
 };

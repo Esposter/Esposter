@@ -115,7 +115,9 @@ Read it before writing any `watch`, or when a local `ref` mirrors a prop/store v
 
 ## Browser Globals and SSR
 
-- **Prefix browser-only globals with `window.`** to make browser-only code explicit: `window.document.getElementById(id)`, `window.navigator.mediaDevices.getUserMedia(...)`, `new window.RTCPeerConnection(...)`, `window.requestAnimationFrame(cb)`. Standard built-ins available in all environments (`Uint8Array`, `Map`, `Set`, `JSON`, `Promise`, `crypto`, …) do **not** need it.
+- **Prefix browser-only globals with `window.`** to make browser-only code explicit: `window.document.getElementById(id)`, `window.navigator.mediaDevices.getUserMedia(...)`, `new window.RTCPeerConnection(...)`, `window.requestAnimationFrame(cb)`. Standard built-ins available in all environments (`Uint8Array`, `Map`, `Set`, `JSON`, `Promise`, `crypto`, …) do **not** need it. Enforced by oxlint `no-restricted-globals`, so the list of which globals count lives in `.oxlintrc.json` rather than here.
+  - **Tests are exempt**, and the rule is off for `**/*.test.ts`. A test declares the environment it runs in, and the default is node — `shared/test/setup.ts` loads `fake-indexeddb/auto`, which polyfills onto `globalThis` where there is no `window` at all, so a prefix there is a `ReferenceError` rather than a style improvement.
+  - **`indexedDB` stays bare everywhere**, source included, and is deliberately absent from the restricted list. `services/cache/indexedDb/` is unit-tested in the node environment against that same polyfill, so prefixing the source breaks its own tests. It is the one browser global this repo treats as environment-agnostic.
 - **Guard browser-only code with `getIsServer()`** from `@esposter/shared` — never `import.meta.client` or `typeof window !== "undefined"`; `getIsServer()` is consistent across Nuxt, shared packages and Azure Functions.
 
   ```typescript

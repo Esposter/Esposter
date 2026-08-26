@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { getDeviceLabel } from "@/services/auth/getDeviceLabel";
-
 export interface UserSessionsCardRowProps {
+  deviceLabel: string;
   isCurrent?: true;
   updatedAt: Date;
-  userAgent: string;
 }
 
-const { isCurrent, updatedAt, userAgent } = defineProps<UserSessionsCardRowProps>();
+const { deviceLabel, isCurrent, updatedAt } = defineProps<UserSessionsCardRowProps>();
 const emit = defineEmits<{ revoke: [] }>();
 </script>
 
@@ -16,7 +14,7 @@ const emit = defineEmits<{ revoke: [] }>();
     <template #prepend>
       <v-icon :icon="isCurrent ? 'mdi-monitor-shimmer' : 'mdi-monitor'" mr-4 size="large" />
     </template>
-    <v-list-item-title>{{ getDeviceLabel(userAgent) }}</v-list-item-title>
+    <v-list-item-title>{{ deviceLabel }}</v-list-item-title>
     <v-list-item-subtitle>
       <template v-if="isCurrent">This device · </template>
       last active <NuxtTime :datetime="updatedAt" relative />

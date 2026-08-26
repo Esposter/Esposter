@@ -8,9 +8,9 @@ New packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
 2. **`tsconfig.json`** — `{ "extends": "../configuration/tsconfig.node.json" }` (node) or `"../configuration/tsconfig.vue.json"` (browser/Vue).
 3. **`tsconfig.build.json`** — `{ "extends": ["./tsconfig.json", "../configuration/tsconfig.build.base.json"] }`.
 4. **`tsdown.config.ts`** — call the matching factory from `@esposter/configuration`: `getTsdownConfigurationNode()` (server-only), `getTsdownConfiguration()` (platform-neutral), or `getTsdownConfigurationVue()`. They are functions, not constants, and are composed with `mergeConfig` rather than a spread. See the `build` skill.
-5. **`eslint.config.js`** — symlink to the shared config (`index.typescript.js` for TS-only, `index.vue.js` for Vue), created per the SKILL's symlink rule:
-   ```powershell
-   New-Item -ItemType SymbolicLink -Path "packages\db-mock\eslint.config.js" -Target "..\configuration\eslint\index.typescript.js"
+5. **`eslint.config.js`** — a one-line re-export of the shared config (`index.typescript.js` for TS-only, `index.vue.js` for Vue), never a symlink (see the SKILL's symlink rule):
+   ```js
+   export { default } from "@esposter/configuration/eslint/index.typescript.js";
    ```
    No per-package `.oxlintrc.json` — oxlint runs once from the repo root against the single root `.oxlintrc.json`.
 6. **`src/index.ts`** — minimal barrel; `ctix` regenerates it on `pnpm export:gen`.
@@ -35,4 +35,4 @@ Use `peerDependencies` for packages that:
 
 Use `dependencies` for direct runtime imports that are not consumer-provided and must be bundled/auto-installed. Workspace packages imported at runtime usually stay in `dependencies`.
 
-**Example — `packages/db-mock`**, a test-only node package: `@electric-sql/pglite` is a peer (heavy, not bundled, loaded at runtime by `createMockDb`) and is in the shared `external` list; `drizzle-kit` is a `devDependency` only, used by `packages/db-mock/scripts/generateSnapshot.ts` (regenerates the committed `src/snapshot.tar.gz` via `pnpm snapshot:gen`) and the verification test, not the shipped `createMockDb` runtime; `eslint.config.js` symlinks to `../configuration/eslint/index.typescript.js`.
+**Example — `packages/db-mock`**, a test-only node package: `@electric-sql/pglite` is a peer (heavy, not bundled, loaded at runtime by `createMockDb`) and is in the shared `external` list; `drizzle-kit` is a `devDependency` only, used by `packages/db-mock/scripts/generateSnapshot.ts` (regenerates the committed `src/snapshot.tar.gz` via `pnpm snapshot:gen`) and the verification test, not the shipped `createMockDb` runtime; `eslint.config.js` re-exports `@esposter/configuration/eslint/index.typescript.js`.

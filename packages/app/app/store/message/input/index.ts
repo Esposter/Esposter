@@ -5,14 +5,12 @@ import type { Editor } from "@tiptap/core";
 import { dayjs } from "#shared/services/dayjs";
 import { validateFile } from "@/services/file/validateFile";
 import { getComposerKey } from "@/services/message/composer/getComposerKey";
-import { getDraft } from "@/services/message/draft/getDraft";
-import { removeDraft } from "@/services/message/draft/removeDraft";
-import { setDraft } from "@/services/message/draft/setDraft";
+import { draftsSerializer } from "@/services/message/draft/draftsSerializer";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
-import { getIsServer } from "@esposter/shared";
+import { sanitizeTextHtml } from "@esposter/shared";
 
 export const useInputStore = defineStore("message/input", () => {
   const roomStore = useRoomStore();
@@ -32,45 +30,41 @@ export const useInputStore = defineStore("message/input", () => {
     },
   });
   const uploadFileStore = useUploadFileStore();
-  const drafts = ref(new Map<string, Draft>());
-  // The one way a room's draft is written: `drafts` is the reactive source of truth and localStorage only its
-  // Persistence, so both move together here rather than at each call site. Content is sanitized on the way in,
-  // And content that sanitizes to nothing removes the draft instead of storing an empty one — an empty draft
-  // Would otherwise show up as a draft in the room list and the drafts page.
+  // Persisted state rather than a Map mirrored into localStorage by hand: the write happens because the Map
+  // Changed, and a server render reads the default empty one — see /docs/architecture/browser-execution
+  // `flush: "sync"` because a draft is persisted state rather than rendered state: the default pre-flush write
+  // Would leave a window in which the composer has been emptied but the storage still holds what was in it
+  const drafts = useLocalStorage(LocalStorageKey.Drafts, new Map<string, Draft>(), {
+    flush: "sync",
+    serializer: draftsSerializer,
+  });
+  // The one way a room's draft is written. Content is sanitized on the way in, and content that sanitizes to
+  // Nothing removes the draft instead of storing an empty one — an empty draft would otherwise show up as a
+  // Draft in the room list and the drafts page.
   // Returns the stored draft, or undefined when the room now has none. Whether `input` follows is left to the
   // Caller, because that is the only thing the three writers disagree on: the editor's own debounced save must
   // Not write the sanitized text back into the editor the user is still typing in.
-  const syncDraft = (composerKey: string, content: string): Draft | undefined => {
-    const draft = content && !EMPTY_TEXT_REGEX.test(content) ? setDraft(composerKey, content) : undefined;
-    if (draft && !EMPTY_TEXT_REGEX.test(draft.content)) {
+  // `updatedAt` is a parameter so restoring a stored draft can hand back the stamp it was written with: the
+  // Drafts list is ordered by it, and a fresh stamp per boot would reorder every draft into whatever order the
+  // Map happened to restore in.
+  const syncDraft = (composerKey: string, content: string, updatedAt = new Date()): Draft | undefined => {
+    const sanitizedContent = content && !EMPTY_TEXT_REGEX.test(content) ? sanitizeTextHtml(content) : "";
+    if (sanitizedContent && !EMPTY_TEXT_REGEX.test(sanitizedContent)) {
+      const draft: Draft = { content: sanitizedContent, updatedAt };
       drafts.value.set(composerKey, draft);
       return draft;
     }
 
-    removeDraft(composerKey);
     drafts.value.delete(composerKey);
     return undefined;
   };
-  // The server renders once and holds no localStorage, so there is nothing to restore there.
-  if (!getIsServer()) {
-    const draftKeyPrefix = LocalStorageKey.Draft("");
-    // Collected before anything is written, because restoring removes the keys that sanitize away and
-    // `localStorage.key(index)` would then walk past a shifted entry
-    const draftComposerKeys: string[] = [];
-    for (let index = 0; index < localStorage.length; index++) {
-      const key = localStorage.key(index);
-      if (key?.startsWith(draftKeyPrefix)) draftComposerKeys.push(key.slice(draftKeyPrefix.length));
-    }
 
-    for (const composerKey of draftComposerKeys) {
-      const storedDraft = getDraft(composerKey);
-      if (!storedDraft) continue;
-      setInput(composerKey, syncDraft(composerKey, storedDraft.content)?.content ?? "");
-    }
-  }
+  // Restoring is re-sanitizing what a previous session stored, so a draft whose content no longer survives the
+  // Sanitizer is dropped here rather than shown. On the server the Map is empty and this does nothing
+  for (const [composerKey, storedDraft] of drafts.value)
+    setInput(composerKey, syncDraft(composerKey, storedDraft.content, storedDraft.updatedAt)?.content ?? "");
 
   const storeDraft = (composerKey: string, content: string) => {
-    if (getIsServer()) return;
     setInput(composerKey, syncDraft(composerKey, content)?.content ?? "");
   };
   // One watcher per composer rather than one over "whatever is being typed in": both are on screen at once, so

@@ -36,7 +36,7 @@ describe("styledEmojiPickerPanel", () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
-    window.localStorage.clear();
+    localStorage.clear();
   });
 
   // The whole point of retiring the dependency is that the grid is our own buttons rendering native unicode,
