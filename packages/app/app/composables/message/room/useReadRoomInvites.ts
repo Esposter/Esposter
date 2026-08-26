@@ -1,4 +1,4 @@
-import type { InviteInMessageWithCreator, RoomInMessage } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useRoomInviteStore } from "@/store/message/room/roomInvite";
 
@@ -7,11 +7,8 @@ import { useRoomInviteStore } from "@/store/message/room/roomInvite";
 export const useReadRoomInvites = (roomId: RoomInMessage["id"]) => {
   const { $trpc } = useNuxtApp();
   const roomInviteStore = useRoomInviteStore();
-  const { getDataRef, getIsLoadedRef } = roomInviteStore;
-  const { hasMore, items, readItems, readMoreItems } = useCursorPaginationOperationData<InviteInMessageWithCreator>(
-    () => getDataRef(roomId),
-    () => getIsLoadedRef(roomId),
-  );
+  const { getSliceOperationData } = roomInviteStore;
+  const { hasMore, items, readItems, readMoreItems } = getSliceOperationData(roomId);
   const readRoomInvites = () => readItems(() => $trpc.room.readRoomInvites.query({ roomId }));
   const readMoreRoomInvites = (onComplete: () => void) =>
     readMoreItems((cursor) => $trpc.room.readRoomInvites.query({ cursor, roomId }), onComplete);

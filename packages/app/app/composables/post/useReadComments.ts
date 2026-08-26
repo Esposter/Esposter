@@ -1,5 +1,3 @@
-import type { PostWithRelations } from "@esposter/db-schema";
-
 import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
 import { useCommentStore } from "@/store/post/comment";
 
@@ -8,11 +6,8 @@ import { useCommentStore } from "@/store/post/comment";
 export const useReadComments = (parentId: string) => {
   const { $trpc } = useNuxtApp();
   const commentStore = useCommentStore();
-  const { getDataRef, getIsLoadedRef } = commentStore;
-  const { hasMore, isLoaded, items, readItems, readMoreItems } = useCursorPaginationOperationData<PostWithRelations>(
-    () => getDataRef(parentId),
-    () => getIsLoadedRef(parentId),
-  );
+  const { getSliceOperationData } = commentStore;
+  const { hasMore, isLoaded, items, readItems, readMoreItems } = getSliceOperationData(parentId);
   // The post page renders server-side, so the root branch's first page rides the payload into hydration
   const readComments = () =>
     readItems(() => $trpc.post.readPosts.query({ parentId }), { key: AsyncDataKey.ReadComments(parentId) });

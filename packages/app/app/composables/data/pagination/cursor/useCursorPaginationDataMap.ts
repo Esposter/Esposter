@@ -5,20 +5,19 @@ import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPag
 import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
 // Keep a map of id → CursorPaginationData so we can store separate lists per id (e.g. comments per post).
 export const useCursorPaginationDataMap = <TItem>(
-  currentId: MaybeRefOrGetter<string>,
+  // Left empty by a caller that has no current partition and names every key instead — a comment tree pages every
+  // Branch independently, so no branch is ever the current one
+  currentId: MaybeRefOrGetter<string> = "",
 ): Except<ReturnType<typeof useCursorPaginationOperationData<TItem>>, "items"> & {
-  // The two binders one partition's operations are built from, for a caller that drives its own reads against a
-  // Named key rather than against whichever one is current — a comment tree pages every branch independently,
-  // And a branch is a partition nothing else is looking at
-  getDataRef: (key: MaybeRefOrGetter<string>) => Ref<CursorPaginationData<TItem>>;
-  getIsLoadedRef: (key: MaybeRefOrGetter<string>) => Ref<boolean>;
   getSlice: (key: string) => CursorPaginationSlice<TItem>;
+  // One named partition's own reads, for a caller that pages a key rather than whichever one is current
+  getSliceOperationData: (key: string) => ReturnType<typeof useCursorPaginationOperationData<TItem>>;
   // The reading view, and only that: it follows whichever id is current, which is what a rendered list wants and
   // Exactly what a write must not use. `readonly` is what makes writing through it impossible rather than merely
   // Discouraged — obtaining a writer means naming the id
   items: ComputedRef<readonly TItem[]>;
   // Every partition the map holds, for a caller that has to look across them — a vote lands on a row wherever the
-  // Tree is keeping it, and a counter moves on rows spread over several branches
+  // Tree is keeping it
   keys: ComputedRef<string[]>;
 } => {
   const { getBoundData, getDataRef, keys } = useDataMap(currentId, () => new CursorPaginationData<TItem>());
@@ -38,11 +37,16 @@ export const useCursorPaginationDataMap = <TItem>(
       items: getPropertyComputed(data, "items"),
     };
   };
+  // Bound to the key it is asked for, the same way the current-partition view is bound to whichever id is current
+  const getSliceOperationData = (key: string) =>
+    useCursorPaginationOperationData<TItem>(
+      () => getDataRef(key),
+      () => getIsLoadedRef(key),
+    );
   return {
     ...useCursorPaginationOperationData(getBoundData, getBoundIsLoaded),
-    getDataRef,
-    getIsLoadedRef,
     getSlice,
+    getSliceOperationData,
     keys,
   };
 };

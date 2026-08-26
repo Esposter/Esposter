@@ -14,17 +14,9 @@ flowchart TD
   ROW["a posts row"] --> PARENT{"parentId"}
   PARENT -->|"null"| POST["post — title required, depth 0"]
   PARENT -->|"set"| COMMENT["comment — description only, depth parent plus 1"]
-  POST --> POSTCREATE["createPost — nothing to own yet"]
-  POST --> POSTWRITE["updatePost, deletePost"]
-  COMMENT --> COMMENTCREATE["createComment — nothing to own yet"]
-  COMMENT --> COMMENTUPDATE["updateComment"]
-  COMMENT --> COMMENTDELETE["deleteComment"]
-  POSTWRITE --> GUARD["ownedBy plus a parentId IS NULL check"]
-  COMMENTUPDATE --> GUARDC["ownedBy plus a parentId IS NOT NULL check"]
-  COMMENTDELETE --> GUARDC
-  COMMENTCREATE --> COUNT["createComment and deleteComment move noComments on every post above"]
-  COMMENTDELETE --> COUNT
-  POSTWRITE --> CASCADE["deleting a post cascades to its comments"]
+  POST --> GUARD["updatePost, deletePost — ownedBy plus a parentId IS NULL check"]
+  COMMENT --> GUARDC["updateComment, deleteComment — ownedBy plus a parentId IS NOT NULL check"]
+  GUARD --> CASCADE["deleting a post cascades to its comments"]
   POST --> SHARED["one table, so likes, ranking and profanity filtering reach both"]
   COMMENT --> SHARED
 ```
@@ -41,9 +33,9 @@ The two guards are why a post procedure cannot touch a comment and vice versa, e
 
 **Ownership** — update/delete are guarded by `ownedBy(posts, id, userId)` plus a `parentId IS (NOT) NULL` check, so post procedures can't touch comments and vice versa; there is no moderator override (moderation is an esbabbler concept, not a posts one).
 
-**Reading** — the post page loads the post by route param, then pages its comments through the same `readPosts` procedure with `parentId`; an empty banner shows for zero comments, and the comment editor only renders for a signed-in session.
+**Reading** — an empty banner shows for zero comments, and the comment editor only renders for a signed-in session.
 
-**The tree** — every node is a branch that pages independently, keyed in the store by the comment whose replies it holds. The route's own post is simply the branch keyed by its id, so the page and a reply ten levels down mount the same component and run the same read. A branch is collapsed until asked for: expanding one is what reads it, and re-expanding costs nothing because the rows outlive the component that read them. Indentation is one step per level below the comment the **route** names rather than the stored `depth`, so a rerooted thread opens at zero rather than already clamped. Past the indent clamp a node offers to continue the thread on its own page, which needs no route of its own: a comment is a post, so `/post/[id]` on its id renders it as a root with one level of context instead of ten.
+**The tree** — every node is a branch that pages independently through the same `readPosts` procedure with its own `parentId`, keyed in the store by the comment whose replies it holds. The route's own post is simply the branch keyed by its id, so the page and a reply ten levels down mount the same component and run the same read. A branch is collapsed until asked for: expanding one is what reads it, and re-expanding costs nothing because the rows outlive the component that read them. Indentation is one step per level below the comment the **route** names rather than the stored `depth`, so a rerooted thread opens at zero rather than already clamped. Past the indent clamp a node offers to continue the thread on its own page, which needs no route of its own: a comment is a post, so `/post/[id]` on its id renders it as a root with one level of context instead of ten.
 
 ```mermaid
 flowchart TD

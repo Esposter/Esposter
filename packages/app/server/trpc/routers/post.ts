@@ -54,8 +54,8 @@ const readPostsInputSchema = z
   .prefault({});
 
 // Every write returns an id and every reader wants the row a card renders — the author beside it, and the
-// Viewer's own like when there is a viewer to have one. Signed out there is no like to look up, so the read
-// Drops the filtered relation rather than filtering on nobody
+// Viewer's own like when there is a viewer to have one. Signed out there is no like to look up, so the read drops
+// The filtered relation rather than filtering on nobody
 const readPostWithRelations = async (
   db: Context["db"] | Transaction,
   id: Post["id"],
@@ -97,8 +97,7 @@ export const postRouter = router({
           DatabaseEntityType.Post,
           input.parentId,
         );
-        // The parent's chain plus the parent itself, which is the whole of what this reply inherits — and the
-        // Exact set of posts whose counters it moves
+        // The parent's chain plus the parent itself: what this reply inherits, and the posts whose counters move
         const ancestorIds = [...parentPost.ancestorIds, parentPost.id];
 
         const createdAt = new Date();
@@ -121,8 +120,8 @@ export const postRouter = router({
           JSON.stringify(input),
         );
 
-        // Every ancestor, not just the parent: once replies nest, a counter that only counts direct children
-        // Makes a feed card under-report its own thread — thirty comments showing as three
+        // Every ancestor, not just the parent: a counter that stops at direct children makes a feed card
+        // Under-report its own thread
         await tx
           .update(posts)
           .set({ noComments: sql`${posts.noComments} + 1` })
@@ -166,14 +165,12 @@ export const postRouter = router({
   deleteComment: standardAuthedProcedure.input(deleteCommentInputSchema).mutation<DeletedComment>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
       // Counted before the delete, because the cascade takes these rows with it and nothing afterwards could say
-      // How many there were. Containment reads the whole subtree in one predicate — the chain is on every row, so
-      // Nothing has to be walked to find out what is under this one — and the row itself is counted with them,
-      // Which makes the count the number every ancestor loses.
-      // The rows are locked rather than merely counted: a delete of a reply beneath this one would otherwise
-      // Commit between this read and the decrement below, and both writes would subtract that same reply from
-      // Every ancestor above it. Ascending id is the order every such delete acquires them in, so an overlap
-      // Waits here — and one that still collides further in, over an ancestor a second delete is decrementing,
-      // Is aborted by the deadlock detector rather than allowed to double-count
+      // How many there were. Containment reads the whole subtree in one predicate, this row included, which makes
+      // The count the number every ancestor loses.
+      // The rows are locked rather than merely counted: a delete of a reply beneath this one would otherwise commit
+      // Between this read and the decrement below, and both writes would subtract that same reply from every
+      // Ancestor above it. Ascending id is the order every such delete acquires them in, so an overlap waits here —
+      // And one that still collides further in is aborted by the deadlock detector rather than double-counted
       const removedComments = await tx
         .select({ id: posts.id })
         .from(posts)
@@ -195,9 +192,7 @@ export const postRouter = router({
       if (!deletedComment.parentId)
         throw getInvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, input);
 
-      // `parentId` cascades, so the replies beneath this one are already gone and the count read before the
-      // Delete is the only record of how many that was. Every ancestor loses all of them, and the row that was
-      // Deleted carries the list of which
+      // Every ancestor loses the whole subtree, and the deleted row carries the list of which posts those are
       const { ancestorIds } = deletedComment;
       await tx
         .update(posts)

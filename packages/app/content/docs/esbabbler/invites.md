@@ -14,15 +14,10 @@ active link in the room, each with its creator, its uses against its cap, its ex
 pause sits above the list, closing the room without touching a single link.
 
 The two acts are gated differently, and the split is the point. **Creating** an invite is `ManageInvites`, which
-the default `@everyone` role carries — so every existing room goes on working exactly as it did, and a room that
-takes the bit away finally gets what the roles panel always said it would. **Acting on somebody else's** link is
-`ManageRoom`: a permission every member holds by default cannot also be the gate on a control over other people's
-links, which is the same line Discord draws between creating an invite and managing the server's.
-
-`revokeInvite` is one procedure either way. A member revokes their own row; a caller holding `ManageRoom` revokes
-any row in the room, because the predicate drops the owner clause rather than the procedure forking. Revoking is a
-delete rather than a flag, deliberately: a revoked link nobody can tell apart from a live one is worse than a
-missing one, and a joiner who loses a race against a revoke gets the same error as an unknown token.
+the default `@everyone` role carries. **Acting on somebody else's** link is `ManageRoom`: a permission every
+member holds by default cannot also be the gate on a control over other people's links, which is the same line
+Discord draws between creating an invite and managing the server's. `revokeInvite` is one procedure either way —
+the predicate drops the owner clause for a caller holding `ManageRoom` rather than the procedure forking.
 
 The list reads what a joiner could actually use — expired and exhausted rows are filtered by
 `checkIsInviteUsable`, the same predicate every other reader applies, rather than by a second copy of it in SQL.

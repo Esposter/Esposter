@@ -11,10 +11,9 @@ import { DerivedDatabaseEntityType } from "@esposter/db-schema";
 export const useCommentStore = defineStore("post/comment", () => {
   const { $trpc } = useNuxtApp();
   const currentPost = ref<PostWithRelations>();
-  // Keyed by the post whose replies the partition holds, and read against a named key rather than a current one:
-  // Every node in the tree pages independently, so no partition is ever the current one. The route's own post is
-  // Simply the branch whose key is its id — one code path for the page and for every reply beneath it
-  const { getDataRef, getIsLoadedRef, getSlice, keys } = useCursorPaginationDataMap<PostWithRelations>("");
+  // Keyed by the post whose replies the partition holds: every node pages independently, and the route's own post
+  // Is simply the branch whose key is its id — one code path for the page and for every reply beneath it
+  const { getSlice, getSliceOperationData, keys } = useCursorPaginationDataMap<PostWithRelations>();
   const getPostOperationData = (parentId: string) =>
     createOperationData(getSlice(parentId).items, ["id"], DerivedDatabaseEntityType.Comment);
   // Every comment on screen, across every open branch — a row the tree is holding ten levels down is in none of
@@ -24,17 +23,15 @@ export const useCommentStore = defineStore("post/comment", () => {
     for (const key of keys.value) comments.push(...getSlice(key).items.value);
     return comments;
   });
-  // The posts the server says it counted against, applied in one pass over the rows on screen. The chain itself
-  // Is never walked here: the write already established it, and rediscovering it client-side would mean scanning
-  // The loaded branches once per level to learn what the response already carries
+  // The posts the server says it counted against, applied in one pass over the rows on screen — the chain comes
+  // Back with the write rather than being rediscovered here
   const updateCommentCounts = (ancestorIds: string[], delta: number) => {
     const ancestorIdSet = new Set(ancestorIds);
     for (const comment of allComments.value) if (ancestorIdSet.has(comment.id)) comment.noComments += delta;
   };
-  // Every loaded reply beneath a comment, which is what the delete cascade removes from under it. A store that
-  // Dropped the one row would leave its descendants rendering under a parent that no longer exists.
-  // Only branches that exist are descended into: asking for one that does not creates it, so a walk over the
-  // Rows themselves would leave an empty partition behind for every reply it passed
+  // Every loaded reply beneath a comment, which is what the delete cascade removes from under it.
+  // Only branches that already exist are descended into: asking for one that does not creates it, so a walk over
+  // The rows themselves would leave an empty partition behind for every reply it passed
   const removeBranch = (parentId: string) => {
     const branchKeys = new Set(keys.value);
     const removeLoadedBranch = (key: string) => {
@@ -95,9 +92,8 @@ export const useCommentStore = defineStore("post/comment", () => {
     const { items: branchItems } = getSlice(parentId);
     const { createComment: storeCreateComment, deleteComment: storeDeleteComment } = getPostOperationData(parentId);
     await executeDeleteCommentMutation(() => $trpc.post.deleteComment.mutate(input), {
-      // The rows go at once and the counters when the server answers. A delete cascades, so how many rows it
-      // Takes is only knowable there — a client guess drawn from whatever happens to be expanded is short by
-      // Every reply nobody opened, and that guess would be the number on screen rather than one briefly behind
+      // The rows go at once and the counters when the server answers: a delete cascades, so how many rows it
+      // Takes is only knowable there — whatever happens to be expanded here is short by every reply nobody opened
       applyOptimistic: () => {
         // The one row this write removes, read when the write is sent: deletes of different comments do not
         // Queue against each other, so restoring a copy of the list would resurrect one deleted beside this
@@ -123,9 +119,8 @@ export const useCommentStore = defineStore("post/comment", () => {
     createComment,
     currentPost,
     deleteComment,
-    getDataRef,
-    getIsLoadedRef,
     getSlice,
+    getSliceOperationData,
     updateComment,
   };
 });

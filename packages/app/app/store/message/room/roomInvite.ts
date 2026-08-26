@@ -7,14 +7,14 @@ import { useInviteStore } from "@/store/message/room/invite";
 
 // The room's whole set, which only the settings panel reads. Kept apart from the member's own link rather than
 // Folded into it: that map answers "what may I hand out", one row per room, and this list answers "what is out
-// There", which is a different question with a different gate
+// There", which is a different question behind a different gate
 export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
   const { $trpc } = useNuxtApp();
   const inviteStore = useInviteStore();
   const { executeMutation } = useMutation();
-  // Keyed by room and read against a named key rather than a current one: the panel names the room it manages, so
-  // A read for the room the reader just left is filed under that room instead of over the list on screen
-  const { getDataRef, getIsLoadedRef, getSlice } = useCursorPaginationDataMap<InviteInMessageWithCreator>("");
+  // Keyed by room and read against a named key: the panel names the room it manages, so a read for the room the
+  // Reader just left is filed under that room instead of over the list on screen
+  const { getSlice, getSliceOperationData } = useCursorPaginationDataMap<InviteInMessageWithCreator>();
 
   const revokeInvite = async (input: RevokeInviteInput) => {
     const { items } = getSlice(input.roomId);
@@ -46,5 +46,5 @@ export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
     items.value = [invite, ...items.value.filter(({ userId }) => userId !== invite.userId)];
   });
 
-  return { getDataRef, getIsLoadedRef, getSlice, revokeInvite };
+  return { getSlice, getSliceOperationData, revokeInvite };
 });

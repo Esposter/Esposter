@@ -25,13 +25,11 @@ const isExpanded = ref(false);
 // Indentation stops moving right at the clamp while the nesting carries on, so a thread deeper than the screen
 // Is wide offers its own page instead of a column of text one word across
 const isClamped = computed(() => depth >= MAX_COMMENT_INDENT_DEPTH);
-const indent = computed(() => (depth === 0 || isClamped.value ? "" : COMMENT_INDENT_STEP));
-const deleteLabel = computed(() => (comment.noComments > 0 ? "Delete Comment And Replies" : "Delete Comment"));
 const replyLabel = computed(() => `${comment.noComments} ${pluralize("reply", comment.noComments, "replies")}`);
 </script>
 
 <template>
-  <div :style="{ marginLeft: indent }">
+  <div :style="{ marginLeft: depth > 0 && !isClamped ? COMMENT_INDENT_STEP : '' }">
     <div flex>
       <PostLikeSection :post="comment" is-comment-store pt-2 />
       <v-card px-2 pt-2 flex-1 shadow-none>
@@ -63,7 +61,7 @@ const replyLabel = computed(() => `${comment.noComments} ${pluralize("reply", co
             v-if="isCreator"
             :button-props="{ size: 'small', tile: true }"
             icon="mdi-delete"
-            :text="deleteLabel"
+            :text="comment.noComments > 0 ? 'Delete Comment And Replies' : 'Delete Comment'"
             @click="setDeletingComment(comment)"
           />
           <!-- Collapsed until asked for, so opening a branch is what reads it. Past the indent clamp the thread

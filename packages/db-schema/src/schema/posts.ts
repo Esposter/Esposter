@@ -15,10 +15,9 @@ export const POST_DESCRIPTION_MAX_LENGTH = 1000;
 export const posts = pgTable(
   "posts",
   {
-    // Every post above this one, root first. A comment is a post with a parent, so a thread is a chain that can
-    // Run to any depth — and both writes a reply forces are questions about that chain: which counters move, and
-    // How many rows a delete takes with it. Holding the chain on the row answers both with an ordinary predicate,
-    // Where deriving it would mean walking the table a level at a time on every write
+    // Every post above this one, root first. Both writes a reply forces are questions about that chain — which
+    // Counters move, and how many rows a delete takes with it — and holding it on the row answers both with an
+    // Ordinary predicate rather than a walk down a level at a time
     ancestorIds: uuid().array().notNull().default([]),
     depth: integer().notNull().default(0),
     description: text().notNull().default(""),
@@ -38,11 +37,9 @@ export const posts = pgTable(
       check("posts_title_length_check", createMaxLengthCheckSql(title, POST_TITLE_MAX_LENGTH)),
       check("posts_description_length_check", createMaxLengthCheckSql(description, POST_DESCRIPTION_MAX_LENGTH)),
       // A foreign key gets no index of its own in Postgres, and every read of a thread asks this one question:
-      // One parent's children, best first. A tree asks it once per open branch, and the feed asks it too — a
-      // Root post is the parent that is null
+      // One parent's children, best first. The feed asks it too — a root post is the parent that is null
       index("posts_parentId_ranking_index").on(parentId, sql`"ranking" DESC`, sql`"id" DESC`),
-      // Containment is the whole-subtree question, which only a delete asks — the size of what its cascade is
-      // About to take
+      // Containment is the whole-subtree question, which only a delete asks — the size of what its cascade takes
       index("posts_ancestorIds_index").using("gin", ancestorIds),
     ],
   },
