@@ -10,3 +10,4 @@ adopt. Check here before proposing one; never re-argue a decided idea.
 
 - [Migration chain guard](/docs/architecture/rejected/migration-chain-guard) — `db:gen` is the only producer of a snapshot, so a linearity test only catches an already-banned hand-edit
 - [Spec frameworks](/docs/architecture/rejected/spec-frameworks) — the proposal/as-built/validator loop already exists here, and the docs suite checks more than a spec CLI does
+- [PDF viewer consolidation](/docs/architecture/rejected/pdf-viewer-consolidation) — the full viewer's product is search, virtual scrolling and ARIA, which the stop list refuses twice over
