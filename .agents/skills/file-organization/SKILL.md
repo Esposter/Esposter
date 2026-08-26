@@ -24,7 +24,7 @@ description: Esposter file and folder organisation — the alias imports (shared
 - **Interfaces go in `models/`** — never define an exported interface inline in a `.vue` component. Extract to `app/models/<feature>/InterfaceName.ts` (app-local) or `shared/models/<feature>/InterfaceName.ts` (cross-package).
 - **Local `interface`/`type` declarations sit at the top of the block** — within a `.vue` `<script setup>` or a `.ts` module, group them together after the imports (and macros), before the runtime `const`/logic. Never interleave one between logic blocks.
 - **One class per file**, in a `models/` folder.
-- **Never use `export { }` syntax** — always inline `export const`/`class`/`interface`/`type`/`function` at the declaration site. Only valid exceptions: empty `export {}` in `.d.ts` files (module marker) and `ctix`-generated barrel files (pinned package).
+- **Never use `export { }` syntax** — always inline `export const`/`class`/`interface`/`type`/`function` at the declaration site. Only valid exceptions: empty `export {}` in `.d.ts` files (module marker), `ctix`-generated barrel files (pinned package), and a package's `eslint.config.js`, which re-exports the shared config as `export { default } from "@esposter/configuration/eslint/index.{typescript,vue}.js";` — ESLint demands a file at that exact path, so it is the tool's entrypoint rather than an import indirection, and it may not be a symlink (`references/symlinks.md`).
 - **Functions go in `services/`** — factory functions, command creators, and other exported functions. `models/` is strictly classes and interfaces/types.
 - **External library extensions go in `services/`** — helpers that extend/wrap third-party libraries (`services/<lib>/doThing.ts`, `services/dayjs/index.ts`), not `utils/`.
 - **`utils/` is for truly universal utilities only** — math, string, regex, type utilities, Node/browser engine extensions with no external dependency. If the helper imports a third-party package, it belongs in `services/`. Generic browser utilities go in `app/utils/` (e.g. `readFoo.ts`).
@@ -84,7 +84,7 @@ Read it when adding a package under `packages/`, adding a `bin` entrypoint (no s
 
 When renaming a file (`createFoo.ts` → `createBar.ts`), **delete the old file** — never leave a re-export alias (`export { createBar as createFoo } from "./createBar"`). Update all import sites to the new path/name directly, and the barrel (`index.ts`) if it exported the old name. The alias pattern looks helpful but creates confusion: the old name stays discoverable, callers assume it's canonical, and the rename never fully propagates.
 
-The same applies to a function that **moves into a shared package**: consumers import it from the owning package directly. Never leave a local file whose whole body re-exports it — one function with two importable paths means a grep for its call sites finds the wrong half. A package barrel (`index.ts`) is the one file allowed to re-export, because publishing the package is its entire job.
+The same applies to a function that **moves into a shared package**: consumers import it from the owning package directly. Never leave a local file whose whole body re-exports it — one function with two importable paths means a grep for its call sites finds the wrong half. Two files are allowed to re-export, both because a tool demands a file at that path: a package barrel (`index.ts`), since publishing the package is its entire job, and a package's `eslint.config.js`, which is how ESLint reaches the shared config.
 
 ## Shared Schemas
 
