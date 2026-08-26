@@ -358,26 +358,17 @@ describe("user", () => {
       });
     });
 
-    test("mints a write target for the lowest free slot", async () => {
-      expect.hasAssertions();
-
-      const userId = getMockSession().user.id;
-      seedSlots(userId, { 0: size, 2: size });
-      const { sasUrl, slot } = await caller.generateCallBackgroundUploadUrl({ mimetype, size });
-
-      expect(slot).toBe(1);
-      expect(sasUrl).toContain(getCallBackgroundBlobName(userId, 1));
-    });
-
-    test("refuses a write target once every slot is taken", async () => {
+    // A slot the caller already holds is a replacement, not a collision — and one freed a moment ago is still
+    // In the listing until a worker reclaims it, which is exactly why nothing here reads that listing
+    test("mints a write target for the slot it is given, occupied or not", async () => {
       expect.hasAssertions();
 
       const userId = getMockSession().user.id;
       seedSlots(userId, Object.fromEntries(Array.from({ length: MAX_CALL_BACKGROUNDS }, (_, slot) => [slot, size])));
 
-      await expect(
-        caller.generateCallBackgroundUploadUrl({ mimetype, size }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${getCallBackgroundErrorMessage(userId)}]`);
+      await expect(caller.generateCallBackgroundUploadUrl({ mimetype, size, slot: 3 })).resolves.toContain(
+        getCallBackgroundBlobName(userId, 3),
+      );
     });
 
     // One assertion each rather than a matrix: an inline snapshot is pinned to its source location, so two
@@ -385,20 +376,20 @@ describe("user", () => {
     test("refuses a write target for a file over the size cap", async () => {
       expect.hasAssertions();
 
-      const input = { mimetype, size: MAX_CALL_BACKGROUND_SIZE_BYTES + 1 };
+      const input = { mimetype, size: MAX_CALL_BACKGROUND_SIZE_BYTES + 1, slot: 0 };
 
       await expect(caller.generateCallBackgroundUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${getCallBackgroundErrorMessage(JSON.stringify(input))}]`,
+        `[TRPCError: ${getCallBackgroundErrorMessage(JSON.stringify({ mimetype: input.mimetype, size: input.size }))}]`,
       );
     });
 
     test("refuses a write target for a file that is not an image", async () => {
       expect.hasAssertions();
 
-      const input = { mimetype: "application/pdf", size };
+      const input = { mimetype: "application/pdf", size, slot: 0 };
 
       await expect(caller.generateCallBackgroundUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${getCallBackgroundErrorMessage(JSON.stringify(input))}]`,
+        `[TRPCError: ${getCallBackgroundErrorMessage(JSON.stringify({ mimetype: input.mimetype, size: input.size }))}]`,
       );
     });
 

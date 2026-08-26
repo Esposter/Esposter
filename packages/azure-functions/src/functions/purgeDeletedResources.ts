@@ -7,10 +7,11 @@ app.timer(AzureFunction.PurgeDeletedResources, {
   // Daily at 03:00 UTC — the retention window is 30 days, so the sweep only needs to be
   // Eventually timely, and an off-peak hour keeps it away from interactive load.
   schedule: "0 0 3 * * *",
-  // The schedule monitor is a status blob the host polls for as long as it is alive, whether or not an
-  // Occurrence is due - so a once-a-day sweep pays a round trip every few seconds to catch up a run it missed
-  // While down. The retention window is 30 days and this is the only thing that reads it, so a skipped night
-  // Is swept the next one; the poll is the only cost that is not eventually free
+  // What the monitor buys is past-due recovery: the host persists each occurrence to a status blob so a run
+  // Missed while it was down fires on the next start. What it cost here was measured rather than assumed —
+  // Storage analytics logging showed that blob being read several times a minute per app, around half of all
+  // Blob reads on the account, for a function that runs once a day. Without it a missed night simply waits for
+  // The next one, which the 30-day retention window absorbs and the handler's own expiry query then sweeps.
   useMonitor: false,
 });
 

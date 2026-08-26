@@ -4,11 +4,11 @@ import type { ContainerClient } from "@azure/storage-blob";
 import type { User, UserSettingsInMessage, UserStatusInMessage } from "@esposter/db-schema";
 import type { SetNonNullable } from "type-fest";
 
-import { deleteCallBackgroundInputSchema } from "#shared/models/db/user/DeleteCallBackgroundInput";
 import { generateCallBackgroundUploadUrlInputSchema } from "#shared/models/db/user/GenerateCallBackgroundUploadUrlInput";
 import { readUserInputSchema } from "#shared/models/db/user/ReadUserInput";
 import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
 import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
+import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -111,7 +111,7 @@ const getIsServableCallBackground = ({ contentLength }: CallBackgroundBlob) =>
 export const userRouter = router({
   connect: standardAuthedProcedure.mutation<void>(({ ctx }) => setConnectedStatus(ctx, true)),
   deleteCallBackground: standardAuthedProcedure
-    .input(deleteCallBackgroundInputSchema)
+    .input(callBackgroundSlotSchema)
     .mutation<void>(async ({ ctx, input: { slot } }) => {
       const userId = ctx.getSessionPayload.user.id;
       // Published as a bounded prefix rather than as the name itself, because a slot's name is fixed: a replace
@@ -130,7 +130,7 @@ export const userRouter = router({
   disconnect: standardAuthedProcedure.mutation<void>(({ ctx }) => setConnectedStatus(ctx, false)),
   generateCallBackgroundUploadUrl: standardAuthedProcedure
     .input(generateCallBackgroundUploadUrlInputSchema)
-    .mutation<{ sasUrl: string; slot: number }>(async ({ ctx, input: { mimetype, size } }) => {
+    .mutation<string>(async ({ ctx, input: { mimetype, size, slot } }) => {
       if (size > MAX_CALL_BACKGROUND_SIZE_BYTES || getMimeCategory(mimetype) !== MimeCategory.Image)
         throw getInvalidOperationError(
           Operation.Create,
@@ -138,20 +138,14 @@ export const userRouter = router({
           JSON.stringify({ mimetype, size }),
         );
 
-      const userId = ctx.getSessionPayload.user.id;
       const containerClient = await useContainerClient(AzureContainer.PrivateUserAssets);
-      const callBackgroundBlobs = await readCallBackgroundBlobs(containerClient, userId);
-      const usedSlots = new Set(callBackgroundBlobs.map(({ slot }) => slot));
-      // The free slot is chosen here rather than sent, so a write target can only ever be one the caller does
-      // Not already hold - a client is never handed the name of a background it did not mean to replace
-      const slot = Array.from({ length: MAX_CALL_BACKGROUNDS }, (_, index) => index).find(
-        (index) => !usedSlots.has(index),
+      // No listing stands between the request and the target: the slot is already bounded by its schema, and a
+      // Count read here could only ever be out of date - a delete is reclaimed by a worker, so a slot freed a
+      // Moment ago would still read as taken and refuse the replacement the user just made room for
+      const blockBlobClient = containerClient.getBlockBlobClient(
+        getCallBackgroundBlobName(ctx.getSessionPayload.user.id, slot),
       );
-      if (slot === undefined)
-        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.CallBackground, userId);
-
-      const blockBlobClient = containerClient.getBlockBlobClient(getCallBackgroundBlobName(userId, slot));
-      return { sasUrl: await generateWriteSasUrl(blockBlobClient, { contentType: mimetype }), slot };
+      return generateWriteSasUrl(blockBlobClient, { contentType: mimetype });
     }),
   generateProfileImageUploadUrl: standardAuthedProcedure.mutation(async ({ ctx }) => {
     const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);

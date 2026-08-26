@@ -12,7 +12,7 @@ const { selectedVirtualBackground } = defineProps<CallVirtualBackgroundGridProps
 const emit = defineEmits<{ select: [virtualBackground: string] }>();
 const callBackgroundStore = useCallBackgroundStore();
 const { createCallBackground, deleteCallBackground, readCallBackgrounds } = callBackgroundStore;
-const { callBackgrounds, isCallBackgroundPending } = storeToRefs(callBackgroundStore);
+const { callBackgrounds, isUploadingCallBackground } = storeToRefs(callBackgroundStore);
 const input = useTemplateRef("input");
 const validateFile = useValidateFile();
 
@@ -80,10 +80,10 @@ onMounted(async () => {
         b-dashed
         bg-surface
         aspect-square
-        :disabled="isCallBackgroundPending"
+        :disabled="isUploadingCallBackground"
         @click="input?.click()"
       >
-        <v-progress-circular v-if="isCallBackgroundPending" indeterminate size="20" />
+        <v-progress-circular v-if="isUploadingCallBackground" indeterminate size="20" />
         <v-icon v-else icon="mdi-plus" size="small" />
       </button>
       <!-- The tile above is the labelled upload affordance, so this proxy input stays out of the

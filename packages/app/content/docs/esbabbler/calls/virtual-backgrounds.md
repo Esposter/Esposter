@@ -15,7 +15,9 @@ An upload writes to `{userId}/CallBackground/{slot}` in the private user-assets 
 
 The container is the **private** one, because the only consumer of a background is the uploader's own browser. Reads are therefore a short-lived read SAS, the same shape resource-asset reads sign ([file uploads](/docs/architecture/file-uploads)), rather than a permanently public url.
 
-The list is the container listing under that prefix. Nothing has to be kept in step with it, which is the point of deriving the name — and the free slot an upload is given is chosen server-side from that same listing, so a client is never handed the name of a background it did not mean to replace.
+The list is the container listing under that prefix. Nothing has to be kept in step with it, which is the point of deriving the name.
+
+**The client picks the slot, and the server signs whatever slot it is asked for.** A listing cannot allocate durably: a delete is reclaimed by a worker, so a slot freed a moment ago still reads as taken and would refuse the replacement the user just made room for, and two concurrent requests read the same free one anyway. The client is the only party holding a view that already accounts for the delete it just made. Nothing is lost by trusting it, because the bound was never the count — there are only `MAX_CALL_BACKGROUNDS` names, the request schema enforces that range, and the worst a client can do with a slot it names deliberately is overwrite its own image.
 
 **The size cap is the stored byte length, and the listing is where it is read.** A write SAS cannot bound what is PUT through it, so the size the picker checked before asking for a target is an early no rather than the guarantee — the same split [custom emoji](/docs/esbabbler/custom-emoji) has. A listing already carries each blob's `contentLength`, so a slot that came back over the cap is dropped from the list the picker receives and its blob reclaimed through the standard blob-deletion event. That costs no extra round trip and needs no row to hang a check on, which is what keeps the no-table property intact.
 
@@ -23,15 +25,19 @@ The list is the container listing under that prefix. Nothing has to be kept in s
 
 `userSettingsInMessage.virtualBackground` is a text column defaulting to the empty sentinel, alongside the voice settings it already carries ([user settings](/docs/esbabbler/settings)). It holds either a preset's path or a slot name; the client resolves a slot to a freshly signed read SAS and a preset to its static path, and the empty value means no background.
 
+**Resolving a slot re-reads the listing rather than the session cache.** The cache the picker renders from goes wrong in both directions over the life of a session: it holds a slot another device has deleted, which would resolve to a url whose blob is gone instead of to no background, and the read SAS it is holding expires while the session stays open. Only a slot ever reaches that path, so a preset still pays nothing.
+
 A preset's path can never collide with a slot number, so the two need no tag to tell apart. Persisting it is the smaller half of the value, but the visible one: before it, choosing a background was a per-tab act and anyone who wanted one had to re-pick it every session.
 
 Applying a background and remembering it are separate calls. A camera that starts mid-call applies the persisted pick without writing it back — restoring a selection is not the user making it again.
+
+Picks supersede rather than queue, so only the one still in force is remembered. A slow selection can resolve after a later one has already applied; persisting it then would leave the settings row naming a background the call is not showing, and restore it on the next camera start.
 
 ## The flow
 
 ```mermaid
 flowchart TD
-  picker["Background grid — presets plus your slots"] -->|"upload"| sas["Write SAS for the first free slot"]
+  picker["Background grid — presets plus your slots"] -->|"upload"| sas["Write SAS for the slot the client picked"]
   sas --> put["Client PUTs the image"]
   put --> list["Container listing under the user's prefix"]
   list -->|"over the cap"| reclaim["Dropped from the picker and reclaimed"]

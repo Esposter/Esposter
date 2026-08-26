@@ -9,6 +9,7 @@ import type {
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { MicrophoneProcessor } from "@/models/message/room/call/MicrophoneProcessor";
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE } from "@/services/message/room/call/constants";
 import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
 import { checkIsRemoteAudioSource } from "@/services/message/room/liveKit/checkIsRemoteAudioSource";
@@ -243,7 +244,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   // Local media pipeline work rather than a server write: clicking through the background picker means only
   // The last pick matters, and the picks before it have nothing to unwind, so they supersede rather than queue
   const applyVirtualBackground = async (virtualBackground: string) => {
-    await executeSetVirtualBackgroundMutation(
+    const outcome = await executeSetVirtualBackgroundMutation(
       async (checkIsStale) => {
         mediaStore.selectedVirtualBackground = virtualBackground;
         if (!localCameraTrack) return;
@@ -275,12 +276,15 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
       },
       { isSupersede: true, key: "virtualBackground" },
     );
+    return outcome.status === MutationStatus.Succeeded;
   };
   // The pick the user actually made, which is the only one worth remembering. Persisted after the pipeline has
-  // Taken it, so a background that could not be applied is not stored as the one in force
+  // Taken it, and only if it is still the pick in force: these supersede rather than queue, so a slow
+  // Selection can resolve after a later one has already applied - writing it then would leave the settings row
+  // Naming a background the call is not showing, and restore it on the next camera start
   const setVirtualBackground = async (virtualBackground: string) => {
-    await applyVirtualBackground(virtualBackground);
-    await updateUserSettings({ virtualBackground });
+    const isVirtualBackgroundApplied = await applyVirtualBackground(virtualBackground);
+    if (isVirtualBackgroundApplied) await updateUserSettings({ virtualBackground });
   };
   // Selecting a device just writes the persisted ref (via setActiveDevice); these watchers restart the
   // Live track on change. The guard skips no-op switches - including the echo from LiveKit's own
