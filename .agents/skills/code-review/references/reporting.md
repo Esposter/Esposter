@@ -8,8 +8,8 @@ The table rule itself — every finding, one compact table, flush-left — is in
 | --- | ------------------------------------------- | ------------------ | ----------- | ----------- | ---------------------------------- | --------------------------------- |
 | 1   | Reordered write drops entity on DB failure  | createThing.ts:40  | correctness | 🔴 critical | regression 57dcbd3                 | Fixed                             |
 | 2   | Truncated buffer decoded with wrong charset | decodeOutput.ts:15 | correctness | 🟡 major    | new                                | Fixed                             |
-| 3   | Third copy of the branch-restore rollback   | roomInvite.ts:22   | quality     | 🟢 minor    | new                                | Fixed — extracted to `restoreRow` |
-| 4   | Comment names a deleted symbol              | helper.ts:6        | correctness | 🟢 minor    | stale-record readPublishHistory.ts | Fixed                             |
+| 3   | Comment names a deleted symbol              | helper.ts:6        | correctness | 🟢 minor    | stale-record readPublishHistory.ts | Fixed                             |
+| 4   | Third copy of the branch-restore rollback   | roomInvite.ts:22   | quality     | 🟢 minor    | new                                | Fixed — extracted to `restoreRow` |
 
 Fixes committed as abc1234. Refuted while reading: removeThing timeout bound, batch submission ordering.
 
@@ -29,7 +29,7 @@ At most three lines, each optional:
 - **What was refuted while reading** — candidates that formed and died. One clause each, no reasoning. This is the honest signal that the refute-first pass ran; a round that reports only survivors is indistinguishable from one that never tried to break anything.
 - **One unsettleable trigger**, phrased as the blocker and the fact that would settle it (SKILL.md, "Nothing unsettled ships"). Never as a row.
 
-**No per-finding prose beyond the table.** Not a paragraph explaining each row, not the trigger written out, not the diff of the fix. The trigger exists so you can be sure; the row is what the user reads. If a finding genuinely cannot be stated in ≤60 characters, it is two findings.
+**No per-finding prose beyond the table.** Not a paragraph explaining each row, not the trigger written out, not the diff of the fix. The trigger exists so you can be sure; the row is what the user reads. A claim that will not fit in ≤60 characters is shortened, never split — splitting one root cause across two rows double-counts it and hides that both fixes are the same edit. Two rows only when there are genuinely two independent findings.
 
 ## What is not in the report
 

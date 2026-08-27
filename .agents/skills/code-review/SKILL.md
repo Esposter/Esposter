@@ -85,9 +85,9 @@ This is the whole of what the independent verifier used to do, and it fails the 
 
 The dominant false-positive class is a finding arguing against a decision already made and written down: a tightened retry policy, an ingestion cap, a best-effort publish that swallows its error. From the diff alone the argument always sounds right, and it returns every round with a different answer.
 
-`packages/app/content/docs/` and `.agents/skills/**/*.md` are the tiebreaker — the whole skill tree, not the index pages alone: a binding rule as often sits in a skill's `references/*.md` deep dive as in its `SKILL.md`. A choice either tree states deliberately, with its consequence acknowledged, is settled — not a finding. It is a finding again only when the code contradicts the record, when a mitigation the record promises is missing, or when the change ships behaviour the record does not cover.
+`packages/app/content/docs/`, `.agents/skills/**/*.md` and `.agents/ledgers/**/*.md` are the tiebreaker — the whole skill tree, not the index pages alone, and a ledger's **Exclusions** section exists precisely to stop a unit being re-litigated: a binding rule as often sits in a skill's `references/*.md` deep dive as in its `SKILL.md`. A choice either tree states deliberately, with its consequence acknowledged, is settled — not a finding. It is a finding again only when the code contradicts the record, when a mitigation the record promises is missing, or when the change ships behaviour the record does not cover.
 
-Grep both trees before reporting a finding that argues with a decision. A genuinely undocumented decision that keeps drawing fire is closed by writing the page (`docs` skill), not by arguing it again. A record invalidated by materially new evidence (an advisory, a changed dependency contract) reopens the decision — update the page first, then fix the code against the new record.
+Grep all three trees before reporting a finding that argues with a decision. A genuinely undocumented decision that keeps drawing fire is closed by writing the page (`docs` skill), not by arguing it again. A record invalidated by materially new evidence (an advisory, a changed dependency contract) reopens the decision — update the page first, then fix the code against the new record.
 
 ## Reporting — `references/reporting.md`
 
@@ -106,7 +106,7 @@ Deliberately **not** measured here: candidate counts, per-lens ceilings, token e
 1. Verify each finding against current HEAD before fixing — post-merge findings can be stale — and check it against the written record above.
 2. Fix confirmed findings.
 3. Run **`fixing-findings.md`** over your own fixes before verifying — it owns the regression checklist and the order of work (root cause → converge the call sites → docs and skills → then one check pass), and it is the block to paste into a delegated fix round.
-4. Verify per the `package-scripts` skill (typecheck → tests), commit per the `git` skill. Before pushing to a branch with an open PR, check CodeRabbit state (`coderabbit` skill).
+4. Verify with the full sequence — `pnpm format` → `typecheck` → `lint:fix` → tests over the paths touched (`package-scripts`) — then commit per the `git` skill. Before pushing to a branch with an open PR, check CodeRabbit state (`coderabbit` skill).
 
 ## The skill improves itself
 

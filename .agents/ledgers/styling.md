@@ -29,9 +29,9 @@ What a component looks like rather than how it is composed: attributify props ov
 
 ```bash
 # px in a template, style block or rules config — rem is the rule, with narrow exceptions
-grep -rnE '[^a-z-][0-9]+px' --include=*.vue --include=*.scss app
+grep -rnE '[^a-z-][0-9]+px' --include=*.vue --include=*.scss packages/app/app packages/app/app/rules.config.ts
 # class= where attributify would do — the survivors should be scoped refs, dynamic bindings, or third-party selectors
-grep -rn 'class="' --include=*.vue app/components
+grep -rn 'class="' --include=*.vue packages/app/app/components
 ```
 
 ## Next enforceable

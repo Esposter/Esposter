@@ -98,9 +98,10 @@ knows what to look for. Those dates are also what the next convention change is 
 line rather than widening an existing one when a unit turns out too big, and split it into its own file when the
 lines stop fitting.
 
-**A new convention joins the ledger that already owns its files** rather than opening one of its own, and adding
-it resets that ledger's dates — a unit swept against a narrower rule set is not swept against the current one,
-and there is no partially-swept state.
+**A new convention joins the ledger that already asks its question** — the one whose owning skill now states it —
+and adding it resets that ledger's dates, because a unit swept against a narrower rule set is not swept against
+the current one and there is no partially-swept state. Sharing a file set with an existing ledger is not what
+decides this; the next section is.
 
 ## A ledger is keyed by its question, never by its address
 
@@ -124,7 +125,7 @@ ledger is that mistake at its widest. When a rule set has no ledger, the answer 
 on an existing one.
 
 Its corollary bounds the count: a ledger is worth opening only for a convention **no enforcer already decides**.
-A rule oxlint or typecheck checks needs no coverage table — it fails on the line that breaks it — so the ledgers
+A rule that oxlint or typecheck checks needs no coverage table — it fails on the line that breaks it — so the ledgers
 that earn their file are the read-only-detectable ones: a helper that already exists, a name that means the wrong
 thing, a guard held on one path and not its sibling.
 

@@ -25,7 +25,7 @@ A duplicate constant is the one thing no skill states a grep for, because it is 
 
 ```bash
 # String literals appearing in more than one file — the candidate list, not the finding
-grep -rhoE '"[a-zA-Z][a-zA-Z0-9 ./_-]{4,}"' --include=*.ts --include=*.vue app server shared |
+grep -rhoE '"[a-zA-Z][a-zA-Z0-9 ./_-]{4,}"' --include=*.ts --include=*.vue packages/app/app packages/app/server packages/app/shared packages/*/src |
   sort | uniq -c | sort -rn | awk '$1 > 1'
 ```
 

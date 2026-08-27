@@ -25,11 +25,11 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 
 ```bash
 # schema-first derivation, which interface-first replaces
-grep -rn 'z\.infer<typeof' --include=*.ts app packages/*/src
+grep -rn 'z\.infer<typeof' --include=*.ts packages/app/app packages/app/server packages/app/shared packages/*/src
 # .extend() where a .shape spread is the rule
-grep -rn '\.extend(' --include=*.ts app packages/*/src
+grep -rn '\.extend(' --include=*.ts packages/app/app packages/app/server packages/app/shared packages/*/src
 # a discriminated union with no satisfies
-grep -rn -A3 'z\.discriminatedUnion(' --include=*.ts app packages/*/src
+grep -rn -A3 'z\.discriminatedUnion(' --include=*.ts packages/app/app packages/app/server packages/app/shared packages/*/src
 ```
 
 ## Next enforceable

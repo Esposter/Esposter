@@ -18,10 +18,11 @@
 ## Find recipe
 
 ```bash
-# A chain that never terminates — no .match, no .orTee, not returned
-grep -rnE 'getResultAsync?\(' --include=*.ts --include=*.vue app server shared packages/*/src
+# A chain that never terminates — no .match, no .orTee, not returned. `Async?` would make the `c` optional
+# And miss every synchronous chain, so the group is the whole word
+grep -rnE 'getResult(Async)?\(' --include=*.ts --include=*.vue packages/app/app packages/app/server packages/app/shared packages/*/src
 # new Error, which InvalidOperationError replaces outside unimplemented stubs
-grep -rn 'new Error(' --include=*.ts --include=*.vue app server shared packages/*/src
+grep -rn 'new Error(' --include=*.ts --include=*.vue packages/app/app packages/app/server packages/app/shared packages/*/src
 ```
 
 ## Exclusions
