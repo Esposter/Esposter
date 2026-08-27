@@ -50,7 +50,7 @@ Working is not finished. Once the change does what it should — a feature, a fi
 2. **Ground the result in tests — only where a test earns its line.** This step deletes at least as often as it adds. Add the regression test for what the review exposed; add nothing another enforcer already owns (typecheck, a Zod constraint, an existing test), because such a test cannot fail honestly and only pins today's implementation; and trim the tests the change made redundant. The full criterion is the `testing` skill's "What to Test".
 3. **Carry the docs and skills with it.** A shipped decision updates its owning docs page and, if it is a reusable convention, its owning skill (`docs`, `skill-authoring`) — in the same change, never "later". A rename owes the same sweep over prose: grep the old name across `content/docs`, `.agents/skills`, `.agents/ledgers` and the READMEs, and fix the flow diagrams that label an edge with it. No test fails on a name that only lives in a sentence.
 4. **`pnpm format` → `typecheck` → `lint:fix` → tests**, batched once at the end (`context-efficiency`, `package-scripts`). Tests means the paths the change touched, passed as arguments.
-5. **Commit** the coherent chunk. Never push unless asked.
+5. **Commit** the coherent chunk. Never push unless asked — but once asked, step 4 does not stand in the way: a review slot costs an hour and the checks cost minutes, so the push goes out and the checks run against the same tree beside it (`coderabbit`). Anything they turn up is a commit in the next window.
 
 Skip step 1 only for a genuinely one-line change. When a step finds nothing, say so — that is a result.
 
