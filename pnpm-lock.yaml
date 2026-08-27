@@ -744,8 +744,8 @@ catalogs:
       specifier: ^1.11.1
       version: 1.11.1
     vuetify:
-      specifier: ^4.1.11
-      version: 4.1.11
+      specifier: ^4.1.12
+      version: 4.1.12
     vuetify-nuxt-module:
       specifier: ^1.0.0-rc.5
       version: 1.0.0-rc.5
@@ -909,7 +909,7 @@ importers:
         version: 7.0.2(temporal-polyfill@1.0.4)(vue@3.5.41(typescript@6.0.3))
       '@koumoul/vjsf':
         specifier: 'catalog:'
-        version: 4.5.4(supports-color@10.2.2)(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))(vuetify@4.1.11(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))
+        version: 4.5.4(supports-color@10.2.2)(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))(vuetify@4.1.12(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))
       '@livekit/track-processors':
         specifier: 'catalog:'
         version: 0.7.2(@types/dom-mediacapture-transform@0.1.12)(livekit-client@2.22.1(@types/dom-mediacapture-record@1.0.22))
@@ -1224,7 +1224,7 @@ importers:
         version: 1.11.1(apexcharts@7.0.0)(vue@3.5.41(typescript@6.0.3))
       vuetify:
         specifier: 'catalog:'
-        version: 4.1.11(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))
+        version: 4.1.12(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))
       web-push:
         specifier: 'catalog:'
         version: 3.6.7(supports-color@10.2.2)
@@ -1372,7 +1372,7 @@ importers:
         version: 3.3.11(typescript@6.0.3)
       vuetify-nuxt-module:
         specifier: 'catalog:'
-        version: 1.0.0-rc.5(@nuxt/schema@4.5.2)(esbuild@0.28.2)(magic-string@1.2.2)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.5)(rollup@4.63.0)(sass-embedded@1.103.1)(sass@1.103.1)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.5)(rollup@4.63.0)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(webpack@5.109.2(cssnano@8.0.9(postcss@8.5.26))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3)))(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(vue@3.5.41(typescript@6.0.3))(vuetify@4.1.11(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))(webpack@5.109.2(cssnano@8.0.9(postcss@8.5.26))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3))
+        version: 1.0.0-rc.5(@nuxt/schema@4.5.2)(esbuild@0.28.2)(magic-string@1.2.2)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.5)(rollup@4.63.0)(sass-embedded@1.103.1)(sass@1.103.1)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.5)(rollup@4.63.0)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(webpack@5.109.2(cssnano@8.0.9(postcss@8.5.26))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3)))(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(vue@3.5.41(typescript@6.0.3))(vuetify@4.1.12(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))(webpack@5.109.2(cssnano@8.0.9(postcss@8.5.26))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3))
 
   packages/azure:
     dependencies:
@@ -14785,8 +14785,8 @@ packages:
     peerDependencies:
       vuetify: ^3.4.0 || ^4.0.0
 
-  vuetify@4.1.11:
-    resolution: {integrity: sha512-pMzGsjha58Lbg9n/icMXCxcQN9rTczcOdMq3wMU1Qe+cfufl28eX4VUUzLwSsDgmLjTtUGsgZIkyYZFQy+SmIw==}
+  vuetify@4.1.12:
+    resolution: {integrity: sha512-WXGbnuzqUGPZM7nF38C3jiucaLRutHZOICVW0wg1dyXppW11i+su/IT20nK+1o86nsgTdedejeEv53cJUrI30A==}
     peerDependencies:
       typescript: '>=4.7'
       vite-plugin-vuetify: '>=2.1.0'
@@ -17323,14 +17323,14 @@ snapshots:
 
   '@juggle/resize-observer@3.4.0': {}
 
-  '@koumoul/vjsf@4.5.4(supports-color@10.2.2)(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))(vuetify@4.1.11(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))':
+  '@koumoul/vjsf@4.5.4(supports-color@10.2.2)(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))(vuetify@4.1.12(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))':
     dependencies:
       '@json-layout/core': 2.8.2(@json-layout/vocabulary@2.13.1(supports-color@10.2.2))(supports-color@10.2.2)
       '@json-layout/vocabulary': 2.13.1(supports-color@10.2.2)
       '@vueuse/core': 12.8.2(typescript@6.0.3)
       debug: 4.4.3(supports-color@10.2.2)
       vue: 3.5.41(typescript@6.0.3)
-      vuetify: 4.1.11(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))
+      vuetify: 4.1.12(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -21726,11 +21726,11 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
 
-  '@vuetify/loader-shared@2.1.2(vue@3.5.41(typescript@6.0.3))(vuetify@4.1.11(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))':
+  '@vuetify/loader-shared@2.1.2(vue@3.5.41(typescript@6.0.3))(vuetify@4.1.12(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))':
     dependencies:
       upath: 2.0.1
       vue: 3.5.41(typescript@6.0.3)
-      vuetify: 4.1.11(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))
+      vuetify: 4.1.12(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))
 
   '@vuetify/unplugin-styles@1.0.0-rc.1(@nuxt/kit@4.5.2(magic-string@1.2.2)(magicast@0.5.4)(rolldown@1.2.5)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.5)(rollup@4.63.0)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(webpack@5.109.2(cssnano@8.0.9(postcss@8.5.26))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3))))(@nuxt/schema@4.5.2)(esbuild@0.28.2)(rolldown@1.2.5)(rollup@4.63.0)(sass-embedded@1.103.1)(sass@1.103.1)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(webpack@5.109.2(cssnano@8.0.9(postcss@8.5.26))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3))':
     dependencies:
@@ -30046,10 +30046,10 @@ snapshots:
     optionalDependencies:
       typescript: 6.0.3
 
-  vuetify-nuxt-module@1.0.0-rc.5(@nuxt/schema@4.5.2)(esbuild@0.28.2)(magic-string@1.2.2)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.5)(rollup@4.63.0)(sass-embedded@1.103.1)(sass@1.103.1)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.5)(rollup@4.63.0)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(webpack@5.109.2(cssnano@8.0.9(postcss@8.5.26))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3)))(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(vue@3.5.41(typescript@6.0.3))(vuetify@4.1.11(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))(webpack@5.109.2(cssnano@8.0.9(postcss@8.5.26))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3)):
+  vuetify-nuxt-module@1.0.0-rc.5(@nuxt/schema@4.5.2)(esbuild@0.28.2)(magic-string@1.2.2)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.5)(rollup@4.63.0)(sass-embedded@1.103.1)(sass@1.103.1)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.5)(rollup@4.63.0)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(webpack@5.109.2(cssnano@8.0.9(postcss@8.5.26))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3)))(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(vue@3.5.41(typescript@6.0.3))(vuetify@4.1.12(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))(webpack@5.109.2(cssnano@8.0.9(postcss@8.5.26))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3)):
     dependencies:
       '@nuxt/kit': 4.5.2(magic-string@1.2.2)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.5)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.5)(rollup@4.63.0)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(webpack@5.109.2(cssnano@8.0.9(postcss@8.5.26))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3)))
-      '@vuetify/loader-shared': 2.1.2(vue@3.5.41(typescript@6.0.3))(vuetify@4.1.11(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))
+      '@vuetify/loader-shared': 2.1.2(vue@3.5.41(typescript@6.0.3))(vuetify@4.1.12(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))
       '@vuetify/unplugin-styles': 1.0.0-rc.1(@nuxt/kit@4.5.2(magic-string@1.2.2)(magicast@0.5.4)(rolldown@1.2.5)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.5)(rollup@4.63.0)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(webpack@5.109.2(cssnano@8.0.9(postcss@8.5.26))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3))))(@nuxt/schema@4.5.2)(esbuild@0.28.2)(rolldown@1.2.5)(rollup@4.63.0)(sass-embedded@1.103.1)(sass@1.103.1)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(webpack@5.109.2(cssnano@8.0.9(postcss@8.5.26))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3))
       defu: 6.1.7
       local-pkg: 1.2.1
@@ -30058,7 +30058,7 @@ snapshots:
       semver: 7.8.5
       ufo: 1.6.4
       unconfig: 7.5.0
-      vuetify: 4.1.11(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))
+      vuetify: 4.1.12(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))
     transitivePeerDependencies:
       - '@farmfe/core'
       - '@nuxt/schema'
@@ -30079,7 +30079,7 @@ snapshots:
       - vue
       - webpack
 
-  vuetify@4.1.11(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)):
+  vuetify@4.1.12(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)):
     dependencies:
       vue: 3.5.41(typescript@6.0.3)
     optionalDependencies:
