@@ -208,7 +208,7 @@ catalog:
   survey-vue3-ui: ^3.0.1
   three: ^0.185.1
   three-globe: ^2.45.2
-  trpc-nuxt: ^2.1.2
+  trpc-nuxt: ^2.1.3
   tsdown: ^0.22.14
   tsx: ^4.23.12
   type-fest: ^5.8.0
