@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/itemConstants";
+import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
 
 const modelValue = defineModel<string>();
 const rules = useVRules();
