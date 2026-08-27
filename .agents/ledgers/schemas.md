@@ -26,15 +26,22 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 ```bash
 # schema-first derivation, which interface-first replaces
 grep -rn 'z\.infer<typeof' --include=*.ts packages/app/app packages/app/server packages/app/shared packages/*/src
-# .extend() where a .shape spread is the rule
-grep -rn '\.extend(' --include=*.ts packages/app/app packages/app/server packages/app/shared packages/*/src
-# a discriminated union with no satisfies
-grep -rn -A3 'z\.discriminatedUnion(' --include=*.ts packages/app/app packages/app/server packages/app/shared packages/*/src
+# .extend() where a .shape spread is the rule. Anchored on a Zod receiver: a bare `.extend(` is dominated by
+# `dayjs.extend(plugin)` and Tiptap's `Node.extend({})`, which are unrelated APIs sharing the method name
+grep -rnE '(Schema|\)|\})\.extend\(' --include=*.ts packages/app/app packages/app/server packages/app/shared packages/*/src
+# a discriminated union, each of which must carry a trailing satisfies
+grep -rn -A 40 'z\.discriminatedUnion(' --include=*.ts packages/app/app packages/app/shared packages/*/src
 ```
 
 ## Next enforceable
 
-- `.extend(` is a bare syntactic ban — `no-restricted-syntax` takes it whole, and the skill states no exception.
-- A `z.discriminatedUnion` without a trailing `satisfies` is decidable from the AST; the skill says "no exceptions", which is exactly what a rule needs.
-- `export type X = z.infer<...>` is allowed in the narrow composed-schema case, so it needs the judgement the sweep provides — leave it.
-- Registration completeness is a test, not a lint rule: walk the schema directory and assert every export appears in `schema.ts`.
+- Registration completeness is a test, not a lint rule: walk the schema directory and assert every export appears
+  In `schema.ts`.
+- **`.extend()` is not cleanly enforceable, contrary to what this row first claimed.** `dayjs.extend`, Tiptap's
+  `.extend` and Zod's share one method name and no syntactic rule tells them apart — a receiver-name heuristic
+  Would ban the first two by accident. It stays with the sweep, and the recipe above carries the anchor instead.
+- A `z.discriminatedUnion` without a trailing `satisfies` is decidable from the AST, and the skill states the rule
+  With no exceptions — which is exactly what a rule needs. Worth a plugin once a second violation appears; the
+  Tree currently holds none.
+- `export type X = z.infer<...>` is allowed in the narrow composed-schema case, so it needs the judgement the
+  Sweep provides — leave it.

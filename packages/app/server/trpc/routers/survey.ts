@@ -25,6 +25,7 @@ import {
   surveyResponseEntitySchema,
 } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
+import { z } from "zod";
 
 const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   participantToken: true,
@@ -49,7 +50,8 @@ const updateSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   rowKey: true,
 });
 
-const deleteSurveyResponseInputSchema = surveyResponseEntitySchema.pick({ rowKey: true }).extend({
+const deleteSurveyResponseInputSchema = z.object({
+  ...surveyResponseEntitySchema.pick({ rowKey: true }).shape,
   // The partition key is the survey id, derived from this owner-checked id — never accepted from the caller
   id: selectResourceSchema.shape.id,
 });
