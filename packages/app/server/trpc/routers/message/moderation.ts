@@ -108,7 +108,7 @@ export const moderationRouter = router({
   }),
   // The delete's own returning() reports whether the ban existed, so there is no separate existence read to
   // Race against a concurrent unban
-  deleteBan: getPermissionsProcedure(RoomPermission.BanMembers, deleteBanInputSchema, "roomId").mutation(
+  deleteBan: getPermissionsProcedure(RoomPermission.BanMembers, deleteBanInputSchema, "roomId").mutation<void>(
     async ({ ctx, input: { roomId, userId } }) => {
       requireMutation(
         (
@@ -129,7 +129,7 @@ export const moderationRouter = router({
     // Aimed at one is rejected before it can write a ban row and a log entry nothing will ever read
     .use(isRoom)
     .concat(moderationLogPlugin)
-    .mutation(async ({ ctx, input }) => {
+    .mutation<void>(async ({ ctx, input }) => {
       const { roomId, targetUserId } = input;
       const actorUserId = ctx.getSessionPayload.user.id;
       // Moderating yourself is not a hierarchy question, so the comparison never reaches it — an owner
@@ -244,28 +244,53 @@ export const moderationRouter = router({
       .limit(limit + 1);
     return getCursorPaginationData(readBans, limit, sortBy);
   }),
-  readModerationLog: getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId").query(
-    async ({ input: { actorUserId, cursor, limit, roomId, targetUserId, type } }) => {
-      const clauses: Clause<ModerationLogEntity>[] = [
+  readModerationLog: getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId").query<
+    CursorPaginationData<ModerationLogEntity>
+  >(async ({ input: { actorUserId, cursor, limit, roomId, targetUserId, type } }) => {
+    const clauses: Clause<ModerationLogEntity>[] = [
+      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+      getTableNullClause(ItemMetadataPropertyNames.deletedAt),
+    ];
+    if (actorUserId)
+      clauses.push({
+        key: ModerationLogEntityPropertyNames.actorUserId,
+        operator: BinaryOperator.eq,
+        value: actorUserId,
+      });
+    if (targetUserId)
+      clauses.push({
+        key: ModerationLogEntityPropertyNames.targetUserId,
+        operator: BinaryOperator.eq,
+        value: targetUserId,
+      });
+    if (type) clauses.push({ key: ModerationLogEntityPropertyNames.type, operator: BinaryOperator.eq, value: type });
+
+    const moderationLogClient = await useTableClient(AzureTable.ModerationLog);
+    return readCursorPaginationDataAzureTable(moderationLogClient, ModerationLogEntity, {
+      clauses,
+      cursor,
+      limit,
+      sortBy: [MESSAGE_ROWKEY_SORT_ITEM],
+    });
+  }),
+  readModerationNotes: getPermissionsProcedure(
+    RoomPermission.KickMembers,
+    readModerationNotesInputSchema,
+    "roomId",
+  ).query<CursorPaginationData<ModerationNoteEntity>>(
+    async ({ ctx, input: { cursor, limit, roomId, targetUserId } }) => {
+      // Provisioning the table is independent of the hierarchy check, so neither waits on the other
+      const [moderationNotesClient] = await Promise.all([
+        useTableClient(AzureTable.ModerationNotes),
+        assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId),
+      ]);
+
+      const clauses: Clause<ModerationNoteEntity>[] = [
         { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+        { key: ModerationNoteEntityPropertyNames.targetUserId, operator: BinaryOperator.eq, value: targetUserId },
         getTableNullClause(ItemMetadataPropertyNames.deletedAt),
       ];
-      if (actorUserId)
-        clauses.push({
-          key: ModerationLogEntityPropertyNames.actorUserId,
-          operator: BinaryOperator.eq,
-          value: actorUserId,
-        });
-      if (targetUserId)
-        clauses.push({
-          key: ModerationLogEntityPropertyNames.targetUserId,
-          operator: BinaryOperator.eq,
-          value: targetUserId,
-        });
-      if (type) clauses.push({ key: ModerationLogEntityPropertyNames.type, operator: BinaryOperator.eq, value: type });
-
-      const moderationLogClient = await useTableClient(AzureTable.ModerationLog);
-      return readCursorPaginationDataAzureTable(moderationLogClient, ModerationLogEntity, {
+      return readCursorPaginationDataAzureTable(moderationNotesClient, ModerationNoteEntity, {
         clauses,
         cursor,
         limit,
@@ -273,27 +298,4 @@ export const moderationRouter = router({
       });
     },
   ),
-  readModerationNotes: getPermissionsProcedure(
-    RoomPermission.KickMembers,
-    readModerationNotesInputSchema,
-    "roomId",
-  ).query(async ({ ctx, input: { cursor, limit, roomId, targetUserId } }) => {
-    // Provisioning the table is independent of the hierarchy check, so neither waits on the other
-    const [moderationNotesClient] = await Promise.all([
-      useTableClient(AzureTable.ModerationNotes),
-      assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId),
-    ]);
-
-    const clauses: Clause<ModerationNoteEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
-      { key: ModerationNoteEntityPropertyNames.targetUserId, operator: BinaryOperator.eq, value: targetUserId },
-      getTableNullClause(ItemMetadataPropertyNames.deletedAt),
-    ];
-    return readCursorPaginationDataAzureTable(moderationNotesClient, ModerationNoteEntity, {
-      clauses,
-      cursor,
-      limit,
-      sortBy: [MESSAGE_ROWKEY_SORT_ITEM],
-    });
-  }),
 });

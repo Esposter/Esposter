@@ -55,6 +55,8 @@ import { readFollowedThreadRootRowKeys } from "@@/server/services/message/thread
 import { updateMessage } from "@@/server/services/message/updateMessage";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
 import { router } from "@@/server/trpc";
+import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessageProcedure";
@@ -97,11 +99,9 @@ import {
 } from "@esposter/db-schema";
 import {
   getResult,
-  InvalidOperationError,
   ItemMetadataPropertyNames,
   jsonDateParse,
   MAX_READ_LIMIT,
-  NotFoundError,
   Operation,
   takeOne,
 } from "@esposter/shared";
@@ -127,10 +127,7 @@ export const baseMessageRouter = router({
   deleteFile: getMessageProcedure(deleteFileInputSchema, MessageOperation.Update).mutation<void>(
     async ({ ctx: { messageClient, messageEntity, messageEtag }, input: { id, partitionKey, rowKey } }) => {
       if (messageEntity.isForward || messageEntity.files.length === 0)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Delete, AzureEntityType.Message, id).message,
-        });
+        throw getInvalidOperationError(Operation.Delete, AzureEntityType.Message, id);
       // The blob names come from the version actually written, so a retry deletes the blobs of the file it
       // Removed from the survivors the winning write stored
       let deletedFilename = "";
@@ -139,11 +136,7 @@ export const baseMessageRouter = router({
         entityWithEtag: { entity: messageEntity, etag: messageEtag },
         getUpdateEntity: ({ files }) => {
           const deletedFile = files.find((file) => file.id === id);
-          if (!deletedFile)
-            throw new TRPCError({
-              code: "NOT_FOUND",
-              message: new NotFoundError(AzureEntityType.File, id).message,
-            });
+          if (!deletedFile) throw getNotFoundError(AzureEntityType.File, id);
 
           deletedFilename = deletedFile.filename;
           return { files: files.filter((file) => file.id !== id), partitionKey, rowKey };
@@ -319,11 +312,7 @@ export const baseMessageRouter = router({
     const maxFileSizeBytes = Math.min(room.maxFileSizeBytes ?? MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
     for (const { mimetype, size } of files)
       if (size > maxFileSizeBytes || !room.allowedMimeCategories.includes(getMimeCategory(mimetype)))
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, AzureEntityType.File, JSON.stringify({ mimetype, size }))
-            .message,
-        });
+        throw getInvalidOperationError(Operation.Create, AzureEntityType.File, JSON.stringify({ mimetype, size }));
     // Room attachments are outside the personal storage quota, which counts what a user keeps in their own
     // Resources — a room's files belong to the room. See /docs/platform/storage-quotas
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
@@ -446,11 +435,7 @@ export const baseMessageRouter = router({
     async ({ ctx, input }) => {
       const inFilterRoomIds = input.filters.filter(({ type }) => type === FilterType.In).map(({ value }) => value);
       if (!inFilterRoomIds.every((value) => typeof value === "string"))
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Read, AzureEntityType.Message, JSON.stringify(inFilterRoomIds))
-            .message,
-        });
+        throw getInvalidOperationError(Operation.Read, AzureEntityType.Message, JSON.stringify(inFilterRoomIds));
       else if (inFilterRoomIds.length > 0) await isMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds);
       return searchMessages(input);
     },
@@ -511,14 +496,11 @@ export const baseMessageRouter = router({
             !pollContentResult?.success ||
             (optionId && !pollContentResult.data.options.some(({ id }) => id === optionId))
           )
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: new InvalidOperationError(
-                Operation.Update,
-                AzureEntityType.Message,
-                JSON.stringify({ optionId, partitionKey, rowKey }),
-              ).message,
-            });
+            throw getInvalidOperationError(
+              Operation.Update,
+              AzureEntityType.Message,
+              JSON.stringify({ optionId, partitionKey, rowKey }),
+            );
 
           const pollContent = pollContentResult.data;
           if (optionId) pollContent.votes[getSessionPayload.user.id] = optionId;
