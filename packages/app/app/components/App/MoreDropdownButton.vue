@@ -3,11 +3,11 @@ import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
 import { MoreDropdownLinkItems } from "@/services/app/MoreDropdownLinkItems";
 import { authClient } from "@/services/auth/authClient";
+import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
 import { RoutePath } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 const { data: session } = await authClient.useSession(useFetch);
-const { signOut } = authClient;
 const items = computed<ListLinkItem[]>(() =>
   session.value
     ? [
@@ -19,10 +19,7 @@ const items = computed<ListLinkItem[]>(() =>
         ...MoreDropdownLinkItems,
         {
           icon: "mdi-logout",
-          onClick: async () => {
-            await signOut();
-            window.location.reload();
-          },
+          onClick: () => signOutOfBrowser(),
           title: "Logout",
         },
       ]
