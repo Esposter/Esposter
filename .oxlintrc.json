@@ -25,7 +25,7 @@
   },
   "overrides": [
     {
-      "files": ["packages/app/server/trpc/**/*.ts"],
+      "files": ["packages/app/server/**/*.ts"],
       "rules": {
         "trpc-procedure/no-hand-rolled-error": "error"
       }

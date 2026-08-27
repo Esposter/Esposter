@@ -1,11 +1,11 @@
 import type { Context } from "@@/server/trpc/context";
 
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { MAX_CALL_SESSION_ID_ATTEMPTS } from "@@/server/services/message/call/constants";
 import { insertCallSessionId } from "@@/server/services/message/call/insertCallSessionId";
 import { readCallSessionId } from "@@/server/services/message/call/readCallSessionId";
 import { DatabaseEntityType } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import { Operation } from "@esposter/shared";
 
 export const createCallSessionId = async (
   db: Context["db"],
@@ -22,9 +22,6 @@ export const createCallSessionId = async (
   // Every attempt lost the race to another creator, so the session is whatever they landed
   const callSessionId = await readCallSessionId(db, roomId, threadRootRowKey);
   if (!callSessionId)
-    throw new TRPCError({
-      code: "UNPROCESSABLE_CONTENT",
-      message: new InvalidOperationError(Operation.Create, DatabaseEntityType.CallSession, roomId).message,
-    });
+    throw getInvalidOperationError(Operation.Create, DatabaseEntityType.CallSession, roomId, "UNPROCESSABLE_CONTENT");
   return callSessionId;
 };

@@ -1,10 +1,9 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
 
+import { getForbiddenError } from "@@/server/trpc/guards/getForbiddenError";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { requireReadableCallSession } from "@@/server/services/message/call/requireReadableCallSession";
-import { ForbiddenError } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
 
 export const requireJoinedCallSession = async (
   db: Context["db"],
@@ -18,8 +17,5 @@ export const requireJoinedCallSession = async (
   )
     return callSession;
 
-  throw new TRPCError({
-    code: "FORBIDDEN",
-    message: new ForbiddenError("Must be in call").message,
-  });
+  throw getForbiddenError("Must be in call");
 };

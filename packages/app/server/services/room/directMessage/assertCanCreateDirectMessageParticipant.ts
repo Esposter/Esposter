@@ -1,9 +1,9 @@
 import type { Context } from "@@/server/trpc/context";
 
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { blocks, DatabaseEntityType, DerivedDatabaseEntityType } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import { Operation } from "@esposter/shared";
 import { and, eq, inArray, or } from "drizzle-orm";
 
 export const assertCanCreateDirectMessageParticipant = async (
@@ -15,11 +15,7 @@ export const assertCanCreateDirectMessageParticipant = async (
   const friendshipId = getFriendshipId(actorUserId, targetUserId);
   const friendship = await db.query.friends.findFirst({ where: { id: { eq: friendshipId } } });
   if (!friendship)
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: new InvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, targetUserId)
-        .message,
-    });
+    throw getInvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, targetUserId);
 
   const existingBlock = await db
     .select()
@@ -32,8 +28,5 @@ export const assertCanCreateDirectMessageParticipant = async (
     )
     .limit(1);
   if (existingBlock.length > 0)
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, targetUserId).message,
-    });
+    throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, targetUserId);
 };

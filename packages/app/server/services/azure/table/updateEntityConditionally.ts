@@ -1,8 +1,9 @@
+import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import type { AzureEntity, AzureEntityType, AzureUpdateEntity, CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
 import { getEntityWithEtag } from "@esposter/db";
-import { getResultAsync, NotFoundError } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 interface ConditionalEntityUpdateOptions<TTableEntity extends AzureEntity, TEntity extends TTableEntity> {
@@ -53,11 +54,7 @@ export const updateEntityConditionally = async <TTableEntity extends AzureEntity
         throw new TRPCError({ code: "CONFLICT" });
       },
     );
-    if (!rereadEntityVersion)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(entityType, JSON.stringify({ partitionKey, rowKey })).message,
-      });
+    if (!rereadEntityVersion) throw getNotFoundError(entityType, JSON.stringify({ partitionKey, rowKey }));
     // Only a lost race is retried, and the re-read is what tells the two apart without a status code: a version
     // That moved is the concurrent write this one was rejected for, while an unchanged version means the write
     // Failed for a reason retrying cannot fix, so that error propagates as itself

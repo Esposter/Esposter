@@ -1,6 +1,7 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
 
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "@@/server/services/azure/eventGrid/publishBlobPrefixDeletion";
@@ -8,8 +9,7 @@ import { ownedBy } from "@@/server/services/db/ownedBy";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { listRoomProfileImageBlobNames } from "@@/server/services/room/listRoomProfileImageBlobNames";
 import { AzureContainer, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import { Operation } from "@esposter/shared";
 
 export const deleteRoom = async (db: Context["db"], { session, user }: GetSessionPayload, id: string) => {
   const deletedRoom = (
@@ -18,11 +18,7 @@ export const deleteRoom = async (db: Context["db"], { session, user }: GetSessio
       .where(ownedBy(roomsInMessage, id, user.id))
       .returning()
   )[0];
-  if (!deletedRoom)
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Room, id).message,
-    });
+  if (!deletedRoom) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Room, id);
 
   roomEventEmitter.emit("deleteRoom", {
     roomId: deletedRoom.id,

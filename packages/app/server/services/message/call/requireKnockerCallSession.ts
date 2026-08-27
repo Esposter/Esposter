@@ -1,10 +1,9 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
 
+import { getForbiddenError } from "@@/server/trpc/guards/getForbiddenError";
 import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
 import { requireCallSession } from "@@/server/services/message/call/requireCallSession";
-import { ForbiddenError } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
 
 export const requireKnockerCallSession = async (
   db: Context["db"],
@@ -14,8 +13,5 @@ export const requireKnockerCallSession = async (
   const callSession = await requireCallSession(db, callSessionId);
   if (callKnockerMap.get(callSessionId)?.has(sessionPayload.session.id)) return callSession;
 
-  throw new TRPCError({
-    code: "FORBIDDEN",
-    message: new ForbiddenError("Must be waiting to join call").message,
-  });
+  throw getForbiddenError("Must be waiting to join call");
 };
