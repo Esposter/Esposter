@@ -5,7 +5,8 @@ The question is where a thing lives and whether it exists twice — one export p
 | Unit                                                                | Swept | Notes                                                                      |
 | ------------------------------------------------------------------- | ----- | -------------------------------------------------------------------------- |
 | `packages/shared`, `packages/shared-node`                           | —     | the ≥2-consumers rule bites hardest here: name the second consumer or move |
-| `app/shared`                                                        | —     | the app's own shared tree; the client-import boundary                      |
+| `app/shared/services`, `app/shared/util`                            | —     |                                                                            |
+| `app/shared/models`                                                 | —     | 319 files; splits again at its own subdirectories on contact               |
 | `app/services`, `app/util`, `app/models`, `app/types`               | —     | models vs services vs utils vs constants; duplicate constants              |
 | `app/composables`                                                   | —     | sole-consumer subfolders                                                   |
 | `app/store`                                                         | —     |                                                                            |
@@ -29,10 +30,20 @@ grep -rhoE '"[a-zA-Z][a-zA-Z0-9 ./_-]{4,}"' --include=*.ts --include=*.vue packa
   sort | uniq -c | sort -rn | awk '$1 > 1'
 ```
 
+## Open findings
+
+- **`shared/services/achievement/achievementDefinitions.ts` holds two exports and names one.**
+  `AchievementDefinitionMap` is the PascalCase constant map the `naming` skill says belongs in
+  `AchievementDefinitionMap.ts` — it names this exact shape a legacy outlier not to copy. Splitting it moves 29
+  Importers, which is its own commit rather than a tail-end edit. The `app/shared/services` row stays `—` until
+  It lands.
+
 ## Exclusions
 
 - Generated barrels (`index.ts` from `ctix`) and `snapshot.json` — machine state.
 - Literals a postinstall-evaluated or JSON config must repeat, which the skill names as the one sanctioned duplication.
+- `getSynchronizedFunction.ts` exporting `waitForSynchronizedFunctions` beside it: the pair shares the pending
+  Set through closure, so one-export-per-file cannot reach them without making that state a module global.
 
 ## Next enforceable
 
