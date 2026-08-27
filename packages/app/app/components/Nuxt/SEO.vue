@@ -22,20 +22,16 @@ useSeoMeta({
   mobileWebAppCapable: "yes",
   msapplicationConfig: "/browserconfig.xml",
   msapplicationTileColor: surface,
-  ogDescription: SITE_DESCRIPTION,
+  // Only the og tags @nuxtjs/seo cannot derive belong here. It resolves og:url from the canonical url of the
+  // Route, og:site_name from the site config, and og:type, and it infers og:title and og:description from the
+  // Title template and the description above — restating any of them pinned every page's unfurl to the site
+  // Root. It also pushes `twitter:card: summary_large_image`, which is the one twitter tag worth having: an
+  // @handle for `twitter:site` is rejected outright when the site has no account to name
   ogImage: logoImageUrl,
   ogImageAlt: SITE_NAME,
   ogImageHeight: 200,
   ogImageWidth: 250,
-  ogSiteName: SITE_NAME,
-  ogTitle: SITE_NAME,
-  ogType: "website",
-  ogUrl: runtimeConfig.public.baseUrl,
   themeColor: surface,
-  // No `twitterSite`: it names an @handle, and this site has no account to name — a url there is rejected
-  // Outright, so the tag was doing nothing but failing validation. `twitterCard` stays despite unhead calling
-  // It deprecated, because Open Graph alone gets a small card and this is what selects the large one
-  twitterCard: "summary_large_image",
 });
 </script>
 

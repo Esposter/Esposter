@@ -17,8 +17,9 @@ export const useReadPublishedResourceContent = async <TContent>(
   const { data } = await useAsyncData(AsyncDataKey.ReadPublishedResourceContent(type, id, version), read);
   if (!data.value)
     throw createError({ statusCode: 404, statusMessage: `${ResourceDefinitionMap[type].title} not found` });
-  // Every published view unfurls under the resource it just read, so the og tags belong with the read
-  // Rather than restated by each view component
-  useSeoMeta({ ogTitle: data.value.name, ogUrl: useRequestURL().href, title: data.value.name });
+  // Every published view unfurls under the resource it just read, so the og title belongs with the read
+  // Rather than restated by each view component. Only the title is set: og:url is the canonical url of the
+  // Route, which @nuxtjs/seo already resolves
+  useSeoMeta({ ogTitle: data.value.name, title: data.value.name });
   return data.value;
 };
