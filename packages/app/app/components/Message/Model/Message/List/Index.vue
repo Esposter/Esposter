@@ -11,9 +11,10 @@ const { hasMore, hasMoreNewer, items } = storeToRefs(dataStore);
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
 const scrollStore = useScrollStore();
-const { isScrolling, messageContainer, messageContainerElement } = storeToRefs(scrollStore);
-const bottomSentinel = useTemplateRef("bottomSentinel");
-const isPinnedToBottom = useElementVisibility(bottomSentinel, { scrollTarget: messageContainerElement });
+// The sentinel and the container are the store's: whether the reader is looking at the present is one fact, read
+// By the jump-to-present affordance as much as by the anchoring below
+const { bottomSentinel, isPinnedToBottom, isScrolling, messageContainer, messageContainerElement } =
+  storeToRefs(scrollStore);
 const getFirstVisibleMessageElement = () => {
   const element = messageContainerElement.value;
   if (!element) return undefined;

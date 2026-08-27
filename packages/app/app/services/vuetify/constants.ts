@@ -8,3 +8,7 @@ export const THEME_COOKIE_NAME = "theme";
 // So a lifetime on one call site alone is a lifetime the other silently drops
 export const THEME_COOKIE_OPTIONS = { maxAge: dayjs.duration(1, "year").asSeconds() };
 export const DISABLED_OPACITY = 0.38;
+// Vuetify's "never auto-dismiss" sentinel. A snackbar reporting standing state — an error waiting to be read,
+// A list scrolled away from the present — takes it, because a timeout would retract the message while what it
+// Reports is still true, and a one-way `:model-value` binding cannot bring it back until the value flips
+export const SNACKBAR_PERSISTENT_TIMEOUT = -1;

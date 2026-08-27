@@ -19,44 +19,45 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 
 ## Pages
 
-| Page                                                             | Covers                                                            |
-| ---------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [messaging](/docs/esbabbler/messaging)                           | Message storage, send flow, message types, real-time fan-out      |
-| [message list rendering](/docs/esbabbler/message-list-rendering) | Per-item weight budget, single-instance menu/dialogs, emoji index |
-| [emoji](/docs/esbabbler/emoji)                                   | One emoji index — picker, reactions, `:` autocomplete, tones      |
-| [custom emoji](/docs/esbabbler/custom-emoji)                     | Per-room uploads — count cap, id-keyed tag, content node          |
-| [file & media](/docs/esbabbler/file-media)                       | Image thumbnails, per-room attachment limits, attachment browsing |
-| [message search](/docs/esbabbler/message-search)                 | Right-sidebar search — filter chips, free text, search history    |
-| [friends and DMs](/docs/esbabbler/friends-and-dms)               | Friend requests, blocking, 1:1 and group direct messages          |
-| [RBAC](/docs/esbabbler/rbac)                                     | Roles, permission bitfield, hierarchy, procedure guards           |
-| [moderation](/docs/esbabbler/moderation)                         | Admin actions, word filter, bans/timeouts, audit log              |
-| [automod actions](/docs/esbabbler/automod-actions)               | Word-filter reject/warn/timeout actions via the admin machinery   |
-| [moderator notes](/docs/esbabbler/moderator-notes)               | Private, append-only per-member moderator notes                   |
-| [threads](/docs/esbabbler/threads)                               | Thread pane, its composer, thread calls, split view, thread route |
-| [thread follows](/docs/esbabbler/thread-follows)                 | Follow threads, notify-on-reply, Followed Threads drawer          |
-| [invites](/docs/esbabbler/invites)                               | Invite links with expiry and max-use options                      |
-| [nicknames](/docs/esbabbler/nicknames)                           | Per-room nicknames and display-name resolution                    |
-| [mention badges](/docs/esbabbler/mention-badges)                 | Mention-only unread counts in the room sidebar                    |
-| [profiles and presence](/docs/esbabbler/profiles-and-presence)   | Profile card/editing and Online/Idle/DND/Offline presence         |
-| [calls](/docs/esbabbler/calls)                                   | LiveKit sessions, membership boundary, knock lobby                |
-| [call view](/docs/esbabbler/calls/call-view)                     | Call surface, prejoin/ready room, tiles, control bar              |
-| [screen share](/docs/esbabbler/calls/screenshare)                | Screen-share tracks, presenter layout, moderation                 |
-| [picture-in-picture](/docs/esbabbler/calls/picture-in-picture)   | Document PiP pop-out of the active call                           |
-| [per-user volume](/docs/esbabbler/calls/per-user-volume)         | Per-participant in-call volume slider (client-only)               |
-| [user settings](/docs/esbabbler/settings)                        | Message-scoped user settings dialog + `userSettingsInMessage`     |
-| [room settings](/docs/esbabbler/room-settings)                   | Room settings dialog — Discord categories + permission gating     |
-| [room UI](/docs/esbabbler/room-ui)                               | Room-shell polish — member grouping, resizable sidebars, density  |
-| [voice & video settings](/docs/esbabbler/voice-video)            | Voice & Video panel and live LiveKit application                  |
-| [push-to-talk](/docs/esbabbler/push-to-talk)                     | Hold-to-talk keybind, mic gate, release delay                     |
-| [push notifications](/docs/esbabbler/push-notifications)         | Web push delivery and recipient filtering                         |
-| [slash commands](/docs/esbabbler/slash-commands)                 | `/command` registry, picker, execution model                      |
-| [scheduled messages](/docs/esbabbler/scheduled-messages)         | `/remind` + `/schedule` jobs and the Service Bus worker           |
-| [drafts & sent](/docs/esbabbler/drafts-and-sent)                 | Cross-room Drafts / Scheduled / Sent view                         |
-| [offline cache](/docs/esbabbler/offline-cache)                   | IndexedDB offline mirror of Pinia state                           |
-| [webhooks](/docs/esbabbler/webhooks)                             | Inbound webhooks and their app-user bot identities                |
-| [deferred](/docs/esbabbler/deferred)                             | Ideas deferred, each with a revisit trigger                       |
-| [rejected](/docs/esbabbler/rejected)                             | Ideas decided against                                             |
-| [roadmap](/docs/esbabbler/roadmap)                               | Open work — every item links its proposal                         |
+| Page                                                             | Covers                                                             |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [messaging](/docs/esbabbler/messaging)                           | Message storage, send flow, message types, real-time fan-out       |
+| [message list rendering](/docs/esbabbler/message-list-rendering) | Per-item weight budget, single-instance menu/dialogs, emoji index  |
+| [message list scrolling](/docs/esbabbler/message-list-scrolling) | Present detection, jump-to-present, newer-page anchor compensation |
+| [emoji](/docs/esbabbler/emoji)                                   | One emoji index — picker, reactions, `:` autocomplete, tones       |
+| [custom emoji](/docs/esbabbler/custom-emoji)                     | Per-room uploads — count cap, id-keyed tag, content node           |
+| [file & media](/docs/esbabbler/file-media)                       | Image thumbnails, per-room attachment limits, attachment browsing  |
+| [message search](/docs/esbabbler/message-search)                 | Right-sidebar search — filter chips, free text, search history     |
+| [friends and DMs](/docs/esbabbler/friends-and-dms)               | Friend requests, blocking, 1:1 and group direct messages           |
+| [RBAC](/docs/esbabbler/rbac)                                     | Roles, permission bitfield, hierarchy, procedure guards            |
+| [moderation](/docs/esbabbler/moderation)                         | Admin actions, word filter, bans/timeouts, audit log               |
+| [automod actions](/docs/esbabbler/automod-actions)               | Word-filter reject/warn/timeout actions via the admin machinery    |
+| [moderator notes](/docs/esbabbler/moderator-notes)               | Private, append-only per-member moderator notes                    |
+| [threads](/docs/esbabbler/threads)                               | Thread pane, its composer, thread calls, split view, thread route  |
+| [thread follows](/docs/esbabbler/thread-follows)                 | Follow threads, notify-on-reply, Followed Threads drawer           |
+| [invites](/docs/esbabbler/invites)                               | Invite links with expiry and max-use options                       |
+| [nicknames](/docs/esbabbler/nicknames)                           | Per-room nicknames and display-name resolution                     |
+| [mention badges](/docs/esbabbler/mention-badges)                 | Mention-only unread counts in the room sidebar                     |
+| [profiles and presence](/docs/esbabbler/profiles-and-presence)   | Profile card/editing and Online/Idle/DND/Offline presence          |
+| [calls](/docs/esbabbler/calls)                                   | LiveKit sessions, membership boundary, knock lobby                 |
+| [call view](/docs/esbabbler/calls/call-view)                     | Call surface, prejoin/ready room, tiles, control bar               |
+| [screen share](/docs/esbabbler/calls/screenshare)                | Screen-share tracks, presenter layout, moderation                  |
+| [picture-in-picture](/docs/esbabbler/calls/picture-in-picture)   | Document PiP pop-out of the active call                            |
+| [per-user volume](/docs/esbabbler/calls/per-user-volume)         | Per-participant in-call volume slider (client-only)                |
+| [user settings](/docs/esbabbler/settings)                        | Message-scoped user settings dialog + `userSettingsInMessage`      |
+| [room settings](/docs/esbabbler/room-settings)                   | Room settings dialog — Discord categories + permission gating      |
+| [room UI](/docs/esbabbler/room-ui)                               | Room-shell polish — member grouping, resizable sidebars, density   |
+| [voice & video settings](/docs/esbabbler/voice-video)            | Voice & Video panel and live LiveKit application                   |
+| [push-to-talk](/docs/esbabbler/push-to-talk)                     | Hold-to-talk keybind, mic gate, release delay                      |
+| [push notifications](/docs/esbabbler/push-notifications)         | Web push delivery and recipient filtering                          |
+| [slash commands](/docs/esbabbler/slash-commands)                 | `/command` registry, picker, execution model                       |
+| [scheduled messages](/docs/esbabbler/scheduled-messages)         | `/remind` + `/schedule` jobs and the Service Bus worker            |
+| [drafts & sent](/docs/esbabbler/drafts-and-sent)                 | Cross-room Drafts / Scheduled / Sent view                          |
+| [offline cache](/docs/esbabbler/offline-cache)                   | IndexedDB offline mirror of Pinia state                            |
+| [webhooks](/docs/esbabbler/webhooks)                             | Inbound webhooks and their app-user bot identities                 |
+| [deferred](/docs/esbabbler/deferred)                             | Ideas deferred, each with a revisit trigger                        |
+| [rejected](/docs/esbabbler/rejected)                             | Ideas decided against                                              |
+| [roadmap](/docs/esbabbler/roadmap)                               | Open work — every item links its proposal                          |
 
 ## Shipped log
 
