@@ -89,7 +89,7 @@
     "vitest": "catalog:"
   },
   "engines": {
-    "node": "^26.7.0"
+    "node": "^26.8.1"
   },
   "packageManager": "pnpm@12.0.0-rc.11+sha512.6efb29f4814dc4b9a71d60738e98cfb9634f62e7a94ab2b23147180d1b80fb5faed6004a407bf3ca65a4b8101b9ff9662078fa3a70f4bdb05cff5e43d67a5fe6",
   "crossOS": {
