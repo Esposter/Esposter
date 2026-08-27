@@ -1,6 +1,6 @@
 ---
 name: file-organization
-description: Esposter file and folder organisation — the alias imports (shared/root/app-source, never relative) and the shared-may-not-import-client boundary, one export per file, no export{} syntax, no magic strings where a constant already means it, the literal a postinstall-evaluated or JSON config must repeat instead of importing, local type declarations at the top of the block, models vs services vs utils vs constants, the sole-consumer subfolder rule, no duplicate constants, when an extraction or a flag earns its existence, the ≥2-consumers rule for shared packages, renaming without re-export aliases, shared field schemas, and file length — plus deep dives on cross-package placement, extraction shapes, constant maps, generic type maps and generic Vue components, symlinks, localStorage keys, command classes, creating a workspace package, and single-file .agents/workflows scripts. Apply when creating, moving, renaming, or organising any file, export, constant, or package.
+description: Esposter file and folder organisation — the alias imports (shared/root/app-source, never relative) and the shared-may-not-import-client boundary, one export per file, no export{} syntax, no magic strings where a constant already means it, the literal a postinstall-evaluated or JSON config must repeat instead of importing, local type declarations at the top of the block, models vs services vs utils vs constants, the sole-consumer subfolder rule, no duplicate constants, when an extraction or a flag earns its existence, the ≥2-consumers rule for shared packages, renaming without re-export aliases, shared field schemas, and file length — plus deep dives on cross-package placement, extraction shapes, constant maps, generic type maps and generic Vue components, symlinks, localStorage keys, command classes, and creating a workspace package. Apply when creating, moving, renaming, or organising any file, export, constant, or package.
 ---
 
 # File & Folder Organisation
@@ -52,9 +52,9 @@ Before writing a helper, grep for an existing one; before finishing a feature, g
 
 Read it before adding a module or constant to a shared package, relocating an existing one for symmetry, or implementing behaviour a second package needs. In short: **a shared package is for code with ≥2 consuming packages** — name the second consumer or leave the code beside its sole one, and when a second appears move the implementation rather than writing another. The home is the lowest package both already depend on. The page also owns the client/node cross-realm exception, env-reading scripts, and the domain-package rule for Azure helpers.
 
-## `.agents/workflows` scripts and repo-wide globs — `references/workflow-scripts.md`
+## Repo-wide globs must exclude agent worktrees
 
-Read it when editing a workflow script or its tests, or writing any glob (Vitest project, tsconfig, lint ignore) that reaches into `.agents/`. In short: the sandbox forbids `import`, so a script is **single-file by force and its length is not a finding**; split it by mode inside the file. Its tests are ordinary modular TypeScript, typechecked and linted, and each linter is configured for the scripts in its own file. Any repo-wide glob must exclude `AGENT_WORKTREES_DIRECTORY`.
+Any glob that reaches into `.agents/` — a Vitest project, a tsconfig include, a lint ignore — must exclude `AGENT_WORKTREES_DIRECTORY`, because a live worktree is a full second checkout of the monorepo nested inside it. `scripts/agentWorktrees.test.ts` pins the copies that cannot import the constant.
 
 ## Symlinks — `references/symlinks.md`
 

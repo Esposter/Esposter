@@ -48,10 +48,6 @@ The `promise` plugin is on, but most of what it enforces the repo already owns �
 
 Everything else in the plugin is green and left on category defaults.
 
-## Workflow scripts (`.agents/workflows/*.js`) — oxlint only
-
-They are async function bodies the harness injects globals into, so they carry a top-level `return`. That is a **parse error** for ESLint's parser (`'return' outside of function`), not a finding it can report — so the root `eslint.config.js` ignores them and oxlint is their only linter. Oxlint parses them fine; the one rule turned off for them, via an `overrides` entry in `.oxlintrc.json`, is `unicorn/prefer-module` (it reads every top-level `return` as a violation). Everything else applies, including the repo's comment and template-literal style. There is no module system in the sandbox, so a fix that suggests an import is always wrong.
-
 ## `ignorePatterns` — the tsgo hang is load-bearing
 
 `options.typeAware: true` runs `tsgolint`, which drives the experimental tsgo. tsgo **infinite-loops** building the type graph for a file importing the giant recursive `three/webgpu` + `three/tsl` types, which is why the one file that does is in `ignorePatterns`. **Do not remove that exclusion** or the whole `oxlint` step hangs forever — every other file lints in seconds, so bisect a suspected new hang per-directory, then per-file.

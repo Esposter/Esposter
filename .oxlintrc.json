@@ -21,12 +21,6 @@
   },
   "overrides": [
     {
-      "files": [".agents/workflows/*.js"],
-      "rules": {
-        "unicorn/prefer-module": "off"
-      }
-    },
-    {
       "files": ["packages/app/server/**/*.ts"],
       "rules": {
         "persist-then-notify/no-unhandled-effect-after-emit": "error"

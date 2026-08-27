@@ -1,93 +1,124 @@
 ---
 name: code-review
-description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Always runs the project opus-pinned workflow script; never an inline/local review, never the review skill, never the built-in workflow by name. Also owns how to size the commit window a review is launched from, what a run costs and what bounds it, the confidence numbers on its verdicts, how to close a finding so the next review cannot reopen it, the findings-table report shape, the standing rule that the workflow's own files stay in every review window plus the per-round meta pass that turns a run's telemetry into the next pipeline fix, and the stop rule for when to re-run and when a round is converged. Apply on any review request, when choosing the scope or boundary to review, when deciding whether to run another round, when applying fixes from one, and when improving the review pipeline itself.
+description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Runs entirely in the main session; there is no workflow script and no finder/verifier fan-out. Owns the two lanes a review runs (quality — reuse, simplification, efficiency, altitude; and correctness — defects and broken conventions), the trigger rule that makes an in-thread finding real, the refute-first pass that replaces an independent verifier, how to size the commit window, the written record as tiebreaker, the findings-table report shape, the stop rule for when a round is converged, and the standing rule that `.agents/` stays in every review window so the skill improves itself. Apply on any review or cleanup request, when choosing the scope to review, when deciding whether to run another round, and when applying fixes from one.
 ---
 
-# Code Review — One Entry Point
+# Code Review — One Entry Point, One Thread
 
-Every review request — `/code-review`, "review this", "review PR N", post-merge audits — goes through the project workflow script. **Never review inline in the session** (reading the code yourself and reporting findings): inline reviews skip the independent verifiers, spend premium-session tokens on an execution role, and historically missed what the workflow catches. Never use the `review` skill/command, and never `mattpocock-skills:code-review` — both are installed, both answer to "review this", and two overlapping commands is how the shallower one gets picked. The plugin reads an issue tracker at a path this repo does not use and reviews inline, which is the thing this skill exists to prevent.
+Every review request — `/code-review`, `/simplify`, "review this", "review PR N", "clean this up", post-merge audits — is answered here, in the main session. **Read the code yourself and report what you find.** There is no workflow script to invoke; `Workflow({ name: "code-review" })` and `Workflow({ scriptPath: ".agents/workflows/code-review.js" })` both name a pipeline that no longer exists.
 
-## Pick the mode first
+Never use the `review` skill/command, the built-in `/simplify`, or `mattpocock-skills:code-review` — all answer to "review this", and several overlapping commands is how the shallowest one gets picked.
 
-One script, two modes, differing only in Scope and Find; Verify → Resolve → Synthesize and the report shape are shared, so a finding means the same thing whichever mode raised it.
+## Why this runs in-thread
 
-| Ask                                                                         | Mode                                                                  | Reference       |
-| --------------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------- |
-| Review this change / this branch / PR N / my working tree                   | `diff` (default)                                                      | `modes/diff.md` |
-| Audit subsystem X — does the code match its docs, and what is broken in it? | `area`                                                                | `modes/area.md` |
-| Is this proposal right, before anything is built?                           | neither — that is the `docs` skill's proposal path, not a code review | —               |
+Cost is agents × material read. A cold subagent re-derives a diff the session already holds, so a fan-out pays for the same reading a dozen times over and returns findings whose context died with the agent. The one thing a separate agent genuinely bought was **a verifier that did not raise the claim** — and what made that verifier work was its instructions, not its address. Those instructions are the trigger rule and the refute-first pass below, and they are enforceable here for free.
 
-**Read the mode's page before invoking**, not after: each names what its `target` must be and how its findings differ. When the ask contains a change to review, it is `diff` — an area audit of code a PR is rewriting reviews the wrong thing.
+What you give up in exchange is real and worth naming: the same context that formed a candidate now judges it. The two rules exist to stop that becoming a rubber stamp, and they are not optional.
 
-## Invocation
+## The two lanes
 
-```javascript
-Workflow({ scriptPath: "<repo>/.agents/workflows/code-review.js", args: "[mode] <level> [target]" });
-```
+| Lane            | Looks for                                                                                                                                                                                                                                                                               | Settled by                   | Severity                       |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------ |
+| **Quality**     | reuse (a helper that already exists), simplification (derivable state, copy-paste variation, dead code), efficiency (repeated I/O, sequential independent work, closures pinning large scopes), altitude (a special case layered on shared infrastructure that should have generalised) | looking at the code it names | always `minor`                 |
+| **Correctness** | defects, plus a convention in CLAUDE.md or a skill that the code breaks                                                                                                                                                                                                                 | the trigger rule below       | `critical` / `major` / `minor` |
 
-- `mode` — `diff` (default, omittable) or `area`.
-- `level` — `low` (default), `high`, `xhigh`, or `max`. **`low` is the everyday level**; it gives up width, not depth. When to raise it, and what each costs: `references/run-economics.md`. Post-merge PR audits run `low` unless asked otherwise.
-- `target` — optional in `diff` (PR number, branch, ref range, path, free-form instruction); **required in `area`**, where it names the subsystem. Omitting it takes the working diff, which is usually the wrong scope — `modes/diff.md` owns picking the commit window.
+**Both lanes run by default.** "quality only" (what `/simplify` used to be) or "correctness only" narrows to one. The lanes never merge: a quality finding is a preference with a cost, a correctness finding is a claim that something is wrong.
 
-Both leading words are positional and optional (`"high"`, `"diff high"`, `"area high packages/app/…"` all parse). **A leading mode word only switches modes when a level word follows it** — otherwise it is part of the target, because diff targets are free-form English. So always spell the level out when you mean the mode.
+**Every file in the window is in scope, whatever its extension** — prose included. A docs page, a skill, a ledger, a README, a config file and a migration are each reviewed against the rules that own them, in both lanes: a paragraph restating a rule its owner already states is a quality finding, and a page whose claim the code contradicts is a correctness one. Nothing is skipped for being "not code" except generated output, lockfiles and binaries, which are named as skipped rather than silently dropped.
 
-- **Never `Workflow({ name: "code-review" })`** — name resolution loads the built-in, which inherits the premium session model onto ~20 agents (~1.46M tokens). The project script pins `model: "opus"` on every agent.
-- `args: "probe"` exits instantly with `{ probe: true }` — a free **syntax** check after editing the script. It returns before the Scope agent, so no ordering, TDZ or prompt-assembly bug is caught by it; only a live run checks those.
+Never write a finding in either lane for something an enforcer already owns:
 
-## What this pipeline is for, and what it must never pay for
+| Layer                    | Cost               | Catches                                                                                                            |
+| ------------------------ | ------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| typecheck / lint / tests | ~free              | everything mechanically decidable — never a finding (`feedback_dont_restate_enforced_rules`)                       |
+| CodeRabbit on the PR     | free, already runs | a broad unverified sweep; it reasons from names and asserts semantics this repo does not have (`coderabbit` skill) |
+| **this skill**           | tens of k          | quality cleanups, and correctness defects this repo's shape makes likely — each carrying its trigger               |
 
-**Verification is the cost, and it is the only thing worth buying here.** A run costs 10–100× a main-session skill pass for one reason: proving a claim real needs an agent that did not raise it, reading files the finder never opened. That is why an inline review is banned above, and it is also why every finding this pipeline touches must be one where being wrong is expensive.
+## Load only the rules the window needs
 
-It follows that a quality finding does not belong in it: settled by looking at the code it names, `minor` by definition, and the stop rule then calls the round converged — so the verifier and resolver it bought decided nothing. The local ladder, cheapest first, each layer seeing only what the one before it cannot:
+The conventions a finding cites live in the domain skills, not here — restating them would give this page a second copy to drift. What this page owns is the routing: **read the window's file list first, load only the rows it hits.**
 
-| Layer                    | Cost               | Catches                                                                                                                      |
-| ------------------------ | ------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| typecheck / lint / tests | ~free              | everything mechanically decidable — never write a review finding for one (`feedback_dont_restate_enforced_rules`)            |
-| `/simplify`              | ~tens of k         | **reuse, simplification, efficiency, altitude** — the workflow has no cleanup finder, deliberately                           |
-| CodeRabbit on the PR     | free, already runs | a broad bug sweep, unverified — it reasons from names and will assert semantics this repo does not have (`coderabbit` skill) |
-| this workflow            | ~200k at `low`     | correctness angles this repo's shape makes likely, **verified**, plus conventions                                            |
+| The window contains                  | Load                                                      |
+| ------------------------------------ | --------------------------------------------------------- |
+| `.vue`, or anything rendering        | `vue`, `vuetify`, `styling`, `responsive`, `ux`           |
+| `app/store/**`                       | `pinia`                                                   |
+| `app/composables/**`                 | `vue-composable-patterns`, `pagination`                   |
+| `server/trpc/**`                     | `trpc`, `error-handling`                                  |
+| `packages/db-schema/**`, a migration | `drizzle`                                                 |
+| a Zod schema                         | `zod`                                                     |
+| `packages/infra/**`                  | `pulumi-infra`                                            |
+| `*.test.ts`, `*.bench.ts`            | `testing`, `bench`                                        |
+| `content/docs/**`                    | `docs`                                                    |
+| `.agents/skills/**`                  | `skill-authoring`                                         |
+| `.agents/ledgers/**`                 | `sweeps`                                                  |
+| `README.md`                          | `readme-standards`                                        |
+| lint or tooling config               | `oxlint`, `package-scripts`                               |
+| any file at all                      | `naming`, `typescript`, `formatting`, `file-organization` |
 
-**Conventions is the one lens that stayed** — `/simplify` names those four and only those four, so a broken CLAUDE.md rule has no other enforcer, and CodeRabbit asserts repo conventions from names rather than from the files. Because area mode lets a finder self-declare its `kind`, the exclusion has to be stated to _every_ agent that chooses one, not just to the conventions finder: the script keeps one `MOVED_LENSES` string for that, and the test asserts both sites quote it.
+The last row is the floor, not a default — those four apply to every file in every window. A row you loaded and found nothing against is a result; say so rather than omitting it.
 
-One corollary worth stating where the ladder is, because it is the wrong instinct to act on: **trimming the script saves nothing.** Every prompt in a run together is ~5k tokens and its comments never leave the file — what cost is actually made of, and what moves it, is `references/run-economics.md`.
+## The loop
 
-## Coverage, cost and when to re-run — `references/run-economics.md`
+1. **Scope.** Pick the window — `modes/diff.md` for a change, `modes/area.md` for a subsystem with no change. Do this before reading anything: a window chosen afterwards is the window that flatters what you already read.
+2. **Read.** The diff, plus every file it touches, plus one hop out of anything load-bearing (the caller, the callee, the primitive it wraps). Generated files, lockfiles and binaries are skipped — **say so**, because "no finding against the snapshot" must never read as "the snapshot is clean".
+3. **Find, per lane.** Quality candidates and correctness candidates, kept apart.
+4. **Refute, then report.** Every correctness candidate goes through both rules below. Quality candidates skip this — they are settled by the code they name.
+5. **Report** the table (`references/reporting.md`), then fix (`fixing-findings.md`), then check and commit.
 
-Read it when choosing a level, reading a run's `stats`, or deciding on another round. In short: a run reports the top findings **per finder**, so its ceiling (`stats.reportableCeiling`) is a budget, not a defect count; widen by raising the level, never by re-running the same one; and a degraded run is not a clean file — some discards carry a `stats.dropped*` field and the rest appear only in the log, so read both.
+### The trigger rule
 
-**The stop rule: a round whose CONFIRMED findings are all `minor` is converged.** Fix them if cheap, then stop. What justifies another round — and which remedy each degradation calls for — is that page's "The stop rule"; it is stated once, there.
+**A correctness finding is not reportable until you have written the concrete trigger** — specific inputs or state, leading to the specific wrong output, crash, or corrupted row — **and opened at least one file the claim depends on that you had not already read when you formed it.**
 
-## The pipeline improves itself — `references/self-improvement.md`
+If you cannot construct the trigger, it is not a finding; it is a feeling about the code, and it belongs in the quality lane or nowhere. If the file you open refutes it, delete it and do not report the near-miss.
 
-Read it at the end of every run, and when picking a window or writing a target string. In short: **`.agents/` is never excluded from a review window**, so each round's pipeline edits are reviewed by the next round for free; and a per-round **meta pass** converts the run's own telemetry — dropped counts, PLAUSIBLE arrivals, findings you settled by hand, repeat false positives, defects that escaped, tests that pin nothing — into a script fix plus a regression test in `.agents/workflows/code-review/`. Unchanged workflow source is deliberately _not_ forced into every run's scope; only what changed gets read, which is what lets the round converge.
+The hops that settle almost everything, cheapest first: one step out to the caller or callee; the dependency's **real source in `node_modules`**, never its reputation; `git log -S <symbol>` or `git log -L <range>:<file>` for "was this guard ever here"; the written record below.
+
+### Refute first
+
+For each correctness candidate, **spend the first pass trying to break it, not to confirm it.** Ask what would have to be true for the code to be right, and go look for that. A candidate you only ever tried to confirm has not been verified, however confident the wording.
+
+This is the whole of what the independent verifier used to do, and it fails the same way when skipped: the finding is plausible, well-argued, and wrong.
+
+**Nothing unsettled ships.** There is no PLAUSIBLE disposition — a candidate is confirmed with its trigger, refuted, or deleted. The one exception is a trigger that genuinely cannot be settled from the repository (a production-only config value, a cloud service's runtime behaviour). That never becomes a table row: write it as a single line below the table naming the blocker and the fact that would settle it, so the user is asked for evidence rather than handed a verdict nobody reached.
 
 ## The written record wins — never re-litigate a settled decision
 
-The dominant false-positive class is a finding arguing against a decision already made and written down: a tightened retry policy, an ingestion cap, a best-effort publish that swallows its error. From the diff alone the argument always sounds right, and it returns every run with a different answer.
+The dominant false-positive class is a finding arguing against a decision already made and written down: a tightened retry policy, an ingestion cap, a best-effort publish that swallows its error. From the diff alone the argument always sounds right, and it returns every round with a different answer.
 
 `packages/app/content/docs/` and `.agents/skills/**/*.md` are the tiebreaker — the whole skill tree, not the index pages alone: a binding rule as often sits in a skill's `references/*.md` deep dive as in its `SKILL.md`. A choice either tree states deliberately, with its consequence acknowledged, is settled — not a finding. It is a finding again only when the code contradicts the record, when a mitigation the record promises is missing, or when the change ships behaviour the record does not cover.
 
-Finder and verifier agents carry this rule, so grep both trees before accepting one they still surface. A genuinely undocumented decision that keeps drawing fire is closed by writing the page (`docs` skill), not by arguing it again. A record invalidated by materially new evidence (an advisory, a changed dependency contract) reopens the decision — update the page first, then fix the code against the new record.
+Grep both trees before reporting a finding that argues with a decision. A genuinely undocumented decision that keeps drawing fire is closed by writing the page (`docs` skill), not by arguing it again. A record invalidated by materially new evidence (an advisory, a changed dependency contract) reopens the decision — update the page first, then fix the code against the new record.
 
-## PLAUSIBLE is a to-do, never an answer
+## Reporting — `references/reporting.md`
 
-Resolve settles every finding before the report, so a run should hand you none. **If one arrives PLAUSIBLE — a resolver died, or the findings are from an older run — settling it is your job and needs no asking.** Never report one, never fix one on the claim alone, never dismiss one as by-design without the evidence a REFUTED verdict would need.
+**Show the user every finding, as one compact table and nothing per-finding beyond it.** Never jump to fixes and report only what changed — the visible findings list is the deliverable. Emit the table **flush-left at the top level** of the message, never indented or nested in a list, blockquote or code fence: an indented table degrades into dot points, which is the failure this format exists to prevent.
 
-PLAUSIBLE means a verifier reading one file under a budget could not reach the trigger — a statement about the budget, not the code. Settling is usually cheap: go one hop out to the caller or callee; read the dependency's real source in `node_modules` along the whole path, never its reputation; use `git log -S` / `git log -L` for "was this guard ever here"; check the record.
+## The stop rule
 
-Only a trigger that genuinely cannot be settled from the repository (a production-only config value, a cloud service's runtime behaviour) may stay unsettled, and it must name that blocker — "the investigation looked large" is not one. **An unsettleable finding is never a table row**: write it as the one line below the table, phrased as the blocker and the fact that would settle it, so the user is asked for evidence rather than handed a verdict nobody reached.
+**A round whose confirmed findings are all `minor` is converged.** Fix them if cheap, then stop — minor supply is effectively unbounded on any mature file, so "the round reported something" is a loop with no exit.
 
-Two things make this worth its cost: a PLAUSIBLE finding shipped to a human is decided by whoever has _less_ context than the agent that raised it, and a fix on an unconfirmed premise is the most common way this repo introduces regressions; and a finding dismissed without evidence comes back next run, worded differently, forever.
+Another round is justified by a confirmed `critical`/`major`, or by a fix round that touched lines an earlier fix wrote. Re-reading the same window at the same depth to resample the same ranking is not: go one hop further out instead, or narrow the window so the reading is deeper per file.
 
-## Reporting findings — `references/reporting.md`
-
-**Show the user every finding the workflow reports, as one compact table and nothing per-finding beyond it.** Final assembly adds no cap of its own, and never jump to fixes and report only what changed — the visible findings list is the deliverable. Emit the table **flush-left at the top level** of the message, never indented or nested in a list, blockquote or code fence: an indented table degrades into dot points, which is the failure this format exists to prevent.
-
-The page owns the columns and what each renders — the verbatim `shortSummary`, the `provenance` vocabulary, the `area`-mode Kind column, and what a merged row's columns describe.
+Deliberately **not** measured here: candidate counts, per-lens ceilings, token estimates. Nothing publishes them any more, and a prose number with no way to fail is one that fails silently and forever (`fixing-findings.md`, "Restated a number the code could publish").
 
 ## Then: fix, verify, commit
 
 1. Verify each finding against current HEAD before fixing — post-merge findings can be stale — and check it against the written record above.
-2. Fix confirmed findings. **PLAUSIBLE is not a disposition.**
+2. Fix confirmed findings.
 3. Run **`fixing-findings.md`** over your own fixes before verifying — it owns the regression checklist and the order of work (root cause → converge the call sites → docs and skills → then one check pass), and it is the block to paste into a delegated fix round.
 4. Verify per the `package-scripts` skill (typecheck → tests), commit per the `git` skill. Before pushing to a branch with an open PR, check CodeRabbit state (`coderabbit` skill).
+
+## The skill improves itself
+
+**`.agents/` is never excluded from a review window**, however tooling-shaped the window looks. This tree is edited nearly every round, and reviewing its own last round's edits is how the review compounds instead of drifting. Never put `.agents/` in a target string's exclusions and never pick a window that stops short of it. Findings against it are ordinary findings — same table, same rules, no special casing.
+
+The meta pass is one question, asked once per round after the findings table: **what did this round's own evidence say about these instructions?**
+
+| Evidence                                                                      | What it says                                     | The change that ends it                                         |
+| ----------------------------------------------------------------------------- | ------------------------------------------------ | --------------------------------------------------------------- |
+| You settled a finding by hand and the hop was cheap                           | the trigger rule is missing that hop             | name the hop in "The trigger rule"                              |
+| The same false-positive class returns across rounds                           | the bar is too low, or the decision is unwritten | raise the materiality bar, or write the doc page (`docs` skill) |
+| A real defect escaped and surfaced later (CodeRabbit, next round, prod)       | a lens does not exist                            | add it to the lane table                                        |
+| A `regression` or `reopened` finding matches no entry in `fixing-findings.md` | the cause is unrecorded and will be re-shipped   | append it there in the same round                               |
+
+**A round that changes nothing about this skill is a valid outcome** — inventing an edit to have made one is the failure this section exists to avoid.
