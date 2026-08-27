@@ -22,11 +22,9 @@ useSeoMeta({
   mobileWebAppCapable: "yes",
   msapplicationConfig: "/browserconfig.xml",
   msapplicationTileColor: surface,
-  // Only the og tags @nuxtjs/seo cannot derive belong here. It resolves og:url from the canonical url of the
-  // Route, og:site_name from the site config, and og:type, and it infers og:title and og:description from the
-  // Title template and the description above — restating any of them pinned every page's unfurl to the site
-  // Root. It also pushes `twitter:card: summary_large_image`, which is the one twitter tag worth having: an
-  // @handle for `twitter:site` is rejected outright when the site has no account to name
+  // Only the og tags @nuxtjs/seo cannot derive belong here: it resolves the rest, per route, off the canonical
+  // Url, the site config, the title template and the description above. It pushes `twitter:card` too, and
+  // `twitter:site` is left unset because it names an @handle, which this site has no account to fill
   ogImage: logoImageUrl,
   ogImageAlt: SITE_NAME,
   ogImageHeight: 200,

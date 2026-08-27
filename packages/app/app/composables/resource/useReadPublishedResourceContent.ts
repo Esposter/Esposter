@@ -7,7 +7,7 @@ import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
 // Hydration never re-issues the read — the public read increments the resource view count, and a
 // Re-issued query would double-count every view
 // Generic over the content alone, not the whole row: every published read answers `{ content, name }`, and
-// Naming that shape is what lets the og tags below read `name` off it
+// Naming that shape is what lets the og title below read `name` off it
 export const useReadPublishedResourceContent = async <TContent>(
   type: ResourceType,
   id: Resource["id"],
@@ -18,8 +18,7 @@ export const useReadPublishedResourceContent = async <TContent>(
   if (!data.value)
     throw createError({ statusCode: 404, statusMessage: `${ResourceDefinitionMap[type].title} not found` });
   // Every published view unfurls under the resource it just read, so the og title belongs with the read
-  // Rather than restated by each view component. Only the title is set: og:url is the canonical url of the
-  // Route, which @nuxtjs/seo already resolves
+  // Rather than restated by each view component
   useSeoMeta({ ogTitle: data.value.name, title: data.value.name });
   return data.value;
 };
