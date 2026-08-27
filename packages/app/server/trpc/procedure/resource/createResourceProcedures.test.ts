@@ -26,7 +26,7 @@ import {
   ResourceType,
   ResourceViewEntity,
 } from "@esposter/db-schema";
-import { InvalidOperationError, jsonDateParse, noop, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, jsonDateParse, noop, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import {
   MockBlobClient,
   MockContainerDatabase,
@@ -297,7 +297,9 @@ describe("createResourceProcedures", () => {
     expect(publication).toBeUndefined();
     await expect(
       dashboardCaller.readPublishedResourceContent(newResource.id),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.ResourcePublication, newResource.id).message}]`,
+    );
   });
 
   // A sweep is bounded at the instant it is decided, so one published for a resource that has nothing published
@@ -331,10 +333,14 @@ describe("createResourceProcedures", () => {
 
     await expect(
       dashboardCaller.readPublishedResourceContent(newResource.id),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
+    );
     await expect(
       dashboardCaller.readPublishedVersionContent({ id: newResource.id, version: 1 }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
+    );
   });
 
   test("fails read published content for unpublished resource", async () => {
@@ -344,7 +350,9 @@ describe("createResourceProcedures", () => {
 
     await expect(
       dashboardCaller.readPublishedResourceContent(newResource.id),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.ResourcePublication, newResource.id).message}]`,
+    );
   });
 
   test("omits publish procedures for non-publishable types", () => {
@@ -394,7 +402,9 @@ describe("createResourceProcedures", () => {
 
     await expect(
       dashboardCaller.readPublishedResourceContent(newResource.id),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.ResourcePublication, newResource.id).message}]`,
+    );
 
     const viewCount = await dashboardCaller.readResourceViewCount({ id: newResource.id });
 

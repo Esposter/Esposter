@@ -1,6 +1,9 @@
 import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
+import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
+import type { PublishedResourceContent } from "#shared/models/resource/PublishedResourceContent";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
+import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
 import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
 import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
@@ -34,6 +37,8 @@ import { saveResourceContent } from "@@/server/services/resource/saveResourceCon
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { generateReservedUploadFileSasEntities } from "@@/server/services/storage/generateReservedUploadFileSasEntities";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
+import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
@@ -51,14 +56,7 @@ import {
   resources,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import {
-  createUniqueArraySchema,
-  getResultAsync,
-  InvalidOperationError,
-  noop,
-  Operation,
-  RoutePath,
-} from "@esposter/shared";
+import { createUniqueArraySchema, getResultAsync, noop, Operation, RoutePath } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -151,7 +149,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
     const content = (await readContentBlob(contentSchema, getPublishedContentBlobName(id, publishVersion))) as
       | ResourceContent<TType>
       | undefined;
-    if (content === undefined) throw new TRPCError({ code: "NOT_FOUND" });
+    if (content === undefined) throw getNotFoundError(DatabaseEntityType.Resource, id);
 
     return content;
   };
@@ -191,12 +189,12 @@ export const createResourceProcedures = <TType extends ResourceType>(
         if (data.id === id && !getIsSameDevice(device, ctx.getSessionPayload))
           yield { ...data, content: data.content as ResourceContent<TType> };
     }),
-    readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query(({ input: { id } }) =>
-      readContent(id),
+    readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query<ResourceContent<TType> | undefined>(
+      ({ input: { id } }) => readContent(id),
     ),
     readResources: standardAuthedProcedure
       .input(readResourcesInputSchema)
-      .query(async ({ ctx, input: { limit, offset, sortBy } }) => {
+      .query<OffsetPaginationData<ResourceWithPublication>>(async ({ ctx, input: { limit, offset, sortBy } }) => {
         const resultResources = await ctx.db.query.resources.findMany({
           limit: limit + 1,
           offset,
@@ -268,11 +266,13 @@ export const createResourceProcedures = <TType extends ResourceType>(
   // At purge, not at delete: a delete only stamps deletedAt, so every asset survives the Recycle bin window and a
   // Restore hands back a whole resource, and purgeResource is what takes the {id}/ directory wholesale
   const fileAssetsProcedures = {
-    deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id").mutation(async ({ input: { blobPath, id } }) => {
-      // The path is a single separator-free segment (BLOB_SEGMENT_REGEX) anchored under {id}/files/, so this can
-      // Only ever delete uploaded assets, never the content or published-content blobs beside the files directory
-      await publishBlobDeletion(id, AzureContainer.ResourceAssets, [`${getFilesDirectoryName(id)}/${blobPath}`]);
-    }),
+    deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id").mutation<void>(
+      async ({ input: { blobPath, id } }) => {
+        // The path is a single separator-free segment (BLOB_SEGMENT_REGEX) anchored under {id}/files/, so this can
+        // Only ever delete uploaded assets, never the content or published-content blobs beside the files directory
+        await publishBlobDeletion(id, AzureContainer.ResourceAssets, [`${getFilesDirectoryName(id)}/${blobPath}`]);
+      },
+    ),
     generateUploadFileSasEntities: getOwnerProcedure(type, generateUploadFileSasEntitiesInputSchema, "id").query<
       FileSasEntity[]
     >(({ ctx, input: { files, id } }) =>
@@ -290,14 +290,11 @@ export const createResourceProcedures = <TType extends ResourceType>(
       async ({ ctx, input: { id } }) => {
         const content = await readContent(id);
         if (content === undefined)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(
-              Operation.Update,
-              DatabaseEntityType.Resource,
-              "cannot publish resource without content",
-            ).message,
-          });
+          throw getInvalidOperationError(
+            Operation.Update,
+            DatabaseEntityType.Resource,
+            "cannot publish resource without content",
+          );
         // Read before the assets are cloned, so the claim below can be compared against it. A sweep of this
         // Resource's published prefix only ever follows a publication row delete, and that delete resets the
         // Version sequence — so a claim that is not the successor of what this attempt read is proof one landed
@@ -385,14 +382,12 @@ export const createResourceProcedures = <TType extends ResourceType>(
             // States what happened in the code the client branches on, so it is rethrown as it is
             if (error instanceof TRPCError) throw error;
 
-            throw new TRPCError({
-              code: "INTERNAL_SERVER_ERROR",
-              message: new InvalidOperationError(
-                Operation.Update,
-                DatabaseEntityType.ResourcePublication,
-                `published at version ${publication.publishVersion}, but its assets could not be re-cloned (${error.message}) — publish again to rebuild them`,
-              ).message,
-            });
+            throw getInvalidOperationError(
+              Operation.Update,
+              DatabaseEntityType.ResourcePublication,
+              `published at version ${publication.publishVersion}, but its assets could not be re-cloned (${error.message}) — publish again to rebuild them`,
+              "INTERNAL_SERVER_ERROR",
+            );
           });
         // A snapshot is stored bytes the owner keeps, so it is charged like the working copy it was taken from —
         // Its cloned assets charge themselves as each copy lands. After the transaction, never inside: the
@@ -424,7 +419,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
     ),
     readPublishedResourceContent: standardRateLimitedProcedure
       .input(selectResourceSchema.shape.id)
-      .query(async ({ ctx, input }) => {
+      .query<PublishedResourceContent<TType>>(async ({ ctx, input }) => {
         const resource = await requireEntity(
           ctx.db.query.resources.findFirst({
             where: { id: { eq: input }, type: { eq: type } },
@@ -433,7 +428,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
           DatabaseEntityType.Resource,
           input,
         );
-        if (!resource.publication) throw new TRPCError({ code: "NOT_FOUND" });
+        if (!resource.publication) throw getNotFoundError(DatabaseEntityType.ResourcePublication, input);
 
         const content = await readPublishedContent(input, resource.publication.publishVersion);
         // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets.
@@ -444,12 +439,12 @@ export const createResourceProcedures = <TType extends ResourceType>(
       }),
     // An owner-only read of a retained snapshot, backing the view route's `version` query param. Anonymous
     // Visitors never reach this — the public read above always serves the latest publish
-    readPublishedVersionContent: getOwnerProcedure(type, readPublishedVersionContentInputSchema, "id").query(
-      async ({ ctx, input: { id, version } }) => ({
-        content: await readPublishedContent(id, version),
-        name: ctx.resource.name,
-      }),
-    ),
+    readPublishedVersionContent: getOwnerProcedure(type, readPublishedVersionContentInputSchema, "id").query<
+      PublishedResourceContent<TType>
+    >(async ({ ctx, input: { id, version } }) => ({
+      content: await readPublishedContent(id, version),
+      name: ctx.resource.name,
+    })),
     readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<
       ResourcePublication | undefined
     >(({ ctx }) => ctx.db.query.resourcePublications.findFirst({ where: { resourceId: { eq: ctx.resource.id } } })),

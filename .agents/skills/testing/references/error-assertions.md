@@ -6,6 +6,12 @@
 
 Almost every error we throw is reproducible, so build the argument from the same source of truth, not a pasted literal — ours as `` `[TRPCError: ${new InvalidOperationError(...).message}]` `` (or `[ClassName: …]` when thrown directly), native ones as `[TypeError: ${fn.name}: …]`, reusing the dynamic parts. It survives a message-format change, and covers a platform-gated test skipped on this OS.
 
+**A message carrying a generated id is the case where `-u` actively lies.** Reaching for `pnpm test -u` on a
+message that embeds a per-run uuid fills the snapshot with _that run's_ id, so the test passes once and fails on
+every run after it — the update flow produces a broken test rather than an unstable-looking one. Interpolate the
+value the test already holds (`` `[TRPCError: ${new NotFoundError(Entity, newResource.id).message}]` ``); the id
+is only unreconstructable when the test never sees it.
+
 ## Opaque third-party messages only
 
 A Zod error string you can't cleanly reconstruct: leave the snapshot empty and populate with `pnpm test -u`. The exception, not the default; still never `toBeInstanceOf`. A message no one can reconstruct portably is not snapshotted at all — `platform-and-bundle-tests.md`.
