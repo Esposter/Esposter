@@ -30,8 +30,9 @@ before being handed over:
   Constructors. A bare `UNAUTHORIZED` is not reported — `errorLink.ts` states the authorization guards throw it.
 - `trpc-procedure/require-return-type` — **now on across `server/trpc/**`**. It reports a `.query`/`.mutation`
   With no type argument. `.subscription` is out of scope: an async generator carries its yield type as a callback
-  Annotation. It landed as a ratchet over swept paths only and widened to the whole tree as the rows cleared,
-  Which is the shape to reuse — a rule enabled over unswept territory buys disables, not coverage.
+  Annotation. It landed as a ratchet: on for swept paths only, then widened to the whole tree once the 37 sites
+  It found were cleared. Reuse that order. A rule switched on over unswept territory buys disables, not
+  Coverage, and the disables outlive whoever added them.
 
 Still with the sweep, because no rule can decide them: procedure builder choice is a policy question about the
 Route's data, and client-path-mirrors-file-path would be a test walking both trees rather than a lint rule.

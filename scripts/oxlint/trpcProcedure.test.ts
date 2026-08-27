@@ -68,6 +68,12 @@ const FIXTURES = [
     source: `export const a = () => { throw new TRPCError({ code: "BAD_REQUEST", message: "stale version" }); };`,
     violations: 0,
   },
+  // A spread could carry `message`, and no syntactic rule can see into it, so the object is left alone.
+  {
+    name: "spreadMaySupplyMessage",
+    source: `export const a = () => { throw new TRPCError({ code: "BAD_REQUEST", ...rest }); };`,
+    violations: 0,
+  },
   // An error class the repo has no guard constructor for is not reported — there is nothing to point at.
   {
     name: "unmappedErrorClass",

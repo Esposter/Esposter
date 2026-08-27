@@ -52,6 +52,10 @@ const noHandRolledError = defineRule({
         const [argument] = node.arguments;
         if (argument?.type !== "ObjectExpression") return;
 
+        // A spread could carry `message`, and nothing here can see into it — so an object holding one is left
+        // Alone rather than reported on a key it may well have
+        if (argument.properties.some((property) => property.type === "SpreadElement")) return;
+
         let hasMessage = false;
         for (const property of argument.properties) {
           const errorName = getHandRolledErrorName(property);
