@@ -40,7 +40,7 @@
   },
   "scripts": {
     "bench": "vitest bench --run --project scripts && pnpm -r --if-present run bench",
-    "build": "pnpm build:packages && pnpm build:docs && pnpm build:app",
+    "build": "pnpm build:packages && pnpm build:app",
     "build:app": "virrun -- pnpm --filter @esposter/app run build",
     "build:docs": "virrun -- typedoc",
     "build:packages": "pnpm -r --filter \"!@esposter/app\" run build",
@@ -103,5 +103,8 @@
       "linux": "./scripts/updateNode/install.sh",
       "win32": "pnpm pwsh scripts/updateNode/install.ps1"
     }
+  },
+  "scriptsComments": {
+    "build": "@TODO: restore `pnpm build:docs` to the chain when a bridge build grows the AST navigation API. TypeDoc exits 6 against the `typescript-native-bridge` alias, and `build` is what deploy runs, so the deploy would fail on documentation alone. `build:docs` stays as the probe. See the `build-docs` job in .github/workflows/CI.yaml."
   }
 }

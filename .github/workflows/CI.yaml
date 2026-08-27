@@ -41,7 +41,7 @@ jobs:
       - name: 🏗️ Build app
         run: pnpm build:app
 
-  # Commented out, not deleted: TypeDoc cannot run against the `typescript-native-bridge` alias. Its
+  # @TODO: Commented out, not deleted: TypeDoc cannot run against the `typescript-native-bridge` alias. Its
   # `attachUnionComments` walks the syntax tree through `declaration.type.getChildAt`, which the bridge's nodes do
   # Not carry, so every run exits 6 on the first union type alias. A `typedoc>typescript` override cannot buy its
   # Way out — `typescript` is TypeDoc's peer, so it resolves from the root context the alias owns. Restore this
