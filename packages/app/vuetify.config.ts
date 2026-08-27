@@ -103,6 +103,11 @@ const defaults: DefaultsOptions = {
   VRadioGroup: { hideDetails: "auto" },
   VSelect: { hideDetails: "auto", variant: "outlined" },
   VSlider: { hideDetails: "auto" },
+  // One corner for every toast in the app. Vuetify anchors a snackbar bottom centre, which is where the message
+  // Composer and the mobile navigation already are, so a notification landed on top of what the reader was
+  // Typing into. The one snackbar that overrides this reports where the list is rather than that something
+  // Happened, and says so at its own call site
+  VSnackbar: { location: "top right" },
   // A switch reports its state by being on, so the grey default reads as disabled. `hideDetails` is `"auto"` here
   // For the same reason it is everywhere else: no row while there is no message, and the message when there is
   VSwitch: { color: "primary", hideDetails: "auto" },

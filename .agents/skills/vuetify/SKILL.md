@@ -73,6 +73,10 @@ Hand-rolling either is the single most repeated finding in this area — the cha
 - Rules validate **what is submitted, not what was typed** — when the sent value is composed from the field (markup wrapper, appended link/suffix), the rule checks the composed value's constraint, even though `counter` still tracks the raw input.
 - Rules depending on reactive component state (uniqueness against a live list) are **not** global aliases — they belong in a composable, or an Ajv keyword when the form is Vjsf. See the `vue-composable-patterns` skill's "Validation Rules — Pick the Right Layer".
 
+## Snackbars
+
+- **A snackbar reporting standing state takes `SNACKBAR_PERSISTENT_TIMEOUT`** (`@/services/vuetify/constants`) — an error waiting to be read, a list scrolled away from the present. Vuetify's default timeout retracts the message while what it reports is still true, and with a one-way `:model-value` binding nothing brings it back until the value flips. A timeout belongs only to a snackbar announcing something that happened.
+
 ## HTML Footprint
 
 **Prefer Vuetify components over raw HTML** — avoid `<div>`, `<span>`, `<p>`, `<ul>`, `<li>` unless there is genuinely no suitable component: `v-container`/`v-row`/`v-col` for layout, `v-list`/`v-list-item` for lists (the `#append` slot centers inline actions), `v-alert`/`v-messages` for inline text. Only reach for raw HTML when Vuetify would add unnecessary complexity (a single unstyled text node inside a slot).

@@ -20,6 +20,9 @@ const { revokeInvite } = roomInviteStore;
 const inviteLink = computed(() => `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(invite.id)}`);
 // The cap belongs beside the count rather than in a column of its own, which is where Discord puts a bare number
 const usesText = computed(() => (invite.maxUses ? `${invite.uses} / ${invite.maxUses}` : String(invite.uses)));
+// Discord's column is a clock rather than a phrase — the reader is watching a link run out, and "in 2 hours"
+// Neither moves nor says how far into the hour it is
+const { countdown, isExpired } = useCountdown(() => invite.expiresAt);
 </script>
 
 <template>
@@ -32,9 +35,10 @@ const usesText = computed(() => (invite.maxUses ? `${invite.uses} / ${invite.max
     </td>
     <td font-mono>{{ invite.id }}</td>
     <td>{{ usesText }}</td>
-    <td>
-      <NuxtTime v-if="invite.expiresAt" :datetime="invite.expiresAt" relative />
-      <template v-else>Never</template>
+    <td font-mono>
+      <template v-if="!invite.expiresAt">Never</template>
+      <template v-else-if="isExpired">Expired</template>
+      <template v-else>{{ countdown }}</template>
     </td>
     <td>
       <div flex justify-end>

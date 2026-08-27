@@ -56,6 +56,9 @@ describe(defineVuetifyConfiguration, () => {
           "VSlider": {
             "hideDetails": "auto",
           },
+          "VSnackbar": {
+            "location": "top right",
+          },
           "VSwitch": {
             "color": "primary",
             "hideDetails": "auto",

@@ -14,7 +14,11 @@ const emit = defineEmits<{ revoke: [] }>();
     <template #prepend>
       <v-icon :icon="isCurrent ? 'mdi-monitor-shimmer' : 'mdi-monitor'" mr-4 size="large" />
     </template>
-    <v-list-item-title>{{ deviceLabel }}</v-list-item-title>
+    <!-- A list row ellipses its title and clamps its subtitle to one line, which is right for a name standing
+         in for a thing the reader already knows and wrong here: the browser, the platform and how recently it
+         was used are the whole basis for deciding whether this row is someone else. On a narrow screen that is
+         exactly the text an ellipsis eats, so both wrap instead -->
+    <v-list-item-title ws-normal>{{ deviceLabel }}</v-list-item-title>
     <v-list-item-subtitle>
       <template v-if="isCurrent">This device · </template>
       last active <NuxtTime :datetime="updatedAt" relative />
@@ -26,3 +30,10 @@ const emit = defineEmits<{ revoke: [] }>();
     </template>
   </v-list-item>
 </template>
+
+<style scoped lang="scss">
+:deep(.v-list-item-subtitle) {
+  line-clamp: unset;
+  -webkit-line-clamp: unset;
+}
+</style>

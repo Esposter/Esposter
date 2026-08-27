@@ -31,16 +31,20 @@ await readRoomInvites();
     </v-row>
     <v-row>
       <v-col cols="12">
-        <StyledButton
-          :button-props="{
-            color: 'error',
-            text: room.isInvitePaused ? 'Resume Invites' : 'Pause Invites',
-            variant: 'flat',
-          }"
-          @click="saveRoom({ isInvitePaused: !room.isInvitePaused })"
-        />
-        <div v-if="room.isInvitePaused" pt-2 op-medium-emphasis text-body-small>
-          Invites are paused. Nobody can join with a link, and no new ones can be created, until you resume.
+        <div flex gap-3 items-center>
+          <StyledButton
+            v-if="room.isInvitePaused"
+            :button-props="{ text: 'Enable Invites', variant: 'flat' }"
+            @click="saveRoom({ isInvitePaused: false })"
+          />
+          <!-- A plain `v-btn`, not `StyledButton`: the shell paints `--midnight-bloom` as a background *image*,
+               which a `color` sets underneath rather than replaces, so an error-coloured one renders the same
+               gradient as the primary beside it and the pair stops reading as opposites -->
+          <v-btn v-else color="error" text="Pause Invites" variant="flat" @click="saveRoom({ isInvitePaused: true })" />
+          <div v-if="room.isInvitePaused" flex gap-2 items-center text-body-small>
+            <v-icon color="warning" icon="mdi-alert-circle" size="small" />
+            Invites to this room are currently paused.
+          </div>
         </div>
       </v-col>
     </v-row>

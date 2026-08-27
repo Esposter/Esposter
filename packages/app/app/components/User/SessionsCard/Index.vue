@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
 import { useUserSessionDialogStore } from "@/store/user/sessionDialog";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
@@ -77,8 +78,10 @@ const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) 
               key: SESSIONS_KEY,
               onSuccess: async () => {
                 // Revoking your own session leaves the page authenticated against a session that no longer
-                // Exists, so it lands on the login route instead of refreshing a listing it cannot read
-                if (isCurrent) await navigateTo(RoutePath.Login);
+                // Exists, so it signs this browser out on the way to the login route instead of refreshing a
+                // Listing it cannot read — the revoke deleted the row, and only the sign out clears the cookie
+                // And the fetched session that would otherwise go on rendering a signed-in account
+                if (isCurrent) await signOutOfBrowser(RoutePath.Login);
                 else await refresh();
               },
             }),

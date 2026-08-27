@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import {
-  NOTIFICATION_SNACKBAR_PERSISTENT_TIMEOUT,
-  NOTIFICATION_SNACKBAR_TIMEOUT_MS,
-} from "@/services/notification/constants";
+import { NOTIFICATION_SNACKBAR_TIMEOUT_MS } from "@/services/notification/constants";
 import { NotificationSeverityIconMap } from "@/services/notification/NotificationSeverityIconMap";
+import { SNACKBAR_PERSISTENT_TIMEOUT } from "@/services/vuetify/constants";
 import { useNotificationStore } from "@/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
 
@@ -27,7 +25,7 @@ const isOpen = computed({
     v-model="isOpen"
     :timeout="
       snackbarNotification.severity === NotificationSeverity.Error
-        ? NOTIFICATION_SNACKBAR_PERSISTENT_TIMEOUT
+        ? SNACKBAR_PERSISTENT_TIMEOUT
         : NOTIFICATION_SNACKBAR_TIMEOUT_MS
     "
   >
