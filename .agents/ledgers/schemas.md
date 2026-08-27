@@ -26,9 +26,10 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 ```bash
 # schema-first derivation, which interface-first replaces
 grep -rn 'z\.infer<typeof' --include=*.ts packages/app/app packages/app/server packages/app/shared packages/*/src
-# .extend() where a .shape spread is the rule. Anchored on a Zod receiver: a bare `.extend(` is dominated by
-# `dayjs.extend(plugin)` and Tiptap's `Node.extend({})`, which are unrelated APIs sharing the method name
-grep -rnE '(Schema|\)|\})\.extend\(' --include=*.ts packages/app/app packages/app/server packages/app/shared packages/*/src
+# .extend() where a .shape spread is the rule. Deliberately unanchored: a receiver pattern misses a stored
+# `schema.extend(` and any chain whose `.extend(` starts on the next line. It is dominated by `dayjs.extend(plugin)`
+# and Tiptap's `Node.extend({})` — unrelated APIs sharing the method name — so the hits are read, not counted
+grep -rn '\.extend(' --include=*.ts packages/app/app packages/app/server packages/app/shared packages/*/src
 # a discriminated union, each of which must carry a trailing satisfies
 grep -rn -A 40 'z\.discriminatedUnion(' --include=*.ts packages/app/app packages/app/shared packages/*/src
 ```

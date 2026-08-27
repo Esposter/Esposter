@@ -74,6 +74,18 @@ const FIXTURES = [
     source: `export const a = () => { throw new TRPCError({ code: "BAD_REQUEST", ...rest }); };`,
     violations: 0,
   },
+  // A message written after the spread overrides it, so the object is decidable and the rule still judges it.
+  {
+    name: "messageAfterSpread",
+    source: `export const a = () => { throw new TRPCError({ ...rest, code: "BAD_REQUEST", message: "stale" }); };`,
+    violations: 0,
+  },
+  // Hand-rolling is decidable wherever it sits — a spread before it changes nothing about what it says.
+  {
+    name: "handRollsAfterSpread",
+    source: `export const a = () => { throw new TRPCError({ ...rest, code: "NOT_FOUND", message: new NotFoundError(n, i).message }); };`,
+    violations: 1,
+  },
   // An error class the repo has no guard constructor for is not reported — there is nothing to point at.
   {
     name: "unmappedErrorClass",

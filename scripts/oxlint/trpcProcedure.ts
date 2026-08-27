@@ -52,11 +52,8 @@ const noHandRolledError = defineRule({
         const [argument] = node.arguments;
         if (argument?.type !== "ObjectExpression") return;
 
-        // A spread could carry `message`, and nothing here can see into it — so an object holding one is left
-        // Alone rather than reported on a key it may well have
-        if (argument.properties.some((property) => property.type === "SpreadElement")) return;
-
-        let hasMessage = false;
+        // An explicitly written message is hand-rolled wherever it sits — a spread earlier in the object cannot
+        // Make `message: new NotFoundError(...).message` mean anything else
         for (const property of argument.properties) {
           const errorName = getHandRolledErrorName(property);
           if (errorName !== undefined && errorName in GUARD_BY_ERROR) {
@@ -64,13 +61,24 @@ const noHandRolledError = defineRule({
             context.report({ message: getHandRolledMessage(errorName, guardName), node });
             return;
           }
-
-          if (property.type === "Property" && !property.computed && property.key.type === "Identifier")
-            hasMessage ||= property.key.name === "message";
         }
+        // Only the properties after the last spread are decidable: a later key overrides the spread, so a
+        // `message` written past it is definitely present, while one written before it may be overridden and a
+        // Spread with no `message` after it may still be supplying one
+        const lastSpreadIndex = argument.properties.findLastIndex((property) => property.type === "SpreadElement");
+        const decidableProperties = argument.properties.slice(lastSpreadIndex + 1);
+        const hasMessage = decidableProperties.some(
+          (property) =>
+            property.type === "Property" &&
+            !property.computed &&
+            property.key.type === "Identifier" &&
+            property.key.name === "message",
+        );
+        if (hasMessage) return;
+        else if (lastSpreadIndex !== -1) return;
         // A bare BAD_REQUEST is the other half of the same convention: the code without the message the skill
         // Requires beside it
-        if (!hasMessage && argument.properties.some((property) => getIsBadRequestCode(property)))
+        if (argument.properties.some((property) => getIsBadRequestCode(property)))
           context.report({ message: MISSING_MESSAGE, node });
       },
     };
