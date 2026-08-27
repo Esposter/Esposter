@@ -28,7 +28,7 @@ import { join } from "node:path";
 //
 // That login PATH also carries the host's `/mnt/c/<repo>/node_modules/.bin` (WSL Windows-interop appends the Windows
 // PATH), whose binaries are the *win32* build. But the sandbox chdir's into the ext4 source mirror, not /mnt/c, so
-// That entry is the raw host tree, not the overlaid one — a bare `tsgo`/`eslint`/`oxlint` would resolve the win32
+// That entry is the raw host tree, not the overlaid one — a bare `tsc`/`eslint`/`oxlint` would resolve the win32
 // Binary and crash needing its `-linux-x64` sibling. Prepend the mirror's own node_modules/.bin (overlaid from the
 // Snapshot lower = current platform) so the Linux binary wins. Only on win32 (wslLoginPath is non-empty): native Linux
 // Overlays at cwd, so its PATH already resolves the correct binary and needs no prepend.

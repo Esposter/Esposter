@@ -62,7 +62,7 @@
     "update:node": "tsx scripts/updateNode/index.ts",
     "test": "virrun -- vitest run",
     "test:packages": "virrun -- vitest run --project \"!@esposter/app\"",
-    "typecheck": "virrun -- tsgo && virrun -- pnpm -r --parallel --aggregate-output run typecheck",
+    "typecheck": "virrun -- tsc && virrun -- pnpm -r --parallel --aggregate-output run typecheck",
     "typecheck:packages": "virrun -- pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run typecheck",
     "watch:packages": "pnpm -r --filter \"!@esposter/app\" --parallel --stream --if-present run watch"
   },
@@ -74,7 +74,6 @@
     "@lerna-lite/publish": "catalog:",
     "@oxlint/plugins": "catalog:",
     "@types/node": "catalog:",
-    "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "dependency-cruiser": "catalog:",
     "dotenv": "catalog:",

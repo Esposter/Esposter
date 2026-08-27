@@ -58,7 +58,7 @@
     "infra:refresh": "pnpm build && pulumi refresh",
     "infra:up": "pnpm build && pulumi up",
     "test": "vitest",
-    "typecheck": "tsgo"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@esposter/db-schema": "workspace:*",

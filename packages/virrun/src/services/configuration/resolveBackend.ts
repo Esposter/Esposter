@@ -10,7 +10,7 @@ import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported
 // Isolates the command, and an inner os backend would try to write its snapshot/persist overlay layers into the now
 // Read-only `~/.virrun` (the outer `--ro-bind / /`), failing with EROFS. Running the inner command in-place instead
 // Lets its writes land in the outer RAM overlay. So a script that itself shells out to virrun (e.g. the root
-// `typecheck` running `virrun -- tsgo`) still works when the whole script is wrapped in another `virrun -- …`.
+// `typecheck` running `virrun -- tsc`) still works when the whole script is wrapped in another `virrun -- …`.
 export const resolveBackend = (
   configuration: undefined | VirrunConfiguration,
   env: NodeJS.ProcessEnv = process.env,

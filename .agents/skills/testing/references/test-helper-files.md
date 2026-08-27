@@ -4,7 +4,7 @@ Shared helpers, fixture constants, canonical filesystem paths, and `.test-d.ts` 
 
 ## Test utility files
 
-Shared test helpers live in `.test.ts` files (and bench helpers in `.bench.ts`) — both suffixes are excluded from the published barrel by `ctix` and from the `tsgo` build, so they never ship. The file-organisation rules apply unchanged: **one function per file, named after the function**, never a `testUtils`-style grab-bag.
+Shared test helpers live in `.test.ts` files (and bench helpers in `.bench.ts`) — both suffixes are excluded from the published barrel by `ctix` and from the `tsc` build, so they never ship. The file-organisation rules apply unchanged: **one function per file, named after the function**, never a `testUtils`-style grab-bag.
 
 - **A helper only one suite calls has no file of its own — it lives in that suite.** A production `.ts` for code nothing in production imports is shipped build output serving one caller, and the `.test.ts` split only earns its place once a second suite imports it. Module scope in the test file is the right home (a pure function is explicitly allowed there), and the move to its own `.test.ts` happens when the second consumer appears, not in anticipation of one.
 - **One helper function per file** — `createRow.test.ts` exports only `createRow`, `createWorkspaceCorpus.test.ts` only `createWorkspaceCorpus`. Follow the `create*` prefix convention for factories/builders. Cross-helper reuse is a normal import (`setupWithDataSource.test.ts` imports `createDataSource.test`).

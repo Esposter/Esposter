@@ -61,7 +61,7 @@
     "lint:fix": "eslint --fix .",
     "snapshot:gen": "tsx scripts/generateSnapshot.ts",
     "test": "vitest",
-    "typecheck": "tsgo"
+    "typecheck": "tsc"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

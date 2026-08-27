@@ -153,7 +153,7 @@ describe(createVirrun, () => {
       backend: BackendType.Os,
       source: { dir, type: SourceType.Dir },
     });
-    const result = await fork("tsgo");
+    const result = await fork("tsc");
     await dispose();
 
     expect(createSnapshot).toHaveBeenCalledTimes(1);
@@ -173,7 +173,7 @@ describe(createVirrun, () => {
       backend: BackendType.Os,
       source: { dir, type: SourceType.Dir },
     });
-    await fork("tsgo");
+    await fork("tsc");
     await dispose();
 
     expect(createSnapshot).not.toHaveBeenCalled();
@@ -192,7 +192,7 @@ describe(createVirrun, () => {
       backend: BackendType.Os,
       source: { dir, type: SourceType.Dir },
     });
-    await fork("tsgo");
+    await fork("tsc");
 
     const leaseFile = join(snapshotDirectory, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME, String(process.pid));
 
