@@ -12,7 +12,7 @@ import { parseResourceAssetPath } from "#shared/services/resource/parseResourceA
 import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 import { deepVisitStrings } from "#shared/util/object/deepVisitStrings";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { getIsResourceAssetReadable } from "@@/server/services/resource/getIsResourceAssetReadable";
+import { checkIsResourceAssetReadable } from "@@/server/services/resource/checkIsResourceAssetReadable";
 import { chargeStorageLedgerEntry, copyBlob } from "@esposter/db";
 import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
 import { getOrCreate, getResultAsync, ID_SEPARATOR, settleAll } from "@esposter/shared";
@@ -108,7 +108,7 @@ export const cloneContentAssets = async <TContent>(
   const getIsReadable = async ({ isPublished, resourceId }: ResourceAssetPath) => {
     if (
       await getOrCreate(isOwnedMap, resourceId, () =>
-        getIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId),
+        checkIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId),
       )
     )
       return true;
@@ -117,7 +117,7 @@ export const cloneContentAssets = async <TContent>(
     // Publication row, and it has already answered no for this resource — passing them here would issue that
     // Same query a second time to learn it again
     return getOrCreate(isPublishedReadableMap, resourceId, () =>
-      getIsResourceAssetReadable(db, { isPublished: true, resourceId }),
+      checkIsResourceAssetReadable(db, { isPublished: true, resourceId }),
     );
   };
   const clones = (

@@ -5,7 +5,7 @@ import { timingSafeEqual } from "node:crypto";
 
 // Compared without leaking how much of the signature matched — the lengths are compared first because
 // TimingSafeEqual throws on a mismatch, and a wrong-length token is already a forgery
-export const getIsUploadFileTokenValid = (userId: string, roomId: string, id: string, token: string): boolean => {
+export const checkIsUploadFileTokenValid = (userId: string, roomId: string, id: string, token: string): boolean => {
   const expiresAt = Number(token.slice(0, token.indexOf(ID_SEPARATOR)));
   if (!Number.isInteger(expiresAt) || expiresAt <= dayjs().valueOf()) return false;
 

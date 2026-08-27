@@ -8,7 +8,7 @@ import type { Database } from "@esposter/db-schema";
 // The clone re-serve the owner's private blob from a directory that answers to the whole internet.
 // A url the caller may not read is data, not an error — the clone carries it verbatim, exactly like a dangling or
 // Unparseable one, so a shared blueprint keeps rendering for whoever can already see its assets
-export const getIsResourceAssetReadable = async (
+export const checkIsResourceAssetReadable = async (
   db: Database,
   { isPublished, resourceId }: Pick<ResourceAssetPath, "isPublished" | "resourceId">,
   userId?: string,

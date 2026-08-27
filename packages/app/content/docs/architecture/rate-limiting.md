@@ -36,7 +36,7 @@ flowchart TD
   assetLimiter --> table
   auth["better-auth endpoints"] -.->|"reads points and duration"| procedureLimiter
   middleware -->|"consumed — sets X-RateLimit headers"| ok["procedure runs"]
-  middleware -->|"rejected — getIsRateLimitExceeded"| tooMany["TOO_MANY_REQUESTS"]
+  middleware -->|"rejected — checkIsRateLimitExceeded"| tooMany["TOO_MANY_REQUESTS"]
 ```
 
 `server/trpc/middleware/getIsRateLimited.ts` is the whole tRPC enforcement path. It resolves the session first, then consumes a point: on the user id when a session exists, and otherwise on `` `${path}${ID_SEPARATOR}${ipAddress}` `` so an anonymous caller is budgeted per procedure per address rather than globally. On success it writes `Retry-After` and the `X-RateLimit-Limit` / `X-RateLimit-Remaining` / `X-RateLimit-Reset` headers so a client can back off before it is refused. Outside production the middleware short-circuits after resolving the session. In production the bypass is narrower than it looks: only an **anonymous** request whose IP address cannot be determined is warned about and allowed through, because that is the one case with no key to spend a point against — a signed-in caller is keyed on its user id and is budgeted regardless. `getIpAddress` also falls back to the socket's remote address, so the header being absent is not by itself enough to reach the bypass.
@@ -49,7 +49,7 @@ Three procedure builders sit on top: `standardRateLimitedProcedure` (public, sta
 
 ## Answering 429 instead of 500
 
-`rate-limiter-flexible` signals an over-budget consume by **rejecting with a `RateLimiterRes`**, which is not an `Error` and carries no `message`. Every [neverthrow](/docs/architecture/async-operations) boundary in the repo wraps a non-`Error` rejection, so by the time a caller inspects it the `RateLimiterRes` is the `cause` of a wrapper `Error` and a bare `instanceof` check misses it — dropping the request into the generic branch that answers 500. `getIsRateLimitExceeded.ts` checks both shapes once, so no call site has to know which side of a `getResultAsync` it is reading the rejection on.
+`rate-limiter-flexible` signals an over-budget consume by **rejecting with a `RateLimiterRes`**, which is not an `Error` and carries no `message`. Every [neverthrow](/docs/architecture/async-operations) boundary in the repo wraps a non-`Error` rejection, so by the time a caller inspects it the `RateLimiterRes` is the `cause` of a wrapper `Error` and a bare `instanceof` check misses it — dropping the request into the generic branch that answers 500. `checkIsRateLimitExceeded.ts` checks both shapes once, so no call site has to know which side of a `getResultAsync` it is reading the rejection on.
 
 ## Notes
 
@@ -60,20 +60,20 @@ Three procedure builders sit on top: `standardRateLimitedProcedure` (public, sta
 
 Paths relative to `packages/app` unless noted.
 
-| File                                                    | Role                                                      |
-| ------------------------------------------------------- | --------------------------------------------------------- |
-| `packages/db-schema/src/schema/rateLimiterFlexible.ts`  | the shared counter table                                  |
-| `server/services/rateLimiter/standardRateLimiter.ts`    | the default procedure budget                              |
-| `server/services/rateLimiter/slowRateLimiter.ts`        | the tightened budget for expensive procedures             |
-| `server/services/rateLimiter/webhookRateLimiter.ts`     | per-webhook budget for the inbound push route             |
-| `server/services/rateLimiter/assetRateLimiter.ts`       | asset-request budget, deliberately without a block period |
-| `server/services/rateLimiter/createRateLimiter.ts`      | the shared constructor — window, store, required prefix   |
-| `server/services/rateLimiter/RateLimiterMap.ts`         | enum → limiter registry for the procedure budgets         |
-| `server/services/rateLimiter/getIsRateLimitExceeded.ts` | recognises the rejection through a neverthrow wrapper     |
-| `server/models/rateLimiter/RateLimiterType.ts`          | the `Slow` / `Standard` enum                              |
-| `server/trpc/middleware/getIsRateLimited.ts`            | consumes a point and sets the response headers            |
-| `server/trpc/middleware/getIsAuthed.ts`                 | pipes the rate limiter, then requires a session           |
-| `server/trpc/procedure/AuthedProcedureMap.ts`           | enum → authed procedure builder                           |
-| `server/api/webhooks/[id]/[token].post.ts`              | inbound webhook route, 429 on overspend                   |
-| `server/api/resource-assets/[...path].get.ts`           | asset redirect route, 429 on overspend                    |
-| `server/auth.ts`                                        | better-auth budget derived from the standard limiter      |
+| File                                                      | Role                                                      |
+| --------------------------------------------------------- | --------------------------------------------------------- |
+| `packages/db-schema/src/schema/rateLimiterFlexible.ts`    | the shared counter table                                  |
+| `server/services/rateLimiter/standardRateLimiter.ts`      | the default procedure budget                              |
+| `server/services/rateLimiter/slowRateLimiter.ts`          | the tightened budget for expensive procedures             |
+| `server/services/rateLimiter/webhookRateLimiter.ts`       | per-webhook budget for the inbound push route             |
+| `server/services/rateLimiter/assetRateLimiter.ts`         | asset-request budget, deliberately without a block period |
+| `server/services/rateLimiter/createRateLimiter.ts`        | the shared constructor — window, store, required prefix   |
+| `server/services/rateLimiter/RateLimiterMap.ts`           | enum → limiter registry for the procedure budgets         |
+| `server/services/rateLimiter/checkIsRateLimitExceeded.ts` | recognises the rejection through a neverthrow wrapper     |
+| `server/models/rateLimiter/RateLimiterType.ts`            | the `Slow` / `Standard` enum                              |
+| `server/trpc/middleware/getIsRateLimited.ts`              | consumes a point and sets the response headers            |
+| `server/trpc/middleware/getIsAuthed.ts`                   | pipes the rate limiter, then requires a session           |
+| `server/trpc/procedure/AuthedProcedureMap.ts`             | enum → authed procedure builder                           |
+| `server/api/webhooks/[id]/[token].post.ts`                | inbound webhook route, 429 on overspend                   |
+| `server/api/resource-assets/[...path].get.ts`             | asset redirect route, 429 on overspend                    |
+| `server/auth.ts`                                          | better-auth budget derived from the standard limiter      |

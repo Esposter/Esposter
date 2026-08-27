@@ -5,7 +5,7 @@ import { deleteReplayedBlob } from "#src/services/deleteReplayedBlob";
 import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
 import { formatReplayId } from "#src/services/formatReplayId";
 import { getContainerClient } from "#src/services/getContainerClient";
-import { getIsReplayable } from "#src/services/getIsReplayable";
+import { checkIsReplayable } from "#src/services/checkIsReplayable";
 import { logAndRethrow } from "#src/services/logAndRethrow";
 import { parseReplayId } from "#src/services/parseReplayId";
 import { writeDeadLetterBlob } from "#src/services/writeDeadLetterBlob";
@@ -105,7 +105,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
         deadLetteredEvent,
         eventId,
         index,
-        isReplayable: getIsReplayable(deadLetteredEvent.eventType, replayAttempts),
+        isReplayable: checkIsReplayable(deadLetteredEvent.eventType, replayAttempts),
         replayAttempts,
       };
     });

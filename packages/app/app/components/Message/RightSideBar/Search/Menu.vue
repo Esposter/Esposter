@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getIsFilterPending } from "#shared/services/message/getIsFilterPending";
+import { checkIsFilterPending } from "#shared/services/message/checkIsFilterPending";
 import { SearchFilterComponentMap } from "@/services/message/filter/SearchFilterComponentMap";
 import { useSearchMessageStore } from "@/store/message/search";
 
@@ -30,7 +30,7 @@ const { width } = useElementSize(activator);
     <StyledCard p-2>
       <component
         :is="SearchFilterComponentMap[activeSelectedFilter.type]"
-        v-if="activeSelectedFilter && getIsFilterPending(activeSelectedFilter)"
+        v-if="activeSelectedFilter && checkIsFilterPending(activeSelectedFilter)"
         @select="
           (value) => {
             if (!activeSelectedFilter) return;

@@ -11,7 +11,7 @@ import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/mes
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
-import { getIsUnicodeEmojiSlug } from "@@/server/services/message/emoji/getIsUnicodeEmojiSlug";
+import { checkIsUnicodeEmojiSlug } from "@@/server/services/message/emoji/checkIsUnicodeEmojiSlug";
 import { getRoomEmojiBlobName } from "@@/server/services/message/emoji/getRoomEmojiBlobName";
 import { roomEmojiEventEmitter } from "@@/server/services/message/events/roomEmojiEventEmitter";
 import { router } from "@@/server/trpc";
@@ -82,7 +82,7 @@ export const roomEmojiRouter = router({
     if (contentLength === undefined || contentLength > MAX_ROOM_EMOJI_SIZE_BYTES)
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, id);
 
-    if (getIsUnicodeEmojiSlug(name))
+    if (checkIsUnicodeEmojiSlug(name))
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, name);
 
     const createdRoomEmoji = await ctx.db.transaction(async (tx) => {
@@ -191,7 +191,7 @@ export const roomEmojiRouter = router({
     updateRoomEmojiInputSchema,
     "roomId",
   ).mutation<RoomEmojiInMessage>(async ({ ctx, input: { id, name, roomId } }) => {
-    if (getIsUnicodeEmojiSlug(name))
+    if (checkIsUnicodeEmojiSlug(name))
       throw getInvalidOperationError(Operation.Update, DatabaseEntityType.RoomEmoji, name);
 
     const updatedRoomEmoji = requireMutation(

@@ -2,7 +2,7 @@ import type { SerializableValue } from "@esposter/azure";
 import type { Filter } from "@esposter/db-schema";
 
 /* eslint-disable perfectionist/sort-switch-case */
-import { getIsFilterPending } from "#shared/services/message/getIsFilterPending";
+import { checkIsFilterPending } from "#shared/services/message/checkIsFilterPending";
 import { getFilterKeyword } from "@/services/message/filter/getFilterKeyword";
 import { useRoomStore } from "@/store/message/room";
 import { useUserStore } from "@/store/message/user";
@@ -18,7 +18,7 @@ const getInvalidValueError = (value: SerializableValue) =>
 export const getFilterDisplayValue = (filter: Filter) => {
   const { type, value } = filter;
   const filterKeyword = getFilterKeyword(type);
-  if (getIsFilterPending(filter)) return filterKeyword;
+  if (checkIsFilterPending(filter)) return filterKeyword;
 
   const displayValue = getDisplayValue(type, value);
   return `${filterKeyword} ${displayValue}`;

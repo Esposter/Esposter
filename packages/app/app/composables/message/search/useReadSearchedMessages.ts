@@ -1,4 +1,4 @@
-import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
+import { checkIsSearchQueryEmpty } from "#shared/services/message/checkIsSearchQueryEmpty";
 import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
@@ -42,7 +42,7 @@ export const useReadSearchedMessages = () => {
       // The input schema refuses a search with nothing in it, so the read that builds the request is where that
       // Stops rather than at each of the surfaces that can issue one — an Enter, a history row, a page change.
       // The field clearing itself on blur is what put an empty query here, and the answer to that is not a 400
-      if (getIsSearchQueryEmpty(query, filters)) return { hasMore: false, items: [] };
+      if (checkIsSearchQueryEmpty(query, filters)) return { hasMore: false, items: [] };
 
       menu.value = false;
       isSearching.value = true;

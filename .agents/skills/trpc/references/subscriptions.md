@@ -36,11 +36,11 @@ In tests, `Promise.all([iterator.next(), mutation()])` exposes this: the mutatio
 
 ## No redundant store update after a mutation the subscription already covers
 
-When a mutation emits to an event emitter and the subscription fires for **all** connected clients (including the caller — no `getIsSameDevice` filter), the subscription's `onData` handler is the single source of truth. Do NOT also call the `store*` action after the mutation returns.
+When a mutation emits to an event emitter and the subscription fires for **all** connected clients (including the caller — no `checkIsSameDevice` filter), the subscription's `onData` handler is the single source of truth. Do NOT also call the `store*` action after the mutation returns.
 
 | Subscription filters caller? | After-mutation store call needed?           |
 | ---------------------------- | ------------------------------------------- |
 | No (no caller filter)        | ❌ Remove — subscription handles it         |
-| Yes (`getIsSameDevice`)      | ✅ Required — subscription skips the caller |
+| Yes (`checkIsSameDevice`)    | ✅ Required — subscription skips the caller |
 
 When adding a new subscription: decide once which pattern it uses, then be consistent — never mix both.

@@ -1,10 +1,10 @@
 import { MessageOperation } from "#shared/models/message/MessageOperation";
-import { getIsMessageOperationPermitted } from "#shared/services/message/getIsMessageOperationPermitted";
+import { checkIsMessageOperationPermitted } from "#shared/services/message/checkIsMessageOperationPermitted";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
 import { MessageType, MessageTypes } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
-describe(getIsMessageOperationPermitted, () => {
+describe(checkIsMessageOperationPermitted, () => {
   // Re-derived here so a new operation widens the matrix instead of silently going untested
   const messageOperations = Object.values(MessageOperation);
   const author = { hasManageMessages: false, isAuthor: true };
@@ -12,7 +12,7 @@ describe(getIsMessageOperationPermitted, () => {
   const moderator = { hasManageMessages: true, isAuthor: false };
   const getPermittedOperations = (type: MessageType, caller: { hasManageMessages: boolean; isAuthor: boolean }) =>
     messageOperations.filter((operation) =>
-      getIsMessageOperationPermitted(getMessageOperationPermission(type, operation), caller),
+      checkIsMessageOperationPermitted(getMessageOperationPermission(type, operation), caller),
     );
 
   test("resolves which operations each caller may perform on each message type", () => {

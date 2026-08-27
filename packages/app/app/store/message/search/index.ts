@@ -1,6 +1,6 @@
 import type { Filter, FilterType, MessageEntity } from "@esposter/db-schema";
 
-import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
+import { checkIsSearchQueryEmpty } from "#shared/services/message/checkIsSearchQueryEmpty";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
 
@@ -13,7 +13,7 @@ export const useSearchMessageStore = defineStore("message/search", () => {
   // The chip a picker is currently filling in. Only ever the last one, because a filter is added by typing its
   // Keyword and immediately needs its value, and the picker writes onto the filter itself rather than replacing it
   const activeSelectedFilter = computed(() => selectedFilters.value.at(-1));
-  const isSearchQueryEmpty = computed(() => getIsSearchQueryEmpty(searchQuery.value, selectedFilters.value));
+  const isSearchQueryEmpty = computed(() => checkIsSearchQueryEmpty(searchQuery.value, selectedFilters.value));
   const createFilter = (type: FilterType) => {
     selectedFilters.value.push({ type, value: "" });
   };

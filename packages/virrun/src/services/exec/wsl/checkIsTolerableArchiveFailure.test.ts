@@ -1,8 +1,8 @@
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
-import { getIsTolerableArchiveFailure } from "#src/services/exec/wsl/getIsTolerableArchiveFailure";
+import { checkIsTolerableArchiveFailure } from "#src/services/exec/wsl/checkIsTolerableArchiveFailure";
 import { describe, expect, test } from "vitest";
 
-describe(getIsTolerableArchiveFailure, () => {
+describe(checkIsTolerableArchiveFailure, () => {
   // Both host tars' captured report shapes for the two per-entry skips — a Windows-locked/permission-denied file and a
   // Path that vanished since the manifest walk — and their summary trailers. Bsdtar names no path on the vanished one.
   const BSDTAR_UNREADABLE_LINE = `tar.exe: Couldn't open ${TEST_FILENAME}: Permission denied`;
@@ -16,7 +16,7 @@ describe(getIsTolerableArchiveFailure, () => {
     expect.hasAssertions();
 
     expect(
-      getIsTolerableArchiveFailure(
+      checkIsTolerableArchiveFailure(
         `${BSDTAR_UNREADABLE_LINE}\r\n${BSDTAR_VANISHED_LINE}\r\n${BSDTAR_TRAILER_LINE}\r\n`,
       ),
     ).toBe(true);
@@ -25,7 +25,7 @@ describe(getIsTolerableArchiveFailure, () => {
   test("tolerates GNU tar's per-entry skips and ignores its trailer", () => {
     expect.hasAssertions();
 
-    expect(getIsTolerableArchiveFailure(`${GNU_UNREADABLE_LINE}\n${GNU_VANISHED_LINE}\n${GNU_TRAILER_LINE}\n`)).toBe(
+    expect(checkIsTolerableArchiveFailure(`${GNU_UNREADABLE_LINE}\n${GNU_VANISHED_LINE}\n${GNU_TRAILER_LINE}\n`)).toBe(
       true,
     );
   });
@@ -35,7 +35,7 @@ describe(getIsTolerableArchiveFailure, () => {
 
     // Anything tar did not archive past leaves an untrustworthy archive, however many benign lines accompany it.
     expect(
-      getIsTolerableArchiveFailure(
+      checkIsTolerableArchiveFailure(
         `${BSDTAR_UNREADABLE_LINE}\ntar.exe: Option --nope is not supported\n${BSDTAR_TRAILER_LINE}`,
       ),
     ).toBe(false);
@@ -44,7 +44,7 @@ describe(getIsTolerableArchiveFailure, () => {
   test("rejects a failure with no report at all", () => {
     expect.hasAssertions();
 
-    expect(getIsTolerableArchiveFailure("")).toBe(false);
-    expect(getIsTolerableArchiveFailure(`${BSDTAR_TRAILER_LINE}\n`)).toBe(false);
+    expect(checkIsTolerableArchiveFailure("")).toBe(false);
+    expect(checkIsTolerableArchiveFailure(`${BSDTAR_TRAILER_LINE}\n`)).toBe(false);
   });
 });

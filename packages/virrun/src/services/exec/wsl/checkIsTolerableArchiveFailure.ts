@@ -21,7 +21,7 @@ const TRAILER_LINE_REGEXES = [
   /^tar(?:\.exe)?: Exiting with failure status due to previous errors$/u,
 ];
 
-export const getIsTolerableArchiveFailure = (stderr: string): boolean => {
+export const checkIsTolerableArchiveFailure = (stderr: string): boolean => {
   const reportLines = stderr
     .split(/\r?\n/u)
     .filter(Boolean)

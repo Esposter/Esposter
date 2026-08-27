@@ -59,17 +59,17 @@ Both the SSR and tRPC paths fix this by passing the raw JSON string through `jso
 
 ### Azure Table path — `packages/db/src/services/azure/transformer/deserializeEntity.ts`
 
-Runs server-side only, before any transport. The Azure SDK already returns `Date` objects for columns stored as `Edm.DateTime`. For columns stored as JSON strings (arrays, nested objects), `getIsSerializable` detects them and `jsonDateParse` restores any dates inside.
+Runs server-side only, before any transport. The Azure SDK already returns `Date` objects for columns stored as `Edm.DateTime`. For columns stored as JSON strings (arrays, nested objects), `checkIsSerializable` detects them and `jsonDateParse` restores any dates inside.
 
 ```ts
 const instance = new cls(); // restores class identity
 for (const [property, value] of Object.entries(entity))
-  if (!(value instanceof Date) && getIsSerializable(instance[property]))
+  if (!(value instanceof Date) && checkIsSerializable(instance[property]))
     instance[property] = jsonDateParse(String(value)); // JSON column → parse + restore dates
   else instance[property] = value; // date column → already a Date
 ```
 
-`getIsSerializable` returns `true` for arrays and non-Date objects — i.e. properties that were stored in Azure Table as a JSON string (e.g. `files: FileEntity[]`, `mentions: string[]`).
+`checkIsSerializable` returns `true` for arrays and non-Date objects — i.e. properties that were stored in Azure Table as a JSON string (e.g. `files: FileEntity[]`, `mentions: string[]`).
 
 ### SSR path — `packages/app/app/plugins/customPayloads.ts`
 

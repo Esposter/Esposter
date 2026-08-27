@@ -1,6 +1,6 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { getIsMessageAuthor } from "#shared/services/message/getIsMessageAuthor";
+import { checkIsMessageAuthor } from "#shared/services/message/checkIsMessageAuthor";
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
 
@@ -14,6 +14,6 @@ export const useIsCreator = async (message: MaybeRefOrGetter<MessageEntity | und
     // Authorship is asked of the same helper getMessageProcedure asks, so the menu offers exactly the
     // Operations the procedure accepts — a type this composable answered "no" for was a type whose
     // Author-permitted operations were unreachable to the person who authored it
-    return getIsMessageAuthor(messageValue, session.value?.user.id) || isCreator.value;
+    return checkIsMessageAuthor(messageValue, session.value?.user.id) || isCreator.value;
   });
 };

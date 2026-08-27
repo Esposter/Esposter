@@ -36,7 +36,7 @@ import { useTableClient } from "@@/server/composables/azure/table/useTableClient
 import { useWebPubSubServiceClient } from "@@/server/composables/azure/webPubSub/useWebPubSubServiceClient";
 import { getDevice } from "@@/server/services/auth/getDevice";
 import { getDeviceId } from "@@/server/services/auth/getDeviceId";
-import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
+import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { updateEntityConditionally } from "@@/server/services/azure/table/updateEntityConditionally";
 import { on } from "@@/server/services/events/on";
@@ -44,7 +44,7 @@ import { createSystemRoomMessage } from "@@/server/services/message/createSystem
 import { createUserMessage } from "@@/server/services/message/createUserMessage";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { createUploadFileToken } from "@@/server/services/message/file/createUploadFileToken";
-import { getIsUploadFileTokenValid } from "@@/server/services/message/file/getIsUploadFileTokenValid";
+import { checkIsUploadFileTokenValid } from "@@/server/services/message/file/checkIsUploadFileTokenValid";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
 import { readMessages } from "@@/server/services/message/readMessages";
 import { readMessagesByRowKeys } from "@@/server/services/message/readMessagesByRowKeys";
@@ -191,7 +191,7 @@ export const baseMessageRouter = router({
   deleteUploadFiles: getMemberProcedure(deleteUploadFilesInputSchema, "roomId").mutation<void>(
     async ({ ctx, input: { files, roomId } }) => {
       for (const { id, token } of files)
-        if (!getIsUploadFileTokenValid(ctx.getSessionPayload.user.id, roomId, id, token))
+        if (!checkIsUploadFileTokenValid(ctx.getSessionPayload.user.id, roomId, id, token))
           throw new TRPCError({ code: "UNAUTHORIZED" });
 
       await publishBlobDeletion(roomId, AzureContainer.MessageAssets, getFilesBlobNames(roomId, files));
@@ -367,7 +367,7 @@ export const baseMessageRouter = router({
       const dataToYield = data.filter(
         (newMessage) =>
           newMessage.partitionKey === roomId &&
-          (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.getSessionPayload)),
+          (isSendToSelf || !checkIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.getSessionPayload)),
       );
       if (dataToYield.length > 0) yield tracked(takeOne(dataToYield, dataToYield.length - 1).rowKey, dataToYield);
     }

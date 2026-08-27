@@ -1,6 +1,6 @@
 import type { AzureContainer, Database, StorageLedgerEntry } from "@esposter/db-schema";
 
-import { getIsNewerSequencer } from "#src/services/storage/getIsNewerSequencer";
+import { checkIsNewerSequencer } from "#src/services/storage/checkIsNewerSequencer";
 import { storageLedger, users } from "@esposter/db-schema";
 import { and, eq, sql } from "drizzle-orm";
 
@@ -51,7 +51,7 @@ export const reconcileStorageLedgerEntry = (
     if (
       sequencer === undefined
         ? countedSequencer !== null
-        : !getIsNewerSequencer(sequencer, countedSequencer ?? undefined)
+        : !checkIsNewerSequencer(sequencer, countedSequencer ?? undefined)
     )
       return true;
 

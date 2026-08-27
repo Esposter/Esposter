@@ -5,5 +5,5 @@ import { normalizeString } from "@esposter/shared";
 
 // A pending filter is not a search — it is a chip waiting for a value, and searching on it would send its "" to
 // A service that rejects it. So emptiness asks the same question the search itself does.
-export const getIsSearchQueryEmpty = (query: string, filters: Filter[]) =>
+export const checkIsSearchQueryEmpty = (query: string, filters: Filter[]) =>
   normalizeString(query) === "" && getSearchableFilters(filters).length === 0;

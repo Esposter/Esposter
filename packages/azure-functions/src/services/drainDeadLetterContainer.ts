@@ -1,5 +1,5 @@
 import { getContainerClient } from "#src/services/getContainerClient";
-import { getIsPreconditionFailed } from "@esposter/db";
+import { checkIsPreconditionFailed } from "@esposter/db";
 import {
   AzureContainer,
   DEAD_LETTER_ARCHIVED_PREFIX,
@@ -50,7 +50,7 @@ export const drainDeadLetterContainer = async (): Promise<number> => {
     ).match(
       () => true,
       (error) => {
-        if (getIsPreconditionFailed(error)) return false;
+        if (checkIsPreconditionFailed(error)) return false;
         throw error;
       },
     );

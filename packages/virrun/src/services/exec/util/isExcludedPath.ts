@@ -1,5 +1,5 @@
 import { getExcludeRelativePath } from "#src/services/exec/util/getExcludeRelativePath";
-import { getIsBareNameExclude } from "#src/services/exec/util/getIsBareNameExclude";
+import { checkIsBareNameExclude } from "#src/services/exec/util/checkIsBareNameExclude";
 // Match a posix relative path against virrun's exclude patterns — the one matcher both sides of the source boundary
 // Use, so what never enters the sandbox (the mirror walk, buildSourceMirrorManifest) and what may never leave it (the
 // Write-back mask, isUnderSnapshotLower) can't drift apart. Two pattern shapes, mirroring gitignore's own split: a
@@ -10,7 +10,7 @@ import { getIsBareNameExclude } from "#src/services/exec/util/getIsBareNameExclu
 // `packages/app-e2e` vs `packages/app`) is never a match.
 export const isExcludedPath = (relativePath: string, excludes: readonly string[]): boolean =>
   excludes.some((exclude) => {
-    if (getIsBareNameExclude(exclude))
+    if (checkIsBareNameExclude(exclude))
       return (
         relativePath === exclude ||
         relativePath.startsWith(`${exclude}/`) ||

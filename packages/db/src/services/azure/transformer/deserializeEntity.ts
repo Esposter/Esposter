@@ -1,6 +1,6 @@
 import type { CompositeKey } from "@esposter/azure";
 
-import { getIsSerializable } from "#src/services/azure/transformer/getIsSerializable";
+import { checkIsSerializable } from "#src/services/azure/transformer/checkIsSerializable";
 import { jsonDateParse } from "@esposter/shared";
 
 export const deserializeEntity = <TEntity extends CompositeKey>(
@@ -10,7 +10,7 @@ export const deserializeEntity = <TEntity extends CompositeKey>(
   const instance = new cls();
   // Azure Table Storage already deserializes Date properties for us C:
   for (const [property, value] of Object.entries(entity) as [keyof TEntity, unknown][])
-    if (!(value instanceof Date) && getIsSerializable(instance[property]))
+    if (!(value instanceof Date) && checkIsSerializable(instance[property]))
       instance[property] = jsonDateParse(String(value));
     else instance[property] = value as TEntity[keyof TEntity];
   return instance;

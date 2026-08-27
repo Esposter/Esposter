@@ -15,7 +15,7 @@ import { observable } from "@trpc/server/observable";
 // To alert is an operation nobody alerts — the caller has already been told the link owns it
 const ALERTED_ERROR_CODES = new Set(["BAD_REQUEST", "TOO_MANY_REQUESTS", "UNPROCESSABLE_CONTENT"]);
 
-export const getIsAlertedByErrorLink = (error: unknown): boolean =>
+export const checkIsAlertedByErrorLink = (error: unknown): boolean =>
   error instanceof TRPCClientError && ALERTED_ERROR_CODES.has(String(error.data?.code));
 
 export const errorLink: TRPCLink<TRPCRouter> =

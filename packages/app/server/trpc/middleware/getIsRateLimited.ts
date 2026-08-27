@@ -3,7 +3,7 @@ import type { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterTy
 import { dayjs } from "#shared/services/dayjs";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { auth } from "@@/server/auth";
-import { getIsRateLimitExceeded } from "@@/server/services/rateLimiter/getIsRateLimitExceeded";
+import { checkIsRateLimitExceeded } from "@@/server/services/rateLimiter/checkIsRateLimitExceeded";
 import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
 import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import { middleware } from "@@/server/trpc";
@@ -33,7 +33,7 @@ export const getIsRateLimited = (type: RateLimiterType) =>
     const { msBeforeNext, remainingPoints } = rateLimiterResult.match(
       (result) => result,
       (error) => {
-        if (getIsRateLimitExceeded(error)) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+        if (checkIsRateLimitExceeded(error)) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       },
     );

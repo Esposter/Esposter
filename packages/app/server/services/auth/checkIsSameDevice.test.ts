@@ -1,14 +1,14 @@
-import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
+import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { describe, expect, test } from "vitest";
 
-describe(getIsSameDevice, () => {
+describe(checkIsSameDevice, () => {
   test("same", () => {
     expect.hasAssertions();
 
     const { session, user } = getMockSession();
 
-    expect(getIsSameDevice({ sessionId: session.id, userId: user.id }, { session, user })).toBe(true);
+    expect(checkIsSameDevice({ sessionId: session.id, userId: user.id }, { session, user })).toBe(true);
   });
 
   test("different", () => {
@@ -17,7 +17,7 @@ describe(getIsSameDevice, () => {
     const { session, user } = getMockSession();
 
     expect(
-      getIsSameDevice(
+      checkIsSameDevice(
         { sessionId: session.id, userId: user.id },
         { session: { ...session, id: crypto.randomUUID() }, user },
       ),

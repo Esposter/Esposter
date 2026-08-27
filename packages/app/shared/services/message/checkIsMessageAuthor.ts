@@ -5,5 +5,5 @@ import type { MessageEntity, User } from "@esposter/db-schema";
 // Whatever its type — a poll is a message its author posted no less than a text message is — and a webhook
 // Message declares `userId?: undefined`, so an absent author is answered here rather than matching an absent
 // Session at every call site.
-export const getIsMessageAuthor = (message: Pick<MessageEntity, "userId">, userId: undefined | User["id"]) =>
+export const checkIsMessageAuthor = (message: Pick<MessageEntity, "userId">, userId: undefined | User["id"]) =>
   Boolean(message.userId) && message.userId === userId;

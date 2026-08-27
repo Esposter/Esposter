@@ -1,9 +1,9 @@
 import type { Database } from "@esposter/db-schema";
 
-import { getIsResourceAssetReadable } from "@@/server/services/resource/getIsResourceAssetReadable";
+import { checkIsResourceAssetReadable } from "@@/server/services/resource/checkIsResourceAssetReadable";
 import { describe, expect, test, vi } from "vitest";
 
-describe(getIsResourceAssetReadable, () => {
+describe(checkIsResourceAssetReadable, () => {
   const resourceId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   // The two rows that answer the question, each present or absent — a publication row makes a published asset
@@ -32,7 +32,7 @@ describe(getIsResourceAssetReadable, () => {
 
     const { db, findFirstPublication, findFirstResource } = createDatabase(true, false);
 
-    await expect(getIsResourceAssetReadable(db, { isPublished: true, resourceId })).resolves.toBe(true);
+    await expect(checkIsResourceAssetReadable(db, { isPublished: true, resourceId })).resolves.toBe(true);
     expect(findFirstPublication).toHaveBeenCalledWith({ where: { resourceId: { eq: resourceId } } });
     expect(findFirstResource).not.toHaveBeenCalled();
   });
@@ -44,7 +44,7 @@ describe(getIsResourceAssetReadable, () => {
 
     const { db } = createDatabase(false, true);
 
-    await expect(getIsResourceAssetReadable(db, { isPublished: true, resourceId }, userId)).resolves.toBe(true);
+    await expect(checkIsResourceAssetReadable(db, { isPublished: true, resourceId }, userId)).resolves.toBe(true);
   });
 
   test("refuses a published asset whose publication row is gone to a non-owner", async () => {
@@ -52,7 +52,7 @@ describe(getIsResourceAssetReadable, () => {
 
     const { db } = createDatabase(false, false);
 
-    await expect(getIsResourceAssetReadable(db, { isPublished: true, resourceId }, userId)).resolves.toBe(false);
+    await expect(checkIsResourceAssetReadable(db, { isPublished: true, resourceId }, userId)).resolves.toBe(false);
   });
 
   test("refuses a published asset whose publication row is gone to an anonymous caller", async () => {
@@ -60,7 +60,7 @@ describe(getIsResourceAssetReadable, () => {
 
     const { db, findFirstResource } = createDatabase(false, true);
 
-    await expect(getIsResourceAssetReadable(db, { isPublished: true, resourceId })).resolves.toBe(false);
+    await expect(checkIsResourceAssetReadable(db, { isPublished: true, resourceId })).resolves.toBe(false);
     expect(findFirstResource).not.toHaveBeenCalled();
   });
 
@@ -69,7 +69,7 @@ describe(getIsResourceAssetReadable, () => {
 
     const { db } = createDatabase(false, true);
 
-    await expect(getIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId)).resolves.toBe(true);
+    await expect(checkIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId)).resolves.toBe(true);
   });
 
   test("refuses a working copy the caller does not own", async () => {
@@ -77,7 +77,7 @@ describe(getIsResourceAssetReadable, () => {
 
     const { db } = createDatabase(false, false);
 
-    await expect(getIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId)).resolves.toBe(false);
+    await expect(checkIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId)).resolves.toBe(false);
   });
 
   // The serving endpoint is public, so an anonymous caller reaches here with no user id at all. Nothing can own
@@ -87,7 +87,7 @@ describe(getIsResourceAssetReadable, () => {
 
     const { db, findFirstResource } = createDatabase(false, false);
 
-    await expect(getIsResourceAssetReadable(db, { isPublished: false, resourceId })).resolves.toBe(false);
+    await expect(checkIsResourceAssetReadable(db, { isPublished: false, resourceId })).resolves.toBe(false);
     expect(findFirstResource).not.toHaveBeenCalled();
   });
 
@@ -97,7 +97,7 @@ describe(getIsResourceAssetReadable, () => {
     expect.hasAssertions();
 
     const { db, findFirstResource } = createDatabase(false, true);
-    await getIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId);
+    await checkIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId);
 
     expect(findFirstResource).toHaveBeenCalledWith({
       where: { deletedAt: { isNull: true }, id: { eq: resourceId }, userId: { eq: userId } },

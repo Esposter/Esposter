@@ -31,7 +31,7 @@ for (const batch of chunk(entities, AZURE_MAX_BATCH_SIZE)) {
   ).match(
     () => true,
     (error) => {
-      if (getIsConflict(error)) return false;
+      if (checkIsConflict(error)) return false;
       throw error;
     },
   );
@@ -41,6 +41,6 @@ for (const batch of chunk(entities, AZURE_MAX_BATCH_SIZE)) {
 
 `submitTransactionBatches` cannot own the chunking here — it has no per-batch hook to catch the rejection and replay, so this path chunks itself with `chunk` (`@esposter/shared`). That is the one exception to `SKILL.md`'s rule, and it is still not a hand-rolled slice loop: an index-stepping `for` with `.slice()` is wrong in both paths.
 
-Only a `409` may fall back — any other failure is a real fault and must propagate, or a transient error silently degrades into a per-row storm that fails anyway. `getIsConflict` and `serializeEntity` both come from `@esposter/db` — never re-test `statusCode === 409` inline (`getIsConflict` covers a blob's conditional create too). `submitTransaction` takes raw entities, so unlike `createEntity` it does not serialize for you.
+Only a `409` may fall back — any other failure is a real fault and must propagate, or a transient error silently degrades into a per-row storm that fails anyway. `checkIsConflict` and `serializeEntity` both come from `@esposter/db` — never re-test `statusCode === 409` inline (`checkIsConflict` covers a blob's conditional create too). `submitTransaction` takes raw entities, so unlike `createEntity` it does not serialize for you.
 
 `MockTableClient.submitTransaction` applies its actions **synchronously** precisely so this is testable: awaiting between actions would let a concurrent caller interleave writes that the rollback then drops. Trust it to model atomicity faithfully under `Promise.all` in tests.

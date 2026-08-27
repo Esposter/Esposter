@@ -100,7 +100,7 @@ describe(errorLink, () => {
   test("alerts a background rejection it owns, because no caller alerts a code the link claims", async () => {
     expect.hasAssertions();
 
-    // The regression this guards: the link declined every background op wholesale while `getIsAlertedByErrorLink`
+    // The regression this guards: the link declined every background op wholesale while `checkIsAlertedByErrorLink`
     // Still reported the code as its own, so an attachment read rejected by the rate limiter rolled the optimistic
     // Bubble back out of the room with no toast from either side
     const alertStore = useAlertStore();

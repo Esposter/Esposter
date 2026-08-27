@@ -19,7 +19,7 @@ import { MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES } from "#shared/services/storag
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
-import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
+import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "@@/server/services/azure/eventGrid/publishBlobPrefixDeletion";
 import { on } from "@@/server/services/events/on";
@@ -186,7 +186,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       id: Resource["id"];
     }> {
       for await (const [[data, device]] of on(resourceEventEmitter, "saveResourceContent", { signal }))
-        if (data.id === id && !getIsSameDevice(device, ctx.getSessionPayload))
+        if (data.id === id && !checkIsSameDevice(device, ctx.getSessionPayload))
           yield { ...data, content: data.content as ResourceContent<TType> };
     }),
     readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query<ResourceContent<TType> | undefined>(

@@ -98,7 +98,7 @@ Deleting an emoji removes the row first and then publishes the blob deletion, be
 | `packages/db-schema/src/schema/roomEmojisInMessage.ts`                  | the table, the name charset, and the per-room unique index |
 | `packages/app/server/trpc/routers/room/emoji.ts`                        | upload SAS, create, rename, delete, read, subscriptions    |
 | `packages/app/server/services/message/emoji/getRoomEmojiBlobName.ts`    | the one place the blob name is spelled                     |
-| `packages/app/server/services/message/emoji/getIsUnicodeEmojiSlug.ts`   | the shadowing guard                                        |
+| `packages/app/server/services/message/emoji/checkIsUnicodeEmojiSlug.ts` | the shadowing guard                                        |
 | `packages/app/app/store/message/room/emoji.ts`                          | the room's set, its upload action, and the id-keyed map    |
 | `packages/app/app/models/message/emoji/CustomEmoji.ts`                  | what a picking surface sees                                |
 | `packages/app/app/components/Styled/Emoji.vue`                          | one glyph component — a character or an image              |

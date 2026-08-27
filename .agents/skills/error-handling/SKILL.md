@@ -1,6 +1,6 @@
 ---
 name: error-handling
-description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch and try/finally banned), wrapping only what can actually fail, terminating every chain (.isOk/.isErr banned, never void a ResultAsync, noop as the ok handler, a callback nothing awaits terminating its own Result), .orTee(console.error) over console.warn/catch {}, who alerts a tRPC rejection (errorLink ownership, getIsAlertedByErrorLink, background reads, alert coalescing), withFinalizer vs withFinalizerAsync, never new Error (InvalidOperationError, the unimplemented-stub exception, jsonDateParse for JSON with dates), the tRPC backend guards and the getInvalidOperationError/getNotFoundError constructors a router asserts its own rejections with, plus deep dives on the worked chain shapes, server guards (requireEntity/requireMutation, TRPCError cause, awaiting a best-effort effect a rollback compensates), and Azure Functions logging/retry with capped dead-letter replay. Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
+description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch and try/finally banned), wrapping only what can actually fail, terminating every chain (.isOk/.isErr banned, never void a ResultAsync, noop as the ok handler, a callback nothing awaits terminating its own Result), .orTee(console.error) over console.warn/catch {}, who alerts a tRPC rejection (errorLink ownership, checkIsAlertedByErrorLink, background reads, alert coalescing), withFinalizer vs withFinalizerAsync, never new Error (InvalidOperationError, the unimplemented-stub exception, jsonDateParse for JSON with dates), the tRPC backend guards and the getInvalidOperationError/getNotFoundError constructors a router asserts its own rejections with, plus deep dives on the worked chain shapes, server guards (requireEntity/requireMutation, TRPCError cause, awaiting a best-effort effect a rollback compensates), and Azure Functions logging/retry with capped dead-letter replay. Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
 ---
 
 # Error Handling Conventions
@@ -75,10 +75,10 @@ import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } fr
 
 ## Who Alerts a tRPC Rejection
 
-`errorLink` owns `BAD_REQUEST`, `TOO_MANY_REQUESTS` and `UNPROCESSABLE_CONTENT` — it alerts them itself, so a caller catching the same rejection asks `getIsAlertedByErrorLink(error)` first and stays the owner only of what it alone can see (a blob PUT, a local guard). Alerting again puts two identical toasts on screen for one failure.
+`errorLink` owns `BAD_REQUEST`, `TOO_MANY_REQUESTS` and `UNPROCESSABLE_CONTENT` — it alerts them itself, so a caller catching the same rejection asks `checkIsAlertedByErrorLink(error)` first and stays the owner only of what it alone can see (a blob PUT, a local guard). Alerting again puts two identical toasts on screen for one failure.
 
 ```typescript
-if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+if (!checkIsAlertedByErrorLink(error)) createAlert(error.message, "error");
 ```
 
 - **That ownership is unconditional, and must stay that way.** The predicate is read off the error code alone, so any operation the link quietly declines to alert is an operation _nobody_ alerts — silence on both sides. `op.context.isBackground` therefore suppresses only the **login redirect**, never the alert: a background read failing is still a failure the user's own action caused, while a background `FORBIDDEN` (an hourly sweep hitting a room the user was just removed from) must never move them.

@@ -20,7 +20,7 @@ import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/con
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
+import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
@@ -382,7 +382,7 @@ export const baseRoomRouter = router({
     await isMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "deleteRoom", { signal })) {
-      if (!input.includes(roomId) || getIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
+      if (!input.includes(roomId) || checkIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
       yield roomId;
     }
   }),
@@ -390,7 +390,7 @@ export const baseRoomRouter = router({
     await isMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ roomId, sessionId, user }] of on(roomEventEmitter, "joinRoom", { signal })) {
-      if (!input.includes(roomId) || getIsSameDevice({ sessionId, userId: user.id }, ctx.getSessionPayload)) continue;
+      if (!input.includes(roomId) || checkIsSameDevice({ sessionId, userId: user.id }, ctx.getSessionPayload)) continue;
       // One subscription spans every room the client is in, so the room the event happened in travels with it.
       // Dropping it leaves the client to infer which room a join belongs to, and the only thing it can infer
       // From is the room that happens to be open
@@ -401,7 +401,7 @@ export const baseRoomRouter = router({
     await isMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "leaveRoom", { signal })) {
-      if (!input.includes(roomId) || getIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
+      if (!input.includes(roomId) || checkIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
       // Yielded with its room for the same reason a join is: a departure applied to the room the user happens
       // To be looking at removes a member who never left it
       yield { roomId, userId };

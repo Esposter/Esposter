@@ -23,7 +23,7 @@ flowchart TD
   Rule -- "anything else" --> Text["searchQuery = the text, verbatim"]
   Create --> Picker["Menu swaps to the type's picker"]
   Text --> Wait["Nothing happens until Enter"]
-  Enter["User presses Enter"] --> Empty{"getIsSearchQueryEmpty"}
+  Enter["User presses Enter"] --> Empty{"checkIsSearchQueryEmpty"}
   Empty -- "no text and no valued chip" --> Noop["Do nothing"]
   Empty -- "something to search on" --> Read["useReadSearchedMessages"]
 ```
@@ -94,7 +94,7 @@ Only the last chip is ever pending, because a chip is created by typing its keyw
 
 ## What a search sends
 
-Everything that searches goes through `getSearchableFilters`, on both sides of the wire. It drops pending chips, because they have no value to narrow on, and it drops exact repeats, because a second identical filter narrows nothing the first did not. `getIsSearchQueryEmpty` asks the same question, so a pending chip on its own is not a search.
+Everything that searches goes through `getSearchableFilters`, on both sides of the wire. It drops pending chips, because they have no value to narrow on, and it drops exact repeats, because a second identical filter narrows nothing the first did not. `checkIsSearchQueryEmpty` asks the same question, so a pending chip on its own is not a search.
 
 **Filters are not unique by type.** Azure Search takes one clause per filter, so two `from:` chips or two `has:` chips narrow together — `filtersToClauses` groups by type and emits a clause per value (`mentions:` being the one that collects its values into a single `arrayContains`). The wire and row schemas therefore constrain the array's length, not its uniqueness by type.
 
@@ -133,9 +133,9 @@ Results, totals and the current page are all keyed by room, so a response that l
 | `app/services/message/filter/getFilterTypeFromSearchQuery.ts` | The keyword-plus-colon rule, and the only place it is decided            |
 | `app/services/message/filter/SearchFilterComponentMap.ts`     | Filter type to the picker that gives it a value                          |
 | `app/services/message/filter/getFilterDisplayValue.ts`        | What a chip reads as, pending or complete                                |
-| `shared/services/message/getIsFilterPending.ts`               | The `""` sentinel test — the one definition of "waiting for a value"     |
+| `shared/services/message/checkIsFilterPending.ts`             | The `""` sentinel test — the one definition of "waiting for a value"     |
 | `shared/services/message/getSearchableFilters.ts`             | The filters a search runs with — pending chips and exact repeats dropped |
-| `shared/services/message/getIsSearchQueryEmpty.ts`            | Whether there is anything to search on at all                            |
+| `shared/services/message/checkIsSearchQueryEmpty.ts`          | Whether there is anything to search on at all                            |
 | `app/composables/message/search/useReadSearchedMessages.ts`   | The explicit-submit read, and the history row it earns                   |
 | `app/store/message/search/index.ts`                           | Per-room query, chips, results, totals and page                          |
 | `server/services/message/searchMessages.ts`                   | Clause assembly and the paged index read                                 |

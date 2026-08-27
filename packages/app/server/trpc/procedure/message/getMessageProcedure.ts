@@ -3,8 +3,8 @@ import type { z } from "zod";
 
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { MessageOperationPermission } from "#shared/models/message/MessageOperationPermission";
-import { getIsMessageAuthor } from "#shared/services/message/getIsMessageAuthor";
-import { getIsMessageOperationPermitted } from "#shared/services/message/getIsMessageOperationPermitted";
+import { checkIsMessageAuthor } from "#shared/services/message/checkIsMessageAuthor";
+import { checkIsMessageOperationPermitted } from "#shared/services/message/checkIsMessageOperationPermitted";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
@@ -50,9 +50,9 @@ export const getMessageProcedure = <T extends z.ZodType<Pick<MessageEntity, "par
         ? false
         : await hasPermission(ctx.db, ctx.getSessionPayload.user.id, input.partitionKey, RoomPermission.ManageMessages);
     if (
-      !getIsMessageOperationPermitted(permission, {
+      !checkIsMessageOperationPermitted(permission, {
         hasManageMessages,
-        isAuthor: getIsMessageAuthor(messageEntity, ctx.getSessionPayload.user.id),
+        isAuthor: checkIsMessageAuthor(messageEntity, ctx.getSessionPayload.user.id),
       })
     )
       throw new TRPCError({ code: "UNAUTHORIZED" });
