@@ -13,7 +13,7 @@ const ERROR_RULE = "trpc-procedure/no-hand-rolled-error";
 const RETURN_TYPE_RULE = "trpc-procedure/require-return-type";
 const OXLINT_BIN = join(import.meta.dirname, "..", "..", "node_modules", "oxlint", "bin", "oxlint");
 const FIXTURES = [
-  // require-return-type — the generic pins a public API surface, so its absence is the finding.
+  // `require-return-type` — the generic pins a public API surface, so its absence is the finding.
   { name: "bareQuery", source: `export const a = p.query(() => 1);`, violations: 1 },
   { name: "bareMutation", source: `export const a = p.mutation(async () => {});`, violations: 1 },
   { name: "genericQuery", source: `export const a = p.query<number>(() => 1);`, violations: 0 },
@@ -28,7 +28,7 @@ const FIXTURES = [
   { name: "drizzleQueryProperty", source: `export const a = ctx.db.query.posts.findFirst({});`, violations: 0 },
   // A bare identifier call is not a builder chain at all.
   { name: "bareIdentifierCall", source: `export const a = query(() => 1);`, violations: 0 },
-  // no-hand-rolled-error — a constructor already pairs each code with its message.
+  // `no-hand-rolled-error` — a constructor already pairs each code with its message.
   {
     name: "handRollsInvalidOperation",
     source: `export const a = () => { throw new TRPCError({ code: "BAD_REQUEST", message: new InvalidOperationError(o, n, c).message }); };`,
@@ -84,6 +84,13 @@ const FIXTURES = [
   {
     name: "handRollsAfterSpread",
     source: `export const a = () => { throw new TRPCError({ ...rest, code: "NOT_FOUND", message: new NotFoundError(n, i).message }); };`,
+    violations: 1,
+  },
+  // A spread after the hand-rolled message may override what the object ends up carrying, and the rule still
+  // Reports it: constructing an error to steal its message is the finding, whatever the object resolves to.
+  {
+    name: "handRollsBeforeSpread",
+    source: `export const a = () => { throw new TRPCError({ code: "NOT_FOUND", message: new NotFoundError(n, i).message, ...rest }); };`,
     violations: 1,
   },
   // An error class the repo has no guard constructor for is not reported — there is nothing to point at.
