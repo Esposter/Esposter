@@ -1,7 +1,7 @@
 import type { PointsLeaderboard } from "#shared/models/achievement/PointsLeaderboard";
 import type { UserAchievementWithRelations } from "@esposter/db-schema";
 
-import { AchievementDefinitionMap } from "#shared/services/achievement/achievementDefinitions";
+import { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
 import { buildPointsLeaderboard } from "@@/server/services/achievement/buildPointsLeaderboard";
 import { achievementEventEmitter } from "@@/server/services/achievement/events/achievementEventEmitter";
 import { on } from "@@/server/services/events/on";

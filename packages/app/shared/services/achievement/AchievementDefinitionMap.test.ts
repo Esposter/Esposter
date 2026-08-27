@@ -1,9 +1,9 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
-import { AchievementDefinitionMap } from "#shared/services/achievement/achievementDefinitions";
+import { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
 import { AchievementName, AchievementNames, EmailAchievementName } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
-describe("achievementDefinitions", () => {
+describe("AchievementDefinitionMap", () => {
   const achievementDefinitionNames = new Set(Object.keys(AchievementDefinitionMap) as AchievementName[]);
 
   test("has a definition for every AchievementName", () => {
