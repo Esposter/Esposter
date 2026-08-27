@@ -1,3 +1,4 @@
+import { NotInitializedError } from "@esposter/shared";
 import { dayjs } from "#shared/services/dayjs";
 import { WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
 import { ID_SEPARATOR } from "@esposter/shared";
@@ -21,8 +22,7 @@ export const createUploadFileToken = (
   // `createHmac` rejects outright, 500ing every upload with an arg-type error that names nothing useful. Fall
   // Back to the process env better-auth itself reads, and fail loudly if neither has it
   const secret = useRuntimeConfig().auth.secret || process.env.BETTER_AUTH_SECRET;
-  if (!secret)
-    throw new Error("BETTER_AUTH_SECRET is not set — upload grants cannot be signed. Set it in the environment.");
+  if (!secret) throw new NotInitializedError("BETTER_AUTH_SECRET");
   return `${expiresAt}${ID_SEPARATOR}${createHmac("sha256", secret)
     .update([userId, roomId, id, expiresAt].join(ID_SEPARATOR))
     .digest("base64url")}`;
