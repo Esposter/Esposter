@@ -10,17 +10,18 @@
 | `app/store`                                                            | —          | CRUD verbs, `store*` subscription handlers; split at `message` if too large                                                                                                                                     |
 | `app/composables`                                                      | —          | `use*` naming, the `{param}Value` `toValue` suffix                                                                                                                                                              |
 | `app/services`, `app/util`, `app/models`, `app/types`                  | —          | filename-is-the-export                                                                                                                                                                                          |
-| `app/components/Message`, `app/components/Resource`                    | —          | prop names, `is*`/`has*`/`show*`; two rows if one pass cannot read both                                                                                                                                         |
+| `app/components/Message`, `app/components/Resource`                    | —          | prop names, `is*`/`has*`/`show*`, and the words in the file names; two rows if one pass cannot read both                                                                                                        |
 | `app/components` — the rest                                            | —          |                                                                                                                                                                                                                 |
-| `packages/db`, `packages/db-schema`, `packages/db-mock`                | —          | column and table names are `drizzle`'s; identifiers around them are here                                                                                                                                        |
+| `packages/db`, `packages/db-schema`, `packages/db-mock`                | —          | column, table and enum member words are in scope — a rename is one forward migration; only the casing is `drizzle`'s                                                                                            |
 | `packages/azure`, `packages/azure-functions`, `packages/azure-mock`    | —          |                                                                                                                                                                                                                 |
 | `packages/virrun`, `packages/infra`, `packages/configuration`          | —          |                                                                                                                                                                                                                 |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`       | —          | published surfaces — a rename is a breaking change, so raise rather than do                                                                                                                                     |
 
-## Exclusions
-
-- Vue component **file** names — `vue-components` owns the tree's shape, and a component rename moves a file.
-- Database columns and enum members — `drizzle` and `zod` own those, and a rename costs a migration.
+A component file name is in scope for its **words** — the rule spelling `Navigation` over `Nav` reads a filename
+the same way it reads any other identifier. The prefix-and-fold question over that same tree stays
+`vue-components`'s: one tree, two questions, which is what keeps both ledgers whole. Nothing is excluded here on
+the grounds that a rename is expensive — that is the argument
+[no compatibility debt](/docs/architecture/no-compatibility-debt) already refuses, migrations included.
 
 ## Open findings
 

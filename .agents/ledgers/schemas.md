@@ -18,8 +18,10 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 ## Exclusions
 
 - `snapshot.json` and generated `migration.sql` — machine state; a fixup is a `drizzle` task, not a sweep finding.
-- Migration SQL already applied — a rename costs a migration, so a naming finding here is raised rather than swept.
-- Column naming — `drizzle`'s `pgTable` wrapper applies camelCase, so there is nothing to carry.
+  An applied migration is history rather than a source of names: a schema rename is swept here and emits a new
+  Forward migration, never an edit to the old file.
+- Column casing — `drizzle`'s `pgTable` wrapper applies it, so there is nothing to carry. The **words** in a
+  Column, table or enum member name are the `naming` ledger's.
 
 ## Find recipe
 
