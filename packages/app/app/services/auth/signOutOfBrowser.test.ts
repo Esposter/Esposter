@@ -2,9 +2,13 @@ import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
 import { RoutePath } from "@esposter/shared";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const signOutMock = vi.fn<() => Promise<void>>();
+// AuthClient is a better-auth dynamic-path Proxy, so signOut is not a configurable own property and cannot be
+// Spied on directly — mock the module and drive signOut through a hoisted mock instead
+const { signOutMock } = vi.hoisted(() => ({ signOutMock: vi.fn<() => Promise<void>>() }));
 
-vi.mock(import("@/services/auth/authClient"), () => ({ authClient: { signOut: () => signOutMock() } }));
+vi.mock(import("@/services/auth/authClient"), () => ({
+  authClient: { signOut: signOutMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
+}));
 
 describe(signOutOfBrowser, () => {
   const reloadMock = vi.fn<() => void>();
