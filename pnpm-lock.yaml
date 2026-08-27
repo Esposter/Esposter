@@ -180,8 +180,8 @@ catalogs:
       specifier: ^0.1.2
       version: 0.1.2
     '@electric-sql/pglite':
-      specifier: ^0.5.7
-      version: 0.5.7
+      specifier: ^0.5.8
+      version: 0.5.8
     '@eslint/core':
       specifier: ^1.2.1
       version: 1.2.1
@@ -1691,13 +1691,13 @@ importers:
     dependencies:
       '@electric-sql/pglite':
         specifier: 'catalog:'
-        version: 0.5.7
+        version: 0.5.8
       '@esposter/db-schema':
         specifier: workspace:*
         version: link:../db-schema
       drizzle-orm:
         specifier: 'catalog:'
-        version: 1.0.0-rc.4(@electric-sql/pglite@0.5.7)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(valibot@1.4.2(typescript@6.0.3))(zod@4.4.3)
+        version: 1.0.0-rc.4(@electric-sql/pglite@0.5.8)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(valibot@1.4.2(typescript@6.0.3))(zod@4.4.3)
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -3021,6 +3021,9 @@ packages:
 
   '@electric-sql/pglite@0.5.7':
     resolution: {integrity: sha512-6WBks0NFO6YUhGP03mCNkbJuVFWwrZPrzZ/vsnAPnsCD28pybdZ+yoTrlLlWFoZst3kdaju5pxIslV/jrr36nQ==}
+
+  '@electric-sql/pglite@0.5.8':
+    resolution: {integrity: sha512-n9tsbUOhwx2epK1V0ZG9Ar4SHWUju04dhmzZXiSBXwBoleOvIfals33NAaWgagQVAL4Rbvx/Ptsu3P+pA09f6Q==}
 
   '@emnapi/core@1.10.0':
     resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==}
@@ -16610,6 +16613,8 @@ snapshots:
   '@electric-sql/pglite@0.5.7':
     optional: true
 
+  '@electric-sql/pglite@0.5.8': {}
+
   '@emnapi/core@1.10.0':
     dependencies:
       '@emnapi/wasi-threads': 1.2.1
@@ -23336,6 +23341,14 @@ snapshots:
   drizzle-orm@1.0.0-rc.4(@electric-sql/pglite@0.5.7)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(valibot@1.4.2(typescript@6.0.3))(zod@4.4.3):
     optionalDependencies:
       '@electric-sql/pglite': 0.5.7
+      '@opentelemetry/api': 1.9.1
+      postgres: 3.4.9
+      valibot: 1.4.2(typescript@6.0.3)
+      zod: 4.4.3
+
+  drizzle-orm@1.0.0-rc.4(@electric-sql/pglite@0.5.8)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(valibot@1.4.2(typescript@6.0.3))(zod@4.4.3):
+    optionalDependencies:
+      '@electric-sql/pglite': 0.5.8
       '@opentelemetry/api': 1.9.1
       postgres: 3.4.9
       valibot: 1.4.2(typescript@6.0.3)
