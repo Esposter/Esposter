@@ -5,7 +5,6 @@ import { MoreDropdownLinkItems } from "@/services/app/MoreDropdownLinkItems";
 import { authClient } from "@/services/auth/authClient";
 import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
 import { RoutePath } from "@esposter/shared";
-import { mergeProps } from "vue";
 
 const { data: session } = await authClient.useSession(useFetch);
 const items = computed<ListLinkItem[]>(() =>
@@ -36,25 +35,22 @@ const menu = ref(false);
 </script>
 
 <template>
-  <v-menu v-model="menu" location="bottom start" :close-on-content-click="false">
-    <template #activator="{ props: menuProps }">
-      <v-tooltip v-if="session" location="bottom" text="Account">
-        <template #activator="{ props: tooltipProps }">
-          <v-avatar>
-            <v-btn h-full :="mergeProps(menuProps, tooltipProps)">
-              <StyledAvatar :image="session.user.image" :name="session.user.name" />
-            </v-btn>
-          </v-avatar>
-        </template>
-      </v-tooltip>
-      <v-tooltip v-else location="bottom" text="More">
-        <template #activator="{ props: tooltipProps }">
-          <v-avatar color="background">
-            <v-btn icon="mdi-chevron-down" :="mergeProps(menuProps, tooltipProps)" />
-          </v-avatar>
-        </template>
-      </v-tooltip>
-    </template>
-    <AppMenuLinkList :items @select="menu = false" />
-  </v-menu>
+  <!-- Signed in the activator is the reader's own avatar, signed out it is a chevron on the same background
+       plate the products grid beside it uses — one control either way, so the menu, its tooltip and the
+       activator's props stay the shared shell's problem rather than a hand-merged stack per branch -->
+  <v-avatar :color="session ? '' : 'background'">
+    <StyledTooltipMenuIconButton
+      v-model="menu"
+      :button-props="session ? { height: '100%' } : {}"
+      :icon="session ? '' : 'mdi-chevron-down'"
+      :menu-props="{ closeOnContentClick: false, location: 'bottom start' }"
+      :text="session ? 'Account' : 'More'"
+      :tooltip-props="{ location: 'bottom' }"
+    >
+      <template v-if="session" #activator>
+        <StyledAvatar :image="session.user.image" :name="session.user.name" />
+      </template>
+      <AppMenuLinkList :items @select="menu = false" />
+    </StyledTooltipMenuIconButton>
+  </v-avatar>
 </template>
