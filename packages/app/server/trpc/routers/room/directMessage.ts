@@ -1,5 +1,5 @@
-import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { DirectMessageParticipants } from "#shared/models/db/room/DirectMessageParticipants";
+import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { RoomInMessage, User } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 

@@ -1,5 +1,5 @@
-import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
+import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
 import type { PublishedResourceContent } from "#shared/models/resource/PublishedResourceContent";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";

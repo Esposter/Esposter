@@ -1,4 +1,5 @@
 import type { PushSubscription } from "@esposter/db-schema";
+
 import { pushSubscriptionSchema } from "@@/server/models/pushSubscription/PushSubscription";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";

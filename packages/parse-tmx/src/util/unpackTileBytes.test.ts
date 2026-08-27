@@ -1,5 +1,5 @@
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { unpackTileBytes } from "#src/util/unpackTileBytes";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(unpackTileBytes, () => {

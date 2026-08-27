@@ -1,9 +1,9 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
 
-import { getForbiddenError } from "@@/server/trpc/guards/getForbiddenError";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { requireReadableCallSession } from "@@/server/services/message/call/requireReadableCallSession";
+import { getForbiddenError } from "@@/server/trpc/guards/getForbiddenError";
 
 export const requireJoinedCallSession = async (
   db: Context["db"],

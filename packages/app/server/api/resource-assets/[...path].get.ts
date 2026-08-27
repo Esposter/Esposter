@@ -8,11 +8,11 @@ import { db } from "@@/server/db";
 import { assetRateLimiter } from "@@/server/services/rateLimiter/assetRateLimiter";
 import { checkIsRateLimitExceeded } from "@@/server/services/rateLimiter/checkIsRateLimitExceeded";
 import { getIpAddress } from "@@/server/services/request/getIpAddress";
+import { checkIsResourceAssetReadable } from "@@/server/services/resource/checkIsResourceAssetReadable";
 import {
   RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS,
   RESOURCE_ASSET_SAS_DURATION,
 } from "@@/server/services/resource/constants";
-import { checkIsResourceAssetReadable } from "@@/server/services/resource/checkIsResourceAssetReadable";
 import { generateReadSasUrl } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";

@@ -1,8 +1,8 @@
 import type { SourceMirrorDelta } from "#src/models/exec/wsl/SourceMirrorDelta";
 import type { SourceMirrorPublication } from "#src/models/exec/wsl/SourceMirrorPublication";
 
-import { getExcludeRelativePath } from "#src/services/exec/util/getExcludeRelativePath";
 import { checkIsBareNameExclude } from "#src/services/exec/util/checkIsBareNameExclude";
+import { getExcludeRelativePath } from "#src/services/exec/util/getExcludeRelativePath";
 import { getChangedExcludes } from "#src/services/exec/wsl/getChangedExcludes";
 // Diff what the mirror published after its last sync against a fresh host walk into the minimal sync
 // (SourceMirrorDelta): a new or changed entry (size/mtimeMs/target — rsync's classic quick-check signal) is copied; a

@@ -1,6 +1,6 @@
-import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import type { Context } from "@@/server/trpc/context";
 
+import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const requireCallSession = async (db: Context["db"], callSessionId: string) => {

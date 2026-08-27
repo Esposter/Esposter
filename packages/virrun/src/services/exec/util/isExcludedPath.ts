@@ -1,5 +1,5 @@
-import { getExcludeRelativePath } from "#src/services/exec/util/getExcludeRelativePath";
 import { checkIsBareNameExclude } from "#src/services/exec/util/checkIsBareNameExclude";
+import { getExcludeRelativePath } from "#src/services/exec/util/getExcludeRelativePath";
 // Match a posix relative path against virrun's exclude patterns — the one matcher both sides of the source boundary
 // Use, so what never enters the sandbox (the mirror walk, buildSourceMirrorManifest) and what may never leave it (the
 // Write-back mask, isUnderSnapshotLower) can't drift apart. Two pattern shapes, mirroring gitignore's own split: a

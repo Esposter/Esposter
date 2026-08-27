@@ -15,19 +15,14 @@ const baseExecuteAdminActionInputSchema = z.object({
   targetUserId: selectUserSchema.shape.id,
 });
 
-interface AExecuteAdminActionInput {
-  roomId: RoomInMessage["id"];
-  targetUserId: User["id"];
-}
+export type ExecuteAdminActionInput =
+  | TimeoutUserAdminActionInput
+  | UnparameterizedAdminActionInput
+  | WarnAdminActionInput;
 
 export interface TimeoutUserAdminActionInput extends AExecuteAdminActionInput {
   durationMs: number;
   readonly type: AdminActionType.TimeoutUser;
-}
-
-export interface WarnAdminActionInput extends AExecuteAdminActionInput {
-  reason?: string;
-  readonly type: AdminActionType.Warn;
 }
 
 export interface UnparameterizedAdminActionInput extends AExecuteAdminActionInput {
@@ -41,10 +36,15 @@ export interface UnparameterizedAdminActionInput extends AExecuteAdminActionInpu
     | AdminActionType.StopScreenShare;
 }
 
-export type ExecuteAdminActionInput =
-  | TimeoutUserAdminActionInput
-  | UnparameterizedAdminActionInput
-  | WarnAdminActionInput;
+export interface WarnAdminActionInput extends AExecuteAdminActionInput {
+  reason?: string;
+  readonly type: AdminActionType.Warn;
+}
+
+interface AExecuteAdminActionInput {
+  roomId: RoomInMessage["id"];
+  targetUserId: User["id"];
+}
 
 export const executeAdminActionInputSchema = z.discriminatedUnion("type", [
   z.object({

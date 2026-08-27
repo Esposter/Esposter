@@ -1,7 +1,7 @@
 import type { WslSourceMirrorSync } from "#src/models/exec/wsl/WslSourceMirrorSync";
 
-import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "#src/services/exec/util/constants";
 import { checkIsBareNameExclude } from "#src/services/exec/util/checkIsBareNameExclude";
+import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "#src/services/exec/util/constants";
 import { buildSourceMirrorManifest } from "#src/services/exec/wsl/buildSourceMirrorManifest";
 import {
   VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX,
