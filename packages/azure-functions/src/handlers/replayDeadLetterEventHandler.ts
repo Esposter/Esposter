@@ -90,7 +90,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     }
     // Judged per event, not per blob: Event Grid batches whatever expired together, so one poison payload must not
     // Strand the transient failures sharing its blob, and a blob-level count would be meaningless anyway once the
-    // Batch splits across cycles. GetIsReplayable owns both bars — the replay cap and handler idempotency.
+    // Batch splits across cycles. Both bars — the replay cap and handler idempotency — are `checkIsReplayable`'s.
     // The raw objects parsed above stay index-aligned with the narrowed events: the schema keeps only the five
     // Fields a republish needs, dropping Event Grid's dead-letter diagnostics (deadLetterReason,
     // DeliveryAttempts, lastDeliveryOutcome). Those are the only record of WHY a payload is here, which is the
