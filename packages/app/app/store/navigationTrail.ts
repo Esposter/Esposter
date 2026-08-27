@@ -19,5 +19,8 @@ export const useNavigationTrailStore = defineStore("navigationTrail", () => {
   const setTrail = (newTrail: NavigationTrailPage[]) => {
     trail.value = newTrail;
   };
-  return { closeTo, crumbs, setTrail, trail };
+  // `readonly` is what makes writing past `setTrail` impossible rather than merely discouraged — the plugin
+  // Recomputes the whole trail from the navigation, so a component splicing this would put the store out of
+  // Step with the history entry it mirrors
+  return { closeTo, crumbs, setTrail, trail: readonly(trail) };
 });
