@@ -3,8 +3,7 @@ import { useCommentStore } from "@/store/post/comment";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface PostCreateCommentRichTextEditorProps {
-  // The comment being replied to, or the post itself — a comment is a post, so the composer under a reply and
-  // The one under the page are the same editor naming a different parent
+  // The comment being replied to, or the post itself
   parentId: string;
 }
 

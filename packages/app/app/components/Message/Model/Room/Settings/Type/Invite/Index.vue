@@ -15,13 +15,9 @@ const { inviteRoomId } = storeToRefs(dialogStore);
 const { hasMore, items, readMoreRoomInvites, readRoomInvites } = useReadRoomInvites(room.id);
 const saveRoom = useSaveRoom(() => room);
 
-// The panel is gated on ManageRoom, so anyone who reaches it may act on every row it lists — the pause below and
-// The revokes beside each link are the same authority
 await readRoomInvites();
 </script>
 
-<!-- Discord's Invites panel, wording included: the room's active links, with creating spelled as a link into the
-     dialog that does it — creating stays where the want is -->
 <template>
   <v-container fluid>
     <v-row>

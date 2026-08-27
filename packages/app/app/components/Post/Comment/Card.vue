@@ -13,8 +13,8 @@ interface PostCommentCardProps {
 }
 
 const { comment, depth } = defineProps<PostCommentCardProps>();
-// The synchronous form, not the awaited one: everything it decides here is an action affordance rather than
-// Content, and a tree renders one of these per node — an awaited session makes every node an async boundary
+// The synchronous form: a tree renders one of these per node, and the awaited one makes every node an async
+// Boundary for something that only gates action affordances
 const session = authClient.useSession();
 const commentDialogStore = useCommentDialogStore();
 const { replyingId } = storeToRefs(commentDialogStore);
@@ -22,8 +22,7 @@ const { setDeletingComment } = commentDialogStore;
 const isCreator = computed(() => comment.userId === session.value.data?.user.id);
 const isUpdateMode = ref(false);
 const isExpanded = ref(false);
-// Indentation stops moving right at the clamp while the nesting carries on, so a thread deeper than the screen
-// Is wide offers its own page instead of a column of text one word across
+// Indentation stops at the clamp while the nesting carries on
 const isClamped = computed(() => depth >= MAX_COMMENT_INDENT_DEPTH);
 const replyLabel = computed(() => `${comment.noComments} ${pluralize("reply", comment.noComments, "replies")}`);
 </script>
@@ -64,8 +63,6 @@ const replyLabel = computed(() => `${comment.noComments} ${pluralize("reply", co
             :text="comment.noComments > 0 ? 'Delete Comment And Replies' : 'Delete Comment'"
             @click="setDeletingComment(comment)"
           />
-          <!-- Collapsed until asked for, so opening a branch is what reads it. Past the indent clamp the thread
-          carries on somewhere it has room, which is its own page — a comment is a post and already has one -->
           <v-btn
             v-if="comment.noComments > 0 && !isClamped"
             size="small"
@@ -86,8 +83,7 @@ const replyLabel = computed(() => `${comment.noComments} ${pluralize("reply", co
         <PostCommentCreateRichTextEditor v-if="replyingId === comment.id" :parent-id="comment.id" pb-2 />
       </v-card>
     </div>
-    <!-- The read is the branch's own, so the boundary is too: without one every expansion anywhere in the tree
-    suspends the page that mounted it -->
+    <!-- Without a boundary of its own, every expansion anywhere in the tree suspends the page that mounted it -->
     <Suspense v-if="isExpanded">
       <PostCommentBranch :parent-id="comment.id" :depth="depth + 1" />
       <template #fallback>

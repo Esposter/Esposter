@@ -1,6 +1,6 @@
 ---
 name: vue
-description: Esposter Vue 3 SFC conventions — macro ordering, script-setup declaration order, template attribute ordering and template conventions, inlining single-use functions and handlers, v-model vs split bindings, never normalizeString in Vue, optional refs, useTemplateRef, computed by cost, identity and cadence, map lookups, the watch decision tree plus watch aliases and hook placement, browser globals via window., SSR guards via getIsServer, and every rendered date being a NuxtTime — plus deep dives on inline handlers, forms and upsert mode, the auth session, computed extraction, template gotchas (v-html, dotted slots, template casts), the compiled-out Options API runtime, and date rendering. Apply when writing or reviewing .vue files, or rendering a date or time.
+description: Esposter Vue 3 SFC conventions — macro ordering, script-setup declaration order, template attribute ordering and template conventions, inlining single-use functions and handlers, v-model vs split bindings, never normalizeString in Vue, optional refs, useTemplateRef, computed by cost, identity and cadence, map lookups, the watch decision tree plus watch aliases and hook placement, browser globals via window., SSR guards via getIsServer, and every rendered date being a NuxtTime — plus deep dives on inline handlers, forms and upsert mode, the auth session, computed extraction, template gotchas (v-html, dotted slots, closure narrowing, template casts), the compiled-out Options API runtime, and date rendering. Apply when writing or reviewing .vue files, or rendering a date or time.
 ---
 
 # Vue Conventions
@@ -81,7 +81,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 - **No allocating expressions in render positions** — `Object.*` in a `:prop`, `v-for` source or `{{ }}` allocates a fresh reference every render. Enforced by `vue/no-restricted-syntax`, whose message states the fix.
 - **Event modifiers over raw event methods** — `@click.stop`, `@keydown.enter.prevent` (`vue/no-restricted-syntax`). Raw calls stay correct where no modifier can encode the trigger: behind a runtime guard, and in programmatic listeners (`useEventListener`, `onKeyStroke`, Tiptap `onKeyDown`). `stopImmediatePropagation()` is banned outright — it couples behaviour to listener registration order.
 - Reassigning a `defineModel` vs mutating it in place is a deliberate semantic choice — don't "fix" one into the other.
-- **`references/template-gotchas.md`** — read it when a directive or slot renders nothing, or vue-tsc cannot see a template identifier: `v-html` on a component, a dotted slot name, and why a type-only import is enough for a template cast.
+- **`references/template-gotchas.md`** — read it when a directive or slot renders nothing, or vue-tsc cannot see a template identifier: `v-html` on a component, a dotted slot name, a guard that stops narrowing at a closure inside an inline handler, and why a type-only import is enough for a template cast.
 
 ## Props, Refs & Computed
 

@@ -5,15 +5,12 @@ import { useMutation } from "@/composables/shared/useMutation";
 import { inviteCreateHooks } from "@/services/message/room/invite/inviteCreateHooks";
 import { useInviteStore } from "@/store/message/room/invite";
 
-// The room's whole set, which only the settings panel reads. Kept apart from the member's own link rather than
-// Folded into it: that map answers "what may I hand out", one row per room, and this list answers "what is out
-// There", which is a different question behind a different gate
+// The room's whole set, behind ManageRoom — apart from `useInviteStore`, which holds the reader's own link
 export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
   const { $trpc } = useNuxtApp();
   const inviteStore = useInviteStore();
   const { executeMutation } = useMutation();
-  // Keyed by room and read against a named key: the panel names the room it manages, so a read for the room the
-  // Reader just left is filed under that room instead of over the list on screen
+  // Keyed by room: a read for the room the reader just left is filed under it rather than over the list on screen
   const { getSlice, getSliceOperationData } = useCursorPaginationDataMap<InviteInMessageWithCreator>();
 
   const revokeInvite = async (input: RevokeInviteInput) => {
@@ -36,8 +33,7 @@ export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
       key: input.id,
     });
   };
-  // A link minted from the dialog belongs in this list too, and one invite per member per room means the create
-  // Replaced whatever that member held — so the row it replaced leaves with it
+  // One invite per member per room, so a link minted from the dialog replaces whatever that member held here
   inviteCreateHooks.register((roomId, invite) => {
     const { isLoaded, items } = getSlice(roomId);
     // A list nobody has read yet is left alone: its first read carries the new row anyway

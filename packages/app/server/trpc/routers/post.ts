@@ -23,7 +23,6 @@ import { getPostRanking } from "@@/server/services/post/getPostRanking";
 import { getPostWithViewerLike } from "@@/server/services/post/getPostWithViewerLike";
 import { getViewerPostRelations } from "@@/server/services/post/getViewerPostRelations";
 import { router } from "@@/server/trpc";
-import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
@@ -99,7 +98,6 @@ export const postRouter = router({
         );
         // The parent's chain plus the parent itself: what this reply inherits, and the posts whose counters move
         const ancestorIds = [...parentPost.ancestorIds, parentPost.id];
-
         const createdAt = new Date();
         const newComment = requireMutation(
           (
@@ -189,9 +187,6 @@ export const postRouter = router({
         DerivedDatabaseEntityType.Comment,
         input,
       );
-      if (!deletedComment.parentId)
-        throw getInvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, input);
-
       // Every ancestor loses the whole subtree, and the deleted row carries the list of which posts those are
       const { ancestorIds } = deletedComment;
       await tx

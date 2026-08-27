@@ -8,8 +8,7 @@ const { deleteComment, getSlice } = commentStore;
 const commentDialogStore = useCommentDialogStore();
 const { deletingId, deletingParentId } = storeToRefs(commentDialogStore);
 // Resolved through the primitive rather than a computed of our own, so a target whose comment has left the
-// Tree is dropped with it instead of re-opening this dialog by itself when a later read brings it back. The
-// Branch is named by the card that set the target, so this reads one list rather than the whole tree
+// Tree is dropped with it instead of re-opening this dialog when a later read brings it back
 const { isOpen, item: comment } = useSingletonDialog(deletingId, () =>
   getSlice(deletingParentId.value).items.value.find(({ id }) => id === deletingId.value),
 );
@@ -23,9 +22,9 @@ const { isOpen, item: comment } = useSingletonDialog(deletingId, () =>
     @delete="
       async (onComplete) => {
         if (!comment) return;
+        // Narrowing does not survive into the closure below, so the id is read out here
         const commentId = comment.id;
-        const parentId = deletingParentId;
-        await withFinalizerAsync(() => deleteComment(commentId, parentId), onComplete);
+        await withFinalizerAsync(() => deleteComment(commentId, deletingParentId), onComplete);
       }
     "
   >

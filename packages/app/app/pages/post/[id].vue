@@ -6,8 +6,6 @@ import { useCommentStore } from "@/store/post/comment";
 definePageMeta({ validate });
 
 const { data: session } = await authClient.useSession(useFetch);
-// A comment is a post, so this is the same page rerooted when the route names one — the thread below it reads
-// The same way, and the comment renders at depth zero rather than at the depth it is stored with
 const post = await useReadPostFromRoute();
 const commentStore = useCommentStore();
 const { currentPost } = storeToRefs(commentStore);
@@ -33,8 +31,6 @@ currentPost.value = post;
             </v-container>
             <v-container>
               <PostCommentEmptyBanner v-if="currentPost.noComments === 0" />
-              <!-- The route's post is a branch like any other, so the page mounts the same component a reply ten
-              levels down does -->
               <PostCommentBranch v-else :parent-id="currentPost.id" :depth="0" />
             </v-container>
           </StyledCard>
