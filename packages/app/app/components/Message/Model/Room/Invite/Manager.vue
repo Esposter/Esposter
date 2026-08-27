@@ -2,7 +2,6 @@
 import type { CreateInviteInput } from "#shared/models/db/room/CreateInviteInput";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { dayjs } from "#shared/services/dayjs";
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { pluralize } from "#shared/util/text/pluralize";
@@ -41,21 +40,8 @@ const onUpdateOptions = async () => {
   if (invite.value) await onCreateInvite();
 };
 // The panel outlives the link it shows, so an invite that lapses while it is open has to flip the copy rather
-// Than read "expires 5 minutes ago". One timeout at the expiry instant, restarted whenever the link changes
-const remainingExpiryMs = computed(() => (invite.value?.expiresAt ? dayjs(invite.value.expiresAt).diff() : 0));
-const isExpired = ref(false);
-const { start: startExpiryTimeout, stop: stopExpiryTimeout } = useTimeoutFn(
-  () => {
-    isExpired.value = true;
-  },
-  remainingExpiryMs,
-  { immediate: false },
-);
-watchImmediate(remainingExpiryMs, (newRemainingExpiryMs) => {
-  stopExpiryTimeout();
-  isExpired.value = Boolean(invite.value?.expiresAt) && newRemainingExpiryMs <= 0;
-  if (newRemainingExpiryMs > 0) startExpiryTimeout();
-});
+// Than read "expires 5 minutes ago"
+const { isExpired } = useCountdown(() => invite.value?.expiresAt);
 const inviteLink = computed(() =>
   invite.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(invite.value.id)}` : "",
 );
