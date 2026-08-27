@@ -3,5 +3,5 @@ import { router } from "@@/server/trpc";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 
 export const appRouter = router({
-  readBuildVersion: standardRateLimitedProcedure.query(() => getCommitCount()),
+  readBuildVersion: standardRateLimitedProcedure.query<number>(() => getCommitCount()),
 });

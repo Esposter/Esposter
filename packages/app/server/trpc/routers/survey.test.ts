@@ -13,7 +13,14 @@ import { programRouter } from "@@/server/trpc/routers/program";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
-import { AzureEntityType, AzureTable, resources, ResourceType, SurveyResponseMode } from "@esposter/db-schema";
+import {
+  AzureEntityType,
+  AzureTable,
+  DatabaseEntityType,
+  resources,
+  ResourceType,
+  SurveyResponseMode,
+} from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
@@ -138,7 +145,7 @@ describe("survey", () => {
     const newResource = await caller.createResource({ name });
 
     await expect(caller.readPublishedResourceContent(newResource.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: NOT_FOUND]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.ResourcePublication, newResource.id).message}]`,
     );
   });
 

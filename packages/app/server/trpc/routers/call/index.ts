@@ -1,3 +1,4 @@
+import type { CallSessionInMessage } from "@esposter/db-schema";
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { JoinCallOutput } from "@@/server/models/room/call/JoinCallOutput";
 
@@ -66,7 +67,7 @@ const requireThreadRoot = async (roomId: string, threadRootRowKey: string) => {
 };
 
 export const baseCallRouter = router({
-  createCall: standardAuthedProcedure.mutation(async ({ ctx }) => {
+  createCall: standardAuthedProcedure.mutation<{ callSessionId: CallSessionInMessage["id"] }>(async ({ ctx }) => {
     const callSessionId = await createStandaloneCallSessionId(ctx.db, ctx.getSessionPayload.user.id);
     return { callSessionId };
   }),
@@ -174,10 +175,12 @@ export const baseCallRouter = router({
       await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, callSessionId);
       return callSessionParticipantMap.get(callSessionId) ?? new Map();
     }),
-  readCallSession: standardAuthedProcedure.input(callSessionInputSchema).query(async ({ ctx, input: { id } }) => {
-    const callSession = await requireReadableCallSession(ctx.db, ctx.getSessionPayload, id);
-    return { id: callSession.id, roomId: callSession.roomId, userId: callSession.userId };
-  }),
+  readCallSession: standardAuthedProcedure
+    .input(callSessionInputSchema)
+    .query<Pick<CallSessionInMessage, "id" | "roomId" | "userId">>(async ({ ctx, input: { id } }) => {
+      const callSession = await requireReadableCallSession(ctx.db, ctx.getSessionPayload, id);
+      return { id: callSession.id, roomId: callSession.roomId, userId: callSession.userId };
+    }),
   readCallSessionId: getMemberProcedure(roomCallInputSchema, "roomId").query<string>(
     ({ ctx, input: { roomId, threadRootRowKey } }) => readCallSessionId(ctx.db, roomId, threadRootRowKey),
   ),

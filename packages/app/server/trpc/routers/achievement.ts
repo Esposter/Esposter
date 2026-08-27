@@ -29,7 +29,7 @@ export const achievementRouter = router({
       if (updatedUserAchievements.length > 0) yield updatedUserAchievements;
     }
   }),
-  readAchievementMap: standardAuthedProcedure.query(async ({ ctx }) => {
+  readAchievementMap: standardAuthedProcedure.query<typeof AchievementDefinitionMap>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const unlockedUserAchievements = await ctx.db.query.userAchievements.findMany({
       where: { unlockedAt: { isNotNull: true }, userId: { eq: userId } },

@@ -1,3 +1,5 @@
+import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import type { DirectMessageParticipants } from "#shared/models/db/room/DirectMessageParticipants";
 import type { RoomInMessage, User } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
@@ -214,19 +216,21 @@ export const directMessageRouter = router({
     );
     return targetUser;
   }),
-  hideDirectMessage: standardAuthedProcedure.input(hideDirectMessageInputSchema).mutation(async ({ ctx, input }) => {
-    await isMember(ctx.db, ctx.getSessionPayload, input);
-    await assertIsRoom(ctx.db, input, RoomType.DirectMessage);
-    await ctx.db
-      .update(usersToRoomsInMessage)
-      .set({ isHidden: true })
-      .where(
-        and(eq(usersToRoomsInMessage.roomId, input), eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id)),
-      );
-  }),
+  hideDirectMessage: standardAuthedProcedure
+    .input(hideDirectMessageInputSchema)
+    .mutation<void>(async ({ ctx, input }) => {
+      await isMember(ctx.db, ctx.getSessionPayload, input);
+      await assertIsRoom(ctx.db, input, RoomType.DirectMessage);
+      await ctx.db
+        .update(usersToRoomsInMessage)
+        .set({ isHidden: true })
+        .where(
+          and(eq(usersToRoomsInMessage.roomId, input), eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id)),
+        );
+    }),
   readDirectMessageParticipants: standardAuthedProcedure
     .input(readDirectMessageParticipantsInputSchema)
-    .query(async ({ ctx, input: roomIds }) => {
+    .query<DirectMessageParticipants[]>(async ({ ctx, input: roomIds }) => {
       const utr1 = alias(usersToRoomsInMessage, "utr1");
       const utr2 = alias(usersToRoomsInMessage, "utr2");
       const rows = await ctx.db
@@ -249,7 +253,7 @@ export const directMessageRouter = router({
     }),
   readDirectMessages: standardAuthedProcedure
     .input(readDirectMessagesInputSchema)
-    .query(async ({ ctx, input: { cursor, limit, sortBy } }) => {
+    .query<CursorPaginationData<RoomInMessage>>(async ({ ctx, input: { cursor, limit, sortBy } }) => {
       const innerJoinCondition = and(
         eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
         eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),

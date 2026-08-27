@@ -1,3 +1,4 @@
+import type { PushSubscription } from "@esposter/db-schema";
 import { pushSubscriptionSchema } from "@@/server/models/pushSubscription/PushSubscription";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -7,7 +8,7 @@ import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 export const pushSubscriptionRouter = router({
-  subscribe: standardAuthedProcedure.input(pushSubscriptionSchema).mutation(
+  subscribe: standardAuthedProcedure.input(pushSubscriptionSchema).mutation<PushSubscription>(
     async ({
       ctx,
       input: {
@@ -48,20 +49,22 @@ export const pushSubscriptionRouter = router({
       return newPushSubscription;
     },
   ),
-  unsubscribe: standardAuthedProcedure.input(pushSubscriptionSchema.shape.endpoint).mutation(async ({ ctx, input }) => {
-    const deletedPushSubscription = requireMutation(
-      (
-        await ctx.db
-          .delete(pushSubscriptions)
-          .where(
-            and(eq(pushSubscriptions.endpoint, input), eq(pushSubscriptions.userId, ctx.getSessionPayload.user.id)),
-          )
-          .returning()
-      )[0],
-      Operation.Delete,
-      DatabaseEntityType.PushSubscription,
-      "unsubscribe",
-    );
-    return deletedPushSubscription;
-  }),
+  unsubscribe: standardAuthedProcedure
+    .input(pushSubscriptionSchema.shape.endpoint)
+    .mutation<PushSubscription>(async ({ ctx, input }) => {
+      const deletedPushSubscription = requireMutation(
+        (
+          await ctx.db
+            .delete(pushSubscriptions)
+            .where(
+              and(eq(pushSubscriptions.endpoint, input), eq(pushSubscriptions.userId, ctx.getSessionPayload.user.id)),
+            )
+            .returning()
+        )[0],
+        Operation.Delete,
+        DatabaseEntityType.PushSubscription,
+        "unsubscribe",
+      );
+      return deletedPushSubscription;
+    }),
 });

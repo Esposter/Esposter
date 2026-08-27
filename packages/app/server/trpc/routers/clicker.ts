@@ -8,8 +8,8 @@ import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardR
 import { AzureContainer } from "@esposter/db-schema";
 
 export const clickerRouter = router({
-  readBuildingMap: standardRateLimitedProcedure.query(() => BuildingMap),
+  readBuildingMap: standardRateLimitedProcedure.query<typeof BuildingMap>(() => BuildingMap),
   readClicker: createReadBlobStateProcedure(AzureContainer.ClickerAssets, ClickerSave),
-  readUpgradeMap: standardRateLimitedProcedure.query(() => UpgradeMap),
+  readUpgradeMap: standardRateLimitedProcedure.query<typeof UpgradeMap>(() => UpgradeMap),
   saveClicker: createSaveBlobStateProcedure(AzureContainer.ClickerAssets, clickerSaveSchema),
 });

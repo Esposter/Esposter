@@ -1,3 +1,4 @@
+import type { UserToRoomInMessage } from "@esposter/db-schema";
 import { updateUserToRoomInputSchema } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
 import { on } from "@@/server/services/events/on";
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
@@ -23,7 +24,7 @@ const onUpdateUserToRoomInputSchema = roomIdsSchema.shape.roomIds.min(1);
 
 export const userToRoomRouter = router({
   // Resets the caller's own mention badge on room view; idempotent — only emits when a count was cleared.
-  clearMentionCount: getMemberProcedure(roomIdSchema, "roomId").mutation(async ({ ctx, input }) => {
+  clearMentionCount: getMemberProcedure(roomIdSchema, "roomId").mutation<void>(async ({ ctx, input }) => {
     const updatedUserToRoom = (
       await ctx.db
         .update(usersToRoomsInMessage)
@@ -50,20 +51,24 @@ export const userToRoomRouter = router({
       yield data;
     }
   }),
-  readMyUsersToRooms: standardAuthedProcedure.input(readMyUsersToRoomsInputSchema).query(async ({ ctx, input }) => {
-    await isMember(ctx.db, ctx.getSessionPayload, input.roomIds);
-    return ctx.db.query.usersToRoomsInMessage.findMany({
-      where: { roomId: { in: input.roomIds }, userId: { eq: ctx.getSessionPayload.user.id } },
-    });
-  }),
-  readNicknames: standardAuthedProcedure.input(readNicknamesInputSchema).query(async ({ ctx, input }) => {
-    await isMember(ctx.db, ctx.getSessionPayload, [input.roomId]);
-    return ctx.db.query.usersToRoomsInMessage.findMany({
-      columns: { nickname: true, roomId: true, userId: true },
-      where: { roomId: { eq: input.roomId }, userId: { in: input.userIds } },
-    });
-  }),
-  updateUserToRoom: getMemberProcedure(updateUserToRoomInputSchema, "roomId").mutation(({ ctx, input }) =>
-    updateUserToRoom(ctx.db, ctx.getSessionPayload.user.id, input),
+  readMyUsersToRooms: standardAuthedProcedure
+    .input(readMyUsersToRoomsInputSchema)
+    .query<UserToRoomInMessage[]>(async ({ ctx, input }) => {
+      await isMember(ctx.db, ctx.getSessionPayload, input.roomIds);
+      return ctx.db.query.usersToRoomsInMessage.findMany({
+        where: { roomId: { in: input.roomIds }, userId: { eq: ctx.getSessionPayload.user.id } },
+      });
+    }),
+  readNicknames: standardAuthedProcedure
+    .input(readNicknamesInputSchema)
+    .query<Pick<UserToRoomInMessage, "nickname" | "roomId" | "userId">[]>(async ({ ctx, input }) => {
+      await isMember(ctx.db, ctx.getSessionPayload, [input.roomId]);
+      return ctx.db.query.usersToRoomsInMessage.findMany({
+        columns: { nickname: true, roomId: true, userId: true },
+        where: { roomId: { eq: input.roomId }, userId: { in: input.userIds } },
+      });
+    }),
+  updateUserToRoom: getMemberProcedure(updateUserToRoomInputSchema, "roomId").mutation<UserToRoomInMessage>(
+    ({ ctx, input }) => updateUserToRoom(ctx.db, ctx.getSessionPayload.user.id, input),
   ),
 });

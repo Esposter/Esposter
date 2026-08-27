@@ -37,3 +37,5 @@ export const pushSubscriptions = pgTable(
     ],
   },
 );
+
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;

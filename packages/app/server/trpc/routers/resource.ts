@@ -1,3 +1,4 @@
+import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { PublishHistoryVersion } from "#shared/models/resource/PublishHistoryVersion";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
@@ -191,7 +192,7 @@ const createResourcesWhere = (
 };
 
 export const resourceRouter = router({
-  count: standardAuthedProcedure.input(resourceFilterInputSchema.prefault({})).query(
+  count: standardAuthedProcedure.input(resourceFilterInputSchema.prefault({})).query<number>(
     async ({ ctx, input }) =>
       takeOne(
         await ctx.db
@@ -200,7 +201,7 @@ export const resourceRouter = router({
           .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input)),
       ).count,
   ),
-  countDeletedResources: standardAuthedProcedure.query(
+  countDeletedResources: standardAuthedProcedure.query<number>(
     async ({ ctx }) =>
       takeOne(
         await ctx.db
@@ -311,20 +312,20 @@ export const resourceRouter = router({
       return ctx.resource;
     },
   ),
-  readActivities: getOwnerProcedure(undefined, readActivitiesInputSchema, "id").query(
-    async ({ input: { cursor, id, limit } }) => {
-      const clauses: Clause<ResourceActivityEntity>[] = [
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: id },
-      ];
-      const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
-      return readCursorPaginationDataAzureTable(resourceActivityClient, ResourceActivityEntity, {
-        clauses,
-        cursor,
-        limit,
-        sortBy: [MESSAGE_ROWKEY_SORT_ITEM],
-      });
-    },
-  ),
+  readActivities: getOwnerProcedure(undefined, readActivitiesInputSchema, "id").query<
+    CursorPaginationData<ResourceActivityEntity>
+  >(async ({ input: { cursor, id, limit } }) => {
+    const clauses: Clause<ResourceActivityEntity>[] = [
+      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: id },
+    ];
+    const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
+    return readCursorPaginationDataAzureTable(resourceActivityClient, ResourceActivityEntity, {
+      clauses,
+      cursor,
+      limit,
+      sortBy: [MESSAGE_ROWKEY_SORT_ITEM],
+    });
+  }),
   readDeletedResources: standardAuthedProcedure
     .input(readDeletedResourcesInputSchema)
     .query<OffsetPaginationData<ResourceListItem>>(async ({ ctx, input: { limit, offset, sortBy } }) => {
@@ -404,16 +405,18 @@ export const resourceRouter = router({
     }),
   // An upsert rather than an insert: the open that just happened is always the newest, so there is nothing to
   // Compare. Owner-scoped, like every other resource write
-  recordAccess: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation(async ({ ctx, input: { id } }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    await ctx.db
-      .insert(resourceAccesses)
-      .values({ resourceId: id, userId })
-      .onConflictDoUpdate({
-        set: { accessedAt: new Date() },
-        target: [resourceAccesses.userId, resourceAccesses.resourceId],
-      });
-  }),
+  recordAccess: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<void>(
+    async ({ ctx, input: { id } }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      await ctx.db
+        .insert(resourceAccesses)
+        .values({ resourceId: id, userId })
+        .onConflictDoUpdate({
+          set: { accessedAt: new Date() },
+          target: [resourceAccesses.userId, resourceAccesses.resourceId],
+        });
+    },
+  ),
   // Restore copies a snapshot's content into the working copy through saveResourceContent semantics
   // (contentVersion++). The publication is never re-pointed — a restore produces a Draft to review and
   // Re-publish, mirroring the recycle bin's restore-returns-a-Draft rule.

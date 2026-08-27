@@ -37,7 +37,7 @@
       }
     },
     {
-      "files": ["packages/app/server/trpc/procedure/**/*.ts", "packages/app/server/trpc/routers/message/**/*.ts"],
+      "files": ["packages/app/server/trpc/**/*.ts"],
       "rules": {
         "trpc-procedure/require-return-type": "error"
       }

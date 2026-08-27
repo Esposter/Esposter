@@ -1,3 +1,4 @@
+import type { ReadInviteResult } from "#shared/models/db/room/ReadInviteResult";
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
@@ -120,7 +121,7 @@ const readMembersByIdsInputSchema = z.object({
 const readInviteInputSchema = selectInviteInMessageSchema.shape.id;
 
 export const baseRoomRouter = router({
-  countMembers: getMemberProcedure(roomIdSchema, "roomId").query(
+  countMembers: getMemberProcedure(roomIdSchema, "roomId").query<number>(
     async ({ ctx, input: { roomId } }) =>
       takeOne(
         await ctx.db
@@ -232,17 +233,18 @@ export const baseRoomRouter = router({
   deleteRoom: standardAuthedProcedure
     .input(deleteRoomInputSchema)
     .mutation<RoomInMessage>(({ ctx, input }) => deleteRoom(ctx.db, ctx.getSessionPayload, input)),
-  generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").mutation(
-    async ({ input: { roomId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-      // A unique segment per upload so a re-upload never lands on a prior blob name — that is what lets the cleanup
-      // On image change (below) delete stale versions without a delayed delete ever removing a freshly uploaded one
-      const blobName = `${getRoomProfileImageBlobPrefix(roomId)}/${crypto.randomUUID()}`;
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      const sasUrl = await generateWriteSasUrl(blockBlobClient);
-      return { publicUrl: blockBlobClient.url, sasUrl };
-    },
-  ),
+  generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").mutation<{
+    publicUrl: string;
+    sasUrl: string;
+  }>(async ({ input: { roomId } }) => {
+    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+    // A unique segment per upload so a re-upload never lands on a prior blob name — that is what lets the cleanup
+    // On image change (below) delete stale versions without a delayed delete ever removing a freshly uploaded one
+    const blobName = `${getRoomProfileImageBlobPrefix(roomId)}/${crypto.randomUUID()}`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    const sasUrl = await generateWriteSasUrl(blockBlobClient);
+    return { publicUrl: blockBlobClient.url, sasUrl };
+  }),
   joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const { roomId, roomInMessage, user } = await ctx.db.transaction(async (tx) => {
       // The room the token names is read and locked before a use is consumed, and the lock is held through the
@@ -417,26 +419,28 @@ export const baseRoomRouter = router({
       yield data;
     }
   }),
-  readInvite: standardAuthedProcedure.input(readInviteInputSchema).query(async ({ ctx, input }) => {
-    const invite = await ctx.db.query.invitesInMessage.findFirst({
-      where: { id: { eq: input } },
-      with: InviteInMessageRelations,
-    });
-    // Expired/exhausted invites behave exactly like unknown tokens — don't leak which
-    if (!invite || !checkIsInviteUsable(invite)) return null;
+  readInvite: standardAuthedProcedure
+    .input(readInviteInputSchema)
+    .query<null | ReadInviteResult>(async ({ ctx, input }) => {
+      const invite = await ctx.db.query.invitesInMessage.findFirst({
+        where: { id: { eq: input } },
+        with: InviteInMessageRelations,
+      });
+      // Expired/exhausted invites behave exactly like unknown tokens — don't leak which
+      if (!invite || !checkIsInviteUsable(invite)) return null;
 
-    const membership = await ctx.db.query.usersToRoomsInMessage.findFirst({
-      where: {
-        roomId: {
-          eq: invite.roomId,
+      const membership = await ctx.db.query.usersToRoomsInMessage.findFirst({
+        where: {
+          roomId: {
+            eq: invite.roomId,
+          },
+          userId: {
+            eq: ctx.getSessionPayload.user.id,
+          },
         },
-        userId: {
-          eq: ctx.getSessionPayload.user.id,
-        },
-      },
-    });
-    return { ...invite, isMember: Boolean(membership) };
-  }),
+      });
+      return { ...invite, isMember: Boolean(membership) };
+    }),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
@@ -453,12 +457,13 @@ export const baseRoomRouter = router({
       return getCursorPaginationData(readUsers, limit, sortBy);
     },
   ),
-  readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query(({ ctx, input: { ids, roomId } }) =>
-    ctx.db
-      .select(getColumns(users))
-      .from(users)
-      .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
-      .where(and(eq(usersToRoomsInMessage.roomId, roomId), inArray(users.id, ids))),
+  readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query<User[]>(
+    ({ ctx, input: { ids, roomId } }) =>
+      ctx.db
+        .select(getColumns(users))
+        .from(users)
+        .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
+        .where(and(eq(usersToRoomsInMessage.roomId, roomId), inArray(users.id, ids))),
   ),
   readMutualRooms: standardAuthedProcedure.input(userIdSchema).query<RoomInMessage[]>(({ ctx, input }) => {
     const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
@@ -549,7 +554,7 @@ export const baseRoomRouter = router({
     const { hasMore, items, nextCursor } = getCursorPaginationData(readInvites, limit, sortBy);
     return { hasMore, items: items.filter((invite) => checkIsInviteUsable(invite)), nextCursor };
   }),
-  readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query(
+  readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query<CursorPaginationData<RoomInMessage>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const innerJoinCondition = and(
         eq(usersToRoomsInMessage.roomId, roomsInMessage.id),

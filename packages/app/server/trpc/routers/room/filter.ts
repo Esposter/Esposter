@@ -1,3 +1,4 @@
+import type { RoomFilterInMessage } from "@esposter/db-schema";
 import { upsertRoomFilterInputSchema } from "#shared/models/db/room/UpsertRoomFilterInput";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -13,27 +14,29 @@ import {
 import { Operation } from "@esposter/shared";
 
 export const filterRouter = router({
-  readRoomFilter: getMemberProcedure(roomIdSchema, "roomId").query(
+  readRoomFilter: getMemberProcedure(roomIdSchema, "roomId").query<null | RoomFilterInMessage>(
     async ({ ctx, input: { roomId } }) =>
       (await ctx.db.query.roomFiltersInMessage.findFirst({ where: { roomId: { eq: roomId } } })) ?? null,
   ),
-  upsertRoomFilter: getPermissionsProcedure(RoomPermission.ManageRoom, upsertRoomFilterInputSchema, "roomId").mutation(
-    async ({ ctx, input: { action, roomId, timeoutDurationMs, words } }) => {
-      // A duration only belongs to a Timeout action — clear it for every other action so a stale value
-      // Can never re-arm a timeout after the action is switched back.
-      const set = { action, timeoutDurationMs: action === WordFilterAction.Timeout ? timeoutDurationMs : null, words };
-      return requireMutation(
-        (
-          await ctx.db
-            .insert(roomFiltersInMessage)
-            .values({ ...set, roomId })
-            .onConflictDoUpdate({ set, target: roomFiltersInMessage.roomId })
-            .returning()
-        )[0],
-        Operation.Update,
-        DatabaseEntityType.RoomFilter,
-        roomId,
-      );
-    },
-  ),
+  upsertRoomFilter: getPermissionsProcedure(
+    RoomPermission.ManageRoom,
+    upsertRoomFilterInputSchema,
+    "roomId",
+  ).mutation<RoomFilterInMessage>(async ({ ctx, input: { action, roomId, timeoutDurationMs, words } }) => {
+    // A duration only belongs to a Timeout action — clear it for every other action so a stale value
+    // Can never re-arm a timeout after the action is switched back.
+    const set = { action, timeoutDurationMs: action === WordFilterAction.Timeout ? timeoutDurationMs : null, words };
+    return requireMutation(
+      (
+        await ctx.db
+          .insert(roomFiltersInMessage)
+          .values({ ...set, roomId })
+          .onConflictDoUpdate({ set, target: roomFiltersInMessage.roomId })
+          .returning()
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.RoomFilter,
+      roomId,
+    );
+  }),
 });
