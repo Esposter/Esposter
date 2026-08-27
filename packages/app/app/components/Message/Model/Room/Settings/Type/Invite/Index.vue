@@ -37,6 +37,9 @@ await readRoomInvites();
             :button-props="{ text: 'Enable Invites', variant: 'flat' }"
             @click="saveRoom({ isInvitePaused: false })"
           />
+          <!-- A plain `v-btn`, not `StyledButton`: the shell paints `--midnight-bloom` as a background *image*,
+               which a `color` sets underneath rather than replaces, so an error-coloured one renders the same
+               gradient as the primary beside it and the pair stops reading as opposites -->
           <v-btn v-else color="error" text="Pause Invites" variant="flat" @click="saveRoom({ isInvitePaused: true })" />
           <div v-if="room.isInvitePaused" flex gap-2 items-center text-body-small>
             <v-icon color="warning" icon="mdi-alert-circle" size="small" />

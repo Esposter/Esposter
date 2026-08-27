@@ -49,14 +49,14 @@ A permalink lands through `useScrollToMessage`: if the room and the message are 
 
 ## Key files
 
-| File                                                             | Role                                                                |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `app/store/message/ui/scroll.ts`                                 | The present predicate, the sentinel, `jumpToPresent`, row highlight |
-| `app/components/Message/Model/Message/List/Index.vue`            | Scroll container, sentinel, both waypoints, anchor compensation     |
-| `app/components/Message/Model/Message/JumpToPresentSnackbar.vue` | The affordance itself                                               |
-| `app/components/Message/Model/Message/List/Container.vue`        | Mounted scroll to the permalinked message                           |
-| `app/composables/message/message/useReadMessages.ts`             | The newer cursor a permalink read leaves behind                     |
-| `app/composables/message/message/useScrollToMessage.ts`          | Highlight-and-scroll, or navigate to the permalink route            |
+| File                                                                          | Role                                                                |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `packages/app/app/store/message/ui/scroll.ts`                                 | The present predicate, the sentinel, `jumpToPresent`, row highlight |
+| `packages/app/app/components/Message/Model/Message/List/Index.vue`            | Scroll container, sentinel, both waypoints, anchor compensation     |
+| `packages/app/app/components/Message/Model/Message/JumpToPresentSnackbar.vue` | The affordance itself                                               |
+| `packages/app/app/components/Message/Model/Message/List/Container.vue`        | Mounted scroll to the permalinked message                           |
+| `packages/app/app/composables/message/message/useReadMessages.ts`             | The newer cursor a permalink read leaves behind                     |
+| `packages/app/app/composables/message/message/useScrollToMessage.ts`          | Highlight-and-scroll, or navigate to the permalink route            |
 
 ## Notes
 

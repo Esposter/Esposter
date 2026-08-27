@@ -67,9 +67,9 @@ A direct message stores `name = ""` and `useDirectMessageName` joins the partici
 
 1. `getDisplayNameExpression` beside the other shared query helpers, with the schema that owns the columns.
 2. Widen `getCursorWhere` to a columns record, mirroring `parseSortByToSql`'s overload pair, with the cursor test that covers an aliased expression.
-3. `readMembers`: select `displayName`, filter on it, sort on it by default, cursor on it. Return type gains the field.
+3. `readMembers`: select `displayName`, sort on it by default, and cursor on it paired with `users.id` — a display name is not unique, and a keyset that reads strictly past its cursor drops the row that ties with it at a page boundary. The filter matches `displayName` **or** `users.name`, since the subtitle above only has something to explain when a search for `Alice` returns `Ally`. Return type gains the field.
 4. Client: drop `readNicknames` from `readMetadata`, sort `members` on `displayName`, and add the global-name subtitle to the member list, the settings panel and the mention list.
-5. `readRooms`: the aggregated form, then remove the `RoomType.Room` restriction from the quick switcher and render the resolved name in `Searched.vue`.
+5. `readRooms`: the aggregated form — the same participant set the client joins, so every other participant and never the reader, ordered by `displayName` so the aggregate is deterministic and a later join cannot reorder the name out from under a search. `useDirectMessageName` and `readDirectMessageParticipants` adopt that order too, or the searched name and the rendered one drift apart the moment a participant is added. Then remove the `RoomType.Room` restriction from the quick switcher and render the resolved name in `Searched.vue`.
 
 Step 5 is separable and lands second — steps 1–4 fix a wrong answer, step 5 adds rows that were never there.
 
