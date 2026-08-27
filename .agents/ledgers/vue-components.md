@@ -22,7 +22,7 @@ body that calls a helper per render, or the same one twice, is a granularity fin
 finding second — under one ledger that is a single decision instead of a note handed between two.
 
 Both directions are in scope: extract what earns a computed, inline what does not; split what holds two actions,
-leave what holds one. The simplification sweeps ran the _opposite_ direction on granularity — collapsing
+leave what holds one. The quality sweeps ran the _opposite_ direction on granularity — collapsing
 duplicate components into shared primitives — so a tree dated there says nothing about this ledger.
 
 **Neither of those two is satisfied by relocation.** A pass that lifts a long literal into `services/` or wraps a cheap
