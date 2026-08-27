@@ -1,9 +1,9 @@
 import { authClient } from "@/services/auth/authClient";
 import { useAchievementStore } from "@/store/achievement";
-import { getIsServer } from "@esposter/shared";
+import { checkIsServer } from "@esposter/shared";
 
 export const useAchievementSubscribables = async () => {
-  if (getIsServer()) return;
+  if (checkIsServer()) return;
 
   const onlineSubscribableContext = getOnlineSubscribableContext();
   const { $trpc } = useNuxtApp();

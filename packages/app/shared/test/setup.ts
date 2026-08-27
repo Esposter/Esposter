@@ -1,5 +1,5 @@
 import { Environment } from "#shared/models/environment/Environment";
-import { getIsServer } from "@esposter/shared";
+import { checkIsServer } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { afterAll, afterEach, beforeEach, vi } from "vitest";
 /* eslint-disable no-restricted-syntax -- module scope is where a vitest setup file runs, and the environment it
@@ -43,10 +43,10 @@ globalThis.sessionStorage = new MemoryStorage();
 // Single assertion runs. The workaround reached for otherwise is `shallow: true`, which renders no overlay DOM at
 // All and so cannot assert anything about the shell inside it. A stationary 1:1 viewport is exactly what the
 // Strategy wants and never changes, so the listeners are no-ops rather than an event target.
-if (!getIsServer() && !("visualViewport" in globalThis))
+if (!checkIsServer() && !("visualViewport" in globalThis))
   globalThis.visualViewport = {
     addEventListener: () => {},
-    // The `getIsServer` fork above is the sanctioned third branch, so the environment is already decided here
+    // The `checkIsServer` fork above is the sanctioned third branch, so the environment is already decided here
     height: window.innerHeight,
     offsetLeft: 0,
     offsetTop: 0,
@@ -117,11 +117,11 @@ vi.mock("nitropack/runtime", () => ({
 // `beforeAll(setupNuxt)` after this setup file, and beforeAll order is registration order, so a beforeAll here
 // Runs before the app is built; every beforeEach runs after all beforeAlls, so the app is ready by then. The
 // Module-scoped flag makes it fire only on the first test of the worker, no-op thereafter. Node-env files
-// (`getIsServer()` — no `window`) skip it — they never mount, and importing the nuxt runtime there would break them.
+// (`checkIsServer()` — no `window`) skip it — they never mount, and importing the nuxt runtime there would break them.
 // Plain happy-dom files (a `window` but no Nuxt app) skip it via the env's own marker — mounting there would crash.
 let isNuxtRuntimeWarm = false;
 // oxlint-disable-next-line no-underscore-dangle -- marker property name is owned by @nuxt/test-utils
-if (!getIsServer() && (window as { __NUXT_VITEST_ENVIRONMENT__?: true }).__NUXT_VITEST_ENVIRONMENT__)
+if (!checkIsServer() && (window as { __NUXT_VITEST_ENVIRONMENT__?: true }).__NUXT_VITEST_ENVIRONMENT__)
   beforeEach(async () => {
     if (isNuxtRuntimeWarm) return;
     isNuxtRuntimeWarm = true;

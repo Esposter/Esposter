@@ -12,7 +12,7 @@ Rules: `/docs/architecture/browser-execution`. Greps, per unit:
 
 1. `window\.localStorage` — already a `no-restricted-syntax` error, so this only finds a disable that has outlived
    its reason.
-2. `getIsServer` — the one that still needs reading. A hit is either a genuine fork (both branches real, keep) or a
+2. `checkIsServer` — the one that still needs reading. A hit is either a genuine fork (both branches real, keep) or a
    leaf that has already been answered by a ref or a phase (convert). The count at the sweep's opening was 30.
 3. `window\.` over `app/` — the wider class: `document`, `navigator`, `matchMedia`. Its deterministic half is now
    the enforcer's, so what this grep is for is the rest. A read at module scope is a `no-restricted-syntax` error,

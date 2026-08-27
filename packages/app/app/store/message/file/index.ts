@@ -8,7 +8,7 @@ import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
-import { chunk, getIsServer, getResultAsync, MAX_READ_LIMIT, noop, Operation } from "@esposter/shared";
+import { chunk, checkIsServer, getResultAsync, MAX_READ_LIMIT, noop, Operation } from "@esposter/shared";
 
 export const useDownloadFileStore = defineStore("message/file", () => {
   const roomStore = useRoomStore();
@@ -83,7 +83,7 @@ export const useDownloadFileStore = defineStore("message/file", () => {
       await storeReadFileUrls(roomId, expiringFiles);
     }).match(noop, console.error);
   // The server renders once and discards the store, so the timer would only ever be a leak there.
-  if (!getIsServer()) useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_SAS_REFRESH_INTERVAL_MS);
+  if (!checkIsServer()) useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_SAS_REFRESH_INTERVAL_MS);
 
   // The gallery the viewer walks: everything that has something to look at and a url to look at it through. A PDF
   // Opens its own dialog from its own renderer and audio plays from the row, so pulling either in would mean two

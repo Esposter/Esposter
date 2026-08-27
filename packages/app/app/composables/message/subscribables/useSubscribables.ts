@@ -1,7 +1,7 @@
-import { getIsServer } from "@esposter/shared";
+import { checkIsServer } from "@esposter/shared";
 
 export const useSubscribables = async () => {
-  if (getIsServer()) return;
+  if (checkIsServer()) return;
 
   useCallSubscribables();
   useDirectMessageSubscribables();

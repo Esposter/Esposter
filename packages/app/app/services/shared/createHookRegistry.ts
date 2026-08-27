@@ -1,6 +1,6 @@
 import type { Promisable } from "type-fest";
 
-import { getIsServer } from "@esposter/shared";
+import { checkIsServer } from "@esposter/shared";
 
 export interface HookRegistry<THook extends AnyHook> {
   hooks: readonly THook[];
@@ -16,7 +16,7 @@ export const createHookRegistry = <THook extends AnyHook>(): HookRegistry<THook>
   return {
     hooks,
     register: (hook) => {
-      if (getIsServer()) return;
+      if (checkIsServer()) return;
       hooks.push(hook);
     },
     run: async (...args) => {

@@ -10,7 +10,7 @@ Such state must never live in component-local refs or `useQuery` data — two mo
 
 ## Hook registries
 
-Every registry is created with `createHookRegistry<THook>()` (`services/shared/createHookRegistry.ts`), which returns `{ hooks, register, run }` — **never export a raw module-level hook array**. Store factories re-run per SSR request while the registry is module-scoped, so raw `.push()` leaks server memory; `register` centralizes the `getIsServer()` no-op (hooks only fire from client-side interactions).
+Every registry is created with `createHookRegistry<THook>()` (`services/shared/createHookRegistry.ts`), which returns `{ hooks, register, run }` — **never export a raw module-level hook array**. Store factories re-run per SSR request while the registry is module-scoped, so raw `.push()` leaks server memory; `register` centralizes the `checkIsServer()` no-op (hooks only fire from client-side interactions).
 
 - Stores call `.register(hook)` at setup; orchestrators fan out with `await registry.run(...args)`, or iterate `registry.hooks` directly from a sync context.
 - Keyed variants are plain objects/Records of registries (`FooHookMap[Operation.Create].register(...)`).

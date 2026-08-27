@@ -24,15 +24,13 @@
 
 ## Open findings
 
-- **`getIs*` vs `check*` — needs a call.** The skill says `check*` for **all** boolean-returning functions, and
-  Names `checkIsManageable` as the example. It also says `get*` for derivation, and a boolean derived from state
-  Is a derivation — so both rules reach `getIsServer`, `getIsMessageAuthor`, `getIsAuthed` and twenty more,
-  Including one exported from `@esposter/shared` and imported repo-wide. Options: rename the family to `check*`
-  And say so in the skill, or carve `getIs*` out explicitly as derivation. Either is fine; guessing is not, and
-  Nothing should sweep this row's neighbours until it is settled.
+- **`getIsAuthed` / `getIsRateLimited` / `getIsEntityIdEqualComparator` — `get*` is right, the `Is` is not.**
+  All three return a function rather than a boolean, so `check*` would be wrong, but the `Is` still reads as a
+  Predicate. The middleware pair wants a name saying what it builds; the comparator already has one.
 
 ## Next enforceable
 
 - Filename-is-the-export is decidable from the AST plus the path; a custom oxlint plugin could take it whole.
 - `is*`/`has*`/`show*` on a boolean-typed declaration needs types, which `typeAware: true` already provides.
 - Abbreviation bans need a word list, not a rule — leave with the sweep.
+- A `getIs*`/`getHas*` declaration is decidable from the name alone; the three `get*`-returning-a-function cases above are what a rule would have to carve out first.
