@@ -16,10 +16,7 @@ const displayName = computed(() => prettify(userAchievement.achievement.name));
 <template>
   <v-snackbar
     :model-value="true"
-    :timeout="5000"
     color="success"
-    location="top right"
-    variant="elevated"
     @update:model-value="
       (value) => {
         if (value) return;
