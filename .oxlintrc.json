@@ -15,11 +15,39 @@
     "**/auto-imports.d.ts",
     "**/composables/visual/useFluidSimulator.ts"
   ],
-  "jsPlugins": ["./scripts/oxlint/passThroughHelper.ts", "./scripts/oxlint/persistThenNotify.ts"],
+  "jsPlugins": [
+    "./scripts/oxlint/passThroughHelper.ts",
+    "./scripts/oxlint/persistThenNotify.ts",
+    "./scripts/oxlint/trpcProcedure.ts"
+  ],
   "options": {
     "typeAware": true
   },
   "overrides": [
+    {
+      "files": ["packages/app/server/trpc/**/*.ts"],
+      "rules": {
+        "trpc-procedure/no-hand-rolled-error": "error"
+      }
+    },
+    {
+      "files": ["packages/app/server/trpc/guards/*.ts"],
+      "rules": {
+        "trpc-procedure/no-hand-rolled-error": "off"
+      }
+    },
+    {
+      "files": ["packages/app/server/trpc/procedure/**/*.ts", "packages/app/server/trpc/routers/message/**/*.ts"],
+      "rules": {
+        "trpc-procedure/require-return-type": "error"
+      }
+    },
+    {
+      "files": ["packages/app/server/trpc/**/*.test.ts"],
+      "rules": {
+        "trpc-procedure/require-return-type": "off"
+      }
+    },
     {
       "files": ["packages/app/server/**/*.ts"],
       "rules": {

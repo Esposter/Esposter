@@ -21,6 +21,19 @@ Router structure, the procedure builder each route picks, ownership guards, and 
 
 ## Next enforceable
 
-- The `Function.prototype` key ban (`call`, `apply`, `bind`, `then`, `catch` as router keys) is a fixed word list against an object literal — a custom oxlint plugin decides it, and the failure is otherwise silent.
-- Client-path-mirrors-file-path is decidable from the two trees; a test could walk `routers/` and assert the shape rather than a sweep re-reading it.
-- Procedure builder choice is a policy question about the route's data, and stays with the sweep.
+**Both decidable halves now belong to `scripts/oxlint/trpcProcedure.ts`**, found by hand in two consecutive units
+before being handed over:
+
+- `trpc-procedure/no-hand-rolled-error` — **on across `server/trpc/**`**, since rows 1-2 cleared the tree. It
+  Reports a `new TRPCError` whose `message` reads `.message` off an error class a guard constructor already
+  Wraps, and a `BAD_REQUEST` carrying no message at all. `guards/*.ts` is exempt: those files are the
+  Constructors. A bare `UNAUTHORIZED` is not reported — `errorLink.ts` states the authorization guards throw it.
+- `trpc-procedure/require-return-type` — **a ratchet**, on only for the paths already swept
+  (`procedure/**`, `routers/message/**`). It reports a `.query`/`.mutation` with no type argument.
+  `.subscription` is out of scope: an async generator carries its yield type as a callback annotation.
+  **Each row below widens the glob when it lands** — 36 sites remain outside it, which is what the unswept rows
+  Are now mostly made of. Several need a named model type rather than an inline one, which is the judgement the
+  Rule cannot make and the sweep exists for.
+
+Still with the sweep, because no rule can decide them: procedure builder choice is a policy question about the
+Route's data, and client-path-mirrors-file-path would be a test walking both trees rather than a lint rule.
