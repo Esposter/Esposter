@@ -2,28 +2,38 @@
 
 What a component looks like rather than how it is composed: attributify props over `class`, theme primitives over bespoke values, the MD3 type set, `rem` over `px`, no hardcoded layout dimensions, `StyledButton` and the shared shells, and the narrow-viewport collapse.
 
-| Unit                                                                                       | Swept | Notes                                                                         |
-| ------------------------------------------------------------------------------------------ | ----- | ----------------------------------------------------------------------------- |
-| `app/components/Styled`                                                                    | —     | the shells everything else is measured against — swept first on purpose       |
-| `app/components/Message/Model/Message`                                                     | —     | the densest surface; the message row and its variants                         |
-| `app/components/Message/Model/Room`                                                        | —     | settings panels and dialogs                                                   |
-| `app/components/Message/Model/User`                                                        | —     | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`           |
-| `app/components/Message/Content`                                                           | —     |                                                                               |
-| `app/components/Message` — the rest                                                        | —     | `RightSideBar`, `DraftsAndSent`, `Friends`, `LeftSideBar`                     |
-| `app/components/Resource/Sheet`                                                            | —     | the sheet editor's own chrome                                                 |
-| `app/components/Resource` — the rest                                                       | —     | `List`, `Survey`, `TodoList`, `Home`, `Search` and the small per-type folders |
-| `app/components/Dungeons`                                                                  | —     | canvas-adjacent; much of it is Phaser rather than DOM                         |
-| `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | —     | the chrome                                                                    |
-| `app/components/Clicker`, `Visual`, `User`, `Docs`, `Dashboard`, `Achievement`             | —     |                                                                               |
-| `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | —     |                                                                               |
-| `app/pages`, `app/layouts`                                                                 | —     | page-level layout; region sizing and the sidebar/panel rules                  |
-| `app/**/*.scss`, `rules.config.ts`                                                         | —     | the style blocks and the UnoCSS rule set behind the attributify vocabulary    |
+| Unit                                                                                       | Swept      | Notes                                                                                                                                         |
+| ------------------------------------------------------------------------------------------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `app/components/Styled`                                                                    | 2026-08-27 | clean — no `px`, and all six `class=` uses are the sanctioned exceptions (two scoped CSS refs, four dynamic bindings). One open finding below |
+| `app/components/Message/Model/Message`                                                     | —          | the densest surface; the message row and its variants                                                                                         |
+| `app/components/Message/Model/Room`                                                        | —          | settings panels and dialogs                                                                                                                   |
+| `app/components/Message/Model/User`                                                        | —          | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`                                                                           |
+| `app/components/Message/Content`                                                           | —          |                                                                                                                                               |
+| `app/components/Message` — the rest                                                        | —          | `RightSideBar`, `DraftsAndSent`, `Friends`, `LeftSideBar`                                                                                     |
+| `app/components/Resource/Sheet`                                                            | —          | the sheet editor's own chrome                                                                                                                 |
+| `app/components/Resource` — the rest                                                       | —          | `List`, `Survey`, `TodoList`, `Home`, `Search` and the small per-type folders                                                                 |
+| `app/components/Dungeons`                                                                  | —          | canvas-adjacent; much of it is Phaser rather than DOM                                                                                         |
+| `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | —          | the chrome                                                                                                                                    |
+| `app/components/Clicker`, `Visual`, `User`, `Docs`, `Dashboard`, `Achievement`             | —          |                                                                                                                                               |
+| `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | —          |                                                                                                                                               |
+| `app/pages`, `app/layouts`                                                                 | —          | page-level layout; region sizing and the sidebar/panel rules                                                                                  |
+| `app/**/*.scss`, `rules.config.ts`                                                         | —          | the style blocks and the UnoCSS rule set behind the attributify vocabulary                                                                    |
 
 ## Exclusions
 
 - Component granularity, extraction and page composition — `vue-components`, over the same files. Different owning skills, so the split is deliberate.
 - Placement and reachability — `ux`, likewise.
 - `app/components/Dungeons` canvas internals: Phaser draw calls are not DOM styling. Only the Vue chrome around them is in scope.
+
+## Open findings
+
+- **Two inline `:style` object bindings where attributify would do — needs eyes on the page.**
+  `Styled/Button.vue` binds `{ backgroundImage: "var(--midnight-bloom)" }`, a static style on the most-used shell
+  In the app, allocating a fresh object every render; `Styled/EditableNameDialogButton.vue` binds a conditional
+  `pointerEvents`. The attributify forms are `bg-[var(--midnight-bloom)]` and a bound `pointer-events`, but
+  UnoCSS's `bg-[…]` is ambiguous between `background-color` and `background-image` for a gradient value, and
+  `Styled/Dialog.test.ts` asserts the current inline style. Neither can be settled without looking at the rendered
+  page, which no agent here does (`run-app` skill) — so it is a question for a human, not a rewrite to attempt.
 
 ## Find recipe
 
