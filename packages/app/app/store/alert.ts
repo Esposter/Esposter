@@ -2,7 +2,7 @@ import type { VAlert } from "vuetify/components";
 
 import { dayjs } from "#shared/services/dayjs";
 import { AlertIconMap } from "@/services/vuetify/AlertIconMap";
-import { getIsServer } from "@esposter/shared";
+import { checkIsServer } from "@esposter/shared";
 
 // The four props the alert list renders, rather than the whole `VAlert` prop surface: matching an alert already
 // On screen compares two of them, and doing that across every prop v-alert accepts blows the instantiation depth
@@ -29,7 +29,7 @@ export const useAlertStore = defineStore("alert", () => {
     type: NonNullable<VAlert["$props"]["type"]>,
     props?: Pick<VAlert["$props"], "icon" | "location">,
   ) => {
-    if (getIsServer()) return;
+    if (checkIsServer()) return;
     // One cause routinely rejects several operations at once — the file and thumbnail reads of a single
     // Attachment batch, every chunk of a paged sweep — and each rejection arrives here on its own. A toast per
     // Operation says nothing the first one did not, so an identical alert still on screen is refreshed instead

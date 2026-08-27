@@ -1,4 +1,5 @@
 import { unpackTileBytes } from "#src/util/unpackTileBytes";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(unpackTileBytes, () => {
@@ -20,7 +21,7 @@ describe(unpackTileBytes, () => {
     buffer.writeUInt32LE(1, 0);
 
     expect(() => unpackTileBytes(buffer, bufferSize + 1)).toThrowErrorMatchingInlineSnapshot(
-      `[Error: Expected ${bufferSize + 1} bytes of tile data; received ${buffer.length}]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "TMXLayer", `expected ${bufferSize + 1} bytes of tile data, received ${buffer.length}`).message}]`,
     );
   });
 });

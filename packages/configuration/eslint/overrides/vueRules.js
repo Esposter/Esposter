@@ -1,4 +1,5 @@
 import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
+import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
 
 // The Vuetify inputs `vuetify.config.ts` declares `hideDetails: "auto"` for. Shared by the two halves of the
@@ -111,6 +112,7 @@ export default {
       selector: `VElement[rawName=${VUETIFY_INPUT_ELEMENT_PATTERN}] > VStartTag > VAttribute[directive=true][key.name.name='bind'][key.argument.name='hide-details']`,
     },
     ...restrictedDateSyntaxes,
+    ...restrictedStoreSyntaxes,
   ],
   "vue/no-unused-vars": "off",
   "vue/no-v-html": "off",

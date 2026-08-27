@@ -1,7 +1,7 @@
 import type { PointsLeaderboard } from "#shared/models/achievement/PointsLeaderboard";
 import type { UserAchievementWithRelations } from "@esposter/db-schema";
 
-import { AchievementDefinitionMap } from "#shared/services/achievement/achievementDefinitions";
+import { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
 import { buildPointsLeaderboard } from "@@/server/services/achievement/buildPointsLeaderboard";
 import { achievementEventEmitter } from "@@/server/services/achievement/events/achievementEventEmitter";
 import { on } from "@@/server/services/events/on";
@@ -29,7 +29,7 @@ export const achievementRouter = router({
       if (updatedUserAchievements.length > 0) yield updatedUserAchievements;
     }
   }),
-  readAchievementMap: standardAuthedProcedure.query(async ({ ctx }) => {
+  readAchievementMap: standardAuthedProcedure.query<typeof AchievementDefinitionMap>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const unlockedUserAchievements = await ctx.db.query.userAchievements.findMany({
       where: { unlockedAt: { isNotNull: true }, userId: { eq: userId } },

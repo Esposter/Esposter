@@ -147,13 +147,15 @@ export const userRouter = router({
       );
       return generateWriteSasUrl(blockBlobClient, { contentType: mimetype });
     }),
-  generateProfileImageUploadUrl: standardAuthedProcedure.mutation(async ({ ctx }) => {
-    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-    const blobName = `${ctx.getSessionPayload.user.id}/ProfileImage`;
-    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    const sasUrl = await generateWriteSasUrl(blockBlobClient);
-    return { publicUrl: blockBlobClient.url, sasUrl };
-  }),
+  generateProfileImageUploadUrl: standardAuthedProcedure.mutation<{ publicUrl: string; sasUrl: string }>(
+    async ({ ctx }) => {
+      const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+      const blobName = `${ctx.getSessionPayload.user.id}/ProfileImage`;
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      const sasUrl = await generateWriteSasUrl(blockBlobClient);
+      return { publicUrl: blockBlobClient.url, sasUrl };
+    },
+  ),
   onUpsertStatus: standardAuthedProcedure.input(userStatusIdsInputSchema).subscription(async function* ({
     ctx,
     input,
@@ -187,34 +189,36 @@ export const userRouter = router({
         })),
     );
   }),
-  readStatuses: standardAuthedProcedure.input(userStatusIdsInputSchema).query(async ({ ctx, input }) => {
-    const foundUserStatuses = await ctx.db
-      .select()
-      .from(userStatusesInMessage)
-      .where(inArray(userStatusesInMessage.userId, input));
-    const resultUserStatuses: SetNonNullable<UserStatusInMessage, "status">[] = [];
-    const statusMap = new Map(foundUserStatuses.map((us) => [us.userId, us]));
+  readStatuses: standardAuthedProcedure
+    .input(userStatusIdsInputSchema)
+    .query<SetNonNullable<UserStatusInMessage, "status">[]>(async ({ ctx, input }) => {
+      const foundUserStatuses = await ctx.db
+        .select()
+        .from(userStatusesInMessage)
+        .where(inArray(userStatusesInMessage.userId, input));
+      const resultUserStatuses: SetNonNullable<UserStatusInMessage, "status">[] = [];
+      const statusMap = new Map(foundUserStatuses.map((us) => [us.userId, us]));
 
-    for (const userId of input) {
-      const foundStatus = statusMap.get(userId);
-      if (foundStatus) resultUserStatuses.push({ ...foundStatus, status: getDetectedUserStatus(foundStatus) });
-      else
-        // We'll conveniently assume that if they don't have a user status record yet
-        // It means that they're still online as we insert a record as soon as they go offline
-        resultUserStatuses.push({
-          createdAt: new Date(),
-          deletedAt: null,
-          expiresAt: null,
-          isConnected: true,
-          message: "",
-          status: UserStatus.Online,
-          updatedAt: new Date(),
-          userId,
-        });
-    }
+      for (const userId of input) {
+        const foundStatus = statusMap.get(userId);
+        if (foundStatus) resultUserStatuses.push({ ...foundStatus, status: getDetectedUserStatus(foundStatus) });
+        else
+          // We'll conveniently assume that if they don't have a user status record yet
+          // It means that they're still online as we insert a record as soon as they go offline
+          resultUserStatuses.push({
+            createdAt: new Date(),
+            deletedAt: null,
+            expiresAt: null,
+            isConnected: true,
+            message: "",
+            status: UserStatus.Online,
+            updatedAt: new Date(),
+            userId,
+          });
+      }
 
-    return resultUserStatuses;
-  }),
+      return resultUserStatuses;
+    }),
   // Public profile identity — projects only the allowlisted columns so private fields (email) never
   // Leave the database, and runs unauthenticated on the rate-limited procedure
   readUser: standardRateLimitedProcedure
@@ -229,7 +233,7 @@ export const userRouter = router({
         input,
       ),
     ),
-  readUserSettings: standardAuthedProcedure.query(async ({ ctx }) => {
+  readUserSettings: standardAuthedProcedure.query<UserSettingsInMessage>(async ({ ctx }) => {
     const foundUserSettings = (
       await ctx.db
         .select()
@@ -256,7 +260,7 @@ export const userRouter = router({
       voiceInputMode: VoiceInputMode.VoiceActivity,
     } satisfies UserSettingsInMessage;
   }),
-  updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation(async ({ ctx, input }) => {
+  updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation<User>(async ({ ctx, input }) => {
     const updatedUser = requireMutation(
       (await ctx.db.update(users).set(input).where(eq(users.id, ctx.getSessionPayload.user.id)).returning())[0],
       Operation.Update,
@@ -265,39 +269,43 @@ export const userRouter = router({
     );
     return updatedUser;
   }),
-  updateUserSettings: standardAuthedProcedure.input(updateUserSettingsInputSchema).mutation(async ({ ctx, input }) =>
-    requireMutation(
-      (
-        await ctx.db
-          .insert(userSettingsInMessage)
-          .values({ ...input, userId: ctx.getSessionPayload.user.id })
-          .onConflictDoUpdate({ set: input, target: userSettingsInMessage.userId })
-          .returning()
-      )[0],
-      Operation.Update,
-      DatabaseEntityType.UserSettings,
-      JSON.stringify(input),
+  updateUserSettings: standardAuthedProcedure
+    .input(updateUserSettingsInputSchema)
+    .mutation<UserSettingsInMessage>(async ({ ctx, input }) =>
+      requireMutation(
+        (
+          await ctx.db
+            .insert(userSettingsInMessage)
+            .values({ ...input, userId: ctx.getSessionPayload.user.id })
+            .onConflictDoUpdate({ set: input, target: userSettingsInMessage.userId })
+            .returning()
+        )[0],
+        Operation.Update,
+        DatabaseEntityType.UserSettings,
+        JSON.stringify(input),
+      ),
     ),
-  ),
-  upsertStatus: standardAuthedProcedure.input(upsertStatusInputSchema).mutation(async ({ ctx, input }) => {
-    const upsertedStatus = requireMutation(
-      (
-        await ctx.db
-          .insert(userStatusesInMessage)
-          .values({ ...input, userId: ctx.getSessionPayload.user.id })
-          .onConflictDoUpdate({
-            set: input,
-            target: userStatusesInMessage.userId,
-          })
-          .returning()
-      )[0],
-      Operation.Update,
-      DatabaseEntityType.UserStatus,
-      JSON.stringify(input),
-    );
+  upsertStatus: standardAuthedProcedure
+    .input(upsertStatusInputSchema)
+    .mutation<SetNonNullable<UserStatusInMessage, "status">>(async ({ ctx, input }) => {
+      const upsertedStatus = requireMutation(
+        (
+          await ctx.db
+            .insert(userStatusesInMessage)
+            .values({ ...input, userId: ctx.getSessionPayload.user.id })
+            .onConflictDoUpdate({
+              set: input,
+              target: userStatusesInMessage.userId,
+            })
+            .returning()
+        )[0],
+        Operation.Update,
+        DatabaseEntityType.UserStatus,
+        JSON.stringify(input),
+      );
 
-    const detectedStatus = { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) };
-    userEventEmitter.emit("upsertStatus", detectedStatus);
-    return detectedStatus;
-  }),
+      const detectedStatus = { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) };
+      userEventEmitter.emit("upsertStatus", detectedStatus);
+      return detectedStatus;
+    }),
 });

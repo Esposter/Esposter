@@ -17,8 +17,7 @@ Errors are surfaced, just never collected:
 - `app/plugins/warnHandler.ts` wraps Vue's `warnHandler` to suppress one known-benign slot warning, so real warnings stay visible in development.
 - The tRPC link stack in `app/plugins/trpc.ts` splits the two jobs a failed call has. `loggerLink` is configured to stay quiet in production **except** for down-direction results that are `Error` instances, so a failing procedure still prints. `errorLink` is the user-facing half — it raises the alert the person actually sees, and an offline failure carries no `data` shape, so it never reaches the alert. `loggerLink` is what still prints it: `errorLink` forwards the failure through `observer.error(err)`, which a caller may catch, so the console entry comes from the log link rather than from an unhandled rejection.
 - Server-side, failures reach the console through the neverthrow convention — a chain that can fail terminates in `.orTee(console.error)` rather than swallowing. Those writes land in the host's log stream and nowhere durable.
-
-There is also **no `app/error.vue`**, so an error that escapes to the boundary renders Nuxt's default error page rather than anything of ours.
+- `app/error.vue` is the boundary itself. Nuxt renders it in place of `app.vue`, so it carries its own Vuetify shell rather than inheriting the app's, and it turns an escaped error into a page that says which of the two things happened — a route that does not exist, or a failure — and offers the way back that fits. It reports nothing anywhere either; it is the surface, not the collection.
 
 ## Why deferred
 
@@ -32,4 +31,4 @@ A user reports a bug that cannot be reproduced from the console — meaning the 
 
 ## Cheaper interim
 
-Adding an `app/error.vue` boundary page costs nothing, needs no service, and is the one gap worth closing first: it turns an escaped error into a branded page with a way back into the app instead of the framework default. Everything else stays as it is — the console handler, the `loggerLink` production filter, and `.orTee(console.error)` on the server.
+The one gap worth closing without a service was the boundary page, and it is closed — an escaped error now lands on ours rather than the framework's. Everything else stays as it is: the console handler, the `loggerLink` production filter, and `.orTee(console.error)` on the server. None of them transmits anything, which is the whole of what adopting a tracker would change.

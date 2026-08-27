@@ -23,28 +23,26 @@ The row **`vi.fn` always takes its signature** has left this table.
 Every row resets when a rule joins this table: a unit dated against a narrower rule set is not swept against the
 current one, and there is no partially-swept state. Trimming last ran across every unit on 2026-08-12.
 
-| Unit                                               | Swept      | Notes                                                                                        |
-| -------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------- |
-| `app/app/services`                                 | 2026-08-20 |                                                                                              |
-| `app/app/composables`                              | 2026-08-20 | `message/emoji` written under the rules                                                      |
-| `app/app/store`, `app/app/models`                  | 2026-08-20 |                                                                                              |
-| `app/app/components`, `app/app/util`               | 2026-08-20 | `Styled/EmojiPicker` written under the rules                                                 |
-| `app/content`                                      | 2026-08-20 | `docs/index.test.ts` — top-level await fixtures, see below                                   |
-| `app/server/services`, `app/server/trpc/procedure` | 2026-08-20 |                                                                                              |
-| `app/server/trpc/routers`, rest                    | 2026-08-20 |                                                                                              |
-| `app/shared`                                       | 2026-08-20 |                                                                                              |
-| `virrun`                                           | 2026-08-20 |                                                                                              |
-| `azure-functions`, `azure-mock`, `db*`             | 2026-08-20 | every `mockDb` stays — hoisted factory, see below                                            |
-| `parse-tmx`, `vue-phaserjs`, `xml2js`, rest        | 2026-08-20 | plus `shared`, `shared-node`, `configuration`, `infra`                                       |
-| `.agents/workflows`                                | 2026-08-20 | the vitest `agents` project; 19 `toMatchObject` assertions converted to exact per-field ones |
+| Unit                                               | Swept      | Notes                                                      |
+| -------------------------------------------------- | ---------- | ---------------------------------------------------------- |
+| `app/app/services`                                 | 2026-08-20 |                                                            |
+| `app/app/composables`                              | 2026-08-20 | `message/emoji` written under the rules                    |
+| `app/app/store`, `app/app/models`                  | 2026-08-20 |                                                            |
+| `app/app/components`, `app/app/util`               | 2026-08-20 | `Styled/EmojiPicker` written under the rules               |
+| `app/content`                                      | 2026-08-20 | `docs/index.test.ts` — top-level await fixtures, see below |
+| `app/server/services`, `app/server/trpc/procedure` | 2026-08-20 |                                                            |
+| `app/server/trpc/routers`, rest                    | 2026-08-20 |                                                            |
+| `app/shared`                                       | 2026-08-20 |                                                            |
+| `virrun`                                           | 2026-08-20 |                                                            |
+| `azure-functions`, `azure-mock`, `db*`             | 2026-08-20 | every `mockDb` stays — hoisted factory, see below          |
+| `parse-tmx`, `vue-phaserjs`, `xml2js`, rest        | 2026-08-20 | plus `shared`, `shared-node`, `configuration`, `infra`     |
 
 ## Find recipe
 
 Constant scope, from the repository root. A line-anchored regex is not enough on its own: it reads a multi-line
 arrow as a constant, because the `=>` lands on a later line, and it cannot tell where a declaration ends, since a
 template literal's `${…}` and a `;` inside a string both fool a bracket count. This scanner skips strings,
-template substitutions, and both comment forms — `/* … */` matters because the `.agents/workflows` suites use it
-— so a declaration ends at the first `;` genuinely at depth zero and a statement is classified by its **whole**
+template substitutions, and both comment forms, so a declaration ends at the first `;` genuinely at depth zero and a statement is classified by its **whole**
 text. The `await` and `function` exemptions match on a word boundary, or `awaitable()` and `functionFactory()`
 would be exempted by their prefixes alone. Helper files are skipped outright — a `*.test.ts` ending in
 `describe.todo` holds module state by design (`references/test-helper-files.md`).

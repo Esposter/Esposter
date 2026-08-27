@@ -49,7 +49,7 @@ So a republished event is sent with `id = <originalEventId>|<attempt>`, joined b
 
 ### The judgement is per event, not per blob
 
-Event Grid batches whatever expired together, so the handler partitions the parsed batch rather than judging the blob as a whole. `getIsReplayable` applies both bars:
+Event Grid batches whatever expired together, so the handler partitions the parsed batch rather than judging the blob as a whole. `checkIsReplayable` applies both bars:
 
 - Events at or over `MAX_DEAD_LETTER_REPLAY_ATTEMPTS` (two) are written as a JSON array under `quarantine/` and logged through `context.error` with the blob name and how many of the batch were quarantined.
 - Events whose handler is **not idempotent** are quarantined the same way, whatever their count — republishing one does not retry the work, it duplicates it. `IsIdempotentAzureFunctionMap` in `packages/db-schema` is the register, exhaustive over `AzureFunction` so a new function has to state its answer rather than inherit a replayable default. `ProcessWebhook` is the case that matters: `createMessage` mints a fresh reverse-ticked `rowKey` per call, so a rerun posts a second, indistinguishable message into the room instead of repairing the first. `ProcessBlobDeletion` is the mirror image and the shape to copy — it deletes with `deleteIfExists`, so a replayed batch converges on the same empty state rather than failing on the blobs the first attempt already removed. Idempotency is a property a handler is _written_ to have, not one its subject grants it. And it is only half the question: a handler whose write depends on _when_ its event happened needs the event's own ordering value too, because Event Grid orders nothing — replaying a stale event is idempotent and still wrong ([conditional writes](/docs/architecture/conditional-writes)).
@@ -122,7 +122,7 @@ stateDiagram-v2
 | `packages/azure-functions/src/functions/replayDeadLetterEvent.ts`                                                    | Event Grid trigger registration for the replay function                     |
 | `packages/azure-functions/src/handlers/replayDeadLetterEventHandler.ts`                                              | Validate, partition the batch, republish in chunks, archive or quarantine   |
 | `packages/shared/src/util/array/chunkBySerializedSize.ts`                                                            | Greedy chunking against a serialized-JSON byte budget and an event count    |
-| `packages/azure-functions/src/services/getIsReplayable.ts`                                                           | The replay cap and handler-idempotency bars a dead-lettered event must pass |
+| `packages/azure-functions/src/services/checkIsReplayable.ts`                                                         | The replay cap and handler-idempotency bars a dead-lettered event must pass |
 | `packages/azure-functions/src/services/deleteReplayedBlob.ts`                                                        | Best-effort delete of a handled original, logged rather than rethrown       |
 | `packages/db-schema/src/models/azure/function/IsIdempotentAzureFunctionMap.ts`                                       | Which handlers a replay may safely rerun                                    |
 | `packages/azure-functions/src/services/writeDeadLetterBlob.ts`                                                       | Copy a payload under a prefix — copy only, the handler owns the delete      |

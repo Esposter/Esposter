@@ -2,7 +2,7 @@ import type { AppNotification } from "@/models/notification/AppNotification";
 import type { Except, SetOptional } from "type-fest";
 
 import { DatabaseEntityType, NotificationSeverity } from "@esposter/db-schema";
-import { getIsServer } from "@esposter/shared";
+import { checkIsServer } from "@esposter/shared";
 
 // The bell renders two kinds of notification and owns the difference between them. A **delivered** one is a row
 // The server wrote for this user — it reached every device that was subscribed, it survives the reload, and it is
@@ -81,7 +81,7 @@ export const useNotificationStore = defineStore("notification", () => {
   const createNotification = (
     newNotification: SetOptional<Except<AppNotification, "createdAt" | "id" | "isRead">, "body" | "path">,
   ) => {
-    if (getIsServer()) return;
+    if (checkIsServer()) return;
 
     const notification: AppNotification = {
       body: "",

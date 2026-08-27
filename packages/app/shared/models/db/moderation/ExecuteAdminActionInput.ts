@@ -1,3 +1,5 @@
+import type { RoomInMessage, User } from "@esposter/db-schema";
+
 import {
   AdminActionType,
   MAX_TIMEOUT_DURATION_MS,
@@ -12,6 +14,37 @@ const baseExecuteAdminActionInputSchema = z.object({
   ...roomIdSchema.shape,
   targetUserId: selectUserSchema.shape.id,
 });
+
+export type ExecuteAdminActionInput =
+  | TimeoutUserAdminActionInput
+  | UnparameterizedAdminActionInput
+  | WarnAdminActionInput;
+
+export interface TimeoutUserAdminActionInput extends AExecuteAdminActionInput {
+  durationMs: number;
+  readonly type: AdminActionType.TimeoutUser;
+}
+
+export interface UnparameterizedAdminActionInput extends AExecuteAdminActionInput {
+  readonly type:
+    | AdminActionType.CreateBan
+    | AdminActionType.ForceMute
+    | AdminActionType.ForceUnmute
+    | AdminActionType.KickFromCall
+    | AdminActionType.KickFromRoom
+    | AdminActionType.SoftBan
+    | AdminActionType.StopScreenShare;
+}
+
+export interface WarnAdminActionInput extends AExecuteAdminActionInput {
+  reason?: string;
+  readonly type: AdminActionType.Warn;
+}
+
+interface AExecuteAdminActionInput {
+  roomId: RoomInMessage["id"];
+  targetUserId: User["id"];
+}
 
 export const executeAdminActionInputSchema = z.discriminatedUnion("type", [
   z.object({
@@ -40,5 +73,4 @@ export const executeAdminActionInputSchema = z.discriminatedUnion("type", [
       AdminActionType.StopScreenShare,
     ]),
   }),
-]);
-export type ExecuteAdminActionInput = z.infer<typeof executeAdminActionInputSchema>;
+]) satisfies z.ZodType<ExecuteAdminActionInput>;

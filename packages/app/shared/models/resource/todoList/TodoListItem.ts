@@ -2,7 +2,7 @@ import type { ItemEntityType, ToData } from "@esposter/shared";
 
 import { ANamedItemEntity, aNamedItemEntitySchema } from "#shared/models/entity/ANamedItemEntity";
 import { TodoListItemType, todoListItemTypeSchema } from "#shared/models/resource/todoList/TodoListItemType";
-import { TODO_LIST_ITEM_NOTES_MAX_LENGTH } from "#shared/services/resource/itemConstants";
+import { TODO_LIST_ITEM_NOTES_MAX_LENGTH } from "#shared/services/resource/item/constants";
 import { createItemEntityTypeSchema, sanitizeTextHtml } from "@esposter/shared";
 import { z } from "zod";
 

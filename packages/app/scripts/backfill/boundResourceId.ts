@@ -1,5 +1,5 @@
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
-import { getContainerClient, getContentBlobName, getIsNotFound } from "@esposter/db";
+import { checkIsNotFound, getContainerClient, getContentBlobName } from "@esposter/db";
 import { AzureContainer, relations, resources, ResourceType } from "@esposter/db-schema";
 import { getResultAsync, streamToText } from "@esposter/shared";
 import { and, eq, isNull } from "drizzle-orm";
@@ -43,7 +43,7 @@ for (const { contentVersion, id } of unprojectedPrograms) {
     (error) => {
       // A Program created but never saved has no blob at all, which is not a failure — it is simply unbound.
       // Anything else is reported and skipped, so one unreadable blob cannot strand the rest of the backlog
-      if (!getIsNotFound(error)) console.error(`skipped ${id}:`, error);
+      if (!checkIsNotFound(error)) console.error(`skipped ${id}:`, error);
       return undefined;
     },
   );

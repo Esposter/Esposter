@@ -7,10 +7,8 @@ definePageMeta({ validate });
 
 const { data: session } = await authClient.useSession(useFetch);
 const post = await useReadPostFromRoute();
-const { readComments, readMoreComments } = useReadComments(post.id);
-const { isPending } = await readComments();
 const commentStore = useCommentStore();
-const { currentPost, hasMore, items } = storeToRefs(commentStore);
+const { currentPost } = storeToRefs(commentStore);
 currentPost.value = post;
 </script>
 
@@ -29,14 +27,11 @@ currentPost.value = post;
         <v-col flex flex-1 flex-col>
           <StyledCard flex-1>
             <v-container v-if="session">
-              <PostCommentCreateRichTextEditor :post-id="currentPost.id" />
+              <PostCommentCreateRichTextEditor :parent-id="currentPost.id" />
             </v-container>
             <v-container>
               <PostCommentEmptyBanner v-if="currentPost.noComments === 0" />
-              <template v-else>
-                <PostCommentCard v-for="comment of items" :key="comment.id" :comment />
-                <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMoreComments" />
-              </template>
+              <PostCommentBranch v-else :parent-id="currentPost.id" :depth="0" />
             </v-container>
           </StyledCard>
         </v-col>

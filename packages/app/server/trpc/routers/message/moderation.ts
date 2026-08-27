@@ -11,9 +11,9 @@ import { readBansInputSchema } from "#shared/models/db/moderation/ReadBansInput"
 import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadModerationLogInput";
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { CREATED_AT_DESCENDING_SORT_ITEM, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
 import { stopLiveKitScreenShare } from "@@/server/services/livekit/stopLiveKitScreenShare";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
@@ -54,7 +54,7 @@ import {
 } from "@esposter/db-schema";
 import { exhaustiveGuard, getResultAsync, ItemMetadataPropertyNames, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, getColumns, isNull, SQL } from "drizzle-orm";
+import { and, eq, getColumns, ilike, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
 // The membership row an admin action removes, times out, or replaces
@@ -108,7 +108,7 @@ export const moderationRouter = router({
   }),
   // The delete's own returning() reports whether the ban existed, so there is no separate existence read to
   // Race against a concurrent unban
-  deleteBan: getPermissionsProcedure(RoomPermission.BanMembers, deleteBanInputSchema, "roomId").mutation(
+  deleteBan: getPermissionsProcedure(RoomPermission.BanMembers, deleteBanInputSchema, "roomId").mutation<void>(
     async ({ ctx, input: { roomId, userId } }) => {
       requireMutation(
         (
@@ -129,7 +129,7 @@ export const moderationRouter = router({
     // Aimed at one is rejected before it can write a ban row and a log entry nothing will ever read
     .use(isRoom)
     .concat(moderationLogPlugin)
-    .mutation(async ({ ctx, input }) => {
+    .mutation<void>(async ({ ctx, input }) => {
       const { roomId, targetUserId } = input;
       const actorUserId = ctx.getSessionPayload.user.id;
       // Moderating yourself is not a hierarchy question, so the comparison never reaches it — an owner
@@ -222,12 +222,12 @@ export const moderationRouter = router({
   }),
   readBans: getPermissionsProcedure(RoomPermission.BanMembers, readBansInputSchema, "roomId").query<
     CursorPaginationData<BanInMessageWithRelations>
-  >(async ({ ctx, input: { cursor, limit, roomId } }) => {
-    const sortBy: SortItem<keyof BanInMessage>[] = [
-      { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
-    ];
+  >(async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
+    const sortBy: SortItem<keyof BanInMessage>[] = [CREATED_AT_DESCENDING_SORT_ITEM];
     const wheres: (SQL | undefined)[] = [eq(bansInMessage.roomId, roomId), isNull(bansInMessage.deletedAt)];
     if (cursor) wheres.push(getCursorWhere(bansInMessage, cursor, sortBy));
+    // The join below already brings the banned user's name into scope, so the predicate costs nothing extra
+    if (filter?.name) wheres.push(ilike(users.name, `%${escapeLike(filter.name)}%`));
 
     const bannedByUsers = alias(users, "bannedByUsers");
     const readBans = await ctx.db
@@ -244,28 +244,53 @@ export const moderationRouter = router({
       .limit(limit + 1);
     return getCursorPaginationData(readBans, limit, sortBy);
   }),
-  readModerationLog: getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId").query(
-    async ({ input: { actorUserId, cursor, limit, roomId, targetUserId, type } }) => {
-      const clauses: Clause<ModerationLogEntity>[] = [
+  readModerationLog: getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId").query<
+    CursorPaginationData<ModerationLogEntity>
+  >(async ({ input: { actorUserId, cursor, limit, roomId, targetUserId, type } }) => {
+    const clauses: Clause<ModerationLogEntity>[] = [
+      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+      getTableNullClause(ItemMetadataPropertyNames.deletedAt),
+    ];
+    if (actorUserId)
+      clauses.push({
+        key: ModerationLogEntityPropertyNames.actorUserId,
+        operator: BinaryOperator.eq,
+        value: actorUserId,
+      });
+    if (targetUserId)
+      clauses.push({
+        key: ModerationLogEntityPropertyNames.targetUserId,
+        operator: BinaryOperator.eq,
+        value: targetUserId,
+      });
+    if (type) clauses.push({ key: ModerationLogEntityPropertyNames.type, operator: BinaryOperator.eq, value: type });
+
+    const moderationLogClient = await useTableClient(AzureTable.ModerationLog);
+    return readCursorPaginationDataAzureTable(moderationLogClient, ModerationLogEntity, {
+      clauses,
+      cursor,
+      limit,
+      sortBy: [MESSAGE_ROWKEY_SORT_ITEM],
+    });
+  }),
+  readModerationNotes: getPermissionsProcedure(
+    RoomPermission.KickMembers,
+    readModerationNotesInputSchema,
+    "roomId",
+  ).query<CursorPaginationData<ModerationNoteEntity>>(
+    async ({ ctx, input: { cursor, limit, roomId, targetUserId } }) => {
+      // Provisioning the table is independent of the hierarchy check, so neither waits on the other
+      const [moderationNotesClient] = await Promise.all([
+        useTableClient(AzureTable.ModerationNotes),
+        assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId),
+      ]);
+
+      const clauses: Clause<ModerationNoteEntity>[] = [
         { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+        { key: ModerationNoteEntityPropertyNames.targetUserId, operator: BinaryOperator.eq, value: targetUserId },
         getTableNullClause(ItemMetadataPropertyNames.deletedAt),
       ];
-      if (actorUserId)
-        clauses.push({
-          key: ModerationLogEntityPropertyNames.actorUserId,
-          operator: BinaryOperator.eq,
-          value: actorUserId,
-        });
-      if (targetUserId)
-        clauses.push({
-          key: ModerationLogEntityPropertyNames.targetUserId,
-          operator: BinaryOperator.eq,
-          value: targetUserId,
-        });
-      if (type) clauses.push({ key: ModerationLogEntityPropertyNames.type, operator: BinaryOperator.eq, value: type });
-
-      const moderationLogClient = await useTableClient(AzureTable.ModerationLog);
-      return readCursorPaginationDataAzureTable(moderationLogClient, ModerationLogEntity, {
+      return readCursorPaginationDataAzureTable(moderationNotesClient, ModerationNoteEntity, {
         clauses,
         cursor,
         limit,
@@ -273,27 +298,4 @@ export const moderationRouter = router({
       });
     },
   ),
-  readModerationNotes: getPermissionsProcedure(
-    RoomPermission.KickMembers,
-    readModerationNotesInputSchema,
-    "roomId",
-  ).query(async ({ ctx, input: { cursor, limit, roomId, targetUserId } }) => {
-    // Provisioning the table is independent of the hierarchy check, so neither waits on the other
-    const [moderationNotesClient] = await Promise.all([
-      useTableClient(AzureTable.ModerationNotes),
-      assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId),
-    ]);
-
-    const clauses: Clause<ModerationNoteEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
-      { key: ModerationNoteEntityPropertyNames.targetUserId, operator: BinaryOperator.eq, value: targetUserId },
-      getTableNullClause(ItemMetadataPropertyNames.deletedAt),
-    ];
-    return readCursorPaginationDataAzureTable(moderationNotesClient, ModerationNoteEntity, {
-      clauses,
-      cursor,
-      limit,
-      sortBy: [MESSAGE_ROWKEY_SORT_ITEM],
-    });
-  }),
 });

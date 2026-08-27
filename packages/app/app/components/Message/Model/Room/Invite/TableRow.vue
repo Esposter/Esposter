@@ -1,23 +1,22 @@
 <script setup lang="ts">
-import type { InviteInMessage, RoomInMessage } from "@esposter/db-schema";
+import type { InviteInMessageWithCreator, RoomInMessage } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
 import { useDialogStore } from "@/store/message/room/dialog";
-import { useInviteStore } from "@/store/message/room/invite";
+import { useRoomInviteStore } from "@/store/message/room/roomInvite";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 interface InviteTableRowProps {
-  invite: InviteInMessage;
+  invite: InviteInMessageWithCreator;
+  isCreator: boolean;
   roomId: RoomInMessage["id"];
 }
 
-const { invite, roomId } = defineProps<InviteTableRowProps>();
-const { data: session } = await authClient.useSession(useFetch);
+const { invite, isCreator, roomId } = defineProps<InviteTableRowProps>();
 const runtimeConfig = useRuntimeConfig();
 const dialogStore = useDialogStore();
 const { inviteRoomId } = storeToRefs(dialogStore);
-const inviteStore = useInviteStore();
-const { revokeInvite } = inviteStore;
+const roomInviteStore = useRoomInviteStore();
+const { revokeInvite } = roomInviteStore;
 const inviteLink = computed(() => `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(invite.id)}`);
 // The cap belongs beside the count rather than in a column of its own, which is where Discord puts a bare number
 const usesText = computed(() => (invite.maxUses ? `${invite.uses} / ${invite.maxUses}` : String(invite.uses)));
@@ -27,12 +26,8 @@ const usesText = computed(() => (invite.maxUses ? `${invite.uses} / ${invite.max
   <tr>
     <td>
       <div flex gap-x-2 items-center>
-        <StyledAvatar
-          :image="session?.user.image ?? ''"
-          :name="session?.user.name ?? ''"
-          :avatar-props="{ size: 'small' }"
-        />
-        <span>{{ session?.user.name }}</span>
+        <StyledAvatar :image="invite.user.image ?? ''" :name="invite.user.name" :avatar-props="{ size: 'small' }" />
+        <span>{{ invite.user.name }}</span>
       </div>
     </td>
     <td font-mono>{{ invite.id }}</td>
@@ -44,7 +39,9 @@ const usesText = computed(() => (invite.maxUses ? `${invite.uses} / ${invite.max
     <td>
       <div flex justify-end>
         <StyledClipboardIconButton :source="inviteLink" text="Copy Invite Link" />
+        <!-- Editing replaces the reader's own link, so it is only offered on the row that is theirs -->
         <StyledTooltipIconButton
+          v-if="isCreator"
           :button-props="{ size: 'small' }"
           icon="mdi-pencil"
           text="Edit invite link"

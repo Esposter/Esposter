@@ -1,5 +1,9 @@
+import type { CreatedComment } from "#shared/models/db/post/CreatedComment";
+import type { DeletedComment } from "#shared/models/db/post/DeletedComment";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { Post, PostWithRelations, relations } from "@esposter/db-schema";
+import type { Transaction } from "@@/server/models/db/Transaction";
+import type { Context } from "@@/server/trpc/context";
+import type { Post, PostWithRelations, relations, User } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
 
 import { createCommentInputSchema } from "#shared/models/db/post/CreateCommentInput";
@@ -19,7 +23,6 @@ import { getPostRanking } from "@@/server/services/post/getPostRanking";
 import { getPostWithViewerLike } from "@@/server/services/post/getPostWithViewerLike";
 import { getViewerPostRelations } from "@@/server/services/post/getViewerPostRelations";
 import { router } from "@@/server/trpc";
-import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
@@ -33,7 +36,7 @@ import {
   selectPostSchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { and, eq, isNotNull, isNull } from "drizzle-orm";
+import { and, arrayContains, eq, inArray, isNotNull, isNull, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
@@ -49,16 +52,40 @@ const readPostsInputSchema = z
   })
   .prefault({});
 
+// Every write returns an id and every reader wants the row a card renders — the author beside it, and the
+// Viewer's own like when there is a viewer to have one. Signed out there is no like to look up, so the read drops
+// The filtered relation rather than filtering on nobody
+const readPostWithRelations = async (
+  db: Context["db"] | Transaction,
+  id: Post["id"],
+  entityType: string,
+  userId?: User["id"],
+): Promise<PostWithRelations> =>
+  getPostWithViewerLike(
+    await requireEntity(
+      db.query.posts.findFirst({
+        where: {
+          id: {
+            eq: id,
+          },
+        },
+        with: userId ? getViewerPostRelations(userId) : PostRelations,
+      }),
+      entityType,
+      id,
+    ),
+  );
+
 export const postRouter = router({
-  createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"]).mutation<PostWithRelations>(
+  createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"]).mutation<CreatedComment>(
     ({ ctx, input }) =>
       ctx.db.transaction(async (tx) => {
         const parentPost = await requireEntity(
           tx.query.posts.findFirst({
             columns: {
+              ancestorIds: true,
               depth: true,
               id: true,
-              noComments: true,
             },
             where: {
               id: {
@@ -69,7 +96,8 @@ export const postRouter = router({
           DatabaseEntityType.Post,
           input.parentId,
         );
-
+        // The parent's chain plus the parent itself: what this reply inherits, and the posts whose counters move
+        const ancestorIds = [...parentPost.ancestorIds, parentPost.id];
         const createdAt = new Date();
         const newComment = requireMutation(
           (
@@ -77,6 +105,7 @@ export const postRouter = router({
               .insert(posts)
               .values({
                 ...input,
+                ancestorIds,
                 createdAt,
                 depth: parentPost.depth + 1,
                 ranking: getPostRanking(0, createdAt),
@@ -89,25 +118,22 @@ export const postRouter = router({
           JSON.stringify(input),
         );
 
+        // Every ancestor, not just the parent: a counter that stops at direct children makes a feed card
+        // Under-report its own thread
         await tx
           .update(posts)
-          .set({ noComments: parentPost.noComments + 1 })
-          .where(eq(posts.id, parentPost.id));
+          .set({ noComments: sql`${posts.noComments} + 1` })
+          .where(inArray(posts.id, ancestorIds));
 
-        return getPostWithViewerLike(
-          await requireEntity(
-            tx.query.posts.findFirst({
-              where: {
-                id: {
-                  eq: newComment.id,
-                },
-              },
-              with: getViewerPostRelations(ctx.getSessionPayload.user.id),
-            }),
-            DerivedDatabaseEntityType.Comment,
+        return {
+          ancestorIds,
+          comment: await readPostWithRelations(
+            tx,
             newComment.id,
+            DerivedDatabaseEntityType.Comment,
+            ctx.getSessionPayload.user.id,
           ),
-        );
+        };
       }),
   ),
   createPost: getProfanityFilterProcedure(createPostInputSchema, ["title", "description"]).mutation<PostWithRelations>(
@@ -131,24 +157,25 @@ export const postRouter = router({
           JSON.stringify(input),
         );
 
-        return getPostWithViewerLike(
-          await requireEntity(
-            tx.query.posts.findFirst({
-              where: {
-                id: {
-                  eq: newPost.id,
-                },
-              },
-              with: getViewerPostRelations(ctx.getSessionPayload.user.id),
-            }),
-            DatabaseEntityType.Post,
-            newPost.id,
-          ),
-        );
+        return readPostWithRelations(tx, newPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
       }),
   ),
-  deleteComment: standardAuthedProcedure.input(deleteCommentInputSchema).mutation<Post>(({ ctx, input }) =>
+  deleteComment: standardAuthedProcedure.input(deleteCommentInputSchema).mutation<DeletedComment>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
+      // Counted before the delete, because the cascade takes these rows with it and nothing afterwards could say
+      // How many there were. Containment reads the whole subtree in one predicate, this row included, which makes
+      // The count the number every ancestor loses.
+      // The rows are locked rather than merely counted: a delete of a reply beneath this one would otherwise commit
+      // Between this read and the decrement below, and both writes would subtract that same reply from every
+      // Ancestor above it. Ascending id is the order every such delete acquires them in, so an overlap waits here —
+      // And one that still collides further in is aborted by the deadlock detector rather than double-counted
+      const removedComments = await tx
+        .select({ id: posts.id })
+        .from(posts)
+        .where(or(eq(posts.id, input), arrayContains(posts.ancestorIds, [input])))
+        .orderBy(posts.id)
+        .for("update");
+      const noRemovedComments = removedComments.length;
       const deletedComment = requireMutation(
         (
           await tx
@@ -160,30 +187,13 @@ export const postRouter = router({
         DerivedDatabaseEntityType.Comment,
         input,
       );
-      const { parentId: postId } = deletedComment;
-      if (!postId) throw getInvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, input);
-
-      const post = await requireEntity(
-        tx.query.posts.findFirst({
-          columns: {
-            id: true,
-            noComments: true,
-          },
-          where: {
-            id: {
-              eq: postId,
-            },
-          },
-        }),
-        DatabaseEntityType.Post,
-        postId,
-      );
-
+      // Every ancestor loses the whole subtree, and the deleted row carries the list of which posts those are
+      const { ancestorIds } = deletedComment;
       await tx
         .update(posts)
-        .set({ noComments: post.noComments - 1 })
-        .where(eq(posts.id, post.id));
-      return deletedComment;
+        .set({ noComments: sql`${posts.noComments} - ${noRemovedComments}` })
+        .where(inArray(posts.id, ancestorIds));
+      return { ancestorIds, noRemovedComments };
     }),
   ),
   deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<Post>(async ({ ctx, input }) => {
@@ -200,40 +210,12 @@ export const postRouter = router({
     );
     return deletedPost;
   }),
-  readPost: standardRateLimitedProcedure.input(readPostInputSchema).query<PostWithRelations>(async ({ ctx, input }) => {
+  readPost: standardRateLimitedProcedure
+    .input(readPostInputSchema)
     // The procedure is rate-limited, so a session may be absent — no viewer means no like lookup at all
-    const userId = ctx.getSessionPayload?.user.id;
-    if (!userId)
-      return getPostWithViewerLike(
-        await requireEntity(
-          ctx.db.query.posts.findFirst({
-            where: {
-              id: {
-                eq: input,
-              },
-            },
-            with: PostRelations,
-          }),
-          DatabaseEntityType.Post,
-          input,
-        ),
-      );
-
-    return getPostWithViewerLike(
-      await requireEntity(
-        ctx.db.query.posts.findFirst({
-          where: {
-            id: {
-              eq: input,
-            },
-          },
-          with: getViewerPostRelations(userId),
-        }),
-        DatabaseEntityType.Post,
-        input,
-      ),
-    );
-  }),
+    .query<PostWithRelations>(({ ctx, input }) =>
+      readPostWithRelations(ctx.db, input, DatabaseEntityType.Post, ctx.getSessionPayload?.user.id),
+    ),
   readPosts: standardRateLimitedProcedure
     .input(readPostsInputSchema)
     .query<CursorPaginationData<PostWithRelations>>(
@@ -256,19 +238,12 @@ export const postRouter = router({
               throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Post, JSON.stringify({ cursor }));
             return rawWhere;
           };
-        const resultPosts = userId
-          ? await ctx.db.query.posts.findMany({
-              limit: limit + 1,
-              orderBy: (post) => parseSortByToSql(post, sortBy),
-              where,
-              with: getViewerPostRelations(userId),
-            })
-          : await ctx.db.query.posts.findMany({
-              limit: limit + 1,
-              orderBy: (post) => parseSortByToSql(post, sortBy),
-              where,
-              with: PostRelations,
-            });
+        const resultPosts = await ctx.db.query.posts.findMany({
+          limit: limit + 1,
+          orderBy: (post) => parseSortByToSql(post, sortBy),
+          where,
+          with: userId ? getViewerPostRelations(userId) : PostRelations,
+        });
         return getCursorPaginationData(
           resultPosts.map((post) => getPostWithViewerLike(post)),
           limit,
@@ -292,25 +267,11 @@ export const postRouter = router({
           id,
         );
 
-        return getPostWithViewerLike(
-          await requireEntity(
-            tx.query.posts.findFirst({
-              where: {
-                id: {
-                  eq: updatedComment.id,
-                },
-                parentId: {
-                  isNotNull: true,
-                },
-                userId: {
-                  eq: ctx.getSessionPayload.user.id,
-                },
-              },
-              with: getViewerPostRelations(ctx.getSessionPayload.user.id),
-            }),
-            DerivedDatabaseEntityType.Comment,
-            id,
-          ),
+        return readPostWithRelations(
+          tx,
+          updatedComment.id,
+          DerivedDatabaseEntityType.Comment,
+          ctx.getSessionPayload.user.id,
         );
       }),
   ),
@@ -330,26 +291,7 @@ export const postRouter = router({
           id,
         );
 
-        return getPostWithViewerLike(
-          await requireEntity(
-            tx.query.posts.findFirst({
-              where: {
-                id: {
-                  eq: updatedPost.id,
-                },
-                parentId: {
-                  isNull: true,
-                },
-                userId: {
-                  eq: ctx.getSessionPayload.user.id,
-                },
-              },
-              with: getViewerPostRelations(ctx.getSessionPayload.user.id),
-            }),
-            DatabaseEntityType.Post,
-            id,
-          ),
-        );
+        return readPostWithRelations(tx, updatedPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
       }),
   ),
 });

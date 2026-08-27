@@ -1,6 +1,6 @@
 ---
 name: sweeps
-description: Esposter repo-wide sweep conventions — progress tracked as a ledger in .agents/ledgers/ (one file per sweep, one index row, promoted to a folder of coverage files as it grows), sweeps are repo state and never proposals, when a mechanical pass earns a ledger and when it is just a commit, the six things a ledger may hold and the explanatory prose it may not, state living at the leaf with no rolled-up counts, reading the leaf rather than the tree, one agent per leaf for parallel passes, every sweep being standing and the changed-files command that resumes one, one ledger per subject with a new convention resetting its dates, handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill, one unit per commit chunked to the review budget, behaviour-preserving passes and where a behaviour-changing finding goes instead, and what belongs in the commit message rather than the ledger. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
+description: Esposter repo-wide sweep conventions — progress tracked as a ledger in .agents/ledgers/ (one file per sweep, one index row, promoted to a folder of coverage files as it grows), sweeps are repo state and never proposals, when a mechanical pass earns a ledger and when it is just a commit, the six things a ledger may hold and the explanatory prose it may not, state living at the leaf with no rolled-up counts, reading the leaf rather than the tree, one agent per leaf for parallel passes, every sweep being standing and the changed-files command that resumes one, a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same) with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all, handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill, one unit per commit chunked to the review budget, behaviour-preserving passes and where a behaviour-changing finding goes instead, and what belongs in the commit message rather than the ledger. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
 ---
 
 # Sweeps
@@ -14,7 +14,7 @@ Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row i
 ## Does it earn a file?
 
 - **More than one sitting or one commit → its own file.** Anything smaller is just the change; a sweep file for it is overhead that then rots.
-- **One subject per file.** A convention whose files another ledger already owns joins that ledger (see below); what never merges is two conventions with different **units**, because a coverage table can only be dated against one of them. A combined "cleanup" sweep is that mistake at its widest.
+- **One question per file.** A convention another ledger already asks joins that ledger (see below); one that asks something different opens its own, however far its files overlap. What never merges is two conventions with different **units**, because a coverage table can only be dated against one of them.
 
 - **A unit is what one pass can read.** Reading is what finds duplication and the helper that already exists; a unit too big to read gets grepped instead, and a grep pass that ticks its row records a sweep that never happened. When a pass reaches for grep because the unit is too large, split the row at the directory boundary rather than carrying on — dated rows keep their dates, the rest become several `—` rows.
 - **A migration is not a sweep.** Work gated on an external trigger (upstream shipping a feature) is tracked by its blocker table in its own docs page, not by coverage.
@@ -98,10 +98,36 @@ knows what to look for. Those dates are also what the next convention change is 
 line rather than widening an existing one when a unit turns out too big, and split it into its own file when the
 lines stop fitting.
 
-**A new convention joins the ledger that already owns its files** rather than opening one of its own, and adding
-it resets that ledger's dates — a unit swept against a narrower rule set is not swept against the current one,
-and there is no partially-swept state. One ledger per _subject_, not per convention: two ledgers over the same
-files mean reading those files twice and handing findings between them.
+**A new convention joins the ledger that already asks its question** — the one whose owning skill now states it —
+and adding it resets that ledger's dates, because a unit swept against a narrower rule set is not swept against
+the current one and there is no partially-swept state. Sharing a file set with an existing ledger is not what
+decides this; the next section is.
+
+## A ledger is keyed by its question, never by its address
+
+Two ledgers reading the same files is **not** duplication on its own. `browser-boundary`, `ux` and
+`vue-components` all read `app/components`, and they are three sweeps because they ask three questions of it.
+They merge only when the question is the same: `quality/skills` folded into `docs` because both read
+`.agents/skills` against `skill-authoring`, and each pass was handing the other its findings.
+
+```mermaid
+flowchart TD
+  TWO["two ledgers reach the same files"] --> Q{"same question of them?"}
+  Q -->|"yes — same owning skill, findings hand back and forth"| MERGE["merge; the survivor's dates reset"]
+  Q -->|"no — different owning skill"| KEEP["keep both; the file is read twice on purpose"]
+  KEEP --> WHY["reading is cheap, attention is not"]
+```
+
+The reason is the same one the `code-review` skill states about its own finders: a pass carrying one question
+finds what a pass carrying twenty skims past. Passes differ by **question**, not by **address** — so widening a
+ledger's rule set to cover more of a file is how a sweep quietly becomes a skim, and an area-keyed "cleanup"
+ledger is that mistake at its widest. When a rule set has no ledger, the answer is a new ledger, not a wider row
+on an existing one.
+
+Its corollary bounds the count: a ledger is worth opening only for a convention **no enforcer already decides**.
+A rule that oxlint or typecheck checks needs no coverage table — it fails on the line that breaks it — so the ledgers
+that earn their file are the read-only-detectable ones: a helper that already exists, a name that means the wrong
+thing, a guard held on one path and not its sibling.
 
 ## Draining beats scheduling
 

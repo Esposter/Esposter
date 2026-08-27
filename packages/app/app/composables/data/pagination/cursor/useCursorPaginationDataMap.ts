@@ -5,15 +5,20 @@ import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPag
 import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
 // Keep a map of id → CursorPaginationData so we can store separate lists per id (e.g. comments per post).
 export const useCursorPaginationDataMap = <TItem>(
-  currentId: MaybeRefOrGetter<string>,
+  // Left empty by a caller that has no current partition and names every key instead
+  currentId: MaybeRefOrGetter<string> = "",
 ): Except<ReturnType<typeof useCursorPaginationOperationData<TItem>>, "items"> & {
   getSlice: (key: string) => CursorPaginationSlice<TItem>;
+  // One named partition's own reads, for a caller that pages a key rather than whichever one is current
+  getSliceOperationData: (key: string) => ReturnType<typeof useCursorPaginationOperationData<TItem>>;
   // The reading view, and only that: it follows whichever id is current, which is what a rendered list wants and
   // Exactly what a write must not use. `readonly` is what makes writing through it impossible rather than merely
-  // Discouraged — `getSlice` is the only way to obtain a writer, and obtaining one means naming the id
+  // Discouraged — obtaining a writer means naming the id
   items: ComputedRef<readonly TItem[]>;
+  // Every partition the map holds, for a caller that has to look across them
+  keys: ComputedRef<string[]>;
 } => {
-  const { getBoundData, getDataRef } = useDataMap(currentId, () => new CursorPaginationData<TItem>());
+  const { getBoundData, getDataRef, keys } = useDataMap(currentId, () => new CursorPaginationData<TItem>());
   // Readiness is keyed like the slice it describes, so it lives and dies with those rows. Held anywhere shorter
   // Lived — a local in whichever composable asks — it starts fresh under a list that did not, and answers for a
   // Partition it never watched load
@@ -30,5 +35,15 @@ export const useCursorPaginationDataMap = <TItem>(
       items: getPropertyComputed(data, "items"),
     };
   };
-  return { ...useCursorPaginationOperationData(getBoundData, getBoundIsLoaded), getSlice };
+  const getSliceOperationData = (key: string) =>
+    useCursorPaginationOperationData<TItem>(
+      () => getDataRef(key),
+      () => getIsLoadedRef(key),
+    );
+  return {
+    ...useCursorPaginationOperationData(getBoundData, getBoundIsLoaded),
+    getSlice,
+    getSliceOperationData,
+    keys,
+  };
 };

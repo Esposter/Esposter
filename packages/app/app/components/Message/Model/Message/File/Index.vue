@@ -4,6 +4,7 @@ import type { FileEntity, MessageEntity } from "@esposter/db-schema";
 import { getFileCornerStyle } from "@/services/message/file/getFileCornerStyle";
 import { useDataStore } from "@/store/message/data";
 import { useDownloadFileStore } from "@/store/message/file";
+import { useFileDialogStore } from "@/store/message/file/dialog";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface FileProps {
@@ -19,10 +20,11 @@ const isCreator = await useIsCreator(() => message);
 const dataStore = useDataStore();
 const { deleteFile } = dataStore;
 const downloadFileStore = useDownloadFileStore();
-const { viewFiles } = downloadFileStore;
 const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
+const fileDialogStore = useFileDialogStore();
+const { viewingFileId } = storeToRefs(fileDialogStore);
 const url = computed(() => fileUrlMap.value.get(file.id)?.url ?? "");
-const viewableFileIndex = computed(() => viewableFiles.value.findIndex(({ id }) => id === file.id));
+const isViewable = computed(() => viewableFiles.value.some(({ id }) => id === file.id));
 const cornerStyle = computed(() => getFileCornerStyle(columnLayout, index));
 const isActive = ref(false);
 </script>
@@ -31,7 +33,7 @@ const isActive = ref(false);
   <StyledCard
     :style="cornerStyle"
     h-full
-    @="viewableFileIndex === -1 ? {} : { click: () => viewFiles(viewableFileIndex) }"
+    @="isViewable ? { click: () => (viewingFileId = file.id) } : {}"
     @mouseenter="isActive = true"
     @mouseleave="isActive = false"
   >

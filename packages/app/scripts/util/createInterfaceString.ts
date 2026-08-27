@@ -1,7 +1,7 @@
 import type { InterfaceProperty } from "@@/scripts/models/InterfaceProperty";
 
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
-import { startsWithNumber } from "#shared/util/regex/startsWithNumber";
+import { checkStartsWithNumber } from "#shared/util/regex/checkStartsWithNumber";
 
 export const createInterfaceString = (name: string, properties: InterfaceProperty[]) =>
   properties.length === 0
@@ -12,7 +12,7 @@ export const createInterfaceString = (name: string, properties: InterfacePropert
           .toSorted((a, b) => EN_US_COMPARATOR.compare(a.name, b.name))
           .map(
             ({ name: propertyName, type }) =>
-              `  ${startsWithNumber(propertyName) ? `"@${propertyName}"` : propertyName}: ${type};`,
+              `  ${checkStartsWithNumber(propertyName) ? `"@${propertyName}"` : propertyName}: ${type};`,
           )
           .join("\n"),
         "}\n",

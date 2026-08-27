@@ -2,7 +2,7 @@ import type { CacheTag } from "@/models/cache/CacheTag";
 import type { Promisable } from "type-fest";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
-import { getIsAlertedByErrorLink } from "@/services/trpc/errorLink";
+import { checkIsAlertedByErrorLink } from "@/services/trpc/errorLink";
 import { useAlertStore } from "@/store/alert";
 import { useCacheStore } from "@/store/cache";
 import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
@@ -117,7 +117,7 @@ export const useMutation = () => {
         if (onError) await onError(error);
         // The error link already put the codes it owns in front of the user, so alerting the same message here
         // Would stack two identical toasts on every mutation this primitive runs
-        else if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+        else if (!checkIsAlertedByErrorLink(error)) createAlert(error.message, "error");
         return { error, status: MutationStatus.Failed };
       },
     );

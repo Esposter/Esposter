@@ -1,17 +1,17 @@
 ---
 title: File & media
-description: Client-side image thumbnails, per-room attachment limits, and browsing a room's attachments, all riding the shared SAS upload.
+description: Client-side image thumbnails, the media viewer, per-room attachment limits, and browsing a room's attachments, all riding the shared SAS upload.
 ---
 
 # File & Media
 
-Message attachments upload through one shared SAS round-trip ([file uploads](/docs/architecture/file-uploads)). This page covers three enhancements layered on top of it: image thumbnails, per-room attachment limits, and browsing a room's attachments.
+Message attachments upload through one shared SAS round-trip ([file uploads](/docs/architecture/file-uploads)). This page covers four enhancements layered on top of it: image thumbnails, the media viewer they open into, per-room attachment limits, and browsing a room's attachments.
 
 ## How it works
 
 Every upload site funnels through the `uploadFileToSas` service, which generates the write targets, PUTs the blocks, and optionally returns read urls. The message composer adds two things on top: it validates each file against the room's limits before the SAS query, and it downscales images to a thumbnail that uploads alongside the original.
 
-Thumbnails are generated on the client with a canvas — each image is scaled so its longest edge is a fixed size and re-encoded to WebP. The server issues a second write SAS for the sibling blob at `{roomId}/{fileId}.thumb` whenever an image is uploaded, so the thumbnail lands in the same container and inherits the same blob-lifecycle tiering as the original. The message list renders the thumbnail inline and opens the full-resolution original in the lightbox.
+Thumbnails are generated on the client with a canvas — each image is scaled so its longest edge is a fixed size and re-encoded to WebP. The server issues a second write SAS for the sibling blob at `{roomId}/{fileId}.thumb` whenever an image is uploaded, so the thumbnail lands in the same container and inherits the same blob-lifecycle tiering as the original. The message list renders the thumbnail inline and opens the full-resolution original in the media viewer.
 
 Per-room limits live as columns on the `rooms` table and are checked at the SAS-issuing procedure, the only place a server sees an upload at all — the block PUT goes straight to Azure and never passes back through Nitro. The composer mirrors the same limits so a rejected file is surfaced before any network call.
 
@@ -35,8 +35,24 @@ flowchart TD
   thumb --> upthumb[Thumbnail blob PUT to thumbnailSasUrl]
   upload --> render[Message list renders the thumbnail]
   upthumb --> render
-  render -->|click| lightbox[showImageViewer opens the original]
+  render -->|click| viewer["viewingFileId opens the media viewer"]
 ```
+
+## The media viewer
+
+Clicking an image or a video attachment opens one viewer, mounted once beside the message list and targeted by
+the id of the file that was clicked ([singleton dialogs](/docs/architecture/singleton-dialogs)). The gallery it
+walks is every viewable file the room has read a url for, so the arrows and the `ArrowLeft`/`ArrowRight` keys
+move through the room's media rather than through one message's attachments. The ends are ends: nothing wraps.
+
+Two things the viewer deliberately does not hold. A PDF opens its own dialog from its own renderer and audio
+plays from the row it is in, so neither joins the gallery — both would mean two dialogs racing for one click.
+And the url is read from the store by id on every render rather than captured when the viewer opened, which is
+what lets the store's refresh sweep re-mint an expiring read SAS underneath a viewer that is still on screen.
+
+An image zooms on the wheel and pans on a drag once it is past the fitted size, with both reset when the viewer
+moves to another file; a video renders with its own controls and does neither. Download is the same
+`downloadUrl` anchor the file card's own options menu calls.
 
 ## Data model
 
@@ -67,10 +83,11 @@ Removing an attachment (`deleteFile`), deleting a message with attachments, or d
 | `packages/app/app/services/file/uploadFileToSas.ts`                                  | The one SAS upload round-trip every site funnels through    |
 | `packages/app/app/services/file/validateFile.ts`                                     | Single file validator returning a discriminated result      |
 | `packages/app/app/services/file/generateImageThumbnail.ts`                           | Canvas downscale to a WebP thumbnail blob                   |
-| `packages/app/app/services/file/showImageViewer.ts`                                  | Builds the hidden gallery element the lightbox engine reads |
+| `packages/app/app/components/Message/Model/Message/File/ViewerDialog.vue`            | The media viewer — one file, the gallery around it          |
+| `packages/app/app/store/message/file/dialog.ts`                                      | The viewer's target id                                      |
 | `packages/app/app/composables/message/file/useUploadFiles.ts`                        | Composer path — validate, upload original, upload thumbnail |
 | `packages/app/app/composables/message/file/useReadFileUrls.ts`                       | Batch-resolves originals and thumbnails into read urls      |
-| `packages/app/app/components/Message/Model/FileRenderer/Image.vue`                   | Renders the thumbnail inline, original in the lightbox      |
+| `packages/app/app/components/Message/Model/FileRenderer/Image.vue`                   | Renders the thumbnail inline, original in the viewer        |
 | `packages/db-schema/src/schema/roomsInMessage.ts`                                    | `maxFileSizeBytes` + `allowedMimeCategories` columns        |
 | `packages/db-schema/src/services/file/getMimeCategory.ts`                            | Mimetype to coarse category mapping                         |
 | `packages/db/src/services/azure/container/generateUploadFileSasEntities.ts`          | Issues the original and sibling thumbnail write SAS         |

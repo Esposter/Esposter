@@ -23,7 +23,7 @@ Batch format/typecheck/tests until **all** edits are done. Each pass re-pays a f
 
 Commit per coherent chunk regardless: commits are cheap and protect against other sessions' resets, checks are not.
 
-The pass runs **after** `/simplify`, not before — cleanup edits code, so checking first pays the startup cost twice. See "Finishing a change" in `CLAUDE.md` for the full order.
+The pass runs **after** the review's quality lane, not before — cleanup edits code, so checking first pays the startup cost twice. See "Finishing a change" in `CLAUDE.md` for the full order.
 
 ## Wait on a condition, never a sleep
 

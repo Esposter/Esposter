@@ -1,7 +1,7 @@
-import { getIsServer } from "@esposter/shared";
+import { checkIsServer } from "@esposter/shared";
 
 export const getTextFromHtml = (html: string) => {
-  if (getIsServer()) return html;
+  if (checkIsServer()) return html;
   const element = window.document.createElement("div");
   element.innerHTML = html;
   return element.textContent ?? "";

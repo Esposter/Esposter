@@ -20,7 +20,8 @@ export const addProfanityFilterMiddleware = <
     for (const key of keys) {
       const value = input[key];
       if (value === null || value === undefined || value === "") continue;
-      else if (typeof value !== "string") throw new TRPCError({ code: "BAD_REQUEST" });
+      else if (typeof value !== "string")
+        throw new TRPCError({ code: "BAD_REQUEST", message: `${key.toString()} must be a string.` });
       else if (profanity.exists(value))
         throw new TRPCError({ code: "BAD_REQUEST", message: `${key.toString()} contains profanity.` });
     }

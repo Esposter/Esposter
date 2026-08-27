@@ -9,7 +9,7 @@ import { danglingProgramBindingError } from "@@/server/services/program/dangling
 import { getProgramParticipantId } from "@@/server/services/program/getProgramParticipantId";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { AZURE_MAX_BATCH_SIZE, AZURE_MAX_PAGE_SIZE, getPartitionKeyFilter } from "@esposter/azure";
-import { createEntity, getEntity, getIsConflict, getTopNEntities, serializeEntity } from "@esposter/db";
+import { checkIsConflict, createEntity, getEntity, getTopNEntities, serializeEntity } from "@esposter/db";
 import { AzureTable, ProgramParticipantEntity } from "@esposter/db-schema";
 import { chunk, getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -21,7 +21,7 @@ const getIsCreated = (create: () => Promise<unknown>): Promise<boolean> =>
   getResultAsync(create).match(
     () => true,
     (error) => {
-      if (getIsConflict(error)) return false;
+      if (checkIsConflict(error)) return false;
       throw error;
     },
   );

@@ -3,14 +3,16 @@ import type { z } from "zod";
 
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { MessageOperationPermission } from "#shared/models/message/MessageOperationPermission";
-import { getIsMessageAuthor } from "#shared/services/message/getIsMessageAuthor";
-import { getIsMessageOperationPermitted } from "#shared/services/message/getIsMessageOperationPermitted";
+import { checkIsMessageAuthor } from "#shared/services/message/checkIsMessageAuthor";
+import { checkIsMessageOperationPermitted } from "#shared/services/message/checkIsMessageOperationPermitted";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
+import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getEntityWithEtag, hasPermission } from "@esposter/db";
 import { AzureEntityType, AzureTable, RoomPermission, StandardMessageEntity } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 // Each procedure names the operation it guards, and MessageTypeOperationPermissionMap answers both halves of the
@@ -31,23 +33,16 @@ export const getMessageProcedure = <T extends z.ZodType<Pick<MessageEntity, "par
       input.partitionKey,
       input.rowKey,
     );
-    if (!messageEntityWithEtag)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message,
-      });
+    if (!messageEntityWithEtag) throw getNotFoundError(AzureEntityType.Message, JSON.stringify(input));
 
     const { entity: messageEntity, etag: messageEtag } = messageEntityWithEtag;
     const permission = getMessageOperationPermission(messageEntity.type, operation);
     if (!permission)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(
-          operation === MessageOperation.Delete ? Operation.Delete : Operation.Update,
-          AzureEntityType.Message,
-          JSON.stringify({ operation, partitionKey: input.partitionKey, rowKey: input.rowKey }),
-        ).message,
-      });
+      throw getInvalidOperationError(
+        operation === MessageOperation.Delete ? Operation.Delete : Operation.Update,
+        AzureEntityType.Message,
+        JSON.stringify({ operation, partitionKey: input.partitionKey, rowKey: input.rowKey }),
+      );
     // An any-member operation is already authorized by the membership check this procedure is built on, so it
     // Never pays for the permission read
     const hasManageMessages =
@@ -55,9 +50,9 @@ export const getMessageProcedure = <T extends z.ZodType<Pick<MessageEntity, "par
         ? false
         : await hasPermission(ctx.db, ctx.getSessionPayload.user.id, input.partitionKey, RoomPermission.ManageMessages);
     if (
-      !getIsMessageOperationPermitted(permission, {
+      !checkIsMessageOperationPermitted(permission, {
         hasManageMessages,
-        isAuthor: getIsMessageAuthor(messageEntity, ctx.getSessionPayload.user.id),
+        isAuthor: checkIsMessageAuthor(messageEntity, ctx.getSessionPayload.user.id),
       })
     )
       throw new TRPCError({ code: "UNAUTHORIZED" });

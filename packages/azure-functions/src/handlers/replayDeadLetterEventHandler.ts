@@ -1,11 +1,11 @@
 import type { EventGridHandler } from "@azure/functions";
 
+import { checkIsReplayable } from "#src/services/checkIsReplayable";
 import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/constants";
 import { deleteReplayedBlob } from "#src/services/deleteReplayedBlob";
 import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
 import { formatReplayId } from "#src/services/formatReplayId";
 import { getContainerClient } from "#src/services/getContainerClient";
-import { getIsReplayable } from "#src/services/getIsReplayable";
 import { logAndRethrow } from "#src/services/logAndRethrow";
 import { parseReplayId } from "#src/services/parseReplayId";
 import { writeDeadLetterBlob } from "#src/services/writeDeadLetterBlob";
@@ -90,7 +90,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     }
     // Judged per event, not per blob: Event Grid batches whatever expired together, so one poison payload must not
     // Strand the transient failures sharing its blob, and a blob-level count would be meaningless anyway once the
-    // Batch splits across cycles. GetIsReplayable owns both bars — the replay cap and handler idempotency.
+    // Batch splits across cycles. Both bars — the replay cap and handler idempotency — are `checkIsReplayable`'s.
     // The raw objects parsed above stay index-aligned with the narrowed events: the schema keeps only the five
     // Fields a republish needs, dropping Event Grid's dead-letter diagnostics (deadLetterReason,
     // DeliveryAttempts, lastDeliveryOutcome). Those are the only record of WHY a payload is here, which is the
@@ -105,7 +105,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
         deadLetteredEvent,
         eventId,
         index,
-        isReplayable: getIsReplayable(deadLetteredEvent.eventType, replayAttempts),
+        isReplayable: checkIsReplayable(deadLetteredEvent.eventType, replayAttempts),
         replayAttempts,
       };
     });

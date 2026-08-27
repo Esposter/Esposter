@@ -52,7 +52,7 @@ When `@electric-sql/pglite` changes between minor versions, regenerate the db-mo
 ## Exact-pinned packages (no caret)
 
 - **`drizzle-kit`, `drizzle-orm`** — pinned to an exact RC (no `^`). Leave the caret off: a caret would float them across RC builds. Bump both together, deliberately, to the same version.
-- **`typescript`** — pinned exact so Renovate cannot propose it (`renovate.json` sets `updatePinnedDependencies: false`). A TypeScript major ripples through `vue-tsc`, `typescript-eslint`, `oxlint-tsgolint`, and `@typescript/native-preview` at once, so it moves only as a deliberate, dedicated pass. Unpin (restore the `^`) only for the duration of that pass.
+- **`typescript`** — an exact-pinned `npm:typescript-native-bridge@…` alias, so Renovate cannot propose it (`renovate.json` sets `updatePinnedDependencies: false`) and a caret would float it across bridge builds. The alias is what runs `tsc`/`vue-tsc` on the Go compiler (`packages/app/content/docs/architecture/monorepo-tooling.md`); a bump moves the bridge, the TypeScript version behind it and `typescript-eslint` at once, so it is a deliberate, dedicated pass and never part of a routine update.
 
 ## Version-capped packages (keep the caret, cap the range)
 
@@ -65,7 +65,7 @@ Temporary overrides that force a transitive dep to a safe version (currently `cr
 ## Tracked issues (update normally, but watch these)
 
 - **`oxlint`** — has `^`; open issue https://github.com/oxc-project/oxc/issues/13204.
-- **`oxlint-tsgolint` / `@typescript/native-preview`** — a bump here is the one thing that could retire the `ignorePatterns` entry covering tsgo's infinite loop on the recursive `three/tsl` types. Check it on every bump; the exclusion itself, and the CI symptom that does not look like a hang, are documented in the `oxlint` skill's `references/lint-configuration.md`.
+- **`oxlint-tsgolint`** — a bump here is the one thing that could retire the `ignorePatterns` entry covering tsgo's infinite loop on the recursive `three/tsl` types. It ships its own Go binaries, so the `typescript` alias does not move it. Check it on every bump; the exclusion itself, and the CI symptom that does not look like a hang, are documented in the `oxlint` skill's `references/lint-configuration.md`.
 - **`ajv`, `ajv-errors`, `ajv-formats`, `ajv-i18n`, `debug`** — required by `@koumoul/vjsf`; tracked at https://github.com/json-layout/json-layout/issues/5.
 - **`db:run` script** — workaround for https://github.com/drizzle-team/drizzle-orm/issues/1228.
 

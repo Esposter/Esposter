@@ -1,7 +1,7 @@
 import type { WslSourceMirrorSync } from "#src/models/exec/wsl/WslSourceMirrorSync";
 
+import { checkIsBareNameExclude } from "#src/services/exec/util/checkIsBareNameExclude";
 import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "#src/services/exec/util/constants";
-import { getIsBareNameExclude } from "#src/services/exec/util/getIsBareNameExclude";
 import { buildSourceMirrorManifest } from "#src/services/exec/wsl/buildSourceMirrorManifest";
 import {
   VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX,
@@ -28,7 +28,7 @@ import { join } from "node:path";
 // Matches that segment at any depth rather than one path. The changed set itself comes from getChangedExcludes, the
 // Same derivation diffSourceMirrorManifests turns into deletes, so the two can never disagree on what changed.
 const getHasBareNameExcludeChange = (previous: readonly string[], current: readonly string[]): boolean =>
-  getChangedExcludes(previous, current).some((exclude) => getIsBareNameExclude(exclude));
+  getChangedExcludes(previous, current).some((exclude) => checkIsBareNameExclude(exclude));
 // Plan the win32 source-mirror sync for a host cwd and return { mirrorPath, script }: the ext4 mirror tree's Linux
 // Path (the `--overlay-src` lower createWslBwrapArgs points at) plus the sh script that brings it up to date, which
 // CreateWslOsBackend folds into the run's own `wsl.exe` invocation ahead of bwrap — no separate sync spawn. The whole

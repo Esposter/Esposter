@@ -102,6 +102,12 @@ is for client-side navigation, where the chunk is fetched with the visitor watch
 
 A registry of small components stays static: the split buys nothing and costs a request per entry.
 
+**A component that `await`s in setup is async in the same way**, so it owes the same boundary — and only where
+it is mounted _after_ its page resolved, behind a `v-if` a click flips. Without one the wait lands on the page's
+own `<Suspense>`, which goes pending and holds every unrelated update on the page until the read returns; with a
+recursive component, every expansion anywhere in the tree does it again. One awaited during the page's own setup
+is already inside that boundary and needs nothing.
+
 ## Boolean Props — `is` Prefix + Default-Aware Literal Typing
 
 - **`is` prefix.** Boolean props read as a question: `isDense`, `isInteractive`, `isOpen` — never bare `dense` / `interactive` / `open`, and never `can*` / `should*` (prefer `is`, fall back to `has`; see global naming rules). The same applies to `defineModel` / emit payloads.

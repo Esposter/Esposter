@@ -22,19 +22,16 @@ useSeoMeta({
   mobileWebAppCapable: "yes",
   msapplicationConfig: "/browserconfig.xml",
   msapplicationTileColor: surface,
-  ogDescription: SITE_DESCRIPTION,
+  // Only the og tags @nuxtjs/seo cannot derive belong here: it resolves the rest, per route, off the canonical
+  // Url, the site config, the title template and the description above
   ogImage: logoImageUrl,
   ogImageAlt: SITE_NAME,
   ogImageHeight: 200,
   ogImageWidth: 250,
-  ogSiteName: SITE_NAME,
-  ogTitle: SITE_NAME,
-  ogType: "website",
-  ogUrl: runtimeConfig.public.baseUrl,
   themeColor: surface,
-  // No `twitterSite`: it names an @handle, and this site has no account to name — a url there is rejected
-  // Outright, so the tag was doing nothing but failing validation. `twitterCard` stays despite unhead calling
-  // It deprecated, because Open Graph alone gets a small card and this is what selects the large one
+  // Nuxt-og-image emits `twitter:card` only for an image declared through `defineOgImage`, and `zeroRuntime`
+  // Strips even that, so the tag is ours to set or X renders no card at all. `twitter:site` stays unset because
+  // It names an @handle, which this site has no account to fill
   twitterCard: "summary_large_image",
 });
 </script>

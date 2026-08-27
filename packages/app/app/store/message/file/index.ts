@@ -3,13 +3,12 @@ import type { FileEntity } from "@esposter/db-schema";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { getInferredMimetype } from "@/services/file/getInferredMimetype";
-import { showImageViewer } from "@/services/file/showImageViewer";
 import { getHasThumbnail } from "@/services/message/file/getHasThumbnail";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
-import { chunk, getIsServer, getResultAsync, MAX_READ_LIMIT, noop, Operation } from "@esposter/shared";
+import { checkIsServer, chunk, getResultAsync, MAX_READ_LIMIT, noop, Operation } from "@esposter/shared";
 
 export const useDownloadFileStore = defineStore("message/file", () => {
   const roomStore = useRoomStore();
@@ -84,22 +83,21 @@ export const useDownloadFileStore = defineStore("message/file", () => {
       await storeReadFileUrls(roomId, expiringFiles);
     }).match(noop, console.error);
   // The server renders once and discards the store, so the timer would only ever be a leak there.
-  if (!getIsServer()) useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_SAS_REFRESH_INTERVAL_MS);
+  if (!checkIsServer()) useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_SAS_REFRESH_INTERVAL_MS);
 
+  // The gallery the viewer walks: everything that has something to look at and a url to look at it through. A PDF
+  // Opens its own dialog from its own renderer and audio plays from the row, so pulling either in would mean two
+  // Dialogs racing for one click
   const viewableFiles = computed(() => {
-    const viewerImages: { alt: string; id: string; src: string }[] = [];
+    const files: Pick<FileEntity, "filename" | "id" | "mimetype">[] = [];
     for (const { filename, id, mimetype } of dataStore.files) {
-      const fileUrl = fileUrlMap.value.get(id);
-      if (!fileUrl) continue;
+      if (!fileUrlMap.value.has(id)) continue;
       const inferredMimetype = getInferredMimetype(mimetype);
-      if (inferredMimetype !== "image") continue;
-      viewerImages.push({ alt: filename, id, src: fileUrl.url });
+      if (inferredMimetype !== "image" && inferredMimetype !== "video") continue;
+      files.push({ filename, id, mimetype });
     }
-    return viewerImages;
+    return files;
   });
-  const viewFiles = (initialViewIndex: number) => {
-    showImageViewer(viewableFiles.value, initialViewIndex);
-  };
 
-  return { fileUrlMap, storeReadFileUrls, viewableFiles, viewFiles };
+  return { fileUrlMap, storeReadFileUrls, viewableFiles };
 });

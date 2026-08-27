@@ -1,3 +1,4 @@
+import type { MyRoomPermissions } from "#shared/models/db/role/MyRoomPermissions";
 import type { RoomMemberAuthority } from "#shared/models/room/RoomMemberAuthority";
 import type { Context } from "@@/server/trpc/context";
 import type { RoomRoleInMessage, UserToRoomRoleInMessageWithRelations } from "@esposter/db-schema";
@@ -186,7 +187,7 @@ export const roleRouter = router({
   ),
   readMyPermissions: standardAuthedProcedure
     .input(readMyPermissionsInputSchema)
-    .query(async ({ ctx, input: { roomIds } }) => {
+    .query<MyRoomPermissions[]>(async ({ ctx, input: { roomIds } }) => {
       const userId = ctx.getSessionPayload.user.id;
       const [rooms, permissionsMap, topRolePositionMap] = await Promise.all([
         ctx.db.query.roomsInMessage.findMany({

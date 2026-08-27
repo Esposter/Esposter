@@ -1,4 +1,4 @@
-import { AchievementDefinitionMap } from "#shared/services/achievement/achievementDefinitions";
+import { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
 import { mapToUserAchievementWithDefinition } from "@/services/achievement/mapToUserAchievementWithDefinition";
 
 // The definition map defaults to the static one because the public profile serves signed-out visitors, who

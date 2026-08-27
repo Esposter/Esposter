@@ -6,6 +6,9 @@ interface AuthResponse<TData> {
 // Hatch throws an error whose message is only the http status text — the api's own message (a session too old to
 // Unlink with, the last-account guard) rides on a property nothing downstream reads, so a rejected link surfaced
 // As "Bad Request". Raising the rejection from the payload keeps the text that tells the user what to do
+// A bare Error rather than InvalidOperationError, which is the one exception to that ban here: the whole point
+// Of this helper is that the api's own sentence reaches the user, and the wrapper prefixes it with an operation
+// And an entity name that would bury it
 export const requireAuthData = async <TData>(authResponse: Promise<AuthResponse<TData>>): Promise<null | TData> => {
   const { data, error } = await authResponse;
   if (error) throw new Error(error.message ?? error.statusText);

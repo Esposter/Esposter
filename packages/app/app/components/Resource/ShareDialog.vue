@@ -21,8 +21,9 @@ const roomItems = ref<SelectItemCategoryDefinition<string>[]>([]);
 const isLoadingRooms = ref(true);
 const roomId = ref("");
 const note = ref("");
+const { origin } = useRequestURL();
 const shareMessage = computed(() =>
-  getShareMessage(note.value, `${window.location.origin}${RoutePath.View(resource.type, resource.id)}`),
+  getShareMessage(note.value, `${origin}${RoutePath.View(resource.type, resource.id)}`),
 );
 const cardProps = computed(() => ({ prependIcon: "mdi-share-variant", title: `Share "${resource.name}"` }));
 const confirmButtonAttrs = computed(() => ({ disabled: !roomId.value }));

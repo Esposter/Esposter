@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getIsCaretAtEnd } from "@/util/dom/getIsCaretAtEnd";
+import { checkIsCaretAtEnd } from "@/util/dom/checkIsCaretAtEnd";
 
 interface CommandInputProps {
   isFocused?: boolean;
@@ -38,7 +38,7 @@ useFocusWhenActive(input, () => isFocused);
       @keydown.delete="!modelValue && emit('delete')"
       @keydown.right.exact="
         (event) => {
-          if (getIsCaretAtEnd(event.target as HTMLInputElement)) {
+          if (checkIsCaretAtEnd(event.target as HTMLInputElement)) {
             event.preventDefault();
             emit('navigate:next');
           }

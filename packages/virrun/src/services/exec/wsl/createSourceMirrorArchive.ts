@@ -4,11 +4,11 @@ import { ExecFileError } from "#src/models/exec/util/ExecFileError";
 import { SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { getTarExecutable } from "#src/services/exec/util/getTarExecutable";
+import { checkIsTolerableArchiveFailure } from "#src/services/exec/wsl/checkIsTolerableArchiveFailure";
 import {
   VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
 } from "#src/services/exec/wsl/constants";
-import { getIsTolerableArchiveFailure } from "#src/services/exec/wsl/getIsTolerableArchiveFailure";
 import { joinNullDelimited } from "#src/services/exec/wsl/joinNullDelimited";
 import { readSourceMirrorArchiveMembers } from "#src/services/exec/wsl/readSourceMirrorArchiveMembers";
 import { getResult } from "@esposter/shared";
@@ -35,7 +35,7 @@ import { join } from "node:path";
 // The listed paths its members lack come back as unarchivedPaths for the planner to prune, instead of a single skipped
 // File hard-failing every run. Attribution reads the archive, never the stderr, because bsdtar names no path at all on
 // A vanished entry (`tar: : Couldn't visit directory`) — the archive is the one record of what was actually captured,
-// And it answers both skip kinds with the same question. Any other failure (getIsTolerableArchiveFailure), or an
+// And it answers both skip kinds with the same question. Any other failure (checkIsTolerableArchiveFailure), or an
 // Archive that won't even list, throws and aborts the plan.
 export const createSourceMirrorArchive = (
   cwd: string,
@@ -65,7 +65,8 @@ export const createSourceMirrorArchive = (
     (error) => {
       // A killed tar (the archive timeout's SIGTERM) stopped mid-write, so whatever skips its partial stderr
       // Happens to carry describe an archive that is truncated at an arbitrary point, not complete-but-for-those
-      if (!(error instanceof ExecFileError) || error.signal || !getIsTolerableArchiveFailure(error.stderr)) throw error;
+      if (!(error instanceof ExecFileError) || error.signal || !checkIsTolerableArchiveFailure(error.stderr))
+        throw error;
       const members = getResult(() => readSourceMirrorArchiveMembers(archiveUnc)).match(
         (value) => new Set(value),
         () => {

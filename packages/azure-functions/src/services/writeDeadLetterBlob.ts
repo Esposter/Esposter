@@ -1,6 +1,6 @@
 import type { ContainerClient } from "@azure/storage-blob";
 
-import { getIsConflict } from "@esposter/db";
+import { checkIsConflict } from "@esposter/db";
 import { getResultAsync } from "@esposter/shared";
 // Copy a dead-letter payload under a destination prefix the subscription's advanced filter excludes, so the copy is
 // Inspectable without ever retriggering a replay. Deleting the original is the caller's step: one run can write more
@@ -26,7 +26,7 @@ export const writeDeadLetterBlob = (
   ).match(
     () => true,
     (error) => {
-      if (getIsConflict(error)) return false;
+      if (checkIsConflict(error)) return false;
       throw error;
     },
   );

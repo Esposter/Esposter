@@ -1,5 +1,5 @@
 import { MimeType } from "#shared/models/file/MimeType";
-import { getIsRateLimitExceeded } from "@@/server/services/rateLimiter/getIsRateLimitExceeded";
+import { checkIsRateLimitExceeded } from "@@/server/services/rateLimiter/checkIsRateLimitExceeded";
 import { webhookRateLimiter } from "@@/server/services/rateLimiter/webhookRateLimiter";
 import { selectWebhookInMessageSchema } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
   }).match(
     (data) => data,
     (error) => {
-      if (getIsRateLimitExceeded(error)) {
+      if (checkIsRateLimitExceeded(error)) {
         setResponseStatus(event, 429);
         return { message: "Rate limit exceeded." };
       } else {

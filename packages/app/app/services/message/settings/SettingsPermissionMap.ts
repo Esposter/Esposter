@@ -9,6 +9,7 @@ export const SettingsPermissionMap: Partial<Record<SettingsType, RoomPermission>
   [SettingsType.AuditLog]: RoomPermission.ManageRoom,
   [SettingsType.Bans]: RoomPermission.BanMembers,
   [SettingsType.Emojis]: RoomPermission.ManageEmojis,
+  [SettingsType.Invites]: RoomPermission.ManageRoom,
   [SettingsType.Members]: RoomPermission.ManageRoles,
   [SettingsType.Overview]: RoomPermission.ManageRoom,
   [SettingsType.Roles]: RoomPermission.ManageRoles,

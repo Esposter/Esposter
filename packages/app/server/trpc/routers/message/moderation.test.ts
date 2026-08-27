@@ -16,6 +16,7 @@ import {
   DatabaseEntityType,
   RoomPermission,
   StandardMessageEntity,
+  users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
@@ -263,6 +264,46 @@ describe("moderation", () => {
 
       expect(result.items).toHaveLength(1);
       expect(takeOne(result.items).userId).toBe(member.id);
+    });
+
+    // The panel paginates every ban a room has ever placed, so without a predicate finding one person means
+    // Scrolling all of them. The name is the room's, not the ban's — the join that renders the row provides it
+    test("filters bans by the banned user's name", async () => {
+      expect.hasAssertions();
+
+      const bannedUserNames = ["searched", "other"];
+      for (const bannedUserName of bannedUserNames) {
+        const member = await createMember();
+        await mockContext.db.update(users).set({ name: bannedUserName }).where(eq(users.id, member.id));
+        await moderationCaller.executeAdminAction({
+          roomId,
+          targetUserId: member.id,
+          type: AdminActionType.CreateBan,
+        });
+      }
+
+      const result = await moderationCaller.readBans({ filter: { name: "search" }, roomId });
+
+      expect(result.items).toHaveLength(1);
+      expect(takeOne(result.items).user.name).toBe("searched");
+    });
+
+    // A name is user input, so the wildcards have to mean themselves — otherwise searching for a literal
+    // Underscore matches every single-character name in the room
+    test("searches a wildcard in a name as itself", async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      await mockContext.db.update(users).set({ name: "ab" }).where(eq(users.id, member.id));
+      await moderationCaller.executeAdminAction({
+        roomId,
+        targetUserId: member.id,
+        type: AdminActionType.CreateBan,
+      });
+
+      const result = await moderationCaller.readBans({ filter: { name: "a_" }, roomId });
+
+      expect(result.items).toHaveLength(0);
     });
   });
 

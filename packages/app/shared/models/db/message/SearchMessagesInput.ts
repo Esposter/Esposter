@@ -1,5 +1,5 @@
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
-import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
+import { checkIsSearchQueryEmpty } from "#shared/services/message/checkIsSearchQueryEmpty";
 import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import {
   filterSchema,
@@ -19,5 +19,5 @@ export const searchMessagesInputSchema = z
     filters: filterSchema.array().max(MAX_READ_LIMIT).default([]),
     query: selectSearchHistoryInMessageSchema.shape.query,
   })
-  .refine(({ filters, query }) => !getIsSearchQueryEmpty(query, filters));
+  .refine(({ filters, query }) => !checkIsSearchQueryEmpty(query, filters));
 export type SearchMessagesInput = z.infer<typeof searchMessagesInputSchema>;

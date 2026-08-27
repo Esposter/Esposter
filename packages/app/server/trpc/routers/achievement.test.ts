@@ -4,7 +4,7 @@ import type { UserAchievementWithRelations } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { AchievementDefinitionMap } from "#shared/services/achievement/achievementDefinitions";
+import { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { trpcRouter } from "@@/server/trpc/routers";

@@ -63,7 +63,7 @@ Permission-gated settings tabs are hidden via a tab-definition map (`FooPermissi
 
 ## Online/Offline Detection
 
-- **Always `useOnline()` from VueUse** — never `navigator.onLine` directly, nor a `getIsServer()` + `navigator.onLine` guard. It returns a reactive `Ref<boolean>` updated on `online`/`offline` events and is SSR-safe (defaults to `true` on the server).
+- **Always `useOnline()` from VueUse** — never `navigator.onLine` directly, nor a `checkIsServer()` + `navigator.onLine` guard. It returns a reactive `Ref<boolean>` updated on `online`/`offline` events and is SSR-safe (defaults to `true` on the server).
 - For subscribables (tRPC subscriptions, WebSocket connections) use `useOnlineSubscribable` (`composables/shared/`), which combines `useOnline()` + `onMounted` + `watchImmediate` + `onUnmounted` cleanup.
 
 ## Browser-Only Composables (SSR Safety)

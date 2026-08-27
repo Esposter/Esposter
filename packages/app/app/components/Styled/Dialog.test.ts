@@ -5,12 +5,11 @@ import { afterEach, describe, expect, test } from "vitest";
 
 // `primary` is StyledButton's own colour, so naming it explicitly must not opt out of the gradient — the
 // Previous gate read any colour at all as "the caller wants a plain button"
-// StyledButton is a v-btn carrying the gradient as an inline background-image, so that style is what
-// Distinguishes it from the plain button in the rendered output
-const getGradientButtons = (body: HTMLElement) =>
-  [...body.querySelectorAll<HTMLElement>(".v-card-actions .v-btn")].filter(({ style }) =>
-    style.backgroundImage.includes("--midnight-bloom"),
-  );
+// StyledButton is a v-btn carrying the gradient as an attributify background-image, so that attribute is what
+// Distinguishes it from the plain button in the rendered output — the generated CSS never loads under jsdom
+const getGradientButtons = (body: HTMLElement) => [
+  ...body.querySelectorAll<HTMLElement>('.v-card-actions .v-btn[bg="[image:--midnight-bloom]"]'),
+];
 
 describe("styledDialog", () => {
   const text = "Confirm";

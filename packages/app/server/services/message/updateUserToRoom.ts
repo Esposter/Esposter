@@ -3,9 +3,10 @@ import type { Context } from "@@/server/trpc/context";
 import type { User } from "@esposter/db-schema";
 
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { hasPermission } from "@esposter/db";
 import { DatabaseEntityType, RoomPermission, usersToRoomsInMessage } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 
@@ -29,11 +30,7 @@ export const updateUserToRoom = async (
       .returning()
   )[0];
   if (!updatedUserToRoom)
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: new InvalidOperationError(Operation.Update, DatabaseEntityType.UserToRoom, JSON.stringify({ roomId }))
-        .message,
-    });
+    throw getInvalidOperationError(Operation.Update, DatabaseEntityType.UserToRoom, JSON.stringify({ roomId }));
   userToRoomEventEmitter.emit("updateUserToRoom", updatedUserToRoom);
   return updatedUserToRoom;
 };

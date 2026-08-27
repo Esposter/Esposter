@@ -87,7 +87,7 @@ describe("post", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const newComment = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
 
     await expect(postCaller.updatePost({ description, id: newComment.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Post, newComment.id).message}]`,
@@ -118,7 +118,7 @@ describe("post", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const newComment = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
     const readPost = await postCaller.readPost(newPost.id);
     const readComment = await postCaller.readPost(newComment.id);
 
@@ -131,7 +131,7 @@ describe("post", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const newComment = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
     const updatedComment = await postCaller.updateComment({ description: updatedDescription, id: newComment.id });
 
     expect(updatedComment.description).toBe(updatedDescription);
@@ -141,7 +141,7 @@ describe("post", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const newComment = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
     await mockSessionOnce(mockContext.db);
 
     await expect(
@@ -165,11 +165,44 @@ describe("post", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const newComment = await postCaller.createComment({ description, parentId: newPost.id });
-    const deletedComment = await postCaller.deleteComment(newComment.id);
+    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
+    const deleted = await postCaller.deleteComment(newComment.id);
     const readPost = await postCaller.readPost(newPost.id);
 
-    expect(deletedComment.id).toBe(newComment.id);
+    expect(deleted.noRemovedComments).toBe(1);
+    expect(readPost.noComments).toBe(0);
+  });
+
+  // A reply is a comment on a comment, so a counter that stopped at direct children would leave a feed card
+  // Reporting three where the thread holds thirty
+  test("counts a reply on every post above it", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newReply } = await postCaller.createComment({ description, parentId: newComment.id });
+    const readPost = await postCaller.readPost(newPost.id);
+    const readComment = await postCaller.readPost(newComment.id);
+
+    expect(newReply.depth).toBe(2);
+    expect(readPost.noComments).toBe(2);
+    expect(readComment.noComments).toBe(1);
+  });
+
+  // The delete cascades down the parentId chain, so the rows it removes are gone before anything could count
+  // Them — an ancestor losing one would then report replies that no longer exist
+  test("takes a deleted comment's whole subtree off every post above it", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newReply } = await postCaller.createComment({ description, parentId: newComment.id });
+    await postCaller.createComment({ description, parentId: newReply.id });
+
+    const deleted = await postCaller.deleteComment(newComment.id);
+    const readPost = await postCaller.readPost(newPost.id);
+
+    expect(deleted.noRemovedComments).toBe(3);
     expect(readPost.noComments).toBe(0);
   });
 
@@ -177,7 +210,7 @@ describe("post", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const newComment = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
     await postCaller.deletePost(newPost.id);
 
     await expect(postCaller.readPost(newComment.id)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -189,7 +222,7 @@ describe("post", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const newComment = await postCaller.createComment({ description, parentId: newPost.id });
+    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
     await mockSessionOnce(mockContext.db);
 
     await expect(postCaller.deleteComment(newComment.id)).rejects.toThrowErrorMatchingInlineSnapshot(

@@ -42,4 +42,17 @@ export default [
       "Use `useLocalStorage(LocalStorageKey.X, default)` rather than `window.localStorage` — see /docs/architecture/browser-execution.",
     selector: "MemberExpression[object.name='window'][property.name='localStorage']",
   },
+  {
+    // A browser global read at the top level of a module is read while the module is being evaluated, which on
+    // The server is before any phase has had the chance to decide anything — so this is the one position where
+    // The environment question cannot have been answered already. Inside a function it can have been, which is
+    // Why the selector stops there: `onMounted`, an event handler and a `.client.ts` plugin's default export are
+    // All correct, and telling them apart is a reading pass rather than a pattern. A genuine top-level fork
+    // Disables this on the line with its reason, the same way the ban above is excepted.
+    message:
+      "A browser global at module scope is evaluated during SSR — move it into a phase (`onMounted`, `.client.ts`) or a ref — see /docs/architecture/browser-execution.",
+    // `localStorage` is excluded rather than left to match both: the ban above names the replacement for it, and
+    // A module-scope `window.localStorage` matching both selectors reports the same node twice
+    selector: "MemberExpression[object.name='window'][property.name!='localStorage']:not(:function *)",
+  },
 ];

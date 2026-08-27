@@ -1,5 +1,8 @@
 import { noop } from "@esposter/shared";
 import { afterAll, vi } from "vitest";
+/* eslint-disable no-restricted-syntax -- module scope is where a vitest setup file runs, and the environment it
+   runs in is the one its config names rather than one SSR decides. The ban this suspends is about a browser
+   global read before any phase could have chosen a branch, which is not a question a setup file has */
 // Happy-dom reports readyState as "loading"; Phaser requires "complete" to boot synchronously.
 vi.spyOn(window.document, "readyState", "get").mockReturnValue("complete");
 // Happy-dom never fires Image load events; call onload synchronously so Phaser's
@@ -111,3 +114,4 @@ vi.spyOn(window.document, "createElement").mockImplementation((tagName, options)
 afterAll(() => {
   vi.restoreAllMocks();
 });
+/* eslint-enable no-restricted-syntax */

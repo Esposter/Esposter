@@ -1,3 +1,4 @@
+import type { ReadNotificationsResult } from "#shared/models/db/notification/ReadNotificationsResult";
 import type { Notification, relations } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
 
@@ -40,7 +41,7 @@ export const notificationRouter = router({
   }),
   readNotifications: standardAuthedProcedure
     .input(readNotificationsInputSchema)
-    .query(async ({ ctx, input: { cursor, limit, sortBy } }) => {
+    .query<ReadNotificationsResult>(async ({ ctx, input: { cursor, limit, sortBy } }) => {
       const where: RelationsFilter<(typeof relations)["notifications"], typeof relations> = {
         userId: { eq: ctx.getSessionPayload.user.id },
       };

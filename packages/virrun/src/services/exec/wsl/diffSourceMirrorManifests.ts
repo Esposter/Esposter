@@ -1,8 +1,8 @@
 import type { SourceMirrorDelta } from "#src/models/exec/wsl/SourceMirrorDelta";
 import type { SourceMirrorPublication } from "#src/models/exec/wsl/SourceMirrorPublication";
 
+import { checkIsBareNameExclude } from "#src/services/exec/util/checkIsBareNameExclude";
 import { getExcludeRelativePath } from "#src/services/exec/util/getExcludeRelativePath";
-import { getIsBareNameExclude } from "#src/services/exec/util/getIsBareNameExclude";
 import { getChangedExcludes } from "#src/services/exec/wsl/getChangedExcludes";
 // Diff what the mirror published after its last sync against a fresh host walk into the minimal sync
 // (SourceMirrorDelta): a new or changed entry (size/mtimeMs/target — rsync's classic quick-check signal) is copied; a
@@ -46,7 +46,7 @@ export const diffSourceMirrorManifests = (
   }
   for (const path of Object.keys(previous.entries)) if (current.entries[path] === undefined) deletePaths.add(path);
   for (const exclude of getChangedExcludes(previous.excludes, current.excludes))
-    if (!getIsBareNameExclude(exclude))
+    if (!checkIsBareNameExclude(exclude))
       // The delete list is spent as paths (`xargs -0 rm -rf` with the mirror tree as cwd), so the pattern's anchor
       // Comes off here — the one place a pattern crosses back into being a path.
       deletePaths.add(getExcludeRelativePath(exclude));

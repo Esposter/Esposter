@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 
-import { TODO_LIST_ITEM_NOTES_MAX_LENGTH } from "#shared/services/resource/itemConstants";
+import { TODO_LIST_ITEM_NOTES_MAX_LENGTH } from "#shared/services/resource/item/constants";
 
 const modelValue = defineModel<TodoListItem>({ required: true });
 </script>

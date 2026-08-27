@@ -1,7 +1,7 @@
 import type { AzureEntity, CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
-import { getIsNotFound } from "#src/services/azure/getIsNotFound";
+import { checkIsNotFound } from "#src/services/azure/checkIsNotFound";
 import { deserializeEntity } from "#src/services/azure/transformer/deserializeEntity";
 import { getResultAsync } from "@esposter/shared";
 
@@ -21,7 +21,7 @@ export const getEntityWithEtag = <TTableEntity extends AzureEntity, TEntity exte
   }).match<undefined | { entity: TEntity; etag: string }>(
     (entityWithEtag) => entityWithEtag,
     (error) => {
-      if (getIsNotFound(error)) return undefined;
+      if (checkIsNotFound(error)) return undefined;
       throw error;
     },
   );

@@ -3,10 +3,11 @@ import { useCommentStore } from "@/store/post/comment";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface PostCreateCommentRichTextEditorProps {
-  postId: string;
+  // The comment being replied to, or the post itself
+  parentId: string;
 }
 
-const { postId } = defineProps<PostCreateCommentRichTextEditorProps>();
+const { parentId } = defineProps<PostCreateCommentRichTextEditorProps>();
 const commentStore = useCommentStore();
 const { createComment } = commentStore;
 const description = ref("");
@@ -23,7 +24,7 @@ const commentButtonProps = computed(() => ({ disabled: EMPTY_TEXT_REGEX.test(des
           async () => {
             const savedDescription = description;
             editor.commands.clearContent(true);
-            await createComment({ parentId: postId, description: savedDescription });
+            await createComment({ parentId, description: savedDescription });
           }
         "
       />

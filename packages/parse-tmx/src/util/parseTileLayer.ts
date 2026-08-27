@@ -10,7 +10,7 @@ import { parseFlips } from "#src/util/parseFlips";
 import { parseProperties } from "#src/util/parseProperties";
 import { parseTileId } from "#src/util/parseTileId";
 import { unpackTileBytes } from "#src/util/unpackTileBytes";
-import { exhaustiveGuard, normalizeString, takeOne } from "@esposter/shared";
+import { exhaustiveGuard, InvalidOperationError, normalizeString, Operation, takeOne } from "@esposter/shared";
 
 export const parseTileLayer = async (
   node: TMXLayerNode,
@@ -18,7 +18,7 @@ export const parseTileLayer = async (
   translateFlips: boolean,
 ): Promise<TMXLayerParsed> => {
   const { data, properties } = node;
-  if (!data) throw new Error("TMXLayer data corrupted!");
+  if (!data) throw new InvalidOperationError(Operation.Read, "TMXLayer", "data is missing");
 
   const layer = cloneNodeWithType<TMXLayerParsed>(node);
   if (properties) layer.properties = parseProperties(properties);

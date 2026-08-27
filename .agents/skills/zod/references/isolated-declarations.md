@@ -4,7 +4,7 @@
 
 **Never shortcut with `: z.ZodType<T>`** — it erases the shape, so the built `dist/*.d.ts` exposes no `.shape` and consumers spreading `...someSchema.shape` break against the published package.
 
-**The annotation is always required for an exported schema const** — `tsgo` cannot emit a `z.object({...})` expression's type without the checker, so even an all-primitive object fails with TS9010/9013 (verified). There is no "simple schema needs no annotation" exception.
+**The annotation is always required for an exported schema const** — `tsc` cannot emit a `z.object({...})` expression's type without the checker, so even an all-primitive object fails with TS9010/9013 (verified). There is no "simple schema needs no annotation" exception.
 
 ```typescript
 export const itemMetadataSchema: z.ZodObject<{

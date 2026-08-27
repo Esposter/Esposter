@@ -4,7 +4,7 @@ import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPag
 import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
 import { getBoundComputed } from "@/util/vue/getBoundComputed";
 import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
-import { createExponentialBackoff, getIsServer, withFinalizerAsync } from "@esposter/shared";
+import { checkIsServer, createExponentialBackoff, withFinalizerAsync } from "@esposter/shared";
 
 interface ReadItemsOptions<TItem> {
   // Payload key, from `AsyncDataKey`, for a read a server render also issues. Without one the read runs twice
@@ -64,7 +64,7 @@ export const useCursorPaginationOperationData = <TItem>(
           await storeCursorPaginationData(data);
           // The page the html was rendered from rides to the client, so hydration adopts the rows already on
           // Screen rather than fetching a second copy of them
-          if (key && getIsServer()) nuxtApp.payload.data[key] = data;
+          if (key && checkIsServer()) nuxtApp.payload.data[key] = data;
         },
         () => {
           isPending.value = false;

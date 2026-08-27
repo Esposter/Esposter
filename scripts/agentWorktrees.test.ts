@@ -9,9 +9,9 @@ const readJson = (fileName: string): Record<string, unknown> =>
   jsonDateParse<Record<string, unknown>>(readFileSync(resolve(repositoryRoot, fileName), "utf8"));
 
 /**
- * The root `vitest.config.ts` imports `AGENT_WORKTREES_DIRECTORY` directly, so its exclusion cannot drift. The two
- * configs below are JSON with no import mechanism, so they repeat the literal and these tests are the only thing
- * holding the copies to the owner — both have already been un-excluded once by an unrelated edit widening a glob.
+ * The configs below are JSON with no import mechanism, so they repeat the literal and these tests are the only
+ * thing holding the copies to the owner — both have already been un-excluded once by an unrelated edit widening
+ * a glob.
  */
 describe(AGENT_WORKTREES_DIRECTORY, () => {
   test("is excluded from the root typescript program", () => {

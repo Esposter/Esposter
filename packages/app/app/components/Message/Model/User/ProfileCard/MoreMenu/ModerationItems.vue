@@ -14,6 +14,7 @@ interface ModerationItemsProps {
 
 const { roomId, user } = defineProps<ModerationItemsProps>();
 const roomStore = useRoomStore();
+const { rooms } = storeToRefs(roomStore);
 const roleStore = useRoleStore();
 const { getMemberRoleMap, getMyPermissions } = roleStore;
 const userToRoomStore = useUserToRoomStore();
@@ -30,7 +31,7 @@ const targetTopPosition = computed(() => {
 });
 // The owner is the one member no moderator may act on, and the server says so too — offering the actions here
 // Would only surface a rejection
-const isTargetOwner = computed(() => roomStore.rooms.find(({ id }) => id === roomId)?.userId === user.id);
+const isTargetOwner = computed(() => rooms.value.find(({ id }) => id === roomId)?.userId === user.id);
 const manageablePermissions = computed(() => {
   const permissions = getMyPermissions(roomId);
   if (!permissions || targetTopPosition.value === undefined) return undefined;

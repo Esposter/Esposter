@@ -52,7 +52,7 @@ describe(createBwrapBackend, () => {
       () => ({ command: ["wsl.exe"], env: {}, statusSource: "stderr" }),
       ERROR_NAME,
     );
-  const exec = (stdio: ExecStdio, tee?: ExecTeeTarget) => createBackend().exec(["tsgo"], { cwd: "", stdio, tee });
+  const exec = (stdio: ExecStdio, tee?: ExecTeeTarget) => createBackend().exec(["tsc"], { cwd: "", stdio, tee });
 
   beforeEach(() => {
     spawn.mockReset();
@@ -65,7 +65,7 @@ describe(createBwrapBackend, () => {
   test("folds the captured stderr into the sandbox-setup error when no exit code is reported", async () => {
     expect.hasAssertions();
 
-    const commandStderr = "bwrap: execvp tsgo: No such file or directory\n";
+    const commandStderr = "bwrap: execvp tsc: No such file or directory\n";
     spawn.mockImplementation(() => createFakeChild({ stderr: commandStderr }));
     const message = (await getResultAsync(() => exec("pipe"))).match(
       () => "",

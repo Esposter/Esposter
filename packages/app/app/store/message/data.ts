@@ -13,7 +13,7 @@ import { authClient } from "@/services/auth/authClient";
 import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { getIsAlertedByErrorLink } from "@/services/trpc/errorLink";
+import { checkIsAlertedByErrorLink } from "@/services/trpc/errorLink";
 import { useAlertStore } from "@/store/alert";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/input/reply";
@@ -85,7 +85,7 @@ export const useDataStore = defineStore("message/data", () => {
       () => true,
       async (error) => {
         await storeDeleteMessage(newMessage);
-        if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+        if (!checkIsAlertedByErrorLink(error)) createAlert(error.message, "error");
         return false;
       },
     );
@@ -123,7 +123,7 @@ export const useDataStore = defineStore("message/data", () => {
         // Against a certain leak plus lost work on every deterministic rejection, which is what slowmode and the
         // Word filter are
         await MessageHookMap.RollbackSend.run(target, sentFileIds);
-        if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+        if (!checkIsAlertedByErrorLink(error)) createAlert(error.message, "error");
         return false;
       },
     );

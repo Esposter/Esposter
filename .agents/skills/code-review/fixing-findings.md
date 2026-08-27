@@ -20,7 +20,7 @@ Each entry below shipped, passed its own new test, and was found again one round
 
 - **Fixed N−1 of N sites.** An invariant is not applied until every site holds it. **Collapse the sites onto one primitive that cannot be half-applied** rather than copying the fix and its test into each — the duplication is why it drifted, and per-site tests only pin the drift. Then one test covers the behaviour and the call sites need only wiring tests.
 - **The claim was never pinned by a test.** A commit message describing behaviour the code does not have is a claim. Every fix lands with a test that fails against the pre-fix code.
-- **The fix lives in the review workflow, which has its own suite.** `.agents/workflows/code-review/` drives the shipped script with stubbed agents; a finding about parsing, scoping, dedupe, confidence, resolution or report assembly becomes a test there. Adding it is part of the fix.
+- **The fix lives in this skill tree, which no test can pin.** A review instruction has no suite, so the only thing that stops it drifting is the meta pass (SKILL.md) and the next round reading it. State the rule with the evidence that produced it, so a later reader can tell a lesson from a preference.
 
 **Guards and thresholds**
 

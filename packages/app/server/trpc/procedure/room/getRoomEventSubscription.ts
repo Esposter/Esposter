@@ -1,7 +1,7 @@
 import type { Device } from "#shared/models/auth/Device";
 import type { EventEmitter } from "node:events";
 
-import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
+import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
 import { on } from "@@/server/services/events/on";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { roomIdSchema } from "@esposter/db-schema";
@@ -23,7 +23,7 @@ export const getRoomEventSubscription = <
   }): AsyncGenerator<TEventMap[TKey][0][0]> {
     for await (const [[data, device]] of on(eventEmitter, eventName, { signal })) {
       const typedData = data as TEventMap[TKey][0][0];
-      if (getRoomId(typedData) === roomId && (!device || !getIsSameDevice(device, ctx.getSessionPayload)))
+      if (getRoomId(typedData) === roomId && (!device || !checkIsSameDevice(device, ctx.getSessionPayload)))
         yield typedData;
     }
   });

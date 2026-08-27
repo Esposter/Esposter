@@ -1,10 +1,10 @@
 import type { inferParser } from "@trpc/server/unstable-core-do-not-import";
 import type { z } from "zod";
 
+import { requireUuid } from "@@/server/trpc/guards/requireUuid";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { uuidValidateV4 } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const getMemberProcedure = <T extends z.ZodType>(schema: T, roomIdKey: keyof inferParser<T>["out"]) =>
   standardAuthedProcedure.input(schema).use(async ({ ctx, input, next }) => {
@@ -13,8 +13,7 @@ export const getMemberProcedure = <T extends z.ZodType>(schema: T, roomIdKey: ke
 
     const value = input[roomIdKey];
     if (value === undefined) return next();
-    else if (!(typeof value === "string" && uuidValidateV4(value))) throw new TRPCError({ code: "BAD_REQUEST" });
 
-    await isMember(ctx.db, ctx.getSessionPayload, value);
+    await isMember(ctx.db, ctx.getSessionPayload, requireUuid(value, DatabaseEntityType.Room));
     return next();
   });

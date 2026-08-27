@@ -4,6 +4,7 @@ import { getFileSize } from "@/services/file/getFileSize";
 import { useStorageStore } from "@/store/storage";
 
 const storageStore = useStorageStore();
+const { readStorageUsage } = storageStore;
 const { storageUsage } = storeToRefs(storageStore);
 // A tier with no quota would divide by zero; the gate treats it as no allowance at all, so a full bar is the
 // Honest reading rather than an empty one
@@ -24,7 +25,7 @@ const usageText = computed(() =>
     : "",
 );
 
-onMounted(() => storageStore.readStorageUsage());
+onMounted(readStorageUsage);
 </script>
 
 <!-- Mounted by the resource shell on every page in the area, reading the number the store already holds -->

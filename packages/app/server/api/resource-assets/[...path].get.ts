@@ -6,13 +6,13 @@ import { auth } from "@@/server/auth";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { db } from "@@/server/db";
 import { assetRateLimiter } from "@@/server/services/rateLimiter/assetRateLimiter";
-import { getIsRateLimitExceeded } from "@@/server/services/rateLimiter/getIsRateLimitExceeded";
+import { checkIsRateLimitExceeded } from "@@/server/services/rateLimiter/checkIsRateLimitExceeded";
 import { getIpAddress } from "@@/server/services/request/getIpAddress";
+import { checkIsResourceAssetReadable } from "@@/server/services/resource/checkIsResourceAssetReadable";
 import {
   RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS,
   RESOURCE_ASSET_SAS_DURATION,
 } from "@@/server/services/resource/constants";
-import { getIsResourceAssetReadable } from "@@/server/services/resource/getIsResourceAssetReadable";
 import { generateReadSasUrl } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
     const rateLimiterKey = getSessionPayload?.user.id ?? getIpAddress(event.node.req);
     if (rateLimiterKey)
       await getResultAsync(() => assetRateLimiter.consume(rateLimiterKey)).match(noop, (error) => {
-        if (getIsRateLimitExceeded(error)) throw createError({ statusCode: 429 });
+        if (checkIsRateLimitExceeded(error)) throw createError({ statusCode: 429 });
         throw error;
       });
     else
@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
   // The images are broken for the owner too; that is what unpublish revoking anonymous access costs, and it is
   // The point of the control
   if (!isPublished && !getSessionPayload) throw createError({ statusCode: 401 });
-  if (!(await getIsResourceAssetReadable(db, resourceAssetPath, getSessionPayload?.user.id)))
+  if (!(await checkIsResourceAssetReadable(db, resourceAssetPath, getSessionPayload?.user.id)))
     throw createError({ statusCode: 404 });
   // No existence probe — Azure itself 404s a missing blob when the redirect is followed
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);

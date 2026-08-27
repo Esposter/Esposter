@@ -1,6 +1,6 @@
 ---
 name: package-scripts
-description: Esposter pnpm script reference — packages/app scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, depcruise:graph, outdated:dependencies), and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
+description: Esposter pnpm script reference — packages/app scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, depcruise:graph, outdated:dependencies), the `scriptsComments` key that carries a script's comment because JSON has none, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
 ---
 
 # Package Scripts
@@ -37,6 +37,23 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 | `pnpm coverage`              | `vitest run --coverage` (no virrun)               | Root-only (packages have no `coverage` script). CI shards via `--reporter=blob` + `--merge-reports`.                                    |
 | `pnpm outdated:dependencies` | `tsx scripts/checkDependencies/index.ts`          | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest.      |
 | `pnpm depcruise:graph`       | `virrun -- depcruise … \| graphviz -Tsvg`         | Generate `dependency-graph.svg`.                                                                                                        |
+
+## `scriptsComments`
+
+JSON has no comments, so a script whose command needs one carries it in a sibling top-level **`scriptsComments`** object keyed by the script name — never a `"// …"` key inside `scripts`, which pnpm lists as a runnable script. The value is the whole note as one string, `@TODO:`-prefixed when it records something to undo later:
+
+```json
+{
+  "scripts": {
+    "build": "pnpm build:packages && pnpm build:app"
+  },
+  "scriptsComments": {
+    "build": "@TODO: restore `pnpm build:docs` to the chain when …"
+  }
+}
+```
+
+Only the scripts that need a note appear there — this is not a place to document the whole script table, which is what this skill is for.
 
 ## Check Suite (after edits)
 

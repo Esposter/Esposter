@@ -3,9 +3,9 @@ import { SettingsPermissionMap } from "@/services/message/settings/SettingsPermi
 import { describe, expect, test } from "vitest";
 
 describe("settingsPermissionMap", () => {
-  // Profile and Invites act on the reader's own membership and own link, which every member may do, and Delete is
-  // Guarded by ownership rather than by a permission
-  const UNGATED_SETTINGS_TYPES = new Set([SettingsType.Delete, SettingsType.Invites, SettingsType.Profile]);
+  // Profile acts on the reader's own membership, which every member may do, and Delete is guarded by ownership
+  // Rather than by a permission
+  const UNGATED_SETTINGS_TYPES = new Set([SettingsType.Delete, SettingsType.Profile]);
 
   test("every panel whose writes need a permission carries an entry", () => {
     expect.hasAssertions();

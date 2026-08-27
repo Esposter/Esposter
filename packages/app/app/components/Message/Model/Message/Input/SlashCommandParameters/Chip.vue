@@ -2,8 +2,8 @@
 import { slashCommandParameterValueSchema } from "@/models/message/slashCommands/SlashCommandParameter";
 import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
-import { getIsCaretAtEnd } from "@/util/dom/getIsCaretAtEnd";
-import { getIsCaretAtStart } from "@/util/dom/getIsCaretAtStart";
+import { checkIsCaretAtEnd } from "@/util/dom/checkIsCaretAtEnd";
+import { checkIsCaretAtStart } from "@/util/dom/checkIsCaretAtStart";
 
 interface ChipProps {
   autofocus?: boolean;
@@ -87,7 +87,7 @@ useFocusWhenActive(input, () => isFocused);
       @keydown.delete="!modelValue && emit('delete')"
       @keydown.left.exact="
         (event) => {
-          if (getIsCaretAtStart(event.target as HTMLInputElement)) {
+          if (checkIsCaretAtStart(event.target as HTMLInputElement)) {
             event.preventDefault();
             emit('navigate:previous');
           }
@@ -95,7 +95,7 @@ useFocusWhenActive(input, () => isFocused);
       "
       @keydown.right.exact="
         (event) => {
-          if (getIsCaretAtEnd(event.target as HTMLInputElement)) {
+          if (checkIsCaretAtEnd(event.target as HTMLInputElement)) {
             event.preventDefault();
             emit('navigate:next');
           }

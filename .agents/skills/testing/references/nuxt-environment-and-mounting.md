@@ -8,7 +8,7 @@ For tests that need a DOM, the nuxt runtime, a mounted component, or that dispat
 
 The `// @vitest-environment nuxt` directives are **load-bearing** — never remove one without moving the test off nuxt-runtime features.
 
-- **No directive = no DOM.** A directive-less app test runs in node: no `window`, `getIsServer()` returns `true`. To exercise a **client** path in a node-env test, stub it: `vi.stubGlobal("window", {})`; server path in any env: `vi.stubGlobal("window", undefined)` (+ `vi.unstubAllGlobals()` in `afterEach`). Prefer env-agnostic stubbing over relying on the ambient environment when the code branches on `getIsServer()`.
+- **No directive = no DOM.** A directive-less app test runs in node: no `window`, `checkIsServer()` returns `true`. To exercise a **client** path in a node-env test, stub it: `vi.stubGlobal("window", {})`; server path in any env: `vi.stubGlobal("window", undefined)` (+ `vi.unstubAllGlobals()` in `afterEach`). Prefer env-agnostic stubbing over relying on the ambient environment when the code branches on `checkIsServer()`.
 - **Add `// @vitest-environment nuxt` only when the test needs the nuxt runtime**: `mountSuspended`/`renderSuspended` from `@nuxt/test-utils/runtime`, or stores/composables calling `useNuxtApp()`/`useRouter()` at setup time. Apply the criteria; don't copy another file because it has the directive.
 - tRPC router tests stay node-env: `createCallerFactory` is pure `@trpc/server`, and Nuxt-dependent server composables hit by middleware (e.g. `useIsProduction` → `useRuntimeConfig`) are mocked in `shared/test/setup.ts`.
 

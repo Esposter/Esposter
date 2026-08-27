@@ -1,7 +1,7 @@
-import { getIsServer } from "#src/util/environment/getIsServer";
+import { checkIsServer } from "#src/util/environment/checkIsServer";
 
 export const hrtime = (previousHrTime?: [number, number]): [number, number] => {
-  if (getIsServer()) return process.hrtime(previousHrTime);
+  if (checkIsServer()) return process.hrtime(previousHrTime);
   const clocktime = performance.now() * 1e-3;
   let seconds = Math.floor(clocktime);
   let nanoseconds = Math.floor((clocktime % 1) * 1e9);

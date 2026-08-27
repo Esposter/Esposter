@@ -9,14 +9,14 @@ import { Vjsf } from "@koumoul/vjsf";
 
 const sheetStore = useSheetStore();
 const { loadContent, saveSheet } = sheetStore;
-const { settings } = storeToRefs(sheetStore);
+const { settings, sheetResource } = storeToRefs(sheetStore);
 const configuration = useDataSourceConfiguration(settings);
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
 const isLoading = ref(true);
 // Changing the type swaps in that format's default configuration; the data section is untouched
 // (settings re-parse on the next import, never silently rewrite data)
 const onUpdateType = (type: DataSourceType) => {
-  sheetStore.sheetResource.settings = createDefaultSheetSettings(type);
+  if (sheetResource.value) sheetResource.value.settings = createDefaultSheetSettings(type);
 };
 // Autosave settings edits; the store's dirty check drops the load echo, so no loading guard is needed here
 // (a guard could not work anyway — the debounced callback fires after loading has already finished)

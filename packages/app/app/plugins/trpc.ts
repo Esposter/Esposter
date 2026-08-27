@@ -6,7 +6,7 @@ import { IS_PRODUCTION, IS_TEST } from "#shared/util/environment/constants";
 import { TRPC_CLIENT_PATH, TRPC_WS_PATH } from "@/services/trpc/constants";
 import { errorLink } from "@/services/trpc/errorLink";
 import { createOfflineLink } from "@/services/trpc/offlineLink";
-import { getIsServer } from "@esposter/shared";
+import { checkIsServer } from "@esposter/shared";
 import {
   createWSClient,
   isNonJsonSerializable,
@@ -23,9 +23,9 @@ export default defineNuxtPlugin(() => {
     // Log to your console in development and only log errors in production
     loggerLink({
       enabled: (opts) =>
-        (!IS_PRODUCTION && !getIsServer()) || (opts.direction === "down" && opts.result instanceof Error),
+        (!IS_PRODUCTION && !checkIsServer()) || (opts.direction === "down" && opts.result instanceof Error),
     }),
-    ...(getIsServer() ? [] : [createOfflineLink(online)]),
+    ...(checkIsServer() ? [] : [createOfflineLink(online)]),
     errorLink,
   ];
   // Under test the client talks to the network so a test can answer it there, exercising the real links and
@@ -37,7 +37,7 @@ export default defineNuxtPlugin(() => {
   // Branch below deciding whether this link is used at all, so a test loading this plugin without a dom would
   // Fail on `window is not defined` — an error naming nothing about tRPC
   const httpSplitLink =
-    IS_TEST && !getIsServer()
+    IS_TEST && !checkIsServer()
       ? trpcHttpLink({ transformer, url: `${window.location.origin}${TRPC_CLIENT_PATH}` })
       : splitLink({
           condition: ({ input }) => isNonJsonSerializable(input),
@@ -45,7 +45,7 @@ export default defineNuxtPlugin(() => {
           true: httpLink({ transformer, url: TRPC_CLIENT_PATH }),
         });
 
-  if (getIsServer()) links.push(httpSplitLink);
+  if (checkIsServer()) links.push(httpSplitLink);
   else {
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}${TRPC_WS_PATH}` });

@@ -69,4 +69,4 @@ The service worker has always posted every delivered push to each open tab befor
 ## Notes
 
 - The delivered half is bounded by retention rather than by the session ([notifications](/docs/architecture/notifications)); a durable audit trail is still the activity log's job ([activity log](/docs/platform/activity-log)).
-- The store no-ops local notifications on the server (`getIsServer`) so SSR renders never enqueue toasts.
+- The store no-ops local notifications on the server (`checkIsServer`) so SSR renders never enqueue toasts.

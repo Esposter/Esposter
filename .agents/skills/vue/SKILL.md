@@ -1,6 +1,6 @@
 ---
 name: vue
-description: Esposter Vue 3 SFC conventions — macro ordering, script-setup declaration order, template attribute ordering and template conventions, inlining single-use functions and handlers, v-model vs split bindings, never normalizeString in Vue, optional refs, useTemplateRef, computed by cost, identity and cadence, map lookups, the watch decision tree plus watch aliases and hook placement, browser globals via window., SSR guards via getIsServer, and every rendered date being a NuxtTime — plus deep dives on inline handlers, forms and upsert mode, the auth session, computed extraction, template gotchas (v-html, dotted slots, template casts), the compiled-out Options API runtime, and date rendering. Apply when writing or reviewing .vue files, or rendering a date or time.
+description: Esposter Vue 3 SFC conventions — macro ordering, script-setup declaration order, template attribute ordering and template conventions, inlining single-use functions and handlers, v-model vs split bindings, never normalizeString in Vue, optional refs, useTemplateRef, computed by cost, identity and cadence, map lookups, the watch decision tree plus watch aliases and hook placement, browser globals via window., SSR guards via checkIsServer, and every rendered date being a NuxtTime — plus deep dives on inline handlers, forms and upsert mode, the auth session, computed extraction, template gotchas (v-html, dotted slots, closure narrowing, template casts), the compiled-out Options API runtime, and date rendering. Apply when writing or reviewing .vue files, or rendering a date or time.
 ---
 
 # Vue Conventions
@@ -81,7 +81,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 - **No allocating expressions in render positions** — `Object.*` in a `:prop`, `v-for` source or `{{ }}` allocates a fresh reference every render. Enforced by `vue/no-restricted-syntax`, whose message states the fix.
 - **Event modifiers over raw event methods** — `@click.stop`, `@keydown.enter.prevent` (`vue/no-restricted-syntax`). Raw calls stay correct where no modifier can encode the trigger: behind a runtime guard, and in programmatic listeners (`useEventListener`, `onKeyStroke`, Tiptap `onKeyDown`). `stopImmediatePropagation()` is banned outright — it couples behaviour to listener registration order.
 - Reassigning a `defineModel` vs mutating it in place is a deliberate semantic choice — don't "fix" one into the other.
-- **`references/template-gotchas.md`** — read it when a directive or slot renders nothing, or vue-tsc cannot see a template identifier: `v-html` on a component, a dotted slot name, and why a type-only import is enough for a template cast.
+- **`references/template-gotchas.md`** — read it when a directive or slot renders nothing, or vue-tsc cannot see a template identifier: `v-html` on a component, a dotted slot name, a guard that stops narrowing at a closure inside an inline handler, and why a type-only import is enough for a template cast.
 
 ## Props, Refs & Computed
 
@@ -118,13 +118,13 @@ Read it before writing any `watch`, or when a local `ref` mirrors a prop/store v
 - **Prefix browser-only globals with `window.`** to make browser-only code explicit: `window.document.getElementById(id)`, `window.navigator.mediaDevices.getUserMedia(...)`, `new window.RTCPeerConnection(...)`, `window.requestAnimationFrame(cb)`. Standard built-ins available in all environments (`Uint8Array`, `Map`, `Set`, `JSON`, `Promise`, `crypto`, …) do **not** need it. Enforced by oxlint `no-restricted-globals`, so the list of which globals count lives in `.oxlintrc.json` rather than here.
   - **Tests are exempt**, and the rule is off for `**/*.test.ts`. A test declares the environment it runs in, and the default is node — `shared/test/setup.ts` loads `fake-indexeddb/auto`, which polyfills onto `globalThis` where there is no `window` at all, so a prefix there is a `ReferenceError` rather than a style improvement.
   - **`indexedDB` stays bare everywhere**, source included, and is deliberately absent from the restricted list. `services/cache/indexedDb/` is unit-tested in the node environment against that same polyfill, so prefixing the source breaks its own tests. It is the one browser global this repo treats as environment-agnostic.
-- **Guard browser-only code with `getIsServer()`** from `@esposter/shared` — never `import.meta.client` or `typeof window !== "undefined"`; `getIsServer()` is consistent across Nuxt, shared packages and Azure Functions.
+- **Guard browser-only code with `checkIsServer()`** from `@esposter/shared` — never `import.meta.client` or `typeof window !== "undefined"`; `checkIsServer()` is consistent across Nuxt, shared packages and Azure Functions.
 
   ```typescript
-  if (!getIsServer()) { ... }
+  if (!checkIsServer()) { ... }
 
   useScript<typeof Desmos>(API_URL, {
-    use: () => (getIsServer() ? undefined : window.Desmos) as typeof Desmos,
+    use: () => (checkIsServer() ? undefined : window.Desmos) as typeof Desmos,
   });
   ```
 

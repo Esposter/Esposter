@@ -21,6 +21,7 @@ import {
   DatabaseEntityType,
   friends,
   INVITE_ID_LENGTH,
+  invitesInMessage,
   MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
   RoomPermission,
   roomsInMessage,
@@ -496,7 +497,12 @@ describe("room", () => {
     const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
-    expect(myInvite).toStrictEqual(newInvite);
+    assert(myInvite);
+
+    // The creator rides back with a created link because the management panel lists that column; a member reading
+    // Their own link already knows who minted it, so that half is the whole difference between the two rows
+    expect(newInvite).toStrictEqual({ ...myInvite, user: newInvite.user });
+    expect(newInvite.user.id).toBe(getMockSession().user.id);
   });
 
   test("reads my invite with no invite to be null", async () => {
@@ -523,6 +529,37 @@ describe("room", () => {
     expect(myInvite).toBeNull();
   });
 
+  // The usability predicate runs over the page rather than in SQL, so a page can filter down to fewer rows than it
+  // Read — and the cursor has to name the oldest row read rather than the oldest usable one, or a batch of lapsed
+  // Links ends the walk in front of the usable ones behind them
+  test("keeps paging room invites past a page of lapsed links", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const { id: userId } = getMockSession().user;
+    const usableInviteId = createId(INVITE_ID_LENGTH);
+    // Newest first, so the two lapsed links are the whole of a two-row page and the usable one sits behind them
+    await mockContext.db.insert(invitesInMessage).values([
+      { createdAt: new Date(3), expiresAt: new Date(1), id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
+      { createdAt: new Date(2), expiresAt: new Date(1), id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
+      { createdAt: new Date(1), id: usableInviteId, roomId: newRoom.id, userId },
+    ]);
+    vi.setSystemTime(dayjs.duration(1, "minute").asMilliseconds());
+    const lapsedPage = await roomCaller.readRoomInvites({ limit: 2, roomId: newRoom.id });
+
+    assert(lapsedPage.nextCursor);
+
+    const usablePage = await roomCaller.readRoomInvites({
+      cursor: lapsedPage.nextCursor,
+      limit: 2,
+      roomId: newRoom.id,
+    });
+
+    expect(lapsedPage.items).toStrictEqual([]);
+    expect(lapsedPage.hasMore).toBe(true);
+    expect(usablePage.items.map(({ id }) => id)).toStrictEqual([usableInviteId]);
+  });
+
   test("creating again replaces the previous invite", async () => {
     expect.hasAssertions();
 
@@ -532,7 +569,7 @@ describe("room", () => {
     const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
     expect(secondInvite.id).not.toBe(firstInvite.id);
-    expect(myInvite).toStrictEqual(secondInvite);
+    expect(secondInvite).toStrictEqual({ ...myInvite, user: secondInvite.user });
   });
 
   test("creates invite with expiry and max uses", async () => {
