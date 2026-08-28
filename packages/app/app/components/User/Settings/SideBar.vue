@@ -12,11 +12,11 @@ const visibleIds = useVisibleSectionIds(UserSettingsPageSections);
       <v-list-item
         v-for="section of UserSettingsPageSections"
         :key="section"
-        rd
         :active="visibleIds.includes(section)"
         :data-slide-indicator-key="section"
         :to="{ hash: `#${section}` }"
         replace
+        rd
       >
         {{ UserSettingsPageSectionMap[section].title }}
       </v-list-item>
