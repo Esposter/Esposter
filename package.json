@@ -91,7 +91,7 @@
   "engines": {
     "node": "^26.8.1"
   },
-  "packageManager": "pnpm@12.0.0-rc.11+sha512.6efb29f4814dc4b9a71d60738e98cfb9634f62e7a94ab2b23147180d1b80fb5faed6004a407bf3ca65a4b8101b9ff9662078fa3a70f4bdb05cff5e43d67a5fe6",
+  "packageManager": "pnpm@12.0.0+sha512.9e2e3dc3911995868dc94b8175c217c27e95408fa03b4a22749778f2b34f773b77cdd3b39ede8171b22fcd53be6a35342e9fac9948a68ef58df6488ce89a7e67",
   "crossOS": {
     "refresh:lockfile": {
       "darwin": "sh ./scripts/refreshLockfile.sh",
