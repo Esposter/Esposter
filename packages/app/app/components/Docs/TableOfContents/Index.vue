@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import type { TocLink } from "@nuxt/content";
 
+import { getTocLinkIds } from "@/services/docs/getTocLinkIds";
+
 interface TableOfContentsProps {
   links: TocLink[];
 }
 
 const { links } = defineProps<TableOfContentsProps>();
-const visibleIds = useVisibleTocLinkIds(() => links);
+const visibleIds = useVisibleSectionIds(() => getTocLinkIds(links));
 </script>
 
 <template>

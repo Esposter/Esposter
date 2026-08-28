@@ -37,9 +37,7 @@ if (typeof linkError === "string") {
 </script>
 
 <template>
-  <div id="linked-accounts" font-bold mt-12 text-title-large>Linked Accounts</div>
-  <div text-body-large>The sign-in providers that reach this account</div>
-  <StyledCard mt-6 p-2>
+  <StyledCard p-2>
     <v-card-title>
       <div font-bold>Providers</div>
       <v-divider mt-2 />

@@ -1,12 +1,12 @@
-import { getVisibleSectionIds } from "@/services/docs/getVisibleSectionIds";
+import { getVisibleSectionIds } from "@/services/shared/getVisibleSectionIds";
 import { describe, expect, test } from "vitest";
 
 describe(getVisibleSectionIds, () => {
-  const VIEWPORT_HEIGHT = 800;
+  const VIEWPORT_BOTTOM = 800;
   // What the headings' own `scroll-margin-top` reserves for the sticky app bar, so the effective top of the
   // Viewport is below its real one
   const VIEWPORT_TOP = 100;
-  const headings = [
+  const sections = [
     { id: "first", top: -400 },
     { id: "second", top: 200 },
     { id: "third", top: 600 },
@@ -18,7 +18,7 @@ describe(getVisibleSectionIds, () => {
   test("returns every section overlapping the viewport", () => {
     expect.hasAssertions();
 
-    expect(getVisibleSectionIds(headings, VIEWPORT_TOP, VIEWPORT_HEIGHT)).toStrictEqual(["first", "second", "third"]);
+    expect(getVisibleSectionIds(sections, VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["first", "second", "third"]);
   });
 
   // The case that separates this from "which headings are on screen", and the one a rewrite is most likely to
@@ -31,7 +31,7 @@ describe(getVisibleSectionIds, () => {
       { id: "after", top: 5000 },
     ];
 
-    expect(getVisibleSectionIds(longSection, VIEWPORT_TOP, VIEWPORT_HEIGHT)).toStrictEqual(["before"]);
+    expect(getVisibleSectionIds(longSection, VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["before"]);
   });
 
   // A section whose next heading has passed the sticky bar is behind it, however far its own heading is above
@@ -43,7 +43,7 @@ describe(getVisibleSectionIds, () => {
       { id: "reading", top: 50 },
     ];
 
-    expect(getVisibleSectionIds(scrolledPast, VIEWPORT_TOP, VIEWPORT_HEIGHT)).toStrictEqual(["reading"]);
+    expect(getVisibleSectionIds(scrolledPast, VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["reading"]);
   });
 
   // Clicking a table-of-contents link lands its heading on the top line, which leaves a sub-pixel sliver of the
@@ -56,18 +56,18 @@ describe(getVisibleSectionIds, () => {
       { id: "clicked", top: VIEWPORT_TOP + 0.5 },
     ];
 
-    expect(getVisibleSectionIds(justLanded, VIEWPORT_TOP, VIEWPORT_HEIGHT)).toStrictEqual(["clicked"]);
+    expect(getVisibleSectionIds(justLanded, VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["clicked"]);
   });
 
   test("runs the last section to the bottom of the document", () => {
     expect.hasAssertions();
 
-    expect(getVisibleSectionIds([{ id: "only", top: -9000 }], VIEWPORT_TOP, VIEWPORT_HEIGHT)).toStrictEqual(["only"]);
+    expect(getVisibleSectionIds([{ id: "only", top: -9000 }], VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["only"]);
   });
 
   test("returns nothing when every section is below the viewport", () => {
     expect.hasAssertions();
 
-    expect(getVisibleSectionIds([{ id: "later", top: 900 }], VIEWPORT_TOP, VIEWPORT_HEIGHT)).toStrictEqual([]);
+    expect(getVisibleSectionIds([{ id: "later", top: 900 }], VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual([]);
   });
 });

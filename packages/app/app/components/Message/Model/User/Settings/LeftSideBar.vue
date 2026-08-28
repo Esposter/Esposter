@@ -7,36 +7,25 @@ import { SETTINGS_CONTENT_ID } from "@/services/message/settings/constants";
 import { UserSettingsListItemMap } from "@/services/message/user/settings/UserSettingsListItemMap";
 import { UserSettingsSectionMap } from "@/services/message/user/settings/UserSettingsSectionMap";
 import { useUserSettingsDialogStore } from "@/store/message/user/settings/dialog";
-import { withFinalizerAsync } from "@esposter/shared";
 
 const modelValue = defineModel<UserSettingsType>({ required: true });
 const userSettingsDialogStore = useUserSettingsDialogStore();
-const { activeSectionId, isDrawerOpen, isScrollingToSection, visibleSectionIds } = storeToRefs(userSettingsDialogStore);
+const { isDrawerOpen } = storeToRefs(userSettingsDialogStore);
 const onSelectType = (settingsType: UserSettingsType) => {
   modelValue.value = settingsType;
   isDrawerOpen.value = false;
 };
 const goTo = useVGoTo();
-// Stable references, since a literal in either binding allocates a fresh array every render
+// A stable reference, since a literal in the binding allocates a fresh array every render
 const openedTypes = computed(() => [modelValue.value]);
-// Highlight every visible section (docs table-of-contents behaviour) — the slide indicator stretches
-// Across them. While a sidebar click scrolls programmatically, pin the highlight to the target.
-const activeSectionIds = computed<string[]>(() => {
-  if (isScrollingToSection.value) return [activeSectionId.value];
-  const sections = UserSettingsSectionMap[modelValue.value].filter((section) => visibleSectionIds.value.has(section));
-  return sections.length > 0 ? sections : [activeSectionId.value];
-});
+// Every visible section is highlighted and the rail stretches across them, the same as the docs table of contents.
+// The panel scrolls itself rather than with the page, so the scrollspy is bounded by that container
+const visibleSectionIds = useVisibleSectionIds(() => UserSettingsSectionMap[modelValue.value], SETTINGS_CONTENT_ID);
 const scrollToSection = async (section: SettingsSection) => {
-  activeSectionId.value = section;
   const element = window.document.getElementById(section);
   if (!element) return;
-  isScrollingToSection.value = true;
-  await withFinalizerAsync(
-    () => goTo(element, { container: `#${SETTINGS_CONTENT_ID}` }),
-    () => {
-      isScrollingToSection.value = false;
-    },
-  );
+
+  await goTo(element, { container: `#${SETTINGS_CONTENT_ID}` });
   // Close the mobile drawer once the section is in view (no-op on desktop where the drawer is permanent)
   isDrawerOpen.value = false;
 };
@@ -45,7 +34,7 @@ const scrollToSection = async (section: SettingsSection) => {
 <template>
   <MessageModelSettingsLeftSideBar v-model:open="isDrawerOpen">
     <v-list :opened="openedTypes">
-      <StyledSlideIndicator :active-keys="activeSectionIds" />
+      <StyledSlideIndicator :active-keys="visibleSectionIds" />
       <v-list-group v-for="settingsType of UserSettingsTypes" :key="settingsType" :value="settingsType">
         <template #activator="{ props }">
           <v-list-item :="props" :active="settingsType === modelValue" @click="onSelectType(settingsType)">
@@ -58,12 +47,12 @@ const scrollToSection = async (section: SettingsSection) => {
         <v-list-item
           v-for="section of UserSettingsSectionMap[settingsType]"
           :key="section"
-          :active="activeSectionIds.includes(section)"
+          :active="visibleSectionIds.includes(section)"
           :data-slide-indicator-key="section"
           density="compact"
           @click="scrollToSection(section)"
         >
-          <v-list-item-title :class="activeSectionIds.includes(section) ? 'font-bold' : 'op-60'">{{
+          <v-list-item-title :class="visibleSectionIds.includes(section) ? 'font-bold' : 'op-60'">{{
             section
           }}</v-list-item-title>
         </v-list-item>

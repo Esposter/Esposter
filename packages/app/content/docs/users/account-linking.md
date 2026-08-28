@@ -71,15 +71,15 @@ Merging two user rows that already exist. This prevents the split going forward,
 
 Paths relative to `packages/app`.
 
-| File                                               | Role                                                           |
-| -------------------------------------------------- | -------------------------------------------------------------- |
-| `server/auth.ts`                                   | the explicit `account.accountLinking` block                    |
-| `app/components/User/LinkedAccountsCard/Index.vue` | the settings section — lists accounts, links and unlinks       |
-| `app/components/User/LinkedAccountsCard/Row.vue`   | one provider row and its Link / Unlink action                  |
-| `app/services/auth/AccountLinkErrorMessageMap.ts`  | redirect error codes translated into readable text             |
-| `app/services/auth/requireAuthData.ts`             | raises an auth rejection from the payload, keeping its message |
-| `app/services/login/LoginButtonItems.ts`           | the single provider list and logos, shared with the login page |
-| `app/pages/user/settings.vue`                      | sidebar entry and where the section sits                       |
+| File                                                       | Role                                                           |
+| ---------------------------------------------------------- | -------------------------------------------------------------- |
+| `server/auth.ts`                                           | the explicit `account.accountLinking` block                    |
+| `app/components/User/LinkedAccountsCard/Index.vue`         | the settings section — lists accounts, links and unlinks       |
+| `app/components/User/LinkedAccountsCard/Row.vue`           | one provider row and its Link / Unlink action                  |
+| `app/services/auth/AccountLinkErrorMessageMap.ts`          | redirect error codes translated into readable text             |
+| `app/services/auth/requireAuthData.ts`                     | raises an auth rejection from the payload, keeping its message |
+| `app/services/login/LoginButtonItems.ts`                   | the single provider list and logos, shared with the login page |
+| `app/services/user/settings/UserSettingsPageSectionMap.ts` | the section's heading and its sidebar entry                    |
 
 ## Notes
 

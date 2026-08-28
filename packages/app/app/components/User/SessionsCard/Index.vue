@@ -21,9 +21,7 @@ const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) 
 </script>
 
 <template>
-  <div id="sessions" font-bold mt-12 text-title-large>Sessions</div>
-  <div text-body-large>The devices signed in to this account</div>
-  <StyledCard mt-6 p-2>
+  <StyledCard p-2>
     <v-card-title>
       <div font-bold>Active sessions</div>
       <v-divider mt-2 />
