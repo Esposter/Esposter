@@ -9,7 +9,6 @@ useFluidSimulator(() => layout.value?.layoutRef.container);
   <NuxtLayout ref="layout" />
 </template>
 
-<!-- eslint-disable-next-line vue/enforce-style-attribute -- the three.js Inspector appends its profiler panels to document.body, outside this component's scope -->
 <style scoped>
 :deep(.profiler-toggle) {
   top: calc(var(--app-bar-height) + 0.9375rem);
