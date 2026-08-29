@@ -9,7 +9,6 @@ import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { getRandomValue } from "@/util/math/random/getRandomValue";
 import { prettify } from "@/util/text/prettify";
-import { SECOND } from "@esposter/shared";
 import { sleep } from "vue-phaserjs";
 
 export const EnemyAttack: State<StateName> = {
@@ -29,7 +28,7 @@ export const EnemyAttack: State<StateName> = {
       scene,
       `Enemy ${prettify(activeMonster.value.key)} used ${prettify(randomAttackId)}.`,
     );
-    await sleep(scene, 0.5 * SECOND);
+    await sleep(scene, 500);
     await useAttackAnimation(scene, randomAttack, false);
     await takeDamage(
       calculateDamage(activeMonster.value.stats.attack, randomAttack.power, playerActiveMonster.value.stats.defense),

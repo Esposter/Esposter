@@ -4,7 +4,6 @@ import { draftsSerializer } from "@/services/message/draft/draftsSerializer";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useInputStore } from "@/store/message/input";
-import { SECOND } from "@esposter/shared";
 import { marked } from "marked";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -23,7 +22,7 @@ describe(useInputStore, () => {
   const roomId1 = crypto.randomUUID();
   const roomId2 = crypto.randomUUID();
   const draftContent = marked.parse("draftContent", { async: false });
-  const debounceMs = 0.3 * SECOND;
+  const debounceMs = 300;
 
   beforeEach(() => {
     // Frozen rather than merely faked, so a draft's `updatedAt` is an exact value instead of "some Date"

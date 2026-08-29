@@ -8,7 +8,7 @@ describe("@esposter/db-schema", () => {
 
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 98.77 KB (101137 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 99.16 KB (101537 bytes)"`);
   });
 
   test("types size", () => {

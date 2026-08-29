@@ -2,7 +2,6 @@
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useDialogStore } from "@/store/dungeons/dialog";
-import { SECOND } from "@esposter/shared";
 import { Image } from "vue-phaserjs";
 
 interface InputPromptCursorProps {
@@ -27,7 +26,7 @@ const { inputPromptCursorDisplayWidth, inputPromptCursorX, isInputPromptCursorVi
       displayWidth: inputPromptCursorDisplayWidth,
       tween: {
         delay: 0,
-        duration: 0.5 * SECOND,
+        duration: 500,
         repeat: -1,
         y: getTweenRange(y, y + 6),
       },

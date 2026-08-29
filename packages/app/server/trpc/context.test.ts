@@ -4,7 +4,7 @@ import type { Session, User } from "better-auth";
 
 import { createMockDb as baseCreateMockDb } from "@esposter/db-mock";
 import { sessions, users } from "@esposter/db-schema";
-import { DAY, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Socket } from "node:net";
 import { describe, vi } from "vitest";
@@ -144,7 +144,7 @@ export const createMockSession = (userId: string): Session => {
   const createdAt = new Date();
   return {
     createdAt,
-    expiresAt: new Date(createdAt.getTime() + DAY),
+    expiresAt: new Date(createdAt.getTime() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
     id: crypto.randomUUID(),
     // Unique like the real thing — `sessions.token` is unique, and every session fabricated here becomes a row
     token: crypto.randomUUID(),

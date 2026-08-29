@@ -12,7 +12,6 @@ import { findRepoRoot } from "#src/services/exec/test/findRepoRoot.test";
 import { isSandboxInstallSupported } from "#src/services/exec/test/isSandboxInstallSupported.test";
 import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
-import { MINUTE } from "@esposter/shared";
 import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
@@ -57,6 +56,6 @@ describe.skipIf(!isSandboxInstallSupported)("createOsBackend - real workspace in
       // The subprocess wall held: nothing the install wrote reached the host corpus on disk.
       expect(existsSync(join(corpus, NODE_MODULES_DIRECTORY))).toBe(false);
     },
-    ACCEPTANCE_TIMEOUT_MINUTES * MINUTE,
+    Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds"),
   );
 });

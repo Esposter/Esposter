@@ -1,14 +1,13 @@
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { scheduleTodoReminders } from "@@/server/services/resource/todoList/scheduleTodoReminders";
 import { AzureQueue } from "@esposter/db-schema";
-import { HOUR } from "@esposter/shared";
 import { MockServiceBusDatabase } from "azure-mock";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe(scheduleTodoReminders, () => {
   const resourceId = crypto.randomUUID();
-  const futureDueAt = new Date(Date.now() + HOUR);
-  const pastDueAt = new Date(Date.now() - HOUR);
+  const futureDueAt = new Date(Date.now() + Temporal.Duration.from({ hours: 1 }).total("milliseconds"));
+  const pastDueAt = new Date(Date.now() - Temporal.Duration.from({ hours: 1 }).total("milliseconds"));
 
   afterEach(() => {
     MockServiceBusDatabase.clear();
@@ -55,7 +54,7 @@ describe(scheduleTodoReminders, () => {
   test("enqueues a re-dated due date", async () => {
     expect.hasAssertions();
 
-    const laterDueAt = new Date(Date.now() + 2 * HOUR);
+    const laterDueAt = new Date(Date.now() + Temporal.Duration.from({ hours: 2 }).total("milliseconds"));
     const previousItem = new TodoListItem({ dueAt: futureDueAt, name: "task" });
     const item = new TodoListItem({ dueAt: laterDueAt, id: previousItem.id, name: "task" });
     await scheduleTodoReminders(resourceId, { items: [item] }, { items: [previousItem] });

@@ -5,7 +5,6 @@ import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHoo
 import { useAlertStore } from "@/store/alert";
 import { useRoomStore } from "@/store/message/room";
 import { AdminActionType, AdminActionTypes } from "@esposter/db-schema";
-import { MINUTE } from "@esposter/shared";
 
 type Action = (roomId: string, durationMs?: number) => Promisable<void>;
 
@@ -34,7 +33,9 @@ export const useAdminActionMap = () => {
       createAlert("Your screen share has been stopped by a moderator.", "error");
     },
     [AdminActionType.TimeoutUser]: (_roomId: string, durationMs?: number) => {
-      const minutes = durationMs ? Math.max(1, Math.ceil(durationMs / MINUTE)) : 0;
+      const minutes = durationMs
+        ? Math.max(1, Math.ceil(Temporal.Duration.from({ milliseconds: durationMs }).total("minutes")))
+        : 0;
       createAlert(`You have been timed out for ${minutes} ${pluralize("minute", minutes)}.`, "error");
     },
     [AdminActionType.Warn]: () => {

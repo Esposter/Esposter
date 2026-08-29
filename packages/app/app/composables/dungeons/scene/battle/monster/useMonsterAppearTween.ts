@@ -1,6 +1,5 @@
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { SECOND } from "@esposter/shared";
 import { useTween } from "vue-phaserjs";
 
 export const useMonsterAppearTween = (isEnemy: boolean) => {
@@ -21,7 +20,7 @@ export const useMonsterAppearTween = (isEnemy: boolean) => {
   return new Promise<void>((resolve) => {
     useTween(monsterTween, {
       delay: 0,
-      duration: (isEnemy ? 1.6 : 0.8) * SECOND,
+      duration: isEnemy ? 1600 : 800,
       onComplete: () => {
         monsterPosition.value.x = xEnd;
         resolve();

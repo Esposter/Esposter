@@ -5,7 +5,6 @@ import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useBallStore } from "@/store/dungeons/battle/ball";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { SECOND } from "@esposter/shared";
 import { Math } from "phaser";
 import { sleep, useTween } from "vue-phaserjs";
 
@@ -32,7 +31,7 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, captureResu
       pathFollowerValue.setPosition(startPosition.x, startPosition.y);
       isVisible.value = true;
       pathFollowerValue.startFollow({
-        duration: SECOND,
+        duration: Temporal.Duration.from({ seconds: 1 }).total("milliseconds"),
         ease: Math.Easing.Sine.InOut,
         onComplete: () => {
           resolve();
@@ -44,14 +43,14 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, captureResu
     new Promise<void>((resolve) => {
       // For some unknown reason, useTween doesn't work here...
       pathFollowerValue.scene.add.tween({
-        delay: 0.2 * SECOND,
-        duration: 0.15 * SECOND,
+        delay: 200,
+        duration: 150,
         ease: Math.Easing.Sine.InOut,
         onComplete: () => {
           resolve();
         },
         repeat: captureResult === CaptureResult.Failure ? 0 : 2,
-        repeatDelay: 0.8 * SECOND,
+        repeatDelay: 800,
         targets: pathFollowerValue,
         x: pathFollowerValue.x + 10,
         yoyo: true,
@@ -62,7 +61,7 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, captureResu
     new Promise<void>((resolve) => {
       useTween(monsterTween, {
         alpha: getTweenRange(fromAlpha, toAlpha),
-        duration: 0.5 * SECOND,
+        duration: 500,
         ease: Math.Easing.Sine.InOut,
         onComplete: () => {
           resolve();
@@ -73,7 +72,7 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, captureResu
   await playThrowBallAnimation();
   await playEnemyFadeAnimation(1, 0);
   await playShakeBallAnimation();
-  await sleep(scene, 0.5 * SECOND);
+  await sleep(scene, 500);
   isVisible.value = false;
   if (captureResult !== CaptureResult.Success) await playEnemyFadeAnimation(0, 1);
 };

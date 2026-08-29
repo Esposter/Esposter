@@ -5,7 +5,7 @@ import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
 import WindowControls from "@/components/Visual/Desmos/WindowControls.vue";
 import { Colors } from "@/models/desmos/Colors";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
-import { SECOND, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 
 interface VisualDesmosDisplayGraphProps {
   expressions: Expression[];
@@ -47,7 +47,7 @@ const animate = () => {
     calculator?.updateSettings(savedSettings);
   });
 
-  const drawingTime = 5 * SECOND;
+  const drawingTime = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
   let i = 0;
   const { pause } = useIntervalFn(() => {
     const expression = takeOne(expressions, i++);

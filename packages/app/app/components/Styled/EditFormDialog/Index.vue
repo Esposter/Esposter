@@ -3,8 +3,6 @@ import type { ItemEntityType } from "@esposter/shared";
 import type { VForm } from "vuetify/components";
 import type { z } from "zod";
 
-import { SECOND } from "@esposter/shared";
-
 interface EditFormDialogProps<T> {
   editedItem: T;
   isDirty: boolean;
@@ -35,7 +33,7 @@ const { start: startClose } = useTimeoutFn(
   () => {
     emit("close");
   },
-  0.3 * SECOND,
+  300,
   { immediate: false },
 );
 useConfirmBeforeNavigation(() => isDirty);

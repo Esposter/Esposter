@@ -8,7 +8,7 @@ import { ARC_STROKES, COLORS } from "@/services/visual/constants";
 import { GlobeConfiguration } from "@/services/visual/GlobeConfiguration";
 import { createRandomInteger } from "@/util/math/random/createRandomInteger";
 import { getRandomValues } from "@/util/math/random/getRandomValues";
-import { SECOND, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import {
   AmbientLight,
   DirectionalLight,
@@ -153,9 +153,12 @@ onMounted(async () => {
     renderer.setSize(width.value, height.value);
   });
 
-  intervalId = window.setInterval(() => {
-    globe.ringsData(getRandomValues(countries, rings));
-  }, 2 * SECOND);
+  intervalId = window.setInterval(
+    () => {
+      globe.ringsData(getRandomValues(countries, rings));
+    },
+    Temporal.Duration.from({ seconds: 2 }).total("milliseconds"),
+  );
 });
 
 onUnmounted(() => {

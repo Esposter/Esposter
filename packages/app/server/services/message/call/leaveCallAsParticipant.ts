@@ -6,7 +6,7 @@ import { deleteCallParticipant } from "@@/server/services/message/call/deleteCal
 import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { MessageType } from "@esposter/db-schema";
-import { getResultAsync, noop, SECOND } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const leaveCallAsParticipant = async (
   db: Context["db"],
@@ -31,7 +31,9 @@ export const leaveCallAsParticipant = async (
     });
     if (!callSession?.roomId) return;
 
-    const callDurationSeconds = callStart ? Math.round((Date.now() - callStart.getTime()) / SECOND) : 0;
+    const callDurationSeconds = callStart
+      ? Math.round(Temporal.Duration.from({ milliseconds: Date.now() - callStart.getTime() }).total("seconds"))
+      : 0;
     // The line is worded by the duration it reports, which is what the renderer reads an ended call back as
     await createSystemRoomMessage(callSession.roomId, userId, String(callDurationSeconds), sessionId, {
       // The summary belongs where the call was — the thread it ran in, or the room itself

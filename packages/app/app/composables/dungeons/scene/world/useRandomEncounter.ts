@@ -15,7 +15,7 @@ import { useEncounterStore } from "@/store/dungeons/world/encounter";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
 import { getWeightedRandomValue } from "@/util/math/random/getWeightedRandomValue";
-import { NotFoundError, SECOND } from "@esposter/shared";
+import { NotFoundError } from "@esposter/shared";
 
 export const useRandomEncounter = (scene: SceneWithPlugins) => {
   const dungeonsStore = useDungeonsStore();
@@ -45,5 +45,5 @@ export const useRandomEncounter = (scene: SceneWithPlugins) => {
   const { activeMonster } = storeToRefs(enemyStore);
   stepsSinceLastEncounter.value = 0;
   activeMonster.value = randomMonster;
-  fadeSwitchToScene(scene, SceneKey.Battle, 2 * SECOND);
+  fadeSwitchToScene(scene, SceneKey.Battle, Temporal.Duration.from({ seconds: 2 }).total("milliseconds"));
 };

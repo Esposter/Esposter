@@ -5,7 +5,6 @@ import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFu
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { SECOND } from "@esposter/shared";
 import { sleep } from "vue-phaserjs";
 
 export const useAttackAnimation = (scene: SceneWithPlugins, attack: Attack, isToEnemy: boolean) => {
@@ -21,7 +20,7 @@ export const useAttackAnimation = (scene: SceneWithPlugins, attack: Attack, isTo
       storeRefs.attackId.value = attack.id;
       storeRefs.isToEnemy.value = isToEnemy;
       storeRefs.isActive.value = true;
-      await sleep(scene, 0.2 * SECOND);
+      await sleep(scene, 200);
       getDungeonsSoundEffect(scene, attack.soundEffectKey).play();
     }),
   );

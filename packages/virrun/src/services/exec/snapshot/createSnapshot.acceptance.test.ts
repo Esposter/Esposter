@@ -10,7 +10,6 @@ import { isSandboxInstallSupported } from "#src/services/exec/test/isSandboxInst
 import { setupWarmSnapshotSuite } from "#src/services/exec/test/setupWarmSnapshotSuite.test";
 import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
-import { MINUTE } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -24,7 +23,7 @@ import { describe, expect, test } from "vitest";
 // Inside; the shared global teardown drops it.
 describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then fork (acceptance)", () => {
   const { getBackend, getCorpus } = setupWarmSnapshotSuite();
-  const acceptanceTimeoutMs = ACCEPTANCE_TIMEOUT_MINUTES * MINUTE;
+  const acceptanceTimeoutMs = Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds");
 
   test("the captured snapshot exists, a fork reuses node_modules offline, and the source stays clean", async () => {
     expect.hasAssertions();

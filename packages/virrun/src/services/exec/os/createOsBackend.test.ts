@@ -2,14 +2,14 @@ import { createOsBackend } from "#src/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
 import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
 import { TEST_DIR } from "#src/services/exec/util/constants.test";
-import { getResultAsync, InvalidOperationError, MINUTE, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(createOsBackend, () => {
   // Real bwrap sandbox execs (win32: over the wsl.exe bridge) contend for the one shared WSL bridge when the suite
   // Fans test files across 16 workers, so a ~1-3s exec can exceed vitest's 5s default. Same hang-ceiling the sibling
   // Acceptance/property os tests carry; the exec is not slow, the cross-file contention is.
-  const acceptanceTimeoutMs = ACCEPTANCE_TIMEOUT_MINUTES * MINUTE;
+  const acceptanceTimeoutMs = Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds");
 
   // No-fallback contract: on an unsupported host, construction throws rather than running un-isolated.
   test.skipIf(isOsBackendSupported())("throws on an unsupported host instead of falling back", () => {

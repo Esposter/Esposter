@@ -1,3 +1,1 @@
-import { SECOND } from "@esposter/shared";
-
-export const AUDIO_RECORDER_TIMER_INTERVAL = SECOND;
+export const AUDIO_RECORDER_TIMER_INTERVAL = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");

@@ -1,7 +1,6 @@
 import type { ComposableOptions } from "@/models/sound/ComposableOptions";
 import type { PlayOptions } from "@/models/sound/PlayOptions";
 
-import { SECOND } from "@esposter/shared";
 import { Howl } from "howler";
 
 const cache = new Map<string, Howl>();
@@ -16,7 +15,8 @@ export const useSound = (
   // oxlint-disable-next-line func-style
   function handleLoad(this: ComposableOptions) {
     if (typeof onload === "function") onload.call(this);
-    duration.value = (duration.value ?? sound.value?.duration() ?? 0) * SECOND;
+    duration.value =
+      (duration.value ?? sound.value?.duration() ?? 0) * Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
     if (autoplay) isPlaying.value = true;
   }
 

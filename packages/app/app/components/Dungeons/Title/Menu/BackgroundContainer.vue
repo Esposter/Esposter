@@ -7,7 +7,6 @@ import {
   MENU_BACKGROUND_WIDTH,
 } from "@/services/dungeons/scene/title/menu/constants";
 import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
-import { SECOND } from "@esposter/shared";
 import { Container } from "vue-phaserjs";
 </script>
 
@@ -21,7 +20,7 @@ import { Container } from "vue-phaserjs";
       :tween="{
         delay: 0,
         repeat: -1,
-        duration: 0.5 * SECOND,
+        duration: 500,
         x: getTweenRange(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.x + 3),
       }"
     />

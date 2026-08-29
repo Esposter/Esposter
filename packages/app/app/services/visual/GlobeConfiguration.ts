@@ -1,8 +1,6 @@
-import { SECOND } from "@esposter/shared";
-
 export const GlobeConfiguration = {
   arcLength: 0.9,
-  arcTime: 2 * SECOND,
+  arcTime: Temporal.Duration.from({ seconds: 2 }).total("milliseconds"),
   atmosphereAltitude: 0.25,
   atmosphereColor: "#3a228a",
   color: "#3a228a",

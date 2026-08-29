@@ -26,7 +26,7 @@ import {
   RoomPermission,
   roomsInMessage,
 } from "@esposter/db-schema";
-import { InvalidOperationError, MINUTE, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL, MockBlockBlobClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -523,7 +523,7 @@ describe("room", () => {
       maxUses: 0,
       roomId: newRoom.id,
     });
-    vi.setSystemTime(31 * MINUTE);
+    vi.setSystemTime(Temporal.Duration.from({ minutes: 31 }).total("milliseconds"));
     const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
     expect(myInvite).toBeNull();
@@ -544,7 +544,7 @@ describe("room", () => {
       { createdAt: new Date(2), expiresAt: new Date(1), id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
       { createdAt: new Date(1), id: usableInviteId, roomId: newRoom.id, userId },
     ]);
-    vi.setSystemTime(MINUTE);
+    vi.setSystemTime(Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
     const lapsedPage = await roomCaller.readRoomInvites({ limit: 2, roomId: newRoom.id });
 
     assert(lapsedPage.nextCursor);
@@ -642,7 +642,7 @@ describe("room", () => {
       maxUses: 0,
       roomId: newRoom.id,
     });
-    vi.setSystemTime(31 * MINUTE);
+    vi.setSystemTime(Temporal.Duration.from({ minutes: 31 }).total("milliseconds"));
     await mockSessionOnce(mockContext.db);
 
     await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(

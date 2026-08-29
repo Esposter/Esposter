@@ -6,7 +6,6 @@ import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.te
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { createOsBaselineBackend } from "#src/services/exec/wsl/createOsBaselineBackend.test";
-import { MINUTE } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
@@ -21,7 +20,7 @@ describe.skipIf(!isOsBackendSupported())(createOsBackend, () => {
   // Runs test files across 16 workers all contending for the one shared WSL bridge, so a single exec can wait well
   // Past vitest's 5s default. Use the same hang-ceiling the acceptance/property os tests already carry — the exec is
   // Not the slow part, the contention is.
-  const acceptanceTimeoutMs = ACCEPTANCE_TIMEOUT_MINUTES * MINUTE;
+  const acceptanceTimeoutMs = Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds");
 
   afterEach(() => {
     temporaryDirectories.cleanup();

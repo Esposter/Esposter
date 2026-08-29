@@ -2,7 +2,7 @@ import type { VList } from "vuetify/components";
 
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { RoutePath, SECOND } from "@esposter/shared";
+import { RoutePath } from "@esposter/shared";
 
 export const useScrollStore = defineStore("message/ui/scroll", () => {
   const messageContainer = ref<InstanceType<typeof VList> | null>(null);
@@ -45,7 +45,7 @@ export const useScrollStore = defineStore("message/ui/scroll", () => {
     () => {
       activeRowKey.value = "";
     },
-    2 * SECOND,
+    Temporal.Duration.from({ seconds: 2 }).total("milliseconds"),
     { immediate: false },
   );
   const jumpToPresent = async () => {

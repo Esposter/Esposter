@@ -9,7 +9,6 @@ import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.te
 import { setupWarmSnapshotSuite } from "#src/services/exec/test/setupWarmSnapshotSuite.test";
 import { CI_ENV_KEY, VIRRUN_NO_CACHE_KEY } from "#src/services/exec/util/constants";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
-import { MINUTE } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 import { existsSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -25,7 +24,7 @@ describe.todo("persistWithCache - a hit replays a recorded run identically (task
   // Counts real sandbox executions so a hit can be proven to skip exec, not merely reproduce its output.
   let execCount = 0;
   let countingBackend: ExecBackend;
-  const acceptanceTimeoutMs = ACCEPTANCE_TIMEOUT_MINUTES * MINUTE;
+  const acceptanceTimeoutMs = Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds");
   let corpus = "";
   const previousCi = process.env[CI_ENV_KEY];
   const previousNoCache = process.env[VIRRUN_NO_CACHE_KEY];

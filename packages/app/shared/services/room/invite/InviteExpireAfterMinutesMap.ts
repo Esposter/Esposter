@@ -1,14 +1,13 @@
 /* eslint-disable perfectionist/sort-objects */
-import { DAY, HOUR, MINUTE } from "@esposter/shared";
 
 // Discord's invite expiry options; the "Never" (the 0 sentinel) option lives in the select, not here
 export const InviteExpireAfterMinutesMap = {
-  "30 minutes": 30,
-  "1 hour": HOUR / MINUTE,
-  "6 hours": (6 * HOUR) / MINUTE,
-  "12 hours": (12 * HOUR) / MINUTE,
-  "1 day": DAY / MINUTE,
-  "7 days": (7 * DAY) / MINUTE,
+  "30 minutes": Temporal.Duration.from({ minutes: 30 }).total("minutes"),
+  "1 hour": Temporal.Duration.from({ hours: 1 }).total("minutes"),
+  "6 hours": Temporal.Duration.from({ hours: 6 }).total("minutes"),
+  "12 hours": Temporal.Duration.from({ hours: 12 }).total("minutes"),
+  "1 day": Temporal.Duration.from({ days: 1 }).total("minutes"),
+  "7 days": Temporal.Duration.from({ days: 7 }).total("minutes"),
 } as const satisfies Record<string, number>;
 
 export const InviteExpireAfterMinutes = Object.values(InviteExpireAfterMinutesMap);

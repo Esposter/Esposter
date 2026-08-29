@@ -3,7 +3,7 @@ import type { Router } from "vue-router";
 
 import { useDataStore } from "@/store/message/data";
 import { useScrollStore } from "@/store/message/ui/scroll";
-import { RoutePath, SECOND } from "@esposter/shared";
+import { RoutePath } from "@esposter/shared";
 import { mockNuxtImport } from "@nuxt/test-utils/runtime";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -16,7 +16,7 @@ describe(useScrollStore, () => {
   const roomId = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const secondRowKey = crypto.randomUUID();
-  const highlightMs = 2 * SECOND;
+  const highlightMs = Temporal.Duration.from({ seconds: 2 }).total("milliseconds");
   let router: Router;
 
   beforeAll(() => {

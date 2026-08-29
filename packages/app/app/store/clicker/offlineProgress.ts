@@ -2,7 +2,6 @@ import { MIN_OFFLINE_DIALOG_ELAPSED, OFFLINE_CAP, OFFLINE_RATE } from "@/service
 import { useClickerStore } from "@/store/clicker";
 import { useBuildingStore } from "@/store/clicker/building";
 import { usePointStore } from "@/store/clicker/point";
-import { SECOND } from "@esposter/shared";
 
 export const useOfflineProgressStore = defineStore("clicker/offlineProgress", () => {
   const clickerStore = useClickerStore();
@@ -19,7 +18,9 @@ export const useOfflineProgressStore = defineStore("clicker/offlineProgress", ()
     const newElapsedMs = Date.now() - clickerStore.clicker.updatedAt.getTime();
     if (newElapsedMs <= 0) return;
 
-    const cappedSeconds = Math.min(newElapsedMs, OFFLINE_CAP) / SECOND;
+    const cappedSeconds = Temporal.Duration.from({ milliseconds: Math.min(newElapsedMs, OFFLINE_CAP) }).total(
+      "seconds",
+    );
     const newAwardedPoints = buildingStore.allBuildingPower * cappedSeconds * OFFLINE_RATE;
     if (newAwardedPoints <= 0) return;
 

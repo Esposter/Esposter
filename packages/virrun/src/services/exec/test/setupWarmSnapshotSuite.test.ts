@@ -7,7 +7,6 @@ import { ensureWarmSnapshot } from "#src/services/exec/test/ensureWarmSnapshot.t
 import { findRepoRoot } from "#src/services/exec/test/findRepoRoot.test";
 import { getAcceptanceCacheHome } from "#src/services/exec/test/getAcceptanceCacheHome";
 import { VIRRUN_CACHE_HOME_KEY } from "#src/services/exec/util/constants";
-import { MINUTE } from "@esposter/shared";
 import { rmSync } from "node:fs";
 import { afterAll, beforeAll, describe } from "vitest";
 // The shared beforeAll/afterAll behind every heavy warm-snapshot acceptance/equivalence suite: point the cache home
@@ -22,12 +21,15 @@ export const setupWarmSnapshotSuite = (): { getBackend: () => ExecBackend; getCo
   let corpus = "";
   const previousCacheHome = process.env[VIRRUN_CACHE_HOME_KEY];
 
-  beforeAll(async () => {
-    backend = createOsBackend();
-    process.env[VIRRUN_CACHE_HOME_KEY] = getAcceptanceCacheHome();
-    corpus = createWorkspaceCorpus(findRepoRoot());
-    await ensureWarmSnapshot(backend, corpus);
-  }, ACCEPTANCE_TIMEOUT_MINUTES * MINUTE);
+  beforeAll(
+    async () => {
+      backend = createOsBackend();
+      process.env[VIRRUN_CACHE_HOME_KEY] = getAcceptanceCacheHome();
+      corpus = createWorkspaceCorpus(findRepoRoot());
+      await ensureWarmSnapshot(backend, corpus);
+    },
+    Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds"),
+  );
 
   afterAll(() => {
     if (previousCacheHome === undefined) delete process.env[VIRRUN_CACHE_HOME_KEY];

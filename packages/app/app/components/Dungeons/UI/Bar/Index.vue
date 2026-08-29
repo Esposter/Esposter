@@ -6,7 +6,6 @@ import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
 import { BarTextureMap } from "@/services/dungeons/UI/bar/BarTextureMap";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { SECOND } from "@esposter/shared";
 import { Math } from "phaser";
 import { Image, useTween } from "vue-phaserjs";
 
@@ -62,7 +61,7 @@ watch(barWidth, (newBarWidth) => {
 
   useTween(tween, {
     displayWidth: newBarWidth,
-    duration: SECOND,
+    duration: Temporal.Duration.from({ seconds: 1 }).total("milliseconds"),
     ease: Math.Easing.Sine.Out,
     onComplete: () => {
       emit("complete:display-width");

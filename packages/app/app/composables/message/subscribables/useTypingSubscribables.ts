@@ -1,6 +1,5 @@
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { SECOND } from "@esposter/shared";
 
 export const useTypingSubscribables = async () => {
   const onlineSubscribableContext = getOnlineSubscribableContext();
@@ -31,10 +30,13 @@ export const useTypingSubscribables = async () => {
           onData: (typing) => {
             clearTypingTimeout(typing.userId);
 
-            const id = window.setTimeout(() => {
-              typings.value = typings.value.filter(({ userId }) => userId !== typing.userId);
-              clearTypingTimeout(typing.userId);
-            }, 3 * SECOND);
+            const id = window.setTimeout(
+              () => {
+                typings.value = typings.value.filter(({ userId }) => userId !== typing.userId);
+                clearTypingTimeout(typing.userId);
+              },
+              Temporal.Duration.from({ seconds: 3 }).total("milliseconds"),
+            );
 
             typingTimeoutIdMap.value.set(typing.userId, id);
             if (!typings.value.some(({ userId }) => userId === typing.userId)) typings.value.push(typing);

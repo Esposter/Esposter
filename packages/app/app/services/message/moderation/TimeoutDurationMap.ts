@@ -1,11 +1,10 @@
 /* eslint-disable perfectionist/sort-objects */
-import { DAY, HOUR, MINUTE } from "@esposter/shared";
 
 export const TimeoutDurationMap = {
-  "1 minute": MINUTE,
-  "5 minutes": 5 * MINUTE,
-  "10 minutes": 10 * MINUTE,
-  "1 hour": HOUR,
-  "24 hours": 24 * HOUR,
-  "7 days": 7 * DAY,
+  "1 minute": Temporal.Duration.from({ minutes: 1 }).total("milliseconds"),
+  "5 minutes": Temporal.Duration.from({ minutes: 5 }).total("milliseconds"),
+  "10 minutes": Temporal.Duration.from({ minutes: 10 }).total("milliseconds"),
+  "1 hour": Temporal.Duration.from({ hours: 1 }).total("milliseconds"),
+  "24 hours": Temporal.Duration.from({ hours: 24 }).total("milliseconds"),
+  "7 days": Temporal.Duration.from({ days: 7 }).total("milliseconds"),
 } as const satisfies Record<string, number>;

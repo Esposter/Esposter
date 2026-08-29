@@ -2,14 +2,13 @@ import type { Popup } from "@/models/clicker/Popup";
 
 import { useMouseStore } from "@/store/clicker/mouse";
 import { usePointStore } from "@/store/clicker/point";
-import { SECOND } from "@esposter/shared";
 
 export const usePopupStore = defineStore("clicker/popup", () => {
   const mouseStore = useMouseStore();
   const pointStore = usePointStore();
   const { incrementPoints } = pointStore;
   const popups = ref<Popup[]>([]);
-  const duration = 10 * SECOND;
+  const duration = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
   const onClick = (event: MouseEvent) => {
     const id = crypto.randomUUID();
     incrementPoints(mouseStore.mousePower);

@@ -3,7 +3,7 @@
 import type { Card } from "@/models/visual/Card";
 
 import CardBase from "@/components/Visual/Card/Base.vue";
-import { SECOND, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 
 interface CardStyleVariables {
   marginRight?: string;
@@ -26,7 +26,7 @@ const {
   cardScaleYRatioLoss = 0.05,
   cardTemplate = CardBase,
   // Duration before cards move
-  duration = 10 * SECOND,
+  duration = Temporal.Duration.from({ seconds: 10 }).total("milliseconds"),
   maxShownCards = 5,
 } = defineProps<VisualCardCarouselProps>();
 /**
