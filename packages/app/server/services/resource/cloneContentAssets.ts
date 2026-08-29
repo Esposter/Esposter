@@ -13,10 +13,10 @@ import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 import { deepVisitStrings } from "#shared/util/object/deepVisitStrings";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { checkIsResourceAssetReadable } from "@@/server/services/resource/checkIsResourceAssetReadable";
-import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
-import { copyBlob } from "@esposter/db";
+import { emitStorageUsage } from "@@/server/services/storage/emitStorageUsage";
+import { chargeStorageLedgerEntry, copyBlob, releaseStorageLedgerEntries } from "@esposter/db";
 import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
-import { getOrCreate, getResultAsync, ID_SEPARATOR, settleAll } from "@esposter/shared";
+import { getOrCreate, getResultAsync, ID_SEPARATOR, noop, settleAll } from "@esposter/shared";
 
 // The rewrite entry for one working-copy asset url, or nothing when the referenced blob is missing — a
 // Dangling reference (the asset was deleted but the content still embeds its url) is data like an
@@ -38,14 +38,24 @@ const cloneAsset = async (
   );
   if (contentLength === undefined) return [];
 
-  await copyBlob(containerClient, blobName, destinationBlobName);
   // A clone is stored bytes like any other, and the destination directory belongs to whoever this clone is
   // For — the publisher, or the owner of the duplicate or the restored working copy. The source's length is a
-  // Provisional figure, not a measurement of the copy: the copy raises its own `BlobCreated`, which now finds
-  // The row this charge wrote and replaces the figure with what actually landed. So a source overwritten under
-  // A still-valid write SAS between the read and the copy costs a few seconds of a wrong number rather than a
+  // Provisional figure, not a measurement of the copy: the copy raises its own `BlobCreated`, which finds the
+  // Row this charge wrote and replaces the figure with what actually landed. So a source overwritten under a
+  // Still-valid write SAS between the read and the copy costs a few seconds of a wrong number rather than a
   // Second HEAD on every clone. See /docs/platform/storage-quotas
-  await chargeAndEmitStorageLedgerEntry(db, userId, AzureContainer.ResourceAssets, destinationBlobName, contentLength);
+  //
+  // Before the copy, never after it: Event Grid orders nothing, and an event that arrives before the row
+  // Exists is dropped for good — `reconcileStorageLedgerEntry` reads a blob nothing reserved as unaccounted
+  // Rather than as an error, so nothing retries it and the provisional figure would stand for the blob's life
+  await chargeStorageLedgerEntry(db, userId, AzureContainer.ResourceAssets, destinationBlobName, contentLength);
+  // The charge is a claim about a blob, so it is unwound the moment the blob turns out not to exist — bytes
+  // Held against an owner for a copy that never landed are the one drift no later event corrects, since a
+  // Destination name is minted per clone and nothing ever writes or deletes it again
+  await getResultAsync(() => copyBlob(containerClient, blobName, destinationBlobName)).match(noop, async (error) => {
+    await releaseStorageLedgerEntries(db, AzureContainer.ResourceAssets, [destinationBlobName]);
+    throw error;
+  });
   return [[url, getResourceAssetUrl(destinationBlobName)] as const];
 };
 // Publish, duplicate and restore all snapshot content whose assets must survive the source's working copies
@@ -161,6 +171,10 @@ export const cloneContentAssets = async <TContent>(
 
   const updatedUrlMap = new Map(clonedUrlEntries.flat());
   if (updatedUrlMap.size === 0) return relativizedContent;
+  // One event for the whole clone rather than one per asset: content naming hundreds of them is a single
+  // Publish as far as the owner's meter is concerned, and the last of those events is the only one that says
+  // Anything the one before it did not
+  await emitStorageUsage(db, userId);
   return deepReplaceStrings(relativizedContent, (value) =>
     value.replaceAll(RESOURCE_ASSET_URL_REGEX, (url) => updatedUrlMap.get(url) ?? url),
   );

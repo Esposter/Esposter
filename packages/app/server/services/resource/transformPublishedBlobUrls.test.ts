@@ -44,6 +44,8 @@ describe(transformPublishedBlobUrls, () => {
       query: {
         resourcePublications: { findFirst: () => Promise.resolve({ resourceId }) },
         resources: { findFirst: () => Promise.resolve({ id: resourceId }) },
+        // The clone announces the owner's new total once it is done, and reads it from here to do so
+        users: { findFirst: () => Promise.resolve(undefined) },
       },
     },
     getSessionPayload: { user: { id: crypto.randomUUID() } },

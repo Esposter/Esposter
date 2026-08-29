@@ -8,8 +8,7 @@ interface UserSettingsSectionProps {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { section } = defineProps<UserSettingsSectionProps>();
-const definition = computed(() => UserSettingsPageSectionMap[section]);
+defineProps<UserSettingsSectionProps>();
 </script>
 
 <template>
@@ -17,8 +16,8 @@ const definition = computed(() => UserSettingsPageSectionMap[section]);
        otherwise land behind — which the scrollspy reads back as the top of the visible band -->
   <section :id="section" scroll-mt="[calc(1rem+--app-bar-height)]" flex flex-col gap-y-6>
     <div flex flex-col>
-      <div font-bold text-title-large>{{ definition.title }}</div>
-      <div text-body-large>{{ definition.subtitle }}</div>
+      <div font-bold text-title-large>{{ UserSettingsPageSectionMap[section].title }}</div>
+      <div text-body-large>{{ UserSettingsPageSectionMap[section].subtitle }}</div>
     </div>
     <slot />
   </section>

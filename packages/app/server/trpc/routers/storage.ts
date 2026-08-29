@@ -12,9 +12,7 @@ export const storageRouter = router({
   onUpdateUsage: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;
     const events = on(storageEventEmitter, "updateUsage", { signal });
-    for await (const [[storageUsage, targetUserId]] of events) {
-      if (targetUserId === userId) yield storageUsage;
-    }
+    for await (const [[storageUsage, targetUserId]] of events) if (targetUserId === userId) yield storageUsage;
   }),
   // Only the usage is stored — the quota is derived from the tier on every read, so moving a user to another
   // Tier changes what they see and what the gate enforces in the same instant. See /docs/platform/storage-quotas

@@ -54,7 +54,9 @@ export const useVisibleSectionIds = (
     const hasSectionIdsChanged =
       newSectionIds.length !== previousSectionIds.value.length ||
       newSectionIds.some((id, index) => id !== previousSectionIds.value[index]);
-    previousSectionIds.value = newSectionIds;
+    // Copied, not aliased: a caller passing a ref it mutates in place would otherwise hand the same array to
+    // Both sides of this comparison, and the change would read as no change at all
+    previousSectionIds.value = [...newSectionIds];
 
     documentBody.value = window.document.body;
     if (containerId) container.value = window.document.getElementById(containerId) ?? undefined;

@@ -35,6 +35,7 @@ import { saveResourceContent } from "@@/server/services/resource/saveResourceCon
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { withResourceRollback } from "@@/server/services/resource/withResourceRollback";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
+import { emitStorageUsage } from "@@/server/services/storage/emitStorageUsage";
 import { router } from "@@/server/trpc";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -305,6 +306,9 @@ export const resourceRouter = router({
         getResourceOwnedTableNames(ctx.resource.type).map((tableName) => useTableClient(tableName)),
       );
       await purgeResource(ctx.db, containerClient, tableClients, id);
+      // The other half of the counter: a purge is the one delete that gives bytes back from this process, so
+      // It is the one delete whose owner is here to be told. See /docs/platform/storage-quotas
+      await emitStorageUsage(ctx.db, ctx.resource.userId);
       await publishResourceOperation(ctx.getSessionPayload, {
         path: RoutePath.ResourceExplorerRecycleBin,
         title: ResourceOperationTitleMap[ResourceOperationType.Purged](ctx.resource.name),
