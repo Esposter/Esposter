@@ -48,18 +48,26 @@ export const useVisibleSectionIds = (
       newVisibleIds.every((id, index) => id === visibleIds.value[index]);
     if (newVisibleIds.length > 0 && !isUnchanged) visibleIds.value = newVisibleIds;
   };
+  const previousSectionIds = shallowRef<string[]>([]);
   const resolveSections = () => {
+    const newSectionIds = toValue(sectionIds);
+    const hasSectionIdsChanged =
+      newSectionIds.length !== previousSectionIds.value.length ||
+      newSectionIds.some((id, index) => id !== previousSectionIds.value[index]);
+    previousSectionIds.value = newSectionIds;
+
     documentBody.value = window.document.body;
     if (containerId) container.value = window.document.getElementById(containerId) ?? undefined;
 
-    const newSections = toValue(sectionIds).flatMap((id) => {
+    const newSections = newSectionIds.flatMap((id) => {
       const element = window.document.getElementById(id);
       return element ? [element] : [];
     });
+    if (hasSectionIdsChanged) visibleIds.value = [];
     const isUnchanged =
       newSections.length === sections.value.length &&
       newSections.every((section, index) => section === sections.value[index]);
-    if (isUnchanged) return;
+    if (isUnchanged && !hasSectionIdsChanged) return;
 
     sections.value = newSections;
     updateVisibleIds();

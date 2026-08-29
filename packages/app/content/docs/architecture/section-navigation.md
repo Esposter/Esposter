@@ -14,10 +14,9 @@ The behaviour the mechanism defines: **every section overlapping the viewport is
 ```mermaid
 flowchart TD
   IDS["caller passes section ids in document order"] --> RESOLVE["resolve each id to its element"]
-  RESOLVE --> LATE{"did every section resolve"}
-  LATE -->|"no — a panel is still mounting"| MUTATION["MutationObserver on the document — resolve again when it arrives"]
+  RESOLVE --> BOUNDS{"do the sections scroll with the page"}
+  RESOLVE -.->|"some ids are not in the DOM yet"| MUTATION["MutationObserver on the document — resolve again when it arrives"]
   MUTATION --> RESOLVE
-  LATE -->|"yes"| BOUNDS{"do the sections scroll with the page"}
   BOUNDS -->|"yes — the window scrolls"| PAGE["band is the window, inset by the first section's scroll-margin-top"]
   BOUNDS -->|"no — a panel scrolls itself"| PANEL["band is the panel's box, and the observer is rooted on it"]
   PAGE --> WATCH["IntersectionObserver on the sections, plus resize and scrollend"]
