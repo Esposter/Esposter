@@ -2,10 +2,9 @@ import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
 import type { Session, User } from "better-auth";
 
-import { dayjs } from "#shared/services/dayjs";
 import { createMockDb as baseCreateMockDb } from "@esposter/db-mock";
 import { sessions, users } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { DAY, takeOne } from "@esposter/shared";
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Socket } from "node:net";
 import { describe, vi } from "vitest";
@@ -145,7 +144,7 @@ export const createMockSession = (userId: string): Session => {
   const createdAt = new Date();
   return {
     createdAt,
-    expiresAt: new Date(createdAt.getTime() + dayjs.duration(1, "day").asMilliseconds()),
+    expiresAt: new Date(createdAt.getTime() + DAY),
     id: crypto.randomUUID(),
     // Unique like the real thing — `sessions.token` is unique, and every session fabricated here becomes a row
     token: crypto.randomUUID(),

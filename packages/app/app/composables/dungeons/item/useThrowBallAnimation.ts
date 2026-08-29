@@ -1,11 +1,11 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { dayjs } from "#shared/services/dayjs";
 import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useBallStore } from "@/store/dungeons/battle/ball";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useSettingsStore } from "@/store/dungeons/settings";
+import { SECOND } from "@esposter/shared";
 import { Math } from "phaser";
 import { sleep, useTween } from "vue-phaserjs";
 
@@ -32,7 +32,7 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, captureResu
       pathFollowerValue.setPosition(startPosition.x, startPosition.y);
       isVisible.value = true;
       pathFollowerValue.startFollow({
-        duration: dayjs.duration(1, "second").asMilliseconds(),
+        duration: SECOND,
         ease: Math.Easing.Sine.InOut,
         onComplete: () => {
           resolve();
@@ -44,14 +44,14 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, captureResu
     new Promise<void>((resolve) => {
       // For some unknown reason, useTween doesn't work here...
       pathFollowerValue.scene.add.tween({
-        delay: dayjs.duration(0.2, "seconds").asMilliseconds(),
-        duration: dayjs.duration(0.15, "seconds").asMilliseconds(),
+        delay: 0.2 * SECOND,
+        duration: 0.15 * SECOND,
         ease: Math.Easing.Sine.InOut,
         onComplete: () => {
           resolve();
         },
         repeat: captureResult === CaptureResult.Failure ? 0 : 2,
-        repeatDelay: dayjs.duration(0.8, "seconds").asMilliseconds(),
+        repeatDelay: 0.8 * SECOND,
         targets: pathFollowerValue,
         x: pathFollowerValue.x + 10,
         yoyo: true,
@@ -62,7 +62,7 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, captureResu
     new Promise<void>((resolve) => {
       useTween(monsterTween, {
         alpha: getTweenRange(fromAlpha, toAlpha),
-        duration: dayjs.duration(0.5, "seconds").asMilliseconds(),
+        duration: 0.5 * SECOND,
         ease: Math.Easing.Sine.InOut,
         onComplete: () => {
           resolve();
@@ -73,7 +73,7 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, captureResu
   await playThrowBallAnimation();
   await playEnemyFadeAnimation(1, 0);
   await playShakeBallAnimation();
-  await sleep(scene, dayjs.duration(0.5, "seconds").asMilliseconds());
+  await sleep(scene, 0.5 * SECOND);
   isVisible.value = false;
   if (captureResult !== CaptureResult.Success) await playEnemyFadeAnimation(0, 1);
 };

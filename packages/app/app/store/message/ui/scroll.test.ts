@@ -1,10 +1,9 @@
 // @vitest-environment nuxt
 import type { Router } from "vue-router";
 
-import { dayjs } from "#shared/services/dayjs";
 import { useDataStore } from "@/store/message/data";
 import { useScrollStore } from "@/store/message/ui/scroll";
-import { RoutePath } from "@esposter/shared";
+import { RoutePath, SECOND } from "@esposter/shared";
 import { mockNuxtImport } from "@nuxt/test-utils/runtime";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -17,7 +16,7 @@ describe(useScrollStore, () => {
   const roomId = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const secondRowKey = crypto.randomUUID();
-  const highlightMs = dayjs.duration(2, "seconds").asMilliseconds();
+  const highlightMs = 2 * SECOND;
   let router: Router;
 
   beforeAll(() => {

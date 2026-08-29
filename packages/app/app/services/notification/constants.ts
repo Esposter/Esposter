@@ -1,3 +1,3 @@
-import { dayjs } from "#shared/services/dayjs";
+import { SECOND } from "@esposter/shared";
 
-export const NOTIFICATION_SNACKBAR_TIMEOUT_MS = dayjs.duration(5, "seconds").asMilliseconds();
+export const NOTIFICATION_SNACKBAR_TIMEOUT_MS = 5 * SECOND;

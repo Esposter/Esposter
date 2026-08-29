@@ -1,8 +1,7 @@
 import type { VAlert } from "vuetify/components";
 
-import { dayjs } from "#shared/services/dayjs";
 import { AlertIconMap } from "@/services/vuetify/AlertIconMap";
-import { checkIsServer } from "@esposter/shared";
+import { checkIsServer, SECOND } from "@esposter/shared";
 
 // The four props the alert list renders, rather than the whole `VAlert` prop surface: matching an alert already
 // On screen compares two of them, and doing that across every prop v-alert accepts blows the instantiation depth
@@ -21,7 +20,7 @@ export const useAlertStore = defineStore("alert", () => {
 
     const timeoutId = window.setTimeout(() => {
       deleteAlert(id);
-    }, dayjs.duration(5, "seconds").asMilliseconds());
+    }, 5 * SECOND);
     alertTimeoutMap.set(id, timeoutId);
   };
   const createAlert = (

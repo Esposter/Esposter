@@ -1,9 +1,8 @@
 import type { VList } from "vuetify/components";
 
-import { dayjs } from "#shared/services/dayjs";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { RoutePath } from "@esposter/shared";
+import { RoutePath, SECOND } from "@esposter/shared";
 
 export const useScrollStore = defineStore("message/ui/scroll", () => {
   const messageContainer = ref<InstanceType<typeof VList> | null>(null);
@@ -46,7 +45,7 @@ export const useScrollStore = defineStore("message/ui/scroll", () => {
     () => {
       activeRowKey.value = "";
     },
-    dayjs.duration(2, "seconds").asMilliseconds(),
+    2 * SECOND,
     { immediate: false },
   );
   const jumpToPresent = async () => {

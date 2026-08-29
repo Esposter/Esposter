@@ -1,7 +1,6 @@
 import { Target } from "#shared/models/clicker/data/Target";
-import { dayjs } from "#shared/services/dayjs";
 import { useClickerStore } from "@/store/clicker";
-import { ID_SEPARATOR, takeOne } from "@esposter/shared";
+import { ID_SEPARATOR, SECOND, takeOne } from "@esposter/shared";
 
 export const useRotatingCursors = () => {
   const clickerStore = useClickerStore();
@@ -28,7 +27,7 @@ export const useRotatingCursors = () => {
       for (const animation of rotatingDiv.getAnimations()) animation.cancel();
       rotatingDiv.animate(
         [{ transform: `rotate(${rotationOffset}deg)` }, { transform: `rotate(${rotationOffset + 360}deg)` }],
-        { duration: dayjs.duration(60, "seconds").asMilliseconds(), iterations: Infinity },
+        { duration: 60 * SECOND, iterations: Infinity },
       );
     }
   };

@@ -1,13 +1,12 @@
 import type { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 
-import { dayjs } from "#shared/services/dayjs";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { auth } from "@@/server/auth";
 import { checkIsRateLimitExceeded } from "@@/server/services/rateLimiter/checkIsRateLimitExceeded";
 import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
 import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import { middleware } from "@@/server/trpc";
-import { getResultAsync, ID_SEPARATOR } from "@esposter/shared";
+import { getResultAsync, ID_SEPARATOR, SECOND } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 export const getIsRateLimited = (type: RateLimiterType) =>
@@ -38,7 +37,7 @@ export const getIsRateLimited = (type: RateLimiterType) =>
       },
     );
     if ("setHeader" in ctx.res) {
-      ctx.res.setHeader("Retry-After", Math.ceil(dayjs.duration(msBeforeNext).asSeconds()));
+      ctx.res.setHeader("Retry-After", Math.ceil(msBeforeNext / SECOND));
       ctx.res.setHeader("X-RateLimit-Limit", rateLimiter.points);
       ctx.res.setHeader("X-RateLimit-Remaining", remainingPoints);
       ctx.res.setHeader("X-RateLimit-Reset", new Date(Date.now() + msBeforeNext).toISOString());

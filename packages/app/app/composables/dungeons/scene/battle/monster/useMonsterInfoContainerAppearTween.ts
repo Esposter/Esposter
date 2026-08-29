@@ -1,7 +1,7 @@
-import { dayjs } from "#shared/services/dayjs";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useSettingsStore } from "@/store/dungeons/settings";
+import { SECOND } from "@esposter/shared";
 import { useTween } from "vue-phaserjs";
 
 export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {
@@ -22,7 +22,7 @@ export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {
 
   useTween(monsterInfoContainerTween, {
     delay: 0,
-    duration: dayjs.duration(0.8, "seconds").asMilliseconds(),
+    duration: 0.8 * SECOND,
     onComplete: () => {
       monsterInfoContainerPosition.value.x = xEnd;
       if (!isEnemy) phaserEventEmitter.emit("playerMonsterInfoContainerAppear");

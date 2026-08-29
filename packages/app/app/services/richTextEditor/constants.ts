@@ -1,3 +1,3 @@
-import { dayjs } from "#shared/services/dayjs";
+import { SECOND } from "@esposter/shared";
 
-export const AUDIO_RECORDER_TIMER_INTERVAL = dayjs.duration(1, "second").asMilliseconds();
+export const AUDIO_RECORDER_TIMER_INTERVAL = SECOND;

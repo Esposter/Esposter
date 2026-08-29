@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { dayjs } from "#shared/services/dayjs";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import {
   CURSOR_POSITION_INCREMENT,
@@ -8,6 +7,7 @@ import {
   MENU_BACKGROUND_WIDTH,
 } from "@/services/dungeons/scene/title/menu/constants";
 import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
+import { SECOND } from "@esposter/shared";
 import { Container } from "vue-phaserjs";
 </script>
 
@@ -21,7 +21,7 @@ import { Container } from "vue-phaserjs";
       :tween="{
         delay: 0,
         repeat: -1,
-        duration: dayjs.duration(0.5, 'seconds').asMilliseconds(),
+        duration: 0.5 * SECOND,
         x: getTweenRange(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.x + 3),
       }"
     />

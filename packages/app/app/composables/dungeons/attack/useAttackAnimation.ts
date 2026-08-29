@@ -1,11 +1,11 @@
 import type { Attack } from "#shared/models/dungeons/attack/Attack";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { dayjs } from "#shared/services/dayjs";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 import { useSettingsStore } from "@/store/dungeons/settings";
+import { SECOND } from "@esposter/shared";
 import { sleep } from "vue-phaserjs";
 
 export const useAttackAnimation = (scene: SceneWithPlugins, attack: Attack, isToEnemy: boolean) => {
@@ -21,7 +21,7 @@ export const useAttackAnimation = (scene: SceneWithPlugins, attack: Attack, isTo
       storeRefs.attackId.value = attack.id;
       storeRefs.isToEnemy.value = isToEnemy;
       storeRefs.isActive.value = true;
-      await sleep(scene, dayjs.duration(0.2, "seconds").asMilliseconds());
+      await sleep(scene, 0.2 * SECOND);
       getDungeonsSoundEffect(scene, attack.soundEffectKey).play();
     }),
   );

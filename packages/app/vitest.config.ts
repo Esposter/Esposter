@@ -1,7 +1,6 @@
 import { getBenchmarkTestConfiguration } from "@esposter/configuration";
+import { MINUTE, SECOND } from "@esposter/shared";
 import { defineVitestProject } from "@nuxt/test-utils/config";
-
-import { dayjs } from "./shared/services/dayjs/index.ts";
 
 const vitestConfig = await defineVitestProject({
   test: {
@@ -17,7 +16,7 @@ const vitestConfig = await defineVitestProject({
     environmentOptions: { nuxt: { rootDir: import.meta.dirname } },
     // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
     // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
-    hookTimeout: dayjs.duration(5, "minutes").asMilliseconds(),
+    hookTimeout: 5 * MINUTE,
     // DOM globals come from the nuxt environment itself: nuxt-env tests (`// @vitest-environment nuxt`)
     // Build their own happy-dom window, so no manual happy-dom registration is needed, and tests in
     // The node environment run without a DOM. `fake-indexeddb/auto` polyfills the IDB* global
@@ -28,7 +27,7 @@ const vitestConfig = await defineVitestProject({
     // To Vitest's 5s default before the run is even parallel — and with sixteen workers sharing a machine the
     // Slowest of them tips over it. The failure reads as a flaky component rather than as a test that was
     // Always near the line, so give every test the headroom the environment actually needs
-    testTimeout: dayjs.duration(30, "seconds").asMilliseconds(),
+    testTimeout: 30 * SECOND,
   },
 });
 // `defineVitestProject` is `resolveConfig` (all the nuxt wiring: plugins, aliases, runtime entry setup

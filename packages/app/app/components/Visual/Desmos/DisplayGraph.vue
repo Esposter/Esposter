@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import type { Expression } from "@/models/desmos/Expression";
 
-import { dayjs } from "#shared/services/dayjs";
 import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
 import WindowControls from "@/components/Visual/Desmos/WindowControls.vue";
 import { Colors } from "@/models/desmos/Colors";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
-import { takeOne } from "@esposter/shared";
+import { SECOND, takeOne } from "@esposter/shared";
 
 interface VisualDesmosDisplayGraphProps {
   expressions: Expression[];
@@ -48,7 +47,7 @@ const animate = () => {
     calculator?.updateSettings(savedSettings);
   });
 
-  const drawingTime = dayjs.duration(5, "seconds").asMilliseconds();
+  const drawingTime = 5 * SECOND;
   let i = 0;
   const { pause } = useIntervalFn(() => {
     const expression = takeOne(expressions, i++);

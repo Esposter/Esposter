@@ -1,6 +1,5 @@
 import type { State } from "@/models/dungeons/state/State";
 
-import { dayjs } from "#shared/services/dayjs";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { calculateDamage } from "@/services/dungeons/monster/calculateDamage";
@@ -10,6 +9,7 @@ import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { getRandomValue } from "@/util/math/random/getRandomValue";
 import { prettify } from "@/util/text/prettify";
+import { SECOND } from "@esposter/shared";
 import { sleep } from "vue-phaserjs";
 
 export const EnemyAttack: State<StateName> = {
@@ -29,7 +29,7 @@ export const EnemyAttack: State<StateName> = {
       scene,
       `Enemy ${prettify(activeMonster.value.key)} used ${prettify(randomAttackId)}.`,
     );
-    await sleep(scene, dayjs.duration(0.5, "seconds").asMilliseconds());
+    await sleep(scene, 0.5 * SECOND);
     await useAttackAnimation(scene, randomAttack, false);
     await takeDamage(
       calculateDamage(activeMonster.value.stats.attack, randomAttack.power, playerActiveMonster.value.stats.defense),

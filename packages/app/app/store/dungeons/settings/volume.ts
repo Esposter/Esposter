@@ -2,9 +2,9 @@ import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type Slider from "phaser4-rex-plugins/plugins/slider";
 
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
-import { dayjs } from "#shared/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { step } from "@/util/math/ease/step";
+import { SECOND } from "@esposter/shared";
 import { clamp } from "@vueuse/core";
 import { Direction } from "grid-engine";
 
@@ -23,7 +23,7 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
     volumeSlider.value.value = clampedVolumePercentage / 100;
   };
   const updateVolume = async (direction: Direction, delta: number) => {
-    volumeDelta.value += delta / dayjs.duration(1, "second").asMilliseconds();
+    volumeDelta.value += delta / SECOND;
     const incrementSpeed = step(volumeDelta.value, [
       { speed: 0.1, threshold: 1 },
       { speed: 0.5, threshold: 3 },

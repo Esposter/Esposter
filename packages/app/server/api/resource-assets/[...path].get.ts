@@ -11,7 +11,7 @@ import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import { checkIsResourceAssetReadable } from "@@/server/services/resource/checkIsResourceAssetReadable";
 import {
   RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS,
-  RESOURCE_ASSET_SAS_DURATION,
+  RESOURCE_ASSET_SAS_DURATION_MS,
 } from "@@/server/services/resource/constants";
 import { generateReadSasUrl } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
@@ -73,7 +73,7 @@ export default defineEventHandler(async (event) => {
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   const sasUrl = await generateReadSasUrl(containerClient.getBlockBlobClient(blobName), {
     contentType: lookup(extname(blobName).toLowerCase()) || undefined,
-    expiresOn: dayjs().add(RESOURCE_ASSET_SAS_DURATION).toDate(),
+    expiresOn: dayjs().add(RESOURCE_ASSET_SAS_DURATION_MS, "ms").toDate(),
   });
   setResponseHeader(event, "Cache-Control", `private, max-age=${RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS}`);
   return sendRedirect(event, sasUrl, 302);

@@ -1,7 +1,7 @@
 import type { ComposableOptions } from "@/models/sound/ComposableOptions";
 import type { PlayOptions } from "@/models/sound/PlayOptions";
 
-import { dayjs } from "#shared/services/dayjs";
+import { SECOND } from "@esposter/shared";
 import { Howl } from "howler";
 
 const cache = new Map<string, Howl>();
@@ -16,7 +16,7 @@ export const useSound = (
   // oxlint-disable-next-line func-style
   function handleLoad(this: ComposableOptions) {
     if (typeof onload === "function") onload.call(this);
-    duration.value = (duration.value ?? sound.value?.duration() ?? 0) * dayjs.duration(1, "second").asMilliseconds();
+    duration.value = (duration.value ?? sound.value?.duration() ?? 0) * SECOND;
     if (autoplay) isPlaying.value = true;
   }
 

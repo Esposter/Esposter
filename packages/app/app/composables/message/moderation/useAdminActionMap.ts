@@ -1,11 +1,11 @@
 import type { Promisable } from "type-fest";
 
-import { dayjs } from "#shared/services/dayjs";
 import { pluralize } from "#shared/util/text/pluralize";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { useAlertStore } from "@/store/alert";
 import { useRoomStore } from "@/store/message/room";
 import { AdminActionType, AdminActionTypes } from "@esposter/db-schema";
+import { MINUTE } from "@esposter/shared";
 
 type Action = (roomId: string, durationMs?: number) => Promisable<void>;
 
@@ -34,7 +34,7 @@ export const useAdminActionMap = () => {
       createAlert("Your screen share has been stopped by a moderator.", "error");
     },
     [AdminActionType.TimeoutUser]: (_roomId: string, durationMs?: number) => {
-      const minutes = durationMs ? Math.max(1, Math.ceil(dayjs.duration(durationMs).asMinutes())) : 0;
+      const minutes = durationMs ? Math.max(1, Math.ceil(durationMs / MINUTE)) : 0;
       createAlert(`You have been timed out for ${minutes} ${pluralize("minute", minutes)}.`, "error");
     },
     [AdminActionType.Warn]: () => {

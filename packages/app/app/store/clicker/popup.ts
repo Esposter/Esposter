@@ -1,15 +1,15 @@
 import type { Popup } from "@/models/clicker/Popup";
 
-import { dayjs } from "#shared/services/dayjs";
 import { useMouseStore } from "@/store/clicker/mouse";
 import { usePointStore } from "@/store/clicker/point";
+import { SECOND } from "@esposter/shared";
 
 export const usePopupStore = defineStore("clicker/popup", () => {
   const mouseStore = useMouseStore();
   const pointStore = usePointStore();
   const { incrementPoints } = pointStore;
   const popups = ref<Popup[]>([]);
-  const duration = dayjs.duration(10, "seconds").asMilliseconds();
+  const duration = 10 * SECOND;
   const onClick = (event: MouseEvent) => {
     const id = crypto.randomUUID();
     incrementPoints(mouseStore.mousePower);
