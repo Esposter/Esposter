@@ -8,7 +8,7 @@ interface UserSettingsSectionProps {
 }
 
 defineSlots<{ default: () => VNode }>();
-defineProps<UserSettingsSectionProps>();
+const { section } = defineProps<UserSettingsSectionProps>();
 </script>
 
 <template>

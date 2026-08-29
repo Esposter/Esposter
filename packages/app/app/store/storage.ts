@@ -7,27 +7,16 @@ import type { StorageUsage } from "#shared/models/storage/StorageUsage";
 export const useStorageStore = defineStore("storage", () => {
   const { $trpc } = useNuxtApp();
   const storageUsage = ref<StorageUsage>();
-  // The subscription is established before the first read is issued, so a charge can land between the two and
-  // Be overwritten by a read that was already in flight when it did. A pushed value is by construction the
-  // Newer of the two — it reports a total committed after the read's snapshot was taken — so the read is
-  // Dropped rather than the push, and the counter this arbitrates is which of them wrote last
-  let updateCount = 0;
-  let readUpdateCount = 0;
-  const { read: readStorageUsage } = useCachedRead(
-    () => {
-      readUpdateCount = updateCount;
-      return $trpc.storage.readUsage.query();
+  const { read: readStorageUsage, supersede } = useCachedRead(() => $trpc.storage.readUsage.query(), {
+    onSuccess: (newStorageUsage) => {
+      storageUsage.value = newStorageUsage;
     },
-    {
-      onSuccess: (newStorageUsage) => {
-        if (readUpdateCount !== updateCount) return;
-
-        storageUsage.value = newStorageUsage;
-      },
-    },
-  );
+  });
+  // The subscription is established before the first read is issued, so a charge can land between the two. The
+  // Pushed value is the newer of the pair — it reports a total committed after the read's snapshot was taken —
+  // So it supersedes the read rather than being overwritten by the older number already on its way
   const storeUpdateStorageUsage = (newStorageUsage: StorageUsage) => {
-    updateCount += 1;
+    supersede();
     storageUsage.value = newStorageUsage;
   };
   return { readStorageUsage, storageUsage, storeUpdateStorageUsage };

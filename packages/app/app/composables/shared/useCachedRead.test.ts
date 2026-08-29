@@ -68,6 +68,35 @@ describe(useCachedRead, () => {
     expect(query.mock.calls).toStrictEqual([[key], [otherKey]]);
   });
 
+  // The store race this exists for: a subscription is established before the first read is issued, so a value
+  // Pushed in between is newer than the read already on its way, and the read must not write the older one back
+  test("drops a read a supersede overtook", async () => {
+    expect.hasAssertions();
+
+    const { promise, resolve } = Promise.withResolvers<string>();
+    const onSuccess = vi.fn<(readResult: string, cacheKey: string) => void>();
+    const { read, supersede } = useCachedRead(() => promise, { onSuccess });
+    const reading = read();
+    supersede();
+    resolve(result);
+    await reading;
+
+    expect(onSuccess).not.toHaveBeenCalled();
+  });
+
+  // The pushed value is the entry, so re-reading it on the next mount would spend a round trip to be told what
+  // The caller already holds
+  test("counts the entry loaded once superseded", async () => {
+    expect.hasAssertions();
+
+    const query = createQuery();
+    const { read, supersede } = useCachedRead(query, { onSuccess: noop });
+    supersede();
+    await read();
+
+    expect(query).not.toHaveBeenCalled();
+  });
+
   test("re-reads on the next call once its tag is invalidated", async () => {
     expect.hasAssertions();
 

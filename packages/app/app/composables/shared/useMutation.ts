@@ -71,6 +71,13 @@ export const useMutation = () => {
     callIds.set(key, id);
     return () => id !== callIds.get(key);
   };
+  // Marks whatever is in flight for a target stale without issuing anything of its own: a value that reached
+  // The caller from outside this primitive — a subscription push — is newer than a read still on its way, and
+  // The read that lands after it must not write the older value back over it. Nothing in flight is nothing to
+  // Supersede, which is also what keeps the call-id bookkeeping bounded to the calls that exist
+  const supersedeKey = (key: PropertyKey) => {
+    if (pendingCounts.value.has(key)) getCheckIsStale(key);
+  };
   const claimKey = (key: PropertyKey) => {
     pendingCounts.value.set(key, (pendingCounts.value.get(key) ?? 0) + 1);
   };
@@ -185,5 +192,5 @@ export const useMutation = () => {
       },
     );
   };
-  return { executeMutation, executeQuery, getIsPending, isPending };
+  return { executeMutation, executeQuery, getIsPending, isPending, supersedeKey };
 };

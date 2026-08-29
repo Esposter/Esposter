@@ -7,7 +7,7 @@ interface UserSettingsSectionProps {
 
 defineSlots<{ default: () => VNode }>();
 // The title is the anchor id as well: the sidebar scrolls to it, and the scrollspy reads the section back by it
-defineProps<UserSettingsSectionProps>();
+const { title } = defineProps<UserSettingsSectionProps>();
 </script>
 
 <template>
