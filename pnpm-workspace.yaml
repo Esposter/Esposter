@@ -62,8 +62,8 @@ catalog:
   "@platformatic/vfs": ^0.4.0
   "@pulumi/azure-native": ^3.26.0
   "@pulumi/github": ^6.15.0
-  "@pulumi/pulumi": ^3.259.0
-  "@takumi-rs/core": ^2.12.0
+  "@pulumi/pulumi": ^3.260.0
+  "@takumi-rs/core": ^2.13.0
   "@tiptap/core": ^3.30.5
   "@tiptap/extension-code-block-lowlight": ^3.30.5
   "@tiptap/extension-file-handler": ^3.30.5
