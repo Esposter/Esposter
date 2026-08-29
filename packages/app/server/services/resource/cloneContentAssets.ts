@@ -13,7 +13,8 @@ import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 import { deepVisitStrings } from "#shared/util/object/deepVisitStrings";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { checkIsResourceAssetReadable } from "@@/server/services/resource/checkIsResourceAssetReadable";
-import { chargeStorageLedgerEntry, copyBlob } from "@esposter/db";
+import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
+import { copyBlob } from "@esposter/db";
 import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
 import { getOrCreate, getResultAsync, ID_SEPARATOR, settleAll } from "@esposter/shared";
 
@@ -44,7 +45,7 @@ const cloneAsset = async (
   // The row this charge wrote and replaces the figure with what actually landed. So a source overwritten under
   // A still-valid write SAS between the read and the copy costs a few seconds of a wrong number rather than a
   // Second HEAD on every clone. See /docs/platform/storage-quotas
-  await chargeStorageLedgerEntry(db, userId, AzureContainer.ResourceAssets, destinationBlobName, contentLength);
+  await chargeAndEmitStorageLedgerEntry(db, userId, AzureContainer.ResourceAssets, destinationBlobName, contentLength);
   return [[url, getResourceAssetUrl(destinationBlobName)] as const];
 };
 // Publish, duplicate and restore all snapshot content whose assets must survive the source's working copies

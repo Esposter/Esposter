@@ -35,4 +35,20 @@ describe(useStorageStore, () => {
     expect(handler).toHaveBeenCalledTimes(1);
     expect(storageStore.storageUsage).toStrictEqual(storageUsage);
   });
+
+  test("storeUpdateStorageUsage updates the stored usage", () => {
+    expect.hasAssertions();
+
+    const storageStore = useStorageStore();
+    const { storeUpdateStorageUsage } = storageStore;
+    const updatedUsage: StorageUsage = {
+      bytesUsed: 1024,
+      quotaBytes: StorageTierQuotaMap[StorageTier.Free],
+      tier: StorageTier.Free,
+    };
+
+    storeUpdateStorageUsage(updatedUsage);
+
+    expect(storageStore.storageUsage).toStrictEqual(updatedUsage);
+  });
 });

@@ -36,6 +36,7 @@ import { readResourceViewCount } from "@@/server/services/resource/readResourceV
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
+import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
 import { generateReservedUploadFileSasEntities } from "@@/server/services/storage/generateReservedUploadFileSasEntities";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
@@ -44,7 +45,6 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { chargeStorageLedgerEntry } from "@esposter/db";
 import {
   AzureContainer,
   BLOB_SEGMENT_MAX_LENGTH,
@@ -393,7 +393,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // Its cloned assets charge themselves as each copy lands. After the transaction, never inside: the
         // Charge locks the ledger row and then the user's, and a transaction held open across that waits on
         // Locks it is itself holding. See /docs/platform/storage-quotas
-        await chargeStorageLedgerEntry(
+        await chargeAndEmitStorageLedgerEntry(
           ctx.db,
           ctx.getSessionPayload.user.id,
           AzureContainer.ResourceAssets,
