@@ -185,7 +185,7 @@ catalog:
   oxlint: ^1.80.0
   oxlint-tsgolint: ^7.0.2001
   p-progress: ^1.0.0
-  pdfjs-dist: ^6.2.108
+  pdfjs-dist: ^6.3.289
   phaser: ^4.2.1
   phaser4-rex-plugins: ^4.2.0
   pinia: ^4.0.3
@@ -248,7 +248,7 @@ nodeOptions: --max-old-space-size=8192
 overrides:
   crossws: ^0.4.12
   h3: ^1.15.11
-  pdfjs-dist: ^6.2.108
+  pdfjs-dist: ^6.3.289
   typescript: npm:typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2
   vite: ^8.2.2
 
