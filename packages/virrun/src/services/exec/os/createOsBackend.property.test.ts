@@ -1,8 +1,8 @@
-import { dayjs } from "#src/services/dayjs.test";
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
 import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { MINUTE } from "@esposter/shared";
 import * as fc from "fast-check";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -102,6 +102,6 @@ describe.skipIf(!isOsBackendSupported())(createOsBackend, () => {
         { numRuns: 10 },
       );
     },
-    dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds(),
+    ACCEPTANCE_TIMEOUT_MINUTES * MINUTE,
   );
 });

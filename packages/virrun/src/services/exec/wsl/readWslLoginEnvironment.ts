@@ -1,6 +1,5 @@
 import type { WslLoginEnvironment } from "#src/models/exec/wsl/WslLoginEnvironment";
 
-import { dayjs } from "#src/services/dayjs";
 import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "#src/services/exec/util/constants";
 import { createProbeCache } from "#src/services/exec/util/createProbeCache";
 import { buildWslLoginShellCommand } from "#src/services/exec/wsl/buildWslLoginShellCommand";
@@ -14,7 +13,7 @@ import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { readWslLoginEnvironmentCache } from "#src/services/exec/wsl/readWslLoginEnvironmentCache";
 import { sliceBetweenMarkers } from "#src/services/exec/wsl/sliceBetweenMarkers";
 import { writeWslEnvironmentCache } from "#src/services/exec/wsl/writeWslEnvironmentCache";
-import { getResult } from "@esposter/shared";
+import { getResult, MINUTE } from "@esposter/shared";
 // Cap the interactive-login capture: a blocking rc/profile (a prompt, a hung version-manager hook) would
 // Otherwise stall createVirrun indefinitely. On timeout execFileSync throws, getResult turns it into the empty
 // Environment, and the command falls back to the default PATH — which on win32 is the WSL Windows-interop PATH,
@@ -22,7 +21,7 @@ import { getResult } from "@esposter/shared";
 // Clear a *cold* WSL start: warm capture is ~1s, but a first-of-session run pays the WSL2 VM boot plus full rc
 // Sourcing (fnm + plugins + profile), which overshoots a few-second cap and produced spurious `node: not found`
 // Failures on the first `virrun` of the day. One minute clears cold boot while still bounding a genuinely hung rc.
-const WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS = dayjs.duration(1, "minute").asMilliseconds();
+const WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS = MINUTE;
 const EMPTY_LOGIN_ENVIRONMENT: WslLoginEnvironment = { nodeVersion: "", path: "" };
 // Run a marked capture inside the user's real login + interactive shell (buildWslLoginShellCommand), so it sources the
 // Exact profile + rc files a real terminal would — that is where a version manager (fnm, nvm, asdf, Volta…) activates

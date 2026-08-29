@@ -1,6 +1,5 @@
 import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
-import { dayjs } from "#src/services/dayjs.test";
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
 import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
 import { createWorkspaceCorpus } from "#src/services/exec/test/createWorkspaceCorpus.test";
@@ -8,6 +7,7 @@ import { ensureWarmSnapshot } from "#src/services/exec/test/ensureWarmSnapshot.t
 import { findRepoRoot } from "#src/services/exec/test/findRepoRoot.test";
 import { getAcceptanceCacheHome } from "#src/services/exec/test/getAcceptanceCacheHome";
 import { VIRRUN_CACHE_HOME_KEY } from "#src/services/exec/util/constants";
+import { MINUTE } from "@esposter/shared";
 import { rmSync } from "node:fs";
 import { afterAll, beforeAll, describe } from "vitest";
 // The shared beforeAll/afterAll behind every heavy warm-snapshot acceptance/equivalence suite: point the cache home
@@ -27,7 +27,7 @@ export const setupWarmSnapshotSuite = (): { getBackend: () => ExecBackend; getCo
     process.env[VIRRUN_CACHE_HOME_KEY] = getAcceptanceCacheHome();
     corpus = createWorkspaceCorpus(findRepoRoot());
     await ensureWarmSnapshot(backend, corpus);
-  }, dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds());
+  }, ACCEPTANCE_TIMEOUT_MINUTES * MINUTE);
 
   afterAll(() => {
     if (previousCacheHome === undefined) delete process.env[VIRRUN_CACHE_HOME_KEY];

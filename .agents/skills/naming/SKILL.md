@@ -45,7 +45,8 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 
 ## Numbers & Time
 
-- **Time durations use `dayjs.duration(...)`** — never inline arithmetic (`7 * 24 * 60 * 60 * 1000`) or raw literals (`604800`). Use `dayjs.duration(7, "days").asMilliseconds()`/`.asSeconds()`, `dayjs().add(1, "minute").toDate()` for "now + N", and `dayjs.duration(ms).asSeconds()`/`.asMinutes()` for ms→unit (never `ms / 1000`). Import: `import { dayjs } from "#shared/services/dayjs"`. Packages without dayjs (`azure-mock`, `infra`) fall back to a digit-separated literal (file-local `const` if reused).
+- **Time durations scale the millisecond constants** — `SECOND`, `MINUTE`, `HOUR`, `DAY`, `YEAR` from `@esposter/shared`, never inline arithmetic (`7 * 24 * 60 * 60 * 1000`) or a raw literal (`604800`). A duration is `7 * DAY`, a conversion is `ms / SECOND`, and a value already in the target unit is written plainly. Every package depends on `@esposter/shared`, so there is no fallback tier and no per-package plugin registration: **`dayjs.duration(...)` is banned**, and a duration written through it is a dependency, a `declare module` augmentation and a module-scope `extend` call bought to multiply two numbers.
+- **dayjs still owns dates, and the duration _object_ where one is genuinely decomposed** — `dayjs().add(1, "minute").toDate()` for "now + N", and `dayjs.duration(ms)` where `.days()`/`.hours()`/`.humanize()` render a duration to a reader (`getCountdown`, the call-message label). Those are formatting, not arithmetic; a millisecond budget is never one of them.
 - **Big numeric literals get `_` digit-group separators** — any literal with 5+ digits: `604_800_000`, `86_400`, `60_000`. Applies to non-time tuning constants too (epoch offsets, decay divisors). Small/clear values (`1024`, `1024 * 1024`) stay as-is. (`unicorn/numeric-separators-style` only fixes the _style_ of existing separators; adding them is on you.)
 
 ## Environment Variables

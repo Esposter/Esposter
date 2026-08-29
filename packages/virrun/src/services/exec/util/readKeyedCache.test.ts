@@ -1,8 +1,8 @@
-import { dayjs } from "#src/services/dayjs";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { readKeyedCache } from "#src/services/exec/util/readKeyedCache";
 import { writeKeyedCache } from "#src/services/exec/util/writeKeyedCache";
+import { HOUR } from "@esposter/shared";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
@@ -56,7 +56,7 @@ describe(readKeyedCache, () => {
 
     writeKeyedCache(file, { key, value });
 
-    expect(readKeyedCache(file, valueSchema, key, dayjs.duration(1, "hour").asMilliseconds())).toBe(value);
+    expect(readKeyedCache(file, valueSchema, key, HOUR)).toBe(value);
   });
 
   test("returns undefined when the value is older than the age bound — the drift the key cannot see", () => {
@@ -64,12 +64,9 @@ describe(readKeyedCache, () => {
 
     // Stamped by hand rather than by writeKeyedCache: the point is a capture taken long enough ago that the host's
     // Toolchain could have moved underneath a key that only fingerprints platform + kernel release.
-    writeFileSync(
-      file,
-      JSON.stringify({ key, storedAtMs: Date.now() - dayjs.duration(2, "hours").asMilliseconds(), value }),
-    );
+    writeFileSync(file, JSON.stringify({ key, storedAtMs: Date.now() - 2 * HOUR, value }));
 
-    expect(readKeyedCache(file, valueSchema, key, dayjs.duration(1, "hour").asMilliseconds())).toBeUndefined();
+    expect(readKeyedCache(file, valueSchema, key, HOUR)).toBeUndefined();
   });
 
   test("ignores the value's age when the caller sets no bound", () => {

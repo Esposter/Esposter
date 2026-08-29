@@ -53,8 +53,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@esposter/shared": "workspace:*",
-    "dayjs": "catalog:"
+    "@esposter/shared": "workspace:*"
   },
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",

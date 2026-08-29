@@ -66,9 +66,7 @@
     "test": "vitest",
     "typecheck": "tsc"
   },
-  "dependencies": {
-    "dayjs": "catalog:"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@trpc/server": "catalog:",
