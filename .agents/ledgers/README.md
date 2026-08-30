@@ -14,7 +14,7 @@ Progress state for sweeps in flight. What a sweep is and how one is run: the `sw
 | [quality](quality/)                       | `code-review` skill — quality lane                     | one area                    | one file per area |
 | [schemas](schemas.md)                     | `zod` + `drizzle` skills                               | one schema tree             | dated per tree    |
 | [styling](styling.md)                     | `styling` + `unocss` + `vuetify` + `responsive` skills | one component tree          | dated per tree    |
-| [tests](tests.md)                         | `testing` skill                                        | one tree                    | dated per tree    |
+| [testing](testing/)                       | `testing` skill                                        | one tree of suites          | one file per area |
 | [trpc](trpc.md)                           | `trpc` skill                                           | one router tree             | dated per tree    |
 | [ux](ux.md)                               | `ux` skill                                             | one product area            | dated per area    |
 | [vue-components](vue-components.md)       | `vue-page-composition` + `vue` skills                  | one component tree          | dated per tree    |
@@ -24,7 +24,7 @@ from the files changed since a row's date.
 
 **One ledger per question, not per file set.** Several ledgers reaching the same files is deliberate — three of
 them read `app/components`, asking three different things of it. They merge only when the question is the same:
-`tests` absorbed test-trimming and test-constant-scope, and `vue-components` absorbed component-granularity and
+`testing` absorbed test-trimming and test-constant-scope, and `vue-components` absorbed component-granularity and
 computed-extraction, because each pair ran the same skill over the same files and handed findings to the other.
 A convention with no ledger opens one; a convention an enforcer already decides opens none (`sweeps` skill).
 

@@ -16,7 +16,7 @@ Router structure, the procedure builder each route picks, ownership guards, and 
 
 ## Exclusions
 
-- Router **tests** — the `tests` ledger owns those; a finding about a caller pattern goes there.
+- Router **tests** — the `testing` ledger owns those; a finding about a caller pattern goes there.
 - Input schemas under `shared/models/db` — `schemas` owns their shape, this ledger only checks the router imports rather than declares them.
 
 ## Next enforceable

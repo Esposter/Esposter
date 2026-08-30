@@ -1,4 +1,4 @@
-# Tests
+# Testing
 
 Every test-file convention the `testing` skill owns, carried across the suites written before each was written
 down. Standing: a unit's date says the rules below all held there on that date, and the pass resumes from the
@@ -27,21 +27,29 @@ its scope is narrower than the ledger's: `packages/app` is the sole package whos
 of environment, so the rule cannot fail anywhere else and the rows outside it keep their dates.
 Trimming last ran across every unit on 2026-08-12.
 
-| Unit                                               | Swept      | Notes                                                      |
-| -------------------------------------------------- | ---------- | ---------------------------------------------------------- |
-| `app/app/services`                                 | 2026-08-30 | the environments below                                     |
-| `app/app/composables`                              | 2026-08-20 | `message/emoji` written under the rules                    |
-| `app/app/store`, `app/app/models`                  | 2026-08-20 |                                                            |
-| `app/app/components`, `app/app/util`               | 2026-08-30 |                                                            |
-| `app/content`                                      | 2026-08-20 | `docs/index.test.ts` — top-level await fixtures, see below |
-| `app/server/services`, `app/server/trpc/procedure` | 2026-08-30 |                                                            |
-| `app/server/trpc/routers`, rest                    | 2026-08-30 |                                                            |
-| `app/shared`                                       | 2026-08-20 |                                                            |
-| `app`, rest                                        | 2026-08-30 | the two resolved-config snapshots stay, see below          |
-| `virrun`                                           | 2026-08-20 |                                                            |
-| `azure-functions`, `azure-mock`, `db*`             | 2026-08-30 | every `mockDb` stays — hoisted factory, see below          |
-| `parse-tmx`, `vue-phaserjs`, `xml2js`, rest        | 2026-08-20 | plus `shared`, `shared-node`, `configuration`, `infra`     |
-| `scripts`                                          | 2026-08-30 | first pass — never a unit before                           |
+## Areas
+
+Coverage lives in the area file, never here. A pass loads this file and the one area it is sweeping.
+
+| Area                      | What it holds                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------------ |
+| [app-shell](app-shell.md) | the chrome, the routes, and the cross-cutting service, composable and store layers   |
+| [messaging](messaging.md) | Esbabbler — its components, store, composables, services and routers                 |
+| [platform](platform.md)   | the resource explorer, the sheet editor and the other editors                        |
+| [products](products.md)   | the smaller products — posts, the clicker, achievements                              |
+| [dungeons](dungeons.md)   | the game                                                                             |
+| [server](server.md)       | `packages/app/server` — routers, procedure builders, guards and services             |
+| [shared](shared.md)       | `packages/app/shared` and `app/components/Styled` — what both halves of the app read |
+| [packages](packages.md)   | every workspace package outside `packages/app`                                       |
+| [tooling](tooling.md)     | `scripts/`, `.agents/`, the app's root config suites and `content/`                  |
+
+The area names are [quality](../quality/)'s, so "was this area swept, for which question, and when" reads off one
+set of names across both ledgers.
+
+Most rows opened at `—` when the ledger split on 2026-08-30. The thirteen rows it replaced were trees, not
+units: one of them named 133 suites and another 155, which is a tree a pass greps rather than reads, and a grep
+pass that ticks its row records a sweep that never happened (`sweeps` skill). Only the rows whose whole unit was
+small enough to have been read keep their dates.
 
 ## Find recipe
 
