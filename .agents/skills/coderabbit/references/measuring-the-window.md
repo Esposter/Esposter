@@ -2,17 +2,27 @@
 
 Read before a push: what is already unreviewed, what the push would add, and whether the frontier really stalled.
 
+## Never `gh pr view --json changedFiles`
+
+It is the command that comes to hand, it answers instantly, and on a long-lived PR it is wrong by a multiple: it counts the **cumulative** diff against the base branch — every cycle the PR has ever had — while CodeRabbit reviews only what moved since its last completed one. On this repo's one standing `develop`→`main` PR it has read four times the real window, which turns a healthy push into a fabricated "over the cap, cut a queue branch" and stalls work for nothing. The same goes for the changed-files count in the PR's web UI, and for `gh pr diff --name-only`.
+
+There is one exception, and it is the merge-base count at the bottom of this page: the **first** review of a PR, or a full re-review, does read the cumulative diff.
+
 ## Read the last reviewed sha, never infer it
 
-Every review body states its own range, so this is a fact to read:
+Every review body states its own range, so this is a fact to read. One block, so no step gets substituted for a shortcut — it prints the frontier and both counts:
 
 ```bash
-gh api "repos/:owner/:repo/pulls/<pr>/reviews?per_page=100" --paginate \
-  --jq '.[] | select(.user.login=="coderabbitai[bot]") | select((.body|length) > 0)
-        | "\(.submitted_at)  \(.body | capture("between (?<a>[0-9a-f]{40}) and (?<b>[0-9a-f]{40})") | "\(.a)..\(.b)")"' | tail -3
-git diff --name-only <last-reviewed-sha>..origin/<branch> | wc -l   # already pushed and unreviewed
-git diff --name-only <last-reviewed-sha>..HEAD | wc -l              # what the next push would add
+PR=<pr>; BRANCH=<branch>
+LAST=$(gh api "repos/:owner/:repo/pulls/$PR/reviews?per_page=100" --paginate \
+  --jq '[.[] | select(.user.login=="coderabbitai[bot]") | select((.body|length) > 0)
+        | .body | capture("between [0-9a-f]{40} and (?<b>[0-9a-f]{40})") | .b] | last')
+echo "last reviewed:     $LAST"
+echo "pushed+unreviewed: $(git diff --name-only "$LAST"..origin/$BRANCH | wc -l)"
+echo "next push adds to: $(git diff --name-only "$LAST"..HEAD | wc -l)"
 ```
+
+An empty `LAST` means no review body has ever named a range — that is the first-review case, and the merge-base count below is the one that applies. It never means zero.
 
 ## Take the second number before a push
 
