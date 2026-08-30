@@ -13,7 +13,7 @@
 | `server/services` — the rest                                     | —          | `resource`, `room`, `survey`, `blueprint`, `rateLimiter` and the small folders                        |
 | `server/composables`                                             | 2026-08-30 | nine client constructors — none wraps a call, so there is nothing to terminate                        |
 | `packages/azure-functions`                                       | 2026-08-30 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)`                 |
-| `app/store/message`                                              | —          | who alerts a rejection — `errorLink` ownership, background reads, coalescing                          |
+| `app/store/message`                                              | 2026-08-31 | five fire-and-forget callbacks now terminate; the silence they relied on is pinned by a test          |
 | `app/store` — the rest                                           | —          | `dungeons`, `resource` and the small stores                                                           |
 | `app/composables/message`, `app/composables/resource`            | —          | a callback nothing awaits terminating its own `Result`                                                |
 | `app/composables` — the rest                                     | —          | `dungeons` is most of it                                                                              |
@@ -77,6 +77,18 @@ for (const file of files) {
 What it still reports is the chain assigned to a named `const` and terminated on a later line — which is the
 repo's own preference over nesting the call inside its own terminator, so those are read rather than counted.
 On 2026-08-30 that was nine sites, all of them terminated.
+
+The **fire-and-forget** half has its own census, because a callback nothing awaits is the one place an
+unterminated body is invisible rather than merely unhandled — `getSynchronizedFunction` reports the rejection
+nowhere and its drain settles it away, which its own suite pins:
+
+```bash
+grep -rn 'getSynchronizedFunction(' packages/app/app packages/app/shared packages/app/server --include=*.ts --include=*.vue
+```
+
+Every hit's callback body has to terminate its own chain. That is a per-site read, not a count: a body whose
+whole work is already inside an `executeMutation` with an `onError` is terminated, and one whose awaits are all
+local writes has nothing to terminate.
 
 ## Exclusions
 

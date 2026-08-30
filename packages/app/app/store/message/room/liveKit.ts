@@ -26,6 +26,7 @@ import {
   NoiseSuppressionMode,
   VoiceInputMode,
 } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
 import { ConnectionQuality, ConnectionState, Room, RoomEvent, Track } from "livekit-client";
 
@@ -106,11 +107,13 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const setSpeakerVolume = () => {
     for (const { element, identity } of remoteAudioElements.values()) applyRemoteAudioVolume(element, identity);
   };
-  const setNoiseSuppressionMode = getSynchronizedFunction(async (noiseSuppressionMode: NoiseSuppressionMode) => {
-    if (!activeRoom) return;
-    const microphonePublication = activeRoom.localParticipant.getTrackPublication(Track.Source.Microphone);
-    await microphonePublication?.audioTrack?.restartTrack(getAudioCaptureDefaults(noiseSuppressionMode));
-  });
+  const setNoiseSuppressionMode = getSynchronizedFunction((noiseSuppressionMode: NoiseSuppressionMode) =>
+    getResultAsync(async () => {
+      if (!activeRoom) return;
+      const microphonePublication = activeRoom.localParticipant.getTrackPublication(Track.Source.Microphone);
+      await microphonePublication?.audioTrack?.restartTrack(getAudioCaptureDefaults(noiseSuppressionMode));
+    }).match(noop, console.error),
+  );
   const applyMicrophoneSettings = () => {
     const settings = userSettingsStore.userSettings;
     if (!microphoneProcessor || !settings) return;
@@ -194,29 +197,35 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     const virtualBackground = mediaStore.selectedVirtualBackground || userSettingsStore.userSettings?.virtualBackground;
     if (virtualBackground) await applyVirtualBackground(virtualBackground);
   };
-  const onLocalTrackPublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
-    if (publication.source === Track.Source.Camera) await setLocalCameraTrack(publication);
-    else if (publication.source === Track.Source.ScreenShare) {
-      setLocalScreenShareStream(publication.track?.mediaStream);
-      mediaStore.isScreenSharing = true;
-    } else if (publication.source === Track.Source.Microphone && publication.audioTrack) {
-      microphoneProcessor = new MicrophoneProcessor();
-      applyMicrophoneSettings();
-      await publication.audioTrack.setProcessor(microphoneProcessor);
-    }
-  });
-  const onLocalTrackUnpublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
-    if (publication.source === Track.Source.Camera) await setLocalCameraTrack(undefined);
-    else if (publication.source === Track.Source.ScreenShare) {
-      setLocalScreenShareStream(undefined);
-      mediaStore.isScreenSharing = false;
-    } else if (publication.source === Track.Source.Microphone) microphoneProcessor = undefined;
-  });
-  const onDisconnected = getSynchronizedFunction(async () => {
-    const handler = disconnectHandler;
-    disconnectHandler = undefined;
-    await handler?.();
-  });
+  const onLocalTrackPublished = getSynchronizedFunction((publication: LocalTrackPublication) =>
+    getResultAsync(async () => {
+      if (publication.source === Track.Source.Camera) await setLocalCameraTrack(publication);
+      else if (publication.source === Track.Source.ScreenShare) {
+        setLocalScreenShareStream(publication.track?.mediaStream);
+        mediaStore.isScreenSharing = true;
+      } else if (publication.source === Track.Source.Microphone && publication.audioTrack) {
+        microphoneProcessor = new MicrophoneProcessor();
+        applyMicrophoneSettings();
+        await publication.audioTrack.setProcessor(microphoneProcessor);
+      }
+    }).match(noop, console.error),
+  );
+  const onLocalTrackUnpublished = getSynchronizedFunction((publication: LocalTrackPublication) =>
+    getResultAsync(async () => {
+      if (publication.source === Track.Source.Camera) await setLocalCameraTrack(undefined);
+      else if (publication.source === Track.Source.ScreenShare) {
+        setLocalScreenShareStream(undefined);
+        mediaStore.isScreenSharing = false;
+      } else if (publication.source === Track.Source.Microphone) microphoneProcessor = undefined;
+    }).match(noop, console.error),
+  );
+  const onDisconnected = getSynchronizedFunction(() =>
+    getResultAsync(async () => {
+      const handler = disconnectHandler;
+      disconnectHandler = undefined;
+      await handler?.();
+    }).match(noop, console.error),
+  );
   const onAudioPlaybackStatusChanged = () => {
     if (activeRoom && !activeRoom.canPlaybackAudio)
       console.warn("Audio autoplay blocked — browser requires user interaction to start audio.");
@@ -289,10 +298,12 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   // Selecting a device just writes the persisted ref (via setActiveDevice); these watchers restart the
   // Live track on change. The guard skips no-op switches - including the echo from LiveKit's own
   // ActiveDeviceChanged event - so there is no feedback loop.
-  const syncDeviceToRoom = getSynchronizedFunction(async (kind: MediaDeviceKind, deviceId: string) => {
-    if (!activeRoom || !deviceId || activeRoom.getActiveDevice(kind) === deviceId) return;
-    await activeRoom.switchActiveDevice(kind, deviceId);
-  });
+  const syncDeviceToRoom = getSynchronizedFunction((kind: MediaDeviceKind, deviceId: string) =>
+    getResultAsync(async () => {
+      if (!activeRoom || !deviceId || activeRoom.getActiveDevice(kind) === deviceId) return;
+      await activeRoom.switchActiveDevice(kind, deviceId);
+    }).match(noop, console.error),
+  );
   for (const kind of VoiceDeviceKinds)
     watch(
       () => voiceDeviceSettingsStore[VoiceDeviceSettingsKeyMap[kind]],
