@@ -5,10 +5,9 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const REGISTRATION_REGEX = /app\.(?:eventGrid|http|serviceBusQueue|timer)\(/gu;
-const HOOK_REGISTRATION_REGEX = /app\.hook\.\w+\(/gu;
-
 describe("@esposter/azure-functions", () => {
+  const REGISTRATION_REGEX = /app\.(?:eventGrid|http|serviceBusQueue|timer)\(/gu;
+  const HOOK_REGISTRATION_REGEX = /app\.hook\.\w+\(/gu;
   const packageDirectory = resolve(import.meta.dirname, "..");
   const distFile = resolve(packageDirectory, "dist/index.js");
   const readRegistrationCount = (directory: string) =>

@@ -1,6 +1,6 @@
+// @vitest-environment happy-dom
+// read-excel-file parses the workbook XML with DOMParser, which only a DOM environment supplies
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-// @vitest-environment nuxt
-// DOMParser only exists in the nuxt env, and read-excel-file parses the workbook XML with it.
 import type { XlsxFileSettings } from "#shared/models/resource/sheet/XlsxFileSettings";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";

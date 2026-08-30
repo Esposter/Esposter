@@ -1,4 +1,4 @@
-// @vitest-environment nuxt
+// @vitest-environment happy-dom
 import type { Resource } from "@esposter/db-schema";
 
 import { SURVEY_INVITE_BUTTON_COLOR } from "@/services/grapesjs/constants";

@@ -4,16 +4,16 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const repositoryRoot = resolve(import.meta.dirname, "..");
-const readJson = (fileName: string): Record<string, unknown> =>
-  jsonDateParse<Record<string, unknown>>(readFileSync(resolve(repositoryRoot, fileName), "utf8"));
-
 /**
  * The configs below are JSON with no import mechanism, so they repeat the literal and these tests are the only
  * thing holding the copies to the owner — both have already been un-excluded once by an unrelated edit widening
  * a glob.
  */
 describe(AGENT_WORKTREES_DIRECTORY, () => {
+  const repositoryRoot = resolve(import.meta.dirname, "..");
+  const readJson = (fileName: string): Record<string, unknown> =>
+    jsonDateParse<Record<string, unknown>>(readFileSync(resolve(repositoryRoot, fileName), "utf8"));
+
   test("is excluded from the root typescript program", () => {
     expect.hasAssertions();
 

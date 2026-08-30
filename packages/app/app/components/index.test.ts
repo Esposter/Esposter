@@ -2,7 +2,6 @@ import { glob } from "node:fs/promises";
 import { basename } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const WORD_REGEX = /[A-Z][a-z0-9]*|[A-Z]+(?![a-z])/gu;
 const componentPaths = (await Array.fromAsync(glob("**/*.vue", { cwd: import.meta.dirname }))).map((componentPath) =>
   componentPath.replaceAll("\\", "/"),
 );
@@ -23,6 +22,8 @@ const folderNamesByParent = componentPaths.reduce<Map<string, Set<string>>>((fol
 // Since the folder re-supplies the word and the generated component name does not change
 // (`.agents/skills/vue-component-patterns/references/component-naming.md`)
 describe("componentFolders", () => {
+  const WORD_REGEX = /[A-Z][a-z0-9]*|[A-Z]+(?![a-z])/gu;
+
   test("holds no component beside the folder its own name opens with", () => {
     expect.hasAssertions();
 

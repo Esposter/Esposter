@@ -7,12 +7,13 @@ import { VTextField } from "vuetify/components";
 describe("messageModelRoomSettingsTypeOverviewSlowmodeField", () => {
   // The model only emits when the value changes, so the field starts enabled and every case below moves it
   const modelValue = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
-  // A number input emits whatever was typed rather than what its min allows, and every Temporal duration field
-  // Must be a finite integer — so a fractional or overflowing entry threw a RangeError out of the handler and
-  // Left the field stuck on the value that broke it
+  // A number input emits whatever was typed rather than what its min and max allow, and a Temporal duration
+  // Rejects a field that is not a finite integer as well as one past the range it can represent — so a
+  // Fractional or oversized entry threw a RangeError out of the handler, leaving the field stuck on it
   test.each([
     ["1.5", Temporal.Duration.from({ seconds: 1 }).total("milliseconds")],
     ["1e999", null],
+    ["1e16", null],
     ["0.5", null],
   ])("resolves the typed %s to a whole-second duration", async (typedSeconds, expected) => {
     expect.hasAssertions();

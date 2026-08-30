@@ -9,33 +9,39 @@ of units, and a suite is read once against all of it rather than once per conven
 
 ## Rules
 
-| Rule                                                       | Owner                                          |
-| ---------------------------------------------------------- | ---------------------------------------------- |
-| A test earns its line or is deleted; fixtures written once | `testing` — "What to Test", "Shared Test Data" |
-| Constants inside the `describe`, never module scope        | `testing` — "Structure"                        |
-| Mock cleanup follows how the mock was created              | `testing` — `references/module-mocks.md`       |
-| `expect.hasAssertions()`, exact assertions, no polling     | `testing` — "Assertions"                       |
+| Rule                                                       | Owner                                            |
+| ---------------------------------------------------------- | ------------------------------------------------ |
+| A test earns its line or is deleted; fixtures written once | `testing` — "What to Test", "Shared Test Data"   |
+| Constants inside the `describe`, never module scope        | `testing` — "Structure"                          |
+| Mock cleanup follows how the mock was created              | `testing` — `references/module-mocks.md`         |
+| `expect.hasAssertions()`, exact assertions, no polling     | `testing` — "Assertions"                         |
+| The cheapest environment that runs the file (`app` only)   | this ledger — "The environment a suite declares" |
 
 The row **`vi.fn` always takes its signature** has left this table.
 `packages/configuration/eslint/restrictedTestSyntaxes.js` bans the bare zero-argument form, and a pass on
 2026-08-18 confirmed the repo holds — it fails on the line that writes it, so there is nothing left to sweep.
 
 Every row resets when a rule joins this table: a unit dated against a narrower rule set is not swept against the
-current one, and there is no partially-swept state. Trimming last ran across every unit on 2026-08-12.
+current one, and there is no partially-swept state. The environment row is the one exception, and only because
+its scope is narrower than the ledger's: `packages/app` is the sole package whose vitest config offers a choice
+of environment, so the rule cannot fail anywhere else and the rows outside it keep their dates.
+Trimming last ran across every unit on 2026-08-12.
 
 | Unit                                               | Swept      | Notes                                                      |
 | -------------------------------------------------- | ---------- | ---------------------------------------------------------- |
-| `app/app/services`                                 | 2026-08-20 |                                                            |
+| `app/app/services`                                 | 2026-08-30 | the environments below                                     |
 | `app/app/composables`                              | 2026-08-20 | `message/emoji` written under the rules                    |
 | `app/app/store`, `app/app/models`                  | 2026-08-20 |                                                            |
-| `app/app/components`, `app/app/util`               | 2026-08-20 | `Styled/EmojiPicker` written under the rules               |
+| `app/app/components`, `app/app/util`               | 2026-08-30 |                                                            |
 | `app/content`                                      | 2026-08-20 | `docs/index.test.ts` — top-level await fixtures, see below |
-| `app/server/services`, `app/server/trpc/procedure` | 2026-08-20 |                                                            |
-| `app/server/trpc/routers`, rest                    | 2026-08-20 |                                                            |
+| `app/server/services`, `app/server/trpc/procedure` | 2026-08-30 |                                                            |
+| `app/server/trpc/routers`, rest                    | 2026-08-30 |                                                            |
 | `app/shared`                                       | 2026-08-20 |                                                            |
+| `app`, rest                                        | 2026-08-30 | the two config snapshots deleted, see below                |
 | `virrun`                                           | 2026-08-20 |                                                            |
-| `azure-functions`, `azure-mock`, `db*`             | 2026-08-20 | every `mockDb` stays — hoisted factory, see below          |
+| `azure-functions`, `azure-mock`, `db*`             | 2026-08-30 | every `mockDb` stays — hoisted factory, see below          |
 | `parse-tmx`, `vue-phaserjs`, `xml2js`, rest        | 2026-08-20 | plus `shared`, `shared-node`, `configuration`, `infra`     |
+| `scripts`                                          | 2026-08-30 | first pass — never a unit before                           |
 
 ## Find recipe
 
@@ -96,7 +102,8 @@ PY
 
 Everything it still reports on a swept repo is one of the exceptions below, so a clean pass is a **known** list
 rather than an empty one: `app/content/docs/index.test.ts`'s top-level-await cluster, the `mockDb` a hoisted `vi.mock`
-factory returns in each `azure-functions` suite, and virrun's two mocked path constants.
+factory returns in each `azure-functions` suite, virrun's two mocked path constants, and each `scripts/oxlint` rule
+name, which names its own `describe` and so is evaluated before the callback the scope rule would move it into.
 
 ## Judging a match
 
@@ -119,6 +126,19 @@ factory returns in each `azure-functions` suite, and virrun's two mocked path co
   skill bans nested `describe` for sub-grouping, so that trades one violation for another.
 - **A hook belongs to the suite it tears down.** An `afterEach` registered at module scope moves in with the
   state it cleans up.
+
+## The environment a suite declares
+
+`packages/app`'s vitest config leaves every file in the node environment and lets `// @vitest-environment nuxt`
+opt in, because the nuxt environment builds the app per file — it is the difference between the suite's plain
+files averaging well under a second and its nuxt files averaging several. So the directive is part of what a
+test costs, and a suite that carries it without needing it is the same waste as a test that proves nothing.
+
+Read what the file actually reaches for. A suite that mounts a component, resolves the router, or reads the nuxt
+app (`useNuxtApp`, `useState`, a `$trpc` call, runtime config) needs the environment. One that only needs a
+**DOM** — `window`, `DOMParser`, `navigator` — takes `happy-dom` instead, and one that needs neither takes the
+default by carrying no directive at all. The check is empirical: drop to the cheaper environment and run the
+file, because the failure names the global that was missing.
 
 ## Exclusions
 

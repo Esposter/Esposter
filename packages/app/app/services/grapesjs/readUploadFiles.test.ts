@@ -1,4 +1,4 @@
-// @vitest-environment nuxt
+// @vitest-environment happy-dom
 import { readUploadFiles } from "@/services/grapesjs/readUploadFiles";
 import { describe, expect, test } from "vitest";
 

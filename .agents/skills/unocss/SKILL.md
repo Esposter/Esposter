@@ -1,6 +1,6 @@
 ---
 name: unocss
-description: Esposter UnoCSS configuration conventions — theme colors registration, safelist rules for dynamic Vuetify color props, cssLayerName mapping, and regression snapshot tests. Apply when editing uno.config.ts or adding new colors/utilities.
+description: Esposter UnoCSS configuration conventions — theme colors registration, safelist rules for dynamic Vuetify color props, cssLayerName mapping, and named shortcuts for recurring utility pairs. Apply when editing uno.config.ts or adding new colors/utilities.
 ---
 
 # UnoCSS Configuration
@@ -52,17 +52,4 @@ Layer declaration order is in `app/assets/css/layers.css`. All `uno-*` layers ap
 
 ## Shortcuts for recurring utility pairs
 
-When the same attributify utility combination recurs across components (e.g. `op-medium-emphasis text-body-small` for hint text), define a named shortcut in `uno.config.ts` (`"text-hint": "op-medium-emphasis text-body-small"`) and use it everywhere instead of the raw pair. Update the `uno.config.test.ts` snapshot after adding one.
-
-## Snapshot test
-
-`packages/app/uno.config.test.ts` is a single test that snapshots `rules`, `safelist`, `shortcuts`, and `theme`. Run it from `packages/app` to update the snapshot after intentional changes:
-
-```bash
-pnpm test uno.config.test.ts -u --run
-```
-
-Update the snapshot whenever:
-
-- A new theme color is added to `vuetify.config.ts`
-- A new rule, shortcut, or opacity utility is added to `uno.config.ts`
+When the same attributify utility combination recurs across components (e.g. `op-medium-emphasis text-body-small` for hint text), define a named shortcut in `uno.config.ts` (`"text-hint": "op-medium-emphasis text-body-small"`) and use it everywhere instead of the raw pair.
