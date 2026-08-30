@@ -37,8 +37,8 @@ describe("messageModelRoomSettingsTypeOverviewSlowmodeField", () => {
     const component = await mountSuspended(MessageModelRoomSettingsTypeOverviewSlowmodeField, {
       props: { modelValue: maxSlowmodeMs },
     });
-    const field = component.findComponent(VTextField);
+    const input = component.find("input");
 
-    expect(field.props("modelValue")).toBe(field.props("max"));
+    expect(input.element.value).toBe(input.attributes("max"));
   });
 });

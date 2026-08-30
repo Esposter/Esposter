@@ -2,19 +2,19 @@
 
 Zod and Drizzle together, because a table, its select schema and the input schema over it are one shape read in one pass: interface-first with `satisfies z.ZodType<T>`, `.shape` spread over `.extend()`, one interface and one schema per file, bare column builders, and every table and `pgEnum` registered.
 
-| Unit                                                       | Swept      | Notes                                                                                                              |
-| ---------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------ |
-| `packages/db-schema/src/schema.ts` + `relations`           | 2026-08-30 | complete both ways, and the table/enum half is now `schema.test.ts`'s rather than a sweep's                        |
-| `packages/db-schema/src/schema` — the message tables       | —          | `*InMessage` is the largest family                                                                                 |
-| `packages/db-schema/src/schema` — the rest                 | —          | users, posts, resources, storage, auth                                                                             |
-| `app/shared/models/db/message`, `.../room`                 | —          | the input schemas every router imports; 102 files across the folder, so it splits                                  |
-| `app/shared/models/db` — the rest                          | —          |                                                                                                                    |
-| `app/shared/models/resource`                               | —          | the discriminated unions; `satisfies z.ZodType<ToData<T>>` on class-typed                                          |
-| `app/shared/models/dungeons`                               | —          | persisted save shapes — latest-shape-only applies                                                                  |
-| `app/shared/models` — the rest                             | —          | `clicker`, `dashboard`, `flowchartEditor`, `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler` |
-| `app/models`, `app/services/*/…` form schemas              | —          | the Vjsf-rendered ones carry extra rules                                                                           |
-| `packages/db`, `packages/db-mock`                          | —          | the mock's snapshot is generated; only its hand-written schema use is in scope                                     |
-| `packages/shared`, `packages/parse-tmx`, `packages/xml2js` | —          | `@esposter/shared` takes `zod` as a peer and nothing else                                                          |
+| Unit                                                       | Swept      | Notes                                                                                                                                                  |
+| ---------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/db-schema/src/schema.ts` + `relations`           | 2026-08-30 | complete both ways, and the table/enum half is now `schema.test.ts`'s rather than a sweep's                                                            |
+| `packages/db-schema/src/schema` — the message tables       | —          | `*InMessage` is the largest family                                                                                                                     |
+| `packages/db-schema/src/schema` — the rest                 | 2026-08-30 | `posts` sanitized its description twice, once per select schema; the twin `friends`/`friendRequests` blocks stay, and the `drizzle` skill now says why |
+| `app/shared/models/db/message`, `.../room`                 | —          | the input schemas every router imports; 102 files across the folder, so it splits                                                                      |
+| `app/shared/models/db` — the rest                          | —          |                                                                                                                                                        |
+| `app/shared/models/resource`                               | —          | the discriminated unions; `satisfies z.ZodType<ToData<T>>` on class-typed                                                                              |
+| `app/shared/models/dungeons`                               | —          | persisted save shapes — latest-shape-only applies                                                                                                      |
+| `app/shared/models` — the rest                             | —          | `clicker`, `dashboard`, `flowchartEditor`, `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler`                                     |
+| `app/models`, `app/services/*/…` form schemas              | —          | the Vjsf-rendered ones carry extra rules                                                                                                               |
+| `packages/db`, `packages/db-mock`                          | —          | the mock's snapshot is generated; only its hand-written schema use is in scope                                                                         |
+| `packages/shared`, `packages/parse-tmx`, `packages/xml2js` | —          | `@esposter/shared` takes `zod` as a peer and nothing else                                                                                              |
 
 ## Exclusions
 
