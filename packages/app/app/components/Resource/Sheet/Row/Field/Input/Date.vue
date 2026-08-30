@@ -2,6 +2,7 @@
 import type { DateColumn } from "#shared/models/resource/sheet/column/DateColumn";
 
 import { dayjs } from "#shared/services/dayjs";
+import { ISO_DATE_FORMAT } from "#shared/services/dayjs/constants";
 
 interface FieldInputDateProps {
   column: DateColumn;
@@ -13,11 +14,11 @@ const modelValue = defineModel<null | string>({ required: true });
 const displayModelValue = computed(() => {
   if (typeof modelValue.value !== "string") return modelValue.value;
   const date = dayjs(modelValue.value, column.format, true);
-  return date.isValid() ? date.format("YYYY-MM-DD") : modelValue.value;
+  return date.isValid() ? date.format(ISO_DATE_FORMAT) : modelValue.value;
 });
 const onUpdateModelValue = (newModelValue: null | string) => {
   // eslint-disable-next-line no-restricted-syntax -- writes the cell's stored value in the column's own format
-  modelValue.value = newModelValue ? dayjs(newModelValue, "YYYY-MM-DD").format(column.format) : newModelValue;
+  modelValue.value = newModelValue ? dayjs(newModelValue, ISO_DATE_FORMAT).format(column.format) : newModelValue;
 };
 </script>
 

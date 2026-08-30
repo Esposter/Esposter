@@ -1,4 +1,5 @@
 import { dayjs } from "#shared/services/dayjs";
+import { ISO_DATE_FORMAT } from "#shared/services/dayjs/constants";
 import { getRecordDifferenceDescription } from "@/services/resource/sheet/commands/getRecordDifferenceDescription";
 import { describe, expect, test } from "vitest";
 
@@ -20,8 +21,8 @@ describe(getRecordDifferenceDescription, () => {
   test("changed date value produces table", () => {
     expect.hasAssertions();
 
-    const originalValue = dayjs("1970-01-01", "YYYY-MM-DD", true).toDate();
-    const updatedValue = dayjs("1970-01-02", "YYYY-MM-DD", true).toDate();
+    const originalValue = dayjs("1970-01-01", ISO_DATE_FORMAT, true).toDate();
+    const updatedValue = dayjs("1970-01-02", ISO_DATE_FORMAT, true).toDate();
 
     expect(getRecordDifferenceDescription({ "": originalValue }, { "": updatedValue })).toBe(
       `${HEADER}\n | 1970-01-01 | 1970-01-02`,
