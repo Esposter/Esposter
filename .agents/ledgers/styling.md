@@ -39,6 +39,12 @@ What a component looks like rather than how it is composed: attributify props ov
   `Styled/Dialog.test.ts` asserts the current inline style. Neither can be settled without looking at the rendered
   page, which no agent here does (`run-app` skill) — so it is a question for a human, not a rewrite to attempt.
 
+- **Two static utility classes that attributify would carry**, found incidentally while sampling the `class=`
+  Recipe rather than by a pass over their unit:
+  `Message/Model/Message/File/ViewerDialog.vue` writes `class="max-h-[80vh]"` on both the video and the image,
+  Where the attribute form is `max-h="[80vh]"`. Left for the pass that reads that tree, since the file has no
+  Test and the change is only visible on the rendered dialog.
+
 ## Find recipe
 
 ```bash
