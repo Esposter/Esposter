@@ -7,6 +7,7 @@ import { useContainerClient } from "@@/server/composables/azure/container/useCon
 import { db } from "@@/server/db";
 import { assetRateLimiter } from "@@/server/services/rateLimiter/assetRateLimiter";
 import { checkIsRateLimitExceeded } from "@@/server/services/rateLimiter/checkIsRateLimitExceeded";
+import { RATE_LIMITER_BYPASS_LOG_MESSAGE } from "@@/server/services/rateLimiter/constants";
 import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import { checkIsResourceAssetReadable } from "@@/server/services/resource/checkIsResourceAssetReadable";
 import {
@@ -42,19 +43,14 @@ export default defineEventHandler(async (event) => {
     // Its own limiter, whose keyPrefix supplies the namespace: a signed-in viewer's key is the bare user id,
     // The same key every tRPC call consumes, so without the prefix opening one published page full of images
     // Spends that page's asset requests out of the budget for the user's actual API calls and 429s the app
-    // Around them (see assetRateLimiter). An authed viewer is keyed on its user id, which is available whether
-    // Or not an address is, so only the anonymous key depends on the address — bypassing both would leave
-    // Every signed-in request unbudgeted on a deployment whose ingress header never arrives
+    // Around them (see assetRateLimiter)
     const rateLimiterKey = getSessionPayload?.user.id ?? getIpAddress(event.node.req);
     if (rateLimiterKey)
       await getResultAsync(() => assetRateLimiter.consume(rateLimiterKey)).match(noop, (error) => {
         if (checkIsRateLimitExceeded(error)) throw createError({ statusCode: 429 });
         throw error;
       });
-    else
-      console.warn(
-        "[RateLimiter] Could not determine IP address for an anonymous request. Bypassing middleware... This is expected for local production builds.",
-      );
+    else console.warn(RATE_LIMITER_BYPASS_LOG_MESSAGE);
   }
   // Working-copy assets are only ever rendered inside the owner's editor (same-origin, cookies present), so an
   // Anonymous request for one is a missing credential rather than a missing asset. A published url has no such

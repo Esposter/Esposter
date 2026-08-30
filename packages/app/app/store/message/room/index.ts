@@ -11,7 +11,7 @@ import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useDialogStore } from "@/store/message/room/dialog";
 import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
-import { Operation, RoutePath, takeOne, uuidValidateV4 } from "@esposter/shared";
+import { Operation, RoutePath, takeOne, checkIsUuidV4 } from "@esposter/shared";
 
 export const useRoomStore = defineStore("message/room", () => {
   const { $trpc } = useNuxtApp();
@@ -26,7 +26,7 @@ export const useRoomStore = defineStore("message/room", () => {
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = router.currentRoute.value.params.id;
-    return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : "";
+    return typeof roomId === "string" && checkIsUuidV4(roomId) ? roomId : "";
   });
   const dialogStore = useDialogStore();
   // Which room the room-scoped surfaces are reading for. The route decides it, except while room settings is open

@@ -3,6 +3,7 @@ import type { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterTy
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { auth } from "@@/server/auth";
 import { checkIsRateLimitExceeded } from "@@/server/services/rateLimiter/checkIsRateLimitExceeded";
+import { RATE_LIMITER_BYPASS_LOG_MESSAGE } from "@@/server/services/rateLimiter/constants";
 import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
 import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import { middleware } from "@@/server/trpc";
@@ -15,13 +16,8 @@ export const getIsRateLimited = (type: RateLimiterType) =>
     if (!IS_PRODUCTION) return next({ ctx: { getSessionPayload } });
 
     const ipAddress = getIpAddress(ctx.req);
-    // An authed caller is keyed on its user id, which is available whether or not an address is, so only the
-    // Anonymous key depends on this. Bypassing both would leave every signed-in request unbudgeted on a
-    // Deployment whose ingress header never arrives.
     if (!getSessionPayload && !ipAddress) {
-      console.warn(
-        "[RateLimiter] Could not determine IP address for an anonymous request. Bypassing middleware... This is expected for local production builds.",
-      );
+      console.warn(RATE_LIMITER_BYPASS_LOG_MESSAGE);
       return next({ ctx: { getSessionPayload } });
     }
 
