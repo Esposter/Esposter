@@ -37,7 +37,7 @@ Trimming last ran across every unit on 2026-08-12.
 | `app/server/services`, `app/server/trpc/procedure` | 2026-08-30 |                                                            |
 | `app/server/trpc/routers`, rest                    | 2026-08-30 |                                                            |
 | `app/shared`                                       | 2026-08-20 |                                                            |
-| `app`, rest                                        | 2026-08-30 | the two config snapshots deleted, see below                |
+| `app`, rest                                        | 2026-08-30 | the two resolved-config snapshots stay, see below          |
 | `virrun`                                           | 2026-08-20 |                                                            |
 | `azure-functions`, `azure-mock`, `db*`             | 2026-08-30 | every `mockDb` stays — hoisted factory, see below          |
 | `parse-tmx`, `vue-phaserjs`, `xml2js`, rest        | 2026-08-20 | plus `shared`, `shared-node`, `configuration`, `infra`     |
@@ -144,6 +144,11 @@ file, because the failure names the global that was missing.
 
 - Coverage thresholds are not a reason to keep a test — a number that only holds because a test restates a
   constant is measuring nothing.
+- `packages/app/uno.config.test.ts` and `packages/app/vuetify.config.test.ts` read as config restatements and are
+  not: both snapshot **resolved** output, so the edit they catch is a `unocss` or `vuetify` bump moving a derived
+  rule, colour or default with no diff in this repo. The `unocss` skill owns the reason; a pass that reaches them
+  reads that first. They were deleted once on the restatement rule alone, which is why the reason is written
+  down in two places rather than inferred from the files.
 
 ## Next enforceable
 
