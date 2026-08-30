@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-// read-excel-file parses the workbook XML with DOMParser, which only a DOM environment supplies
+// The `read-excel-file` parser reads the workbook XML with DOMParser, which only a DOM environment supplies
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { XlsxFileSettings } from "#shared/models/resource/sheet/XlsxFileSettings";
 

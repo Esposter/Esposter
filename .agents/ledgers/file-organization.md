@@ -50,10 +50,10 @@ for (const file of sourceFiles)
   }'
 ```
 
-`String.raw` is load-bearing — a `` written into a template literal here becomes a backspace and the scan
-reports every export as unused, which reads exactly like a tree of dead code (`sweeps` skill). Two counts are
-worth running: excluding the package's own source answers "does this belong here", and including it answers "is
-this referenced at all" — the second is what separates a dead export from one its own file annotates.
+`String.raw` is load-bearing — a `\b` written into a template literal here becomes a backspace and the scan
+reports every export as unused, which reads exactly like a tree of dead code (`sweeps` skill). The scan excludes
+the export's own file, so a `0` names an export nothing outside that file references — dead code and an export
+only its own file annotates read alike, and the pass tells them apart by opening the file.
 
 ## Exclusions
 

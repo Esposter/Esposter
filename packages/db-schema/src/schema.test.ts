@@ -45,7 +45,7 @@ describe("schema", () => {
   test("registers every table and enum the schema directory declares", async () => {
     expect.hasAssertions();
 
-    const registered = new Set(Object.values(schema));
+    const registered = new Set<unknown>(Object.values(schema));
     const schemaDirectory = resolve(import.meta.dirname, "schema");
     const fileNames = await Array.fromAsync(glob("*.ts", { cwd: schemaDirectory }));
     const unregistered: string[] = [];

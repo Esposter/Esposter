@@ -4,9 +4,12 @@ const emit = defineEmits<{ save: [] }>();
 const rules = useVRules();
 const slowmodeRules = computed(() => [rules.minValue(1)]);
 // `Temporal` is a language global, and a template expression resolves only the globals Vue allows — so the
-// Field's two unit conversions live here rather than inline in the bindings
+// Field's two unit conversions live here rather than inline in the bindings. Both truncate to whole seconds, so a
+// Stored value finer or larger than the field accepts still displays inside the bound the field advertises
 const displaySeconds = computed(() =>
-  modelValue.value === null ? "" : Temporal.Duration.from({ milliseconds: modelValue.value }).total("seconds"),
+  modelValue.value === null
+    ? ""
+    : Math.trunc(Temporal.Duration.from({ milliseconds: modelValue.value }).total("seconds")),
 );
 // `slowmodeMs` is a Postgres `integer`, so a longer slowmode could never be stored — and the bound doubles as
 // The one that keeps a typed entry inside the range a Temporal duration can represent

@@ -100,6 +100,10 @@ export const useResourceStore = defineStore("resource", () => {
     contentResourceId = current.id;
     return content as ResourceContent<TType> | undefined;
   };
+  // Every content store calls this once its load has hydrated, and the two GrapesJS ones have to: the editor
+  // Stores as soon as it finishes loading, so the first save of a session is an echo of what was just read.
+  // Unseeded, that echo counts as a change — it bumps contentVersion for content nobody edited, and every
+  // Other client holding the page open is then told its version is stale
   const setPersistedContent = (content: ResourceContent<ResourceType>) => {
     persistedContentJson = JSON.stringify(content);
   };

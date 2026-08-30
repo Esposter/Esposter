@@ -18,12 +18,13 @@ Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row i
 A find recipe that comes back empty is the same shape as a clean tree, so a broken scan reads as a finished
 sweep. Two ways it has actually happened here, both silent:
 
-- **`new RegExp` built from a template literal inside `node -e '...'`.** The shell eats one level of escaping
-  Before node sees it, so a `\b` written for a word boundary arrives as a **backspace character** and the regex
-  Matches nothing. It survives a glance because `JSON.stringify` renders a real backspace as `\b` as well, so
-  Printing `regex.source` looks right. Use a regex **literal** (`/\bfoo\b/u`), `String.raw`, or a plain
-  `.includes`. A literal is unaffected — `/getResult\(/u` still means an escaped paren however the shell mangles
-  It — and a heredoc (`<<'PY'`, `<<'JS'`) eats nothing at all, which is why the longer recipes use one.
+- **`new RegExp` built from a template literal inside `node -e '...'`.** Single quotes hand the backslash to
+  Node intact — the **template literal** is the layer that eats it, so a `\b` written for a word boundary reaches
+  `new RegExp` as a **backspace character** and the regex matches nothing. It survives a glance because
+  `JSON.stringify` renders a real backspace as `\b` as well, so printing `regex.source` looks right. Use a regex
+  **literal** (`/\bfoo\b/u`), `String.raw`, or a plain `.includes` — a literal is unaffected, `/getResult\(/u`
+  Still means an escaped paren. A quoted heredoc (`<<'PY'`, `<<'JS'`) keeps the shell out of it entirely, which
+  Is why the longer recipes use one; it removes no JavaScript layer, so the same three fixes still apply inside.
 - **A filter on the wrong field.** An author login that differs between two APIs, a path prefix that never
   Matches, a `--jq` selector against the wrong payload shape — each returns an empty set and exit 0.
 
