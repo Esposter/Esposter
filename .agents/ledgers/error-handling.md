@@ -2,18 +2,18 @@
 
 `try`/`catch` is already lint-banned, so this sweep is about the shapes a linter cannot see: what a chain wraps, how it terminates, and who alerts.
 
-| Unit                                                             | Swept | Notes                                                                                  |
-| ---------------------------------------------------------------- | ----- | -------------------------------------------------------------------------------------- |
-| `server/trpc/routers`                                            | —     | the guard constructors vs a hand-rolled `TRPCError`; `requireEntity`/`requireMutation` |
-| `server/services`, `server/composables`                          | —     | wrapping only what can actually fail                                                   |
-| `packages/azure-functions`                                       | —     | logging and retry, and the capped dead-letter replay                                   |
-| `app/store`                                                      | —     | who alerts a rejection — `errorLink` ownership, background reads, coalescing           |
-| `app/composables`                                                | —     | a callback nothing awaits terminating its own `Result`                                 |
-| `app/services`, `app/util`                                       | —     | `withFinalizer` vs `withFinalizerAsync`                                                |
-| `app/components`                                                 | —     | inline handlers that swallow, and `.orTee(console.error)` vs a bare catch              |
-| `packages/db`, `packages/virrun`, `packages/infra`               | —     |                                                                                        |
-| `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | —     | mocks may model a rejection the real client throws — check against the wire            |
-| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | —     | published packages; `try` is allowed in their README examples only                     |
+| Unit                                                             | Swept      | Notes                                                                                  |
+| ---------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------- |
+| `server/trpc/routers`                                            | —          | the guard constructors vs a hand-rolled `TRPCError`; `requireEntity`/`requireMutation` |
+| `server/services`, `server/composables`                          | —          | wrapping only what can actually fail                                                   |
+| `packages/azure-functions`                                       | —          | logging and retry, and the capped dead-letter replay                                   |
+| `app/store`                                                      | —          | who alerts a rejection — `errorLink` ownership, background reads, coalescing           |
+| `app/composables`                                                | —          | a callback nothing awaits terminating its own `Result`                                 |
+| `app/services`, `app/util`                                       | —          | `withFinalizer` vs `withFinalizerAsync`                                                |
+| `app/components`                                                 | —          | inline handlers that swallow, and `.orTee(console.error)` vs a bare catch              |
+| `packages/db`, `packages/virrun`, `packages/infra`               | —          |                                                                                        |
+| `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | —          | mocks may model a rejection the real client throws — check against the wire            |
+| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-08-30 | clean — every throw is a named error class, no chain to terminate outside `shared`     |
 
 ## Find recipe
 

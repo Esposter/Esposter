@@ -24,6 +24,10 @@ What a component looks like rather than how it is composed: attributify props ov
 - Component granularity, extraction and page composition — `vue-components`, over the same files. Different owning skills, so the split is deliberate.
 - Placement and reachability — `ux`, likewise.
 - `app/components/Dungeons` canvas internals: Phaser draw calls are not DOM styling. Only the Vue chrome around them is in scope.
+- `app/assets/dashboard/demo/icon/*.vue` — vendored ApexCharts sample SVGs, kept diff-identical to their source.
+  They are the bulk of what the `px` recipe reports, and none of them is a finding.
+- `app/assets/css/settings.scss`'s breakpoint map — Vuetify's SASS API takes px and computes the rem forms from
+  Them, so the unit there is the framework's rather than ours.
 
 ## Open findings
 
