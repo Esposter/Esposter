@@ -13,16 +13,28 @@ There is one exception, and it is the merge-base count at the bottom of this pag
 Every review body states its own range, so this is a fact to read. One block, so no step gets substituted for a shortcut — it prints the frontier and both counts:
 
 ```bash
-PR=<pr>; BRANCH=<branch>
+PR=<pr>; BRANCH=<branch>; BASE=<base-branch>
 LAST=$(gh api "repos/:owner/:repo/pulls/$PR/reviews?per_page=100" --paginate \
-  --jq '[.[] | select(.user.login=="coderabbitai[bot]") | select((.body|length) > 0)
-        | .body | capture("between [0-9a-f]{40} and (?<b>[0-9a-f]{40})") | .b] | last')
+  --jq '.[] | select(.user.login=="coderabbitai[bot]") | select((.body|length) > 0)
+        | .body | capture("between [0-9a-f]{40} and (?<b>[0-9a-f]{40})") | .b' | tail -n 1)
+if [ -z "$LAST" ]; then
+  LAST=$(git merge-base "$BASE" HEAD)
+  echo "no review body names a range — first review, so the frontier is the merge base"
+fi
 echo "last reviewed:     $LAST"
 echo "pushed+unreviewed: $(git diff --name-only "$LAST"..origin/$BRANCH | wc -l)"
 echo "next push adds to: $(git diff --name-only "$LAST"..HEAD | wc -l)"
 ```
 
-An empty `LAST` means no review body has ever named a range — that is the first-review case, and the merge-base count below is the one that applies. It never means zero.
+**Both halves of that pipeline are load-bearing, and both fail silently.** `last` inside `--jq` would run once
+per page — `gh` re-invokes the filter for each — so a PR past 100 reviews yields one sha per page and `$LAST`
+becomes a multi-line string no `git diff` accepts; picking the last **line** downstream is what spans the pages.
+And a `[…] | last` over an empty array emits the literal `null`, which is a string `git diff` resolves against
+nothing rather than an empty value the shell can test, so the streaming form is what makes the guard reachable
+at all.
+
+An empty `LAST` means no review body has ever named a range — that is the first-review case, and the merge base
+the guard substitutes is the cumulative diff the bottom of this page describes. It never means zero.
 
 ## Take the second number before a push
 
