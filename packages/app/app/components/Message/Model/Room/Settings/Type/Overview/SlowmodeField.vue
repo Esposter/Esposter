@@ -9,9 +9,12 @@ const displaySeconds = computed(() =>
   modelValue.value === null ? "" : Temporal.Duration.from({ milliseconds: modelValue.value }).total("seconds"),
 );
 const onUpdateModelValue = (newDisplaySeconds: string) => {
+  // A number input hands over whatever was typed, and a Temporal field must be a finite integer — so a
+  // Fractional or overflowing entry is truncated to whole seconds here rather than throwing out of the handler
+  const seconds = Math.trunc(Number(newDisplaySeconds));
   modelValue.value =
-    newDisplaySeconds && Number(newDisplaySeconds) >= 1
-      ? Temporal.Duration.from({ seconds: Number(newDisplaySeconds) }).total("milliseconds")
+    newDisplaySeconds && Number.isFinite(seconds) && seconds >= 1
+      ? Temporal.Duration.from({ seconds }).total("milliseconds")
       : null;
 };
 </script>
