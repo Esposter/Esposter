@@ -5,25 +5,74 @@
 | Unit                                                             | Swept      | Notes                                                                                  |
 | ---------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------- |
 | `server/trpc/routers`                                            | —          | the guard constructors vs a hand-rolled `TRPCError`; `requireEntity`/`requireMutation` |
-| `server/services`, `server/composables`                          | —          | wrapping only what can actually fail                                                   |
-| `packages/azure-functions`                                       | —          | logging and retry, and the capped dead-letter replay                                   |
-| `app/store`                                                      | —          | who alerts a rejection — `errorLink` ownership, background reads, coalescing           |
-| `app/composables`                                                | —          | a callback nothing awaits terminating its own `Result`                                 |
-| `app/services`, `app/util`                                       | —          | `withFinalizer` vs `withFinalizerAsync`                                                |
-| `app/components`                                                 | —          | inline handlers that swallow, and `.orTee(console.error)` vs a bare catch              |
-| `packages/db`, `packages/virrun`, `packages/infra`               | —          |                                                                                        |
-| `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | —          | mocks may model a rejection the real client throws — check against the wire            |
+| `server/services/message`                                        | —          | wrapping only what can actually fail                                                   |
+| `server/services` — the rest                                     | —          | `resource`, `room`, `survey`, `blueprint`, `rateLimiter` and the small folders         |
+| `server/composables`                                             | 2026-08-30 | nine client constructors — none wraps a call, so there is nothing to terminate         |
+| `packages/azure-functions`                                       | 2026-08-30 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)`  |
+| `app/store/message`                                              | —          | who alerts a rejection — `errorLink` ownership, background reads, coalescing           |
+| `app/store` — the rest                                           | —          | `dungeons`, `resource` and the small stores                                            |
+| `app/composables/message`, `app/composables/resource`            | —          | a callback nothing awaits terminating its own `Result`                                 |
+| `app/composables` — the rest                                     | —          | `dungeons` is most of it                                                               |
+| `app/services/resource`, `app/services/message`                  | —          | `withFinalizer` vs `withFinalizerAsync`                                                |
+| `app/services` — the rest, `app/util`                            | —          | `dungeons` is most of it                                                               |
+| `app/components/Message`                                         | —          | inline handlers that swallow, and `.orTee(console.error)` vs a bare catch              |
+| `app/components/Resource`, `app/components/Dungeons`             | —          |                                                                                        |
+| `app/components` — the rest                                      | —          |                                                                                        |
+| `packages/db`, `packages/infra`                                  | 2026-08-30 | `db` rolls back then rethrows; `infra` is resource declarations with no error path     |
+| `packages/virrun` — `src/services/exec`                          | —          |                                                                                        |
+| `packages/virrun` — the rest                                     | —          |                                                                                        |
+| `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-08-30 | every throw is a stub, an unsupported-in-mock, or an Azure wire response               |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-08-30 | clean — every throw is a named error class, no chain to terminate outside `shared`     |
+
+Rows were split at their directory boundaries on 2026-08-30, because a unit of 150–740 files is grepped rather
+than read and a grep pass that ticks a row records a sweep that never happened. The mechanical half was run
+across every row that day and is clean repo-wide: no `try`/`catch`, no `.isOk`/`.isErr`, no `new Error` outside
+`toAppError` and `requireAuthData`, and all 234 `getResult` chains terminate. What the remaining rows are for is
+the half no grep sees — what a chain wraps, and who alerts.
 
 ## Find recipe
 
 ```bash
-# A chain that never terminates — no .match, no .orTee, not returned. `Async?` would make the `c` optional
-# And miss every synchronous chain, so the group is the whole word
-grep -rnE 'getResult(Async)?\(' --include=*.ts --include=*.vue packages/app/app packages/app/server packages/app/shared packages/*/src
 # new Error, which InvalidOperationError replaces outside unimplemented stubs
 grep -rn 'new Error(' --include=*.ts --include=*.vue packages/app/app packages/app/server packages/app/shared packages/*/src
 ```
+
+A chain that never terminates cannot be grepped for. A line-anchored `getResult(Async)?\(` reports all 234 call
+sites, and a fixed-size window around one calls the ~40 whose body runs long a finding — the terminator sits
+after the closing paren, which is wherever the callback ends. So the scan **matches the bracket** and reads what
+follows it, which leaves only the sites that genuinely chain nothing:
+
+```bash
+node -e '
+const { execSync } = require("node:child_process");
+const fs = require("node:fs");
+const files = execSync("git ls-files \"packages/*/src/**\" \"packages/app/app/**\" \"packages/app/server/**\" \"packages/app/shared/**\"", { encoding: "utf8", maxBuffer: 1 << 28 })
+  .split("
+").filter((f) => (f.endsWith(".ts") || f.endsWith(".vue")) && !f.includes(".test."));
+const findClose = (text, open) => {
+  let depth = 0;
+  for (let i = open; i < text.length; i += 1) {
+    if (text[i] === "(") depth += 1;
+    else if (text[i] === ")") { depth -= 1; if (depth === 0) return i; }
+  }
+  return -1;
+};
+for (const file of files) {
+  const text = fs.readFileSync(file, "utf8");
+  for (const match of text.matchAll(/getResult(?:Async)?\(/gu)) {
+    const close = findClose(text, match.index + match[0].length - 1);
+    if (close === -1) continue;
+    const after = text.slice(close + 1, close + 40).replace(/\s+/gu, " ");
+    if (/^\s*\.(match|orTee|andTee|unwrapOr|mapErr|andThen|map|orElse)/u.test(after)) continue;
+    console.log(`${file}:${text.slice(0, match.index).split("
+").length}  after: ${after.slice(0, 34)}`);
+  }
+}'
+```
+
+What it still reports is the chain assigned to a named `const` and terminated on a later line — which is the
+repo's own preference over nesting the call inside its own terminator, so those are read rather than counted.
+On 2026-08-30 that was nine sites, all of them terminated.
 
 ## Exclusions
 
@@ -32,6 +81,11 @@ grep -rn 'new Error(' --include=*.ts --include=*.vue packages/app/app packages/a
   Throws are that exemption at scale — they are the bulk of every `new Error` grep and none of them is a finding.
 - `azure-mock`'s "not supported by this mock" throws, which are the same exemption worn differently.
 - `toAppError` itself, which is the mechanism that wraps an unknown throw into an `Error`.
+- The five `console.warn` calls: two report a browser capability in `store/message/room/liveKit.ts`, two are the
+  Same rate-limiter bypass note in the tRPC middleware and the Nitro asset route, and one is `ignoreWarn.ts`'s own
+  Mechanism. None terminates a `Result`, which is what the `.orTee(console.error)` rule is about. That the
+  Rate-limiter pair states its key derivation, its warning and its rationale twice is a `file-organization`
+  Finding, raised rather than swept here.
 - `requireAuthData`, where the whole point is that the auth api's own sentence reaches the user — the wrapper
   Would prefix it with an operation and an entity name and bury it. The reason is written at the call site.
 
