@@ -2,8 +2,7 @@ import type { CacheTag } from "@/models/cache/CacheTag";
 import type { Promisable } from "type-fest";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
-import { checkIsAlertedByErrorLink } from "@/services/trpc/errorLink";
-import { useAlertStore } from "@/store/alert";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useCacheStore } from "@/store/cache";
 import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 
@@ -50,8 +49,6 @@ interface QueryOptions<TResult> {
 }
 
 export const useMutation = () => {
-  const alertStore = useAlertStore();
-  const { createAlert } = alertStore;
   const cacheStore = useCacheStore();
   const { invalidateTags } = cacheStore;
   // Which call is the latest for a target. Only supersede-mode operations take a number here — every read,
@@ -129,9 +126,7 @@ export const useMutation = () => {
         // Record that the value the user is looking at was never persisted
         rollback?.();
         if (onError) await onError(error);
-        // The error link already put the codes it owns in front of the user, so alerting the same message here
-        // Would stack two identical toasts on every mutation this primitive runs
-        else if (!checkIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+        else createErrorAlert(error);
         return { error, status: MutationStatus.Failed };
       },
     );

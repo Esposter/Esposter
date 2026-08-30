@@ -13,8 +13,7 @@ import { authClient } from "@/services/auth/authClient";
 import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { checkIsAlertedByErrorLink } from "@/services/trpc/errorLink";
-import { useAlertStore } from "@/store/alert";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
@@ -27,8 +26,6 @@ export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const { executeMutation } = useMutation();
-  const alertStore = useAlertStore();
-  const { createAlert } = alertStore;
   const roomStore = useRoomStore();
   const threadFollowStore = useThreadFollowStore();
   const { storeFollowThread } = threadFollowStore;
@@ -85,7 +82,7 @@ export const useDataStore = defineStore("message/data", () => {
       () => true,
       async (error) => {
         await storeDeleteMessage(newMessage);
-        if (!checkIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+        createErrorAlert(error);
         return false;
       },
     );
@@ -113,9 +110,7 @@ export const useDataStore = defineStore("message/data", () => {
         // From its own sender (the subscription echo is filtered for the sending session, so nothing restores
         // It) and invites the duplicate resend /docs/architecture/persist-then-notify exists to prevent. The
         // Bubble also stays the sender's copy of a genuinely rejected message — the composer is already reset —
-        // So it holds its loading state and the alert says what happened. Only when errorLink has not already
-        // Said it: a rejected send is characteristically one of the codes it owns (slowmode, a Zod rejection),
-        // And alerting again puts two identical toasts on screen for one send.
+        // So it holds its loading state and the alert says what happened.
         // The composer's attachments come back, held rather than discarded since the bubble — so the user retries
         // With the files already uploaded instead of re-picking them, and their grants can still reclaim the
         // Blobs. The cost is the lost-response case: a message that did land keeps a composer copy whose delete
@@ -123,7 +118,7 @@ export const useDataStore = defineStore("message/data", () => {
         // Against a certain leak plus lost work on every deterministic rejection, which is what slowmode and the
         // Word filter are
         await MessageHookMap.RollbackSend.run(target, sentFileIds);
-        if (!checkIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+        createErrorAlert(error);
         return false;
       },
     );

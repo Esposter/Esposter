@@ -5,7 +5,7 @@ import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { generateImageThumbnail } from "@/services/file/generateImageThumbnail";
 import { uploadFileToSas } from "@/services/file/uploadFileToSas";
-import { checkIsAlertedByErrorLink } from "@/services/trpc/errorLink";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useAlertStore } from "@/store/alert";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
@@ -112,9 +112,7 @@ export const useUploadFiles = (target: MaybeRefOrGetter<ComposerTarget>) => {
             targetValue,
             seededFileSasEntities.map(({ id }) => id),
           );
-          // A rejected SAS request is one of the codes errorLink owns, so it has already told the user; a failed
-          // Blob PUT is not a tRPC call at all and this is the only thing that can
-          if (!checkIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+          createErrorAlert(error);
         }),
       () => {
         storeUploadEnd(targetValue);
