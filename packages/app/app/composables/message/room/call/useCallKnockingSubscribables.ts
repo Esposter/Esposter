@@ -19,20 +19,11 @@ export const useCallKnockingSubscribables = (callId: string, onlineSubscribableC
       if (!callSessionId) return undefined;
 
       const knockerAdmittedUnsubscribable = $trpc.callSession.knocker.onKnockerAdmitted.subscribe(callSessionId, {
+        // Neither call can reject — `joinCall` unwinds and alerts its own failure — so there is nothing here
+        // For a terminator to hold, and a failed admit leaves the user on the pre-join screen they knocked from
         onData: getSynchronizedFunction(async () => {
-          await getResultAsync(async () => {
-            cancelKnock();
-            await joinCall(callId);
-          }).match(noop, (error) => {
-            const message = `Unable to join call: ${error.message}`;
-            showError(
-              createError({
-                message,
-                status: 500,
-                statusText: message,
-              }),
-            );
-          });
+          cancelKnock();
+          await joinCall(callId);
         }),
       });
       const knockerDismissedUnsubscribable = $trpc.callSession.knocker.onKnockerDismissed.subscribe(callSessionId, {

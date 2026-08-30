@@ -4,7 +4,6 @@ import type { VBtn } from "vuetify/components";
 
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface PreJoinProps {
   callId: string;
@@ -56,15 +55,9 @@ const buttonProps = computed<VBtn["$props"]>(() => ({
           @click="
             async () => {
               isRequestingJoin = true;
-              await withFinalizerAsync(
-                async () => {
-                  if (isCreator) await joinCall(callId);
-                  else await knockCall(callId);
-                },
-                () => {
-                  isRequestingJoin = false;
-                },
-              );
+              if (isCreator) await joinCall(callId);
+              else await knockCall(callId);
+              isRequestingJoin = false;
             }
           "
         />

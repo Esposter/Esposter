@@ -2,12 +2,13 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { useAlertStore } from "@/store/alert";
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { getMockSession } from "@@/server/trpc/context.test";
-import { RoutePath } from "@esposter/shared";
+import { RoutePath, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -86,6 +87,30 @@ describe(useCallStore, () => {
     callThreadRootRowKey.value = rootRowKey;
 
     expect(callRoute.value).toBe(expected);
+  });
+
+  // A join is the user's own click, and a rejection only this store sees — the callers are an inline click
+  // Handler and a subscription onData, neither of which holds anything to catch a rethrow. So it unwinds the
+  // State the attempt wrote and alerts, rather than leaving the failure to a caller that does not exist
+  test("alerts and unwinds a rejected join", async () => {
+    expect.hasAssertions();
+
+    server.use(
+      trpcMsw.callSession.joinCallByRoomId.mutation(() => {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+    );
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
+    const callStore = useCallStore();
+    const { joinCallByRoomId } = callStore;
+    const { activeCallSessionId, callRoomId, isConnecting } = storeToRefs(callStore);
+    await joinCallByRoomId(roomId);
+
+    expect(callRoomId.value).toBe("");
+    expect(activeCallSessionId.value).toBe("");
+    expect(isConnecting.value).toBe(false);
+    expect(takeOne(alerts.value).type).toBe("error");
   });
 
   test("routes to the call's own page when the call belongs to no room", () => {

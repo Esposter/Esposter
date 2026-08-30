@@ -2,7 +2,7 @@
 import type { VBtn } from "vuetify/components";
 
 import { useCallStore } from "@/store/message/room/call";
-import { RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { RoutePath } from "@esposter/shared";
 
 const callStore = useCallStore();
 const { createCall } = callStore;
@@ -23,16 +23,9 @@ const buttonProps = computed<VBtn["$props"]>(() => ({
         @click="
           async () => {
             isCreating = true;
-            await withFinalizerAsync(
-              async () => {
-                const newCallSessionId = await createCall();
-                if (!newCallSessionId) return;
-                await navigateTo(RoutePath.Calls(newCallSessionId));
-              },
-              () => {
-                isCreating = false;
-              },
-            );
+            const newCallSessionId = await createCall();
+            isCreating = false;
+            if (newCallSessionId) await navigateTo(RoutePath.Calls(newCallSessionId));
           }
         "
       />
