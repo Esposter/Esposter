@@ -1,6 +1,6 @@
 ---
 name: sweeps
-description: Esposter repo-wide sweep conventions — progress tracked as a ledger in .agents/ledgers/ (one file per sweep, one index row, promoted to a folder of coverage files as it grows), sweeps are repo state and never proposals, when a mechanical pass earns a ledger and when it is just a commit, the six things a ledger may hold and the explanatory prose it may not, state living at the leaf with no rolled-up counts, reading the leaf rather than the tree, one agent per leaf for parallel passes, every sweep being standing and the changed-files command that resumes one, a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same) with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all, handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill, one unit per commit chunked to the review budget, behaviour-preserving passes and where a behaviour-changing finding goes instead, and what belongs in the commit message rather than the ledger. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
+description: Esposter repo-wide sweep conventions — progress tracked as a ledger in .agents/ledgers/ (one file per sweep, one index row, promoted to a folder of coverage files as it grows), sweeps are repo state and never proposals, when a mechanical pass earns a ledger and when it is just a commit, the six things a ledger may hold and the explanatory prose it may not, state living at the leaf with no rolled-up counts, reading the leaf rather than the tree, one agent per leaf for parallel passes, every sweep being standing and the changed-files command that resumes one, a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same) with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all, handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill, one unit per commit chunked to the review budget, proving a find recipe can fail before believing it passed, behaviour-preserving passes and where a behaviour-changing finding goes instead, and what belongs in the commit message rather than the ledger. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
 ---
 
 # Sweeps
@@ -10,6 +10,24 @@ A **sweep** carries one already-settled convention across a tree too large to fi
 Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row in its `README.md` index. A ledger that outgrows a screen, or that two agents want to work at once, becomes a folder of one file per area — the index row still carries the metadata, so the folder holds nothing but coverage. It grows the way source does: split when a unit earns its own home, never to hit a number.
 
 **A sweep is never a proposal.** A proposal designs behaviour that does not exist yet and is deleted when it ships; a sweep changes no behaviour at all. Filing one under `packages/app/content/docs/proposals/` mislabels maintenance as design and puts a never-ending standing sweep in a folder whose contents are all supposed to leave.
+
+## A scan that reports nothing
+
+A find recipe that comes back empty is the same shape as a clean tree, so a broken scan reads as a finished
+sweep. Two ways it has actually happened here, both silent:
+
+- **`new RegExp` built from a template literal inside `node -e '...'`.** The shell eats one level of escaping
+  Before node sees it, so a `\b` written for a word boundary arrives as a **backspace character** and the regex
+  Matches nothing. It survives a glance because `JSON.stringify` renders a real backspace as `\b` as well, so
+  Printing `regex.source` looks right. Use a regex **literal** (`/\bfoo\b/u`), `String.raw`, or a plain
+  `.includes`. A literal is unaffected — `/getResult\(/u` still means an escaped paren however the shell mangles
+  It — and a heredoc (`<<'PY'`, `<<'JS'`) eats nothing at all, which is why the longer recipes use one.
+- **A filter on the wrong field.** An author login that differs between two APIs, a path prefix that never
+  Matches, a `--jq` selector against the wrong payload shape — each returns an empty set and exit 0.
+
+So **prove the scan can fail before believing it passed**: run it against a known violation, or break one on
+purpose and confirm it is reported. The rule the `testing` skill applies to a new test applies to a new recipe —
+a check that cannot fail is not evidence.
 
 ## Does it earn a file?
 
