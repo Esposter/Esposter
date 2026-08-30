@@ -9,7 +9,7 @@ import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { RoutePath, checkIsUuidV4, withFinalizerAsync } from "@esposter/shared";
+import { checkIsUuidV4, RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
 // One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor

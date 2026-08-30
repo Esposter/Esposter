@@ -11,7 +11,7 @@ import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useDialogStore } from "@/store/message/room/dialog";
 import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
-import { Operation, RoutePath, takeOne, checkIsUuidV4 } from "@esposter/shared";
+import { checkIsUuidV4, Operation, RoutePath, takeOne } from "@esposter/shared";
 
 export const useRoomStore = defineStore("message/room", () => {
   const { $trpc } = useNuxtApp();

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { validate } from "@/services/router/validate";
+import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { usePostStore } from "@/store/post";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
-definePageMeta({ middleware: "auth", validate });
+definePageMeta({ middleware: "auth", validate: checkIsUuidRouteId });
 
 const post = await useReadPostFromRoute();
 // This form edits a title, and a comment has none — reading one as a root is the thread page's business, not

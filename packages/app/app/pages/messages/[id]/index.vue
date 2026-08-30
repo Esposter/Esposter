@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { validate } from "@/services/router/validate";
+import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
 import { requireRouteParam } from "@/util/router/requireRouteParam";
 
-definePageMeta({ middleware: "auth", validate });
+definePageMeta({ middleware: "auth", validate: checkIsUuidRouteId });
 
 const { currentRoute } = useRouter();
 const { $trpc } = useNuxtApp();

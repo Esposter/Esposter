@@ -1,5 +1,5 @@
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
-import { Operation, checkIsUuidV4 } from "@esposter/shared";
+import { checkIsUuidV4, Operation } from "@esposter/shared";
 
 // The check every room procedure builder runs before its membership, ownership or permission read: the id it is
 // About to look up must be one the table could hold. The read is what the malformed id invalidates, so all three
