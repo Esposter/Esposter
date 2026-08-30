@@ -14,7 +14,7 @@ export const usePopupStore = defineStore("clicker/popup", () => {
     incrementPoints(mouseStore.mousePower);
     popups.value.push({ duration, id, left: event.pageX, points: mouseStore.mousePower, top: event.pageY });
     useTimeoutFn((popupId: string) => {
-      const index = popups.value.findIndex((p) => p.id === popupId);
+      const index = popups.value.findIndex((popup) => popup.id === popupId);
       if (index === -1) return;
       popups.value = popups.value.toSpliced(index, 1);
     }, duration);

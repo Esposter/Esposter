@@ -10,7 +10,7 @@ Store shape and the rules around a mutation: `storeToRefs`, store-to-store dot-a
 | `app/store/resource`                                                                                                     | —          | blade-scoped state torn down on unmount                                                                                                                                                     |
 | `app/store/dungeons`                                                                                                     | —          | class instances in reactive state; the game stores predate most of this                                                                                                                     |
 | `app/store/post`, `app/store/user`, `app/store/survey`, `app/store/achievement`                                          | 2026-08-30 | clean — every `useMutation` carries a key, every rollback is scoped to the one row its write touches rather than a list copy, and the three dialog stores are per-service with `""` targets |
-| `app/store/dashboard`, `emailEditor`, `flowchartEditor`, `webpageEditor`, `clicker`                                      | —          | the editor stores                                                                                                                                                                           |
+| `app/store/dashboard`, `emailEditor`, `flowchartEditor`, `webpageEditor`, `clicker`                                      | 2026-08-30 | store-to-store access is already right across all five; the email editor was missing the load seed every other content store has, fixed as its own commit                                   |
 
 ## Exclusions
 

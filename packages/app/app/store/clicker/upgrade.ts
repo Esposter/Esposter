@@ -18,17 +18,17 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   };
   const unlockedUpgrades = computed<Upgrade[]>(() =>
     upgrades.value.filter(({ unlockConditions }) =>
-      unlockConditions.every((uc) => {
-        const { type } = uc;
+      unlockConditions.every((unlockCondition) => {
+        const { type } = unlockCondition;
 
         switch (type) {
           case Target.Building: {
-            const foundBuilding = clickerStore.clicker.boughtBuildings.find(({ id }) => id === uc.id);
-            if (foundBuilding) return foundBuilding.amount >= uc.amount;
+            const foundBuilding = clickerStore.clicker.boughtBuildings.find(({ id }) => id === unlockCondition.id);
+            if (foundBuilding) return foundBuilding.amount >= unlockCondition.amount;
             break;
           }
           case Target.Upgrade: {
-            const foundUpgrade = clickerStore.clicker.boughtUpgrades.find(({ id }) => id === uc.id);
+            const foundUpgrade = clickerStore.clicker.boughtUpgrades.find(({ id }) => id === unlockCondition.id);
             if (foundUpgrade) return true;
             break;
           }
