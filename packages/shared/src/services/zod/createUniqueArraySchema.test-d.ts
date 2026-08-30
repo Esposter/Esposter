@@ -6,64 +6,38 @@ describe("createUniqueArraySchema type", () => {
   test("primitive", () => {
     expect.hasAssertions();
 
-    expectTypeOf<ReturnType<typeof createUniqueArraySchema<z.ZodString>>>().toEqualTypeOf<z.ZodArray<z.ZodString>>();
+    expectTypeOf(createUniqueArraySchema(z.string())).toEqualTypeOf<z.ZodArray<z.ZodString>>();
   });
 
   test("object", () => {
     expect.hasAssertions();
 
-    expectTypeOf<
-      ReturnType<
-        typeof createUniqueArraySchema<
-          { id: string },
-          { id: string },
-          z.ZodObject<{
-            id: z.ZodString;
-          }>
-        >
-      >
-    >().toEqualTypeOf<
-      z.ZodArray<
-        z.ZodObject<{
-          id: z.ZodString;
-        }>
-      >
+    expectTypeOf(createUniqueArraySchema(z.object({ id: z.string() }), "id")).toEqualTypeOf<
+      z.ZodArray<z.ZodObject<{ id: z.ZodString }>>
     >();
+  });
+
+  test("object without a key", () => {
+    expect.hasAssertions();
+
+    // @ts-expect-error a Set compares items by reference, so an object schema is unique only against a key
+    expectTypeOf(createUniqueArraySchema).toBeCallableWith(z.object({ id: z.string() }));
   });
 
   test("generic object", () => {
     expect.hasAssertions();
 
-    expectTypeOf<
-      z.output<
-        ReturnType<
-          typeof createUniqueArraySchema<
-            { id: string },
-            unknown,
-            z.ZodType<{
-              id: string;
-            }>
-          >
-        >
-      >
-    >().toEqualTypeOf<{ id: string }[]>();
+    const genericObjectSchema: z.ZodType<{ id: string }> = z.object({ id: z.string() });
+    const schema = createUniqueArraySchema(genericObjectSchema, "id");
+
+    expectTypeOf<z.output<typeof schema>>().toEqualTypeOf<{ id: string }[]>();
   });
 
   test("generic mapped object", () => {
     expect.hasAssertions();
 
-    expectTypeOf<
-      z.output<
-        ReturnType<
-          typeof createUniqueArraySchema<
-            { id: "id" },
-            { id: "id" },
-            z.ZodObject<{
-              id: z.ZodLiteral<"id">;
-            }>
-          >
-        >
-      >
-    >().toEqualTypeOf<{ id: "id" }[]>();
+    const schema = createUniqueArraySchema(z.object({ id: z.literal("id") }), "id");
+
+    expectTypeOf<z.output<typeof schema>>().toEqualTypeOf<{ id: "id" }[]>();
   });
 });
