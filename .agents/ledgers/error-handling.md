@@ -2,27 +2,31 @@
 
 `try`/`catch` is already lint-banned, so this sweep is about the shapes a linter cannot see: what a chain wraps, how it terminates, and who alerts.
 
-| Unit                                                             | Swept      | Notes                                                                                  |
-| ---------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------- |
-| `server/trpc/routers`                                            | —          | the guard constructors vs a hand-rolled `TRPCError`; `requireEntity`/`requireMutation` |
-| `server/services/message`                                        | —          | wrapping only what can actually fail                                                   |
-| `server/services` — the rest                                     | —          | `resource`, `room`, `survey`, `blueprint`, `rateLimiter` and the small folders         |
-| `server/composables`                                             | 2026-08-30 | nine client constructors — none wraps a call, so there is nothing to terminate         |
-| `packages/azure-functions`                                       | 2026-08-30 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)`  |
-| `app/store/message`                                              | —          | who alerts a rejection — `errorLink` ownership, background reads, coalescing           |
-| `app/store` — the rest                                           | —          | `dungeons`, `resource` and the small stores                                            |
-| `app/composables/message`, `app/composables/resource`            | —          | a callback nothing awaits terminating its own `Result`                                 |
-| `app/composables` — the rest                                     | —          | `dungeons` is most of it                                                               |
-| `app/services/resource`, `app/services/message`                  | —          | `withFinalizer` vs `withFinalizerAsync`                                                |
-| `app/services` — the rest, `app/util`                            | —          | `dungeons` is most of it                                                               |
-| `app/components/Message`                                         | —          | inline handlers that swallow, and `.orTee(console.error)` vs a bare catch              |
-| `app/components/Resource`, `app/components/Dungeons`             | —          |                                                                                        |
-| `app/components` — the rest                                      | —          |                                                                                        |
-| `packages/db`, `packages/infra`                                  | 2026-08-30 | `db` rolls back then rethrows; `infra` is resource declarations with no error path     |
-| `packages/virrun` — `src/services/exec`                          | —          |                                                                                        |
-| `packages/virrun` — the rest                                     | —          |                                                                                        |
-| `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-08-30 | every throw is a stub, an unsupported-in-mock, or an Azure wire response               |
-| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-08-30 | clean — every throw is a named error class, no chain to terminate outside `shared`     |
+| Unit                                                             | Swept      | Notes                                                                                                 |
+| ---------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------- |
+| `server/trpc/routers/message`, `server/trpc/routers/room`        | —          | the guard constructors vs a hand-rolled `TRPCError`; `requireEntity`/`requireMutation`                |
+| `server/trpc/routers` — `call`, `role`, `userToRoom`, `webhook`  | —          | plus `searchHistory` and `index.ts`                                                                   |
+| `server/trpc/routers` — the resource family                      | —          | `resource`, `blueprint`, `note`, `program`, `sheet`, `todoList`, `survey`                             |
+| `server/trpc/routers` — the social and editor routers            | —          | `post`, `like`, `block`, `friend`, `friendRequest`, `user`, and the four editors                      |
+| `server/trpc/routers` — the rest                                 | —          | `achievement`, `app`, `clicker`, `dungeons`, `notification`, `pushSubscription`, `session`, `storage` |
+| `server/services/message`                                        | —          | wrapping only what can actually fail                                                                  |
+| `server/services` — the rest                                     | —          | `resource`, `room`, `survey`, `blueprint`, `rateLimiter` and the small folders                        |
+| `server/composables`                                             | 2026-08-30 | nine client constructors — none wraps a call, so there is nothing to terminate                        |
+| `packages/azure-functions`                                       | 2026-08-30 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)`                 |
+| `app/store/message`                                              | —          | who alerts a rejection — `errorLink` ownership, background reads, coalescing                          |
+| `app/store` — the rest                                           | —          | `dungeons`, `resource` and the small stores                                                           |
+| `app/composables/message`, `app/composables/resource`            | —          | a callback nothing awaits terminating its own `Result`                                                |
+| `app/composables` — the rest                                     | —          | `dungeons` is most of it                                                                              |
+| `app/services/resource`, `app/services/message`                  | —          | `withFinalizer` vs `withFinalizerAsync`                                                               |
+| `app/services` — the rest, `app/util`                            | —          | `dungeons` is most of it                                                                              |
+| `app/components/Message`                                         | —          | inline handlers that swallow, and `.orTee(console.error)` vs a bare catch                             |
+| `app/components/Resource`, `app/components/Dungeons`             | —          |                                                                                                       |
+| `app/components` — the rest                                      | —          |                                                                                                       |
+| `packages/db`, `packages/infra`                                  | 2026-08-30 | `db` rolls back then rethrows; `infra` is resource declarations with no error path                    |
+| `packages/virrun` — `src/services/exec`                          | —          |                                                                                                       |
+| `packages/virrun` — the rest                                     | —          |                                                                                                       |
+| `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-08-30 | every throw is a stub, an unsupported-in-mock, or an Azure wire response                              |
+| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-08-30 | clean — every throw is a named error class, no chain to terminate outside `shared`                    |
 
 Rows were split at their directory boundaries on 2026-08-30, because a unit of 150–740 files is grepped rather
 than read and a grep pass that ticks a row records a sweep that never happened. The mechanical half was run

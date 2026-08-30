@@ -250,11 +250,14 @@ export const baseRoomRouter = router({
       // The room the token names is read and locked before a use is consumed, and the lock is held through the
       // Membership insert: a pause committing between the check below and that insert would otherwise let one more
       // Member in through a link the room had already closed
-      const invitedRoom = await tx.query.invitesInMessage.findFirst({
-        columns: { roomId: true },
-        where: { id: { eq: input } },
-      });
-      if (!invitedRoom) throw getNotFoundError(DatabaseEntityType.Invite, input);
+      const invitedRoom = await requireEntity(
+        tx.query.invitesInMessage.findFirst({
+          columns: { roomId: true },
+          where: { id: { eq: input } },
+        }),
+        DatabaseEntityType.Invite,
+        input,
+      );
 
       await tx
         .select({ id: roomsInMessage.id })

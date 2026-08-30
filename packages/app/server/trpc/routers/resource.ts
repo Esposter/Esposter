@@ -37,7 +37,7 @@ import { withResourceRollback } from "@@/server/services/resource/withResourceRo
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { emitStorageUsage } from "@@/server/services/storage/emitStorageUsage";
 import { router } from "@@/server/trpc";
-import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
@@ -430,11 +430,14 @@ export const resourceRouter = router({
   // Re-publishing that draft would ship the same dead urls, with re-uploading every asset the only recovery
   restorePublishedVersion: getOwnerProcedure(undefined, restorePublishedVersionInputSchema, "id").mutation<Resource>(
     async ({ ctx, input: { id, version } }) => {
-      const publishedContent = await readContentBlob(
-        ResourceDefinitionMap[ctx.resource.type].contentSchema,
-        getPublishedContentBlobName(id, version),
+      const publishedContent = await requireEntity(
+        readContentBlob(
+          ResourceDefinitionMap[ctx.resource.type].contentSchema,
+          getPublishedContentBlobName(id, version),
+        ),
+        DatabaseEntityType.Resource,
+        `${id}/${version}`,
       );
-      if (publishedContent === undefined) throw getNotFoundError(DatabaseEntityType.Resource, `${id}/${version}`);
       // Cloned before the transaction opens, exactly as `publishResource` does it: the clone is one storage
       // Round trip per referenced asset, and running it inside would hold a pooled connection — not just the
       // `resources` row lock — for that whole time, so a handful of concurrent restores of asset-heavy
