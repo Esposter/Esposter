@@ -7,6 +7,7 @@ import { OPEN_EMAIL_EDITOR_MESSAGE } from "@/services/emailEditor/constants";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { DataSourceTypeItemCategoryDefinitionMap } from "@/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitions";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
@@ -87,9 +88,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
           // So a capped read hands the decision to the Editor blade's confirm instead of exporting
           if (getDatasetTruncation(dataset)) pendingDataset.value = dataset;
           else exportPersonalizedHtml(dataset.rows);
-        }).match(noop, (error) => {
-          createAlert(error.message, "error");
-        });
+        }).match(noop, createErrorAlert);
       },
       icon: "mdi-language-html5",
       label: "Personalized HTML",

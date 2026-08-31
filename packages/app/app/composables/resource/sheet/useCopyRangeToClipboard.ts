@@ -1,6 +1,6 @@
 import { copyToClipboard } from "@/services/resource/sheet/commands/copyToClipboard";
 import { filterDataSourceRange } from "@/services/resource/sheet/dataSource/filterDataSourceRange";
-import { useAlertStore } from "@/store/alert";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useSheetStore } from "@/store/resource/sheet";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useRowStore } from "@/store/resource/sheet/row";
@@ -13,8 +13,6 @@ export const useCopyRangeToClipboard = () => {
   const { copyIncludesHeaders, filteredRows } = storeToRefs(rowStore);
   const cellStore = useCellStore();
   const { selectedCellRange } = storeToRefs(cellStore);
-  const alertStore = useAlertStore();
-  const { createAlert } = alertStore;
   return async () => {
     const range = selectedCellRange.value;
     if (!range) return;
@@ -29,9 +27,7 @@ export const useCopyRangeToClipboard = () => {
     };
     await getResultAsync(() => copyToClipboard(rangeDataSource, { includeHeaders: copyIncludesHeaders.value })).match(
       noop,
-      (error) => {
-        createAlert(error.message, "error");
-      },
+      createErrorAlert,
     );
   };
 };

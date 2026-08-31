@@ -3,7 +3,7 @@ import type { Editor, EditorConfig, ProjectData } from "grapesjs";
 import { authClient } from "@/services/auth/authClient";
 import { GRAPES_JS_EDITOR_CONTAINER_ID } from "@/services/grapesjs/constants";
 import { readUploadFiles } from "@/services/grapesjs/readUploadFiles";
-import { useAlertStore } from "@/store/alert";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync, noop } from "@esposter/shared";
 import grapesJS from "grapesjs";
 
@@ -24,8 +24,6 @@ export const useGrapesJsEditor = async (
   // https://antfu.me/posts/async-with-composition-api
   const currentInstance = getCurrentInstance();
   const { data: session } = await authClient.useSession(useFetch);
-  const alertStore = useAlertStore();
-  const { createAlert } = alertStore;
   const validateFile = useValidateFile();
   const editor = shallowRef<Editor>();
   // The document stores branch between the authenticated document path and local storage,
@@ -51,9 +49,7 @@ export const useGrapesJsEditor = async (
                       .andTee((url) => {
                         newEditor.AssetManager.add(url);
                       })
-                      .match(noop, (error) => {
-                        createAlert(error.message, "error");
-                      });
+                      .match(noop, createErrorAlert);
                   }),
                 );
               },

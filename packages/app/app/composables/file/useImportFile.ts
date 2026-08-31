@@ -1,20 +1,20 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
 import { getFilePickerTypes } from "@/services/file/getFilePickerTypes";
-import { useAlertStore } from "@/store/alert";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync, noop, takeOne } from "@esposter/shared";
 import { showOpenFilePicker } from "show-open-file-picker";
 
-export const useImportFile = () => {
-  const alertStore = useAlertStore();
-  const { createAlert } = alertStore;
-  return (mimeType: MimeType, accept: string, onSelect: (file: File) => Promise<void>): Promise<void> =>
+export const useImportFile =
+  () =>
+  (mimeType: MimeType, accept: string, onSelect: (file: File) => Promise<void>): Promise<void> =>
     getResultAsync(async () => {
       const handles = await showOpenFilePicker({ types: getFilePickerTypes(mimeType, accept) });
       const file = await takeOne(handles).getFile();
       await onSelect(file);
     }).match(noop, (error) => {
-      if (error instanceof Error && error.name === "AbortError") return;
-      createAlert(error instanceof Error ? error.message : String(error), "error");
+      // Dismissing the picker rejects like a failure and is not one
+      if (error.name === "AbortError") return;
+
+      createErrorAlert(error);
     });
-};
