@@ -23,7 +23,7 @@
 | `app/composables` — the rest                                     | —          | `dungeons` is unread; `shared` and the cross-cutting singles were swept ahead of it                   |
 | `app/services/resource`, `app/services/message`                  | 2026-08-31 | two suggestion callbacks, a `.match(noop, noop)`, and a wrapper whose only handler rethrew            |
 | `app/services` — the rest, `app/util`                            | —          | `dungeons` is most of it                                                                              |
-| `app/components/Message`                                         | —          | inline handlers that swallow, and `.orTee(console.error)` vs a bare catch                             |
+| `app/components/Message`                                         | 2026-08-31 | a hover-time roles read and the app's one clipboard write reported nowhere                            |
 | `app/components/Resource`, `app/components/Dungeons`             | —          |                                                                                                       |
 | `app/components` — the rest                                      | —          |                                                                                                       |
 | `packages/db`, `packages/infra`                                  | 2026-08-30 | `db` rolls back then rethrows; `infra` is resource declarations with no error path                    |
