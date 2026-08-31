@@ -18,10 +18,13 @@ export const useReadSearchedMessages = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
-  const { getBoundCount, getBoundPage, getReadMoreItems } = searchMessageStore;
-  const { isSearching, menu, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
+  const { getBoundCount, getBoundIsSearching, getBoundPage, getReadMoreItems } = searchMessageStore;
+  const { menu, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
   const searchHistoryStore = useSearchHistoryStore();
   const { createSearchHistory } = searchHistoryStore;
+  // The pending flag the finalizer clears is the one the read raised, which the finalizer cannot bind for
+  // Itself — by the time it runs the room may have moved, and re-binding there would clear the arriving room's
+  let boundIsSearching: Ref<boolean> | undefined;
   return getReadMoreItems(
     async (offset) => {
       const roomId = currentRoomId.value;
@@ -45,7 +48,8 @@ export const useReadSearchedMessages = () => {
       if (checkIsSearchQueryEmpty(query, filters)) return { hasMore: false, items: [] };
 
       menu.value = false;
-      isSearching.value = true;
+      boundIsSearching = getBoundIsSearching();
+      boundIsSearching.value = true;
       isRightDrawerOpen.value = true;
       rightDrawer.value = RightDrawer.Search;
       const boundCount = getBoundCount();
@@ -65,7 +69,7 @@ export const useReadSearchedMessages = () => {
       return data;
     },
     () => {
-      isSearching.value = false;
+      if (boundIsSearching) boundIsSearching.value = false;
     },
   );
 };
