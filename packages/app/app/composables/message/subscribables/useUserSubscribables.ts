@@ -10,7 +10,7 @@ export const useUserSubscribables = async () => {
   const memberStore = useMemberStore();
   const { members } = storeToRefs(memberStore);
   const statusStore = useStatusStore();
-  const { statusMap } = storeToRefs(statusStore);
+  const { storeStatus } = statusStore;
 
   useOnlineSubscribable(
     [() => getIdsKey(members.value), session],
@@ -22,7 +22,7 @@ export const useUserSubscribables = async () => {
 
       const upsertStatusUnsubscribable = $trpc.user.onUpsertStatus.subscribe(newMemberIds, {
         onData: ({ userId, ...userStatus }) => {
-          statusMap.value.set(userId, userStatus);
+          storeStatus(userId, userStatus);
         },
       });
 

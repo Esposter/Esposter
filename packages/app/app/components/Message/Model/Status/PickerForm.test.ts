@@ -60,8 +60,8 @@ describe("messageModelStatusPickerForm", () => {
     expect.hasAssertions();
 
     const statusStore = useStatusStore();
-    const { statusMap } = storeToRefs(statusStore);
-    statusMap.value.set(userId, {
+    const { getStatus, storeStatus } = statusStore;
+    storeStatus(userId, {
       createdAt: new Date(0),
       deletedAt: null,
       expiresAt: null,
@@ -72,7 +72,7 @@ describe("messageModelStatusPickerForm", () => {
     });
     const textField = await submitRejectedMessage();
 
-    expect(statusMap.value.get(userId)?.message).toBe(message);
+    expect(getStatus(userId)?.message).toBe(message);
     expect(textField.props("modelValue")).toBe(message);
   });
 
@@ -82,10 +82,10 @@ describe("messageModelStatusPickerForm", () => {
     expect.hasAssertions();
 
     const statusStore = useStatusStore();
-    const { statusMap } = storeToRefs(statusStore);
+    const { getStatus } = statusStore;
     const textField = await submitRejectedMessage();
 
-    expect(statusMap.value.has(userId)).toBe(false);
+    expect(getStatus(userId)).toBeUndefined();
     expect(textField.props("modelValue")).toBe("");
   });
 
@@ -96,7 +96,7 @@ describe("messageModelStatusPickerForm", () => {
     expect.hasAssertions();
 
     const statusStore = useStatusStore();
-    const { statusMap } = storeToRefs(statusStore);
+    const { storeStatus } = statusStore;
     const storedStatus = {
       createdAt: new Date(0),
       deletedAt: null,
@@ -106,12 +106,12 @@ describe("messageModelStatusPickerForm", () => {
       status: UserStatus.Online,
       updatedAt: new Date(0),
     };
-    statusMap.value.set(userId, storedStatus);
+    storeStatus(userId, storedStatus);
     const component = await mountSuspended(MessageModelStatusPickerForm);
     const textField = component.getComponent(VTextField);
     textField.vm.$emit("update:model-value", draftMessage);
     await flushPromises();
-    statusMap.value.set(userId, { ...storedStatus, isConnected: true });
+    storeStatus(userId, { ...storedStatus, isConnected: true });
     await flushPromises();
 
     expect(textField.props("modelValue")).toBe(draftMessage);
