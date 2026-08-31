@@ -5,8 +5,8 @@ describe("messageEmojiMetadataEntitySchema", () => {
   const emojiTagSchema = messageEmojiMetadataEntitySchema.shape.emojiTag;
 
   // Only the grapheme count is ours — `z.emoji()` owns the charset. A toned character, a flag and a ZWJ
-  // Sequence are each several code points and one cluster, and a keycap is built out of a digit, so these are
-  // The shapes a single-cluster rule rejects by accident
+  // Sequence are each several code points and one cluster, and a keycap is built out of a digit, so a count
+  // Measured in code points rather than clusters would turn all four away
   test.each(["👍🏽", "🇦🇺", "🧑🏽‍💻", "1️⃣"])("accepts the single grapheme %s", (emojiTag) => {
     expect.hasAssertions();
 
