@@ -15,7 +15,7 @@ Working-copy version history was held back on two open questions — when a chec
 
 **Today** the snapshot machinery lives inside `createResourceProcedures`: `publishResource` claims a version on the `resource_publications` row, clones referenced assets into a per-attempt directory, writes `{id}/published/{n}.json`, and repairs itself when a concurrent unpublish breaks the version succession. `readPublishHistory` lists the prefix; `restorePublishedVersion` copies a snapshot back through `saveResourceContent`. A non-publishable type — Blueprint, Program, Sheet, TodoList — has none of this, and its working copy has exactly one recoverable state: the current one.
 
-**This adds** a shared half extracted from that machinery, a second channel, a retention rule, a declared snapshot boundary, one Postgres column for the checkpoint counter and one for publish-time drift, and the Overview and blade surfaces that show them. It changes no blob layout that exists today.
+**This adds** a shared half extracted from that machinery, a second channel, a retention rule, a declared snapshot boundary, one Postgres column for the checkpoint counter and one for publish-time drift, the Overview status row, and a version-history panel that replaces the publish-history blade for every type. It changes no blob layout that exists today.
 
 ### Why not Azure Blob versioning
 
@@ -62,7 +62,7 @@ Reconstitution is the row that matters most, because it is where sharing **fixes
 
 Take is the row where sharing would cost. Publish's take is a transform that may read through `ctx.db`, a version claimed in a transaction, an upload, a succession check and a repair; a checkpoint's is a serialize, a column bump, an upload and an eviction. What they have in common is "upload a blob and charge it". Hiding the succession repair behind a channel-kind flag would move logic that is about publication rows and the unpublish sweep away from the words `publication` and `unpublish`, which is the opposite of what a reader needs. It stays where it is.
 
-The version counter stays in Postgres and is never derived from the listing. That is the rule publish already established and the one thing about it that is subtle: the listing answers _which snapshots exist_, the row answers _what the next version is and which one is live_, and the two are allowed to disagree — an unpublish sweep is best-effort, so retired blobs outlive the row that numbered them. Checkpoints take a `checkpointVersion` column on `resources` rather than a table of their own; there is nothing else to record about a checkpoint that the blob does not already carry.
+The version counter stays in Postgres and is never derived from the listing. That is the rule publish already established and the one thing about it that is subtle: the listing answers _which snapshots exist_, the row answers _what the next version is and which one is live_, and the two are allowed to disagree — an unpublish sweep is best-effort, so retired blobs outlive the row that numbered them. Checkpoints take a `checkpointVersion` column on `resources` rather than a table of their own; there is nothing else to record about a checkpoint that the blob does not already carry — its reason and its owner-typed label ride as blob metadata, which the listing returns, so even the row a named checkpoint looks like it needs turns out not to exist.
 
 ### Two snapshot kinds
 
@@ -126,7 +126,9 @@ sequenceDiagram
   R->>WORK: saveResourceContent — contentVersion++, after-save hooks, activity trail
 ```
 
-Note the first step. A restore is the one operation that destroys draft work on purpose, and today it has no undo — the [publish history](/docs/platform/publish-history) blade warns about it in prose and that is the whole safety net. Checkpointing before overwriting is the cheapest and highest-value trigger in this proposal, and it falls out of the mechanism for free.
+Note the first step, because it is what makes the whole mechanism **append-only**: a rollback is not a rewind, it is an append whose content happens to equal an earlier state. Nothing is mutated and nothing is destroyed — the draft being replaced becomes a checkpoint first, the restore lands as an ordinary save with its own `contentVersion`, and undoing the restore is simply the next append. A restore is the one operation that destroys draft work on purpose, and today it has no undo — the [publish history](/docs/platform/publish-history) blade warns about it in prose and that is the whole safety net. Checkpointing before overwriting is the cheapest and highest-value trigger in this proposal, and it falls out of the mechanism for free.
+
+Two things sit outside that invariant, and both are named here so nobody has to rediscover them as bugs. The **ring buffer** evicts the oldest checkpoint, so append-only holds over recent history rather than all history. The **unpublish sweep** deletes `{id}/published/` outright, because unpublishing exists to make an artifact unreachable and keeping the bytes would defeat it — the checkpoint channel survives an unpublish untouched, so nothing _recoverable_ is lost with it.
 
 ### When a snapshot is taken
 
@@ -154,7 +156,7 @@ The idle-window trigger is what makes this a recovery feature rather than a manu
 
 The published channel keeps everything and prunes nothing — that stays, because publishes are deliberate and rare, and a retired public artifact is something an owner may need to point at.
 
-Checkpoints are a **ring buffer**: a fixed cap in the tens, oldest evicted when a new one lands. Eviction is not a blob delete on its own — it releases the checkpoint's ledger entry in the same step, or the ring buffer becomes a slow quota leak that nothing ever reconciles.
+Checkpoints are a **ring buffer**: a fixed cap in the tens, oldest evicted when a new one lands. Eviction is not a blob delete on its own — it releases the checkpoint's ledger entry in the same step, or the ring buffer becomes a slow quota leak that nothing ever reconciles. This is the bound on the append-only invariant above, and it is taken deliberately: unbounded checkpoints would be charged and visible like any other content the owner keeps, but a long-lived Sheet accumulates fast and the history listing has no limit, so the cap buys a bounded cost and a bounded list at the price of the oldest recovery points.
 
 ### Versions the owner sees
 
@@ -164,14 +166,28 @@ The two counters that reach the UI are different axes and must never be collapse
 
 | Type            | State                            | Status row                                                              |
 | --------------- | -------------------------------- | ----------------------------------------------------------------------- |
-| Not publishable | —                                | version, once at least one checkpoint exists                            |
-| Publishable     | never published                  | `Draft` chip, plus version once at least one checkpoint exists          |
+| Not publishable | —                                | that a restore point exists, once one does                              |
+| Publishable     | never published                  | `Draft` chip, plus that a restore point exists once one does            |
 | Publishable     | published, draft unchanged since | `Published` chip, `v{publishVersion}`, up to date                       |
 | Publishable     | published, draft moved since     | `Published` chip, `v{publishVersion}`, and that changes are unpublished |
 
 The last row needs one thing that does not exist: **`resource_publications` records the `contentVersion` it published from**. Then "the draft has moved since the publish" is a comparison rather than a guess, and the Azure-portal-shaped answer to _is what I am looking at what the world sees_ stops being something an owner works out from timestamps. It is one column and it removes an entire class of "I thought I had published that".
 
-The checkpoint blade is the [publish history](/docs/platform/publish-history) blade generalized — the same table, the same restore dialog, a channel switch — and it appears for every type, not only publishable ones. Publish history's capability gate becomes a gate on the _channel_, not on the blade.
+### The rollback surface
+
+Generalizing the publish-history blade across channels is the cheap answer and the wrong shape. Two things decide it.
+
+**Rollback is wanted where the damage happened, not in a nav item.** Every product that does this well — Docs, Notion, Figma — opens version history from the overflow menu on the thing being edited, as a panel over it, with the selected version rendered read-only in place. Confluence's history-as-a-separate-page is the counterexample, and it is the one people complain about. Today's `View version` navigates to `RoutePath.View(type, id)?version=`, which leaves the owner's place and makes stepping through candidates impossible — so the panel is what replaces it, with a banner over the previewed version carrying `Restore this version` and `Back to current`. Preview-before-commit is what turns restore from a button people fear into browsing.
+
+The panel opens from **`Resource/Blade/Actions`**, not from the editor, because Sheet and TodoList are blade-only types with no Editor blade at all — the blade action bar is the one surface every type has, and it is this repo's equivalent of the overflow menu. It is deep-linkable by route, so the back button and a shared link both work. **Publish history stops being a nav blade** and becomes this panel, which is a change to a shipped surface rather than an addition beside it.
+
+**The owner has one question, so the panel has one list.** Publishes and checkpoints are separate address spaces in storage and the UI has no reason to mirror that: they go into one time-ordered timeline, a publish marked with its `Published v{n}` chip and its public link, a checkpoint with its time and its reason. A `Published only` filter chip appears on publishable types. `Current` is always the first row, so the list is never empty on a resource that has just been created, and the mental model — current, plus the points behind it — is established from the first visit.
+
+A row has to be **choosable**, which a bare `v37 · 14:02` is not. Each carries a reason (`Saved version`, `Before restore`, `Before deploy`, `Auto`), a relative time with the absolute one on hover, and a one-line per-type summary from a `SnapshotSummaryMap` beside the existing type maps — `12 items`, `3 sheets · 1.2k rows`. A `Save version` may carry an owner-typed label, and both label and reason live in **Azure blob metadata**: the listing already returns it, so the rule that a checkpoint needs no table of its own survives.
+
+Restoring emits a success notification carrying an **Undo** action, which restores the checkpoint the restore had just taken. It costs nothing given that checkpoint already exists, and it is what makes the one destructive operation in the feature safe to try.
+
+Two consequences follow. Version numbers collide across channels in one list, so a row is labelled by kind rather than by number. And `checkpointVersion` stops being a number the UI renders at all — an owner picks a version by time and by label, never by ordinal — which is why the status table above reports only that a restore point exists. It remains what the mechanism counts with.
 
 ## What this refactors
 
@@ -187,7 +203,7 @@ Nothing above changes a blob path that exists today, so there is no migration: `
 
 ## Consequences beyond the feature
 
-- **Every resource type gains recovery**, including the ones with no publish path at all. That makes the checkpoint channel core rather than opt-in, which inverts the current dependency: today Publishable owns snapshots, afterwards the shared half is core and Publishable consumes it. The capability admission rule in [resources](/docs/architecture/resources) — a capability exists at two or more adopters — is satisfied trivially by "every type saves", which is the signal that it is not a capability. The shape to copy already exists: `getResourceBladeDefinitions` pushes Overview and Activity unconditionally and gates Publish history behind `hasCapability`, so the checkpoint blade is a third unconditional push rather than a new pattern.
+- **Every resource type gains recovery**, including the ones with no publish path at all. That makes the checkpoint channel core rather than opt-in, which inverts the current dependency: today Publishable owns snapshots, afterwards the shared half is core and Publishable consumes it. The capability admission rule in [resources](/docs/architecture/resources) — a capability exists at two or more adopters — is satisfied trivially by "every type saves", which is the signal that it is not a capability. The shape to copy already exists: `getResourceBladeDefinitions` pushes Overview and Activity unconditionally and gates Publish history behind `hasCapability`, so an unconditional core surface beside a gated one is a pattern already in place rather than a new one. What changes is that this one is a panel over the blade rather than a blade of its own, and `hasCapability` moves from gating the surface to gating one channel's rows within it.
 - **Purge and soft delete are unaffected** and need no new step. Purge takes `{id}/` wholesale, which is already every channel.
 - **Unpublish keeps sweeping only `{id}/published/`.** A checkpoint is not published state and must survive an unpublish; keeping the channels in separate prefixes is what makes that automatic rather than a condition someone has to remember.
 - **Storage grows per owner**, bounded by the ring buffer times the content size. It is charged, metered and visible, so it behaves like any other content the owner keeps rather than like an invisible platform cost — which is precisely what Blob versioning would have been.
@@ -206,10 +222,12 @@ Nothing above changes a blob path that exists today, so there is no migration: `
 | `packages/app/server/trpc/routers/resource.ts`                                  | `readPublishHistory` and `restorePublishedVersion`            |
 | `packages/db-schema/src/schema/resources.ts`                                    | `checkpointVersion` column                                    |
 | `packages/db-schema/src/schema/resourcePublications.ts`                         | published-from `contentVersion` column                        |
-| `packages/app/app/components/Resource/PublishHistory/Index.vue`                 | the blade being generalized across channels                   |
+| `packages/app/app/components/Resource/PublishHistory/Index.vue`                 | the shipped blade the timeline panel replaces                 |
+| `packages/app/app/components/Resource/Blade/Actions.vue`                        | where the version history panel opens from                    |
+| `packages/app/app/services/resource/getResourceBladeDefinitions.ts`             | loses the Publish history nav entry                           |
 | `packages/app/app/components/Resource/Overview.vue`                             | the Status row and the two version numbers                    |
 
 ## Notes
 
-- [Named checkpoints](/docs/sheet-editor/rejected/named-checkpoints) was rejected for the Sheet editor on the grounds that undo/redo already traverses prior states. That rejection stands and does not conflict: it is about the in-session history stack, and every trigger here is about recovery _across_ sessions, where no undo stack exists. The Save version command is the one place they meet, and it is a resource-level command rather than an editor-level one.
+- [Named checkpoints](/docs/sheet-editor/rejected/named-checkpoints) was rejected for the Sheet editor on the grounds that undo/redo already traverses prior states. That rejection stands and does not conflict: it is about the in-session history stack, and every trigger here is about recovery _across_ sessions, where no undo stack exists. The Save version command is the one place they meet, and it is a resource-level command rather than an editor-level one — so the label it may carry names a point in a resource's history rather than a step in an editor's undo stack, which is the thing that rejection turned down.
 - The idle window and the ring-buffer cap are the two numbers this proposal does not fix. Both are constants, both are cheap to change, and neither should be guessed in prose before the first implementation measures a real content blob.
