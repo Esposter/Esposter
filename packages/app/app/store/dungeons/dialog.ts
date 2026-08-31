@@ -8,6 +8,7 @@ import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useSettingsStore } from "@/store/dungeons/settings";
+import { getResultAsync, noop } from "@esposter/shared";
 import { sleep } from "vue-phaserjs";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
@@ -43,7 +44,13 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     return new Promise<void>(
       getSynchronizedFunction(async (resolve) => {
         queuedOnComplete = resolve;
-        await showMessage(scene);
+        // The promise this settles is the gate the dialog flow waits on, and nothing awaits the executor —
+        // `getSynchronizedFunction` hands its rejection to a drain that settles it away. So a failed first
+        // Message reported nowhere and left the flow waiting on a dialog that was never going to show
+        await getResultAsync(() => showMessage(scene)).match(noop, (error) => {
+          console.error(error);
+          resolve();
+        });
       }),
     );
   };

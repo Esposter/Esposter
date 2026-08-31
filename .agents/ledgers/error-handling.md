@@ -14,7 +14,7 @@
 | `server/composables`                                             | 2026-08-30 | nine client constructors — none wraps a call, so there is nothing to terminate                        |
 | `packages/azure-functions`                                       | 2026-08-30 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)`                 |
 | `app/store/message`                                              | 2026-08-31 | five fire-and-forget callbacks now terminate; the silence they relied on is pinned by a test          |
-| `app/store` — the rest                                           | —          | `dungeons`, `resource` and the small stores                                                           |
+| `app/store` — the rest                                           | 2026-08-31 | the dungeons dialog gate never opened on a failed message; the rest reports through `useMutation`     |
 | `app/composables/message/room`                                   | 2026-08-31 | the pre-join device probes and the call-session read reported nothing                                 |
 | `app/composables/message/subscribables`                          | 2026-08-31 | seven `onData` bodies terminate; a dropped event was invisible                                        |
 | `app/composables/message` — the rest                             | —          | `message`, `editor`, `emoji`, `draftsAndSent`, `slashCommand`, `moderation`, `user` and the singles   |
