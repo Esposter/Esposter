@@ -2,11 +2,12 @@
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 
 const directMessageStore = useDirectMessageStore();
-const { currentDirectMessage, directMessageParticipantsMap } = storeToRefs(directMessageStore);
+const { currentDirectMessage } = storeToRefs(directMessageStore);
+const { getDirectMessageParticipants } = directMessageStore;
 const { deleteDirectMessageParticipant } = directMessageStore;
 const directMessageName = useDirectMessageName(currentDirectMessage);
 const participants = computed(() =>
-  currentDirectMessage.value ? (directMessageParticipantsMap.value.get(currentDirectMessage.value.id) ?? []) : [],
+  currentDirectMessage.value ? getDirectMessageParticipants(currentDirectMessage.value.id) : [],
 );
 </script>
 

@@ -8,6 +8,7 @@ import { useInviteStore } from "@/store/message/room/invite";
 export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
   const { $trpc } = useNuxtApp();
   const inviteStore = useInviteStore();
+  const { storeInvite } = inviteStore;
   const { executeMutation } = useMutation();
   // Keyed by room: a read for the room the reader just left is filed under it rather than over the list on screen
   const { getSlice, getSliceOperationData } = useCursorPaginationDataMap<InviteInMessageWithCreator>();
@@ -23,10 +24,10 @@ export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
         // The reader's own link lives in the other store, and revoking it here has to reach that too — the
         // Invite dialog would otherwise go on offering a token this panel just killed
         const ownInvite = inviteStore.invites.get(input.roomId);
-        if (ownInvite?.id === input.id) inviteStore.invites.set(input.roomId, undefined);
+        if (ownInvite?.id === input.id) storeInvite(input.roomId, undefined);
         return () => {
           if (revokedInvite) items.value = [revokedInvite, ...items.value];
-          if (ownInvite?.id === input.id) inviteStore.invites.set(input.roomId, ownInvite);
+          if (ownInvite?.id === input.id) storeInvite(input.roomId, ownInvite);
         };
       },
       key: input.id,
