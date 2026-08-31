@@ -22,7 +22,7 @@
 | `app/composables/resource` — the rest                            | 2026-08-31 | clean — every read goes through `readItems`/`useMutation`, and the autosave tick terminates        |
 | `app/composables` — the rest                                     | 2026-08-31 | one more async promise executor that never opened its gate; the rest terminates                    |
 | `app/services/resource`, `app/services/message`                  | 2026-08-31 | two suggestion callbacks, a `.match(noop, noop)`, and a wrapper whose only handler rethrew         |
-| `app/services` — the rest, `app/util`                            | —          | `dungeons` is most of it                                                                           |
+| `app/services` — the rest, `app/util`                            | 2026-08-31 | the npc effect chain stopped silently; the file pickers report from inside their own composables   |
 | `app/components/Message`                                         | 2026-08-31 | a hover-time roles read and the app's one clipboard write reported nowhere                         |
 | `app/components/Resource`, `app/components/Dungeons`             | —          |                                                                                                    |
 | `app/components` — the rest                                      | —          |                                                                                                    |
