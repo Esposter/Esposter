@@ -23,6 +23,12 @@ const { updateResourceTags } = resourceStore;
 const isTagsEditorOpen = ref(false);
 const tagRows = computed(() => Object.entries(resource.tags));
 const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
+// The publication records the `contentVersion` it was published from, so whether the draft has moved since is
+// A comparison rather than a guess off two timestamps — `updatedAt` moves for a rename and a tag edit too, and
+// The publish itself writes nothing to the resource row for it to be compared against
+const hasUnpublishedChanges = computed(() =>
+  publication.value ? resource.contentVersion > publication.value.publishedContentVersion : false,
+);
 const publicUrl = computed(() => (publication.value ? RoutePath.View(resource.type, resource.id) : undefined));
 // Best-effort telemetry, so a failed count leaves the row out rather than erroring the whole blade
 // The page is keyed by resource id, so this instance only ever describes one resource — the count is
@@ -64,6 +70,14 @@ onMounted(async () => {
               <template v-if="publication">
                 <v-chip color="success" size="small">Published</v-chip>
                 <span op-medium-emphasis>v{{ publication.publishVersion }}</span>
+                <!-- The Azure-portal question this row exists to answer: is what I am looking at what the world
+                     sees. A published resource whose draft has moved says so rather than leaving it to be worked
+                     out from the two dates above -->
+                <span v-if="hasUnpublishedChanges" flex gap-1 items-center>
+                  <v-icon color="warning" icon="mdi-alert-outline" size="small" />
+                  Draft changes not published
+                </span>
+                <span v-else op-medium-emphasis>Up to date</span>
               </template>
               <v-chip v-else size="small">Draft</v-chip>
             </div>
