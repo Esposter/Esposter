@@ -27,14 +27,14 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     ["id"],
     DatabaseEntityType.FriendRequest,
   );
-  // Accepting, declining and blocking all resolve the same thing: the pending requests between the app user and
-  // One other party. The list only ever holds requests the app user is a party to — the read filters on it and
-  // The subscription only yields those — so naming the other party identifies the pair on its own, and the
-  // Removal never has to wait on a session that has not resolved yet
   // Single source of truth for "has the app user already asked this user" — the counterpart to the friend
   // Store's getIsFriend, and asked by the same surfaces
   const getHasSentFriendRequest = (targetUserId: User["id"]) =>
     sentFriendRequests.value.some(({ receiverId }) => receiverId === targetUserId);
+  // Accepting, declining and blocking all resolve the same thing: the pending requests between the app user and
+  // One other party. The list only ever holds requests the app user is a party to — the read filters on it and
+  // The subscription only yields those — so naming the other party identifies the pair on its own, and the
+  // Removal never has to wait on a session that has not resolved yet
   const getFriendRequestsByUser = (targetUserId: User["id"]) =>
     friendRequests.value.filter(({ receiverId, senderId }) => [receiverId, senderId].includes(targetUserId));
   const storeDeleteFriendRequestsByUser = (targetUserId: User["id"]) => {
