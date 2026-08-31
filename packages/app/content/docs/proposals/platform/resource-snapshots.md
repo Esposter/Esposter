@@ -1,21 +1,21 @@
 ---
 title: Resource snapshots
-description: Proposal — generalize the publish snapshot into a core snapshot mechanism with channels, giving the working copy restorable checkpoints and leaving Publishable as one consumer of it.
+description: Proposal — extract the reusable half of the publish snapshot into channel-addressed snapshots, giving every resource type restorable checkpoints of its working copy.
 ---
 
 # Resource Snapshots
 
-A resource can already be rolled back — but only to a deliberate publish, and only if it is a publishable type. Everything the rollback needs is built: an immutable content copy, an asset clone that makes the copy self-contained, a version counter that survives concurrency, a history read that needs no table, and a restore that lands through the ordinary save path. All of it is welded to `publishResource`.
+A resource can already be rolled back — but only to a deliberate publish, and only if it is a publishable type. Everything the rollback needs is built: an addressing scheme for stored copies, a history read that needs no table, a reconstitution of stored content into something a caller can use, and a restore that lands through the ordinary save path. None of that is about publishing, and all of it is reachable only through `publishResource`.
 
-This proposal **unwelds it**. Snapshots become a core mechanism addressed by **channel**; `published` is one channel; a new `checkpoints` channel gives every resource type restorable point-in-time versions of the working copy. Publishable stops owning the machinery and becomes its first consumer.
+This proposal moves that half out. Snapshots are addressed by **channel**; `published` is one channel; a new `checkpoints` channel gives every resource type restorable point-in-time versions of the working copy. What stays with publish is the half that is genuinely about publishing — the transform, the version claim, and the repair that a concurrent unpublish forces — and the section below draws that line precisely, because getting it wrong in either direction is the main risk in this work.
 
-This supersedes the deferred draft-version-history idea, whose revisit trigger was answering its own open question — _periodic checkpoint copies, when and how many_ — and whose stated alternative, Azure Blob versioning, turns out not to be able to do the job at all.
+Working-copy version history was held back on two open questions — when a checkpoint is taken and how many are kept — and on an assumption that Azure Blob versioning was the alternative if it were ever wanted. This page answers both questions and retires the assumption: the trigger table and the retention rule below settle the first two, and blob versioning turns out not to be able to do the job at all.
 
 ## Scope
 
 **Today** the snapshot machinery lives inside `createResourceProcedures`: `publishResource` claims a version on the `resource_publications` row, clones referenced assets into a per-attempt directory, writes `{id}/published/{n}.json`, and repairs itself when a concurrent unpublish breaks the version succession. `readPublishHistory` lists the prefix; `restorePublishedVersion` copies a snapshot back through `saveResourceContent`. A non-publishable type — Blueprint, Program, Sheet, TodoList — has none of this, and its working copy has exactly one recoverable state: the current one.
 
-**This adds** a channel abstraction over that machinery, a second channel, a retention rule, a declared snapshot boundary, one Postgres column for the checkpoint counter and one for publish-time drift, and the Overview and blade surfaces that show them. It changes no blob layout that exists today.
+**This adds** a shared half extracted from that machinery, a second channel, a retention rule, a declared snapshot boundary, one Postgres column for the checkpoint counter and one for publish-time drift, and the Overview and blade surfaces that show them. It changes no blob layout that exists today.
 
 ### Why not Azure Blob versioning
 
@@ -43,7 +43,24 @@ A snapshot channel is a directory segment under the resource prefix plus a small
 {id}/files/…                             binary assets, FileAssets types only
 ```
 
-`SnapshotChannelDefinitionMap` is the one place a channel says what it is: its kind, its retention, its counter, and whether the snapshot is publicly servable. Every operation — take, list, restore, evict — reads its behaviour from there rather than from a branch at the call site.
+`SnapshotChannelDefinitionMap` is the one place a channel says what it is: its segment, its kind, its counter source, its retention, and whether the snapshot is publicly servable.
+
+**A channel is an address space, not a workflow**, and the distinction is the whole of what this mechanism may generalize. Count the axes on which the two channels differ — kind, counter, retention, visibility, whether an unpublish sweep takes them, and whether taking one is an outward act with a public url, a view count, a notification and an activity entry. Six axes, two values each, one per channel. A `createSnapshot(id, channel)` that drove all of it from a map would not be an abstraction; it would be a branch with indirection between it and its reader, which is the same over-generalization the [capability admission rule](/docs/architecture/resources) already forbids one level up.
+
+So the shared half is drawn where the operations are genuinely the same one:
+
+| Shared by both channels | Owned by each caller |
+| --- | --- |
+| the blob address `{id}/{segment}/{n}.json` | **taking** a snapshot |
+| counter in Postgres, existence in the listing, and the rule that they may disagree | publish's transform, version claim, succession check and repair |
+| the history listing | the checkpoint's ring-buffer eviction |
+| **reconstitution** — read, re-apply live state, hand back | publish's activity entry, notification and view counting |
+| restore — reconstitute, then `saveResourceContent` | |
+| the ledger charge on write and release on evict | |
+
+Reconstitution is the row that matters most, because it is where sharing **fixes a defect rather than saving lines**: the survey settings bug below exists exactly because restore was written separately from the public read, and one shared reconstitution makes writing them apart impossible.
+
+Take is the row where sharing would cost. Publish's take is a transform that may read through `ctx.db`, a version claimed in a transaction, an upload, a succession check and a repair; a checkpoint's is a serialize, a column bump, an upload and an eviction. What they have in common is "upload a blob and charge it". Hiding the succession repair behind a channel-kind flag would move logic that is about publication rows and the unpublish sweep away from the words `publication` and `unpublish`, which is the opposite of what a reader needs. It stays where it is.
 
 The version counter stays in Postgres and is never derived from the listing. That is the rule publish already established and the one thing about it that is subtle: the listing answers _which snapshots exist_, the row answers _what the next version is and which one is live_, and the two are allowed to disagree — an unpublish sweep is best-effort, so retired blobs outlive the row that numbered them. Checkpoints take a `checkpointVersion` column on `resources` rather than a table of their own; there is nothing else to record about a checkpoint that the blob does not already carry.
 
@@ -65,18 +82,20 @@ flowchart LR
   WORK[("{id}/content.json<br/>working copy")]
   FILES[("{id}/files/…<br/>binary assets")]
 
-  WORK --> TAKE["createSnapshot(id, channel)"]
-  TAKE --> KIND{"channel kind"}
+  WORK --> TAKECP["checkpoint take<br/>serialize, bump column, evict oldest"]
+  WORK --> TAKEPUB["publish take<br/>transform, claim in txn, succession repair"]
 
-  KIND -->|reference| CP[("{id}/checkpoints/{n}.json")]
-  KIND -->|immutable| CLONE["cloneContentAssets<br/>published/{publishId}/files/…"]
+  TAKECP --> CP[("{id}/checkpoints/{n}.json")]
+  TAKEPUB --> CLONE["cloneContentAssets<br/>published/{publishId}/files/…"]
   CLONE --> PUB[("{id}/published/{n}.json")]
 
   CP -.->|"urls resolve to the live assets"| FILES
   PUB -.->|"urls rewritten to its own clones"| CLONE
 
-  CP --> OWNER["owner-only — no public path exists"]
-  PUB --> PUBLIC["served publicly while a publication row exists"]
+  SHARED["shared half — address, list,<br/>reconstitute, restore, ledger"]
+  SHARED -->|"owner-only, no public path exists"| CP
+  SHARED -->|"public while a publication row exists"| PUB
+  SHARED -->|restore| WORK
 ```
 
 ### The snapshot boundary — and the defect it fixes
@@ -158,9 +177,8 @@ The checkpoint blade is the [publish history](/docs/platform/publish-history) bl
 
 The point of the proposal is as much what it deletes as what it adds. Every item below is existing code that gets smaller or more honest:
 
-- **`publishResource` shrinks to publication bookkeeping.** The version claim, the upload, the succession check and the repair move into `createSnapshot`; publish becomes "take a snapshot on the published channel, then point the row at it". That body is the largest single block in `createResourceProcedures.ts` today and none of it is about publishing.
-- **The succession repair becomes a property of the channel kind.** It exists because an unpublish sweep can land between the clone and the claim. Reference channels have no clone and no sweep, so they carry none of it — the logic stops being something every snapshot pays attention to and becomes something immutable channels declare.
-- **The restore clone becomes conditional.** `restorePublishedVersion` clones assets back because a published url lives under a prefix unpublish wipes. A reference snapshot already points at the working copy's own assets, so it clones nothing. Symmetric with the take path, driven by the same channel definition.
+- **`publishResource` keeps its take and loses everything around it.** The addressing, the listing, the reconstitution, the restore and the ledger calls move to the shared half; the transform, the version claim, the succession check and the repair stay, because they are about publication rows and the unpublish sweep and belong beside those words.
+- **The restore clone becomes conditional on the channel kind** — the one axis that legitimately parameterizes a shared path. `restorePublishedVersion` clones assets back because a published url lives under a prefix unpublish wipes; a reference snapshot already points at the working copy's own assets, so it clones nothing. One flag, read in two places, symmetric between take and restore.
 - **`getPublishedContentBlobName`, `createPublishedAssetsDirectoryName`, `readPublishHistory` and `restorePublishedVersion`** lose their `Published` prefixes and take a channel. `readSnapshotHistory` takes the "which is current" answer as an argument instead of knowing about publication rows.
 - **`transformPublicReadContent` becomes the read half of the snapshot boundary** and is applied by restore as well, fixing the survey settings defect above.
 - **The ledger touchpoints collapse to two** — charge on take, release on evict — instead of being restated per call site.
@@ -169,7 +187,7 @@ Nothing above changes a blob path that exists today, so there is no migration: `
 
 ## Consequences beyond the feature
 
-- **Every resource type gains recovery**, including the ones with no publish path at all. That is the first cross-cutting mechanism that is _core_ rather than opt-in, which inverts the current dependency: today Publishable owns snapshots, afterwards snapshots are core and Publishable consumes them. The capability admission rule in [resources](/docs/architecture/resources) — a capability exists at two or more adopters — is satisfied trivially by "every type saves", which is the signal that it is not a capability.
+- **Every resource type gains recovery**, including the ones with no publish path at all. That makes the checkpoint channel core rather than opt-in, which inverts the current dependency: today Publishable owns snapshots, afterwards the shared half is core and Publishable consumes it. The capability admission rule in [resources](/docs/architecture/resources) — a capability exists at two or more adopters — is satisfied trivially by "every type saves", which is the signal that it is not a capability. The shape to copy already exists: `getResourceBladeDefinitions` pushes Overview and Activity unconditionally and gates Publish history behind `hasCapability`, so the checkpoint blade is a third unconditional push rather than a new pattern.
 - **Purge and soft delete are unaffected** and need no new step. Purge takes `{id}/` wholesale, which is already every channel.
 - **Unpublish keeps sweeping only `{id}/published/`.** A checkpoint is not published state and must survive an unpublish; keeping the channels in separate prefixes is what makes that automatic rather than a condition someone has to remember.
 - **Storage grows per owner**, bounded by the ring buffer times the content size. It is charged, metered and visible, so it behaves like any other content the owner keeps rather than like an invisible platform cost — which is precisely what Blob versioning would have been.
