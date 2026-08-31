@@ -51,6 +51,9 @@ export const useDataStore = defineStore("message/data", () => {
   );
   const hasMoreNewer = computed(() => ambientHasMoreNewer.value);
   const nextCursorNewer = computed(() => ambientNextCursorNewer.value);
+  // The one field here that is not keyed by room, deliberately: a typing indicator expires after three seconds,
+  // So a per-room slice would only ever hold entries that have already lapsed. The subscription owns it instead —
+  // Its teardown empties this as it unsubscribes, so the list always describes the room currently subscribed
   const typings = ref<CreateTypingInput[]>([]);
   // `onOptimisticCreate` runs once the bubble is in the list and before anything reaches the server — the
   // Composer reset hangs off it rather than off the send, because the bubble is the sender's only copy of what
@@ -194,7 +197,7 @@ export const useDataStore = defineStore("message/data", () => {
   };
 
   const inputStore = useInputStore();
-  const { clearComposer, validateInput } = inputStore;
+  const { clearComposer, getComposerInput, validateInput } = inputStore;
   const uploadFileStore = useUploadFileStore();
   const { getComposerFiles } = uploadFileStore;
   const replyStore = useReplyStore();
@@ -208,7 +211,7 @@ export const useDataStore = defineStore("message/data", () => {
 
     const input: StandardCreateMessageInput = {
       files: getComposerFiles(target),
-      message: inputStore.getComposerInput(target),
+      message: getComposerInput(target),
       replyRowKey: threadRootRowKey || replyStore.rowKey,
       roomId,
       type: MessageType.Message,
