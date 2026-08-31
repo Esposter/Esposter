@@ -4,11 +4,12 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { Resource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { FILES_DIRECTORY_SEGMENT, PUBLISHED_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
+import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { createPublishedAssetsDirectoryName } from "@@/server/services/resource/createPublishedAssetsDirectoryName";
+import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/createSnapshotAssetsDirectoryName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
@@ -178,7 +179,7 @@ describe("webpage", () => {
     });
     replayMockSession(foreignSession);
     await caller.publishResource({ id: foreignResource.id });
-    const publishedBlobName = `${createPublishedAssetsDirectoryName(foreignResource.id)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
+    const publishedBlobName = `${createSnapshotAssetsDirectoryName(foreignResource.id, SnapshotChannel.Published)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
     // Added to the container rather than replacing it — the publish above wrote its own snapshot blob, and
     // Discarding that leaves the fixture's publication with nothing behind it
     const resourceAssets = MockContainerDatabase.get(AzureContainer.ResourceAssets) ?? new Map<string, Buffer>();
@@ -202,7 +203,7 @@ describe("webpage", () => {
     // About to claim, so the container is what names it
     const clonedBlobNames = [...(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.keys() ?? [])].filter(
       (publishedBlobPath) =>
-        publishedBlobPath.startsWith(`${newResource.id}/${PUBLISHED_DIRECTORY_SEGMENT}/`) &&
+        publishedBlobPath.startsWith(`${newResource.id}/${SnapshotChannel.Published}/`) &&
         // Only the filename carries over — the clone is written under a freshly minted asset id
         publishedBlobPath.endsWith(`${ID_SEPARATOR}a`),
     );

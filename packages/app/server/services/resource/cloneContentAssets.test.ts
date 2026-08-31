@@ -1,7 +1,8 @@
 import type { ContainerClient } from "@azure/storage-blob";
 import type { Database } from "@esposter/db-schema";
 
-import { FILES_DIRECTORY_SEGMENT, PUBLISHED_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
+import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
+import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
@@ -35,7 +36,7 @@ describe(cloneContentAssets, () => {
   const filesRelativeName = `${FILES_DIRECTORY_SEGMENT}/${fileId}${ID_SEPARATOR}${filename}`;
   const workingBlobName = `${sourceResourceId}/${filesRelativeName}`;
   const siblingWorkingBlobName = `${sourceResourceId}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
-  const publishedBlobName = `${sourceResourceId}/${PUBLISHED_DIRECTORY_SEGMENT}/${crypto.randomUUID()}/${filesRelativeName}`;
+  const publishedBlobName = `${sourceResourceId}/${SnapshotChannel.Published}/${crypto.randomUUID()}/${filesRelativeName}`;
   // The clone asks the same question the serving endpoint does, so the rows that answer it are what a case here
   // Varies: an owned working copy is readable, an unowned one is not, and neither has a publication row
   const createDatabase = (isOwned: boolean) => {

@@ -1,10 +1,10 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
-import type { PublishHistoryVersion } from "#shared/models/resource/PublishHistoryVersion";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount";
 import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCount";
 import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
+import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { Context } from "@@/server/trpc/context";
 import type { Clause } from "@esposter/azure";
 import type { Resource } from "@esposter/db-schema";
@@ -13,6 +13,7 @@ import { ResourceOperationType } from "#shared/models/notification/ResourceOpera
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { resourceListSortKeySchema } from "#shared/models/resource/ResourceListItem";
+import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -27,10 +28,10 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
 import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
-import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
+import { getSnapshotContentBlobName } from "@@/server/services/resource/getSnapshotContentBlobName";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
-import { readPublishHistory } from "@@/server/services/resource/readPublishHistory";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
+import { readSnapshotHistory } from "@@/server/services/resource/readSnapshotHistory";
 import { reapplyLiveResourceContent } from "@@/server/services/resource/reapplyLiveResourceContent";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
@@ -361,18 +362,6 @@ export const resourceRouter = router({
       .orderBy(desc(resourceFavorites.createdAt))
       .limit(MAX_READ_LIMIT);
   }),
-  // Which snapshots exist comes from a blob prefix listing — no history table, since the {id}/published/{n}
-  // Blobs are already the source of truth for that. Which one is LIVE comes from the publication row instead,
-  // Because the two can disagree: the unpublish sweep is a best-effort event, so a republish can land while
-  // Retired snapshots are still present, with publishVersion restarted at 1
-  readPublishHistory: getOwnerProcedure(undefined, readResourceInputSchema, "id").query<PublishHistoryVersion[]>(
-    async ({ ctx }) => {
-      const publication = await ctx.db.query.resourcePublications.findFirst({
-        where: { resourceId: { eq: ctx.resource.id } },
-      });
-      return readPublishHistory(ctx.resource.id, publication?.publishVersion);
-    },
-  ),
   // Publish state rides the row rather than answering a second request: `resourcePublications` is one table
   // For every type, so this cross-type read resolves it whatever the resource turns out to be, and the
   // Ownership that second request would re-resolve is the ownership this one already resolved
@@ -408,6 +397,28 @@ export const resourceRouter = router({
         .offset(offset);
       return getOffsetPaginationData(resultResources, limit);
     }),
+  // Which snapshots exist comes from a blob prefix listing — no history table, since the
+  // {id}/{channel}/{n} blobs are already the source of truth for that. Which published one is LIVE comes from
+  // The publication row instead, because the two can disagree: the unpublish sweep is a best-effort event, so
+  // A republish can land while retired snapshots are still present, with publishVersion restarted at 1.
+  //
+  // Both channels in one time-ordered list, because the owner has one question — where can I go back to — and
+  // The channels are an address space rather than two things to make them choose between. Every type is asked
+  // For both: a non-publishable one simply has no published prefix to enumerate
+  readSnapshotHistory: getOwnerProcedure(undefined, readResourceInputSchema, "id").query<SnapshotVersion[]>(
+    async ({ ctx }) => {
+      const publication = await ctx.db.query.resourcePublications.findFirst({
+        where: { resourceId: { eq: ctx.resource.id } },
+      });
+      const channelHistories = await Promise.all([
+        readSnapshotHistory(ctx.resource.id, SnapshotChannel.Revisions),
+        readSnapshotHistory(ctx.resource.id, SnapshotChannel.Published, publication?.publishVersion),
+      ]);
+      // Newest first, and by time rather than by version: the two channels number independently, so an
+      // Ordinal says nothing about where a row belongs once they share a list
+      return channelHistories.flat().toSorted((first, second) => second.takenAt.getTime() - first.takenAt.getTime());
+    },
+  ),
   // An upsert rather than an insert: the open that just happened is always the newest, so there is nothing to
   // Compare. Owner-scoped, like every other resource write
   recordAccess: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<void>(
@@ -434,7 +445,7 @@ export const resourceRouter = router({
       const snapshotContent = await requireEntity(
         readContentBlob(
           ResourceDefinitionMap[ctx.resource.type].contentSchema,
-          getPublishedContentBlobName(id, version),
+          getSnapshotContentBlobName(id, SnapshotChannel.Published, version),
         ),
         DatabaseEntityType.Resource,
         `${id}/${version}`,

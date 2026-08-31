@@ -2,9 +2,9 @@ import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { ContainerClient } from "@azure/storage-blob";
 import type { Resource } from "@esposter/db-schema";
 
+import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import {
   FILES_DIRECTORY_SEGMENT,
-  PUBLISHED_DIRECTORY_SEGMENT,
   RESOURCE_ASSET_URL_REGEX,
   RESOURCE_ASSETS_URL_PREFIX,
 } from "#shared/services/resource/constants";
@@ -63,7 +63,7 @@ describe(transformPublishedBlobUrls, () => {
     vi.restoreAllMocks();
   });
 
-  const PUBLISHED_DIRECTORY_REGEX = new RegExp(`${resourceId}/${PUBLISHED_DIRECTORY_SEGMENT}/[^/]+`, "u");
+  const PUBLISHED_DIRECTORY_REGEX = new RegExp(`${resourceId}/${SnapshotChannel.Published}/[^/]+`, "u");
   const transform = async () => {
     const { html } = await transformPublishedBlobUrls(ctx, { id: resourceId } as Resource, content);
     return PUBLISHED_DIRECTORY_REGEX.exec(html)?.[0];
@@ -78,7 +78,7 @@ describe(transformPublishedBlobUrls, () => {
     const publishedUrl = takeOne([...html.matchAll(RESOURCE_ASSET_URL_REGEX)])[0];
 
     expect(parseResourceAssetPath(publishedUrl.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length))).toStrictEqual({
-      blobName: expect.stringContaining(`${resourceId}/${PUBLISHED_DIRECTORY_SEGMENT}/`),
+      blobName: expect.stringContaining(`${resourceId}/${SnapshotChannel.Published}/`),
       isPublished: true,
       resourceId,
     });
@@ -91,7 +91,7 @@ describe(transformPublishedBlobUrls, () => {
     expect.hasAssertions();
 
     const foreignResourceId = crypto.randomUUID();
-    const foreignBlobName = `${foreignResourceId}/${PUBLISHED_DIRECTORY_SEGMENT}/${crypto.randomUUID()}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+    const foreignBlobName = `${foreignResourceId}/${SnapshotChannel.Published}/${crypto.randomUUID()}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
     await containerClient.getBlockBlobClient(foreignBlobName).upload(foreignBlobName, foreignBlobName.length);
     const foreignUrl = getResourceAssetUrl(foreignBlobName);
 

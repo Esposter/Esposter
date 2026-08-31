@@ -1,6 +1,7 @@
 import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
 
-import { FILES_DIRECTORY_SEGMENT, PUBLISHED_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
+import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
+import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getDecodedUriComponent } from "@esposter/shared";
 import { z } from "zod";
 
@@ -35,9 +36,9 @@ export const parseResourceAssetPath = (encodedPath: string): ResourceAssetPath |
     return { blobName, isPublished: false, resourceId };
   if (
     decodedSegments.length === 5 &&
-    directoryName === PUBLISHED_DIRECTORY_SEGMENT &&
+    directoryName === SnapshotChannel.Published &&
     // The publish clone directory is a per-attempt uuid, never the publishVersion — the clone runs before the
-    // Transaction claims one (see createPublishedAssetsDirectoryName)
+    // Transaction claims one (see createSnapshotAssetsDirectoryName)
     publishId !== undefined &&
     UUID_SCHEMA.safeParse(publishId).success &&
     publishedFilesDirectoryName === FILES_DIRECTORY_SEGMENT

@@ -7,9 +7,9 @@ export const staleContentVersionErrorMessage = new InvalidOperationError(
   DatabaseEntityType.Resource,
   "cannot save resource content with old content version",
 ).message;
-// The blob-name directory segments — the single source for building directory names and validating asset paths
+// The blob-name directory segment for a resource's binary assets. A snapshot channel's segment is its own
+// `SnapshotChannel` value rather than a constant restating it
 export const FILES_DIRECTORY_SEGMENT = "files";
-export const PUBLISHED_DIRECTORY_SEGMENT = "published";
 
 // Must match the serving route's directory: server/api/resource-assets/[...path].get.ts
 export const RESOURCE_ASSETS_URL_PREFIX = `/api/${AzureContainer.ResourceAssets}`;

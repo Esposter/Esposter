@@ -3,15 +3,16 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { Resource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
-import { FILES_DIRECTORY_SEGMENT, PUBLISHED_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
+import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
-import { createPublishedAssetsDirectoryName } from "@@/server/services/resource/createPublishedAssetsDirectoryName";
+import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/createSnapshotAssetsDirectoryName";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
@@ -47,7 +48,7 @@ const readPublishedBlobSizes = (id: string): number[] => {
   const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
   assert(container);
   return [...container.entries()]
-    .filter(([blobName]) => blobName.startsWith(`${id}/${PUBLISHED_DIRECTORY_SEGMENT}/`))
+    .filter(([blobName]) => blobName.startsWith(`${id}/${SnapshotChannel.Published}/`))
     .map(([, data]) => data.byteLength);
 };
 
@@ -397,7 +398,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    const publishedBlobName = `${createPublishedAssetsDirectoryName(webpageResource.id)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+    const publishedBlobName = `${createSnapshotAssetsDirectoryName(webpageResource.id, SnapshotChannel.Published)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[publishedBlobName, Buffer.alloc(1)]]));
     await saveWebpageContent(
       webpageResource,
@@ -689,7 +690,7 @@ describe("resource", () => {
     await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     await webpageCaller.publishResource({ id: webpageResource.id });
-    const versions = await caller.readPublishHistory({ id: webpageResource.id });
+    const versions = await caller.readSnapshotHistory({ id: webpageResource.id });
 
     // The blob lastModified timestamp is non-deterministic, so only version + current are asserted
     expect(
@@ -704,7 +705,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    const versions = await caller.readPublishHistory({ id: webpageResource.id });
+    const versions = await caller.readSnapshotHistory({ id: webpageResource.id });
 
     expect(versions).toStrictEqual([]);
   });
@@ -774,7 +775,7 @@ describe("resource", () => {
     await mockSessionOnce(mockContext.db);
     const otherUserResource = await webpageCaller.createResource({ name });
 
-    await expect(caller.readPublishHistory({ id: otherUserResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(caller.readSnapshotHistory({ id: otherUserResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
   });

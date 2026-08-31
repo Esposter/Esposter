@@ -13,7 +13,7 @@ const { resource } = defineProps<ResourcePublishHistoryProps>();
 const { $trpc } = useNuxtApp();
 const publishHistoryDialogStore = usePublishHistoryDialogStore();
 const { restoringVersion } = storeToRefs(publishHistoryDialogStore);
-const versions = ref(await $trpc.resource.readPublishHistory.query({ id: resource.id }));
+const versions = ref(await $trpc.resource.readSnapshotHistory.query({ id: resource.id }));
 // Newest snapshot first, matching the order the publish flow stacks versions
 const items = computed(() => versions.value.toSorted((first, second) => second.version - first.version));
 // The row is a data-table slot, so its link is keyed here rather than rebuilt on every render of the table
@@ -28,7 +28,7 @@ const viewVersionToMap = computed(
 );
 const headers = [
   { key: "version", title: "Version" },
-  { key: "publishedAt", title: "Published" },
+  { key: "takenAt", title: "Taken" },
   { key: "actions", sortable: false, title: "" },
 ];
 </script>
@@ -48,8 +48,8 @@ const headers = [
           <v-chip v-if="item.isCurrent" color="primary" size="x-small" text="Current" />
         </div>
       </template>
-      <template #[`item.publishedAt`]="{ item }">
-        <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="item.publishedAt" />
+      <template #[`item.takenAt`]="{ item }">
+        <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="item.takenAt" />
       </template>
       <template #[`item.actions`]="{ item }">
         <div flex gap-1 justify-end>

@@ -9,9 +9,10 @@ import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from 
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
+import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { PUBLISHED_DIRECTORY_SEGMENT, staleContentVersionErrorMessage } from "#shared/services/resource/constants";
+import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -28,7 +29,7 @@ import { getOffsetPaginationData } from "@@/server/services/pagination/offset/ge
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
-import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
+import { getSnapshotContentBlobName } from "@@/server/services/resource/getSnapshotContentBlobName";
 import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
@@ -148,9 +149,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
     resource: Resource,
     publishVersion: ResourcePublication["publishVersion"],
   ): Promise<ResourceContent<TType>> => {
-    const content = (await readContentBlob(contentSchema, getPublishedContentBlobName(resource.id, publishVersion))) as
-      | ResourceContent<TType>
-      | undefined;
+    const content = (await readContentBlob(
+      contentSchema,
+      getSnapshotContentBlobName(resource.id, SnapshotChannel.Published, publishVersion),
+    )) as ResourceContent<TType> | undefined;
     if (content === undefined) throw getNotFoundError(DatabaseEntityType.Resource, resource.id);
 
     // Reconstitution, not a plain read: a snapshot's frozen copy of what the type declares live is replaced
@@ -308,7 +310,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         });
         // Transformed before the transaction opens: a hook may read through `ctx.db` (Dashboard resolves every
         // Bound dataset), and issuing that read while this connection holds a transaction deadlocks. Nothing it
-        // Writes is keyed by the version claimed below — see createPublishedAssetsDirectoryName
+        // Writes is keyed by the version claimed below — see createSnapshotAssetsDirectoryName
         const publishedContent = transformPublishedContent
           ? await transformPublishedContent(ctx, ctx.resource, content)
           : content;
@@ -326,7 +328,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
           const serializedContent = JSON.stringify(value);
           await useUpload(
             AzureContainer.ResourceAssets,
-            getPublishedContentBlobName(id, publishVersion),
+            getSnapshotContentBlobName(id, SnapshotChannel.Published, publishVersion),
             serializedContent,
           );
           publishedContentBytes = Buffer.byteLength(serializedContent);
@@ -402,7 +404,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
           ctx.db,
           ctx.getSessionPayload.user.id,
           AzureContainer.ResourceAssets,
-          getPublishedContentBlobName(id, publication.publishVersion),
+          getSnapshotContentBlobName(id, SnapshotChannel.Published, publication.publishVersion),
           publishedContentBytes,
         );
         // Fire-and-forget: the activity trail is best-effort and the publish must not wait on telemetry
@@ -476,7 +478,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       await publishBlobPrefixDeletion(
         id,
         AzureContainer.ResourceAssets,
-        `${id}/${PUBLISHED_DIRECTORY_SEGMENT}`,
+        `${id}/${SnapshotChannel.Published}`,
         new Date(),
       );
       // Fire-and-forget: the activity trail is best-effort and the unpublish must not wait on telemetry

@@ -1,6 +1,6 @@
+import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import {
   FILES_DIRECTORY_SEGMENT,
-  PUBLISHED_DIRECTORY_SEGMENT,
   RESOURCE_ASSET_URL_REGEX,
   RESOURCE_ASSETS_URL_PREFIX,
 } from "#shared/services/resource/constants";
@@ -51,7 +51,7 @@ describe(getResourceAssetUrl, () => {
   test("should round-trip through the parser", () => {
     expect.hasAssertions();
 
-    const blobName = `${resourceId}/${PUBLISHED_DIRECTORY_SEGMENT}/${crypto.randomUUID()}/${FILES_DIRECTORY_SEGMENT}/a${ID_SEPARATOR}a (1)`;
+    const blobName = `${resourceId}/${SnapshotChannel.Published}/${crypto.randomUUID()}/${FILES_DIRECTORY_SEGMENT}/a${ID_SEPARATOR}a (1)`;
     const url = getResourceAssetUrl(blobName);
 
     expect(parseResourceAssetPath(url.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length))).toStrictEqual({
