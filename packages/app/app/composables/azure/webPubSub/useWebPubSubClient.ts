@@ -12,8 +12,11 @@ export const useWebPubSubClient = async (
   const webPubSubClient = new WebPubSubClient({
     getClientAccessUrl: (options) => getClientAccessUrl(options?.abortSignal as AbortSignal | undefined),
   });
-  await webPubSubClient.start();
+  // Registered before the client starts: a group message that arrives while `start` is still resolving is
+  // Delivered to whatever is listening at that moment, and a subscriber that missed one waits for the next
+  // Change to learn what it already changed
   webPubSubClient.on("group-message", onGroupMessage);
+  await webPubSubClient.start();
   return () => {
     webPubSubClient.stop();
   };

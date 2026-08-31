@@ -333,6 +333,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
           );
           publishedContentBytes = Buffer.byteLength(serializedContent);
         };
+        // The draft version this publish is taken from, written on both the insert and the conflict update: a
+        // Row left carrying the column's default reports a draft that has moved since it was published,
+        // Whatever the owner has or has not edited since
+        const { contentVersion: publishedContentVersion } = ctx.resource;
         // Bump the version and write the blob in one transaction so a failed upload rolls the version bump back,
         // The publication row can never point at a publishVersion whose blob was never written.
         const publication = await ctx.db.transaction(async (tx) => {
@@ -342,9 +346,13 @@ export const createResourceProcedures = <TType extends ResourceType>(
             (
               await tx
                 .insert(resourcePublications)
-                .values({ resourceId: id })
+                .values({ publishedContentVersion, resourceId: id })
                 .onConflictDoUpdate({
-                  set: { publishedAt: new Date(), publishVersion: sql`${resourcePublications.publishVersion} + 1` },
+                  set: {
+                    publishedAt: new Date(),
+                    publishedContentVersion,
+                    publishVersion: sql`${resourcePublications.publishVersion} + 1`,
+                  },
                   target: resourcePublications.resourceId,
                 })
                 .returning()

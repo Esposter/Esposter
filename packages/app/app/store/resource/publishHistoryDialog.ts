@@ -1,5 +1,6 @@
-// Singleton dialog target for the Publish history blade's restore confirm — the version (as a string) being restored
+// Singleton dialog target for the Publish history blade's restore confirm — the id of the snapshot row being
+// Restored, which is its channel and version together: a version alone names one row per channel
 export const usePublishHistoryDialogStore = defineStore("resource/publishHistoryDialog", () => {
-  const restoringVersion = ref("");
-  return { restoringVersion };
+  const restoringSnapshotVersionId = ref("");
+  return { restoringSnapshotVersionId };
 });

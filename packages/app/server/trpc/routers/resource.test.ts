@@ -4,6 +4,7 @@ import type { Resource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
+import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
@@ -61,6 +62,7 @@ describe("resource", () => {
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
   const filename = "filename";
+  const label = "before the layout redo";
   const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
   const dueAt = new Date(1);
@@ -460,7 +462,7 @@ describe("resource", () => {
       new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
     );
     await webpageCaller.publishResource({ id: webpageResource.id });
-    await caller.restorePublishedVersion({ id: webpageResource.id, version: 1 });
+    await caller.restoreSnapshotVersion({ channel: SnapshotChannel.Published, id: webpageResource.id, version: 1 });
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
     assert.exists(content);
 
@@ -717,7 +719,11 @@ describe("resource", () => {
     await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     await saveWebpageContent(webpageResource, new WebpageEditor({ css: "b", html: "b" }), 1);
-    const restoredResource = await caller.restorePublishedVersion({ id: webpageResource.id, version: 1 });
+    const restoredResource = await caller.restoreSnapshotVersion({
+      channel: SnapshotChannel.Published,
+      id: webpageResource.id,
+      version: 1,
+    });
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
     const publication = await webpageCaller.readResourcePublication({ id: webpageResource.id });
 
@@ -748,7 +754,11 @@ describe("resource", () => {
     resourceEventEmitter.on("saveResourceContent", ([data]) => {
       saveEvent = data;
     });
-    const restoredResource = await caller.restorePublishedVersion({ id: webpageResource.id, version: 1 });
+    const restoredResource = await caller.restoreSnapshotVersion({
+      channel: SnapshotChannel.Published,
+      id: webpageResource.id,
+      version: 1,
+    });
     // Every entry on the trail is fire-and-forget off its mutation, so drain them before reading it back
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: webpageResource.id });
@@ -769,6 +779,79 @@ describe("resource", () => {
     );
   });
 
+  // Both channels number from 1, so a restore that took a version without the channel it belongs to read the
+  // Published snapshot whenever a revision shared its number — silently discarding the point the owner picked
+  test("restores the revision a version names rather than the published snapshot of that number", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    await saveWebpageContent(webpageResource, webpageEditor);
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    const revisionEditor = new WebpageEditor({ css: "b", html: "b" });
+    await saveWebpageContent(webpageResource, revisionEditor, 1);
+    await caller.saveResourceRevision({ id: webpageResource.id });
+    await saveWebpageContent(webpageResource, new WebpageEditor({ css: "c", html: "c" }), 2);
+    await caller.restoreSnapshotVersion({ channel: SnapshotChannel.Revisions, id: webpageResource.id, version: 1 });
+    const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
+
+    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(revisionEditor)));
+  });
+
+  // A reference snapshot's urls already name the live files directory the working copy points at, so a clone
+  // Would mint a second copy of every asset the resource already holds and charge the owner for it
+  test("restores a revision without cloning the assets it already points at", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    await saveWebpageContent(
+      webpageResource,
+      new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
+    );
+    await caller.saveResourceRevision({ id: webpageResource.id });
+    await saveWebpageContent(webpageResource, webpageEditor, 1);
+    await caller.restoreSnapshotVersion({ channel: SnapshotChannel.Revisions, id: webpageResource.id, version: 1 });
+    const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
+    assert.exists(content);
+
+    expect(content.html).toBe(`<img src="${getResourceAssetUrl(blobName)}">`);
+    expect(readFilesBlobNames(webpageResource.id)).toStrictEqual([blobName]);
+  });
+
+  // A label is what the owner typed when they took a version by hand, so a reason the owner did not choose
+  // Cannot carry one — a labelled BeforeImport row reads in the history as a milestone somebody named
+  test("does not save a labelled revision for a reason the owner did not choose", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+
+    await expect(caller.saveResourceRevision({ id: webpageResource.id, label, reason: SnapshotReason.BeforeImport }))
+      .rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "code": "custom",
+          "path": [],
+          "message": "A label is only accepted on a Manual revision"
+        }
+      ]]
+    `);
+  });
+
+  // The publication carries the draft version it was taken from, so "has the draft moved since I published?"
+  // Is a comparison rather than a guess off two timestamps — a row left on the column's default answers yes
+  // For every resource, whatever its owner has or has not edited since
+  test("records the draft version a publish was taken from", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    await saveWebpageContent(webpageResource, webpageEditor);
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    const publication = await webpageCaller.readResourcePublication({ id: webpageResource.id });
+
+    expect(publication?.publishedContentVersion).toBe(webpageResource.contentVersion + 1);
+  });
+
   test("does not read publish history for another user's resource", async () => {
     expect.hasAssertions();
 
@@ -787,7 +870,7 @@ describe("resource", () => {
     const otherUserResource = await webpageCaller.createResource({ name });
 
     await expect(
-      caller.restorePublishedVersion({ id: otherUserResource.id, version: 1 }),
+      caller.restoreSnapshotVersion({ channel: SnapshotChannel.Published, id: otherUserResource.id, version: 1 }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 

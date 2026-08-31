@@ -4,6 +4,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { closedSurveyErrorReason, invalidParticipantTokenErrorReason } from "@@/server/services/survey/constants";
 import { createCallerFactory } from "@@/server/trpc";
@@ -509,7 +510,7 @@ describe("survey", () => {
       model: updatedModel,
       settings: closedSettings,
     });
-    await resourceCaller.restorePublishedVersion({ id: newResource.id, version: 1 });
+    await resourceCaller.restoreSnapshotVersion({ channel: SnapshotChannel.Published, id: newResource.id, version: 1 });
     const content = await caller.readResourceContent({ id: newResource.id });
 
     // The model is the snapshot's, which is the whole point of restoring — the settings are still the owner's
