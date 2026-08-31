@@ -8,7 +8,7 @@ import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 import { sleep } from "vue-phaserjs";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
@@ -86,10 +86,15 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     });
     dialogTarget.message.value.title = message.title;
     isQueuedMessagesAnimationPlaying.value = true;
-    await useAnimateText(scene, dialogTargetText, message.text);
+    // The flag gates player input, so an animation that rejects has to clear it or input stays blocked forever
+    await withFinalizerAsync(
+      () => useAnimateText(scene, dialogTargetText, message.text),
+      () => {
+        isQueuedMessagesAnimationPlaying.value = false;
+      },
+    );
     showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
     isWaitingForPlayerSpecialInput.value = true;
-    isQueuedMessagesAnimationPlaying.value = false;
   };
 
   const showMessageNoInputRequired = (scene: SceneWithPlugins, target: DialogTarget, message: DialogMessage) => {
