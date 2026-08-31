@@ -3,7 +3,7 @@ import type { ResourceType } from "@esposter/db-schema";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { createContentData } from "@/services/resource/createContentData";
 
-export const useProgramStore = defineStore("program", () => {
+export const useProgramStore = defineStore("resource/program", () => {
   const {
     content: programResource,
     loadContent,
