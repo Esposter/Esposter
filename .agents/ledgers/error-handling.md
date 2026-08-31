@@ -33,7 +33,7 @@
 | `packages/virrun` — `exec/cache`, `exec/os`                      | 2026-08-31 | two more best-effort branches now trace; the hash and key chains answer absence with `null` on purpose   |
 | `packages/virrun` — `exec` — the rest                            | 2026-08-31 | clean — `bwrap`, `native`, `store`, `vfs`, `differential`, `test`; two chains, both absence-as-answer    |
 | `packages/virrun` — `services/cli`                               | 2026-08-31 | the prepare line's resolve swallowed twice over; every other absence-as-answer chain says so at its site |
-| `packages/virrun` — `src/models`, `services` — the rest          | —          |                                                                                                          |
+| `packages/virrun` — `src/models`, `services` — the rest          | 2026-08-31 | clean — every chain here rethrows or falls back on a value its own comment names                         |
 | `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-08-30 | every throw is a stub, an unsupported-in-mock, or an Azure wire response                                 |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-08-30 | clean — every throw is a named error class, no chain to terminate outside `shared`                       |
 
