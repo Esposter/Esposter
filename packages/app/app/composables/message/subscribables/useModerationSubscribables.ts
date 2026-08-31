@@ -1,5 +1,6 @@
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useRoomStore } from "@/store/message/room";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const useModerationSubscribables = () => {
   const { $trpc } = useNuxtApp();
@@ -12,9 +13,9 @@ export const useModerationSubscribables = () => {
     const adminActionUnsubscribable = $trpc.message.moderation.onAdminAction.subscribe(
       { roomId },
       {
-        onData: getSynchronizedFunction(async ({ durationMs, type }) => {
-          await adminActionMap[type](roomId, durationMs);
-        }),
+        onData: getSynchronizedFunction(({ durationMs, type }) =>
+          getResultAsync(() => adminActionMap[type](roomId, durationMs)).match(noop, console.error),
+        ),
       },
     );
 

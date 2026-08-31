@@ -15,8 +15,12 @@
 | `packages/azure-functions`                                       | 2026-08-30 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)`                 |
 | `app/store/message`                                              | 2026-08-31 | five fire-and-forget callbacks now terminate; the silence they relied on is pinned by a test          |
 | `app/store` — the rest                                           | —          | `dungeons`, `resource` and the small stores                                                           |
-| `app/composables/message`, `app/composables/resource`            | —          | a callback nothing awaits terminating its own `Result`                                                |
-| `app/composables` — the rest                                     | —          | `dungeons` is most of it                                                                              |
+| `app/composables/message/room`                                   | 2026-08-31 | the pre-join device probes and the call-session read reported nothing                                 |
+| `app/composables/message/subscribables`                          | 2026-08-31 | seven `onData` bodies terminate; a dropped event was invisible                                        |
+| `app/composables/message` — the rest                             | —          | `message`, `editor`, `emoji`, `draftsAndSent`, `slashCommand`, `moderation`, `user` and the singles   |
+| `app/composables/resource/sheet`                                 | —          | the command composables                                                                               |
+| `app/composables/resource` — the rest                            | —          | the root files and `list`                                                                             |
+| `app/composables` — the rest                                     | —          | `dungeons` is most of it; `shared/useOnlineSubscribable` was swept ahead of it                        |
 | `app/services/resource`, `app/services/message`                  | —          | `withFinalizer` vs `withFinalizerAsync`                                                               |
 | `app/services` — the rest, `app/util`                            | —          | `dungeons` is most of it                                                                              |
 | `app/components/Message`                                         | —          | inline handlers that swallow, and `.orTee(console.error)` vs a bare catch                             |
@@ -115,3 +119,14 @@ local writes has nothing to terminate.
   Unterminated chain fails silently — but nothing type-aware runs in either linter here (`oxlint` skill), so this
   Stays with the sweep until that changes.
 - `console.warn` and an empty `catch {}` are syntactic and already candidates.
+- A **fire-and-forget body that does not terminate** is the widest one left, and the census above finds every
+  Candidate site. What no selector can decide is whether the body has anything to terminate, since a body whose
+  Whole work is an `executeMutation` with an `onError` is already done — so it stays a read.
+
+## Enforced since
+
+- **Alerting a rejection without asking the error link** — `error-alert/no-raw-error-alert`
+  (`scripts/oxlint/errorAlert.ts`) reports `createAlert(<expr>.message, …)`, which is the shape that means a
+  Rejection rather than a sentence the caller composed. Ten sites were converted to `createErrorAlert` on
+  2026-08-31 and the rule is what stops the eleventh. It is off for `createErrorAlert.ts` and `errorLink.ts`,
+  Which are the mechanism, and it cannot see a Vue template's inline handler.
