@@ -53,7 +53,7 @@ export const useReadSearchedMessages = () => {
     rightDrawer.value = RightDrawer.Search;
     const boundCount = getBoundCount();
     const boundPage = getBoundPage();
-    return await withFinalizerAsync(
+    const searchedMessages = await withFinalizerAsync(
       async () => {
         const { count: newCount, data } = await $trpc.message.searchMessages.query({
           filters,
@@ -73,5 +73,6 @@ export const useReadSearchedMessages = () => {
         boundIsSearching.value = false;
       },
     );
+    return searchedMessages;
   });
 };
