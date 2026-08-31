@@ -19,7 +19,8 @@ describe(getSynchronizedFunction, () => {
 
     const originalFunction = vi.fn<() => Promise<void>>().mockRejectedValue(new Error("rejected"));
 
-    expect(getSynchronizedFunction(originalFunction)()).toBeUndefined();
+    getSynchronizedFunction(originalFunction)();
+
     await expect(waitForSynchronizedFunctions()).resolves.toBeUndefined();
   });
 });

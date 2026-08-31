@@ -11,6 +11,21 @@ import { ResourceUpdatedFilters } from "@/models/resource/list/ResourceUpdatedFi
 import { deserializeResourceSortBy } from "@/services/resource/list/deserializeResourceSortBy";
 import { serializeResourceSortBy } from "@/services/resource/list/serializeResourceSortBy";
 import { resourceTypeSchema } from "@esposter/db-schema";
+// Dates can't round-trip through a query param directly, so the custom bounds serialize day-granular. It reads
+// Nothing from the composable it is called in, so it declares once rather than per call
+const createUpdatedBound = (key: string) => {
+  const boundQuery = useRouteQuery(key, "", { transform: String });
+  return computed<Date | undefined>({
+    get: () => {
+      if (!boundQuery.value) return undefined;
+      const parsedBound = dayjs(boundQuery.value, ISO_DATE_FORMAT);
+      return parsedBound.isValid() ? parsedBound.toDate() : undefined;
+    },
+    set: (value) => {
+      boundQuery.value = value ? dayjs(value).format(ISO_DATE_FORMAT) : "";
+    },
+  });
+};
 // The list workbench's filter state, mirrored to query params so the list is deep-linkable, refresh-safe and
 // Back-button-safe. useRouteQuery drops a param again when set back to its default, and the default order is
 // The view's own — Recent's newest-open-first leaves the url as clean as All's newest-updated-first.
@@ -44,20 +59,6 @@ export const useResourceListFilters = (defaultSortBy: readonly SortItem<keyof Re
   const tagName = useRouteQuery("tagName", "", { transform: String });
   const tagValue = useRouteQuery("tagValue", "", { transform: String });
   const updatedFilter = useEnumRouteQuery<"" | ResourceUpdatedFilter>("updated", ResourceUpdatedFilters, "");
-  // Dates can't round-trip through a query param directly, so the custom bounds serialize day-granular
-  const createUpdatedBound = (key: string) => {
-    const boundQuery = useRouteQuery(key, "", { transform: String });
-    return computed<Date | undefined>({
-      get: () => {
-        if (!boundQuery.value) return undefined;
-        const parsedBound = dayjs(boundQuery.value, ISO_DATE_FORMAT);
-        return parsedBound.isValid() ? parsedBound.toDate() : undefined;
-      },
-      set: (value) => {
-        boundQuery.value = value ? dayjs(value).format(ISO_DATE_FORMAT) : "";
-      },
-    });
-  };
   const updatedAfter = createUpdatedBound("updatedAfter");
   const updatedBefore = createUpdatedBound("updatedBefore");
   const hasActiveFilters = computed(() =>

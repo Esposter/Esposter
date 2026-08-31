@@ -159,7 +159,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   // Through createErrorAlert — which defers to the error link, so a coded rejection is still shown exactly once.
   // Rejecting instead would put the alert in the caller, and the callers are inline click handlers and a
   // Subscription onData, none of which holds anything to catch it
-  const createCall = async () =>
+  const createCall = () =>
     getResultAsync(() => $trpc.callSession.createCall.mutate()).match(
       ({ callSessionId }) => callSessionId,
       (error) => {
