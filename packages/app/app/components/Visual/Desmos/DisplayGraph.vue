@@ -5,7 +5,7 @@ import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
 import WindowControls from "@/components/Visual/Desmos/WindowControls.vue";
 import { Colors } from "@/models/desmos/Colors";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
-import { takeOne } from "@esposter/shared";
+import { getResultAsync, noop, takeOne } from "@esposter/shared";
 
 interface VisualDesmosDisplayGraphProps {
   expressions: Expression[];
@@ -71,24 +71,28 @@ watch(componentsToRender, (newComponentsToRender) => {
 onMounted(() => {
   const element = window.document.getElementById(id) as HTMLDivElement;
 
-  onLoaded(async ({ GraphingCalculator }) => {
-    calculator = await GraphingCalculator(element, {
-      border: false,
-      expressionsCollapsed: true,
-      invertedColors: isDark.value,
-      keypad: false,
-      showGrid: false,
-      showXAxis: false,
-      showYAxis: false,
-      trace: false,
-    });
-    calculator.setExpressions(expressions.map((e) => Object.assign(e, { color: e.color ?? Colors.BLACK })));
-    const newExpressionPanel = element.querySelector<HTMLDivElement>(".dcg-exppanel-outer");
-    if (!newExpressionPanel) return;
+  // The script's own load slot calls this and drops what it returns, so the calculator's construction reports
+  // Here or nowhere — a graph that never builds leaves the panel empty rather than the page broken
+  onLoaded(({ GraphingCalculator }) =>
+    getResultAsync(async () => {
+      calculator = await GraphingCalculator(element, {
+        border: false,
+        expressionsCollapsed: true,
+        invertedColors: isDark.value,
+        keypad: false,
+        showGrid: false,
+        showXAxis: false,
+        showYAxis: false,
+        trace: false,
+      });
+      calculator.setExpressions(expressions.map((e) => Object.assign(e, { color: e.color ?? Colors.BLACK })));
+      const newExpressionPanel = element.querySelector<HTMLDivElement>(".dcg-exppanel-outer");
+      if (!newExpressionPanel) return;
 
-    expressionPanel.value = newExpressionPanel;
-    render(componentsToRender.value);
-  });
+      expressionPanel.value = newExpressionPanel;
+      render(componentsToRender.value);
+    }).match(noop, console.error),
+  );
 });
 </script>
 

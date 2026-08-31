@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { getResultAsync } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 interface EditRoomImageFieldProps {
@@ -64,9 +66,13 @@ const { isLoading, uploadImage } = useUploadImage(() => $trpc.room.generateProfi
 
                 if (!validateFile(file)) return;
 
-                modelValue = await uploadImage(file, () => {
-                  if (input) input.value = '';
-                });
+                await getResultAsync(() =>
+                  uploadImage(file, () => {
+                    if (input) input.value = '';
+                  }),
+                ).match((newImage) => {
+                  modelValue = newImage;
+                }, createErrorAlert);
               }
             "
           />

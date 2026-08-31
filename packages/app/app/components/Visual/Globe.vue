@@ -8,7 +8,7 @@ import { ARC_STROKES, COLORS } from "@/services/visual/constants";
 import { GlobeConfiguration } from "@/services/visual/GlobeConfiguration";
 import { createRandomInteger } from "@/util/math/random/createRandomInteger";
 import { getRandomValues } from "@/util/math/random/getRandomValues";
-import { takeOne } from "@esposter/shared";
+import { getResultAsync, noop, takeOne } from "@esposter/shared";
 import {
   AmbientLight,
   DirectionalLight,
@@ -51,7 +51,10 @@ let globe: ThreeGlobe;
 let animationFrameId: number;
 let intervalId: number;
 
-onMounted(async () => {
+// The scene is built in one pass rather than inline in the hook, so the lazily imported `three-globe` chunk has
+// Somewhere to report from: a stale chunk after a redeploy rejects, and a hook's callback is a slot nothing
+// Awaits. The globe is decoration on the About page, so the page renders without it
+const renderGlobe = async () => {
   const canvas = window.document.getElementById(id) as HTMLCanvasElement;
   renderer = new WebGLRenderer({ antialias: true, canvas });
   renderer.setClearColor(0x000, 0);
@@ -159,6 +162,10 @@ onMounted(async () => {
     },
     Temporal.Duration.from({ seconds: 2 }).total("milliseconds"),
   );
+};
+
+onMounted(async () => {
+  await getResultAsync(renderGlobe).match(noop, console.error);
 });
 
 onUnmounted(() => {

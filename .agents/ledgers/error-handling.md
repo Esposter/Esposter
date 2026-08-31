@@ -25,7 +25,7 @@
 | `app/services` — the rest, `app/util`                            | 2026-08-31 | the npc effect chain stopped silently; the file pickers report from inside their own composables      |
 | `app/components/Message`                                         | 2026-08-31 | a hover-time roles read and the app's one clipboard write reported nowhere                            |
 | `app/components/Resource`, `app/components/Dungeons`             | 2026-08-31 | the scene lifecycle and input slots drop what they return; `Resource` reaches the server by primitive |
-| `app/components` — the rest                                      | —          |                                                                                                       |
+| `app/components` — the rest                                      | 2026-08-31 | five slots dropped what they returned, and the profile-image upload's twin in the swept `Message` row |
 | `packages/db`, `packages/infra`                                  | 2026-08-30 | `db` rolls back then rethrows; `infra` is resource declarations with no error path                    |
 | `packages/virrun` — `src/services/exec`                          | —          |                                                                                                       |
 | `packages/virrun` — the rest                                     | —          |                                                                                                       |
