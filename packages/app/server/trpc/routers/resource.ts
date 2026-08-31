@@ -14,8 +14,10 @@ import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cu
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { resourceListSortKeySchema } from "#shared/models/resource/ResourceListItem";
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
+import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { MAX_SNAPSHOT_LABEL_LENGTH } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -28,12 +30,13 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
 import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
-import { getSnapshotContentBlobName } from "@@/server/services/resource/getSnapshotContentBlobName";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
-import { readSnapshotHistory } from "@@/server/services/resource/readSnapshotHistory";
 import { reapplyLiveResourceContent } from "@@/server/services/resource/reapplyLiveResourceContent";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
+import { getSnapshotContentBlobName } from "@@/server/services/resource/snapshot/getSnapshotContentBlobName";
+import { readSnapshotHistory } from "@@/server/services/resource/snapshot/readSnapshotHistory";
+import { takeResourceRevision } from "@@/server/services/resource/snapshot/takeResourceRevision";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { withResourceRollback } from "@@/server/services/resource/withResourceRollback";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
@@ -61,7 +64,14 @@ import {
   resourceTypeSchema,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
+import {
+  createNormalizedStringSchema,
+  createUniqueArraySchema,
+  MAX_READ_LIMIT,
+  Operation,
+  RoutePath,
+  takeOne,
+} from "@esposter/shared";
 import {
   and,
   asc,
@@ -86,6 +96,14 @@ const readResourceInputSchema = selectResourceSchema.pick({ id: true });
 const restorePublishedVersionInputSchema = z.object({
   ...readResourceInputSchema.shape,
   version: z.int().positive(),
+});
+
+// The reasons a client may name, which is not the whole enum: Automatic is decided by the save path from a
+// Clock, and BeforeRestore by the restore itself. Both would be a lie coming from a caller
+const saveResourceRevisionInputSchema = z.object({
+  ...readResourceInputSchema.shape,
+  label: createNormalizedStringSchema(MAX_SNAPSHOT_LABEL_LENGTH).default(""),
+  reason: z.enum([SnapshotReason.BeforeImport, SnapshotReason.Manual]).default(SnapshotReason.Manual),
 });
 
 const resourceFilterInputSchema = z.object({
@@ -516,6 +534,12 @@ export const resourceRouter = router({
       return restoredResource;
     },
   ),
+  // The deliberate milestone, and the one an owner may name. Returns the version it wrote, or undefined when
+  // The resource has no content blob to take one from — a resource created and never saved has no state worth
+  // Keeping, which is an answer rather than a failure
+  saveResourceRevision: getOwnerProcedure(undefined, saveResourceRevisionInputSchema, "id").mutation<
+    number | undefined
+  >(({ ctx, input: { label, reason } }) => takeResourceRevision(ctx, ctx.resource, reason, label)),
   toggleFavorite: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<boolean>(
     async ({ ctx, input: { id } }) => {
       const userId = ctx.getSessionPayload.user.id;

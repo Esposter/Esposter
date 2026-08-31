@@ -1,8 +1,10 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Transaction } from "@@/server/models/db/Transaction";
 import type { Context } from "@@/server/trpc/context";
-import type { Resource, ResourceActivityType } from "@esposter/db-schema";
+import type { Resource } from "@esposter/db-schema";
 
+import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
+import { SNAPSHOT_IDLE_WINDOW_MS } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
@@ -11,11 +13,12 @@ import { readResourceContent } from "@@/server/services/resource/readResourceCon
 import { ResourceAfterSaveContentMap } from "@@/server/services/resource/ResourceAfterSaveContentMap";
 import { ResourceBoundResourceIdMap } from "@@/server/services/resource/ResourceBoundResourceIdMap";
 import { runAfterSaveResourceContent } from "@@/server/services/resource/runAfterSaveResourceContent";
+import { takeResourceRevision } from "@@/server/services/resource/snapshot/takeResourceRevision";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
 import { getContentBlobName } from "@esposter/db";
-import { AzureContainer, resources } from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
+import { AzureContainer, ResourceActivityType, resources } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 interface SaveResourceContentInput {
@@ -41,6 +44,23 @@ export const saveResourceContent = async (
   { activityType, content, resource, updateContentVersion }: SaveResourceContentInput,
 ): Promise<Resource> => {
   const { id } = resource;
+  // The first save after a quiet spell keeps a point the owner can return to, and every save after it within
+  // The window keeps none. Only an ordinary save: a restore and a blueprint deploy take (or do not need) their
+  // Own, and a first content write has no prior state to preserve. Before the write, because what is worth
+  // Keeping is what this save is about to replace — and awaited rather than fired off, since a revision racing
+  // The write it precedes would snapshot the content it was meant to come before.
+  //
+  // Best-effort, and only here: a safety net that failed must not fail the autosave it was protecting. Every
+  // Other trigger throws, because they exist to make one deliberate destructive act undoable.
+  // See /docs/platform/resource-snapshots
+  if (
+    activityType === ResourceActivityType.ContentSaved &&
+    Date.now() - resource.updatedAt.getTime() >= SNAPSHOT_IDLE_WINDOW_MS
+  )
+    await getResultAsync(() => takeResourceRevision(ctx, resource, SnapshotReason.Automatic)).match(
+      noop,
+      console.error,
+    );
   // The content is parsed here rather than at each door, because this is the door: `content` arrives as
   // `unknown` and everything downstream — the blob, the save event, the type's after-save hook — reads it as
   // The type's own shape, so a caller that hands over content it never parsed reaches the hook with strings

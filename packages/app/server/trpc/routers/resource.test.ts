@@ -12,8 +12,8 @@ import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirecto
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
-import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/createSnapshotAssetsDirectoryName";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
+import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/snapshot/createSnapshotAssetsDirectoryName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";

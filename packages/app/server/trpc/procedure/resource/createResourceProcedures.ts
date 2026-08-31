@@ -29,13 +29,13 @@ import { getOffsetPaginationData } from "@@/server/services/pagination/offset/ge
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
-import { getSnapshotContentBlobName } from "@@/server/services/resource/getSnapshotContentBlobName";
 import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { readResourceViewCount } from "@@/server/services/resource/readResourceViewCount";
 import { reapplyLiveResourceContent } from "@@/server/services/resource/reapplyLiveResourceContent";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
+import { getSnapshotContentBlobName } from "@@/server/services/resource/snapshot/getSnapshotContentBlobName";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";

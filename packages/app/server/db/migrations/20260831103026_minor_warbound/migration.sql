@@ -1,0 +1,2 @@
+ALTER TABLE "resourcePublications" ADD COLUMN "publishedContentVersion" integer DEFAULT 0 NOT NULL;--> statement-breakpoint
+ALTER TABLE "resources" ADD COLUMN "revisionVersion" integer DEFAULT 0 NOT NULL;

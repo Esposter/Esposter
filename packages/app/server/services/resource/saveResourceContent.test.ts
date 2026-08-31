@@ -4,12 +4,17 @@ import type { Transaction } from "@@/server/models/db/Transaction";
 import type { Context } from "@@/server/trpc/context";
 import type { Resource } from "@esposter/db-schema";
 
+import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
+import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
+import { SNAPSHOT_IDLE_WINDOW_MS } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
+import { getSnapshotContentBlobName } from "@@/server/services/resource/snapshot/getSnapshotContentBlobName";
+import { readSnapshotHistory } from "@@/server/services/resource/snapshot/readSnapshotHistory";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { getContentBlobName } from "@esposter/db";
 import {
@@ -113,6 +118,41 @@ describe(saveResourceContent, () => {
     // Content, which now charges the counter
     await mockContext.db.delete(storageLedger);
     await mockContext.db.update(users).set({ storageBytesUsed: 0 });
+  });
+
+  // Autosave fires on every coalesced keystroke batch, so a revision per save would burn the owner's quota
+  // while they type and grow a listing nothing bounds. One per idle window is the ceiling, which is what makes
+  // this recovery across sessions rather than a second undo stack
+  test("keeps no revision for a save inside the idle window", async () => {
+    expect.hasAssertions();
+
+    await saveResourceContent(ctx, { activityType: ResourceActivityType.ContentSaved, content, resource });
+
+    await expect(readSnapshotHistory(resource.id, SnapshotChannel.Revisions)).resolves.toStrictEqual([]);
+  });
+
+  test("keeps a revision of what the first save after an idle window replaces", async () => {
+    expect.hasAssertions();
+
+    await saveResourceContent(ctx, { activityType: ResourceActivityType.ContentSaved, content, resource });
+    vi.advanceTimersByTime(SNAPSHOT_IDLE_WINDOW_MS);
+    await saveResourceContent(ctx, {
+      activityType: ResourceActivityType.ContentSaved,
+      content: { items: [] },
+      resource,
+    });
+    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+    assert.exists(container);
+
+    // The revision holds the content this save replaced, not the content it wrote — a point to return *to*
+    expect(
+      jsonDateParse(
+        container.get(getSnapshotContentBlobName(resource.id, SnapshotChannel.Revisions, 1))?.toString() ?? "",
+      ),
+    ).toStrictEqual(jsonDateParse(JSON.stringify(content)));
+    await expect(readSnapshotHistory(resource.id, SnapshotChannel.Revisions)).resolves.toMatchObject([
+      { reason: SnapshotReason.Automatic, version: 1 },
+    ]);
   });
 
   test("writes the content, emits the save, records the activity and runs the after-save hook as one unit", async () => {

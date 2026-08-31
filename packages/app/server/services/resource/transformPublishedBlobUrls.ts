@@ -3,7 +3,7 @@ import type { Resource } from "@esposter/db-schema";
 
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
-import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/createSnapshotAssetsDirectoryName";
+import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/snapshot/createSnapshotAssetsDirectoryName";
 
 // Published snapshots must survive the owner deleting/replacing working-copy assets, so the referenced
 // Asset blobs are cloned under the publish directory and the content is rewritten to serve the clones

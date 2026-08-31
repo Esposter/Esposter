@@ -26,6 +26,11 @@ export const resources = pgTable(
     contentVersion: integer().notNull().default(0),
     id: uuid().primaryKey().defaultRandom(),
     name: text().notNull(),
+    // The revision channel's counter, and the only thing about a revision that is not in its own blob — its
+    // Reason and label ride as blob metadata, so there is no revisions table. Never derived from the blob
+    // Listing: the listing answers which revisions exist, this answers what the next one is numbered, and a
+    // Ring-buffer eviction makes the two disagree by design. See /docs/platform/resource-snapshots
+    revisionVersion: integer().notNull().default(0),
     tags: jsonb().notNull().default({}).$type<ResourceTags>(),
     type: resourceTypeEnum().notNull(),
     userId: text()

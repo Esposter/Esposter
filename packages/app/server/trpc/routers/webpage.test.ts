@@ -9,7 +9,7 @@ import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/createSnapshotAssetsDirectoryName";
+import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/snapshot/createSnapshotAssetsDirectoryName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";

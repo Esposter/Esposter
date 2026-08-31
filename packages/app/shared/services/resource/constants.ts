@@ -11,6 +11,15 @@ export const staleContentVersionErrorMessage = new InvalidOperationError(
 // `SnapshotChannel` value rather than a constant restating it
 export const FILES_DIRECTORY_SEGMENT = "files";
 
+// What an owner may name a saved version. Short because it is a row label in a list, not a description —
+// The revision's content is what says what changed
+export const MAX_SNAPSHOT_LABEL_LENGTH = 60;
+// How long a resource must go unsaved before its next save is worth keeping a revision of. Autosave fires on
+// Every coalesced keystroke batch, so without a window a working session would take a revision per batch —
+// Burning the owner's storage quota while they type and growing a listing nothing bounds. One per window is
+// The ceiling, which is what makes this recovery rather than a manual discipline
+export const SNAPSHOT_IDLE_WINDOW_MS = 15 * 60 * 1000;
+
 // Must match the serving route's directory: server/api/resource-assets/[...path].get.ts
 export const RESOURCE_ASSETS_URL_PREFIX = `/api/${AzureContainer.ResourceAssets}`;
 
