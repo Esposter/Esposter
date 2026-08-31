@@ -2,35 +2,35 @@
 
 `try`/`catch` is already lint-banned, so this sweep is about the shapes a linter cannot see: what a chain wraps, how it terminates, and who alerts.
 
-| Unit                                                             | Swept      | Notes                                                                                              |
-| ---------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------- |
-| `server/trpc/routers/message`, `server/trpc/routers/room`        | 2026-08-31 | one bare `FORBIDDEN` left a banned member no reason; the best-effort tails are all awaited         |
-| `server/trpc/routers` — `call`, `role`, `userToRoom`, `webhook`  | 2026-08-31 | one entity name spelled as a literal; every `UNAUTHORIZED` is the sanctioned bare form             |
-| `server/trpc/routers` — the resource family                      | 2026-08-31 | clean — the two repeated rejections already have named constructors over the guards                |
-| `server/trpc/routers` — the social and editor routers            | 2026-08-31 | clean — the one bare `InvalidOperationError` asserts an unreachable state, so a 500 is what it is  |
-| `server/trpc/routers` — the rest                                 | 2026-08-31 | clean — two rejections between them, both through a guard                                          |
-| `server/services/message`                                        | 2026-08-31 | every message-creation rejection reached the composer as its bare code                             |
-| `server/services` — the rest                                     | 2026-08-31 | four rejections re-decided their own code; the `CONFLICT` pair is the documented exception         |
-| `server/composables`                                             | 2026-08-30 | nine client constructors — none wraps a call, so there is nothing to terminate                     |
-| `packages/azure-functions`                                       | 2026-08-30 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)`              |
-| `app/store/message`                                              | 2026-08-31 | five fire-and-forget callbacks now terminate; the silence they relied on is pinned by a test       |
-| `app/store` — the rest                                           | 2026-08-31 | the dungeons dialog gate never opened on a failed message; the rest reports through `useMutation`  |
-| `app/composables/message/room`                                   | 2026-08-31 | the pre-join device probes and the call-session read reported nothing                              |
-| `app/composables/message/subscribables`                          | 2026-08-31 | seven `onData` bodies terminate; a dropped event was invisible                                     |
-| `app/composables/message` — the rest                             | 2026-08-31 | a note count read beside the list it belongs to; the three fire-and-forget sites already terminate |
-| `app/composables/resource/sheet`                                 | 2026-08-31 | clean — the two clipboard shortcuts terminate inside the composables they call                     |
-| `app/composables/resource` — the rest                            | 2026-08-31 | clean — every read goes through `readItems`/`useMutation`, and the autosave tick terminates        |
-| `app/composables` — the rest                                     | 2026-08-31 | one more async promise executor that never opened its gate; the rest terminates                    |
-| `app/services/resource`, `app/services/message`                  | 2026-08-31 | two suggestion callbacks, a `.match(noop, noop)`, and a wrapper whose only handler rethrew         |
-| `app/services` — the rest, `app/util`                            | 2026-08-31 | the npc effect chain stopped silently; the file pickers report from inside their own composables   |
-| `app/components/Message`                                         | 2026-08-31 | a hover-time roles read and the app's one clipboard write reported nowhere                         |
-| `app/components/Resource`, `app/components/Dungeons`             | —          |                                                                                                    |
-| `app/components` — the rest                                      | —          |                                                                                                    |
-| `packages/db`, `packages/infra`                                  | 2026-08-30 | `db` rolls back then rethrows; `infra` is resource declarations with no error path                 |
-| `packages/virrun` — `src/services/exec`                          | —          |                                                                                                    |
-| `packages/virrun` — the rest                                     | —          |                                                                                                    |
-| `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-08-30 | every throw is a stub, an unsupported-in-mock, or an Azure wire response                           |
-| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-08-30 | clean — every throw is a named error class, no chain to terminate outside `shared`                 |
+| Unit                                                             | Swept      | Notes                                                                                                 |
+| ---------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------- |
+| `server/trpc/routers/message`, `server/trpc/routers/room`        | 2026-08-31 | one bare `FORBIDDEN` left a banned member no reason; the best-effort tails are all awaited            |
+| `server/trpc/routers` — `call`, `role`, `userToRoom`, `webhook`  | 2026-08-31 | one entity name spelled as a literal; every `UNAUTHORIZED` is the sanctioned bare form                |
+| `server/trpc/routers` — the resource family                      | 2026-08-31 | clean — the two repeated rejections already have named constructors over the guards                   |
+| `server/trpc/routers` — the social and editor routers            | 2026-08-31 | clean — the one bare `InvalidOperationError` asserts an unreachable state, so a 500 is what it is     |
+| `server/trpc/routers` — the rest                                 | 2026-08-31 | clean — two rejections between them, both through a guard                                             |
+| `server/services/message`                                        | 2026-08-31 | every message-creation rejection reached the composer as its bare code                                |
+| `server/services` — the rest                                     | 2026-08-31 | four rejections re-decided their own code; the `CONFLICT` pair is the documented exception            |
+| `server/composables`                                             | 2026-08-30 | nine client constructors — none wraps a call, so there is nothing to terminate                        |
+| `packages/azure-functions`                                       | 2026-08-30 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)`                 |
+| `app/store/message`                                              | 2026-08-31 | five fire-and-forget callbacks now terminate; the silence they relied on is pinned by a test          |
+| `app/store` — the rest                                           | 2026-08-31 | the dungeons dialog gate never opened on a failed message; the rest reports through `useMutation`     |
+| `app/composables/message/room`                                   | 2026-08-31 | the pre-join device probes and the call-session read reported nothing                                 |
+| `app/composables/message/subscribables`                          | 2026-08-31 | seven `onData` bodies terminate; a dropped event was invisible                                        |
+| `app/composables/message` — the rest                             | 2026-08-31 | a note count read beside the list it belongs to; the three fire-and-forget sites already terminate    |
+| `app/composables/resource/sheet`                                 | 2026-08-31 | clean — the two clipboard shortcuts terminate inside the composables they call                        |
+| `app/composables/resource` — the rest                            | 2026-08-31 | clean — every read goes through `readItems`/`useMutation`, and the autosave tick terminates           |
+| `app/composables` — the rest                                     | 2026-08-31 | one more async promise executor that never opened its gate; the rest terminates                       |
+| `app/services/resource`, `app/services/message`                  | 2026-08-31 | two suggestion callbacks, a `.match(noop, noop)`, and a wrapper whose only handler rethrew            |
+| `app/services` — the rest, `app/util`                            | 2026-08-31 | the npc effect chain stopped silently; the file pickers report from inside their own composables      |
+| `app/components/Message`                                         | 2026-08-31 | a hover-time roles read and the app's one clipboard write reported nowhere                            |
+| `app/components/Resource`, `app/components/Dungeons`             | 2026-08-31 | the scene lifecycle and input slots drop what they return; `Resource` reaches the server by primitive |
+| `app/components` — the rest                                      | —          |                                                                                                       |
+| `packages/db`, `packages/infra`                                  | 2026-08-30 | `db` rolls back then rethrows; `infra` is resource declarations with no error path                    |
+| `packages/virrun` — `src/services/exec`                          | —          |                                                                                                       |
+| `packages/virrun` — the rest                                     | —          |                                                                                                       |
+| `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-08-30 | every throw is a stub, an unsupported-in-mock, or an Azure wire response                              |
+| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-08-30 | clean — every throw is a named error class, no chain to terminate outside `shared`                    |
 
 Rows were split at their directory boundaries on 2026-08-30, because a unit of 150–740 files is grepped rather
 than read and a grep pass that ticks a row records a sweep that never happened. The mechanical half was run

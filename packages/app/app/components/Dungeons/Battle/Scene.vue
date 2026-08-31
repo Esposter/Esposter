@@ -6,6 +6,7 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 import { useControlsStore } from "@/store/dungeons/controls";
+import { getResultAsync, noop } from "@esposter/shared";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
@@ -17,18 +18,15 @@ const { onPlayerInput } = battleSceneStore;
   <DungeonsScene
     :scene-key="SceneKey.Battle"
     @create="
-      async (scene) => {
-        playDungeonsBackgroundMusic(scene, BackgroundMusicKey.DecisiveBattle);
-        battleStateMachine.scene = scene;
-        await battleStateMachine.setState(StateName.Intro);
-      }
+      (scene) =>
+        getResultAsync(async () => {
+          playDungeonsBackgroundMusic(scene, BackgroundMusicKey.DecisiveBattle);
+          battleStateMachine.scene = scene;
+          await battleStateMachine.setState(StateName.Intro);
+        }).match(noop, console.error)
     "
     @update="onPlayerInput($event, controls.getInput())"
-    @shutdown="
-      async () => {
-        await battleStateMachine.setState();
-      }
-    "
+    @shutdown="() => getResultAsync(() => battleStateMachine.setState()).match(noop, console.error)"
   >
     <DungeonsBattleBackground />
     <DungeonsBattleMonster is-enemy />

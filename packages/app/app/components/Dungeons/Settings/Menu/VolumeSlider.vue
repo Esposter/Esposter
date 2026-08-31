@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RectangleConfiguration } from "vue-phaserjs";
 
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import {
@@ -16,6 +17,7 @@ import { getSettingsOptionY } from "@/services/dungeons/scene/settings/getSettin
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { Input } from "phaser";
 import { Rectangle, Text } from "vue-phaserjs";
+import { getResultAsync, noop } from "@esposter/shared";
 
 const volumeStore = useVolumeStore();
 const { setVolume } = volumeStore;
@@ -28,13 +30,15 @@ const baseSliderBarConfiguration: Partial<RectangleConfiguration> = {
   x: INITIAL_SETTINGS_VALUE_POSITION.x,
   y: baseY + 17,
 };
-const onSliderBarClick = async ({ x }: Input.Pointer) => {
-  if (!volumeSlider.value) return;
+const onSliderBarClick = getSynchronizedFunction(({ x }: Input.Pointer) =>
+  getResultAsync(async () => {
+    if (!volumeSlider.value) return;
 
-  const volumeSliderWidth = VOLUME_SLIDER_END_X - VOLUME_SLIDER_START_X;
-  const selectedVolumeSliderWidth = x - (MENU_HORIZONTAL_PADDING + VOLUME_SLIDER_START_X + VOLUME_SLIDER_WIDTH / 2);
-  await setVolume(Math.floor((selectedVolumeSliderWidth / volumeSliderWidth) * 100));
-};
+    const volumeSliderWidth = VOLUME_SLIDER_END_X - VOLUME_SLIDER_START_X;
+    const selectedVolumeSliderWidth = x - (MENU_HORIZONTAL_PADDING + VOLUME_SLIDER_START_X + VOLUME_SLIDER_WIDTH / 2);
+    await setVolume(Math.floor((selectedVolumeSliderWidth / volumeSliderWidth) * 100));
+  }).match(noop, console.error),
+);
 </script>
 
 <template>

@@ -11,7 +11,7 @@ import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/scene/battle/men
 import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
 
 export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const dialogStore = useDialogStore();
@@ -20,11 +20,14 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const activePanel = ref(ActivePanel.Info);
   const experienceBarStore = useExperienceBarStore();
 
-  const onPlayerInput = async (scene: SceneWithPlugins, input: PlayerInput) => {
-    if (await handleShowMessageInput(scene, input)) return;
-    else if (checkIsPlayerSpecialInput(input)) await onPlayerSpecialInput(input);
-    else onPlayerDirectionInput(input);
-  };
+  // The scene's update event is the frame loop, which drops whatever its listener returns — so the input this
+  // Entry point runs reports its own failure rather than leaving one rejection per frame with no handler
+  const onPlayerInput = (scene: SceneWithPlugins, input: PlayerInput) =>
+    getResultAsync(async () => {
+      if (await handleShowMessageInput(scene, input)) return;
+      else if (checkIsPlayerSpecialInput(input)) await onPlayerSpecialInput(input);
+      else onPlayerDirectionInput(input);
+    }).match(noop, console.error);
 
   const onPlayerSpecialInput = async (playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {

@@ -12,7 +12,7 @@ import { useDungeonsStore } from "@/store/dungeons";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
 import { Direction } from "grid-engine";
 
 let isAutoUpdateGridX = false;
@@ -62,21 +62,18 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     },
   );
 
-  const onPlayerInput = async (
-    scene: SceneWithPlugins,
-    justDownInput: PlayerInput,
-    input: PlayerInput,
-    delta: number,
-  ) => {
-    if (checkIsPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
-    // Handle special cases first with player direction input
-    else if (isUpdateVolume(input, selectedSettingsOption.value)) await updateVolume(input, delta);
-    else if (checkIsUpdateThemeModeSetting(justDownInput, selectedSettingsOption.value))
-      await updateThemeModeSetting(justDownInput);
-    // We ignore validation when moving up/down since we auto update grid x
-    // And this is just updating the settings options being viewed, not the actual values
-    else SettingsOptionGrid.move(justDownInput, justDownInput === Direction.UP || justDownInput === Direction.DOWN);
-  };
+  // Terminated here because the frame loop drops what this returns — see the battle scene's own entry point
+  const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput, input: PlayerInput, delta: number) =>
+    getResultAsync(async () => {
+      if (checkIsPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
+      // Handle special cases first with player direction input
+      else if (isUpdateVolume(input, selectedSettingsOption.value)) await updateVolume(input, delta);
+      else if (checkIsUpdateThemeModeSetting(justDownInput, selectedSettingsOption.value))
+        await updateThemeModeSetting(justDownInput);
+      // We ignore validation when moving up/down since we auto update grid x
+      // And this is just updating the settings options being viewed, not the actual values
+      else SettingsOptionGrid.move(justDownInput, justDownInput === Direction.UP || justDownInput === Direction.DOWN);
+    }).match(noop, console.error);
 
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {

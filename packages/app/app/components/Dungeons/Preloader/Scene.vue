@@ -2,6 +2,7 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { FontLoaders } from "@/models/dungeons/loader/FontLoaderMap";
 import { ImageLoaders } from "@/models/dungeons/loader/image/ImageLoaderMap";
@@ -17,6 +18,7 @@ import {
 } from "@/services/dungeons/scene/preloader/constants";
 import { prettify } from "@/util/text/prettify";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
+import { getResultAsync, noop } from "@esposter/shared";
 
 const phaserStore = usePhaserStore();
 const { switchToScene } = phaserStore;
@@ -39,9 +41,10 @@ const preload = (scene: SceneWithPlugins) => {
     .on("fileprogress", (file: Loader.File) => {
       assetText.value = `Loading asset: ${prettify(file.key)}`;
     })
-    .once("complete", async () => {
-      await switchToScene(SceneKey.Title);
-    });
+    .once(
+      "complete",
+      getSynchronizedFunction(() => getResultAsync(() => switchToScene(SceneKey.Title)).match(noop, console.error)),
+    );
 
   for (const fontLoader of FontLoaders) fontLoader(scene);
   for (const soundLoader of SoundLoaders) soundLoader(scene);
