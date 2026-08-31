@@ -4,6 +4,7 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount";
 import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCount";
 import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
+import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { Context } from "@@/server/trpc/context";
 import type { Clause } from "@esposter/azure";
@@ -493,65 +494,74 @@ export const resourceRouter = router({
   // Referenced where they sit, exactly as the duplicate path does: a published url lives under {id}/published,
   // Which unpublish wipes wholesale, so a verbatim copy would hand the draft urls a later unpublish deletes —
   // And re-publishing that draft would ship the same dead urls, with re-uploading every asset the only recovery
-  restoreSnapshotVersion: getOwnerProcedure(undefined, restoreSnapshotVersionInputSchema, "id").mutation<Resource>(
-    async ({ ctx, input: { channel, id, version } }) => {
-      const blobName = getSnapshotContentBlobName(id, channel, version);
-      const snapshotContent = await requireEntity(
-        readContentBlob(ResourceDefinitionMap[ctx.resource.type].contentSchema, blobName),
-        DatabaseEntityType.Resource,
-        blobName,
-      );
-      // Reconstitution, not a raw copy: a snapshot froze whatever the type declares live, and writing that
-      // Back over the working copy is how a restore silently reopened a closed survey or flipped its response
-      // Mode — a setting the write boundary makes authorization decisions on, with nothing in the restore or
-      // Its confirmation saying it would happen. The declaration is `ResourceLiveContentMap`, and it is the
-      // Same one the public read and the version preview reconstitute through
-      const reappliedContent = await reapplyLiveResourceContent(ctx.resource, snapshotContent);
-      // Cloned before the transaction opens, exactly as `publishResource` does it: the clone is one storage
-      // Round trip per referenced asset, and running it inside would hold a pooled connection — not just the
-      // `resources` row lock — for that whole time, so a handful of concurrent restores of asset-heavy
-      // Resources would starve the pool for requests that have nothing to do with them.
-      // Blobs a partial clone already wrote stay under this resource's own `{id}/files`, unreferenced by any
-      // Content until the next restore overwrites them or `purgeResource` takes the directory wholesale — the
-      // Deliberate trade, unlike `duplicateResource`, whose compensating `deleteDirectory` is only safe because
-      // The resource it clears was created moments earlier; the target here is a live working copy whose
-      // Existing files a directory-wide cleanup would destroy.
-      // Only the immutable kind, which is the one whose urls point into its own frozen clone directory. A
-      // Reference snapshot's urls already name the live `{id}/files/…` the working copy is pointing at, so
-      // Cloning them would mint a second copy of every asset the resource already holds and charge the owner
-      // For it, on every restore
-      const restoredContent =
-        SnapshotChannelDefinitionMap[channel].kind === SnapshotKind.Immutable
-          ? await cloneContentAssets(ctx.db, ctx.getSessionPayload.user.id, reappliedContent, id)
-          : reappliedContent;
-      // The one content-write path, so a restore is a content write like any other: the version bump and the blob
-      // Write land in one transaction, the type's after-save hook re-derives what the restored content declares,
-      // And the trail records the restore the way the recycle bin's does. Nothing adopts the save event it emits:
-      // The subscription filters the emitting device out, and no publishable type subscribes to it client-side, so
-      // An editor left open on this resource keeps the pre-restore draft and the version it cached, and its next
-      // Autosave is rejected as stale until it reloads
-      return saveResourceContent(ctx, {
-        activityType: ResourceActivityType.Restored,
-        content: restoredContent,
-        resource: ctx.resource,
-        // The bump and the write stay in one transaction so a failed write rolls the contentVersion back —
-        // A restore that did not land must never advance the version every client caches against
-        updateContentVersion: async (tx) =>
-          requireMutation(
-            (
-              await tx
-                .update(resources)
-                .set({ contentVersion: sql`${resources.contentVersion} + 1` })
-                .where(eq(resources.id, id))
-                .returning()
-            )[0],
-            Operation.Update,
-            DatabaseEntityType.Resource,
-            id,
-          ),
-      });
-    },
-  ),
+  restoreSnapshotVersion: getOwnerProcedure(
+    undefined,
+    restoreSnapshotVersionInputSchema,
+    "id",
+  ).mutation<SnapshotRestoration>(async ({ ctx, input: { channel, id, version } }) => {
+    const blobName = getSnapshotContentBlobName(id, channel, version);
+    const snapshotContent = await requireEntity(
+      readContentBlob(ResourceDefinitionMap[ctx.resource.type].contentSchema, blobName),
+      DatabaseEntityType.Resource,
+      blobName,
+    );
+    // The undo, taken before a single byte of the working copy is written and allowed to fail the whole
+    // Restore: a restore is the one operation that destroys draft work on purpose, and one whose undo silently
+    // Did not happen is the defect this mechanism exists to close. Taken after the snapshot is known to exist,
+    // So a restore that was never going to land does not spend a ring-buffer slot and evict the oldest
+    // Recovery point on its way to failing
+    const undoRevisionVersion = await takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeRestore);
+    // Reconstitution, not a raw copy: a snapshot froze whatever the type declares live, and writing that
+    // Back over the working copy is how a restore silently reopened a closed survey or flipped its response
+    // Mode — a setting the write boundary makes authorization decisions on, with nothing in the restore or
+    // Its confirmation saying it would happen. The declaration is `ResourceLiveContentMap`, and it is the
+    // Same one the public read and the version preview reconstitute through
+    const reappliedContent = await reapplyLiveResourceContent(ctx.resource, snapshotContent);
+    // Cloned before the transaction opens, exactly as `publishResource` does it: the clone is one storage
+    // Round trip per referenced asset, and running it inside would hold a pooled connection — not just the
+    // `resources` row lock — for that whole time, so a handful of concurrent restores of asset-heavy
+    // Resources would starve the pool for requests that have nothing to do with them.
+    // Blobs a partial clone already wrote stay under this resource's own `{id}/files`, unreferenced by any
+    // Content until the next restore overwrites them or `purgeResource` takes the directory wholesale — the
+    // Deliberate trade, unlike `duplicateResource`, whose compensating `deleteDirectory` is only safe because
+    // The resource it clears was created moments earlier; the target here is a live working copy whose
+    // Existing files a directory-wide cleanup would destroy.
+    // Only the immutable kind, which is the one whose urls point into its own frozen clone directory. A
+    // Reference snapshot's urls already name the live `{id}/files/…` the working copy is pointing at, so
+    // Cloning them would mint a second copy of every asset the resource already holds and charge the owner
+    // For it, on every restore
+    const restoredContent =
+      SnapshotChannelDefinitionMap[channel].kind === SnapshotKind.Immutable
+        ? await cloneContentAssets(ctx.db, ctx.getSessionPayload.user.id, reappliedContent, id)
+        : reappliedContent;
+    // The one content-write path, so a restore is a content write like any other: the version bump and the blob
+    // Write land in one transaction, the type's after-save hook re-derives what the restored content declares,
+    // And the trail records the restore the way the recycle bin's does. Nothing adopts the save event it emits:
+    // The subscription filters the emitting device out, and no publishable type subscribes to it client-side, so
+    // An editor left open on this resource keeps the pre-restore draft and the version it cached, and its next
+    // Autosave is rejected as stale until it reloads
+    const restoredResource = await saveResourceContent(ctx, {
+      activityType: ResourceActivityType.Restored,
+      content: restoredContent,
+      resource: ctx.resource,
+      // The bump and the write stay in one transaction so a failed write rolls the contentVersion back —
+      // A restore that did not land must never advance the version every client caches against
+      updateContentVersion: async (tx) =>
+        requireMutation(
+          (
+            await tx
+              .update(resources)
+              .set({ contentVersion: sql`${resources.contentVersion} + 1` })
+              .where(eq(resources.id, id))
+              .returning()
+          )[0],
+          Operation.Update,
+          DatabaseEntityType.Resource,
+          id,
+        ),
+    });
+    return { resource: restoredResource, undoRevisionVersion };
+  }),
   // The deliberate milestone, and the one an owner may name. Returns the version it wrote, or undefined when
   // The resource has no content blob to take one from — a resource created and never saved has no state worth
   // Keeping, which is an answer rather than a failure

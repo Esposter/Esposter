@@ -719,7 +719,7 @@ describe("resource", () => {
     await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     await saveWebpageContent(webpageResource, new WebpageEditor({ css: "b", html: "b" }), 1);
-    const restoredResource = await caller.restoreSnapshotVersion({
+    const { resource: restoredResource } = await caller.restoreSnapshotVersion({
       channel: SnapshotChannel.Published,
       id: webpageResource.id,
       version: 1,
@@ -754,7 +754,7 @@ describe("resource", () => {
     resourceEventEmitter.on("saveResourceContent", ([data]) => {
       saveEvent = data;
     });
-    const restoredResource = await caller.restoreSnapshotVersion({
+    const { resource: restoredResource } = await caller.restoreSnapshotVersion({
       channel: SnapshotChannel.Published,
       id: webpageResource.id,
       version: 1,
@@ -817,6 +817,34 @@ describe("resource", () => {
 
     expect(content.html).toBe(`<img src="${getResourceAssetUrl(blobName)}">`);
     expect(readFilesBlobNames(webpageResource.id)).toStrictEqual([blobName]);
+  });
+
+  // A restore is an append rather than a rewind: the draft it is about to overwrite becomes a revision first,
+  // So the one operation that destroys draft work on purpose is the one with an undo. The version it took rides
+  // Back with the restore, because a listing afterwards cannot say which of its rows this restore had just taken
+  test(`${SnapshotReason.BeforeRestore}: the draft a restore replaces is restorable afterwards`, async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    await saveWebpageContent(webpageResource, webpageEditor);
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    const draftEditor = new WebpageEditor({ css: "b", html: "b" });
+    await saveWebpageContent(webpageResource, draftEditor, 1);
+    const { undoRevisionVersion } = await caller.restoreSnapshotVersion({
+      channel: SnapshotChannel.Published,
+      id: webpageResource.id,
+      version: 1,
+    });
+    assert.exists(undoRevisionVersion);
+    await caller.restoreSnapshotVersion({
+      channel: SnapshotChannel.Revisions,
+      id: webpageResource.id,
+      version: undoRevisionVersion,
+    });
+    const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
+
+    expect(undoRevisionVersion).toBe(1);
+    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(draftEditor)));
   });
 
   // A label is what the owner typed when they took a version by hand, so a reason the owner did not choose
