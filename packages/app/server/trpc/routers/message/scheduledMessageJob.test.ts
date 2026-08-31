@@ -7,8 +7,10 @@ import { createCallerFactory } from "@@/server/trpc";
 import { mockSessionOnce } from "@@/server/trpc/context.test";
 import { scheduledMessageJobRouter } from "@@/server/trpc/routers/message/scheduledMessageJob";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
+import { MessageCreationRejectionReasonMap } from "@@/server/services/message/moderation/MessageCreationRejectionReasonMap";
 import {
   AzureTable,
+  MessageCreationRejectionType,
   roomFiltersInMessage,
   scheduledMessageJobsInMessage,
   ScheduledMessageJobType,
@@ -210,7 +212,9 @@ describe("scheduledMessageJob", () => {
 
     await expect(
       scheduledMessageJobCaller.sendScheduledMessageNow({ id: scheduledMessageJob.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: FORBIDDEN]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.ReadOnly]}]`,
+    );
 
     await mockSessionOnce(mockContext.db, member);
     const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();

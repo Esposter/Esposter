@@ -22,12 +22,14 @@ import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
+import { MessageCreationRejectionReasonMap } from "@@/server/services/message/moderation/MessageCreationRejectionReasonMap";
 import { getBlobName, getThumbnailBlobName } from "@esposter/db";
 import {
   AzureContainer,
   AzureEntityType,
   AzureTable,
   getReverseTickedTimestamp,
+  MessageCreationRejectionType,
   MessageType,
   roomFiltersInMessage,
   SearchIndex,
@@ -1278,7 +1280,7 @@ describe("message", () => {
       vi.advanceTimersByTime(1);
 
       await expect(messageCaller.createMessage({ message, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: TOO_MANY_REQUESTS]`,
+        `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Slowmode]}]`,
       );
     });
 
@@ -1324,7 +1326,7 @@ describe("message", () => {
       vi.advanceTimersByTime(1);
 
       await expect(messageCaller.forwardMessage(forwardInput)).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: TOO_MANY_REQUESTS]`,
+        `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Slowmode]}]`,
       );
     });
 
@@ -1354,7 +1356,7 @@ describe("message", () => {
       await mockSessionOnce(mockContext.db, member);
 
       await expect(messageCaller.createMessage({ message, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: FORBIDDEN]`,
+        `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.ReadOnly]}]`,
       );
     });
 
@@ -1393,7 +1395,7 @@ describe("message", () => {
       await mockSessionOnce(mockContext.db, member);
 
       await expect(messageCaller.createMessage({ message, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: FORBIDDEN]`,
+        `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Timeout]}]`,
       );
     });
 
@@ -1409,7 +1411,9 @@ describe("message", () => {
 
       await expect(
         messageCaller.createMessage({ message: createOwnMentionMessage(), roomId }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: FORBIDDEN]`);
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Timeout]}]`,
+      );
     });
   });
 
