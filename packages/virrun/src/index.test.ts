@@ -13,6 +13,6 @@ describe("virrun", () => {
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 152.12 KB (155775 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 156.53 KB (160290 bytes)"`);
   });
 });

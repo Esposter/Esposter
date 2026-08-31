@@ -75,6 +75,6 @@
   },
   "inlinedDependencies": {
     "@types/xml2js": "0.4.14",
-    "type-fest": "5.8.0"
+    "type-fest": "5.9.0"
   }
 }
