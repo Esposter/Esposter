@@ -18,8 +18,8 @@
 | `app/composables/message/room`                                   | 2026-08-31 | the pre-join device probes and the call-session read reported nothing                              |
 | `app/composables/message/subscribables`                          | 2026-08-31 | seven `onData` bodies terminate; a dropped event was invisible                                     |
 | `app/composables/message` — the rest                             | 2026-08-31 | a note count read beside the list it belongs to; the three fire-and-forget sites already terminate |
-| `app/composables/resource/sheet`                                 | —          | the command composables                                                                            |
-| `app/composables/resource` — the rest                            | —          | the root files and `list`                                                                          |
+| `app/composables/resource/sheet`                                 | 2026-08-31 | clean — the two clipboard shortcuts terminate inside the composables they call                     |
+| `app/composables/resource` — the rest                            | 2026-08-31 | clean — every read goes through `readItems`/`useMutation`, and the autosave tick terminates        |
 | `app/composables` — the rest                                     | 2026-08-31 | one more async promise executor that never opened its gate; the rest terminates                    |
 | `app/services/resource`, `app/services/message`                  | 2026-08-31 | two suggestion callbacks, a `.match(noop, noop)`, and a wrapper whose only handler rethrew         |
 | `app/services` — the rest, `app/util`                            | —          | `dungeons` is most of it                                                                           |
