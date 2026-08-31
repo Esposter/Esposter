@@ -4,7 +4,6 @@ import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatus
 import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
 import type { ResourceType } from "@esposter/db-schema";
 
-import { useReadResourcesPage } from "@/composables/resource/list/useReadResourcesPage";
 import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { getResourceFilterInput } from "@/services/resource/list/getResourceFilterInput";
 import { getResourceFilterKey } from "@/services/resource/list/getResourceFilterKey";

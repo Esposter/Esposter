@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useEmojiTag } from "@/composables/message/emoji/useEmojiTag";
-
 interface MessageModelMessageEmojiTagProps {
   emojiTag: string;
 }

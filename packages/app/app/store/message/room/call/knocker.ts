@@ -1,8 +1,6 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { JoinCallOptions } from "@/models/message/room/call/JoinCallOptions";
 
-import { useMutation } from "@/composables/shared/useMutation";
-
 // A fresh object per call — the pre-join sheet edits it in place, so a shared one would carry the previous
 // Call's choices into the next lobby
 const getDefaultJoinCallOptions = (): JoinCallOptions => ({ isCameraEnabled: false, isMicrophoneEnabled: true });

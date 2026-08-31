@@ -3,7 +3,6 @@ import type { DeleteRoomCategoryInput } from "#shared/models/db/roomCategory/Del
 import type { UpdateRoomCategoryInput } from "#shared/models/db/roomCategory/UpdateRoomCategoryInput";
 import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
-import { useMutation } from "@/composables/shared/useMutation";
 import { authClient } from "@/services/auth/authClient";
 import { getCategoryPositionUpdates } from "@/services/message/roomCategory/getCategoryPositionUpdates";
 import { createOperationData } from "@/services/shared/createOperationData";

@@ -1,5 +1,3 @@
-import { useReadResourcesPage } from "@/composables/resource/list/useReadResourcesPage";
-
 // The caller's own Recycle bin: soft-deleted resources awaiting restore or purge
 export const useReadDeletedResources = () => {
   const { $trpc } = useNuxtApp();

@@ -6,7 +6,6 @@ import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
 import type { RoomInMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
-import { useMutation } from "@/composables/shared/useMutation";
 import { EmojiType } from "@/models/message/emoji/EmojiType";
 import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
 import { uploadFileToSas } from "@/services/file/uploadFileToSas";

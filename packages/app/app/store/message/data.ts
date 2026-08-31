@@ -7,7 +7,6 @@ import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
-import { useMutation } from "@/composables/shared/useMutation";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { authClient } from "@/services/auth/authClient";
 import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";

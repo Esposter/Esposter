@@ -5,7 +5,6 @@ import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
-import { useMutation } from "@/composables/shared/useMutation";
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";

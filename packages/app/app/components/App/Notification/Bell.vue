@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useReadNotifications } from "@/composables/notification/useReadNotifications";
 import { authClient } from "@/services/auth/authClient";
 import { useNotificationStore } from "@/store/notification";
 import { mergeProps } from "vue";

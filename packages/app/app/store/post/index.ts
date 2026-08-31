@@ -3,7 +3,6 @@ import type { DeletePostInput } from "#shared/models/db/post/DeletePostInput";
 import type { UpdatePostInput } from "#shared/models/db/post/UpdatePostInput";
 import type { PostWithRelations } from "@esposter/db-schema";
 
-import { useMutation } from "@/composables/shared/useMutation";
 import { PostSortType } from "@/models/post/PostSortType";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { createOperationData } from "@/services/shared/createOperationData";

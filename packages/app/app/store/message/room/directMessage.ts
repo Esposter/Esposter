@@ -2,7 +2,6 @@ import type { HideDirectMessageInput } from "#shared/models/db/room/HideDirectMe
 import type { RoomInMessage, User } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
-import { useMutation } from "@/composables/shared/useMutation";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";

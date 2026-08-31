@@ -1,7 +1,6 @@
 import type { RevokeInviteInput } from "#shared/models/db/room/RevokeInviteInput";
 import type { InviteInMessageWithCreator } from "@esposter/db-schema";
 
-import { useMutation } from "@/composables/shared/useMutation";
 import { inviteCreateHooks } from "@/services/message/room/invite/inviteCreateHooks";
 import { useInviteStore } from "@/store/message/room/invite";
 

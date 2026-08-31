@@ -4,7 +4,6 @@ import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesO
 import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
-import { useResourceListColumns } from "@/composables/resource/list/useResourceListColumns";
 import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";

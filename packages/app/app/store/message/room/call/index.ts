@@ -1,4 +1,3 @@
-import { useMutation } from "@/composables/shared/useMutation";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";

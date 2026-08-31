@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 
-import { useEmojiTag } from "@/composables/message/emoji/useEmojiTag";
 import { getReactorNames } from "@/services/message/emoji/getReactorNames";
 import { useMemberStore } from "@/store/message/user/member";
 
