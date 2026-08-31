@@ -29,7 +29,7 @@
 | `packages/db`, `packages/infra`                                  | 2026-08-30 | `db` rolls back then rethrows; `infra` is resource declarations with no error path                       |
 | `packages/virrun` — `exec/snapshot`                              | —          |                                                                                                          |
 | `packages/virrun` — `exec/wsl`                                   | —          |                                                                                                          |
-| `packages/virrun` — `exec/util`                                  | —          |                                                                                                          |
+| `packages/virrun` — `exec/util`                                  | 2026-08-31 | the signal reaper and the probe-cache write; the `unwrapOr` readers answer a missing path with a value   |
 | `packages/virrun` — `exec/cache`, `exec/os`                      | 2026-08-31 | two more best-effort branches now trace; the hash and key chains answer absence with `null` on purpose   |
 | `packages/virrun` — `exec` — the rest                            | 2026-08-31 | clean — `bwrap`, `native`, `store`, `vfs`, `differential`, `test`; two chains, both absence-as-answer    |
 | `packages/virrun` — `services/cli`                               | 2026-08-31 | the prepare line's resolve swallowed twice over; every other absence-as-answer chain says so at its site |
