@@ -24,6 +24,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { knockerRouter } from "@@/server/trpc/routers/call/knocker";
 import { hasPermission } from "@esposter/db";
 import {
+  AzureEntityType,
   callSessionIdSchema,
   DatabaseEntityType,
   roomIdSchema,
@@ -63,7 +64,7 @@ const requireThreadRoot = async (roomId: string, threadRootRowKey: string) => {
   if (!threadRootRowKey) return;
 
   const [message] = await readMessagesByRowKeys(roomId, [threadRootRowKey]);
-  if (!message) throw getNotFoundError("Message", threadRootRowKey);
+  if (!message) throw getNotFoundError(AzureEntityType.Message, threadRootRowKey);
 };
 
 export const baseCallRouter = router({

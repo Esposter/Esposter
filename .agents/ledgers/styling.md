@@ -24,6 +24,10 @@ What a component looks like rather than how it is composed: attributify props ov
 - Component granularity, extraction and page composition — `vue-components`, over the same files. Different owning skills, so the split is deliberate.
 - Placement and reachability — `ux`, likewise.
 - `app/components/Dungeons` canvas internals: Phaser draw calls are not DOM styling. Only the Vue chrome around them is in scope.
+- `app/assets/dashboard/demo/icon/*.vue` — vendored ApexCharts sample SVGs, kept diff-identical to their source.
+  They are the bulk of what the `px` recipe reports, and none of them is a finding.
+- `app/assets/css/settings.scss`'s breakpoint map — Vuetify's SASS API takes px and computes the rem forms from
+  Them, so the unit there is the framework's rather than ours.
 
 ## Open findings
 
@@ -34,6 +38,12 @@ What a component looks like rather than how it is composed: attributify props ov
   UnoCSS's `bg-[…]` is ambiguous between `background-color` and `background-image` for a gradient value, and
   `Styled/Dialog.test.ts` asserts the current inline style. Neither can be settled without looking at the rendered
   page, which no agent here does (`run-app` skill) — so it is a question for a human, not a rewrite to attempt.
+
+- **Two static utility classes that attributify would carry**, found incidentally while sampling the `class=`
+  Recipe rather than by a pass over their unit:
+  `Message/Model/Message/File/ViewerDialog.vue` writes `class="max-h-[80vh]"` on both the video and the image,
+  Where the attribute form is `max-h="[80vh]"`. Left for the pass that reads that tree, since the file has no
+  Test and the change is only visible on the rendered dialog.
 
 ## Find recipe
 

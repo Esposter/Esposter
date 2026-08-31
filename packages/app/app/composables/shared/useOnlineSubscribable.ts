@@ -2,6 +2,7 @@ import type { Promisable } from "type-fest";
 import type { ComponentInternalInstance, EffectScope, MultiWatchSources, WatchSource } from "vue";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export interface OnlineSubscribableContext {
   instance?: ComponentInternalInstance | null;
@@ -76,12 +77,16 @@ export function useOnlineSubscribable(
     trigger();
   }, instance);
 
-  const disposeHandler = getSynchronizedFunction(async () => {
-    isActive = false;
-    const fn = currentCleanup;
-    currentCleanup = undefined;
-    await fn?.();
-  });
+  // The teardown is whatever the subscribe handed back — an unsubscribe, a socket stop — and a scope disposing
+  // Holds nothing to catch it, so a cleanup that rejects reports here rather than escaping the dispose
+  const disposeHandler = getSynchronizedFunction(() =>
+    getResultAsync(async () => {
+      isActive = false;
+      const fn = currentCleanup;
+      currentCleanup = undefined;
+      await fn?.();
+    }).match(noop, console.error),
+  );
 
   if (scope)
     scope.run(() => {

@@ -1,5 +1,5 @@
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
-import { Operation, uuidValidateV4 } from "@esposter/shared";
+import { checkIsUuidV4, Operation } from "@esposter/shared";
 
 // The check every room procedure builder runs before its membership, ownership or permission read: the id it is
 // About to look up must be one the table could hold. The read is what the malformed id invalidates, so all three
@@ -8,7 +8,7 @@ import { Operation, uuidValidateV4 } from "@esposter/shared";
 // Spelling is `JSON.stringify(input)` — which throws outright on a room input carrying a `bigint` permission
 // Bitfield, turning a rejected id into an unhandled serializer error.
 export const requireUuid = (value: unknown, name: string): string => {
-  if (typeof value !== "string" || !uuidValidateV4(value))
+  if (typeof value !== "string" || !checkIsUuidV4(value))
     throw getInvalidOperationError(Operation.Read, name, String(value));
   return value;
 };

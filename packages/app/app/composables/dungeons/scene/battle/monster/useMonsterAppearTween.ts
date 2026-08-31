@@ -1,4 +1,3 @@
-import { dayjs } from "#shared/services/dayjs";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useTween } from "vue-phaserjs";
@@ -21,7 +20,7 @@ export const useMonsterAppearTween = (isEnemy: boolean) => {
   return new Promise<void>((resolve) => {
     useTween(monsterTween, {
       delay: 0,
-      duration: dayjs.duration(isEnemy ? 1.6 : 0.8, "seconds").asMilliseconds(),
+      duration: isEnemy ? 1600 : 800,
       onComplete: () => {
         monsterPosition.value.x = xEnd;
         resolve();

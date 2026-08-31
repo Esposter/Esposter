@@ -2,7 +2,7 @@ import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFu
 import { authClient } from "@/services/auth/authClient";
 import { getIdsKey } from "@/services/message/subscribables/getIdsKey";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
-import { RoutePath, takeOne } from "@esposter/shared";
+import { getResultAsync, noop, RoutePath, takeOne } from "@esposter/shared";
 
 export const useDirectMessageSubscribables = () => {
   const { $trpc } = useNuxtApp();
@@ -31,23 +31,25 @@ export const useDirectMessageSubscribables = () => {
         },
       });
       const leaveRoomUnsubscribable = $trpc.room.onLeaveRoom.subscribe(roomIds, {
-        onData: getSynchronizedFunction(async ({ roomId, userId }) => {
-          if (userId === session.value.data?.user.id) {
-            storeDeleteDirectMessage({ id: roomId });
-            await navigateTo(
-              directMessages.value.length > 0
-                ? RoutePath.Messages(takeOne(directMessages.value).id)
-                : RoutePath.MessagesIndex,
-              { replace: true },
+        onData: getSynchronizedFunction(({ roomId, userId }) =>
+          getResultAsync(async () => {
+            if (userId === session.value.data?.user.id) {
+              storeDeleteDirectMessage({ id: roomId });
+              await navigateTo(
+                directMessages.value.length > 0
+                  ? RoutePath.Messages(takeOne(directMessages.value).id)
+                  : RoutePath.MessagesIndex,
+                { replace: true },
+              );
+              return;
+            }
+            const participants = directMessageParticipantsMap.value.get(roomId) ?? [];
+            directMessageParticipantsMap.value.set(
+              roomId,
+              participants.filter(({ id }) => id !== userId),
             );
-            return;
-          }
-          const participants = directMessageParticipantsMap.value.get(roomId) ?? [];
-          directMessageParticipantsMap.value.set(
-            roomId,
-            participants.filter(({ id }) => id !== userId),
-          );
-        }),
+          }).match(noop, console.error),
+        ),
       });
 
       return () => {

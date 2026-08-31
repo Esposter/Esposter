@@ -1,6 +1,5 @@
 import type { Context } from "@@/server/trpc/context";
 
-import { dayjs } from "#shared/services/dayjs";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { callStartTimeMap } from "@@/server/services/message/call/callStartTimeMap";
 import { deleteCallParticipant } from "@@/server/services/message/call/deleteCallParticipant";
@@ -33,7 +32,7 @@ export const leaveCallAsParticipant = async (
     if (!callSession?.roomId) return;
 
     const callDurationSeconds = callStart
-      ? Math.round(dayjs.duration(Date.now() - callStart.getTime()).asSeconds())
+      ? Math.round(Temporal.Duration.from({ milliseconds: Date.now() - callStart.getTime() }).total("seconds"))
       : 0;
     // The line is worded by the duration it reports, which is what the renderer reads an ended call back as
     await createSystemRoomMessage(callSession.roomId, userId, String(callDurationSeconds), sessionId, {

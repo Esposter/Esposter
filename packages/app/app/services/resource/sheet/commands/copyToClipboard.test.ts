@@ -1,4 +1,4 @@
-// @vitest-environment nuxt
+// @vitest-environment happy-dom
 import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";

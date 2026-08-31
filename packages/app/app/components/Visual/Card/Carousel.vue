@@ -2,7 +2,6 @@
 <script setup lang="ts">
 import type { Card } from "@/models/visual/Card";
 
-import { dayjs } from "#shared/services/dayjs";
 import CardBase from "@/components/Visual/Card/Base.vue";
 import { takeOne } from "@esposter/shared";
 
@@ -27,7 +26,7 @@ const {
   cardScaleYRatioLoss = 0.05,
   cardTemplate = CardBase,
   // Duration before cards move
-  duration = dayjs.duration(10, "seconds").asMilliseconds(),
+  duration = Temporal.Duration.from({ seconds: 10 }).total("milliseconds"),
   maxShownCards = 5,
 } = defineProps<VisualCardCarouselProps>();
 /**

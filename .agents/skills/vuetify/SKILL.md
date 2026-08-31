@@ -92,7 +92,7 @@ The goal is always attributify: prefer inline UnoCSS utilities and delete the st
 - `references/form-dialogs-and-rules.md` — when wiring a form dialog or inline form's validity/error icon, choosing between a built-in rule and a custom one, or adding a custom global validation rule and wording its message.
 - `references/select-item-construction.md` — when building the items constant for a select, list or menu from an enum or map.
 - `references/css-custom-properties.md` — when a component genuinely needs a `<style>` block and a shared value in it.
-- `references/scrollspy-sub-nav.md` — when a sidebar must track which section is scrolled into view.
+- `references/scrollspy-sub-nav.md` — when a Vuetify sidebar must track which section is scrolled into view.
 - `references/nested-activators.md` — when one control activates two or more overlays and no primitive covers the stack.
 - `references/button-backgrounds.md` — when a button's fill is not what you expected, or a container has turned it transparent.
 - `references/router-driven-highlighting.md` — when binding `to` on a button or tab, or the wrong tab is lit.

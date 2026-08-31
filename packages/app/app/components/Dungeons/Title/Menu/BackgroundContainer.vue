@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { dayjs } from "#shared/services/dayjs";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import {
   CURSOR_POSITION_INCREMENT,
@@ -21,7 +20,7 @@ import { Container } from "vue-phaserjs";
       :tween="{
         delay: 0,
         repeat: -1,
-        duration: dayjs.duration(0.5, 'seconds').asMilliseconds(),
+        duration: 500,
         x: getTweenRange(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.x + 3),
       }"
     />

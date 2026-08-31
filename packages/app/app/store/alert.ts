@@ -1,6 +1,5 @@
 import type { VAlert } from "vuetify/components";
 
-import { dayjs } from "#shared/services/dayjs";
 import { AlertIconMap } from "@/services/vuetify/AlertIconMap";
 import { checkIsServer } from "@esposter/shared";
 
@@ -19,9 +18,12 @@ export const useAlertStore = defineStore("alert", () => {
     const previousTimeoutId = alertTimeoutMap.get(id);
     if (previousTimeoutId) clearTimeout(previousTimeoutId);
 
-    const timeoutId = window.setTimeout(() => {
-      deleteAlert(id);
-    }, dayjs.duration(5, "seconds").asMilliseconds());
+    const timeoutId = window.setTimeout(
+      () => {
+        deleteAlert(id);
+      },
+      Temporal.Duration.from({ seconds: 5 }).total("milliseconds"),
+    );
     alertTimeoutMap.set(id, timeoutId);
   };
   const createAlert = (

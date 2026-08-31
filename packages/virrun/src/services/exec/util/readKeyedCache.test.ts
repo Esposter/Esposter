@@ -1,4 +1,3 @@
-import { dayjs } from "#src/services/dayjs";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { readKeyedCache } from "#src/services/exec/util/readKeyedCache";
@@ -56,7 +55,9 @@ describe(readKeyedCache, () => {
 
     writeKeyedCache(file, { key, value });
 
-    expect(readKeyedCache(file, valueSchema, key, dayjs.duration(1, "hour").asMilliseconds())).toBe(value);
+    expect(readKeyedCache(file, valueSchema, key, Temporal.Duration.from({ hours: 1 }).total("milliseconds"))).toBe(
+      value,
+    );
   });
 
   test("returns undefined when the value is older than the age bound — the drift the key cannot see", () => {
@@ -66,10 +67,16 @@ describe(readKeyedCache, () => {
     // Toolchain could have moved underneath a key that only fingerprints platform + kernel release.
     writeFileSync(
       file,
-      JSON.stringify({ key, storedAtMs: Date.now() - dayjs.duration(2, "hours").asMilliseconds(), value }),
+      JSON.stringify({
+        key,
+        storedAtMs: Date.now() - Temporal.Duration.from({ hours: 2 }).total("milliseconds"),
+        value,
+      }),
     );
 
-    expect(readKeyedCache(file, valueSchema, key, dayjs.duration(1, "hour").asMilliseconds())).toBeUndefined();
+    expect(
+      readKeyedCache(file, valueSchema, key, Temporal.Duration.from({ hours: 1 }).total("milliseconds")),
+    ).toBeUndefined();
   });
 
   test("ignores the value's age when the caller sets no bound", () => {

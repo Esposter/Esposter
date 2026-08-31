@@ -4,7 +4,7 @@ The question is where a thing lives and whether it exists twice — one export p
 
 | Unit                                                                | Swept      | Notes                                                                                                                                                                                |
 | ------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/shared`, `packages/shared-node`                           | —          | the ≥2-consumers rule bites hardest here: name the second consumer or move                                                                                                           |
+| `packages/shared`, `packages/shared-node`                           | 2026-08-30 | the two zod helpers moved to `services/zod`, their annotating types to `models/zod`, one export per file                                                                             |
 | `app/shared/services`, `app/shared/util`                            | 2026-08-27 | `AchievementDefinitionMap` moved out of `achievementDefinitions.ts` into its own file, with its colocated suite; `getSynchronizedFunction`'s second export is exempt and now says so |
 | `app/shared/models`                                                 | —          | 319 files; splits again at its own subdirectories on contact                                                                                                                         |
 | `app/services`, `app/util`, `app/models`, `app/types`               | —          | models vs services vs utils vs constants; duplicate constants                                                                                                                        |
@@ -30,6 +30,31 @@ grep -rhoE '"[a-zA-Z][a-zA-Z0-9 ./_-]{4,}"' --include=*.ts --include=*.vue packa
   sort | uniq -c | sort -rn | awk '$1 > 1'
 ```
 
+## The consumer scan
+
+The ≥2-consumers rule is answered by counting the **packages** that name each export, which needs the whole repo
+in memory rather than a grep per name:
+
+```bash
+node -e '
+const { execSync } = require("node:child_process");
+const fs = require("node:fs");
+const list = (...globs) => execSync(`git ls-files ${globs.map((g) => `"${g}"`).join(" ")}`, { encoding: "utf8", maxBuffer: 1 << 28 }).split("
+").filter(Boolean);
+const sourceFiles = list("packages/shared/src/**/*.ts").filter((f) => !f.includes(".test.") && !f.endsWith("index.ts"));
+const corpus = [...list("*.ts"), ...list("*.vue")].filter((f) => !f.includes("/dist/")).map((f) => [f, fs.readFileSync(f, "utf8")]);
+for (const file of sourceFiles)
+  for (const [, name] of fs.readFileSync(file, "utf8").matchAll(/^export (?:const|function|class|enum|type|interface) ([A-Za-z0-9_$]+)/gmu)) {
+    const packages = [...new Set(corpus.filter(([f, body]) => f !== file && new RegExp(String.raw`${name}`, "u").test(body)).map(([f]) => f.split("/").slice(0, 2).join("/")))];
+    if (packages.length < 2) console.log(`${packages.length}  ${file} -> ${name}`);
+  }'
+```
+
+`String.raw` is load-bearing — a `\b` written into a template literal here becomes a backspace and the scan
+reports every export as unused, which reads exactly like a tree of dead code (`sweeps` skill). The scan excludes
+the export's own file, so a `0` names an export nothing outside that file references — dead code and an export
+used only inside its own file produce the same result, and the pass tells them apart by opening the file.
+
 ## Exclusions
 
 - Generated barrels (`index.ts` from `ctix`) and `snapshot.json` — machine state.
@@ -40,5 +65,9 @@ grep -rhoE '"[a-zA-Z][a-zA-Z0-9 ./_-]{4,}"' --include=*.ts --include=*.vue packa
 ## Next enforceable
 
 - One export per file is syntactic; a custom oxlint plugin decides it outright.
+- A `util/` file importing a third-party package belongs in `services/`, and that is a specifier test: a
+  `no-restricted-imports` override on `**/util/**` whose `group` is `["*", "!node:*", "!#src/*", "!@esposter/*"]` decides
+  it, if oxlint honours a negated group and an `allowTypeImports` escape for the pure type utilities under
+  `util/types`. Both are unverified — the pass that builds it proves the rule can fail first (`sweeps` skill).
 - Alias imports are already enforced — the `@/**`-under-`packages/*/src/**` ban retired the `package-imports` sweep.
 - Duplicate constants and the sole-consumer rule need the whole repo in mind; they stay with the sweep.

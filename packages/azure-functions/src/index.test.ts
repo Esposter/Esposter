@@ -5,10 +5,9 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const REGISTRATION_REGEX = /app\.(?:eventGrid|http|serviceBusQueue|timer)\(/gu;
-const HOOK_REGISTRATION_REGEX = /app\.hook\.\w+\(/gu;
-
 describe("@esposter/azure-functions", () => {
+  const REGISTRATION_REGEX = /app\.(?:eventGrid|http|serviceBusQueue|timer)\(/gu;
+  const HOOK_REGISTRATION_REGEX = /app\.hook\.\w+\(/gu;
   const packageDirectory = resolve(import.meta.dirname, "..");
   const distFile = resolve(packageDirectory, "dist/index.js");
   const readRegistrationCount = (directory: string) =>
@@ -16,7 +15,7 @@ describe("@esposter/azure-functions", () => {
 
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4888.31 KB (5005632 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4888.27 KB (5005584 bytes)"`);
   });
 
   // The Functions host loads a v4-model app by reading "main", and never consults the generated exports map, so

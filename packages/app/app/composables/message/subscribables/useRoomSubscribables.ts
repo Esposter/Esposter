@@ -2,6 +2,7 @@ import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFu
 import { getIdsKey } from "@/services/message/subscribables/getIdsKey";
 import { useRoomStore } from "@/store/message/room";
 import { useMemberStore } from "@/store/message/user/member";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const useRoomSubscribables = () => {
   const { $trpc } = useNuxtApp();
@@ -23,7 +24,9 @@ export const useRoomSubscribables = () => {
         },
       });
       const deleteRoomUnsubscribable = $trpc.room.onDeleteRoom.subscribe(newRoomIds, {
-        onData: getSynchronizedFunction((id) => storeDeleteRoom({ id })),
+        onData: getSynchronizedFunction((id) =>
+          getResultAsync(() => storeDeleteRoom({ id })).match(noop, console.error),
+        ),
       });
       const joinRoomUnsubscribable = $trpc.room.onJoinRoom.subscribe(newRoomIds, {
         onData: ({ roomId, user }) => {

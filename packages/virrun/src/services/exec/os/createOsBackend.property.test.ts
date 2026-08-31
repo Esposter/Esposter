@@ -1,4 +1,3 @@
-import { dayjs } from "#src/services/dayjs.test";
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
 import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
@@ -102,6 +101,6 @@ describe.skipIf(!isOsBackendSupported())(createOsBackend, () => {
         { numRuns: 10 },
       );
     },
-    dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds(),
+    Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds"),
   );
 });

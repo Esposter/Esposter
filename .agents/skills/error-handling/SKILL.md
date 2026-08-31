@@ -1,6 +1,6 @@
 ---
 name: error-handling
-description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch and try/finally banned), wrapping only what can actually fail, terminating every chain (.isOk/.isErr banned, never void a ResultAsync, noop as the ok handler, a callback nothing awaits terminating its own Result), .orTee(console.error) over console.warn/catch {}, who alerts a tRPC rejection (errorLink ownership, checkIsAlertedByErrorLink, background reads, alert coalescing), withFinalizer vs withFinalizerAsync, never new Error (InvalidOperationError, the unimplemented-stub exception, jsonDateParse for JSON with dates), the tRPC backend guards and the getInvalidOperationError/getNotFoundError constructors a router asserts its own rejections with, plus deep dives on the worked chain shapes, server guards (requireEntity/requireMutation, TRPCError cause, awaiting a best-effort effect a rollback compensates), and Azure Functions logging/retry with capped dead-letter replay. Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
+description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch and try/finally banned), wrapping only what can actually fail, terminating every chain (.isOk/.isErr banned, never void a ResultAsync, noop as the ok handler, a callback nothing awaits terminating its own Result), .orTee(console.error) over console.warn/catch {}, who alerts a tRPC rejection (errorLink ownership, createErrorAlert as the caller side of it, background reads, alert coalescing), withFinalizer vs withFinalizerAsync, never new Error (InvalidOperationError, the unimplemented-stub exception, jsonDateParse for JSON with dates), the tRPC backend guards and the getInvalidOperationError/getNotFoundError constructors a router asserts its own rejections with, plus deep dives on the worked chain shapes, server guards (requireEntity/requireMutation, TRPCError cause, awaiting a best-effort effect a rollback compensates), and Azure Functions logging/retry with capped dead-letter replay. Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
 ---
 
 # Error Handling Conventions
@@ -72,14 +72,19 @@ import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } fr
 - Never end a fire-and-forget chain with `.orTee(handler)` alone (lint flags it) — use `.match(noop, handler)`.
 - No-op ok handler: always `noop`. Never inline `() => undefined` or `() => {}`.
 - **A callback nothing awaits terminates its own `Result` inside its own body.** An interval tick, a timer, a fire-and-forget hook — nothing holds its promise, so a rejection escapes as an unhandled one and nothing retries. Wrap the whole body and terminate it inside (`getResultAsync(async () => …).match(noop, console.error)`), rather than leaving the terminal handler to a caller that does not exist.
+- **When that callback is a promise executor, the err handler also resolves the gate.** `new Promise(getSynchronizedFunction(async (resolve) => …))` is how a Phaser animation or a dialog hands its completion back to the flow waiting on it, and the rejection is swallowed twice over — the drain settles it, and the `Promise` constructor never sees a throw from an `async` executor. Terminating alone therefore trades an invisible failure for a permanent hang: the caller keeps awaiting a gate nothing will ever open. So the err branch logs **and** calls `resolve`, and the caller carries on with the animation skipped rather than the turn stalled.
 
 ## Who Alerts a tRPC Rejection
 
-`errorLink` owns `BAD_REQUEST`, `TOO_MANY_REQUESTS` and `UNPROCESSABLE_CONTENT` — it alerts them itself, so a caller catching the same rejection asks `checkIsAlertedByErrorLink(error)` first and stays the owner only of what it alone can see (a blob PUT, a local guard). Alerting again puts two identical toasts on screen for one failure.
+`errorLink` owns `BAD_REQUEST`, `TOO_MANY_REQUESTS` and `UNPROCESSABLE_CONTENT` — it alerts them itself, so a caller stays the owner only of what it alone can see (a blob PUT, a local guard). Alerting again puts two identical toasts on screen for one failure.
+
+**A caller never writes that check itself** — `createErrorAlert` is the one way a caller alerts a rejection, and it asks `checkIsAlertedByErrorLink` before reaching the alert store. Spelled out per site, the guard is a line four callers can each forget, and each one that does ships a double toast nothing catches. `error-alert/no-raw-error-alert` fails the line that writes `createAlert(<expr>.message, …)`, so the only shape left to get wrong is one inside a Vue template's inline handler, which oxlint hands no JS plugin. A sentence the caller composed — a validation message, a template literal — is not a rejection and stays on `createAlert`.
 
 ```typescript
-if (!checkIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+createErrorAlert(error);
 ```
+
+Where a surface reports through the notification store instead — the resource areas do — `createErrorNotification(error)` is the same constructor wearing that store's shape, and a caller spelling out `createNotification({ severity: NotificationSeverity.Error, title: error.message })` is restating it.
 
 - **That ownership is unconditional, and must stay that way.** The predicate is read off the error code alone, so any operation the link quietly declines to alert is an operation _nobody_ alerts — silence on both sides. `op.context.isBackground` therefore suppresses only the **login redirect**, never the alert: a background read failing is still a failure the user's own action caused, while a background `FORBIDDEN` (an hourly sweep hitting a room the user was just removed from) must never move them.
 - **The redirect reads the session rather than inferring one from the code**, and only once the session request has **settled** — `authClient.useSession()` outside a component returns `data: null` while pending, and redirecting on that logs an authenticated user out of the first page load that happens to reject. It reads it inside an `effectScope` the link stops: better-auth's `useStore` registers its unsubscribe through `onScopeDispose`, so a bare call in the link's promise leaves a listener on the module-singleton session atom per rejection.
@@ -92,6 +97,27 @@ Both live in `@esposter/shared`. Both run the finalizer regardless of success/fa
 - **`withFinalizer`** (sync): finalizer errors are always rethrown.
 - **`withFinalizerAsync`** (async/sync mix): finalizer errors rethrown if the original operation succeeded; silently logged via `console.error` if it failed (preserving the original error). Both arguments are plain `() => Promisable<T>`, not `ResultAsync`.
 - For simple loading flags around a `ResultAsync`, set the flag after `await` instead — a `ResultAsync` resolves to a `Result` rather than rejecting, so no finalizer is needed.
+
+**A finalizer never wraps a `Result`; a `Result` wraps the finalizer.** Both finalizers throw and neither returns
+one, so there is no `.match` on the outside of a `withFinalizerAsync` — nesting it the other way round
+(`withFinalizerAsync(() => getResultAsync(…).match(…), finalizer)`) terminates the operation but leaves the
+**finalizer's** own rejection escaping, which is the harder one to notice. In a fire-and-forget the outermost
+layer therefore has to be `getResultAsync`, because it is the only one of the two that produces something a
+`.match` can end:
+
+```typescript
+getSynchronizedFunction((argument) =>
+  getResultAsync(() => withFinalizerAsync(operation, finalizer)).match(noop, console.error),
+);
+```
+
+No `async`/`await` is added to reach that shape — `withFinalizerAsync` already returns the promise
+`getResultAsync` takes, so writing `async () => await withFinalizerAsync(…)` only trips `require-await`.
+
+**And the shape above is usually not the one you want**, because a terminated chain resolves: the statements
+after the `await` run on every path, which is what the finalizer existed to guarantee. So when the finalizer only
+resets local state — a flag, an emit, a ref — terminate first and put those lines after the await, and the
+finalizer disappears rather than being nested.
 
 ## tRPC Backend Guards
 

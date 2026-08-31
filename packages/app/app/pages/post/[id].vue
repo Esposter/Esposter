@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { authClient } from "@/services/auth/authClient";
-import { validate } from "@/services/router/validate";
+import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
 import { useCommentStore } from "@/store/post/comment";
 
-definePageMeta({ validate });
+definePageMeta({ validate: checkIsUuidRouteId });
 
 const { data: session } = await authClient.useSession(useFetch);
 const post = await useReadPostFromRoute();

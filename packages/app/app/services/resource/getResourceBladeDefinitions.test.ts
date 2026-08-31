@@ -1,4 +1,4 @@
-// @vitest-environment nuxt
+// @vitest-environment happy-dom
 // The editor component map reaches GrapesJS, which touches `window` at import time
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";

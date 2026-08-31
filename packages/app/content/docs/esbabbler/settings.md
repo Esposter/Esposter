@@ -55,24 +55,22 @@ The client store (`store/message/user/settings/index.ts`) applies updates optimi
 
 The dialog uses a Discord-style two-level nav: a `v-list-group` per `UserSettingsListItemMap` category whose sections come from `UserSettingsSectionMap` (per-panel subsection enums whose values double as section title **and** DOM id).
 
-- **Scroll tracking is visibility-driven, not `v-intersect`.** Each `MessageModelUserSettingsSection` reports visibility via `useElementVisibility` into `visibleSectionIds`; `useSettingsScrollSpy` sets `activeSectionId` to the topmost visible section in map order. `v-intersect` is the wrong instrument here: `IntersectionObserver` re-fires on any layout reflow, so a button clicked inside a panel moves the sidebar highlight to a section the user never scrolled to.
-- **The panel header sits outside the scroll container** (the shared shell's fixed `#header` slot above the `flex-1` scroll div). That structural choice keeps the scrollspy simple: a section clipped above the scroll area is genuinely not visible, and `useVGoTo` lands a section title just below the header with no offset math. `scrollToSection` sets `activeSectionId` immediately and guards with `isScrollingToSection` so the highlight doesn't flicker through intermediate sections during the animated scroll.
-- The active sub-item rail is the generic `StyledSlideIndicator` — measures the active item and slides to it via `translateY`, reusable for any vertical nav.
+- **Scroll tracking is the repo-wide mechanism**, not one written for this dialog: `useVisibleSectionIds` over the panel's section ids, bounded by the scroll container, and the `StyledSlideIndicator` rail stretched across every section currently on screen. What that guarantees, and why it is neither a scroll handler nor `v-intersect`, is [section navigation](/docs/architecture/section-navigation).
+- **The panel header sits outside the scroll container** (the shared shell's fixed `#header` slot above the `flex-1` scroll div). That structural choice is what keeps the scrollspy free of offset math here: a section clipped above the scroll area is genuinely not visible, and `useVGoTo` lands a section title just below the header.
 
 ## Key files
 
-| File                                                                         | Role                                                                 |
-| :--------------------------------------------------------------------------- | :------------------------------------------------------------------- |
-| `packages/db-schema/src/schema/userSettingsInMessage.ts`                     | table + enums + range constants                                      |
-| `packages/app/server/trpc/routers/user.ts`                                   | `readUserSettings` + `updateUserSettings`                            |
-| `packages/app/app/models/message/user/UserSettingsType.ts`                   | panel enum (values double as titles)                                 |
-| `packages/app/app/services/message/user/settings/`                           | list-item / content / section maps                                   |
-| `packages/app/app/store/message/user/settings/index.ts`                      | DB-backed store (optimistic + revert)                                |
-| `packages/app/app/store/message/user/settings/voice.ts`                      | device-local store (`localStorage` device IDs)                       |
-| `packages/app/app/store/message/user/settings/dialog.ts`                     | dialog UI store (visibility, mobile `isDrawerOpen`, scrollspy state) |
-| `packages/app/app/components/Message/Model/User/Settings/`                   | dialog + wrappers + `Type/*` panels                                  |
-| `packages/app/app/composables/message/user/settings/useSettingsScrollSpy.ts` | topmost-visible-section scrollspy                                    |
-| `packages/app/app/pages/user/settings.vue`                                   | global account/profile surface                                       |
+| File                                                       | Role                                                       |
+| :--------------------------------------------------------- | :--------------------------------------------------------- |
+| `packages/db-schema/src/schema/userSettingsInMessage.ts`   | table + enums + range constants                            |
+| `packages/app/server/trpc/routers/user.ts`                 | `readUserSettings` + `updateUserSettings`                  |
+| `packages/app/app/models/message/user/UserSettingsType.ts` | panel enum (values double as titles)                       |
+| `packages/app/app/services/message/user/settings/`         | list-item / content / section maps                         |
+| `packages/app/app/store/message/user/settings/index.ts`    | DB-backed store (optimistic + revert)                      |
+| `packages/app/app/store/message/user/settings/voice.ts`    | device-local store (`localStorage` device IDs)             |
+| `packages/app/app/store/message/user/settings/dialog.ts`   | dialog UI store (visibility, panel, mobile `isDrawerOpen`) |
+| `packages/app/app/components/Message/Model/User/Settings/` | dialog + wrappers + `Type/*` panels                        |
+| `packages/app/app/pages/user/settings.vue`                 | global account/profile surface                             |
 
 ## Notes
 

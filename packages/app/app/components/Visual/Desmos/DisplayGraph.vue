@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Expression } from "@/models/desmos/Expression";
 
-import { dayjs } from "#shared/services/dayjs";
 import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
 import WindowControls from "@/components/Visual/Desmos/WindowControls.vue";
 import { Colors } from "@/models/desmos/Colors";
@@ -48,7 +47,7 @@ const animate = () => {
     calculator?.updateSettings(savedSettings);
   });
 
-  const drawingTime = dayjs.duration(5, "seconds").asMilliseconds();
+  const drawingTime = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
   let i = 0;
   const { pause } = useIntervalFn(() => {
     const expression = takeOne(expressions, i++);

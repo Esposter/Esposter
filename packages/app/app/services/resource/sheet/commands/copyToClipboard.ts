@@ -4,7 +4,6 @@ import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleCo
 import { getCellTextRows } from "@/services/resource/sheet/commands/getCellTextRows";
 import { serializeToHtml } from "@/services/resource/sheet/commands/serializeToHtml";
 import { serializeToTsv } from "@/services/resource/sheet/commands/serializeToTsv";
-import { getResultAsync, noop } from "@esposter/shared";
 
 interface CopyToClipboardOptions {
   includeHeaders?: boolean;
@@ -19,18 +18,15 @@ export const copyToClipboard = async (dataSource: DataSource, options: CopyToCli
   const filteredDataSource = { ...dataSource, columns: visibleColumns, rows };
   const cellTextRows = getCellTextRows(visibleColumns, rows);
   const tsv = serializeToTsv(filteredDataSource, includeHeaders, cellTextRows);
-  await getResultAsync(async () => {
-    if (typeof ClipboardItem === "undefined") {
-      await window.navigator.clipboard.writeText(tsv);
-      return;
-    }
+  // Not wrapped: the only handler this had rethrew what it caught, and the caller already terminates and alerts
+  if (typeof ClipboardItem === "undefined") {
+    await window.navigator.clipboard.writeText(tsv);
+    return;
+  }
 
-    const tsvBlob = new Blob([tsv], { type: "text/plain" });
-    const htmlBlob = new Blob([serializeToHtml(filteredDataSource, includeHeaders, cellTextRows)], {
-      type: "text/html",
-    });
-    await window.navigator.clipboard.write([new ClipboardItem({ "text/html": htmlBlob, "text/plain": tsvBlob })]);
-  }).match(noop, (error) => {
-    throw error;
+  const tsvBlob = new Blob([tsv], { type: "text/plain" });
+  const htmlBlob = new Blob([serializeToHtml(filteredDataSource, includeHeaders, cellTextRows)], {
+    type: "text/html",
   });
+  await window.navigator.clipboard.write([new ClipboardItem({ "text/html": htmlBlob, "text/plain": tsvBlob })]);
 };

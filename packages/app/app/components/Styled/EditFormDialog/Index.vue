@@ -3,8 +3,6 @@ import type { ItemEntityType } from "@esposter/shared";
 import type { VForm } from "vuetify/components";
 import type { z } from "zod";
 
-import { dayjs } from "#shared/services/dayjs";
-
 interface EditFormDialogProps<T> {
   editedItem: T;
   isDirty: boolean;
@@ -35,7 +33,7 @@ const { start: startClose } = useTimeoutFn(
   () => {
     emit("close");
   },
-  dayjs.duration(0.3, "seconds").asMilliseconds(),
+  300,
   { immediate: false },
 );
 useConfirmBeforeNavigation(() => isDirty);

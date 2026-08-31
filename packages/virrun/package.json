@@ -87,7 +87,6 @@
     "@types/node": "catalog:",
     "citty": "catalog:",
     "ctix": "catalog:",
-    "dayjs": "catalog:",
     "dedent": "catalog:",
     "fast-check": "catalog:",
     "publint": "catalog:",
@@ -98,7 +97,6 @@
   "inlinedDependencies": {
     "@platformatic/vfs": "0.4.0",
     "citty": "0.2.2",
-    "dayjs": "1.11.23",
     "dedent": "1.7.2",
     "neverthrow": "8.2.0",
     "zod": "4.4.3"

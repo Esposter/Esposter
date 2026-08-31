@@ -7,6 +7,7 @@ import { useMessageStore } from "@/store/message";
 import { useDataStore } from "@/store/message/data";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MessageType } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
 import { Extension } from "@tiptap/vue-3";
 
 // Send is passed in rather than read from the data store: the room composer and the thread pane's composer
@@ -33,9 +34,11 @@ export const useKeyboardShortcutsExtension = async (send: (editor: Editor) => Pr
           return true;
         },
         Enter: () => {
-          getSynchronizedFunction(async () => {
-            await send(this.editor);
-          })();
+          getSynchronizedFunction(() =>
+            getResultAsync(async () => {
+              await send(this.editor);
+            }).match(noop, console.error),
+          )();
           return true;
         },
       };

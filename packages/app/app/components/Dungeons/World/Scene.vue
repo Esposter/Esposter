@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { dayjs } from "#shared/services/dayjs";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import { getActiveInputResolvers } from "@/services/dungeons/scene/world/getActiveInputResolvers";
@@ -14,7 +13,7 @@ const update = useResolveInput(getActiveInputResolvers());
 
 const create = (scene: SceneWithPlugins) => {
   playDungeonsBackgroundMusic(scene, BackgroundMusicKey.AndTheJourneyBegins);
-  fadeIn(scene, dayjs.duration(1, "second").asMilliseconds());
+  fadeIn(scene, Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
 };
 </script>
 

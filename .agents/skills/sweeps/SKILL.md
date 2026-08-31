@@ -1,22 +1,45 @@
 ---
 name: sweeps
-description: Esposter repo-wide sweep conventions — progress tracked as a ledger in .agents/ledgers/ (one file per sweep, one index row, promoted to a folder of coverage files as it grows), sweeps are repo state and never proposals, when a mechanical pass earns a ledger and when it is just a commit, the six things a ledger may hold and the explanatory prose it may not, state living at the leaf with no rolled-up counts, reading the leaf rather than the tree, one agent per leaf for parallel passes, every sweep being standing and the changed-files command that resumes one, a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same) with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all, handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill, one unit per commit chunked to the review budget, behaviour-preserving passes and where a behaviour-changing finding goes instead, and what belongs in the commit message rather than the ledger. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
+description: Esposter repo-wide sweep conventions — progress tracked as a ledger in .agents/ledgers/ (one file per sweep, one index row, named after the skill that owns its rules, promoted to a folder whose README holds everything that is not coverage as it grows), sweeps are repo state and never proposals, splitting a row that reads as too high a level before any pass starts and dropping the date from children the parent could never have read, when a mechanical pass earns a ledger and when it is just a commit, the six things a ledger may hold and the explanatory prose it may not, state living at the leaf with no rolled-up counts, reading the leaf rather than the tree, one agent per leaf for parallel passes, every sweep being standing and the changed-files command that resumes one, a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same) with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all, handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill, one unit per commit chunked to the review budget, proving a find recipe can fail before believing it passed, behaviour-preserving passes and where a behaviour-changing finding goes instead, and what belongs in the commit message rather than the ledger. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
 ---
 
 # Sweeps
 
 A **sweep** carries one already-settled convention across a tree too large to finish in one commit. It decides nothing: the convention is owned by a skill or docs page, and the sweep only applies it to code that predates it, changing no behaviour.
 
-Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row in its `README.md` index. A ledger that outgrows a screen, or that two agents want to work at once, becomes a folder of one file per area — the index row still carries the metadata, so the folder holds nothing but coverage. It grows the way source does: split when a unit earns its own home, never to hit a number.
+Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row in its `README.md` index. A ledger that outgrows a screen, or that two agents want to work at once, becomes a folder of one file per area — the index row still carries the metadata, and the folder's own `README.md` holds only what is not coverage (the find recipe, the exclusions, what is next enforceable), so each area file is a table and nothing else. It grows the way source does: split when a unit earns its own home, never to hit a number.
+
+**A ledger is named after the skill that owns its rules**, where one skill does — `pinia`, `naming`, `trpc`, `testing`. A second name for the same subject makes the ledger and the skill read as two topics, and the index row is where the pairing is stated. A ledger several skills own takes the name of the question instead (`schemas`, `styling`). Areas inside a promoted folder reuse the area names another ledger already established, so "was this area swept, for which question, and when" reads off one set of names.
 
 **A sweep is never a proposal.** A proposal designs behaviour that does not exist yet and is deleted when it ships; a sweep changes no behaviour at all. Filing one under `packages/app/content/docs/proposals/` mislabels maintenance as design and puts a never-ending standing sweep in a folder whose contents are all supposed to leave.
+
+## A scan that reports nothing
+
+A find recipe that comes back empty is the same shape as a clean tree, so a broken scan reads as a finished
+sweep. Two ways it has actually happened here, both silent:
+
+- **`new RegExp` built from a template literal inside `node -e '...'`.** Single quotes hand the backslash to
+  Node intact — the **template literal** is the layer that eats it, so a `\b` written for a word boundary reaches
+  `new RegExp` as a **backspace character** and the regex matches nothing. It survives a glance because
+  `JSON.stringify` renders a real backspace as `\b` as well, so printing `regex.source` looks right. Use a regex
+  **literal** (`/\bfoo\b/u`), `String.raw`, or a plain `.includes` — a literal is unaffected, `/getResult\(/u`
+  Still means an escaped paren. A quoted heredoc (`<<'PY'`, `<<'JS'`) keeps the shell out of it entirely, which
+  Is why the longer recipes use one; it removes no JavaScript layer, so the same three fixes still apply inside.
+- **A filter on the wrong field.** An author login that differs between two APIs, a path prefix that never
+  Matches, a `--jq` selector against the wrong payload shape — each returns an empty set and exit 0.
+
+So **prove the scan can fail before believing it passed**: run it against a known violation, or break one on
+purpose and confirm it is reported. The rule the `testing` skill applies to a new test applies to a new recipe —
+a check that cannot fail is not evidence.
 
 ## Does it earn a file?
 
 - **More than one sitting or one commit → its own file.** Anything smaller is just the change; a sweep file for it is overhead that then rots.
 - **One question per file.** A convention another ledger already asks joins that ledger (see below); one that asks something different opens its own, however far its files overlap. What never merges is two conventions with different **units**, because a coverage table can only be dated against one of them.
 
-- **A unit is what one pass can read.** Reading is what finds duplication and the helper that already exists; a unit too big to read gets grepped instead, and a grep pass that ticks its row records a sweep that never happened. When a pass reaches for grep because the unit is too large, split the row at the directory boundary rather than carrying on — dated rows keep their dates, the rest become several `—` rows.
+- **A unit is what one pass can read.** Reading is what finds duplication and the helper that already exists; a unit too big to read gets grepped instead, and a grep pass that ticks its row records a sweep that never happened. When a pass reaches for grep because the unit is too large, split the row at the directory boundary rather than carrying on — the children open at `—`, since a row grepped because it was too large is a row nothing read.
+- **Split the row the moment it reads as too high a level, before any pass starts.** Two shapes give it away without counting anything: a unit naming several unrelated trees at once, and a unit that is a whole tree rather than a directory inside one. Both are bags, and a bag is swept by skimming — which is how a fully dated ledger still misses things. Count the files the row actually covers, and split until each row is a sitting.
+- **A row that could never have been read loses its date in the split.** Inheriting the parent's date onto children the parent never read carries the skim forward as if it were coverage. The date survives only where the whole unit was small enough that the pass really could have read it; everything else reopens at `—`, and the ledger says in one line why.
 - **A migration is not a sweep.** Work gated on an external trigger (upstream shipping a feature) is tracked by its blocker table in its own docs page, not by coverage.
 
 ## One pass

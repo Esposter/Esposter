@@ -1,3 +1,4 @@
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useAlertStore } from "@/store/alert";
 import { getResultAsync, noop } from "@esposter/shared";
 
@@ -65,7 +66,9 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
     stopStream();
 
     await getResultAsync(startStream).match(noop, (error) => {
-      if (error instanceof DOMException) createAlert(error.message, "error");
+      // A DOMException is the device refusing — the user picked this device, so they are told. Anything
+      // Else reaching here is a programming error nobody watching a recorder can act on
+      if (error instanceof DOMException) createErrorAlert(error);
       else console.error(error);
     });
     if (!stream.value) return;

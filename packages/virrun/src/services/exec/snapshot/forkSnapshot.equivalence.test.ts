@@ -1,6 +1,5 @@
 import type { ExecOptions } from "#src/models/exec/ExecOptions";
 
-import { dayjs } from "#src/services/dayjs.test";
 import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
 import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
 import { forkSnapshot } from "#src/services/exec/snapshot/forkSnapshot";
@@ -52,7 +51,7 @@ describe.todo("forkSnapshot - warm fork matches a cold in-place install (equival
     expect(coldResult.exitCode).toBe(0);
     expect(warmResult.stdout).toMatch(ESBUILD_VERSION_REGEX);
     expect(warmResult).toStrictEqual(coldResult);
-  }, dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds());
+  }, Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds"));
 
   // Pnpm's pre-run dependency verification may auto-install inside the sandbox and fail when writing bin shims into the
   // Overlay upper (ENOENT node_modules/.bin/*). A warm fork resolves the binary from the frozen snapshot instead.
@@ -74,5 +73,5 @@ describe.todo("forkSnapshot - warm fork matches a cold in-place install (equival
     expect(coldResult.exitCode).toBe(0);
     expect(warmResult.stdout).toMatch(ESBUILD_VERSION_REGEX);
     expect(warmResult.stdout).toBe(coldResult.stdout);
-  }, dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds());
+  }, Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds"));
 });

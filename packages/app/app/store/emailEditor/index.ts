@@ -10,7 +10,7 @@ import { getResult } from "@esposter/shared";
 
 export const useEmailEditorStore = defineStore("emailEditor", () => {
   const resourceStore = useResourceStore();
-  const { readContent, readResource, saveContent } = resourceStore;
+  const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
   // Cast avoids the excessively deep UnwrapRef instantiation on the nested GrapesJS project types
   const content = ref(new EmailEditor()) as Ref<EmailEditor>;
   // The live GrapesJS editor, set by the blade — the export command (command bar) reads it from here
@@ -21,6 +21,7 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     await readResource();
     const data = await readContent<ResourceType.Email>();
     content.value = new EmailEditor(data);
+    setPersistedContent(content.value);
     return content.value;
   };
   // GrapesJS project data doesn't know about the dataset binding or the loaded content's own metadata, so

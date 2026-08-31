@@ -3,13 +3,12 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
-import { dayjs } from "#shared/services/dayjs";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 // How long a pending "G" chord prefix stays armed before the second key must be pressed
-export const KEY_CHORD_TIMEOUT_MS = dayjs.duration(1, "second").asMilliseconds();
+export const KEY_CHORD_TIMEOUT_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 // One shared cadence for every edit-triggered autosave — injected by the autosave wrappers so call sites never restate it
-export const RESOURCE_AUTOSAVE_DEBOUNCE_MS = dayjs.duration(0.5, "seconds").asMilliseconds();
+export const RESOURCE_AUTOSAVE_DEBOUNCE_MS = 500;
 export const RECENT_RESOURCES_LIMIT = 5;
 // Enough parsed rows to recognise your own file before committing to it, without rendering the import twice
 export const SHEET_IMPORT_PREVIEW_ROW_COUNT = 5;

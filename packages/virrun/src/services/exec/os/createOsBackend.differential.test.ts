@@ -1,4 +1,3 @@
-import { dayjs } from "#src/services/dayjs.test";
 import { assertDifferential } from "#src/services/exec/differential/assertDifferential.test";
 import { SHELL_DIFFERENTIAL_CORPUS } from "#src/services/exec/differential/differentialCorpus.test";
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
@@ -21,7 +20,7 @@ describe.skipIf(!isOsBackendSupported())(createOsBackend, () => {
   // Runs test files across 16 workers all contending for the one shared WSL bridge, so a single exec can wait well
   // Past vitest's 5s default. Use the same hang-ceiling the acceptance/property os tests already carry — the exec is
   // Not the slow part, the contention is.
-  const acceptanceTimeoutMs = dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds();
+  const acceptanceTimeoutMs = Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds");
 
   afterEach(() => {
     temporaryDirectories.cleanup();

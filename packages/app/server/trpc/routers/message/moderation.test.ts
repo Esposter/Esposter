@@ -81,6 +81,26 @@ describe("moderation", () => {
       expect(membershipRows).toHaveLength(0);
     });
 
+    // A ban that only deletes the membership row is undone by the link the member still holds. The rejection
+    // Names the condition rather than being a bare UNAUTHORIZED, because it is one the caller can act on —
+    // Retrying the link is the one thing that will never work
+    test(`${AdminActionType.CreateBan}: a banned member cannot rejoin through an invite`, async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      await moderationCaller.executeAdminAction({
+        roomId,
+        targetUserId: member.id,
+        type: AdminActionType.CreateBan,
+      });
+      const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
+      await mockSessionOnce(mockContext.db, member);
+
+      await expect(roomCaller.joinRoom(invite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: You are banned from this room]`,
+      );
+    });
+
     // Owner immunity is not a position comparison: the owner holds no role row, so every assigned role outranks
     // Their floor position and a moderator would be able to ban the member who owns the room
     test(`${AdminActionType.CreateBan}: moderator cannot ban the room owner`, async () => {

@@ -8,17 +8,19 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
 
 export const useInventoryInputStore = defineStore("dungeons/inventory/input", () => {
   const enemyStore = useEnemyStore();
   const itemOptionGrid = useItemOptionGrid();
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.Inventory);
 
-  const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
-    if (checkIsPlayerSpecialInput(justDownInput)) await onPlayerSpecialInput(scene, justDownInput);
-    else onPlayerDirectionInput(justDownInput);
-  };
+  // Terminated here because the frame loop drops what this returns — see the battle scene's own entry point
+  const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) =>
+    getResultAsync(async () => {
+      if (checkIsPlayerSpecialInput(justDownInput)) await onPlayerSpecialInput(scene, justDownInput);
+      else onPlayerDirectionInput(justDownInput);
+    }).match(noop, console.error);
 
   const onPlayerSpecialInput = async (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {

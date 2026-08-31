@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-import { useAlertStore } from "@/store/alert";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useActivityStore } from "@/store/resource/activity";
 import { getResultAsync, noop } from "@esposter/shared";
 
@@ -13,15 +13,11 @@ const { resourceId } = defineProps<ResourceActivityLogProps>();
 const { readActivities, readMoreActivities } = useReadActivities(resourceId);
 const activityStore = useActivityStore();
 const { hasMore, items } = storeToRefs(activityStore);
-const alertStore = useAlertStore();
-const { createAlert } = alertStore;
 const isLoading = ref(true);
 
 onMounted(async () => {
   // A failed read still clears the skeleton — the empty state renders instead of loading forever
-  await getResultAsync(readActivities).match(noop, (error) => {
-    createAlert(error.message, "error");
-  });
+  await getResultAsync(readActivities).match(noop, createErrorAlert);
   isLoading.value = false;
 });
 </script>

@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
 import type { Router } from "vue-router";
 
-import { dayjs } from "#shared/services/dayjs";
 import { useDataStore } from "@/store/message/data";
 import { useScrollStore } from "@/store/message/ui/scroll";
 import { RoutePath } from "@esposter/shared";
@@ -17,7 +16,7 @@ describe(useScrollStore, () => {
   const roomId = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const secondRowKey = crypto.randomUUID();
-  const highlightMs = dayjs.duration(2, "seconds").asMilliseconds();
+  const highlightMs = Temporal.Duration.from({ seconds: 2 }).total("milliseconds");
   let router: Router;
 
   beforeAll(() => {

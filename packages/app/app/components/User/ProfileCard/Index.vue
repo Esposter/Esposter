@@ -45,8 +45,6 @@ const disabled = computed(
 </script>
 
 <template>
-  <div font-bold text-title-large>Profile</div>
-  <div text-body-large>Your personal information</div>
   <v-form
     v-model="isEditFormValid"
     @submit.prevent="
@@ -56,7 +54,7 @@ const disabled = computed(
       }
     "
   >
-    <StyledCard mt-6 p-2>
+    <StyledCard p-2>
       <v-card-title>
         <div font-bold>Personal Information</div>
         <v-divider mt-2 />

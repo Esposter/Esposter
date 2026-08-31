@@ -7,13 +7,17 @@ import type { StorageUsage } from "#shared/models/storage/StorageUsage";
 export const useStorageStore = defineStore("storage", () => {
   const { $trpc } = useNuxtApp();
   const storageUsage = ref<StorageUsage>();
-  const { read: readStorageUsage } = useCachedRead(() => $trpc.storage.readUsage.query(), {
-    // Deliberately untagged. The counter only moves when storage's own BlobCreated event lands seconds after
-    // The PUT, so there is no moment a write here could invalidate this and read a different number — the
-    // Read is per session, not per navigation, and no tag would make it truer
+  const { read: readStorageUsage, supersede } = useCachedRead(() => $trpc.storage.readUsage.query(), {
     onSuccess: (newStorageUsage) => {
       storageUsage.value = newStorageUsage;
     },
   });
-  return { readStorageUsage, storageUsage };
+  // The subscription is established before the first read is issued, so a charge can land between the two. The
+  // Pushed value is the newer of the pair — it reports a total committed after the read's snapshot was taken —
+  // So it supersedes the read rather than being overwritten by the older number already on its way
+  const storeUpdateStorageUsage = (newStorageUsage: StorageUsage) => {
+    supersede();
+    storageUsage.value = newStorageUsage;
+  };
+  return { readStorageUsage, storageUsage, storeUpdateStorageUsage };
 });

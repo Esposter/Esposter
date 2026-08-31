@@ -1,8 +1,6 @@
-import { dayjs } from "#shared/services/dayjs";
-
 export const GlobeConfiguration = {
   arcLength: 0.9,
-  arcTime: dayjs.duration(2, "second").asMilliseconds(),
+  arcTime: Temporal.Duration.from({ seconds: 2 }).total("milliseconds"),
   atmosphereAltitude: 0.25,
   atmosphereColor: "#3a228a",
   color: "#3a228a",

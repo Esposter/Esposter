@@ -1,6 +1,7 @@
 import { useMutation } from "@/composables/shared/useMutation";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
@@ -154,48 +155,62 @@ export const useCallStore = defineStore("message/room/call", () => {
       dynacast: true,
       videoCaptureDefaults: { deviceId: voiceDeviceSettingsStore.cameraDeviceId || undefined },
     });
-  const createCall = async (): Promise<string | undefined> => {
-    const { callSessionId } = await $trpc.callSession.createCall.mutate();
-    return callSessionId;
+  // Nothing that starts or ends a call rejects: each terminates its own chain and, where the user acted, alerts
+  // Through createErrorAlert — which defers to the error link, so a coded rejection is still shown exactly once.
+  // Rejecting instead would put the alert in the caller, and the callers are inline click handlers and a
+  // Subscription onData, none of which holds anything to catch it
+  const createCall = () =>
+    getResultAsync(() => $trpc.callSession.createCall.mutate()).match(
+      ({ callSessionId }) => callSessionId,
+      (error) => {
+        createErrorAlert(error);
+        return undefined;
+      },
+    );
+  // How far a failed join got decides how it unwinds: past the connect there is a call to leave properly, and
+  // Before it only the state this attempt itself wrote. Shared by both entry points, because getting it the
+  // Wrong way round either strands a connected call or issues a leave for a session that was never joined.
+  // The room and thread refs are cleared unconditionally — no call is active on this path, so they hold at most
+  // What the attempt put there
+  const unwindJoin = async (isJoined: boolean, error: Error) => {
+    if (isJoined) await leaveCall();
+    else {
+      callRoomId.value = "";
+      callThreadRootRowKey.value = "";
+      activeCallSessionId.value = "";
+      // The teardown reports rather than propagates: it is unwinding an attempt that already failed, and a
+      // Rejected disconnect must not take the join's own error off screen or strand the connecting flag
+      await getResultAsync(() => disconnect()).match(noop, console.error);
+    }
+
+    createErrorAlert(error);
   };
-  const joinCall = async (id: string): Promise<string | undefined> => {
+  const joinCall = async (id: string) => {
     if (activeCallSessionId.value) return activeCallSessionId.value;
     isConnecting.value = true;
     let isJoined = false;
     let joinedCallSessionId: string | undefined;
-    await withFinalizerAsync(
-      async () => {
-        await getResultAsync(async () => {
-          const { callSessionId, livekitToken, livekitUrl, participantMap } = await $trpc.callSession.joinCall.mutate({
-            id,
-          });
-          const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
-          await connect(createRoom(), livekitUrl, livekitToken, leaveCall, isMicrophoneEnabled);
-          activeCallSessionId.value = callSessionId;
-          joinedCallSessionId = callSessionId;
-          isJoined = true;
-          setParticipantMap(callSessionId, participantMap);
-          // The call is connected by here, so these only sync the participant row and report their own
-          // Failures — a rejected flag must not tear down a call that is already up
-          if (!isMicrophoneEnabled) await setMuteEnabled(true);
-          if (isCameraEnabled) {
-            await setCamera(true);
-            await setCameraEnabled(true);
-          }
-        }).match(noop, async (error) => {
-          console.error(error);
-          if (isJoined) await leaveCall();
-          else {
-            activeCallSessionId.value = "";
-            await disconnect();
-          }
-          throw error;
-        });
-      },
-      () => {
-        isConnecting.value = false;
-      },
-    );
+    await getResultAsync(async () => {
+      const { callSessionId, livekitToken, livekitUrl, participantMap } = await $trpc.callSession.joinCall.mutate({
+        id,
+      });
+      const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
+      await connect(createRoom(), livekitUrl, livekitToken, leaveCall, isMicrophoneEnabled);
+      activeCallSessionId.value = callSessionId;
+      joinedCallSessionId = callSessionId;
+      isJoined = true;
+      setParticipantMap(callSessionId, participantMap);
+      // The call is connected by here, so these only sync the participant row and report their own
+      // Failures — a rejected flag must not tear down a call that is already up
+      if (!isMicrophoneEnabled) await setMuteEnabled(true);
+      if (isCameraEnabled) {
+        await setCamera(true);
+        await setCameraEnabled(true);
+      }
+    }).match(noop, (error) => unwindJoin(isJoined, error));
+    // Set after the await rather than through a finalizer: the chain above resolves to a Result rather than
+    // Rejecting, so no path skips this line
+    isConnecting.value = false;
     return joinedCallSessionId;
   };
   // A thread's call is the room's call addressed by the thread it belongs to, so joining one is the same act
@@ -222,38 +237,35 @@ export const useCallStore = defineStore("message/room/call", () => {
       isJoined = true;
       setParticipantMap(callSessionId, participantMap);
       isCallViewOpen.value = true;
-    }).match(noop, async (error) => {
-      console.error(error);
-      if (isJoined) await leaveCall();
-      else {
-        callRoomId.value = "";
-        callThreadRootRowKey.value = "";
-        activeCallSessionId.value = "";
-        await disconnect();
-      }
-    });
+    }).match(noop, (error) => unwindJoin(isJoined, error));
     isConnecting.value = false;
   };
+  // The teardown is the finalizer because it has to run whether or not the server accepted the leave — by the
+  // Time it answers, the local call is already down. A rejected leave is then bookkeeping the user cannot act
+  // On, and the session reaps the participant row on its own, so it logs rather than alerting a call that
+  // Visibly ended
   const leaveCall = async () => {
     const callSessionId = activeCallSessionId.value;
     if (!callSessionId) return;
-    await withFinalizerAsync(
-      async () => {
-        if (participantStore.sessionId) deleteCallParticipant(callSessionId, participantStore.sessionId);
-        await $trpc.callSession.leaveCall.mutate({ callSessionId });
-      },
-      async () => {
-        callRoomId.value = "";
-        callThreadRootRowKey.value = "";
-        resetKnockerState();
-        activeCallSessionId.value = "";
-        isCallViewOpen.value = false;
-        resetCallMedia();
-        await disconnect();
-        clearJoinNotice();
-        clearSpeakers();
-      },
-    );
+    await getResultAsync(() =>
+      withFinalizerAsync(
+        async () => {
+          if (participantStore.sessionId) deleteCallParticipant(callSessionId, participantStore.sessionId);
+          await $trpc.callSession.leaveCall.mutate({ callSessionId });
+        },
+        async () => {
+          callRoomId.value = "";
+          callThreadRootRowKey.value = "";
+          resetKnockerState();
+          activeCallSessionId.value = "";
+          isCallViewOpen.value = false;
+          resetCallMedia();
+          await disconnect();
+          clearJoinNotice();
+          clearSpeakers();
+        },
+      ),
+    ).match(noop, console.error);
   };
   const selectVirtualBackground = async (imagePath: string) => {
     if (imagePath && !mediaStore.isCameraEnabled) {

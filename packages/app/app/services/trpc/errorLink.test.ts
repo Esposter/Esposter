@@ -1,4 +1,4 @@
-// @vitest-environment nuxt
+// @vitest-environment happy-dom
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { Operation } from "@trpc/client";
 import type { EffectScope } from "vue";

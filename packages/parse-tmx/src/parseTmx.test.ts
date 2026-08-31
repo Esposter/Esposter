@@ -1,6 +1,5 @@
 import { TMXParsed } from "#src/models/tmx/parsed/TMXParsed";
 import { parseTmx } from "#src/parseTmx";
-import { dayjs } from "#src/services/dayjs.test";
 import { readdir, readFile } from "node:fs/promises";
 import { extname, join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -19,7 +18,7 @@ describe(parseTmx, () => {
 
   // Disabled for runtime: snapshots every .tmx fixture under maps/, which the parser output for is stable.
   // Re-enable on any parseTmx change to regenerate against the committed __snapshots__.
-  test.todo("snapshots", { timeout: dayjs.duration(60, "seconds").asMilliseconds() }, async () => {
+  test.todo("snapshots", { timeout: Temporal.Duration.from({ seconds: 60 }).total("milliseconds") }, async () => {
     expect.hasAssertions();
 
     const filenames = await readdir(MAP_DIRECTORY, { recursive: true });

@@ -1,4 +1,3 @@
-import { dayjs } from "#shared/services/dayjs";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useTween } from "vue-phaserjs";
@@ -21,7 +20,7 @@ export const useMonsterDeathTween = (isEnemy: boolean) => {
 
   useTween(monsterInfoContainerTween, {
     delay: 0,
-    duration: dayjs.duration(2, "seconds").asMilliseconds(),
+    duration: Temporal.Duration.from({ seconds: 2 }).total("milliseconds"),
     onComplete: () => {
       monsterInfoContainerPosition.value.x = monsterInfoContainerPositionXEnd;
     },
@@ -31,7 +30,7 @@ export const useMonsterDeathTween = (isEnemy: boolean) => {
   return new Promise<void>((resolve) => {
     useTween(monsterTween, {
       delay: 0,
-      duration: dayjs.duration(2, "seconds").asMilliseconds(),
+      duration: Temporal.Duration.from({ seconds: 2 }).total("milliseconds"),
       onComplete: () => {
         monsterPosition.value.y = monsterPositionYEnd;
         resolve();

@@ -45,7 +45,12 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 
 ## Numbers & Time
 
-- **Time durations use `dayjs.duration(...)`** — never inline arithmetic (`7 * 24 * 60 * 60 * 1000`) or raw literals (`604800`). Use `dayjs.duration(7, "days").asMilliseconds()`/`.asSeconds()`, `dayjs().add(1, "minute").toDate()` for "now + N", and `dayjs.duration(ms).asSeconds()`/`.asMinutes()` for ms→unit (never `ms / 1000`). Import: `import { dayjs } from "#shared/services/dayjs"`. Packages without dayjs (`azure-mock`, `infra`) fall back to a digit-separated literal (file-local `const` if reused).
+- **Time durations use `Temporal.Duration`** — never inline arithmetic (`7 * 24 * 60 * 60 * 1000`) or a raw literal (`604800`). `Temporal.Duration.from({ days: 7 }).total("milliseconds")`, `.total("seconds")` for a unit conversion, and `Temporal.Duration.from({ milliseconds: ms }).total("minutes")` for ms→unit (never `ms / 1000`). It is a language global — nothing to import, no plugin to register, no dependency.
+  - **Every field must be a finite integer**, so a sub-second duration is written in the unit that makes it one: `0.5` seconds is `{ milliseconds: 500 }`. A milliseconds-only duration totalled in milliseconds is the number it was built from, so at that point the literal is written plainly — the wrapper would state nothing the value does not.
+  - **Years, weeks and months never reach `.total()`** — they are calendar units and throw without a `relativeTo`. A year budget is `{ days: 365 }`, exactly what dayjs's own duration meant by one.
+  - **A duration decomposed for display is `.round({ largestUnit: "day" })` first**, then read off the `days`/`hours`/`minutes`/`seconds` **properties**. Built from one unit it carries everything in that field, so an unrounded duration reads zero for every part above it.
+  - Inside a `.vue` **template attribute** the unit literals are single-quoted — a `"`-delimited attribute cannot carry a `"`.
+- **dayjs still owns dates** — `dayjs().add(1, "minute").toDate()` for "now + N", and `formatDuration`'s `humanize()`, which Temporal has no fuzzy equivalent for. It is no longer a dependency of `azure`, `db-schema`, `virrun` or `parse-tmx`, which only ever imported it to measure time.
 - **Big numeric literals get `_` digit-group separators** — any literal with 5+ digits: `604_800_000`, `86_400`, `60_000`. Applies to non-time tuning constants too (epoch offsets, decay divisors). Small/clear values (`1024`, `1024 * 1024`) stay as-is. (`unicorn/numeric-separators-style` only fixes the _style_ of existing separators; adding them is on you.)
 
 ## Environment Variables

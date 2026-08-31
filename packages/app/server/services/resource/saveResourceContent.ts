@@ -12,7 +12,8 @@ import { ResourceAfterSaveContentMap } from "@@/server/services/resource/Resourc
 import { ResourceBoundResourceIdMap } from "@@/server/services/resource/ResourceBoundResourceIdMap";
 import { runAfterSaveResourceContent } from "@@/server/services/resource/runAfterSaveResourceContent";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
-import { chargeStorageLedgerEntry, getContentBlobName } from "@esposter/db";
+import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
+import { getContentBlobName } from "@esposter/db";
 import { AzureContainer, resources } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
@@ -138,7 +139,7 @@ export const saveResourceContent = async (
   // Owner's behalf. After the transaction rather than inside it — the charge takes the ledger row's lock and
   // Then the user's, and holding a save's transaction open across those is a second connection waiting on
   // Locks this one is not going to release. See /docs/platform/storage-quotas
-  await chargeStorageLedgerEntry(
+  await chargeAndEmitStorageLedgerEntry(
     ctx.db,
     resource.userId,
     AzureContainer.ResourceAssets,

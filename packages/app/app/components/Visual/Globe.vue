@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type ThreeGlobe from "three-globe";
 
-import { dayjs } from "#shared/services/dayjs";
 import countries from "@/assets/about/countries.json";
 import data from "@/assets/about/data.json";
 import { features } from "@/assets/about/globe.json";
@@ -154,9 +153,12 @@ onMounted(async () => {
     renderer.setSize(width.value, height.value);
   });
 
-  intervalId = window.setInterval(() => {
-    globe.ringsData(getRandomValues(countries, rings));
-  }, dayjs.duration(2, "seconds").asMilliseconds());
+  intervalId = window.setInterval(
+    () => {
+      globe.ringsData(getRandomValues(countries, rings));
+    },
+    Temporal.Duration.from({ seconds: 2 }).total("milliseconds"),
+  );
 });
 
 onUnmounted(() => {

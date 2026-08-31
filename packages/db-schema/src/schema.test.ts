@@ -1,6 +1,9 @@
 import { schema } from "#src/schema";
 import { is } from "drizzle-orm";
 import { getTableConfig, isPgEnum, PgDialect, PgTable } from "drizzle-orm/pg-core";
+import { glob } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import { describe, expect, test } from "vitest";
 
 describe("schema", () => {
@@ -32,6 +35,28 @@ describe("schema", () => {
       .map(([expected, name]) => `${name} should be ${expected}`);
 
     expect(mismatched).toStrictEqual([]);
+  });
+
+  // Every other check here reads the `schema` object, so none of them can see a table that never reached it —
+  // And nothing else can either: `db:gen` diffs that object, so an unregistered table emits no migration and no
+  // Column, and the first failure is a query against a relation that does not exist. Comparing by identity
+  // Rather than by name means a table registered under the wrong key still counts as registered, which is what
+  // The naming check above is for
+  test("registers every table and enum the schema directory declares", async () => {
+    expect.hasAssertions();
+
+    const registered = new Set<unknown>(Object.values(schema));
+    const schemaDirectory = resolve(import.meta.dirname, "schema");
+    const fileNames = await Array.fromAsync(glob("*.ts", { cwd: schemaDirectory }));
+    const unregistered: string[] = [];
+    for (const fileName of fileNames) {
+      const module: Record<string, unknown> = await import(pathToFileURL(resolve(schemaDirectory, fileName)).href);
+      for (const [exportName, value] of Object.entries(module))
+        if ((is(value, PgTable) || isPgEnum(value)) && !registered.has(value))
+          unregistered.push(`${fileName}: ${exportName}`);
+    }
+
+    expect(unregistered).toStrictEqual([]);
   });
 
   // Drizzle-kit hashes the SQL a CHECK renders to, and a migration is already applied against that exact

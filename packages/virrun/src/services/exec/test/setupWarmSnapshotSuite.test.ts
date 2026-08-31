@@ -1,6 +1,5 @@
 import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
-import { dayjs } from "#src/services/dayjs.test";
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
 import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
 import { createWorkspaceCorpus } from "#src/services/exec/test/createWorkspaceCorpus.test";
@@ -22,12 +21,15 @@ export const setupWarmSnapshotSuite = (): { getBackend: () => ExecBackend; getCo
   let corpus = "";
   const previousCacheHome = process.env[VIRRUN_CACHE_HOME_KEY];
 
-  beforeAll(async () => {
-    backend = createOsBackend();
-    process.env[VIRRUN_CACHE_HOME_KEY] = getAcceptanceCacheHome();
-    corpus = createWorkspaceCorpus(findRepoRoot());
-    await ensureWarmSnapshot(backend, corpus);
-  }, dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds());
+  beforeAll(
+    async () => {
+      backend = createOsBackend();
+      process.env[VIRRUN_CACHE_HOME_KEY] = getAcceptanceCacheHome();
+      corpus = createWorkspaceCorpus(findRepoRoot());
+      await ensureWarmSnapshot(backend, corpus);
+    },
+    Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds"),
+  );
 
   afterAll(() => {
     if (previousCacheHome === undefined) delete process.env[VIRRUN_CACHE_HOME_KEY];

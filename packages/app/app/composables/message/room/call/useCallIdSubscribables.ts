@@ -14,10 +14,12 @@ export const useCallIdSubscribables = async (callId: string) => {
   const { cancelKnock } = knockerStore;
   const mediaStore = useMediaStore();
   const { isPoppedOut } = storeToRefs(mediaStore);
-  const callSession = await getResultAsync(() => $trpc.callSession.readCallSession.query({ id: callId })).match(
-    (result) => result,
-    () => undefined,
-  );
+  // The page renders its own "call not found" for an absent session, so a failed read degrades to the same
+  // Screen rather than an error one — but a read that failed is not a call that is missing, and only the log
+  // Tells the two apart
+  const callSession = await getResultAsync(() => $trpc.callSession.readCallSession.query({ id: callId }))
+    .orTee(console.error)
+    .unwrapOr(undefined);
   if (!callSession) return undefined;
 
   useCallJoinedSubscribables(onlineSubscribableContext);

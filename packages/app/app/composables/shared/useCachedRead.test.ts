@@ -68,6 +68,58 @@ describe(useCachedRead, () => {
     expect(query.mock.calls).toStrictEqual([[key], [otherKey]]);
   });
 
+  // The store race this exists for: a subscription is established before the first read is issued, so a value
+  // Pushed in between is newer than the read already on its way, and the read must not write the older one back
+  test("drops a read a supersede overtook", async () => {
+    expect.hasAssertions();
+
+    const { promise, resolve } = Promise.withResolvers<string>();
+    const onSuccess = vi.fn<(readResult: string, cacheKey: string) => void>();
+    const { read, supersede } = useCachedRead(() => promise, { onSuccess });
+    const reading = read();
+    supersede();
+    resolve(result);
+    await reading;
+
+    expect(onSuccess).not.toHaveBeenCalled();
+  });
+
+  // The pushed value is the entry, so re-reading it on the next mount would spend a round trip to be told what
+  // The caller already holds
+  test("counts the entry loaded once superseded", async () => {
+    expect.hasAssertions();
+
+    const query = createQuery();
+    const { read, supersede } = useCachedRead(query, { onSuccess: noop });
+    supersede();
+    await read();
+
+    expect(query).not.toHaveBeenCalled();
+  });
+
+  // A superseded read answers `Stale`, so a later caller joining it would resolve holding nothing — an entry
+  // The invalidation just dropped would stay empty behind a read that issued no request of its own
+  test("issues a new read rather than joining the one it superseded", async () => {
+    expect.hasAssertions();
+
+    const { promise, resolve } = Promise.withResolvers<string>();
+    const query = vi.fn<(cacheKey: string) => Promise<string>>();
+    query.mockReturnValueOnce(promise).mockResolvedValue(result);
+    const onSuccess = vi.fn<(readResult: string, cacheKey: string) => void>();
+    const cacheStore = useCacheStore();
+    const { invalidateTags } = cacheStore;
+    const { read, supersede } = useCachedRead(query, { onSuccess, tags: [CacheTag.Resources] });
+    const superseded = read();
+    supersede();
+    await invalidateTags([CacheTag.Resources]);
+    await read();
+    resolve(result);
+    await superseded;
+
+    expect(query).toHaveBeenCalledTimes(2);
+    expect(onSuccess).toHaveBeenCalledExactlyOnceWith(result, "");
+  });
+
   test("re-reads on the next call once its tag is invalidated", async () => {
     expect.hasAssertions();
 

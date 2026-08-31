@@ -24,6 +24,7 @@ const { isPending: isLoading, read: readFavorites } = useCachedRead(() => $trpc.
 
 - **`read(key?)`** — what a surface calls on mount. It issues nothing once the entry has landed, and the concurrent first callers join one request through `executeQuery`'s `isExclusive` single-flight.
 - **`refetch(key?)`** — an unconditional re-read, deliberately **not** single-flight: a read issued _because_ something changed must not join the answer that the change just invalidated. It supersedes it on latest-wins instead.
+- **`supersede(key?)`** — a value that reached the caller from **outside** the cache marks that key's in-flight read stale and the entry loaded. It is what a store holding both a read and a subscription push calls before assigning the pushed value: the subscription is established before the first read is issued, so a value pushed in between would otherwise be overwritten by the older number the read was already carrying. Ordering two async sources against each other is the primitive's job — a store that grows a pair of counters beside its `ref` has hand-rolled the call id the ban in [async operations](/docs/architecture/async-operations) names.
 - **`onSuccess(result, key)`** — the caller owns what the response writes. One read can populate two maps (`threadFollow`) or a data ref plus an error ref (`recent`), so the primitive never owns the data.
 - **`isPending`** — the instance reads one cache, so the primitive's pending state _is_ that cache's loading flag. No store keeps an `isLoading` ref.
 

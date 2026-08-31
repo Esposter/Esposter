@@ -2,8 +2,7 @@ import type { CacheTag } from "@/models/cache/CacheTag";
 import type { Promisable } from "type-fest";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
-import { checkIsAlertedByErrorLink } from "@/services/trpc/errorLink";
-import { useAlertStore } from "@/store/alert";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useCacheStore } from "@/store/cache";
 import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 
@@ -50,8 +49,6 @@ interface QueryOptions<TResult> {
 }
 
 export const useMutation = () => {
-  const alertStore = useAlertStore();
-  const { createAlert } = alertStore;
   const cacheStore = useCacheStore();
   const { invalidateTags } = cacheStore;
   // Which call is the latest for a target. Only supersede-mode operations take a number here — every read,
@@ -70,6 +67,20 @@ export const useMutation = () => {
     const id = (callIds.get(key) ?? 0) + 1;
     callIds.set(key, id);
     return () => id !== callIds.get(key);
+  };
+  // Marks whatever is in flight for a target stale without issuing anything of its own: a value that reached
+  // The caller from outside this primitive — a subscription push — is newer than a read still on its way, and
+  // The read that lands after it must not write the older value back over it. Nothing in flight is nothing to
+  // Supersede, which is also what keeps the call-id bookkeeping bounded to the calls that exist
+  const supersedeKey = (key: PropertyKey) => {
+    if (!pendingCounts.value.has(key)) return;
+
+    getCheckIsStale(key);
+    // Whatever was joinable answers for a call this just made stale, so it resolves `Stale` — applying no state
+    // And running no callback. A later exclusive caller joining it would resolve holding nothing, so the entry
+    // Goes the same way a superseding read's does. The finalizer's identity check is what keeps an older read
+    // From dropping the entry a newer one registered after it
+    sharedQueries.delete(key);
   };
   const claimKey = (key: PropertyKey) => {
     pendingCounts.value.set(key, (pendingCounts.value.get(key) ?? 0) + 1);
@@ -115,9 +126,7 @@ export const useMutation = () => {
         // Record that the value the user is looking at was never persisted
         rollback?.();
         if (onError) await onError(error);
-        // The error link already put the codes it owns in front of the user, so alerting the same message here
-        // Would stack two identical toasts on every mutation this primitive runs
-        else if (!checkIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+        else createErrorAlert(error);
         return { error, status: MutationStatus.Failed };
       },
     );
@@ -185,5 +194,5 @@ export const useMutation = () => {
       },
     );
   };
-  return { executeMutation, executeQuery, getIsPending, isPending };
+  return { executeMutation, executeQuery, getIsPending, isPending, supersedeKey };
 };

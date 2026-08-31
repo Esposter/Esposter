@@ -461,7 +461,7 @@ describe("survey", () => {
     await caller.deleteResource({ id: newResource.id });
 
     await expect(createSurveyResponse(newResource.id, 0)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: NOT_FOUND]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
     );
   });
 

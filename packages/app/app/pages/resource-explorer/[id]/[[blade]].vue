@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import { isValidResourceBlade } from "@/services/resource/isValidResourceBlade";
-import { validate } from "@/services/router/validate";
+import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
 import { useResourceStore } from "@/store/resource";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
@@ -12,7 +12,7 @@ import { getRouteParamString } from "@/util/router/getRouteParamString";
 definePageMeta({
   key: (route) => `resource-${getRouteParamString(route.params.id)}`,
   middleware: "auth",
-  validate: (route) => validate(route) && (!route.params.blade || typeof route.params.blade === "string"),
+  validate: (route) => checkIsUuidRouteId(route) && (!route.params.blade || typeof route.params.blade === "string"),
 });
 const { currentRoute } = useRouter();
 // Id is stable for this page instance (keyed by id), so a one-time read is safe; only blade changes without a remount

@@ -1,6 +1,6 @@
 ---
 name: unocss
-description: Esposter UnoCSS configuration conventions — theme colors registration, safelist rules for dynamic Vuetify color props, cssLayerName mapping, and regression snapshot tests. Apply when editing uno.config.ts or adding new colors/utilities.
+description: Esposter UnoCSS configuration conventions — theme colors registration, safelist rules for dynamic Vuetify color props, cssLayerName mapping, named shortcuts for recurring utility pairs, and the resolved-config snapshots that catch what a dependency bump changes. Apply when editing uno.config.ts or adding new colors/utilities.
 ---
 
 # UnoCSS Configuration
@@ -52,17 +52,24 @@ Layer declaration order is in `app/assets/css/layers.css`. All `uno-*` layers ap
 
 ## Shortcuts for recurring utility pairs
 
-When the same attributify utility combination recurs across components (e.g. `op-medium-emphasis text-body-small` for hint text), define a named shortcut in `uno.config.ts` (`"text-hint": "op-medium-emphasis text-body-small"`) and use it everywhere instead of the raw pair. Update the `uno.config.test.ts` snapshot after adding one.
+When the same attributify utility combination recurs across components (e.g. `op-medium-emphasis text-body-small` for hint text), define a named shortcut in `uno.config.ts` (`"text-hint": "op-medium-emphasis text-body-small"`) and use it everywhere instead of the raw pair. Update the snapshot below after adding one.
 
-## Snapshot test
+## The resolved-config snapshots
 
-`packages/app/uno.config.test.ts` is a single test that snapshots `rules`, `safelist`, `shortcuts`, and `theme`. Run it from `packages/app` to update the snapshot after intentional changes:
+`packages/app/uno.config.test.ts` snapshots `rules`, `safelist`, `shortcuts` and `theme`;
+`packages/app/vuetify.config.test.ts` snapshots the whole Vuetify configuration.
+
+**They are not there to restate what the config file sets** — that would fail only on a deliberate edit, where
+the diff is already the review. They are there for the edit nobody makes: **a `vuetify` or `unocss` bump**. Both
+snapshots capture _resolved_ output — the elevation rules and theme colours UnoCSS derives from Vuetify's
+palette, and the defaults Vuetify's own `defineVuetifyConfiguration` fills in around ours — so an upstream
+release can move them with no diff anywhere in this repo and nothing else in the suite would notice. That is the
+"a literal fixed outside this repo" case the `testing` skill carves out, and it is why a version bump is the
+review that matters for these two files.
+
+So the diff on a dependency update is the finding, not noise: read it before regenerating, and say in the commit
+what upstream changed. Regenerate after an intentional change of our own:
 
 ```bash
-pnpm test uno.config.test.ts -u --run
+pnpm test uno.config.test.ts vuetify.config.test.ts -u --run
 ```
-
-Update the snapshot whenever:
-
-- A new theme color is added to `vuetify.config.ts`
-- A new rule, shortcut, or opacity utility is added to `uno.config.ts`

@@ -1,6 +1,5 @@
 import type { State } from "@/models/dungeons/state/State";
 
-import { dayjs } from "#shared/services/dayjs";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
@@ -19,7 +18,7 @@ export const BringOutMonster: State<StateName> = {
     await useMonsterAppearTween(false);
     useMonsterInfoContainerAppearTween(false);
     await showMessageNoInputRequired(scene, `Go ${prettify(activeMonster.value.key)}!`);
-    await sleep(scene, dayjs.duration(1, "second").asMilliseconds());
+    await sleep(scene, Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
     await battleStateMachine.setState(StateName.PlayerInput);
   },
 };

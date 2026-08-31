@@ -25,7 +25,10 @@ export const transformPublishedDashboard = async (
         DatasetProviderMap[dataset.reference.type](ctx, dataset.reference),
       ).match(
         (newSnapshot) => newSnapshot,
-        () => {
+        (error) => {
+          // The provider's own reason is what says which of the two it was — a deleted reference or a provider
+          // That failed on one this dashboard still names — and the reply deliberately does not carry it
+          console.error(error);
           throw getNotFoundError("Dataset", dataset.reference.id);
         },
       );

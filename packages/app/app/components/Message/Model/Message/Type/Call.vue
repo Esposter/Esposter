@@ -2,21 +2,21 @@
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
-import { dayjs } from "#shared/services/dayjs";
-
 interface CallProps extends MessageComponentProps<StandardMessageEntity> {}
 
 const { active, creator, isPreview = false, message } = defineProps<CallProps>();
 const isCallEnded = computed(() => Boolean(message.message));
 const formattedDuration = computed(() => {
   if (!isCallEnded.value) return;
-  const duration = dayjs.duration(Number(message.message), "seconds");
+  // Rounded so the seconds the message carries are balanced across the fields below — an unrounded duration
+  // Keeps all of them in `seconds` and every larger part reads zero
+  const duration = Temporal.Duration.from({ seconds: Number(message.message) }).round({ largestUnit: "day" });
   return (
     [
-      [duration.days(), "d"],
-      [duration.hours(), "h"],
-      [duration.minutes(), "m"],
-      [duration.seconds(), "s"],
+      [duration.days, "d"],
+      [duration.hours, "h"],
+      [duration.minutes, "m"],
+      [duration.seconds, "s"],
     ] as [number, string][]
   )
     .filter(([value]) => value > 0)

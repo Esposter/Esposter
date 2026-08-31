@@ -1,4 +1,4 @@
-// @vitest-environment nuxt
+// @vitest-environment happy-dom
 import type { Resource } from "@esposter/db-schema";
 
 import { createEmailSurveyInviteBlocks } from "@/services/emailEditor/createEmailSurveyInviteBlocks";

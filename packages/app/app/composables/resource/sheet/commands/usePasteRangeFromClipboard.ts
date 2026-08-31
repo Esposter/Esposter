@@ -2,7 +2,7 @@ import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
 import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
 import { parseClipboardValuesByPosition } from "@/services/resource/sheet/commands/parseClipboardValuesByPosition";
-import { useAlertStore } from "@/store/alert";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useSheetStore } from "@/store/resource/sheet";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
@@ -15,8 +15,6 @@ export const usePasteRangeFromClipboard = () => {
   const { displayColumns } = storeToRefs(columnStore);
   const cellStore = useCellStore();
   const { selectedCellRange } = storeToRefs(cellStore);
-  const alertStore = useAlertStore();
-  const { createAlert } = alertStore;
   const createRows = useCreateRows();
   const pasteRange = usePasteRange();
   return async (pasteMode = PasteMode.Overwrite) => {
@@ -50,8 +48,6 @@ export const usePasteRangeFromClipboard = () => {
         default:
           exhaustiveGuard(pasteMode);
       }
-    }).match(noop, (error) => {
-      createAlert(error.message, "error");
-    });
+    }).match(noop, createErrorAlert);
   };
 };

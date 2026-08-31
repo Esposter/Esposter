@@ -47,10 +47,15 @@ export const posts = pgTable(
 
 export type Post = typeof posts.$inferSelect;
 
+// A comment's description is the whole comment, so it is the one that may not be blank — everything else about
+// The two is the same field, sanitized the same way against the same cap
+const createDescriptionSchema = (schema: z.ZodString, minLength: number) =>
+  schema.transform(sanitizeTextHtml).pipe(z.string().min(minLength).max(POST_DESCRIPTION_MAX_LENGTH));
+
 export const selectPostSchema = createSelectSchema(posts, {
-  description: (schema) => schema.transform(sanitizeTextHtml).pipe(z.string().max(POST_DESCRIPTION_MAX_LENGTH)),
+  description: (schema) => createDescriptionSchema(schema, 0),
   title: (schema) => schema.min(1).max(POST_TITLE_MAX_LENGTH),
 });
 export const selectCommentSchema = createSelectSchema(posts, {
-  description: (schema) => schema.transform(sanitizeTextHtml).pipe(z.string().min(1).max(POST_DESCRIPTION_MAX_LENGTH)),
+  description: (schema) => createDescriptionSchema(schema, 1),
 });

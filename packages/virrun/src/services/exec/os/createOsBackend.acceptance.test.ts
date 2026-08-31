@@ -1,4 +1,3 @@
-import { dayjs } from "#src/services/dayjs.test";
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
 import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
 import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
@@ -57,6 +56,6 @@ describe.skipIf(!isSandboxInstallSupported)("createOsBackend - real workspace in
       // The subprocess wall held: nothing the install wrote reached the host corpus on disk.
       expect(existsSync(join(corpus, NODE_MODULES_DIRECTORY))).toBe(false);
     },
-    dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds(),
+    Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds"),
   );
 });

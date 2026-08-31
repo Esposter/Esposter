@@ -523,7 +523,7 @@ describe("room", () => {
       maxUses: 0,
       roomId: newRoom.id,
     });
-    vi.setSystemTime(dayjs.duration(31, "minutes").asMilliseconds());
+    vi.setSystemTime(Temporal.Duration.from({ minutes: 31 }).total("milliseconds"));
     const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
     expect(myInvite).toBeNull();
@@ -544,7 +544,7 @@ describe("room", () => {
       { createdAt: new Date(2), expiresAt: new Date(1), id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
       { createdAt: new Date(1), id: usableInviteId, roomId: newRoom.id, userId },
     ]);
-    vi.setSystemTime(dayjs.duration(1, "minute").asMilliseconds());
+    vi.setSystemTime(Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
     const lapsedPage = await roomCaller.readRoomInvites({ limit: 2, roomId: newRoom.id });
 
     assert(lapsedPage.nextCursor);
@@ -642,7 +642,7 @@ describe("room", () => {
       maxUses: 0,
       roomId: newRoom.id,
     });
-    vi.setSystemTime(dayjs.duration(31, "minutes").asMilliseconds());
+    vi.setSystemTime(Temporal.Duration.from({ minutes: 31 }).total("milliseconds"));
     await mockSessionOnce(mockContext.db);
 
     await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(

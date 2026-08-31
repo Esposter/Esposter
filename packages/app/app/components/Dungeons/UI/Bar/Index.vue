@@ -4,7 +4,6 @@ import type { BarType } from "@/models/dungeons/UI/bar/BarType";
 import type { Tweens } from "phaser";
 import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
-import { dayjs } from "#shared/services/dayjs";
 import { BarTextureMap } from "@/services/dungeons/UI/bar/BarTextureMap";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Math } from "phaser";
@@ -62,7 +61,7 @@ watch(barWidth, (newBarWidth) => {
 
   useTween(tween, {
     displayWidth: newBarWidth,
-    duration: dayjs.duration(1, "second").asMilliseconds(),
+    duration: Temporal.Duration.from({ seconds: 1 }).total("milliseconds"),
     ease: Math.Easing.Sine.Out,
     onComplete: () => {
       emit("complete:display-width");

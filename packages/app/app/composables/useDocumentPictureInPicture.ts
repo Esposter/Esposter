@@ -76,11 +76,13 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
     target.document.body.style.margin = "0";
     // Mirror late-added stylesheets (UnoCSS dev-time runtime injection) into the PiP document.
     styleObserver = new MutationObserver(
-      getSynchronizedFunction(async (mutations) => {
-        for (const mutation of mutations)
-          for (const node of mutation.addedNodes)
-            if (isStyleNode(node) && node.sheet) await cloneStyleSheet(target, node.sheet);
-      }),
+      getSynchronizedFunction((mutations) =>
+        getResultAsync(async () => {
+          for (const mutation of mutations)
+            for (const node of mutation.addedNodes)
+              if (isStyleNode(node) && node.sheet) await cloneStyleSheet(target, node.sheet);
+        }).match(noop, console.error),
+      ),
     );
     styleObserver.observe(window.document.head, { childList: true });
     // Wait for re-linked sheets to finish loading so content isn't revealed before its CSS (FOUC).

@@ -2,7 +2,7 @@
 import type { User } from "@esposter/db-schema";
 
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
-import { useAlertStore } from "@/store/alert";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useModerationNoteStore } from "@/store/message/moderation/note";
 import { MODERATION_NOTE_MAX_LENGTH } from "@esposter/db-schema";
 
@@ -16,8 +16,6 @@ const { displayName, roomId, user } = defineProps<NotesDialogProps>();
 const { $trpc } = useNuxtApp();
 const rules = useVRules();
 const noteRules = computed(() => [rules.maxLength(MODERATION_NOTE_MAX_LENGTH)]);
-const alertStore = useAlertStore();
-const { createAlert } = alertStore;
 const { readModerationNotes, readMoreModerationNotes } = useReadModerationNotes(roomId, () => user.id);
 const moderationNoteStore = useModerationNoteStore();
 const { currentTargetUserId, hasMore, items } = storeToRefs(moderationNoteStore);
@@ -41,7 +39,7 @@ const createNote = (onComplete: (isSuccessful?: boolean) => void) =>
       // Each note is an independent server-generated create with no id yet, so it gets a per-call symbol
       key: Symbol("createModerationNote"),
       onError: (error) => {
-        createAlert(error.message, "error");
+        createErrorAlert(error);
         onComplete(false);
       },
       onSuccess: async () => {

@@ -9,7 +9,7 @@ import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { RoutePath, uuidValidateV4, withFinalizerAsync } from "@esposter/shared";
+import { checkIsUuidV4, RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
 // One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor
@@ -58,7 +58,7 @@ export const useResourceStore = defineStore("resource", () => {
     const id = getRouteParamString(currentRoute.value.params.id);
     // A route with no resource segment — a list view, or one this read raced a navigation to — names nothing to
     // Read, and the empty sentinel would reach the server as a uuid that fails validation
-    if (!uuidValidateV4(id)) return;
+    if (!checkIsUuidV4(id)) return;
 
     isPending.value = true;
     await withFinalizerAsync(
@@ -100,6 +100,10 @@ export const useResourceStore = defineStore("resource", () => {
     contentResourceId = current.id;
     return content as ResourceContent<TType> | undefined;
   };
+  // Every content store calls this once its load has hydrated, and the two GrapesJS ones have to: the editor
+  // Stores as soon as it finishes loading, so the first save of a session is an echo of what was just read.
+  // Unseeded, that echo counts as a change — it bumps contentVersion for content nobody edited, and every
+  // Other client holding the page open is then told its version is stale
   const setPersistedContent = (content: ResourceContent<ResourceType>) => {
     persistedContentJson = JSON.stringify(content);
   };

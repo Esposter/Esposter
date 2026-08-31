@@ -1,4 +1,3 @@
-import { dayjs } from "#shared/services/dayjs";
 import { MIN_OFFLINE_DIALOG_ELAPSED, OFFLINE_CAP, OFFLINE_RATE } from "@/services/clicker/constants";
 import { useClickerStore } from "@/store/clicker";
 import { useBuildingStore } from "@/store/clicker/building";
@@ -19,7 +18,9 @@ export const useOfflineProgressStore = defineStore("clicker/offlineProgress", ()
     const newElapsedMs = Date.now() - clickerStore.clicker.updatedAt.getTime();
     if (newElapsedMs <= 0) return;
 
-    const cappedSeconds = dayjs.duration(Math.min(newElapsedMs, OFFLINE_CAP)).asSeconds();
+    const cappedSeconds = Temporal.Duration.from({ milliseconds: Math.min(newElapsedMs, OFFLINE_CAP) }).total(
+      "seconds",
+    );
     const newAwardedPoints = buildingStore.allBuildingPower * cappedSeconds * OFFLINE_RATE;
     if (newAwardedPoints <= 0) return;
 

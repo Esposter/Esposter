@@ -1,6 +1,5 @@
 import type { WslLoginEnvironment } from "#src/models/exec/wsl/WslLoginEnvironment";
 
-import { dayjs } from "#src/services/dayjs";
 import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "#src/services/exec/util/constants";
 import { createProbeCache } from "#src/services/exec/util/createProbeCache";
 import { buildWslLoginShellCommand } from "#src/services/exec/wsl/buildWslLoginShellCommand";
@@ -22,7 +21,7 @@ import { getResult } from "@esposter/shared";
 // Clear a *cold* WSL start: warm capture is ~1s, but a first-of-session run pays the WSL2 VM boot plus full rc
 // Sourcing (fnm + plugins + profile), which overshoots a few-second cap and produced spurious `node: not found`
 // Failures on the first `virrun` of the day. One minute clears cold boot while still bounding a genuinely hung rc.
-const WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS = dayjs.duration(1, "minute").asMilliseconds();
+const WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 const EMPTY_LOGIN_ENVIRONMENT: WslLoginEnvironment = { nodeVersion: "", path: "" };
 // Run a marked capture inside the user's real login + interactive shell (buildWslLoginShellCommand), so it sources the
 // Exact profile + rc files a real terminal would — that is where a version manager (fnm, nvm, asdf, Volta…) activates

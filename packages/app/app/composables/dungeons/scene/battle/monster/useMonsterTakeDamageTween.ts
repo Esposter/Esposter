@@ -1,4 +1,3 @@
-import { dayjs } from "#shared/services/dayjs";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useTween } from "vue-phaserjs";
@@ -14,7 +13,7 @@ export const useMonsterTakeDamageTween = (isEnemy: boolean) => {
     useTween(monsterTween, {
       alpha: getTweenRange(1, 0),
       delay: 0,
-      duration: dayjs.duration(0.15, "seconds").asMilliseconds(),
+      duration: 150,
       onComplete: (_tween, [monsterImageGameObject]) => {
         monsterImageGameObject.setAlpha(1);
         resolve();

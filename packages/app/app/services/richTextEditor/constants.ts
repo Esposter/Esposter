@@ -1,3 +1,1 @@
-import { dayjs } from "#shared/services/dayjs";
-
-export const AUDIO_RECORDER_TIMER_INTERVAL = dayjs.duration(1, "second").asMilliseconds();
+export const AUDIO_RECORDER_TIMER_INTERVAL = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");

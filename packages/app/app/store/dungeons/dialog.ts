@@ -8,6 +8,7 @@ import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useSettingsStore } from "@/store/dungeons/settings";
+import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 import { sleep } from "vue-phaserjs";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
@@ -43,7 +44,12 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     return new Promise<void>(
       getSynchronizedFunction(async (resolve) => {
         queuedOnComplete = resolve;
-        await showMessage(scene);
+        // The gate the dialog flow waits on, so a message that fails to show resolves it rather than stalling
+        // The flow behind a dialog that is never going to appear
+        await getResultAsync(() => showMessage(scene)).match(noop, (error) => {
+          console.error(error);
+          resolve();
+        });
       }),
     );
   };
@@ -80,10 +86,15 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     });
     dialogTarget.message.value.title = message.title;
     isQueuedMessagesAnimationPlaying.value = true;
-    await useAnimateText(scene, dialogTargetText, message.text);
+    // The flag gates player input, so an animation that rejects has to clear it or input stays blocked forever
+    await withFinalizerAsync(
+      () => useAnimateText(scene, dialogTargetText, message.text),
+      () => {
+        isQueuedMessagesAnimationPlaying.value = false;
+      },
+    );
     showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
     isWaitingForPlayerSpecialInput.value = true;
-    isQueuedMessagesAnimationPlaying.value = false;
   };
 
   const showMessageNoInputRequired = (scene: SceneWithPlugins, target: DialogTarget, message: DialogMessage) => {

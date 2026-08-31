@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
 
-import { dayjs } from "#shared/services/dayjs";
 import { draftsSerializer } from "@/services/message/draft/draftsSerializer";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
@@ -23,7 +22,7 @@ describe(useInputStore, () => {
   const roomId1 = crypto.randomUUID();
   const roomId2 = crypto.randomUUID();
   const draftContent = marked.parse("draftContent", { async: false });
-  const debounceMs = dayjs.duration(0.3, "seconds").asMilliseconds();
+  const debounceMs = 300;
 
   beforeEach(() => {
     // Frozen rather than merely faked, so a draft's `updatedAt` is an exact value instead of "some Date"

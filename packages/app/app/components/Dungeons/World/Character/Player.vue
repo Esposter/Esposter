@@ -11,6 +11,7 @@ import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { getResultAsync, noop } from "@esposter/shared";
 import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 import { onCreate, onNextTick, onShutdown, useInjectSceneKey } from "vue-phaserjs";
@@ -34,18 +35,25 @@ const sceneKey = useInjectSceneKey();
 const frame = ref(PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing);
 
 onCreate(
-  getSynchronizedFunction(async (scene) => {
-    if (!isPlayerFainted.value) return;
+  getSynchronizedFunction((scene) =>
+    getResultAsync(async () => {
+      if (!isPlayerFainted.value) return;
 
-    await respawn();
-    scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, async () => {
-      healParty();
-      await showMessages(scene, [
-        { text: "It looks like your team put up quite a fight...", title: "???" },
-        { text: "I went ahead and healed them up for you.", title: "???" },
-      ]);
-    });
-  }),
+      await respawn();
+      scene.cameras.main.once(
+        Cameras.Scene2D.Events.FADE_IN_COMPLETE,
+        getSynchronizedFunction(() =>
+          getResultAsync(async () => {
+            healParty();
+            await showMessages(scene, [
+              { text: "It looks like your team put up quite a fight...", title: "???" },
+              { text: "I went ahead and healed them up for you.", title: "???" },
+            ]);
+          }).match(noop, console.error),
+        ),
+      );
+    }).match(noop, console.error),
+  ),
 );
 
 usePhaserListener("playerTeleport", (position, direction) => {

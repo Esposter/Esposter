@@ -50,7 +50,7 @@ Kick, ban and soft ban all delete a membership row, and a deleted membership row
 
 ### Word filter
 
-Rooms can define filtered words (`room.filter` router, `roomFiltersInMessage`). The word filter is the last rule in `getMessageCreationRejection`, the shared gate every message-producing path decides with — alongside the timeout, read-only, and slowmode checks. It reports the match; the caller (`assertCanCreateMessage`) applies the configured action and rejects.
+Rooms can define filtered words (`room.filter` router, `roomFiltersInMessage`). The word filter is the last rule in `getMessageCreationRejection`, the shared gate every message-producing path decides with — alongside the timeout, read-only, and slowmode checks. It reports the match; the caller (`assertCanCreateMessage`) applies the configured action and rejects. Every rule rejects with the sentence it owns, from one map beside that caller — the sender is shown the message text, so a bare code would tell them neither what stopped the send nor whether waiting helps. Slowmode is the one that answers yes to that second question, which is why it alone rejects as a rate limit.
 
 ## Data model
 
@@ -72,17 +72,18 @@ The **Bans** tab searches by the banned user's name, over the join that already 
 
 ## Key files
 
-| File                                                                          | Role                              |
-| :---------------------------------------------------------------------------- | :-------------------------------- |
-| `packages/db-schema/src/models/message/AdminActionType.ts`                    | action type enum                  |
-| `packages/app/server/trpc/routers/message/moderation.ts`                      | moderation router                 |
-| `packages/app/server/services/message/moderation/AdminActionPermissionMap.ts` | action → required permission      |
-| `packages/app/server/services/room/announceRoomMemberRemoval.ts`              | the departure event + system line |
-| `packages/app/shared/models/db/moderation/ExecuteAdminActionInput.ts`         | discriminated union input         |
-| `packages/app/app/composables/message/moderation/useAdminActionMap.ts`        | client-side per-action handlers   |
-| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`  | shared message-creation gate      |
-| `packages/app/server/services/message/moderation/assertCanCreateMessage.ts`   | tRPC face — applies + rejects     |
-| `packages/app/server/trpc/routers/room/filter.ts`                             | word filter CRUD                  |
+| File                                                                                   | Role                              |
+| :------------------------------------------------------------------------------------- | :-------------------------------- |
+| `packages/db-schema/src/models/message/AdminActionType.ts`                             | action type enum                  |
+| `packages/app/server/trpc/routers/message/moderation.ts`                               | moderation router                 |
+| `packages/app/server/services/message/moderation/AdminActionPermissionMap.ts`          | action → required permission      |
+| `packages/app/server/services/room/announceRoomMemberRemoval.ts`                       | the departure event + system line |
+| `packages/app/shared/models/db/moderation/ExecuteAdminActionInput.ts`                  | discriminated union input         |
+| `packages/app/app/composables/message/moderation/useAdminActionMap.ts`                 | client-side per-action handlers   |
+| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`           | shared message-creation gate      |
+| `packages/app/server/services/message/moderation/assertCanCreateMessage.ts`            | tRPC face — applies + rejects     |
+| `packages/app/server/services/message/moderation/MessageCreationRejectionReasonMap.ts` | what each rule tells the sender   |
+| `packages/app/server/trpc/routers/room/filter.ts`                                      | word filter CRUD                  |
 
 ## Notes
 

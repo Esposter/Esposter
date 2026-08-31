@@ -1,7 +1,6 @@
 import type { ExecBackend } from "#src/models/exec/ExecBackend";
 import type { ExecOptions } from "#src/models/exec/ExecOptions";
 
-import { dayjs } from "#src/services/dayjs.test";
 import { computeTaskCacheKey } from "#src/services/exec/cache/computeTaskCacheKey";
 import { persistWithCache } from "#src/services/exec/cache/persistWithCache";
 import { resolveTaskCacheLocation } from "#src/services/exec/cache/resolveTaskCacheLocation";
@@ -25,7 +24,7 @@ describe.todo("persistWithCache - a hit replays a recorded run identically (task
   // Counts real sandbox executions so a hit can be proven to skip exec, not merely reproduce its output.
   let execCount = 0;
   let countingBackend: ExecBackend;
-  const acceptanceTimeoutMs = dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds();
+  const acceptanceTimeoutMs = Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds");
   let corpus = "";
   const previousCi = process.env[CI_ENV_KEY];
   const previousNoCache = process.env[VIRRUN_NO_CACHE_KEY];

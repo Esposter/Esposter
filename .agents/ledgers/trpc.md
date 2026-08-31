@@ -12,11 +12,11 @@ Router structure, the procedure builder each route picks, ownership guards, and 
 | `server/trpc/routers/post`, `like`, `block`, `friend`, `friendRequest`, `user`                                            | —          | generics enforced across it, so a pass here reads for builder choice, guards and structure only                                                                                                                                                           |
 | `server/trpc/routers/dashboard`, `dataset`, `email`, `flowchart`, `webpage`, `survey`                                     | —          | generics enforced across it, so a pass here reads for builder choice, guards and structure only                                                                                                                                                           |
 | `server/trpc/routers/achievement`, `app`, `clicker`, `dungeons`, `notification`, `pushSubscription`, `session`, `storage` | —          | generics enforced across it, so a pass here reads for builder choice, guards and structure only                                                                                                                                                           |
-| `app/plugins` + `app/services/trpc`                                                                                       | —          | the client half: `errorLink`, the proxy, `$trpc` wiring                                                                                                                                                                                                   |
+| `app/plugins` + `app/services/trpc`                                                                                       | 2026-08-30 | `errorLink` listed its three alerted codes twice — the set `checkIsAlertedByErrorLink` answers from, and a switch beside it — so a caller could be told the link owns a code the link declined to alert                                                   |
 
 ## Exclusions
 
-- Router **tests** — the `tests` ledger owns those; a finding about a caller pattern goes there.
+- Router **tests** — the `testing` ledger owns those; a finding about a caller pattern goes there.
 - Input schemas under `shared/models/db` — `schemas` owns their shape, this ledger only checks the router imports rather than declares them.
 
 ## Next enforceable

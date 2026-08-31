@@ -4,6 +4,7 @@ import type { RoomInMessage, User } from "@esposter/db-schema";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useRoleStore } from "@/store/message/room/role";
 import { hasPermission, RoomPermission } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
 
 interface MoreMenuRoleItemsProps {
   roomId: RoomInMessage["id"];
@@ -19,8 +20,12 @@ const hasManageRoles = computed(() => {
   if (!myPermissions) return false;
   return hasPermission(myPermissions.permissions, RoomPermission.ManageRoles, myPermissions.isRoomOwner);
 });
-// The card is a popout that appears on hover, so the member's own roles load behind it rather than blocking it
-getSynchronizedFunction(() => readMemberRoles({ roomId, userIds: [user.id] }))();
+// The card is a popout that appears on hover, so the member's own roles load behind it rather than blocking it.
+// Nothing awaits the read and nobody asked for it, so it reports its own failure — the group renders empty,
+// Which is also what a member with no roles looks like
+getSynchronizedFunction(() =>
+  getResultAsync(() => readMemberRoles({ roomId, userIds: [user.id] })).match(noop, console.error),
+)();
 </script>
 
 <!-- Discord assigns a role from the member themselves rather than only from a settings list, which is where the

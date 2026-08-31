@@ -1,11 +1,10 @@
 /* eslint-disable perfectionist/sort-objects */
-import { dayjs } from "#shared/services/dayjs";
 
 export const TimeoutDurationMap = {
-  "1 minute": dayjs.duration(1, "minute").asMilliseconds(),
-  "5 minutes": dayjs.duration(5, "minutes").asMilliseconds(),
-  "10 minutes": dayjs.duration(10, "minutes").asMilliseconds(),
-  "1 hour": dayjs.duration(1, "hour").asMilliseconds(),
-  "24 hours": dayjs.duration(24, "hours").asMilliseconds(),
-  "7 days": dayjs.duration(7, "days").asMilliseconds(),
+  "1 minute": Temporal.Duration.from({ minutes: 1 }).total("milliseconds"),
+  "5 minutes": Temporal.Duration.from({ minutes: 5 }).total("milliseconds"),
+  "10 minutes": Temporal.Duration.from({ minutes: 10 }).total("milliseconds"),
+  "1 hour": Temporal.Duration.from({ hours: 1 }).total("milliseconds"),
+  "24 hours": Temporal.Duration.from({ hours: 24 }).total("milliseconds"),
+  "7 days": Temporal.Duration.from({ days: 7 }).total("milliseconds"),
 } as const satisfies Record<string, number>;

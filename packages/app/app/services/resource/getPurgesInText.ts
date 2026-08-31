@@ -11,7 +11,7 @@ export const getPurgesInText = (deletedAt: Resource["deletedAt"]): string => {
 
   const purgesAt = dayjs(deletedAt).add(RECYCLE_BIN_RETENTION_MS, "milliseconds");
   // Partial days round up — a purge 29.5 days away reads as 30, never as already closer than it is
-  const remainingDays = Math.ceil(purgesAt.diff(dayjs()) / dayjs.duration(1, "day").asMilliseconds());
+  const remainingDays = Math.ceil(purgesAt.diff(dayjs()) / Temporal.Duration.from({ days: 1 }).total("milliseconds"));
   if (remainingDays <= 0) return "Purges soon";
   return `Purges in ${remainingDays} ${pluralize("day", remainingDays)}`;
 };

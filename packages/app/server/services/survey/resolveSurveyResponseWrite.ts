@@ -5,9 +5,9 @@ import { closedSurveyErrorReason } from "@@/server/services/survey/constants";
 import { readSurveySettings } from "@@/server/services/survey/readSurveySettings";
 import { SurveyResponseModeValidatorMap } from "@@/server/services/survey/SurveyResponseModeValidatorMap";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
-import { AzureEntityType, ResourceType } from "@esposter/db-schema";
+import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
+import { AzureEntityType, DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
 
 // The single write boundary for both response mutations — client state can never bypass it.
 // Costs one blob read per submission; submissions are rate-limited and low-volume, so no caching until measured
@@ -21,7 +21,7 @@ export const resolveSurveyResponseWrite = async (
   const survey = await db.query.resources.findFirst({
     where: { deletedAt: { isNull: true }, id: { eq: surveyId }, type: { eq: ResourceType.Survey } },
   });
-  if (!survey) throw new TRPCError({ code: "NOT_FOUND" });
+  if (!survey) throw getNotFoundError(DatabaseEntityType.Resource, surveyId);
 
   const { isAcceptingResponses, responseMode } = await readSurveySettings(surveyId);
   if (!isAcceptingResponses)

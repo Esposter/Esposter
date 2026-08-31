@@ -1,4 +1,3 @@
-import { dayjs } from "#src/services/dayjs";
 import {
   TASK_CACHE_MAX_AGE_DAYS,
   TASK_CACHE_META_FILENAME,
@@ -9,7 +8,7 @@ import { getResult } from "@esposter/shared";
 import { statSync } from "node:fs";
 import { join } from "node:path";
 
-const TASK_CACHE_MAX_AGE_MS = dayjs.duration(TASK_CACHE_MAX_AGE_DAYS, "days").asMilliseconds();
+const TASK_CACHE_MAX_AGE_MS = Temporal.Duration.from({ days: TASK_CACHE_MAX_AGE_DAYS }).total("milliseconds");
 // Age-prune published `tasks/<key>` entries: the tasks root is the one cache surface with no superseded-entry sweep
 // (a branch switch flips the working-tree hash back, so an "old" key can become current again — there is no superseded
 // Set, only recency). An entry whose `meta.json` has not been touched within TASK_CACHE_MAX_AGE_DAYS is dead weight;

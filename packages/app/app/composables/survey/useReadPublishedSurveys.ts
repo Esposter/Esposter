@@ -1,7 +1,7 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
-import { useAlertStore } from "@/store/alert";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
 
 // The owner's published surveys — the invite-block source for both GrapesJS editors. Only published
@@ -9,8 +9,6 @@ import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
 export const useReadPublishedSurveys = () => {
   const { $trpc } = useNuxtApp();
   const session = authClient.useSession();
-  const alertStore = useAlertStore();
-  const { createAlert } = alertStore;
   const publishedSurveys = ref<Resource[]>([]);
 
   watchImmediate(
@@ -20,9 +18,7 @@ export const useReadPublishedSurveys = () => {
       await getResultAsync(async () => {
         const { items } = await $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT });
         publishedSurveys.value = items.filter(({ publication }) => publication);
-      }).match(noop, (error) => {
-        createAlert(error.message, "error");
-      });
+      }).match(noop, createErrorAlert);
     },
   );
 

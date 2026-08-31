@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
-import { validate } from "@/services/router/validate";
+import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
 import { useThreadStore } from "@/store/message/thread";
 import { requireRouteParam } from "@/util/router/requireRouteParam";
 
-definePageMeta({ middleware: "auth", validate });
+definePageMeta({ middleware: "auth", validate: checkIsUuidRouteId });
 
 const { currentRoute } = useRouter();
 const threadStore = useThreadStore();

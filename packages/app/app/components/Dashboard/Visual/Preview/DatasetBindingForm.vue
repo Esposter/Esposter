@@ -3,6 +3,7 @@ import type { VisualDatasetBinding } from "#shared/models/dashboard/data/VisualD
 
 import { DatasetAggregationType, DatasetAggregationTypes } from "#shared/models/dataset/DatasetAggregationType";
 import { authClient } from "@/services/auth/authClient";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useAlertStore } from "@/store/alert";
 import { getResultAsync, noop } from "@esposter/shared";
 
@@ -41,7 +42,7 @@ const columnNames = computed(() => dataset.value?.columns.map(({ name }) => name
               },
               reference: newReference,
             };
-          }).match(noop, (error) => createAlert(error.message, 'error'));
+          }).match(noop, createErrorAlert);
         }
       "
     />

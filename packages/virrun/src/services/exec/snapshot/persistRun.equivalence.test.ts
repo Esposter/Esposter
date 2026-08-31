@@ -1,4 +1,3 @@
-import { dayjs } from "#src/services/dayjs.test";
 import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
 import { persistRun } from "#src/services/exec/snapshot/persistRun";
 import { ACCEPTANCE_TIMEOUT_MINUTES, PACKAGES_DIRECTORY } from "#src/services/exec/test/constants.test";
@@ -19,7 +18,7 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
   const MASKED_PATH = "b/c";
 
   const { getBackend, getCorpus } = setupWarmSnapshotSuite();
-  const acceptanceTimeoutMs = dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds();
+  const acceptanceTimeoutMs = Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds");
   let corpus = "";
   // A real package directory in the corpus (e.g. `packages/virrun`); its per-package node_modules lands in the
   // Snapshot lower, so it is the fixture for the "source under a shared snapshot-lower parent" case.

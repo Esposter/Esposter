@@ -1,6 +1,5 @@
 import type { State } from "@/models/dungeons/state/State";
 
-import { dayjs } from "#shared/services/dayjs";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { calculateDamage } from "@/services/dungeons/monster/calculateDamage";
@@ -29,7 +28,7 @@ export const EnemyAttack: State<StateName> = {
       scene,
       `Enemy ${prettify(activeMonster.value.key)} used ${prettify(randomAttackId)}.`,
     );
-    await sleep(scene, dayjs.duration(0.5, "seconds").asMilliseconds());
+    await sleep(scene, 500);
     await useAttackAnimation(scene, randomAttack, false);
     await takeDamage(
       calculateDamage(activeMonster.value.stats.attack, randomAttack.power, playerActiveMonster.value.stats.defense),

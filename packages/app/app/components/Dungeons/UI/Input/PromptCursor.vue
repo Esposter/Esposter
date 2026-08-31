@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { dayjs } from "#shared/services/dayjs";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { Image } from "vue-phaserjs";
@@ -27,7 +26,7 @@ const { inputPromptCursorDisplayWidth, inputPromptCursorX, isInputPromptCursorVi
       displayWidth: inputPromptCursorDisplayWidth,
       tween: {
         delay: 0,
-        duration: dayjs.duration(0.5, 'seconds').asMilliseconds(),
+        duration: 500,
         repeat: -1,
         y: getTweenRange(y, y + 6),
       },

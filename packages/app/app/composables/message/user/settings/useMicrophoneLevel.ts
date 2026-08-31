@@ -1,7 +1,7 @@
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
 import { MAX_INPUT_SENSITIVITY_DECIBELS, MIN_INPUT_SENSITIVITY_DECIBELS } from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 // Opens a local microphone and exposes the live input level (dB) so the Input Sensitivity panel
 // Can show a calibration meter. There is no shared analyser to reuse - in-call speaking detection
@@ -71,10 +71,12 @@ export const useMicrophoneLevel = () => {
   };
 
   onScopeDispose(
-    getSynchronizedFunction(async () => {
-      isDisposed = true;
-      await stop();
-    }),
+    getSynchronizedFunction(() =>
+      getResultAsync(async () => {
+        isDisposed = true;
+        await stop();
+      }).match(noop, console.error),
+    ),
   );
 
   return { isTesting, level, start, stop };

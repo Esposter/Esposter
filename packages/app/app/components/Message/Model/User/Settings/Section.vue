@@ -1,30 +1,17 @@
 <script setup lang="ts">
 import type { SettingsSection } from "@/models/message/user/settings/SettingsSection";
 
-import { useUserSettingsDialogStore } from "@/store/message/user/settings/dialog";
-
 interface UserSettingsSectionProps {
   title: SettingsSection;
 }
 
 defineSlots<{ default: () => VNode }>();
+// The title is the anchor id as well: the sidebar scrolls to it, and the scrollspy reads the section back by it
 const { title } = defineProps<UserSettingsSectionProps>();
-const userSettingsDialogStore = useUserSettingsDialogStore();
-const { setSectionVisibility } = userSettingsDialogStore;
-const section = useTemplateRef("section");
-const isVisible = useElementVisibility(section);
-
-watchImmediate(isVisible, (newIsVisible) => {
-  setSectionVisibility(title, newIsVisible);
-});
-
-onUnmounted(() => {
-  setSectionVisibility(title, false);
-});
 </script>
 
 <template>
-  <section :id="title" ref="section" flex flex-col gap-y-4>
+  <section :id="title" flex flex-col gap-y-4>
     <div font-bold text-title-medium>{{ title }}</div>
     <slot />
   </section>

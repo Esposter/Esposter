@@ -3,7 +3,6 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { Dungeons, dungeonsSchema } from "#shared/models/dungeons/data/Dungeons";
 import { Save } from "#shared/models/dungeons/data/Save";
-import { dayjs } from "#shared/services/dayjs";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { Cameras } from "phaser";
 import { useCameraStore, usePhaserStore } from "vue-phaserjs";
@@ -30,7 +29,7 @@ export const useDungeonsStore = defineStore("dungeons", () => {
   const fadeSwitchToScene = (
     scene: SceneWithPlugins,
     sceneKey: SceneKey,
-    durationMs = dayjs.duration(1, "second").asMilliseconds(),
+    durationMs = Temporal.Duration.from({ seconds: 1 }).total("milliseconds"),
   ) => {
     fadeOut(scene, durationMs);
     scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {

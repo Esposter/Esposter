@@ -38,6 +38,12 @@ throw getNotFoundError(DatabaseEntityType.Foo, input.fooId);
 
 `new TRPCError({ code, message: new InvalidOperationError(...).message })` written out at a throw site is the anti-pattern: it re-decides the code per site, and drifts from the guards' text the moment either changes. Where one feature throws the same rejection from several places, give it a named constructor that calls these (`createInvalidBlueprintError`, `danglingProgramBindingError`) so the arguments are stated once too.
 
+## `UNAUTHORIZED` is the one code thrown bare, and has no constructor
+
+`throw new TRPCError({ code: "UNAUTHORIZED" })` with no message is correct and is what every ownership, membership and permission check in the tree does. There is nothing to say: the caller failed a check, and wording _which_ check describes the permission model to the one caller who should not be reading it. A constructor would exist only to attach that sentence, so there is none — the absence is the rule, not a gap someone forgot to fill.
+
+`getForbiddenError(reason)` is its opposite and that is why it takes a string: a `FORBIDDEN` names a **condition the caller can act on** — "Must join call first", "Must be admitted to join this call" — so the reason is the whole point of the error. Choose between the two by asking whether the caller can do anything with the answer.
+
 ## A `cause` without a `message` rewrites what the client is told
 
 `TRPCError` falls back to `cause.message` when no `message` is passed, so attaching the underlying failure to an otherwise-bare error (`new TRPCError({ cause: writeError, code: "CONFLICT" })`) replaces the code-shaped message the client renders with the raw upstream text — a `CONFLICT` starts reporting itself as `412`. Attach a `cause` only alongside an explicit `message`, and only when it carries something the code does not already say: where the code is definitionally the diagnosis (every retry lost the same race), the cause is noise bought at the price of the client-facing message. An inline snapshot over the thrown error catches this — the message is what it renders.

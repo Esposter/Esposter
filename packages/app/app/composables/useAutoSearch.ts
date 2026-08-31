@@ -1,5 +1,5 @@
 import { AUTO_SEARCH_THROTTLE_MS } from "@/services/shared/constants";
-import { useAlertStore } from "@/store/alert";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync, normalizeString } from "@esposter/shared";
 
 export interface UseAutoSearchOptions {
@@ -13,8 +13,6 @@ export const useAutoSearch = (
   searchQuery: Ref<string>,
   { isIncludeEmptySearchQuery, reset, search }: UseAutoSearchOptions,
 ) => {
-  const alertStore = useAlertStore();
-  const { createAlert } = alertStore;
   const isPending = ref(false);
   const isSearchQueryEmpty = computed(() => !normalizeString(searchQuery.value));
   let abortController: AbortController | undefined;
@@ -43,7 +41,7 @@ export const useAutoSearch = (
           isPending.value = false;
           // Nothing was rendered for it, so retyping the same query is a retry rather than a repeat
           searchedQuery = undefined;
-          createAlert(error.message, "error");
+          createErrorAlert(error);
         },
       );
     },

@@ -16,6 +16,7 @@
     "**/composables/visual/useFluidSimulator.ts"
   ],
   "jsPlugins": [
+    "./scripts/oxlint/errorAlert.ts",
     "./scripts/oxlint/passThroughHelper.ts",
     "./scripts/oxlint/persistThenNotify.ts",
     "./scripts/oxlint/trpcProcedure.ts"
@@ -90,6 +91,12 @@
       }
     },
     {
+      "files": ["packages/app/app/services/trpc/createErrorAlert.ts", "packages/app/app/services/trpc/errorLink.ts"],
+      "rules": {
+        "error-alert/no-raw-error-alert": "off"
+      }
+    },
+    {
       "files": ["packages/*/src/**", "scripts/**"],
       "rules": {
         "no-restricted-imports": [
@@ -145,6 +152,7 @@
     "class-methods-use-this": "off",
     "complexity": "off",
     "curly": ["error", "multi"],
+    "error-alert/no-raw-error-alert": "error",
     "func-names": "off",
     "id-length": "off",
     "import/default": "off",
