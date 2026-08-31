@@ -44,9 +44,8 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     return new Promise<void>(
       getSynchronizedFunction(async (resolve) => {
         queuedOnComplete = resolve;
-        // The promise this settles is the gate the dialog flow waits on, and nothing awaits the executor —
-        // `getSynchronizedFunction` hands its rejection to a drain that settles it away. So a failed first
-        // Message reported nowhere and left the flow waiting on a dialog that was never going to show
+        // The gate the dialog flow waits on, so a message that fails to show resolves it rather than stalling
+        // The flow behind a dialog that is never going to appear
         await getResultAsync(() => showMessage(scene)).match(noop, (error) => {
           console.error(error);
           resolve();
