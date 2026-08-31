@@ -121,8 +121,8 @@ describe(saveResourceContent, () => {
   });
 
   // Autosave fires on every coalesced keystroke batch, so a revision per save would burn the owner's quota
-  // while they type and grow a listing nothing bounds. One per idle window is the ceiling, which is what makes
-  // this recovery across sessions rather than a second undo stack
+  // While they type and grow a listing nothing bounds. One per idle window is the ceiling, which is what makes
+  // This recovery across sessions rather than a second undo stack
   test("keeps no revision for a save inside the idle window", async () => {
     expect.hasAssertions();
 

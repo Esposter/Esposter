@@ -60,7 +60,7 @@ describe(takeResourceRevision, () => {
   });
 
   // The reason and the label are what make a row choosable, and they ride the blob's own metadata so the
-  // listing never has to open a snapshot to say what one is
+  // Listing never has to open a snapshot to say what one is
   test("writes the working copy under the revision channel with what it was taken for", async () => {
     expect.hasAssertions();
 
@@ -94,7 +94,7 @@ describe(takeResourceRevision, () => {
   });
 
   // A label is whatever the owner typed, and metadata travels as http headers — so it is encoded on the way in
-  // and has to come back as what they typed rather than as its encoding
+  // And has to come back as what they typed rather than as its encoding
   test("round-trips a label that is not spellable in ascii", async () => {
     expect.hasAssertions();
 
@@ -107,8 +107,8 @@ describe(takeResourceRevision, () => {
   });
 
   // The counter is the ring's position, so eviction is one publish rather than a walk of the prefix on every
-  // save — and it goes through the deletion event so the evicted revision's bytes are given back with it,
-  // rather than leaking the owner's quota for every revision they ever roll past
+  // Save — and it goes through the deletion event so the evicted revision's bytes are given back with it,
+  // Rather than leaking the owner's quota for every revision they ever roll past
   test("evicts the oldest revision once the ring buffer is full", async () => {
     expect.hasAssertions();
 
@@ -135,7 +135,7 @@ describe(takeResourceRevision, () => {
   });
 
   // The triggers that take one before overwriting a draft reach a resource created and never saved exactly
-  // like any other, so "there is nothing to keep" is an answer rather than a failure
+  // Like any other, so "there is nothing to keep" is an answer rather than a failure
   test("answers with nothing when the resource has no content yet", async () => {
     expect.hasAssertions();
 

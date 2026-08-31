@@ -1,3 +1,4 @@
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { authClient } from "@/services/auth/authClient";
 import { useStorageStore } from "@/store/storage";
 import { checkIsServer, getResultAsync, noop } from "@esposter/shared";
@@ -29,9 +30,7 @@ export const useStorageSubscribables = async () => {
       // Cached answer that the change just invalidated
       const stopWebPubSubClient = await useWebPubSubClient(
         (signal) => $trpc.storage.generateWebPubSubClientAccessUrl.query(undefined, { signal }),
-        () => {
-          getResultAsync(refetchStorageUsage).match(noop, console.error);
-        },
+        getSynchronizedFunction(() => getResultAsync(refetchStorageUsage).match(noop, console.error)),
       );
       return () => {
         updateUsageUnsubscribable.unsubscribe();

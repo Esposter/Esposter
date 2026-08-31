@@ -210,22 +210,22 @@ Nothing above changes a blob path that exists today, so there is no migration: `
 
 ## Key files
 
-| File                                                                            | Role                                                          |
-| -------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts`       | publish procedures — the machinery being extracted            |
-| `packages/app/server/services/resource/getPublishedContentBlobName.ts`          | snapshot addressing, becomes channel-aware                    |
-| `packages/app/server/services/resource/createPublishedAssetsDirectoryName.ts`   | per-attempt asset directory, immutable channels only          |
-| `packages/app/server/services/resource/readPublishHistory.ts`                   | prefix listing as history, becomes channel-aware              |
-| `packages/app/server/services/resource/cloneContentAssets.ts`                   | the immutable kind's asset clone                              |
-| `packages/app/server/services/resource/saveResourceContent.ts`                  | the one content-write path every restore lands through        |
-| `packages/app/server/services/survey/transformPublicReadSurvey.ts`              | the existing live-state declaration the boundary generalizes  |
-| `packages/app/server/trpc/routers/resource.ts`                                  | `readPublishHistory` and `restorePublishedVersion`            |
-| `packages/db-schema/src/schema/resources.ts`                                    | `checkpointVersion` column                                    |
-| `packages/db-schema/src/schema/resourcePublications.ts`                         | published-from `contentVersion` column                        |
-| `packages/app/app/components/Resource/PublishHistory/Index.vue`                 | the shipped blade the timeline panel replaces                 |
-| `packages/app/app/components/Resource/Blade/Actions.vue`                        | where the version history panel opens from                    |
-| `packages/app/app/services/resource/getResourceBladeDefinitions.ts`             | loses the Publish history nav entry                           |
-| `packages/app/app/components/Resource/Overview.vue`                             | the Status row and the two version numbers                    |
+| File                                                                                  | Role                                                         |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts`             | publish procedures — the machinery being extracted           |
+| `packages/app/server/services/resource/snapshot/getSnapshotContentBlobName.ts`        | snapshot addressing, becomes channel-aware                   |
+| `packages/app/server/services/resource/snapshot/createSnapshotAssetsDirectoryName.ts` | per-attempt asset directory, immutable channels only         |
+| `packages/app/server/services/resource/snapshot/readSnapshotHistory.ts`               | prefix listing as history, becomes channel-aware             |
+| `packages/app/server/services/resource/cloneContentAssets.ts`                         | the immutable kind's asset clone                             |
+| `packages/app/server/services/resource/saveResourceContent.ts`                        | the one content-write path every restore lands through       |
+| `packages/app/server/services/survey/reapplySurveyLiveContent.ts`                     | the existing live-state declaration the boundary generalizes |
+| `packages/app/server/trpc/routers/resource.ts`                                        | `readSnapshotHistory` and `restorePublishedVersion`          |
+| `packages/db-schema/src/schema/resources.ts`                                          | `checkpointVersion` column                                   |
+| `packages/db-schema/src/schema/resourcePublications.ts`                               | published-from `contentVersion` column                       |
+| `packages/app/app/components/Resource/PublishHistory/Index.vue`                       | the shipped blade the timeline panel replaces                |
+| `packages/app/app/components/Resource/Blade/Actions.vue`                              | where the version history panel opens from                   |
+| `packages/app/app/services/resource/getResourceBladeDefinitions.ts`                   | loses the Publish history nav entry                          |
+| `packages/app/app/components/Resource/Overview.vue`                                   | the Status row and the two version numbers                   |
 
 ## Notes
 

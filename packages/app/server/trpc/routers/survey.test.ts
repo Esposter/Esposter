@@ -497,8 +497,8 @@ describe("survey", () => {
 
   // A restore reconstitutes a snapshot rather than copying it, so it re-applies what the type declares live.
   // Copying the blob wholesale put the settings frozen at publish time back over the working copy — silently
-  // reopening a survey its owner had closed, and able to flip the response mode the write boundary makes its
-  // authorization decisions on, with nothing in the restore or its confirmation saying so
+  // Reopening a survey its owner had closed, and able to flip the response mode the write boundary makes its
+  // Authorization decisions on, with nothing in the restore or its confirmation saying so
   test("keeps the live settings when a published version is restored over them", async () => {
     expect.hasAssertions();
 

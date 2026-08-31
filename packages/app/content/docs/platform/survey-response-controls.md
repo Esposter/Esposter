@@ -14,7 +14,7 @@ The flag is **live state, not snapshot state**: closing takes effect without re-
 ```mermaid
 flowchart LR
   OV["Overview Collection card<br/>Accepting responses toggle"] -->|saveResourceContent| BLOB[("{id}/content.json<br/>settings.isAcceptingResponses")]
-  RESP["/view/Survey/[id]"] -->|readPublishedResourceContent| MERGED["published model snapshot<br/>+ live settings merged by transformPublicReadSurvey"]
+  RESP["/view/Survey/[id]"] -->|readPublishedResourceContent| MERGED["published model snapshot<br/>+ live settings merged by reapplySurveyLiveContent"]
   MERGED -->|closed| MSG["closed state<br/>(closedMessage or the default)"]
   MERGED -->|open| FORM["SurveyJS form"]
   SUBMIT["createSurveyResponse<br/>updateSurveyResponse"] -->|"resolveSurveyResponseWrite rejects when closed"| AT[("SurveyResponseEntity")]
@@ -32,7 +32,7 @@ flowchart LR
 | `packages/app/shared/models/resource/survey/SurveySettings.ts`      | the `settings` section — the toggle + message      |
 | `packages/app/server/services/survey/readSurveySettings.ts`         | the live settings read                             |
 | `packages/app/server/services/survey/resolveSurveyResponseWrite.ts` | the one write boundary both mutations pass through |
-| `packages/app/server/services/survey/transformPublicReadSurvey.ts`  | merges live settings onto the public read          |
+| `packages/app/server/services/survey/reapplySurveyLiveContent.ts`   | merges live settings onto the public read          |
 | `packages/app/app/components/Resource/Survey/Collection.vue`        | the toggle + closed message field                  |
 | `packages/app/app/components/Resource/Survey/View.vue`              | the closed state                                   |
 

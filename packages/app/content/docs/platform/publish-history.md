@@ -14,13 +14,13 @@ Publishing already writes an immutable snapshot to `{id}/published/{publishVersi
 ```mermaid
 flowchart LR
   PUB["publishResource (n++)"] -->|"writes snapshot"| BLOB[("Blob {id}/published/{n}")]
-  BLADE["Publish history blade"] -->|"resource.readPublishHistory"| LIST["versions table<br/>(blob prefix listing)"]
+  BLADE["Publish history blade"] -->|"resource.readSnapshotHistory"| LIST["versions table<br/>(blob prefix listing)"]
   LIST -->|"View v{k}"| VIEW["/view/[type]/[id]?version=k<br/>(owner-only)"]
   LIST -->|"Restore v{k}"| RESTORE["resource.restorePublishedVersion"]
   RESTORE -->|"copies snapshot into working copy (contentVersion++)"| DRAFT["draft content"]
 ```
 
-- **List** — `resource.readPublishHistory` enumerates the `{id}/published/{n}.json` blobs under the `{id}/published/` prefix as a hierarchy listing, so the per-publish asset subdirectories beside them are skipped. Each row carries the version number, the snapshot timestamp from the blob `lastModified`, and a "current" badge on the version the `resource_publications` row names as live. The badge is never derived from the listing: unpublish drops the row and sweeps the prefix through a best-effort event, so a republish moments later restarts numbering at 1 while snapshots 1..n are still on disk — "highest version wins" would then badge a retired snapshot as live while the public route served the new version 1. No row means nothing is published, so nothing is current.
+- **List** — `resource.readSnapshotHistory` enumerates the `{id}/published/{n}.json` blobs under the `{id}/published/` prefix as a hierarchy listing, so the per-publish asset subdirectories beside them are skipped. Each row carries the version number, the snapshot timestamp from the blob `lastModified`, and a "current" badge on the version the `resource_publications` row names as live. The badge is never derived from the listing: unpublish drops the row and sweeps the prefix through a best-effort event, so a republish moments later restarts numbering at 1 while snapshots 1..n are still on disk — "highest version wins" would then badge a retired snapshot as live while the public route served the new version 1. No row means nothing is published, so nothing is current.
 - **View a version** — the public view route gains an optional `version` query param. When it is present the renderer loads `{id}/published/{k}` through an owner-only read; the snapshot's stable asset urls resolve through `/api/resource-assets` without any content rewriting. Which of that endpoint's two published-asset paths answers depends on the resource, not on the version being viewed: while a publication row exists every `{id}/published/…` asset is served anonymously, retained snapshots included, and only once the resource is unpublished does the owner fallback carry them — and then only for a direct request, since the sandboxed `srcdoc` iframe a published view renders in sends no cookies. Anonymous visitors never pass the param and always get the latest publish, so public behaviour is unchanged, and a non-owner passing one is rejected server-side.
 - **Restore** — `resource.restorePublishedVersion` copies the snapshot's content into the working copy and bumps `contentVersion` in one transaction, then lands the owner in the Editor blade. It never re-points the publication — a restore produces a draft to review and re-publish, mirroring the [recycle bin](/docs/platform/recycle-bin) restore-returns-a-Draft rule.
 - **A restore is a content write like any other**, so it goes through the shared `saveResourceContent` service ([resources](/docs/architecture/resources)): the `contentVersion` bump and the blob write land in one transaction, the type's after-save hook re-derives what the restored content declares, and the [activity](/docs/platform/activity-log) trail records a `Restored` entry, as the recycle bin's own restore does. **No open editor adopts the restored content**, though. The `onSaveResourceContent` event the service emits is filtered to the owner's _other_ devices, so no tab of the session that restored ever sees it, and no publishable type subscribes to that stream client-side anyway — TodoList is the only subscriber and it is not publishable. An editor left open on the resource therefore keeps the pre-restore draft and the version it cached, and its next autosave is rejected as stale until it reloads. Closing that gap means a publishable type subscribing, not a change to the restore path.
@@ -32,20 +32,20 @@ Retention stays "keep everything" — there is no prune step. A prune command wo
 
 | Procedure                            | Auth                | Input             | Purpose                                            |
 | ------------------------------------ | ------------------- | ----------------- | -------------------------------------------------- |
-| `resource.readPublishHistory`        | `getOwnerProcedure` | `{ id }`          | list snapshot versions from a blob prefix listing  |
+| `resource.readSnapshotHistory`       | `getOwnerProcedure` | `{ id }`          | list snapshot versions from a blob prefix listing  |
 | `resource.restorePublishedVersion`   | `getOwnerProcedure` | `{ id, version }` | copy a snapshot's content into the working copy    |
 | `{type}.readPublishedVersionContent` | `getOwnerProcedure` | `{ id, version }` | owner-only read of one snapshot for the view route |
 
 ## Key files
 
-| File                                                         | Role                                               |
-| ------------------------------------------------------------ | -------------------------------------------------- |
-| `app/components/Resource/PublishHistory/Index.vue`           | blade — versions table with View and Restore       |
-| `app/components/Resource/PublishHistory/RestoreDialog.vue`   | restore confirmation dialog                        |
-| `server/services/resource/readPublishHistory.ts`             | blob prefix enumeration into version rows          |
-| `server/trpc/routers/resource.ts`                            | `readPublishHistory` and `restorePublishedVersion` |
-| `server/trpc/procedure/resource/createResourceProcedures.ts` | `readPublishedVersionContent` (publishable types)  |
-| `app/pages/view/[type]/[id].vue`                             | owner-only `version` query param                   |
+| File                                                         | Role                                                |
+| ------------------------------------------------------------ | --------------------------------------------------- |
+| `app/components/Resource/PublishHistory/Index.vue`           | blade — versions table with View and Restore        |
+| `app/components/Resource/PublishHistory/RestoreDialog.vue`   | restore confirmation dialog                         |
+| `server/services/resource/snapshot/readSnapshotHistory.ts`   | blob prefix enumeration into version rows           |
+| `server/trpc/routers/resource.ts`                            | `readSnapshotHistory` and `restorePublishedVersion` |
+| `server/trpc/procedure/resource/createResourceProcedures.ts` | `readPublishedVersionContent` (publishable types)   |
+| `app/pages/view/[type]/[id].vue`                             | owner-only `version` query param                    |
 
 ## Notes
 
