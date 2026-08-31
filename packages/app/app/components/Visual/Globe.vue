@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type ThreeGlobe from "three-globe";
-
 import countries from "@/assets/about/countries.json";
 import data from "@/assets/about/data.json";
 import { features } from "@/assets/about/globe.json";
@@ -41,13 +39,10 @@ const id = "globe";
 const getRandomColor = () => takeOne(COLORS, createRandomInteger(COLORS.length - 1));
 const { width } = useWindowSize();
 const height = computed(() => width.value);
-let renderer: WebGLRenderer;
-let controls: OrbitControls;
-let ambientLight: AmbientLight;
-let directionLight: DirectionalLight;
-let directionLight1: DirectionalLight;
-let pointLight: PointLight;
-let globe: ThreeGlobe;
+// Teardown disposes what was actually built rather than a fixed list of names: the lazily imported chunk can
+// Reject partway through the scene, and a hook reaching for a globe that was never assigned would throw before
+// It ever got to the renderer
+const disposables: { dispose: () => void }[] = [];
 let animationFrameId: number;
 let intervalId: number;
 
@@ -56,13 +51,15 @@ let intervalId: number;
 // Awaits. The globe is decoration on the About page, so the page renders without it
 const renderGlobe = async () => {
   const canvas = window.document.getElementById(id) as HTMLCanvasElement;
-  renderer = new WebGLRenderer({ antialias: true, canvas });
+  const renderer = new WebGLRenderer({ antialias: true, canvas });
+  disposables.push(renderer);
   renderer.setClearColor(0x000, 0);
   renderer.setSize(width.value, height.value);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const scene = new Scene();
-  ambientLight = new AmbientLight(0xbbb, 0.3);
+  const ambientLight = new AmbientLight(0xbbb, 0.3);
+  disposables.push(ambientLight);
   scene.add(ambientLight);
 
   const camera = new PerspectiveCamera();
@@ -72,22 +69,26 @@ const renderGlobe = async () => {
   camera.position.x = 0;
   camera.position.y = 0;
 
-  directionLight = new DirectionalLight(0xfff, 0.8);
+  const directionLight = new DirectionalLight(0xfff, 0.8);
+  disposables.push(directionLight);
   directionLight.position.set(-800, 2000, 400);
   camera.add(directionLight);
 
-  directionLight1 = new DirectionalLight(0x7982f6, 1);
+  const directionLight1 = new DirectionalLight(0x7982f6, 1);
+  disposables.push(directionLight1);
   directionLight1.position.set(-200, 500, 200);
   camera.add(directionLight1);
 
-  pointLight = new PointLight(0x8566cc, 0.5);
+  const pointLight = new PointLight(0x8566cc, 0.5);
+  disposables.push(pointLight);
   pointLight.position.set(-200, 500, 200);
   camera.add(pointLight);
 
   scene.add(camera);
   scene.fog = new Fog(0x535ef3, 400, 2000);
 
-  controls = new OrbitControls(camera, canvas);
+  const controls = new OrbitControls(camera, canvas);
+  disposables.push(controls);
   controls.enableDamping = true;
   controls.enablePan = false;
   controls.minDistance = 300;
@@ -100,7 +101,8 @@ const renderGlobe = async () => {
 
   const ThreeGlobe = (await import("three-globe")).default;
   const globeMaterial = new MeshPhongMaterial({ color, emissive, emissiveIntensity, shininess });
-  globe = new ThreeGlobe({ animateIn: true, waitForGlobeReady: true })
+  disposables.push(globeMaterial);
+  const globe = new ThreeGlobe({ animateIn: true, waitForGlobeReady: true })
     .globeMaterial(globeMaterial)
     .hexPolygonsData(features)
     .hexPolygonResolution(3)
@@ -171,13 +173,7 @@ onMounted(async () => {
 onUnmounted(() => {
   window.cancelAnimationFrame(animationFrameId);
   window.clearInterval(intervalId);
-  ambientLight.dispose();
-  directionLight.dispose();
-  directionLight1.dispose();
-  pointLight.dispose();
-  globe.globeMaterial().dispose();
-  controls.dispose();
-  renderer.dispose();
+  for (const disposable of disposables) disposable.dispose();
 });
 </script>
 
