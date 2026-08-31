@@ -178,7 +178,9 @@ export const useCallStore = defineStore("message/room/call", () => {
       callRoomId.value = "";
       callThreadRootRowKey.value = "";
       activeCallSessionId.value = "";
-      await disconnect();
+      // The teardown reports rather than propagates: it is unwinding an attempt that already failed, and a
+      // Rejected disconnect must not take the join's own error off screen or strand the connecting flag
+      await getResultAsync(() => disconnect()).match(noop, console.error);
     }
 
     createErrorAlert(error);
