@@ -12,6 +12,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { MessageCreationRejectionReasonMap } from "@@/server/services/message/moderation/MessageCreationRejectionReasonMap";
 import { readMessages } from "@@/server/services/message/readMessages";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
@@ -22,7 +23,6 @@ import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
-import { MessageCreationRejectionReasonMap } from "@@/server/services/message/moderation/MessageCreationRejectionReasonMap";
 import { getBlobName, getThumbnailBlobName } from "@esposter/db";
 import {
   AzureContainer,

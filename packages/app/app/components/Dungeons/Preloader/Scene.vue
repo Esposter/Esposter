@@ -17,8 +17,8 @@ import {
   PROGRESS_BOX_WIDTH,
 } from "@/services/dungeons/scene/preloader/constants";
 import { prettify } from "@/util/text/prettify";
-import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
 import { getResultAsync, noop } from "@esposter/shared";
+import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
 
 const phaserStore = usePhaserStore();
 const { switchToScene } = phaserStore;

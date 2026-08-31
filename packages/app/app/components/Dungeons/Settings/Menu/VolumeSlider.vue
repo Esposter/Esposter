@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { RectangleConfiguration } from "vue-phaserjs";
 
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import {
   INITIAL_SETTINGS_VALUE_POSITION,
@@ -15,9 +15,9 @@ import {
 } from "@/services/dungeons/scene/settings/constants";
 import { getSettingsOptionY } from "@/services/dungeons/scene/settings/getSettingsOptionY";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
+import { getResultAsync, noop } from "@esposter/shared";
 import { Input } from "phaser";
 import { Rectangle, Text } from "vue-phaserjs";
-import { getResultAsync, noop } from "@esposter/shared";
 
 const volumeStore = useVolumeStore();
 const { setVolume } = volumeStore;
