@@ -20,7 +20,7 @@
 | `app/composables/message` — the rest                             | —          | `message`, `editor`, `emoji`, `draftsAndSent`, `slashCommand`, `moderation`, `user` and the singles   |
 | `app/composables/resource/sheet`                                 | —          | the command composables                                                                               |
 | `app/composables/resource` — the rest                            | —          | the root files and `list`                                                                             |
-| `app/composables` — the rest                                     | —          | `dungeons` is most of it; `shared/useOnlineSubscribable` was swept ahead of it                        |
+| `app/composables` — the rest                                     | —          | `dungeons` is unread; `shared` and the cross-cutting singles were swept ahead of it                   |
 | `app/services/resource`, `app/services/message`                  | 2026-08-31 | two suggestion callbacks, a `.match(noop, noop)`, and a wrapper whose only handler rethrew            |
 | `app/services` — the rest, `app/util`                            | —          | `dungeons` is most of it                                                                              |
 | `app/components/Message`                                         | —          | inline handlers that swallow, and `.orTee(console.error)` vs a bare catch                             |

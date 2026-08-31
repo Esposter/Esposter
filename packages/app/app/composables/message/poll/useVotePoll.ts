@@ -4,6 +4,7 @@ import type { StandardMessageEntity } from "@esposter/db-schema";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { authClient } from "@/services/auth/authClient";
 import { useDataStore } from "@/store/message/data";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const useVotePoll = async (
   message: () => StandardMessageEntity,
@@ -54,13 +55,15 @@ export const useVotePoll = async (
           });
           // The rollback slot is synchronous and belongs to useMutation, so the store write is handed to the
           // Sanctioned fire-and-forget primitive rather than dropped
-          return getSynchronizedFunction(async () => {
-            await storeUpdateMessage({
-              message: previousMessage,
-              partitionKey: messageValue.partitionKey,
-              rowKey: messageValue.rowKey,
-            });
-          });
+          return getSynchronizedFunction(() =>
+            getResultAsync(() =>
+              storeUpdateMessage({
+                message: previousMessage,
+                partitionKey: messageValue.partitionKey,
+                rowKey: messageValue.rowKey,
+              }),
+            ).match(noop, console.error),
+          );
         },
         isExclusive: true,
         key: messageValue.rowKey,

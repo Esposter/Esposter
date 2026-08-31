@@ -3,6 +3,7 @@ import type { Promisable } from "type-fest";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { getResultAsync, noop } from "@esposter/shared";
 
 // The one shared autosave cadence, bound to the resource that was open when the edit landed. Both halves
 // Are load-bearing: useTimeoutFn drops its pending timer with the surrounding scope (VueUse's debounce arms a
@@ -13,10 +14,12 @@ import { getRouteParamString } from "@/util/router/getRouteParamString";
 export const useAutosaveFn = (save: () => Promisable<unknown>) => {
   const { currentRoute } = useRouter();
   const { start } = useTimeoutFn(
-    getSynchronizedFunction(async (scheduledResourceId: string) => {
-      if (getRouteParamString(currentRoute.value.params.id) !== scheduledResourceId) return;
-      await save();
-    }),
+    getSynchronizedFunction((scheduledResourceId: string) =>
+      getResultAsync(async () => {
+        if (getRouteParamString(currentRoute.value.params.id) !== scheduledResourceId) return;
+        await save();
+      }).match(noop, console.error),
+    ),
     RESOURCE_AUTOSAVE_DEBOUNCE_MS,
     { immediate: false },
   );
