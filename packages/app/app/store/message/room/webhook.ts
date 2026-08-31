@@ -5,7 +5,6 @@ import type { UpdateWebhookInput } from "#shared/models/db/webhook/UpdateWebhook
 import type { RoomInMessage, WebhookInMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
-import { useMutation } from "@/composables/shared/useMutation";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { DatabaseEntityType } from "@esposter/db-schema";

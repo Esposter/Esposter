@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { AppNotificationAction } from "@/models/notification/AppNotificationAction";
 
-import { withFinalizerAsync } from "@esposter/shared";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { getResultAsync, noop } from "@esposter/shared";
 
 interface AppNotificationActionButtonProps {
   action: AppNotificationAction;
@@ -22,17 +23,14 @@ const isLoading = ref(false);
       async () => {
         if (isLoading) return;
         isLoading = true;
-        // Complete fires only on success — a failed action leaves the button armed for a retry — while
-        // The finalizer re-arms it unconditionally so a thrown handler can never wedge the spinner
-        await withFinalizerAsync(
-          async () => {
-            await action.handler?.();
-            emit('complete');
-          },
-          () => {
-            isLoading = false;
-          },
-        );
+        // Complete fires only on success — a failed action leaves the button armed for a retry — and nothing
+        // Awaits this handler, so the chain reports here or the failure is lost. Terminating resolves either
+        // Way, which is what re-arms the spinner without a finalizer around it
+        await getResultAsync(async () => {
+          await action.handler?.();
+          emit('complete');
+        }).match(noop, createErrorAlert);
+        isLoading = false;
       }
     "
     >{{ action.title }}</v-btn

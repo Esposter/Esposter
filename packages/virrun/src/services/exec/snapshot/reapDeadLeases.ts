@@ -1,3 +1,4 @@
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { isProcessAlive } from "#src/services/exec/util/isProcessAlive";
 import { parsePid } from "#src/services/exec/util/parsePid";
 import { getResult, noop } from "@esposter/shared";
@@ -18,7 +19,9 @@ export const reapDeadLeases = (leasesDir: string): boolean => {
     }
     getResult(() => {
       rmSync(join(leasesDir, entry), { force: true });
-    }).match(noop, noop);
+    }).match(noop, ({ message }) => {
+      writeVirrunDebug(`dead lease ${entry} not reaped, it spares this layer another pass — ${message}`);
+    });
   }
   return isLeaseLive;
 };

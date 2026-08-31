@@ -1,5 +1,4 @@
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
-import { useReadNotifications } from "@/composables/notification/useReadNotifications";
 import { useNotificationStore } from "@/store/notification";
 import { NotificationChannel, NotificationChannelMap, pushNotificationPayloadSchema } from "@esposter/db-schema";
 import { getResult } from "@esposter/shared";

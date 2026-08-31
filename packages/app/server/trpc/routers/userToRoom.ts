@@ -60,15 +60,14 @@ export const userToRoomRouter = router({
         where: { roomId: { in: input.roomIds }, userId: { eq: ctx.getSessionPayload.user.id } },
       });
     }),
-  readNicknames: standardAuthedProcedure
-    .input(readNicknamesInputSchema)
-    .query<Pick<UserToRoomInMessage, "nickname" | "roomId" | "userId">[]>(async ({ ctx, input }) => {
-      await isMember(ctx.db, ctx.getSessionPayload, [input.roomId]);
-      return ctx.db.query.usersToRoomsInMessage.findMany({
-        columns: { nickname: true, roomId: true, userId: true },
-        where: { roomId: { eq: input.roomId }, userId: { in: input.userIds } },
-      });
+  readNicknames: getMemberProcedure(readNicknamesInputSchema, "roomId").query<
+    Pick<UserToRoomInMessage, "nickname" | "roomId" | "userId">[]
+  >(({ ctx, input }) =>
+    ctx.db.query.usersToRoomsInMessage.findMany({
+      columns: { nickname: true, roomId: true, userId: true },
+      where: { roomId: { eq: input.roomId }, userId: { in: input.userIds } },
     }),
+  ),
   updateUserToRoom: getMemberProcedure(updateUserToRoomInputSchema, "roomId").mutation<UserToRoomInMessage>(
     ({ ctx, input }) => updateUserToRoom(ctx.db, ctx.getSessionPayload.user.id, input),
   ),

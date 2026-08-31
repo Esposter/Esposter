@@ -29,6 +29,7 @@ export const useInputStore = defineStore("message/input", () => {
     },
   });
   const uploadFileStore = useUploadFileStore();
+  const { getComposerFiles, getIsFileLoading } = uploadFileStore;
   // Persisted state rather than a Map mirrored into localStorage by hand: the write happens because the Map
   // Changed, and a server render reads the default empty one — see /docs/architecture/browser-execution
   // `flush: "sync"` because a draft is persisted state rather than rendered state: the default pre-flush write
@@ -111,14 +112,13 @@ export const useInputStore = defineStore("message/input", () => {
   };
 
   const validateInput = (target: ComposerTarget, editor?: Editor, isDisplayError?: true) => {
-    const files = uploadFileStore.getComposerFiles(target);
+    const files = getComposerFiles(target);
     if (isDisplayError && !files.every(({ size }) => validateFile(size).isValid)) {
       useEmptyFileAlert();
       return false;
     } else
       return (
-        !uploadFileStore.getIsFileLoading(target) &&
-        (Boolean(editor && !EMPTY_TEXT_REGEX.test(editor.getText())) || files.length > 0)
+        !getIsFileLoading(target) && (Boolean(editor && !EMPTY_TEXT_REGEX.test(editor.getText())) || files.length > 0)
       );
   };
 

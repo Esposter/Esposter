@@ -7,8 +7,13 @@ import { getResultAsync, noop, RoutePath, takeOne } from "@esposter/shared";
 export const useDirectMessageSubscribables = () => {
   const { $trpc } = useNuxtApp();
   const directMessageStore = useDirectMessageStore();
-  const { storeDeleteDirectMessage, storeUpdateDirectMessage } = directMessageStore;
-  const { directMessageParticipantsMap, directMessages } = storeToRefs(directMessageStore);
+  const {
+    storeCreateDirectMessageParticipant,
+    storeDeleteDirectMessage,
+    storeDeleteDirectMessageParticipant,
+    storeUpdateDirectMessage,
+  } = directMessageStore;
+  const { directMessages } = storeToRefs(directMessageStore);
   const session = authClient.useSession();
 
   useOnlineSubscribable(
@@ -25,9 +30,7 @@ export const useDirectMessageSubscribables = () => {
       // One subscription over every direct message, because the event carries the room it happened in
       const joinRoomUnsubscribable = $trpc.room.onJoinRoom.subscribe(roomIds, {
         onData: ({ roomId, user }) => {
-          const participants = directMessageParticipantsMap.value.get(roomId) ?? [];
-          if (!participants.some(({ id }) => id === user.id))
-            directMessageParticipantsMap.value.set(roomId, [user, ...participants]);
+          storeCreateDirectMessageParticipant(roomId, user);
         },
       });
       const leaveRoomUnsubscribable = $trpc.room.onLeaveRoom.subscribe(roomIds, {
@@ -43,11 +46,7 @@ export const useDirectMessageSubscribables = () => {
               );
               return;
             }
-            const participants = directMessageParticipantsMap.value.get(roomId) ?? [];
-            directMessageParticipantsMap.value.set(
-              roomId,
-              participants.filter(({ id }) => id !== userId),
-            );
+            storeDeleteDirectMessageParticipant(roomId, userId);
           }).match(noop, console.error),
         ),
       });

@@ -3,9 +3,20 @@ import type { Except, SetNonNullable } from "type-fest";
 
 import { UserStatus } from "@esposter/db-schema";
 
+// The row minus the id it is keyed by. `status` is non-null because a row only exists once one was set —
+// The absent case is the default below, never a stored null
+type StoredUserStatus = SetNonNullable<Except<UserStatusInMessage, "userId">, "status">;
+
 export const useStatusStore = defineStore("message/user/status", () => {
-  const statusMap = ref(new Map<string, SetNonNullable<Except<UserStatusInMessage, "userId">, "status">>());
-  const getStatusEnum = (id: string) => statusMap.value.get(id)?.status ?? UserStatus.Online;
-  const getStatusMessage = (id: string) => statusMap.value.get(id)?.message ?? "";
-  return { getStatusEnum, getStatusMessage, statusMap };
+  const statusMap = ref(new Map<string, StoredUserStatus>());
+  const getStatus = (id: string) => statusMap.value.get(id);
+  const getStatusEnum = (id: string) => getStatus(id)?.status ?? UserStatus.Online;
+  const getStatusMessage = (id: string) => getStatus(id)?.message ?? "";
+  const storeStatus = (userId: string, userStatus: StoredUserStatus) => {
+    statusMap.value.set(userId, userStatus);
+  };
+  const storeStatuses = (userStatuses: (Pick<UserStatusInMessage, "userId"> & StoredUserStatus)[]) => {
+    for (const { userId, ...userStatus } of userStatuses) storeStatus(userId, userStatus);
+  };
+  return { getStatus, getStatusEnum, getStatusMessage, statusMap, storeStatus, storeStatuses };
 });

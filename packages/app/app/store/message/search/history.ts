@@ -3,7 +3,6 @@ import type { DeleteSearchHistoryInput } from "#shared/models/db/searchHistory/D
 import type { UpdateSearchHistoryInput } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
 import type { SearchHistoryInMessage } from "@esposter/db-schema";
 
-import { useMutation } from "@/composables/shared/useMutation";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { DatabaseEntityType } from "@esposter/db-schema";

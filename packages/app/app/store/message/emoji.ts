@@ -5,7 +5,6 @@ import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/Update
 
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
-import { useMutation } from "@/composables/shared/useMutation";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { authClient } from "@/services/auth/authClient";
 import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";

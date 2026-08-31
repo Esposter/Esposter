@@ -9,13 +9,13 @@ export const useReadAppUsers = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const appUserStore = useAppUserStore();
   const { appUserMap } = storeToRefs(appUserStore);
+  const { storeAppUsers } = appUserStore;
   return async (appUserIds: AppUserInMessage["id"][]) => {
     if (!currentRoomId.value) return;
 
     const ids = appUserIds.filter((id) => !appUserMap.value.has(id));
     if (ids.length === 0) return;
 
-    const appUsers = await $trpc.webhook.readAppUsersByIds.query({ ids, roomId: currentRoomId.value });
-    for (const appUser of appUsers) appUserMap.value.set(appUser.id, appUser);
+    storeAppUsers(await $trpc.webhook.readAppUsersByIds.query({ ids, roomId: currentRoomId.value }));
   };
 };

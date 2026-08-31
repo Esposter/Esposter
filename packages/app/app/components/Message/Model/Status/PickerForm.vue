@@ -14,8 +14,7 @@ const { $trpc } = useNuxtApp();
 const session = authClient.useSession();
 const userId = computed(() => session.value.data?.user.id ?? "");
 const statusStore = useStatusStore();
-const { statusMap } = storeToRefs(statusStore);
-const { getStatusEnum, getStatusMessage } = statusStore;
+const { getStatus, getStatusEnum, getStatusMessage, storeStatus } = statusStore;
 // A manual draft, seeded once per open: the menu unmounts its content on close, so every open builds this form
 // Again against the row as it then stands. Automatic sync would re-seed on any write to the status map, and the
 // Map carries more than these two fields — a presence push landing while the user is mid-sentence would clear
@@ -38,26 +37,22 @@ const save = async () => {
     // Status on screen when the user clicked. Nothing is applied when there is no record yet — the row carries
     // Fields only the server can fill in, so it is left to onSuccess
     applyOptimistic: () => {
-      const previousStatus = statusMap.value.get(userId.value);
+      const previousStatus = getStatus(userId.value);
       if (!previousStatus) return noop;
 
       const { message: previousMessage, status: previousUserStatus } = previousStatus;
-      statusMap.value.set(userId.value, { ...previousStatus, ...input });
+      storeStatus(userId.value, { ...previousStatus, ...input });
       return () => {
         // Only the two fields this write moved, against the record as it stands — reinstating the row as a
         // Whole would undo the connection state a presence push landed while this write was in flight
-        const currentStatus = statusMap.value.get(userId.value);
+        const currentStatus = getStatus(userId.value);
         if (currentStatus)
-          statusMap.value.set(userId.value, {
-            ...currentStatus,
-            message: previousMessage,
-            status: previousUserStatus,
-          });
+          storeStatus(userId.value, { ...currentStatus, message: previousMessage, status: previousUserStatus });
       };
     },
     key: userId.value,
     onSuccess: ({ userId: upsertedUserId, ...rest }) => {
-      statusMap.value.set(upsertedUserId, rest);
+      storeStatus(upsertedUserId, rest);
     },
   });
   // A rollback moves the row and the clone follows it, but a first status the server refuses leaves no row to

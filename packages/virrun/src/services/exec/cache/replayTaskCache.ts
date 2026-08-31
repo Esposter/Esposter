@@ -1,5 +1,6 @@
 import type { ExecResult } from "#src/models/exec/ExecResult";
 
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { parseTaskCacheEntry } from "#src/services/exec/cache/parseTaskCacheEntry";
 import { resolveTaskCacheLocation } from "#src/services/exec/cache/resolveTaskCacheLocation";
 import { applyFlushPlan } from "#src/services/exec/snapshot/applyFlushPlan";
@@ -16,7 +17,9 @@ export const replayTaskCache = (key: string, hostDir: string): ExecResult => {
   const now = new Date();
   getResult(() => {
     utimesSync(location.metaFile, now, now);
-  }).match(noop, noop);
+  }).match(noop, ({ message }) => {
+    writeVirrunDebug(`task cache touch failed, entry ages from creation — ${message}`);
+  });
   applyFlushPlan(location.payloadDir, hostDir, entry.plan);
   return { exitCode: entry.exitCode, stderr: entry.stderr, stdout: entry.stdout };
 };

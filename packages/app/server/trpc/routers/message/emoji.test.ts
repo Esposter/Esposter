@@ -19,7 +19,7 @@ describe("emoji", () => {
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roomId: string;
   const message = "message";
-  const emojiTag = "emojiTag";
+  const emojiTag = "👍";
 
   // Every emoji hangs off a message the test has to post first, and every write against one addresses it by the
   // Same three keys — so the pair is set up once and the keys ride the emoji rather than being restated

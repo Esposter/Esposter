@@ -3,8 +3,10 @@ import type { betterAuth } from "better-auth";
 import type { CSSProperties } from "vue";
 
 import { authClient } from "@/services/auth/authClient";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useAlertStore } from "@/store/alert";
 import { toTitleCase } from "@/util/text/toTitleCase";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export interface LoginButtonProps {
   logo: Component;
@@ -39,14 +41,18 @@ const isLoading = ref(false);
     @click="
       async () => {
         isLoading = true;
-        await signIn.social(
-          { provider },
-          {
-            onError: ({ error }) => {
-              createAlert(error.message, 'error');
+        // `onError` is the auth client's own report of a refused sign-in; a rejection here is the redirect
+        // Never starting at all, which nothing else would say — and the spinner has to clear on both paths
+        await getResultAsync(() =>
+          signIn.social(
+            { provider },
+            {
+              onError: ({ error }) => {
+                createAlert(error.message, 'error');
+              },
             },
-          },
-        );
+          ),
+        ).match(noop, createErrorAlert);
         isLoading = false;
       }
     "

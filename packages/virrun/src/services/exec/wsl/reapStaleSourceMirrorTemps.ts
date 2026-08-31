@@ -1,3 +1,4 @@
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { isProcessAlive } from "#src/services/exec/util/isProcessAlive";
 import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
 import {
@@ -31,7 +32,11 @@ export const reapStaleSourceMirrorTemps = (entryUnc: string): void => {
       if (pid === undefined || isProcessAlive(pid)) continue;
       getResult(() => {
         unlinkSync(join(entryUnc, entry.name));
-      }).match(noop, noop);
+      }).match(noop, ({ message }) => {
+        writeVirrunDebug(`stranded mirror temp ${entry.name} not reaped — ${message}`);
+      });
     }
-  }).match(noop, noop);
+  }).match(noop, ({ message }) => {
+    writeVirrunDebug(`mirror temp sweep skipped for ${entryUnc} — ${message}`);
+  });
 };

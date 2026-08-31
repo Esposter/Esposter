@@ -9,7 +9,6 @@ import type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
 import type { RoomPermission, RoomRoleInMessage } from "@esposter/db-schema";
 
 import { checkIsManageable as checkIsManageableByPosition } from "#shared/services/room/rbac/checkIsManageable";
-import { useMutation } from "@/composables/shared/useMutation";
 import { getTopRole } from "@/services/message/member/getTopRole";
 import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks";
 import { MANAGEMENT_PERMISSIONS } from "@/services/room/rbac/constants";

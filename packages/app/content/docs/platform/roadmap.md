@@ -9,7 +9,7 @@ Azure-portal parity program for the Resource Explorer: every product is already 
 
 ## Next
 
-Nothing open. New ideas start as a [proposal](/docs/proposals) and get a prioritized checkbox here.
+- [ ] [Resource snapshots](/docs/proposals/platform/resource-snapshots) — generalize the publish snapshot into a core channel mechanism, giving every type restorable checkpoints of its working copy, a pre-restore safety net, and a fix for the survey settings a restore silently reverts
 
 ## Later
 

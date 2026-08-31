@@ -14,7 +14,7 @@ const { roomId } = defineProps<CreateDirectMessageParticipantDialogProps>();
 const { $trpc } = useNuxtApp();
 const { data: session } = await authClient.useSession(useFetch);
 const directMessageStore = useDirectMessageStore();
-const { directMessageParticipantsMap } = storeToRefs(directMessageStore);
+const { getDirectMessageParticipants, storeDirectMessageParticipants } = directMessageStore;
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
 const friendPicker = useTemplateRef("friendPicker");
@@ -22,7 +22,7 @@ const selectedUserIds = ref<string[]>([]);
 const excludedUserIds = computed(() => {
   const userIds: string[] = [];
   if (session.value) userIds.push(session.value.user.id);
-  userIds.push(...(directMessageParticipantsMap.value.get(roomId) ?? []).map(({ id }) => id));
+  userIds.push(...getDirectMessageParticipants(roomId).map(({ id }) => id));
   return userIds;
 });
 const confirmButtonAttrs = computed(() => ({ disabled: selectedUserIds.value.length === 0 }));
@@ -35,19 +35,19 @@ const createDirectMessageParticipants = async (onComplete: (isSuccessful?: boole
       // Read as the write is sent, so this builds on whoever the add ahead of it already stored rather than on
       // The list as it stood when the user confirmed
       applyOptimistic: () => {
-        const currentParticipants = directMessageParticipantsMap.value.get(roomId) ?? [];
+        const currentParticipants = getDirectMessageParticipants(roomId);
         const existingParticipantIds = new Set(currentParticipants.map(({ id }) => id));
         const newParticipants = friends.value.filter(
           ({ id }) => selectedUserIds.value.includes(id) && !existingParticipantIds.has(id),
         );
-        directMessageParticipantsMap.value.set(roomId, [...newParticipants, ...currentParticipants]);
+        storeDirectMessageParticipants(roomId, [...newParticipants, ...currentParticipants]);
         return () => {
           // Only the people this write added — reinstating the list it was issued with would re-add anyone a
           // Concurrent removal took out and drop whoever arrived while this write was in flight
           const addedIds = new Set(newParticipants.map(({ id }) => id));
-          directMessageParticipantsMap.value.set(
+          storeDirectMessageParticipants(
             roomId,
-            (directMessageParticipantsMap.value.get(roomId) ?? []).filter(({ id }) => !addedIds.has(id)),
+            getDirectMessageParticipants(roomId).filter(({ id }) => !addedIds.has(id)),
           );
         };
       },

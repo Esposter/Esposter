@@ -1,5 +1,6 @@
 import type { ChildProcess } from "node:child_process";
 
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { getResult, noop } from "@esposter/shared";
 
 // Bridge the parent's termination signals to the spawned child so Ctrl+C actually stops the run. Killing the
@@ -14,7 +15,12 @@ import { getResult, noop } from "@esposter/shared";
 export const forwardTerminationSignals = (child: ChildProcess, onTerminate?: () => void): void => {
   const onSignal = (signal: NodeJS.Signals): void => {
     // The reaper is best-effort cleanup (it spawns another process); never let it throw out of a signal handler.
-    if (onTerminate) getResult(onTerminate).match(noop, noop);
+    // It is also the only thing that stops a wsl grandchild, so a failure here is a run that appears to have been
+    // Interrupted while its real work carries on Linux-side — invisible unless it is said
+    if (onTerminate)
+      getResult(onTerminate).match(noop, ({ message }) => {
+        writeVirrunDebug(`terminate reaper failed, a sandboxed grandchild may survive — ${message}`);
+      });
     child.kill(signal);
   };
   process.once("SIGINT", onSignal);

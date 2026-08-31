@@ -1,6 +1,7 @@
 import type { SourceMirrorManifest } from "#src/models/exec/wsl/SourceMirrorManifest";
 
 import { SourceMirrorEntryType } from "#src/models/exec/wsl/SourceMirrorEntryType";
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { isExcludedPath } from "#src/services/exec/util/isExcludedPath";
 import { getResult, noop } from "@esposter/shared";
 import { lstatSync, readdirSync, readlinkSync } from "node:fs";
@@ -38,9 +39,13 @@ export const buildSourceMirrorManifest = (cwd: string, excludes: readonly string
           };
       } else if (entry.isDirectory()) {
         manifest[relativePath] = { mtimeMs: 0, size: 0, target: "", type: SourceMirrorEntryType.Directory };
+        // A whole subtree, not one entry: everything under an unreadable directory leaves the manifest at once,
+        // Which the diff then reads as a deletion of every path beneath it
         getResult(() => {
           walk(path, relativePath);
-        }).match(noop, noop);
+        }).match(noop, ({ message }) => {
+          writeVirrunDebug(`source mirror walk skipped ${relativePath} and everything under it — ${message}`);
+        });
       } else if (entry.isFile()) {
         const stats = getResult(() => lstatSync(path)).unwrapOr(undefined);
         if (stats !== undefined)

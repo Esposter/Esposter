@@ -4,7 +4,8 @@ import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import type { FileFieldValue } from "@/models/vuetify/FileFieldValue";
 
 import { validateFile } from "@/services/file/validateFile";
-import { takeOne } from "@esposter/shared";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { getResultAsync, takeOne } from "@esposter/shared";
 
 export interface UserProfileCardColumnImageProps {
   editMode: boolean;
@@ -52,7 +53,9 @@ const fileRules = [validateFileRule];
             const file = Array.isArray(files) ? takeOne(files) : files;
             if (!validateFile(file.size).isValid) return;
 
-            modelValue = await uploadImage(file);
+            await getResultAsync(() => uploadImage(file)).match((newImage) => {
+              modelValue = newImage;
+            }, createErrorAlert);
           }
         "
       />

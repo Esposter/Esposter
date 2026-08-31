@@ -1,7 +1,6 @@
 import type { CreateInviteInput } from "#shared/models/db/room/CreateInviteInput";
 import type { InviteInMessage } from "@esposter/db-schema";
 
-import { useMutation } from "@/composables/shared/useMutation";
 import { inviteCreateHooks } from "@/services/message/room/invite/inviteCreateHooks";
 
 export const useInviteStore = defineStore("message/room/invite", () => {

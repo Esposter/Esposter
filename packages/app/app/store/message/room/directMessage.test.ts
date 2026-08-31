@@ -37,15 +37,15 @@ describe(useDirectMessageStore, () => {
     );
     const alertStore = useAlertStore();
     const directMessageStore = useDirectMessageStore();
-    const { deleteDirectMessageParticipant } = directMessageStore;
-    const { directMessageParticipantsMap } = storeToRefs(directMessageStore);
-    directMessageParticipantsMap.value.set(roomId, [first, second, third]);
+    const { deleteDirectMessageParticipant, getDirectMessageParticipants, storeDirectMessageParticipants } =
+      directMessageStore;
+    storeDirectMessageParticipants(roomId, [first, second, third]);
     const rejectedDeleteDirectMessageParticipant = deleteDirectMessageParticipant(roomId, second.id);
     await deleteDirectMessageParticipant(roomId, first.id);
     onFirstDeleted(true);
     await rejectedDeleteDirectMessageParticipant;
 
-    expect(directMessageParticipantsMap.value.get(roomId)).toStrictEqual([second, third]);
+    expect(getDirectMessageParticipants(roomId)).toStrictEqual([second, third]);
     expect(alertStore.alerts).toHaveLength(1);
   });
 
@@ -55,12 +55,12 @@ describe(useDirectMessageStore, () => {
     server.use(trpcMsw.room.directMessage.deleteDirectMessageParticipant.mutation(() => second));
     const alertStore = useAlertStore();
     const directMessageStore = useDirectMessageStore();
-    const { deleteDirectMessageParticipant } = directMessageStore;
-    const { directMessageParticipantsMap } = storeToRefs(directMessageStore);
-    directMessageParticipantsMap.value.set(roomId, [first, second, third]);
+    const { deleteDirectMessageParticipant, getDirectMessageParticipants, storeDirectMessageParticipants } =
+      directMessageStore;
+    storeDirectMessageParticipants(roomId, [first, second, third]);
     await deleteDirectMessageParticipant(roomId, second.id);
 
-    expect(directMessageParticipantsMap.value.get(roomId)).toStrictEqual([first, third]);
+    expect(getDirectMessageParticipants(roomId)).toStrictEqual([first, third]);
     expect(alertStore.alerts).toHaveLength(0);
   });
 

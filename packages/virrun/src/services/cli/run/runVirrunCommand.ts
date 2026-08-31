@@ -1,5 +1,6 @@
 import { BackendType } from "#src/models/virrun/BackendType";
 import { ExecutionMode } from "#src/models/virrun/ExecutionMode";
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { formatVirrunBanner } from "#src/services/cli/format/formatVirrunBanner";
 import { formatVirrunError } from "#src/services/cli/format/formatVirrunError";
 import { formatVirrunPrepare } from "#src/services/cli/format/formatVirrunPrepare";
@@ -48,11 +49,15 @@ export const runVirrunCommand = async (
       // Source-keyed prepare layer or rebuilds it (expected on a source edit — the key tracks the working-tree hash),
       // So prepare is as observable as the deps snapshot instead of a silent stall. resolvePrepareStep already returns
       // Undefined when no preset is set, so no separate none-check is needed. A read-only resolve for the log only —
-      // CreateVirrun owns the authoritative build — wrapped so a resolve throw never masks the run.
+      // CreateVirrun owns the authoritative build — wrapped so a resolve throw never masks the run. A throw costs
+      // The prepare line and nothing else, which is the degradation the debug sink exists for: the run goes on, and
+      // A missing line is otherwise indistinguishable from having no preset configured at all.
       getResult(() => {
         const prepareStep = resolvePrepareStep(configuration?.environment, "");
         if (prepareStep) process.stderr.write(`${formatVirrunPrepare(resolvePrepareLocation("", prepareStep))}\n`);
-      }).match(noop, noop);
+      }).match(noop, ({ message }) => {
+        writeVirrunDebug(`prepare location unresolved, line skipped — ${message}`);
+      });
     }
     return withFinalizerAsync(
       () => {

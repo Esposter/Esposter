@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useZoomPan } from "@/composables/message/file/useZoomPan";
 import { downloadUrl } from "@/services/app/downloadUrl";
 import { getInferredMimetype } from "@/services/file/getInferredMimetype";
 import { useDownloadFileStore } from "@/store/message/file";

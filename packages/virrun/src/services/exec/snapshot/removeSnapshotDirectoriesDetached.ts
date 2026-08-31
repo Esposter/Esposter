@@ -1,3 +1,4 @@
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
 import { spawnBackground } from "#src/services/exec/util/spawnBackground";
 import { VIRRUN_REMOVE_LIST_TEMP_PREFIX, WSL_REMOVE_LIST_SCRIPT, WSL_UNC_REGEX } from "#src/services/exec/wsl/constants";
@@ -39,7 +40,9 @@ export const removeSnapshotDirectoriesDetached = (dirs: readonly string[]): void
     else
       getResult(() => {
         removeSnapshotDirectory(dir);
-      }).match(noop, noop);
+      }).match(noop, ({ message }) => {
+        writeVirrunDebug(`stale cache dir ${dir} not removed — ${message}`);
+      });
   if (linuxDirs.length === 0) return;
 
   getResult(() => {
@@ -51,5 +54,7 @@ export const removeSnapshotDirectoriesDetached = (dirs: readonly string[]): void
     const listUnc = join(cacheRoot, listFilename);
     writeFileSync(listUnc, joinNullDelimited(linuxDirs));
     spawnBackground("wsl.exe", ["--exec", "sh", "-c", WSL_REMOVE_LIST_SCRIPT, "sh", readWslPath(listUnc)]);
-  }).match(noop, noop);
+  }).match(noop, ({ message }) => {
+    writeVirrunDebug(`detached teardown of ${linuxDirs.length} dirs not staged — ${message}`);
+  });
 };

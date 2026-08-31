@@ -1,3 +1,4 @@
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { REMOVE_LIST_REAP_MINIMUM_AGE_MS } from "#src/services/exec/util/constants";
 import { isProcessAlive } from "#src/services/exec/util/isProcessAlive";
 import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
@@ -29,6 +30,8 @@ export const reapStaleRemoveLists = (dir: string): void => {
 
     getResult(() => {
       rmSync(join(dir, entry.name), { force: true });
-    }).match(noop, noop);
+    }).match(noop, ({ message }) => {
+      writeVirrunDebug(`stranded remove list ${entry.name} not reaped — ${message}`);
+    });
   }
 };

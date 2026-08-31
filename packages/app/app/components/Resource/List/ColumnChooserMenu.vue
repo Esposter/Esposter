@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 
-import { useResourceListColumns } from "@/composables/resource/list/useResourceListColumns";
 import { mergeProps } from "vue";
 
 interface ResourceListColumnChooserMenuProps {

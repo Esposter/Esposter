@@ -7,14 +7,21 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 | `packages/db-schema/src/schema.ts` + `relations`           | 2026-08-30 | complete both ways, and the table/enum half is now `schema.test.ts`'s rather than a sweep's                                                            |
 | `packages/db-schema/src/schema` — the message tables       | —          | `*InMessage` is the largest family                                                                                                                     |
 | `packages/db-schema/src/schema` — the rest                 | 2026-08-30 | `posts` sanitized its description twice, once per select schema; the twin `friends`/`friendRequests` blocks stay, and the `drizzle` skill now says why |
-| `app/shared/models/db/message`, `.../room`                 | —          | the input schemas every router imports; 102 files across the folder, so it splits                                                                      |
+| `app/shared/models/db/message`                             | 2026-08-31 | clean — every input is composed by `.pick`/`.shape` spread, so the derived plain type alias is the sanctioned form                                     |
+| `app/shared/models/db` — the room family                   | —          | `room`, `roomCategory`, `roomEmoji`, `role`, `moderation`, `webhook`                                                                                   |
 | `app/shared/models/db` — the rest                          | —          |                                                                                                                                                        |
-| `app/shared/models/resource`                               | —          | the discriminated unions; `satisfies z.ZodType<ToData<T>>` on class-typed                                                                              |
+| `app/shared/models/resource/sheet`                         | —          | the column and transformation discriminated unions; `satisfies z.ZodType<ToData<T>>` on class-typed                                                    |
+| `app/shared/models/resource` — the rest                    | —          | the per-type content shapes and the capability types over them                                                                                         |
 | `app/shared/models/dungeons`                               | —          | persisted save shapes — latest-shape-only applies                                                                                                      |
-| `app/shared/models` — the rest                             | —          | `clicker`, `dashboard`, `flowchartEditor`, `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler`                                     |
+| `app/shared/models` — the editor and game trees            | —          | `clicker`, `dashboard`, `flowchartEditor`, `emailEditor`, `webpageEditor`, `grapesjs`                                                                  |
+| `app/shared/models` — the rest                             | —          | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler`, and the singles                                                               |
 | `app/models`, `app/services/*/…` form schemas              | —          | the Vjsf-rendered ones carry extra rules                                                                                                               |
 | `packages/db`, `packages/db-mock`                          | —          | the mock's snapshot is generated; only its hand-written schema use is in scope                                                                         |
 | `packages/shared`, `packages/parse-tmx`, `packages/xml2js` | —          | `@esposter/shared` takes `zod` as a peer and nothing else                                                                                              |
+
+The three widest rows were split at their own subdirectories on 2026-08-31, before any pass read them: `db` was
+102 files, `resource` 76 and the tail around 90, and a unit that size is grepped rather than read. The dates stay
+absent — the parent rows never held one to carry down.
 
 ## Exclusions
 

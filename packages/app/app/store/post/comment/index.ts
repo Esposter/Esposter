@@ -3,7 +3,6 @@ import type { DeleteCommentInput } from "#shared/models/db/post/DeleteCommentInp
 import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInput";
 import type { PostWithRelations } from "@esposter/db-schema";
 
-import { useMutation } from "@/composables/shared/useMutation";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
