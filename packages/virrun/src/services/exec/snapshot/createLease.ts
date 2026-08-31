@@ -1,5 +1,6 @@
 import type { Lease } from "#src/models/exec/snapshot/Lease";
 
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
 import { reapDeadLeases } from "#src/services/exec/snapshot/reapDeadLeases";
 import { getResult, noop } from "@esposter/shared";
@@ -20,7 +21,9 @@ export const createLease = (hashDir: string): Lease => {
     release: () => {
       getResult(() => {
         rmSync(leaseFile, { force: true });
-      }).match(noop, noop);
+      }).match(noop, ({ message }) => {
+        writeVirrunDebug(`lease ${leaseFile} not released, the next acquire reaps it — ${message}`);
+      });
     },
   };
 };
