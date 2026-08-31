@@ -31,7 +31,7 @@
 | `packages/virrun` — `exec/wsl`                                   | —          |                                                                                                          |
 | `packages/virrun` — `exec/util`                                  | —          |                                                                                                          |
 | `packages/virrun` — `exec/cache`, `exec/os`                      | 2026-08-31 | two more best-effort branches now trace; the hash and key chains answer absence with `null` on purpose   |
-| `packages/virrun` — `exec` — the rest                            | —          | `bwrap`, `native`, `store`, `vfs`, `differential`, `test`                                                |
+| `packages/virrun` — `exec` — the rest                            | 2026-08-31 | clean — `bwrap`, `native`, `store`, `vfs`, `differential`, `test`; two chains, both absence-as-answer    |
 | `packages/virrun` — `services/cli`                               | 2026-08-31 | the prepare line's resolve swallowed twice over; every other absence-as-answer chain says so at its site |
 | `packages/virrun` — `src/models`, `services` — the rest          | —          |                                                                                                          |
 | `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-08-30 | every throw is a stub, an unsupported-in-mock, or an Azure wire response                                 |
