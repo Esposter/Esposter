@@ -35,15 +35,20 @@ export const useCallPreJoinMedia = () => {
       joinCallOptions.value = { ...joinCallOptions.value, isMicrophoneEnabled: value };
     },
   });
+  // A refused or unavailable device leaves the toggle off, which is what the user sees — but the reason it
+  // Refused is only in the error, and the pre-join screen is where a wrong device id or a blocked permission is
+  // Diagnosed, so it is logged rather than dropped
   const startCamera = async () => {
-    await getResultAsync(startCameraStream).match(
-      (stream) => {
-        isCameraEnabled.value = Boolean(stream);
-      },
-      () => {
-        isCameraEnabled.value = false;
-      },
-    );
+    await getResultAsync(startCameraStream)
+      .orTee(console.error)
+      .match(
+        (stream) => {
+          isCameraEnabled.value = Boolean(stream);
+        },
+        () => {
+          isCameraEnabled.value = false;
+        },
+      );
   };
   const stopCamera = () => {
     stopCameraStream();
@@ -54,15 +59,17 @@ export const useCallPreJoinMedia = () => {
     else await startCamera();
   };
   const startMicrophone = async () => {
-    await getResultAsync(startMicrophoneStream).match(
-      (stream) => {
-        isMicrophoneEnabled.value = Boolean(stream);
-        stopMicrophoneStream();
-      },
-      () => {
-        isMicrophoneEnabled.value = false;
-      },
-    );
+    await getResultAsync(startMicrophoneStream)
+      .orTee(console.error)
+      .match(
+        (stream) => {
+          isMicrophoneEnabled.value = Boolean(stream);
+          stopMicrophoneStream();
+        },
+        () => {
+          isMicrophoneEnabled.value = false;
+        },
+      );
   };
   const toggleMicrophone = async () => {
     if (isMicrophoneEnabled.value) isMicrophoneEnabled.value = false;
