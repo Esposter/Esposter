@@ -28,7 +28,7 @@
 | `app/components` — the rest                                      | 2026-08-31 | five slots dropped what they returned, and the profile-image upload's twin in the swept `Message` row    |
 | `packages/db`, `packages/infra`                                  | 2026-08-30 | `db` rolls back then rethrows; `infra` is resource declarations with no error path                       |
 | `packages/virrun` — `exec/snapshot`                              | 2026-08-31 | four self-healing branches now trace, like `removeSnapshotDirectoryBestEffort` beside them already did   |
-| `packages/virrun` — `exec/wsl`                                   | —          |                                                                                                          |
+| `packages/virrun` — `exec/wsl`                                   | 2026-08-31 | six more, the mirror's origin marker among them — the one swallow another sweep's age arm rests on       |
 | `packages/virrun` — `exec/util`                                  | 2026-08-31 | the signal reaper and the probe-cache write; the `unwrapOr` readers answer a missing path with a value   |
 | `packages/virrun` — `exec/cache`, `exec/os`                      | 2026-08-31 | two more best-effort branches now trace; the hash and key chains answer absence with `null` on purpose   |
 | `packages/virrun` — `exec` — the rest                            | 2026-08-31 | clean — `bwrap`, `native`, `store`, `vfs`, `differential`, `test`; two chains, both absence-as-answer    |

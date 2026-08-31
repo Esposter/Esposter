@@ -1,3 +1,4 @@
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { sweepStaleEntries } from "#src/services/exec/snapshot/sweepStaleEntries";
 import { SOURCE_MIRROR_UNMARKED_MAX_AGE_MS } from "#src/services/exec/util/constants";
 import { VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME, VIRRUN_SOURCES_DIRECTORY_NAME } from "#src/services/exec/wsl/constants";
@@ -47,5 +48,7 @@ export const reapAbandonedSourceMirrors = (liveEntryName: string): void => {
         .map((mtimeMs) => Date.now() - mtimeMs > SOURCE_MIRROR_UNMARKED_MAX_AGE_MS)
         .unwrapOr(false);
     });
-  }).match(noop, noop);
+  }).match(noop, ({ message }) => {
+    writeVirrunDebug(`abandoned source mirror sweep skipped — ${message}`);
+  });
 };

@@ -2,6 +2,7 @@ import {
   VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
   VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
 } from "#src/services/exec/wsl/constants";
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { getResult, noop } from "@esposter/shared";
 import { renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -21,5 +22,7 @@ export const publishSourceMirrorOrigin = (entryUnc: string, cwd: string): void =
   getResult(() => {
     writeFileSync(originTempPath, cwd);
     renameSync(originTempPath, join(entryUnc, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME));
-  }).match(noop, noop);
+  }).match(noop, ({ message }) => {
+    writeVirrunDebug(`source mirror origin marker not published for ${entryUnc} — ${message}`);
+  });
 };
