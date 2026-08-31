@@ -11,12 +11,9 @@ import type { MapValue } from "@esposter/shared";
 import { BLOB_NOT_FOUND_ERROR_CODE, BLOB_NOT_FOUND_MESSAGE } from "#src/constants";
 import { getAzureErrorXml } from "#src/services/container/getAzureErrorXml";
 import { getBlobUrlParts } from "#src/services/container/getBlobUrlParts";
+import { deleteMockBlob } from "#src/services/container/deleteMockBlob";
 import { getMockContainer } from "#src/services/container/getMockContainer";
 import { createMockResponse } from "#src/services/createMockResponse";
-import {
-  getMockContainerBlobDatesKey,
-  MockContainerBlobDatesDatabase,
-} from "#src/store/MockContainerBlobDatesDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders } from "@azure/core-rest-pipeline";
@@ -52,11 +49,8 @@ export class MockBlobBatchClient implements BlobBatchClient {
       }
 
       const { blobName, containerName } = urlParts;
-      const container = this.getContainer(containerName);
 
-      if (container.has(blobName)) {
-        container.delete(blobName);
-        MockContainerBlobDatesDatabase.delete(getMockContainerBlobDatesKey(containerName, blobName));
+      if (deleteMockBlob(containerName, blobName)) {
         subResponses.push({
           _request: { credential, url: this.url },
           headers: toHttpHeadersLike(createHttpHeaders()),

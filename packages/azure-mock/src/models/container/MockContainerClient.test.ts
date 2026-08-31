@@ -28,4 +28,20 @@ describe(MockContainerClient, () => {
     expect(page?.segment.blobItems.map(({ name }) => name)).toStrictEqual(["root.txt"]);
     expect(page?.segment.blobPrefixes?.map(({ name }) => name)).toStrictEqual(["nested/"]);
   });
+
+  // Metadata lives in a map beside the content, so a delete that takes only the content leaves a record the
+  // Next blob seeded under that name inherits — and a listing then reports the deleted blob's metadata
+  test("clears a deleted blob's metadata", async () => {
+    expect.hasAssertions();
+
+    const blobName = "blobName";
+    const client = new MockContainerClient(MOCK_BLOB_BASE_URL, containerName);
+    const blockBlobClient = client.getBlockBlobClient(blobName);
+    await blockBlobClient.upload("", 0, { metadata: { reason: "Manual" } });
+    await client.deleteBlob(blobName);
+    MockContainerDatabase.get(containerName)?.set(blobName, Buffer.from(""));
+    const [blob] = await Array.fromAsync(client.listBlobsFlat({ includeMetadata: true }));
+
+    expect(blob?.metadata).toBeUndefined();
+  });
 });

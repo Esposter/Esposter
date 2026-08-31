@@ -37,16 +37,13 @@ import { MockBlockBlobClient } from "#src/models/container/MockBlockBlobClient";
 import { MockRestError } from "#src/models/MockRestError";
 import { getBlobItemXml } from "#src/services/container/getBlobItemXml";
 import { getBlobPrefixXml } from "#src/services/container/getBlobPrefixXml";
+import { deleteMockBlob } from "#src/services/container/deleteMockBlob";
 import { getBlobUrl } from "#src/services/container/getBlobUrl";
 import { getListBlobsSegmentResponse } from "#src/services/container/getListBlobsSegmentResponse";
 import { getMockContainer } from "#src/services/container/getMockContainer";
 import { createMockResponse } from "#src/services/createMockResponse";
 import { getMockSasUrl } from "#src/services/getMockSasUrl";
-import {
-  getMockContainerBlobDatesKey,
-  MockContainerBlobDatesDatabase,
-  readMockBlobDates,
-} from "#src/store/MockContainerBlobDatesDatabase";
+import { readMockBlobDates } from "#src/store/MockContainerBlobDatesDatabase";
 import { readMockBlobMetadata } from "#src/store/MockContainerBlobMetadataDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
@@ -88,9 +85,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   deleteBlob(blobName: string): Promise<BlobDeleteResponse> {
-    if (!this.container.has(blobName)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
-    this.container.delete(blobName);
-    MockContainerBlobDatesDatabase.delete(getMockContainerBlobDatesKey(this.containerName, blobName));
+    if (!deleteMockBlob(this.containerName, blobName)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
     return Promise.resolve({ _response: createMockResponse(200, getBlobUrl(this.containerName, blobName)) });
   }
 
