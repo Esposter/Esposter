@@ -17,6 +17,7 @@ describe(useReadSearchedMessages, () => {
   const server = setupMswTrpc();
   let wrapper: VueWrapper;
   let count: Ref<number>;
+  let isSearching: Ref<boolean>;
   let page: Ref<number>;
   let searchQuery: Ref<string>;
   let selectedFilters: Ref<Filter[]>;
@@ -38,7 +39,7 @@ describe(useReadSearchedMessages, () => {
         setup: () => {
           setCurrentRoomId(roomId);
           const searchMessageStore = useSearchMessageStore();
-          ({ count, page, searchQuery, selectedFilters } = storeToRefs(searchMessageStore));
+          ({ count, isSearching, page, searchQuery, selectedFilters } = storeToRefs(searchMessageStore));
           // Each room's page starts at its own value, so a page written into the wrong slice is visible
           setCurrentRoomId(otherRoomId);
           page.value = otherRoomPage;
@@ -89,6 +90,45 @@ describe(useReadSearchedMessages, () => {
     expect(count.value).toBe(newCount);
     expect(page.value).toBe(1);
     expect(createSearchHistory).toHaveBeenCalledTimes(1);
+  });
+
+  // Pending belongs to the search that raised it, not to the composable: the paginator hands every read the same
+  // Finalizer, so two searches overlapping across a room switch would have the first to land clear the second's
+  // Flag and leave its own room rendering as loading forever
+  test("clears only the pending flag of the search that settles", async () => {
+    expect.hasAssertions();
+
+    const { promise: roomSearch, resolve: releaseRoomSearch } = Promise.withResolvers<void>();
+    const { promise: otherRoomSearch, resolve: releaseOtherRoomSearch } = Promise.withResolvers<void>();
+    server.use(
+      trpcMsw.message.searchMessages.query(async ({ input }) => {
+        await (input.roomId === roomId ? roomSearch : otherRoomSearch);
+        return { count: newCount, data: { hasMore: false, items: [] } };
+      }),
+    );
+    await mountRead();
+    searchQuery.value = query;
+    const pendingRoomSearch = readSearchedMessages();
+    // The search is issued a microtask after the call, so let it go out before the room moves
+    await flushPromises();
+    setCurrentRoomId(otherRoomId);
+    searchQuery.value = query;
+    const pendingOtherRoomSearch = readSearchedMessages();
+    await flushPromises();
+    releaseRoomSearch();
+    await pendingRoomSearch;
+
+    expect(isSearching.value).toBe(true);
+
+    setCurrentRoomId(roomId);
+
+    expect(isSearching.value).toBe(false);
+
+    setCurrentRoomId(otherRoomId);
+    releaseOtherRoomSearch();
+    await pendingOtherRoomSearch;
+
+    expect(isSearching.value).toBe(false);
   });
 
   // The schema refuses a search with nothing in it, so a read that would send one issues no request at all — the
