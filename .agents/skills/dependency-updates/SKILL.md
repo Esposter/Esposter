@@ -51,6 +51,10 @@ When `@electric-sql/pglite` changes between minor versions, regenerate the db-mo
 
 When `vuetify` or `unocss` changes, `packages/app/uno.config.test.ts` and `packages/app/vuetify.config.test.ts` are the check: they snapshot resolved config, so a failure is the upstream release moving a derived rule, colour or default, and it is the only place that shows. **Read the diff and account for it in the commit before regenerating** — a reflexive `-u` throws away the one signal the bump produces. The `unocss` skill owns the detail.
 
+`inlinedDependencies` in a package manifest is written by tsdown on every build, so a vendored package's bump lands in a reviewed diff — except in `packages/azure-functions`, whose config sets `exports: false` so the Functions host's `main` survives a build, and that same switch is what writes the manifest at all. Its list is hand-maintained: after `pnpm build:packages`, compare each recorded version against what is installed and edit the drifted ones. A version there that no longer exists under `node_modules/.pnpm` is the tell, and it is also the only explanation on offer for that package's bundle size moving when nothing in its own manifest did.
+
+Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them per the `testing` skill's `references/platform-and-bundle-tests.md` — rebuild first, then the narrowed `-u` pair — never by editing a snapshot to the number a failure printed.
+
 ## Exact-pinned packages (no caret)
 
 - **`drizzle-kit`, `drizzle-orm`** — pinned to an exact RC (no `^`). Leave the caret off: a caret would float them across RC builds. Bump both together, deliberately, to the same version.

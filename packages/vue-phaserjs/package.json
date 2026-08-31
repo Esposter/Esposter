@@ -81,7 +81,6 @@
     "vue": "catalog:"
   },
   "inlinedDependencies": {
-    "tagged-tag": "1.0.0",
-    "type-fest": "5.8.0"
+    "type-fest": "5.9.0"
   }
 }
