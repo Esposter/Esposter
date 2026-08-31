@@ -1,4 +1,4 @@
-import type { AzureContainer, Database } from "@esposter/db-schema";
+import type { AzureContainer, Database, User } from "@esposter/db-schema";
 
 import { releaseStorageLedgerEntriesWhere } from "#src/services/storage/releaseStorageLedgerEntriesWhere";
 import { storageLedger } from "@esposter/db-schema";
@@ -14,7 +14,7 @@ export const releaseStorageLedgerEntriesByPrefix = (
   db: Database,
   containerName: AzureContainer,
   prefix: string,
-): Promise<void> =>
+): Promise<User["id"][]> =>
   releaseStorageLedgerEntriesWhere(
     db,
     and(eq(storageLedger.containerName, containerName), sql`starts_with(${storageLedger.blobName}, ${prefix})`),

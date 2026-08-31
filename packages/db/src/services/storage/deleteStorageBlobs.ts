@@ -1,5 +1,5 @@
 import type { ContainerClient } from "@azure/storage-blob";
-import type { AzureContainer, Database } from "@esposter/db-schema";
+import type { AzureContainer, Database, User } from "@esposter/db-schema";
 
 import { releaseStorageLedgerEntries } from "#src/services/storage/releaseStorageLedgerEntries";
 import { MAX_CONCURRENT_BLOB_DELETIONS } from "@esposter/db-schema";
@@ -14,12 +14,18 @@ import { chunk, getResultAsync, takeOne } from "@esposter/shared";
 // Of names exceeds what a single postgres bind message may carry. Each wave releases exactly the names it
 // Removed — not the set it was asked for — so a wave that throws leaves nothing stranded behind it: the names
 // It did remove are already out of the ledger, and the redelivered event re-resolves a smaller set.
+// `onReleased` is handed each wave's owners as the wave lands, for the same reason the release itself does not
+// Wait: a wave that gives bytes back and then throws would otherwise announce nothing, and the redelivery that
+// Follows re-resolves a smaller set — one that can be empty, leaving the meter stale with nothing left to fix
+// It. Deduped across waves, so a directory-sized deletion costs its owner one re-read rather than one per wave.
 export const deleteStorageBlobs = async (
   db: Database,
   containerClient: ContainerClient,
   containerName: AzureContainer,
   blobNames: string[],
+  onReleased: (userIds: User["id"][]) => Promise<void>,
 ): Promise<void> => {
+  const releasedUserIds = new Set<User["id"]>();
   for (const blobNamesChunk of chunk(blobNames, MAX_CONCURRENT_BLOB_DELETIONS)) {
     const deletedBlobNames: string[] = [];
     const errors: Error[] = [];
@@ -38,7 +44,11 @@ export const deleteStorageBlobs = async (
       ),
     );
     // After the blobs are gone, so a release can never hand bytes back for a blob still stored
-    await releaseStorageLedgerEntries(db, containerName, deletedBlobNames);
+    const newlyReleasedUserIds = (await releaseStorageLedgerEntries(db, containerName, deletedBlobNames)).filter(
+      (userId) => !releasedUserIds.has(userId),
+    );
+    for (const newlyReleasedUserId of newlyReleasedUserIds) releasedUserIds.add(newlyReleasedUserId);
+    if (newlyReleasedUserIds.length > 0) await onReleased(newlyReleasedUserIds);
     // Rethrown once the release has landed, never before it: the failure is what makes Event Grid redeliver,
     // And the blobs this wave did remove must not wait for that redelivery to be given back
     if (errors.length > 0) throw takeOne(errors);

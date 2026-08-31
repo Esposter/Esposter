@@ -7,7 +7,11 @@ import type { StorageUsage } from "#shared/models/storage/StorageUsage";
 export const useStorageStore = defineStore("storage", () => {
   const { $trpc } = useNuxtApp();
   const storageUsage = ref<StorageUsage>();
-  const { read: readStorageUsage, supersede } = useCachedRead(() => $trpc.storage.readUsage.query(), {
+  const {
+    read: readStorageUsage,
+    refetch: refetchStorageUsage,
+    supersede,
+  } = useCachedRead(() => $trpc.storage.readUsage.query(), {
     onSuccess: (newStorageUsage) => {
       storageUsage.value = newStorageUsage;
     },
@@ -19,5 +23,5 @@ export const useStorageStore = defineStore("storage", () => {
     supersede();
     storageUsage.value = newStorageUsage;
   };
-  return { readStorageUsage, storageUsage, storeUpdateStorageUsage };
+  return { readStorageUsage, refetchStorageUsage, storageUsage, storeUpdateStorageUsage };
 });

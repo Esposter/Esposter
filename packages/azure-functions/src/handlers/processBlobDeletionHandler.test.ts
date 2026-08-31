@@ -22,6 +22,25 @@ vi.mock(import("#src/services/db"), () => ({
 
 vi.mock(import("#src/services/getContainerClient"), () => import("#src/services/getContainerClient.test"));
 
+// Released bytes are published to the owner's meter, which lives in the app process — so the group published
+// To is the only observable this handler has for the half of a deletion the owner actually watches
+const { groupMock, sendToAllMock } = vi.hoisted(() => ({
+  groupMock: vi.fn<(group: string) => void>(),
+  sendToAllMock: vi.fn<(message: unknown) => Promise<void>>(),
+}));
+
+vi.mock(import("#src/services/getWebPubSubServiceClient"), () => ({
+  // The client is stubbed in the factory and the mocks only record, so a suite-wide restore between tests
+  // Cannot take the stub's own behaviour away with the call history
+  getWebPubSubServiceClient: () =>
+    ({
+      group: (group: string) => {
+        groupMock(group);
+        return { sendToAll: sendToAllMock };
+      },
+    }) as never,
+}));
+
 const readContainer = () => {
   const container = MockContainerDatabase.get(AzureContainer.MessageAssets);
   assert.exists(container);
@@ -89,6 +108,7 @@ describe(processBlobDeletionHandler, () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
+    vi.clearAllMocks();
     vi.restoreAllMocks();
     await mockDb.delete(storageLedger);
     await mockDb.update(users).set({ storageBytesUsed: 0 });
@@ -102,6 +122,29 @@ describe(processBlobDeletionHandler, () => {
     await processBlobDeletionHandler(createEvent([blobName, secondBlobName]), context);
 
     expect(readContainer()).toStrictEqual([]);
+  });
+
+  test("tells the owner's meter what the deletion gave back", async () => {
+    expect.hasAssertions();
+
+    await seedBlob(blobName);
+    await seedStorageLedgerEntry(blobName);
+    await mockDb.update(users).set({ storageBytesUsed: countedBytes });
+    await processBlobDeletionHandler(createEvent([blobName]), context);
+
+    await expect(readStorageBytesUsed()).resolves.toBe(0);
+    expect(groupMock).toHaveBeenCalledExactlyOnceWith(userId);
+    expect(sendToAllMock).toHaveBeenCalledExactlyOnceWith({ userId });
+  });
+
+  // A deletion whose blobs were never charged to anyone releases nothing, so there is no meter to tell
+  test("publishes nothing when the deletion frees no accounted bytes", async () => {
+    expect.hasAssertions();
+
+    await seedBlob(blobName);
+    await processBlobDeletionHandler(createEvent([blobName]), context);
+
+    expect(sendToAllMock).not.toHaveBeenCalled();
   });
 
   test("processBlobDeletionHandler is idempotent", async () => {
