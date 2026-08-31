@@ -10,7 +10,7 @@
 | `server/trpc/routers` — the social and editor routers            | 2026-08-31 | clean — the one bare `InvalidOperationError` asserts an unreachable state, so a 500 is what it is   |
 | `server/trpc/routers` — the rest                                 | 2026-08-31 | clean — two rejections between them, both through a guard                                           |
 | `server/services/message`                                        | —          | wrapping only what can actually fail                                                                |
-| `server/services` — the rest                                     | —          | `resource`, `room`, `survey`, `blueprint`, `rateLimiter` and the small folders                      |
+| `server/services` — the rest                                     | 2026-08-31 | four rejections re-decided their own code; the `CONFLICT` pair is the documented exception          |
 | `server/composables`                                             | 2026-08-30 | nine client constructors — none wraps a call, so there is nothing to terminate                      |
 | `packages/azure-functions`                                       | 2026-08-30 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)`               |
 | `app/store/message`                                              | 2026-08-31 | five fire-and-forget callbacks now terminate; the silence they relied on is pinned by a test        |

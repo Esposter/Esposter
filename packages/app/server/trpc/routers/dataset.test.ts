@@ -15,7 +15,8 @@ import { datasetRouter } from "@@/server/trpc/routers/dataset";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
-import { resources } from "@esposter/db-schema";
+import { DatabaseEntityType, resources } from "@esposter/db-schema";
+import { NotFoundError } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -204,7 +205,9 @@ describe("dataset", () => {
 
     await expect(
       caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
+    );
   });
 
   test("fails read file dataset with wrong user", async () => {
