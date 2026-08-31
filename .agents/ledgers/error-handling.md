@@ -27,8 +27,13 @@
 | `app/components/Resource`, `app/components/Dungeons`             | 2026-08-31 | the scene lifecycle and input slots drop what they return; `Resource` reaches the server by primitive |
 | `app/components` — the rest                                      | 2026-08-31 | five slots dropped what they returned, and the profile-image upload's twin in the swept `Message` row |
 | `packages/db`, `packages/infra`                                  | 2026-08-30 | `db` rolls back then rethrows; `infra` is resource declarations with no error path                    |
-| `packages/virrun` — `src/services/exec`                          | —          |                                                                                                       |
-| `packages/virrun` — the rest                                     | —          |                                                                                                       |
+| `packages/virrun` — `exec/snapshot`                              | —          |                                                                                                       |
+| `packages/virrun` — `exec/wsl`                                   | —          |                                                                                                       |
+| `packages/virrun` — `exec/util`                                  | —          |                                                                                                       |
+| `packages/virrun` — `exec/cache`, `exec/os`                      | —          |                                                                                                       |
+| `packages/virrun` — `exec` — the rest                            | —          | `bwrap`, `native`, `store`, `vfs`, `differential`, `test`                                             |
+| `packages/virrun` — `services/cli`                               | —          |                                                                                                       |
+| `packages/virrun` — `src/models`, `services` — the rest          | —          |                                                                                                       |
 | `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-08-30 | every throw is a stub, an unsupported-in-mock, or an Azure wire response                              |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-08-30 | clean — every throw is a named error class, no chain to terminate outside `shared`                    |
 
@@ -37,6 +42,11 @@ than read and a grep pass that ticks a row records a sweep that never happened. 
 across every row that day and is clean repo-wide: no `try`/`catch`, no `.isOk`/`.isErr`, no `new Error` outside
 `toAppError` and `requireAuthData`, and all 234 `getResult` chains terminate. What the remaining rows are for is
 the half no grep sees — what a chain wraps, and who alerts.
+
+`packages/virrun` was split the same way on 2026-08-31, for the same reason: its two rows covered a little over
+four hundred files between them, which is a grep rather than a read. It has no `try`, no `new Error` and no
+`.isOk`/`.isErr` anywhere, so its rows are entirely about what each chain wraps and where a failure surfaces —
+a CLI's answer to that is an exit code and a message on stderr rather than an alert.
 
 ## Find recipe
 
