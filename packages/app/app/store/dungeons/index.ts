@@ -4,6 +4,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { Dungeons, dungeonsSchema } from "#shared/models/dungeons/data/Dungeons";
 import { Save } from "#shared/models/dungeons/data/Save";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { getResultAsync, noop } from "@esposter/shared";
 import { Cameras } from "phaser";
 import { useCameraStore, usePhaserStore } from "vue-phaserjs";
 
@@ -32,9 +33,12 @@ export const useDungeonsStore = defineStore("dungeons", () => {
     durationMs = Temporal.Duration.from({ seconds: 1 }).total("milliseconds"),
   ) => {
     fadeOut(scene, durationMs);
-    scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {
-      await switchToScene(sceneKey);
-    });
+    // Phaser calls its listener and drops what it returns, and the switch can reject — a fade that completes
+    // After the game has gone finds no game to start the next scene on. Terminating here is what turns that
+    // Into a line on the console rather than a screen left faded out with nothing behind it
+    scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
+      getResultAsync(() => switchToScene(sceneKey)).match(noop, console.error),
+    );
   };
 
   return { dungeons, fadeSwitchToScene, save, saveData, saveDungeons, setDungeons };
