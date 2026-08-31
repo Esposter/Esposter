@@ -7,8 +7,8 @@ import { useMessageStore } from "@/store/message";
 import { useDataStore } from "@/store/message/data";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MessageType } from "@esposter/db-schema";
-import { Extension } from "@tiptap/vue-3";
 import { getResultAsync, noop } from "@esposter/shared";
+import { Extension } from "@tiptap/vue-3";
 
 // Send is passed in rather than read from the data store: the room composer and the thread pane's composer
 // Both bind these shortcuts, and Enter has to reach the composer the editor belongs to
