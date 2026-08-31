@@ -37,11 +37,18 @@ describe(MockContainerClient, () => {
     const blobName = "blobName";
     const client = new MockContainerClient(MOCK_BLOB_BASE_URL, containerName);
     const blockBlobClient = client.getBlockBlobClient(blobName);
-    await blockBlobClient.upload("", 0, { metadata: { reason: "Manual" } });
+    await blockBlobClient.upload("", 0, { metadata: { reason: "reason" } });
+    const [uploadedBlob] = await Array.fromAsync(client.listBlobsFlat({ includeMetadata: true }));
+
+    expect(uploadedBlob?.metadata).toStrictEqual({ reason: "reason" });
+
     await client.deleteBlob(blobName);
     MockContainerDatabase.get(containerName)?.set(blobName, Buffer.from(""));
     const [blob] = await Array.fromAsync(client.listBlobsFlat({ includeMetadata: true }));
 
+    // The re-seeded blob is what the listing must return: without this, an empty listing would pass the
+    // Assertion below on a blob that is not there
+    expect(blob?.name).toBe(blobName);
     expect(blob?.metadata).toBeUndefined();
   });
 });

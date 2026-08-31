@@ -28,9 +28,20 @@ export const useStorageSubscribables = async () => {
       // The far side of a process boundary is one that can disagree with the gate the server enforces.
       // `refetch` rather than `read`, because a read issued because something changed must not join the
       // Cached answer that the change just invalidated
-      const stopWebPubSubClient = await useWebPubSubClient(
-        (signal) => $trpc.storage.generateWebPubSubClientAccessUrl.query(undefined, { signal }),
-        getSynchronizedFunction(() => getResultAsync(refetchStorageUsage).match(noop, console.error)),
+      // The tRPC subscription above is already live, so a client that fails to start has to take it down
+      // Again before the rejection leaves: the setup returns its unsubscribe only on the path that succeeds, so
+      // Nothing else ever holds a handle to it and the socket outlives the session that opened it
+      const stopWebPubSubClient = await getResultAsync(() =>
+        useWebPubSubClient(
+          (signal) => $trpc.storage.generateWebPubSubClientAccessUrl.query(undefined, { signal }),
+          getSynchronizedFunction(() => getResultAsync(refetchStorageUsage).match(noop, console.error)),
+        ),
+      ).match(
+        (stop) => stop,
+        (error) => {
+          updateUsageUnsubscribable.unsubscribe();
+          throw error;
+        },
       );
       return () => {
         updateUsageUnsubscribable.unsubscribe();
