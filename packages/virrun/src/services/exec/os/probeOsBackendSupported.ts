@@ -1,8 +1,9 @@
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { buildBwrapArgs } from "#src/services/exec/bwrap/buildBwrapArgs";
 import { PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { execWsl } from "#src/services/exec/wsl/execWsl";
-import { getResult, withFinalizer } from "@esposter/shared";
+import { getResult, noop, withFinalizer } from "@esposter/shared";
 // Whether this host can actually SET UP the overlay sandbox — not merely whether bwrap is on PATH. A `command -v
 // Bwrap` probe is insufficient: bubblewrap built without overlayfs support (some WSL2 builds), or a kernel with
 // Unprivileged user namespaces disabled, has bwrap present yet rejects the overlay flags. So we run the real argv
@@ -38,8 +39,13 @@ export const probeOsBackendSupported = (): boolean => {
                   timeout: PROBE_TIMEOUT_MS,
                 }),
               () => {
-                getResult(() => execWsl(["--exec", "rm", "-rf", wslDir], { timeout: PROBE_TIMEOUT_MS })).unwrapOr(
-                  undefined,
+                // The probe's own mktemp dir, and nothing else sweeps the guest's /tmp on our behalf — a failed
+                // Removal leaks one directory per probe, which is only ever visible if it is said out loud
+                getResult(() => execWsl(["--exec", "rm", "-rf", wslDir], { timeout: PROBE_TIMEOUT_MS })).match(
+                  noop,
+                  ({ message }) => {
+                    writeVirrunDebug(`os probe temp ${wslDir} not removed — ${message}`);
+                  },
                 );
               },
             ),

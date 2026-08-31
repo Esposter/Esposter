@@ -30,7 +30,7 @@
 | `packages/virrun` — `exec/snapshot`                              | —          |                                                                                                          |
 | `packages/virrun` — `exec/wsl`                                   | —          |                                                                                                          |
 | `packages/virrun` — `exec/util`                                  | —          |                                                                                                          |
-| `packages/virrun` — `exec/cache`, `exec/os`                      | —          |                                                                                                          |
+| `packages/virrun` — `exec/cache`, `exec/os`                      | 2026-08-31 | two more best-effort branches now trace; the hash and key chains answer absence with `null` on purpose   |
 | `packages/virrun` — `exec` — the rest                            | —          | `bwrap`, `native`, `store`, `vfs`, `differential`, `test`                                                |
 | `packages/virrun` — `services/cli`                               | 2026-08-31 | the prepare line's resolve swallowed twice over; every other absence-as-answer chain says so at its site |
 | `packages/virrun` — `src/models`, `services` — the rest          | —          |                                                                                                          |
