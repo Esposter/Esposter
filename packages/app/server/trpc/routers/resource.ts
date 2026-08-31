@@ -31,6 +31,7 @@ import { getPublishedContentBlobName } from "@@/server/services/resource/getPubl
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readPublishHistory } from "@@/server/services/resource/readPublishHistory";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
+import { reapplyLiveResourceContent } from "@@/server/services/resource/reapplyLiveResourceContent";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { withResourceRollback } from "@@/server/services/resource/withResourceRollback";
@@ -430,7 +431,7 @@ export const resourceRouter = router({
   // Re-publishing that draft would ship the same dead urls, with re-uploading every asset the only recovery
   restorePublishedVersion: getOwnerProcedure(undefined, restorePublishedVersionInputSchema, "id").mutation<Resource>(
     async ({ ctx, input: { id, version } }) => {
-      const publishedContent = await requireEntity(
+      const snapshotContent = await requireEntity(
         readContentBlob(
           ResourceDefinitionMap[ctx.resource.type].contentSchema,
           getPublishedContentBlobName(id, version),
@@ -438,6 +439,12 @@ export const resourceRouter = router({
         DatabaseEntityType.Resource,
         `${id}/${version}`,
       );
+      // Reconstitution, not a raw copy: a snapshot froze whatever the type declares live, and writing that
+      // Back over the working copy is how a restore silently reopened a closed survey or flipped its response
+      // Mode — a setting the write boundary makes authorization decisions on, with nothing in the restore or
+      // Its confirmation saying it would happen. The declaration is `ResourceLiveContentMap`, and it is the
+      // Same one the public read and the version preview reconstitute through
+      const publishedContent = await reapplyLiveResourceContent(ctx.resource, snapshotContent);
       // Cloned before the transaction opens, exactly as `publishResource` does it: the clone is one storage
       // Round trip per referenced asset, and running it inside would hold a pooled connection — not just the
       // `resources` row lock — for that whole time, so a handful of concurrent restores of asset-heavy

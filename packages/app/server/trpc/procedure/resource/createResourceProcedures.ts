@@ -33,6 +33,7 @@ import { incrementResourceViewCount } from "@@/server/services/resource/incremen
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { readResourceViewCount } from "@@/server/services/resource/readResourceViewCount";
+import { reapplyLiveResourceContent } from "@@/server/services/resource/reapplyLiveResourceContent";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
@@ -118,8 +119,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const { contentSchema } = ResourceDefinitionMap[type];
   // Args comes from an unresolved-generic conditional tuple, so the hook params collapse to the
   // Intersection of every content type; pin them back to this TType's concrete content shape.
-  const { transformPublicReadContent, transformPublishedContent } = (args[0] ??
-    {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>>;
+  const { transformPublishedContent } = (args[0] ?? {}) as unknown as PublishableResourceProcedureOptions<
+    ResourceContent<TType>
+  >;
   // Annotated so the generic content schema resolves to a concrete type for destructuring.
   // Both the output and input sides are declared — leaving the input side defaulted to unknown
   // Would erase the procedure's input type for consumers like achievement condition paths.
@@ -143,15 +145,18 @@ export const createResourceProcedures = <TType extends ResourceType>(
   // Not as an internal error. The generic contentSchema parses to the union of all content types; the
   // Concrete caller's TType pins it back down so consumers read their own content shape
   const readPublishedContent = async (
-    id: Resource["id"],
+    resource: Resource,
     publishVersion: ResourcePublication["publishVersion"],
   ): Promise<ResourceContent<TType>> => {
-    const content = (await readContentBlob(contentSchema, getPublishedContentBlobName(id, publishVersion))) as
+    const content = (await readContentBlob(contentSchema, getPublishedContentBlobName(resource.id, publishVersion))) as
       | ResourceContent<TType>
       | undefined;
-    if (content === undefined) throw getNotFoundError(DatabaseEntityType.Resource, id);
+    if (content === undefined) throw getNotFoundError(DatabaseEntityType.Resource, resource.id);
 
-    return content;
+    // Reconstitution, not a plain read: a snapshot's frozen copy of what the type declares live is replaced
+    // Here, so the public read and the owner's version preview answer the same content — and so does the
+    // Restore, which reconstitutes through the same declaration
+    return (await reapplyLiveResourceContent(resource, content)) as ResourceContent<TType>;
   };
   const baseProcedures = {
     createResource: standardAuthedProcedure
@@ -430,19 +435,18 @@ export const createResourceProcedures = <TType extends ResourceType>(
         );
         if (!resource.publication) throw getNotFoundError(DatabaseEntityType.ResourcePublication, input);
 
-        const content = await readPublishedContent(input, resource.publication.publishVersion);
+        const content = await readPublishedContent(resource, resource.publication.publishVersion);
         // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets.
         // Fire-and-forget: the increment swallows its own failures and the viewer must never wait on telemetry
         getSynchronizedFunction(incrementResourceViewCount)(input);
-        if (!transformPublicReadContent) return { content, name: resource.name };
-        return { content: await transformPublicReadContent(ctx, resource, content), name: resource.name };
+        return { content, name: resource.name };
       }),
     // An owner-only read of a retained snapshot, backing the view route's `version` query param. Anonymous
     // Visitors never reach this — the public read above always serves the latest publish
     readPublishedVersionContent: getOwnerProcedure(type, readPublishedVersionContentInputSchema, "id").query<
       PublishedResourceContent<TType>
-    >(async ({ ctx, input: { id, version } }) => ({
-      content: await readPublishedContent(id, version),
+    >(async ({ ctx, input: { version } }) => ({
+      content: await readPublishedContent(ctx.resource, version),
       name: ctx.resource.name,
     })),
     readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<

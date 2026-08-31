@@ -8,7 +8,6 @@ import { invalidParticipantTokenError } from "@@/server/services/survey/invalidP
 import { readSurveyResponseRecords } from "@@/server/services/survey/readSurveyResponseRecords";
 import { resolveSurveyResponseRead } from "@@/server/services/survey/resolveSurveyResponseRead";
 import { resolveSurveyResponseWrite } from "@@/server/services/survey/resolveSurveyResponseWrite";
-import { transformPublicReadSurvey } from "@@/server/services/survey/transformPublicReadSurvey";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -62,7 +61,6 @@ export const surveyRouter = router({
   // Survey uploads come from the shared fileAssets capability rather than a bespoke set here —
   // See ResourceDefinitionMap
   ...createResourceProcedures(ResourceType.Survey, {
-    transformPublicReadContent: transformPublicReadSurvey,
     transformPublishedContent: transformPublishedBlobUrls,
   }),
   countSurveyResponses: getOwnerProcedure(

@@ -495,6 +495,44 @@ describe("survey", () => {
     expect(content.settings).toStrictEqual(closedSettings);
   });
 
+  // A restore reconstitutes a snapshot rather than copying it, so it re-applies what the type declares live.
+  // Copying the blob wholesale put the settings frozen at publish time back over the working copy — silently
+  // reopening a survey its owner had closed, and able to flip the response mode the write boundary makes its
+  // authorization decisions on, with nothing in the restore or its confirmation saying so
+  test("keeps the live settings when a published version is restored over them", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings });
+    await caller.publishResource({ id: newResource.id });
+    await saveSurveyContent(newResource.id, newResource.contentVersion + 1, {
+      model: updatedModel,
+      settings: closedSettings,
+    });
+    await resourceCaller.restorePublishedVersion({ id: newResource.id, version: 1 });
+    const content = await caller.readResourceContent({ id: newResource.id });
+
+    // The model is the snapshot's, which is the whole point of restoring — the settings are still the owner's
+    expect(content?.model).toBe(model);
+    expect(content?.settings).toStrictEqual(closedSettings);
+  });
+
+  test("serves the live settings on the owner's version preview", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings });
+    await caller.publishResource({ id: newResource.id });
+    await saveSurveyContent(newResource.id, newResource.contentVersion + 1, {
+      model: updatedModel,
+      settings: closedSettings,
+    });
+    const { content } = await caller.readPublishedVersionContent({ id: newResource.id, version: 1 });
+
+    expect(content.model).toBe(model);
+    expect(content.settings).toStrictEqual(closedSettings);
+  });
+
   test("reopening accepts responses again", async () => {
     expect.hasAssertions();
 
