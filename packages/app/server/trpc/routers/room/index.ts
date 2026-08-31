@@ -35,6 +35,7 @@ import { deleteRoom } from "@@/server/services/room/deleteRoom";
 import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
 import { listRoomProfileImageBlobNames } from "@@/server/services/room/listRoomProfileImageBlobNames";
 import { router } from "@@/server/trpc";
+import { getForbiddenError } from "@@/server/trpc/guards/getForbiddenError";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -84,7 +85,6 @@ import {
   Operation,
   takeOne,
 } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { and, count, desc, eq, getColumns, gt, ilike, inArray, isNull, lt, ne, not, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -301,7 +301,7 @@ export const baseRoomRouter = router({
           userId: { eq: ctx.getSessionPayload.user.id },
         },
       });
-      if (ban) throw new TRPCError({ code: "FORBIDDEN" });
+      if (ban) throw getForbiddenError("You are banned from this room");
 
       const userToRoom = requireMutation(
         (

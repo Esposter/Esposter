@@ -4,7 +4,7 @@
 
 | Unit                                                             | Swept      | Notes                                                                                                 |
 | ---------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------- |
-| `server/trpc/routers/message`, `server/trpc/routers/room`        | —          | the guard constructors vs a hand-rolled `TRPCError`; `requireEntity`/`requireMutation`                |
+| `server/trpc/routers/message`, `server/trpc/routers/room`        | 2026-08-31 | one bare `FORBIDDEN` left a banned member no reason; the best-effort tails are all awaited            |
 | `server/trpc/routers` — `call`, `role`, `userToRoom`, `webhook`  | —          | plus `searchHistory` and `index.ts`                                                                   |
 | `server/trpc/routers` — the resource family                      | —          | `resource`, `blueprint`, `note`, `program`, `sheet`, `todoList`, `survey`                             |
 | `server/trpc/routers` — the social and editor routers            | —          | `post`, `like`, `block`, `friend`, `friendRequest`, `user`, and the four editors                      |
