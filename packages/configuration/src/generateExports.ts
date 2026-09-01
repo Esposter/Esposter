@@ -24,25 +24,9 @@ const getCtixCommandPath = (): string => {
   return ctixCommandPath;
 };
 
-// The one definition of how a barrel is generated, and both ways of generating one go through it: the
-// `build:prepare` hook `getTsdownConfiguration` registers, so no manifest repeats the command in front of its
-// Build, and the `generate-exports` bin, so `export:gen` regenerates a barrel without paying for the
-// Bundle, the declarations and the publish gates behind it — which is the whole of what a typecheck needs after
-// A file is added. The config paths and the order the "vue" answer runs them in are named here and nowhere else.
-//
-// The default sits on the parameter rather than at either call site, because the bin's argument is a command
-// Line: `process.argv[2]` is absent for every package but the one shipping components. The membership check is
-// There for the same reason — an unknown answer reaches this typed parameter anyway, and reading the map blind
-// Would fail as a TypeError naming this file rather than the argument that was wrong.
-//
-// Generation is unguarded on purpose. A barrel of `export * from` names no symbol and so looks like a function
-// Of the source file list, cheap to hash and skip on — and it is not one: ctix resolves two files exporting the
-// Same identifier by dropping both, so a rename that collides changes the output while moving no path. Nothing
-// Cheap is a sound key for it, and nothing needs to be. CI restores `dist` and the barrels together from the
-// `package-builds` cache on an exact content hash, which is the case that actually happens; a build that misses
-// That cache is regenerating everything regardless.
-//
-// Stdio is inherited, so ctix reports what it wrote exactly as it did when a script invoked it.
+// Stdio is inherited, so ctix reports what it wrote exactly as it did when a script invoked it. The default and
+// The membership check are here rather than at a call site because one of the two callers is the
+// `generate-exports` bin, whose argument is a command line.
 export const generateExports = (exportsGeneration: ExportsGeneration = "typescript"): void => {
   if (!(exportsGeneration in CtixConfigurationsMap))
     throw new Error(
