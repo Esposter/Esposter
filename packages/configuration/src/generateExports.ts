@@ -2,6 +2,7 @@ import type { ExportsGeneration } from "#src/models/ExportsGeneration";
 
 import { CTIX_TS_CONFIGURATION, CTIX_VUE_CONFIGURATION } from "#src/constants";
 import { getSourceFingerprint } from "#src/getSourceFingerprint";
+import { getTsconfigPaths } from "#src/getTsconfigPaths";
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -56,7 +57,15 @@ export const generateExports = (exportsGeneration: ExportsGeneration): void => {
     resolve(CONFIGURATION_DIRECTORY, ctixConfiguration),
   );
   const generatedBarrelPaths = GeneratedBarrelsMap[exportsGeneration];
-  const fingerprint = getSourceFingerprint(generatedBarrelPaths, [ctixCommandPath, ...ctixConfigurationPaths]);
+  // The tsconfig every `.ctirc-*` points `project` at, and every preset it extends. Its `include` and `exclude`
+  // Decide which files ctix ever sees, so it is as much a generator input as ctix itself — left out, widening a
+  // Shared preset's exclude list changes what the barrel should hold while the fingerprint reports nothing to do,
+  // And the package builds green against an export surface that no longer matches its source.
+  const fingerprint = getSourceFingerprint(generatedBarrelPaths, [
+    ctixCommandPath,
+    ...ctixConfigurationPaths,
+    ...getTsconfigPaths(process.cwd(), CONFIGURATION_DIRECTORY),
+  ]);
   const isFingerprintCurrent = existsSync(FINGERPRINT_FILE) && readFileSync(FINGERPRINT_FILE, "utf8") === fingerprint;
   // Every barrel the passes below write, not just the one tsdown resolves its entry to: the component barrel is
   // Reached through the root one, so a package missing it builds against a root barrel whose line points at

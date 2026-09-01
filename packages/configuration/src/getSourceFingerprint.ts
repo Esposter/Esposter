@@ -1,9 +1,9 @@
+import { NON_SOURCE_SUFFIXES } from "#src/constants";
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const SOURCE_DIRECTORY = "src";
-const NON_SOURCE_REGEX = /\.(?:bench|test|test-d)\.ts$/u;
 const SOURCE_EXTENSION_REGEX = /\.(?:ts|vue)$/u;
 const EXPORT_REGEX = /^export\s/mu;
 // `readdirSync` yields the platform's separator while a barrel path is written with `/`, so every path is
@@ -34,7 +34,7 @@ const checkHasExports = (sourcePath: string): boolean =>
 // Ships without the export, green the whole way.
 //
 // `generatorPaths` closes the last half: the barrel is a function of the source list *and* of whatever wrote
-// It, so ctix's own cli and the configs it is handed are hashed by content. Left out, an edit to a ctix config
+// It, so ctix's own cli, the configs it is handed and the tsconfig those point at are hashed by content. Left out, an edit to a ctix config
 // Or an upgrade of ctix leaves every package serving the barrel the previous generator wrote,
 // Indistinguishable from a source tree nothing touched. They are a few hundred kilobytes read once per package
 // Build, against a generation that costs seconds.
@@ -51,7 +51,7 @@ export const getSourceFingerprint = (generatedBarrelPaths: string[], generatorPa
     .filter(
       (sourcePath) =>
         SOURCE_EXTENSION_REGEX.test(sourcePath) &&
-        !NON_SOURCE_REGEX.test(sourcePath) &&
+        !NON_SOURCE_SUFFIXES.some((nonSourceSuffix) => sourcePath.endsWith(nonSourceSuffix)) &&
         !generatedBarrels.has(sourcePath),
     )
     .toSorted();
