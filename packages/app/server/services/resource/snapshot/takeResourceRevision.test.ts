@@ -59,8 +59,8 @@ describe(takeResourceRevision, () => {
     await mockContext.db.update(users).set({ storageBytesUsed: 0 });
   });
 
-  // The reason and the label are what make a row choosable, and they ride the blob's own metadata so the
-  // Listing never has to open a snapshot to say what one is
+  // The reason, the label and the type's own one-line summary are what make a row choosable, and all three ride
+  // The blob's own metadata so the listing never has to open a snapshot to say what one is
   test("writes the working copy under the revision channel with what it was taken for", async () => {
     expect.hasAssertions();
 
@@ -87,6 +87,7 @@ describe(takeResourceRevision, () => {
       isCurrent: false,
       label,
       reason: SnapshotReason.Manual,
+      summary: "0 items",
       version: 1,
     });
     // Stored bytes the owner keeps, charged like the working copy it came from

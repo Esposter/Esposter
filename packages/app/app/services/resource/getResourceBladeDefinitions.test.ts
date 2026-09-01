@@ -25,14 +25,6 @@ describe(getResourceBladeDefinitions, () => {
     expect(getSlugs(ResourceType.Sheet)).not.toContain(ResourceBladeType.Editor);
   });
 
-  // Only publishable types have snapshots, so only they get the history blade
-  test("offers Publish history only to publishable types", () => {
-    expect.hasAssertions();
-
-    expect(getSlugs(ResourceType.Survey)).toContain(ResourceBladeType.PublishHistory);
-    expect(getSlugs(ResourceType.Blueprint)).not.toContain(ResourceBladeType.PublishHistory);
-  });
-
   // Editor is the one built-in blade that declares no icon of its own: it renders the type's own editor, so the
   // Rail entry has to be the type's own icon rather than a generic pencil shared by every editable type
   test("gives the Editor blade the type's own icon", () => {
@@ -63,10 +55,10 @@ describe(getResourceBladeDefinitions, () => {
     expect(isValidResourceBlade(ResourceType.Note, "not-a-blade")).toBe(false);
   });
 
-  // A guard that only checks the slug against the whole blade vocabulary would route a Blueprint to a
-  // Publish history it has no snapshots for — the blade has to be one *this* type offers
+  // A guard that only checks the slug against the whole blade vocabulary would route a Sheet to an Editor
+  // Blade it renders nothing in — the blade has to be one *this* type offers
   test("rejects a real blade the type does not offer", () => {
     expect.hasAssertions();
-    expect(isValidResourceBlade(ResourceType.Blueprint, ResourceBladeType.PublishHistory)).toBe(false);
+    expect(isValidResourceBlade(ResourceType.Sheet, ResourceBladeType.Editor)).toBe(false);
   });
 });

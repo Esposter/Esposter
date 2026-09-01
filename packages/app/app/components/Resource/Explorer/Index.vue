@@ -12,6 +12,10 @@ interface ResourceExplorerProps {
 const { activeBlade, resource } = defineProps<ResourceExplorerProps>();
 // The blade nav is a rail beside the content on desktop and a dropdown above it where there is no room for one
 const { smAndDown } = useVDisplay();
+// Version history is a panel over whichever blade is open rather than a blade of its own, because the blade
+// Action bar is the one surface every type has — Sheet and TodoList have no editor to hang it off. Its state
+// Is the route's, so the back button and a shared link both land on it. See /docs/platform/resource-snapshots
+const { isVersionHistoryOpen, previewSnapshotVersionId } = useVersionHistoryRoute();
 </script>
 
 <!-- One box, not two. A list pane beside the blade duplicated a way back the breadcrumb and the toolbar's
@@ -28,8 +32,17 @@ const { smAndDown } = useVDisplay();
       <div b-0 b-t-1 b-border b-solid flex flex-1 min-w-0 :class="smAndDown ? 'flex-col' : 'flex-row'">
         <ResourceBladeNavigation :active-blade :resource />
         <div flex-1 min-w-0 overflow-auto>
-          <ResourceBladeOutlet :active-blade :resource />
+          <!-- Preview in place: the version renders where the blade was, so stepping through candidates never
+            leaves the resource -->
+          <ResourceVersionHistoryPreview
+            v-if="previewSnapshotVersionId"
+            :key="previewSnapshotVersionId"
+            :resource
+            :snapshot-version-id="previewSnapshotVersionId"
+          />
+          <ResourceBladeOutlet v-else :active-blade :resource />
         </div>
+        <ResourceVersionHistory v-if="isVersionHistoryOpen" :resource />
       </div>
     </div>
     <component :is="ResourceDialogsComponentMap[resource.type]" v-if="ResourceDialogsComponentMap[resource.type]" />

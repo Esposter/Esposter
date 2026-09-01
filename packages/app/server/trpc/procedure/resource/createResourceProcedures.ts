@@ -36,6 +36,8 @@ import { readResourceViewCount } from "@@/server/services/resource/readResourceV
 import { reapplyLiveResourceContent } from "@@/server/services/resource/reapplyLiveResourceContent";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { getSnapshotContentBlobName } from "@@/server/services/resource/snapshot/getSnapshotContentBlobName";
+import { getSnapshotMetadata } from "@@/server/services/resource/snapshot/getSnapshotMetadata";
+import { getSnapshotSummary } from "@@/server/services/resource/snapshot/getSnapshotSummary";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
@@ -330,6 +332,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
             AzureContainer.ResourceAssets,
             getSnapshotContentBlobName(id, SnapshotChannel.Published, publishVersion),
             serializedContent,
+            // No reason: a published row's reason is that it was published, which its channel already says.
+            // The summary is what makes it choosable beside the revisions it shares one timeline with
+            getSnapshotMetadata({ summary: getSnapshotSummary(ctx.resource.type, serializedContent) }),
           );
           publishedContentBytes = Buffer.byteLength(serializedContent);
         };

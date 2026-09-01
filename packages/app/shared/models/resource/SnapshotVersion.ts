@@ -14,6 +14,10 @@ export interface SnapshotVersion {
   label: string;
   // Absent on a published row, whose reason is that it was published
   reason?: SnapshotReason;
+  // One line about what this version holds — "12 items", "3 columns · 40 rows" — so a row is choosable by
+  // What it is rather than by an ordinal. Empty for a type that declares no summary, and for a snapshot
+  // Taken before the field existed
+  summary: string;
   takenAt: Date;
   version: number;
 }

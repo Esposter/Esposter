@@ -1,10 +1,11 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
-import type { Resource, ResourceType } from "@esposter/db-schema";
+import type { Resource } from "@esposter/db-schema";
 
 import { createContentData } from "@/services/resource/createContentData";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { useResourceStore } from "@/store/resource";
+import { ResourceType } from "@esposter/db-schema";
 import { toRawDeep } from "@esposter/shared";
 
 export const useTodoListStore = defineStore("resource/todoList", () => {
@@ -15,6 +16,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     loadContent,
     saveContent: saveTodoList,
   } = createContentData<ResourceType.TodoList, TodoListResource>(
+    ResourceType.TodoList,
     // Content is parsed from the blob with plain JSON.parse, so the loaded value carries the list's data
     // Shape rather than its class instances. The cast is sound because `toJSON` is the only method these
     // Classes have — pinned by ResourceContent.test-d.ts, which fails the day a second one is added

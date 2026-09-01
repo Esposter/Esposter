@@ -27,6 +27,10 @@ const isPublishable = computed(() => hasCapability(resource.type, "publishable")
 const isRenameOpen = ref(false);
 const isDeleteOpen = ref(false);
 const isShareOpen = ref(false);
+const isSaveVersionOpen = ref(false);
+// The panel opens from here rather than from the editor, because Sheet and TodoList are blade-only types with
+// No editor at all — the action bar is the one surface every type has. See /docs/platform/resource-snapshots
+const { openVersionHistory } = useVersionHistoryRoute();
 const { exportFormats, importFormats } = usePortableFormats(() => resource);
 // A type with several formats gets one command whose submenu names them, rather than one command per format —
 // Seven top-level buttons for a sheet is the same rail the Data blade just lost. A type with a single format
@@ -82,6 +86,20 @@ const commandItems = computed<Item[]>(() => [
     loading: isDuplicatePending.value,
     onClick: () => duplicateResource(),
     title: "Duplicate",
+  },
+  // Every type has revisions, so both commands are unconditional — recovery is core rather than a capability
+  {
+    icon: "mdi-history",
+    isGroupStart: true,
+    onClick: () => openVersionHistory(),
+    title: "Version history",
+  },
+  {
+    icon: "mdi-content-save-outline",
+    onClick: () => {
+      isSaveVersionOpen.value = true;
+    },
+    title: "Save version",
   },
   // Publishing and unpublishing are one executor, so one pending flag covers the single button that is
   // Rendered for whichever of them applies
@@ -166,4 +184,5 @@ const commandItems = computed<Item[]>(() => [
   <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename="renameResource" :resource />
   <ResourceDeleteDialog v-if="isDeleteOpen" v-model="isDeleteOpen" :remove="deleteResource" :resource />
   <ResourceShareDialog v-if="isShareOpen" v-model="isShareOpen" :resource />
+  <ResourceVersionHistorySaveDialog v-if="isSaveVersionOpen" v-model="isSaveVersionOpen" />
 </template>

@@ -35,12 +35,6 @@ const contentComponent = computed(
     :key="resource.id"
     :resource-id="resource.id"
   />
-  <Suspense v-else-if="activeBlade === ResourceBladeType.PublishHistory">
-    <ResourcePublishHistory :key="resource.id" :resource />
-    <template #fallback>
-      <StyledSkeleton />
-    </template>
-  </Suspense>
   <Suspense v-else-if="contentComponent">
     <component :is="contentComponent" :key="`${resource.id}${ID_SEPARATOR}${activeBlade}`" />
     <template #fallback>

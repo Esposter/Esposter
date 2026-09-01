@@ -36,11 +36,12 @@ export const readSnapshotHistory = async (
     // Written percent-encoded because metadata travels as http headers and a label is whatever the owner
     // Typed. A snapshot written before either field existed simply has neither, which reads as an unlabelled
     // Row rather than as a parse failure
-    const { label = "", reason } = blob.metadata ?? {};
+    const { label = "", reason, summary = "" } = blob.metadata ?? {};
     entries.push({
       channel,
       label: getDecodedUriComponent(label, label),
       reason: reason as SnapshotReason | undefined,
+      summary: getDecodedUriComponent(summary, summary),
       takenAt: blob.properties.lastModified,
       version,
     });

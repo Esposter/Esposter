@@ -6,5 +6,4 @@ export enum ResourceBladeType {
   Overview = "overview",
   Editor = "editor",
   Activity = "activity",
-  PublishHistory = "publish-history",
 }

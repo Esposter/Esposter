@@ -9,6 +9,7 @@ import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { getSnapshotContentBlobName } from "@@/server/services/resource/snapshot/getSnapshotContentBlobName";
 import { getSnapshotMetadata } from "@@/server/services/resource/snapshot/getSnapshotMetadata";
+import { getSnapshotSummary } from "@@/server/services/resource/snapshot/getSnapshotSummary";
 import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
 import { checkIsNotFound, getContentBlobName } from "@esposter/db";
 import { AzureContainer, resources } from "@esposter/db-schema";
@@ -67,7 +68,12 @@ export const takeResourceRevision = async (
 
   const { revisionVersion } = updatedResource;
   const blobName = getSnapshotContentBlobName(id, SnapshotChannel.Revisions, revisionVersion);
-  await useUpload(AzureContainer.ResourceAssets, blobName, serializedContent, getSnapshotMetadata(reason, label));
+  await useUpload(
+    AzureContainer.ResourceAssets,
+    blobName,
+    serializedContent,
+    getSnapshotMetadata({ label, reason, summary: getSnapshotSummary(resource.type, serializedContent) }),
+  );
   // A revision is stored bytes the owner keeps, charged like the working copy it was taken from. On the
   // Owner rather than the caller: a deploy or a restore writes on their behalf. See /docs/platform/storage-quotas
   await chargeAndEmitStorageLedgerEntry(
