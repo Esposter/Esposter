@@ -3,6 +3,7 @@ import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { benchColumns } from "@/composables/resource/sheet/commands/constants.bench";
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
+import { describe } from "vitest";
 
 // The per-iteration fixture for every command bench: `bench()` runs its callback in a tight loop, and every
 // Command mutates the data source it is handed, so each iteration needs one nothing else can see.
@@ -24,3 +25,5 @@ export const createBenchDataSource = (rows: Row[]) =>
     [...benchColumns],
     rows.map((row) => createRow({ ...row.data })),
   );
+
+describe.todo("createBenchDataSource");
