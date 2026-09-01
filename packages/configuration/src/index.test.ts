@@ -4,15 +4,9 @@ import { describe, expect, test } from "vitest";
 
 describe("@esposter/configuration", () => {
   const distFile = resolve(import.meta.dirname, "../dist/index.js");
-  const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
 
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 3.91 KB (4003 bytes)"`);
-  });
-
-  test("types size", () => {
-    expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 2.59 KB (2654 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 3.94 KB (4032 bytes)"`);
   });
 });

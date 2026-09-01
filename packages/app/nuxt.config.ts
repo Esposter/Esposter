@@ -21,6 +21,7 @@ import { routeRules } from "./configuration/routeRules";
 import { runtimeConfig } from "./configuration/runtimeConfig";
 import { security } from "./configuration/security";
 import { site } from "./configuration/site";
+import { typescript } from "./configuration/typescript";
 import { vite } from "./configuration/vite";
 import { vuetify } from "./configuration/vuetify";
 
@@ -45,6 +46,7 @@ export default defineNuxtConfig({
   runtimeConfig,
   security,
   site,
+  typescript,
   vite,
   vuetify,
 });

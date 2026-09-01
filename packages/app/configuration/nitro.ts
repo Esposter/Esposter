@@ -7,6 +7,7 @@ export const nitro: NitroConfig = {
   typescript: {
     tsConfig: {
       compilerOptions: {
+        customConditions: ["source"],
         verbatimModuleSyntax: true,
       },
     },

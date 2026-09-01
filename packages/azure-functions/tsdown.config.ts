@@ -9,8 +9,6 @@ const { dependencies } = readPackageManifest();
 // Nothing, so every dependency is vendored rather than externalized. The list is derived from the manifest so
 // A newly added dependency is vendored without anyone remembering to add it here, and `onlyImport` fails the
 // Build if a chunk reaches for anything the host does not itself provide.
-//
-// No declarations: nothing consumes this package as a library, so generating them would only cost build time.
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode(), {
   deps: {
     alwaysBundle: getPackagePatterns(
@@ -19,8 +17,7 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode()
     neverBundle: getPackagePatterns(HOST_PROVIDED_PACKAGES),
     onlyImport: getPackagePatterns(HOST_PROVIDED_PACKAGES),
   },
-  dts: false,
-  // No generated exports map either, and this is the one package where that matters: the Functions host loads the
+  // No generated exports map, and this is the one package where that matters: the Functions host loads the
   // App by reading "main" from this manifest, and tsdown's exports generation rewrites the entry fields on every
   // Build — which is how "main" silently disappeared here once, registering zero functions on a host that still
   // Reported Running. Nothing resolves this package as a dependency, so an exports map buys it nothing, and

@@ -28,7 +28,6 @@
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
   "type": "module",
-  "types": "dist/index.d.ts",
   "imports": {
     "#src/*": "./src/*.ts"
   },

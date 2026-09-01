@@ -49,7 +49,6 @@ export const getTsdownConfiguration = (): UserConfig => {
         ...Object.keys(peerDependenciesMeta ?? {}),
       ]),
     },
-    dts: { tsconfig: BUILD_TSCONFIG },
     // Generated rather than hand-written, so a new entrypoint cannot ship without the manifest reaching it.
     //
     // `devExports` gives every generated entry a second arm under `SOURCE_CONDITION` pointing at `src`, so a
@@ -71,12 +70,22 @@ export const getTsdownConfiguration = (): UserConfig => {
     tsconfig: BUILD_TSCONFIG,
   } satisfies UserConfig;
   return isPrivate
-    ? commonConfiguration
+    ? // No declarations. A private package's `dist` is only ever reached through the `default` arm, by something
+      // That runs it rather than types against it — a host loading a deploy artifact, Node loading the
+      // Infrastructure program. Everything that types against one resolves `SOURCE_CONDITION` and reads the
+      // Package's TypeScript, so the emitted `.d.ts` had no reader at all, and the emit is not free: a package
+      // Whose types cannot satisfy `isolatedDeclarations` falls back to a full TypeScript program, and for the
+      // Drizzle schema that was four minutes and a 6.8 MB file nothing opened. Deriving this from `private`
+      // Rather than opting in per package also means it cannot be forgotten, and it leaves one invariant behind
+      // Worth stating: declarations are now only ever emitted where `isolatedDeclarations` holds, so no build
+      // Here takes the slow path any more.
+      mergeConfig(commonConfiguration, { dts: false })
     : mergeConfig(commonConfiguration, {
         // Declarations are consumed through whatever resolution mode the consumer picked, so they are checked
         // Against all of them. `esm-only` rather than `node16`: every package here is `"type": "module"` with
         // No CJS output, and the stricter profiles fail on a dual-format contract we do not offer.
         attw: { level: "error", profile: "esm-only" },
+        dts: { tsconfig: BUILD_TSCONFIG },
         // Publishability is a build-time error rather than a release-time surprise: this fails a build whose
         // Manifest points at a file it does not ship.
         publint: { level: "error" },
