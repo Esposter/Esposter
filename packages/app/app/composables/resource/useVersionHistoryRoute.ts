@@ -8,8 +8,12 @@ import { getRouteParamString } from "@/util/router/getRouteParamString";
 // Place of the blade. See /docs/platform/resource-snapshots
 export const useVersionHistoryRoute = () => {
   const { currentRoute } = useRouter();
-  const isVersionHistoryOpen = computed(() => currentRoute.value.query.versions !== undefined);
   const previewSnapshotVersionId = computed(() => getRouteParamString(currentRoute.value.query.version));
+  // A previewed version is always previewed *from* the panel, so the panel is open whenever one is named —
+  // Otherwise a hand-typed link renders a preview whose Restore has no dialog mounted to open
+  const isVersionHistoryOpen = computed(
+    () => currentRoute.value.query.versions !== undefined || Boolean(previewSnapshotVersionId.value),
+  );
   // Merged rather than replaced: the blade route carries whatever else its own surfaces put there, and a
   // Param set to undefined is the router's own way of dropping one
   const setVersionHistoryQuery = async (query: LocationQueryRaw) => {

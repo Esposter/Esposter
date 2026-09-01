@@ -42,8 +42,13 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
   // The one destructive operation in the feature, and the reason it is safe to try: the restore takes a
   // Revision of the draft it replaces, so its own success notification can offer to put that draft back.
   // Single-use, because a second fire would restore a draft the first fire already replaced
-  const restoreSnapshot = async ({ channel, version }: Pick<SnapshotVersion, "channel" | "version">) => {
-    const resource = resourceStore.resource;
+  // The resource is named rather than read at call time: the Undo below is clickable from the bell long after
+  // The panel closed and the owner moved on, and a restore that read whichever resource is open now would
+  // Overwrite the wrong draft
+  const restoreSnapshot = async (
+    { channel, version }: Pick<SnapshotVersion, "channel" | "version">,
+    resource = resourceStore.resource,
+  ) => {
     if (!resource) return;
 
     await executeRestoreMutation(
@@ -59,7 +64,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
               : {
                   action: {
                     handler: () =>
-                      restoreSnapshot({ channel: SnapshotChannel.Revisions, version: undoRevisionVersion }),
+                      restoreSnapshot({ channel: SnapshotChannel.Revisions, version: undoRevisionVersion }, resource),
                     isSingleUse: true,
                     title: "Undo",
                   },
@@ -67,9 +72,11 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
             severity: NotificationSeverity.Success,
             title: `Restored "${resource.name}" from ${SnapshotChannelDefinitionMap[channel].title} v${version} into a draft`,
           });
-          // The restore landed as an ordinary content save, so the blade the owner is looking at is holding the
-          // Draft it read before — and its own next save would be rejected as stale. Reloading is what makes the
-          // Restore visible where it happened
+          // The restore landed as an ordinary content save, so a blade open on this resource is holding the
+          // Draft it read before — and its own next save would be rejected as stale. Reloading is what makes
+          // The restore visible where it happened, and it is owed only to the resource still on screen
+          if (resourceStore.resource?.id !== resource.id) return;
+
           await reloadResourceContent();
           await readSnapshotHistory();
         },
