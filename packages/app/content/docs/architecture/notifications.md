@@ -55,7 +55,7 @@ Feedback about the tab's own action — a mutation error, a save conflict, an ex
 
 A type whose channels include the bell writes one `notifications` row per recipient, in one statement. The row is the render shape the panel already uses, and its `severity` comes from `NotificationSeverityMap` rather than from a field every publisher would restate identically.
 
-Rows are trimmed to `NOTIFICATION_RETENTION_MS` on the write path, where the recipients are already known — nothing else deletes them, so an untrimmed bell is a table that only grows. The unread badge is a property of what the panel read, so no count rides on the push payload and no service worker writes one.
+Rows are trimmed to `NOTIFICATION_RETENTION_MS` on the write path, where the recipients are already known — nothing else trims them, and the only other delete is the cascade that takes a user's rows with the user, so an untrimmed bell is a table that only grows. The unread badge is a property of what the panel read, so no count rides on the push payload and no service worker writes one.
 
 ## Delivery
 

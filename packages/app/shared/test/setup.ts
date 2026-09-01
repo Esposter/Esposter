@@ -135,6 +135,7 @@ if (!checkIsServer() && (window as { __NUXT_VITEST_ENVIRONMENT__?: true }).__NUX
 
 afterEach(() => {
   globalThis.localStorage.clear();
+  globalThis.sessionStorage.clear();
 });
 
 afterAll(() => {
