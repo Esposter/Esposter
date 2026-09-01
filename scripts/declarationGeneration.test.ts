@@ -30,15 +30,18 @@ describe("declaration generation", () => {
   const readEmitsDeclarations = (packageDirectory: string): boolean =>
     readJsonFile(resolve(packageDirectory, "package.json")).private !== true;
   // `extends` resolves relative to the file that declares it and may be a list, later entries winning, so the chain
-  // Is walked to its root and merged back down — the same order TypeScript itself applies.
-  const readIsolatedDeclarations = (tsconfigPath: string): boolean => {
+  // Is walked to its root and merged back down — the same order TypeScript itself applies. The fold carries
+  // `undefined` rather than `false` so the two are distinguishable: a later entry that turns the flag off wins over
+  // An earlier one that turned it on, where a boolean fold would read an explicit `false` as "said nothing" and
+  // Report a package on the slow path as if it were on the fast one.
+  const readIsolatedDeclarations = (tsconfigPath: string): boolean | undefined => {
     const tsconfig = readJsonFile(tsconfigPath);
     const extended = tsconfig.extends;
     const extendedPaths = Array.isArray(extended) ? extended : typeof extended === "string" ? [extended] : [];
-    const inherited = extendedPaths.reduce(
-      (isolatedDeclarations, extendedPath) =>
-        readIsolatedDeclarations(resolve(dirname(tsconfigPath), String(extendedPath))) || isolatedDeclarations,
-      false,
+    const inherited = extendedPaths.reduce<boolean | undefined>(
+      (isolatedDeclarationsValue, extendedPath) =>
+        readIsolatedDeclarations(resolve(dirname(tsconfigPath), String(extendedPath))) ?? isolatedDeclarationsValue,
+      undefined,
     );
     const { isolatedDeclarations } = (tsconfig.compilerOptions ?? {}) as { isolatedDeclarations?: boolean };
     return isolatedDeclarations ?? inherited;

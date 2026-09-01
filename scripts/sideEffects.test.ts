@@ -10,6 +10,12 @@ import { describe, expect, test } from "vitest";
  */
 // eslint-disable-next-line no-restricted-syntax -- a package manifest carries no dates, and this suite has no bundler to make jsonDateParse worth an import
 const readJsonFile = (path: string): Record<string, unknown> => JSON.parse(readFileSync(path, "utf8"));
+// The field is only the three shapes a bundler acts on. Anything else — `null`, a bare path string, an array
+// Holding something other than globs — is read by every bundler as no declaration at all, so a package carrying
+// One has not answered the question however deliberate the value looks in the manifest.
+const checkIsSideEffectsDeclaration = (sideEffects: unknown): boolean =>
+  typeof sideEffects === "boolean" ||
+  (Array.isArray(sideEffects) && sideEffects.every((entry) => typeof entry === "string"));
 
 describe("side effects", () => {
   const packagesDirectory = resolve(import.meta.dirname, "../packages");
@@ -31,7 +37,9 @@ describe("side effects", () => {
   test("are declared by every package a bundler resolves", () => {
     expect.hasAssertions();
     // Named rather than counted: the package that never answered the question names itself in the failure.
-    const undeclaredPackageNames = PACKAGE_NAMES.filter((packageName) => readSideEffects(packageName) === undefined);
+    const undeclaredPackageNames = PACKAGE_NAMES.filter(
+      (packageName) => !checkIsSideEffectsDeclaration(readSideEffects(packageName)),
+    );
 
     expect(undeclaredPackageNames).toStrictEqual([]);
   });
