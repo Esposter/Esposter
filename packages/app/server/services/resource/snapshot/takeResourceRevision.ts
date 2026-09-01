@@ -43,7 +43,7 @@ export const takeResourceRevision = async (
 ): Promise<number | undefined> => {
   const { id } = resource;
   // A missing content blob is "nothing to snapshot", never an error: a resource created and never saved
-  // Reaches the before-restore and before-deploy triggers exactly like any other
+  // Reaches the before-restore and before-import triggers exactly like any other
   const contentStream = await getResultAsync(() =>
     useDownload(AzureContainer.ResourceAssets, getContentBlobName(id)),
   ).match(
