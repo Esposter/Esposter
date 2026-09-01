@@ -54,9 +54,8 @@ export const CTIX_TS_CONFIGURATION = ".ctirc-ts";
 
 export const CTIX_VUE_CONFIGURATION = ".ctirc-vue";
 // A file that is neither listed by a barrel nor compiled by a build program: a test, a type test or a benchmark.
-// Three places define it and they have to agree — the fingerprint filters the source list by it, the ctix configs
-// Exclude it from the barrel, and `tsconfig.build.base.json` excludes it from the program the barrel is generated
-// Against. The two configs are JSON with no import mechanism, so they repeat the literal and `constants.test.ts` is
-// The only thing holding the copies to this one. Drift is silent both ways: a suffix ctix stops excluding puts a
-// Test file in the published barrel, and one the fingerprint stops excluding regenerates on every test edit.
+// Two configs define it and they have to agree — the ctix configs exclude it from the barrel, and
+// `tsconfig.build.base.json` excludes it from the program the barrel is generated against. Both are JSON with no
+// Import mechanism, so they repeat the literal and `constants.test.ts` is the only thing holding the copies to
+// This one. Drift is silent: a suffix ctix stops excluding puts a test file in the published barrel.
 export const NON_SOURCE_SUFFIXES = [".bench.ts", ".test-d.ts", ".test.ts"] as const;

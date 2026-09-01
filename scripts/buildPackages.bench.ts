@@ -3,8 +3,6 @@ import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { bench, describe } from "vitest";
 
-// The barrel guard's own record, relative to the package it belongs to.
-const FINGERPRINT_FILE = join("node_modules", ".cache", "ctix-source-fingerprint");
 // This bench rebuilds every package from cold, and the only way to do that is to delete the `dist` it is about
 // To rebuild. On a CI runner that `dist` is the `package-builds` artifact every job downloaded, and one of the
 // Files in it is the `@esposter/shared-node` reporter Vitest is writing these results through — so the run
@@ -62,21 +60,20 @@ const packages = IS_CI ? [] : readBuildOrder();
 //
 // `vs base` compares each package against the first one built, so the package holding most of the serial build is
 // The smallest multiplier in the group — the only one worth optimising, and what a regression looks like here.
-describe.skipIf(IS_CI)("build - packages (cold)", () => {
+describe.skipIf(IS_CI)("build - packages", () => {
   for (const { directory, packageName } of packages)
     bench(
       packageName,
       () => {
-        // Both `dist` and the barrel guard's fingerprint survive a build, so without this every iteration after the
-        // First would measure the skip rather than the work — and a report of warm numbers reads exactly like a
-        // Report of a build that got faster. The removal is milliseconds against a build of seconds.
+        // Tsdown cleans `dist` before writing anyway, so this states the starting state rather than creating it —
+        // A package that ever turned `clean` off would otherwise be measured incrementally without the report
+        // Saying so. The removal is milliseconds against a build of seconds.
         rmSync(join(directory, "dist"), { force: true, recursive: true });
-        rmSync(join(directory, FINGERPRINT_FILE), { force: true });
         runPnpm(["--filter", quoteArgument(packageName), "run", "build"]);
       },
-      // A cold build is seconds, so the runner's default ten iterations would put this bench in the tens of
-      // Minutes. Three is what buys an honest `±rme` — one sample renders `±0.00%`, which reads as certainty the
-      // Measurement does not have — and no warmup, because a warmup run here is just another full cold build.
+      // A build is seconds, so the runner's default ten iterations would put this bench in the tens of minutes.
+      // Three is what buys an honest `±rme` — one sample renders `±0.00%`, which reads as certainty the
+      // Measurement does not have — and no warmup, because a warmup run here is just another full build.
       { iterations: 3, warmupIterations: 0 },
     );
 });

@@ -9,28 +9,28 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-01T01:36:44.551Z
-- Commit: 89cd43944
+- Date: 2026-09-01T11:44:54.516Z
+- Commit: e26cea09d
 - Node: v26.8.1
-- OS: win32 10.0.26200 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 38.8 GiB
+- OS: win32 10.0.19045 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 31.9 GiB
 
-## build - packages (cold)
+## build - packages
 
-| task                      | vs base | mean (ms)  | ±rme    | p99 (ms)   | samples |
-| ------------------------- | ------- | ---------- | ------- | ---------- | ------- |
-| @esposter/configuration   | 1.00×   | 8870.5805  | ±14.50% | 9463.0811  | 3       |
-| @esposter/shared          | 1.14×   | 7804.9517  | ±4.27%  | 7896.2125  | 3       |
-| @esposter/azure           | 1.09×   | 8125.5574  | ±24.41% | 9010.1528  | 3       |
-| @esposter/shared-node     | 5.99×   | 1481.1174  | ±7.88%  | 1517.3188  | 3       |
-| @esposter/xml2js          | 1.11×   | 7982.5049  | ±9.18%  | 8275.8921  | 3       |
-| azure-mock                | 0.95×   | 9380.1041  | ±9.06%  | 9732.0296  | 3       |
-| @esposter/db-schema       | 1.08×   | 8214.3157  | ±14.34% | 8610.9877  | 3       |
-| virrun                    | 0.89×   | 9955.2498  | ±17.11% | 10476.6407 | 3       |
-| parse-tmx                 | 1.26×   | 7042.0276  | ±14.52% | 7508.2541  | 3       |
-| @esposter/db-mock         | 1.03×   | 8600.7084  | ±4.61%  | 8775.5669  | 3       |
-| @esposter/infra           | 0.46×   | 19309.0175 | ±22.20% | 20811.9277 | 3       |
-| vue-phaserjs              | 0.38×   | 23199.1572 | ±6.32%  | 23787.9297 | 3       |
-| @esposter/db              | 1.14×   | 7757.2891  | ±7.62%  | 8007.1317  | 3       |
-| @esposter/azure-functions | 0.55×   | 16249.9267 | ±55.71% | 18953.1443 | 3       |
+| task                      | vs base | mean (ms)  | ±rme   | p99 (ms)   | samples |
+| ------------------------- | ------- | ---------- | ------ | ---------- | ------- |
+| @esposter/configuration   | 1.00×   | 4271.1202  | ±2.99% | 4301.2272  | 3       |
+| @esposter/shared          | 1.13×   | 3779.7409  | ±2.59% | 3802.9957  | 3       |
+| @esposter/azure           | 1.17×   | 3660.0754  | ±4.06% | 3725.9026  | 3       |
+| @esposter/shared-node     | 7.47×   | 571.7602   | ±6.09% | 587.8804   | 3       |
+| @esposter/xml2js          | 1.06×   | 4036.5336  | ±2.59% | 4083.5054  | 3       |
+| azure-mock                | 0.91×   | 4688.1000  | ±4.23% | 4778.0688  | 3       |
+| @esposter/db-schema       | 1.00×   | 4251.8312  | ±4.28% | 4334.0413  | 3       |
+| virrun                    | 0.85×   | 4996.3835  | ±1.61% | 5031.5383  | 3       |
+| parse-tmx                 | 1.11×   | 3837.8003  | ±2.84% | 3874.2231  | 3       |
+| @esposter/db-mock         | 1.10×   | 3878.3742  | ±3.31% | 3915.7928  | 3       |
+| @esposter/infra           | 0.42×   | 10208.9257 | ±1.11% | 10254.0521 | 3       |
+| vue-phaserjs              | 0.31×   | 13864.6837 | ±2.14% | 13994.1621 | 3       |
+| @esposter/db              | 0.93×   | 4598.7411  | ±1.37% | 4627.5396  | 3       |
+| @esposter/azure-functions | 0.61×   | 7008.2108  | ±4.17% | 7121.7295  | 3       |

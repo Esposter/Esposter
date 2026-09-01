@@ -44,9 +44,8 @@ jobs:
       #
       # Exact key only, and it stays that way. This glob also catches the one hand-written directory barrel
       # Under a package's `src`, which the key covers as the tracked file it is — so a hit proves the restored
-      # Copy is the checked-out copy. Restoring this entry by prefix would extract another commit's version of
-      # That file over the checkout and build it, green, which is why the prefix restore below is a separate
-      # Entry holding only paths that no commit can author.
+      # Copy is the checked-out copy. A prefix restore would extract another commit's version of that file over
+      # The checkout and build it, green.
       - name: ♻️ Restore package builds
         id: cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -55,49 +54,6 @@ jobs:
             packages/*/dist
             packages/*/src/**/index.ts
           key: package-builds-${{ steps.key.outputs.hash }}
-      # A second entry under the same content hash, holding only what is safe to restore stale, and reached by
-      # Prefix so that a miss on the exact key still finds the previous build's copy.
-      #
-      # It exists because barrel generation is the expensive half of a cold build. Bundling a package is quick;
-      # Generating its barrel is a TypeScript program, and the same tree builds an order of magnitude faster
-      # Once every fingerprint is current. `generateExports` already skips generation per package on that
-      # Fingerprint, but nothing restored the file here, so the skip only ever fired on a developer's machine
-      # And every miss regenerated all of them, including for the packages the commit never touched.
-      #
-      # Every path here is generated — the root barrel, the component barrel the one Vue package's extra ctix
-      # Pass writes, and the fingerprints — so no commit authors any of them and a stale copy can overwrite
-      # Nothing a checkout wrote. Staleness decides nothing either: the fingerprint hashes the source list,
-      # each file's export bit and the generator, so a restored barrel survives only where all three are
-      # Identical and is regenerated over otherwise. Losing these files costs the cold build we have today.
-      #
-      # Gated on the exact miss, which also gates the save the action registers for it — on a hit this job
-      # Neither restores nor writes the entry, and its cost stays the restore and the upload.
-      - name: ♻️ Restore barrel generation cache
-        if: steps.cache.outputs.cache-hit != 'true'
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: |
-            packages/*/src/index.ts
-            packages/*/src/components/index.ts
-            packages/*/node_modules/.cache/ctix-source-fingerprint
-          key: barrel-generation-${{ steps.key.outputs.hash }}
-          restore-keys: barrel-generation-
-      # A prefix hit can carry a package that has since been deleted, which lands as a directory holding
-      # Nothing but generated output. Nothing builds it — `pnpm -r` reads the workspace, which no longer names
-      # It — but the artifact glob below would ship it to every consuming job and the save above would carry it
-      # Forward for good. A package is the manifest that declares it, so its absence is the whole test.
-      - name: 🧹 Prune deleted packages
-        if: steps.cache.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          for barrel in packages/*/src/index.ts; do
-            [ -e "$barrel" ] || continue
-            package="${barrel%/src/index.ts}"
-            if [ ! -f "$package/package.json" ]; then
-              echo "Pruning restored output for deleted package: $package"
-              rm -rf "$package"
-            fi
-          done
       # Both the install and the build hang off the cache miss, and in that order: the key is computed from
       # tracked files with `git ls-tree` and the artifact is uploaded straight from the restored paths, so on a
       # hit this job needs no `node_modules` at all. Every job in both callers `needs` this one, so an install
