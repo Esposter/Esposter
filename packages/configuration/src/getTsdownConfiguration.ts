@@ -95,9 +95,12 @@ export const getTsdownConfiguration = ({
       // Package's TypeScript, so the emitted `.d.ts` had no reader at all, and the emit is not free: a package
       // Whose types cannot satisfy `isolatedDeclarations` falls back to a full TypeScript program, and for the
       // Drizzle schema that was four minutes and a 6.8 MB file nothing opened. Deriving this from `private`
-      // Rather than opting in per package also means it cannot be forgotten, and it leaves one invariant behind
-      // Worth stating: declarations are now only ever emitted where `isolatedDeclarations` holds, so no build
-      // Here takes the slow path any more.
+      // Rather than opting in per package also means it cannot be forgotten. What it leaves behind is one full
+      // Program rather than none: every published package extends `tsconfig.library.json` and emits per file
+      // Under `isolatedDeclarations`, except `vue-phaserjs`, whose `.vue` declarations are vue-tsc's to emit
+      // And have no per-file path to take at all — see `getTsdownConfigurationVue`, which loads the whole
+      // Program on purpose. So the slow path is now exactly the one package that cannot avoid it, and a new
+      // Published package taking it would have to have left the library preset to do so.
       mergeConfig(commonConfiguration, { dts: false })
     : mergeConfig(commonConfiguration, {
         // Declarations are consumed through whatever resolution mode the consumer picked, so they are checked
