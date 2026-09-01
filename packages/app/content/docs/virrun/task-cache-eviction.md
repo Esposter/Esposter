@@ -45,4 +45,4 @@ Paths relative to `packages/virrun/src/`.
 
 - Failure semantics inherit the cache's rules: the prune is best-effort and never aborts the run; a torn removal is re-swept next record.
 - A size budget (LRU to a byte cap) was considered and dropped: it needs a full-directory stat walk on the hot path to know the total, while the age cutoff is a single mtime comparison per entry during an already-off-path sweep. Add a budget only if a measured workload keeps 14 days of entries too large.
-- dayjs is test-only in this package (kept out of the ~1 MB runtime bundle), so the days→ms cutoff is derived from named unit constants rather than `dayjs.duration`.
+- The days→ms cutoff is a `Temporal.Duration`, like every other duration in the repo — never raw millisecond arithmetic.

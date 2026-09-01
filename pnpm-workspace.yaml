@@ -119,7 +119,6 @@ catalog:
   crossws: ^0.4.12
   ctix: ^2.8.2
   data-urls: ^7.0.0
-  dayjs: ^1.11.23
   debug: ^4.4.3
   dedent: ^1.7.2
   defu: ^6.1.7

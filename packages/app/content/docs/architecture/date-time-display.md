@@ -5,9 +5,9 @@ description: Every date a reader sees is a NuxtTime — formatted in their local
 
 # Date and time display
 
-A date rendered by a component is formatted twice: once on the server, once again when the client hydrates. Those two runs do not agree. The server formats in the container's locale and timezone (UTC on Azure), the browser in the reader's — so `dayjs(...).format(...)`, `toLocaleDateString()` and `useTimeAgo()` in a template produce different text on each side. Vue reports that as `Hydration completed but contains mismatches`, silently re-renders the subtree, and the reader is left looking at the server's clock rather than their own.
+A date rendered by a component is formatted twice: once on the server, once again when the client hydrates. Those two runs do not agree. The server formats in the container's locale and timezone (UTC on Azure), the browser in the reader's — so `formatDate(...)`, `toLocaleDateString()` and `useTimeAgo()` in a template produce different text on each side. Vue reports that as `Hydration completed but contains mismatches`, silently re-renders the subtree, and the reader is left looking at the server's clock rather than their own.
 
-**Anything a reader sees is a `<NuxtTime>`.** Formatting a date any other way inside a `.vue` file is a `vue/no-restricted-syntax` error. The one exception is the client-rendered message list, [below](#where-dayjs-still-belongs).
+**Anything a reader sees is a `<NuxtTime>`.** Formatting a date any other way inside a `.vue` file is a `vue/no-restricted-syntax` error. The one exception is the client-rendered message list, [below](#where-a-format-string-still-belongs).
 
 ```vue
 <NuxtTime :datetime="post.createdAt" relative />
@@ -39,11 +39,11 @@ A format shared by more than one call site is one constant of attributes, spread
 
 A `<NuxtTime>` is a component, so it cannot live inside a prop string. A subtitle or a sentence that embeds a time is written as slot content with the time in inline flow, never assembled with template literals in script.
 
-## Where dayjs still belongs
+## Where a format string still belongs
 
-dayjs formats **data**, not display: filenames, CSV exports, the value accessors a data table sorts on, and the cell value a date input writes back. It also stays for date _logic_ everywhere — `diff`, `isSame`, `isToday`, parsing, `duration`. The lint rule only covers `.vue` files; services and server code format freely.
+`formatDate` formats **data**, not display: filenames, CSV exports, the value accessors a data table sorts on, and the cell value a date input writes back. It is the repo's own token formatter — the dayjs `format` subset the repo actually writes, over `Temporal` — and `parseDate` is its strict inverse, which is what a sheet's date column round-trips a cell through. The date _logic_ underneath is Temporal directly, through the day-level helpers in `@esposter/shared` (`getStartOfDay`, `checkIsSameDay`, `checkIsToday`); a duration is a `Temporal.Duration`, never a library's. The lint rule only covers `.vue` files; services and server code format freely.
 
-The one display exception is the message list. Its labels (`Yesterday at 14:03`, the day divider, the compact 24-hour gutter clock) branch on the reader's own day boundary, which no single `<NuxtTime>` expresses, and its 24-hour format has to stay identical across three surfaces. That is safe because `/messages/**` is client-rendered — like `/resource-explorer/**`, it is an auth-gated app surface with no SEO value, so there is no server render to disagree with. The labels live in `app/services/dayjs/`, outside any component.
+The one display exception is the message list. Its labels (`Yesterday at 14:03`, the day divider, the compact 24-hour gutter clock) branch on the reader's own day boundary, which no single `<NuxtTime>` expresses, and its 24-hour format has to stay identical across three surfaces. That is safe because `/messages/**` is client-rendered — like `/resource-explorer/**`, it is an auth-gated app surface with no SEO value, so there is no server render to disagree with. The labels live in `app/util/date/`, outside any component.
 
 ## Themes have the same failure mode
 
@@ -55,7 +55,8 @@ The same "server guesses, client knows" split hits the theme: Vuetify resolves `
 | :---------------------------------------------------- | :---------------------------------------------------------------------- |
 | `packages/configuration/eslint/overrides/vueRules.js` | The `vue/no-restricted-syntax` rule, and the `<time>` element ban       |
 | `packages/app/app/services/resource/constants.ts`     | `RESOURCE_DATE_TIME_ATTRIBUTES` and its string counterpart              |
-| `packages/app/app/services/dayjs/`                    | The message-list labels, the one place a display format is hand-written |
+| `packages/app/app/util/date/`                         | The message-list labels, the one place a display format is hand-written |
+| `packages/app/shared/util/date/`                      | `formatDate`/`parseDate` and the token map they share                   |
 | `packages/app/configuration/routeRules.ts`            | The client-rendered app surfaces                                        |
 | `packages/app/app/components/Nuxt/Theme.vue`          | System-theme resolution, the theme half of the same problem             |
 | `packages/app/configuration/vuetify.ts`               | `ssrClientHints.prefersColorScheme`, which carries the scheme into SSR  |

@@ -1,6 +1,5 @@
 import type { Database } from "@esposter/db-schema";
 
-import { dayjs } from "#src/services/dayjs/index";
 import { createUser } from "#src/services/message/createUser.test";
 import { getPushSubscriptionsForUsers } from "#src/services/notification/getPushSubscriptionsForUsers";
 import { createMockDb } from "@esposter/db-mock";
@@ -22,7 +21,7 @@ describe(getPushSubscriptionsForUsers, () => {
     db = await createMockDb();
     const createdAt = new Date();
     await db.insert(users).values([userId, otherUserId].map((id) => createUser(id, createdAt, name)));
-    const expiresAt = dayjs(createdAt).add(1, "day").toDate();
+    const expiresAt = new Date(createdAt.getTime() + Temporal.Duration.from({ days: 1 }).total("milliseconds"));
     await db.insert(sessions).values([
       { expiresAt, id: actingSessionId, token: actingSessionId, updatedAt: createdAt, userId },
       { expiresAt, id: otherSessionId, token: otherSessionId, updatedAt: createdAt, userId },

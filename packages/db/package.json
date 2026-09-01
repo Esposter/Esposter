@@ -35,10 +35,7 @@
     "dist"
   ],
   "type": "module",
-  "sideEffects": [
-    "./src/services/dayjs/index.ts",
-    "./dist/index.js"
-  ],
+  "sideEffects": false,
   "types": "dist/index.d.ts",
   "imports": {
     "#src/*": "./src/*.ts"
@@ -68,7 +65,6 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
-    "dayjs": "catalog:",
     "link-preview-js": "catalog:",
     "linkifyjs": "catalog:",
     "mime-types": "catalog:",

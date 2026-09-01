@@ -115,7 +115,6 @@
     "bn.js": "4.12.5",
     "buffer-equal-constant-time": "1.0.1",
     "bundle-name": "4.1.0",
-    "dayjs": "1.11.23",
     "debug": "4.4.3",
     "deepmerge": "4.3.1",
     "default-browser": "5.5.1",

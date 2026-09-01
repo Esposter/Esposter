@@ -4,7 +4,6 @@ import type { BlobDeletionEventGridData, Database } from "@esposter/db-schema";
 import { processBlobDeletionHandler } from "#src/handlers/processBlobDeletionHandler";
 import { getContainerClient } from "#src/services/getContainerClient";
 import { InvocationContext } from "@azure/functions";
-import { dayjs } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer, storageLedger, users } from "@esposter/db-schema";
 import { MockBlockBlobClient, MockContainerDatabase } from "azure-mock";
@@ -163,7 +162,10 @@ describe(processBlobDeletionHandler, () => {
     expect.hasAssertions();
 
     await seedBlob(prefixedBlobName);
-    await processBlobDeletionHandler(createPrefixEvent(prefix, dayjs().add(1, "minute").toDate()), context);
+    await processBlobDeletionHandler(
+      createPrefixEvent(prefix, new Date(Date.now() + Temporal.Duration.from({ minutes: 1 }).total("milliseconds"))),
+      context,
+    );
 
     expect(readContainer()).toStrictEqual([]);
   });

@@ -37,8 +37,8 @@ absent — the parent rows never held one to carry down.
 # schema-first derivation, which interface-first replaces
 grep -rn 'z\.infer<typeof' --include=*.ts packages/app/app packages/app/server packages/app/shared packages/*/src
 # .extend() where a .shape spread is the rule. Deliberately unanchored: a receiver pattern misses a stored
-# `schema.extend(` and any chain whose `.extend(` starts on the next line. It is dominated by `dayjs.extend(plugin)`
-# and Tiptap's `Node.extend({})` — unrelated APIs sharing the method name — so the hits are read, not counted
+# `schema.extend(` and any chain whose `.extend(` starts on the next line. It is dominated by Tiptap's
+# `Node.extend({})` — an unrelated API sharing the method name — so the hits are read, not counted
 grep -rn '\.extend(' --include=*.ts packages/app/app packages/app/server packages/app/shared packages/*/src
 # a discriminated union, each of which must carry a trailing satisfies
 grep -rn -A 40 'z\.discriminatedUnion(' --include=*.ts packages/app/app packages/app/shared packages/*/src
@@ -52,9 +52,9 @@ grep -rn -A 40 'z\.discriminatedUnion(' --include=*.ts packages/app/app packages
   2026-08-30 and mutation-checked by dropping one entry, which it reports by file and export name. The relations
   Half stays with the sweep: `relations.ts` spreads its parts rather than holding them, so there is no identity
   To compare and no crisp invariant — not every table earns a relation.
-- **`.extend()` is not cleanly enforceable, contrary to what this row first claimed.** `dayjs.extend`, Tiptap's
-  `.extend` and Zod's share one method name and no syntactic rule tells them apart — a receiver-name heuristic
-  Would ban the first two by accident. It stays with the sweep, and the recipe above carries the anchor instead.
+- **`.extend()` is not cleanly enforceable, contrary to what this row first claimed.** Tiptap's `.extend` and
+  Zod's share one method name and no syntactic rule tells them apart — a receiver-name heuristic would ban the
+  First by accident. It stays with the sweep, and the recipe above carries the anchor instead.
 - A `z.discriminatedUnion` without a trailing `satisfies` is decidable from the AST, and the skill states the rule
   With no exceptions — which is exactly what a rule needs. Worth a plugin once a second violation appears; the
   Tree currently holds none.

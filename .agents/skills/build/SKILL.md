@@ -98,9 +98,9 @@ A package whose side effects each land in an exported binding — the infrastruc
 `export const x = new Resource(...)` — needs nothing: the export is what keeps it alive.
 
 **Every package answers, and one of three answers.** `false` where nothing runs at import; `true` where the
-entry exists to run; an **array of module paths** where one module runs and the rest are ordinary exports —
-`@esposter/db` registers a dayjs plugin at module scope and names that file rather than surrendering the whole
-package's tree-shaking to a blanket `true`. Name both arms when a package is resolved through both: a consumer
+entry exists to run; an **array of module paths** where one module runs and the rest are ordinary exports — a
+package registering a plugin at module scope names that file rather than surrendering the whole package's
+tree-shaking to a blanket `true`. Name both arms when a package is resolved through both: a consumer
 on `source` reaches the file itself, one on `default` gets a single chunk that carries the registration with
 everything else, and a path matching neither leaves a bundler free to drop the call.
 
@@ -143,7 +143,7 @@ The declaration build seeds its TypeScript program from the **entrypoints**, not
 `deps.onlyImport` applies to **every** package: a bundle may leave external only what its own manifest names. It catches two different failures with one check.
 
 - **A published package importing a _private_ sibling** passes every local check — the workspace has the sibling on disk — and resolves nothing on a fresh `npm install`. If it fires, the fix is to make the import legitimate (publish what it needs, or move the shared code somewhere published), never to widen the list.
-- **A specifier that resolved to nothing.** Rolldown externalizes an unresolvable `#src/...` rather than failing, so the `dist` ships an import Node then resolves through the package's own `imports` map to a `.ts` file it cannot load. That surfaces in a _consumer_, at runtime, naming a source path the consumer never referenced — `Cannot find module .../packages/db-schema/src/services/dayjs.ts imported from .../db-schema/dist/index.js`. The gate turns it into a build error in the package that caused it.
+- **A specifier that resolved to nothing.** Rolldown externalizes an unresolvable `#src/...` rather than failing, so the `dist` ships an import Node then resolves through the package's own `imports` map to a `.ts` file it cannot load. That surfaces in a _consumer_, at runtime, naming a source path the consumer never referenced — `Cannot find module .../packages/db-schema/src/services/missing.ts imported from .../db-schema/dist/index.js`. The gate turns it into a build error in the package that caused it.
 
 `@esposter/configuration` is the one package that widens the list, because everything it externalizes is a `devDependency` and the base derives the allowlist from the runtime fields only.
 
@@ -237,7 +237,7 @@ Two things that follow, and are easy to get wrong:
 
 Every package snapshots its `dist/index.js` size in `src/index.test.ts`, and its `index.d.ts` too unless it skips `dts`. After changing a manifest, a `deps` entry or a config factory, rebuild and run those — a jump means something started being bundled that shouldn't be, and a `-u` that "fixes" a large jump is hiding the bug.
 
-`sideEffects: false` is a claim, not a formality. Declare it only where the package genuinely has no top-level side effects — a package registering a dayjs plugin at module scope has one, and declares nothing.
+`sideEffects: false` is a claim, not a formality. Declare it only where the package genuinely has no top-level side effects — a package registering a library plugin at module scope has one, and names that module instead.
 
 ## tsconfig presets
 
@@ -255,9 +255,9 @@ These are `**/*.json` under a strict `json/json` ESLint language — **no commen
 
 ## Module augmentations do not cross a package boundary
 
-A `declare module "x"` augmentation — a dayjs plugin, a Zod extension, a Vuetify labs type — is resolved **per TypeScript program** against that module's identity. It is not a value, so it cannot be re-exported, and it does not travel inside a bundled `.d.ts`. Neither `import type {} from "dayjs/plugin/duration"` nor a `/// <reference types="…" />` in the source survives the bundle, and externalizing the dependency changes nothing: the consumer's own program still has to contain the plugin's declarations before the augmented member resolves.
+A `declare module "x"` augmentation — a library plugin, a Zod extension, a Vuetify labs type — is resolved **per TypeScript program** against that module's identity. It is not a value, so it cannot be re-exported, and it does not travel inside a bundled `.d.ts`. Neither an `import type {} from "the-plugin"` nor a `/// <reference types="…" />` in the source survives the bundle, and externalizing the dependency changes nothing: the consumer's own program still has to contain the plugin's declarations before the augmented member resolves.
 
-So a package that wraps an augmented library exports the **value** and lets each consumer register the augmentation itself — `packages/db-schema`'s `dayjs` re-export calls `baseDayjs.extend(duration)` so the runtime works everywhere, and every package that types a `.duration(...)` call still imports the plugin in its own graph. Don't chase this with a barrel re-export or a reference directive; both look like they work until a downstream `pnpm typecheck` reports the member missing.
+So a package that wraps an augmented library exports the **value** and registers the augmentation at module scope so the runtime works everywhere, while every package that _types_ an augmented member still imports the plugin in its own graph. Don't chase this with a barrel re-export or a reference directive; both look like they work until a downstream `pnpm typecheck` reports the member missing.
 
 ## Dependency installs & workspace graph
 

@@ -134,4 +134,4 @@ Ours are `<script setup>` only (`vue/component-api-style`, which bans plain `def
 
 ## Dates Are `<NuxtTime>` — `references/dates.md`
 
-Every rendered date is a `<NuxtTime>`; `dayjs(…).format(…)`, `toLocaleDateString()`, `useTimeAgo` and `useDateFormat` inside a `.vue` are `vue/no-restricted-syntax` errors, and a hand-written `<time>` is a `vue/no-restricted-html-elements` one. Standard: `packages/app/content/docs/architecture/date-time-display.md`. Read the page for what the lint rule can't say — options rather than format strings, what bare `title` really renders, and the client-rendered message list as the one exception.
+Every rendered date is a `<NuxtTime>`; `formatDate(…)`, `toLocaleDateString()`, `useTimeAgo` and `useDateFormat` inside a `.vue` are `vue/no-restricted-syntax` errors, and a hand-written `<time>` is a `vue/no-restricted-html-elements` one. Standard: `packages/app/content/docs/architecture/date-time-display.md`. Read the page for what the lint rule can't say — options rather than format strings, what bare `title` really renders, and the client-rendered message list as the one exception.

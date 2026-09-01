@@ -95,10 +95,11 @@ It therefore declares `sideEffects: true`, and its `src/index.test.ts` counts th
 the files in `src/functions`. The infrastructure program needs neither: its resources are `export const`
 bindings, so the exports keep them alive.
 
-A package with a single such module names that module instead of surrendering the whole package: `@esposter/db`
-registers a dayjs plugin at module scope, so its field is the array naming that file — under both arms, because
-a consumer on the source condition reaches the file while one on `default` gets a single chunk carrying the
-registration with everything else. Nothing derives any of this, so `scripts/sideEffects.test.ts` enforces the
+A package with a single such module names that module instead of surrendering the whole package: its field is
+the array naming that file — under both arms, because a consumer on the source condition reaches the file while
+one on `default` gets a single chunk carrying the registration with everything else. Nothing here holds one
+today; the shape stays documented because the next module-scope registration is what it is for. Nothing derives
+any of this, so `scripts/sideEffects.test.ts` enforces the
 part that is derivable: every package with a tsdown config declares the field, and only the run-on-import one
 claims `true` wholesale.
 
@@ -125,7 +126,7 @@ A bare package name never matches a subpath import, and plenty of packages are o
 
 For a **published** package it is an installability promise. A package that imports a private sibling resolves nothing on a fresh `npm install`, and nothing in the repo notices — the workspace has the sibling on disk, so every local build, test and typecheck passes. That is an install-time failure for a stranger and a build-time failure for us, and the gate is what moves it.
 
-For **any** package it is the only thing that notices a specifier which resolved to nothing. Rolldown treats an unresolvable `#src/...` as external rather than failing, so the built `dist` ships an import that Node later resolves through the package's own `imports` map to a `.ts` file it cannot load. The error then lands in a consumer at runtime, naming a source path that consumer never referenced — `Cannot find module .../packages/db-schema/src/services/dayjs.ts imported from .../db-schema/dist/index.js` — a phase and a package away from the typo that caused it.
+For **any** package it is the only thing that notices a specifier which resolved to nothing. Rolldown treats an unresolvable `#src/...` as external rather than failing, so the built `dist` ships an import that Node later resolves through the package's own `imports` map to a `.ts` file it cannot load. The error then lands in a consumer at runtime, naming a source path that consumer never referenced — `Cannot find module .../packages/db-schema/src/services/missing.ts imported from .../db-schema/dist/index.js` — a phase and a package away from the typo that caused it.
 
 `@esposter/configuration` is the single package that widens the allowlist, adding its `devDependencies`: it externalizes everything, and the base derives the list from the runtime dependency fields alone.
 

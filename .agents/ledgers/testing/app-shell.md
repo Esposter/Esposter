@@ -13,7 +13,7 @@ composable and store layers no single feature claims.
 | `services/{azure,cache}`                                         | —     |                                                           |
 | `services/file`                                                  | —     |                                                           |
 | `services/{zod,ajv,jsonSchema}`                                  | —     |                                                           |
-| `services/{dayjs,compiler}`                                      | —     | `app/services/compiler` is not `shared/services/compiler` |
+| `util/date`, `services/compiler`                                 | —     | `app/services/compiler` is not `shared/services/compiler` |
 | `services/shared` and its twins                                  | —     |                                                           |
 | `services/{styled,entity,vuetify,codemirror}`                    | —     |                                                           |
 | `services/docs`, `composables/docs`, `components/{Docs,content}` | —     |                                                           |
