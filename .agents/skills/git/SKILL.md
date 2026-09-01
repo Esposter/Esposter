@@ -1,6 +1,6 @@
 ---
 name: git
-description: Esposter git workflow conventions — commit message format, safety rules, and branch hygiene. Apply when running git operations or advising on source control workflows.
+description: Esposter git workflow conventions — commit message format, safety rules, branch hygiene, and syncing `main` back into `develop` with the `pnpm-lock.yaml` conflict that merge always brings. Apply when running git operations, merging a branch, resolving a lockfile conflict, or advising on source control workflows.
 ---
 
 # Git Conventions
@@ -54,15 +54,24 @@ Batch commits and push **once** per coherent chunk of work. Several pushes in qu
 - `develop` is the working branch; `main` takes releases from it.
 - Cut a branch only when the work genuinely cannot land incrementally (a spike, or an edit to `main` itself — use `git worktree` for that rather than checking it out over work in progress), and delete it after merging.
 
-## Verify On `develop`
+## Syncing `main` Into `develop`
 
-The local check suite runs **once per coherent chunk, on `develop`, before pushing it** — not per commit:
+`main` takes commits `develop` never saw — a Renovate PR merged straight into it, a hotfix — so `develop` goes
+behind and the open `develop` → `main` PR starts showing a diff nobody wrote. Fetch and merge `main` in; never
+rebase `develop`, whose commits are already pushed and already reviewed.
 
-1. **Commit** as the work lands; commits are free and nothing is triggered by them.
-2. **Verify** the finished chunk with the check suite (see the package-scripts skill).
-3. **Push** the chunk, which starts the review. Fix forward on `develop`.
+```bash
+git fetch origin
+git merge origin/main --no-edit
+```
 
-Rationale: a per-commit check run is re-invalidated by the next commit in the same chunk, and the pushed state is the only state a reviewer ever sees.
+The conflict is `pnpm-lock.yaml`, every time, because both sides regenerated it (below). `pnpm-workspace.yaml`
+is authored and usually auto-merges — read the merged catalog anyway rather than trusting that, since a clean
+auto-merge proves only that the two sides touched different lines, never that the surviving version is the
+higher one.
+
+The merge commit itself is not a review window: it carries whatever `main` already held, and the review that
+matters already ran on the PR those commits came from.
 
 ### `pnpm-lock.yaml` Conflicts — Always Regenerate, Never Hand-Resolve
 
@@ -77,3 +86,13 @@ git add pnpm-lock.yaml
 `pnpm i` reporting `Lockfile is up to date` is a valid outcome, not a skipped step — it means the side you kept already resolved every merged specifier. Verify with the specifiers themselves (`grep` the bumped package in the lock) rather than trusting the message.
 
 Escalate to `pnpm refresh:lockfile` only when `pnpm i` cannot reconcile the tree — it deletes the lock and every `node_modules`, kills running node processes, and reinstalls from scratch (minutes, and it takes down any dev server or vitest watcher).
+
+## Verify On `develop`
+
+The local check suite runs **once per coherent chunk, on `develop`, before pushing it** — not per commit:
+
+1. **Commit** as the work lands; commits are free and nothing is triggered by them.
+2. **Verify** the finished chunk with the check suite (see the package-scripts skill).
+3. **Push** the chunk, which starts the review. Fix forward on `develop`.
+
+Rationale: a per-commit check run is re-invalidated by the next commit in the same chunk, and the pushed state is the only state a reviewer ever sees.
