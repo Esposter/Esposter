@@ -91,8 +91,8 @@ Do **not** add App Insights, a Log Analytics workspace, diagnostic settings, sma
 
 ## Docs
 
-- Durable infrastructure docs live in `packages/infra/docs/`, one directory per provider (`azure/`, `github/`) with the cross-cutting pages at its root. The convention is the layout, not a list: `ls packages/infra/docs` names the current set, and each page's title says what it holds.
-- The forward roadmap is `packages/app/content/docs/infra/roadmap.md` (every item links a proposal in `packages/app/content/docs/proposals/infra/`); the area index + shipped log is `packages/app/content/docs/infra/index.md`; phase-2 cost/security findings are in `packages/app/content/docs/infra/optimization-review.md`.
+- Durable infrastructure docs live in `packages/infra/docs/`, one directory per provider that has any (`azure/`) with the cross-cutting pages at its root. The convention is the layout, not a list: `ls packages/infra/docs` names the current set, and each page's title says what it holds.
+- The forward roadmap is `packages/app/content/docs/infra/roadmap.md` (every item links a proposal in `packages/app/content/docs/proposals/infra/`); the area index + shipped log is `packages/app/content/docs/infra/index.md`; phase-2 cost/security findings are in `packages/app/content/docs/infra/cost-and-security-posture.md`.
 - Move completed one-off migration notes out of the package once their durable content is represented in `docs/`.
 
 ## Deep Dives
