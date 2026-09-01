@@ -213,16 +213,25 @@ Node's own ESM loader cannot read that second shape, twice over: it resolves no 
 
 **The condition is `source`**, the ecosystem's own spelling — Parcel and Metro resolve it, and it is what a workspace-source arm is called wherever one exists. Don't namespace it: a repo-prefixed name only protects against a stranger's resolver matching the arm, and no published package has one, because tsdown writes a `dist`-only map into `publishConfig.exports`.
 
-Two places opt in, and they are the whole mechanism:
+Four places opt in, and they are the whole mechanism:
 
-| Where                    | How                                    |
-| :----------------------- | :------------------------------------- |
-| `tsconfig.base.json`     | `customConditions: [SOURCE_CONDITION]` |
-| `getVitestConfiguration` | `resolve.conditions`                   |
+| Where                                      | How                                           | Reaches                |
+| :----------------------------------------- | :-------------------------------------------- | :--------------------- |
+| `tsconfig.base.json`                       | `customConditions: [SOURCE_CONDITION]`        | every package          |
+| `getVitestConfiguration`                   | `resolve.conditions`                          | every test run         |
+| `packages/app/configuration/typescript.ts` | `customConditions` on all four Nuxt tsconfigs | the app's types        |
+| `packages/app/configuration/nitro.ts`      | `customConditions` on the server tsconfig     | the app's server types |
 
 `resolve.conditions` **replaces** Vite's defaults rather than adding to them, which is why `getVitestConfiguration` spreads `defaultServerConditions` back in — dropping `module` and `node` silently re-resolves half the dependency tree. The tsconfig spells the condition out as a literal because JSON cannot import `SOURCE_CONDITION`; renaming the constant means editing that file too, and nothing fails loudly if you forget — every package silently falls back to `dist`.
 
-The app deliberately stays out: neither Nuxt's Vite build nor Nitro carries the condition, so the app resolves every sibling's `dist` and the server bundle keeps externalizing them instead of pulling every package's TypeScript into one graph. That is why `watch:packages` still earns its keep — for the **app**, an edit to a package is invisible until that package is rebuilt.
+**The app is split on purpose, and the split is the thing to know.** Its four Nuxt tsconfigs and Nitro's carry the condition, so everything that reads types — `typecheck`, the editor, go-to-definition — resolves a sibling's source. Its **bundlers do not**: neither Nuxt's Vite build nor Nitro carries it, so `build` resolves every sibling's `dist` and the server bundle keeps externalizing them instead of pulling every package's TypeScript into one graph.
+
+Two consequences, and both get rediscovered as bugs if this is not read first:
+
+- **`watch:packages` still earns its keep.** For the app at runtime, an edit to a package is invisible until that package is rebuilt, and a stale `dist` mimics a failed fix.
+- **Typecheck and build can disagree.** `typecheck` reads a sibling's source while `build` reads its last-built `dist`, so an unbuilt package edit is visible to one and not the other. That is the cost of the arrangement, not a defect in it.
+
+**Finishing the split — putting the condition on Vite and Nitro too — has been tried and is not wanted.** It is the obvious-looking fix for both consequences above and it is a bad trade: every workspace package's TypeScript joins one Rollup graph, the server bundle stops externalizing its siblings, and `vue-phaserjs` breaks outright, because its stores rely on `defineStore`/`ref` injected by its own build's `unplugin-auto-import` and the app's `configuration/imports.ts` explicitly excludes that package from Nuxt's auto-import transform (a rolldown bug). Reach for `watch:packages`, not for `resolve.conditions`.
 
 `publint` and `attw` still gate the published shape, because both read `publishConfig.exports`, where tsdown writes the `dist`-only map.
 
