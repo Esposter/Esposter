@@ -18,7 +18,7 @@ describe("vue-phaserjs", () => {
 
   test.skipIf(process.platform !== "win32")("types size (Windows)", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 522.62 KB (535163 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 522.57 KB (535109 bytes)"`);
   });
 
   test.skipIf(process.platform === "win32")("types size (POSIX)", () => {
