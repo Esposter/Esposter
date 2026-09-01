@@ -1,0 +1,112 @@
+{
+  "files": [
+    {
+      "filepath": "scripts/buildPackages.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 8870.580466666668,
+              "name": "@esposter/configuration",
+              "p99": 9463.081100000003,
+              "rme": 14.503403663584052,
+              "sampleCount": 3
+            },
+            {
+              "mean": 7804.951733333332,
+              "name": "@esposter/shared",
+              "p99": 7896.212500000009,
+              "rme": 4.2723200575559135,
+              "sampleCount": 3
+            },
+            {
+              "mean": 8125.557400000001,
+              "name": "@esposter/azure",
+              "p99": 9010.15280000001,
+              "rme": 24.406556874906055,
+              "sampleCount": 3
+            },
+            {
+              "mean": 1481.1174333333427,
+              "name": "@esposter/shared-node",
+              "p99": 1517.3188000000082,
+              "rme": 7.88317521866553,
+              "sampleCount": 3
+            },
+            {
+              "mean": 7982.5049,
+              "name": "@esposter/xml2js",
+              "p99": 8275.892099999997,
+              "rme": 9.182921539528877,
+              "sampleCount": 3
+            },
+            {
+              "mean": 9380.104066666672,
+              "name": "azure-mock",
+              "p99": 9732.02959999998,
+              "rme": 9.063872734363256,
+              "sampleCount": 3
+            },
+            {
+              "mean": 8214.315733333331,
+              "name": "@esposter/db-schema",
+              "p99": 8610.987699999998,
+              "rme": 14.339784160611197,
+              "sampleCount": 3
+            },
+            {
+              "mean": 9955.249833333364,
+              "name": "virrun",
+              "p99": 10476.640700000047,
+              "rme": 17.108039887682565,
+              "sampleCount": 3
+            },
+            {
+              "mean": 7042.027633333307,
+              "name": "parse-tmx",
+              "p99": 7508.254099999962,
+              "rme": 14.515126593475856,
+              "sampleCount": 3
+            },
+            {
+              "mean": 8600.708366666688,
+              "name": "@esposter/db-mock",
+              "p99": 8775.566900000034,
+              "rme": 4.608993819697956,
+              "sampleCount": 3
+            },
+            {
+              "mean": 19309.01746666666,
+              "name": "@esposter/infra",
+              "p99": 20811.9277,
+              "rme": 22.20239306813329,
+              "sampleCount": 3
+            },
+            {
+              "mean": 23199.157200000016,
+              "name": "vue-phaserjs",
+              "p99": 23787.92969999998,
+              "rme": 6.316559128467121,
+              "sampleCount": 3
+            },
+            {
+              "mean": 7757.289066666698,
+              "name": "@esposter/db",
+              "p99": 8007.131700000027,
+              "rme": 7.621268285892227,
+              "sampleCount": 3
+            },
+            {
+              "mean": 16249.926666666715,
+              "name": "@esposter/azure-functions",
+              "p99": 18953.144300000044,
+              "rme": 55.71313763114033,
+              "sampleCount": 3
+            }
+          ],
+          "fullName": "build - packages (cold)"
+        }
+      ]
+    }
+  ]
+}
