@@ -20,7 +20,7 @@ flowchart LR
   SUBMIT["createSurveyResponse<br/>updateSurveyResponse"] -->|"resolveSurveyResponseWrite rejects when closed"| AT[("SurveyResponseEntity")]
 ```
 
-- **Public read** — `readPublishedResourceContent` merges the live settings into its response through `transformPublicReadContent`, a per-type hook on `createResourceProcedures` alongside the existing publish/read hooks. The published model snapshot itself stays immutable; only the settings beside it are live.
+- **Public read** — `readPublishedResourceContent` merges the live settings into its response through `reapplyLiveResourceContent`, which applies what `ResourceLiveContentMap` declares live on every path that reconstitutes a snapshot ([resource snapshots](/docs/platform/resource-snapshots)) — the public read, the owner's version preview and the restore alike. The published model snapshot itself stays immutable; only the settings beside it are live.
 - **Server enforcement** — both response mutations call `resolveSurveyResponseWrite`, which rejects with a conflict error when the survey is closed. Client state can never bypass it. This costs one blob read per submission; submissions are rate-limited and low-volume, so there is no caching until it is measured.
 - **Owner UX** — the toggle lives on the Survey Overview's Collection card next to publish status; the closed message is an inline field (normalized, capped by `MAX_CLOSED_MESSAGE_LENGTH`) shown only while closed.
 - **Respondent UX** — a closed survey renders a `StyledEmptyState` card carrying the owner's message, or a default when none is set.

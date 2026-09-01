@@ -50,5 +50,5 @@ sequenceDiagram
 
 ## Notes
 
-- Listing published snapshots, previewing one, and rolling back to it are [publish history](/docs/platform/publish-history), not command-bar parity.
+- Listing snapshots, previewing one, and rolling back to it are [resource snapshots](/docs/platform/resource-snapshots), not command-bar parity — the two commands that open that panel live on the action bar, and nothing else about it does.
 - JSON view / export-template parity is [out of scope](/docs/platform/rejected/json-config-parity).
