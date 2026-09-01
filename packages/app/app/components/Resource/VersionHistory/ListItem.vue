@@ -4,10 +4,10 @@ import type { Resource } from "@esposter/db-schema";
 
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { hasCapability } from "#shared/services/resource/hasCapability";
-import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { SnapshotReasonTitleMap } from "#shared/services/resource/SnapshotReasonTitleMap";
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { getSnapshotVersionId } from "@/services/resource/getSnapshotVersionId";
+import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
 import { RoutePath } from "@esposter/shared";
 
@@ -26,11 +26,6 @@ const snapshotVersionId = computed(() => getSnapshotVersionId(snapshotVersion));
 // Surface that does not exist yet, so its row restores rather than previews
 const isPreviewable = computed(
   () => snapshotVersion.channel === SnapshotChannel.Published && hasCapability(resource.type, "publishable"),
-);
-// A row is labelled by its kind rather than by its number, because the two channels number independently and
-// One list holds both — `v1` on its own names two different snapshots
-const title = computed(
-  () => `${SnapshotChannelDefinitionMap[snapshotVersion.channel].title} v${snapshotVersion.version}`,
 );
 // What the row says it is, in the owner's words: why it was taken, what the owner named it, and one line about
 // What is in it. A bare version and a time is not something a person can choose between
@@ -53,7 +48,7 @@ const subtitle = computed(() =>
   >
     <template #title>
       <div flex flex-wrap gap-2 items-center>
-        <span>{{ title }}</span>
+        <span>{{ getSnapshotVersionTitle(snapshotVersion) }}</span>
         <v-chip v-if="snapshotVersion.isCurrent" color="success" size="x-small" text="Live" />
       </div>
     </template>

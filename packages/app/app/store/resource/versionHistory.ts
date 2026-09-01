@@ -2,8 +2,8 @@ import type { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
-import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { MutationStatus } from "@/models/shared/MutationStatus";
+import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
 import { NotificationSeverity } from "@esposter/db-schema";
@@ -70,7 +70,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
                   },
                 }),
             severity: NotificationSeverity.Success,
-            title: `Restored "${resource.name}" from ${SnapshotChannelDefinitionMap[channel].title} v${version} into a draft`,
+            title: `Restored "${resource.name}" from ${getSnapshotVersionTitle({ channel, version })} into a draft`,
           });
           // The restore landed as an ordinary content save, so a blade open on this resource is holding the
           // Draft it read before — and its own next save would be rejected as stale. Reloading is what makes

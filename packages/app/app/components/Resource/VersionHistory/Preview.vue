@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
+import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { parseSnapshotVersionId } from "@/services/resource/parseSnapshotVersionId";
 import { ViewComponentMap } from "@/services/resource/ViewComponentMap";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
@@ -21,11 +21,7 @@ const snapshotVersion = computed(() => parseSnapshotVersionId(snapshotVersionId)
 const viewComponent = computed(
   () => Object.entries(ViewComponentMap).find(([viewType]) => viewType === resource.type)?.[1],
 );
-const title = computed(() =>
-  snapshotVersion.value
-    ? `${SnapshotChannelDefinitionMap[snapshotVersion.value.channel].title} v${snapshotVersion.value.version}`
-    : "",
-);
+const title = computed(() => (snapshotVersion.value ? getSnapshotVersionTitle(snapshotVersion.value) : ""));
 </script>
 
 <template>

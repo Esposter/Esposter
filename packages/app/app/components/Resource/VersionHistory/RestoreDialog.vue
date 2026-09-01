@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 
-import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { getSnapshotVersionId } from "@/services/resource/getSnapshotVersionId";
+import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
 import { withFinalizerAsync } from "@esposter/shared";
 
@@ -22,12 +22,9 @@ const restore = async () => {
 
   await restoreSnapshot(restoringVersion.value);
 };
-// The row's own words, so the confirmation names the version the owner clicked rather than an ordinal that
-// Means something different on each channel
+// The row's own words, so the confirmation names the version the owner clicked
 const restoringVersionTitle = computed(() =>
-  restoringVersion.value
-    ? `${SnapshotChannelDefinitionMap[restoringVersion.value.channel].title} v${restoringVersion.value.version}`
-    : "",
+  restoringVersion.value ? getSnapshotVersionTitle(restoringVersion.value) : "",
 );
 </script>
 
