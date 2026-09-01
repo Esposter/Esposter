@@ -2,7 +2,7 @@ import type { DatasetColumnType } from "#shared/models/dataset/DatasetColumnType
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
-import { dayjs } from "#shared/services/dayjs";
+import { parseDate } from "#shared/util/date/parseDate";
 import { BooleanValue, BooleanValues } from "@/models/resource/sheet/column/BooleanValue";
 import { normalizeString } from "@esposter/shared";
 
@@ -14,7 +14,7 @@ export const inferColumnType = (values: string[]): DatasetColumnType => {
   else if (normalizedValues.every((value) => !Number.isNaN(Number(value)))) return ColumnType.Number;
   else if (
     normalizedValues.every(
-      (value) => Number.isNaN(Number(value)) && DateFormats.some((format) => dayjs(value, format, true).isValid()),
+      (value) => Number.isNaN(Number(value)) && DateFormats.some((format) => parseDate(value, format) !== undefined),
     )
   )
     return ColumnType.Date;

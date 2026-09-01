@@ -3,7 +3,6 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { BlobDeletionEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { dayjs } from "#shared/services/dayjs";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { createId } from "#shared/util/math/random/createId";
@@ -582,7 +581,7 @@ describe("room", () => {
       roomId: newRoom.id,
     });
 
-    expect(newInvite.expiresAt).toStrictEqual(dayjs(0).add(30, "minutes").toDate());
+    expect(newInvite.expiresAt).toStrictEqual(new Date(Temporal.Duration.from({ minutes: 30 }).total("milliseconds")));
     expect(newInvite.maxUses).toBe(maxUses);
     expect(newInvite.uses).toBe(0);
   });

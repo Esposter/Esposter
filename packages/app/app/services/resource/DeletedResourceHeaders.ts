@@ -1,7 +1,7 @@
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 import type { Resource } from "@esposter/db-schema";
 
-import { dayjs } from "#shared/services/dayjs";
+import { formatDate } from "#shared/util/date/formatDate";
 import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
 import { getPurgesInText } from "@/services/resource/getPurgesInText";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
@@ -12,7 +12,7 @@ export const DeletedResourceHeaders: DataTableHeader<Resource>[] = [
   {
     key: ItemMetadataPropertyNames.deletedAt,
     title: "Deleted At",
-    value: (item) => (item.deletedAt ? dayjs(item.deletedAt).format(RESOURCE_DATE_FORMAT) : ""),
+    value: (item) => (item.deletedAt ? formatDate(item.deletedAt, RESOURCE_DATE_FORMAT) : ""),
   },
   { key: "purgesIn", sortable: false, title: "Retention", value: (item) => getPurgesInText(item.deletedAt) },
   { key: "actions", sortable: false, title: "Actions" },

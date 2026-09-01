@@ -15,7 +15,6 @@ import { revokeInviteInputSchema } from "#shared/models/db/room/RevokeInviteInpu
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { dayjs } from "#shared/services/dayjs";
 import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { createId } from "#shared/util/math/random/createId";
@@ -171,7 +170,9 @@ export const baseRoomRouter = router({
         );
         if (isInvitePaused) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId);
         // Timestamps have no empty value, so the 0 sentinel (never expires) maps to null here
-        const expiresAt = expireAfterMinutes ? dayjs().add(expireAfterMinutes, "minutes").toDate() : null;
+        const expiresAt = expireAfterMinutes
+          ? new Date(Date.now() + Temporal.Duration.from({ minutes: expireAfterMinutes }).total("milliseconds"))
+          : null;
         // One invite per member per room — creating with new options replaces the old link
         await tx
           .delete(invitesInMessage)
@@ -650,7 +651,7 @@ export const baseRoomRouter = router({
         // To repair it. A version replaced within the window is therefore left for the next image change (or the
         // Room's deletion) to collect, which is the same deferral every other in-flight upload gets
         const blobNames = await listRoomProfileImageBlobNames(containerClient, id, {
-          createdBefore: dayjs().subtract(WRITE_SAS_DURATION_MS, "ms").toDate(),
+          createdBefore: new Date(Date.now() - WRITE_SAS_DURATION_MS),
         });
         return blobNames.filter((blobName) => containerClient.getBlockBlobClient(blobName).url !== image);
       });

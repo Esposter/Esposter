@@ -1,5 +1,4 @@
-import { dayjs } from "#shared/services/dayjs";
-import { getCountdown } from "#shared/services/dayjs/getCountdown";
+import { getCountdown } from "#shared/util/date/getCountdown";
 
 const COUNTDOWN_INTERVAL_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 // A deadline on screen is a number that moves on its own, so the reader watches it run down rather than
@@ -9,7 +8,7 @@ export const useCountdown = (expiresAt: MaybeRefOrGetter<Date | null | undefined
   const now = useNow({ scheduler: (callback) => useIntervalFn(callback, COUNTDOWN_INTERVAL_MS) });
   const remainingMs = computed(() => {
     const expiresAtValue = toValue(expiresAt);
-    return expiresAtValue ? dayjs(expiresAtValue).diff(now.value) : 0;
+    return expiresAtValue ? expiresAtValue.getTime() - now.value.getTime() : 0;
   });
   const countdown = computed(() => getCountdown(remainingMs.value));
   const isExpired = computed(() => Boolean(toValue(expiresAt)) && remainingMs.value <= 0);

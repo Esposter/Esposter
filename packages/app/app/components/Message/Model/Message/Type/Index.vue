@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 
-import { getShortTimeLabel } from "@/services/dayjs/getShortTimeLabel";
+import { getShortTimeLabel } from "@/util/date/getShortTimeLabel";
 import { MessageType } from "@esposter/db-schema";
 
 defineSlots<{ default?: () => VNode }>();

@@ -1,6 +1,6 @@
-import { dayjs } from "#shared/services/dayjs";
 import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
 import { getResourceUpdatedRange } from "@/services/resource/list/getResourceUpdatedRange";
+import { getEndOfDay } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(getResourceUpdatedRange, () => {
@@ -22,13 +22,13 @@ describe(getResourceUpdatedRange, () => {
     expect.hasAssertions();
 
     expect(getResourceUpdatedRange(ResourceUpdatedFilter.Last24Hours)).toStrictEqual({
-      updatedAfter: dayjs(0).subtract(24, "hours").toDate(),
+      updatedAfter: new Date(-Temporal.Duration.from({ hours: 24 }).total("milliseconds")),
     });
     expect(getResourceUpdatedRange(ResourceUpdatedFilter.Last7Days)).toStrictEqual({
-      updatedAfter: dayjs(0).subtract(7, "days").toDate(),
+      updatedAfter: new Date(-Temporal.Duration.from({ days: 7 }).total("milliseconds")),
     });
     expect(getResourceUpdatedRange(ResourceUpdatedFilter.Last30Days)).toStrictEqual({
-      updatedAfter: dayjs(0).subtract(30, "days").toDate(),
+      updatedAfter: new Date(-Temporal.Duration.from({ days: 30 }).total("milliseconds")),
     });
   });
 
@@ -42,7 +42,7 @@ describe(getResourceUpdatedRange, () => {
     expect(getResourceUpdatedRange(ResourceUpdatedFilter.Custom, updatedAfter)).toStrictEqual({ updatedAfter });
     expect(getResourceUpdatedRange(ResourceUpdatedFilter.Custom, updatedAfter, updatedBefore)).toStrictEqual({
       updatedAfter,
-      updatedBefore: dayjs(updatedBefore).endOf("day").toDate(),
+      updatedBefore: getEndOfDay(updatedBefore),
     });
   });
 });

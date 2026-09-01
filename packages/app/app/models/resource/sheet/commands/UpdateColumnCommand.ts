@@ -4,7 +4,8 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import type { ToData } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { dayjs } from "#shared/services/dayjs";
+import { formatDate } from "#shared/util/date/formatDate";
+import { parseDate } from "#shared/util/date/parseDate";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
 import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
@@ -69,9 +70,9 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
       for (const row of dataSource.rows) {
         const value = takeOne(row.data, updatedName);
         if (typeof value === "string") {
-          const parsedValue = dayjs(value, oldFormat, true);
-          if (parsedValue.isValid()) {
-            const newValue = parsedValue.format(newFormat);
+          const parsedValue = parseDate(value, oldFormat);
+          if (parsedValue) {
+            const newValue = formatDate(parsedValue, newFormat);
             row.data[updatedName] = newValue;
             size += getValueSize(newValue);
             continue;

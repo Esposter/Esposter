@@ -3,7 +3,7 @@ import { OFFLINE_CAP } from "@/services/clicker/constants";
 import { formatNumberLong } from "@/services/clicker/format";
 import { useClickerStore } from "@/store/clicker";
 import { useOfflineProgressStore } from "@/store/clicker/offlineProgress";
-import { formatDuration } from "@/util/text/formatDuration";
+import { formatDuration } from "@/util/date/formatDuration";
 
 const clickerStore = useClickerStore();
 const { clickerItemProperties } = storeToRefs(clickerStore);

@@ -4,7 +4,6 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { Session } from "better-auth";
 
-import { dayjs } from "#shared/services/dayjs";
 import { createCallerFactory } from "@@/server/trpc";
 import {
   createMockContext,
@@ -38,7 +37,10 @@ describe("session", () => {
   const deviceLabel = "Chrome 141 on Windows";
 
   // The row as better-auth writes it, minus the token the client is never handed
-  const insertSession = async (session: Session, expiresAt = dayjs().add(1, "day").toDate()) => {
+  const insertSession = async (
+    session: Session,
+    expiresAt = new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
+  ) => {
     await mockContext.db.insert(sessions).values({
       expiresAt,
       id: session.id,
@@ -77,7 +79,10 @@ describe("session", () => {
   test("reads the caller's unexpired sessions, without the stored address", async () => {
     expect.hasAssertions();
     const expiredSession = { ...createMockSession(userId), token: "expiredToken" };
-    await insertSession(expiredSession, dayjs().subtract(1, "day").toDate());
+    await insertSession(
+      expiredSession,
+      new Date(Date.now() - Temporal.Duration.from({ days: 1 }).total("milliseconds")),
+    );
 
     const readSessions = await caller.readSessions();
 

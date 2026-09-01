@@ -1,7 +1,6 @@
 import type { ReadFileUrl } from "@/models/message/file/ReadFileUrl";
 import type { FileEntity } from "@esposter/db-schema";
 
-import { dayjs } from "#shared/services/dayjs";
 import { getHasThumbnail } from "@/services/message/file/getHasThumbnail";
 import { READ_SAS_DURATION_MS } from "@esposter/db-schema";
 import { getResultAsync, takeOne } from "@esposter/shared";
@@ -42,7 +41,7 @@ export const useReadFileUrls = () => {
           ).unwrapOr([])
         : [],
     ]);
-    const expiresAt = dayjs().add(READ_SAS_DURATION_MS, "ms").valueOf();
+    const expiresAt = Date.now() + READ_SAS_DURATION_MS;
     for (const [index, { id }] of files.entries())
       fileUrlMap.set(id, { expiresAt, url: takeOne(downloadFileSasUrls, index) });
     // A thumbnail url is minted from the id alone, so it can point at a thumbnail blob that was never

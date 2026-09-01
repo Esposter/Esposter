@@ -3,8 +3,10 @@ import type { DateFormat } from "#shared/models/resource/sheet/column/DateFormat
 import type { DatePartTransformation } from "#shared/models/resource/sheet/column/transformation/DatePartTransformation";
 
 import { DatePartType } from "#shared/models/resource/sheet/column/transformation/DatePartType";
-import { dayjs } from "#shared/services/dayjs";
-import { exhaustiveGuard } from "@esposter/shared";
+import { parseDate } from "#shared/util/date/parseDate";
+import { exhaustiveGuard, getZonedDateTime } from "@esposter/shared";
+
+const DAYS_IN_WEEK = 7;
 
 export const computeDatePartTransformation = (
   value: ColumnValue,
@@ -12,21 +14,24 @@ export const computeDatePartTransformation = (
   inputFormat: DateFormat,
 ): ColumnValue => {
   if (typeof value !== "string") return null;
-  const parsedDate = dayjs(value, inputFormat, true);
-  if (!parsedDate.isValid()) return null;
+  const parsedDate = parseDate(value, inputFormat);
+  if (!parsedDate) return null;
+  const zonedDateTime = getZonedDateTime(parsedDate);
   switch (transformation.part) {
     case DatePartType.Day:
-      return parsedDate.date();
+      return zonedDateTime.day;
     case DatePartType.Hour:
-      return parsedDate.hour();
+      return zonedDateTime.hour;
     case DatePartType.Minute:
-      return parsedDate.minute();
+      return zonedDateTime.minute;
     case DatePartType.Month:
-      return parsedDate.month() + 1;
+      return zonedDateTime.month;
+    // Temporal counts Monday as 1 through Sunday as 7; a weekday column reads Sunday as 0, the spelling every
+    // Spreadsheet's WEEKDAY uses, so the week wraps rather than being renumbered
     case DatePartType.Weekday:
-      return parsedDate.day();
+      return zonedDateTime.dayOfWeek % DAYS_IN_WEEK;
     case DatePartType.Year:
-      return parsedDate.year();
+      return zonedDateTime.year;
     default:
       return exhaustiveGuard(transformation.part);
   }

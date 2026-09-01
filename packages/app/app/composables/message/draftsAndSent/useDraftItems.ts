@@ -1,4 +1,3 @@
-import { dayjs } from "#shared/services/dayjs";
 import { getComposerTarget } from "@/services/message/composer/getComposerTarget";
 import { useInputStore } from "@/store/message/input";
 import { useRoomStore } from "@/store/message/room";
@@ -18,6 +17,6 @@ export const useDraftItems = () => {
           ? [{ composerKey, content: draft.content, room, threadRootRowKey, updatedAt: draft.updatedAt }]
           : [];
       })
-      .toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)),
+      .toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()),
   );
 };

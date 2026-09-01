@@ -2,7 +2,6 @@
 import type { Creator } from "@/models/message/Creator";
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { dayjs } from "#shared/services/dayjs";
 import { MessageDisplayMode } from "@/models/message/MessageDisplayMode";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useMessageStore } from "@/store/message";
@@ -17,6 +16,9 @@ interface MessageListItemProps {
   nextMessage?: MessageEntity;
 }
 
+// Consecutive messages from the same author within this window render as one batch — one avatar, one header
+const SAME_BATCH_WINDOW_MS = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
+
 const { creator, message, nextMessage } = defineProps<MessageListItemProps>();
 const isSameBatch = computed(
   () =>
@@ -25,7 +27,7 @@ const isSameBatch = computed(
       nextMessage.type === MessageType.Webhook &&
       message.appUser.id === nextMessage.appUser.id) ||
       message.userId === nextMessage.userId) &&
-    dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
+    message.createdAt.getTime() - nextMessage.createdAt.getTime() <= SAME_BATCH_WINDOW_MS,
 );
 const appearanceStore = useAppearanceStore();
 const { messageDisplayMode } = storeToRefs(appearanceStore);

@@ -1,7 +1,7 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
-import { dayjs } from "#shared/services/dayjs";
+import { formatDate } from "#shared/util/date/formatDate";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
 import { escapeCsvCell } from "@/services/resource/sheet/csv/escapeCsvCell";
@@ -14,8 +14,8 @@ export const getResourcesCsv = (resourceItems: Resource[]): string => {
     [
       ResourceDefinitionMap[type].title,
       name,
-      dayjs(createdAt).format(RESOURCE_DATE_FORMAT),
-      dayjs(updatedAt).format(RESOURCE_DATE_FORMAT),
+      formatDate(createdAt, RESOURCE_DATE_FORMAT),
+      formatDate(updatedAt, RESOURCE_DATE_FORMAT),
     ]
       .map((cell) => escapeCsvCell(cell, CsvDelimiter.Comma))
       .join(CsvDelimiter.Comma),

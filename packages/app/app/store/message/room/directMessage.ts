@@ -1,7 +1,6 @@
 import type { HideDirectMessageInput } from "#shared/models/db/room/HideDirectMessageInput";
 import type { RoomInMessage, User } from "@esposter/db-schema";
 
-import { dayjs } from "#shared/services/dayjs";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
@@ -16,7 +15,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     updateDirectMessage: storeUpdateDirectMessage,
     ...restOperationData
   } = createOperationData(items, ["id"], DerivedDatabaseEntityType.DirectMessage);
-  const directMessages = computed(() => items.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
+  const directMessages = computed(() => items.value.toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()));
   // Keyed by room and read by every surface that names a conversation after the people in it. Held behind its
   // Own accessors rather than handed out: six call sites outside this store used to write it directly, and a
   // Participant list edited from five places is a list nothing can state the invariants of

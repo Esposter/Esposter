@@ -4,7 +4,7 @@ import type { ModerationLogEntity } from "@esposter/db-schema";
 import { AdminActionColorMap } from "@/services/message/moderation/AdminActionColorMap";
 import { AdminActionIconMap } from "@/services/message/moderation/AdminActionIconMap";
 import { useMemberStore } from "@/store/message/user/member";
-import { formatDuration } from "@/util/text/formatDuration";
+import { formatDuration } from "@/util/date/formatDuration";
 import { AUTOMOD_USER_ID } from "@esposter/db-schema";
 
 interface AuditLogListItemProps {

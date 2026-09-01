@@ -1,11 +1,13 @@
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { DateFormat, DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
-import { dayjs } from "#shared/services/dayjs";
+import { DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
+import { formatDate } from "#shared/util/date/formatDate";
 import { BooleanValue } from "@/models/resource/sheet/column/BooleanValue";
 import { inferColumnType } from "@/services/resource/sheet/column/inferColumnType";
 import { describe, expect, test } from "vitest";
 
 describe(inferColumnType, () => {
+  const EPOCH_DATE = new Date(1970, 0, 1);
+
   test(`empty array returns ${ColumnType.String}`, () => {
     expect.hasAssertions();
 
@@ -42,7 +44,7 @@ describe(inferColumnType, () => {
     expect.hasAssertions();
 
     for (const format of DateFormats) {
-      const epochDate = dayjs("1970-01-01", DateFormat["YYYY-MM-DD"], true).format(format);
+      const epochDate = formatDate(EPOCH_DATE, format);
 
       expect(inferColumnType([epochDate])).toBe(ColumnType.Date);
     }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { dayjs } from "#shared/services/dayjs";
-import { getTimelineDateLabel } from "@/services/dayjs/getTimelineDateLabel";
+import { getTimelineDateLabel } from "@/util/date/getTimelineDateLabel";
+import { checkIsSameDay } from "@esposter/shared";
 
 interface MessageTimelineProps {
   messageDate: Date;
@@ -13,7 +13,7 @@ const displayDate = computed(() => getTimelineDateLabel(messageDate));
 
 <template>
   <v-row
-    v-if="!nextMessageDate || !dayjs(messageDate).isSame(nextMessageDate, 'day')"
+    v-if="!nextMessageDate || !checkIsSameDay(messageDate, nextMessageDate)"
     mt-4
     flex
     flex-none

@@ -4,7 +4,6 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
-import { dayjs } from "#shared/services/dayjs";
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { createCallerFactory } from "@@/server/trpc";
@@ -96,7 +95,7 @@ describe("blueprint", () => {
   test("deploys a TodoList whose due dates still schedule their reminders", async () => {
     expect.hasAssertions();
 
-    const dueAt = dayjs().add(1, "day").toDate();
+    const dueAt = new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds"));
     const item = new TodoListItem({ dueAt, name });
     const blueprint = await createBlueprint({
       entries: [{ content: { items: [item] }, key: "todo", name: "t", type: ResourceType.TodoList }],
