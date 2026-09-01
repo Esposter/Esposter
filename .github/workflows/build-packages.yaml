@@ -15,6 +15,15 @@ permissions:
 jobs:
   build-packages:
     name: Build Packages
+    # 🏗️ CI and 🏎️ Bench both trigger on a push to any branch, so without this their two copies of this job run
+    # at the same time, each restoring the cache before the other has saved it — the shared-cache benefit above
+    # only ever materialises for a *later* push, never for the pair the same push starts, and the build is paid
+    # twice concurrently. Grouping on the commit serialises exactly that pair: the second one waits and then
+    # restores what the first saved. Never `cancel-in-progress` — the waiting job is the one that still owes its
+    # caller the `package-builds` artifact.
+    concurrency:
+      group: build-packages-${{ github.sha }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -25,25 +34,20 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      - name: 📦 Install dependencies
-        run: pnpm i
-      # Cache key = a content hash (mode + blob hash + path) of only the TRACKED files that actually feed
-      # `pnpm build:packages` (ctix barrel gen + tsdown bundle of each package's src/index.ts), plus the
-      # root package.json (infra bundles it via `import packageJson from "../../../../package.json"`), the lockfile
-      # and the catalog. This is an allowlist, not a denylist: every non-app package builds with the same fixed
-      # stack, so the build inputs are a small, stable set and we enumerate them explicitly rather than hashing
-      # everything and subtracting noise. Excluded by being absent from the allowlist: docs (README/CHANGELOG/
-      # docs/**), lint config (.oxlintrc.json, eslint.config.js, eslint/**), test files + vitest.config.ts, test
-      # fixtures (parse-tmx maps/, __snapshots__/), deploy/runtime config (host.json, Pulumi*.yaml,
-      # drizzle.config.ts), and build-glue scripts (db-mock/scripts/** only copies a snapshot that already lives
-      # in src/, so the script itself moves no untracked input) — none of which reach dist. Tracked files only, so
-      # generated output (dist, ctix barrels, *.tsbuildinfo, node_modules) is excluded by construction. NOTE:
-      # adding a build input of a new shape (e.g. a new root-level config a package's build reads) means adding
-      # it to the allowlist below.
+      # Cache key = a content hash (mode + blob hash + path) of the TRACKED files under `packages/` that
+      # `pnpm build:packages` could read, plus the root package.json (infra bundles it via
+      # `import packageJson from "../../../../package.json"`), the lockfile and the catalog.
       #
-      # Allowed per non-app package: package.json, tsdown.config.ts, auto-imports.d.ts (any vue
-      # package's generated ambient imports), tsconfig*.json, src/** (minus *.test.ts/*.test-d.ts/*.bench.ts),
-      # types/**; plus configuration/.ctirc-* (drives every package's barrel gen).
+      # Everything is an input until proven otherwise, and only two things are subtracted: `packages/app`, which
+      # this job does not build at all, and test/bench files, which no entrypoint reaches and which change far
+      # more often than anything they sit beside. The two failure directions are not symmetric — subtracting too
+      # little costs one rebuild on a push that was already touching a package's internals, while subtracting too
+      # much serves a `dist` that does not match the source it claims to be built from, and every check downstream
+      # then passes against the stale artifact. So the default is to hash it, and an exclusion has to earn itself.
+      # That also means a build input of a new shape needs nothing done to it: it is already in the key.
+      #
+      # Tracked files only, so generated output (dist, ctix barrels, *.tsbuildinfo, node_modules) stays out by
+      # construction.
       - name: 🔑 Compute package build cache key
         id: key
         run: |
@@ -51,10 +55,7 @@ jobs:
             git ls-tree -r HEAD packages | awk -F'\t' '
               $2 ~ /^packages\/app\// { next }
               $2 ~ /\.(test|test-d|bench)\.ts$/ { next }
-              $2 ~ /^packages\/[^/]+\/(package\.json|tsdown\.config\.ts|auto-imports\.d\.ts)$/ { print; next }
-              $2 ~ /^packages\/[^/]+\/tsconfig[^/]*\.json$/ { print; next }
-              $2 ~ /^packages\/[^/]+\/(src|types)\// { print; next }
-              $2 ~ /^packages\/configuration\/\.ctirc-/ { print; next }
+              { print }
             '
             git rev-parse HEAD:package.json HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml
           } | sha256sum | cut -d' ' -f1 )
@@ -69,6 +70,13 @@ jobs:
             packages/*/dist
             packages/*/src/**/index.ts
           key: package-builds-${{ steps.key.outputs.hash }}
+      # Both the install and the build hang off the cache miss, and in that order: the key is computed from
+      # tracked files with `git ls-tree` and the artifact is uploaded straight from the restored paths, so on a
+      # hit this job needs no `node_modules` at all. Every job in both callers `needs` this one, so an install
+      # nothing goes on to use is latency the whole workflow waits behind.
+      - name: 📦 Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pnpm i
 
       - name: 🏗️ Build packages
         if: steps.cache.outputs.cache-hit != 'true'
