@@ -51,7 +51,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "pnpm export:gen && tsdown",
+    "build": "tsdown",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",

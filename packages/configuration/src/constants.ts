@@ -47,3 +47,9 @@ export const VUE_AUTO_IMPORTS = ["pinia", "vue"] as const;
 // Ugliness if the condition could reach a stranger, and it cannot — tsdown writes a `dist`-only map into
 // `publishConfig.exports`, so nothing published carries a source arm for someone else's resolver to match.
 export const SOURCE_CONDITION = "source";
+// The two ctix configs, which live in this package because every package's barrel is generated from them. The
+// TypeScript one is what a package gets by default; the Vue one runs ahead of it in the single package that
+// Ships `.vue` files, writing the component barrel the TypeScript pass then reaches.
+export const CTIX_TS_CONFIGURATION = ".ctirc-ts";
+
+export const CTIX_VUE_CONFIGURATION = ".ctirc-vue";

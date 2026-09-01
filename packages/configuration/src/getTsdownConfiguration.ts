@@ -1,12 +1,14 @@
+import type { TsdownConfigurationOptions } from "#src/models/TsdownConfigurationOptions";
 import type { UserConfig } from "tsdown";
 
 import { BUILD_TSCONFIG, SOURCE_CONDITION } from "#src/constants";
+import { generateExports } from "#src/generateExports";
 import { getPackagePatterns } from "#src/getPackagePatterns";
 import { readPackageManifest } from "#src/readPackageManifest";
 import { mergeConfig } from "tsdown";
 
-// The base every package's `tsdown.config.ts` calls. tsdown already defaults `entry` to `src/index.ts`,
-// `outDir` to `dist`, `format` to `esm` and `clean` to true, so none of those are restated here.
+// The base every package's `tsdown.config.ts` calls. tsdown already defaults `outDir` to `dist`, `format` to
+// `esm` and `clean` to true, so none of those are restated here — `entry` is, for the reason given on it.
 //
 // Compose these factories with `mergeConfig`, never by spreading one into an object literal. A spread replaces
 // A key outright, so a config that adds one `deps` or `dts` field silently drops every other field the base
@@ -15,7 +17,12 @@ import { mergeConfig } from "tsdown";
 // Whether a package is published is the only thing that changes the shape of a build, so it is asked once. A
 // Published package owes an installable promise to a stranger, and `publint` and `attw` are the gates that
 // Hold it to that promise. A private package owes nobody anything and gets neither.
-export const getTsdownConfiguration = (): UserConfig => {
+//
+// `exportsGeneration` says which barrel the build generates for itself, and the three answers it can give are
+// The whole of what a package may vary here.
+export const getTsdownConfiguration = ({
+  exportsGeneration = "typescript",
+}: TsdownConfigurationOptions = {}): UserConfig => {
   const {
     dependencies,
     optionalDependencies,
@@ -49,6 +56,11 @@ export const getTsdownConfiguration = (): UserConfig => {
         ...Object.keys(peerDependenciesMeta ?? {}),
       ]),
     },
+    // The same path tsdown would have defaulted to, and stating it is what makes the hook below usable. Left
+    // Unset, tsdown treats the default as a glob and resolves it while it is still resolving the config —
+    // Before any hook runs — so a package whose barrel is not on disk yet dies with "No input files" rather
+    // Than generating one. A literal entry is handed to rolldown instead, which reads it after `build:prepare`.
+    entry: "src/index.ts",
     // Generated rather than hand-written, so a new entrypoint cannot ship without the manifest reaching it.
     //
     // `devExports` gives every generated entry a second arm under `SOURCE_CONDITION` pointing at `src`, so a
@@ -66,6 +78,13 @@ export const getTsdownConfiguration = (): UserConfig => {
     // Tsdown defaults to on the node platform buys nothing — it only makes the output path differ between the
     // Node packages and the neutral ones.
     fixedExtension: false,
+    // Barrel generation belongs to the build rather than to a line in front of it — one definition here
+    // Instead of the same command repeated in every manifest, and the one place a guard can live.
+    hooks: {
+      "build:prepare": () => {
+        generateExports(exportsGeneration);
+      },
+    },
     platform: "neutral",
     tsconfig: BUILD_TSCONFIG,
   } satisfies UserConfig;

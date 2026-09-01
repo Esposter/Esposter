@@ -19,7 +19,7 @@ import Vue from "unplugin-vue/rolldown";
 // `.d.ts`, silently, while `vue-tsc` still passes. `eager` loads every file the tsconfig lists instead, which
 // Is how the tsconfig's own `include` picks the ambient file up.
 export const getTsdownConfigurationVue = (): UserConfig =>
-  mergeConfig(getTsdownConfiguration(), {
+  mergeConfig(getTsdownConfiguration({ exportsGeneration: "vue" }), {
     dts: { eager: true, vue: true },
     plugins: [AutoImport({ imports: [...VUE_AUTO_IMPORTS] }), Vue({ isProduction: true })],
   });

@@ -53,7 +53,7 @@
     }
   },
   "scripts": {
-    "build": "pnpm export:gen && tsdown && tsx scripts/copySnapshot.ts",
+    "build": "tsdown && tsx scripts/copySnapshot.ts",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
