@@ -84,7 +84,7 @@ catalog:
   "@types/howler": ^2.2.13
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
-  "@types/node": ^26.4.0
+  "@types/node": ^26.4.1
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
   "@types/three": ^0.185.4
