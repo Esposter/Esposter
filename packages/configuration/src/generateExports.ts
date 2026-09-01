@@ -12,12 +12,19 @@ const CtixConfigurationsMap: Record<ExportsGeneration, string[]> = {
   typescript: [CTIX_TS_CONFIGURATION],
   vue: [CTIX_VUE_CONFIGURATION, CTIX_TS_CONFIGURATION],
 };
+// What each ctix pass above writes, in the same order, and the `.gitignore` entries that keep them out of the
+// Repository are the same two paths. Named exactly rather than matched by shape: every other `index.ts` under
+// `src` is a hand-written directory barrel that the root barrel carries a line for, so treating one as
+// Generated both skips regenerating a barrel that is missing a line and hides the file from the fingerprint.
+const GeneratedBarrelsMap: Record<ExportsGeneration, string[]> = {
+  none: [],
+  typescript: ["src/index.ts"],
+  vue: ["src/components/index.ts", "src/index.ts"],
+};
 // The ctix configs live beside this package's own source, and both arms of its `exports` map sit one directory
 // Below the package root — `src` under the source condition, `dist` under the default one — so the same
 // Relative step reaches them however a consumer resolved this module.
 const CONFIGURATION_DIRECTORY = resolve(import.meta.dirname, "..");
-// What tsdown resolves its entry to, so a package missing it has to generate whatever its fingerprint says.
-const GENERATED_BARREL = "src/index.ts";
 const FINGERPRINT_FILE = "node_modules/.cache/ctix-source-fingerprint";
 // Resolved rather than spawned by name: a bare `ctix` would be found through whatever `PATH` the process
 // Happened to inherit, which is the package manager's doing and not this package's to rely on.
@@ -48,9 +55,14 @@ export const generateExports = (exportsGeneration: ExportsGeneration): void => {
   const ctixConfigurationPaths = ctixConfigurations.map((ctixConfiguration) =>
     resolve(CONFIGURATION_DIRECTORY, ctixConfiguration),
   );
-  const fingerprint = getSourceFingerprint([ctixCommandPath, ...ctixConfigurationPaths]);
+  const generatedBarrelPaths = GeneratedBarrelsMap[exportsGeneration];
+  const fingerprint = getSourceFingerprint(generatedBarrelPaths, [ctixCommandPath, ...ctixConfigurationPaths]);
   const isFingerprintCurrent = existsSync(FINGERPRINT_FILE) && readFileSync(FINGERPRINT_FILE, "utf8") === fingerprint;
-  if (isFingerprintCurrent && existsSync(GENERATED_BARREL)) return;
+  // Every barrel the passes below write, not just the one tsdown resolves its entry to: the component barrel is
+  // Reached through the root one, so a package missing it builds against a root barrel whose line points at
+  // Nothing while the fingerprint still says there is nothing to do.
+  if (isFingerprintCurrent && generatedBarrelPaths.every((generatedBarrelPath) => existsSync(generatedBarrelPath)))
+    return;
 
   for (const ctixConfigurationPath of ctixConfigurationPaths) {
     const { status } = spawnSync(process.execPath, [ctixCommandPath, "build", "--config", ctixConfigurationPath], {

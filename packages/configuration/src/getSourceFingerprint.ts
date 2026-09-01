@@ -1,12 +1,15 @@
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 
 const SOURCE_DIRECTORY = "src";
-const GENERATED_BARREL_REGEX = /(?:^|[/\\])index\.ts$/u;
 const NON_SOURCE_REGEX = /\.(?:bench|test|test-d)\.ts$/u;
 const SOURCE_EXTENSION_REGEX = /\.(?:ts|vue)$/u;
 const EXPORT_REGEX = /^export\s/mu;
+// `readdirSync` yields the platform's separator while a barrel path is written with `/`, so every path is
+// Normalised once before either is compared to the other — which also makes a fingerprint mean the same thing
+// On both platforms rather than only within one.
+const getNormalizedPath = (path: string): string => path.replaceAll("\\", "/");
 // Ctix omits a file that exports nothing, so the barrel lists the source files filtered by whether each exports
 // At all — the one thing about a file's contents a barrel of `export * from` lines can depend on. A `.vue` file
 // Is listed by its own ctix pass whatever its script block holds, so it carries no probe.
@@ -24,6 +27,12 @@ const checkHasExports = (sourcePath: string): boolean =>
 // That did not change — the one transition where a stale barrel builds green and the new API is simply absent
 // From the package. The bit flips exactly there and on no other edit, so it costs the skip nothing.
 //
+// `generatedBarrelPaths` is the exact set ctix writes rather than a shape every `index.ts` matches, because a
+// Nested `index.ts` is ordinary source here — a directory barrel, which the root barrel carries its own
+// `export * from "./<directory>/index"` line for. Excluding it by shape hides the file that most needs to be
+// Seen: adding one moves neither the path list nor an export bit, so generation is skipped and the package
+// Ships without the export, green the whole way.
+//
 // `generatorPaths` closes the last half: the barrel is a function of the source list *and* of whatever wrote
 // It, so ctix's own cli and the configs it is handed are hashed by content. Left out, an edit to a ctix config
 // Or an upgrade of ctix leaves every package serving the barrel the previous generator wrote,
@@ -31,13 +40,19 @@ const checkHasExports = (sourcePath: string): boolean =>
 // Build, against a generation that costs seconds.
 //
 // `export:gen` remains a script, and running it by hand regenerates unconditionally.
-export const getSourceFingerprint = (generatorPaths: string[]): string => {
+export const getSourceFingerprint = (generatedBarrelPaths: string[], generatorPaths: string[]): string => {
+  const generatedBarrels = new Set(
+    generatedBarrelPaths.map((generatedBarrelPath) =>
+      getNormalizedPath(relative(SOURCE_DIRECTORY, generatedBarrelPath)),
+    ),
+  );
   const sourcePaths = readdirSync(SOURCE_DIRECTORY, { encoding: "utf8", recursive: true })
+    .map((sourcePath) => getNormalizedPath(sourcePath))
     .filter(
       (sourcePath) =>
         SOURCE_EXTENSION_REGEX.test(sourcePath) &&
         !NON_SOURCE_REGEX.test(sourcePath) &&
-        !GENERATED_BARREL_REGEX.test(sourcePath),
+        !generatedBarrels.has(sourcePath),
     )
     .toSorted();
   const hash = createHash("sha256").update(
