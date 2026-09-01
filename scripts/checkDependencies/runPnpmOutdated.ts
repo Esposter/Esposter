@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 
-const timeoutMs = 120_000;
+const timeoutMs = Temporal.Duration.from({ minutes: 2 }).total("milliseconds");
 
 export const runPnpmOutdated = (
   root: string,

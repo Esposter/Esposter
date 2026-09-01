@@ -3,6 +3,7 @@ import { getEngineEntries } from "#scripts/checkDependencies/getEngineEntries";
 import { getLockCatalogVersions } from "#scripts/checkDependencies/getLockCatalogVersions";
 import { getLockConfigDependencyVersions } from "#scripts/checkDependencies/getLockConfigDependencyVersions";
 import { getManifestDependencies } from "#scripts/checkDependencies/getManifestDependencies";
+import { getManifests } from "#scripts/checkDependencies/getManifests";
 import { getMismatches } from "#scripts/checkDependencies/getMismatches";
 import { getRegistryOutdatedDependencies } from "#scripts/checkDependencies/getRegistryOutdatedDependencies";
 import { getRegularOutdatedDependencies } from "#scripts/checkDependencies/getRegularOutdatedDependencies";
@@ -29,8 +30,9 @@ const configDependencyEntries = parseWorkspaceEntries(
   "configDependencies",
   getSection("configDependencies", workspaceYaml),
 );
-const engineEntries = getEngineEntries(root);
-const manifestDependencies = getManifestDependencies(root);
+const manifests = getManifests(root);
+const engineEntries = getEngineEntries(manifests);
+const manifestDependencies = getManifestDependencies(manifests);
 const uncatalogedManifestDependencies = getUncatalogedManifestDependencies(manifestDependencies);
 const mismatches = [
   ...getMismatches(catalogEntries, getLockCatalogVersions(lockYaml)),

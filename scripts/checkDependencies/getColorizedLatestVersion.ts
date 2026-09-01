@@ -1,5 +1,6 @@
 import type { ColorPalette } from "#scripts/checkDependencies/models/ColorPalette";
 
+import { VersionChangeLevel } from "#scripts/checkDependencies/constants";
 import { getVersionChangeLevel } from "#scripts/checkDependencies/getVersionChangeLevel";
 import { getVersionParts } from "#scripts/services/getVersionParts";
 
@@ -7,8 +8,9 @@ export const getColorizedLatestVersion = (current: string, latest: string, color
   const changeLevel = getVersionChangeLevel(current, latest);
   const latestParts = getVersionParts(latest);
 
-  if (changeLevel === 2) return color.red(latest);
-  if (changeLevel === 1) return `${latestParts.major}${color.yellow(latest.slice(String(latestParts.major).length))}`;
+  if (changeLevel === VersionChangeLevel.major) return color.red(latest);
+  if (changeLevel === VersionChangeLevel.minor)
+    return `${latestParts.major}${color.yellow(latest.slice(String(latestParts.major).length))}`;
 
   const currentParts = getVersionParts(current);
   // For a prerelease bump on the same base, highlight only the changed build tail (from its first digit) in red.

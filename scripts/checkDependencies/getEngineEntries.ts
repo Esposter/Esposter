@@ -1,25 +1,12 @@
 import type { DependencyEntry } from "#scripts/checkDependencies/models/DependencyEntry";
+import type { Manifest } from "#scripts/checkDependencies/models/Manifest";
 
-import { getPackageJsonPaths } from "#scripts/services/getPackageJsonPaths";
-import { jsonDateParse } from "@esposter/shared";
-import { readFileSync } from "node:fs";
-
-export const getEngineEntries = (root: string): DependencyEntry[] => {
+export const getEngineEntries = (manifests: Manifest[]): DependencyEntry[] => {
   const entriesByKey = new Map<string, DependencyEntry>();
 
-  for (const manifestPath of getPackageJsonPaths(root)) {
-    const manifest = jsonDateParse<unknown>(readFileSync(manifestPath, "utf8"));
-    if (!manifest || typeof manifest !== "object") continue;
-
-    const engines: unknown = (manifest as Record<string, unknown>).engines;
-    if (!engines || typeof engines !== "object") continue;
-
-    for (const [pkg, specifier] of Object.entries(engines)) {
-      if (typeof specifier !== "string") continue;
-
+  for (const { manifest } of manifests)
+    for (const [pkg, specifier] of Object.entries(manifest.engines ?? {}))
       entriesByKey.set(`${pkg}@${specifier}`, { group: "engines", pkg, specifier });
-    }
-  }
 
   return [...entriesByKey.values()];
 };

@@ -60,6 +60,11 @@ An extensionless relative import (`../src/constants`) is a third blocker in disg
 tsx does not — and it is already banned anyway, since a script addresses its package through `#src/*`
 (`file-organization`).
 
+**The preference runs in that direction only, and never back up the stack: the code is not bent to reach `node`.**
+A script whose clearest form wants an `enum` keeps `tsx` and declares the enum — that is what `tsx` is for. What is
+not allowed is the reverse move, weakening a type or inlining a constant so a `node` line can stay. If moving a
+script to `node` costs anything but the loader, leave it on `tsx` and say why in `scriptsComments`.
+
 ## `scriptsComments`
 
 JSON has no comments, so a script whose command needs one carries it in a sibling top-level **`scriptsComments`** object keyed by the script name — never a `"// …"` key inside `scripts`, which pnpm lists as a runnable script. The value is the whole note as one string, `@TODO:`-prefixed when it records something to undo later:

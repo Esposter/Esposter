@@ -2,14 +2,14 @@ import type { DependencyEntry } from "#scripts/checkDependencies/models/Dependen
 import type { OutdatedDependency } from "#scripts/checkDependencies/models/OutdatedDependency";
 import type { RegistryCheckError } from "#scripts/checkDependencies/models/RegistryCheckError";
 
+import { REGISTRY_CONCURRENCY } from "#scripts/checkDependencies/constants";
 import { getSpecifierBase } from "#scripts/checkDependencies/getSpecifierBase";
 import { getVersionChangeLevel } from "#scripts/checkDependencies/getVersionChangeLevel";
 import { isVersionOutdated } from "#scripts/checkDependencies/isVersionOutdated";
 import { getLatestVersion } from "#scripts/services/getLatestVersion";
 import { getResultAsync } from "@esposter/shared";
 
-const registryConcurrency = 4;
-const groupMetadata: Record<string, { dependencyType: string; dependent: string }> = {
+const GroupMetadataMap: Record<string, { dependencyType: string; dependent: string }> = {
   configDependencies: { dependencyType: "config", dependent: "configDependencies" },
   engines: { dependencyType: "engine", dependent: "engines" },
 };
@@ -21,7 +21,7 @@ export const getRegistryOutdatedDependencies = async (
   const errors: RegistryCheckError[] = [];
   const queue = [...entries];
 
-  const workers = Array.from({ length: registryConcurrency }, async () => {
+  const workers = Array.from({ length: REGISTRY_CONCURRENCY }, async () => {
     for (;;) {
       const entry = queue.shift();
       if (!entry) return;
@@ -30,7 +30,7 @@ export const getRegistryOutdatedDependencies = async (
       await getResultAsync(() => getLatestVersion(pkg)).match(
         (latest) => {
           const current = getSpecifierBase(specifier);
-          const metadata = groupMetadata[group];
+          const metadata = GroupMetadataMap[group];
           if (isVersionOutdated(current, latest))
             outdatedDependencies.push({
               current,

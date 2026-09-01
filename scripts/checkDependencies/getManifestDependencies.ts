@@ -1,31 +1,18 @@
+import type { Manifest } from "#scripts/checkDependencies/models/Manifest";
 import type { ManifestDependency } from "#scripts/checkDependencies/models/ManifestDependency";
 
-import { getPackageJsonPaths } from "#scripts/services/getPackageJsonPaths";
-import { jsonDateParse } from "@esposter/shared";
-import { readFileSync } from "node:fs";
+import { DEPENDENCY_FIELDS } from "#scripts/checkDependencies/constants";
 
-const dependencyFields = ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"] as const;
-
-export const getManifestDependencies = (root: string): ManifestDependency[] => {
+export const getManifestDependencies = (manifests: Manifest[]): ManifestDependency[] => {
   const manifestDependencies: ManifestDependency[] = [];
 
-  for (const manifestPath of getPackageJsonPaths(root)) {
-    const manifest = jsonDateParse<unknown>(readFileSync(manifestPath, "utf8"));
-    if (!manifest || typeof manifest !== "object") continue;
+  for (const { manifest, path } of manifests) {
+    const { name } = manifest;
+    if (name === undefined) continue;
 
-    const manifestName = (manifest as Record<string, unknown>).name;
-    if (typeof manifestName !== "string") continue;
-
-    for (const field of dependencyFields) {
-      const dependencies: unknown = (manifest as Record<string, unknown>)[field];
-      if (!dependencies || typeof dependencies !== "object") continue;
-
-      for (const [pkg, specifier] of Object.entries(dependencies)) {
-        if (typeof specifier !== "string") continue;
-
-        manifestDependencies.push({ field, manifestName, manifestPath, pkg, specifier });
-      }
-    }
+    for (const field of DEPENDENCY_FIELDS)
+      for (const [pkg, specifier] of Object.entries(manifest[field] ?? {}))
+        manifestDependencies.push({ field, manifestName: name, manifestPath: path, pkg, specifier });
   }
 
   return manifestDependencies;
