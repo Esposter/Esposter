@@ -20,9 +20,7 @@ import { mergeConfig } from "tsdown";
 //
 // `exportsGeneration` says which barrel the build generates for itself, and the three answers it can give are
 // The whole of what a package may vary here.
-export const getTsdownConfiguration = ({
-  exportsGeneration = "typescript",
-}: TsdownConfigurationOptions = {}): UserConfig => {
+export const getTsdownConfiguration = ({ exportsGeneration }: TsdownConfigurationOptions = {}): UserConfig => {
   const {
     dependencies,
     optionalDependencies,

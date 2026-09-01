@@ -55,7 +55,7 @@
   },
   "scripts": {
     "build": "tsdown",
-    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "export:gen": "generate-exports",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",
@@ -74,7 +74,6 @@
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
     "@types/mime-types": "catalog:",
-    "ctix": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
     "vitest": "catalog:"

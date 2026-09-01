@@ -54,12 +54,12 @@
   },
   "scripts": {
     "build": "tsdown",
+    "export:gen": "generate-exports",
     "db:gen": "pnpm db:run generate",
     "db:pull": "pnpm db:run pull",
     "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
     "db:studio": "pnpm db:run studio",
     "db:up": "pnpm db:run up",
-    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",
@@ -71,7 +71,6 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@trpc/server": "catalog:",
-    "ctix": "catalog:",
     "drizzle-kit": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",

@@ -30,20 +30,20 @@ flowchart LR
   P --> Z
 ```
 
-The barrel is generated, never committed: `ctix` runs against `tsconfig.build.json` as the build starts, which is why CI caches the generated `src/**/index.ts` files alongside `dist`. It runs on every build rather than behind a guard. A barrel of `export * from` names no symbol, so it reads as a function of the source file list and nothing else — cheap to hash, cheap to skip on. It is not one: ctix resolves two files exporting the same identifier by dropping both from the barrel, so a rename that collides changes what it writes while moving no path and adding no file. Nothing cheap keys that soundly, and nothing needs to — the `package-builds` cache restores `dist` and the barrels together on an exact content hash, and a build that misses it is regenerating every package regardless. `export:gen` is still a script per package, for regenerating without a build.
+The barrel is generated, never committed: `ctix` runs against `tsconfig.build.json` as the build starts, which is why CI caches the generated `src/**/index.ts` files alongside `dist`. It runs on every build rather than behind a guard. A barrel of `export * from` names no symbol, so it reads as a function of the source file list and nothing else — cheap to hash, cheap to skip on. It is not one: ctix resolves two files exporting the same identifier by dropping both from the barrel, so a rename that collides changes what it writes while moving no path and adding no file. Nothing cheap keys that soundly, and nothing needs to — the `package-builds` cache restores `dist` and the barrels together on an exact content hash, and a build that misses it is regenerating every package regardless. `export:gen` regenerates a barrel without the build behind it, which is what a typecheck needs after a file is added and all it needs; it runs the same function through the `generate-exports` bin rather than a second copy of the ctix command, so the config paths and the order the Vue answer runs them in are named in one place. `ctix` is a devDependency of `@esposter/configuration` alone.
 
 ## The shared configuration package
 
 `@esposter/configuration` owns every build input. A package's `tsdown.config.ts` is one factory call plus whatever is genuinely specific to it.
 
-| Factory                         | For                                                    |
-| ------------------------------- | ------------------------------------------------------ |
-| `getTsdownConfiguration`        | The base — `platform: "neutral"`                       |
-| `getTsdownConfigurationNode`    | The base plus `platform: "node"`                       |
-| `getTsdownConfigurationVue`     | The base plus SFC compilation and `dts.vue`            |
-| `getVuePlugins`                 | The SFC plugin pair, shared with the Vitest run        |
-| `getVitestConfiguration`        | The Vitest config every package's tests run on         |
-| `getBenchmarkTestConfiguration` | Just the bench wiring, for a config built from scratch |
+| Factory                         | For                                                          |
+| ------------------------------- | ------------------------------------------------------------ |
+| `getTsdownConfiguration`        | The base — `platform: "neutral"`                             |
+| `getTsdownConfigurationNode`    | The base plus `platform: "node"`                             |
+| `getTsdownConfigurationVue`     | The base plus SFC compilation and `dts.vue`                  |
+| `getVuePlugins`                 | The SFC plugin pair, shared with the Vitest run              |
+| `getVitestConfiguration`        | The Vitest config every package's tests run on but the app's |
+| `getBenchmarkTestConfiguration` | Just the bench wiring, for a config built from scratch       |
 
 **Compose these with `mergeConfig`, never by spreading one into an object literal.** A spread replaces a key outright, so a config that adds a single `deps` or `dts` field silently drops every other field the base set on it — which is a build that quietly stops externalizing, or stops reading the build tsconfig, with nothing to show for it. `mergeConfig` merges into those keys instead.
 
@@ -202,8 +202,10 @@ go-to-definition lands on real source rather than a bundled declaration.
 
 The condition is called **`source`**, which is what the ecosystem calls this: Parcel and Metro both resolve a `source` condition, and it is the spelling every workspace-source setup uses. A repo-namespaced name (`esposter-source`) buys protection against a stranger's resolver matching it by accident — protection worth nothing here, because tsdown writes a `dist`-only map into `publishConfig.exports` and nothing published carries a source arm at all. Inside the workspace, no tool enables `source` unless told to: Vite's server defaults are `module`, `node` and `development`/`production`, and Nuxt adds nothing that would match.
 
-Two places opt in, and that is the entire mechanism: `customConditions` in `tsconfig.base.json` and
-`resolve.conditions` in `getVitestConfiguration`. Anything else that wants source says so explicitly.
+Four places opt in, and that is the entire mechanism: `customConditions` in `tsconfig.base.json`,
+`resolve.conditions` in `getVitestConfiguration`, and `customConditions` again on the Nuxt and Nitro tsconfigs
+the app generates — it extends neither base, so `configuration/typescript.ts` and `configuration/nitro.ts`
+restate it. Anything else that wants source says so explicitly.
 
 **The `default` arm is the load-bearing half.** `devExports: true` omits it and points every condition at
 source, which reads as the simpler configuration and is not: Node's own ESM loader cannot read TypeScript
@@ -224,7 +226,7 @@ emits its sibling's bare specifier, so that import resolves independently, under
 resolver is running with. There is no single consumer where the decision can be made once — which is exactly why the
 answer belongs in the exports map rather than in a bundler's config.
 
-The app is the deliberate non-participant. Nuxt's Vite and Nitro builds do not carry the condition, so the app resolves every sibling's `dist` — which is what keeps the Nitro server bundle externalizing them rather than pulling every package's TypeScript into a single graph. The practical consequence: a package's own tests see a sibling's edit immediately, and the app does not until that sibling is rebuilt, which is what `watch:packages` is still for.
+**The app opts in for types and for nothing that runs.** Those tsconfigs are the whole of its participation, so `typecheck`, the editor and go-to-definition read a sibling's source. Nuxt's Vite and Nitro builds do not carry the condition, which is what keeps the Nitro server bundle externalizing its siblings rather than pulling every package's TypeScript into a single graph — and neither does the app's Vitest project, which builds its own config through `defineVitestProject` instead of taking `getVitestConfiguration`. Its tests are on the `dist` side for the same reason its bundlers are: the app imports `vue-phaserjs`, whose stores rely on the `defineStore`/`ref` its own build injects, and `configuration/imports.ts` excludes that package from Nuxt's auto-import transform — so resolving it to source breaks it outright. The practical consequence: a package's own tests see a sibling's edit immediately, and the app — its tests included — does not until that sibling is rebuilt, which is what `watch:packages` is still for.
 
 **A build that vendors a sibling vendors its source.** Rolldown reads `customConditions` from the tsconfig it was handed, so the self-contained bundles pull their siblings' TypeScript rather than their `dist`. That is the behaviour worth having — a deploy artifact can no longer be built from a stale sibling — and it is also precisely what `paths` made impossible, because a `@/` inside the vendored package would have re-anchored to the bundling package. It is why `isolatedDeclarations` has to be off in a package that vendors one of the packages that cannot satisfy it: the transform runs over the whole module graph, and those files are now inputs to it.
 

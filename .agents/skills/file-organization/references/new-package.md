@@ -4,7 +4,7 @@ Read when adding a package under `packages/`, adding a `bin` entrypoint, or deci
 
 New packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
 
-1. **`package.json`** — set `name`, `private: true` (internal) or omit (publishable), `"type": "module"`, `"types": "dist/index.d.ts"`, `"files": ["dist"]`, `"sideEffects": false` if it genuinely has none (the build generates `exports`). Standard scripts: `build` (`pnpm export:gen && tsdown`), `export:gen`, `format`, `format:check`, `lint`, `lint:fix`, `typecheck`. If it has tests, add a `test` script + `vitest`/`@types/node` devDeps and an `src/index.test.ts` bundle-size snapshot (see the `testing` skill). Coverage runs only from the repo root, so don't add a per-package `coverage` script or `@vitest/coverage-v8`.
+1. **`package.json`** — set `name`, `private: true` (internal) or omit (publishable), `"type": "module"`, `"types": "dist/index.d.ts"`, `"files": ["dist"]`, `"sideEffects": false` if it genuinely has none (the build generates `exports`). Standard scripts: `build` (bare `tsdown` — the shared factory generates the barrel from a `build:prepare` hook), `export:gen` (`generate-exports`, or `generate-exports vue`), `format`, `format:check`, `lint`, `lint:fix`, `typecheck`. If it has tests, add a `test` script + `vitest`/`@types/node` devDeps and an `src/index.test.ts` bundle-size snapshot (see the `testing` skill). Coverage runs only from the repo root, so don't add a per-package `coverage` script or `@vitest/coverage-v8`.
 2. **`tsconfig.json`** — `{ "extends": "../configuration/tsconfig.node.json" }` (node) or `"../configuration/tsconfig.vue.json"` (browser/Vue).
 3. **`tsconfig.build.json`** — `{ "extends": ["./tsconfig.json", "../configuration/tsconfig.build.base.json"] }`.
 4. **`tsdown.config.ts`** — call the matching factory from `@esposter/configuration`: `getTsdownConfigurationNode()` (server-only), `getTsdownConfiguration()` (platform-neutral), or `getTsdownConfigurationVue()`. They are functions, not constants, and are composed with `mergeConfig` rather than a spread. See the `build` skill.
@@ -13,7 +13,7 @@ New packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
    export { default } from "@esposter/configuration/eslint/index.typescript.js";
    ```
    No per-package `.oxlintrc.json` — oxlint runs once from the repo root against the single root `.oxlintrc.json`.
-6. **`src/index.ts`** — minimal barrel; `ctix` regenerates it on `pnpm export:gen`.
+6. **`src/index.ts`** — generated, never written by hand or committed; `pnpm build` runs `ctix` over the package, and `pnpm export:gen` runs it alone.
 7. **Run plain `pnpm i`** from repo root to link the package. Follow `packages/app/content/docs/architecture/monorepo-tooling.md` for install safety.
 8. **Run `pnpm build`** in the new package to produce `dist/`.
 

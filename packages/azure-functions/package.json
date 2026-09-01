@@ -36,15 +36,9 @@
   "imports": {
     "#src/*": "./src/*.ts"
   },
-  "publishConfig": {
-    "exports": {
-      ".": "./dist/index.js",
-      "./package.json": "./package.json"
-    }
-  },
   "scripts": {
     "build": "tsdown",
-    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "export:gen": "generate-exports",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",
@@ -76,7 +70,6 @@
     "@types/node": "catalog:",
     "@types/web-push": "catalog:",
     "azure-mock": "workspace:*",
-    "ctix": "catalog:",
     "tsdown": "catalog:",
     "typedoc": "catalog:",
     "vitest": "catalog:"

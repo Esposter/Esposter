@@ -27,6 +27,9 @@
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
+  "bin": {
+    "generate-exports": "bin/generateExports.js"
+  },
   "type": "module",
   "sideEffects": false,
   "imports": {
@@ -49,7 +52,7 @@
   },
   "scripts": {
     "build": "tsdown",
-    "export:gen": "ctix build --config .ctirc-ts",
+    "export:gen": "node bin/generateExports.js",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",

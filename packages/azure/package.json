@@ -45,7 +45,7 @@
   },
   "scripts": {
     "build": "tsdown",
-    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "export:gen": "generate-exports",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",
@@ -59,7 +59,6 @@
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
-    "ctix": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
