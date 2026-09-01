@@ -2,7 +2,7 @@
 
 Read when planning the push cadence on `develop` — how work keeps moving while a review runs, and where a window boundary falls. This page holds the whole procedure; `SKILL.md` keeps the cap, the gates and the finding rules it operates under.
 
-### Pipelining — work lands on `develop`, review runs against the `develop` → `main` PR
+## Work lands on `develop`, the review runs against the `develop` → `main` PR
 
 **There are no per-chunk feature branches.** Work is committed and pushed straight to `develop`, and the single long-lived PR is `develop` → `main`. Because that PR's base is the default branch, every push to `develop` auto-triggers a review — no trigger comment, no PR per chunk. Keeping that PR open is what makes the pipeline work.
 

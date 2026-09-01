@@ -13,6 +13,11 @@ Read when writing, splitting, merging, promoting or retiring a ledger in `.agent
 - **Next enforceable** — the part of the convention a lint rule or test could take over.
 - **Open findings** — only while one is genuinely open. A closed finding is deleted: its rule is in a skill, its invariant is in a test, and git holds the argument.
 
+**Promotion to a folder splits that list, it never shortens it.** Coverage is what an area file holds — a table
+and nothing else — and every other item above moves to the folder's own `README.md`, open findings included. A
+finding has nowhere to sit on an area file, so a promoted ledger that keeps one on a leaf has put it in the one
+place the shape does not allow.
+
 **"The current shape is already right" closes a finding — by documenting it, never by leaving it.** A finding that survives several passes is usually not unresolved; it is resolved and unrecorded. Someone keeps rediscovering the same duplication or asymmetry, reasoning about it, concluding the existing shape is correct, and writing that conclusion nowhere — so the ledger keeps it open and the next pass pays for the reasoning again. Three outcomes, and a finding must reach one of them:
 
 | Verdict                            | Where it goes                                                                                                      |

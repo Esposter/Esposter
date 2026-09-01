@@ -12,7 +12,7 @@ Read when a composable reads scroll position, connectivity, or anything else tha
 ## Online/Offline Detection
 
 - **Always `useOnline()` from VueUse** — never `navigator.onLine` directly, nor a `checkIsServer()` + `navigator.onLine` guard. It returns a reactive `Ref<boolean>` updated on `online`/`offline` events and is SSR-safe (defaults to `true` on the server).
-- For subscribables (tRPC subscriptions, WebSocket connections) use `useOnlineSubscribable` (`composables/shared/`), which combines `useOnline()` + `onMounted` + `watchImmediate` + `onUnmounted` cleanup.
+- For subscribables (tRPC subscriptions, WebSocket connections) use `useOnlineSubscribable` (`composables/shared/`), which combines `useOnline()` + `watchTriggerable` triggered from `onMounted` + `onScopeDispose` cleanup — the deferred-first-run shape below, so nothing observes the browser during `setup()`.
 
 ## Browser-Only Composables (SSR Safety)
 

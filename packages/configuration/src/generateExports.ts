@@ -28,7 +28,9 @@ const getCtixCommandPath = (): string => {
 // The membership check are here rather than at a call site because one of the two callers is the
 // `generate-exports` bin, whose argument is a command line.
 export const generateExports = (exportsGeneration: ExportsGeneration = "typescript"): void => {
-  if (!(exportsGeneration in CtixConfigurationsMap))
+  // `in` over an own-property check would accept every inherited name a command line can spell: `toString`
+  // Reads a function whose `length` is 0 and returns silently, `constructor` reaches one and throws.
+  if (!Object.hasOwn(CtixConfigurationsMap, exportsGeneration))
     throw new Error(
       `${exportsGeneration} is not an exports generation: expected one of ${Object.keys(CtixConfigurationsMap).join(", ")}`,
     );

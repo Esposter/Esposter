@@ -20,10 +20,13 @@ jobs:
     # only ever materialises for a *later* push, never for the pair the same push starts, and the build is paid
     # twice concurrently. Grouping on the commit serialises exactly that pair: the second one waits and then
     # restores what the first saved. Never `cancel-in-progress` — the waiting job is the one that still owes its
-    # caller the `package-builds` artifact.
+    # caller the `package-builds` artifact. `queue: max` for the same reason: the default `single` retains one
+    # pending run and lets the next arrival replace it, so a third invocation of the same commit — a re-run of
+    # either caller while the other waits — would drop a caller that is still owed its artifact.
     concurrency:
       group: build-packages-${{ github.sha }}
       cancel-in-progress: false
+      queue: max
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
