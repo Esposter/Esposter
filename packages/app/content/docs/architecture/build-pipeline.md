@@ -82,7 +82,9 @@ tsdown records every package a bundle swallowed under `inlinedDependencies` in t
 ### Tree-shaking and a package whose product is a side effect
 
 `sideEffects: false` is what lets a consumer drop the parts of a library they never import, so every package
-here carries it — except the one whose entry exists to run rather than to export. The Functions app registers
+here declares the field — and absence is not the safe middle, because a bundler reads it as _unknown_ and keeps
+everything. One answers `true`, one answers with a list of module paths, and the rest answer `false`. The one
+whose entry exists to run rather than to export is the `true`. The Functions app registers
 each of its handlers with a bare `app.eventGrid(...)`-style call whose result nothing uses, in a module whose
 only export is `export default {}`, which the barrel's `export *` does not re-export. That is a pure side effect
 by every rule a bundler has: told the package has none, rolldown removes all of them, keeps the handler exports,
@@ -92,6 +94,13 @@ app deploys, starts, reports `Running` and never runs a trigger again — with n
 It therefore declares `sideEffects: true`, and its `src/index.test.ts` counts the registrations in `dist` against
 the files in `src/functions`. The infrastructure program needs neither: its resources are `export const`
 bindings, so the exports keep them alive.
+
+A package with a single such module names that module instead of surrendering the whole package: `@esposter/db`
+registers a dayjs plugin at module scope, so its field is the array naming that file — under both arms, because
+a consumer on the source condition reaches the file while one on `default` gets a single chunk carrying the
+registration with everything else. Nothing derives any of this, so `scripts/sideEffects.test.ts` enforces the
+part that is derivable: every package with a tsdown config declares the field, and only the run-on-import one
+claims `true` wholesale.
 
 ### A host-loaded artifact keeps its own entry field
 

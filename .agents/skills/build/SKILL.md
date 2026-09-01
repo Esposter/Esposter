@@ -97,6 +97,18 @@ absence is what a repo-wide sweep adding `false` everywhere overwrites without a
 A package whose side effects each land in an exported binding — the infrastructure program's
 `export const x = new Resource(...)` — needs nothing: the export is what keeps it alive.
 
+**Every package answers, and one of three answers.** `false` where nothing runs at import; `true` where the
+entry exists to run; an **array of module paths** where one module runs and the rest are ordinary exports —
+`@esposter/db` registers a dayjs plugin at module scope and names that file rather than surrendering the whole
+package's tree-shaking to a blanket `true`. Name both arms when a package is resolved through both: a consumer
+on `source` reaches the file itself, one on `default` gets a single chunk that carries the registration with
+everything else, and a path matching neither leaves a bundler free to drop the call.
+
+Leaving the field off is not the safe middle — absent means _unknown_, so a consumer's bundler keeps everything,
+the same outcome as `true` while reading as nobody having considered it. Nothing can derive the value, so
+`scripts/sideEffects.test.ts` enforces what is derivable: every package with a tsdown config declares the field,
+and only the run-on-import one claims `true` wholesale.
+
 **Assert it in that package's own `src/index.test.ts`.** Count the registrations in the built bundle against the
 source files that should have produced them; nothing else can see the difference, because every other test
 imports source rather than `dist`, and the bundle still loads either way.

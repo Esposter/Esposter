@@ -35,6 +35,10 @@
     "dist"
   ],
   "type": "module",
+  "sideEffects": [
+    "./src/services/dayjs/index.ts",
+    "./dist/index.js"
+  ],
   "types": "dist/index.d.ts",
   "imports": {
     "#src/*": "./src/*.ts"

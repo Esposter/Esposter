@@ -28,6 +28,7 @@
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
   "type": "module",
+  "sideEffects": false,
   "imports": {
     "#src/*": "./src/*.ts"
   },
