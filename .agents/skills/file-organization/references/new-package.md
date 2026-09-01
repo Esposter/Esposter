@@ -21,6 +21,8 @@ New packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
 
 Don't add `#!/usr/bin/env node` to source files, including `bin` entrypoints (`src/cli.ts`). pnpm generates the bin shim that invokes `node` for the target, so the shebang is dead weight. Only add one if a file is genuinely meant to be executed directly (`chmod +x ./file`), which workspace bins are not.
 
+A `bin` field points at a committed one-line `bin/*.js` that imports the built entry, never at `dist` itself: pnpm refuses to link a shim whose target is missing at install time, and `dist` is gitignored, so a fresh clone would install with no shim at all. Don't guard that import. A bin is reachable before `build:packages` has run, and Node's own `ERR_MODULE_NOT_FOUND` already names the missing `dist` file and the wrapper that imported it — a hand-written check buys the exact build command and costs the same lines in every wrapper, which cannot share them because they run before there is anything importable to share.
+
 ## Externals
 
 Nothing to configure: tsdown externalizes `dependencies` and `peerDependencies` and bundles the `devDependencies` the source imports. Declare it in `package.json` and the placement decides. See the `build` skill for the two kinds of package that override this in their own `tsdown.config.ts`.
