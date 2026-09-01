@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs), version-capped packages (h3), and tracked open issues. Apply when updating package versions.
+description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs), version-capped packages (h3), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues. Apply when updating package versions.
 ---
 
 # Dependency Updates
@@ -67,6 +67,12 @@ Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them pe
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 
 Temporary overrides that force a transitive dep to a safe version (currently `crossws`, `h3`, `pdfjs-dist`, `vite`). Remove when the upstream package catches up — most carry no comment explaining why, so check git blame before removing one.
+
+## Release age (`minimumReleaseAge: 0`)
+
+A nonzero `minimumReleaseAge` makes pnpm refuse a version until it has been on the registry for a while — the standard quarantine against installing a compromised release in the window before it is pulled. It is `0` here deliberately: being on the freshest version is the point of the pass, and a quarantine would have `pnpm outdated:dependencies` report updates that `pnpm refresh:lockfile` then declines to take, turning one clean pass into a partial one that has to be run again later for no result the first pass could act on.
+
+What that trades is real and accepted: a just-published bad version installs immediately. The mitigation is the shape of the process rather than a delay — updates here are a deliberate pass someone runs and reads the diff of, not an unattended bot merge, and step 4 re-verifies every resolution before the lockfile is committed. Don't propose raising it.
 
 ## Tracked issues (update normally, but watch these)
 
