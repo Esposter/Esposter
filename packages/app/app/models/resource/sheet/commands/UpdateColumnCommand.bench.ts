@@ -1,3 +1,5 @@
+import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
+
 import {
   benchColumns,
   benchRows1k,
@@ -5,44 +7,32 @@ import {
   benchRows100,
 } from "@/composables/resource/sheet/commands/constants.bench";
 import { createBenchDataSource } from "@/composables/resource/sheet/commands/createBenchDataSource.bench";
-import { createOriginalRowValues } from "@/composables/resource/sheet/commands/createOriginalRowValues.bench";
+import { setupCommandBench } from "@/composables/resource/sheet/commands/setupCommandBench.bench";
 import { UpdateColumnCommand } from "@/models/resource/sheet/commands/UpdateColumnCommand";
+import { getOriginalRowValues } from "@/services/resource/sheet/getOriginalRowValues";
 import { takeOne } from "@esposter/shared";
-import { bench, describe } from "vitest";
+import { describe } from "vitest";
 
 const originalColumn = takeOne(benchColumns);
 const originalName = originalColumn.name;
-const updatedColumn = Object.assign(structuredClone(originalColumn), {
-  name: `${originalName}_renamed`,
-});
-
-const createRenameCommand = (rows: typeof benchRows1k) =>
-  new UpdateColumnCommand(originalName, originalColumn, updatedColumn, createOriginalRowValues(rows, originalName));
+// The command takes the update as plain data, which is what a structured clone of a column instance is.
+const updatedColumn = Object.assign(structuredClone(originalColumn), { name: `${originalName}_renamed` });
+// Read once per scale rather than inside every iteration: the command only reads these back on undo, so building
+// Them in the callback would time an O(rows) read the command itself never performs.
+const originalRowValues100 = getOriginalRowValues(createBenchDataSource(benchRows100), originalName);
+const originalRowValues1k = getOriginalRowValues(createBenchDataSource(benchRows1k), originalName);
+const originalRowValues10k = getOriginalRowValues(createBenchDataSource(benchRows10k), originalName);
+const createRenameCommand = (originalRowValues: ColumnValue[]) => () =>
+  new UpdateColumnCommand(originalName, originalColumn, updatedColumn, originalRowValues);
 
 describe(UpdateColumnCommand, () => {
-  bench("execute (rename) — 100 rows", () => {
-    createRenameCommand(benchRows100).execute(createBenchDataSource(benchRows100));
-  });
-
-  bench("execute (rename) — 1000 rows", () => {
-    createRenameCommand(benchRows1k).execute(createBenchDataSource(benchRows1k));
-  });
-
-  bench("execute (rename) — 10000 rows", () => {
-    createRenameCommand(benchRows10k).execute(createBenchDataSource(benchRows10k));
-  });
-
-  bench("undo (rename) — 1000 rows", () => {
-    const dataSource = createBenchDataSource(benchRows1k);
-    const command = createRenameCommand(benchRows1k);
-    command.execute(dataSource);
-    command.undo(dataSource);
-  });
-
-  bench("undo (rename) — 10000 rows", () => {
-    const dataSource = createBenchDataSource(benchRows10k);
-    const command = createRenameCommand(benchRows10k);
-    command.execute(dataSource);
-    command.undo(dataSource);
-  });
+  setupCommandBench("rename column, 100 rows", createRenameCommand(originalRowValues100), () =>
+    createBenchDataSource(benchRows100),
+  );
+  setupCommandBench("rename column, 1000 rows", createRenameCommand(originalRowValues1k), () =>
+    createBenchDataSource(benchRows1k),
+  );
+  setupCommandBench("rename column, 10000 rows", createRenameCommand(originalRowValues10k), () =>
+    createBenchDataSource(benchRows10k),
+  );
 });

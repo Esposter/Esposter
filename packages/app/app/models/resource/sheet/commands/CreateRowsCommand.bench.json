@@ -1,61 +1,83 @@
 {
   "files": [
     {
-      "filepath": "app/models/tableEditor/file/commands/CreateRowsCommand.bench.ts",
+      "filepath": "app/models/resource/sheet/commands/CreateRowsCommand.bench.ts",
       "groups": [
         {
           "benchmarks": [
             {
-              "mean": 0.057960000000093714,
-              "name": "execute — insert 100 rows into 100",
-              "p99": 0.07980000000043219,
-              "rme": 9.990551488261325,
+              "mean": 0.13593999999998232,
+              "name": "execute",
+              "p99": 0.14869999999973516,
+              "rme": 5.094826851667407,
               "sampleCount": 10
             },
             {
-              "mean": 0.059140000000115836,
-              "name": "execute — insert 100 rows into 1000",
-              "p99": 0.07430000000022119,
-              "rme": 7.228183617214587,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.5480499999999665,
-              "name": "execute — insert 1000 rows into 10000",
-              "p99": 0.6122000000004846,
-              "rme": 3.1987518363452656,
-              "sampleCount": 10
-            },
-            {
-              "mean": 4.928610000000117,
-              "name": "execute — insert 10000 rows into 10000",
-              "p99": 5.380699999999706,
-              "rme": 2.8726179188372463,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.11828999999979714,
-              "name": "undo — remove 100 rows from 200",
-              "p99": 0.1529999999993379,
-              "rme": 10.393230266575197,
-              "sampleCount": 10
-            },
-            {
-              "mean": 1.0814700000000812,
-              "name": "undo — remove 1000 rows from 11000",
-              "p99": 1.2039999999997235,
-              "rme": 6.038067789919266,
-              "sampleCount": 10
-            },
-            {
-              "mean": 9.619570000000113,
-              "name": "undo — remove 10000 rows from 20000",
-              "p99": 11.011800000000221,
-              "rme": 4.40758828473811,
+              "mean": 0.16202000000007502,
+              "name": "execute + undo",
+              "p99": 0.2795000000000982,
+              "rme": 20.633273817490842,
               "sampleCount": 10
             }
           ],
-          "fullName": "CreateRowsCommand"
+          "fullName": "CreateRowsCommand > insert 100 rows into 100"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 1.4409500000000661,
+              "name": "execute",
+              "p99": 1.9165000000002692,
+              "rme": 10.21255774639226,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.658080000000109,
+              "name": "execute + undo",
+              "p99": 2.36830000000009,
+              "rme": 14.818828593751684,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "CreateRowsCommand > insert 100 rows into 1000"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 6.566030000000092,
+              "name": "execute",
+              "p99": 7.283900000000358,
+              "rme": 4.389277976851905,
+              "sampleCount": 10
+            },
+            {
+              "mean": 10.019100000000027,
+              "name": "execute + undo",
+              "p99": 15.283300000000054,
+              "rme": 21.37417512589053,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "CreateRowsCommand > insert 1000 rows into 10000"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 13.975609999999824,
+              "name": "execute",
+              "p99": 17.47689999999966,
+              "rme": 10.055190464246337,
+              "sampleCount": 10
+            },
+            {
+              "mean": 21.211779999999997,
+              "name": "execute + undo",
+              "p99": 23.953100000000177,
+              "rme": 6.43520754778053,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "CreateRowsCommand > insert 10000 rows into 10000"
         }
       ]
     }

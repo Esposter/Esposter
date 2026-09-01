@@ -1,54 +1,64 @@
 {
   "files": [
     {
-      "filepath": "app/models/tableEditor/file/commands/DeleteRowsCommand.bench.ts",
+      "filepath": "app/models/resource/sheet/commands/DeleteRowsCommand.bench.ts",
       "groups": [
         {
           "benchmarks": [
             {
-              "mean": 0.06185999999997875,
-              "name": "execute — delete 50 rows from 100",
-              "p99": 0.07920000000012806,
-              "rme": 10.515661717900066,
+              "mean": 0.10634000000004562,
+              "name": "execute",
+              "p99": 0.18100000000004002,
+              "rme": 20.912572431511773,
               "sampleCount": 10
             },
             {
-              "mean": 0.417489999999998,
-              "name": "execute — delete 500 rows from 1000",
-              "p99": 0.5913000000000466,
-              "rme": 19.654728115535228,
-              "sampleCount": 10
-            },
-            {
-              "mean": 2.9689499999998588,
-              "name": "execute — delete 5000 rows from 10000",
-              "p99": 3.2866000000003623,
-              "rme": 4.548179335183272,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.08464999999987413,
-              "name": "undo — re-insert 50 rows into 50",
-              "p99": 0.09900000000016007,
-              "rme": 5.21607655852741,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.578480000000036,
-              "name": "undo — re-insert 500 rows into 500",
-              "p99": 0.6440000000002328,
-              "rme": 3.042010636231798,
-              "sampleCount": 10
-            },
-            {
-              "mean": 5.603679999999895,
-              "name": "undo — re-insert 5000 rows into 5000",
-              "p99": 5.98490000000038,
-              "rme": 2.1614599224347253,
+              "mean": 0.17507000000005063,
+              "name": "execute + undo",
+              "p99": 0.24839999999994689,
+              "rme": 13.33474428215431,
               "sampleCount": 10
             }
           ],
-          "fullName": "DeleteRowsCommand"
+          "fullName": "DeleteRowsCommand > delete 50 rows from 100"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.8785199999999804,
+              "name": "execute",
+              "p99": 1.4403000000002066,
+              "rme": 16.87608921135421,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.0100099999998746,
+              "name": "execute + undo",
+              "p99": 1.1615999999999076,
+              "rme": 5.495047625412352,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "DeleteRowsCommand > delete 500 rows from 1000"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 9.683589999999958,
+              "name": "execute",
+              "p99": 12.295999999999822,
+              "rme": 9.623875986779016,
+              "sampleCount": 10
+            },
+            {
+              "mean": 13.026179999999977,
+              "name": "execute + undo",
+              "p99": 15.003999999999905,
+              "rme": 10.694119901427014,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "DeleteRowsCommand > delete 5000 rows from 10000"
         }
       ]
     }

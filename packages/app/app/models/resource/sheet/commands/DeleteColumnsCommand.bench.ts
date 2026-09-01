@@ -1,3 +1,6 @@
+import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { IndexedColumn } from "@/models/resource/sheet/commands/IndexedColumn";
+
 import {
   benchColumns,
   benchRows1k,
@@ -5,49 +8,51 @@ import {
   benchRows100,
 } from "@/composables/resource/sheet/commands/constants.bench";
 import { createBenchDataSource } from "@/composables/resource/sheet/commands/createBenchDataSource.bench";
-import { createOriginalRowValues } from "@/composables/resource/sheet/commands/createOriginalRowValues.bench";
+import { setupCommandBench } from "@/composables/resource/sheet/commands/setupCommandBench.bench";
 import { DeleteColumnsCommand } from "@/models/resource/sheet/commands/DeleteColumnsCommand";
-import { bench, describe } from "vitest";
+import { getOriginalRowValues } from "@/services/resource/sheet/getOriginalRowValues";
+import { describe } from "vitest";
 
-const createIndexedColumns = (count: number, rows: typeof benchRows1k) =>
-  benchColumns.slice(0, count).map((originalColumn, columnIndex) => ({
+// The command reads its indexed columns and writes only to the data source it executes against, so these are built
+// Once per case instead of per iteration — reading a 10000-row column back is work the command itself never does.
+const createIndexedColumns = (count: number, rows: Row[]): IndexedColumn[] => {
+  const dataSource = createBenchDataSource(rows);
+  return benchColumns.slice(0, count).map((originalColumn, columnIndex) => ({
     columnIndex,
     originalColumn,
-    originalRowValues: createOriginalRowValues(rows, originalColumn.name),
+    originalRowValues: getOriginalRowValues(dataSource, originalColumn.name),
   }));
+};
+const oneColumn100Rows = createIndexedColumns(1, benchRows100);
+const oneColumn1kRows = createIndexedColumns(1, benchRows1k);
+const oneColumn10kRows = createIndexedColumns(1, benchRows10k);
+const threeColumns1kRows = createIndexedColumns(3, benchRows1k);
+const threeColumns10kRows = createIndexedColumns(3, benchRows10k);
 
 describe(DeleteColumnsCommand, () => {
-  bench("execute — delete 1 of 5 columns, 100 rows", () => {
-    new DeleteColumnsCommand(createIndexedColumns(1, benchRows100)).execute(createBenchDataSource(benchRows100));
-  });
-
-  bench("execute — delete 1 of 5 columns, 1000 rows", () => {
-    new DeleteColumnsCommand(createIndexedColumns(1, benchRows1k)).execute(createBenchDataSource(benchRows1k));
-  });
-
-  bench("execute — delete 1 of 5 columns, 10000 rows", () => {
-    new DeleteColumnsCommand(createIndexedColumns(1, benchRows10k)).execute(createBenchDataSource(benchRows10k));
-  });
-
-  bench("execute — delete 3 of 5 columns, 1000 rows", () => {
-    new DeleteColumnsCommand(createIndexedColumns(3, benchRows1k)).execute(createBenchDataSource(benchRows1k));
-  });
-
-  bench("execute — delete 3 of 5 columns, 10000 rows", () => {
-    new DeleteColumnsCommand(createIndexedColumns(3, benchRows10k)).execute(createBenchDataSource(benchRows10k));
-  });
-
-  bench("undo — restore 1 column into 1000 rows", () => {
-    const dataSource = createBenchDataSource(benchRows1k);
-    const command = new DeleteColumnsCommand(createIndexedColumns(1, benchRows1k));
-    command.execute(dataSource);
-    command.undo(dataSource);
-  });
-
-  bench("undo — restore 3 columns into 10000 rows", () => {
-    const dataSource = createBenchDataSource(benchRows10k);
-    const command = new DeleteColumnsCommand(createIndexedColumns(3, benchRows10k));
-    command.execute(dataSource);
-    command.undo(dataSource);
-  });
+  setupCommandBench(
+    "delete 1 of 5 columns, 100 rows",
+    () => new DeleteColumnsCommand(oneColumn100Rows),
+    () => createBenchDataSource(benchRows100),
+  );
+  setupCommandBench(
+    "delete 1 of 5 columns, 1000 rows",
+    () => new DeleteColumnsCommand(oneColumn1kRows),
+    () => createBenchDataSource(benchRows1k),
+  );
+  setupCommandBench(
+    "delete 1 of 5 columns, 10000 rows",
+    () => new DeleteColumnsCommand(oneColumn10kRows),
+    () => createBenchDataSource(benchRows10k),
+  );
+  setupCommandBench(
+    "delete 3 of 5 columns, 1000 rows",
+    () => new DeleteColumnsCommand(threeColumns1kRows),
+    () => createBenchDataSource(benchRows1k),
+  );
+  setupCommandBench(
+    "delete 3 of 5 columns, 10000 rows",
+    () => new DeleteColumnsCommand(threeColumns10kRows),
+    () => createBenchDataSource(benchRows10k),
+  );
 });

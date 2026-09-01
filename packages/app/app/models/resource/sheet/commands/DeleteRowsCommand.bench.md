@@ -9,20 +9,30 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-30T11:29:00.304Z
-- Commit: 5d007480e
-- Node: v26.4.0
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- Date: 2026-09-01T01:41:45.361Z
+- Commit: 89cd43944
+- Node: v26.8.1
+- OS: win32 10.0.26200 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
-## DeleteRowsCommand
+## DeleteRowsCommand > delete 50 rows from 100
 
-| task                                  | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| execute — delete 50 rows from 100     | 1.00×   | 0.0619    | ±10.52% | 0.0792   | 10      |
-| execute — delete 500 rows from 1000   | 0.15×   | 0.4175    | ±19.65% | 0.5913   | 10      |
-| execute — delete 5000 rows from 10000 | 0.021×  | 2.9689    | ±4.55%  | 3.2866   | 10      |
-| undo — re-insert 50 rows into 50      | 0.73×   | 0.0846    | ±5.22%  | 0.0990   | 10      |
-| undo — re-insert 500 rows into 500    | 0.11×   | 0.5785    | ±3.04%  | 0.6440   | 10      |
-| undo — re-insert 5000 rows into 5000  | 0.011×  | 5.6037    | ±2.16%  | 5.9849   | 10      |
+| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------- | -------- | ------- |
+| execute        | 1.00×   | 0.1063    | ±20.91% | 0.1810   | 10      |
+| execute + undo | 0.61×   | 0.1751    | ±13.33% | 0.2484   | 10      |
+
+## DeleteRowsCommand > delete 500 rows from 1000
+
+| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------- | -------- | ------- |
+| execute        | 1.00×   | 0.8785    | ±16.88% | 1.4403   | 10      |
+| execute + undo | 0.87×   | 1.0100    | ±5.50%  | 1.1616   | 10      |
+
+## DeleteRowsCommand > delete 5000 rows from 10000
+
+| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------- | -------- | ------- |
+| execute        | 1.00×   | 9.6836    | ±9.62%  | 12.2960  | 10      |
+| execute + undo | 0.74×   | 13.0262   | ±10.69% | 15.0040  | 10      |
