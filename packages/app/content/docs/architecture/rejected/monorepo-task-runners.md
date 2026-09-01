@@ -20,11 +20,11 @@ Turborepo is the closest fit: pnpm workspaces are native to it, and per-package 
 
 ## Why not
 
-**The build it would make incremental takes seconds.** `pnpm build:packages` builds every non-app package, topologically and in parallel, in well under a minute. Per-package granularity would save a fraction of one CI job, against a cache miss that only happens on a commit already touching a package's internals.
+**The build it would make incremental is not what CI waits on.** `pnpm build:packages` builds every non-app package, topologically and in parallel, in a couple of minutes — against an app build several times longer that gates the workflow either way, so per-package granularity would save a fraction of the one job nothing is waiting on. It would not even save that on every miss: the [whole-set key](/docs/architecture/monorepo-tooling) hashes every tracked file under a non-app package, so a README, CHANGELOG or lint-config edit rebuilds too, and per-package granularity narrows which packages rebuild without making those commits hit.
 
 **It would be the third content-hash cache in the repo.** virrun's [task cache](/docs/virrun/task-cache) is already the Turborepo idea, and [prior art](/docs/virrun/prior-art) records it as such — content-keyed on lockfile, working tree and command. The `package-builds` entry is the second. A task runner's key would be a third, with its own notion of what an input is, and three caches that disagree about staleness fail in the direction that matters: one of them serves a `dist` the others would have rebuilt.
 
-**Its cache would miss in CI anyway without remote caching.** A local task cache is a dev-loop lever — virrun's is off in CI precisely because a fresh commit changes the tree hash and hits are near zero. Getting CI value out of Turborepo means running a remote cache, which is either Vercel's or a self-hosted server to operate, for a build measured in seconds.
+**Its cache would miss in CI anyway without remote caching.** A local task cache is a dev-loop lever — virrun's is off in CI precisely because a fresh commit changes the tree hash and hits are near zero. Getting CI value out of Turborepo means running a remote cache, which is either Vercel's or a self-hosted server to operate, for a build that is not the critical path.
 
 **It replaces the orchestration we chose on purpose.** `pnpm -r` with filters is the documented mechanism, picked over Lerna Lite for the same reasons; `turbo run build` would put a second task graph in front of a workspace graph pnpm already resolves correctly.
 
