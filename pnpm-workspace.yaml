@@ -64,16 +64,16 @@ catalog:
   "@pulumi/github": ^6.15.0
   "@pulumi/pulumi": ^3.260.0
   "@takumi-rs/core": ^2.13.3
-  "@tiptap/core": ^3.30.6
-  "@tiptap/extension-code-block-lowlight": ^3.30.6
-  "@tiptap/extension-file-handler": ^3.30.6
-  "@tiptap/extension-mention": ^3.30.6
-  "@tiptap/extensions": ^3.30.6
-  "@tiptap/html": ^3.30.6
-  "@tiptap/pm": ^3.30.6
-  "@tiptap/starter-kit": ^3.30.6
-  "@tiptap/suggestion": ^3.30.6
-  "@tiptap/vue-3": ^3.30.6
+  "@tiptap/core": ^3.31.0
+  "@tiptap/extension-code-block-lowlight": ^3.31.0
+  "@tiptap/extension-file-handler": ^3.31.0
+  "@tiptap/extension-mention": ^3.31.0
+  "@tiptap/extensions": ^3.31.0
+  "@tiptap/html": ^3.31.0
+  "@tiptap/pm": ^3.31.0
+  "@tiptap/starter-kit": ^3.31.0
+  "@tiptap/suggestion": ^3.31.0
+  "@tiptap/vue-3": ^3.31.0
   "@tresjs/cientos": ^5.8.1
   "@tresjs/core": ^5.8.3
   "@tresjs/nuxt": ^5.6.3
