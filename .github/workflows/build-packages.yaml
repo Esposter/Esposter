@@ -34,32 +34,11 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      # Cache key = a content hash (mode + blob hash + path) of the TRACKED files under `packages/` that
-      # `pnpm build:packages` could read, plus the root package.json (infra bundles it via
-      # `import packageJson from "../../../../package.json"`), the lockfile and the catalog.
-      #
-      # Everything is an input until proven otherwise, and only two things are subtracted: `packages/app`, which
-      # this job does not build at all, and test/bench files, which no entrypoint reaches and which change far
-      # more often than anything they sit beside. The two failure directions are not symmetric — subtracting too
-      # little costs one rebuild on a push that was already touching a package's internals, while subtracting too
-      # much serves a `dist` that does not match the source it claims to be built from, and every check downstream
-      # then passes against the stale artifact. So the default is to hash it, and an exclusion has to earn itself.
-      # That also means a build input of a new shape needs nothing done to it: it is already in the key.
-      #
-      # Tracked files only, so generated output (dist, ctix barrels, *.tsbuildinfo, node_modules) stays out by
-      # construction.
-      - name: 🔑 Compute package build cache key
+      # The key is computed by a shared action so the save here and every restore elsewhere derive it from
+      # One definition — 🏗️ Pulumi and the two Functions deploys restore this same entry.
+      - name: 🔑 Get package builds key
         id: key
-        run: |
-          hash=$( {
-            git ls-tree -r HEAD packages | awk -F'\t' '
-              $2 ~ /^packages\/app\// { next }
-              $2 ~ /\.(test|test-d|bench)\.ts$/ { next }
-              { print }
-            '
-            git rev-parse HEAD:package.json HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml
-          } | sha256sum | cut -d' ' -f1 )
-          echo "hash=$hash" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/get-package-builds-key
       # `packages/*/dist` is the published build output and `packages/*/src/**/index.ts` are the ctix-generated
       # Barrels (gitignored, absent on a fresh checkout). Both are produced by `pnpm build:packages`.
       - name: ♻️ Restore package builds

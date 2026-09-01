@@ -38,10 +38,33 @@ jobs:
       - name: 🔨 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
+      # 🏗️ CI already built every non-app package at this content hash and saved it under this key, and
+      # `@esposter/azure-functions` is one of them — so on a hit this job builds nothing and deploys exactly the
+      # Bundle CI checked. Restore only: this job builds a subset, so saving from here would publish a partial
+      # `dist` set under the full build's key.
+      - name: 🔑 Get package builds key
+        id: key
+        uses: ./.github/actions/get-package-builds-key
+
+      - name: ♻️ Restore package builds
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            packages/*/dist
+            packages/*/src/**/index.ts
+          key: package-builds-${{ steps.key.outputs.hash }}
+
       - name: 🔧 Resolve Project Dependencies
+        run: pnpm --filter @esposter/azure-functions... i
+      # Gated on the artifact itself rather than on the restore's `cache-hit`: a hit whose `path` list no longer
+      # Matches what was saved reports success and extracts nothing, and a build skipped on that flag would zip
+      # An empty `dist` and deploy a function app that registers nothing while the host still reports Running.
+      - name: 🏗️ Build
+        if: ${{ hashFiles(format('{0}/dist/index.js', env.PACKAGE_PATH)) == '' }}
+        run: pnpm --filter @esposter/azure-functions... build
+
+      - name: 📦 Collect Deployment Output
         run: |
-          pnpm --filter @esposter/azure-functions... i
-          pnpm --filter @esposter/azure-functions... build
           pnpm --filter @esposter/azure-functions deploy --prod ${{ env.OUTPUT_DIRECTORY }} --config.inject-workspace-packages=true --config.node-linker=hoisted
           cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.OUTPUT_DIRECTORY }}/host.json
 

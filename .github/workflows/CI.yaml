@@ -155,22 +155,24 @@ jobs:
           path: coverage
           if-no-files-found: error
 
+  # The one check with no `needs: build-packages`. oxfmt is a standalone binary reading source files — no
+  # Barrels, no package `dist`, and no `virrun` in the command to build one for — so gating it on the package
+  # Build only made the workflow's quickest check wait out its slowest job. It installs rather than using
+  # `setup-packages` for the same reason: it wants `node_modules`, not the built artifact.
   format:
     name: Format
-    needs: build-packages
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # Native on Linux (platform-branched virrun.config.ts): plain install + the built virrun bin from the
-      # build-packages artifact, no sandbox setup.
+
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      - name: 📦 Setup Packages
-        uses: ./.github/actions/setup-packages
+      - name: 📦 Install dependencies
+        run: pnpm i
 
       - name: 📝 Format
         run: pnpm format:check
