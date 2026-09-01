@@ -39,8 +39,29 @@ jobs:
       - name: 🔑 Get package builds key
         id: key
         uses: ./.github/actions/get-package-builds-key
-      # `packages/*/dist` is the published build output and `packages/*/src/**/index.ts` are the ctix-generated
-      # Barrels (gitignored, absent on a fresh checkout). Both are produced by `pnpm build:packages`.
+      # `packages/*/dist` is the published build output, `packages/*/src/**/index.ts` are the ctix-generated
+      # Barrels (gitignored, absent on a fresh checkout), and the fingerprint files are what let a build that
+      # Does run skip regenerating those barrels. All three are produced by `pnpm build:packages`.
+      #
+      # `restore-keys` is the whole reason the fingerprints are cached. Bundling a package is quick; generating
+      # Its barrel is a TypeScript program, and it dominates a cold build so completely that the same tree
+      # Builds an order of magnitude faster once every fingerprint is current — which is what
+      # `generateExports` checks `node_modules/.cache/ctix-source-fingerprint` for. Nothing restored that file here, so the skip only ever fired on a developer's machine and
+      # Every CI miss paid full generation for all of them, including the packages the commit never touched.
+      # The prefix restores the previous build's fingerprints on a miss, so generation runs for exactly the
+      # Packages whose barrel could have changed.
+      #
+      # Safe because it cannot decide anything. The exact key is still what gates the build below —
+      # `cache-hit` is true only on an exact match — so a prefix hit builds every package regardless, over a
+      # `dist` tsdown cleans first, and the restored barrels are re-derived by the fingerprint's own rule:
+      # It hashes the source list, each file's export bit and the generator, so a stale barrel survives only
+      # Where those are identical. If pnpm ever prunes `.cache` out of `node_modules` the fingerprints are
+      # Simply absent and the build is the cold one it is today — the failure direction is a slower build,
+      # Never a wrong barrel.
+      #
+      # It belongs to this job alone. 🏗️ Pulumi and the two Functions deploys restore the same entry but
+      # Skip their build when a `dist` is already on disk, so a prefix hit there would hand them output built
+      # From another commit and deploy it.
       - name: ♻️ Restore package builds
         id: cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -48,14 +69,20 @@ jobs:
           path: |
             packages/*/dist
             packages/*/src/**/index.ts
+            packages/*/node_modules/.cache/ctix-source-fingerprint
           key: package-builds-${{ steps.key.outputs.hash }}
+          restore-keys: package-builds-
       # Both the install and the build hang off the cache miss, and in that order: the key is computed from
       # tracked files with `git ls-tree` and the artifact is uploaded straight from the restored paths, so on a
       # hit this job needs no `node_modules` at all. Every job in both callers `needs` this one, so an install
       # nothing goes on to use is latency the whole workflow waits behind.
+      #
+      # Filtered rather than a plain `pnpm i`: this job builds `!@esposter/app`, so the app's dependency tree
+      # And its `postinstall: nuxt prepare` are install work nothing here reads. Every other postinstall still
+      # Runs, for the projects that are installed — the project set narrows, scripts are not disabled.
       - name: 📦 Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: pnpm i
+        run: pnpm --filter "!@esposter/app" i
 
       - name: 🏗️ Build packages
         if: steps.cache.outputs.cache-hit != 'true'

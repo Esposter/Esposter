@@ -20,7 +20,9 @@ Turborepo is the closest fit: pnpm workspaces are native to it, and per-package 
 
 ## Why not
 
-**The build it would make incremental is not what CI waits on.** `pnpm build:packages` builds every non-app package, topologically and in parallel, in a couple of minutes — against an app build several times longer that gates the workflow either way, so per-package granularity would save a fraction of the one job nothing is waiting on. It would not even save that on every miss: the [whole-set key](/docs/architecture/monorepo-tooling) hashes every tracked file under a non-app package, so a README, CHANGELOG or lint-config edit rebuilds too, and per-package granularity narrows which packages rebuild without making those commits hit.
+**The build it would make incremental is not what CI waits on.** `pnpm build:packages` builds every non-app package, topologically and in parallel, against an app build several times longer that gates the workflow either way — so per-package granularity would save a fraction of the one job nothing is waiting on. It would not even save that on every miss: the [whole-set key](/docs/architecture/monorepo-tooling) hashes every tracked file under a non-app package, so a README, CHANGELOG or lint-config edit rebuilds too, and per-package granularity narrows which packages rebuild without making those commits hit.
+
+**The expensive half of that build is already per-package.** Bundling a package is quick; generating its barrel is a TypeScript program, and that is the difference between a cold build and a warm one — an order of magnitude on the same tree. Generation is skipped per package by a content fingerprint, and CI [restores those fingerprints by key prefix](/docs/architecture/monorepo-tooling) on a miss, so a miss already regenerates only the packages whose barrel could have changed. What a task runner would add on top is skipping the cheap half.
 
 **It would be the third content-hash cache in the repo.** virrun's [task cache](/docs/virrun/task-cache) is already the Turborepo idea, and [prior art](/docs/virrun/prior-art) records it as such — content-keyed on lockfile, working tree and command. The `package-builds` entry is the second. A task runner's key would be a third, with its own notion of what an input is, and three caches that disagree about staleness fail in the direction that matters: one of them serves a `dist` the others would have rebuilt.
 
@@ -30,7 +32,7 @@ Turborepo is the closest fit: pnpm workspaces are native to it, and per-package 
 
 ## The revisit trigger
 
-If `build:packages` ever passes roughly a minute, granularity starts earning its keep — and the first step is still not a task runner. The existing key is a short `git ls-tree` pipeline in `get-package-builds-key`, and the dependency order it would need is already what `pnpm -r` walks, so splitting it per package is a smaller change than adopting a runner and adds no third cache.
+If `build:packages` ever stops finishing well inside the app build — the job that gates the workflow, and the reason the package build's own duration buys nothing today — granularity starts earning its keep, and the first step is still not a task runner. The existing key is a short `git ls-tree` pipeline in `get-package-builds-key`, and the dependency order it would need is already what `pnpm -r` walks, so splitting it per package is a smaller change than adopting a runner and adds no third cache.
 
 ## What we take from it instead
 
