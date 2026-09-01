@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
+import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { parseSnapshotVersionId } from "@/services/resource/parseSnapshotVersionId";
 import { ViewComponentMap } from "@/services/resource/ViewComponentMap";
@@ -20,6 +21,13 @@ const snapshotVersion = computed(() => parseSnapshotVersionId(snapshotVersionId)
 // Matches its own route param — a type with no renderer previews nothing, and its rows never offer to
 const viewComponent = computed(
   () => Object.entries(ViewComponentMap).find(([viewType]) => viewType === resource.type)?.[1],
+);
+// The public renderer addresses `{id}/published/{version}`, so it can only be handed a published version — a
+// Revision's number would render whichever published snapshot happens to share it, and the two channels number
+// Independently. A revision has no rendered form here and falls to the empty state, whose Restore is the way to
+// See it; the banner still names it, because what is being previewed is what the route asked for
+const publishedVersion = computed(() =>
+  snapshotVersion.value?.channel === SnapshotChannel.Published ? snapshotVersion.value.version : undefined,
 );
 const title = computed(() => (snapshotVersion.value ? getSnapshotVersionTitle(snapshotVersion.value) : ""));
 </script>
@@ -41,13 +49,13 @@ const title = computed(() => (snapshotVersion.value ? getSnapshotVersionTitle(sn
     </v-alert>
     <div flex-1 min-w-0 overflow-auto>
       <StyledEmptyState
-        v-if="!snapshotVersion || !viewComponent"
+        v-if="!publishedVersion || !viewComponent"
         description="This version has no rendered form of its own — restore it to see its content."
         icon="mdi-eye-off-outline"
         title="Nothing to preview"
       />
       <Suspense v-else>
-        <component :is="viewComponent" :id="resource.id" :version="snapshotVersion.version" />
+        <component :is="viewComponent" :id="resource.id" :version="publishedVersion" />
         <template #fallback>
           <StyledSkeleton />
         </template>
