@@ -16,13 +16,22 @@ Name what the test actually asserts on — `vi.useFakeTimers({ now: 0, toFake: [
 
 ## `Temporal.Now` reads a clock the fake timers never patched
 
-The polyfill captures its clock source at module load, so `Temporal.Now.zonedDateTimeISO()` and its siblings return
-the **real** current instant inside a suite that installed `vi.useFakeTimers({ now: 0 })` — the test fails with a
-received value that is today's date, which reads as the code ignoring its input rather than as the clock leaking.
+`Temporal` is not one of the methods vitest's `toFake` accepts — the fake clock replaces `Date`, `performance` and
+the timer functions and nothing else — so `Temporal.Now.zonedDateTimeISO()` and its siblings return the **real**
+current instant inside a suite that installed `vi.useFakeTimers({ now: 0 })`. The test fails with a received value
+that is today's date, which reads as the code ignoring its input rather than as the clock leaking.
 
 Production code that has to be testable takes the instant through `Date` and converts:
 `getZonedDateTime(new Date())` from `@esposter/shared`, which builds the zoned time from `date.getTime()` and so
 sees whatever the fake clock says. `Temporal.Now` stays fine anywhere no test needs to pin the clock.
+
+**This retires on the vitest 5 bump.** `@sinonjs/fake-timers` has since gained a `Temporal` entry that fakes every
+`Temporal.Now.*` method on native Temporal (node 26+), and vitest closed
+https://github.com/vitest-dev/vitest/issues/10345 against its 5.0.0 milestone as a breaking change — nothing on 4.x
+carries it. The check is one grep rather than a release note: the `FakeMethod` union in vitest's
+`dist/chunks/config.d.*.d.ts` either lists `"Temporal"` or it does not. Once it does, a test that pins the clock
+names it (`toFake: ["Date", "Temporal"]`) and the take-the-instant-through-`Date` rule above goes with it —
+`getZonedDateTime` itself stays, since it is the one place a `Date` becomes a zoned time.
 
 ## A throttled or debounced call wants a bare `vi.useFakeTimers()`
 
