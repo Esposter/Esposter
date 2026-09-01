@@ -30,7 +30,7 @@ flowchart LR
   P --> Z
 ```
 
-The barrel is generated, never committed: `ctix` runs against `tsconfig.build.json` as the build starts, which is why CI caches the generated `src/**/index.ts` files alongside `dist`. It is skipped when the source file list is unchanged, since a barrel names no symbol and so cannot depend on a file's contents; `export:gen` is still a script per package, and running it regenerates unconditionally.
+The barrel is generated, never committed: `ctix` runs against `tsconfig.build.json` as the build starts, which is why CI caches the generated `src/**/index.ts` files alongside `dist`. It is skipped when the source file list, each file's export bit and the generator are all unchanged. A barrel names no symbol, so it cannot depend on _what_ a file exports — but ctix omits a file exporting nothing, so it does depend on whether each one exports at all, which is the single transition a path list would report as no change while the barrel silently lost a line. And it depends entirely on what wrote it, which is why ctix's cli and its `.ctirc-*` configs are hashed by content alongside the list. `export:gen` is still a script per package, and running it regenerates unconditionally.
 
 ## The shared configuration package
 

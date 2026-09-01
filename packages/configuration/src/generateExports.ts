@@ -36,26 +36,29 @@ const getCtixCommandPath = (): string => {
 // Each, which is most of what a package build spends once declarations are out of it, and it earns none of that
 // On the ordinary edit that changes a file's contents without adding or removing one.
 //
+// The cli is resolved ahead of the fingerprint rather than after it, because it is one of the fingerprint's own
+// Inputs — the generator is part of what the barrel is a function of.
+//
 // Stdio is inherited, so ctix reports what it wrote exactly as it did when a script invoked it.
 export const generateExports = (exportsGeneration: ExportsGeneration): void => {
   const ctixConfigurations = CtixConfigurationsMap[exportsGeneration];
   if (ctixConfigurations.length === 0) return;
 
-  const fingerprint = getSourceFingerprint();
+  const ctixCommandPath = getCtixCommandPath();
+  const ctixConfigurationPaths = ctixConfigurations.map((ctixConfiguration) =>
+    resolve(CONFIGURATION_DIRECTORY, ctixConfiguration),
+  );
+  const fingerprint = getSourceFingerprint([ctixCommandPath, ...ctixConfigurationPaths]);
   const isFingerprintCurrent = existsSync(FINGERPRINT_FILE) && readFileSync(FINGERPRINT_FILE, "utf8") === fingerprint;
   if (isFingerprintCurrent && existsSync(GENERATED_BARREL)) return;
 
-  const ctixCommandPath = getCtixCommandPath();
-  for (const ctixConfiguration of ctixConfigurations) {
-    const { status } = spawnSync(
-      process.execPath,
-      [ctixCommandPath, "build", "--config", resolve(CONFIGURATION_DIRECTORY, ctixConfiguration)],
-      { stdio: "inherit" },
-    );
+  for (const ctixConfigurationPath of ctixConfigurationPaths) {
+    const { status } = spawnSync(process.execPath, [ctixCommandPath, "build", "--config", ctixConfigurationPath], {
+      stdio: "inherit",
+    });
     // A stale barrel is a build that succeeds against the wrong export surface, so this fails the build rather
     // Than leaving tsdown to bundle whatever the last successful run happened to write.
-
-    if (status !== 0) throw new Error(`ctix exited ${String(status)} for ${ctixConfiguration}`);
+    if (status !== 0) throw new Error(`ctix exited ${String(status)} for ${ctixConfigurationPath}`);
   }
 
   mkdirSync(dirname(FINGERPRINT_FILE), { recursive: true });

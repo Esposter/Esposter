@@ -99,7 +99,7 @@ The `build-packages` job builds the packages once and uploads `packages/*/dist` 
 
 The shared gate is preferred over per-job caching because the package _build_ then happens at most once per run (no redundant parallel rebuilds on a package-change commit), and on an app-only commit — the common case — the gate's own build is a cache hit, so the gate cost collapses to install + restore + upload. The trade is the serial gate wait before the consuming checks start.
 
-The generated barrels must be cached alongside `dist` because `build:packages` runs `export:gen` and the barrel files are not committed — TypeDoc and the package lint/typecheck steps fail without them even when `dist` is present. Preserve all generated source index files, not just root `src/index.ts`, since some generators create nested barrels.
+The generated barrels must be cached alongside `dist` because `build:packages` generates them from a `build:prepare` hook and the barrel files are not committed — TypeDoc and the package lint/typecheck steps fail without them even when `dist` is present. Preserve all generated source index files, not just root `src/index.ts`, since some generators create nested barrels.
 
 ## CI security
 
