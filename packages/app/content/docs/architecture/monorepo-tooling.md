@@ -57,6 +57,8 @@ lerna publish --yes
 
 Do not use Lerna Lite for recursive script execution or watch orchestration. If a root script is not publishing, prefer pnpm workspace commands. This means `@lerna-lite/cli` and `@lerna-lite/publish` remain in dev dependencies, while `@lerna-lite/run` and `@lerna-lite/watch` are unnecessary.
 
+`pnpm release` is the chain in front of it, and **every step is a check rather than a fix**: `lint:packages`, `format:check`, `typecheck:packages`, `test:packages`, `build:packages`, then the publish. The fix variants led this chain once, which made a release rewrite the tree it was about to publish — whatever they changed shipped under the new version and got tagged without anyone reading it. A release is the one moment a dirty tree has to fail loudly rather than be tidied away. The suite is in the chain for the same reason the checks are: CI runs it on every push, but nothing tied a green suite to the tree lerna actually publishes, and a publish is the only step here that a later commit cannot walk back.
+
 ## Dependency installs
 
 Use plain `pnpm i` from the repo root when package manifests change.

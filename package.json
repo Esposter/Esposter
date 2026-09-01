@@ -57,7 +57,7 @@
     "prepare": "git config core.hooksPath .githooks || true",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
-    "release": "pnpm lint:fix:packages && pnpm format && pnpm typecheck:packages && pnpm build:packages && lerna publish --yes",
+    "release": "pnpm lint:packages && pnpm format:check && pnpm typecheck:packages && pnpm test:packages && pnpm build:packages && lerna publish --yes",
     "start": "pnpm --filter @esposter/app run start",
     "test": "virrun -- vitest run",
     "test:packages": "virrun -- vitest run --project \"!@esposter/app\"",
@@ -105,6 +105,7 @@
     }
   },
   "scriptsComments": {
+    "release": "Every step is a check rather than a fix, and the suite runs before the publish. `lint:fix:packages` and `format` used to lead this chain, which meant a release rewrote the tree it was about to publish: whatever they changed went out under the new version and got tagged, never having been read by anyone. A release is the one moment a dirty tree has to fail loudly instead of being tidied away, so the fix variants are the dev loop's and the check variants are this chain's. `test:packages` is here because a publish is the only step in the repo that a later commit cannot walk back — CI runs the suite on every push, but nothing tied a green suite to the tree that lerna actually publishes.",
     "build": "@TODO: restore `pnpm build:docs` to the chain when a bridge build grows the AST navigation API. TypeDoc exits 6 against the `typescript-native-bridge` alias, and `build` is what deploy runs, so the deploy would fail on documentation alone. `build:docs` stays as the probe. See the `build-docs` job in .github/workflows/CI.yaml."
   }
 }
