@@ -229,6 +229,7 @@
     "nuxt-security": "catalog:",
     "sass-embedded": "catalog:",
     "sql-highlight": "catalog:",
+    "tsx": "catalog:",
     "type-fest": "catalog:",
     "unocss": "catalog:",
     "unocss-preset-vuetify": "catalog:",

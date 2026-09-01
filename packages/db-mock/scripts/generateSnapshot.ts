@@ -1,3 +1,4 @@
+import { SNAPSHOT_FILENAME } from "#src/constants";
 import { PGlite } from "@electric-sql/pglite";
 import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
 import { KIBIBYTE } from "@esposter/configuration";
@@ -7,8 +8,6 @@ import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/pglite";
 import { writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-
-import { SNAPSHOT_FILENAME } from "../src/constants";
 
 const client = new PGlite({ extensions: { pg_trgm } });
 const db = drizzle({ client, relations });

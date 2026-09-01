@@ -57,7 +57,7 @@
     "export:gen": "generate-exports",
     "db:gen": "pnpm db:run generate",
     "db:pull": "pnpm db:run pull",
-    "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
+    "db:run": "node node_modules/drizzle-kit/bin.cjs",
     "db:studio": "pnpm db:run studio",
     "db:up": "pnpm db:run up",
     "format": "oxfmt",
