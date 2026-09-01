@@ -1,6 +1,6 @@
 ---
 name: skill-authoring
-description: Esposter skill-writing conventions for .agents/skills — frontmatter that drives selection, the two-tier layout (SKILL.md is the always-on rule index, references/*.md hold sub-task deep dives opening with their trigger, the ~15 KB budget as a signal to separate topics rather than a number to shave prose under, trigger-named index lines, and repointing every pointer a split breaks), when a skill earns a mermaid diagram (an ordered cycle with a gate, never a rule list), one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), don't restate what an enforcer already checks, the reproducible-pattern test (one-offs are deleted rather than recorded — git already holds them), generic placeholders over identifiers from one change, magnitudes over incident numbers, and citing a docs page by its repo-relative path rather than a relative or GitHub link. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
+description: Esposter skill-writing conventions for .agents/skills — frontmatter that drives selection, the two-tier layout (SKILL.md is the always-on rule index, references/*.md hold sub-task deep dives opening with their trigger, the ~15 KB budget as a signal to separate topics rather than a number to shave prose under, trigger-named index lines, and repointing every pointer a split breaks), when a skill earns a mermaid diagram (an ordered cycle with a gate, never a rule list), one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), the `## Settled — do not re-propose` list a domain with rejected directions carries as its first section so a settled decision is findable before it is re-derived rather than buried in prose, don't restate what an enforcer already checks, the reproducible-pattern test (one-offs are deleted rather than recorded — git already holds them), generic placeholders over identifiers from one change, magnitudes over incident numbers, and citing a docs page by its repo-relative path rather than a relative or GitHub link. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
 ---
 
 # Skill Authoring
@@ -32,6 +32,19 @@ When a session discovers or corrects a convention — a shared primitive that mu
 
 - Adding a section is also a frontmatter edit — the `description` must gain the new topic or selection never surfaces it.
 - **A skill claim contradicted by evidence gets verified empirically and fixed, never obeyed.** Run the enforcer, reproduce the behavior, then correct the line — a stale rule that keeps being followed compounds exactly like a good one.
+
+## Rejected directions get a list, not a paragraph
+
+A settled decision written as prose — "finishing X has been tried and is not wanted", mid-paragraph, two thirds down a long skill — is not read by the person about to propose X. That is how a rejected design gets re-derived by a reader who loaded the very skill that rejects it, and the cost is a session's work thrown away against a record that existed and was unfindable.
+
+So a skill whose domain has directions that were tried or considered and rejected carries **`## Settled — do not re-propose`** as its first section after the intro, ahead of the rules anyone designs against.
+
+- **One line per direction**: what would be proposed, why it fails, what to do instead — `**Bundling `` `external-pkg` `` into every consumer** — duplicates it in each dist and splits its types, so `` `instanceof` `` fails across copies; externalise and let the consumer dedupe.`
+- **It holds directions, not rules.** A rule says what to do. A settled line exists only because a reader would plausibly propose the alternative — if nobody would, it is a rule and belongs with the rules.
+- **The rationale stays where it already lives.** The line carries one clause of why, never the argument: where the skill makes the case further down, or `packages/app/content/docs/architecture/rejected/` holds a page for it, the line ends with that pointer. Two full statements of one rejection drift like any other copy.
+- The reproducible-pattern test applies unchanged: no dates, no PR numbers, no account of the session that got it wrong. What would be proposed and why it fails is the whole entry.
+
+`code-review` greps this tree as the tiebreaker for a finding that argues with a decision, so a rejection that never reaches a `Settled` list is one that keeps being re-litigated.
 
 ## Don't restate what an enforcer already checks
 
@@ -90,17 +103,9 @@ but the repo root (`docs/architecture/foo.md`) resolves nowhere and is the form 
 Cite another **skill** by name plus its page (``the `pinia` skill (`references/keyed-state-and-pagination.md`)``),
 never as a path into `.agents/skills/`.
 
-## A cycle earns a diagram; a rule list does not
+## A cycle earns a diagram — `references/diagrams.md`
 
-Most skills are rule lists, and a diagram of a list is decoration. The exception is a skill whose subject is an **ordered process with state** — a gate you can be on the wrong side of, a loop whose position decides what you may do next. Prose describes each step of one of those correctly and still leaves the reader unable to answer "where am I, and what does that permit", because that answer lives in the ordering rather than in any step.
-
-One `mermaid` block, in `SKILL.md` beside the rule it serves, when all three hold:
-
-- The subject is a **sequence or cycle**, not a set of independent rules.
-- Being at the wrong point in it is a **mistake you can actually make** — the diagram is a gate, not an illustration.
-- The nodes are states or decisions, not the rules restated as boxes.
-
-Keep it small enough to read at a glance, label the edges with the condition that takes you along them, and never let it carry a rule the prose does not — a diagram is unsearchable, and a rule that exists only in one is a rule nobody greps. Content docs have their own, stricter diagram mandate, owned by the `docs` skill; this is the narrower rule for skills.
+Most skills are rule lists, and a diagram of a list is decoration. **Considering a `mermaid` block in a skill** — the three conditions its subject has to meet, and why an ordered process with a gate is the only subject that meets them — is that page.
 
 ## Tight, not fluffy
 
