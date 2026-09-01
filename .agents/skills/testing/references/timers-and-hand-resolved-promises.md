@@ -31,7 +31,9 @@ https://github.com/vitest-dev/vitest/issues/10345 against its 5.0.0 milestone as
 carries it. The check is one grep rather than a release note: the `FakeMethod` union in vitest's
 `dist/chunks/config.d.*.d.ts` either lists `"Temporal"` or it does not. Once it does, a test that pins the clock
 names it (`toFake: ["Date", "Temporal"]`) and the take-the-instant-through-`Date` rule above goes with it —
-`getZonedDateTime` itself stays, since it is the one place a `Date` becomes a zoned time.
+`getZonedDateTime` itself stays, since it is the one place a `Date` becomes a zoned time. It is one row of
+`packages/app/content/docs/proposals/refactors/test-harness-workarounds.md`, which holds every shim the suite
+carries for a gap in a runner or its DOM.
 
 ## A throttled or debounced call wants a bare `vi.useFakeTimers()`
 
