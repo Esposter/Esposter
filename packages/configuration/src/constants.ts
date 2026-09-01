@@ -2,13 +2,20 @@
 // And settings while every tool reads the real path — globbers follow directory symlinks, so a repo-wide walk that did
 // Not ignore the alias would enumerate the whole tree twice under two names.
 export const AGENT_DIRECTORY = ".agents";
+// The alias itself. Only a tool that follows directory symlinks has to ignore it: the root TypeScript program and
+// Oxlint both do, oxfmt and VS Code's search do not, and ESLint inherits oxlint's list rather than stating its own.
+// The configs that cannot import repeat the literal and are pinned against this constant by
+// `scripts/agentDirectories.test.ts`.
+export const AGENT_ALIAS_DIRECTORY = ".claude";
 // Agent tools run `git worktree add` into `<agent tree>/worktrees/<name>/`, so a live worktree is a full second copy of
-// This monorepo nested inside it. Every repo-wide glob — the root tsconfig program, the `agents` Vitest project, the
-// Oxlint ignore list (which the shared ESLint config bridges) — has to exclude it or it traverses the whole repo once
-// More per live worktree, reporting diagnostics at paths that belong to another branch. Only the agent harness's
-// Machine-local `.git/info/exclude` hides these from git, and no clone, CI runner or non-git tool ever sees that file,
-// So the exclusion has to be stated in each tool's own configuration. The configs that cannot import (`tsconfig.json`,
-// `.oxlintrc.json`) repeat the literal and are pinned against this constant by `scripts/agentWorktrees.test.ts`.
+// This monorepo nested inside it. Every repo-wide walk — the root tsconfig program, the oxlint ignore list (which the
+// Shared ESLint config bridges), oxfmt and git itself — has to exclude it, or each one traverses the whole repo once
+// More per live worktree: diagnostics reported at paths belonging to another branch, another branch's files rewritten
+// By a format run, and a checkout listed as untracked. The agent harness only ever hides these from git through the
+// Machine-local `.git/info/exclude`, which no clone, CI runner or non-git tool sees, so the exclusion is stated in
+// Each tool's own configuration. None of those formats can import (`tsconfig.json`, `.oxlintrc.json`, `.oxfmtrc.json`
+// And `.gitignore`), so they repeat the literal and are pinned against this constant by
+// `scripts/agentDirectories.test.ts`.
 // The annotation is redundant to oxlint but mandatory to the dts build — an interpolated value cannot be inferred
 // Under --isolatedDeclarations, which is what emits this package's types.
 // oxlint-disable-next-line typescript/no-inferrable-types

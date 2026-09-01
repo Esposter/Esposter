@@ -1,6 +1,8 @@
 import eslintConfiguration from "@esposter/configuration/eslint/index.typescript.js";
 
-// The workflow scripts are async function bodies the harness injects globals into, so they end in a top-level
-// `return` — which is a parse error for ESLint's parser, not a lint finding it could report. Oxlint parses them
-// Fine and covers them instead; only `unicorn/prefer-module` is turned off for them in `.oxlintrc.json`.
-export default eslintConfiguration.append({ ignores: ["packages", ".claude"] });
+// `packages` is the only ignore this file owns: every package lints itself with its own flat config, and a root
+// `eslint .` that walked them would apply this file's rules instead of theirs. Everything else a repo-wide walk has
+// To skip — the `.claude` alias, `.agents/worktrees` — arrives from `.oxlintrc.json`'s `ignorePatterns`, which the
+// Shared config bridges into flat-config global `ignores` through `eslint-plugin-oxlint`. Repeating one here reads
+// As the rule's owner and drifts from the list that actually governs both linters.
+export default eslintConfiguration.append({ ignores: ["packages"] });
