@@ -78,10 +78,18 @@ matters already ran on the PR those commits came from.
 The lockfile is machine state, like `snapshot.json`. A hand-merged lock (or one side taken wholesale and left alone) silently disagrees with the merged `pnpm-workspace.yaml` catalog. Resolve `pnpm-workspace.yaml` first — that one is authored and merges normally, keeping the **higher** version on every conflicting catalog entry — then regenerate the lock from it:
 
 ```bash
-git checkout --ours -- pnpm-lock.yaml   # any side; it is about to be rewritten
-pnpm i                                  # from the repo root — reconciles the lock to the merged catalog
+git checkout origin/main -- pnpm-lock.yaml   # the side that already resolved the incoming bumps
+pnpm i                                       # from the repo root — reconciles the lock to the merged catalog
 git add pnpm-lock.yaml
 ```
+
+**Which side is kept is not arbitrary.** `pnpm i` re-resolves only the specifiers the kept lock cannot satisfy,
+and it resolves each of those to the newest release the caret allows — which for a monorepo of packages bumped
+together is a release the rest of them have no entry for. Keeping the side that never saw the bump therefore
+puts the direct dependency a version ahead of every sibling pinned around it, and two copies of the shared core
+land in the tree; a type augmentation then registers against the copy the app does not import, and the errors
+name application files that the branch never touched. Keep the side whose catalog bump is already resolved
+— `origin/main` when merging `main` in — so the reconciliation is only the other branch's own additions.
 
 `pnpm i` reporting `Lockfile is up to date` is a valid outcome, not a skipped step — it means the side you kept already resolved every merged specifier. Verify with the specifiers themselves (`grep` the bumped package in the lock) rather than trusting the message.
 
