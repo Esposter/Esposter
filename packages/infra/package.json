@@ -61,8 +61,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@esposter/db-schema": "workspace:*",
-    "@esposter/shared": "workspace:*"
+    "@esposter/db-schema": "workspace:*"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

@@ -36,7 +36,7 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 | `pnpm test:packages`         | `virrun -- vitest run --project "!@esposter/app"` | All projects except the app — skips Nuxt. Local-only, and takes paths like `pnpm test` does: pass them.                                 |
 | `pnpm coverage`              | `vitest run --coverage` (no virrun)               | Root-only (packages have no `coverage` script). CI shards via `--reporter=blob` + `--merge-reports`.                                    |
 | `pnpm outdated:dependencies` | `tsx scripts/checkDependencies/index.ts`          | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest.      |
-| `pnpm depcruise:graph`       | `virrun -- depcruise … \| graphviz -Tsvg`         | Generate `dependency-graph.svg`.                                                                                                        |
+| `pnpm depcruise:graph`       | `virrun -- depcruise … \| graphviz -Tsvg`         | Generate `dependency-graph.svg`. Needs `build:packages` first — it cruises the generated barrels.                                       |
 
 ## `scriptsComments`
 

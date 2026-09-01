@@ -46,7 +46,7 @@
     "build:packages": "pnpm -r --filter \"!@esposter/app\" run build",
     "coverage": "vitest run --coverage",
     "crossOS": "node scripts/crossOS.ts",
-    "depcruise:graph": "virrun -- depcruise packages/*/src/index.ts --include-only \"^packages\" --collapse 2 --output-type dot | graphviz -Tsvg > dependency-graph.svg",
+    "depcruise:graph": "virrun -- depcruise \"packages/*/src/index.ts\" --include-only \"^packages\" --collapse 2 --output-type dot | graphviz -Tsvg > dependency-graph.svg",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "virrun -- oxlint --format=default --disable-nested-config && virrun -- eslint . && virrun -- pnpm -r --parallel --aggregate-output run lint",
@@ -105,7 +105,6 @@
     }
   },
   "scriptsComments": {
-    "release": "Every step is a check rather than a fix, and the suite runs before the publish. `lint:fix:packages` and `format` used to lead this chain, which meant a release rewrote the tree it was about to publish: whatever they changed went out under the new version and got tagged, never having been read by anyone. A release is the one moment a dirty tree has to fail loudly instead of being tidied away, so the fix variants are the dev loop's and the check variants are this chain's. `build:packages` leads every check that reads what a build writes: the ctix barrels and `dist` are both generated and gitignored, so from a clean checkout lint and typecheck resolve no `packages/*/src/index.ts` and the size snapshots measure no bundle — the same reason CI gives all three jobs `needs: build-packages`. `format:check` is the one check that runs cold, so it is the only one that can precede the build. `test:packages` is here because a publish is the only step in the repo that a later commit cannot walk back — CI runs the suite on every push, but nothing tied a green suite to the tree that lerna actually publishes.",
     "build": "@TODO: restore `pnpm build:docs` to the chain when a bridge build grows the AST navigation API. TypeDoc exits 6 against the `typescript-native-bridge` alias, and `build` is what deploy runs, so the deploy would fail on documentation alone. `build:docs` stays as the probe. See the `build-docs` job in .github/workflows/CI.yaml."
   }
 }

@@ -15,9 +15,11 @@ const { devDependencies } = readPackageManifest();
 // Encapsulates a package, so without this every `@esposter/configuration/eslint/*.js` import — the shared flat
 // Config each package symlinks — resolves to nothing.
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode(), {
-  // The base derives `onlyImport` from the manifest's runtime dependency fields, which this package has none
-  // Of — everything it externalizes is a `devDependency`, so the allowlist has to be widened by exactly that
-  // Set or the gate would fail every import it makes. `mergeConfig` concatenates the two lists.
+  // The base derives `onlyImport` from the manifest's runtime dependency fields, and this package declares
+  // None — everything it externalizes is a `devDependency`, so the base's allowlist is empty and the gate
+  // Would fail every import it makes. Stating the list here is what fills it, rather than adding to it:
+  // `mergeConfig` deep-merges objects, but a colliding array is replaced outright — `plugins` is the one
+  // Exception — so a package meaning to extend a base list has to build the whole list itself.
   deps: { neverBundle: true, onlyImport: getPackagePatterns(Object.keys(devDependencies ?? {})) },
   exports: { customExports: { "./eslint/*": "./eslint/*" } },
 });
