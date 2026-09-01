@@ -3,13 +3,6 @@ import { afterAll, vi } from "vitest";
 /* eslint-disable no-restricted-syntax -- module scope is where a vitest setup file runs, and the environment it
    runs in is the one its config names rather than one SSR decides. The ban this suspends is about a browser
    global read before any phase could have chosen a branch, which is not a question a setup file has */
-// Happy-dom reports readyState as "loading"; Phaser requires "complete" to boot synchronously.
-vi.spyOn(window.document, "readyState", "get").mockReturnValue("complete");
-// Happy-dom never fires Image load events; call onload synchronously so Phaser's
-// TextureManager resolves its 3 default base64 images and emits READY.
-vi.spyOn(HTMLImageElement.prototype, "src", "set").mockImplementation(function (this: HTMLImageElement) {
-  if (typeof this.onload === "function") this.onload(new Event("load"));
-});
 // Happy-dom has no canvas, and its instance method resolution bypasses a prototype spy on getContext,
 // So store the original createElement and spy per-instance instead.
 // oxlint-disable-next-line typescript/no-deprecated
