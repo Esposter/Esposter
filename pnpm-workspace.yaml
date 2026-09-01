@@ -63,7 +63,7 @@ catalog:
   "@pulumi/azure-native": ^3.27.0
   "@pulumi/github": ^6.15.0
   "@pulumi/pulumi": ^3.260.0
-  "@takumi-rs/core": ^2.13.3
+  "@takumi-rs/core": ^2.13.4
   "@tiptap/core": ^3.31.0
   "@tiptap/extension-code-block-lowlight": ^3.31.0
   "@tiptap/extension-file-handler": ^3.31.0
