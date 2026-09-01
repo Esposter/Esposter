@@ -131,7 +131,7 @@ catalog:
   eslint: ^10.9.1
   eslint-plugin-depend: ^1.5.0
   eslint-plugin-oxlint: ^1.80.0
-  eslint-plugin-perfectionist: ^5.10.1
+  eslint-plugin-perfectionist: ^5.11.0
   eslint-plugin-pinia: ^0.4.2
   eslint-plugin-vuejs-accessibility: ^2.6.0
   eventemitter3: ^5.0.4

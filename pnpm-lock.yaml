@@ -456,7 +456,7 @@ catalogs:
       specifier: ^1.80.0
       version: 1.80.0
     eslint-plugin-perfectionist:
-      specifier: ^5.10.1
+      specifier: ^5.11.0
       version: 5.11.0
     eslint-plugin-pinia:
       specifier: ^0.4.2
