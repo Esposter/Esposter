@@ -57,7 +57,7 @@
     "prepare": "git config core.hooksPath .githooks || true",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
-    "release": "pnpm lint:packages && pnpm format:check && pnpm typecheck:packages && pnpm test:packages && pnpm build:packages && lerna publish --yes",
+    "release": "pnpm format:check && pnpm lint:packages && pnpm typecheck:packages && pnpm build:packages && pnpm test:packages && lerna publish --yes",
     "start": "pnpm --filter @esposter/app run start",
     "test": "virrun -- vitest run",
     "test:packages": "virrun -- vitest run --project \"!@esposter/app\"",
