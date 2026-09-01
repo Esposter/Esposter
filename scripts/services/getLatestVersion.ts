@@ -1,4 +1,4 @@
-import type { PackumentVersion } from "#scripts/services/models/PackumentVersion";
+import type { PackumentVersion } from "#scripts/models/PackumentVersion";
 
 import { fetchRegistry } from "#scripts/services/fetchRegistry";
 import { getResultAsync } from "@esposter/shared";

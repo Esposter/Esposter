@@ -1,4 +1,4 @@
-import type { Packument } from "#scripts/services/models/Packument";
+import type { Packument } from "#scripts/models/Packument";
 
 import { fetchRegistry } from "#scripts/services/fetchRegistry";
 import { getLatestVersionForPrefix } from "#scripts/services/getLatestVersionForPrefix";

@@ -1,6 +1,6 @@
 import type { DependencyEntry } from "#scripts/checkDependencies/models/DependencyEntry";
 
-import { getPackageJsonPaths } from "#scripts/checkDependencies/getPackageJsonPaths";
+import { getPackageJsonPaths } from "#scripts/services/getPackageJsonPaths";
 import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 

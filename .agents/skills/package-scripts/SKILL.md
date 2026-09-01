@@ -1,6 +1,6 @@
 ---
 name: package-scripts
-description: Esposter pnpm script reference — packages/app scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, depcruise:graph, outdated:dependencies), the `scriptsComments` key that carries a script's comment because JSON has none, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
+description: Esposter pnpm script reference — packages/app scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, graph:gen, outdated:dependencies), the `scriptsComments` key that carries a script's comment because JSON has none, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
 ---
 
 # Package Scripts
@@ -36,7 +36,7 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 | `pnpm test:packages`         | `virrun -- vitest run --project "!@esposter/app"` | All projects except the app — skips Nuxt. Local-only, and takes paths like `pnpm test` does: pass them.                                 |
 | `pnpm coverage`              | `vitest run --coverage` (no virrun)               | Root-only (packages have no `coverage` script). CI shards via `--reporter=blob` + `--merge-reports`.                                    |
 | `pnpm outdated:dependencies` | `tsx scripts/checkDependencies/index.ts`          | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest.      |
-| `pnpm depcruise:graph`       | `virrun -- depcruise … \| graphviz -Tsvg`         | Generate `dependency-graph.svg`. Needs `build:packages` first — it cruises the generated barrels.                                       |
+| `pnpm graph:gen`             | `node scripts/dependencyGraph/index.ts`           | Regenerate `dependency-graph.svg` from the workspace manifests. Run it after changing one.                                              |
 
 ## `scriptsComments`
 

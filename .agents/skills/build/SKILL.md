@@ -136,4 +136,4 @@ Presets live in `@esposter/configuration` and are extended by path; the base car
 
 ## Dependency installs & workspace graph
 
-Covered by root `CLAUDE.md` (`pnpm i`, `pnpm depcruise:graph`) and `packages/app/content/docs/architecture/monorepo-tooling.md` (install safety rules). One addition: if `pnpm i` needs network access, request approval for plain `pnpm i` rather than changing pnpm store settings.
+Covered by root `CLAUDE.md` (`pnpm i`, `pnpm graph:gen`) and `packages/app/content/docs/architecture/monorepo-tooling.md` (install safety rules). One addition: if `pnpm i` needs network access, request approval for plain `pnpm i` rather than changing pnpm store settings.

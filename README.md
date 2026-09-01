@@ -316,10 +316,11 @@ Packages are used directly by the nuxt application via `workspace:*`.
 
 ![Workspace dependency graph](./dependency-graph.svg)
 
-Regenerate this graph from the repo root with:
+Runtime dependencies are solid, development-only ones dashed, and a private package is outlined dashed.
+Regenerate it from the repo root with:
 
 ```bash
-pnpm depcruise:graph
+pnpm graph:gen
 ```
 
 ## <a name="packages">📦 Packages</a>
