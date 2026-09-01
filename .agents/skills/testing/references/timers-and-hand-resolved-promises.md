@@ -14,6 +14,16 @@ The default set is wide — `process.hrtime` is in it — so a test that only wa
 
 Name what the test actually asserts on — `vi.useFakeTimers({ now: 0, toFake: ["Date"] })` — whenever the code under test writes a table row or otherwise reads `now()` from `@esposter/shared`.
 
+## `Temporal.Now` reads a clock the fake timers never patched
+
+The polyfill captures its clock source at module load, so `Temporal.Now.zonedDateTimeISO()` and its siblings return
+the **real** current instant inside a suite that installed `vi.useFakeTimers({ now: 0 })` — the test fails with a
+received value that is today's date, which reads as the code ignoring its input rather than as the clock leaking.
+
+Production code that has to be testable takes the instant through `Date` and converts:
+`getZonedDateTime(new Date())` from `@esposter/shared`, which builds the zoned time from `date.getTime()` and so
+sees whatever the fake clock says. `Temporal.Now` stays fine anywhere no test needs to pin the clock.
+
 ## A throttled or debounced call wants a bare `vi.useFakeTimers()`
 
 Not `{ now: 0 }`. VueUse's throttle filter compares `Date.now()` against a "last run" starting at `0`, so a clock parked at epoch zero reads the very first call as already inside a window and defers it to the trailing edge — the leading edge never fires and every assertion about the first call fails. Pin the clock only where a test asserts a timestamp.
