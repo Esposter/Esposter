@@ -171,8 +171,15 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
+      # `--ignore-scripts`, because the only thing this job needs out of the install is the lockfile-pinned
+      # `oxfmt` binary. A plain install additionally runs the app's `postinstall: nuxt prepare` and every
+      # `allowBuilds` native postinstall, none of which a formatter reading source files can observe — which
+      # Put the workflow's quickest check behind its slowest install right after it stopped waiting on the
+      # Package build. Installing oxfmt globally or through `dlx` would skip more still and is the wrong trade:
+      # A formatter's version is its output, so a second source of truth for it drifts from the lockfile until
+      # `format:check` here and `pnpm format` locally disagree — the exact failure this job exists to catch.
       - name: 📦 Install dependencies
-        run: pnpm i
+        run: pnpm i --ignore-scripts
 
       - name: 📝 Format
         run: pnpm format:check

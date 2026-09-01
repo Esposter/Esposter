@@ -253,6 +253,8 @@ These are `**/*.json` under a strict `json/json` ESLint language — **no commen
 
 `@esposter/configuration` is built by the factories it exports. Its relative imports carry a `.ts` extension because tsdown loads a config with a native import that will not guess one, and it keeps its exports pointing at `dist` for the same reason. Both are specific to it — don't copy either into another package.
 
+It also throws bare `new Error`, which the `error-handling` skill bans everywhere else in favour of `InvalidOperationError`. That constructor lives in `@esposter/shared`, and `@esposter/shared` builds by calling this package's factories — so depending on it here is a cycle in the build order, not a style choice. The exemption is this package only, and it is why the throws in `generateExports.ts` are not a finding.
+
 ## Module augmentations do not cross a package boundary
 
 A `declare module "x"` augmentation — a library plugin, a Zod extension, a Vuetify labs type — is resolved **per TypeScript program** against that module's identity. It is not a value, so it cannot be re-exported, and it does not travel inside a bundled `.d.ts`. Neither an `import type {} from "the-plugin"` nor a `/// <reference types="…" />` in the source survives the bundle, and externalizing the dependency changes nothing: the consumer's own program still has to contain the plugin's declarations before the augmented member resolves.
