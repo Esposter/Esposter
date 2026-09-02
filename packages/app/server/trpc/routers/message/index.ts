@@ -403,16 +403,16 @@ export const baseMessageRouter = router({
       readMySentMessages(input, ctx.db, ctx.getSessionPayload.user.id),
     ),
   readThread: getMemberProcedure(readThreadInputSchema, "roomId").query<MessageEntity[]>(
-    async ({ input: { roomId, rootRowKey } }) => {
+    async ({ input: { roomId, threadRootRowKey } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       const replyClauses: Clause<StandardMessageEntity>[] = [
         { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
-        { key: StandardMessageEntityPropertyNames.replyRowKey, operator: BinaryOperator.eq, value: rootRowKey },
+        { key: StandardMessageEntityPropertyNames.replyRowKey, operator: BinaryOperator.eq, value: threadRootRowKey },
         getTableNullClause(ItemMetadataPropertyNames.deletedAt),
       ];
       // The root and its replies are independent reads, so neither waits on the other
       const [rootMessage, replies] = await Promise.all([
-        getEntity(messageClient, StandardMessageEntity, roomId, rootRowKey),
+        getEntity(messageClient, StandardMessageEntity, roomId, threadRootRowKey),
         getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageEntityMap, {
           filter: serializeClauses(replyClauses),
         }),
