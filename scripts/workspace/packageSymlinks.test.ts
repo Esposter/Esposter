@@ -16,7 +16,7 @@ import { describe, expect, test } from "vitest";
 describe("workspace package symlinks", () => {
   const NODE_MODULES_DIRECTORY = "node_modules";
   const PARENT_DIRECTORY = "..";
-  const repositoryRoot = resolve(import.meta.dirname, "..");
+  const repositoryRoot = resolve(import.meta.dirname, "../..");
   // `node_modules` is the one prune: it is the fetcher's own output rather than package source, and every dependency
   // Under it is a store link that escapes by design.
   const readSymlinkPaths = (directory: string): string[] =>

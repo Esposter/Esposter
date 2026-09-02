@@ -1,7 +1,7 @@
 import { getLatestVersion } from "#scripts/services/getLatestVersion";
-import { getRegistryLatestVersionForPrefix } from "#scripts/services/getRegistryLatestVersionForPrefix";
 import { getVersionParts } from "#scripts/services/getVersionParts";
 import { getEnginesNode } from "#scripts/updateNode/getEnginesNode";
+import { getRegistryLatestVersionForPrefix } from "#scripts/updateNode/getRegistryLatestVersionForPrefix";
 import { setCatalogTypesNode } from "#scripts/updateNode/setCatalogTypesNode";
 import { setEnginesNode } from "#scripts/updateNode/setEnginesNode";
 import { spawnSync } from "node:child_process";

@@ -99,7 +99,7 @@ A package with a single such module names that module instead of surrendering th
 the array naming that file — under both arms, because a consumer on the source condition reaches the file while
 one on `default` gets a single chunk carrying the registration with everything else. Nothing here holds one
 today; the shape stays documented because the next module-scope registration is what it is for. Nothing derives
-any of this, so `scripts/sideEffects.test.ts` enforces the
+any of this, so `scripts/workspace/sideEffects.test.ts` enforces the
 part that is derivable: every package with a tsdown config declares the field, and only the run-on-import one
 claims `true` wholesale.
 
@@ -137,7 +137,7 @@ For **any** package it is the only thing that notices a specifier which resolved
 
 `@esposter/configuration` is the single package that widens the allowlist, adding its `devDependencies`: it externalizes everything, and the base derives the list from the runtime dependency fields alone.
 
-The gate reads imports, not the manifest, so it stops one step short of the whole promise: a private sibling sitting in `dependencies` _is_ declared. The bundle leaves it external legitimately, publint sees a well-formed manifest, and the install still resolves nothing for a stranger. Nothing in a build can see that, so `scripts/publishedDependencies.test.ts` does — no published package may name a private sibling in any field a consumer's package manager resolves, `peerDependenciesMeta` included, since a name declared only there is externalized too.
+The gate reads imports, not the manifest, so it stops one step short of the whole promise: a private sibling sitting in `dependencies` _is_ declared. The bundle leaves it external legitimately, publint sees a well-formed manifest, and the install still resolves nothing for a stranger. Nothing in a build can see that, so `scripts/workspace/publishedDependencies.test.ts` does — no published package may name a private sibling in any field a consumer's package manager resolves, `peerDependenciesMeta` included, since a name declared only there is externalized too.
 
 ## The published surface is gated further
 

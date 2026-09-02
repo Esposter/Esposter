@@ -1,4 +1,4 @@
-import type { WorkspaceEdge } from "#scripts/models/WorkspaceEdge";
+import type { WorkspaceEdge } from "#scripts/dependencyGraph/models/WorkspaceEdge";
 
 export interface WorkspaceEdges {
   development: WorkspaceEdge[];

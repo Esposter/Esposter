@@ -1,5 +1,5 @@
-import type { WorkspaceEdge } from "#scripts/models/WorkspaceEdge";
-import type { WorkspaceEdges } from "#scripts/models/WorkspaceEdges";
+import type { WorkspaceEdge } from "#scripts/dependencyGraph/models/WorkspaceEdge";
+import type { WorkspaceEdges } from "#scripts/dependencyGraph/models/WorkspaceEdges";
 import type { WorkspacePackage } from "#scripts/models/WorkspacePackage";
 
 import { RUNTIME_DEPENDENCY_FIELDS, WORKSPACE_SPECIFIER_PREFIX } from "#scripts/dependencyGraph/constants";

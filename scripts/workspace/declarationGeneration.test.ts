@@ -13,7 +13,7 @@ import { describe, expect, test } from "vitest";
 const readJsonFile = (path: string): Record<string, unknown> => JSON.parse(readFileSync(path, "utf8"));
 
 describe("declaration generation", () => {
-  const packagesDirectory = resolve(import.meta.dirname, "../packages");
+  const packagesDirectory = resolve(import.meta.dirname, "../../packages");
   // A package builds with tsdown exactly when it has a tsdown config, so the set is discovered rather than listed:
   // A listed set silently stops covering the package added after it was written, which is the only way this
   // Invariant can be broken. (`packages/app` is a Nuxt application, has no tsdown config, and emits nothing.)

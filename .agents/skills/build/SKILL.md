@@ -91,7 +91,7 @@ everything else, and a path matching neither leaves a bundler free to drop the c
 
 Leaving the field off is not the safe middle — absent means _unknown_, so a consumer's bundler keeps everything,
 the same outcome as `true` while reading as nobody having considered it. Nothing can derive the value, so
-`scripts/sideEffects.test.ts` enforces what is derivable: every package with a tsdown config declares the field,
+`scripts/workspace/sideEffects.test.ts` enforces what is derivable: every package with a tsdown config declares the field,
 and only the run-on-import one claims `true` wholesale.
 
 **Assert it in that package's own `src/index.test.ts`.** Count the registrations in the built bundle against the
@@ -111,7 +111,7 @@ Two kinds of declaration are invisible to the build that should emit them, and b
 
 `@esposter/configuration` is the one package that widens the list, because everything it externalizes is a `devDependency` and the base derives the allowlist from the runtime fields only.
 
-`deps.onlyImport` checks that imports are declared. It cannot check that a declared dependency is actually _publishable_, and neither can publint — a private sibling sitting in `dependencies` is declared, well-formed, and still ships a package that resolves nothing on a stranger's `npm install`. That edge is the one thing about the manifest no build gate can see, so `scripts/publishedDependencies.test.ts` asserts it instead: no published package names a private sibling in any field a consumer's package manager resolves.
+`deps.onlyImport` checks that imports are declared. It cannot check that a declared dependency is actually _publishable_, and neither can publint — a private sibling sitting in `dependencies` is declared, well-formed, and still ships a package that resolves nothing on a stranger's `npm install`. That edge is the one thing about the manifest no build gate can see, so `scripts/workspace/publishedDependencies.test.ts` asserts it instead: no published package names a private sibling in any field a consumer's package manager resolves.
 
 ## A published package is gated further
 
