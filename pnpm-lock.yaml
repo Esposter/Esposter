@@ -186,8 +186,8 @@ catalogs:
       specifier: ^1.2.1
       version: 1.2.1
     '@eslint/json':
-      specifier: ^2.0.1
-      version: 2.0.1
+      specifier: ^2.1.0
+      version: 2.1.0
     '@floating-ui/dom':
       specifier: ^1.8.0
       version: 1.8.0
@@ -1547,7 +1547,7 @@ importers:
         version: 1.2.1
       '@eslint/json':
         specifier: 'catalog:'
-        version: 2.0.1
+        version: 2.1.0
       '@types/node':
         specifier: 'catalog:'
         version: 26.4.1
@@ -3537,8 +3537,8 @@ packages:
       eslint:
         optional: true
 
-  '@eslint/json@2.0.1':
-    resolution: {integrity: sha512-Thz2j92ceUF3Bq/0TuWb3MWn3Z+Cwc8k5ptF0fakl2D4Mp8mSx07Xr1aQM4R5NoihzarWUdxfOmQ8DesGy4jOg==}
+  '@eslint/json@2.1.0':
+    resolution: {integrity: sha512-Zcg+SXHmdAlo+0ZFwxOvDQye2zxhaFCu/CPdJTsMDSEYZXkX67AWvdwzhI/YdPYNW68Q1Tr1Rv2SsuUZydnjBg==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
   '@eslint/object-schema@3.0.5':
@@ -16843,7 +16843,7 @@ snapshots:
     optionalDependencies:
       eslint: 10.9.1(jiti@2.7.0)(supports-color@10.2.2)
 
-  '@eslint/json@2.0.1':
+  '@eslint/json@2.1.0':
     dependencies:
       '@eslint/core': 1.2.1
       '@eslint/plugin-kit': 0.7.2
