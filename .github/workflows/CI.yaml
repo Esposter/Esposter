@@ -8,6 +8,13 @@ on:
 permissions:
   contents: read
 
+# `pnpm -r` interleaves the packages it runs concurrently, so a failure's stack arrives spliced with another
+# package's output. Live interleaved output is what a local run wants — a watched terminal, one failure at a time —
+# while a log read after the fact wants each package contiguous. Same scripts either way: this is the only place the
+# difference is stated, and pnpm reads its settings from `PNPM_CONFIG_<SETTING>` (`npm_config_*` is not read).
+env:
+  PNPM_CONFIG_AGGREGATE_OUTPUT: true
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

@@ -12,6 +12,11 @@ on:
 permissions:
   contents: read
 
+# Stated again rather than inherited: a reusable workflow does not receive the caller's `env`. Why CI aggregates
+# and a local run does not is in 🏗️ CI.
+env:
+  PNPM_CONFIG_AGGREGATE_OUTPUT: true
+
 jobs:
   build-packages:
     name: Build Packages

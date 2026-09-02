@@ -31,9 +31,9 @@ Common patterns:
 
 ```bash
 pnpm -r run build
-pnpm -r --parallel --aggregate-output run lint
-pnpm -r --parallel --aggregate-output run typecheck
-pnpm -r --aggregate-output --filter "!@esposter/app" run build
+pnpm -r --parallel run lint
+pnpm -r --parallel run typecheck
+pnpm -r --filter "!@esposter/app" run build
 pnpm --filter @esposter/app run build
 ```
 
@@ -41,7 +41,7 @@ Guidelines:
 
 - Tests are the exception: `test`/`coverage` run through one root `vitest.config.ts` `projects` config (a single `vitest run`), not a recursive fan-out, so the whole suite shares one run, one coverage report, and one `--shard` axis.
 - Use `--parallel` for independent checks such as linting and typechecking. Never for `build` — `--parallel` is what discards the topological order, and a package would build against a sibling's `dist` that is mid-write or absent.
-- Use `--aggregate-output` in CI-style commands so package logs remain readable. It is orthogonal to `--parallel`: `pnpm -r` runs the graph's independent packages concurrently regardless, so a build failure's stack arrives spliced with another package's output without it.
+- Output interleaving is settled by environment, not by the scripts. `pnpm -r` runs the graph's independent packages concurrently regardless of `--parallel`, so a failure's stack arrives spliced with another package's output; `aggregate-output` buffers each package into a contiguous block instead. A watched terminal wants the live interleaved default, a log read after the fact wants the blocks, and both run the identical script — so the workflows set `PNPM_CONFIG_AGGREGATE_OUTPUT` and no script carries the flag. pnpm reads its settings from `PNPM_CONFIG_<SETTING>`; the npm-style `npm_config_*` spelling is not read. `--stream` is not the counterpart to it and never needs passing: it has been the default since pnpm 12, and `--stream`, `--no-stream` and no flag at all produce identical output.
 - Use filters instead of Lerna scopes/ignores.
 - Keep `build:packages` separate from `build:app`; the app can depend on compiled package output.
 - Use `--if-present` only for scripts that are optional across packages.
