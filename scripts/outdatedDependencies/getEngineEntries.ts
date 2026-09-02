@@ -1,7 +1,7 @@
 import type { DependencyEntry } from "#scripts/outdatedDependencies/models/DependencyEntry";
-import type { Manifest } from "#scripts/outdatedDependencies/models/Manifest";
+import type { ManifestFile } from "#scripts/outdatedDependencies/models/ManifestFile";
 
-export const getEngineEntries = (manifests: Manifest[]): DependencyEntry[] => {
+export const getEngineEntries = (manifests: ManifestFile[]): DependencyEntry[] => {
   const entriesByKey = new Map<string, DependencyEntry>();
 
   for (const { manifest } of manifests)

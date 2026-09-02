@@ -6,9 +6,11 @@ export const DEPENDENCY_FIELDS = [
   "optionalDependencies",
   "peerDependencies",
 ] as const;
-// How far apart two versions are, ordered so the difference of two levels sorts the more urgent bump first. The
-// Values are compared and subtracted as the numbers they are, never passed around as a type, so a record says
-// What an enum would without asking every caller to name it.
+// How far apart two versions are, ordered so the difference of two levels sorts the more urgent bump first — a
+// Sort subtracts them, so the levels are the numbers rather than a set of labels with an ordering beside it. The
+// Value and the type share the name, so a caller reads and returns `VersionChangeLevel` as it would an enum.
 export const VersionChangeLevel = { major: 2, minor: 1, patch: 0 } as const;
+
+export type VersionChangeLevel = (typeof VersionChangeLevel)[keyof typeof VersionChangeLevel];
 
 export const REGISTRY_CONCURRENCY = 4;

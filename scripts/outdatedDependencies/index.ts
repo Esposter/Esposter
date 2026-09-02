@@ -3,7 +3,7 @@ import { getEngineEntries } from "#scripts/outdatedDependencies/getEngineEntries
 import { getLockCatalogVersions } from "#scripts/outdatedDependencies/getLockCatalogVersions";
 import { getLockConfigDependencyVersions } from "#scripts/outdatedDependencies/getLockConfigDependencyVersions";
 import { getManifestDependencies } from "#scripts/outdatedDependencies/getManifestDependencies";
-import { getManifests } from "#scripts/outdatedDependencies/getManifests";
+import { getManifestFiles } from "#scripts/outdatedDependencies/getManifestFiles";
 import { getMismatches } from "#scripts/outdatedDependencies/getMismatches";
 import { getRegistryOutdatedDependencies } from "#scripts/outdatedDependencies/getRegistryOutdatedDependencies";
 import { getRegularOutdatedDependencies } from "#scripts/outdatedDependencies/getRegularOutdatedDependencies";
@@ -30,7 +30,7 @@ const configDependencyEntries = parseWorkspaceEntries(
   "configDependencies",
   getSection("configDependencies", workspaceYaml),
 );
-const manifests = getManifests(root);
+const manifests = getManifestFiles(root);
 const engineEntries = getEngineEntries(manifests);
 const manifestDependencies = getManifestDependencies(manifests);
 const uncatalogedManifestDependencies = getUncatalogedManifestDependencies(manifestDependencies);

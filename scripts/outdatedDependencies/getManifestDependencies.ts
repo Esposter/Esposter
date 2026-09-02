@@ -1,9 +1,9 @@
-import type { Manifest } from "#scripts/outdatedDependencies/models/Manifest";
 import type { ManifestDependency } from "#scripts/outdatedDependencies/models/ManifestDependency";
+import type { ManifestFile } from "#scripts/outdatedDependencies/models/ManifestFile";
 
 import { DEPENDENCY_FIELDS } from "#scripts/outdatedDependencies/constants";
 
-export const getManifestDependencies = (manifests: Manifest[]): ManifestDependency[] => {
+export const getManifestDependencies = (manifests: ManifestFile[]): ManifestDependency[] => {
   const manifestDependencies: ManifestDependency[] = [];
 
   for (const { manifest, path } of manifests) {
