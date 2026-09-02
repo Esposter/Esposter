@@ -17,7 +17,7 @@ export const webhooksInMessage = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     id: uuid().primaryKey().defaultRandom(),
     isActive: boolean().notNull().default(true),
-    name: text().notNull().default(""),
+    name: text().notNull(),
     roomId: uuid()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
