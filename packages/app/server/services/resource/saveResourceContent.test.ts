@@ -16,7 +16,7 @@ import { saveResourceContent } from "@@/server/services/resource/saveResourceCon
 import { getSnapshotContentBlobName } from "@@/server/services/resource/snapshot/getSnapshotContentBlobName";
 import { readSnapshotHistory } from "@@/server/services/resource/snapshot/readSnapshotHistory";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
-import { getContentBlobName } from "@esposter/db";
+import { getContentBlobName, reconcileStorageLedgerEntry } from "@esposter/db";
 import {
   AzureContainer,
   AzureQueue,
@@ -86,6 +86,8 @@ describe(saveResourceContent, () => {
   const dueAt = new Date(1);
   const item = new TodoListItem({ dueAt, name });
   const content: TodoListResource = { items: [item] };
+  // Storage's own per-blob ordering value, as the first save's event would carry it
+  const sequencer = "0000000000000abc000000000000000000001";
   const { contentSchema } = ResourceDefinitionMap[ResourceType.TodoList];
   const createReminder = (resourceId: Resource["id"]) => ({
     body: { dueAt, itemId: item.id, resourceId },
@@ -202,6 +204,32 @@ describe(saveResourceContent, () => {
     );
     assert.exists(storedContent);
 
+    await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength);
+  });
+
+  // Every save rewrites the same blob name and raises its own `BlobCreated` behind it, which settles that name
+  // From the Functions host seconds later. So the counter has to follow the save that comes after one of those
+  // Events, or the owner's meter moves on their first save of a resource and never again
+  test("keeps the counter in step with a save that follows the blob's own event", async () => {
+    expect.hasAssertions();
+
+    await saveResourceContent(ctx, { content, resource });
+    const contentBlobName = getContentBlobName(resource.id);
+    const firstStoredContent = MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(contentBlobName);
+    assert.exists(firstStoredContent);
+    // The first save's own event, arriving with the position storage wrote the blob in
+    await reconcileStorageLedgerEntry(
+      mockContext.db,
+      AzureContainer.ResourceAssets,
+      contentBlobName,
+      firstStoredContent.byteLength,
+      sequencer,
+    );
+    await saveResourceContent(ctx, { content: { items: [item, new TodoListItem({ dueAt, name })] }, resource });
+    const storedContent = MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(contentBlobName);
+    assert.exists(storedContent);
+
+    expect(storedContent.byteLength).toBeGreaterThan(firstStoredContent.byteLength);
     await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength);
   });
 
