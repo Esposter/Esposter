@@ -25,6 +25,14 @@ export default {
       selector: "TryStatement",
     },
     {
+      // The `A` prefix marks an abstract class, so an interface wearing it claims a construct it is not and
+      // Sorts beside the classes it only resembles. The shared-shape interface takes `Base*` instead, which is
+      // Also what the schema it sits beside is already called.
+      message:
+        "The `A` prefix is for abstract classes — name the interface after what it holds, or `Base*` where it is the shape its implementors share. See the naming skill.",
+      selector: "TSInterfaceDeclaration[id.name=/^A[A-Z]/]",
+    },
+    {
       message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
       selector:
         ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",

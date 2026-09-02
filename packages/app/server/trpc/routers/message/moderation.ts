@@ -3,12 +3,12 @@ import type { Context } from "@@/server/trpc/context";
 import type { Clause } from "@esposter/azure";
 import type { BanInMessage, BanInMessageWithRelations } from "@esposter/db-schema";
 
-import { readModerationNotesCountInputSchema } from "#shared/models/db/moderation/ReadModerationNotesCountInput";
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
 import { deleteBanInputSchema } from "#shared/models/db/moderation/DeleteBanInput";
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
 import { readBansInputSchema } from "#shared/models/db/moderation/ReadBansInput";
 import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadModerationLogInput";
+import { readModerationNotesCountInputSchema } from "#shared/models/db/moderation/ReadModerationNotesCountInput";
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { CREATED_AT_DESCENDING_SORT_ITEM, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -76,14 +76,6 @@ const banRoomMember = (db: Context["db"], actorUserId: string, roomId: string, t
   });
 
 export const moderationRouter = router({
-  readModerationNotesCount: getPermissionsProcedure(
-    RoomPermission.KickMembers,
-    readModerationNotesCountInputSchema,
-    "roomId",
-  ).query<number>(async ({ ctx, input: { roomId, targetUserId } }) => {
-    await assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId);
-    return readModerationNotesCount(roomId, targetUserId);
-  }),
   createModerationNote: getPermissionsProcedure(
     RoomPermission.KickMembers,
     createModerationNoteInputSchema,
@@ -298,4 +290,12 @@ export const moderationRouter = router({
       });
     },
   ),
+  readModerationNotesCount: getPermissionsProcedure(
+    RoomPermission.KickMembers,
+    readModerationNotesCountInputSchema,
+    "roomId",
+  ).query<number>(async ({ ctx, input: { roomId, targetUserId } }) => {
+    await assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId);
+    return readModerationNotesCount(roomId, targetUserId);
+  }),
 });
