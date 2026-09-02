@@ -1,9 +1,15 @@
 ---
 name: readme-standards
-description: Esposter README conventions — the anchor+emoji heading template, the published-vs-private split that drives the badges, the typedoc module-page URL and scoped-name slug mangling that drive the docs link, when Getting Started is omitted, reading published-vs-private off each manifest rather than a list, the two package inventories (AGENTS.md and the root README table) that are edited together, and GitHub blob/tree URL rules. Apply when creating or updating any README.md in this monorepo, including the root one.
+description: Esposter README conventions — the anchor+emoji heading template, the published-vs-private split that drives the badges, the typedoc module-page URL and scoped-name slug mangling that drive the docs link, when Getting Started is omitted, reading published-vs-private off each manifest rather than a list, the two package inventories (AGENTS.md and the root README table) that are edited together, GitHub blob/tree URL rules, and a Settled list of the directions already rejected (making a README diagram interactive with markup, a second copy of the workspace graph as a dark `<picture>` variant or a hosted duplicate, and re-emitting that graph as a mermaid fence for GitHub's pan/zoom). Apply when creating or updating any README.md in this monorepo, including the root one.
 ---
 
 # README Standards — Esposter
+
+## Settled — do not re-propose
+
+- **Making a README diagram interactive with markup.** GitHub sanitises rendered markdown — `<script>`, `<iframe>`, `<object>`/`<embed>` and inline `<svg>` are stripped, and an svg behind an `<img>` renders isolated, so its own scripts and anchors are dead. Pan/zoom in a README is therefore never a markup question: it exists only for the formats GitHub renders itself, which is why a repo whose diagram zooms has a `mermaid` fence — GitHub draws those in an iframe and supplies the pan/zoom widget. The most an image can offer is a link to a larger rendering, which the workspace graph already does.
+- **A second copy of the workspace graph — a `<picture>` dark variant, a hosted copy under `packages/app/public/`, anything paired with the committed svg.** One artifact is the design, not an omission: `bgcolor="transparent"` plus a palette whose every fill, border and neutral was measured against both a white and a near-black page (`scripts/dependencyGraph/constants.ts`, `PackageRoleColorsMap.ts`) is what makes the single file correct in either colour scheme.
+- **Re-emitting the workspace graph as a mermaid fence** to collect GitHub's pan/zoom. It costs the `dot` layout and with it the runtime-edge weighting that ranks the picture by what the repo ships, the `box3d` fold, its shadow pass and the two-stop fills — and the root README is typedoc's index page, where a fence is a code block rather than a diagram. The zoom is worth less than the picture it degrades.
 
 ## Template
 
