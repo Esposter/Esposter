@@ -1,6 +1,7 @@
 import type { ApexOptions } from "apexcharts";
 import type { z } from "zod";
 
+import { basicChartConfigurationSchema } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
 import { uncapitalize } from "@esposter/shared";
@@ -60,6 +61,6 @@ export class FunnelResolver extends AVisualTypeResolver {
   }
 
   override handleSchema(schema: z.ZodObject) {
-    return schema.omit({ dataLabels: true });
+    return schema.omit({ [basicChartConfigurationSchema.keyof().enum.dataLabels]: true });
   }
 }

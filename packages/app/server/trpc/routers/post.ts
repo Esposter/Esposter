@@ -47,8 +47,8 @@ const readPostsInputSchema = z
       { key: "ranking", order: SortOrder.Desc },
       { key: "id", order: SortOrder.Desc },
     ]).shape,
-    parentId: selectPostSchema.shape.parentId.default(null),
-    userId: selectPostSchema.shape.userId.optional(),
+    [selectPostSchema.keyof().enum.parentId]: selectPostSchema.shape.parentId.default(null),
+    [selectPostSchema.keyof().enum.userId]: selectPostSchema.shape.userId.optional(),
   })
   .prefault({});
 
