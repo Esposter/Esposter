@@ -17,7 +17,12 @@ const GroupMetadataMap: Record<string, { dependencyType: string; dependent: stri
 export const getRegistryOutdatedDependencies = async (
   entries: DependencyEntry[],
 ): Promise<{ errors: RegistryCheckError[]; outdatedDependencies: OutdatedDependency[] }> => {
-  const outdatedDependencies: OutdatedDependency[] = [];
+  // Keyed by the entry object itself, because a package name is not an identity: two manifests declaring the
+  // Same engine under different constraints are two entries, and so is a package that is both a config
+  // Dependency and an engine. Keyed by name, the last result written wins and is then emitted once per entry
+  // That shares the name — a duplicated row carrying another entry's specifier. The ordering loop below walks
+  // The very array the workers took their entries from, so identity is exact and needs no composite key.
+  const outdatedDependencyMap = new Map<DependencyEntry, OutdatedDependency>();
   const errors: RegistryCheckError[] = [];
   const queue = [...entries];
 
@@ -32,7 +37,7 @@ export const getRegistryOutdatedDependencies = async (
           const current = getSpecifierBase(specifier);
           const metadata = GroupMetadataMap[group];
           if (isVersionOutdated(current, latest))
-            outdatedDependencies.push({
+            outdatedDependencyMap.set(entry, {
               current,
               dependencyType: metadata?.dependencyType ?? "",
               dependents: metadata ? [metadata.dependent] : [],
@@ -49,10 +54,9 @@ export const getRegistryOutdatedDependencies = async (
   });
 
   await Promise.all(workers);
-  const outdatedDependencyMap = new Map(outdatedDependencies.map((dependency) => [dependency.pkg, dependency]));
   const orderedOutdatedDependencies: OutdatedDependency[] = [];
-  for (const { pkg } of entries) {
-    const dependency = outdatedDependencyMap.get(pkg);
+  for (const entry of entries) {
+    const dependency = outdatedDependencyMap.get(entry);
     if (dependency) orderedOutdatedDependencies.push(dependency);
   }
 
