@@ -64,17 +64,17 @@ catalog:
   "@pulumi/azure-native": ^3.27.0
   "@pulumi/github": ^6.15.0
   "@pulumi/pulumi": ^3.260.0
-  "@takumi-rs/core": ^2.13.3
-  "@tiptap/core": ^3.30.6
-  "@tiptap/extension-code-block-lowlight": ^3.30.6
-  "@tiptap/extension-file-handler": ^3.30.6
-  "@tiptap/extension-mention": ^3.30.6
-  "@tiptap/extensions": ^3.30.6
-  "@tiptap/html": ^3.30.6
-  "@tiptap/pm": ^3.30.6
-  "@tiptap/starter-kit": ^3.30.6
-  "@tiptap/suggestion": ^3.30.6
-  "@tiptap/vue-3": ^3.30.6
+  "@takumi-rs/core": ^2.13.4
+  "@tiptap/core": ^3.31.0
+  "@tiptap/extension-code-block-lowlight": ^3.31.0
+  "@tiptap/extension-file-handler": ^3.31.0
+  "@tiptap/extension-mention": ^3.31.0
+  "@tiptap/extensions": ^3.31.0
+  "@tiptap/html": ^3.31.0
+  "@tiptap/pm": ^3.31.0
+  "@tiptap/starter-kit": ^3.31.0
+  "@tiptap/suggestion": ^3.31.0
+  "@tiptap/vue-3": ^3.31.0
   "@tresjs/cientos": ^5.8.1
   "@tresjs/core": ^5.8.3
   "@tresjs/nuxt": ^5.6.3
@@ -85,7 +85,7 @@ catalog:
   "@types/howler": ^2.2.13
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
-  "@types/node": ^26.4.0
+  "@types/node": ^26.4.1
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
   "@types/three": ^0.185.4
