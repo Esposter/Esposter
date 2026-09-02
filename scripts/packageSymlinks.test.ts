@@ -1,5 +1,5 @@
 import { readdirSync, readlinkSync } from "node:fs";
-import { dirname, isAbsolute, join, relative, resolve } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { describe, expect, test } from "vitest";
 
 /**
@@ -15,6 +15,7 @@ import { describe, expect, test } from "vitest";
  */
 describe("workspace package symlinks", () => {
   const NODE_MODULES_DIRECTORY = "node_modules";
+  const PARENT_DIRECTORY = "..";
   const repositoryRoot = resolve(import.meta.dirname, "..");
   // `node_modules` is the one prune: it is the fetcher's own output rather than package source, and every dependency
   // Under it is a store link that escapes by design.
@@ -36,10 +37,12 @@ describe("workspace package symlinks", () => {
       const packageRoot = join(packagesRoot, entry.name);
       return readSymlinkPaths(packageRoot)
         .filter((path) => {
-          // An absolute result means `relative` could not express the target as a walk from the package — a different
-          // Windows drive — which is as far outside it as a `..` is.
+          // The escape is a leading `..` segment, matched as a whole component so an entry named `..fixtures` stays
+          // Inside. An absolute result means `relative` could not express the target as a walk from the package — a
+          // Different Windows drive — which is as far outside it as a `..` is.
           const target = relative(packageRoot, resolve(dirname(path), readlinkSync(path)));
-          return target.startsWith("..") || isAbsolute(target);
+          const [firstSegment] = target.split(sep);
+          return firstSegment === PARENT_DIRECTORY || isAbsolute(target);
         })
         .map((path) => relative(repositoryRoot, path));
     });
