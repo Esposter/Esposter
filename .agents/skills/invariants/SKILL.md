@@ -62,7 +62,7 @@ and that place is checked by something. A guard with no owner is a bug with a de
 ### A rule written in prose is a rung left on the table
 
 Before a convention is written into a skill, find out whether something already decides it — oxlint ships ~500
-rules and the repo runs six plugins with every category at `error`, so a surprising share of what reads like a
+rules and the repo enables a broad plugin set with every category at `error`, so a surprising share of what reads like a
 review convention is already a build failure. Probe rather than assume: a throwaway file in the tree, run
 `pnpm exec oxlint --format=default --disable-nested-config <path>`, and read what fires.
 
