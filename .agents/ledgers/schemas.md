@@ -17,7 +17,7 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 | `app/shared/models` — the rest                             | —          | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler`, and the singles                                                               |
 | `app/models`, `app/services/*/…` form schemas              | —          | the Vjsf-rendered ones carry extra rules                                                                                                               |
 | `packages/db`, `packages/db-mock`                          | —          | the mock's snapshot is generated; only its hand-written schema use is in scope                                                                         |
-| `packages/shared`, `packages/parse-tmx`, `packages/xml2js` | —          | `@esposter/shared` takes `zod` as a peer and nothing else                                                                                              |
+| `packages/shared`, `packages/parse-tmx`, `packages/xml2js` | 2026-09-02 | clean - `@esposter/shared`'s zod surface is the helpers themselves; `parse-tmx` and `xml2js` depend on zod nowhere                                     |
 
 The three widest rows were split at their own subdirectories on 2026-08-31, before any pass read them: `db` was
 102 files, `resource` 76 and the tail around 90, and a unit that size is grepped rather than read. The dates stay
