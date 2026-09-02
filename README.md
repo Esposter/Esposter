@@ -316,7 +316,8 @@ Packages are used directly by the nuxt application via `workspace:*`.
 
 ![Workspace dependency graph](./dependency-graph.svg)
 
-Each node is coloured by the role its edges give it, and the key is drawn into the image.
+Each node's hue and tint are the role its edges give it, darkest at what the repo ships and lightest at what
+the rest of it stands on; the key is drawn into the image.
 Regenerate it from the repo root with:
 
 ```bash
