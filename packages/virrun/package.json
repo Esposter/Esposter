@@ -66,8 +66,8 @@
   },
   "scripts": {
     "bench": "vitest bench --run",
-    "build": "pnpm export:gen && tsdown",
-    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "build": "tsdown",
+    "export:gen": "generate-exports",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",
@@ -86,7 +86,6 @@
     "@platformatic/vfs": "catalog:",
     "@types/node": "catalog:",
     "citty": "catalog:",
-    "ctix": "catalog:",
     "dedent": "catalog:",
     "fast-check": "catalog:",
     "publint": "catalog:",

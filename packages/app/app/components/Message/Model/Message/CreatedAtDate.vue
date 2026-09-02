@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getMessageDateLabel } from "@/services/dayjs/getMessageDateLabel";
+import { getMessageDateLabel } from "@/util/date/getMessageDateLabel";
 
 interface CreatedAtDateProps {
   createdAt: Date;

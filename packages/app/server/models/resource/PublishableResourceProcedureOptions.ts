@@ -1,11 +1,10 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Context } from "@@/server/trpc/context";
 import type { Resource } from "@esposter/db-schema";
 
+// The read half of the snapshot boundary is not here: which parts of a type's content are live rather than
+// Frozen is declared once in `ResourceLiveContentMap` and applied by every path that reconstitutes a snapshot,
+// Because a hook only one of those paths calls is how restore came to write frozen settings back
 export interface PublishableResourceProcedureOptions<TContent> {
-  // Rewrite content on the public read (e.g. merge live collection settings over the immutable snapshot).
-  // The caller is anonymous, so this hook gets the unauthed context
-  transformPublicReadContent?: (ctx: Context, resource: Resource, content: TContent) => Promise<TContent>;
   // Rewrite content at publish time with the owner's authority (e.g. bake dataset snapshots, clone asset
   // Blobs and rewrite their stable urls under the publish directory). It runs before the publish transaction
   // Claims a version — and outside it, because a hook resolving a dataset reads through `ctx.db` — so nothing

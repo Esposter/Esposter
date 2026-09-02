@@ -87,8 +87,9 @@ describe(formatVirrunNetworkHint, () => {
   test("joins an argv command for display", () => {
     expect.hasAssertions();
 
-    expect(stripAnsi(formatVirrunNetworkHint(["tsx", "scripts/checkDependencies/index.ts"]))).toMatchInlineSnapshot(`
-      "[virrun] "tsx scripts/checkDependencies/index.ts" tried to use the network, but cached runs are sandboxed offline so results stay reproducible.
+    expect(stripAnsi(formatVirrunNetworkHint(["node", "scripts/outdatedDependencies/index.ts"])))
+      .toMatchInlineSnapshot(`
+      "[virrun] "node scripts/outdatedDependencies/index.ts" tried to use the network, but cached runs are sandboxed offline so results stay reproducible.
       [virrun] If it needs the network, run it natively — drop the virrun -- prefix — or, to keep the sandbox, re-run uncached with virrun --no-cache -- (or VIRRUN_NO_CACHE=1)."
     `);
   });

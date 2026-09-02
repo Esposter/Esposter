@@ -3,7 +3,7 @@ import type { Database } from "@esposter/db-schema";
 import { sendTodoReminderHandler } from "#src/handlers/sendTodoReminderHandler";
 import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/eventGridPublisherClient.test";
 import { InvocationContext } from "@azure/functions";
-import { dayjs, getContentBlobName } from "@esposter/db";
+import { getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import { AppNotificationType, AzureContainer, resources, ResourceType, users } from "@esposter/db-schema";
 import { MockContainerClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
@@ -30,7 +30,7 @@ describe(sendTodoReminderHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const name = "task";
   const userId = crypto.randomUUID();
-  const dueAt = dayjs().add(1, "hour").toDate();
+  const dueAt = new Date(Date.now() + Temporal.Duration.from({ hours: 1 }).total("milliseconds"));
 
   const insertResource = async () => {
     const [resource] = await mockDb.insert(resources).values({ name, type: ResourceType.TodoList, userId }).returning();
@@ -90,7 +90,7 @@ describe(sendTodoReminderHandler, () => {
 
     const resource = await insertResource();
     const itemId = crypto.randomUUID();
-    const reDatedAt = dayjs(dueAt).add(1, "hour").toDate();
+    const reDatedAt = new Date(dueAt.getTime() + Temporal.Duration.from({ hours: 1 }).total("milliseconds"));
     await seedContent(resource.id, [{ dueAt: reDatedAt.toISOString(), id: itemId, name }]);
     await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id }, context);
 

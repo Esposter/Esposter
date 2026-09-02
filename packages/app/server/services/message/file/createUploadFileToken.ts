@@ -1,4 +1,3 @@
-import { dayjs } from "#shared/services/dayjs";
 import { WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
 import { ID_SEPARATOR, NotInitializedError } from "@esposter/shared";
 import { createHmac } from "node:crypto";
@@ -14,7 +13,7 @@ export const createUploadFileToken = (
   userId: string,
   roomId: string,
   id: string,
-  expiresAt: number = dayjs().add(WRITE_SAS_DURATION_MS, "ms").valueOf(),
+  expiresAt: number = Date.now() + WRITE_SAS_DURATION_MS,
 ): string => {
   // Nuxt bakes runtimeConfig at BUILD time and only re-reads `NUXT_`-prefixed vars at runtime, so a deployment
   // That builds without the secret and supplies it as a runtime app setting leaves this undefined — which

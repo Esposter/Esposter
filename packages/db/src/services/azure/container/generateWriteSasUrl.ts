@@ -1,6 +1,5 @@
 import type { BlobGenerateSasUrlOptions, BlockBlobClient } from "@azure/storage-blob";
 
-import { dayjs } from "#src/services/dayjs/index";
 import { BlobSASPermissions } from "@azure/storage-blob";
 import { WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
 import { encodeUrlSubDelimiters } from "@esposter/shared";
@@ -14,7 +13,7 @@ export const generateWriteSasUrl = async (
   encodeUrlSubDelimiters(
     await blockBlobClient.generateSasUrl({
       ...options,
-      expiresOn: dayjs().add(WRITE_SAS_DURATION_MS, "ms").toDate(),
+      expiresOn: new Date(Date.now() + WRITE_SAS_DURATION_MS),
       permissions: BlobSASPermissions.from({ write: true }),
     }),
   );

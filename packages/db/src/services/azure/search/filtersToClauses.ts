@@ -4,7 +4,6 @@ import type { Clause, SerializableValue } from "@esposter/azure";
 import type { Filter, MessageEntity } from "@esposter/db-schema";
 
 import { ContentTypes } from "#src/models/ContentType";
-import { dayjs } from "#src/services/dayjs/index";
 import {
   BinaryOperator,
   CompositeKeyPropertyNames,
@@ -20,7 +19,7 @@ import {
   MimeCategory,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { getEndOfDay, getStartOfDay, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 
 // The one categorisation of a mimetype, so a category the uploader recognises is a category search can filter by
 const ContentTypesByMimeCategory = Object.groupBy([...ContentTypes], getMimeCategory);
@@ -103,17 +102,16 @@ export const filtersToClauses = (
         for (const { value } of filtersByType) {
           if (!(value instanceof Date)) throw getInvalidValueError(value);
 
-          const date = dayjs(value);
           clauses.push(
             {
               key: StandardMessageEntityPropertyNames.createdAt,
               operator: BinaryOperator.ge,
-              value: date.startOf("day").toDate(),
+              value: getStartOfDay(value),
             },
             {
               key: StandardMessageEntityPropertyNames.createdAt,
               operator: BinaryOperator.le,
-              value: date.endOf("day").toDate(),
+              value: getEndOfDay(value),
             },
           );
         }

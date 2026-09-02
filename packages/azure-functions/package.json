@@ -32,9 +32,17 @@
   ],
   "type": "module",
   "sideEffects": true,
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "imports": {
     "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
@@ -43,8 +51,8 @@
     }
   },
   "scripts": {
-    "build": "pnpm export:gen && tsdown",
-    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "build": "tsdown",
+    "export:gen": "generate-exports",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",
@@ -76,7 +84,6 @@
     "@types/node": "catalog:",
     "@types/web-push": "catalog:",
     "azure-mock": "workspace:*",
-    "ctix": "catalog:",
     "tsdown": "catalog:",
     "typedoc": "catalog:",
     "vitest": "catalog:"

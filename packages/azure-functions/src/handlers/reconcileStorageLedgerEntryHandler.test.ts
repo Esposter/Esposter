@@ -5,7 +5,7 @@ import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStora
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer, getBlobSubjectPrefix, storageLedger, users } from "@esposter/db-schema";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -13,6 +13,25 @@ vi.mock(import("#src/services/db"), () => ({
   get db() {
     return mockDb;
   },
+}));
+
+// The meter lives in the app process, so publishing is the only thing this handler can do about it — which
+// Makes the group it publishes to the assertable half: it has to be the owner whose counter moved
+const { groupMock, sendToAllMock } = vi.hoisted(() => ({
+  groupMock: vi.fn<(group: string) => void>(),
+  sendToAllMock: vi.fn<(message: unknown) => Promise<void>>(),
+}));
+
+vi.mock(import("#src/services/getWebPubSubServiceClient"), () => ({
+  // The client is stubbed in the factory and the mocks only record, so a suite-wide restore between tests
+  // Cannot take the stub's own behaviour away with the call history
+  getWebPubSubServiceClient: () =>
+    ({
+      group: (group: string) => {
+        groupMock(group);
+        return { sendToAll: sendToAllMock };
+      },
+    }) as never,
 }));
 
 describe(reconcileStorageLedgerEntryHandler, () => {
@@ -50,6 +69,10 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     });
   });
 
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   afterEach(async () => {
     await mockDb.delete(storageLedger);
     await mockDb.update(users).set({ storageBytesUsed: 0 });
@@ -75,6 +98,23 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     );
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
+    expect(groupMock).toHaveBeenCalledExactlyOnceWith(userId);
+    expect(sendToAllMock).toHaveBeenCalledExactlyOnceWith({ userId });
+  });
+
+  // The counter settles in this process and is read in the app's, so a redelivery that moves nothing must not
+  // Cost every one of the owner's devices a re-read
+  test("stays quiet when a redelivered event moves nothing", async () => {
+    expect.hasAssertions();
+
+    await createStorageLedgerEntry();
+    const event = createEventGridEvent(`${getBlobSubjectPrefix(containerName)}${blobName}`);
+    await reconcileStorageLedgerEntryHandler(event, context);
+    vi.clearAllMocks();
+    await reconcileStorageLedgerEntryHandler(event, context);
+
+    await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
+    expect(sendToAllMock).not.toHaveBeenCalled();
   });
 
   test("recovers a blob name storage percent-encoded into the subject", async () => {
@@ -87,6 +127,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     );
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
+    expect(sendToAllMock).toHaveBeenCalledExactlyOnceWith({ userId });
   });
 
   // A lone `%` is legal in a filename and decodes to nothing valid. The blob is simply one nobody reserved —

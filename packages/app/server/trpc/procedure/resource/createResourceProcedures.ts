@@ -9,9 +9,10 @@ import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from 
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
+import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { PUBLISHED_DIRECTORY_SEGMENT, staleContentVersionErrorMessage } from "#shared/services/resource/constants";
+import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -28,12 +29,15 @@ import { getOffsetPaginationData } from "@@/server/services/pagination/offset/ge
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
-import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { readResourceViewCount } from "@@/server/services/resource/readResourceViewCount";
+import { reapplyLiveResourceContent } from "@@/server/services/resource/reapplyLiveResourceContent";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
+import { getSnapshotContentBlobName } from "@@/server/services/resource/snapshot/getSnapshotContentBlobName";
+import { getSnapshotMetadata } from "@@/server/services/resource/snapshot/getSnapshotMetadata";
+import { getSnapshotSummary } from "@@/server/services/resource/snapshot/getSnapshotSummary";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
@@ -118,8 +122,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const { contentSchema } = ResourceDefinitionMap[type];
   // Args comes from an unresolved-generic conditional tuple, so the hook params collapse to the
   // Intersection of every content type; pin them back to this TType's concrete content shape.
-  const { transformPublicReadContent, transformPublishedContent } = (args[0] ??
-    {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>>;
+  const { transformPublishedContent } = (args[0] ?? {}) as unknown as PublishableResourceProcedureOptions<
+    ResourceContent<TType>
+  >;
   // Annotated so the generic content schema resolves to a concrete type for destructuring.
   // Both the output and input sides are declared — leaving the input side defaulted to unknown
   // Would erase the procedure's input type for consumers like achievement condition paths.
@@ -143,15 +148,19 @@ export const createResourceProcedures = <TType extends ResourceType>(
   // Not as an internal error. The generic contentSchema parses to the union of all content types; the
   // Concrete caller's TType pins it back down so consumers read their own content shape
   const readPublishedContent = async (
-    id: Resource["id"],
+    resource: Resource,
     publishVersion: ResourcePublication["publishVersion"],
   ): Promise<ResourceContent<TType>> => {
-    const content = (await readContentBlob(contentSchema, getPublishedContentBlobName(id, publishVersion))) as
-      | ResourceContent<TType>
-      | undefined;
-    if (content === undefined) throw getNotFoundError(DatabaseEntityType.Resource, id);
+    const content = (await readContentBlob(
+      contentSchema,
+      getSnapshotContentBlobName(resource.id, SnapshotChannel.Published, publishVersion),
+    )) as ResourceContent<TType> | undefined;
+    if (content === undefined) throw getNotFoundError(DatabaseEntityType.Resource, resource.id);
 
-    return content;
+    // Reconstitution, not a plain read: a snapshot's frozen copy of what the type declares live is replaced
+    // Here, so the public read and the owner's version preview answer the same content — and so does the
+    // Restore, which reconstitutes through the same declaration
+    return (await reapplyLiveResourceContent(resource, content)) as ResourceContent<TType>;
   };
   const baseProcedures = {
     createResource: standardAuthedProcedure
@@ -303,7 +312,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         });
         // Transformed before the transaction opens: a hook may read through `ctx.db` (Dashboard resolves every
         // Bound dataset), and issuing that read while this connection holds a transaction deadlocks. Nothing it
-        // Writes is keyed by the version claimed below — see createPublishedAssetsDirectoryName
+        // Writes is keyed by the version claimed below — see createSnapshotAssetsDirectoryName
         const publishedContent = transformPublishedContent
           ? await transformPublishedContent(ctx, ctx.resource, content)
           : content;
@@ -321,11 +330,18 @@ export const createResourceProcedures = <TType extends ResourceType>(
           const serializedContent = JSON.stringify(value);
           await useUpload(
             AzureContainer.ResourceAssets,
-            getPublishedContentBlobName(id, publishVersion),
+            getSnapshotContentBlobName(id, SnapshotChannel.Published, publishVersion),
             serializedContent,
+            // No reason: a published row's reason is that it was published, which its channel already says.
+            // The summary is what makes it choosable beside the revisions it shares one timeline with
+            getSnapshotMetadata({ summary: getSnapshotSummary(ctx.resource.type, serializedContent) }),
           );
           publishedContentBytes = Buffer.byteLength(serializedContent);
         };
+        // The draft version this publish is taken from, written on both the insert and the conflict update: a
+        // Row left carrying the column's default reports a draft that has moved since it was published,
+        // Whatever the owner has or has not edited since
+        const { contentVersion: publishedContentVersion } = ctx.resource;
         // Bump the version and write the blob in one transaction so a failed upload rolls the version bump back,
         // The publication row can never point at a publishVersion whose blob was never written.
         const publication = await ctx.db.transaction(async (tx) => {
@@ -335,9 +351,13 @@ export const createResourceProcedures = <TType extends ResourceType>(
             (
               await tx
                 .insert(resourcePublications)
-                .values({ resourceId: id })
+                .values({ publishedContentVersion, resourceId: id })
                 .onConflictDoUpdate({
-                  set: { publishedAt: new Date(), publishVersion: sql`${resourcePublications.publishVersion} + 1` },
+                  set: {
+                    publishedAt: new Date(),
+                    publishedContentVersion,
+                    publishVersion: sql`${resourcePublications.publishVersion} + 1`,
+                  },
                   target: resourcePublications.resourceId,
                 })
                 .returning()
@@ -397,7 +417,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
           ctx.db,
           ctx.getSessionPayload.user.id,
           AzureContainer.ResourceAssets,
-          getPublishedContentBlobName(id, publication.publishVersion),
+          getSnapshotContentBlobName(id, SnapshotChannel.Published, publication.publishVersion),
           publishedContentBytes,
         );
         // Fire-and-forget: the activity trail is best-effort and the publish must not wait on telemetry
@@ -430,19 +450,18 @@ export const createResourceProcedures = <TType extends ResourceType>(
         );
         if (!resource.publication) throw getNotFoundError(DatabaseEntityType.ResourcePublication, input);
 
-        const content = await readPublishedContent(input, resource.publication.publishVersion);
+        const content = await readPublishedContent(resource, resource.publication.publishVersion);
         // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets.
         // Fire-and-forget: the increment swallows its own failures and the viewer must never wait on telemetry
         getSynchronizedFunction(incrementResourceViewCount)(input);
-        if (!transformPublicReadContent) return { content, name: resource.name };
-        return { content: await transformPublicReadContent(ctx, resource, content), name: resource.name };
+        return { content, name: resource.name };
       }),
     // An owner-only read of a retained snapshot, backing the view route's `version` query param. Anonymous
     // Visitors never reach this — the public read above always serves the latest publish
     readPublishedVersionContent: getOwnerProcedure(type, readPublishedVersionContentInputSchema, "id").query<
       PublishedResourceContent<TType>
-    >(async ({ ctx, input: { id, version } }) => ({
-      content: await readPublishedContent(id, version),
+    >(async ({ ctx, input: { version } }) => ({
+      content: await readPublishedContent(ctx.resource, version),
       name: ctx.resource.name,
     })),
     readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<
@@ -472,7 +491,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       await publishBlobPrefixDeletion(
         id,
         AzureContainer.ResourceAssets,
-        `${id}/${PUBLISHED_DIRECTORY_SEGMENT}`,
+        `${id}/${SnapshotChannel.Published}`,
         new Date(),
       );
       // Fire-and-forget: the activity trail is best-effort and the unpublish must not wait on telemetry

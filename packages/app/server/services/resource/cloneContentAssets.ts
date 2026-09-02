@@ -96,7 +96,7 @@ export const cloneContentAssets = async <TContent>(
 
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   // Every clone is written under a freshly minted asset id, never the source's. A destination name carried
-  // Over from the source is a name with a history: `restorePublishedVersion` clones back into the working
+  // Over from the source is a name with a history: `restoreSnapshotVersion` clones back into the working
   // Copy's own `{id}/files`, so a snapshot of a file the editor has since deleted would rebuild the exact
   // Name that delete already published for deletion — and a named-blob deletion event carries no time bound
   // (/docs/architecture/blob-lifecycle), so its redelivery or dead-letter replay destroys the restored blob.

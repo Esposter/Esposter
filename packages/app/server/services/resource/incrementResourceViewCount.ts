@@ -1,6 +1,6 @@
 import type { Resource } from "@esposter/db-schema";
 
-import { getUtcDateString } from "#shared/services/dayjs/getUtcDateString";
+import { getUtcDateString } from "#shared/util/date/getUtcDateString";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { MAX_VIEW_COUNT_ETAG_RETRIES } from "@@/server/services/resource/constants";
 import { createEntity, getEntityWithEtag, updateEntity } from "@esposter/db";

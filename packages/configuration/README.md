@@ -24,6 +24,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | tsdown (Node) | `getTsdownConfigurationNode` | The base, targeting Node                                                |
 | tsdown (Vue)  | `getTsdownConfigurationVue`  | The base, compiling `.vue` files and emitting their declarations        |
 | ctix          | `.ctirc-ts`                  | Barrel file generation config for `packages/*/src/index.ts`             |
+| ctix (bin)    | `generate-exports`           | Runs that generation on its own, which is what every `export:gen` calls |
 
 ### Usage in other packages
 

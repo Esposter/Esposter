@@ -1,6 +1,5 @@
-import { dayjs } from "#shared/services/dayjs";
 import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, getEndOfDay, getZonedDateTime } from "@esposter/shared";
 
 // Resolved at fetch time so relative presets stay anchored to "now" instead of a stale computed
 export const getResourceUpdatedRange = (
@@ -15,14 +14,16 @@ export const getResourceUpdatedRange = (
       return {
         ...(updatedAfter ? { updatedAfter } : {}),
         // Extend to end-of-day so the selected "To" date is inclusive against the server's lte filter
-        ...(updatedBefore ? { updatedBefore: dayjs(updatedBefore).endOf("day").toDate() } : {}),
+        ...(updatedBefore ? { updatedBefore: getEndOfDay(updatedBefore) } : {}),
       };
+    // Subtracted as calendar days rather than fixed 24-hour spans, so a preset crossing a DST transition
+    // Still lands on the same wall-clock time it started from
     case ResourceUpdatedFilter.Last7Days:
-      return { updatedAfter: dayjs().subtract(7, "days").toDate() };
+      return { updatedAfter: new Date(getZonedDateTime(new Date()).subtract({ days: 7 }).epochMilliseconds) };
     case ResourceUpdatedFilter.Last24Hours:
-      return { updatedAfter: dayjs().subtract(24, "hours").toDate() };
+      return { updatedAfter: new Date(Date.now() - Temporal.Duration.from({ hours: 24 }).total("milliseconds")) };
     case ResourceUpdatedFilter.Last30Days:
-      return { updatedAfter: dayjs().subtract(30, "days").toDate() };
+      return { updatedAfter: new Date(getZonedDateTime(new Date()).subtract({ days: 30 }).epochMilliseconds) };
     default:
       return exhaustiveGuard(updatedFilter);
   }

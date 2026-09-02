@@ -1,6 +1,6 @@
 ---
 name: git
-description: Esposter git workflow conventions — commit message format, safety rules, and branch hygiene. Apply when running git operations or advising on source control workflows.
+description: Esposter git workflow conventions — commit message format, safety rules, branch hygiene, and syncing `main` back into `develop` with the `pnpm-lock.yaml` conflict that merge always brings. Apply when running git operations, merging a branch, resolving a lockfile conflict, or advising on source control workflows.
 ---
 
 # Git Conventions
@@ -54,6 +54,47 @@ Batch commits and push **once** per coherent chunk of work. Several pushes in qu
 - `develop` is the working branch; `main` takes releases from it.
 - Cut a branch only when the work genuinely cannot land incrementally (a spike, or an edit to `main` itself — use `git worktree` for that rather than checking it out over work in progress), and delete it after merging.
 
+## Syncing `main` Into `develop`
+
+`main` takes commits `develop` never saw — a Renovate PR merged straight into it, a hotfix — so `develop` goes
+behind and the open `develop` → `main` PR starts showing a diff nobody wrote. Fetch and merge `main` in; never
+rebase `develop`, whose commits are already pushed and already reviewed.
+
+```bash
+git fetch origin
+git merge origin/main --no-edit
+```
+
+The conflict is `pnpm-lock.yaml`, every time, because both sides regenerated it (below). `pnpm-workspace.yaml`
+is authored and usually auto-merges — read the merged catalog anyway rather than trusting that, since a clean
+auto-merge proves only that the two sides touched different lines, never that the surviving version is the
+higher one.
+
+The merge commit itself is not a review window: it carries whatever `main` already held, and the review that
+matters already ran on the PR those commits came from.
+
+### `pnpm-lock.yaml` Conflicts — Always Regenerate, Never Hand-Resolve
+
+The lockfile is machine state, like `snapshot.json`. A hand-merged lock (or one side taken wholesale and left alone) silently disagrees with the merged `pnpm-workspace.yaml` catalog. Resolve `pnpm-workspace.yaml` first — that one is authored and merges normally, keeping the **higher** version on every conflicting catalog entry — then regenerate the lock from it:
+
+```bash
+git checkout origin/main -- pnpm-lock.yaml   # the side that already resolved the incoming bumps
+pnpm i                                       # from the repo root — reconciles the lock to the merged catalog
+git add pnpm-lock.yaml
+```
+
+**Which side is kept is not arbitrary.** `pnpm i` re-resolves only the specifiers the kept lock cannot satisfy,
+and it resolves each of those to the newest release the caret allows — which for a monorepo of packages bumped
+together is a release the rest of them have no entry for. Keeping the side that never saw the bump therefore
+puts the direct dependency a version ahead of every sibling pinned around it, and two copies of the shared core
+land in the tree; a type augmentation then registers against the copy the app does not import, and the errors
+name application files that the branch never touched. Keep the side whose catalog bump is already resolved
+— `origin/main` when merging `main` in — so the reconciliation is only the other branch's own additions.
+
+`pnpm i` reporting `Lockfile is up to date` is a valid outcome, not a skipped step — it means the side you kept already resolved every merged specifier. Verify with the specifiers themselves (`grep` the bumped package in the lock) rather than trusting the message.
+
+Escalate to `pnpm refresh:lockfile` only when `pnpm i` cannot reconcile the tree — it deletes the lock and every `node_modules`, kills running node processes, and reinstalls from scratch (minutes, and it takes down any dev server or vitest watcher).
+
 ## Verify On `develop`
 
 The local check suite runs **once per coherent chunk, on `develop`, before pushing it** — not per commit:
@@ -63,17 +104,3 @@ The local check suite runs **once per coherent chunk, on `develop`, before pushi
 3. **Push** the chunk, which starts the review. Fix forward on `develop`.
 
 Rationale: a per-commit check run is re-invalidated by the next commit in the same chunk, and the pushed state is the only state a reviewer ever sees.
-
-### `pnpm-lock.yaml` Conflicts — Always Regenerate, Never Hand-Resolve
-
-The lockfile is machine state, like `snapshot.json`. A hand-merged lock (or one side taken wholesale and left alone) silently disagrees with the merged `pnpm-workspace.yaml` catalog. Resolve `pnpm-workspace.yaml` first — that one is authored and merges normally, keeping the **higher** version on every conflicting catalog entry — then regenerate the lock from it:
-
-```bash
-git checkout --ours -- pnpm-lock.yaml   # any side; it is about to be rewritten
-pnpm i                                  # from the repo root — reconciles the lock to the merged catalog
-git add pnpm-lock.yaml
-```
-
-`pnpm i` reporting `Lockfile is up to date` is a valid outcome, not a skipped step — it means the side you kept already resolved every merged specifier. Verify with the specifiers themselves (`grep` the bumped package in the lock) rather than trusting the message.
-
-Escalate to `pnpm refresh:lockfile` only when `pnpm i` cannot reconcile the tree — it deletes the lock and every `node_modules`, kills running node processes, and reinstalls from scratch (minutes, and it takes down any dev server or vitest watcher).

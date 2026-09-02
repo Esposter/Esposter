@@ -59,7 +59,7 @@ When you change a schema file in `packages/db-schema/src/schema/`:
 
 1. Run `pnpm db:gen` to generate the migration SQL.
 2. Start the app — migrations are applied at startup by the Nitro plugin `packages/app/server/plugins/migrate.ts`. Nothing applies them from the CLI, `db:up` included.
-3. If you added or removed exports, run `pnpm export:gen` in `packages/db-schema/`.
+3. If you added or removed exports, run `pnpm export:gen` in `packages/db-schema/` to regenerate the barrel.
 
 ## Before You Start
 

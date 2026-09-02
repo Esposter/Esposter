@@ -1,47 +1,64 @@
 {
   "files": [
     {
-      "filepath": "app/models/tableEditor/file/commands/MoveColumnCommand.bench.ts",
+      "filepath": "app/models/resource/sheet/commands/MoveColumnCommand.bench.ts",
       "groups": [
         {
           "benchmarks": [
             {
-              "mean": 0.0559299999999439,
-              "name": "execute — move col 0→4, 100 rows",
-              "p99": 0.07849999999962165,
-              "rme": 18.058892731976616,
+              "mean": 0.23193000000014763,
+              "name": "execute",
+              "p99": 0.27440000000024156,
+              "rme": 7.681319401567997,
               "sampleCount": 10
             },
             {
-              "mean": 0.2916700000000219,
-              "name": "execute — move col 0→4, 1000 rows",
-              "p99": 0.31179999999994834,
-              "rme": 1.930927369741019,
-              "sampleCount": 10
-            },
-            {
-              "mean": 2.5239600000000335,
-              "name": "execute — move col 0→4, 10000 rows",
-              "p99": 4.0349999999998545,
-              "rme": 16.116034916719475,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.46918000000000576,
-              "name": "undo — move col 0→4 then back, 1000 rows",
-              "p99": 0.4808000000002721,
-              "rme": 1.0784743774101362,
-              "sampleCount": 10
-            },
-            {
-              "mean": 4.901980000000094,
-              "name": "undo — move col 0→4 then back, 10000 rows",
-              "p99": 5.615899999999783,
-              "rme": 4.3257975760044,
+              "mean": 0.13748000000000501,
+              "name": "execute + undo",
+              "p99": 0.24459999999999127,
+              "rme": 21.258232551217016,
               "sampleCount": 10
             }
           ],
-          "fullName": "MoveColumnCommand"
+          "fullName": "MoveColumnCommand > move column 0→4, 100 rows"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 1.881860000000006,
+              "name": "execute",
+              "p99": 3.634400000000369,
+              "rme": 34.74884626413714,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.285169999999971,
+              "name": "execute + undo",
+              "p99": 2.100199999999859,
+              "rme": 18.804211733895663,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "MoveColumnCommand > move column 0→4, 1000 rows"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 16.364849999999933,
+              "name": "execute",
+              "p99": 29.29549999999972,
+              "rme": 21.168348494717172,
+              "sampleCount": 10
+            },
+            {
+              "mean": 24.13102000000017,
+              "name": "execute + undo",
+              "p99": 30.131600000000617,
+              "rme": 13.417875998945435,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "MoveColumnCommand > move column 0→4, 10000 rows"
         }
       ]
     }

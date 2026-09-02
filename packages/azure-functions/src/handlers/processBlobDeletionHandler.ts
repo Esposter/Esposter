@@ -1,5 +1,6 @@
 import type { EventGridHandler } from "@azure/functions";
 
+import { broadcastStorageUsage } from "#src/services/broadcastStorageUsage";
 import { db } from "#src/services/db";
 import { getContainerClient } from "#src/services/getContainerClient";
 import { logAndRethrow } from "#src/services/logAndRethrow";
@@ -26,7 +27,9 @@ export const processBlobDeletionHandler: EventGridHandler = (event, context) => 
         : await listBlobNames(containerClient, data.prefix, { createdBefore: data.createdBefore });
     // The delete and the release of the bytes it frees are one operation, waved and retried together — see
     // DeleteStorageBlobs and /docs/platform/storage-quotas
-    await deleteStorageBlobs(db, containerClient, data.containerName, blobNames);
+    await deleteStorageBlobs(db, containerClient, data.containerName, blobNames, (releasedUserIds) =>
+      broadcastStorageUsage(context, releasedUserIds),
+    );
     context.log(`${AzureFunction.ProcessBlobDeletion} deleted ${blobNames.length} blobs from ${data.containerName}.`);
   }).match(noop, logAndRethrow(context, AzureFunction.ProcessBlobDeletion));
 };

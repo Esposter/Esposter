@@ -1,3 +1,5 @@
-import { dayjs } from "#shared/services/dayjs";
+import { formatDate } from "#shared/util/date/formatDate";
 
-export const getDisplayTime = (date: Date) => dayjs(date).format("h:mm A");
+const DISPLAY_TIME_FORMAT = "h:mm A";
+
+export const getDisplayTime = (date: Date) => formatDate(date, DISPLAY_TIME_FORMAT);

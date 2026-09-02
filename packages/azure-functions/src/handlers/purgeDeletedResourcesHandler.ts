@@ -1,5 +1,6 @@
 import type { TimerHandler } from "@azure/functions";
 
+import { broadcastStorageUsage } from "#src/services/broadcastStorageUsage";
 import { db } from "#src/services/db";
 import { getContainerClient } from "#src/services/getContainerClient";
 import { getTableClient } from "#src/services/getTableClient";
@@ -38,7 +39,8 @@ export const purgeDeletedResourcesHandler: TimerHandler = (_timer, context) =>
         const tableClients = await Promise.all(
           getResourceOwnedTableNames(type).map((tableName) => getTableClient(tableName)),
         );
-        await purgeResource(db, containerClient, tableClients, id);
+        const releasedUserIds = await purgeResource(db, containerClient, tableClients, id);
+        await broadcastStorageUsage(context, releasedUserIds);
       }).match(noop, (error) => {
         context.error(`${AzureFunction.PurgeDeletedResources} failed to purge resource ${id}: `, error);
       });

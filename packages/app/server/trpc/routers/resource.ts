@@ -1,10 +1,11 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
-import type { PublishHistoryVersion } from "#shared/models/resource/PublishHistoryVersion";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount";
 import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCount";
 import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
+import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
+import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { Context } from "@@/server/trpc/context";
 import type { Clause } from "@esposter/azure";
 import type { Resource } from "@esposter/db-schema";
@@ -13,9 +14,14 @@ import { ResourceOperationType } from "#shared/models/notification/ResourceOpera
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { resourceListSortKeySchema } from "#shared/models/resource/ResourceListItem";
+import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
+import { SnapshotKind } from "#shared/models/resource/SnapshotKind";
+import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { MAX_SNAPSHOT_LABEL_LENGTH } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -27,11 +33,13 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
 import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
-import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
-import { readPublishHistory } from "@@/server/services/resource/readPublishHistory";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
+import { reapplyLiveResourceContent } from "@@/server/services/resource/reapplyLiveResourceContent";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
+import { getSnapshotContentBlobName } from "@@/server/services/resource/snapshot/getSnapshotContentBlobName";
+import { readSnapshotHistory } from "@@/server/services/resource/snapshot/readSnapshotHistory";
+import { takeResourceRevision } from "@@/server/services/resource/snapshot/takeResourceRevision";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { withResourceRollback } from "@@/server/services/resource/withResourceRollback";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
@@ -59,7 +67,14 @@ import {
   resourceTypeSchema,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
+import {
+  createNormalizedStringSchema,
+  createUniqueArraySchema,
+  MAX_READ_LIMIT,
+  Operation,
+  RoutePath,
+  takeOne,
+} from "@esposter/shared";
 import {
   and,
   asc,
@@ -81,10 +96,27 @@ import { z } from "zod";
 
 const readResourceInputSchema = selectResourceSchema.pick({ id: true });
 
-const restorePublishedVersionInputSchema = z.object({
+const restoreSnapshotVersionInputSchema = z.object({
   ...readResourceInputSchema.shape,
+  // Which address space the version belongs to: the two channels number independently, so a version alone
+  // Names two different snapshots and the caller has to say which of them it means
+  channel: z.enum(SnapshotChannel),
   version: z.int().positive(),
 });
+
+// The reasons a client may name, which is not the whole enum: Automatic is decided by the save path from a
+// Clock, and BeforeRestore by the restore itself. Both would be a lie coming from a caller
+const saveResourceRevisionInputSchema = z
+  .object({
+    ...readResourceInputSchema.shape,
+    label: createNormalizedStringSchema(MAX_SNAPSHOT_LABEL_LENGTH).default(""),
+    reason: z.enum([SnapshotReason.BeforeImport, SnapshotReason.Manual]).default(SnapshotReason.Manual),
+  })
+  // A label is what the owner typed when they took a version by hand, so it belongs to that reason alone: a
+  // Labelled BeforeImport row reads in the history as a milestone someone chose, when the import took it
+  .refine(({ label, reason }) => label === "" || reason === SnapshotReason.Manual, {
+    message: `A label is only accepted on a ${SnapshotReason.Manual} revision`,
+  });
 
 const resourceFilterInputSchema = z.object({
   // Narrows a read to an explicit set — the search dropdown resolves its own ids this way
@@ -360,18 +392,6 @@ export const resourceRouter = router({
       .orderBy(desc(resourceFavorites.createdAt))
       .limit(MAX_READ_LIMIT);
   }),
-  // Which snapshots exist comes from a blob prefix listing — no history table, since the {id}/published/{n}
-  // Blobs are already the source of truth for that. Which one is LIVE comes from the publication row instead,
-  // Because the two can disagree: the unpublish sweep is a best-effort event, so a republish can land while
-  // Retired snapshots are still present, with publishVersion restarted at 1
-  readPublishHistory: getOwnerProcedure(undefined, readResourceInputSchema, "id").query<PublishHistoryVersion[]>(
-    async ({ ctx }) => {
-      const publication = await ctx.db.query.resourcePublications.findFirst({
-        where: { resourceId: { eq: ctx.resource.id } },
-      });
-      return readPublishHistory(ctx.resource.id, publication?.publishVersion);
-    },
-  ),
   // Publish state rides the row rather than answering a second request: `resourcePublications` is one table
   // For every type, so this cross-type read resolves it whatever the resource turns out to be, and the
   // Ownership that second request would re-resolve is the ownership this one already resolved
@@ -407,6 +427,28 @@ export const resourceRouter = router({
         .offset(offset);
       return getOffsetPaginationData(resultResources, limit);
     }),
+  // Which snapshots exist comes from a blob prefix listing — no history table, since the
+  // {id}/{channel}/{n} blobs are already the source of truth for that. Which published one is LIVE comes from
+  // The publication row instead, because the two can disagree: the unpublish sweep is a best-effort event, so
+  // A republish can land while retired snapshots are still present, with publishVersion restarted at 1.
+  //
+  // Both channels in one time-ordered list, because the owner has one question — where can I go back to — and
+  // The channels are an address space rather than two things to make them choose between. Every type is asked
+  // For both: a non-publishable one simply has no published prefix to enumerate
+  readSnapshotHistory: getOwnerProcedure(undefined, readResourceInputSchema, "id").query<SnapshotVersion[]>(
+    async ({ ctx }) => {
+      const publication = await ctx.db.query.resourcePublications.findFirst({
+        where: { resourceId: { eq: ctx.resource.id } },
+      });
+      const channelHistories = await Promise.all([
+        readSnapshotHistory(ctx.resource.id, SnapshotChannel.Revisions),
+        readSnapshotHistory(ctx.resource.id, SnapshotChannel.Published, publication?.publishVersion),
+      ]);
+      // Newest first, and by time rather than by version: the two channels number independently, so an
+      // Ordinal says nothing about where a row belongs once they share a list
+      return channelHistories.flat().toSorted((first, second) => second.takenAt.getTime() - first.takenAt.getTime());
+    },
+  ),
   // An upsert rather than an insert: the open that just happened is always the newest, so there is nothing to
   // Compare. Owner-scoped, like every other resource write
   recordAccess: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<void>(
@@ -419,61 +461,6 @@ export const resourceRouter = router({
           set: { accessedAt: new Date() },
           target: [resourceAccesses.userId, resourceAccesses.resourceId],
         });
-    },
-  ),
-  // Restore copies a snapshot's content into the working copy through saveResourceContent semantics
-  // (contentVersion++). The publication is never re-pointed — a restore produces a Draft to review and
-  // Re-publish, mirroring the recycle bin's restore-returns-a-Draft rule.
-  // The snapshot's assets are cloned back into the working copy's own files directory rather than referenced
-  // Where they sit, exactly as the duplicate path does: a published url lives under {id}/published, which
-  // Unpublish wipes wholesale, so a verbatim copy would hand the draft urls a later unpublish deletes — and
-  // Re-publishing that draft would ship the same dead urls, with re-uploading every asset the only recovery
-  restorePublishedVersion: getOwnerProcedure(undefined, restorePublishedVersionInputSchema, "id").mutation<Resource>(
-    async ({ ctx, input: { id, version } }) => {
-      const publishedContent = await requireEntity(
-        readContentBlob(
-          ResourceDefinitionMap[ctx.resource.type].contentSchema,
-          getPublishedContentBlobName(id, version),
-        ),
-        DatabaseEntityType.Resource,
-        `${id}/${version}`,
-      );
-      // Cloned before the transaction opens, exactly as `publishResource` does it: the clone is one storage
-      // Round trip per referenced asset, and running it inside would hold a pooled connection — not just the
-      // `resources` row lock — for that whole time, so a handful of concurrent restores of asset-heavy
-      // Resources would starve the pool for requests that have nothing to do with them.
-      // Blobs a partial clone already wrote stay under this resource's own `{id}/files`, unreferenced by any
-      // Content until the next restore overwrites them or `purgeResource` takes the directory wholesale — the
-      // Deliberate trade, unlike `duplicateResource`, whose compensating `deleteDirectory` is only safe because
-      // The resource it clears was created moments earlier; the target here is a live working copy whose
-      // Existing files a directory-wide cleanup would destroy.
-      const clonedContent = await cloneContentAssets(ctx.db, ctx.getSessionPayload.user.id, publishedContent, id);
-      // The one content-write path, so a restore is a content write like any other: the version bump and the blob
-      // Write land in one transaction, the type's after-save hook re-derives what the restored content declares,
-      // And the trail records the restore the way the recycle bin's does. Nothing adopts the save event it emits:
-      // The subscription filters the emitting device out, and no publishable type subscribes to it client-side, so
-      // An editor left open on this resource keeps the pre-restore draft and the version it cached, and its next
-      // Autosave is rejected as stale until it reloads
-      return saveResourceContent(ctx, {
-        activityType: ResourceActivityType.Restored,
-        content: clonedContent,
-        resource: ctx.resource,
-        // The bump and the write stay in one transaction so a failed write rolls the contentVersion back —
-        // A restore that did not land must never advance the version every client caches against
-        updateContentVersion: async (tx) =>
-          requireMutation(
-            (
-              await tx
-                .update(resources)
-                .set({ contentVersion: sql`${resources.contentVersion} + 1` })
-                .where(eq(resources.id, id))
-                .returning()
-            )[0],
-            Operation.Update,
-            DatabaseEntityType.Resource,
-            id,
-          ),
-      });
     },
   ),
   restoreResource: getOwnerProcedure(undefined, readResourceInputSchema, "id", true).mutation<Resource>(
@@ -498,6 +485,89 @@ export const resourceRouter = router({
       return restoredResource;
     },
   ),
+  // Restore copies a snapshot's content into the working copy through saveResourceContent semantics
+  // (contentVersion++). The publication is never re-pointed — a restore produces a Draft to review and
+  // Re-publish, mirroring the recycle bin's restore-returns-a-Draft rule.
+  // The channel rides with the version because the two number independently: `v1` names one snapshot per
+  // Channel, so a version alone restores whichever of them the caller did not mean.
+  // An immutable snapshot's assets are cloned back into the working copy's own files directory rather than
+  // Referenced where they sit, exactly as the duplicate path does: a published url lives under {id}/published,
+  // Which unpublish wipes wholesale, so a verbatim copy would hand the draft urls a later unpublish deletes —
+  // And re-publishing that draft would ship the same dead urls, with re-uploading every asset the only recovery
+  restoreSnapshotVersion: getOwnerProcedure(
+    undefined,
+    restoreSnapshotVersionInputSchema,
+    "id",
+  ).mutation<SnapshotRestoration>(async ({ ctx, input: { channel, id, version } }) => {
+    const blobName = getSnapshotContentBlobName(id, channel, version);
+    const snapshotContent = await requireEntity(
+      readContentBlob(ResourceDefinitionMap[ctx.resource.type].contentSchema, blobName),
+      DatabaseEntityType.Resource,
+      blobName,
+    );
+    // The undo, taken before a single byte of the working copy is written and allowed to fail the whole
+    // Restore: a restore is the one operation that destroys draft work on purpose, and one whose undo silently
+    // Did not happen is the defect this mechanism exists to close. Taken after the snapshot is known to exist,
+    // So a restore that was never going to land does not spend a ring-buffer slot and evict the oldest
+    // Recovery point on its way to failing
+    const undoRevisionVersion = await takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeRestore);
+    // Reconstitution, not a raw copy: a snapshot froze whatever the type declares live, and writing that
+    // Back over the working copy is how a restore silently reopened a closed survey or flipped its response
+    // Mode — a setting the write boundary makes authorization decisions on, with nothing in the restore or
+    // Its confirmation saying it would happen. The declaration is `ResourceLiveContentMap`, and it is the
+    // Same one the public read and the version preview reconstitute through
+    const reappliedContent = await reapplyLiveResourceContent(ctx.resource, snapshotContent);
+    // Cloned before the transaction opens, exactly as `publishResource` does it: the clone is one storage
+    // Round trip per referenced asset, and running it inside would hold a pooled connection — not just the
+    // `resources` row lock — for that whole time, so a handful of concurrent restores of asset-heavy
+    // Resources would starve the pool for requests that have nothing to do with them.
+    // Blobs a partial clone already wrote stay under this resource's own `{id}/files`, unreferenced by any
+    // Content until the next restore overwrites them or `purgeResource` takes the directory wholesale — the
+    // Deliberate trade, unlike `duplicateResource`, whose compensating `deleteDirectory` is only safe because
+    // The resource it clears was created moments earlier; the target here is a live working copy whose
+    // Existing files a directory-wide cleanup would destroy.
+    // Only the immutable kind, which is the one whose urls point into its own frozen clone directory. A
+    // Reference snapshot's urls already name the live `{id}/files/…` the working copy is pointing at, so
+    // Cloning them would mint a second copy of every asset the resource already holds and charge the owner
+    // For it, on every restore
+    const restoredContent =
+      SnapshotChannelDefinitionMap[channel].kind === SnapshotKind.Immutable
+        ? await cloneContentAssets(ctx.db, ctx.getSessionPayload.user.id, reappliedContent, id)
+        : reappliedContent;
+    // The one content-write path, so a restore is a content write like any other: the version bump and the blob
+    // Write land in one transaction, the type's after-save hook re-derives what the restored content declares,
+    // And the trail records the restore the way the recycle bin's does. Nothing adopts the save event it emits:
+    // The subscription filters the emitting device out, and no publishable type subscribes to it client-side, so
+    // An editor left open on this resource keeps the pre-restore draft and the version it cached, and its next
+    // Autosave is rejected as stale until it reloads
+    const restoredResource = await saveResourceContent(ctx, {
+      activityType: ResourceActivityType.Restored,
+      content: restoredContent,
+      resource: ctx.resource,
+      // The bump and the write stay in one transaction so a failed write rolls the contentVersion back —
+      // A restore that did not land must never advance the version every client caches against
+      updateContentVersion: async (tx) =>
+        requireMutation(
+          (
+            await tx
+              .update(resources)
+              .set({ contentVersion: sql`${resources.contentVersion} + 1` })
+              .where(eq(resources.id, id))
+              .returning()
+          )[0],
+          Operation.Update,
+          DatabaseEntityType.Resource,
+          id,
+        ),
+    });
+    return { resource: restoredResource, undoRevisionVersion };
+  }),
+  // The deliberate milestone, and the one an owner may name. Returns the version it wrote, or undefined when
+  // The resource has no content blob to take one from — a resource created and never saved has no state worth
+  // Keeping, which is an answer rather than a failure
+  saveResourceRevision: getOwnerProcedure(undefined, saveResourceRevisionInputSchema, "id").mutation<
+    number | undefined
+  >(({ ctx, input: { label, reason } }) => takeResourceRevision(ctx, ctx.resource, reason, label)),
   toggleFavorite: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<boolean>(
     async ({ ctx, input: { id } }) => {
       const userId = ctx.getSessionPayload.user.id;

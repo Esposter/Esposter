@@ -5,7 +5,6 @@ import { sendNotification } from "#src/services/notification/sendNotification";
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
 import { webpush } from "#src/services/webpush.test";
 import { InvocationContext } from "@azure/functions";
-import { dayjs } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
@@ -56,7 +55,7 @@ describe(sendNotification, () => {
     await seedSession();
     // The subscriber's second device, so a notification the first one caused still has somewhere to land
     await mockDb.insert(sessions).values({
-      expiresAt: dayjs().add(1, "day").toDate(),
+      expiresAt: new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
       id: actingSessionId,
       token: actingSessionId,
       userId: subscriberUserId,

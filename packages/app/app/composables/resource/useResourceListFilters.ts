@@ -4,8 +4,9 @@ import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatus
 import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
 import type { ResourceType } from "@esposter/db-schema";
 
-import { dayjs } from "#shared/services/dayjs";
-import { ISO_DATE_FORMAT } from "#shared/services/dayjs/constants";
+import { ISO_DATE_FORMAT } from "#shared/util/date/constants";
+import { formatDate } from "#shared/util/date/formatDate";
+import { parseDate } from "#shared/util/date/parseDate";
 import { ResourceStatusFilters } from "@/models/resource/list/ResourceStatusFilter";
 import { ResourceUpdatedFilters } from "@/models/resource/list/ResourceUpdatedFilter";
 import { deserializeResourceSortBy } from "@/services/resource/list/deserializeResourceSortBy";
@@ -18,11 +19,10 @@ const createUpdatedBound = (key: string) => {
   return computed<Date | undefined>({
     get: () => {
       if (!boundQuery.value) return undefined;
-      const parsedBound = dayjs(boundQuery.value, ISO_DATE_FORMAT);
-      return parsedBound.isValid() ? parsedBound.toDate() : undefined;
+      return parseDate(boundQuery.value, ISO_DATE_FORMAT);
     },
     set: (value) => {
-      boundQuery.value = value ? dayjs(value).format(ISO_DATE_FORMAT) : "";
+      boundQuery.value = value ? formatDate(value, ISO_DATE_FORMAT) : "";
     },
   });
 };

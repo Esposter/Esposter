@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { DateColumn } from "#shared/models/resource/sheet/column/DateColumn";
 
-import { dayjs } from "#shared/services/dayjs";
-import { ISO_DATE_FORMAT } from "#shared/services/dayjs/constants";
+import { ISO_DATE_FORMAT } from "#shared/util/date/constants";
+import { formatDate } from "#shared/util/date/formatDate";
+import { parseDate } from "#shared/util/date/parseDate";
 
 interface FieldInputDateProps {
   column: DateColumn;
@@ -13,12 +14,14 @@ const { column, isInline } = defineProps<FieldInputDateProps>();
 const modelValue = defineModel<null | string>({ required: true });
 const displayModelValue = computed(() => {
   if (typeof modelValue.value !== "string") return modelValue.value;
-  const date = dayjs(modelValue.value, column.format, true);
-  return date.isValid() ? date.format(ISO_DATE_FORMAT) : modelValue.value;
+  const date = parseDate(modelValue.value, column.format);
+  // eslint-disable-next-line no-restricted-syntax -- the ISO value the date input reads, not text a reader sees
+  return date ? formatDate(date, ISO_DATE_FORMAT) : modelValue.value;
 });
 const onUpdateModelValue = (newModelValue: null | string) => {
+  const date = newModelValue ? parseDate(newModelValue, ISO_DATE_FORMAT) : undefined;
   // eslint-disable-next-line no-restricted-syntax -- writes the cell's stored value in the column's own format
-  modelValue.value = newModelValue ? dayjs(newModelValue, ISO_DATE_FORMAT).format(column.format) : newModelValue;
+  modelValue.value = date ? formatDate(date, column.format) : newModelValue;
 };
 </script>
 

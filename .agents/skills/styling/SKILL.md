@@ -1,6 +1,6 @@
 ---
 name: styling
-description: Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for all static styles, class only for scoped CSS refs / dynamic bindings / third-party selectors, theme primitives and theme colours over bespoke values, the MD3 typography set and semantic opacity in place of a fixed text-gray, text-info links, hover:bg-hover over a hand-picked surface, state variants instead of scoped &:hover blocks, slash/fraction utilities in valued attributify, abbreviated utilities (op-, b-, rd-), an equal w-/h- pair collapsing to size-, named over numeric utilities, gap directionality, the parent owning spacing (gap/padding over child margins), absolute positioning within a container, rem over px with its narrow exceptions, and style-block rules — plus deep dives on page/panel/sidebar/region layout, border utilities and ownership including the banned global border reset, sentence-like rows in inline flow, images as NuxtImg, and arbitrary bracket values (calc, CSS variables, transitions, !important). Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border.
+description: Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for all static styles, class only for scoped CSS refs / dynamic bindings / third-party selectors, theme primitives and theme colours over bespoke values, the MD3 typography set and semantic opacity in place of a fixed text-gray, text-info links, hover:bg-hover over a hand-picked surface, state variants instead of scoped &:hover blocks, the parent owning spacing (gap/padding over child margins), absolute positioning within a container, rem over px with its narrow exceptions, and style-block rules — plus deep dives on the utility vocabulary (slash/fraction values in valued attributify, abbreviated utilities, an equal w-/h- pair collapsing to size-, named over numeric, and gap directionality), page/panel/sidebar/region layout, border utilities and ownership including the banned global border reset, sentence-like rows in inline flow, images as NuxtImg, and arbitrary bracket values (calc, CSS variables, transitions, !important). Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border.
 ---
 
 # Styling — UnoCSS Attributify Mode (MANDATORY)
@@ -8,6 +8,7 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 ## Deep Dives
 
 - `references/layout.md` — when laying out a page, panel, sidebar or column split, sizing a region, drawing a border or finding one you did not ask for, or building a row that reads as one sentence.
+- `references/utility-vocabulary.md` — when two spellings say the same thing: an abbreviation, a named step against a numeric one, a directional gap, or a slash value.
 - `references/images.md` — when adding or sizing an image.
 - `references/arbitrary-values.md` — when a utility needs an arbitrary `[...]` value: `calc()`, a CSS variable, a transition, or `!important`.
 
@@ -24,10 +25,6 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
   - **`px` survives only where the unit is not ours to choose**: a value staying numerically in step with a JS API (`$grid-breakpoints` against `useDisplay().thresholds`, a drawer width also passed as `:width`), SVG user-space attributes, HTML email, and vendored output mirrored into a snapshot.
   - A round `px` that is already a token is a duplicated constant first — `borderRadius: "4px 0 0 4px"` wants `var(--border-radius)`, not `"0.25rem"`.
 - `field-sizing: content` is an attributify utility — put `field-sizing-content` directly on the `<input>` / `<textarea>`, never in a scoped class.
-
-## Slashes / fractions → valued attributify (never bare, never `class`)
-
-A utility containing `/` (`top-1/2`, `translate-y-1/2`) **cannot** be a bare attribute — the SFC parser reads the `/` as a tag terminator and fails with `Opening tag "div" not terminated` — and must not be dumped into `class="..."` to dodge that. Use the **valued** form with the minus inside the quotes: `<div top="1/2" translate-y="-1/2" translate-x="-1/2" />`, the valued analogue of the bare-scale negative rule (`top--1`) below.
 
 ## What stays in `class="..."`
 
@@ -67,46 +64,13 @@ A colour that changes on hover/focus/disabled is a variant utility (`hover:text-
 
 The tint is an **overlay over whatever is underneath**, not a palette: a control whose background is itself the design — a chip swapping its own fill to read as selected — keeps its explicit colour.
 
-## Abbreviated Utilities
+## Utility vocabulary — `references/utility-vocabulary.md`
 
-Always use the UnoCSS abbreviated shorthand forms — they are first-class utilities, and when in doubt the shorter form is canonical here.
-
-**Opacity (`op-` prefix):**
-
-- `op-0`/`op-50`/`op-100` not `opacity-*`; works with variants (`group-hover:op-100`, `hover:op-80`, `disabled:op-30`).
-- Prefer semantic utilities for non-obvious values: `op-medium-emphasis` → `var(--v-medium-emphasis-opacity)`, `op-high-emphasis` → `var(--v-high-emphasis-opacity)` (defining/safelisting new ones — see the `unocss` skill).
-- Conditional semantic opacity utilities take boolean bindings: `:op-high-emphasis="!isLoading ? '' : undefined"`.
-- Reserve raw numeric opacity for obvious visibility states (`0`, `0!`, `op-0`, `op-100`, `group-hover:op-100`). Avoid raw non-obvious values (`op-40`, `op-50`, `:op="80"`) in app UI; use semantic utilities or CSS variables.
-
-**Spacing/position scale values:**
-
-- Use UnoCSS scale tokens instead of explicit rem when the value is on the spacing scale (`1` = `0.25rem`, `2` = `0.5rem`, etc.).
-- For negative values, put the double hyphen in the attribute name: `right--1`, `top--1`, `ml--2`. Do not write `right="-0.25rem"` or use `-right-1` in templates.
-- Use arbitrary values only when off-scale or computed (`references/arbitrary-values.md`).
-
-**Border (`b-` prefix)** — never the Vuetify `border="sm"` prop or `border-sm` class, and `b-solid` is never applied automatically. Both that rule and the one a directional border needs (`b-0 b-b-1`, never a bare `b-b-1`) are `references/layout.md`, along with why a global border reset is not the fix.
-
-**Border-radius (`rd` prefix)** — never the Vuetify `rounded="sm"` prop or `rounded-sm` class: `rd` not `rounded`, `rd-t-2` not `rounded-t-2`, `rd-full` not `rounded-full`. Two mappings aren't a direct rename — Vuetify `rounded-xl` is `rd-3xl` (24px), and `rounded-circle` is `rd="50%"`.
-
-**Background:** `bg-transparent` not `background-transparent`. **Outline:** `outline-none` not `outline-0` (sets `outline: 2px solid transparent`).
-
-**Size (`size-` prefix)** — a `w-{n}` and an `h-{n}` on the same element with the **same** value collapse to one `size-{n}`: `size-8`, never `w-8 h-8`; `size-full`, never `w-full h-full`. The pair is only ever written out when the two values differ.
+Where two spellings say the same thing, one is the repo's. **Choosing between an abbreviation and its long form, a named step and a numeric one, a directional gap, or a slash value against a bare one** is that page.
 
 ## Images Are `<NuxtImg>` — `references/images.md`
 
 `<v-img>` and raw `<img>` are both `vue/no-restricted-html-elements` errors. Read the page when adding or sizing one: `width`/`height` are html attributes rather than styles, sizing is CSS utilities, and `object-contain`/`object-cover` is stated wherever both dimensions are constrained.
-
-## Named Utilities Over Numeric
-
-Prefer UnoCSS **named** utilities over numeric equivalents whenever a name exists:
-
-- Font weight: `font-medium` / `font-semibold` / `font-bold` — never `font-500` / `font-600` / `font-700`.
-- Transition duration: `duration-[--transition-duration]` (the global variable from `globals.scss`) — never a raw `duration-200`.
-- Vuetify helper classes (`font-weight-medium`, `font-weight-bold`, …) are **not** UnoCSS utilities — as attributify attributes they generate nothing. Only the shortcuts registered in `uno.config.ts` work (MD3 typography, theme/palette colours, semantic opacity). Use the UnoCSS named form (`font-medium`) instead.
-
-## Gap Directionality
-
-Use axis-specific gap utilities instead of omnidirectional `gap-{n}`: **`flex` (row)** → `gap-x-{n}`; **`flex-col`** → `gap-y-{n}`; **`grid` / 2D layouts** → `gap-{n}` (both axes intentional).
 
 ## The Parent Owns Spacing
 

@@ -42,7 +42,7 @@ sequenceDiagram
 
 `ResourceActivityEntity` carries `activityType` (`Created | Renamed | ContentSaved | Published | Unpublished | Duplicated | Restored`), `userId`, and per-type payload fields (`oldName`/`newName`, `publishVersion`). Every payload field is optional: Azure Table is schemaless per row, and a `Renamed` has nothing to say about `publishVersion`.
 
-`Restored` covers both restores: out of the [recycle bin](/docs/platform/recycle-bin), and of a [published snapshot](/docs/platform/publish-history) into the working copy. Both hand the owner back content they had before, so the trail says the same thing about them.
+`Restored` covers both restores: out of the [recycle bin](/docs/platform/recycle-bin), and of a [snapshot](/docs/platform/resource-snapshots) into the working copy. Both hand the owner back content they had before, so the trail says the same thing about them.
 
 ### Cleanup
 

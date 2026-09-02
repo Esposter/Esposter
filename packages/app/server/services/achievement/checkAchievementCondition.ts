@@ -1,7 +1,6 @@
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
-import { dayjs } from "#shared/services/dayjs";
 import { EN_US_SEGMENTER } from "#shared/services/intl/constants";
 import { BinaryOperator } from "@esposter/azure";
 import { exhaustiveGuard } from "@esposter/shared";
@@ -61,8 +60,10 @@ export const checkAchievementCondition = (
     // oxlint-disable-next-line no-fallthrough
     case AchievementConditionType.Time: {
       const { maximum, minimum, referenceUnit, unit } = condition;
-      const now = dayjs();
-      const value = now.diff(now.startOf(referenceUnit), unit);
+      const now = Temporal.Now.zonedDateTimeISO();
+      const value = Math.trunc(
+        now.since(now.round({ roundingMode: "trunc", smallestUnit: referenceUnit })).total({ relativeTo: now, unit }),
+      );
       return value >= minimum && value < maximum;
     }
     default:

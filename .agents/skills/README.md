@@ -14,7 +14,7 @@ If nothing fits, that may signal a missing single-responsibility skill — creat
 
 ### Meta
 
-- `skill-authoring` — how to write a `SKILL.md`: frontmatter/selection, one owner per topic, the enforcer rule, generic placeholders, the two-tier layout.
+- `skill-authoring` — how to write a `SKILL.md`: frontmatter/selection, one owner per topic, the enforcer rule, generic placeholders, the two-tier layout, the `Settled — do not re-propose` list.
 - `docs` — `packages/app/content/docs` conventions: the Mermaid mandate, location-carries-status, page templates, area lifecycle.
 - `readme-standards` — package `README.md` template, badges, published-vs-private split.
 

@@ -51,8 +51,8 @@
     "access": "public"
   },
   "scripts": {
-    "build": "pnpm export:gen && tsdown",
-    "export:gen": "ctix build --config ../configuration/.ctirc-vue && ctix build --config ../configuration/.ctirc-ts",
+    "build": "tsdown",
+    "export:gen": "generate-exports vue",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",
@@ -64,7 +64,6 @@
     "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@vue/test-utils": "catalog:",
-    "ctix": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",

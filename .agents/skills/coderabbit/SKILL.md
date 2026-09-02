@@ -1,9 +1,18 @@
 ---
 name: coderabbit
-description: Esposter CodeRabbit review conventions — auto-review runs only on default-branch PRs (develop-base PRs triggered manually with @coderabbitai review, reviews.auto_review.base_branches never added), opening or pushing to a default-branch PR spends a review slot so the push is asked for every time, the four gates that decide a push (open findings drained so they lead the window, nothing running, the previous window reviewed, the backlog under the cap) measured from the last reviewed sha rather than the last push, reading the check's bucket rather than its state string with unknown meaning wait, a rate-limited status not proving the checkpoint stalled and the retrigger as the probe, the ~90-file window against a 100-file cap that refreshes per review cycle and is never sized with gh pr view --json changedFiles, the pipeline that keeps local work ahead of the reviewed frontier, nitpicks and outside-diff-range findings living in the review body rather than as inline comments and being in scope whenever a review's comments are asked for, reconciling against the review's stated counts, replying to every finding, and answering a whole invalid finding class with one reviews.path_instructions entry rather than a reply per instance — plus deep dives on retrieving feedback and counting what is open, measuring the backlog before a push, composing a window and reordering a fix to lead it, editing .coderabbit.yaml on the base branch, cutting an over-budget release PR, and which files may be excluded. Apply when fetching, addressing or replying to CodeRabbit comments, nitpicks, minors or outside-diff-range findings, before any git push to a branch with an open PR, when choosing which commits a push should carry, when a PR is too large for review, or when excluding files.
+description: Esposter CodeRabbit review conventions — a Settled list of the directions already rejected (sizing a window with gh pr view --json changedFiles, adding develop to reviews.auto_review.base_branches, excluding files to fit an over-budget window, holding a finished chunk until the checks come back, one roadmap item per PR, and grepping the review body for the word nitpick), auto-review runs only on default-branch PRs (develop-base PRs triggered manually with @coderabbitai review, reviews.auto_review.base_branches never added), opening or pushing to a default-branch PR spends a review slot so the push is asked for every time, the four gates that decide a push (open findings drained so they lead the window, nothing running, the previous window reviewed, the backlog under the cap) measured from the last reviewed sha rather than the last push, reading the check's bucket rather than its state string with unknown meaning wait, a rate-limited status not proving the checkpoint stalled and the retrigger as the probe, the ~90-file window against a 100-file cap that refreshes per review cycle and is never sized with gh pr view --json changedFiles, the pipeline that keeps local work ahead of the reviewed frontier, nitpicks and outside-diff-range findings living in the review body rather than as inline comments and being in scope whenever a review's comments are asked for, reconciling against the review's stated counts, replying to every finding, and answering a whole invalid finding class with one reviews.path_instructions entry rather than a reply per instance — plus deep dives on pipelining a push against a running review, retrieving feedback and counting what is open, measuring the backlog before a push, composing a window and reordering a fix to lead it, editing .coderabbit.yaml on the base branch, cutting an over-budget release PR, and which files may be excluded. Apply when fetching, addressing or replying to CodeRabbit comments, nitpicks, minors or outside-diff-range findings, before any git push to a branch with an open PR, when choosing which commits a push should carry, when a PR is too large for review, or when excluding files.
 ---
 
 # CodeRabbit Conventions
+
+## Settled — do not re-propose
+
+- **Sizing a window with `gh pr view --json changedFiles`.** It counts the cumulative diff against the base branch rather than what moved since the last completed review, so on this repo's standing `develop`→`main` PR it reads a multiple of the real window and manufactures an over-cap emergency out of a healthy push. It is the fastest thing to reach for and wrong every time a PR has been reviewed more than once, which is every time. Read the frontier (`references/measuring-the-window.md`).
+- **Adding `develop` to `reviews.auto_review.base_branches`** so develop-base PRs review themselves. It turns every intermediate PR into a spent slot; a develop-base PR is triggered by hand with `@coderabbitai review` ("What Triggers a Review").
+- **Excluding files to bring an over-budget window under the cap.** Exclusion hides the work from the only review it will ever get. Cut the tail to a queue branch and re-push a sub-cap window instead (`references/exclusions.md`, `references/release-pr-cutting.md`).
+- **Holding a finished chunk until `format`/`typecheck`/`lint`/tests come back.** Checks are minutes and a slot is an hour, so that spends the scarce resource to protect the cheap one — and a failure found afterwards is one more commit in the next window (`references/pipelining.md`).
+- **One roadmap item per PR.** A slot costs an hour whether it reads 12 files or 90, so an under-filled window is the most expensive kind ("PR File Budget").
+- **Grepping the review body for the word "nitpick"** to collect them. The buckets are not a fixed set — duplicates, refactor suggestions and an additional-comments block appear once a review carries many — so a grep silently drops whichever bucket it did not name (`references/review-feedback.md`).
 
 ## What Triggers a Review
 
@@ -74,35 +83,11 @@ flowchart TD
 
 The cap is **100 files per review** — the Open Source tier's limit is popularity-scaled and can move, so treat it as current-best-known; the bot's skip comment states the current one. Aim each window at **~90 changed files**, close enough to fill the slot without risking it — counting the union of committed and working-tree changes, and measuring per cycle rather than per PR (`references/measuring-the-window.md`).
 
-**Never size a window with `gh pr view --json changedFiles`.** It counts the cumulative diff against the base branch rather than what moved since the last completed review, so on this repo's standing `develop`→`main` PR it reads a multiple of the real window and manufactures an over-cap emergency out of a healthy push. It is the fastest thing to reach for and it is wrong every time a PR has been reviewed more than once, which is every time. The frontier is read, never guessed — the one command that does it is in `references/measuring-the-window.md`.
-
 The budget is a **target to fill, not only a cap**. A slot costs an hour whether it reads 12 files or 90, so an under-filled window is the most expensive kind. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a slot and multiplies rounds. Batch items until the estimate approaches ~90, grouping by what they touch so coupling stays inside one review: items sharing a schema section, a router or a settings object belong in the same PR — splitting them creates stacked branches that cannot start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can land separately with a stated merge order.
 
-### Pipelining — work lands on `develop`, review runs against the `develop` → `main` PR
+### Pipelining — `references/pipelining.md`
 
-**There are no per-chunk feature branches.** Work is committed and pushed straight to `develop`, and the single long-lived PR is `develop` → `main`. Because that PR's base is the default branch, every push to `develop` auto-triggers a review — no trigger comment, no PR per chunk. Keeping that PR open is what makes the pipeline work.
-
-1. Commit continuously on `develop`. When the delta since the last reviewed sha approaches ~90 files, that chunk is ready.
-2. Push it. The push starts a review.
-3. **Keep working locally while it runs.** Commits are free; only pushes trigger reviews. The local commit queue is what absorbs the hour.
-4. When the review completes, address its findings, commit the fixes, verify, and push them **together with** the next queued chunk — then reply to every finding. That single push starts the next cycle. Replying last is what makes a reply checkable: it can name the commit that answers the finding, where a reply written before the push points at nothing.
-5. Repeat, so review effort tracks the work instead of gating it.
-
-**Verification does not gate the push.** `format`/`typecheck`/`lint`/tests are minutes of wall-clock each and a
-review slot is an hour, so holding a finished chunk until the checks come back spends the scarce resource to
-protect the cheap one — and the checks were going to run either way. Push the chunk, then run them against the
-same tree while the review works; a failure found afterwards is one more commit in the next window, which is
-where its fix belongs anyway. Correctness on `develop` is eventual, and the branch is not the release. The
-repo's finishing ritual still runs in full — the change is only that its verification steps stop standing
-between the commit and the push.
-
-**Cut the commits, not the push.** The window boundary is whatever sha the push names, so the way to fill a slot
-to ~90 files without splitting a coherent change across two reviews is to commit in finer pieces and push
-through the last one that fits. Never undo working-tree edits to make a window smaller: the work stays
-committed and the tail is simply held, so nothing is redone and nothing is lost. A rename too large for one
-window splits by **which identifiers it renames**, never by which files, so every commit is green on its own.
-
-The invariant: a chunk is a **push** boundary, not a work boundary. If step 4's fixes plus the queued chunk exceed the budget, push the fixes with only part of the queue and hold the rest — never split a fix away from the finding it answers. Which commits ride in a window, and how a late-authored fix is moved to its front: `references/window-composition.md`.
+There are no per-chunk feature branches: work is committed and pushed straight to `develop`, and the single long-lived `develop` → `main` PR auto-reviews every push. **Planning the push cadence, deciding where a window boundary falls, or holding a tail that does not fit** is that page.
 
 ## Reading and Answering Findings
 
@@ -125,6 +110,7 @@ thread as readily as a major — and it is the channel, never the severity, that
 
 - `references/review-feedback.md` — when fetching a PR's feedback, counting what is still open, or replying to a comment.
 - `references/measuring-the-window.md` — before a push: reading the last reviewed sha, counting the backlog against it, and what a rate-limited status does and does not prove.
+- `references/pipelining.md` — when planning the push cadence, or deciding where a window boundary falls.
 - `references/window-composition.md` — when a push would exceed the cap, or work authored last has to be reviewed first.
 - `references/config-editing.md` — when changing `.coderabbit.yaml`.
 - `references/release-pr-cutting.md` — when a PR has grown past the file limit and its review is skipped outright.

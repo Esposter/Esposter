@@ -3,7 +3,7 @@ import type { Database, ScheduledMessageJobPayload } from "@esposter/db-schema";
 import { processScheduledMessageJobHandler } from "#src/handlers/processScheduledMessageJobHandler";
 import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
 import { InvocationContext } from "@azure/functions";
-import { createReplyThreadFollows, dayjs } from "@esposter/db";
+import { createReplyThreadFollows } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AzureFunction,
@@ -171,7 +171,9 @@ describe(processScheduledMessageJobHandler, () => {
   test("requeues when job is visible before runAt", async () => {
     expect.hasAssertions();
 
-    const job = await insertJob(reminderPayload, { runAt: dayjs().add(1, "day").toDate() });
+    const job = await insertJob(reminderPayload, {
+      runAt: new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
+    });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const requeuedJob = await getJob(job.id);

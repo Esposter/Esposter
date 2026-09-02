@@ -2,7 +2,7 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
-import { dayjs } from "#shared/services/dayjs";
+import { formatDate } from "#shared/util/date/formatDate";
 import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 // Publish status is a capability, not a base feature, so it is surfaced per-resource (Overview / editor)
@@ -17,18 +17,18 @@ export const ResourceHeaders: DataTableHeader<ResourceListItem>[] = [
   {
     key: ItemMetadataPropertyNames.createdAt,
     title: "Created At",
-    value: (item) => dayjs(item.createdAt).format(RESOURCE_DATE_FORMAT),
+    value: (item) => formatDate(item.createdAt, RESOURCE_DATE_FORMAT),
   },
   {
     key: ItemMetadataPropertyNames.updatedAt,
     title: "Updated At",
-    value: (item) => dayjs(item.updatedAt).format(RESOURCE_DATE_FORMAT),
+    value: (item) => formatDate(item.updatedAt, RESOURCE_DATE_FORMAT),
   },
   {
     key: ResourceListItemPropertyNames.lastAccessedAt,
     title: "Last Accessed",
     // Em dash rather than a blank cell: never opened is an answer, and an empty cell reads as a failed read
-    value: (item) => (item.lastAccessedAt ? dayjs(item.lastAccessedAt).format(RESOURCE_DATE_FORMAT) : "—"),
+    value: (item) => (item.lastAccessedAt ? formatDate(item.lastAccessedAt, RESOURCE_DATE_FORMAT) : "—"),
   },
   { key: "actions", sortable: false, title: "Actions" },
 ];

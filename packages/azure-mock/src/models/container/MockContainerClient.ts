@@ -35,6 +35,7 @@ import { BLOB_NOT_FOUND_MESSAGE, MOCK_BLOB_BASE_URL } from "#src/constants";
 import { MockBlobBatchClient } from "#src/models/container/MockBlobBatchClient";
 import { MockBlockBlobClient } from "#src/models/container/MockBlockBlobClient";
 import { MockRestError } from "#src/models/MockRestError";
+import { deleteMockBlob } from "#src/services/container/deleteMockBlob";
 import { getBlobItemXml } from "#src/services/container/getBlobItemXml";
 import { getBlobPrefixXml } from "#src/services/container/getBlobPrefixXml";
 import { getBlobUrl } from "#src/services/container/getBlobUrl";
@@ -42,11 +43,8 @@ import { getListBlobsSegmentResponse } from "#src/services/container/getListBlob
 import { getMockContainer } from "#src/services/container/getMockContainer";
 import { createMockResponse } from "#src/services/createMockResponse";
 import { getMockSasUrl } from "#src/services/getMockSasUrl";
-import {
-  getMockContainerBlobDatesKey,
-  MockContainerBlobDatesDatabase,
-  readMockBlobDates,
-} from "#src/store/MockContainerBlobDatesDatabase";
+import { readMockBlobDates } from "#src/store/MockContainerBlobDatesDatabase";
+import { readMockBlobMetadata } from "#src/store/MockContainerBlobMetadataDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 /**
@@ -87,9 +85,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   deleteBlob(blobName: string): Promise<BlobDeleteResponse> {
-    if (!this.container.has(blobName)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
-    this.container.delete(blobName);
-    MockContainerBlobDatesDatabase.delete(getMockContainerBlobDatesKey(this.containerName, blobName));
+    if (!deleteMockBlob(this.containerName, blobName)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
     return Promise.resolve({ _response: createMockResponse(200, getBlobUrl(this.containerName, blobName)) });
   }
 
@@ -271,7 +267,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
 
       if (delimiterIndex === -1)
         // No delimiter found after the prefix, so it's a blob at this level
-        blobsInCurrentLevel.push(this.#getBlobItem(name, buffer));
+        blobsInCurrentLevel.push(this.#getBlobItem(name, buffer, options?.includeMetadata));
       else {
         // Delimiter found, this represents a "subdirectory"
         const subprefix = `${prefix}${nameAfterPrefix.slice(0, delimiterIndex + delimiter.length)}`;
@@ -284,10 +280,13 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     for (const blobItem of blobsInCurrentLevel) yield await Promise.resolve({ kind: "blob", ...blobItem });
   }
 
-  #getBlobItem(name: string, buffer: Buffer): BlobItem {
+  #getBlobItem(name: string, buffer: Buffer, isMetadataIncluded?: boolean): BlobItem {
     const { createdOn, etag, lastModified } = readMockBlobDates(this.containerName, name);
     return {
       deleted: false,
+      // Only when asked for, like the service: a listing that did not request it reports none at all, so a
+      // Caller that forgot the flag fails its own assertion rather than passing on the mock's generosity
+      ...(isMetadataIncluded && { metadata: readMockBlobMetadata(this.containerName, name) }),
       name,
       properties: {
         blobType: "BlockBlob",
@@ -307,7 +306,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     const prefix = options?.prefix ?? "";
     for (const [name, buffer] of this.container.entries()) {
       if (!name.startsWith(prefix)) continue;
-      yield await Promise.resolve(this.#getBlobItem(name, buffer));
+      yield await Promise.resolve(this.#getBlobItem(name, buffer, options?.includeMetadata));
     }
   }
 }

@@ -1,7 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
 import { MOCK_ENDPOINT } from "#src/services/constants.test";
-import { dayjs } from "@esposter/db";
 import { pushSubscriptions, sessions, users } from "@esposter/db-schema";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { eq } from "drizzle-orm";
@@ -33,7 +32,12 @@ export const setupWebPushSuite = (
     seedSession: async () => {
       await getMockDb()
         .insert(sessions)
-        .values({ expiresAt: dayjs().add(1, "day").toDate(), id: sessionId, token: sessionId, userId });
+        .values({
+          expiresAt: new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
+          id: sessionId,
+          token: sessionId,
+          userId,
+        });
     },
   };
 };

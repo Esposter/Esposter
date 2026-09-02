@@ -12,9 +12,26 @@ on:
 permissions:
   contents: read
 
+# Stated again rather than inherited: a reusable workflow does not receive the caller's `env`. Why CI aggregates
+# and a local run does not is in 🏗️ CI.
+env:
+  PNPM_CONFIG_AGGREGATE_OUTPUT: true
+
 jobs:
   build-packages:
     name: Build Packages
+    # 🏗️ CI and 🏎️ Bench both trigger on a push to any branch, so without this their two copies of this job run
+    # at the same time, each restoring the cache before the other has saved it — the shared-cache benefit above
+    # only ever materialises for a *later* push, never for the pair the same push starts, and the build is paid
+    # twice concurrently. Grouping on the commit serialises exactly that pair: the second one waits and then
+    # restores what the first saved. Never `cancel-in-progress` — the waiting job is the one that still owes its
+    # caller the `package-builds` artifact. `queue: max` for the same reason: the default `single` retains one
+    # pending run and lets the next arrival replace it, so a third invocation of the same commit — a re-run of
+    # either caller while the other waits — would drop a caller that is still owed its artifact.
+    concurrency:
+      group: build-packages-${{ github.sha }}
+      cancel-in-progress: false
+      queue: max
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -25,62 +42,61 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      - name: 📦 Install dependencies
-        run: pnpm i
-      # Cache key = a content hash (mode + blob hash + path) of only the TRACKED files that actually feed
-      # `pnpm build:packages` (ctix barrel gen + tsdown bundle of each package's src/index.ts), plus the
-      # root package.json (infra bundles it via `import packageJson from "../../../../package.json"`), the lockfile
-      # and the catalog. This is an allowlist, not a denylist: every non-app package builds with the same fixed
-      # stack, so the build inputs are a small, stable set and we enumerate them explicitly rather than hashing
-      # everything and subtracting noise. Excluded by being absent from the allowlist: docs (README/CHANGELOG/
-      # docs/**), lint config (.oxlintrc.json, eslint.config.js, eslint/**), test files + vitest.config.ts, test
-      # fixtures (parse-tmx maps/, __snapshots__/), deploy/runtime config (host.json, Pulumi*.yaml,
-      # drizzle.config.ts), and build-glue scripts (db-mock/scripts/** only copies a snapshot that already lives
-      # in src/, so the script itself moves no untracked input) — none of which reach dist. Tracked files only, so
-      # generated output (dist, ctix barrels, *.tsbuildinfo, node_modules) is excluded by construction. NOTE:
-      # adding a build input of a new shape (e.g. a new root-level config a package's build reads) means adding
-      # it to the allowlist below.
-      #
-      # Allowed per non-app package: package.json, tsdown.config.ts, auto-imports.d.ts (any vue
-      # package's generated ambient imports), tsconfig*.json, src/** (minus *.test.ts/*.test-d.ts/*.bench.ts),
-      # types/**; plus configuration/.ctirc-* (drives every package's barrel gen).
-      - name: 🔑 Compute package build cache key
-        id: key
-        run: |
-          hash=$( {
-            git ls-tree -r HEAD packages | awk -F'\t' '
-              $2 ~ /^packages\/app\// { next }
-              $2 ~ /\.(test|test-d|bench)\.ts$/ { next }
-              $2 ~ /^packages\/[^/]+\/(package\.json|tsdown\.config\.ts|auto-imports\.d\.ts)$/ { print; next }
-              $2 ~ /^packages\/[^/]+\/tsconfig[^/]*\.json$/ { print; next }
-              $2 ~ /^packages\/[^/]+\/(src|types)\// { print; next }
-              $2 ~ /^packages\/configuration\/\.ctirc-/ { print; next }
-            '
-            git rev-parse HEAD:package.json HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml
-          } | sha256sum | cut -d' ' -f1 )
-          echo "hash=$hash" >> "$GITHUB_OUTPUT"
-      # `packages/*/dist` is the published build output and `packages/*/src/**/index.ts` are the ctix-generated
-      # Barrels (gitignored, absent on a fresh checkout). Both are produced by `pnpm build:packages`.
+      # The key is computed by a shared action so the save here and every restore elsewhere derive it from
+      # One definition — 🏗️ Pulumi and the two Functions deploys restore this same entry.
+      - name: 🔑 Get build cache keys
+        id: keys
+        uses: ./.github/actions/get-build-cache-keys
+      # Exact key only, and it stays that way. The path list also catches the one hand-written directory barrel
+      # Under a package's `src`, which the key covers as the tracked file it is — so a hit proves the restored
+      # Copy is the checked-out copy. A prefix restore would extract another commit's version of that file over
+      # The checkout and build it, green.
       - name: ♻️ Restore package builds
-        id: cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: |
-            packages/*/dist
-            packages/*/src/**/index.ts
-          key: package-builds-${{ steps.key.outputs.hash }}
+          path: ${{ steps.keys.outputs.package-builds-paths }}
+          key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
+      # What the build hangs off, and it is the disk rather than the restore's `cache-hit`: that flag reports the
+      # Entry the cache found, not what it extracted, so a `path` list that drifted from the save's reports a hit
+      # And leaves this job uploading whatever the checkout happened to contain. This reads every building
+      # Package's `dist` instead, so a partial extract is a miss and gets rebuilt.
+      - name: 🔍 Verify package builds
+        id: verify
+        uses: ./.github/actions/verify-package-builds
+      # Both the install and the build hang off that verdict, and in that order: the key is computed from tracked
+      # Files with `git ls-tree`, the verification is shell reading the disk, and the artifact is uploaded straight
+      # From the restored paths — so a hit needs no `node_modules` at all. Every job in both callers
+      # `needs` this one, so an install nothing goes on to use is latency the whole workflow waits behind.
+      #
+      # Filtered rather than a plain `pnpm i`: this job builds `!@esposter/app`, so the app's dependency tree
+      # And its `postinstall: nuxt prepare` are install work nothing here reads. Every other postinstall still
+      # Runs, for the projects that are installed — the project set narrows, scripts are not disabled.
+      - name: 📦 Install dependencies
+        if: steps.verify.outputs.complete != 'true'
+        run: pnpm --filter "!@esposter/app" i
 
       - name: 🏗️ Build packages
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.verify.outputs.complete != 'true'
         run: pnpm build:packages
-      # Single gated build, then fan the output out to every consuming job as one artifact (dist + barrels share
-      # The `packages/` common ancestor, so consumers download into `packages`). No hidden-file flag needed —
-      # Neither `dist` nor `index.ts` is a dotfile.
+      # The build writes the exports map, the entry fields it owns and `inlinedDependencies` into each manifest,
+      # And nothing downstream reads one — every other check runs against the `dist` this job just made. So an
+      # Uncommitted manifest is green everywhere else. Gated on the miss because that is the only branch that
+      # Builds.
+      - name: 🔍 Check generated manifest fields are committed
+        if: steps.verify.outputs.complete != 'true'
+        run: git diff --exit-code -- "packages/*/package.json"
+      # The same check again, now as an assertion: every job in both callers reads the artifact this one uploads,
+      # So an incomplete tree here is a broken build rather than a cold cache, and it fails where the cause is
+      # Still readable instead of surfacing as a missing barrel in `typecheck`.
+      - name: 🔍 Verify the build is complete
+        uses: ./.github/actions/verify-package-builds
+        with:
+          fail-when-incomplete: true
+      # Single gated build, then fan the output out to every consuming job as one artifact. No hidden-file flag
+      # Needed — neither `dist` nor `index.ts` is a dotfile.
       - name: 📤 Upload package builds
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: package-builds
-          path: |
-            packages/*/dist
-            packages/*/src/**/index.ts
+          path: ${{ steps.keys.outputs.package-builds-paths }}
           if-no-files-found: error

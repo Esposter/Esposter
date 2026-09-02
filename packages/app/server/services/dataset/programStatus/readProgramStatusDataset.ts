@@ -1,7 +1,7 @@
 import type { DatasetProvider } from "@@/server/models/dataset/DatasetProvider";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { getUtcDateString } from "#shared/services/dayjs/getUtcDateString";
+import { getUtcDateString } from "#shared/util/date/getUtcDateString";
 import { countProgramParticipantEntities } from "@@/server/services/program/countProgramParticipantEntities";
 import { readProgramStatusRows } from "@@/server/services/program/readProgramStatusRows";
 import { requireOwnedResource } from "@@/server/services/resource/requireOwnedResource";

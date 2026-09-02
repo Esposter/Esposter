@@ -1,6 +1,6 @@
 ---
 name: vue-composable-patterns
-description: Esposter Vue 3 composable patterns — no pass-through composables (a use* that only re-exposes a store's refs is deleted, consumers use the store directly), minimal public surface, createSharedComposable banned, single-function composables returning the function, inferred return types, MaybeRefOrGetter vs plain args, the three validation-rule layers (global alias / composable / Ajv keyword), extracting duplicate mutation blocks with a builder arg for discriminated-union inputs, permission-gated settings tabs hidden at the tab level, toRawDeep over toRaw and no cloning of freshly newed instances, resource cleanup, useOnline, SSR-safe watches (watchImmediate is the concern), dirty-check saves via useSave (never hand-rolled), async sequencing through the one useMutation primitive (executeQuery latest-wins for reads, executeMutation queued per target for writes — promise chains, in-flight promise maps, generation counters and hand-rolled stale guards banned), plus deep dives on the sequencing opt-ins and useSave mechanics, form-dialog wiring (Ajv keyword injection, schema-controlling selectors, type-driven state reset, dialog data loading), and composable lifecycle (capturing the instance before await, use*Subscribables). Apply when writing or reviewing a composable, a form dialog, or browser-aware reactive code.
+description: Esposter Vue 3 composable patterns — no pass-through composables (a use* that only re-exposes a store's refs is deleted, consumers use the store directly), minimal public surface, createSharedComposable banned, single-function composables returning the function, inferred return types, MaybeRefOrGetter vs plain args, the three validation-rule layers (global alias / composable / Ajv keyword), extracting duplicate mutation blocks with a builder arg for discriminated-union inputs, permission-gated settings tabs hidden at the tab level, toRawDeep over toRaw and no cloning of freshly newed instances, resource cleanup, dirty-check saves via useSave (never hand-rolled), async sequencing through the one useMutation primitive (executeQuery latest-wins for reads, executeMutation queued per target for writes — promise chains, in-flight promise maps, generation counters and hand-rolled stale guards banned), plus deep dives on observing the browser (scroll position measured never polled, useOnline, SSR-safe watches where watchImmediate is the concern), the sequencing opt-ins and useSave mechanics, form-dialog wiring (Ajv keyword injection, schema-controlling selectors, type-driven state reset, dialog data loading), and composable lifecycle (capturing the instance before await, use*Subscribables). Apply when writing or reviewing a composable, a form dialog, or browser-aware reactive code.
 ---
 
 # Vue Composable & Form Patterns
@@ -8,6 +8,7 @@ description: Esposter Vue 3 composable patterns — no pass-through composables 
 ## Deep dives
 
 - `references/async-sequencing.md` — when a composable issues a read or a write that can overlap another, or persists state that may be unchanged since the last save.
+- `references/browser-observation.md` — when a composable reads scroll position or online state, or must not run during SSR.
 - `references/form-dialogs.md` — when building a dialog that edits an entity: a selector that switches which schema renders, a reset on type change, a Vjsf rule that needs live component state, or the dialog's initial data load.
 - `references/composable-lifecycle.md` — when a composable `await`s before registering hooks or watchers, or when wiring a feature's tRPC subscriptions.
 
@@ -61,32 +62,9 @@ Permission-gated settings tabs are hidden via a tab-definition map (`FooPermissi
 - **A mount-scoped interval is `useWorkerInterval(callback, intervalMs)`**, never a hand-written `setInterval` in `onMounted` plus a `clearInterval` in `onUnmounted` — the second copy of that pair is where one of them loses its teardown. It schedules on `worker-timers`, so the interval keeps firing in a backgrounded tab; VueUse's `useIntervalFn` is the main-thread one, correct where throttling is fine. An interval armed by an event rather than by mounting (a recorder starting, a countdown beginning) still owns its own id.
 - **Unmount is the teardown trigger, not "currently unneeded".** An observer or listener set up once at setup stays for the component's life; don't add a `watchEffect` that stops and re-creates it as some flag flips. An `IntersectionObserver` is the clearest case — on a `display: none` element it reports not-intersecting and goes quiet on its own, so `v-show` plus a permanent observer already costs nothing, while the stop/restart version adds a re-observation race for no saving (`Styled/Waypoint.vue`, and the `pagination` skill). Where a resource genuinely must not exist yet, use the composable's own defer option rather than a teardown cycle.
 
-## Scroll Position — Observe It, Never Measure It
+## Observing the browser — `references/browser-observation.md`
 
-- **"Is this element in view" is `useElementVisibility` over a sentinel, never a scroll-offset threshold.** `useScroll`'s `x`/`y` are written by scroll events alone, and nothing re-measures when the observed element changes — so a container that remounts (a route change, a keyed swap) inherits the offset of the container that was torn down and keeps reporting it until the user scrolls the new one. That stale "the reader is far up the list" is the affordance that reappears after the click that already satisfied it. `useElementVisibility` re-observes whenever its target or root changes, and the observer's first callback reports the truth.
-- **A zero-height sentinel gets its tolerance from `rootMargin`, and the tolerance is a reactive quantity the reader already owns** — the scroll container's own height for "within a screen" — not a tuned pixel constant that is wrong on a phone and wrong again on a tall monitor. One wheel notch off the edge is not a change of state. `rootMargin` takes a getter, so the observer re-observes when the container resizes.
-- **`initialValue` faces the answer that costs nothing when wrong.** An observer reports a frame after it is created, so an affordance that defaults to "something is off screen" flashes on every mount.
-- **A position answer that more than one surface reads is one predicate in the store**, computed from the observed state, not a measurement each surface takes for itself — and it is only half the answer when the loaded window is paginated: the end of the list is not the end of the data while a "has more" cursor is set.
-
-## Online/Offline Detection
-
-- **Always `useOnline()` from VueUse** — never `navigator.onLine` directly, nor a `checkIsServer()` + `navigator.onLine` guard. It returns a reactive `Ref<boolean>` updated on `online`/`offline` events and is SSR-safe (defaults to `true` on the server).
-- For subscribables (tRPC subscriptions, WebSocket connections) use `useOnlineSubscribable` (`composables/shared/`), which combines `useOnline()` + `onMounted` + `watchImmediate` + `onUnmounted` cleanup.
-
-## Browser-Only Composables (SSR Safety)
-
-Regular `watch`/`watchDeep` are SSR-safe — they don't fire until the source changes (client-side only). Set them up directly in `setup()`, **not** inside `onMounted`: Vue scopes them to the component and disposes them on unmount, so no manual `WatchHandle[]` + `onUnmounted` cleanup.
-
-**`watchImmediate` is the SSR concern** — it runs the callback during `setup()` (on the server). If the callback touches browser APIs, use `watchTriggerable` + `onMounted` to defer the first execution (as `useOnlineSubscribable` does):
-
-```ts
-const { trigger } = watchTriggerable(source, (value) => {
-  // Browser-only logic
-});
-onMounted(async () => {
-  await trigger();
-});
-```
+Scroll, connectivity and every other browser-only reading has one right shape here, and measuring where the platform will observe is the recurring mistake. **A composable reading scroll position or online state, or one that must not run during SSR**, is that page.
 
 ## Least API Calls — Dirty-Check Saves (`useSave`)
 

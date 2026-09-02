@@ -2,7 +2,6 @@ import type { Item } from "@/models/shared/Item";
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { MessageOperation } from "#shared/models/message/MessageOperation";
-import { dayjs } from "#shared/services/dayjs";
 import { checkIsMessageOperationPermitted } from "#shared/services/message/checkIsMessageOperationPermitted";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
 import { useClipboardStore } from "@/store/clipboard";
@@ -134,7 +133,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const markUnreadFromHereItem: Item = {
     icon: "mdi-email-mark-as-unread",
     onClick: async () => {
-      const lastMessageAt = dayjs(message.createdAt).subtract(1, "millisecond").toDate();
+      const lastMessageAt = new Date(message.createdAt.getTime() - 1);
       const roomId = message.partitionKey;
       await executeMarkUnreadMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ lastMessageAt, roomId }), {
         // Read as the write is sent, so a rejected mark-unread restores the marker the write ahead of it stored

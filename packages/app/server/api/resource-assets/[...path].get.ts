@@ -1,4 +1,3 @@
-import { dayjs } from "#shared/services/dayjs";
 import { RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
@@ -69,7 +68,7 @@ export default defineEventHandler(async (event) => {
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   const sasUrl = await generateReadSasUrl(containerClient.getBlockBlobClient(blobName), {
     contentType: lookup(extname(blobName).toLowerCase()) || undefined,
-    expiresOn: dayjs().add(RESOURCE_ASSET_SAS_DURATION_MS, "ms").toDate(),
+    expiresOn: new Date(Date.now() + RESOURCE_ASSET_SAS_DURATION_MS),
   });
   setResponseHeader(event, "Cache-Control", `private, max-age=${RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS}`);
   return sendRedirect(event, sasUrl, 302);

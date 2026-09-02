@@ -33,7 +33,7 @@ The standards the platform applies live in architecture: the layer model ([the p
 - [Resource tags](/docs/platform/tags) — name:value pairs in Essentials, edited in place, filterable on `/all`
 - [Recycle bin](/docs/platform/recycle-bin) — soft delete with restore, permanent purge, and a 30-day timer sweep
 - [Activity log](/docs/platform/activity-log) — the per-resource audit trail blade, in Azure Table Storage
-- [Publish history](/docs/platform/publish-history) — versioned snapshot blade with per-version view and restore-to-draft
+- [Resource snapshots](/docs/platform/resource-snapshots) — published versions and revisions of the working copy in one version history panel, with preview, restore and undo
 - [Shell cohesion](/docs/platform/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
 - [Breadcrumb trail](/docs/platform/breadcrumb-trail) — crumbs are the click path, the current page is the title, and a direct link shows no ancestor at all
 - [Sheet resource](/docs/platform/sheet-resource) — CSV/JSON/XLSX files as resources with Data + Settings blades
@@ -68,7 +68,7 @@ Azure service at any point.
 
 - **Resource Explorer consolidation** — every product became a resource behind one explorer: the `resources` and `resource_publications` tables, one `ResourceAssets` container replacing six, the `createResourceProcedures` factory, and every per-editor page, picker and hub deleted.
 - **Capabilities** — Publishable, DatasetProvider, Portable and FileAssets, each adopted by the types that declare them rather than rebuilt per type.
-- **Explorer surface** — the list workbench, summary view, service menu, command-bar parity, global search and its trigram ranking, favorites, recents, tags, the recycle bin, activity log, and publish history.
+- **Explorer surface** — the list workbench, summary view, service menu, command-bar parity, global search and its trigram ranking, favorites, recents, tags, the recycle bin, activity log, and version history.
 - **Resource types** — Sheet (renamed from File), Survey, Program, Note and Blueprint, plus publish parity for Email and Flowchart.
 - **Datasets** — the read contract one resource consumes another through: dashboard visual binding, email merge fields, and the Program funnel status, with the row cap surfaced wherever a read hits it.
 - **Platform services** — storage quotas charged by Storage's own `BlobCreated` event, TodoList due reminders on the scheduled-job stack, and the notifications bell.

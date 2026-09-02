@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Esposter Vitest testing conventions — a test file colocated with what it tests, describe with function refs, constants scoped to the describe block rather than module scope, test.each over loops, canonical test values, the shared-test-data DRY rule, always typing vi.fn, toStrictEqual, takeOne/assert.exists, no unnecessary destructure, call-count matchers, toThrowErrorMatchingInlineSnapshot as the only error assertion, the polling ban, the ban on running the full suite locally, and what earns a test at all — plus deep dives on router tests, what to mock plus mock cleanup and global/env stubs, the nuxt environment, platform/CLI/bundle snapshots, full-run failures, helper/`.test-d.ts` files, fake timers with hand-resolved promises, error-snapshot reconstruction, fixture shapes, and which subjects earn a test. Apply when writing .test.ts or .test-d.ts files.
+description: Esposter Vitest testing conventions — a test file colocated with what it tests, describe with function refs, constants scoped to the describe block rather than module scope, test.each over loops, always typing vi.fn, toStrictEqual, takeOne/assert.exists, no unnecessary destructure, call-count matchers, toThrowErrorMatchingInlineSnapshot as the only error assertion, the polling ban, the ban on running the full suite locally, and what earns a test at all — plus deep dives on canonical test values and the shared-test-data DRY rule, router tests, what to mock plus mock cleanup and global/env stubs, the nuxt environment, platform/CLI/bundle snapshots, full-run failures, helper/`.test-d.ts` files, fake timers with hand-resolved promises, error-snapshot reconstruction, fixture shapes, and which subjects earn a test. Apply when writing .test.ts or .test-d.ts files.
 ---
 
 # Testing Conventions (Vitest)
@@ -8,6 +8,7 @@ description: Esposter Vitest testing conventions — a test file colocated with 
 ## Deep dives
 
 - `references/router-test-setup.md` — tRPC callers, mock sessions, seeded mock-DB rows, naming a router test.
+- `references/test-data.md` — choosing the values a test asserts on, or giving two suites the same fixture.
 - `references/module-mocks.md` — what to mock; colocated doubles, `vi.mock` factories, the `db` getter, client tRPC calls, gating a double to prove a caller awaits it, and which cleanup hook the mock's creation style demands.
 - `references/error-assertions.md` — filling in the inline snapshot a thrown or rejected error is asserted with.
 - `references/what-earns-a-test.md` — deciding whether a given subject earns a test at all, and which one.
@@ -30,21 +31,9 @@ description: Esposter Vitest testing conventions — a test file colocated with 
 - **A `void` return is never assigned or asserted at runtime** (`no-confusing-void-expression`, caught by the **root** `pnpm lint` alone since `packages/app`'s ESLint isn't type-aware; never disabled). A `Promise<void>`: `await fn();` bare when another assertion follows, else `await expect(fn()).resolves.toBeUndefined();`. One resolving to a **real value** goes into a `const`; a sync `void` contract is asserted in a `.test-d.ts` (`references/test-helper-files.md`).
 - **Reuse utilities, and prefix factories `create*`** — look for an existing helper beside the code under test first; builders are `createRow`, never `make*`.
 
-## Shared Test Data (DRY)
+## Test data — `references/test-data.md`
 
-- **Never repeat a literal or object**: anything used by 2+ tests (or 2+ rows of a bulk insert) is declared **once** at `describe` scope and referenced. Hard rule — but no single-use extraction; a value used once stays inline.
-- **Never re-declare what production owns — import it.** A sentinel, cmdline marker, temp-file prefix, cache filename, env-var key or sizing formula the source owns is imported from there, or the copy stays green while asserting the wrong thing after the source changes.
-- The shapes that take (base + spread, `create*` envelopes, bulk `.map`), which values stay `let`, and how to export a module-private constant for a test: `references/shared-test-data.md`.
-
-## Canonical Test Values
-
-- Boolean `"true"`/`"false"` (both in one case), integer `"0"`/`0`, decimal `"0.1"`/`0.1`, negative `"-1"`/`-1`, NaN `String(Number.NaN)`, dates `"1970-01-01"` then `"1970-01-02"`.
-- Strings: `""` base, `" "` for a different value, `"a"` only when a space trims to `""`. Object keys likewise — never semantic names.
-- Nonexistent ID `"-1"` (string) / `-1` (number) — never `"non-existent-id"`. Real IDs are `crypto.randomUUID()` at **describe scope** — never `"room-1"`/`"test-id"`. Other entity fields use the field name as the literal: `const name = "name"`. Filesystem names are the canonical `TEST_FILENAME = "a"` / `TEST_DIR = "/a"` (`references/test-helper-files.md`).
-- **Every string literal passes one of three checks or it does not go in**: the value under test, a canonical value above, or an existing `describe`-scope constant/helper in that file. Anything else is decoration the code never inspects — a filename is `"a"`, not `"logo.png"`, with a realistic word only where behaviour reads it (mimetype inference, a parser, trigram ranking). **Prose fails all three**: an invented body, note or title reads as text a human would type, but the code only matches a substring or stores a blob. Reuse the file's message helper for a valid body, and hoist a token with its body: ``const filteredWord = "spam"; const filteredMessage = `<p>${filteredWord}</p>`;``
-- **Freeze the clock instead of asserting `toBeInstanceOf(Date)`** — `vi.useFakeTimers({ now: 0 })` plus `expect(row.createdAt).toStrictEqual(new Date(0))`; the instance check only restates the schema's column type and passes against a value written a day late. Works under PGlite/`createMockDb` and the Azure mocks.
-- **Date format tests** — `for...of` inside one test over `dayjs("1970-01-01", "YYYY-MM-DD", true).format(format)`. Never `test.each`.
-- **Descriptions interpolate enum values** — `` `${FooType.Bar}: <plain-English outcome>` ``, never the literal; plain English otherwise ("integer", "epoch date"). Idempotency is always `"[functionName] is idempotent"`, never `"deduplicates …"`/`"does not create duplicate"`/`"skips duplicate"`.
+Values are canonical and minimal, and shared fixtures have one home. **Choosing the values a test asserts on, or giving two suites the same fixture**, is that page.
 
 ## Assertions
 

@@ -62,7 +62,10 @@ describe("storage blob ledger", () => {
 
     await createStorageLedgerEntry();
 
-    await expect(reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes)).resolves.toBe(true);
+    await expect(reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes)).resolves.toStrictEqual({
+      chargedUserId: userId,
+      isMatched: true,
+    });
     await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
 
     const [reconciledStorageLedgerEntry] = await db.query.storageLedger.findMany();
@@ -102,7 +105,10 @@ describe("storage blob ledger", () => {
     await createStorageLedgerEntry();
     await reconcileStorageLedgerEntry(db, containerName, blobName, overwrittenBytes, laterSequencer);
     // The earlier write's event, delayed past the one that superseded it
-    await expect(reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes, sequencer)).resolves.toBe(true);
+    // Matched, but no owner comes back: nothing moved, so there is nothing to tell a meter about
+    await expect(
+      reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes, sequencer),
+    ).resolves.toStrictEqual({ isMatched: true });
 
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
 
@@ -179,7 +185,9 @@ describe("storage blob ledger", () => {
   test("accounts a blob nothing reserved to nobody", async () => {
     expect.hasAssertions();
 
-    await expect(reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes)).resolves.toBe(false);
+    await expect(reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes)).resolves.toStrictEqual({
+      isMatched: false,
+    });
     await expect(readStorageBytesUsed()).resolves.toBe(0);
   });
 
@@ -188,7 +196,9 @@ describe("storage blob ledger", () => {
 
     await createStorageLedgerEntry();
     await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes);
-    await releaseStorageLedgerEntries(db, containerName, [blobName]);
+    // The owners come back because the release runs in the Functions host, which has no way to reach their
+    // Meters except by being told whose counter it just moved
+    await expect(releaseStorageLedgerEntries(db, containerName, [blobName])).resolves.toStrictEqual([userId]);
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
     await expect(db.query.storageLedger.findMany()).resolves.toStrictEqual([]);

@@ -38,7 +38,6 @@
   "type": "module",
   "scripts": {
     "analyze": "nuxt analyze",
-    "backfill:bound-resource-id": "tsx --tsconfig tsconfig.root.json scripts/backfill/boundResourceId.ts",
     "bench": "vitest bench --run",
     "build": "nuxt build",
     "cleanup": "nuxt cleanup",
@@ -117,7 +116,6 @@
     "better-auth": "catalog:",
     "bowser": "catalog:",
     "codemirror": "catalog:",
-    "dayjs": "catalog:",
     "debug": "catalog:",
     "dedent": "catalog:",
     "defu": "catalog:",
@@ -230,6 +228,7 @@
     "nuxt-security": "catalog:",
     "sass-embedded": "catalog:",
     "sql-highlight": "catalog:",
+    "tsx": "catalog:",
     "type-fest": "catalog:",
     "unocss": "catalog:",
     "unocss-preset-vuetify": "catalog:",

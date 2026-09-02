@@ -316,10 +316,12 @@ Packages are used directly by the nuxt application via `workspace:*`.
 
 ![Workspace dependency graph](./dependency-graph.svg)
 
-Regenerate this graph from the repo root with:
+Each node's hue and tint are the role its edges give it, darkest at what the repo ships and lightest at what
+the rest of it stands on; the key is drawn into the image.
+Regenerate it from the repo root with:
 
 ```bash
-pnpm depcruise:graph
+pnpm graph:gen
 ```
 
 ## <a name="packages">📦 Packages</a>

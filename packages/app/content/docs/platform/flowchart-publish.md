@@ -11,7 +11,7 @@ This is the **minimal Publishable adoption** and the reference template for futu
 
 ## How it works
 
-Flowchart content references no other resources and no binary assets, so the publish snapshot is the plain content copy: neither `transformPublishedContent` nor `transformPublicReadContent` is needed ([publishing](/docs/architecture/publishing)).
+Flowchart content references no other resources and no binary assets, so the publish snapshot is the plain content copy: it declares neither a `transformPublishedContent` hook nor any live content ([publishing](/docs/architecture/publishing)).
 
 ```mermaid
 flowchart LR

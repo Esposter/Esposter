@@ -1,5 +1,5 @@
 {
   "exclude": ["node_modules", "packages", ".agents/worktrees", ".claude"],
   "extends": "./packages/configuration/tsconfig.node.json",
-  "include": [".agents/**/*.ts", "**/*.ts"]
+  "include": ["**/*.ts"]
 }

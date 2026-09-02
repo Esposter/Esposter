@@ -9,19 +9,30 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-30T11:29:00.304Z
-- Commit: 5d007480e
-- Node: v26.4.0
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- Date: 2026-09-01T01:41:45.361Z
+- Commit: 89cd43944
+- Node: v26.8.1
+- OS: win32 10.0.26200 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
-## MoveColumnCommand
+## MoveColumnCommand > move column 0→4, 100 rows
 
-| task                                      | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ----------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| execute — move col 0→4, 100 rows          | 1.00×   | 0.0559    | ±18.06% | 0.0785   | 10      |
-| execute — move col 0→4, 1000 rows         | 0.19×   | 0.2917    | ±1.93%  | 0.3118   | 10      |
-| execute — move col 0→4, 10000 rows        | 0.022×  | 2.5240    | ±16.12% | 4.0350   | 10      |
-| undo — move col 0→4 then back, 1000 rows  | 0.12×   | 0.4692    | ±1.08%  | 0.4808   | 10      |
-| undo — move col 0→4 then back, 10000 rows | 0.011×  | 4.9020    | ±4.33%  | 5.6159   | 10      |
+| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------- | -------- | ------- |
+| execute        | 1.00×   | 0.2319    | ±7.68%  | 0.2744   | 10      |
+| execute + undo | 1.69×   | 0.1375    | ±21.26% | 0.2446   | 10      |
+
+## MoveColumnCommand > move column 0→4, 1000 rows
+
+| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------- | -------- | ------- |
+| execute        | 1.00×   | 1.8819    | ±34.75% | 3.6344   | 10      |
+| execute + undo | 1.46×   | 1.2852    | ±18.80% | 2.1002   | 10      |
+
+## MoveColumnCommand > move column 0→4, 10000 rows
+
+| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------- | -------- | ------- |
+| execute        | 1.00×   | 16.3648   | ±21.17% | 29.2955  | 10      |
+| execute + undo | 0.68×   | 24.1310   | ±13.42% | 30.1316  | 10      |

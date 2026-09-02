@@ -6,8 +6,10 @@ import { afterAll, afterEach, beforeEach, vi } from "vitest";
    runs in is the one its config names rather than one SSR decides. The ban this suspends is about a browser
    global read before any phase could have chosen a branch, which is not a question a setup file has */
 
-// The nuxt test env provides `window`/`document`/`DOMParser` but not `localStorage`/`sessionStorage`,
-// So install a minimal in-memory `Storage` — cheaper than registering a full DOM, harmless in node.
+// Node defines a `localStorage` global that is undefined without `--localstorage-file`, and vitest copies a
+// Window property onto the global only where the key is absent there or named in its own key set — which names
+// No storage — so happy-dom's working `Storage` never lands and every read hits an undefined global. Install a
+// Minimal in-memory one; `sessionStorage` arrives intact and nothing here writes over it.
 class MemoryStorage implements Storage {
   get length() {
     return this.#store.size;
@@ -37,7 +39,6 @@ class MemoryStorage implements Storage {
 }
 
 globalThis.localStorage = new MemoryStorage();
-globalThis.sessionStorage = new MemoryStorage();
 // Happy-dom implements no `visualViewport`, and Vuetify's overlay location strategy reads it unguarded — so any
 // Test that mounts a real `v-dialog`/`v-menu` dies with `ReferenceError: visualViewport is not defined` before a
 // Single assertion runs. The workaround reached for otherwise is `shallow: true`, which renders no overlay DOM at

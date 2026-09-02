@@ -3,7 +3,6 @@ import type { MessageEntity } from "@esposter/db-schema";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { WebPubSubClient } from "@azure/web-pubsub-client";
 import { MessageType, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
 import { getResultAsync, jsonDateParse, noop } from "@esposter/shared";
 
@@ -48,16 +47,8 @@ export const useMessageSubscribables = () => {
         ),
       },
     );
-    const webPubSubClient = new WebPubSubClient({
-      getClientAccessUrl: (options) =>
-        $trpc.message.generateWebPubSubClientAccessUrl.query(
-          { roomId },
-          { signal: options?.abortSignal as AbortSignal | undefined },
-        ),
-    });
-    await webPubSubClient.start();
-    webPubSubClient.on(
-      "group-message",
+    const stopWebPubSubClient = await useWebPubSubClient(
+      (signal) => $trpc.message.generateWebPubSubClientAccessUrl.query({ roomId }, { signal }),
       getSynchronizedFunction(({ message: { data } }) =>
         getResultAsync(async () => {
           // Data arrives as a pre-parsed object (dataType: "json") from WebPubSub — re-stringify so
@@ -76,7 +67,7 @@ export const useMessageSubscribables = () => {
       createMessageUnsubscribable.unsubscribe();
       updateMessageUnsubscribable.unsubscribe();
       deleteMessageUnsubscribable.unsubscribe();
-      webPubSubClient.stop();
+      stopWebPubSubClient();
     };
   });
 };

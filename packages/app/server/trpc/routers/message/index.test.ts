@@ -8,7 +8,6 @@ import type { MockInstance } from "vitest";
 
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { dayjs } from "#shared/services/dayjs";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -938,7 +937,7 @@ describe("message", () => {
       roomId,
     });
     assert(sasEntity);
-    vi.useFakeTimers({ now: dayjs().add(WRITE_SAS_DURATION_MS, "ms").add(1, "ms").toDate() });
+    vi.useFakeTimers({ now: new Date(Date.now() + WRITE_SAS_DURATION_MS + 1) });
 
     await expect(
       messageCaller.deleteUploadFiles({

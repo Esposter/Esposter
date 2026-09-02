@@ -29,7 +29,7 @@ of the usable links behind it.
 
 ```mermaid
 flowchart TD
-    dialog["Invite friends dialog<br/>(expire-after + max-uses selects)"] -->|createInvite| create["createInvite<br/>deletes old link, computes expiresAt via dayjs"]
+    dialog["Invite friends dialog<br/>(expire-after + max-uses selects)"] -->|createInvite| create["createInvite<br/>deletes old link, computes expiresAt from a Temporal.Duration"]
     create --> row[("invitesInMessage<br/>expiresAt · maxUses · uses")]
     joiner["User with token"] -->|joinRoom| check{"one conditional UPDATE … RETURNING<br/>unexpired and under its cap?"}
     row --> check
@@ -39,7 +39,7 @@ flowchart TD
     row -.->|"inert when expired/exhausted"| reads["readInvite / readMyInvite<br/>treat as absent, lazily delete"]
 ```
 
-- **Create**: the invite dialog's selects drive `createInvite`; option values come from the dayjs-computed `InviteExpireAfterMinutesMap` (never manual minute math) and `INVITE_MAX_USES_OPTIONS`. The `0` sentinel means never expires / unlimited uses; `maxUses` stores it as-is (the column is `notNull().default(0)`), while `expireAfterMinutes` maps to a null `expiresAt` since timestamps have no empty value. Changing an option with a live link regenerates it. The dialog shows the real state ("expires in 7 days", "5 uses remaining") from the returned row.
+- **Create**: the invite dialog's selects drive `createInvite`; option values come from `InviteExpireAfterMinutesMap` (never manual minute math) and `INVITE_MAX_USES_OPTIONS`. The `0` sentinel means never expires / unlimited uses; `maxUses` stores it as-is (the column is `notNull().default(0)`), while `expireAfterMinutes` maps to a null `expiresAt` since timestamps have no empty value. Changing an option with a live link regenerates it. The dialog shows the real state ("expires in 7 days", "5 uses remaining") from the returned row.
 - **Join**: `joinRoom` validates and consumes a use in one `UPDATE … RETURNING` statement — the row matches only while it is unexpired (`expiresAt` null or still in the future) and under its cap (`maxUses` zero, or `uses` below it), and the same statement is what increments `uses` — so two concurrent joins can't both consume the last use. Expired, exhausted, and unknown tokens all produce the same `NOT_FOUND` error.
 - **Pause**: `roomsInMessage.isInvitePaused` closes the room to every link at once without deleting any of them — the control for a raid in progress, which the links have to survive. While it is set `joinRoom` answers a live link exactly as it answers an unknown one, so an outsider learns nothing about why, and any use consumed by its statement rolls back with the transaction, so pausing costs a link nothing. `createInvite` refuses too: a paused room minting credentials nobody can use is a slower way of handing out dead links. The button is a `ManageRoom` write through `updateRoom`, like every other room field, and it carries the shape of the act rather than one shape for both: `Pause Invites` is an error button because it closes the room, `Enable Invites` is the primary one because it is what the reader of a paused room came to do, and the paused state says so in a warning line beside it rather than a note under it.
 - **Revoke**: a delete rather than a flag — the token is the credential, so the row's absence is what stops it working, and `readInvite` already treats a missing row as unknown. A member revokes their own link; a caller holding `ManageRoom` revokes any of them, from the settings panel above.
@@ -61,21 +61,21 @@ All in `server/trpc/routers/room/index.ts`:
 
 ## Key files
 
-| File                                                                      | Role                                          |
-| :------------------------------------------------------------------------ | :-------------------------------------------- |
-| `packages/db-schema/src/schema/invitesInMessage.ts`                       | table + check constraints                     |
-| `packages/app/shared/services/room/invite/InviteExpireAfterMinutesMap.ts` | dayjs-computed expiry options (single source) |
-| `packages/app/shared/models/db/room/CreateInviteInput.ts`                 | Zod input — only the fixed option values      |
-| `packages/app/shared/services/room/invite/checkIsInviteUsable.ts`         | shared usability predicate, client included   |
-| `packages/app/server/services/message/readMyInvite.ts`                    | own-invite read + lazy delete                 |
-| `packages/app/app/store/message/room/invite.ts`                           | shared per-room invite map                    |
-| `packages/app/app/store/message/room/roomInvite.ts`                       | the panel's room-keyed list of every link     |
-| `packages/app/app/services/message/room/invite/inviteCreateHooks.ts`      | create fan-out from the dialog to the panel   |
-| `packages/app/app/components/Message/Model/Room/Invite/Manager.vue`       | invite manager with option selects            |
-| `packages/app/app/components/Message/Model/Room/Invite/Dialog.vue`        | the dialog hosting the manager                |
-| `packages/app/app/components/Message/Model/Room/Invite/TableRow.vue`      | the settings panel's row for a live link      |
-| `packages/app/app/composables/message/room/useReadMyInvite.ts`            | own-invite read every surface seeds from      |
-| `packages/app/app/pages/messages/invite/[code].vue`                       | invite landing page                           |
+| File                                                                      | Role                                        |
+| :------------------------------------------------------------------------ | :------------------------------------------ |
+| `packages/db-schema/src/schema/invitesInMessage.ts`                       | table + check constraints                   |
+| `packages/app/shared/services/room/invite/InviteExpireAfterMinutesMap.ts` | Expiry options in minutes (single source)   |
+| `packages/app/shared/models/db/room/CreateInviteInput.ts`                 | Zod input — only the fixed option values    |
+| `packages/app/shared/services/room/invite/checkIsInviteUsable.ts`         | shared usability predicate, client included |
+| `packages/app/server/services/message/readMyInvite.ts`                    | own-invite read + lazy delete               |
+| `packages/app/app/store/message/room/invite.ts`                           | shared per-room invite map                  |
+| `packages/app/app/store/message/room/roomInvite.ts`                       | the panel's room-keyed list of every link   |
+| `packages/app/app/services/message/room/invite/inviteCreateHooks.ts`      | create fan-out from the dialog to the panel |
+| `packages/app/app/components/Message/Model/Room/Invite/Manager.vue`       | invite manager with option selects          |
+| `packages/app/app/components/Message/Model/Room/Invite/Dialog.vue`        | the dialog hosting the manager              |
+| `packages/app/app/components/Message/Model/Room/Invite/TableRow.vue`      | the settings panel's row for a live link    |
+| `packages/app/app/composables/message/room/useReadMyInvite.ts`            | own-invite read every surface seeds from    |
+| `packages/app/app/pages/messages/invite/[code].vue`                       | invite landing page                         |
 
 ## Surfaces
 

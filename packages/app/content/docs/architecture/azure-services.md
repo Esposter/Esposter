@@ -106,10 +106,12 @@ EventGrid decouples the HTTP response from delivery. The Function handles retrie
 
 ## Real-time architecture (three layers)
 
-| Layer                 | Technology                                                                                  | Scope                  | What it drives                                                |
-| --------------------- | ------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------- |
-| In-process events     | NodeJS `EventEmitter` (`messageEventEmitter`, `moderationEventEmitter`, `roomEventEmitter`) | Single server instance | tRPC subscriptions (`onCreateMessage`, `onAdminAction`, etc.) |
-| Cross-process fan-out | Azure Web PubSub                                                                            | All server instances   | Webhook message delivery                                      |
-| Media / signaling     | LiveKit SFU                                                                                 | External service       | Audio, video, screenshare tracks and participant lifecycle    |
+| Layer                 | Technology                                                                                  | Scope                  | What it drives                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------- | ---------------------- | --------------------------------------------------------------- |
+| In-process events     | NodeJS `EventEmitter` (`messageEventEmitter`, `moderationEventEmitter`, `roomEventEmitter`) | Single server instance | tRPC subscriptions (`onCreateMessage`, `onAdminAction`, etc.)   |
+| Cross-process fan-out | Azure Web PubSub                                                                            | All server instances   | Webhook message delivery, storage usage from the Functions host |
+| Media / signaling     | LiveKit SFU                                                                                 | External service       | Audio, video, screenshare tracks and participant lifecycle      |
+
+The layers split on **which process holds the writer**, not on how much fan-out is wanted. A change the app makes announces itself in-process; a change an Azure Function makes has no emitter the app is listening to, so it publishes to a hub instead — webhook messages on `Messages`, and a settled or released storage charge on `Storage` ([storage quotas](/docs/platform/storage-quotas)). A surface fed by both writers subscribes to both.
 
 tRPC subscriptions are driven by the in-process EventEmitter. The LiveKit webhook (`server/api/webhooks/livekit.post.ts`) feeds participant join/leave back into `callEventEmitter` so non-participants and tRPC subscriptions stay consistent without touching the SFU.

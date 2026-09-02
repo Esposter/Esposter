@@ -1,7 +1,7 @@
-import { setupOxlintPluginSuite } from "#scripts/oxlint/setupOxlintPluginSuite.test";
+import { setupPluginSuite } from "#scripts/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
-// Both rules are oxlint JS plugins; the harness that runs them over these fixtures is setupOxlintPluginSuite.
+// Both rules are oxlint JS plugins; the harness that runs them over these fixtures is setupPluginSuite.
 const ERROR_RULE = "trpc-procedure/no-hand-rolled-error";
 const RETURN_TYPE_RULE = "trpc-procedure/require-return-type";
 
@@ -94,7 +94,7 @@ describe("trpc-procedure", () => {
       violations: 0,
     },
   ];
-  const { getCodes, getViolations } = setupOxlintPluginSuite({
+  const { getCodes, getViolations } = setupPluginSuite({
     fixtures: FIXTURES,
     plugin: "trpcProcedure",
     rules: [ERROR_RULE, RETURN_TYPE_RULE],

@@ -34,6 +34,7 @@
     "dist"
   ],
   "type": "module",
+  "sideEffects": false,
   "types": "dist/index.d.ts",
   "imports": {
     "#src/*": "./src/*.ts"
@@ -52,13 +53,13 @@
     }
   },
   "scripts": {
-    "build": "pnpm export:gen && tsdown",
+    "build": "tsdown",
+    "export:gen": "generate-exports",
     "db:gen": "pnpm db:run generate",
     "db:pull": "pnpm db:run pull",
-    "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
+    "db:run": "node node_modules/drizzle-kit/bin.cjs",
     "db:studio": "pnpm db:run studio",
     "db:up": "pnpm db:run up",
-    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",
@@ -70,7 +71,6 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@trpc/server": "catalog:",
-    "ctix": "catalog:",
     "drizzle-kit": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
@@ -84,8 +84,5 @@
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
     "zod": "catalog:"
-  },
-  "inlinedDependencies": {
-    "type-fest": "5.9.0"
   }
 }

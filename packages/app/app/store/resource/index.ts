@@ -6,6 +6,7 @@ import { ResourceOperationTitleMap } from "#shared/services/notification/Resourc
 import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
+import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { NotificationSeverity } from "@esposter/db-schema";
@@ -88,6 +89,14 @@ export const useResourceStore = defineStore("resource", () => {
     contentResourceId = undefined;
     persistedContentJson = undefined;
     isContentStale = false;
+  };
+  // This resource's content was replaced underneath whatever blade is open — a restore is the one write that
+  // Does that. The row is re-read here and the content stores re-read themselves through the hook registry,
+  // Rather than the blade being keyed on a counter something bumps: which store holds the content is the
+  // Type's business, and a blade left holding the pre-restore draft has its own next save rejected as stale
+  const reloadResourceContent = async () => {
+    await readResource();
+    if (resource.value) await ResourceContentHookMap.Reload.run(resource.value.type);
   };
   // The blob is written on first save, so a freshly created resource returns undefined content.
   // The dispatch reads the loaded row's own type, so the procedure resolves to the union of every type's
@@ -309,6 +318,7 @@ export const useResourceStore = defineStore("resource", () => {
     publishResource,
     readContent,
     readResource,
+    reloadResourceContent,
     renameResource,
     resource,
     saveContent,

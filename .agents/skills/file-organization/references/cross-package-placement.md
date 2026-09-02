@@ -18,4 +18,4 @@ A constant only earns a shared-package home when ≥2 packages consume it; a sin
 
 ## Helper home follows the same rule — the domain package
 
-Azure blob/table/queue primitives shared by server code live in `@esposter/db` (`generateReadSasUrl`, `generateWriteSasUrl`, `getEntityWithEtag`, `copyBlob`); `packages/app/server` keeps only app-specific compositions of them (e.g. `cloneContentAssets`, which walks content for asset urls before delegating each copy). Never re-implement a signer/entity helper locally when the domain package can host it — after adding one, run `pnpm export:gen` + `pnpm build` in the package before consumers can import it.
+Azure blob/table/queue primitives shared by server code live in `@esposter/db` (`generateReadSasUrl`, `generateWriteSasUrl`, `getEntityWithEtag`, `copyBlob`); `packages/app/server` keeps only app-specific compositions of them (e.g. `cloneContentAssets`, which walks content for asset urls before delegating each copy). Never re-implement a signer/entity helper locally when the domain package can host it — after adding one, run `pnpm build` in the package (which regenerates the barrel) before consumers can import it.

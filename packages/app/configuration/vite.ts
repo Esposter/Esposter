@@ -19,7 +19,7 @@ export const vite: NuxtConfig["vite"] = {
       "three/examples/jsm/inspector/Inspector.js",
     ],
     // Mermaid is imported lazily after mount, so without this it is discovered mid-session and the
-    // Re-optimize rewrites the dayjs chunk it shares with the app out from under the loaded module graph
+    // Re-optimize rewrites the chunks it shares with the app out from under the loaded module graph
     include: [...commonjsDeps, "debug", "mermaid", "pdfjs-dist"],
   },
   plugins: [fixAjv],

@@ -49,6 +49,8 @@ When a child has **local mutable state initialized from a prop**, don't watch th
 <FooEditor v-if="selectedFoo" :key="selectedFoo.id" :foo="selectedFoo" />
 ```
 
+**A `:key` names the thing being rendered, never a counter something bumps.** `:key="reloadCount"` is a manual refresh in reactive clothing: the key says nothing about what changed, every writer has to remember to bump it, and the remount throws away scroll and focus to re-fetch data the surface could have been handed. When data changes underneath a mounted surface, the writer **pushes** it — a subscription handler, or a hook registry (`services/shared/createHookRegistry.ts`) the holding stores register into.
+
 **Prefer props-down when the parent is adjacent and already has the data** — the child initializes its ref from the prop (`const { fooId } = defineProps<Props>(); const selectedFooId = ref(fooId);`), no watch, no store duplication. Only pass through an intermediate generic router component if the prop is truly shared by all children; if only one leaf needs it, keep the store read in that leaf and initialize its ref directly.
 
 ## Async Data: Wrapper + Pure Child Pattern

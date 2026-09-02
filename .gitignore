@@ -48,8 +48,9 @@ logs
 # VSCode local workspace
 *.code-workspace
 
-# Claude
+# Agent tree (`.claude` is a symlink alias to `.agents`, so it needs no entry of its own)
 scheduled_tasks.lock
+.agents/worktrees
 
 # OS
 .DS_Store

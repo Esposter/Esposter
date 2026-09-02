@@ -1,17 +1,24 @@
 ---
 name: sweeps
-description: Esposter repo-wide sweep conventions — progress tracked as a ledger in .agents/ledgers/ (one file per sweep, one index row, named after the skill that owns its rules, promoted to a folder whose README holds everything that is not coverage as it grows), sweeps are repo state and never proposals, splitting a row that reads as too high a level before any pass starts and dropping the date from children the parent could never have read, when a mechanical pass earns a ledger and when it is just a commit, the six things a ledger may hold and the explanatory prose it may not, state living at the leaf with no rolled-up counts, reading the leaf rather than the tree, one agent per leaf for parallel passes, every sweep being standing and the changed-files command that resumes one, a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same) with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all, handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill, one unit per commit chunked to the review budget, proving a find recipe can fail before believing it passed, behaviour-preserving passes and where a behaviour-changing finding goes instead, and what belongs in the commit message rather than the ledger. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
+description: Esposter repo-wide sweep conventions — a Settled list of the directions already rejected (filing a sweep as a proposal, a progress column or tick count on the index row, fanning one sweep's units out to parallel agents, and inheriting a split row's date onto its children), progress tracked as a ledger in .agents/ledgers/ named after the skill that owns its rules, sweeps being repo state rather than proposals, proving a find recipe can fail before believing it passed, when a mechanical pass earns a ledger and when it is just a commit, splitting a row that reads as too high a level before any pass starts, one unit per commit chunked to the review budget, state living at the leaf with the pass run in the main session one unit at a time, behaviour-preserving passes and where a behaviour-changing finding goes instead, what belongs in the commit message rather than the ledger, every sweep being standing and the changed-files command that resumes one, draining a ledger as a by-product of ordinary work, and handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill — plus a deep dive on the ledger file itself: the six things it may hold and the explanatory prose it may not, promotion to a folder, and a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same), with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
 ---
 
 # Sweeps
 
 A **sweep** carries one already-settled convention across a tree too large to finish in one commit. It decides nothing: the convention is owned by a skill or docs page, and the sweep only applies it to code that predates it, changing no behaviour.
 
-Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row in its `README.md` index. A ledger that outgrows a screen, or that two agents want to work at once, becomes a folder of one file per area — the index row still carries the metadata, and the folder's own `README.md` holds only what is not coverage (the find recipe, the exclusions, what is next enforceable), so each area file is a table and nothing else. It grows the way source does: split when a unit earns its own home, never to hit a number.
+Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row in its `README.md` index. A ledger that outgrows a screen, or that two agents want to work at once, becomes a folder of one file per area — the index row still carries the metadata, each area file is a coverage table and nothing else, and everything else the ledger holds moves to the folder's own `README.md` (`references/ledger-files.md`). It grows the way source does: split when a unit earns its own home, never to hit a number.
 
 **A ledger is named after the skill that owns its rules**, where one skill does — `pinia`, `naming`, `trpc`, `testing`. A second name for the same subject makes the ledger and the skill read as two topics, and the index row is where the pairing is stated. A ledger several skills own takes the name of the question instead (`schemas`, `styling`). Areas inside a promoted folder reuse the area names another ledger already established, so "was this area swept, for which question, and when" reads off one set of names.
 
 **A sweep is never a proposal.** A proposal designs behaviour that does not exist yet and is deleted when it ships; a sweep changes no behaviour at all. Filing one under `packages/app/content/docs/proposals/` mislabels maintenance as design and puts a never-ending standing sweep in a folder whose contents are all supposed to leave.
+
+## Settled — do not re-propose
+
+- **Filing a sweep under `packages/app/content/docs/proposals/`.** A proposal designs behaviour that does not exist yet and leaves when it ships; a sweep changes no behaviour and never ends. A ledger is repo state, and lives in `.agents/ledgers/`.
+- **A progress column, percentage or tick count on the index row.** A rolled-up number is a second copy of the truth that drifts, and it turns every pass into a write to the one file every other pass is also writing. State lives at the leaf ("One pass").
+- **Fanning the units of one sweep out to parallel agents.** A sweep reads a whole tree to change a fraction of it, and delegation is priced by files read rather than files changed; a parallel pass also throws away the carve-out that the first unit teaches every unit after it. Main session, one unit at a time ("One pass").
+- **Inheriting a split row's date onto the children.** The parent was split because it could never have been read, so carrying its date down records the skim as coverage. Children reopen at `—` (`references/ledger-files.md`).
 
 ## A scan that reports nothing
 
@@ -64,41 +71,9 @@ flowchart LR
 - **Verification batches once at the end of everything going out**, not per unit and not per file — several units swept in one sitting are one pass, not one each (`context-efficiency`, `package-scripts`). Commits stay per unit regardless; commits are cheap and checks are not.
 - **Skipped findings, with the reason, go in the commit message.** The sweep file tracks coverage, not decisions.
 
-## What a ledger holds — and nothing else
+## The ledger file — `references/ledger-files.md`
 
-**A ledger is progress state, not a document.** Every explanatory line in one is a line the skills and docs already own, paid for twice and drifting from the moment it is written. What earns a place is only what exists nowhere else:
-
-- **The index row** (`.agents/ledgers/README.md`) — mode, rules owner, unit, state. This is the sweep's whole metadata; there is no second metadata block below it.
-- **Coverage** — a table, one row per unit, ordered by expected payoff: `| Unit | Swept | Notes |`. `Swept` is the date the pass landed and `—` while it is open, so the row carries when as well as whether; `Notes` scopes the unit or names what the pass produced (a rule written into a skill, an invariant pinned by a test), never explains the convention. A checkbox is one bit and cannot say either.
-- **The find recipe** — the greps or commands specific to this convention, as bare patterns. Only where no skill states them.
-- **Exclusions** — units deliberately out of scope, one clause of reason, so the next pass does not re-litigate them.
-- **Next enforceable** — the part of the convention a lint rule or test could take over.
-- **Open findings** — only while one is genuinely open. A closed finding is deleted: its rule is in a skill, its invariant is in a test, and git holds the argument.
-
-**"The current shape is already right" closes a finding — by documenting it, never by leaving it.** A finding that survives several passes is usually not unresolved; it is resolved and unrecorded. Someone keeps rediscovering the same duplication or asymmetry, reasoning about it, concluding the existing shape is correct, and writing that conclusion nowhere — so the ledger keeps it open and the next pass pays for the reasoning again. Three outcomes, and a finding must reach one of them:
-
-| Verdict                            | Where it goes                                                                                                      |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| The code is wrong                  | Fix it; delete the finding                                                                                         |
-| The code is right                  | Write the **why** into the owning docs page or skill (a diagram if it is an ordered mechanism); delete the finding |
-| Genuinely undecided — needs a call | Stays, with the decision named and the options stated                                                              |
-
-Deleting a "code is right" finding without recording the rationale is the same failure as deleting a docs tombstone: the reasoning dies and the finding gets re-raised. The ledger holds coverage, so the rationale never stays there — it moves to whatever owns the topic.
-
-Anything else — what the convention says, why it matters, how a pass is run — belongs to the owning skill and is not repeated here.
-
-**State lives at the leaf.** The index row never restates how far a sweep has got: no tick counts, no per-area status column. A rolled-up number is a second copy of the truth that drifts, and it turns every pass into a write to a file other passes are also writing.
-
-**Read the leaf, not the tree.** A pass loads `.agents/ledgers/README.md` and the one file it is sweeping.
-
-**Run the pass in the main session, one unit at a time.** A sweep reads a whole tree to change a fraction of it,
-and delegation is priced by files read rather than files changed — fanning units out to agents costs a large
-multiple of sweeping them here, and an agent that exhausts its budget mid-unit leaves a tree that cannot be
-ticked (`model-delegation`, "A reading pass is not delegable work"). It also throws away the pass's own learning:
-a carve-out the rule failed to state is found once in a sequential pass and applied to every unit after it, where
-parallel agents each re-derive it or miss it. If a sweep is ever delegated anyway, it is still **one agent per
-leaf** — two inside one file trample each other. Adding, promoting or retiring a ledger is the only edit to the
-index row.
+A ledger holds six things and no explanatory prose, and is keyed by the question it asks rather than by the files it reaches. **Writing, splitting, merging, promoting or retiring one**, or deciding whether a new convention joins an existing ledger, is that page.
 
 ## Every sweep is standing
 
@@ -125,32 +100,6 @@ lines stop fitting.
 and adding it resets that ledger's dates, because a unit swept against a narrower rule set is not swept against
 the current one and there is no partially-swept state. Sharing a file set with an existing ledger is not what
 decides this; the next section is.
-
-## A ledger is keyed by its question, never by its address
-
-Two ledgers reading the same files is **not** duplication on its own. `browser-boundary`, `ux` and
-`vue-components` all read `app/components`, and they are three sweeps because they ask three questions of it.
-They merge only when the question is the same: `quality/skills` folded into `docs` because both read
-`.agents/skills` against `skill-authoring`, and each pass was handing the other its findings.
-
-```mermaid
-flowchart TD
-  TWO["two ledgers reach the same files"] --> Q{"same question of them?"}
-  Q -->|"yes — same owning skill, findings hand back and forth"| MERGE["merge; the survivor's dates reset"]
-  Q -->|"no — different owning skill"| KEEP["keep both; the file is read twice on purpose"]
-  KEEP --> WHY["reading is cheap, attention is not"]
-```
-
-The reason is the same one the `code-review` skill states about its own finders: a pass carrying one question
-finds what a pass carrying twenty skims past. Passes differ by **question**, not by **address** — so widening a
-ledger's rule set to cover more of a file is how a sweep quietly becomes a skim, and an area-keyed "cleanup"
-ledger is that mistake at its widest. When a rule set has no ledger, the answer is a new ledger, not a wider row
-on an existing one.
-
-Its corollary bounds the count: a ledger is worth opening only for a convention **no enforcer already decides**.
-A rule that oxlint or typecheck checks needs no coverage table — it fails on the line that breaks it — so the ledgers
-that earn their file are the read-only-detectable ones: a helper that already exists, a name that means the wrong
-thing, a guard held on one path and not its sibling.
 
 ## Draining beats scheduling
 

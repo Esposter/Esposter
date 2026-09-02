@@ -4,6 +4,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { closedSurveyErrorReason, invalidParticipantTokenErrorReason } from "@@/server/services/survey/constants";
 import { createCallerFactory } from "@@/server/trpc";
@@ -23,7 +24,6 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
-import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
@@ -334,18 +334,6 @@ describe("survey", () => {
     );
   });
 
-  // A program whose content predates the column reads null, and its already-issued tokens have to keep working
-  // Whether or not the backfill has run — so the resolver still falls back to the blob for exactly those rows
-  test(`${SurveyResponseMode.Identified}: accepts a token from a program whose binding was never projected`, async () => {
-    expect.hasAssertions();
-
-    const { program, survey, token } = await setupIdentifiedSurvey();
-    await mockContext.db.update(resources).set({ boundResourceId: null }).where(eq(resources.id, program.id));
-    const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
-
-    expect(newSurveyResponse.participantToken).toBe(token);
-  });
-
   test(`fails create with forged token in ${SurveyResponseMode.Identified} mode`, async () => {
     expect.hasAssertions();
 
@@ -491,6 +479,44 @@ describe("survey", () => {
     const { content } = await caller.readPublishedResourceContent(newResource.id);
 
     // The model stays the immutable snapshot while the settings are the live ones
+    expect(content.model).toBe(model);
+    expect(content.settings).toStrictEqual(closedSettings);
+  });
+
+  // A restore reconstitutes a snapshot rather than copying it, so it re-applies what the type declares live.
+  // Copying the blob wholesale put the settings frozen at publish time back over the working copy — silently
+  // Reopening a survey its owner had closed, and able to flip the response mode the write boundary makes its
+  // Authorization decisions on, with nothing in the restore or its confirmation saying so
+  test("keeps the live settings when a published version is restored over them", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings });
+    await caller.publishResource({ id: newResource.id });
+    await saveSurveyContent(newResource.id, newResource.contentVersion + 1, {
+      model: updatedModel,
+      settings: closedSettings,
+    });
+    await resourceCaller.restoreSnapshotVersion({ channel: SnapshotChannel.Published, id: newResource.id, version: 1 });
+    const content = await caller.readResourceContent({ id: newResource.id });
+
+    // The model is the snapshot's, which is the whole point of restoring — the settings are still the owner's
+    expect(content?.model).toBe(model);
+    expect(content?.settings).toStrictEqual(closedSettings);
+  });
+
+  test("serves the live settings on the owner's version preview", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings });
+    await caller.publishResource({ id: newResource.id });
+    await saveSurveyContent(newResource.id, newResource.contentVersion + 1, {
+      model: updatedModel,
+      settings: closedSettings,
+    });
+    const { content } = await caller.readPublishedVersionContent({ id: newResource.id, version: 1 });
+
     expect(content.model).toBe(model);
     expect(content.settings).toStrictEqual(closedSettings);
   });

@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs), version-capped packages (h3), and tracked open issues. Apply when updating package versions.
+description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs), version-capped packages (h3), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues. Apply when updating package versions.
 ---
 
 # Dependency Updates
@@ -51,7 +51,7 @@ When `@electric-sql/pglite` changes between minor versions, regenerate the db-mo
 
 When `vuetify` or `unocss` changes, `packages/app/uno.config.test.ts` and `packages/app/vuetify.config.test.ts` are the check: they snapshot resolved config, so a failure is the upstream release moving a derived rule, colour or default, and it is the only place that shows. **Read the diff and account for it in the commit before regenerating** — a reflexive `-u` throws away the one signal the bump produces. The `unocss` skill owns the detail.
 
-`inlinedDependencies` in a package manifest is written by tsdown on every build, so a vendored package's bump lands in a reviewed diff — except in `packages/azure-functions`, whose config sets `exports: false` so the Functions host's `main` survives a build, and that same switch is what writes the manifest at all. Its list is hand-maintained: after `pnpm build:packages`, compare each recorded version against what is installed and edit the drifted ones. A version there that no longer exists under `node_modules/.pnpm` is the tell, and it is also the only explanation on offer for that package's bundle size moving when nothing in its own manifest did.
+`inlinedDependencies` in a package manifest is written by tsdown on every build, so a vendored package's bump lands in a reviewed diff — every package included, `packages/azure-functions` among them: it keeps the `main` the Functions host reads through `exports: { legacy: true }` rather than by switching generation off, and generation is the same write that records the list. Nothing there is hand-maintained, so a recorded version that no longer exists under `node_modules/.pnpm` is a build nobody re-ran rather than an edit nobody made — rebuild and read the diff, which is also the explanation on offer for that package's bundle size moving when nothing in its own manifest did.
 
 Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them per the `testing` skill's `references/platform-and-bundle-tests.md` — rebuild first, then the narrowed `-u` pair — never by editing a snapshot to the number a failure printed.
 
@@ -68,11 +68,18 @@ Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them pe
 
 Temporary overrides that force a transitive dep to a safe version (currently `crossws`, `h3`, `pdfjs-dist`, `vite`). Remove when the upstream package catches up — most carry no comment explaining why, so check git blame before removing one.
 
+## Release age (`minimumReleaseAge: 0`)
+
+A nonzero `minimumReleaseAge` makes pnpm refuse a version until it has been on the registry for a while — the standard quarantine against installing a compromised release in the window before it is pulled. It is `0` here deliberately: being on the freshest version is the point of the pass, and a quarantine would have `pnpm outdated:dependencies` report updates that `pnpm refresh:lockfile` then declines to take, turning one clean pass into a partial one that has to be run again later for no result the first pass could act on.
+
+What that trades is real and accepted: a just-published bad version installs immediately. The mitigation is the shape of the process rather than a delay — updates here are a deliberate pass someone runs and reads the diff of, not an unattended bot merge, and step 4 re-verifies every resolution before the lockfile is committed. Don't propose raising it.
+
 ## Tracked issues (update normally, but watch these)
 
 - **`oxlint`** — has `^`; open issue https://github.com/oxc-project/oxc/issues/13204.
 - **`oxlint-tsgolint`** — a bump here is the one thing that could retire the `ignorePatterns` entry covering tsgo's infinite loop on the recursive `three/tsl` types. It ships its own Go binaries, so the `typescript` alias does not move it. Check it on every bump; the exclusion itself, and the CI symptom that does not look like a hang, are documented in the `oxlint` skill's `references/lint-configuration.md`.
 - **`ajv`, `ajv-errors`, `ajv-formats`, `ajv-i18n`, `debug`** — required by `@koumoul/vjsf`; tracked at https://github.com/json-layout/json-layout/issues/5.
+- **`vitest`** — has `^`; the 5.0.0 major is what retires the `Temporal.Now` fake-timer workaround (https://github.com/vitest-dev/vitest/issues/10345, closed against that milestone as a breaking change). Nothing on 4.x fakes `Temporal`, so until the major lands the workaround stays. Take the bump as its own deliberate pass — it is a major — and drop the workaround in it. That row, its probe, and every other shim a bump can retire live in `packages/app/content/docs/proposals/refactors/test-harness-workarounds.md`.
 - **`db:run` script** — workaround for https://github.com/drizzle-team/drizzle-orm/issues/1228.
 
 ## Dependency placement (deps vs peerDeps)

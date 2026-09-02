@@ -24,7 +24,7 @@ flowchart TD
 
 `app/composables/useAutoSearch.ts` owns everything reactive about search-as-you-type, exactly once:
 
-- **1s throttle** on the query ref (`useThrottle` + `dayjs.duration`) so typing doesn't fire a request per keystroke.
+- **1s throttle** on the query ref (`useThrottle` + `Temporal.Duration`) so typing doesn't fire a request per keystroke.
 - **In-flight abort** — each new search aborts the previous request via `AbortController`; the `AbortSignal` is passed to the `search` callback to forward to tRPC as `{ signal }`.
 - **Normalized change detection** — queries run through `normalizeString`, and a throttled value that normalizes to the same string as before does not re-query.
 - **Reset on empty** — when the query empties out, the in-flight request aborts and the consumer's `reset` callback drops stale results (skipped with `isIncludeEmptySearchQuery`, for pickers where an empty query should list everything).

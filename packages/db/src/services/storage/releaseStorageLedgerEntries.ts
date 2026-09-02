@@ -1,4 +1,4 @@
-import type { AzureContainer, Database } from "@esposter/db-schema";
+import type { AzureContainer, Database, User } from "@esposter/db-schema";
 
 import { releaseStorageLedgerEntriesWhere } from "#src/services/storage/releaseStorageLedgerEntriesWhere";
 import { storageLedger } from "@esposter/db-schema";
@@ -10,8 +10,8 @@ export const releaseStorageLedgerEntries = (
   db: Database,
   containerName: AzureContainer,
   blobNames: string[],
-): Promise<void> => {
-  if (blobNames.length === 0) return Promise.resolve();
+): Promise<User["id"][]> => {
+  if (blobNames.length === 0) return Promise.resolve([]);
 
   return releaseStorageLedgerEntriesWhere(
     db,

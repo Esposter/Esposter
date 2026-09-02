@@ -48,8 +48,8 @@
     }
   },
   "scripts": {
-    "build": "pnpm export:gen && tsdown",
-    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "build": "tsdown",
+    "export:gen": "generate-exports",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",
@@ -61,13 +61,11 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@esposter/db-schema": "workspace:*",
-    "@esposter/shared": "workspace:*"
+    "@esposter/db-schema": "workspace:*"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
-    "ctix": "catalog:",
     "tsdown": "catalog:",
     "vitest": "catalog:"
   },

@@ -1,5 +1,6 @@
 import type { EventGridHandler } from "@azure/functions";
 
+import { broadcastStorageUsage } from "#src/services/broadcastStorageUsage";
 import { db } from "#src/services/db";
 import { logAndRethrow } from "#src/services/logAndRethrow";
 import { reconcileStorageLedgerEntry } from "@esposter/db";
@@ -22,14 +23,32 @@ export const reconcileStorageLedgerEntryHandler: EventGridHandler = (event, cont
 
     const { blobName, containerName } = parsedBlobSubject;
     const { contentLength, sequencer } = blobCreatedEventGridDataSchema.parse(event.data);
-    if (await reconcileStorageLedgerEntry(db, containerName, blobName, contentLength, sequencer)) return;
+    const { chargedUserId, isMatched } = await reconcileStorageLedgerEntry(
+      db,
+      containerName,
+      blobName,
+      contentLength,
+      sequencer,
+    );
+    if (isMatched) {
+      if (chargedUserId) await broadcastStorageUsage(context, [chargedUserId]);
+      return;
+    }
     // A blob name reaches us through a url path, and whether storage percent-encodes it in the subject depends
     // On the characters in it — our names carry a `|` separator and a user-chosen filename. Rather than guess
     // Which form a given event used, the decoded form is tried only once the raw one has found no row.
     // A filename holding a lone `%` decodes to nothing valid, and falling back to the raw name keeps that a
     // No-op — throwing would turn an unreserved blob, which is not an error, into a poison event
     const decodedBlobName = getDecodedUriComponent(blobName, blobName);
-    if (decodedBlobName !== blobName)
-      await reconcileStorageLedgerEntry(db, containerName, decodedBlobName, contentLength, sequencer);
+    if (decodedBlobName === blobName) return;
+
+    const { chargedUserId: decodedChargedUserId } = await reconcileStorageLedgerEntry(
+      db,
+      containerName,
+      decodedBlobName,
+      contentLength,
+      sequencer,
+    );
+    if (decodedChargedUserId) await broadcastStorageUsage(context, [decodedChargedUserId]);
   }).match(noop, logAndRethrow(context, AzureFunction.ReconcileStorageLedgerEntry));
 };

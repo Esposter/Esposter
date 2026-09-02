@@ -6,7 +6,7 @@ import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSou
 import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { getResultAsync, noop } from "@esposter/shared";
-import { sleep } from "vue-phaserjs";
+import { sleepScene } from "vue-phaserjs";
 
 export const useAttackAnimation = (scene: SceneWithPlugins, attack: Attack, isToEnemy: boolean) => {
   const settingsStore = useSettingsStore();
@@ -23,7 +23,7 @@ export const useAttackAnimation = (scene: SceneWithPlugins, attack: Attack, isTo
       storeRefs.isActive.value = true;
       // The gate the battle turn waits on, so a failed animation resolves it rather than stalling the turn
       await getResultAsync(async () => {
-        await sleep(scene, 200);
+        await sleepScene(scene, 200);
         getDungeonsSoundEffect(scene, attack.soundEffectKey).play();
       }).match(noop, (error) => {
         console.error(error);

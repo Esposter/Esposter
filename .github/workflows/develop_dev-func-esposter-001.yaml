@@ -38,10 +38,37 @@ jobs:
       - name: 🔨 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
+      # 🏗️ CI already built every non-app package at this content hash and saved it under this key, and
+      # `@esposter/azure-functions` is one of them — so on a hit this job builds nothing and deploys exactly the
+      # Bundle CI checked. Restore only: this job builds a subset, so saving from here would publish a partial
+      # `dist` set under the full build's key.
+      - name: 🔑 Get build cache keys
+        id: keys
+        uses: ./.github/actions/get-build-cache-keys
+
+      - name: ♻️ Restore package builds
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.keys.outputs.package-builds-paths }}
+          key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
+
       - name: 🔧 Resolve Project Dependencies
+        run: pnpm --filter @esposter/azure-functions... i
+      # Gated on the build output rather than on the restore's `cache-hit`: that flag reports the entry the cache
+      # Found, not what it extracted, so a `path` list that drifted from the save's reports a hit while a build
+      # Skipped on it zips an empty `dist` and deploys a function app that registers nothing, with the host still
+      # Reporting Running. Every building package's `dist` is read rather than this one's — a partial extract
+      # Satisfies a single-file probe exactly when it should not.
+      - name: 🔍 Verify package builds
+        id: verify
+        uses: ./.github/actions/verify-package-builds
+
+      - name: 🏗️ Build
+        if: steps.verify.outputs.complete != 'true'
+        run: pnpm --filter @esposter/azure-functions... build
+
+      - name: 📦 Collect Deployment Output
         run: |
-          pnpm --filter @esposter/azure-functions... i
-          pnpm --filter @esposter/azure-functions... build
           pnpm --filter @esposter/azure-functions deploy --prod ${{ env.OUTPUT_DIRECTORY }} --config.inject-workspace-packages=true --config.node-linker=hoisted
           cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.OUTPUT_DIRECTORY }}/host.json
 

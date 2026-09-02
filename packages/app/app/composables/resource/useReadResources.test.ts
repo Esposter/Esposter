@@ -2,7 +2,6 @@
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { dayjs } from "#shared/services/dayjs";
 import { useReadResources } from "@/composables/resource/useReadResources";
 import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
@@ -57,7 +56,7 @@ describe(useReadResources, () => {
     const updatedFilter = ref<"" | ResourceUpdatedFilter>(ResourceUpdatedFilter.Last7Days);
     const { readResources } = useReadResources({ updatedFilter });
     await readResources(firstOptions);
-    vi.setSystemTime(dayjs(0).add(1, "day").toDate());
+    vi.setSystemTime(new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")));
     await readResources(secondOptions);
 
     expect(countHandler).toHaveBeenCalledTimes(1);

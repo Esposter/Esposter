@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MimeType } from "#shared/models/file/MimeType";
-import { dayjs } from "#shared/services/dayjs";
-import { AUDIO_RECORDER_TIMER_INTERVAL } from "@/services/richTextEditor/constants";
+import { formatDate } from "#shared/util/date/formatDate";
+import { AUDIO_MESSAGE_DATE_FORMAT, AUDIO_RECORDER_TIMER_INTERVAL } from "@/services/richTextEditor/constants";
 import { clearInterval, setInterval } from "worker-timers";
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
@@ -28,10 +28,8 @@ const { data, start, state, stop } = useMediaRecorder({
     if (data.value.length === 0) return;
 
     const blob = new Blob(data.value, { type: MimeType.AudioWebm });
-    // A filename wants one stable sortable spelling for everyone, which is the opposite of what a localised
-    // <NuxtTime> renders
     // eslint-disable-next-line no-restricted-syntax -- a filename, not text a reader sees
-    const file = new File([blob], `Audio Message - ${dayjs().format("YYYY-MM-DD HH:mm:ss")}.webm`, {
+    const file = new File([blob], `Audio Message - ${formatDate(new Date(), AUDIO_MESSAGE_DATE_FORMAT)}.webm`, {
       type: MimeType.AudioWebm,
     });
     emit("upload-file", [file]);

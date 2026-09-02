@@ -18,6 +18,7 @@ import { MockRestError } from "#src/models/MockRestError";
 import { bodyToBuffer } from "#src/services/container/bodyToBuffer";
 import { createMockResponse } from "#src/services/createMockResponse";
 import { readMockBlobDates, storeMockBlobWrite } from "#src/store/MockContainerBlobDatesDatabase";
+import { storeMockBlobMetadata } from "#src/store/MockContainerBlobMetadataDatabase";
 
 export class MockBlockBlobClient extends MockBlobClient implements Except<BlockBlobClient, "accountName"> {
   commitBlockList(): Promise<BlockBlobCommitBlockListResponse> {
@@ -67,6 +68,8 @@ export class MockBlockBlobClient extends MockBlobClient implements Except<BlockB
     )
       throw new MockRestError("The condition specified using HTTP conditional header(s) is not met.", 412);
     storeMockBlobWrite(this.containerName, this.name, this.container.has(this.name));
+    // Replaced rather than merged, so an upload naming none clears what the previous write set
+    storeMockBlobMetadata(this.containerName, this.name, options?.metadata);
     this.container.set(this.name, buffer);
     return { _response: createMockResponse(201) };
   }

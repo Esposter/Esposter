@@ -1,8 +1,8 @@
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
-import type { ResourceType } from "@esposter/db-schema";
 
 import { createContentData } from "@/services/resource/createContentData";
 import { useResourceStore } from "@/store/resource";
+import { ResourceType } from "@esposter/db-schema";
 
 const createEmptyBlueprint = (): BlueprintResource => ({ entries: [], parameters: [] });
 
@@ -10,6 +10,7 @@ export const useBlueprintStore = defineStore("resource/blueprint", () => {
   const resourceStore = useResourceStore();
   const { saveContent } = resourceStore;
   const { content: blueprint, loadContent } = createContentData<ResourceType.Blueprint>(
+    ResourceType.Blueprint,
     (data) => data ?? createEmptyBlueprint(),
   );
   // The manifest is edited wholesale as validated JSON, so the save takes the parsed manifest and persists it.

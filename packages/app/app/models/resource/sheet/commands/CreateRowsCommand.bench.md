@@ -9,21 +9,37 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-30T11:29:00.304Z
-- Commit: 5d007480e
-- Node: v26.4.0
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- Date: 2026-09-01T01:41:45.361Z
+- Commit: 89cd43944
+- Node: v26.8.1
+- OS: win32 10.0.26200 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
-## CreateRowsCommand
+## CreateRowsCommand > insert 100 rows into 100
 
-| task                                   | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| -------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| execute — insert 100 rows into 100     | 1.00×   | 0.0580    | ±9.99%  | 0.0798   | 10      |
-| execute — insert 100 rows into 1000    | 0.98×   | 0.0591    | ±7.23%  | 0.0743   | 10      |
-| execute — insert 1000 rows into 10000  | 0.11×   | 0.5480    | ±3.20%  | 0.6122   | 10      |
-| execute — insert 10000 rows into 10000 | 0.012×  | 4.9286    | ±2.87%  | 5.3807   | 10      |
-| undo — remove 100 rows from 200        | 0.49×   | 0.1183    | ±10.39% | 0.1530   | 10      |
-| undo — remove 1000 rows from 11000     | 0.054×  | 1.0815    | ±6.04%  | 1.2040   | 10      |
-| undo — remove 10000 rows from 20000    | 0.006×  | 9.6196    | ±4.41%  | 11.0118  | 10      |
+| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------- | -------- | ------- |
+| execute        | 1.00×   | 0.1359    | ±5.09%  | 0.1487   | 10      |
+| execute + undo | 0.84×   | 0.1620    | ±20.63% | 0.2795   | 10      |
+
+## CreateRowsCommand > insert 100 rows into 1000
+
+| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------- | -------- | ------- |
+| execute        | 1.00×   | 1.4410    | ±10.21% | 1.9165   | 10      |
+| execute + undo | 0.87×   | 1.6581    | ±14.82% | 2.3683   | 10      |
+
+## CreateRowsCommand > insert 1000 rows into 10000
+
+| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------- | -------- | ------- |
+| execute        | 1.00×   | 6.5660    | ±4.39%  | 7.2839   | 10      |
+| execute + undo | 0.66×   | 10.0191   | ±21.37% | 15.2833  | 10      |
+
+## CreateRowsCommand > insert 10000 rows into 10000
+
+| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------- | -------- | ------- |
+| execute        | 1.00×   | 13.9756   | ±10.06% | 17.4769  | 10      |
+| execute + undo | 0.66×   | 21.2118   | ±6.44%  | 23.9531  | 10      |

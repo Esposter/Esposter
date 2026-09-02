@@ -8,6 +8,13 @@ on:
 permissions:
   contents: read
 
+# `pnpm -r` interleaves the packages it runs concurrently, so a failure's stack arrives spliced with another
+# package's output. Live interleaved output is what a local run wants — a watched terminal, one failure at a time —
+# while a log read after the fact wants each package contiguous. Same scripts either way: this is the only place the
+# difference is stated, and pnpm reads its settings from `PNPM_CONFIG_<SETTING>` (`npm_config_*` is not read).
+env:
+  PNPM_CONFIG_AGGREGATE_OUTPUT: true
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -29,17 +36,53 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      # This job is the workflow's critical path — several times the next-longest — and the only build here that
+      # Was paid on every push. What it produces is a verdict rather than an artifact: nothing downstream reads
+      # `.output`, no deploy takes it, so the only thing worth carrying across runs is the fact that this exact
+      # Tree built green. That is what the marker is, and it is why the key may be an app-wide content hash:
+      # A hit means the identical source already built, so the build has nothing left to say.
+      #
+      # The key comes from the same action that keys `package-builds`, over the same inputs plus `packages/app`
+      # — so a change to a package this app bundles moves it too, and the two caches can never disagree about
+      # What the tree is.
+      - name: 🔑 Get build cache keys
+        id: keys
+        uses: ./.github/actions/get-build-cache-keys
+
+      - name: ♻️ Restore app build marker
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .app-build-marker
+          key: app-build-${{ steps.keys.outputs.app-build-hash }}
+      # Every step below hangs off the marker's absence, in this order: the key is computed from tracked files
+      # With `git ls-tree`, so a hit needs neither `node_modules` nor the `package-builds` artifact, and an
+      # Install nothing goes on to use is latency on the job the whole workflow finishes behind.
+      #
+      # Gated on the marker itself rather than on the restore's `cache-hit`, as everywhere else here: a hit whose
+      # `path` no longer matches what was saved reports success and extracts nothing, and a build skipped on that
+      # Flag would report green having built nothing at all. A literal path rather than a glob, so the leading
+      # Dot is matched as the ordinary character it is.
+      #
       # The platform-branched virrun.config.ts resolves the native backend on Linux, so `virrun --` is a passthrough
       # Here: `pnpm i` (warm pnpm store cache) provisions node_modules and its `postinstall: nuxt prepare` generates
       # The platform-correct Linux `.nuxt` in place — no sandbox, no bubblewrap, no warm overlay layers.
       - name: 🔧 Setup Project Dependencies
+        if: ${{ hashFiles('.app-build-marker') == '' }}
         uses: ./.github/actions/setup-project-dependencies
 
       - name: 📦 Setup Packages
+        if: ${{ hashFiles('.app-build-marker') == '' }}
         uses: ./.github/actions/setup-packages
-
+      # The marker is written only after the build returns, so a failed build leaves nothing for the post-run
+      # Save to find and the next push rebuilds. It holds the hash it was saved under, which is the only thing
+      # A restored marker can be read for.
       - name: 🏗️ Build app
-        run: pnpm build:app
+        if: ${{ hashFiles('.app-build-marker') == '' }}
+        env:
+          APP_BUILD_HASH: ${{ steps.keys.outputs.app-build-hash }}
+        run: |
+          pnpm build:app
+          echo "$APP_BUILD_HASH" > .app-build-marker
 
   # @TODO: Commented out, not deleted: TypeDoc cannot run against the `typescript-native-bridge` alias. Its
   # `attachUnionComments` walks the syntax tree through `declaration.type.getChildAt`, which the bridge's nodes do
@@ -155,22 +198,31 @@ jobs:
           path: coverage
           if-no-files-found: error
 
+  # The one check with no `needs: build-packages`. oxfmt is a standalone binary reading source files — no
+  # Barrels, no package `dist`, and no `virrun` in the command to build one for — so gating it on the package
+  # Build only made the workflow's quickest check wait out its slowest job. It installs rather than using
+  # `setup-packages` for the same reason: it wants `node_modules`, not the built artifact.
   format:
     name: Format
-    needs: build-packages
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # Native on Linux (platform-branched virrun.config.ts): plain install + the built virrun bin from the
-      # build-packages artifact, no sandbox setup.
+
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      - name: 📦 Setup Packages
-        uses: ./.github/actions/setup-packages
+      # `--ignore-scripts`, because the only thing this job needs out of the install is the lockfile-pinned
+      # `oxfmt` binary. A plain install additionally runs the app's `postinstall: nuxt prepare` and every
+      # `allowBuilds` native postinstall, none of which a formatter reading source files can observe — which
+      # Put the workflow's quickest check behind its slowest install right after it stopped waiting on the
+      # Package build. Installing oxfmt globally or through `dlx` would skip more still and is the wrong trade:
+      # A formatter's version is its output, so a second source of truth for it drifts from the lockfile until
+      # `format:check` here and `pnpm format` locally disagree — the exact failure this job exists to catch.
+      - name: 📦 Install dependencies
+        run: pnpm i --ignore-scripts
 
       - name: 📝 Format
         run: pnpm format:check

@@ -33,12 +33,10 @@ import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants"
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { useWebPubSubServiceClient } from "@@/server/composables/azure/webPubSub/useWebPubSubServiceClient";
 import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
-import { getDevice } from "@@/server/services/auth/getDevice";
-import { getDeviceId } from "@@/server/services/auth/getDeviceId";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { updateEntityConditionally } from "@@/server/services/azure/table/updateEntityConditionally";
+import { generateWebPubSubClientAccessUrl } from "@@/server/services/azure/webPubSub/generateWebPubSubClientAccessUrl";
 import { on } from "@@/server/services/events/on";
 import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";
 import { createUserMessage } from "@@/server/services/message/createUserMessage";
@@ -327,16 +325,8 @@ export const baseMessageRouter = router({
     );
   }),
   generateWebPubSubClientAccessUrl: getMemberProcedure(roomIdSchema, "roomId").query<string>(
-    async ({ ctx, input: { roomId }, signal }) => {
-      const webPubSubServiceClient = useWebPubSubServiceClient(AzureWebPubSubHub.Messages);
-      const { url } = await webPubSubServiceClient.getClientAccessToken({
-        abortSignal: signal,
-        groups: [roomId],
-        roles: [`webPubSub.joinLeaveGroup.${roomId}`],
-        userId: getDeviceId(getDevice(ctx.getSessionPayload)),
-      });
-      return url;
-    },
+    ({ ctx, input: { roomId }, signal }) =>
+      generateWebPubSubClientAccessUrl(AzureWebPubSubHub.Messages, roomId, ctx.getSessionPayload, signal),
   ),
   onCreateMessage: getMemberProcedure(onCreateMessageInputSchema, "roomId").subscription<
     AsyncGenerator<TrackedEnvelope<MessageEntity[]>, void, unknown>

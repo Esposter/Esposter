@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { dayjs } from "#shared/services/dayjs";
 import { ScheduledMessageJobIconMap } from "@/services/message/draftsAndSent/ScheduledMessageJobIconMap";
+import { getEarliestScheduledAt } from "@/services/message/getEarliestScheduledAt";
 import { useScheduledMessageJobDialogStore } from "@/store/message/input/scheduledMessageJobDialog";
 import { useRoomStore } from "@/store/message/room";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
@@ -13,7 +13,7 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const scheduledMessageJobDialogStore = useScheduledMessageJobDialogStore();
 const { isOpen, type } = storeToRefs(scheduledMessageJobDialogStore);
-const scheduledAt = ref(dayjs().add(1, "minute").toDate());
+const scheduledAt = ref(getEarliestScheduledAt());
 const minScheduledAt = ref(scheduledAt.value);
 const text = ref("");
 const isReminder = computed(() => type.value === ScheduledMessageJobType.Reminder);
@@ -23,7 +23,7 @@ const confirmButtonProps = computed(() => ({
   text: title.value,
 }));
 const setDefaultScheduledAt = () => {
-  scheduledAt.value = dayjs().add(1, "minute").toDate();
+  scheduledAt.value = getEarliestScheduledAt();
   minScheduledAt.value = new Date(scheduledAt.value);
 };
 const { executeMutation } = useMutation();

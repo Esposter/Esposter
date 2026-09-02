@@ -10,6 +10,7 @@ import { devtools } from "./configuration/devtools";
 import { experimental } from "./configuration/experimental";
 import { future } from "./configuration/future";
 import { hooks } from "./configuration/hooks";
+import { ignore } from "./configuration/ignore";
 import { image } from "./configuration/image";
 import { imports } from "./configuration/imports";
 import { modules } from "./configuration/modules";
@@ -21,6 +22,7 @@ import { routeRules } from "./configuration/routeRules";
 import { runtimeConfig } from "./configuration/runtimeConfig";
 import { security } from "./configuration/security";
 import { site } from "./configuration/site";
+import { typescript } from "./configuration/typescript";
 import { vite } from "./configuration/vite";
 import { vuetify } from "./configuration/vuetify";
 
@@ -34,6 +36,7 @@ export default defineNuxtConfig({
   experimental,
   future,
   hooks,
+  ignore,
   image,
   imports,
   modules,
@@ -45,6 +48,7 @@ export default defineNuxtConfig({
   runtimeConfig,
   security,
   site,
+  typescript,
   vite,
   vuetify,
 });

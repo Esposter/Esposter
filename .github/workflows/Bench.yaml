@@ -46,5 +46,10 @@ jobs:
       # rewrites `*.bench.md` beside each bench on ephemeral runner disk; nothing commits it, so the committed
       # artifacts are untouched. Unsharded: this job is a smoke test that every bench still executes, so the
       # only thing splitting it buys is runner minutes spent on setup.
+      #
+      # One bench opts out of this job rather than being excluded here: `scripts/workspace/buildPackages.bench.ts` measures
+      # cold package builds, which means deleting each `dist` — on this runner that is the `package-builds`
+      # artifact `setup-packages` just downloaded, including the `@esposter/shared-node` reporter this very run
+      # writes its results through. It skips on `CI`, and says so in the file.
       - name: 🏎️ Run benchmarks
         run: pnpm exec vitest bench --run

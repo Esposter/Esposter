@@ -9,19 +9,30 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-30T11:29:00.304Z
-- Commit: 5d007480e
-- Node: v26.4.0
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- Date: 2026-09-01T01:41:45.361Z
+- Commit: 89cd43944
+- Node: v26.8.1
+- OS: win32 10.0.26200 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
-## UpdateColumnCommand
+## UpdateColumnCommand > rename column, 100 rows
 
-| task                          | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ----------------------------- | ------- | --------- | ------- | -------- | ------- |
-| execute (rename) — 100 rows   | 1.00×   | 0.0140    | ±54.20% | 0.0347   | 10      |
-| execute (rename) — 1000 rows  | 0.89×   | 0.0157    | ±23.10% | 0.0299   | 10      |
-| execute (rename) — 10000 rows | 0.12×   | 0.1133    | ±9.64%  | 0.1436   | 10      |
-| undo (rename) — 1000 rows     | 0.014×  | 0.9740    | ±41.26% | 2.2036   | 10      |
-| undo (rename) — 10000 rows    | 0.0026× | 5.3591    | ±5.40%  | 6.1846   | 10      |
+| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------- | -------- | ------- |
+| execute        | 1.00×   | 0.6056    | ±10.15% | 0.7608   | 10      |
+| execute + undo | 0.43×   | 1.4124    | ±59.30% | 4.4942   | 10      |
+
+## UpdateColumnCommand > rename column, 1000 rows
+
+| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------- | -------- | ------- |
+| execute        | 1.00×   | 3.7265    | ±4.45%  | 3.9775   | 10      |
+| execute + undo | 0.68×   | 5.5137    | ±23.36% | 10.1706  | 10      |
+
+## UpdateColumnCommand > rename column, 10000 rows
+
+| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------- | -------- | ------- |
+| execute        | 1.00×   | 39.0923   | ±9.24%  | 48.1157  | 10      |
+| execute + undo | 0.61×   | 63.5903   | ±20.07% | 105.3728 | 10      |

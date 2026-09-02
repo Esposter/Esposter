@@ -1,6 +1,5 @@
 import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
 
-import { dayjs } from "#shared/services/dayjs";
 import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
 import { getResourceFilterKey } from "@/services/resource/list/getResourceFilterKey";
@@ -31,7 +30,7 @@ describe(getResourceFilterKey, () => {
     expect.hasAssertions();
 
     const key = getResourceFilterKey({ ...values, updatedFilter: ResourceUpdatedFilter.Last7Days });
-    vi.setSystemTime(dayjs(0).add(1, "day").toDate());
+    vi.setSystemTime(new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")));
 
     expect(getResourceFilterKey({ ...values, updatedFilter: ResourceUpdatedFilter.Last7Days })).toBe(key);
     expect(getResourceFilterKey({ ...values, updatedFilter: ResourceUpdatedFilter.Last30Days })).not.toBe(key);
@@ -44,12 +43,15 @@ describe(getResourceFilterKey, () => {
 
     const customValues = {
       ...values,
-      updatedAfter: dayjs(0).toDate(),
+      updatedAfter: new Date(0),
       updatedFilter: ResourceUpdatedFilter.Custom,
     } satisfies ResourceFilterValues;
 
     expect(getResourceFilterKey(customValues)).not.toBe(
-      getResourceFilterKey({ ...customValues, updatedAfter: dayjs(0).add(1, "day").toDate() }),
+      getResourceFilterKey({
+        ...customValues,
+        updatedAfter: new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")),
+      }),
     );
   });
 

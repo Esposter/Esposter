@@ -2,13 +2,20 @@
 // And settings while every tool reads the real path — globbers follow directory symlinks, so a repo-wide walk that did
 // Not ignore the alias would enumerate the whole tree twice under two names.
 export const AGENT_DIRECTORY = ".agents";
+// The alias itself. Only a tool that follows directory symlinks has to ignore it: the root TypeScript program and
+// Oxlint both do, oxfmt and VS Code's search do not, and ESLint inherits oxlint's list rather than stating its own.
+// The configs that cannot import repeat the literal and are pinned against this constant by
+// `scripts/agentDirectories.test.ts`.
+export const AGENT_ALIAS_DIRECTORY = ".claude";
 // Agent tools run `git worktree add` into `<agent tree>/worktrees/<name>/`, so a live worktree is a full second copy of
-// This monorepo nested inside it. Every repo-wide glob — the root tsconfig program, the `agents` Vitest project, the
-// Oxlint ignore list (which the shared ESLint config bridges) — has to exclude it or it traverses the whole repo once
-// More per live worktree, reporting diagnostics at paths that belong to another branch. Only the agent harness's
-// Machine-local `.git/info/exclude` hides these from git, and no clone, CI runner or non-git tool ever sees that file,
-// So the exclusion has to be stated in each tool's own configuration. The configs that cannot import (`tsconfig.json`,
-// `.oxlintrc.json`) repeat the literal and are pinned against this constant by `scripts/agentWorktrees.test.ts`.
+// This monorepo nested inside it. Every repo-wide walk — the root tsconfig program, the oxlint ignore list (which the
+// Shared ESLint config bridges), oxfmt and git itself — has to exclude it, or each one traverses the whole repo once
+// More per live worktree: diagnostics reported at paths belonging to another branch, another branch's files rewritten
+// By a format run, and a checkout listed as untracked. The agent harness only ever hides these from git through the
+// Machine-local `.git/info/exclude`, which no clone, CI runner or non-git tool sees, so the exclusion is stated in
+// Each tool's own configuration. None of those formats can import (`tsconfig.json`, `.oxlintrc.json`, `.oxfmtrc.json`
+// And `.gitignore`), so they repeat the literal and are pinned against this constant by
+// `scripts/agentDirectories.test.ts`.
 // The annotation is redundant to oxlint but mandatory to the dts build — an interpolated value cannot be inferred
 // Under --isolatedDeclarations, which is what emits this package's types.
 // oxlint-disable-next-line typescript/no-inferrable-types
@@ -47,3 +54,15 @@ export const VUE_AUTO_IMPORTS = ["pinia", "vue"] as const;
 // Ugliness if the condition could reach a stranger, and it cannot — tsdown writes a `dist`-only map into
 // `publishConfig.exports`, so nothing published carries a source arm for someone else's resolver to match.
 export const SOURCE_CONDITION = "source";
+// The two ctix configs, which live in this package because every package's barrel is generated from them. The
+// TypeScript one is what a package gets by default; the Vue one runs ahead of it in the single package that
+// Ships `.vue` files, writing the component barrel the TypeScript pass then reaches.
+export const CTIX_TS_CONFIGURATION = ".ctirc-ts";
+
+export const CTIX_VUE_CONFIGURATION = ".ctirc-vue";
+// A file that is neither listed by a barrel nor compiled by a build program: a test, a type test or a benchmark.
+// Two configs define it and they have to agree — the ctix configs exclude it from the barrel, and
+// `tsconfig.build.base.json` excludes it from the program the barrel is generated against. Both are JSON with no
+// Import mechanism, so they repeat the literal and `constants.test.ts` is the only thing holding the copies to
+// This one. Drift is silent: a suffix ctix stops excluding puts a test file in the published barrel.
+export const NON_SOURCE_SUFFIXES = [".bench.ts", ".test-d.ts", ".test.ts"] as const;

@@ -9,13 +9,13 @@ of units, and a suite is read once against all of it rather than once per conven
 
 ## Rules
 
-| Rule                                                       | Owner                                            |
-| ---------------------------------------------------------- | ------------------------------------------------ |
-| A test earns its line or is deleted; fixtures written once | `testing` — "What to Test", "Shared Test Data"   |
-| Constants inside the `describe`, never module scope        | `testing` — "Structure"                          |
-| Mock cleanup follows how the mock was created              | `testing` — `references/module-mocks.md`         |
-| `expect.hasAssertions()`, exact assertions, no polling     | `testing` — "Assertions"                         |
-| The cheapest environment that runs the file (`app` only)   | this ledger — "The environment a suite declares" |
+| Rule                                                       | Owner                                                 |
+| ---------------------------------------------------------- | ----------------------------------------------------- |
+| A test earns its line or is deleted; fixtures written once | `testing` — "What to Test", `references/test-data.md` |
+| Constants inside the `describe`, never module scope        | `testing` — "Structure"                               |
+| Mock cleanup follows how the mock was created              | `testing` — `references/module-mocks.md`              |
+| `expect.hasAssertions()`, exact assertions, no polling     | `testing` — "Assertions"                              |
+| The cheapest environment that runs the file (`app` only)   | this ledger — "The environment a suite declares"      |
 
 The row **`vi.fn` always takes its signature** has left this table.
 `packages/configuration/eslint/restrictedTestSyntaxes.js` bans the bare zero-argument form, and a pass on

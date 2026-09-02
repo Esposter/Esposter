@@ -1,7 +1,7 @@
-import { setupOxlintPluginSuite } from "#scripts/oxlint/setupOxlintPluginSuite.test";
+import { setupPluginSuite } from "#scripts/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
-// The rule is an oxlint JS plugin; the harness that runs it over these fixtures is setupOxlintPluginSuite.
+// The rule is an oxlint JS plugin; the harness that runs it over these fixtures is setupPluginSuite.
 const RULE = "pass-through-helper/no-forwarding-wrapper";
 
 describe(RULE, () => {
@@ -53,7 +53,7 @@ describe(RULE, () => {
       violations: 0,
     },
   ];
-  const { getCodes, getViolations } = setupOxlintPluginSuite({
+  const { getCodes, getViolations } = setupPluginSuite({
     fixtures: FIXTURES,
     plugin: "passThroughHelper",
     rules: [RULE],
