@@ -316,7 +316,7 @@ Packages are used directly by the nuxt application via `workspace:*`.
 
 ![Workspace dependency graph](./dependency-graph.svg)
 
-Runtime dependencies are solid, development-only ones dashed, and a private package is outlined dashed.
+Each node is coloured by the role its edges give it, and the key is drawn into the image.
 Regenerate it from the repo root with:
 
 ```bash

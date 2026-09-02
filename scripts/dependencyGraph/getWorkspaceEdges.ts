@@ -3,6 +3,7 @@ import type { WorkspaceEdges } from "#scripts/dependencyGraph/models/WorkspaceEd
 import type { WorkspacePackage } from "#scripts/models/WorkspacePackage";
 
 import { RUNTIME_DEPENDENCY_FIELDS, WORKSPACE_SPECIFIER_PREFIX } from "#scripts/dependencyGraph/constants";
+import { DependencyField } from "#scripts/models/DependencyField";
 
 const getEdgeKey = ({ from, to }: WorkspaceEdge): string => `${from}/${to}`;
 // Sorted by key with no comparator, so the order is UTF-16 code units rather than the machine's collation. The
@@ -33,7 +34,7 @@ export const getWorkspaceEdges = (workspacePackages: WorkspacePackage[]): Worksp
       for (const to of getDependencyDirectories(manifest[field]))
         runtime.set(getEdgeKey({ from: directory, to }), { from: directory, to });
 
-    for (const to of getDependencyDirectories(manifest.devDependencies))
+    for (const to of getDependencyDirectories(manifest[DependencyField.DevDependencies]))
       development.set(getEdgeKey({ from: directory, to }), { from: directory, to });
   }
   // A sibling declared in both fields is one runtime edge that a test also happens to import, so the
