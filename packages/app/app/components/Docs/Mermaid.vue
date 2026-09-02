@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import type { PanzoomObject } from "@panzoom/panzoom";
-
 import { MAX_MERMAID_SCALE, MIN_MERMAID_SCALE } from "@/services/docs/constants";
 import { getResultAsync } from "@esposter/shared";
-import Panzoom from "@panzoom/panzoom";
 import { useTheme } from "vuetify";
 
 interface MermaidProps {
@@ -21,7 +18,12 @@ const theme = useTheme();
 const wrapper = useTemplateRef("wrapper");
 const container = useTemplateRef("container");
 const id = useId();
-const panzoom = shallowRef<PanzoomObject>();
+const diagram = shallowRef<null | SVGSVGElement>(null);
+const { panzoom } = usePanZoom(diagram, {
+  cursor: "grab",
+  maxScale: MAX_MERMAID_SCALE,
+  minScale: MIN_MERMAID_SCALE,
+});
 const { isFullscreen, isSupported: isFullscreenSupported, toggle: toggleFullscreen } = useFullscreen(wrapper);
 const zoomButtonProps = { density: "comfortable", size: "small", variant: "tonal" } as const;
 const zoomControls = computed<MermaidZoomControl[]>(() => {
@@ -59,18 +61,12 @@ onMounted(async () => {
   result.match((svg) => {
     if (!container.value) return;
     container.value.innerHTML = svg;
-    const svgElement = container.value.querySelector("svg");
-    if (!svgElement) return;
-    panzoom.value = Panzoom(svgElement, { cursor: "grab", maxScale: MAX_MERMAID_SCALE, minScale: MIN_MERMAID_SCALE });
+    diagram.value = container.value.querySelector("svg");
   }, console.error);
 });
 // Ctrl+wheel (and trackpad pinch, which browsers report as a ctrl wheel) zooms; plain wheel keeps scrolling the page
 useEventListener(container, "wheel", (event) => {
   if (event.ctrlKey) panzoom.value?.zoomWithWheel(event);
-});
-
-onUnmounted(() => {
-  panzoom.value?.destroy();
 });
 </script>
 
