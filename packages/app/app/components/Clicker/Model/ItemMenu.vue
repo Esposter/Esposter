@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
+import type { BuildingWithStatistics } from "#shared/models/clicker/data/building/BuildingWithStatistics";
 import type { ItemType } from "#shared/models/clicker/data/ItemType";
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 import type { VMenu } from "vuetify/components";
@@ -11,9 +11,9 @@ import { MenuIconMap } from "@/services/clicker/icon/MenuIconMap";
 import { UpgradeIconMap } from "@/services/clicker/icon/UpgradeIconMap";
 import { marked } from "marked";
 
-type ItemMenuProps = Partial<Pick<BuildingWithStats, "amount">> &
+type ItemMenuProps = Partial<Pick<BuildingWithStatistics, "amount">> &
   Partial<Pick<Upgrade, "description">> &
-  Pick<BuildingWithStats | Upgrade, "id"> &
+  Pick<BuildingWithStatistics | Upgrade, "id"> &
   Pick<Upgrade, "flavorDescription" | "price"> & { isAffordable: boolean; menuProps: VMenu["$props"]; type: ItemType };
 
 const slots = defineSlots<{

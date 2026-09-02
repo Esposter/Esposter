@@ -1,10 +1,10 @@
-import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
+import type { BuildingWithStatistics } from "#shared/models/clicker/data/building/BuildingWithStatistics";
 import type { Effect } from "#shared/models/clicker/data/effect/Effect";
 
 export const applyBuildingAdditiveNorEffects = (
   basePower: number,
   buildingAdditiveNorEffects: Effect[],
-  boughtBuildings: BuildingWithStats[],
+  boughtBuildings: BuildingWithStatistics[],
 ) => {
   let resultPower = basePower;
 
