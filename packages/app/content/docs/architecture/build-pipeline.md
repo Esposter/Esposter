@@ -103,7 +103,7 @@ any of this, so `scripts/sideEffects.test.ts` enforces the
 part that is derivable: every package with a tsdown config declares the field, and only the run-on-import one
 claims `true` wholesale.
 
-### A host-loaded artifact keeps its own entry field
+### A host-loaded artifact keeps the entry field the build generates
 
 tsdown writes the `exports` map into the manifest of the package it builds, and removes entry fields it does not
 own. That is right for a library, where `exports` supersedes `main` for every resolver here — and wrong for an
@@ -112,9 +112,16 @@ app by `main`, so generation deletes the field the artifact needs, and nothing i
 resolves through it, a private package is not gated by publint, and every check passes. The deployed app then
 reports Running while registering no functions at all, which stops every trigger with no error anywhere.
 
-`@esposter/azure-functions` therefore sets `exports: false` and declares `main` itself. Nothing resolves it as a
-dependency — it is a deploy artifact — so the map it gives up was never doing anything, and its
-`src/index.test.ts` asserts the field, which is the only check that can fail on its absence.
+`@esposter/azure-functions` therefore sets `exports: { legacy: true }`, which is what makes tsdown _own_ the
+field: for a package with no CJS output the ESM chunk is written into `main`, so the host's contract is generated
+from the build rather than typed beside it. Its `src/index.test.ts` asserts the field, which is the only check
+that can fail on its absence.
+
+Switching generation off entirely (`exports: false`) keeps a hand-written `main` too, and costs more than it
+saves — the manifest write it disables is the same one that records `inlinedDependencies`. This is the bundle
+that vendors every dependency, so that list is the only account of what is inside the artifact, and the hand-kept
+copy had already drifted — short a transitive package no manifest here names directly, which is exactly the entry
+nobody thinks to add. One switch controls two unrelated jobs, and only one of them was ever wanted.
 
 ### Every entry matches subpaths
 

@@ -43,8 +43,14 @@ therefore deletes the one field that makes the artifact work, and nothing catche
 it, a private package gets no publint, and typecheck, lint and every other test pass. What ships is a host that
 reports Running with **zero functions registered**, so every trigger stops silently.
 
-So a package like that turns generation off (`exports: false` in its own `tsdown.config.ts`) and declares the
-host's field by hand. It loses nothing by doing so: nothing resolves it as a dependency, which is why it had no
-use for an exports map in the first place. Pin the field with an assertion in that package's `src/index.test.ts`
-— one package, one test, and it is the only enforcer there is. A host that names its entry somewhere else instead
-(Pulumi's `Pulumi.yaml` points straight at `dist/index.js`) needs neither the field nor the opt-out.
+So a package like that sets `exports: { legacy: true }`, which makes tsdown own the field rather than remove it:
+with no CJS output the ESM chunk is written into `main`, generated from the build on every run. Pin it with an
+assertion in that package's `src/index.test.ts` — one package, one test, and it is the only enforcer there is. A
+host that names its entry somewhere else instead (Pulumi's `Pulumi.yaml` points straight at `dist/index.js`)
+needs neither the field nor the opt-out.
+
+**Don't reach for `exports: false` to keep the field.** It works, and it silently takes `inlinedDependencies`
+with it: one manifest write emits both, so turning off the map a deploy artifact never needed also turns off the
+only record of what that artifact vendored. The list then has to be hand-kept against a bundle that swallows the
+whole dependency tree, which is a chore nothing enforces and which drifted by a transitive package before anyone
+read it.
