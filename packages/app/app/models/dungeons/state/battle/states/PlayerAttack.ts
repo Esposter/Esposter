@@ -7,7 +7,7 @@ import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { prettify } from "@/util/text/prettify";
-import { sleep } from "vue-phaserjs";
+import { sleepScene } from "vue-phaserjs";
 
 export const PlayerAttack: State<StateName> = {
   name: StateName.PlayerAttack,
@@ -24,7 +24,7 @@ export const PlayerAttack: State<StateName> = {
     if (!attack) return;
 
     await showMessageNoInputRequired(scene, `${prettify(activeMonster.value.key)} used ${prettify(attack.id)}.`);
-    await sleep(scene, 500);
+    await sleepScene(scene, 500);
     await useAttackAnimation(scene, attack, true);
     await takeDamage(
       calculateDamage(activeMonster.value.stats.attack, attack.power, enemyActiveMonster.value.stats.defense),

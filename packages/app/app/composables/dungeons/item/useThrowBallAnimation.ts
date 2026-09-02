@@ -6,7 +6,7 @@ import { useBallStore } from "@/store/dungeons/battle/ball";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Math } from "phaser";
-import { sleep, useTween } from "vue-phaserjs";
+import { sleepScene, useTween } from "vue-phaserjs";
 
 export const useThrowBallAnimation = async (scene: SceneWithPlugins, captureResult: CaptureResult) => {
   const settingsStore = useSettingsStore();
@@ -72,7 +72,7 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, captureResu
   await playThrowBallAnimation();
   await playEnemyFadeAnimation(1, 0);
   await playShakeBallAnimation();
-  await sleep(scene, 500);
+  await sleepScene(scene, 500);
   isVisible.value = false;
   if (captureResult !== CaptureResult.Success) await playEnemyFadeAnimation(0, 1);
 };

@@ -5,7 +5,7 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { prettify } from "@/util/text/prettify";
-import { sleep } from "vue-phaserjs";
+import { sleepScene } from "vue-phaserjs";
 
 export const BringOutMonster: State<StateName> = {
   name: StateName.BringOutMonster,
@@ -18,7 +18,7 @@ export const BringOutMonster: State<StateName> = {
     await useMonsterAppearTween(false);
     useMonsterInfoContainerAppearTween(false);
     await showMessageNoInputRequired(scene, `Go ${prettify(activeMonster.value.key)}!`);
-    await sleep(scene, Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
+    await sleepScene(scene, Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
     await battleStateMachine.setState(StateName.PlayerInput);
   },
 };

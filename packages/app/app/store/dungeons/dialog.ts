@@ -9,7 +9,7 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
-import { sleep } from "vue-phaserjs";
+import { sleepScene } from "vue-phaserjs";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
   const settingsStore = useSettingsStore();
@@ -72,7 +72,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
       dialogTarget.setMessage(message);
       // Show the cursor after vue's rendering cycle has caught up with phaser
       // Seems like it takes exactly 2 ticks for vue to register phaser's text changes
-      await sleep(scene, textDelay.value * 2);
+      await sleepScene(scene, textDelay.value * 2);
       showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
       isWaitingForPlayerSpecialInput.value = true;
       return;

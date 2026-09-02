@@ -8,21 +8,21 @@ describe("vue-phaserjs", () => {
 
   test.skipIf(process.platform !== "win32")("bundle size (Windows)", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 59.61 KB (61038 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 59.64 KB (61069 bytes)"`);
   });
 
   test.skipIf(process.platform === "win32")("bundle size (POSIX)", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 59.61 KB (61038 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 59.64 KB (61069 bytes)"`);
   });
 
   test.skipIf(process.platform !== "win32")("types size (Windows)", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 522.53 KB (535075 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 522.56 KB (535098 bytes)"`);
   });
 
   test.skipIf(process.platform === "win32")("types size (POSIX)", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 522.53 KB (535075 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 522.56 KB (535098 bytes)"`);
   });
 });
