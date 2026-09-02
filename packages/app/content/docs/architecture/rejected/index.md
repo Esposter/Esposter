@@ -14,3 +14,4 @@ adopt. Check here before proposing one; never re-argue a decided idea.
 - [Monorepo task runners](/docs/architecture/rejected/monorepo-task-runners) — Turborepo-style per-package cache keys, for a package build measured in seconds and a third content-hash cache beside two that already exist
 - [Nuxt build cache](/docs/architecture/rejected/nuxt-build-cache) — `experimental.buildCache` invalidates on the same commits the app build's content-hash marker already does, and trades that marker's key for one that cannot say when it is wrong
 - [TypeScript build info cache](/docs/architecture/rejected/typescript-build-info-cache) — the only version that saves anything rests on the compiler's own invalidation rather than a hash of its inputs
+- [Published package metadata](/docs/architecture/rejected/published-package-metadata) — `engines`, `repository.directory` and a `LICENSE` file are claims no gate here can hold honest, and one of them cannot even be shared by symlink
