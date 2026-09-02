@@ -19,6 +19,10 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 | `packages/db`, `packages/db-mock`                          | 2026-09-02 | clean - neither declares a table or a zod schema; the mock's snapshot is generated and `createMockDb.test.ts` fails when it drifts                     |
 | `packages/shared`, `packages/parse-tmx`, `packages/xml2js` | 2026-09-02 | clean - `@esposter/shared`'s zod surface is the helpers themselves; `parse-tmx` and `xml2js` depend on zod nowhere                                     |
 
+The inherited-key rule was added to the `zod` skill on 2026-09-02 and the dates above survive it: its whole
+scope is two positions a grep finds exactly — `.omit`/`.pick` on a generic `z.ZodObject`, and `.safeExtend` — and
+both were swept repo-wide in the same sitting, so no dated unit is holding a pass taken against the narrower set.
+
 The three widest rows were split at their own subdirectories on 2026-08-31, before any pass read them: `db` was
 102 files, `resource` 76 and the tail around 90, and a unit that size is grepped rather than read. The children
 opened at `—` rather than inheriting a date, because the parent rows never held one to carry down.
@@ -46,9 +50,10 @@ grep -rn -A 40 'z\.discriminatedUnion(' --include=*.ts packages/app/app packages
 
 ## Next enforceable
 
-- **A computed object key read off a zod `.enum` is now banned by lint** — `restrictedSyntaxes.js` carries the
-  Selector, and the four sites it found are rewritten. The shape spelled a literal unsearchably while the value
-  Beside it named the same field through `.shape`, so a rename broke the object either way.
+- **The inherited-key rule is not lint-decidable, and a ban on the computed form was wrong.** `.safeExtend`
+  Legitimately adds new fields as well as layering over existing ones, so nothing syntactic separates the key that
+  Must match from the key that must not. It stays with the sweep; the `zod` skill carries the measured table of
+  Which positions check a key and which do not.
 - **Registration completeness is now enforced** — `schema.test.ts` imports every module in `src/schema` and
   Asserts each `pgTable`/`pgEnum` export is a value of the `schema` object, comparing by identity so a table
   Registered under the wrong key still counts (the naming test beside it owns the key). It was written on

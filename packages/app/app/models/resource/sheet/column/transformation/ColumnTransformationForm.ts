@@ -19,7 +19,7 @@ import { z } from "zod";
 // Which of the form's context lists feeds a source-column picker is a rendering decision, so the key naming
 // It only exists on this side of the boundary — `shared/` states what a transformation is, never how it looks.
 const createSourceColumnIdFormShape = (getItems: keyof typeof ColumnFormVjsfContextPropertyNames) => ({
-  sourceColumnId: sourceColumnIdSchema.shape.sourceColumnId.meta({
+  [sourceColumnIdSchema.keyof().enum.sourceColumnId]: sourceColumnIdSchema.shape.sourceColumnId.meta({
     layout: { comp: "select", getItems },
     title: "Source Column",
   }),
@@ -29,9 +29,10 @@ const createSourceColumnIdFormShape = (getItems: keyof typeof ColumnFormVjsfCont
 const aggregationTransformationFormSchema = aggregationTransformationSchema
   .safeExtend({
     ...createSourceColumnIdFormShape(ColumnFormVjsfContextPropertyNames["context.numberColumnItems"]),
-    aggregationTransformationType: aggregationTransformationSchema.shape.aggregationTransformationType.meta({
-      title: "Aggregation",
-    }),
+    [aggregationTransformationSchema.keyof().enum.aggregationTransformationType]:
+      aggregationTransformationSchema.shape.aggregationTransformationType.meta({
+        title: "Aggregation",
+      }),
   })
   .meta({ title: ColumnTransformationType.Aggregation });
 
@@ -48,7 +49,9 @@ const mathVariableFormSchema = mathVariableSchema.safeExtend(
 );
 
 const mathTransformationFormSchema = mathTransformationSchema
-  .safeExtend({ variables: createUniqueArraySchema(mathVariableFormSchema, "name") })
+  .safeExtend({
+    [mathTransformationSchema.keyof().enum.variables]: createUniqueArraySchema(mathVariableFormSchema, "name"),
+  })
   .meta({ title: ColumnTransformationType.Math });
 
 const regexMatchTransformationFormSchema = regexMatchTransformationSchema
@@ -57,7 +60,7 @@ const regexMatchTransformationFormSchema = regexMatchTransformationSchema
 
 const stringPatternTransformationFormSchema = stringPatternTransformationSchema
   .safeExtend({
-    sourceColumnIds: sourceColumnIdsSchema.shape.sourceColumnIds.meta({
+    [sourceColumnIdsSchema.keyof().enum.sourceColumnIds]: sourceColumnIdsSchema.shape.sourceColumnIds.meta({
       layout: { getItems: ColumnFormVjsfContextPropertyNames["context.columnItems"] },
       title: "Source Columns",
     }),
