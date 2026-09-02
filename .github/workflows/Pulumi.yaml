@@ -6,7 +6,7 @@ on:
       - "packages/infra/**"
       - ".github/workflows/Pulumi.yaml"
       - ".github/actions/setup-project-dependencies/**"
-      - ".github/actions/get-package-builds-key/**"
+      - ".github/actions/get-build-cache-keys/**"
 
 permissions:
   id-token: write
@@ -33,9 +33,9 @@ jobs:
       # 🏗️ CI already built every non-app package at this content hash and saved it under this key, and
       # `@esposter/infra`'s build is a subset of that — so on a hit this job builds nothing. Restore only: this
       # job builds a subset, so saving from here would publish a partial `dist` set under the full build's key.
-      - name: 🔑 Get package builds key
-        id: key
-        uses: ./.github/actions/get-package-builds-key
+      - name: 🔑 Get build cache keys
+        id: keys
+        uses: ./.github/actions/get-build-cache-keys
 
       - name: ♻️ Restore package builds
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -43,7 +43,7 @@ jobs:
           path: |
             packages/*/dist
             packages/*/src/**/index.ts
-          key: package-builds-${{ steps.key.outputs.hash }}
+          key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
 
       - name: 📦 Install dependencies
         run: pnpm --filter @esposter/infra... i

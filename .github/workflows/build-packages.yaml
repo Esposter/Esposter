@@ -39,9 +39,9 @@ jobs:
 
       # The key is computed by a shared action so the save here and every restore elsewhere derive it from
       # One definition — 🏗️ Pulumi and the two Functions deploys restore this same entry.
-      - name: 🔑 Get package builds key
-        id: key
-        uses: ./.github/actions/get-package-builds-key
+      - name: 🔑 Get build cache keys
+        id: keys
+        uses: ./.github/actions/get-build-cache-keys
       # `packages/*/dist` is the published build output and `packages/*/src/**/index.ts` are the ctix-generated
       # Barrels (gitignored, absent on a fresh checkout). Both are produced by `pnpm build:packages`.
       #
@@ -56,7 +56,7 @@ jobs:
           path: |
             packages/*/dist
             packages/*/src/**/index.ts
-          key: package-builds-${{ steps.key.outputs.hash }}
+          key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
       # Both the install and the build hang off the cache miss, and in that order: the key is computed from
       # tracked files with `git ls-tree` and the artifact is uploaded straight from the restored paths, so on a
       # hit this job needs no `node_modules` at all. Every job in both callers `needs` this one, so an install

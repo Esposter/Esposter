@@ -30,7 +30,7 @@ Turborepo is the closest fit: pnpm workspaces are native to it, and per-package 
 
 ## The revisit trigger
 
-If `build:packages` ever stops finishing well inside the app build — the job that gates the workflow, and the reason the package build's own duration buys nothing today — granularity starts earning its keep, and the first step is still not a task runner. The existing key is a short `git ls-tree` pipeline in `get-package-builds-key`, and the dependency order it would need is already what `pnpm -r` walks, so splitting it per package is a smaller change than adopting a runner and adds no third cache.
+If `build:packages` ever stops finishing well inside the app build — the job that gates the workflow, and the reason the package build's own duration buys nothing today — granularity starts earning its keep, and the first step is still not a task runner. The existing key is a short `git ls-tree` pipeline in `get-build-cache-keys`, and the dependency order it would need is already what `pnpm -r` walks, so splitting it per package is a smaller change than adopting a runner and adds no third cache.
 
 ## What we take from it instead
 

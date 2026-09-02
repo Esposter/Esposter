@@ -1,0 +1,48 @@
+name: Get Build Cache Keys
+description: Compute the content hashes that key the package-builds and app-build caches, shared by the workflows that save one and every workflow that restores one
+outputs:
+  app-build-hash:
+    description: sha256 over every tracked file `pnpm build:app` could read — the package-builds inputs plus `packages/app`
+    value: ${{ steps.keys.outputs.app-build-hash }}
+  package-builds-hash:
+    description: sha256 over every tracked file `pnpm build:packages` could read
+    value: ${{ steps.keys.outputs.package-builds-hash }}
+runs:
+  using: composite
+  steps:
+    # An action rather than a copy of the script per workflow, because the two sides of a cache fail
+    # differently. A restore whose `path` list is wrong reports a hit and extracts nothing, which the consumers
+    # catch by probing for the artifact itself before they skip a build. A restore whose *key* drifts from the
+    # save's simply never hits again, silently, and the only symptom is a build everyone assumed was cached —
+    # so the keys get one definition and the path lists stay where they are read.
+    #
+    # Both keys are a content hash (mode + blob hash + path) of the TRACKED files under `packages/` that the
+    # build could read, plus the root package.json (infra bundles it via
+    # `import packageJson from "../../../../package.json"`), the lockfile and the catalog. Reading the lockfile
+    # and the catalog is what makes a dependency bump — a catalog version, a resolution — a new key rather than
+    # a stale hit.
+    #
+    # Everything is an input until proven otherwise, and only two things are subtracted: `packages/app`, from
+    # the package key alone because no consumer of that cache builds it, and test/bench files, which no
+    # entrypoint reaches and which change far more often than anything they sit beside. The two failure
+    # directions are not symmetric — subtracting too little costs one rebuild on a push that was already
+    # touching a package's internals, while subtracting too much serves a `dist` that does not match the source
+    # it claims to be built from, and every check downstream then passes against the stale artifact. So the
+    # default is to hash it, and an exclusion has to earn itself. That also means a build input of a new shape
+    # needs nothing done to it: it is already in both keys.
+    #
+    # Tracked files only, so generated output (dist, ctix barrels, *.tsbuildinfo, node_modules) stays out by
+    # construction. It is also what lets a `pull_request` event hit a cache a `push` event saved: the hash is
+    # over content, so a merge commit whose `packages/` tree matches the branch head's keys to the same entry.
+    - name: 🔑 Compute build cache keys
+      id: keys
+      shell: bash
+      run: |
+        readBuildInputs() {
+          git ls-tree -r HEAD packages | awk -F'\t' '$2 ~ /\.(test|test-d|bench)\.ts$/ { next } { print }'
+          git rev-parse HEAD:package.json HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml
+        }
+        {
+          echo "app-build-hash=$(readBuildInputs | sha256sum | cut -d' ' -f1)"
+          echo "package-builds-hash=$(readBuildInputs | awk -F'\t' '$2 ~ /^packages\/app\// { next } { print }' | sha256sum | cut -d' ' -f1)"
+        } >> "$GITHUB_OUTPUT"
