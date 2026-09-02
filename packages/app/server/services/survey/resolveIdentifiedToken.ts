@@ -1,9 +1,7 @@
 import type { SurveyResponseModeValidator } from "@@/server/models/survey/SurveyResponseModeValidator";
 import type { Clause } from "@esposter/azure";
 
-import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { invalidParticipantTokenError } from "@@/server/services/survey/invalidParticipantTokenError";
 import { BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { getTopNEntities } from "@esposter/db";
@@ -32,23 +30,6 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, su
       userId: { eq: survey.userId },
     },
   });
-  // Programs whose content predates the column have no binding projected yet, so they are still resolved the
-  // Old way until the backfill (or their owner's next save) reaches them. Scoped to exactly those rows, so it
-  // Costs nothing once none are left — and dropping it instead would reject every already-issued token on a
-  // Deploy where the backfill has not run
-  const unprojectedPrograms = await db.query.resources.findMany({
-    where: {
-      boundResourceId: { isNull: true },
-      type: { eq: ResourceType.Program },
-      userId: { eq: survey.userId },
-    },
-  });
-  if (unprojectedPrograms.length > 0) {
-    const contents = await Promise.all(
-      unprojectedPrograms.map(({ id }) => readResourceContent(programResourceSchema, id)),
-    );
-    boundPrograms.push(...unprojectedPrograms.filter((_program, index) => contents[index]?.surveyId === surveyId));
-  }
   const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
   for (const boundProgram of boundPrograms) {
     // The token is a column rather than the key, so this is a single-partition scan for one row —

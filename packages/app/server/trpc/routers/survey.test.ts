@@ -24,7 +24,6 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
-import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
@@ -333,18 +332,6 @@ describe("survey", () => {
     await expect(createSurveyResponse(survey.id, 0, token)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${invalidParticipantTokenErrorMessage}]`,
     );
-  });
-
-  // A program whose content predates the column reads null, and its already-issued tokens have to keep working
-  // Whether or not the backfill has run — so the resolver still falls back to the blob for exactly those rows
-  test(`${SurveyResponseMode.Identified}: accepts a token from a program whose binding was never projected`, async () => {
-    expect.hasAssertions();
-
-    const { program, survey, token } = await setupIdentifiedSurvey();
-    await mockContext.db.update(resources).set({ boundResourceId: null }).where(eq(resources.id, program.id));
-    const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
-
-    expect(newSurveyResponse.participantToken).toBe(token);
   });
 
   test(`fails create with forged token in ${SurveyResponseMode.Identified} mode`, async () => {

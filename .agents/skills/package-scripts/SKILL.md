@@ -51,8 +51,8 @@ resolves on its own. A new script is therefore `node path/to/index.ts`, and an e
   specifier it goes looking for in `node_modules`.
 
 `packages/app/scripts/*` hits both: it reaches app source through the Nuxt-generated `@/*`, `@@/*` and `#shared/*`
-paths, and that source declares enums. So those three scripts (`backfill:bound-resource-id`, `phaser:gen`,
-`tiled:gen`) keep `tsx --tsconfig tsconfig.root.json`, and `tsx` is a devDependency **of that package** rather
+paths, and that source declares enums. So both of them (`phaser:gen` and `tiled:gen`) keep
+`tsx --tsconfig tsconfig.root.json`, and `tsx` is a devDependency **of that package** rather
 than of the root — nothing else in the repo needs it. `db:run` is on `node` too: `drizzle-kit`'s CJS bin reads its
 own `drizzle.config.ts` and needs no loader wrapped around it.
 

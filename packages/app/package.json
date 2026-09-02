@@ -38,7 +38,6 @@
   "type": "module",
   "scripts": {
     "analyze": "nuxt analyze",
-    "backfill:bound-resource-id": "tsx --tsconfig tsconfig.root.json scripts/backfill/boundResourceId.ts",
     "bench": "vitest bench --run",
     "build": "nuxt build",
     "cleanup": "nuxt cleanup",
