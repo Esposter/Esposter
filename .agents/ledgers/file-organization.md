@@ -19,6 +19,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `packages/azure`, `packages/azure-functions`, `packages/azure-mock` | —          | cross-package placement: an Azure helper two packages need lives in `db`                                                                                                             |
 | `packages/virrun`, `packages/infra`, `packages/configuration`       | —          |                                                                                                                                                                                      |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`    | —          | barrel contents are `ctix` output — regenerate, never hand-edit                                                                                                                      |
+| `scripts`                                                           | —          | sole-consumer subfolders, and the cascade one move opens: draining `services/` and `models/` re-points the next file's only consumer                                                 |
 
 ## Find recipe
 
