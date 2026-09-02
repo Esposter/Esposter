@@ -77,6 +77,13 @@ jobs:
       - name: 🏗️ Build packages
         if: steps.cache.outputs.cache-hit != 'true'
         run: pnpm build:packages
+      # The build writes the exports map, the entry fields it owns and `inlinedDependencies` into each manifest,
+      # And nothing downstream reads one — every other check runs against the `dist` this job just made. So an
+      # Uncommitted manifest is green everywhere else. Gated on the miss because that is the only branch that
+      # Builds.
+      - name: 🔍 Check generated manifest fields are committed
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: git diff --exit-code -- "packages/*/package.json"
       # Single gated build, then fan the output out to every consuming job as one artifact (dist + barrels share
       # The `packages/` common ancestor, so consumers download into `packages`). No hidden-file flag needed —
       # Neither `dist` nor `index.ts` is a dotfile.
