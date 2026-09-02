@@ -43,7 +43,7 @@
     "build": "pnpm build:packages && pnpm build:app",
     "build:app": "virrun -- pnpm --filter @esposter/app run build",
     "build:docs": "virrun -- typedoc",
-    "build:packages": "pnpm -r --filter \"!@esposter/app\" run build",
+    "build:packages": "pnpm -r --aggregate-output --filter \"!@esposter/app\" run build",
     "coverage": "vitest run --coverage",
     "crossOS": "node scripts/crossOS.ts",
     "format": "oxfmt",
