@@ -15,7 +15,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 // Sheet is not publishable and Note is, so the pair covers both sides of every capability gate below
 const createResource = (id: string, type = ResourceType.Sheet) => createResourceListItem({ id, type });
 // The unpublished answer the read carries, which is what a publishable type's test overrides
-type ReadResourceOutput = ReturnType<typeof createResource> & { publication: null };
+type ReadResourceResult = ReturnType<typeof createResource> & { publication: null };
 // The route is what the store loads from, so switching resources in a test is switching the route
 const setRouteId = (id: string) => {
   useRouter().currentRoute.value.params.id = id;
@@ -24,7 +24,7 @@ const setRouteId = (id: string) => {
 describe(useResourceStore, () => {
   const server = setupMswTrpc();
   // Held as a spy rather than an inline resolver, so a test can assert the read was never issued at all
-  let readResourceQuery: ReturnType<typeof vi.fn<(options: { input: { id: string } }) => ReadResourceOutput>>;
+  let readResourceQuery: ReturnType<typeof vi.fn<(options: { input: { id: string } }) => ReadResourceResult>>;
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
   const resourceId = crypto.randomUUID();
   const otherResourceId = crypto.randomUUID();
@@ -51,7 +51,7 @@ describe(useResourceStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     setRouteId(resourceId);
-    readResourceQuery = vi.fn<(options: { input: { id: string } }) => ReadResourceOutput>(({ input }) => ({
+    readResourceQuery = vi.fn<(options: { input: { id: string } }) => ReadResourceResult>(({ input }) => ({
       ...createResource(input.id),
       publication: null,
     }));

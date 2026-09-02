@@ -20,7 +20,7 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 
 - `get*` for derivation/display functions: `getFooTooltip`, `getFooTitle`
 - `read*` for async data-fetching functions — never `fetch*` (`fetch` is reserved for the Web API): `readFoos`
-  - **A fetch that returns a count is one of them**: `readFoosCount`, never `countFoos` — the trip is what the name has to say, and the endpoint sits beside `readFoos` in the same router. `count*` is reserved for a pure in-memory tally (`countOccurrences`), which is where the verb is the whole operation
+  - **A fetch that returns a count is one of them** — `readFoosCount`, and the service behind it takes the procedure's name. Where `count*` is still right for the procedure itself is the `trpc` skill's, under Procedure & Result Naming; `count*` outside that is a pure in-memory tally (`countOccurrences`), where the verb is the whole operation
 - CRUD prefixes (`create*`, `update*`, `delete*`) for data/store operations
 - `store*` prefix for subscription-driven state-update counterparts of async user actions: `deleteFoo` (user action) + `storeDeleteFoo` (subscription update). Never on unpaired methods
 - `on*` prefix for handlers **only when wrapping an existing named store/service fn**: `onUpdateFoo` wraps `updateFoo`. Direct actions use the action name: `submit`, `save`, `delete` — never `onSubmit`/`onSave`/`onDelete`

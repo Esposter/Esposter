@@ -1,7 +1,7 @@
 import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMySentMessagesResult";
 import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessagesResult";
 import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
-import type { ReadFollowedThreadsOutput } from "#shared/models/message/thread/ReadFollowedThreadsOutput";
+import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { Clause } from "@esposter/azure";
 import type { AzureUpdateEntity, MessageEntity } from "@esposter/db-schema";
@@ -382,7 +382,7 @@ export const baseMessageRouter = router({
   // `threadRootRowKeys` is the follow-STATE source of truth — every followed root, including those whose root
   // Message was deleted, so the follow button can offer Unfollow on a thread whose root is gone but whose DB
   // Follow row remains — while `threads` drops deleted roots so the drawer never lists a dangling follow.
-  readFollowedThreads: getMemberProcedure(roomIdSchema, "roomId").query<ReadFollowedThreadsOutput>(
+  readFollowedThreads: getMemberProcedure(roomIdSchema, "roomId").query<ReadFollowedThreadsResult>(
     async ({ ctx, input: { roomId } }) => {
       const threadRootRowKeys = await readFollowedThreadRootRowKeys(ctx.db, roomId, ctx.getSessionPayload.user.id);
       if (threadRootRowKeys.length === 0) return { threadRootRowKeys, threads: [] };

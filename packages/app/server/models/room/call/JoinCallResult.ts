@@ -1,6 +1,6 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
-export interface JoinCallOutput {
+export interface JoinCallResult {
   callSessionId: string;
   livekitToken: string;
   livekitUrl: string;
