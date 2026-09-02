@@ -10,6 +10,17 @@ reviews:
         line; the case is not authored and reverting it is undone on the next edit. Report the comment's content
         when it is wrong, out of date, or contradicted by the code — never its casing.
 
+    # Raised as a stale-generator finding in consecutive reviews, in prose and in a workflow comment, sourced from
+    # A learning that never held. One entry ends the class; replying costs a paragraph per window and changes nothing
+    # The next review reads.
+    - path: "**"
+      instructions: |
+        `ctix` is this repository's barrel generator and is current, not removed. `packages/configuration`
+        declares it as a devDependency, the catalog pins its version, and that package's `src/generateExports.ts`
+        resolves `ctix/cli.cjs` and spawns it. `generate-exports` is the bin `@esposter/configuration` exposes to
+        invoke ctix — a wrapper, never a replacement. Never report a reference to `ctix`, or to a barrel as
+        `ctix-generated`, as a stale generator name to be renamed to `generate-exports`.
+
   path_filters:
     - "!pnpm-lock.yaml"
     # auto-generated migrations
