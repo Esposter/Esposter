@@ -139,7 +139,7 @@ export const SOURCE_MIRROR_TIMEOUT_SECONDS: number = Temporal.Duration.from({ mi
 // Upper bound for the host-side `tar` staging the sync's archive (createSourceMirrorArchive): a native NTFS read of
 // The copied paths plus one sequential 9p write into the mirror entry. Generous — a full materialize archives the
 // Whole mirrored set — but bounded so a wedged 9p bridge fails the plan instead of hanging it. This bounds the
-// Synchronous execFileSync side of the split, so ms; SOURCE_MIRROR_TIMEOUT_SECONDS bounds the Linux side.
+// Synchronous execFileSync side of the split, so milliseconds; SOURCE_MIRROR_TIMEOUT_SECONDS bounds the Linux side.
 export const SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 
 export const VIRRUN_TEMP_DIR_PREFIX = "virrun-temp-";
