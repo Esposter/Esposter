@@ -64,7 +64,7 @@
     "typecheck": "virrun -- tsc && virrun -- pnpm -r --parallel run typecheck",
     "typecheck:packages": "virrun -- pnpm -r --filter \"!@esposter/app\" --parallel run typecheck",
     "update:node": "tsx scripts/updateNode/index.ts",
-    "watch:packages": "pnpm -r --filter \"!@esposter/app\" --parallel --stream exec tsdown --watch"
+    "watch:packages": "pnpm -r --filter \"!@esposter/app\" --parallel exec tsdown --watch"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

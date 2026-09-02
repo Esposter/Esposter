@@ -24,20 +24,31 @@ $processMap.Values |
   Where-Object {
     # IndexOf with an explicit comparison rather than -like: Windows paths are
     # case-insensitive, and a -like pattern would read a bracket in the path as a
-    # character class.
-    $_.Name -eq "node.exe" -and $_.CommandLine -and
-    $_.CommandLine.IndexOf($workspacePath, [System.StringComparison]::OrdinalIgnoreCase) -ge 0 -and
+    # character class. The trailing separator is the path boundary - a bare substring
+    # match also matches a sibling workspace whose path extends this one, so a
+    # neighbouring checkout's node processes would be killed too. Both separators,
+    # because node reports its own argv paths with either.
+    $commandLine = $_.CommandLine
+    $_.Name -eq "node.exe" -and $commandLine -and
+    ($commandLine.IndexOf("$workspacePath\", [System.StringComparison]::OrdinalIgnoreCase) -ge 0 -or
+      $commandLine.IndexOf("$workspacePath/", [System.StringComparison]::OrdinalIgnoreCase) -ge 0) -and
     -not $ancestors.Contains([int]$_.ProcessId)
   } |
   ForEach-Object { taskkill /F /PID $_.ProcessId 2>$null }
 
-Remove-Item "pnpm-lock.yaml" -Force -ErrorAction SilentlyContinue
+# A removal that silently fails leaves stale state that the pnpm i below then installs
+# on top of, which is the failure this script exists to clear. Only an already-absent
+# lockfile is not an error.
+if (Test-Path "pnpm-lock.yaml") { Remove-Item "pnpm-lock.yaml" -Force -ErrorAction Stop }
 # Collect every node_modules at any depth, but prune (don't descend into) a matched
 # node_modules so we never walk the huge .pnpm tree. Mirrors `find -prune` in the
 # sh script. rmdir /s /q handles pnpm junctions + long paths, which
 # Remove-Item -Recurse chokes on ("directory not empty").
 function Get-NodeModules($path) {
+  # Reparse points are skipped rather than followed: a junction or symlink leads out of
+  # the workspace, and everything this returns is handed to rmdir /s /q.
   foreach ($dir in Get-ChildItem -Path $path -Directory -Force) {
+    if ($dir.Attributes.HasFlag([System.IO.FileAttributes]::ReparsePoint)) { continue }
     if ($dir.Name -eq "node_modules") { $dir.FullName }
     else { Get-NodeModules $dir.FullName }
   }
@@ -48,6 +59,7 @@ for ($i = 0; $i -lt $targets.Count; $i++) {
   $dir = $targets[$i]
   Write-Progress -Activity "Removing node_modules" -Status "$($i + 1)/$($targets.Count): $dir" -PercentComplete (($i + 1) / $targets.Count * 100)
   cmd /c "rmdir /s /q `"$dir`""
+  if ($LASTEXITCODE -ne 0) { throw "rmdir exited $LASTEXITCODE for $dir" }
 }
 Write-Progress -Activity "Removing node_modules" -Completed
 

@@ -1,5 +1,5 @@
 name: Get Build Cache Keys
-description: Compute the content hashes that key the package-builds and app-build caches, shared by the workflows that save one and every workflow that restores one
+description: Compute the content hashes that key the package-builds and app-build caches, and the path list the package-builds entry is saved and restored with, shared by the workflows that save one and every workflow that restores one
 outputs:
   app-build-hash:
     description: sha256 over every tracked file `pnpm build:app` could read — the package-builds inputs plus `packages/app`
@@ -7,24 +7,34 @@ outputs:
   package-builds-hash:
     description: sha256 over every tracked file `pnpm build:packages` could read
     value: ${{ steps.keys.outputs.package-builds-hash }}
+  package-builds-paths:
+    description: The paths the package-builds cache entry and its artifact hold — `packages/*/dist` and the generated barrels
+    value: ${{ steps.paths.outputs.package-builds-paths }}
 runs:
   using: composite
   steps:
-    # An action rather than a copy of the script per workflow, because the two sides of a cache fail
-    # differently. A restore whose `path` list is wrong reports a hit and extracts nothing, which the consumers
-    # catch by probing for the artifact itself before they skip a build. A restore whose *key* drifts from the
-    # save's simply never hits again, silently, and the only symptom is a build everyone assumed was cached —
-    # so the keys get one definition and the path lists stay where they are read.
+    # An action rather than a copy per workflow, because both halves of a cache entry's address fail silently. A
+    # key that drifts from the save's simply never hits again, and the only symptom is a build everyone assumed
+    # was cached. A `path` list that drifts extracts part of the entry — or none of it — while the restore still
+    # reports a hit. So both get one definition here, and no job trusts that hit: each verifies the build output
+    # on disk with the `verify-package-builds` action before it skips a build.
     #
     # Both keys are a content hash (mode + blob hash + path) of the TRACKED files under `packages/` that the
     # build could read, plus the root package.json (infra bundles it via
-    # `import packageJson from "../../../../package.json"`), the lockfile and the catalog. Reading the lockfile
-    # and the catalog is what makes a dependency bump — a catalog version, a resolution — a new key rather than
-    # a stale hit.
+    # `import packageJson from "../../../../package.json"`), the lockfile, the catalog and `virrun.config.ts`.
+    # Reading the lockfile and the catalog is what makes a dependency bump — a catalog version, a resolution —
+    # a new key rather than a stale hit; reading `virrun.config.ts` is what makes a change to the backend
+    # `pnpm build:app` runs under one, since the root package.json only carries the script that names `virrun`.
     #
-    # Everything is an input until proven otherwise, and only two things are subtracted: `packages/app`, from
-    # the package key alone because no consumer of that cache builds it, and test/bench files, which no
-    # entrypoint reaches and which change far more often than anything they sit beside. The two failure
+    # Everything is an input until proven otherwise, and only three things are subtracted. Two are subtracted
+    # from both keys: test/bench sources, which no entrypoint reaches and which change far more often than
+    # anything they sit beside, and the committed bench reports beside them (`*.bench.json`, `*.bench.md` and
+    # their platform-suffixed variants) — a `pnpm bench` run rewrites those in `packages/app` and `virrun`
+    # alike, and hashing them cost a full app rebuild for a number no build reads. The third is `packages/app`,
+    # subtracted from the package key alone because no consumer of that cache builds it, together with every
+    # `.md` — markdown is a build input for the app, which renders `content/docs` through @nuxt/content, and
+    # for no package, so a README edit or the CHANGELOGs `lerna publish` rewrites across every package no
+    # longer discards the whole package build. The two failure
     # directions are not symmetric — subtracting too little costs one rebuild on a push that was already
     # touching a package's internals, while subtracting too much serves a `dist` that does not match the source
     # it claims to be built from, and every check downstream then passes against the stale artifact. So the
@@ -39,10 +49,24 @@ runs:
       shell: bash
       run: |
         readBuildInputs() {
-          git ls-tree -r HEAD packages | awk -F'\t' '$2 ~ /\.(test|test-d|bench)\.ts$/ { next } { print }'
-          git rev-parse HEAD:package.json HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml
+          git ls-tree -r HEAD packages | awk -F'\t' '$2 ~ /\.(test|test-d|bench)\.ts$/ || $2 ~ /\.bench(\.[^.]+)?\.(json|md)$/ { next } { print }'
+          git rev-parse HEAD:package.json HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml HEAD:virrun.config.ts
         }
         {
           echo "app-build-hash=$(readBuildInputs | sha256sum | cut -d' ' -f1)"
-          echo "package-builds-hash=$(readBuildInputs | awk -F'\t' '$2 ~ /^packages\/app\// { next } { print }' | sha256sum | cut -d' ' -f1)"
+          echo "package-builds-hash=$(readBuildInputs | awk -F'\t' '$2 ~ /^packages\/app\// || $2 ~ /\.md$/ { next } { print }' | sha256sum | cut -d' ' -f1)"
+        } >> "$GITHUB_OUTPUT"
+    # `packages/*/dist` is the build output and `packages/*/src/**/index.ts` are the ctix-generated barrels
+    # (gitignored, absent on a fresh checkout). Both are produced by `pnpm build:packages`, and both share the
+    # `packages/` common ancestor, so the artifact made from them downloads into `packages`. Five workflows save
+    # or restore this entry; none of them repeats these two globs.
+    - name: 🗂️ Emit the package-builds path list
+      id: paths
+      shell: bash
+      run: |
+        {
+          echo 'package-builds-paths<<PACKAGE_BUILDS_PATHS'
+          echo 'packages/*/dist'
+          echo 'packages/*/src/**/index.ts'
+          echo 'PACKAGE_BUILDS_PATHS'
         } >> "$GITHUB_OUTPUT"

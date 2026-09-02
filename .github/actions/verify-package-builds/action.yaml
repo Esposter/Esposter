@@ -1,0 +1,47 @@
+name: Verify Package Builds
+description: Report whether every workspace package that builds has output on disk, so a job gates its build on the build itself rather than on a cache's own verdict
+inputs:
+  fail-when-incomplete:
+    description: Fail the step rather than reporting `complete=false`. For the check that runs *after* a build, where an incomplete tree is a broken build rather than a cold cache
+    required: false
+    default: "false"
+outputs:
+  complete:
+    description: "`true` when every package that builds has a non-empty `dist`"
+    value: ${{ steps.verify.outputs.complete }}
+runs:
+  using: composite
+  steps:
+    # `actions/cache` reports `cache-hit` for the entry it found, not for what it wrote: an entry saved under one
+    # `path` list and restored by a job carrying another extracts part of it, or none, and still reports a hit —
+    # And the key covers tracked files, so editing that list moves nothing. Every job here skips a build on that
+    # Answer, so the answer comes from the disk instead.
+    #
+    # The package set is discovered rather than listed, the way the workspace invariants under `scripts/workspace`
+    # Discover theirs: a package builds if it has a tsdown config, so one added later is covered by nothing.
+    # `dist` alone is checked, deliberately. It is the half that gets deployed and published, so it is the half
+    # Whose absence is silent — a barrel missing beside it fails the consuming `typecheck` and `lint` jobs loudly,
+    # Naming the package. Pure shell for the same reason it is `dist`-shaped: a cache hit is designed to need no
+    # `node_modules`, and a probe that had to be installed could not answer before the install it gates.
+    - name: 🔍 Verify package builds
+      id: verify
+      shell: bash
+      env:
+        FAIL_WHEN_INCOMPLETE: ${{ inputs.fail-when-incomplete }}
+      run: |
+        missingPackages=()
+        for tsdownConfiguration in packages/*/tsdown.config.ts; do
+          package="${tsdownConfiguration%/tsdown.config.ts}"
+          [ -n "$(ls -A "$package/dist" 2>/dev/null)" ] || missingPackages+=("$package")
+        done
+        if [ ${#missingPackages[@]} -eq 0 ]; then
+          echo "complete=true" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        echo "complete=false" >> "$GITHUB_OUTPUT"
+        # Named rather than counted, and the two readings differ: every package is an ordinary cold cache, some of
+        # Them is the partial extract this check exists to catch.
+        echo "No dist for: ${missingPackages[*]}"
+        if [ "$FAIL_WHEN_INCOMPLETE" = "true" ]; then
+          exit 1
+        fi

@@ -16,7 +16,10 @@ export const RUNTIME_DEPENDENCY_FIELDS: DependencyField[] = [
 // Is what every line the theme does not own has to do — the svg is committed once and read in either scheme.
 export const MUTED_COLOR = "#8b949e";
 
-export const RUNTIME_EDGE_COLOR = "#2f74d0";
+// Teal, because it is the one strong mid-lightness family none of the three role hues claims: a runtime edge
+// Lands on a node's border, and the blue this replaces was the violet library border under protanopia (ΔE 3.8).
+// Mid-lightness rather than dark, so it carries on a near-black page as well as a white one.
+export const RUNTIME_EDGE_COLOR = "#207372";
 // Graphviz reads no stylesheet, so the theme is attribute defaults on the graph itself. `transparent` is what
 // Lets the one committed svg sit in a README that is read in either colour scheme, and it is also why every
 // Colour here is one that carries its own contrast: a node is an opaque pale fill with near-black text on top

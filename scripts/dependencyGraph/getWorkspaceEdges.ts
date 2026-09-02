@@ -6,14 +6,14 @@ import { RUNTIME_DEPENDENCY_FIELDS, WORKSPACE_SPECIFIER_PREFIX } from "#scripts/
 import { DependencyField } from "#scripts/models/DependencyField";
 
 const getEdgeKey = ({ from, to }: WorkspaceEdge): string => `${from}/${to}`;
-// Sorted by key with no comparator, so the order is UTF-16 code units rather than the machine's collation. The
-// Svg this feeds is committed, and a locale-dependent order would rewrite it on someone else's machine.
+// Ordered by `<` on the key rather than by `localeCompare`, so the order is UTF-16 code units rather than the
+// Machine's collation. The svg this feeds is committed, and a locale-dependent order would rewrite it on someone
+// Else's machine.
 const getSortedEdges = (workspaceEdges: Map<string, WorkspaceEdge>): WorkspaceEdge[] =>
   workspaceEdges
-    .keys()
+    .values()
     .toArray()
-    .toSorted()
-    .flatMap((key) => workspaceEdges.get(key) ?? []);
+    .toSorted((left, right) => (getEdgeKey(left) < getEdgeKey(right) ? -1 : 1));
 
 export const getWorkspaceEdges = (workspacePackages: WorkspacePackage[]): WorkspaceEdges => {
   const directoryByName = new Map(

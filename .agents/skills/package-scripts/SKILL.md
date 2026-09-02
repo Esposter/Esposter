@@ -1,11 +1,15 @@
 ---
 name: package-scripts
-description: Esposter pnpm script reference — packages/app scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, graph:gen, outdated:dependencies), the rule that every `.ts` script runs under `tsx` so an enum is always available, the `scriptsComments` key that carries a script's comment because JSON has none, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
+description: Esposter pnpm script reference — packages/app scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, graph:gen, outdated:dependencies, release), a Settled note that the release stays one local script rather than a CI publish, the rule that every `.ts` script runs under `tsx` so an enum is always available and why a pre-install CI check is shell rather than a script, the `scriptsComments` key that carries a script's comment because JSON has none, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
 ---
 
 # Package Scripts
 
 `packages/app` scripts run from `packages/app/`; root scripts run from the repo root. Always `pnpm` — never `npm` or `npx`.
+
+## Settled — do not re-propose
+
+- **Splitting the release into a local `lerna version` and a CI publish** — a tag-triggered job publishing through npm's trusted publishing, which lerna-lite supports out of the box (`id-token: write`, a per-package token exchange, provenance attached for a public package). It buys an attestation that the published tarball is the one CI built. Nobody here is asking for that attestation, and the price is a release path that lives in two places and a per-package trusted-publisher registration on npmjs.com that fails closed the day a new package is added. **One script, run locally, is the whole release**: `pnpm release` gates the tree and hands `lerna publish` a version, a tag and a `dist` it just built, and 🚀 Release turns the pushed tag into a GitHub release. Publishing from a developer's machine is the deliberate simplification, not an oversight.
 
 ## `packages/app`
 
@@ -37,6 +41,7 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 | `pnpm coverage`              | `vitest run --coverage` (no virrun)               | Root-only (packages have no `coverage` script). CI shards via `--reporter=blob` + `--merge-reports`.                                    |
 | `pnpm outdated:dependencies` | `tsx scripts/outdatedDependencies/index.ts`       | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest.      |
 | `pnpm graph:gen`             | `tsx scripts/dependencyGraph/index.ts`            | Regenerate `dependency-graph.svg` from the workspace manifests. Run it after changing one.                                              |
+| `pnpm release`               | checks, then `lerna publish`                      | The whole release, run locally — see Settled above.                                                                                     |
 
 ## Running a TypeScript Script
 
@@ -59,6 +64,12 @@ Two further things `tsx` absorbs, which is why there is nothing to gain by tryin
 
 **`node` stays where the file is not TypeScript.** `db:run` runs `drizzle-kit`'s CJS bin directly and needs no
 loader wrapped around it.
+
+**A check that has to run before an install belongs in CI's own shell, not in a script.** `tsx` is a
+devDependency, so a `.ts` script cannot answer a question asked before `node_modules` exists — which is exactly
+what CI's package-build gate asks, on a cache hit designed to need no install. That gate is therefore a few lines
+of bash in `.github/actions/verify-package-builds`, beside the bash that computes the cache key. Reaching for bare
+`node` instead would pick the runner before the code and put an enum ban on a script for the rest of its life.
 
 ## `scriptsComments`
 
