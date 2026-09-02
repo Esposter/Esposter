@@ -3,7 +3,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { Clause } from "@esposter/azure";
 import type { BanInMessage, BanInMessageWithRelations } from "@esposter/db-schema";
 
-import { countModerationNotesInputSchema } from "#shared/models/db/moderation/CountModerationNotesInput";
+import { readModerationNotesCountInputSchema } from "#shared/models/db/moderation/ReadModerationNotesCountInput";
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
 import { deleteBanInputSchema } from "#shared/models/db/moderation/DeleteBanInput";
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
@@ -20,7 +20,7 @@ import { callSessionParticipantMap } from "@@/server/services/message/call/callP
 import { readCallSessionId } from "@@/server/services/message/call/readCallSessionId";
 import { moderationEventEmitter } from "@@/server/services/message/events/moderationEventEmitter";
 import { AdminActionPermissionMap } from "@@/server/services/message/moderation/AdminActionPermissionMap";
-import { countModerationNotes } from "@@/server/services/message/moderation/countModerationNotes";
+import { readModerationNotesCount } from "@@/server/services/message/moderation/readModerationNotesCount";
 import { softDeleteRoomMessagesByUser } from "@@/server/services/message/moderation/softDeleteRoomMessagesByUser";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
@@ -76,13 +76,13 @@ const banRoomMember = (db: Context["db"], actorUserId: string, roomId: string, t
   });
 
 export const moderationRouter = router({
-  countModerationNotes: getPermissionsProcedure(
+  readModerationNotesCount: getPermissionsProcedure(
     RoomPermission.KickMembers,
-    countModerationNotesInputSchema,
+    readModerationNotesCountInputSchema,
     "roomId",
   ).query<number>(async ({ ctx, input: { roomId, targetUserId } }) => {
     await assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId);
-    return countModerationNotes(roomId, targetUserId);
+    return readModerationNotesCount(roomId, targetUserId);
   }),
   createModerationNote: getPermissionsProcedure(
     RoomPermission.KickMembers,

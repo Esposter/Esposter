@@ -468,7 +468,7 @@ describe("moderation", () => {
     });
   });
 
-  describe("countModerationNotes", () => {
+  describe("readModerationNotesCount", () => {
     test("counts all of the target member's notes regardless of page size", async () => {
       expect.hasAssertions();
 
@@ -480,7 +480,7 @@ describe("moderation", () => {
       }
 
       const firstPage = await moderationCaller.readModerationNotes({ limit: 1, roomId, targetUserId: member.id });
-      const count = await moderationCaller.countModerationNotes({ roomId, targetUserId: member.id });
+      const count = await moderationCaller.readModerationNotesCount({ roomId, targetUserId: member.id });
 
       expect(firstPage.items).toHaveLength(1);
       expect(count).toBe(noteCount);
