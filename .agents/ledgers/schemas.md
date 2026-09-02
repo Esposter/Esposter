@@ -15,13 +15,13 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 | `app/shared/models/dungeons`                               | 2026-09-02 | clean - class/interface-first with a trailing `satisfies` throughout, ints already bounded, and no legacy arm in a save shape                          |
 | `app/shared/models` — the editor and game trees            | 2026-09-02 | clean - the GrapesJS subclasses each re-declare the catchall a `.shape` spread drops, and a test pins it                                               |
 | `app/shared/models` — the rest                             | 2026-09-02 | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler` and the singles; `dataset` was the only array set                              |
-| `app/models`, `app/services/*/…` form schemas              | —          | the Vjsf-rendered ones carry extra rules                                                                                                               |
+| `app/models`, `app/services/*/…` form schemas              | 2026-09-02 | the Vjsf-rendered ones carry extra rules; the computed-enum-key shape found here is now a lint rule                                                    |
 | `packages/db`, `packages/db-mock`                          | 2026-09-02 | clean - neither declares a table or a zod schema; the mock's snapshot is generated and `createMockDb.test.ts` fails when it drifts                     |
 | `packages/shared`, `packages/parse-tmx`, `packages/xml2js` | 2026-09-02 | clean - `@esposter/shared`'s zod surface is the helpers themselves; `parse-tmx` and `xml2js` depend on zod nowhere                                     |
 
 The three widest rows were split at their own subdirectories on 2026-08-31, before any pass read them: `db` was
-102 files, `resource` 76 and the tail around 90, and a unit that size is grepped rather than read. The dates stay
-absent — the parent rows never held one to carry down.
+102 files, `resource` 76 and the tail around 90, and a unit that size is grepped rather than read. The children
+opened at `—` rather than inheriting a date, because the parent rows never held one to carry down.
 
 ## Exclusions
 
@@ -46,6 +46,9 @@ grep -rn -A 40 'z\.discriminatedUnion(' --include=*.ts packages/app/app packages
 
 ## Next enforceable
 
+- **A computed object key read off a zod `.enum` is now banned by lint** — `restrictedSyntaxes.js` carries the
+  Selector, and the four sites it found are rewritten. The shape spelled a literal unsearchably while the value
+  Beside it named the same field through `.shape`, so a rename broke the object either way.
 - **Registration completeness is now enforced** — `schema.test.ts` imports every module in `src/schema` and
   Asserts each `pgTable`/`pgEnum` export is a value of the `schema` object, comparing by identity so a table
   Registered under the wrong key still counts (the naming test beside it owns the key). It was written on

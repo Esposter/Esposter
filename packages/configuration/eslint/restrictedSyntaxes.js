@@ -27,6 +27,14 @@ export default [
     selector: "CallExpression[callee.property.name=/^(catch|finally|then)$/]",
   },
   {
+    // A zod `.enum` read as a computed object key spells a literal unsearchably. The value beside it already
+    // Names the same field through `.shape`, so a rename breaks the object whichever way the key is written —
+    // The indirection buys no safety and costs every grep for the field name.
+    message:
+      "Write the object key literally — a computed `…enum.x` key is the same literal, spelled so nothing can grep it.",
+    selector: "Property[computed=true][key.object.property.name='enum']",
+  },
+  {
     // Banned outright (no Vue modifier exists for it, and it couples behavior to listener registration order).
     message:
       "stopImmediatePropagation is banned — it couples behavior to listener registration order. Restructure the handlers (or use @event.stop) instead.",
