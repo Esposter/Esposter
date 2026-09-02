@@ -137,6 +137,8 @@ For **any** package it is the only thing that notices a specifier which resolved
 
 `@esposter/configuration` is the single package that widens the allowlist, adding its `devDependencies`: it externalizes everything, and the base derives the list from the runtime dependency fields alone.
 
+The gate reads imports, not the manifest, so it stops one step short of the whole promise: a private sibling sitting in `dependencies` _is_ declared. The bundle leaves it external legitimately, publint sees a well-formed manifest, and the install still resolves nothing for a stranger. Nothing in a build can see that, so `scripts/publishedDependencies.test.ts` does — no published package may name a private sibling in any field a consumer's package manager resolves, `peerDependenciesMeta` included, since a name declared only there is externalized too.
+
 ## The published surface is gated further
 
 A published package owes an installable promise to a stranger, and two more options hold it to that promise. They are switched on by the absence of `private` in the manifest, so no package opts into them by hand:
