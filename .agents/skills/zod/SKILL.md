@@ -56,6 +56,7 @@ createUniqueArraySchema(fooSchema, "id").max(FOO_MAX_LENGTH).default([]);
 - **Format validators and numeric refinements are top-level functions** — never the Zod 3 chained syntax: `z.email()`, `z.url()`, `z.uuid()`, `z.nanoid()`, `z.cuid()`/`z.cuid2()`, `z.ulid()`, `z.emoji()`, `z.base64()`/`z.base64url()`, `z.ipv4()`/`z.ipv6()` (not `z.string().ip({ version })`), `z.int()` (not `z.number().int()`), `z.iso.date()`/`.datetime()`/`.time()`/`.duration()`, `z.strictObject({...})` (not `.strict()`), `z.looseObject({...})` (not `.passthrough()`).
 - `z.uuid()` strictly validates RFC 9562/4122 — use `z.guid()` for permissive "UUID-like" validation.
 - **`z.enum(MyEnum)`** directly for TS string enums; `z.nativeEnum` is Zod 3 only.
+- **A refinement's custom text goes under `error`** — `.refine(check, { error: "…", path: [...] })`, never Zod 3's `message`, which still parses and so leaves two spellings of one key in the same tree. The `message` key inside a pushed issue is a different object and keeps its name.
 - **Never `.addIssue()` / `.addIssues()` on a `ZodError`** (deprecated in Zod 4) — push directly: `myError.issues.push({ code: "custom", message: "..." })`. `ctx.addIssue()` inside `superRefine` is still valid (it operates on the refinement context, not a `ZodError`).
 
 ## Validate, Never Cast

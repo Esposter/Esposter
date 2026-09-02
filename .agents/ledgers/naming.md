@@ -6,7 +6,7 @@
 | `app/shared/services`, `app/shared/util`                               | 2026-08-27 | `startsWithNumber` → `checkStartsWithNumber`; `itemConstants.ts` → `item/constants.ts`, the shape its own sibling already used. `check*` on the three invite/rbac predicates is the convention, not a violation                                   |
 | `app/shared/models/db/message`                                         | 2026-09-02 | the input schemas every message router imports; `readThread` now names the root the way its column and every sibling do                                                                                                                           |
 | `app/shared/models/db` — `room`, `role`, `moderation`, `webhook`, …    | 2026-09-02 | `countModerationNotes` → `readModerationNotesCount`, and the base admin-action interface off the `A` prefix. `action`/`type` mirror their own columns, and the invite result's fields are drizzle relation keys — both `packages/db-schema`'s row |
-| `app/shared/models/db` — the rest                                      | —          | `post`, `user`, `searchHistory`, `friend`, `blueprint`, `userToRoom`, `userSettings`, `notification`                                                                                                                                              |
+| `app/shared/models/db` — the rest                                      | 2026-09-02 | clean on names; the one fix was a refinement spelling its text `message` where every other one says `error`                                                                                                                                       |
 | `app/shared/models/resource/sheet`                                     | —          | the column and transformation families                                                                                                                                                                                                            |
 | `app/shared/models/resource` — the rest                                | —          | the per-type content shapes and the capability types over them                                                                                                                                                                                    |
 | `app/shared/models/dungeons`                                           | —          | the persisted save shapes                                                                                                                                                                                                                         |
@@ -38,6 +38,9 @@ the grounds that a rename is expensive — that is the argument
 - **`getIsAuthed` / `getIsRateLimited` / `getIsEntityIdEqualComparator` — `get*` is right, the `Is` is not.**
   All three return a function rather than a boolean, so `check*` would be wrong, but the `Is` still reads as a
   Predicate. The middleware pair wants a name saying what it builds; the comparator already has one.
+- **`no*` for "number of" reads as a negation, and the family is anchored to two columns.** `noComments` and
+  `noLikes` are `posts` columns, so `noRemovedComments` and the rest follow them rather than lead — the whole
+  family renames with the migration on `packages/db-schema`'s row, or not at all.
 
 ## Next enforceable
 
