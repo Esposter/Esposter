@@ -7,6 +7,7 @@ on:
       - ".github/workflows/Pulumi.yaml"
       - ".github/actions/setup-project-dependencies/**"
       - ".github/actions/get-build-cache-keys/**"
+      - ".github/actions/verify-package-builds/**"
 
 permissions:
   id-token: write
@@ -40,18 +41,21 @@ jobs:
       - name: ♻️ Restore package builds
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: |
-            packages/*/dist
-            packages/*/src/**/index.ts
+          path: ${{ steps.keys.outputs.package-builds-paths }}
           key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
 
       - name: 📦 Install dependencies
         run: pnpm --filter @esposter/infra... i
-      # Gated on the artifact itself rather than on the restore's `cache-hit`: a hit whose `path` list no longer
-      # Matches what was saved reports success and extracts nothing, and a build skipped on that flag would hand
-      # Pulumi an empty program.
+      # Gated on the build output rather than on the restore's `cache-hit`: that flag reports the entry the cache
+      # Found, not what it extracted, so a `path` list that drifted from the save's reports a hit while a build
+      # Skipped on it hands Pulumi an empty program. Every building package's `dist` is read rather than this
+      # One's `dist/index.js` — a partial extract satisfies a single-file probe exactly when it should not.
+      - name: 🔍 Verify package builds
+        id: verify
+        uses: ./.github/actions/verify-package-builds
+
       - name: 🏗️ Build
-        if: ${{ hashFiles('packages/infra/dist/index.js') == '' }}
+        if: steps.verify.outputs.complete != 'true'
         run: pnpm --filter @esposter/infra... build
 
       - name: 🔍 Pulumi Preview

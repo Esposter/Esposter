@@ -49,18 +49,22 @@ jobs:
       - name: ♻️ Restore package builds
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: |
-            packages/*/dist
-            packages/*/src/**/index.ts
+          path: ${{ steps.keys.outputs.package-builds-paths }}
           key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
 
       - name: 🔧 Resolve Project Dependencies
         run: pnpm --filter @esposter/azure-functions... i
-      # Gated on the artifact itself rather than on the restore's `cache-hit`: a hit whose `path` list no longer
-      # Matches what was saved reports success and extracts nothing, and a build skipped on that flag would zip
-      # An empty `dist` and deploy a function app that registers nothing while the host still reports Running.
+      # Gated on the build output rather than on the restore's `cache-hit`: that flag reports the entry the cache
+      # Found, not what it extracted, so a `path` list that drifted from the save's reports a hit while a build
+      # Skipped on it zips an empty `dist` and deploys a function app that registers nothing, with the host still
+      # Reporting Running. Every building package's `dist` is read rather than this one's — a partial extract
+      # Satisfies a single-file probe exactly when it should not.
+      - name: 🔍 Verify package builds
+        id: verify
+        uses: ./.github/actions/verify-package-builds
+
       - name: 🏗️ Build
-        if: ${{ hashFiles(format('{0}/dist/index.js', env.PACKAGE_PATH)) == '' }}
+        if: steps.verify.outputs.complete != 'true'
         run: pnpm --filter @esposter/azure-functions... build
 
       - name: 📦 Collect Deployment Output
