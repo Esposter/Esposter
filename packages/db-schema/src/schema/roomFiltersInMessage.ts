@@ -40,7 +40,7 @@ export const roomFiltersInMessage = pgTable(
       // A Timeout action requires a positive duration — every other action requires the duration unset.
       check(
         "roomFilters_action_timeoutDurationMs_check",
-        sql`(${action} = 'Timeout' AND ${timeoutDurationMs} IS NOT NULL AND ${timeoutDurationMs} > 0) OR (${action} <> 'Timeout' AND ${timeoutDurationMs} IS NULL)`,
+        sql`(${action} = '${sql.raw(WordFilterAction.Timeout)}' AND ${timeoutDurationMs} IS NOT NULL AND ${timeoutDurationMs} > 0) OR (${action} <> '${sql.raw(WordFilterAction.Timeout)}' AND ${timeoutDurationMs} IS NULL)`,
       ),
     ],
     schema: messageSchema,

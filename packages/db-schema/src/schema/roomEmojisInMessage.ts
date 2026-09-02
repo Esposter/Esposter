@@ -1,7 +1,8 @@
-import { createNameCheckSql, createNameSchema } from "#src/models/shared/Name";
+import { createNameCheckSql } from "#src/models/shared/Name";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomsInMessage } from "#src/schema/roomsInMessage";
+import { normalizeString } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { check, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -37,5 +38,10 @@ export const roomEmojisInMessage = pgTable(
 export type RoomEmojiInMessage = typeof roomEmojisInMessage.$inferSelect;
 
 export const selectRoomEmojiInMessageSchema = createSelectSchema(roomEmojisInMessage, {
-  name: (schema) => createNameSchema(ROOM_EMOJI_NAME_MAX_LENGTH, schema).pipe(z.string().regex(ROOM_EMOJI_NAME_REGEX)),
+  // Every constraint sits on the one final pipe output rather than layering a second pipe over the name helper:
+  // A JSON schema is emitted from the outermost pipe alone, so a nested layer silently drops the length bounds
+  name: (schema) =>
+    schema
+      .transform(normalizeString)
+      .pipe(z.string().min(1).max(ROOM_EMOJI_NAME_MAX_LENGTH).regex(ROOM_EMOJI_NAME_REGEX)),
 });
