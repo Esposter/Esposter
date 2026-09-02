@@ -35,7 +35,7 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 | `pnpm test`                  | `virrun -- vitest run`                            | Whole suite once via the root vitest `projects` config (every package + `scripts/` + `.agents/`). **CI only** — never run bare locally. |
 | `pnpm test:packages`         | `virrun -- vitest run --project "!@esposter/app"` | All projects except the app — skips Nuxt. Local-only, and takes paths like `pnpm test` does: pass them.                                 |
 | `pnpm coverage`              | `vitest run --coverage` (no virrun)               | Root-only (packages have no `coverage` script). CI shards via `--reporter=blob` + `--merge-reports`.                                    |
-| `pnpm outdated:dependencies` | `node scripts/checkDependencies/index.ts`         | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest.      |
+| `pnpm outdated:dependencies` | `node scripts/outdatedDependencies/index.ts`      | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest.      |
 | `pnpm graph:gen`             | `node scripts/dependencyGraph/index.ts`           | Regenerate `dependency-graph.svg` from the workspace manifests. Run it after changing one.                                              |
 
 ## Running a TypeScript Script

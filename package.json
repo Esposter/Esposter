@@ -53,7 +53,7 @@
     "lint:fix": "virrun -- oxlint --format=default --fix --disable-nested-config && virrun -- eslint --fix . && virrun -- pnpm -r --parallel --aggregate-output run lint:fix",
     "lint:fix:packages": "virrun -- oxlint --format=default --fix --disable-nested-config --ignore-pattern \"packages/app/**\" packages && virrun -- pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run lint:fix",
     "lint:packages": "virrun -- oxlint --format=default --disable-nested-config --ignore-pattern \"packages/app/**\" packages && virrun -- pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run lint",
-    "outdated:dependencies": "node scripts/checkDependencies/index.ts",
+    "outdated:dependencies": "node scripts/outdatedDependencies/index.ts",
     "prepare": "git config core.hooksPath .githooks || true",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
