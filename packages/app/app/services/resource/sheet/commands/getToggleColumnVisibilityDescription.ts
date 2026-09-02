@@ -1,2 +1,2 @@
-export const getToggleColumnVisibilityDescription = (name: string, hidden: boolean) =>
-  `${hidden ? "Show" : "Hide"} "${name}" Column`;
+export const getToggleColumnVisibilityDescription = (name: string, isHidden: boolean) =>
+  `${isHidden ? "Show" : "Hide"} "${name}" Column`;

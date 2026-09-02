@@ -17,7 +17,7 @@ export const computeDatePartTransformation = (
   const parsedDate = parseDate(value, inputFormat);
   if (!parsedDate) return null;
   const zonedDateTime = getZonedDateTime(parsedDate);
-  switch (transformation.part) {
+  switch (transformation.datePartType) {
     case DatePartType.Day:
       return zonedDateTime.day;
     case DatePartType.Hour:
@@ -33,6 +33,6 @@ export const computeDatePartTransformation = (
     case DatePartType.Year:
       return zonedDateTime.year;
     default:
-      return exhaustiveGuard(transformation.part);
+      return exhaustiveGuard(transformation.datePartType);
   }
 };

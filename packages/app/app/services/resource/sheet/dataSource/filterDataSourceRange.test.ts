@@ -44,7 +44,7 @@ describe(filterDataSourceRange, () => {
     expect.hasAssertions();
 
     const hiddenSourceColumn = createColumn("source");
-    hiddenSourceColumn.hidden = true;
+    hiddenSourceColumn.isHidden = true;
     const hiddenSourceDataSource = createDataSource(
       [hiddenSourceColumn, createComputedColumn("computed", hiddenSourceColumn.id)],
       rows,

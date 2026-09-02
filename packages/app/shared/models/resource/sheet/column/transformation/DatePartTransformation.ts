@@ -8,11 +8,11 @@ import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface DatePartTransformation extends ItemEntityType<ColumnTransformationType.DatePart>, SourceColumnId {
-  part: DatePartType;
+  datePartType: DatePartType;
 }
 
 export const datePartTransformationSchema = z.object({
   ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.DatePart).readonly()).shape,
   ...sourceColumnIdSchema.shape,
-  part: datePartTypeSchema,
+  datePartType: datePartTypeSchema,
 }) satisfies z.ZodType<DatePartTransformation>;

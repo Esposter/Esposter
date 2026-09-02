@@ -103,7 +103,7 @@ describe(useCopyRangeToClipboard, () => {
     const rowStore = useRowStore();
     rowStore.copyIncludesHeaders = true;
     const sourceColumn = createNumberColumn("price");
-    sourceColumn.hidden = true;
+    sourceColumn.isHidden = true;
     const computedColumn = createComputedColumn("priceStr", sourceColumn.id);
     setupWithDataSource(createDataSource([sourceColumn, computedColumn], [createRow({ price: 42 })]));
     selectRange(0, 0, 0, 0);

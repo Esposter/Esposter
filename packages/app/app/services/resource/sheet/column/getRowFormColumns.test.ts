@@ -12,7 +12,7 @@ describe(getRowFormColumns, () => {
 
     const columns = [
       new StringColumn({ name: "visible" }),
-      new NumberColumn({ hidden: true, name: "hidden" }),
+      new NumberColumn({ isHidden: true, name: "hidden" }),
       new ComputedColumn({ name: "computed" }),
     ];
 

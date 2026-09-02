@@ -15,7 +15,7 @@ export const createColumnStatistics = (overrides: Partial<ColumnStatistics> = {}
   minimum: undefined,
   mostFrequentValue: undefined,
   nullCount: 0,
-  nullPercent: undefined,
+  nullPercentage: undefined,
   standardDeviation: undefined,
   summation: undefined,
   topFrequencies: undefined,

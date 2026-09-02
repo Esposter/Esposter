@@ -17,17 +17,17 @@ describe(useToggleColumnVisibility, () => {
     const toggleColumnVisibility = useToggleColumnVisibility();
     await toggleColumnVisibility(takeOne(dataSource.columns).id);
 
-    expect(takeOne(dataSource.columns).hidden).toBe(true);
+    expect(takeOne(dataSource.columns).isHidden).toBe(true);
   });
 
   test("shows a hidden column", async () => {
     expect.hasAssertions();
 
-    const hiddenColumn = new StringColumn({ hidden: true, name: "" });
+    const hiddenColumn = new StringColumn({ isHidden: true, name: "" });
     const { dataSource } = setupWithDataSource(createDataSource([hiddenColumn], [createRow({ "": 0 })]));
     const toggleColumnVisibility = useToggleColumnVisibility();
     await toggleColumnVisibility(hiddenColumn.id);
 
-    expect(takeOne(dataSource.columns).hidden).toBe(false);
+    expect(takeOne(dataSource.columns).isHidden).toBe(false);
   });
 });

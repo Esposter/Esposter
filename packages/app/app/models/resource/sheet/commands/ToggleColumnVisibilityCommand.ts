@@ -8,29 +8,29 @@ export class ToggleColumnVisibilityCommand extends ADataSourceCommand<CommandTyp
   readonly type = CommandType.ToggleColumnVisibility;
 
   get description() {
-    return getToggleColumnVisibilityDescription(this.#columnName, this.#hidden);
+    return getToggleColumnVisibilityDescription(this.#columnName, this.#isHidden);
   }
 
   readonly #columnId: string;
   readonly #columnName: string;
-  readonly #hidden: boolean;
+  readonly #isHidden: boolean;
 
-  constructor(columnId: string, columnName: string, hidden: boolean) {
+  constructor(columnId: string, columnName: string, isHidden: boolean) {
     super();
     this.#columnId = columnId;
     this.#columnName = columnName;
-    this.#hidden = hidden;
+    this.#isHidden = isHidden;
   }
 
   execute(dataSource: DataSource) {
     const column = dataSource.columns.find(({ id }) => id === this.#columnId);
     if (!column) return;
-    column.hidden = !this.#hidden;
+    column.isHidden = !this.#isHidden;
   }
 
   undo(dataSource: DataSource) {
     const column = dataSource.columns.find(({ id }) => id === this.#columnId);
     if (!column) return;
-    column.hidden = this.#hidden;
+    column.isHidden = this.#isHidden;
   }
 }
