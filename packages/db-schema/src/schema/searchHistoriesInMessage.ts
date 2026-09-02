@@ -18,10 +18,10 @@ export const searchHistoriesInMessage = pgTable(
     query: text().notNull().default(""),
     roomId: uuid()
       .notNull()
-      .references(() => roomsInMessage.id),
+      .references(() => roomsInMessage.id, { onDelete: "cascade" }),
     userId: text()
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
   },
   {
     extraConfig: ({ query }) => [

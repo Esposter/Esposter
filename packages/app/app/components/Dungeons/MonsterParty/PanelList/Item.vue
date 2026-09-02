@@ -63,7 +63,7 @@ const monsterName = computed(() => prettify(monster.key));
       :configuration="{
         x: 26,
         y: 116,
-        text: `LV. ${monster.stats.level}`,
+        text: `LV. ${monster.statistics.level}`,
         style: {
           color: 'white',
           fontSize: 22,
@@ -82,7 +82,7 @@ const monsterName = computed(() => prettify(monster.key));
       :type="BarType.Health"
       :position="{ x: 100, y: 40 }"
       :width="252"
-      :bar-percentage="(monster.status.hp / monster.stats.maxHp) * 100"
+      :bar-percentage="(monster.status.health / monster.statistics.maxHealth) * 100"
     />
     <Text
       :configuration="{
@@ -90,7 +90,7 @@ const monsterName = computed(() => prettify(monster.key));
         y: 95,
         originX: 1,
         originY: 0,
-        text: `${monster.status.hp}/${monster.stats.maxHp}`,
+        text: `${monster.status.health}/${monster.statistics.maxHealth}`,
         style: {
           color: 'white',
           fontSize: 38,

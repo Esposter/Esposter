@@ -1,5 +1,5 @@
 import type { BoughtBuilding } from "#shared/models/clicker/data/building/BoughtBuilding";
-import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
+import type { BuildingWithStatistics } from "#shared/models/clicker/data/building/BuildingWithStatistics";
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 import type { UpgradeId } from "#shared/models/clicker/data/upgrade/UpgradeId";
 
@@ -9,7 +9,7 @@ import { Clicker } from "#shared/models/clicker/data/Clicker";
 import { clickerSaveSchema } from "#shared/models/clicker/data/ClickerSave";
 
 // Copies into fresh objects — the content maps are shared definitions and must never be mutated
-const toBuildingWithStats = ({ amount, id, producedValue }: BoughtBuilding): BuildingWithStats => ({
+const toBuildingWithStatistics = ({ amount, id, producedValue }: BoughtBuilding): BuildingWithStatistics => ({
   ...BuildingMap[id],
   amount,
   id,
@@ -25,7 +25,7 @@ export const toClicker = (savedClicker: unknown) => {
   const { boughtBuildings, boughtUpgrades, ...clickerSave } = parsedClickerSave.data;
   return new Clicker({
     ...clickerSave,
-    boughtBuildings: boughtBuildings.map((boughtBuilding) => toBuildingWithStats(boughtBuilding)),
+    boughtBuildings: boughtBuildings.map((boughtBuilding) => toBuildingWithStatistics(boughtBuilding)),
     boughtUpgrades: boughtUpgrades.map((id) => toUpgrade(id)),
   });
 };

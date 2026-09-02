@@ -66,7 +66,7 @@ Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them pe
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 
-Temporary overrides that force a transitive dep to a safe version (currently `crossws`, `h3`, `pdfjs-dist`, `vite`). Remove when the upstream package catches up — most carry no comment explaining why, so check git blame before removing one.
+Temporary overrides that force a transitive dep to a safe version — the block itself is the list. Remove one when the upstream package catches up; most carry no comment explaining why, so check git blame before removing one.
 
 ## Release age (`minimumReleaseAge: 0`)
 

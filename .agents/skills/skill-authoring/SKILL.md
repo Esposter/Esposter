@@ -1,6 +1,6 @@
 ---
 name: skill-authoring
-description: Esposter skill-writing conventions for .agents/skills — a Settled list of the directions already rejected (shaving prose to land under the size budget, giving another skill's subject a reference page here, recording a one-off as context worth preserving, restating what an enforcer checks, citing a page as a markdown link, diagramming a rule list, and keeping a learning in private memory), frontmatter that drives selection, the two-tier layout (SKILL.md is the always-on rule index, references/*.md hold sub-task deep dives opening with their trigger, the ~15 KB budget as a signal to separate topics rather than a number to shave prose under, trigger-named index lines, and repointing every pointer a split breaks), when a skill earns a mermaid diagram (an ordered cycle with a gate, never a rule list), one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), the `## Settled — do not re-propose` list a domain with rejected directions carries as its first section so a settled decision is findable before it is re-derived rather than buried in prose, don't restate what an enforcer already checks, the reproducible-pattern test (one-offs are deleted rather than recorded — git already holds them), generic placeholders over identifiers from one change, magnitudes over incident numbers, and citing a docs page by its repo-relative path rather than a relative or GitHub link. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
+description: Esposter skill-writing conventions for .agents/skills — a Settled list of the directions already rejected (shaving prose to land under the size budget, giving another skill's subject a reference page here, recording a one-off as context worth preserving, restating what an enforcer checks, citing a page as a markdown link, diagramming a rule list, and keeping a learning in private memory), frontmatter that drives selection, the two-tier layout (SKILL.md is the always-on rule index, references/*.md hold sub-task deep dives opening with their trigger, the ~15 KB budget as a signal to separate topics rather than a number to shave prose under, trigger-named index lines, and repointing every pointer a split breaks), when a skill earns a mermaid diagram (an ordered cycle with a gate, never a rule list), one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), the `## Settled — do not re-propose` list a domain with rejected directions carries as its first section so a settled decision is findable before it is re-derived rather than buried in prose, don't restate what an enforcer already checks, the reproducible-pattern test (one-offs are deleted rather than recorded — git already holds them), generic placeholders over identifiers from one change, magnitudes over incident numbers, stating the rule rather than the roster it produced (a count, an enumeration of what currently satisfies a convention or an only-X-does-this claim restates what ls/grep/a manifest answers, and a sweep's swept set belongs in its ledger while the rule it carried is written as an invariant plus its enforcer), and citing a docs page by its repo-relative path rather than a relative or GitHub link. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
 ---
 
 # Skill Authoring
@@ -10,7 +10,7 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. The ownership map of wh
 ## Settled — do not re-propose
 
 - **Shaving prose to bring a skill under the ~15 KB budget.** The budget is a signal that topics have accumulated, and cutting words buys bytes by making every surviving rule harder to read; separate the topics instead ("SKILL.md is the always-on layer").
-- **Moving an over-budget section to a `references/` page here when it is another skill's subject.** It becomes two shallow copies of one topic; it moves to the skill that owns it ("SKILL.md is the always-on layer").
+- **Moving an over-budget section to a `references/` page here when it is another skill's subject.** It becomes two shallow copies of one topic; it moves to the skill that owns it (`references/splitting-a-skill.md`).
 - **Recording a one-off as context worth preserving** — the file it went wrong in, the fix that was applied. The commit already holds it with more detail and a date, and a one-off in a skill reads as a standing rule ("Is it a reproducible pattern?").
 - **Restating a rule an enforcer already checks**, for completeness. It fails the build on violation, so the prose only rots when the rule changes ("Don't restate what an enforcer already checks").
 - **Citing a page as a markdown link** — a relative hop or a `github.com/.../blob/...` url. Nothing resolves a link out of a skill; the repo-relative path in backticks is what a reader greps ("Cite a page by its repo path").
@@ -83,6 +83,23 @@ Generic source categories (`#shared`, `@vueuse/*`, `@/`) are fine — they descr
 
 The same applies to numbers: keep only the magnitudes the rule operates on (a limit, a budget), and drop the evidence numbers from the incident that prompted it — PR numbers, dates, counts from one occurrence, quoted error text with baked-in values. If the operative number may drift, state where to re-check it rather than freezing today's reading.
 
+## State the rule, never the roster it produced
+
+The `docs` skill owns this in full ("Never write down what the repo can count", "Magnitudes, not
+measurements") and it binds a skill exactly as it binds a page. A count, an enumeration of what currently
+satisfies a convention, or an "only X does this" is a second copy of what `ls`, `grep` or a manifest answers,
+and it rots without failing anything — the reader who finds one more case than the skill admits cannot tell
+whether the skill is stale or the code is wrong. Write the convention that **generates** the set and name where
+the set lives; a list earns its place only where every row carries something the tree cannot — a scope, a role,
+a caveat.
+
+**A sweep is where this gets broken**, because a pass ends with the swept set freshly in mind and writing it
+down reads as completion: "every package now declares X", the roster that opted out, the count reached. It is a
+snapshot the next package invalidates, and it is the wrong layer twice over — progress belongs to the sweep's
+ledger (the `sweeps` skill), and the rule belongs here as an **invariant plus its enforcer**. What keeps "every
+package declares X" true is the test that fails when one does not; the sentence claiming it can only ever go
+quietly out of date.
+
 ## SKILL.md is the always-on layer; `references/` holds the rest
 
 A selected skill loads **whole**, so every byte of `SKILL.md` is paid for by every task that trips its trigger — including the tasks that needed one rule from it. The budget is **~15 KB, and ~150 lines**: bytes are what the context actually costs, lines are the readability proxy, and this repo's long prose lines make it easy to pass the first while meeting the second. Past that a skill stops being a rule list and becomes a manual nobody reads to the end, which is the same failure as not writing it.
@@ -92,15 +109,12 @@ So a skill is two tiers:
 - **`SKILL.md`** — the rules that apply to _every_ task in the domain, one line each, plus an index of the deep dives. This is what has to land without anyone asking for it.
 - **`references/<topic>.md`** — a rule set that fires only for a _named sub-task_: a ritual, a file type, a single component, a procedure. It is read when the index line matches, the way `code-review` reads its mode pages.
 
-Move a section out when it is a **procedure** (ordered steps run occasionally), when it fires only for one narrow sub-task, or when it runs past ~40 lines of examples. Keep it in `SKILL.md` when violating it is the **default behaviour** — a rule that fires only if someone thought to look it up does not fire.
-
 **The index line carries the split**, and it works like frontmatter: name the trigger, not the topic — as `testing` indexes `references/timers-and-hand-resolved-promises.md` _when a test installs fake timers or holds a call in flight_. An index line that reads "see X for more detail" guarantees the page is never opened.
 
-**The budget is a signal, never a target.** Passing it says the skill has accumulated topics, and the fix is separating them — never shaving prose to land under the number, which buys bytes by making every surviving rule harder to read. Three cohesive pages beat nine fragments, and two rules that have to be read together stay on one page. Where a section over the line turns out to be another skill's subject, it **moves to that skill** rather than becoming a reference page here: one owner beats two shallow copies, and the split is the moment that shows up.
+**The budget is a signal, never a target.** Passing it says the skill has accumulated topics, and the fix is separating them — never shaving prose to land under the number, which buys bytes by making every surviving rule harder to read. Three cohesive pages beat nine fragments, and two rules that have to be read together stay on one page.
 
-**A reference page opens by naming its trigger.** Its first line is "read when X" — a reader landing on the page from a search rather than from `SKILL.md` has nothing else to tell them whether the page is theirs. **Where `SKILL.md` kept part of the rule, a second line says which part**: "the rule itself is in `SKILL.md`; this page is Y". Without it the reader cannot tell whether they are holding the whole rule or its tail, and the always-on half gets restated here the next time someone edits the page. A page that holds its whole subject needs only the trigger, and adding the second line there invents a split that does not exist.
-
-**A split breaks inbound pointers, so fix them in the same change.** Other skills cite sections by heading (``see the `pinia` skill ("Cursor Pagination in Stores")``), and a heading that moved into `references/` leaves that citation pointing at nothing — silently, because nothing resolves skill links. After moving a section, grep the tree for its heading text and repoint each citation at the page (``see the `pinia` skill (`references/keyed-state-and-pagination.md`)``), which is stable across later edits to the heading itself. Two pointer forms break **inside** the moved text as well: a `references/x.md` citation is now a sibling of that page and becomes bare `x.md`, and a cross-page "see below"/"as above" no longer has its target — both resolve to nothing and neither fails a build.
+**Actually moving a section out — `references/splitting-a-skill.md`.** What qualifies, what a reference page's
+opening lines owe a reader who arrived by search, and the pointer forms a move silently breaks, is that page.
 
 ## Cite a page by its repo path, never by a link
 

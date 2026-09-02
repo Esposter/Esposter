@@ -30,8 +30,8 @@ export class Player {
       new Monster(MonsterKey.Ignivolt),
     ];
     for (const monster of monsters) {
-      monster.stats.attack = 100;
-      monster.status.hp = 5;
+      monster.statistics.attack = 100;
+      monster.status.health = 5;
     }
     return monsters;
   })();

@@ -3,12 +3,12 @@ import type { Context } from "@@/server/trpc/context";
 import type { Clause } from "@esposter/azure";
 import type { BanInMessage, BanInMessageWithRelations } from "@esposter/db-schema";
 
-import { countModerationNotesInputSchema } from "#shared/models/db/moderation/CountModerationNotesInput";
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
 import { deleteBanInputSchema } from "#shared/models/db/moderation/DeleteBanInput";
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
 import { readBansInputSchema } from "#shared/models/db/moderation/ReadBansInput";
 import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadModerationLogInput";
+import { readModerationNotesCountInputSchema } from "#shared/models/db/moderation/ReadModerationNotesCountInput";
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { CREATED_AT_DESCENDING_SORT_ITEM, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -20,7 +20,7 @@ import { callSessionParticipantMap } from "@@/server/services/message/call/callP
 import { readCallSessionId } from "@@/server/services/message/call/readCallSessionId";
 import { moderationEventEmitter } from "@@/server/services/message/events/moderationEventEmitter";
 import { AdminActionPermissionMap } from "@@/server/services/message/moderation/AdminActionPermissionMap";
-import { countModerationNotes } from "@@/server/services/message/moderation/countModerationNotes";
+import { readModerationNotesCount } from "@@/server/services/message/moderation/readModerationNotesCount";
 import { softDeleteRoomMessagesByUser } from "@@/server/services/message/moderation/softDeleteRoomMessagesByUser";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
@@ -76,14 +76,6 @@ const banRoomMember = (db: Context["db"], actorUserId: string, roomId: string, t
   });
 
 export const moderationRouter = router({
-  countModerationNotes: getPermissionsProcedure(
-    RoomPermission.KickMembers,
-    countModerationNotesInputSchema,
-    "roomId",
-  ).query<number>(async ({ ctx, input: { roomId, targetUserId } }) => {
-    await assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId);
-    return countModerationNotes(roomId, targetUserId);
-  }),
   createModerationNote: getPermissionsProcedure(
     RoomPermission.KickMembers,
     createModerationNoteInputSchema,
@@ -298,4 +290,12 @@ export const moderationRouter = router({
       });
     },
   ),
+  readModerationNotesCount: getPermissionsProcedure(
+    RoomPermission.KickMembers,
+    readModerationNotesCountInputSchema,
+    "roomId",
+  ).query<number>(async ({ ctx, input: { roomId, targetUserId } }) => {
+    await assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId);
+    return readModerationNotesCount(roomId, targetUserId);
+  }),
 });

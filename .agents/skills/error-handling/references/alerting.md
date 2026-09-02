@@ -4,7 +4,7 @@ Read when wiring the error path of a tRPC call — deciding whether the caller a
 
 `errorLink` owns `BAD_REQUEST`, `TOO_MANY_REQUESTS` and `UNPROCESSABLE_CONTENT` — it alerts them itself, so a caller stays the owner only of what it alone can see (a blob PUT, a local guard). Alerting again puts two identical toasts on screen for one failure.
 
-**A caller never writes that check itself** — `createErrorAlert` is the one way a caller alerts a rejection, and it asks `checkIsAlertedByErrorLink` before reaching the alert store. Spelled out per site, the guard is a line four callers can each forget, and each one that does ships a double toast nothing catches. `error-alert/no-raw-error-alert` fails the line that writes `createAlert(<expr>.message, …)`, so the only shape left to get wrong is one inside a Vue template's inline handler, which oxlint hands no JS plugin. A sentence the caller composed — a validation message, a template literal — is not a rejection and stays on `createAlert`.
+**A caller never writes that check itself** — `createErrorAlert` is the one way a caller alerts a rejection, and it asks `checkIsAlertedByErrorLink` before reaching the alert store. Spelled out per site, the guard is a line every caller can forget, and each one that does ships a double toast nothing catches. `error-alert/no-raw-error-alert` fails the line that writes `createAlert(<expr>.message, …)`, so the only shape left to get wrong is one inside a Vue template's inline handler, which oxlint hands no JS plugin. A sentence the caller composed — a validation message, a template literal — is not a rejection and stays on `createAlert`.
 
 ```typescript
 createErrorAlert(error);

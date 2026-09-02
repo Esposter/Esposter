@@ -21,9 +21,9 @@ export const useThreadStore = defineStore("message/thread", () => {
   const threadFollowStore = useThreadFollowStore();
   const { ensureFollowedThreadsLoaded } = threadFollowStore;
 
-  const openThread = async (roomId: string, rootRowKey: string) => {
+  const openThread = async (roomId: string, threadRootRowKey: string) => {
     activeRoomId.value = roomId;
-    activeRootRowKey.value = rootRowKey;
+    activeRootRowKey.value = threadRootRowKey;
     // Cleared with the drawer rather than when the replies land, so the pane never shows the previous thread's
     // Replies under the new thread's header while the read is in flight
     threadMessages.value = [];
@@ -34,7 +34,7 @@ export const useThreadStore = defineStore("message/thread", () => {
     messageLayoutStore.rightDrawer = RightDrawer.Thread;
     layoutStore.isRightDrawerOpen = true;
     await Promise.all([
-      executeQuery(() => $trpc.message.readThread.query({ roomId, rootRowKey }), {
+      executeQuery(() => $trpc.message.readThread.query({ roomId, threadRootRowKey }), {
         key: readThreadKey,
         onSuccess: (messages) => {
           // The read spans the whole open, so the user can close the drawer while it is still in flight — a

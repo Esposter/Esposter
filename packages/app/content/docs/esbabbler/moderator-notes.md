@@ -32,7 +32,7 @@ All under `message.moderation.` (`server/trpc/routers/message/moderation.ts`), g
 | ------------------------------------------------------- | -------------------------------- |
 | `createModerationNote({ roomId, targetUserId, note })`  | append a note                    |
 | `readModerationNotes({ roomId, targetUserId, cursor })` | cursor-paginated per-member view |
-| `countModerationNotes({ roomId, targetUserId })`        | note count for the menu badge    |
+| `readModerationNotesCount({ roomId, targetUserId })`    | note count for the menu badge    |
 
 ## Key files
 

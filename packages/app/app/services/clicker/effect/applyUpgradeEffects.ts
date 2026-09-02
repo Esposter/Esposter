@@ -1,4 +1,4 @@
-import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
+import type { BuildingWithStatistics } from "#shared/models/clicker/data/building/BuildingWithStatistics";
 import type { Effect } from "#shared/models/clicker/data/effect/Effect";
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 
@@ -7,7 +7,7 @@ import { applyEffects } from "@/services/clicker/effect/applyEffects";
 export const applyUpgradeEffects = (
   upgrade: Upgrade,
   allUpgradeEffects: Effect[],
-  boughtBuildings: BuildingWithStats[],
+  boughtBuildings: BuildingWithStatistics[],
 ): Upgrade => {
   const resultEffects: Effect[] = [];
   for (const effect of upgrade.effects)

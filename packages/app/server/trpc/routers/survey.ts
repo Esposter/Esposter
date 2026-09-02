@@ -1,4 +1,4 @@
-import type { CountSurveyResponsesOutput } from "#shared/models/resource/survey/CountSurveyResponsesOutput";
+import type { CountSurveyResponsesResult } from "#shared/models/resource/survey/CountSurveyResponsesResult";
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -67,7 +67,7 @@ export const surveyRouter = router({
     ResourceType.Survey,
     surveyIdInputSchema,
     "id",
-  ).query<CountSurveyResponsesOutput>(({ ctx }) => countSurveyResponses(ctx.resource.id)),
+  ).query<CountSurveyResponsesResult>(({ ctx }) => countSurveyResponses(ctx.resource.id)),
   createSurveyResponse: standardRateLimitedProcedure
     .input(createSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {

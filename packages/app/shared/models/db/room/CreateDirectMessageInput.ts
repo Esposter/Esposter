@@ -1,9 +1,6 @@
 import type { z } from "zod";
 
-import { selectUserSchema } from "@esposter/db-schema";
-import { createUniqueArraySchema, MAX_READ_LIMIT } from "@esposter/shared";
+import { userIdsSchema } from "@esposter/db-schema";
 
-export const createDirectMessageInputSchema = createUniqueArraySchema(selectUserSchema.shape.id)
-  .min(1)
-  .max(MAX_READ_LIMIT);
+export const createDirectMessageInputSchema = userIdsSchema.shape.userIds.min(1);
 export type CreateDirectMessageInput = z.infer<typeof createDirectMessageInputSchema>;

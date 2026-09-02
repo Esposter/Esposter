@@ -14,6 +14,6 @@ export const updateUserToRoomInputSchema = refineAtLeastOne(
   (data) =>
     !data.targetUserId ||
     (data.nickname !== undefined && data.notificationType === undefined && data.lastMessageAt === undefined),
-  { message: "targetUserId requires nickname and must not include notificationType or lastMessageAt" },
+  { error: "targetUserId requires nickname and must not include notificationType or lastMessageAt" },
 );
 export type UpdateUserToRoomInput = z.infer<typeof updateUserToRoomInputSchema>;

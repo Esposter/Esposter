@@ -9,7 +9,7 @@ describe(getVisibleStringColumns, () => {
 
     const columns = [
       new StringColumn({ name: "visible" }),
-      new StringColumn({ hidden: true, name: "hidden" }),
+      new StringColumn({ isHidden: true, name: "hidden" }),
       new NumberColumn({ name: "number" }),
     ];
 

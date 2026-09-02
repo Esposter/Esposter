@@ -53,9 +53,9 @@ export const VIRRUN_CACHE_HOME_KEY = "VIRRUN_CACHE_HOME";
 // Host-global file caching the os-backend capability probe's verdict so a fresh `virrun -- <cmd>` process reuses it
 // Instead of re-spawning the bwrap probe every command. See isOsBackendSupported.
 export const CAPABILITY_CACHE_FILENAME = "capability.json";
-// Windows-side files caching the win32 WSL environment probes so a fresh `virrun -- <cmd>` process reuses them instead
-// Of re-spawning wsl.exe (an interactive-login shell for the PATH, two round-trips for the cache root). Stored via
-// GetLocalCacheDirectory (the Windows `~`), not the WSL-ext4 cache root. See readWslEnvironmentCache.
+// Windows-side files caching the win32 WSL environment probes so a fresh `virrun -- <cmd>` process reuses them
+// Instead of re-spawning wsl.exe (an interactive-login shell for the PATH, two round-trips for the cache root).
+// Stored via getLocalCacheDirectory (the Windows `~`), not the WSL-ext4 cache root. See readWslEnvironmentCache.
 export const WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME = "wsl-login-environment.json";
 export const WSL_CACHE_ROOT_CACHE_FILENAME = "wsl-cache-root.json";
 // How long any persisted probe verdict stays reusable — a captured WSL environment, the os-backend capability
@@ -77,11 +77,12 @@ export const VIRRUN_DEBUG_KEY = "VIRRUN_DEBUG";
 export const PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY = "PNPM_CONFIG_PACKAGE_IMPORT_METHOD";
 export const PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE = "copy";
 export const PNPM_CONFIG_STORE_DIR_KEY = "PNPM_CONFIG_STORE_DIR";
-// Pnpm's verify-deps-before-run makes `pnpm run`/`pnpm exec` fire an auto-install when it decides node_modules is out
-// Of sync with the lockfile. Inside the sandbox node_modules comes frozen from the snapshot lower, so that check both
-// Misfires (the overlay's merged tree never matches pnpm's on-disk expectation) and, when it installs, pacquet dies
-// Writing bin shims into the overlay upper (ENOENT node_modules/.bin/*). Disable it so a sandboxed pnpm only runs the
-// Command over the frozen deps and never re-installs them — the prepare step (`pnpm exec nuxt prepare`) is the hot path.
+// The pnpm verify-deps-before-run check makes `pnpm run`/`pnpm exec` fire an auto-install the moment it
+// Decides node_modules is out of sync with the lockfile. Inside the sandbox node_modules comes frozen from
+// The snapshot lower, so that check both misfires (the overlay's merged tree never matches pnpm's on-disk
+// Expectation) and, when it installs, pacquet dies writing bin shims into the overlay upper
+// (ENOENT node_modules/.bin/*). Disable it so a sandboxed pnpm only runs the command over the frozen deps
+// And never re-installs them — the prepare step (`pnpm exec nuxt prepare`) is the hot path.
 export const PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN_KEY = "PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN";
 export const PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN_VALUE = "false";
 // The host's node_modules shows through the overlay lower, so a sandbox `pnpm install` wants to purge it and, with
@@ -92,9 +93,9 @@ export const CI_ENV_VALUE = "true";
 // Are sub-second on a healthy host; a corrupt/unresponsive WSL distro can hang execFileSync forever, so the cap lets
 // The probe fail (degrade to unsupported) instead of blocking the whole CLI.
 export const PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
-// Upper bound for a synchronous WSL-side `rm -rf` of a cache dir (removeSnapshotDirectory). Real work — a
-// Node_modules closure to unlink — so it gets minutes rather than the probe's seconds, and its size is bounded by
-// One cache entry rather than by what the run did. The bound exists only so a wedged WSL service or 9p bridge fails
+// Upper bound for a synchronous WSL-side `rm -rf` of a cache dir (removeSnapshotDirectory). Real work — an
+// Unlink of a whole node_modules closure — so it gets minutes rather than the probe's seconds, and its size is
+// Bounded by one cache entry rather than by what the run did. The bound exists only so a wedged WSL service or 9p bridge fails
 // The call instead of blocking the CLI forever, which is exactly how an unbounded execFileSync presents: a run that
 // Never returns and no error to explain it. See [subprocess timeouts](/docs/virrun/subprocess-timeouts).
 export const WSL_WORK_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
@@ -137,8 +138,8 @@ export const ORPHAN_REAP_MINIMUM_AGE_SECONDS: number = Temporal.Duration.from({ 
 export const SOURCE_MIRROR_TIMEOUT_SECONDS: number = Temporal.Duration.from({ minutes: 5 }).total("seconds");
 // Upper bound for the host-side `tar` staging the sync's archive (createSourceMirrorArchive): a native NTFS read of
 // The copied paths plus one sequential 9p write into the mirror entry. Generous — a full materialize archives the
-// Whole mirrored set — but bounded so a wedged 9p bridge fails the plan instead of hanging it. This is the
-// ExecFileSync side of the split, so ms; SOURCE_MIRROR_TIMEOUT_SECONDS bounds the Linux side.
+// Whole mirrored set — but bounded so a wedged 9p bridge fails the plan instead of hanging it. This bounds the
+// Synchronous execFileSync side of the split, so milliseconds; SOURCE_MIRROR_TIMEOUT_SECONDS bounds the Linux side.
 export const SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 
 export const VIRRUN_TEMP_DIR_PREFIX = "virrun-temp-";

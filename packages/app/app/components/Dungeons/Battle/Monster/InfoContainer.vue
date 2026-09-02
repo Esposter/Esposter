@@ -45,7 +45,7 @@ onUnmounted(() => {
       :configuration="{
         x: 35 + (nameDisplayWidth ?? 0),
         y: 23,
-        text: `L${activeMonster.stats.level}`,
+        text: `L${activeMonster.statistics.level}`,
         style: {
           color: '#ed474b',
           fontSize: 28,
@@ -63,7 +63,7 @@ onUnmounted(() => {
     <DungeonsUIBarContainer
       :type="BarType.Health"
       :position="{ x: 34, y: 34 }"
-      :bar-percentage="(activeMonster.status.hp / activeMonster.stats.maxHp) * 100"
+      :bar-percentage="(activeMonster.status.health / activeMonster.statistics.maxHealth) * 100"
     />
     <template v-if="!isEnemy">
       <Text
@@ -72,7 +72,7 @@ onUnmounted(() => {
           y: 80,
           originX: 1,
           originY: 0,
-          text: `${activeMonster.status.hp}/${activeMonster.stats.maxHp}`,
+          text: `${activeMonster.status.health}/${activeMonster.statistics.maxHealth}`,
           style: {
             color: '#7e3d3f',
             fontSize: 16,

@@ -14,7 +14,7 @@ export const useReadModerationNotes = (roomId: RoomInMessage["id"], targetUserId
       const targetUserIdValue = toValue(targetUserId);
       const [moderationNotes, count] = await Promise.all([
         $trpc.message.moderation.readModerationNotes.query({ roomId, targetUserId: targetUserIdValue }),
-        $trpc.message.moderation.countModerationNotes.query({ roomId, targetUserId: targetUserIdValue }),
+        $trpc.message.moderation.readModerationNotesCount.query({ roomId, targetUserId: targetUserIdValue }),
       ]);
       setModerationNoteCount(targetUserIdValue, count);
       return moderationNotes;

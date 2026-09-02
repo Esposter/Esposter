@@ -1,4 +1,4 @@
-import { createBetweenCheckSql } from "#src/models/shared/Check";
+import { createBetweenCheckSql, createMaxLengthCheckSql } from "#src/models/shared/Check";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { users } from "#src/schema/users";
@@ -36,6 +36,9 @@ export const DEFAULT_SPEAKER_VOLUME_PERCENTAGE = 100;
 export const MIN_AUTO_IDLE_THRESHOLD_MS = 60_000;
 export const MAX_AUTO_IDLE_THRESHOLD_MS = 86_400_000;
 export const DEFAULT_AUTO_IDLE_THRESHOLD_MS = 600_000;
+// A keybind is one `KeyboardEvent.code`, the longest of which is well inside this - the bound is what stops an
+// Unbounded string being stored, not a statement about which codes are real
+export const MAX_PUSH_TO_TALK_KEYBIND_LENGTH = 64;
 export const MIN_PUSH_TO_TALK_RELEASE_DELAY_MS = 0;
 export const MAX_PUSH_TO_TALK_RELEASE_DELAY_MS = 2000;
 export const DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS = 20;
@@ -68,6 +71,7 @@ export const userSettingsInMessage = pgTable(
       autoIdleThresholdMs,
       inputSensitivityDecibels,
       microphoneVolumePercentage,
+      pushToTalkKeybind,
       pushToTalkReleaseDelayMs,
       speakerVolumePercentage,
     }) => [
@@ -88,6 +92,10 @@ export const userSettingsInMessage = pgTable(
         createBetweenCheckSql(autoIdleThresholdMs, MIN_AUTO_IDLE_THRESHOLD_MS, MAX_AUTO_IDLE_THRESHOLD_MS),
       ),
       check(
+        "userSettings_pushToTalkKeybind_length_check",
+        createMaxLengthCheckSql(pushToTalkKeybind, MAX_PUSH_TO_TALK_KEYBIND_LENGTH),
+      ),
+      check(
         "userSettings_pushToTalkReleaseDelayMs_check",
         createBetweenCheckSql(
           pushToTalkReleaseDelayMs,
@@ -106,6 +114,7 @@ export const selectUserSettingsInMessageSchema = createSelectSchema(userSettings
   inputSensitivityDecibels: (schema) => schema.min(MIN_INPUT_SENSITIVITY_DECIBELS).max(MAX_INPUT_SENSITIVITY_DECIBELS),
   microphoneVolumePercentage: (schema) => schema.min(0).max(MAX_USER_VOLUME_PERCENTAGE),
   noiseSuppressionMode: noiseSuppressionModeSchema,
+  pushToTalkKeybind: (schema) => schema.max(MAX_PUSH_TO_TALK_KEYBIND_LENGTH),
   pushToTalkReleaseDelayMs: (schema) =>
     schema.min(MIN_PUSH_TO_TALK_RELEASE_DELAY_MS).max(MAX_PUSH_TO_TALK_RELEASE_DELAY_MS),
   speakerVolumePercentage: (schema) => schema.min(0).max(MAX_USER_VOLUME_PERCENTAGE),

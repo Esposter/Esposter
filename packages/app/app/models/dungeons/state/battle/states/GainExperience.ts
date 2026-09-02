@@ -31,12 +31,12 @@ export const GainExperience: State<StateName> = {
     const experienceBarStore = useExperienceBarStore();
     const { isSkipAnimations } = storeToRefs(experienceBarStore);
     const experienceGain = calculateExperienceGain(
-      enemyActiveMonster.value.stats.baseExp,
-      enemyActiveMonster.value.stats.level,
+      enemyActiveMonster.value.statistics.baseExperience,
+      enemyActiveMonster.value.statistics.level,
     );
     const { experienceToNextLevel } = useExperience(activeMonster);
     const onComplete = async () => {
-      await showMessages(scene, [`You gained ${experienceGain} exp.`]);
+      await showMessages(scene, [`You gained ${experienceGain} experience.`]);
       await gainExperienceForNonActiveMonsters(scene, experienceGain);
       await battleStateMachine.setState(StateName.Finished);
     };
@@ -45,9 +45,9 @@ export const GainExperience: State<StateName> = {
       // We will implement and thus assume the fact that the level up event
       // Will be triggered by the experience bar once it reaches 100%
       const levelUpListener: PhaserEvents["levelUp"] = getSynchronizedFunction(
-        async ({ key, stats }, onLevelUpComplete) => {
+        async ({ key, statistics }, onLevelUpComplete) => {
           const showLevelUpMessage = async () => {
-            await showMessages(scene, [`${key} leveled up to ${stats.level}!`]);
+            await showMessages(scene, [`${key} leveled up to ${statistics.level}!`]);
             onLevelUpComplete();
             if (experienceToNextLevel.value > 0) phaserEventEmitter.emit("levelUpComplete");
           };
@@ -67,11 +67,11 @@ export const GainExperience: State<StateName> = {
           await onComplete();
         }),
       );
-      activeMonster.value.status.exp += experienceGain;
+      activeMonster.value.status.experience += experienceGain;
       return;
     }
 
-    activeMonster.value.status.exp += experienceGain;
+    activeMonster.value.status.experience += experienceGain;
     await onComplete();
   },
 };
@@ -86,13 +86,13 @@ const gainExperienceForNonActiveMonsters = async (scene: SceneWithPlugins, exper
   const leveledUpNonActiveMonsters: Monster[] = [];
 
   for (const nonActiveMonster of player.value.monsters.filter(({ id }) => id !== activeMonster.value.id)) {
-    nonActiveMonster.status.exp += experienceGain;
-    let levelExperience = calculateLevelExperience(nonActiveMonster.stats.level);
-    const isLeveledUp = nonActiveMonster.status.exp - levelExperience >= 0;
+    nonActiveMonster.status.experience += experienceGain;
+    let levelExperience = calculateLevelExperience(nonActiveMonster.statistics.level);
+    const isLeveledUp = nonActiveMonster.status.experience - levelExperience >= 0;
 
-    while (nonActiveMonster.status.exp - levelExperience >= 0) {
+    while (nonActiveMonster.status.experience - levelExperience >= 0) {
       levelUp(nonActiveMonster);
-      levelExperience = calculateLevelExperience(nonActiveMonster.stats.level);
+      levelExperience = calculateLevelExperience(nonActiveMonster.statistics.level);
     }
 
     if (isLeveledUp) leveledUpNonActiveMonsters.push(nonActiveMonster);
@@ -101,6 +101,6 @@ const gainExperienceForNonActiveMonsters = async (scene: SceneWithPlugins, exper
   if (leveledUpNonActiveMonsters.length > 0)
     await showMessages(
       scene,
-      leveledUpNonActiveMonsters.map(({ key, stats }) => `${key} leveled up to ${stats.level}!`),
+      leveledUpNonActiveMonsters.map(({ key, statistics }) => `${key} leveled up to ${statistics.level}!`),
     );
 };

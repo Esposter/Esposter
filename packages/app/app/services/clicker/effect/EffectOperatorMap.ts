@@ -1,4 +1,4 @@
-import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
+import type { BuildingWithStatistics } from "#shared/models/clicker/data/building/BuildingWithStatistics";
 import type { Effect } from "#shared/models/clicker/data/effect/Effect";
 
 import { EffectType } from "#shared/models/clicker/data/effect/EffectType";
@@ -14,5 +14,5 @@ export const EffectOperatorMap = {
   [EffectType.Multiplicative]: applyMultiplicativeEffects,
 } as const satisfies Record<
   EffectType,
-  (basePower: number, effects: Effect[], boughtBuildings: BuildingWithStats[]) => number
+  (basePower: number, effects: Effect[], boughtBuildings: BuildingWithStatistics[]) => number
 >;

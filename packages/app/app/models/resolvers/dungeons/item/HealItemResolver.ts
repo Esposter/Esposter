@@ -17,10 +17,10 @@ export class HealItemResolver extends AItemResolver {
   override async handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
     const infoPanelStore = useInfoPanelStore();
     const { showMessages } = infoPanelStore;
-    const oldHp = monster.value.status.hp;
-    const newHp = Math.min(oldHp + item.value.effect.value, monster.value.stats.maxHp);
+    const oldHp = monster.value.status.health;
+    const newHp = Math.min(oldHp + item.value.effect.value, monster.value.statistics.maxHealth);
 
-    monster.value.status.hp = newHp;
+    monster.value.status.health = newHp;
     await showMessages(scene, [`Healed ${monster.value.key} by ${newHp - oldHp} HP.`]);
     phaserEventEmitter.emit("useItem", scene, item.value, monster.value, () =>
       battleStateMachine.setState(StateName.EnemyInput),
@@ -31,10 +31,10 @@ export class HealItemResolver extends AItemResolver {
     const infoPanelStore = useInfoPanelStore();
     const { infoDialogMessage } = storeToRefs(infoPanelStore);
 
-    if (monster.value.status.hp === 0) {
+    if (monster.value.status.health === 0) {
       infoDialogMessage.value.text = `Cannot heal fainted ${monster.value.key}.`;
       return false;
-    } else if (monster.value.status.hp === monster.value.stats.maxHp) {
+    } else if (monster.value.status.health === monster.value.statistics.maxHealth) {
       infoDialogMessage.value.text = `${monster.value.key} is already fully healed.`;
       return false;
     }

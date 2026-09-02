@@ -1,5 +1,5 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-import type { JoinCallOutput } from "@@/server/models/room/call/JoinCallOutput";
+import type { JoinCallResult } from "@@/server/models/room/call/JoinCallResult";
 import type { CallSessionInMessage } from "@esposter/db-schema";
 
 import { on } from "@@/server/services/events/on";
@@ -74,7 +74,7 @@ export const baseCallRouter = router({
   }),
   joinCall: standardAuthedProcedure
     .input(callSessionInputSchema)
-    .mutation<JoinCallOutput>(async ({ ctx, input: { id } }) => {
+    .mutation<JoinCallResult>(async ({ ctx, input: { id } }) => {
       const callSession = await requireCallSession(ctx.db, id);
       if (callSession.roomId) throw getForbiddenError("Room calls must be joined via joinCallByRoomId");
 
@@ -86,7 +86,7 @@ export const baseCallRouter = router({
       callAdmittedParticipantMap.get(id)?.delete(session.id);
       return joinLiveKitCall(callSession, createParticipant(session, user), user.id);
     }),
-  joinCallByRoomId: getMemberProcedure(roomCallInputSchema, "roomId").mutation<JoinCallOutput>(
+  joinCallByRoomId: getMemberProcedure(roomCallInputSchema, "roomId").mutation<JoinCallResult>(
     async ({ ctx, input: { roomId, threadRootRowKey } }) => {
       const { session, user } = ctx.getSessionPayload;
       await requireThreadRoot(roomId, threadRootRowKey);

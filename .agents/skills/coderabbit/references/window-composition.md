@@ -36,6 +36,6 @@ Only reorder when the fix is **independent of the commits it jumps**. One that e
 
 Measure before every push and hold the overflow locally. A push that overshoots is not a setback costing one review cycle — it is one that can cost every cycle after it. The only way to shrink an over-budget branch is to rewind it, and a force-push desynchronises CodeRabbit's incremental checkpoint from the branch: after a rewind it can measure the next window from a sha whose files it has already reviewed, inflating the count well past the local one, and every later push inherits that baseline.
 
-When a push has already overshot, the recovery is to shorten `develop`, park the remainder on a queue branch, and drain it one window at a time — `release-pr-cutting.md`. Last resort, with a real cost.
+When a push has already overshot, the recovery is to shorten `develop`, park the remainder on a queue branch, and drain it one window at a time — `references/release-pr-cutting.md`. Last resort, with a real cost.
 
-**Exclusions are rarely the answer, and never for a substantive file.** Over budget is a chunking problem: split the work, or land it in stages so each cycle stays under the cap. Excluding a file that carries real content buys a smaller review, not a better one — the diff still ships, just unread. When to reach for one anyway, and the procedure: `exclusions.md`.
+**Exclusions are rarely the answer, and never for a substantive file.** Over budget is a chunking problem: split the work, or land it in stages so each cycle stays under the cap. Excluding a file that carries real content buys a smaller review, not a better one — the diff still ships, just unread. When to reach for one anyway, and the procedure: `references/exclusions.md`.

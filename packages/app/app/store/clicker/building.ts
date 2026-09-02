@@ -1,6 +1,6 @@
 import type { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import type { Building } from "#shared/models/clicker/data/building/Building";
-import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
+import type { BuildingWithStatistics } from "#shared/models/clicker/data/building/BuildingWithStatistics";
 
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 import { getBuildingPrice as baseGetBuildingPrice } from "@/services/clicker/building/getBuildingPrice";
@@ -25,7 +25,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   const allBuildingPower = computed(() =>
     applyBuildingUpgrades(0, clickerStore.clicker.boughtUpgrades, clickerStore.clicker.boughtBuildings),
   );
-  const getBoughtBuildingPower = (boughtBuilding: BuildingWithStats) =>
+  const getBoughtBuildingPower = (boughtBuilding: BuildingWithStatistics) =>
     applyBuildingUpgrade(boughtBuilding, clickerStore.clicker.boughtUpgrades, clickerStore.clicker.boughtBuildings);
   const getBoughtBuilding = (building: Building) =>
     clickerStore.clicker.boughtBuildings.find(({ id }) => id === building.id);

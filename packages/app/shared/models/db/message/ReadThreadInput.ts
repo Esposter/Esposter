@@ -3,6 +3,6 @@ import { z } from "zod";
 
 export const readThreadInputSchema = z.object({
   ...roomIdSchema.shape,
-  rootRowKey: standardMessageEntitySchema.shape.rowKey,
+  threadRootRowKey: standardMessageEntitySchema.shape.rowKey,
 });
 export type ReadThreadInput = z.infer<typeof readThreadInputSchema>;

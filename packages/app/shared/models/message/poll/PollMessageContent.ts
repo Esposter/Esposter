@@ -10,6 +10,9 @@ export interface PollMessageContent {
   votes: Record<string, string>;
 }
 
+// No max on the question or an option label: a poll reaches the server as one serialized `message` body,
+// Which `createMessage` already bounds by MESSAGE_MAX_LENGTH - a per-field cap here would bound nothing
+// The whole-body cap does not, and would put a second number in the way of a long single-option poll
 export const pollMessageContentSchema = z
   .object({
     options: createUniqueArraySchema(pollOptionSchema, "id").min(1),

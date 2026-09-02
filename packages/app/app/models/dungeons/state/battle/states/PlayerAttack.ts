@@ -27,7 +27,7 @@ export const PlayerAttack: State<StateName> = {
     await sleepScene(scene, 500);
     await useAttackAnimation(scene, attack, true);
     await takeDamage(
-      calculateDamage(activeMonster.value.stats.attack, attack.power, enemyActiveMonster.value.stats.defense),
+      calculateDamage(activeMonster.value.statistics.attack, attack.power, enemyActiveMonster.value.statistics.defense),
     );
     await battleStateMachine.setState(StateName.PlayerPostAttackCheck);
   },

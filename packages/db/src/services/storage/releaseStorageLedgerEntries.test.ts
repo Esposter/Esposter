@@ -130,23 +130,23 @@ describe("storage blob ledger", () => {
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
   });
 
-  // A charge is a guess about a write storage has already measured, so once an event has spoken for the blob
-  // The charge yields to it. Otherwise a save whose charge is delayed past a newer save's event would put its
-  // Own size back on the counter, and its own event — being older — would then be correctly rejected, leaving
-  // The superseded size there for good
-  test("ignores a charge that lands after an event has settled the blob", async () => {
+  // A save rewrites one blob name and its event settles that name seconds later, from the Functions host. So a
+  // Charge that stood down once the blob had an event would move the counter on a resource's very first save
+  // And never again — every save after it counted only by its own event, and nothing at all in the request the
+  // Owner's meter is watching
+  test("counts each save that follows the blob's first event", async () => {
     expect.hasAssertions();
 
-    await createStorageLedgerEntry();
-    await reconcileStorageLedgerEntry(db, containerName, blobName, overwrittenBytes, laterSequencer);
-    await chargeStorageLedgerEntry(db, userId, containerName, blobName, declaredBytes);
+    await chargeStorageLedgerEntry(db, userId, containerName, blobName, actualBytes);
     await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes, sequencer);
+    await chargeStorageLedgerEntry(db, userId, containerName, blobName, overwrittenBytes);
 
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
-
-    const [storageLedgerEntry] = await db.query.storageLedger.findMany();
-
-    expect(storageLedgerEntry).toMatchObject({ countedBytes: overwrittenBytes, sequencer: laterSequencer });
+    // The write order is untouched: a charge claims no position, so the next event is still ranked against the
+    // Last one that spoke rather than against a charge that cannot be ordered
+    await expect(db.query.storageLedger.findMany()).resolves.toMatchObject([
+      { countedBytes: overwrittenBytes, sequencer },
+    ]);
   });
 
   // The server's own writes — a resource's content blob — have no reserve to ledger them, so the charge is

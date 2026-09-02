@@ -14,14 +14,14 @@ const MonstersDataMap = {
       key: AssetKey.Aquavalor,
     },
     attackIds: [AttackId["Aqua Jet"], AttackId["Ice Shard"], AttackId.Bite],
-    stats: {
+    statistics: {
       attack: 4,
-      baseExp: 60,
+      baseExperience: 60,
       defense: 8,
       level: 5,
-      maxHp: 40,
+      maxHealth: 40,
     },
-    status: { exp: 0, hp: 40 },
+    status: { experience: 0, health: 40 },
   },
   // Fast and fragile: hits hard, folds fast
   [MonsterKey.Carnodusk]: {
@@ -29,14 +29,14 @@ const MonstersDataMap = {
       key: AssetKey.Carnodusk,
     },
     attackIds: [AttackId["Shadow Claw"], AttackId.Slash, AttackId.Bite],
-    stats: {
+    statistics: {
       attack: 8,
-      baseExp: 62,
+      baseExperience: 62,
       defense: 3,
       level: 5,
-      maxHp: 18,
+      maxHealth: 18,
     },
-    status: { exp: 0, hp: 18 },
+    status: { experience: 0, health: 18 },
   },
   // Rare and strong on both axes — the prize encounter
   [MonsterKey.Frostsaber]: {
@@ -44,14 +44,14 @@ const MonstersDataMap = {
       key: AssetKey.Frostsaber,
     },
     attackIds: [AttackId["Frost Fang"], AttackId["Ice Shard"], AttackId.Slash],
-    stats: {
+    statistics: {
       attack: 7,
-      baseExp: 70,
+      baseExperience: 70,
       defense: 7,
       level: 5,
-      maxHp: 30,
+      maxHealth: 30,
     },
-    status: { exp: 0, hp: 30 },
+    status: { experience: 0, health: 30 },
   },
   // Glass cannon: strong attack, thin health pool
   [MonsterKey.Ignivolt]: {
@@ -59,14 +59,14 @@ const MonstersDataMap = {
       key: AssetKey.Ignivolt,
     },
     attackIds: [AttackId["Volt Claw"], AttackId.Slash, AttackId.Bite],
-    stats: {
+    statistics: {
       attack: 7,
-      baseExp: 58,
+      baseExperience: 58,
       defense: 4,
       level: 5,
-      maxHp: 20,
+      maxHealth: 20,
     },
-    status: { exp: 0, hp: 20 },
+    status: { experience: 0, health: 20 },
   },
   // Balanced starter
   [MonsterKey.Iguanignite]: {
@@ -74,14 +74,14 @@ const MonstersDataMap = {
       key: AssetKey.Iguanignite,
     },
     attackIds: [AttackId.Slash, AttackId.Bite],
-    stats: {
+    statistics: {
       attack: 6,
-      baseExp: 55,
+      baseExperience: 55,
       defense: BASE_DEFENSE,
       level: 5,
-      maxHp: 25,
+      maxHealth: 25,
     },
-    status: { exp: 0, hp: 25 },
+    status: { experience: 0, health: 25 },
   },
 } as const satisfies Record<MonsterKey, Except<Monster, "id" | "key">>;
 

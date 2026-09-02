@@ -6,8 +6,8 @@ import { DatePartType } from "#shared/models/resource/sheet/column/transformatio
 import { computeDatePartTransformation } from "@/services/resource/sheet/column/transformation/computeDatePartTransformation";
 import { describe, expect, test } from "vitest";
 
-const createTransformation = (part: DatePartType): DatePartTransformation => ({
-  part,
+const createTransformation = (datePartType: DatePartType): DatePartTransformation => ({
+  datePartType,
   sourceColumnId: "",
   type: ColumnTransformationType.DatePart,
 });
@@ -17,27 +17,27 @@ describe(computeDatePartTransformation, () => {
     expect.hasAssertions();
 
     // Month is 1-indexed and weekday is 0-indexed from Sunday
-    const cases: { expected: number; format: DateFormat; part: DatePartType; value: string }[] = [
-      { expected: 1970, format: DateFormat["YYYY-MM-DD"], part: DatePartType.Year, value: "1970-01-01" },
-      { expected: 1, format: DateFormat["YYYY-MM-DD"], part: DatePartType.Month, value: "1970-01-01" },
-      { expected: 2, format: DateFormat["YYYY-MM-DD"], part: DatePartType.Day, value: "1970-01-02" },
-      { expected: 4, format: DateFormat["YYYY-MM-DD"], part: DatePartType.Weekday, value: "1970-01-01" },
+    const cases: { datePartType: DatePartType; expected: number; format: DateFormat; value: string }[] = [
+      { datePartType: DatePartType.Year, expected: 1970, format: DateFormat["YYYY-MM-DD"], value: "1970-01-01" },
+      { datePartType: DatePartType.Month, expected: 1, format: DateFormat["YYYY-MM-DD"], value: "1970-01-01" },
+      { datePartType: DatePartType.Day, expected: 2, format: DateFormat["YYYY-MM-DD"], value: "1970-01-02" },
+      { datePartType: DatePartType.Weekday, expected: 4, format: DateFormat["YYYY-MM-DD"], value: "1970-01-01" },
       {
+        datePartType: DatePartType.Hour,
         expected: 0,
         format: DateFormat["YYYY-MM-DDTHH:mm:ss"],
-        part: DatePartType.Hour,
         value: "1970-01-01T00:00:00",
       },
       {
+        datePartType: DatePartType.Minute,
         expected: 0,
         format: DateFormat["YYYY-MM-DDTHH:mm:ss"],
-        part: DatePartType.Minute,
         value: "1970-01-01T00:00:00",
       },
     ];
 
-    for (const { expected, format, part, value } of cases)
-      expect(computeDatePartTransformation(value, createTransformation(part), format)).toBe(expected);
+    for (const { datePartType, expected, format, value } of cases)
+      expect(computeDatePartTransformation(value, createTransformation(datePartType), format)).toBe(expected);
   });
 
   test("returns null for invalid date", () => {

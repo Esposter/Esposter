@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CountSurveyResponsesOutput } from "#shared/models/resource/survey/CountSurveyResponsesOutput";
+import type { CountSurveyResponsesResult } from "#shared/models/resource/survey/CountSurveyResponsesResult";
 import type { Resource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
@@ -14,7 +14,7 @@ const { resource } = defineProps<ResourceSurveyOverviewProps>();
 const { $trpc } = useNuxtApp();
 const surveyStore = useSurveyStore();
 const { loadContent } = surveyStore;
-const responseCount = ref<CountSurveyResponsesOutput>();
+const responseCount = ref<CountSurveyResponsesResult>();
 // Only isCapped renders the "1000+" form — an exactly-at-cap count is still an exact count
 const responseLabel = computed(() => {
   if (!responseCount.value) return "";

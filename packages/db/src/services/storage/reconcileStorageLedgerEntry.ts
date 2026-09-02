@@ -41,20 +41,20 @@ export const reconcileStorageLedgerEntry = (
     if (!storageLedgerEntry) return { isMatched: false };
 
     const { countedBytes, sequencer: countedSequencer, userId } = storageLedgerEntry;
-    // Two writes are dropped here, and both answer matched — the caller has no other blob-name form to try,
-    // And there is nothing left to do with the write either way.
+    // A stale event is dropped here and still answers matched — the caller has no other blob-name form to try,
+    // And there is nothing left to do with an event older than the one already applied, which happens because
+    // The newer write's event can land first.
     //
-    // An event older than the one already applied is stale, since the newer write's event can land first.
-    // A charge is dropped once any event has spoken, because it is a guess about a write storage has already
-    // Measured — a charge delayed past a newer write's event would otherwise put back the size that event
-    // Superseded. Skipping it costs nothing: every write to this container raises its own event, so the next
-    // One settles the blob again.
+    // A charge passes no sequencer and is applied whatever the row has already seen. It cannot yield to the
+    // Last event that spoke: the blob it measures is rewritten under one name on every save, so a charge that
+    // Stood down after the blob's first event would leave every save after the first counted only by its own
+    // Event — seconds later, from the Functions host, and not at all in the request the owner is watching.
+    // What that trades is a charge delayed past a *newer* write's event putting its own size back; the next
+    // Save's charge corrects it rather than stranding it, because the same name is written again. The one
+    // Charge whose figure is a guess about a write the server did not make — a clone — is charged before its
+    // Copy, so its own event always lands behind it and measures over it.
     // `?? undefined` because a nullable column reads back as `null` — drizzle's boundary, not a shape we pass on
-    if (
-      sequencer === undefined
-        ? countedSequencer !== null
-        : !checkIsNewerSequencer(sequencer, countedSequencer ?? undefined)
-    )
+    if (sequencer !== undefined && !checkIsNewerSequencer(sequencer, countedSequencer ?? undefined))
       return { isMatched: true };
 
     await tx

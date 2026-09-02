@@ -107,6 +107,7 @@ describe("schema", () => {
       userSettings_microphoneVolumePercentage_check: "message"."userSettings"."microphoneVolumePercentage" BETWEEN 0 AND 200
       userSettings_speakerVolumePercentage_check: "message"."userSettings"."speakerVolumePercentage" BETWEEN 0 AND 200
       userSettings_autoIdleThresholdMs_check: "message"."userSettings"."autoIdleThresholdMs" BETWEEN 60000 AND 86400000
+      userSettings_pushToTalkKeybind_length_check: LENGTH("message"."userSettings"."pushToTalkKeybind") <= 64
       userSettings_pushToTalkReleaseDelayMs_check: "message"."userSettings"."pushToTalkReleaseDelayMs" BETWEEN 0 AND 2000
       userStatuses_message_length_check: LENGTH("message"."userStatuses"."message") <= 64
       usersToRooms_nickname_length_check: LENGTH("message"."usersToRooms"."nickname") <= 32

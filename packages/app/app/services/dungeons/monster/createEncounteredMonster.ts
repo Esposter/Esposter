@@ -8,10 +8,10 @@ import { levelUp } from "@/services/dungeons/monster/levelUp";
 // So a scaled spawn is statistically identical to a monster trained to that level.
 export const createEncounteredMonster = (key: MonsterKey, level: number) => {
   const monster = new Monster(key);
-  while (monster.stats.level < level) {
-    monster.status.exp = calculateLevelExperience(monster.stats.level);
+  while (monster.statistics.level < level) {
+    monster.status.experience = calculateLevelExperience(monster.statistics.level);
     levelUp(monster);
   }
-  monster.status.hp = monster.stats.maxHp;
+  monster.status.health = monster.statistics.maxHealth;
   return monster;
 };

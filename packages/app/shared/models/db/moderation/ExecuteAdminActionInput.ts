@@ -20,12 +20,12 @@ export type ExecuteAdminActionInput =
   | UnparameterizedAdminActionInput
   | WarnAdminActionInput;
 
-export interface TimeoutUserAdminActionInput extends AExecuteAdminActionInput {
+export interface TimeoutUserAdminActionInput extends BaseExecuteAdminActionInput {
   durationMs: number;
   readonly type: AdminActionType.TimeoutUser;
 }
 
-export interface UnparameterizedAdminActionInput extends AExecuteAdminActionInput {
+export interface UnparameterizedAdminActionInput extends BaseExecuteAdminActionInput {
   readonly type:
     | AdminActionType.CreateBan
     | AdminActionType.ForceMute
@@ -36,12 +36,12 @@ export interface UnparameterizedAdminActionInput extends AExecuteAdminActionInpu
     | AdminActionType.StopScreenShare;
 }
 
-export interface WarnAdminActionInput extends AExecuteAdminActionInput {
+export interface WarnAdminActionInput extends BaseExecuteAdminActionInput {
   reason?: string;
   readonly type: AdminActionType.Warn;
 }
 
-interface AExecuteAdminActionInput {
+interface BaseExecuteAdminActionInput {
   roomId: RoomInMessage["id"];
   targetUserId: User["id"];
 }

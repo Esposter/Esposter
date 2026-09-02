@@ -1,6 +1,6 @@
 ---
 name: oxlint
-description: Esposter oxlint + ESLint linting conventions — which lint script to run locally vs in CI (oxlint is repo-wide, per-package scripts are ESLint only), never hand-fixing lint errors, the require-await autofix that breaks a Promise-returning function, picking oxlint-disable vs eslint-disable and spelling the rule the reporting linter's way, method-signature-style and its overload exceptions, the expect.any and JSON.parse no-restricted-syntax bans and when a JSON.parse disable is earned, prefer-named-capture-group, why nothing type-aware can be linted, and the vuejs-accessibility template rules (which are staged off and what promotes them, component-tag false positives, template disable comments), plus deep dives on editing .oxlintrc.json (categories, prefixed rule names, vitest and promise entries, ignorePatterns, stale-directive audits) and on authoring a custom JS plugin. Apply when fixing lint errors, editing .oxlintrc.json, configuring vitest lint rules, investigating slow ESLint rules, writing a custom lint rule, adding an accessibility attribute to a template, or adding regexes, interface declarations or JSON parsing.
+description: Esposter oxlint + ESLint linting conventions — which lint script to run locally vs in CI (oxlint is repo-wide, per-package scripts are ESLint only), never hand-fixing lint errors, the require-await autofix that breaks a Promise-returning function, picking oxlint-disable vs eslint-disable and spelling the rule the reporting linter's way, method-signature-style and its overload exceptions, the no-useless-default-assignment false positive on an overloaded implementation signature, the expect.any and JSON.parse no-restricted-syntax bans and when a JSON.parse disable is earned, prefer-named-capture-group, why nothing type-aware can be linted, and the vuejs-accessibility template rules (which are staged off and what promotes them, component-tag false positives, template disable comments), plus deep dives on editing .oxlintrc.json (categories, prefixed rule names, vitest and promise entries, ignorePatterns, stale-directive audits) and on authoring a custom JS plugin. Apply when fixing lint errors, editing .oxlintrc.json, configuring vitest lint rules, investigating slow ESLint rules, writing a custom lint rule, adding an accessibility attribute to a template, or adding regexes, interface declarations or JSON parsing.
 ---
 
 # Oxlint + ESLint Conventions
@@ -50,6 +50,15 @@ SFC templates are linted by `eslint-plugin-vuejs-accessibility`, configured in `
 - **Never silence a finding with an `aria-label` restating visible text.** Fix the markup, or disable the line with the reason. A control that only proxies a labelled affordance (a `hidden` file input behind a button) is `aria-hidden="true"` **plus** `tabindex="-1"`; `aria-hidden` alone trips `no-aria-hidden-on-focusable`.
 - **Template directives are HTML comments**: `<!-- eslint-disable-next-line vuejs-accessibility/<rule> -- reason -->`. `-next-line` reaches the element's opening line only, so an attribute several lines down a multi-line tag needs an `eslint-disable` / `eslint-enable` pair wrapping the element instead. Both forms are safe above a single root element: the dev-mode render function becomes a fragment carrying `DEV_ROOT_FRAGMENT`, which the runtime resolves back to the one-element child for attribute fallthrough, and the production compiler strips template comments outright.
 - Take only `files`, `plugins` and `rules` from the plugin's flat config — its `languageOptions` sets a bare `vue-eslint-parser` that would replace the Nuxt TS sub-parser and turn every `lang="ts"` block into a parse error.
+
+## `typescript/no-useless-default-assignment` (oxlint)
+
+The rule proves a default can never fire from the signature it is written on — and for an overloaded function that
+is the **implementation** signature, never the overloads a caller actually sees. So a parameter one overload
+declares optional, defaulted in an implementation whose own annotation makes it required, reports as a useless
+default. Deleting it is a runtime defect the types no longer describe: the single-argument call indexes by
+`undefined`. Take the file-level `/* oxlint-disable typescript/no-useless-default-assignment -- reason */`
+(`packages/shared/src/util/array/takeOne.ts`).
 
 ## `typescript/method-signature-style` (oxlint)
 

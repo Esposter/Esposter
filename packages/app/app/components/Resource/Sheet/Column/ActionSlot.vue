@@ -29,7 +29,7 @@ const { chartingColumnName, deletingColumnName, editingColumnName } = storeToRef
     <ResourceSheetColumnToggleVisibilityButton
       :column-id="column.id"
       :column-name="column.name"
-      :hidden="column.hidden"
+      :is-hidden="column.isHidden"
     />
     <StyledTooltipIconButton
       :button-props="DENSE_ICON_BUTTON_PROPS"

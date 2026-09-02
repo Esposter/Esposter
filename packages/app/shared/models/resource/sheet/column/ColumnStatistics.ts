@@ -12,7 +12,7 @@ export interface ColumnStatistics {
   minimum?: number;
   mostFrequentValue?: string;
   nullCount: number;
-  nullPercent?: number;
+  nullPercentage?: number;
   standardDeviation?: number;
   summation?: number;
   topFrequencies?: readonly (readonly [string, number])[];
@@ -29,7 +29,7 @@ export const columnStatisticsSchema = z.object({
   minimum: z.number().optional(),
   mostFrequentValue: z.string().optional(),
   nullCount: z.int().nonnegative(),
-  nullPercent: z.number().min(0).max(100).optional(),
+  nullPercentage: z.number().min(0).max(100).optional(),
   standardDeviation: z.number().nonnegative().optional(),
   summation: z.number().optional(),
   topFrequencies: z

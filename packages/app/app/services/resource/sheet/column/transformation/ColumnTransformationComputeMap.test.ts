@@ -79,7 +79,7 @@ describe("columnTransformationComputeMap", () => {
     expect.hasAssertions();
 
     const transformation = {
-      part: DatePartType.Year,
+      datePartType: DatePartType.Year,
       sourceColumnId,
       type: ColumnTransformationType.DatePart,
     } as const;

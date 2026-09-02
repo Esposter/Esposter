@@ -1,1 +1,2 @@
-export const calculateExperienceGain = (baseExp: number, enemyLevel: number) => Math.round((baseExp * enemyLevel) / 7);
+export const calculateExperienceGain = (baseExperience: number, enemyLevel: number) =>
+  Math.round((baseExperience * enemyLevel) / 7);

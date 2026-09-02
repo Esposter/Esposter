@@ -14,7 +14,7 @@ is only unreconstructable when the test never sees it.
 
 ## Opaque third-party messages only
 
-A Zod error string you can't cleanly reconstruct: leave the snapshot empty and populate with `pnpm test -u`. The exception, not the default; still never `toBeInstanceOf`. A message no one can reconstruct portably is not snapshotted at all — `platform-and-bundle-tests.md`.
+A Zod error string you can't cleanly reconstruct: leave the snapshot empty and populate with `pnpm test -u`. The exception, not the default; still never `toBeInstanceOf`. A message no one can reconstruct portably is not snapshotted at all — `references/platform-and-bundle-tests.md`.
 
 ## An inline snapshot belongs to its call site
 

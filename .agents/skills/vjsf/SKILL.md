@@ -13,6 +13,11 @@ General Zod schema conventions are the `zod` skill's; this skill owns only what 
 
 `.meta({ title })` values use **enum values directly**, not string literals; `zodToJsonSchema` runs `toTitleCase(prettify(...))` automatically, so an enum value like `FooType.ConvertTo` renders as `"Convert To"`.
 
+**A field with no `title` is labelled by its own key**, so renaming the field renames the control the user reads —
+`fooBarType` renders as `"Foo Bar Type"` where `type` rendered as `"Type"`. A rename that only fixes the
+identifier carries a `.meta({ title })` holding the label the key used to produce, which is what keeps the change
+behaviour-preserving; a field whose label was already wrong is a separate change.
+
 ## `layout` Meta
 
 Put `comp`, `getItems`, `getProps` under the `layout` key of the field's `.meta()` **in the schema**, never injected dynamically from a composable. `GlobalMeta` (`shared/types/zod.d.ts`) types `layout?: Partial<PartialCompObject>` — its values are vjsf JS expression strings evaluated at runtime against the vjsf `context` (passed via `:options`):

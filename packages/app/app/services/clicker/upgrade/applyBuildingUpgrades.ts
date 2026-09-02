@@ -1,4 +1,4 @@
-import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
+import type { BuildingWithStatistics } from "#shared/models/clicker/data/building/BuildingWithStatistics";
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 
 import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUpgrade";
@@ -6,7 +6,7 @@ import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUp
 export const applyBuildingUpgrades = (
   basePower: number,
   boughtUpgrades: Upgrade[],
-  boughtBuildings: BuildingWithStats[],
+  boughtBuildings: BuildingWithStatistics[],
 ) => {
   let resultPower = basePower;
   for (const boughtBuilding of boughtBuildings)
