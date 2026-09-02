@@ -1,5 +1,5 @@
 import type { ProgramParticipant } from "#shared/models/resource/program/ProgramParticipant";
-import type { ProgramStatus } from "#shared/models/resource/program/ProgramStatusRow";
+import type { ProgramStatus } from "#shared/models/resource/program/ProgramStatus";
 
 import { generateProgramParticipants } from "@@/server/services/program/generateProgramParticipants";
 import { readProgramStatusRows } from "@@/server/services/program/readProgramStatusRows";
