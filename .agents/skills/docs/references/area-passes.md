@@ -15,7 +15,7 @@ So ideation, triage, and the per-area pass run in the main session, **one produc
 
 Modularize by area, and take each area through its **full lifecycle in one sequential pass**:
 
-1. **Migrate** — move/rewrite that area's existing docs into `packages/app/content/docs/<area>/` per the layout in `page-shapes.md`.
+1. **Migrate** — move/rewrite that area's existing docs into `packages/app/content/docs/<area>/` per the layout in `references/page-shapes.md`.
 2. **Refactor** — split consolidated pages to single-responsibility files, fix links, promote repo-wide rules to `architecture/`.
 3. **Ideate exhaustively** — enumerate every new feature that could possibly make sense for the area, not just obvious ones.
 4. **Triage every idea** into exactly one bucket, and **every to-implement idea gets a full spec**:
