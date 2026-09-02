@@ -314,7 +314,7 @@ Packages are used directly by the nuxt application via `workspace:*`.
 
 ### Workspace Graph
 
-![Workspace dependency graph](./dependency-graph.svg)
+[![Workspace dependency graph](./dependency-graph.svg)](https://github.com/Esposter/Esposter/blob/main/dependency-graph.svg)
 
 Each node's hue and tint are the role its edges give it, darkest at what the repo ships and lightest at what
 the rest of it stands on; the key is drawn into the image.
