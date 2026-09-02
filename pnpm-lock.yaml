@@ -806,6 +806,9 @@ importers:
       oxlint-tsgolint:
         specifier: 'catalog:'
         version: 7.0.2001
+      tsx:
+        specifier: 'catalog:'
+        version: 4.23.13
       typedoc:
         specifier: 'catalog:'
         version: 0.28.20(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
@@ -1667,6 +1670,9 @@ importers:
       tsdown:
         specifier: 'catalog:'
         version: 0.22.14(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(publint@0.3.24)(tsx@4.23.13)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
+      tsx:
+        specifier: 'catalog:'
+        version: 4.23.13
       vitest:
         specifier: 'catalog:'
         version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.4.1)(@vitest/coverage-v8@4.1.11)(happy-dom@20.12.0)(msw@2.15.0(@types/node@26.4.1)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(vite@8.2.2(@types/node@26.4.1)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.103.1)(sass@1.103.1)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0))

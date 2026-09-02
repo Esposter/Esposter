@@ -1,7 +1,7 @@
-import type { DEPENDENCY_FIELDS } from "#scripts/outdatedDependencies/constants";
+import type { DependencyField } from "#scripts/models/DependencyField";
 
 export interface ManifestDependency {
-  field: (typeof DEPENDENCY_FIELDS)[number];
+  field: DependencyField;
   manifestName: string;
   manifestPath: string;
   pkg: string;

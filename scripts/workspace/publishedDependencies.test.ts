@@ -1,3 +1,4 @@
+import { DependencyField } from "#scripts/models/DependencyField";
 import { getWorkspacePackages } from "#scripts/services/getWorkspacePackages";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -15,9 +16,9 @@ describe("published packages", () => {
   // Same reason the build's allowlist reads it: a name declared only there is still externalized, so a private
   // One is still an import the consumer cannot resolve.
   const INSTALL_DEPENDENCY_FIELDS = [
-    "dependencies",
-    "optionalDependencies",
-    "peerDependencies",
+    DependencyField.Dependencies,
+    DependencyField.OptionalDependencies,
+    DependencyField.PeerDependencies,
     "peerDependenciesMeta",
   ] as const;
   const privatePackageNames = new Set(

@@ -59,7 +59,7 @@
     "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "snapshot:gen": "node scripts/generateSnapshot.ts",
+    "snapshot:gen": "tsx scripts/generateSnapshot.ts",
     "test": "vitest",
     "typecheck": "tsc"
   },
@@ -68,6 +68,7 @@
     "@types/node": "catalog:",
     "drizzle-kit": "catalog:",
     "tsdown": "catalog:",
+    "tsx": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {

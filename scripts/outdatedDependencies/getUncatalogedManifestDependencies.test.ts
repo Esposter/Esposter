@@ -1,11 +1,12 @@
 import type { ManifestDependency } from "#scripts/outdatedDependencies/models/ManifestDependency";
 
+import { DependencyField } from "#scripts/models/DependencyField";
 import { getUncatalogedManifestDependencies } from "#scripts/outdatedDependencies/getUncatalogedManifestDependencies";
 import { describe, expect, test } from "vitest";
 
 describe(getUncatalogedManifestDependencies, () => {
   const baseDependency: ManifestDependency = {
-    field: "dependencies",
+    field: DependencyField.Dependencies,
     manifestName: "",
     manifestPath: "",
     pkg: "",

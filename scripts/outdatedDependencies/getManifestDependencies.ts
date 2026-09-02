@@ -1,7 +1,7 @@
 import type { ManifestDependency } from "#scripts/outdatedDependencies/models/ManifestDependency";
 import type { ManifestFile } from "#scripts/outdatedDependencies/models/ManifestFile";
 
-import { DEPENDENCY_FIELDS } from "#scripts/outdatedDependencies/constants";
+import { DependencyFields } from "#scripts/models/DependencyField";
 
 export const getManifestDependencies = (manifests: ManifestFile[]): ManifestDependency[] => {
   const manifestDependencies: ManifestDependency[] = [];
@@ -10,7 +10,7 @@ export const getManifestDependencies = (manifests: ManifestFile[]): ManifestDepe
     const { name } = manifest;
     if (name === undefined) continue;
 
-    for (const field of DEPENDENCY_FIELDS)
+    for (const field of DependencyFields)
       for (const [pkg, specifier] of Object.entries(manifest[field] ?? {}))
         manifestDependencies.push({ field, manifestName: name, manifestPath: path, pkg, specifier });
   }
