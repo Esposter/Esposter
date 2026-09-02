@@ -1,7 +1,7 @@
-import { setupOxlintPluginSuite } from "#scripts/oxlint/setupOxlintPluginSuite.test";
+import { setupPluginSuite } from "#scripts/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
-// The rule is an oxlint JS plugin; the harness that runs it over these fixtures is setupOxlintPluginSuite.
+// The rule is an oxlint JS plugin; the harness that runs it over these fixtures is setupPluginSuite.
 const RULE = "error-alert/no-raw-error-alert";
 
 describe(RULE, () => {
@@ -30,7 +30,7 @@ describe(RULE, () => {
     // A different callee reading `.message` is not the alert store.
     { name: "logsErrorMessage", source: `console.error(error.message);`, violations: 0 },
   ];
-  const { getCodes, getViolations } = setupOxlintPluginSuite({
+  const { getCodes, getViolations } = setupPluginSuite({
     fixtures: FIXTURES,
     plugin: "errorAlert",
     rules: [RULE],

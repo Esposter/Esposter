@@ -27,7 +27,7 @@ const TEMPORARY_DIRECTORY_PREFIX = "oxlint-plugin-";
 // Oxlint binary over generated fixtures — which covers plugin loading and visitor keys, not just the predicates.
 // Fixtures are written outside the repo so the deliberately-violating ones are never picked up by the root
 // Oxlint pass. One run answers for every fixture, so the whole thing happens once in `beforeAll`
-export const setupOxlintPluginSuite = ({
+export const setupPluginSuite = ({
   fixtures,
   plugin,
   rules,
@@ -85,4 +85,4 @@ export const setupOxlintPluginSuite = ({
   return { getCodes: () => codes, getViolations: (name: string) => violationsByFixture.get(name) };
 };
 
-describe.todo("setupOxlintPluginSuite");
+describe.todo("setupPluginSuite");
