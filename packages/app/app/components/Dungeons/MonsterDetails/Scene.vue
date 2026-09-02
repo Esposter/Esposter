@@ -26,7 +26,7 @@ const monsterName = computed(() => prettify(selectedMonster.value.key));
       :configuration="{
         x: 20,
         y: 60,
-        text: `LV. ${selectedMonster.stats.level}`,
+        text: `LV. ${selectedMonster.statistics.level}`,
         style: { ...MenuTextStyle, fontSize: 40 },
       }"
     />
@@ -48,7 +48,7 @@ const monsterName = computed(() => prettify(selectedMonster.value.key));
         y: 340,
         originX: 1,
         originY: 0,
-        text: selectedMonster.status.exp.toString(),
+        text: selectedMonster.status.experience.toString(),
         style: MenuExperienceTextStyle,
       }"
     />

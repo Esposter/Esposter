@@ -16,7 +16,7 @@ export const useAchievementStore = defineStore("achievement", () => {
     achievementDefinitionMap.value = newAchievementDefinitionMap;
   };
   const userAchievements = ref<UserAchievementWithDefinition[]>([]);
-  const stats = computed(() => {
+  const statistics = computed(() => {
     const unlockedUserAchievements = getUnlockedUserAchievements(userAchievements.value);
     return {
       totalAchievements: achievementDefinitions.value.length,
@@ -52,7 +52,7 @@ export const useAchievementStore = defineStore("achievement", () => {
     deleteRecentlyUnlockedUserAchievement,
     initializeAchievementDefinitionMap,
     recentlyUnlockedUserAchievements,
-    stats,
+    statistics,
     updateAchievement,
     userAchievements,
   };

@@ -5,7 +5,7 @@ import { TAB_QUERY_PARAMETER_KEY } from "@/services/route/constants";
 import { useAchievementStore } from "@/store/achievement";
 
 const achievementStore = useAchievementStore();
-const { achievementDefinitions, stats, userAchievements } = storeToRefs(achievementStore);
+const { achievementDefinitions, statistics, userAchievements } = storeToRefs(achievementStore);
 const achievementListMap = computed(() => {
   const unlockedUserAchievements = getUnlockedUserAchievements(userAchievements.value);
   return {
@@ -36,12 +36,14 @@ const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, AchievementStatuses, Achi
       <v-icon icon="mdi-trophy" />
       Achievements
       <v-spacer />
-      <v-chip color="primary" size="small">{{ stats.unlockedAchievements }} / {{ stats.totalAchievements }}</v-chip>
+      <v-chip color="primary" size="small"
+        >{{ statistics.unlockedAchievements }} / {{ statistics.totalAchievements }}</v-chip
+      >
     </v-card-title>
-    <v-card-subtitle>Total Points: {{ stats.unlockedPoints }} / {{ stats.totalPoints }}</v-card-subtitle>
+    <v-card-subtitle>Total Points: {{ statistics.unlockedPoints }} / {{ statistics.totalPoints }}</v-card-subtitle>
     <v-card-text>
       <v-progress-linear
-        :model-value="(stats.unlockedAchievements / stats.totalAchievements) * 100"
+        :model-value="(statistics.unlockedAchievements / statistics.totalAchievements) * 100"
         :height="8"
         color="primary"
         rd

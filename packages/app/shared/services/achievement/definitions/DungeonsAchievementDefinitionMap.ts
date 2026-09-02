@@ -19,7 +19,7 @@ const defineMonsterLevelAchievementDefinition = ({
   defineAchievementDefinition({
     amount: 1,
     condition: {
-      operation: (value) => value.some(({ stats }) => stats.level >= level),
+      operation: (value) => value.some(({ statistics }) => statistics.level >= level),
       operator: AchievementOperator.Operation,
       path: "save.player.monsters",
       type: AchievementConditionType.Property,

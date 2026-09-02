@@ -17,7 +17,7 @@ export const useWorldPlayerStore = defineStore("dungeons/world/player", () => {
     phaserEventEmitter.emit("playerTeleport", position, direction);
   };
   const healParty = () => {
-    for (const monster of monsterPartySceneStore.monsters) monster.status.hp = monster.stats.maxHp;
+    for (const monster of monsterPartySceneStore.monsters) monster.status.health = monster.statistics.maxHealth;
   };
 
   const sprite = ref<GameObjects.Sprite>();

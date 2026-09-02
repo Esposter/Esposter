@@ -8,15 +8,15 @@ vi.mock(import("@/util/math/random/createRandomNumber"), () => ({ createRandomNu
 
 describe(createEncounteredMonster, () => {
   const key = MonsterKey.Iguanignite;
-  const baseStatistics = getMonsterData(key).stats;
+  const baseStatistics = getMonsterData(key).statistics;
 
   test("spawns at the species' base level unchanged", () => {
     expect.hasAssertions();
 
     const monster = createEncounteredMonster(key, baseStatistics.level);
 
-    expect(monster.stats).toStrictEqual(baseStatistics);
-    expect(monster.status).toStrictEqual({ exp: 0, hp: baseStatistics.maxHp });
+    expect(monster.statistics).toStrictEqual(baseStatistics);
+    expect(monster.status).toStrictEqual({ experience: 0, health: baseStatistics.maxHealth });
   });
 
   test("levels a fresh monster up to the target level at full health", () => {
@@ -25,7 +25,7 @@ describe(createEncounteredMonster, () => {
     const targetLevel = baseStatistics.level + 2;
     const monster = createEncounteredMonster(key, targetLevel);
 
-    expect(monster.stats.level).toBe(targetLevel);
-    expect(monster.status).toStrictEqual({ exp: 0, hp: monster.stats.maxHp });
+    expect(monster.statistics.level).toBe(targetLevel);
+    expect(monster.status).toStrictEqual({ experience: 0, health: monster.statistics.maxHealth });
   });
 });
