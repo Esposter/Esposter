@@ -26,8 +26,8 @@ const rolelessMemberCount = computed(
   () => memberCount.value - memberCountsByTopRole.value.reduce((sum, countByTopRole) => sum + countByTopRole.count, 0),
 );
 const getMemberCountSuffix = (roleId: string) => {
-  const memberCount = roleId ? memberCountByRoleId.value.get(roleId) : rolelessMemberCount.value;
-  return memberCount === undefined ? "" : ` — ${memberCount}`;
+  const groupMemberCount = roleId ? memberCountByRoleId.value.get(roleId) : rolelessMemberCount.value;
+  return groupMemberCount === undefined ? "" : ` — ${groupMemberCount}`;
 };
 </script>
 
