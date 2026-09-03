@@ -7,14 +7,14 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import { DEFAULT_INFO_DIALOG_MESSAGE } from "@/services/dungeons/scene/monsterParty/constants";
 import { MonsterPartyConfirmationMenuOptionGrid } from "@/services/dungeons/scene/monsterParty/MonsterPartyConfirmationMenuOptionGrid";
 import { checkIsMovingDirection } from "@/services/dungeons/UI/input/checkIsMovingDirection";
-import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
+import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confirmationMenu", () => {
   const monsterPartySceneStore = useMonsterPartySceneStore();
   const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
-  const infoPanelStore = useInfoPanelStore();
+  const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
 
   const onPlayerInput = (_scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel) return false;
@@ -32,7 +32,7 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
 
           monsterPartySceneStore.monsters = monsterPartySceneStore.monsters.toSpliced(index, 1);
           monsterPartySceneStore.sceneMode = SceneMode.Default;
-          infoPanelStore.infoDialogMessage.text = `You released ${monsterPartyOptionGrid.value.key} into the wild.`;
+          monsterPartyInfoPanelStore.infoDialogMessage.text = `You released ${monsterPartyOptionGrid.value.key} into the wild.`;
           break;
         }
         default:
@@ -46,7 +46,7 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
 
   const onCancel = () => {
     monsterPartySceneStore.sceneMode = SceneMode.Menu;
-    infoPanelStore.infoDialogMessage.text = DEFAULT_INFO_DIALOG_MESSAGE;
+    monsterPartyInfoPanelStore.infoDialogMessage.text = DEFAULT_INFO_DIALOG_MESSAGE;
   };
 
   return { onPlayerInput };

@@ -2,11 +2,11 @@
 import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuTextStyle";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { WORD_PADDING } from "@/services/dungeons/UI/constants";
-import { useInfoPanelStore } from "@/store/dungeons/inventory/infoPanel";
+import { useInventoryInfoPanelStore } from "@/store/dungeons/inventory/infoPanel";
 import { onCreate, Text } from "vue-phaserjs";
 
-const infoPanelStore = useInfoPanelStore();
-const { infoDialogMessage } = storeToRefs(infoPanelStore);
+const inventoryInfoPanelStore = useInventoryInfoPanelStore();
+const { infoDialogMessage } = storeToRefs(inventoryInfoPanelStore);
 const itemOptionGrid = useItemOptionGrid();
 const wordWrapWidth = ref<number>();
 

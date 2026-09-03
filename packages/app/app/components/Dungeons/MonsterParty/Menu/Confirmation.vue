@@ -5,14 +5,14 @@ import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { DEFAULT_INFO_DIALOG_MESSAGE } from "@/services/dungeons/scene/monsterParty/constants";
 import { MonsterPartyConfirmationMenuOptionGrid } from "@/services/dungeons/scene/monsterParty/MonsterPartyConfirmationMenuOptionGrid";
 import { getMenuPosition } from "@/services/dungeons/UI/menu/getMenuPosition";
-import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
+import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { onCreate } from "vue-phaserjs";
 
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { sceneMode } = storeToRefs(monsterPartySceneStore);
-const infoPanelStore = useInfoPanelStore();
-const { infoDialogMessage } = storeToRefs(infoPanelStore);
+const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
+const { infoDialogMessage } = storeToRefs(monsterPartyInfoPanelStore);
 const position = ref<Position>();
 const isMenuVisible = computed({
   get: () => sceneMode.value === SceneMode.Confirmation,

@@ -7,7 +7,7 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { phaserEventEmitter } from "@/services/phaser/events";
-import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
+import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 
 export class HealItemResolver extends AItemResolver {
   constructor() {
@@ -15,8 +15,8 @@ export class HealItemResolver extends AItemResolver {
   }
 
   override async handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
-    const infoPanelStore = useInfoPanelStore();
-    const { showMessages } = infoPanelStore;
+    const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
+    const { showMessages } = monsterPartyInfoPanelStore;
     const oldHp = monster.value.status.health;
     const newHp = Math.min(oldHp + item.value.effect.value, monster.value.statistics.maxHealth);
 
@@ -28,8 +28,8 @@ export class HealItemResolver extends AItemResolver {
   }
 
   override isActive(_item: Ref<Item>, monster: Ref<Monster>) {
-    const infoPanelStore = useInfoPanelStore();
-    const { infoDialogMessage } = storeToRefs(infoPanelStore);
+    const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
+    const { infoDialogMessage } = storeToRefs(monsterPartyInfoPanelStore);
 
     if (monster.value.status.health === 0) {
       infoDialogMessage.value.text = `Cannot heal fainted ${monster.value.key}.`;

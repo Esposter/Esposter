@@ -10,7 +10,7 @@ import { useDungeonsStore } from "@/store/dungeons";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { exhaustiveGuard } from "@esposter/shared";
 
-export const useMenuStore = defineStore("dungeons/world/menu", () => {
+export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
   const dungeonsStore = useDungeonsStore();
   const { fadeSwitchToScene, saveData } = dungeonsStore;
   const worldDialogStore = useWorldDialogStore();

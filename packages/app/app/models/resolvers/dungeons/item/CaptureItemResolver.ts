@@ -10,7 +10,7 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import { COLUMN_SIZE, ROW_SIZE } from "@/services/dungeons/scene/monsterParty/constants";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBallStore } from "@/store/dungeons/battle/ball";
-import { useInfoPanelStore } from "@/store/dungeons/inventory/infoPanel";
+import { useInventoryInfoPanelStore } from "@/store/dungeons/inventory/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { prettify } from "@/util/text/prettify";
 import { NotFoundError } from "@esposter/shared";
@@ -35,8 +35,8 @@ export class CaptureItemResolver extends AItemResolver {
     const { monsters } = storeToRefs(monsterPartySceneStore);
 
     if (monsters.value.length >= COLUMN_SIZE * ROW_SIZE) {
-      const infoPanelStore = useInfoPanelStore();
-      const { infoDialogMessage } = storeToRefs(infoPanelStore);
+      const inventoryInfoPanelStore = useInventoryInfoPanelStore();
+      const { infoDialogMessage } = storeToRefs(inventoryInfoPanelStore);
       infoDialogMessage.value.text = `You have no room in your party! Cannot use ${prettify(item.value.id)}.`;
       return false;
     }

@@ -7,15 +7,15 @@ import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { checkIsMovingDirection } from "@/services/dungeons/UI/input/checkIsMovingDirection";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
-import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
+import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { exhaustiveGuard } from "@esposter/shared";
 
-export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
+export const useMonsterPartyMenuStore = defineStore("dungeons/monsterParty/menu", () => {
   const monsterPartySceneStore = useMonsterPartySceneStore();
   const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
   const monsterPartyMenuOptionGrid = useMonsterPartyMenuOptionGrid();
-  const infoPanelStore = useInfoPanelStore();
+  const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel) return false;
     else if (monsterPartySceneStore.sceneMode === SceneMode.Default)
@@ -33,17 +33,17 @@ export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
         case MenuOption.Move:
           monsterPartySceneStore.monsterIdToMove = monsterPartyOptionGrid.value.id;
           monsterPartySceneStore.sceneMode = SceneMode.Move;
-          infoPanelStore.infoDialogMessage.text = `Select a monster to switch ${monsterPartyOptionGrid.value.key} with.`;
+          monsterPartyInfoPanelStore.infoDialogMessage.text = `Select a monster to switch ${monsterPartyOptionGrid.value.key} with.`;
           break;
         case MenuOption.Release:
           if (monsterPartySceneStore.monsters.length <= 1) {
-            infoPanelStore.infoDialogMessage.text = "Cannot release any more monsters.";
+            monsterPartyInfoPanelStore.infoDialogMessage.text = "Cannot release any more monsters.";
             monsterPartySceneStore.sceneMode = SceneMode.Default;
             break;
           }
 
           monsterPartySceneStore.sceneMode = SceneMode.Confirmation;
-          infoPanelStore.infoDialogMessage.text = `Release ${monsterPartyOptionGrid.value.key}?`;
+          monsterPartyInfoPanelStore.infoDialogMessage.text = `Release ${monsterPartyOptionGrid.value.key}?`;
           break;
         case MenuOption.Summary: {
           const monsterDetailsSceneStore = useMonsterDetailsSceneStore();

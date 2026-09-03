@@ -29,7 +29,7 @@
 | `app/store/message/input`                                                                                                                   | 2026-09-03 | `store*` is for a paired subscription handler; a `getIs*` returning a boolean is `check*`         |
 | `app/store/message/user`                                                                                                                    | 2026-09-03 | a store file's name carries every word its export does, the parent path aside                     |
 | `app/store/message` — `file`, `search`, `ui`, `moderation`, `draftsAndSent`                                                                 | 2026-09-03 | a read that also writes is `read*`, and the composable it wraps takes `base*`                     |
-| `app/store/dungeons`                                                                                                                        | —          |                                                                                                   |
+| `app/store/dungeons`                                                                                                                        | 2026-09-03 | a store export whose leaf name collides takes its parent's word, as the import site cannot        |
 | `app/store/resource`                                                                                                                        | —          |                                                                                                   |
 | `app/store` — the rest                                                                                                                      | 2026-09-03 | the root stores plus `achievement`, `clicker`, `dashboard`, `post`, `survey`, the editors         |
 | `app/composables/message/room`                                                                                                              | —          | `use*` naming, the `{param}Value` `toValue` suffix                                                |
@@ -107,6 +107,14 @@ the grounds that a rename is expensive — that is the argument
 - **`getIsAuthed` / `getIsRateLimited` / `getIsEntityIdEqualComparator` — `get*` is right, the `Is` is not.**
   All three return a function rather than a boolean, so `check*` would be wrong, but the `Is` still reads as a
   predicate. The middleware pair wants a name saying what it builds; the comparator already has one.
+
+- **The dungeons input path spells one role three ways, and the skill sanctions none of them outright.**
+  A scene store's entry point is `onPlayerInput`, the resolver classes it dispatches to declare `handleInput`,
+  and the dialog store's own entry point is `handleShowMessageInput` — all three take a `PlayerInput` and answer
+  whether they consumed it. The `on*` rule covers a handler that wraps an existing named function, which none of
+  these does, so `handle*` is not straightforwardly wrong and renaming one family in isolation would only widen
+  the split. Which prefix the family takes is the open question, and it is settled with
+  `app/models` — `resolvers`, `shared`, where the abstract classes that fix the method name live.
 
 - **The `block` router's `blockUser` and `unblockUser` procedures name an action, not the row they write.**
   The store side is now `createBlock` / `deleteBlock` against the `blocks` table, and the router already spells

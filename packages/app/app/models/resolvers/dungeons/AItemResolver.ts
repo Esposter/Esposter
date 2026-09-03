@@ -6,7 +6,7 @@ import type { Promisable } from "type-fest";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
-import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
+import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 
 export abstract class AItemResolver implements ItemEntityType<ItemEffectType> {
   type;
@@ -36,8 +36,8 @@ export abstract class AItemResolver implements ItemEntityType<ItemEffectType> {
   validate(item: Ref<Item>): boolean {
     if (item.value.effect.type !== this.type) return false;
 
-    const infoPanelStore = useInfoPanelStore();
-    const { infoDialogMessage } = storeToRefs(infoPanelStore);
+    const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
+    const { infoDialogMessage } = storeToRefs(monsterPartyInfoPanelStore);
 
     if (item.value.quantity === 0) {
       infoDialogMessage.value.text = `No more ${item.value.id} available.`;

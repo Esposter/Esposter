@@ -5,7 +5,9 @@ import { takeOne } from "@esposter/shared";
 
 export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => {
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const activeMonsterIndex = ref(monsterPartySceneStore.monsters.findIndex((m) => !checkIsMonsterFainted(m)));
+  const activeMonsterIndex = ref(
+    monsterPartySceneStore.monsters.findIndex((monster) => !checkIsMonsterFainted(monster)),
+  );
   const activeMonster = computed({
     get: () => takeOne(monsterPartySceneStore.monsters, activeMonsterIndex.value),
     set: (newActiveMonster) => {
@@ -13,7 +15,7 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
     },
   });
   const switchActiveMonster = (id: string) => {
-    activeMonsterIndex.value = monsterPartySceneStore.monsters.findIndex((m) => m.id === id);
+    activeMonsterIndex.value = monsterPartySceneStore.monsters.findIndex((monster) => monster.id === id);
   };
   const attacks = computed(() => activeMonster.value.attackIds.map(getAttack));
 

@@ -2,14 +2,14 @@
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
 import { WORD_PADDING } from "@/services/dungeons/UI/constants";
-import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
+import { useBattleInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 import { onCreate, Text } from "vue-phaserjs";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
-const infoPanelStore = useInfoPanelStore();
-const { line1DialogMessage, line1TextDisplayWidth, line2Text } = storeToRefs(infoPanelStore);
+const battleInfoPanelStore = useBattleInfoPanelStore();
+const { line1DialogMessage, line1TextDisplayWidth, line2Text } = storeToRefs(battleInfoPanelStore);
 const wordWrapWidth = ref<number>();
 
 onCreate((scene) => {

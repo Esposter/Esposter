@@ -3,7 +3,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
 import { useDialogStore } from "@/store/dungeons/dialog";
 
-export const useInfoPanelStore = defineStore("dungeons/monsterParty/infoPanel", () => {
+export const useMonsterPartyInfoPanelStore = defineStore("dungeons/monsterParty/infoPanel", () => {
   const dialogStore = useDialogStore();
   const { updateQueuedMessagesAndShowMessage } = dialogStore;
   const { infoDialogMessage, infoTextDisplayWidth } = useDialogMessage("info");
