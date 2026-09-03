@@ -10,7 +10,10 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
-import { closedSurveyErrorReason, invalidParticipantTokenErrorReason } from "@@/server/services/survey/constants";
+import {
+  CLOSED_SURVEY_ERROR_REASON,
+  INVALID_PARTICIPANT_TOKEN_ERROR_REASON,
+} from "@@/server/services/survey/constants";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "@@/server/trpc/routers/createAudienceSheet.test";
@@ -124,8 +127,11 @@ describe("survey funnel — café feedback drive", () => {
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${
-        new InvalidOperationError(Operation.Create, AzureEntityType.SurveyResponse, invalidParticipantTokenErrorReason)
-          .message
+        new InvalidOperationError(
+          Operation.Create,
+          AzureEntityType.SurveyResponse,
+          INVALID_PARTICIPANT_TOKEN_ERROR_REASON,
+        ).message
       }]`,
     );
 
@@ -168,7 +174,7 @@ describe("survey funnel — café feedback drive", () => {
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${
-        new InvalidOperationError(Operation.Create, AzureEntityType.SurveyResponse, closedSurveyErrorReason).message
+        new InvalidOperationError(Operation.Create, AzureEntityType.SurveyResponse, CLOSED_SURVEY_ERROR_REASON).message
       }]`,
     );
 

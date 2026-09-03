@@ -1,6 +1,6 @@
 import type { TRPCError } from "@trpc/server";
 
-import { invalidParticipantTokenErrorReason } from "@@/server/services/survey/constants";
+import { INVALID_PARTICIPANT_TOKEN_ERROR_REASON } from "@@/server/services/survey/constants";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { AzureEntityType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
@@ -11,6 +11,6 @@ export const getInvalidParticipantTokenError = (): TRPCError =>
   getInvalidOperationError(
     Operation.Create,
     AzureEntityType.SurveyResponse,
-    invalidParticipantTokenErrorReason,
+    INVALID_PARTICIPANT_TOKEN_ERROR_REASON,
     "FORBIDDEN",
   );

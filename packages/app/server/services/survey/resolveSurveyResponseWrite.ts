@@ -1,7 +1,7 @@
 import type { Context } from "@@/server/trpc/context";
 import type { Resource, SurveyResponseEntity } from "@esposter/db-schema";
 
-import { closedSurveyErrorReason } from "@@/server/services/survey/constants";
+import { CLOSED_SURVEY_ERROR_REASON } from "@@/server/services/survey/constants";
 import { readSurveySettings } from "@@/server/services/survey/readSurveySettings";
 import { SurveyResponseModeValidatorMap } from "@@/server/services/survey/SurveyResponseModeValidatorMap";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
@@ -28,7 +28,7 @@ export const resolveSurveyResponseWrite = async (
     throw getInvalidOperationError(
       Operation.Create,
       AzureEntityType.SurveyResponse,
-      closedSurveyErrorReason,
+      CLOSED_SURVEY_ERROR_REASON,
       "CONFLICT",
     );
   return SurveyResponseModeValidatorMap[responseMode](db, surveyId, participantToken);

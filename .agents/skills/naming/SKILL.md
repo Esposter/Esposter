@@ -80,8 +80,9 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 - **Casing conventions apply to identifiers we author, never to foreign wire values.** A key that _is_ a protocol string — a provider's error code read off a redirect query, a field of a third-party payload we accept or emit verbatim — keeps that provider's spelling, `snake_case` included, because renaming it breaks the lookup or the contract. Type the map's key as `string` when the library exports no union for it (most don't, and hand-copying their literals into a union drifts silently), and give the lookup a fallback so an unmapped value degrades instead of rendering blank. Our own key beside it still gets camelCase.
 - **UI section enums: one per group, values double as title + id** — when a panel has scrollable subsections (or any list whose labels also serve as stable ids/anchors), model each group as its own enum whose values are the human title (e.g. `FooSection { Bar = "Bar Baz", ... }`). The value is reused as the display title and the DOM/scroll id, so don't derive a separate slug. One enum per subsection group, never a shared catch-all.
 
-## Regex Constants
+## Constants
 
+- **A module-scope constant holding a fixed scalar is `SCREAMING_SNAKE_CASE`** — `MAX_INVITE_ID_RETRIES`, `SEARCH_SIMILARITY_THRESHOLD`, `DUPLICATE_NAME_SUFFIX`, `CLOSED_SURVEY_ERROR_REASON`. The casing is what separates the value that is fixed for the life of the process from the local that happens to be `const`, and a camelCase one reads as the latter at every use site. A constant holding a **lookup structure** — a map, record or set the code indexes into — is PascalCase named after its file instead (`file-organization`, `references/constant-maps.md`), because there the name stands for the table rather than for one value. `packages/infra` is the one package this does not reach: a constant there is one per file named after that file, scalars included, so its casing is the file name's (`pulumi-infra`).
 - Named regex constants use `_REGEX` suffix — `FOO_REGEX`. **Never** `_RE`, `_PATTERN`, or any other suffix.
 
 ## Framework-Specific Naming
