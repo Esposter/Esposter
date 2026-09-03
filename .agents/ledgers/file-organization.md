@@ -2,24 +2,24 @@
 
 The question is where a thing lives and whether it exists twice — one export per file, no magic string where a constant already means it, no duplicate constant, the sole-consumer subfolder rule, alias imports.
 
-| Unit                                                                | Swept      | Notes                                                                                                                                                                                            |
-| ------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/shared`, `packages/shared-node`                           | 2026-08-30 | the two zod helpers moved to `services/zod`, their annotating types to `models/zod`, one export per file                                                                                         |
-| `app/shared/services`, `app/shared/util`                            | 2026-08-27 | `AchievementDefinitionMap` moved out of `achievementDefinitions.ts` into its own file, with its colocated suite; `getSynchronizedFunction`'s second export is exempt and now says so             |
-| `app/shared/models`                                                 | —          | 319 files; splits again at its own subdirectories on contact                                                                                                                                     |
-| `app/services`, `app/util`, `app/models`, `app/types`               | —          | models vs services vs utils vs constants; duplicate constants                                                                                                                                    |
-| `app/composables`                                                   | —          | sole-consumer subfolders                                                                                                                                                                         |
-| `app/store`                                                         | —          |                                                                                                                                                                                                  |
-| `server/services`, `server/composables`, `server/models`            | —          |                                                                                                                                                                                                  |
-| `server/trpc`                                                       | —          | input schemas belong in `shared/models`, not beside the router                                                                                                                                   |
-| `app/components/Message`                                            | —          | splits further at `Model/` on contact                                                                                                                                                            |
-| `app/components/Resource`                                           | —          |                                                                                                                                                                                                  |
-| `app/components` — the rest                                         | —          |                                                                                                                                                                                                  |
-| `packages/db`, `packages/db-schema`, `packages/db-mock`             | —          |                                                                                                                                                                                                  |
-| `packages/azure`, `packages/azure-functions`, `packages/azure-mock` | —          | cross-package placement: an Azure helper two packages need lives in `db`                                                                                                                         |
-| `packages/virrun`, `packages/infra`, `packages/configuration`       | —          |                                                                                                                                                                                                  |
-| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`    | —          | barrel contents are `ctix` output — regenerate, never hand-edit                                                                                                                                  |
-| `scripts`                                                           | 2026-09-02 | six sole-consumer files drained to their feature folder, taken to fixpoint; the root loose files folded into `workspace/` and `refreshLockfile/`, so a command is a folder when it has internals |
+| Unit                                                                | Swept      | Notes                                                                    |
+| ------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------ |
+| `packages/shared`, `packages/shared-node`                           | 2026-08-30 |                                                                          |
+| `app/shared/services`, `app/shared/util`                            | 2026-08-27 | `getSynchronizedFunction`'s second export is the exclusion below         |
+| `app/shared/models`                                                 | —          | 319 files; splits again at its own subdirectories on contact             |
+| `app/services`, `app/util`, `app/models`, `app/types`               | —          | models vs services vs utils vs constants; duplicate constants            |
+| `app/composables`                                                   | —          | sole-consumer subfolders                                                 |
+| `app/store`                                                         | —          |                                                                          |
+| `server/services`, `server/composables`, `server/models`            | —          |                                                                          |
+| `server/trpc`                                                       | —          | input schemas belong in `shared/models`, not beside the router           |
+| `app/components/Message`                                            | —          | splits further at `Model/` on contact                                    |
+| `app/components/Resource`                                           | —          |                                                                          |
+| `app/components` — the rest                                         | —          |                                                                          |
+| `packages/db`, `packages/db-schema`, `packages/db-mock`             | —          |                                                                          |
+| `packages/azure`, `packages/azure-functions`, `packages/azure-mock` | —          | cross-package placement: an Azure helper two packages need lives in `db` |
+| `packages/virrun`, `packages/infra`, `packages/configuration`       | —          |                                                                          |
+| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`    | —          | barrel contents are `ctix` output — regenerate, never hand-edit          |
+| `scripts`                                                           | 2026-09-02 | a command is a folder once it has internals                              |
 
 ## Find recipe
 
@@ -70,5 +70,5 @@ used only inside its own file produce the same result, and the pass tells them a
   `no-restricted-imports` override on `**/util/**` whose `group` is `["*", "!node:*", "!#src/*", "!@esposter/*"]` decides
   it, if oxlint honours a negated group and an `allowTypeImports` escape for the pure type utilities under
   `util/types`. Both are unverified — the pass that builds it proves the rule can fail first (`sweeps` skill).
-- Alias imports are already enforced — the `@/**`-under-`packages/*/src/**` ban retired the `package-imports` sweep.
+- Alias imports are already enforced by the `@/**`-under-`packages/*/src/**` ban.
 - Duplicate constants and the sole-consumer rule need the whole repo in mind; they stay with the sweep.

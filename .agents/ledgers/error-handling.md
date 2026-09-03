@@ -2,51 +2,44 @@
 
 `try`/`catch` is already lint-banned, so this sweep is about the shapes a linter cannot see: what a chain wraps, how it terminates, and who alerts.
 
-| Unit                                                             | Swept      | Notes                                                                                                    |
-| ---------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------- |
-| `server/trpc/routers/message`, `server/trpc/routers/room`        | 2026-08-31 | one bare `FORBIDDEN` left a banned member no reason; the best-effort tails are all awaited               |
-| `server/trpc/routers` — `call`, `role`, `userToRoom`, `webhook`  | 2026-08-31 | one entity name spelled as a literal; every `UNAUTHORIZED` is the sanctioned bare form                   |
-| `server/trpc/routers` — the resource family                      | 2026-08-31 | clean — the two repeated rejections already have named constructors over the guards                      |
-| `server/trpc/routers` — the social and editor routers            | 2026-08-31 | clean — the one bare `InvalidOperationError` asserts an unreachable state, so a 500 is what it is        |
-| `server/trpc/routers` — the rest                                 | 2026-08-31 | clean — two rejections between them, both through a guard                                                |
-| `server/services/message`                                        | 2026-08-31 | every message-creation rejection reached the composer as its bare code                                   |
-| `server/services` — the rest                                     | 2026-08-31 | four rejections re-decided their own code; the `CONFLICT` pair is the documented exception               |
-| `server/composables`                                             | 2026-08-30 | nine client constructors — none wraps a call, so there is nothing to terminate                           |
-| `packages/azure-functions`                                       | 2026-08-30 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)`                    |
-| `app/store/message`                                              | 2026-08-31 | five fire-and-forget callbacks now terminate; the silence they relied on is pinned by a test             |
-| `app/store` — the rest                                           | 2026-08-31 | the dungeons dialog gate never opened on a failed message; the rest reports through `useMutation`        |
-| `app/composables/message/room`                                   | 2026-08-31 | the pre-join device probes and the call-session read reported nothing                                    |
-| `app/composables/message/subscribables`                          | 2026-08-31 | seven `onData` bodies terminate; a dropped event was invisible                                           |
-| `app/composables/message` — the rest                             | 2026-08-31 | a note count read beside the list it belongs to; the three fire-and-forget sites already terminate       |
-| `app/composables/resource/sheet`                                 | 2026-08-31 | clean — the two clipboard shortcuts terminate inside the composables they call                           |
-| `app/composables/resource` — the rest                            | 2026-08-31 | clean — every read goes through `readItems`/`useMutation`, and the autosave tick terminates              |
-| `app/composables` — the rest                                     | 2026-08-31 | one more async promise executor that never opened its gate; the rest terminates                          |
-| `app/services/resource`, `app/services/message`                  | 2026-08-31 | two suggestion callbacks, a `.match(noop, noop)`, and a wrapper whose only handler rethrew               |
-| `app/services` — the rest, `app/util`                            | 2026-08-31 | the npc effect chain stopped silently; the file pickers report from inside their own composables         |
-| `app/components/Message`                                         | 2026-08-31 | a hover-time roles read and the app's one clipboard write reported nowhere                               |
-| `app/components/Resource`, `app/components/Dungeons`             | 2026-08-31 | the scene lifecycle and input slots drop what they return; `Resource` reaches the server by primitive    |
-| `app/components` — the rest                                      | 2026-08-31 | five slots dropped what they returned, and the profile-image upload's twin in the swept `Message` row    |
-| `packages/db`, `packages/infra`                                  | 2026-08-30 | `db` rolls back then rethrows; `infra` is resource declarations with no error path                       |
-| `packages/virrun` — `exec/snapshot`                              | 2026-08-31 | four self-healing branches now trace, like `removeSnapshotDirectoryBestEffort` beside them already did   |
-| `packages/virrun` — `exec/wsl`                                   | 2026-08-31 | six more, the mirror's origin marker among them — the one swallow another sweep's age arm rests on       |
-| `packages/virrun` — `exec/util`                                  | 2026-08-31 | the signal reaper and the probe-cache write; the `unwrapOr` readers answer a missing path with a value   |
-| `packages/virrun` — `exec/cache`, `exec/os`                      | 2026-08-31 | two more best-effort branches now trace; the hash and key chains answer absence with `null` on purpose   |
-| `packages/virrun` — `exec` — the rest                            | 2026-08-31 | clean — `bwrap`, `native`, `store`, `vfs`, `differential`, `test`; two chains, both absence-as-answer    |
-| `packages/virrun` — `services/cli`                               | 2026-08-31 | the prepare line's resolve swallowed twice over; every other absence-as-answer chain says so at its site |
-| `packages/virrun` — `src/models`, `services` — the rest          | 2026-08-31 | clean — every chain here rethrows or falls back on a value its own comment names                         |
-| `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-08-30 | every throw is a stub, an unsupported-in-mock, or an Azure wire response                                 |
-| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-08-30 | clean — every throw is a named error class, no chain to terminate outside `shared`                       |
+| Unit                                                             | Swept      | Notes                                                                                 |
+| ---------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------- |
+| `server/trpc/routers/message`, `server/trpc/routers/room`        | 2026-08-31 | the widest best-effort tails in the app, all of them awaited                          |
+| `server/trpc/routers` — `call`, `role`, `userToRoom`, `webhook`  | 2026-08-31 | a bare `UNAUTHORIZED` here is the sanctioned form                                     |
+| `server/trpc/routers` — the resource family                      | 2026-08-31 | the two repeated rejections have named constructors over the guards                   |
+| `server/trpc/routers` — the social and editor routers            | 2026-08-31 | one bare `InvalidOperationError` asserts an unreachable state, so a 500 is what it is |
+| `server/trpc/routers` — the rest                                 | 2026-08-31 |                                                                                       |
+| `server/services/message`                                        | 2026-08-31 |                                                                                       |
+| `server/services` — the rest                                     | 2026-08-31 | the `CONFLICT` pair is the documented exception                                       |
+| `server/composables`                                             | 2026-08-30 | nine client constructors — none wraps a call, so there is nothing to terminate        |
+| `packages/azure-functions`                                       | 2026-08-30 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)` |
+| `app/store/message`                                              | 2026-08-31 | the fire-and-forget callbacks here are pinned by a test                               |
+| `app/store` — the rest                                           | 2026-08-31 | reports through `useMutation`                                                         |
+| `app/composables/message/room`                                   | 2026-08-31 | the pre-join device probes and the call-session read                                  |
+| `app/composables/message/subscribables`                          | 2026-08-31 | every `onData` body terminates its own chain                                          |
+| `app/composables/message` — the rest                             | 2026-08-31 |                                                                                       |
+| `app/composables/resource/sheet`                                 | 2026-08-31 | the clipboard shortcuts terminate inside the composables they call                    |
+| `app/composables/resource` — the rest                            | 2026-08-31 | every read goes through `readItems`/`useMutation`                                     |
+| `app/composables` — the rest                                     | 2026-08-31 |                                                                                       |
+| `app/services/resource`, `app/services/message`                  | 2026-08-31 |                                                                                       |
+| `app/services` — the rest, `app/util`                            | 2026-08-31 | the file pickers report from inside their own composables                             |
+| `app/components/Message`                                         | 2026-08-31 |                                                                                       |
+| `app/components/Resource`, `app/components/Dungeons`             | 2026-08-31 | `Resource` reaches the server by primitive; the scene lifecycle drops what it returns |
+| `app/components` — the rest                                      | 2026-08-31 |                                                                                       |
+| `packages/db`, `packages/infra`                                  | 2026-08-30 | `db` rolls back then rethrows; `infra` is resource declarations with no error path    |
+| `packages/virrun` — `exec/snapshot`                              | 2026-08-31 | a self-healing branch traces rather than alerts                                       |
+| `packages/virrun` — `exec/wsl`                                   | 2026-08-31 | the mirror's origin marker is the one swallow another sweep's age arm rests on        |
+| `packages/virrun` — `exec/util`                                  | 2026-08-31 | the `unwrapOr` readers answer a missing path with a value                             |
+| `packages/virrun` — `exec/cache`, `exec/os`                      | 2026-08-31 | the hash and key chains answer absence with `null` on purpose                         |
+| `packages/virrun` — `exec` — the rest                            | 2026-08-31 | `bwrap`, `native`, `store`, `vfs`, `differential`, `test`                             |
+| `packages/virrun` — `services/cli`                               | 2026-08-31 | a CLI answers a failure with an exit code and stderr rather than an alert             |
+| `packages/virrun` — `src/models`, `services` — the rest          | 2026-08-31 | every chain rethrows or falls back on a value its own comment names                   |
+| `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-08-30 | every throw is a stub, an unsupported-in-mock, or an Azure wire response              |
+| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-08-30 | every throw is a named error class, no chain to terminate outside `shared`            |
 
-Rows were split at their directory boundaries on 2026-08-30, because a unit of 150–740 files is grepped rather
-than read and a grep pass that ticks a row records a sweep that never happened. The mechanical half was run
-across every row that day and is clean repo-wide: no `try`/`catch`, no `.isOk`/`.isErr`, no `new Error` outside
-`toAppError` and `requireAuthData`, and all 234 `getResult` chains terminate. What the remaining rows are for is
-the half no grep sees — what a chain wraps, and who alerts.
-
-`packages/virrun` was split the same way on 2026-08-31, for the same reason: its two rows covered a little over
-four hundred files between them, which is a grep rather than a read. It has no `try`, no `new Error` and no
-`.isOk`/`.isErr` anywhere, so its rows are entirely about what each chain wraps and where a failure surfaces —
-a CLI's answer to that is an exit code and a message on stderr rather than an alert.
+The mechanical half — no `try`/`catch`, no `.isOk`/`.isErr`, no `new Error` outside `toAppError` and
+`requireAuthData`, every `getResult` chain terminated — is clean repo-wide and grepped by the recipe below. What
+the rows are for is the half no grep sees: what a chain wraps, and who alerts.
 
 ## Find recipe
 
@@ -90,7 +83,6 @@ for (const file of files) {
 
 What it still reports is the chain assigned to a named `const` and terminated on a later line — which is the
 repo's own preference over nesting the call inside its own terminator, so those are read rather than counted.
-On 2026-08-30 that was nine sites, all of them terminated.
 
 The **fire-and-forget** half has its own census, because a callback nothing awaits is the one place an
 unterminated body is invisible rather than merely unhandled — `getSynchronizedFunction` reports the rejection
@@ -132,11 +124,5 @@ local writes has nothing to terminate.
 - A **fire-and-forget body that does not terminate** is the widest one left, and the census above finds every
   Candidate site. What no selector can decide is whether the body has anything to terminate, since a body whose
   Whole work is an `executeMutation` with an `onError` is already done — so it stays a read.
-
-## Enforced since
-
-- **Alerting a rejection without asking the error link** — `error-alert/no-raw-error-alert`
-  (`scripts/oxlint/errorAlert.ts`) reports `createAlert(<expr>.message, …)`, which is the shape that means a
-  Rejection rather than a sentence the caller composed. Ten sites were converted to `createErrorAlert` on
-  2026-08-31 and the rule is what stops the eleventh. It is off for `createErrorAlert.ts` and `errorLink.ts`,
-  Which are the mechanism, and it cannot see a Vue template's inline handler.
+- **A Vue template's inline handler** is outside `error-alert/no-raw-error-alert`'s reach, so an alert written
+  There is still the sweep's to find.
