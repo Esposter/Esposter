@@ -27,6 +27,9 @@ else if (invite.isMember) await navigateTo(RoutePath.Messages(invite.roomId));
 
 const roomStore = useRoomStore();
 const { joinRoom } = roomStore;
+// The dialog is the page, so it is open from its first render — and an overlay born open before its mount has
+// No root for Vuetify's block scroll strategy to read, which throws and takes the page with it. See StyledDialog
+const isMounted = useMounted();
 </script>
 
 <template>
@@ -35,7 +38,7 @@ const { joinRoom } = roomStore;
       <Title>Invite</Title>
     </Head>
     <VisualSpaceBackground>
-      <v-dialog :model-value="true" persistent no-click-animation :scrim="false">
+      <v-dialog :model-value="isMounted" persistent no-click-animation :scrim="false">
         <StyledCard p-8 bg-background items-center>
           <v-card-title>
             <StyledAvatar :image="invite.user.image" :name="invite.user.name" :avatar-props="{ size: '6rem' }" />

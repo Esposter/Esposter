@@ -1,6 +1,6 @@
 ---
 name: vuetify
-description: Esposter Vuetify 4 conventions — StyledButton for primary actions, the isIconButton shape switch, :to and type never inside :button-props, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated and why a state-conditional style cannot be one, drawer elevation, tooltips on icon-only buttons, StyledTooltipIconButton/StyledTooltipMenuIconButton over a hand-rolled activator chain, plain-variant buttons inside input slots, typed SelectItemCategoryDefinition items (clearable banned, no item-title/item-value), enum-value-as-display-title, form validity naming and useVRules, no SASS variables in component styles, plus deep dives on button backgrounds, router-driven highlighting of linked buttons and tabs, StyledList and StyledAvatar, form dialogs and custom validation rules, constructing items arrays from enums and maps, the CSS custom property registry, scrollspy sub-nav, and mergeProps activator stacks. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
+description: Esposter Vuetify 4 conventions — StyledButton for primary actions, the isIconButton shape switch, :to and type never inside :button-props, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated and why a state-conditional style cannot be one, drawer elevation, tooltips on icon-only buttons, StyledTooltipIconButton/StyledTooltipMenuIconButton over a hand-rolled activator chain, plain-variant buttons inside input slots, typed SelectItemCategoryDefinition items (clearable banned, no item-title/item-value), enum-value-as-display-title, form validity naming and useVRules, the mount gate a dialog born open owes Vuetify's block scroll strategy, no SASS variables in component styles, plus deep dives on button backgrounds, router-driven highlighting of linked buttons and tabs, StyledList and StyledAvatar, form dialogs and custom validation rules, constructing items arrays from enums and maps, the CSS custom property registry, scrollspy sub-nav, and mergeProps activator stacks. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
 ---
 
 # Vuetify Conventions
@@ -76,6 +76,10 @@ Hand-rolling either is the single most repeated finding in this area — the cha
 ## Snackbars
 
 - **A snackbar reporting standing state takes `SNACKBAR_PERSISTENT_TIMEOUT`** (`@/services/vuetify/constants`) — an error waiting to be read, a list scrolled away from the present. Vuetify's default timeout retracts the message while what it reports is still true, and with a one-way `:model-value` binding nothing brings it back until the value flips. A timeout belongs only to a snackbar announcing something that happened.
+
+## A Dialog Born Open Waits for Its Mount
+
+`StyledDialog` gates its own model on `useMounted()`, so consumers pass their open state straight through. A **raw `v-dialog` rendered open on its first render** — one a page's async setup decides, or one that _is_ the page — owes the same gate: `:model-value="isMounted"`. Vuetify's block scroll strategy reads the overlay's root element on a timeout after it activates, and a navigation renders the incoming page inside a suspense that has not mounted one yet, so the strategy dereferences `undefined` and the whole page render goes with it (still unguarded upstream at 4.2.0).
 
 ## HTML Footprint
 
