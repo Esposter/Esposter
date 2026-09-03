@@ -15,8 +15,8 @@ export default defineEventHandler(async (event) => {
     return { message: "Invalid LiveKit webhook." };
   }
 
-  const receiver = new WebhookReceiver(livekit.apiKey, livekit.apiSecret);
-  return getResultAsync(() => receiver.receive(body, getHeader(event, "authorization"))).match(
+  const webhookReceiver = new WebhookReceiver(livekit.apiKey, livekit.apiSecret);
+  return getResultAsync(() => webhookReceiver.receive(body, getHeader(event, "authorization"))).match(
     async (webhookEvent) => {
       const participant = webhookEvent.participant;
       const callSessionId = webhookEvent.room?.name ?? "";
