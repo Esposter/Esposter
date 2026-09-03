@@ -74,17 +74,20 @@ export const reserveStorageBytes = async (
     // Expiry is what stops a hold counting, not the collection above — a row is kept past `expiresAt` only so a
     // Late `BlobCreated` can still find it, and a dead write target must never hold space or a slot in the
     // Meantime
-    const [outstanding] = await tx
-      .select({ pendingBytes: sum(storageLedger.declaredBytes), value: count() })
+    const [pendingTotals] = await tx
+      .select({ noPendingReservations: count(), pendingBytes: sum(storageLedger.declaredBytes) })
       .from(storageLedger)
       .where(
         and(eq(storageLedger.userId, userId), isNull(storageLedger.reconciledAt), gt(storageLedger.expiresAt, now)),
       );
     // `sum` is a bigint aggregate, so postgres hands it back as a string — and as null for an empty set
-    const pendingBytes = Number(outstanding?.pendingBytes ?? 0);
+    const pendingBytes = Number(pendingTotals?.pendingBytes ?? 0);
     if (user.storageBytesUsed + pendingBytes + declaredBytes > StorageTierQuotaMap[user.storageTier])
       throw getForbiddenError(storageQuotaExceededErrorMessage);
-    else if ((outstanding?.value ?? 0) + reservations.length > MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES)
+    else if (
+      (pendingTotals?.noPendingReservations ?? 0) + reservations.length >
+      MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES
+    )
       throw new TRPCError({
         code: "TOO_MANY_REQUESTS",
         message: "Too many uploads are still in flight — wait for them to finish.",

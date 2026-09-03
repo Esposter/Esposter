@@ -26,8 +26,8 @@ describe("dungeons", () => {
 
     const dungeons = new Dungeons();
     await caller.saveDungeons(dungeons);
-    const readDungeons = await caller.readDungeons();
+    const storedDungeons = await caller.readDungeons();
 
-    expect(readDungeons).toStrictEqual(dungeons);
+    expect(storedDungeons).toStrictEqual(dungeons);
   });
 });

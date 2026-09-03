@@ -7,7 +7,7 @@ import { Operation } from "@esposter/shared";
 
 // One error for every Identified-mode rejection — missing, forged, and another survey's token are
 // Deliberately indistinguishable, so the response is never an oracle for probing valid tokens
-export const invalidParticipantTokenError = (): TRPCError =>
+export const getInvalidParticipantTokenError = (): TRPCError =>
   getInvalidOperationError(
     Operation.Create,
     AzureEntityType.SurveyResponse,

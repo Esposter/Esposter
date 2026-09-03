@@ -6,10 +6,10 @@ import { getResultAsync } from "@esposter/shared";
 
 export default defineEventHandler(async (event) => {
   const { id: rawId, token: rawToken } = getRouterParams(event);
-  const { data: id, success: idSuccess } = selectWebhookInMessageSchema.shape.id.safeParse(rawId);
-  const { data: token, success: tokenSuccess } = selectWebhookInMessageSchema.shape.token.safeParse(rawToken);
+  const { data: id, success: isIdValid } = selectWebhookInMessageSchema.shape.id.safeParse(rawId);
+  const { data: token, success: isTokenValid } = selectWebhookInMessageSchema.shape.token.safeParse(rawToken);
 
-  if (!(idSuccess && tokenSuccess)) {
+  if (!(isIdValid && isTokenValid)) {
     setResponseStatus(event, 400);
     return { message: "Invalid parameters." };
   }

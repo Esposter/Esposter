@@ -117,9 +117,9 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
-    const readResource = await caller.readResource({ id: dashboardResource.id });
+    const resource = await caller.readResource({ id: dashboardResource.id });
 
-    expect(readResource).toStrictEqual({ ...dashboardResource, publication: null });
+    expect(resource).toStrictEqual({ ...dashboardResource, publication: null });
   });
 
   // Opening a resource is one round trip: the publication rides the row, so no surface has to follow the read
@@ -204,7 +204,7 @@ describe("resource", () => {
     await dashboardCaller.createResource({ name });
     await sheetCaller.createResource({ name });
 
-    const count = await caller.count();
+    const count = await caller.countResources();
 
     expect(count).toBe(2);
   });
@@ -215,7 +215,7 @@ describe("resource", () => {
     await dashboardCaller.createResource({ name });
     await sheetCaller.createResource({ name });
 
-    const count = await caller.count({ types: [ResourceType.Dashboard] });
+    const count = await caller.countResources({ types: [ResourceType.Dashboard] });
 
     expect(count).toBe(1);
   });
@@ -226,7 +226,7 @@ describe("resource", () => {
     await dashboardCaller.createResource({ name: "quarterly report" });
     await sheetCaller.createResource({ name: "grocery list" });
 
-    const count = await caller.count({ searchQuery: "report" });
+    const count = await caller.countResources({ searchQuery: "report" });
 
     expect(count).toBe(1);
   });
@@ -289,7 +289,7 @@ describe("resource", () => {
     const draftResource = await dashboardCaller.createResource({ name });
     const { items: publishedItems } = await caller.readResources({ isPublished: true });
     const { items: draftItems } = await caller.readResources({ isPublished: false });
-    const publishedCount = await caller.count({ isPublished: true });
+    const publishedCount = await caller.countResources({ isPublished: true });
 
     expect(publishedItems.map(({ id }) => id)).toStrictEqual([webpageResource.id]);
     expect(draftItems.map(({ id }) => id)).toStrictEqual([draftResource.id]);
@@ -315,7 +315,7 @@ describe("resource", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     const sheetResource = await sheetCaller.createResource({ name });
     const deletedResources = await caller.deleteResources({ ids: [dashboardResource.id, sheetResource.id] });
-    const count = await caller.count();
+    const count = await caller.countResources();
 
     expect(deletedResources.map(({ id }) => id).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b))).toStrictEqual(
       [dashboardResource.id, sheetResource.id].toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
@@ -601,7 +601,7 @@ describe("resource", () => {
     const otherResource = await sheetCaller.createResource({ name });
     await sheetCaller.updateResource({ id: otherResource.id, name, tags: { env: "dev" } });
     const { items } = await caller.readResources({ tags: { env: "prod" } });
-    const tagCount = await caller.count({ tags: { env: "prod" } });
+    const tagCount = await caller.countResources({ tags: { env: "prod" } });
 
     expect(items.map(({ id }) => id)).toStrictEqual([taggedResource.id]);
     expect(takeOne(items).tags).toStrictEqual({ env: "prod", owner: "ops" });
@@ -629,7 +629,7 @@ describe("resource", () => {
     await caller.deleteResources({ ids: [dashboardResource.id] });
     const { items: deletedItems } = await caller.readDeletedResources();
     const deletedCount = await caller.countDeletedResources();
-    const liveCount = await caller.count();
+    const liveCount = await caller.countResources();
 
     expect(deletedItems.map(({ id }) => id)).toStrictEqual([dashboardResource.id]);
     expect(deletedCount).toBe(1);
@@ -667,7 +667,7 @@ describe("resource", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     await caller.deleteResources({ ids: [dashboardResource.id] });
     const restoredResource = await caller.restoreResource({ id: dashboardResource.id });
-    const liveCount = await caller.count();
+    const liveCount = await caller.countResources();
     const deletedCount = await caller.countDeletedResources();
 
     expect(restoredResource.deletedAt).toBeNull();

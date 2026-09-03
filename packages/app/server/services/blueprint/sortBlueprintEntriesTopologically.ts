@@ -1,6 +1,6 @@
 import type { BlueprintEntry } from "#shared/models/resource/blueprint/BlueprintEntry";
 
-import { createInvalidBlueprintError } from "@@/server/services/blueprint/createInvalidBlueprintError";
+import { getInvalidBlueprintError } from "@@/server/services/blueprint/getInvalidBlueprintError";
 
 // Orders entries dependencies-first so an entry's `{{entry:key}}` references already have created ids by the
 // Time it is created. The edges come from the validation walk that already read every content string, so
@@ -15,12 +15,12 @@ export const sortBlueprintEntriesTopologically = (
   const sortedEntries: BlueprintEntry[] = [];
   const visit = (entry: BlueprintEntry): void => {
     if (visited.has(entry.key)) return;
-    else if (visiting.has(entry.key)) throw createInvalidBlueprintError(`cyclic entry reference ${entry.key}`);
+    else if (visiting.has(entry.key)) throw getInvalidBlueprintError(`cyclic entry reference ${entry.key}`);
 
     visiting.add(entry.key);
     for (const reference of referencesByKey.get(entry.key) ?? []) {
       const dependency = entryByKey.get(reference);
-      if (!dependency) throw createInvalidBlueprintError(`unknown entry reference ${reference}`);
+      if (!dependency) throw getInvalidBlueprintError(`unknown entry reference ${reference}`);
 
       visit(dependency);
     }

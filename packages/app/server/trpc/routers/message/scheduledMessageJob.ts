@@ -15,7 +15,7 @@ import { assertCanCreateMessage } from "@@/server/services/message/moderation/as
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
+import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { enqueueScheduledMessageJob } from "@esposter/db";
@@ -231,7 +231,7 @@ export const scheduledMessageJobRouter = router({
       // Every guard `createUserMessage` would reject on runs before the job is flipped to cancelled. Checked
       // Afterwards, a rejection — non-member, slowmode, timeout, word filter — burns the job without ever
       // Sending its message, and nothing reschedules it: the send fails and the scheduled message is gone
-      await isMember(ctx.db, ctx.getSessionPayload, scheduledMessageJob.roomId);
+      await assertIsMember(ctx.db, ctx.getSessionPayload, scheduledMessageJob.roomId);
       // The word filter is the exception: it already applied the room's automod action, and its inputs are
       // Both stored, so leaving the job scheduled hands the worker the same block at `runAt` — a second
       // Timeout and a second audit row for one message. Burn it here instead, exactly as the worker does

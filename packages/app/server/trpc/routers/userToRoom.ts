@@ -5,7 +5,7 @@ import { on } from "@@/server/services/events/on";
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
 import { router } from "@@/server/trpc";
-import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
+import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { roomIdSchema, roomIdsSchema, userIdsSchema, usersToRoomsInMessage } from "@esposter/db-schema";
@@ -46,7 +46,7 @@ export const userToRoomRouter = router({
     input,
     signal,
   }) {
-    await isMember(ctx.db, ctx.getSessionPayload, input);
+    await assertIsMember(ctx.db, ctx.getSessionPayload, input);
     for await (const [data] of on(userToRoomEventEmitter, "updateUserToRoom", { signal })) {
       if (!input.includes(data.roomId) || data.userId !== ctx.getSessionPayload.user.id) continue;
       yield data;
@@ -55,7 +55,7 @@ export const userToRoomRouter = router({
   readMyUsersToRooms: standardAuthedProcedure
     .input(readMyUsersToRoomsInputSchema)
     .query<UserToRoomInMessage[]>(async ({ ctx, input }) => {
-      await isMember(ctx.db, ctx.getSessionPayload, input.roomIds);
+      await assertIsMember(ctx.db, ctx.getSessionPayload, input.roomIds);
       return ctx.db.query.usersToRoomsInMessage.findMany({
         where: { roomId: { in: input.roomIds }, userId: { eq: ctx.getSessionPayload.user.id } },
       });

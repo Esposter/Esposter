@@ -79,20 +79,20 @@ describe("createResourceProcedures", () => {
   test("reads resources with publication state", async () => {
     expect.hasAssertions();
 
-    const readResources = await dashboardCaller.readResources();
+    const { items: emptyItems } = await dashboardCaller.readResources();
 
-    expect(readResources.items).toStrictEqual([]);
+    expect(emptyItems).toStrictEqual([]);
 
     const newResource = await dashboardCaller.createResource({ name });
-    const newReadResources = await dashboardCaller.readResources();
+    const { items: draftItems } = await dashboardCaller.readResources();
 
-    expect(newReadResources.items).toStrictEqual([{ ...newResource, publication: null }]);
+    expect(draftItems).toStrictEqual([{ ...newResource, publication: null }]);
 
     await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
     await dashboardCaller.publishResource({ id: newResource.id });
-    const publishedReadResources = await dashboardCaller.readResources();
+    const { items: publishedItems } = await dashboardCaller.readResources();
 
-    expect(publishedReadResources.items[0]?.publication?.publishVersion).toBe(1);
+    expect(publishedItems[0]?.publication?.publishVersion).toBe(1);
   });
 
   test("updates resource", async () => {
@@ -123,9 +123,9 @@ describe("createResourceProcedures", () => {
 
     expect(deletedResource.id).toBe(newResource.id);
 
-    const readResources = await dashboardCaller.readResources();
+    const { items } = await dashboardCaller.readResources();
 
-    expect(readResources.items).toStrictEqual([]);
+    expect(items).toStrictEqual([]);
   });
 
   test("reads undefined content for new resource", async () => {

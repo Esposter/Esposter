@@ -14,7 +14,7 @@ import { applyWSSHandler } from "@trpc/server/adapters/ws";
 
 const wss = new WssAdapter();
 const handler = applyWSSHandler({
-  createContext: (opts) => createContext(opts),
+  createContext: (options) => createContext(options),
   keepAlive: { enabled: true },
   router: trpcRouter,
   wss,

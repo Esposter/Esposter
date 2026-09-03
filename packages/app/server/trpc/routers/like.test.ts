@@ -29,10 +29,10 @@ describe("like", () => {
 
     const newPost = await postCaller.createPost({ title });
     const newLike = await likeCaller.createLike({ postId: newPost.id, value });
-    const readPost = await postCaller.readPost(newPost.id);
+    const post = await postCaller.readPost(newPost.id);
 
     expect(newLike.value).toBe(value);
-    expect(readPost.noLikes).toBe(value);
+    expect(post.noLikes).toBe(value);
   });
 
   test("fails create with existing like", async () => {
@@ -54,10 +54,10 @@ describe("like", () => {
     const newPost = await postCaller.createPost({ title });
     await likeCaller.createLike({ postId: newPost.id, value });
     const updatedLike = await likeCaller.updateLike({ postId: newPost.id, value: updatedValue });
-    const readPost = await postCaller.readPost(newPost.id);
+    const post = await postCaller.readPost(newPost.id);
 
     expect(updatedLike.value).toBe(updatedValue);
-    expect(readPost.noLikes).toBe(updatedValue);
+    expect(post.noLikes).toBe(updatedValue);
   });
 
   test("fails update with wrong user", async () => {

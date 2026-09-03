@@ -1,6 +1,6 @@
 import type { WriteResourceActivityInput } from "@@/server/models/resource/WriteResourceActivityInput";
 import type { Clause } from "@esposter/azure";
-import type { ResourceActivityEntity as AResourceActivityEntity } from "@esposter/db-schema";
+import type { ResourceActivityEntity as BaseResourceActivityEntity } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
@@ -38,7 +38,7 @@ export const writeResourceActivity = ({ resourceId, ...rest }: WriteResourceActi
             operator: BinaryOperator.gt,
             value: new Date(Date.now() - CONTENT_SAVED_COALESCE_WINDOW_MS),
           },
-        ] as Clause<AResourceActivityEntity>[]),
+        ] as Clause<BaseResourceActivityEntity>[]),
       });
       if (recentEntries.length > 0) return;
     }

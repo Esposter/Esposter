@@ -150,13 +150,13 @@ describe("user", () => {
     expect.hasAssertions();
 
     const status = UserStatus.DoNotDisturb;
-    const returnedUserStatus = await caller.upsertStatus({ message, status });
+    const upsertedUserStatus = await caller.upsertStatus({ message, status });
     vi.advanceTimersByTime(1);
     const userId = getMockSession().user.id;
     const userStatus = takeOne(await caller.readStatuses([userId]));
 
-    expect(returnedUserStatus.status).toBe(status);
-    expect(returnedUserStatus.userId).toBe(userId);
+    expect(upsertedUserStatus.status).toBe(status);
+    expect(upsertedUserStatus.userId).toBe(userId);
     expect(userStatus.message).toBe(message);
     expect(userStatus.status).toBe(status);
   });
@@ -166,13 +166,13 @@ describe("user", () => {
 
     await caller.upsertStatus({ message, status: UserStatus.DoNotDisturb });
     vi.advanceTimersByTime(1);
-    const returnedUserStatus = await caller.upsertStatus({ message: updatedMessage, status: UserStatus.Idle });
+    const upsertedUserStatus = await caller.upsertStatus({ message: updatedMessage, status: UserStatus.Idle });
     vi.advanceTimersByTime(1);
     const userId = getMockSession().user.id;
     const userStatus = takeOne(await caller.readStatuses([userId]));
 
-    expect(returnedUserStatus.status).toBe(UserStatus.Idle);
-    expect(returnedUserStatus.userId).toBe(userId);
+    expect(upsertedUserStatus.status).toBe(UserStatus.Idle);
+    expect(upsertedUserStatus.userId).toBe(userId);
     expect(userStatus.message).toBe(updatedMessage);
     expect(userStatus.status).toBe(UserStatus.Idle);
   });
@@ -283,10 +283,10 @@ describe("user", () => {
 
     const { user } = await mockSessionOnce(mockContext.db);
     await caller.updateUser({ biography, image, name });
-    const readUser = await caller.readUser(user.id);
+    const publicUser = await caller.readUser(user.id);
 
     // Only the allowlisted columns are projected — private fields (email) never leave the database
-    expect(readUser).toStrictEqual({ biography, image, name });
+    expect(publicUser).toStrictEqual({ biography, image, name });
   });
 
   test("reads user unauthenticated", async () => {
@@ -295,9 +295,9 @@ describe("user", () => {
     const { user } = await mockSessionOnce(mockContext.db);
     await caller.updateUser({ biography, image, name });
     mockNoSessionOnce();
-    const readUser = await caller.readUser(user.id);
+    const publicUser = await caller.readUser(user.id);
 
-    expect(readUser).toStrictEqual({ biography, image, name });
+    expect(publicUser).toStrictEqual({ biography, image, name });
   });
 
   test("fails read user with non-existent id", async () => {

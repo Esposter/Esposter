@@ -13,11 +13,17 @@
 | `app/shared/models` — the editor and game trees                                                                                             | 2026-09-02 | these mirror `@vue-flow/core` and ApexCharts field for field, so their spellings are not ours   |
 | `app/shared/models` — the rest                                                                                                              | 2026-09-03 | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler`, `trpc`, `room`, `auth` |
 | `server/trpc/routers` — `message`, `room`, `userToRoom`, `role`, `call`, `webhook`, `searchHistory`                                         | 2026-09-03 | procedure and result naming; the `trpc` skill owns the pattern                                  |
-| `server/trpc/routers` — `resource`, `blueprint`, `note`, `program`, `sheet`, `todoList`, `survey`                                           | —          |                                                                                                 |
-| `server/trpc/routers` — `dashboard`, `dataset`, `email`, `flowchart`, `webpage`, `post`, `like`, `block`, `friend`, `friendRequest`, `user` | —          |                                                                                                 |
-| `server/trpc/routers` — `achievement`, `app`, `clicker`, `dungeons`, `notification`, `pushSubscription`, `session`, `storage`               | —          |                                                                                                 |
-| `server/trpc/{guards,procedure,plugins,middleware}`, `context.ts`                                                                           | —          |                                                                                                 |
-| `server/services`, `server/composables`, `server/api`, `server/routes`                                                                      | —          | `get*` vs `read*` on the server side                                                            |
+| `server/trpc/routers` — `resource`, `blueprint`, `note`, `program`, `sheet`, `todoList`, `survey`                                           | 2026-09-03 | an error constructor is `get*Error`, matching the guards                                        |
+| `server/trpc/routers` — `dashboard`, `dataset`, `email`, `flowchart`, `webpage`, `post`, `like`, `block`, `friend`, `friendRequest`, `user` | 2026-09-03 |                                                                                                 |
+| `server/trpc/routers` — `achievement`, `app`, `clicker`, `dungeons`, `notification`, `pushSubscription`, `session`, `storage`               | 2026-09-03 | a caller-scoped read is `readMy*`, never `readOwn*`                                             |
+| `server/trpc/{guards,procedure,plugins,middleware}`, `context.ts`                                                                           | 2026-09-03 | a guard that throws is `assert*`; `is*` is a stored boolean and nothing else                    |
+| `server/composables`, `server/api`, `server/routes`                                                                                         | 2026-09-03 | `get*` vs `read*` on the server side                                                            |
+| `server/services/message`                                                                                                                   | —          |                                                                                                 |
+| `server/services/resource`                                                                                                                  | 2026-09-03 |                                                                                                 |
+| `server/services` — `room`, `role`, `user`, `friend`, `post`                                                                                | 2026-09-03 |                                                                                                 |
+| `server/services` — `blueprint`, `program`, `survey`, `dataset`, `dashboard`, `emailEditor`                                                 | 2026-09-03 |                                                                                                 |
+| `server/services` — `azure`, `storage`, `livekit`, `notification`, `events`, `request`                                                      | 2026-09-03 |                                                                                                 |
+| `server/services` — `auth`, `rateLimiter`, `achievement`, `pagination`, `db`, `blobState`                                                   | 2026-09-03 |                                                                                                 |
 | `app/store`                                                                                                                                 | —          | CRUD verbs, `store*` subscription handlers; split at `message` if too large                     |
 | `app/composables`                                                                                                                           | —          | `use*` naming, the `{param}Value` `toValue` suffix                                              |
 | `app/services`, `app/util`, `app/models`, `app/types`                                                                                       | —          | filename-is-the-export                                                                          |
@@ -40,13 +46,25 @@ the grounds that a rename is expensive — that is the argument
   `*ByIds` read dropped it, but these two share a feature with a paginated read of the same rows
   (`readMembers`, `readMessages`), so the suffix is what separates two procedures rather than marking a batch
   upgrade — and dropping it collides. What the pair should be called instead is the open question.
+- **`list*` is a third async fetch prefix beside `read*`, and it cannot be settled one side at a time.**
+  `listRoomProfileImageBlobNames` wraps `@esposter/db`'s `listBlobNames`, which wraps Azure's own
+  `listBlobsFlat`; renaming ours to `read*` while the helper under it keeps `list*` splits one family across two
+  spellings. Whether `list*` is sanctioned for an enumerating fetch belongs to the `packages/db` pass, which owns
+  the name the wrapper mirrors.
 - **`getIsAuthed` / `getIsRateLimited` / `getIsEntityIdEqualComparator` — `get*` is right, the `Is` is not.**
   All three return a function rather than a boolean, so `check*` would be wrong, but the `Is` still reads as a
-  Predicate. The middleware pair wants a name saying what it builds; the comparator already has one.
+  predicate. The middleware pair wants a name saying what it builds; the comparator already has one.
 
 ## Next enforceable
 
 - Filename-is-the-export is decidable from the AST plus the path; a custom oxlint plugin could take it whole.
 - `is*`/`has*`/`show*` on a boolean-typed declaration needs types, which `typeAware: true` already provides.
 - Abbreviation bans need a word list, not a rule — leave with the sweep.
-- A `getIs*`/`getHas*` declaration is decidable from the name alone; the three `get*`-returning-a-function cases above are what a rule would have to carve out first.
+- **A `getIs*`/`getHas*` declaration is decidable from the name alone, and the carve-out is now closed.** The
+  only ones that may keep the prefix are the three above, which return a function rather than a boolean; every
+  other one in the repo is a `check*` the pass has not reached yet. A `no-restricted-syntax` selector on a
+  declarator named `^get(Is|Has)[A-Z]` can therefore be written against the swept paths and widened as the
+  remaining units drain.
+- A `const` bound to the call it names — `const readPost = await caller.readPost(…)` — is decidable from the AST alone
+  (declarator name equal to the callee's last property), and it is the finding this ledger has now written in five
+  files. The fix is always the same: drop the verb prefix, since the binding is the value rather than the fetch.

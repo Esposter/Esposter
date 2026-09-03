@@ -23,7 +23,7 @@ import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
+import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
@@ -219,7 +219,7 @@ export const directMessageRouter = router({
   hideDirectMessage: standardAuthedProcedure
     .input(hideDirectMessageInputSchema)
     .mutation<void>(async ({ ctx, input }) => {
-      await isMember(ctx.db, ctx.getSessionPayload, input);
+      await assertIsMember(ctx.db, ctx.getSessionPayload, input);
       await assertIsRoom(ctx.db, input, RoomType.DirectMessage);
       await ctx.db
         .update(usersToRoomsInMessage)

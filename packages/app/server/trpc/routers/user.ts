@@ -57,7 +57,7 @@ const upsertStatusInputSchema = refineAtLeastOne(
   ["message", "status"],
 );
 // Connecting and disconnecting are one upsert of the same column, so the row and the emit are written once
-const setConnectedStatus = async (ctx: AuthedContext, isConnected: boolean) => {
+const upsertConnectedStatus = async (ctx: AuthedContext, isConnected: boolean) => {
   const upsertedStatus = requireMutation(
     (
       await ctx.db
@@ -105,11 +105,11 @@ const readCallBackgroundBlobs = async (containerClient: ContainerClient, userId:
 // Guarantee, and it costs nothing extra: the length comes back on the listing that renders the picker anyway.
 // The stored content type is deliberately not read here: the same client sets it on the same upload, so it
 // Is the mime claim again rather than evidence about the bytes - the write target's check already has that
-const getIsServableCallBackground = ({ contentLength }: CallBackgroundBlob) =>
+const checkIsServableCallBackground = ({ contentLength }: CallBackgroundBlob) =>
   contentLength <= MAX_CALL_BACKGROUND_SIZE_BYTES;
 
 export const userRouter = router({
-  connect: standardAuthedProcedure.mutation<void>(({ ctx }) => setConnectedStatus(ctx, true)),
+  connect: standardAuthedProcedure.mutation<void>(({ ctx }) => upsertConnectedStatus(ctx, true)),
   deleteCallBackground: standardAuthedProcedure
     .input(callBackgroundSlotSchema)
     .mutation<void>(async ({ ctx, input: { slot } }) => {
@@ -127,7 +127,7 @@ export const userRouter = router({
         new Date(),
       );
     }),
-  disconnect: standardAuthedProcedure.mutation<void>(({ ctx }) => setConnectedStatus(ctx, false)),
+  disconnect: standardAuthedProcedure.mutation<void>(({ ctx }) => upsertConnectedStatus(ctx, false)),
   generateCallBackgroundUploadUrl: standardAuthedProcedure
     .input(generateCallBackgroundUploadUrlInputSchema)
     .mutation<string>(async ({ ctx, input: { mimetype, size, slot } }) => {
@@ -174,7 +174,7 @@ export const userRouter = router({
     const containerClient = await useContainerClient(AzureContainer.PrivateUserAssets);
     const callBackgroundBlobs = await readCallBackgroundBlobs(containerClient, userId);
     const unservableBlobNames = callBackgroundBlobs
-      .filter((callBackgroundBlob) => !getIsServableCallBackground(callBackgroundBlob))
+      .filter((callBackgroundBlob) => !checkIsServableCallBackground(callBackgroundBlob))
       .map(({ name }) => name);
     // A slot that came back over the cap is dropped from what the picker receives and reclaimed through the
     // Same event every other blob delete goes through. Best-effort: a dropped publish only leaves a slot
@@ -182,7 +182,7 @@ export const userRouter = router({
     await publishBlobDeletion(userId, AzureContainer.PrivateUserAssets, unservableBlobNames);
     return Promise.all(
       callBackgroundBlobs
-        .filter((callBackgroundBlob) => getIsServableCallBackground(callBackgroundBlob))
+        .filter((callBackgroundBlob) => checkIsServableCallBackground(callBackgroundBlob))
         .map(async ({ name, slot }) => ({
           sasUrl: await generateReadSasUrl(containerClient.getBlockBlobClient(name)),
           slot,
@@ -197,7 +197,7 @@ export const userRouter = router({
         .from(userStatusesInMessage)
         .where(inArray(userStatusesInMessage.userId, input));
       const resultUserStatuses: SetNonNullable<UserStatusInMessage, "status">[] = [];
-      const statusMap = new Map(foundUserStatuses.map((us) => [us.userId, us]));
+      const statusMap = new Map(foundUserStatuses.map((userStatus) => [userStatus.userId, userStatus]));
 
       for (const userId of input) {
         const foundStatus = statusMap.get(userId);

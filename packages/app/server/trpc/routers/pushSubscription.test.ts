@@ -85,10 +85,10 @@ describe("pushSubscription", () => {
 
   test("unsubscribes", async () => {
     expect.hasAssertions();
-    const pushSubscription = await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
+    const newPushSubscription = await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
     const deletedPushSubscription = await pushSubscriptionCaller.unsubscribe(endpoint);
 
-    expect(deletedPushSubscription.id).toBe(pushSubscription.id);
+    expect(deletedPushSubscription.id).toBe(newPushSubscription.id);
     expect(deletedPushSubscription.endpoint).toBe(endpoint);
   });
 
@@ -111,11 +111,15 @@ describe("pushSubscription", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const root = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const newRootMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     // Ignore the root message's notification; assert only on the reply
     MockEventGridDatabase.clear();
 
-    const reply = await messageCaller.createMessage({ message, replyRowKey: root.rowKey, roomId: newRoom.id });
+    const newReplyMessage = await messageCaller.createMessage({
+      message,
+      replyRowKey: newRootMessage.rowKey,
+      roomId: newRoom.id,
+    });
     const events = MockEventGridDatabase.get("");
     assert(events);
 
@@ -123,7 +127,7 @@ describe("pushSubscription", () => {
     // Second notification that the first has to be de-duplicated against
     expect(events).toHaveLength(1);
     expect(takeOne(events).data).toStrictEqual(
-      createMessageNotificationData(message, newRoom.id, reply.rowKey, root.rowKey),
+      createMessageNotificationData(message, newRoom.id, newReplyMessage.rowKey, newRootMessage.rowKey),
     );
   });
 });

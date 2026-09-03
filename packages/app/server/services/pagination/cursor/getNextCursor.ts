@@ -8,7 +8,7 @@ export const getNextCursor = <TItem extends CompositeKey | ItemMetadata>(
   items: TItem[],
   sortBy: SortItem<keyof TItem & string>[],
 ) => {
-  const nextItem = items.at(-1);
-  if (!nextItem) return "";
-  return serialize(nextItem, sortBy);
+  const lastItem = items.at(-1);
+  if (!lastItem) return "";
+  return serialize(lastItem, sortBy);
 };

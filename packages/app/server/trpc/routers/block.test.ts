@@ -42,9 +42,9 @@ describe("block", () => {
 
     const { user } = await createFriendship(mockContext);
     await blockCaller.blockUser(user.id);
-    const friendList = await friendCaller.readFriends();
+    const friendUsers = await friendCaller.readFriends();
 
-    expect(friendList).toHaveLength(0);
+    expect(friendUsers).toHaveLength(0);
   });
 
   test("fails to block self", async () => {
@@ -137,8 +137,8 @@ describe("block", () => {
     await blockCaller.blockUser(user.id);
     await mockSessionOnce(mockContext.db, user);
 
-    const users = await friendCaller.searchUsers(blockerUser.name);
+    const searchedUsers = await friendCaller.searchUsers(blockerUser.name);
 
-    expect(users.every(({ id }) => id !== blockerUser.id)).toBe(true);
+    expect(searchedUsers.every(({ id }) => id !== blockerUser.id)).toBe(true);
   });
 });

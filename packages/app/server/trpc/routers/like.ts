@@ -94,7 +94,7 @@ export const likeRouter = router({
   ),
   updateLike: standardAuthedProcedure.input(updateLikeInputSchema).mutation<Like>(({ ctx, input: { postId, value } }) =>
     ctx.db.transaction(async (tx) => {
-      const [post, like] = await Promise.all([
+      const [post, existingLike] = await Promise.all([
         readLikedPost(tx, postId),
         tx.query.likes.findFirst({
           where: {
@@ -108,8 +108,8 @@ export const likeRouter = router({
         }),
       ]);
       if (!post) throw getNotFoundError(DatabaseEntityType.Post, postId);
-      else if (!like) throw getNotFoundError(DatabaseEntityType.Like, postId);
-      else if (like.value === value)
+      else if (!existingLike) throw getNotFoundError(DatabaseEntityType.Like, postId);
+      else if (existingLike.value === value)
         throw getInvalidOperationError(Operation.Update, DatabaseEntityType.Like, JSON.stringify({ postId, value }));
 
       const updatedLike = requireMutation(

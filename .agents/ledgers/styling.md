@@ -27,13 +27,13 @@ What a component looks like rather than how it is composed: attributify props ov
 - `app/assets/dashboard/demo/icon/*.vue` — vendored ApexCharts sample SVGs, kept diff-identical to their source.
   They are the bulk of what the `px` recipe reports, and none of them is a finding.
 - `app/assets/css/settings.scss`'s breakpoint map — Vuetify's SASS API takes px and computes the rem forms from
-  Them, so the unit there is the framework's rather than ours.
+  them, so the unit there is the framework's rather than ours.
 
 ## Open findings
 
 - **Two inline `:style` object bindings where attributify would do — needs eyes on the page.**
   `Styled/Button.vue` binds `{ backgroundImage: "var(--midnight-bloom)" }`, a static style on the most-used shell
-  In the app, allocating a fresh object every render; `Styled/EditableNameDialogButton.vue` binds a conditional
+  in the app, allocating a fresh object every render; `Styled/EditableNameDialogButton.vue` binds a conditional
   `pointerEvents`. The attributify forms are `bg-[var(--midnight-bloom)]` and a bound `pointer-events`, but
   UnoCSS's `bg-[…]` is ambiguous between `background-color` and `background-image` for a gradient value, and
   `Styled/Dialog.test.ts` asserts the current inline style. Neither can be settled without looking at the rendered
@@ -41,8 +41,8 @@ What a component looks like rather than how it is composed: attributify props ov
 
 - **Two static utility classes that attributify would carry.**
   `Message/Model/Message/File/ViewerDialog.vue` writes `class="max-h-[80vh]"` on both the video and the image,
-  Where the attribute form is `max-h="[80vh]"`. Left for the pass that reads that tree, since the file has no
-  Test and the change is only visible on the rendered dialog.
+  where the attribute form is `max-h="[80vh]"`. Left for the pass that reads that tree, since the file has no
+  test and the change is only visible on the rendered dialog.
 
 ## Find recipe
 

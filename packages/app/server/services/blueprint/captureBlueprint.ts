@@ -5,8 +5,8 @@ import type { Resource } from "@esposter/db-schema";
 
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { createInvalidBlueprintError } from "@@/server/services/blueprint/createInvalidBlueprintError";
 import { getBlueprintEntryKeys } from "@@/server/services/blueprint/getBlueprintEntryKeys";
+import { getInvalidBlueprintError } from "@@/server/services/blueprint/getInvalidBlueprintError";
 import { rewriteIdsToAliases } from "@@/server/services/blueprint/rewriteIdsToAliases";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
@@ -30,7 +30,7 @@ export const captureBlueprint = async (ctx: AuthedContext, ids: Resource["id"][]
   // A binned resource is still the caller's own, so it is bad input rather than an authorization failure:
   // The fix is restoring it, which a blanket UNAUTHORIZED would never tell them
   const deletedResource = ownedResources.find(({ deletedAt }) => deletedAt !== null);
-  if (deletedResource) throw createInvalidBlueprintError(`cannot capture deleted resource ${deletedResource.name}`);
+  if (deletedResource) throw getInvalidBlueprintError(`cannot capture deleted resource ${deletedResource.name}`);
   // The caller's selection order drives key derivation, so a given selection always captures identically
   const resourceById = new Map(ownedResources.map((resource) => [resource.id, resource]));
   const orderedResources = ids.map((id) => {

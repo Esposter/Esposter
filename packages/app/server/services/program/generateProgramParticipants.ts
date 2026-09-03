@@ -5,7 +5,7 @@ import type { Resource } from "@esposter/db-schema";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { DatasetProviderMap } from "@@/server/services/dataset/DatasetProviderMap";
-import { danglingProgramBindingError } from "@@/server/services/program/danglingProgramBindingError";
+import { getDanglingProgramBindingError } from "@@/server/services/program/getDanglingProgramBindingError";
 import { getProgramParticipantId } from "@@/server/services/program/getProgramParticipantId";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { AZURE_MAX_BATCH_SIZE, AZURE_MAX_PAGE_SIZE, getPartitionKeyFilter } from "@esposter/azure";
@@ -17,7 +17,7 @@ import { TRPCError } from "@trpc/server";
 // A create whose row already exists is the one rejection this path expects — it means a concurrent run
 // Claimed the recipient first. Every other failure is a real fault and propagates, so a transient storage
 // Error is never mistaken for a collision and degraded into a per-row storm that fails anyway
-const getIsCreated = (create: () => Promise<unknown>): Promise<boolean> =>
+const checkIsCreated = (create: () => Promise<unknown>): Promise<boolean> =>
   getResultAsync(create).match(
     () => true,
     (error) => {
@@ -34,7 +34,7 @@ export const generateProgramParticipants = async (
   programId: Resource["id"],
 ): Promise<ProgramParticipant[]> => {
   const content = await readResourceContent(programResourceSchema, programId);
-  if (!content?.audience || !content.keyColumn) throw danglingProgramBindingError();
+  if (!content?.audience || !content.keyColumn) throw getDanglingProgramBindingError();
   // A deleted audience makes its provider throw UNAUTHORIZED — surfaced as the program's own
   // Dangling-binding error rather than thrown through as if the owner had lost access to their program.
   // Every other failure is a real fault and propagates, so a transient storage or parse error is never
@@ -43,11 +43,11 @@ export const generateProgramParticipants = async (
   const { columns, rows } = await getResultAsync(() => DatasetProviderMap[audience.type](ctx, audience)).match(
     (dataset) => dataset,
     (error) => {
-      if (error instanceof TRPCError && error.code === "UNAUTHORIZED") throw danglingProgramBindingError();
+      if (error instanceof TRPCError && error.code === "UNAUTHORIZED") throw getDanglingProgramBindingError();
       throw error;
     },
   );
-  if (!columns.some(({ name }) => name === content.keyColumn)) throw danglingProgramBindingError();
+  if (!columns.some(({ name }) => name === content.keyColumn)) throw getDanglingProgramBindingError();
 
   const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
   // The capped page is a warm cache, never the source of truth — a participant past the cap is simply one
@@ -84,7 +84,7 @@ export const generateProgramParticipants = async (
   // Instead of a round trip each — an audience at the read cap costs ten calls rather than a thousand,
   // And this is a single mutation request the owner waits on
   for (const batch of chunk(newParticipants, AZURE_MAX_BATCH_SIZE)) {
-    const isBatchCreated = await getIsCreated(() =>
+    const isBatchCreated = await checkIsCreated(() =>
       programParticipantClient.submitTransaction(batch.map((participant) => ["create", serializeEntity(participant)])),
     );
     if (isBatchCreated) {
@@ -95,7 +95,7 @@ export const generateProgramParticipants = async (
     // Whole batch — replay it insert by insert, which lands everyone this run is still the first to reach
     for (const participant of batch) {
       const { keyValue, rowKey, token } = participant;
-      const isCreated = await getIsCreated(() => createEntity(programParticipantClient, participant));
+      const isCreated = await checkIsCreated(() => createEntity(programParticipantClient, participant));
       if (isCreated) {
         participantsByKeyValue.set(keyValue, { keyValue, token });
         continue;

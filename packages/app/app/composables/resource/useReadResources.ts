@@ -39,7 +39,7 @@ export const useReadResources = (
     getFilterInput,
     // The count depends on the filter alone, so the filter the user picked is exactly what it is keyed by
     getFilterKey: () => getResourceFilterKey(getFilterValues()),
-    readCount: (filterInput) => $trpc.resource.count.query(filterInput),
+    readCount: (filterInput) => $trpc.resource.countResources.query(filterInput),
     readPage: async ({ itemsPerPage, page, sortBy }, filterInput) =>
       (
         await $trpc.resource.readResources.query({

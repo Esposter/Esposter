@@ -116,7 +116,7 @@ export const cloneContentAssets = async <TContent>(
   // Caller, who has no ownership to check
   const isOwnedMap = new Map<string, Promise<boolean>>();
   const isPublishedReadableMap = new Map<string, Promise<boolean>>();
-  const getIsReadable = async ({ isPublished, resourceId }: ResourceAssetPath) => {
+  const checkIsReadable = async ({ isPublished, resourceId }: ResourceAssetPath) => {
     if (
       await getOrCreate(isOwnedMap, resourceId, () =>
         checkIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId),
@@ -145,7 +145,7 @@ export const cloneContentAssets = async <TContent>(
         // Reached them through a personalized export, say. Copying it would hand them the blob the serving
         // Endpoint refuses them, published under a directory anyone can read, so an unreadable url is carried
         // Verbatim like any other reference the clone cannot follow
-        if (!(await getIsReadable(resourceAssetPath))) return [];
+        if (!(await checkIsReadable(resourceAssetPath))) return [];
         const { blobName } = resourceAssetPath;
         const fileSegment = blobName.slice(blobName.lastIndexOf("/") + 1);
         const separatorIndex = fileSegment.indexOf(ID_SEPARATOR);

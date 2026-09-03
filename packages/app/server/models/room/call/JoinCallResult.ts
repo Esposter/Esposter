@@ -2,7 +2,7 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 export interface JoinCallResult {
   callSessionId: string;
-  livekitToken: string;
-  livekitUrl: string;
+  liveKitToken: string;
+  liveKitUrl: string;
   participantMap: Map<string, CallParticipant>;
 }

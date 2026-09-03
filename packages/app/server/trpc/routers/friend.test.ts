@@ -31,10 +31,10 @@ describe("friend", () => {
     expect.hasAssertions();
 
     const { user } = await createFriendship(mockContext);
-    const fetchedFriends = await friendCaller.readFriends();
+    const friendUsers = await friendCaller.readFriends();
 
-    expect(fetchedFriends).toHaveLength(1);
-    expect(takeOne(fetchedFriends).id).toBe(user.id);
+    expect(friendUsers).toHaveLength(1);
+    expect(takeOne(friendUsers).id).toBe(user.id);
   });
 
   test("reads friends as receiver", async () => {
@@ -42,10 +42,10 @@ describe("friend", () => {
 
     const { user, userId } = await createFriendship(mockContext);
     await mockSessionOnce(mockContext.db, user);
-    const fetchedFriends = await friendCaller.readFriends();
+    const friendUsers = await friendCaller.readFriends();
 
-    expect(fetchedFriends).toHaveLength(1);
-    expect(takeOne(fetchedFriends).id).toBe(userId);
+    expect(friendUsers).toHaveLength(1);
+    expect(takeOne(friendUsers).id).toBe(userId);
   });
 
   test("deletes friend", async () => {
@@ -54,9 +54,9 @@ describe("friend", () => {
     const { user } = await createFriendship(mockContext);
     await friendCaller.deleteFriend(user.id);
 
-    const fetchedFriends = await friendCaller.readFriends();
+    const friendUsers = await friendCaller.readFriends();
 
-    expect(fetchedFriends).toHaveLength(0);
+    expect(friendUsers).toHaveLength(0);
   });
 
   test("fails to delete self as friend", async () => {
@@ -86,19 +86,19 @@ describe("friend", () => {
     const user = getMockSession().user;
     // Session=newUser: search for default user by name
     await mockSessionOnce(mockContext.db);
-    const users = await friendCaller.searchUsers(user.name);
+    const searchedUsers = await friendCaller.searchUsers(user.name);
 
-    expect(users).toHaveLength(1);
-    expect(takeOne(users).id).toBe(user.id);
+    expect(searchedUsers).toHaveLength(1);
+    expect(takeOne(searchedUsers).id).toBe(user.id);
   });
 
   test("excludes self from search results", async () => {
     expect.hasAssertions();
 
     const user = getMockSession().user;
-    const users = await friendCaller.searchUsers(user.name);
+    const searchedUsers = await friendCaller.searchUsers(user.name);
 
-    expect(users.every(({ id }) => id !== user.id)).toBe(true);
+    expect(searchedUsers.every(({ id }) => id !== user.id)).toBe(true);
   });
 
   test("on delete friend notifies the other party", async () => {

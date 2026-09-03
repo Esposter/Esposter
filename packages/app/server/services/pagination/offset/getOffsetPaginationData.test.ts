@@ -3,13 +3,13 @@ import { getOffsetPaginationData } from "@@/server/services/pagination/offset/ge
 import { describe, expect, test } from "vitest";
 
 describe(getOffsetPaginationData, () => {
-  const item1 = new AItemEntity();
-  const item2 = new AItemEntity();
+  const firstItem = new AItemEntity();
+  const secondItem = new AItemEntity();
 
   test("gets all", () => {
     expect.hasAssertions();
 
-    const items: AItemEntity[] = [item1];
+    const items: AItemEntity[] = [firstItem];
 
     expect(getOffsetPaginationData(items, 1)).toStrictEqual({
       hasMore: false,
@@ -20,11 +20,11 @@ describe(getOffsetPaginationData, () => {
   test("gets partial", () => {
     expect.hasAssertions();
 
-    const items = [item1, item2];
+    const items = [firstItem, secondItem];
 
     expect(getOffsetPaginationData(items, 1)).toStrictEqual({
       hasMore: true,
-      items: [item1],
+      items: [firstItem],
     });
   });
 });

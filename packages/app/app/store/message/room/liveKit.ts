@@ -319,8 +319,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   };
   const connect = async (
     room: Room,
-    livekitUrl: string,
-    livekitToken: string,
+    liveKitUrl: string,
+    liveKitToken: string,
     newDisconnectHandler: () => Promise<void>,
     isMicrophoneEnabled: boolean,
   ) => {
@@ -342,7 +342,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     room.on(RoomEvent.LocalTrackUnpublished, onLocalTrackUnpublished);
     room.on(RoomEvent.Disconnected, onDisconnected);
     room.on(RoomEvent.AudioPlaybackStatusChanged, onAudioPlaybackStatusChanged);
-    await room.connect(livekitUrl, livekitToken);
+    await room.connect(liveKitUrl, liveKitToken);
     connectionQuality.value = room.localParticipant.connectionQuality;
     connectionState.value = room.state;
     await room.localParticipant.setMicrophoneEnabled(isMicrophoneEnabled);
