@@ -190,11 +190,11 @@ export const useCallStore = defineStore("message/room/call", () => {
     let isJoined = false;
     let joinedCallSessionId: string | undefined;
     await getResultAsync(async () => {
-      const { callSessionId, livekitToken, livekitUrl, participantMap } = await $trpc.callSession.joinCall.mutate({
+      const { callSessionId, liveKitToken, liveKitUrl, participantMap } = await $trpc.callSession.joinCall.mutate({
         id,
       });
       const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
-      await connect(createRoom(), livekitUrl, livekitToken, leaveCall, isMicrophoneEnabled);
+      await connect(createRoom(), liveKitUrl, liveKitToken, leaveCall, isMicrophoneEnabled);
       activeCallSessionId.value = callSessionId;
       joinedCallSessionId = callSessionId;
       isJoined = true;
@@ -223,12 +223,12 @@ export const useCallStore = defineStore("message/room/call", () => {
     callThreadRootRowKey.value = threadRootRowKey;
     let isJoined = false;
     await getResultAsync(async () => {
-      const { callSessionId, livekitToken, livekitUrl, participantMap } =
+      const { callSessionId, liveKitToken, liveKitUrl, participantMap } =
         await $trpc.callSession.joinCallByRoomId.mutate({
           roomId,
           threadRootRowKey,
         });
-      await connect(createRoom(), livekitUrl, livekitToken, leaveCall, true);
+      await connect(createRoom(), liveKitUrl, liveKitToken, leaveCall, true);
       // Only the room's own call is the one the room header offers to join — a thread's call is reached from
       // Its pane, and writing it here would light up the header for a call that is not the room's
       if (!threadRootRowKey) currentRoomCallSessionId.value = callSessionId;

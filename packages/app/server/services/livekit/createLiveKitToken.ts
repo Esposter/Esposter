@@ -5,7 +5,7 @@ import { AccessToken, TrackSource } from "livekit-server-sdk";
 
 export const createLiveKitToken = async (callSessionId: string, participant: CallParticipant) => {
   const credentials = getLiveKitCredentials();
-  if (!credentials) return { livekitToken: "", livekitUrl: "" };
+  if (!credentials) return { liveKitToken: "", liveKitUrl: "" };
 
   const token = new AccessToken(credentials.apiKey, credentials.apiSecret, {
     identity: participant.id,
@@ -24,5 +24,5 @@ export const createLiveKitToken = async (callSessionId: string, participant: Cal
     room: callSessionId,
     roomJoin: true,
   });
-  return { livekitToken: await token.toJwt(), livekitUrl: credentials.url };
+  return { liveKitToken: await token.toJwt(), liveKitUrl: credentials.url };
 };

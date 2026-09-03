@@ -46,10 +46,10 @@ describe("reserveStorageBytes", () => {
     // Nothing is stored yet, so nothing is charged — storage reporting the blob is what moves the counter
     await expect(readStorageBytesUsed()).resolves.toBe(0);
 
-    const ledgeredStorageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
+    const storageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
 
-    expect(ledgeredStorageLedgerEntries).toHaveLength(1);
-    expect(ledgeredStorageLedgerEntries[0]).toMatchObject({
+    expect(storageLedgerEntries).toHaveLength(1);
+    expect(storageLedgerEntries[0]).toMatchObject({
       blobName,
       containerName,
       countedBytes: 0,
@@ -109,9 +109,9 @@ describe("reserveStorageBytes", () => {
       { blobName: `${blobName}Second`, declaredBytes },
     ]);
 
-    const ledgeredStorageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
+    const storageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
 
-    expect(ledgeredStorageLedgerEntries.map(({ blobName: name }) => name).toSorted()).toStrictEqual([
+    expect(storageLedgerEntries.map(({ blobName: name }) => name).toSorted()).toStrictEqual([
       blobName,
       `${blobName}Second`,
     ]);
@@ -134,10 +134,10 @@ describe("reserveStorageBytes", () => {
       { blobName: `${blobName}Second`, declaredBytes },
     ]);
 
-    const ledgeredStorageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
+    const storageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
 
-    expect(ledgeredStorageLedgerEntries).toHaveLength(1);
-    expect(ledgeredStorageLedgerEntries[0]?.blobName).toBe(`${blobName}Second`);
+    expect(storageLedgerEntries).toHaveLength(1);
+    expect(storageLedgerEntries[0]?.blobName).toBe(`${blobName}Second`);
   });
 
   test("rejects once too many holds are outstanding", async () => {

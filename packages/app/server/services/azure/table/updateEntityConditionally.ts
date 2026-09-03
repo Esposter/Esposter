@@ -24,7 +24,7 @@ const MAX_ENTITY_ETAG_RETRIES = 3;
 // Earlier change, erasing it with nothing surfaced to either caller
 export const updateEntityConditionally = async <TTableEntity extends AzureEntity, TEntity extends TTableEntity>(
   tableClient: CustomTableClient<TTableEntity>,
-  cls: Class<TEntity>,
+  entityClass: Class<TEntity>,
   { entityType, entityWithEtag, getUpdateEntity, writeEntity }: ConditionalEntityUpdateOptions<TTableEntity, TEntity>,
 ): Promise<AzureUpdateEntity<TTableEntity>> => {
   // The version under write travels as one value so each attempt destructures it into its own consts — the
@@ -46,7 +46,7 @@ export const updateEntityConditionally = async <TTableEntity extends AzureEntity
     // Leaves the attempt unclassified, which is what CONFLICT already means: the write did not land, the caller
     // Sends it again, and the fault itself is logged rather than renamed into a deletion for the user
     const rereadEntityVersion = await getResultAsync(() =>
-      getEntityWithEtag(tableClient, cls, partitionKey, rowKey),
+      getEntityWithEtag(tableClient, entityClass, partitionKey, rowKey),
     ).match(
       (readEntityVersion) => readEntityVersion,
       (error) => {
