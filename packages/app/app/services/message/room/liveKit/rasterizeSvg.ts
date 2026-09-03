@@ -1,7 +1,7 @@
 import { getResultAsync, InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 
-const width = 1920;
-const height = 1080;
+const RASTERIZED_SVG_WIDTH = 1920;
+const RASTERIZED_SVG_HEIGHT = 1080;
 const rasterizedSvgCache = new Map<string, string>();
 
 export const rasterizeSvg = (svgUrl: string) =>
@@ -15,28 +15,30 @@ export const rasterizeSvg = (svgUrl: string) =>
     const svgImage = await withFinalizerAsync(
       () =>
         new Promise<HTMLImageElement>((resolve, reject) => {
-          const img = new Image();
-          img.onload = () => {
-            resolve(img);
+          const image = new Image();
+          image.onload = () => {
+            resolve(image);
           };
-          img.onerror = reject;
-          img.src = svgObjectUrl;
+          image.onerror = reject;
+          image.src = svgObjectUrl;
         }),
       () => {
         URL.revokeObjectURL(svgObjectUrl);
       },
     );
     const rasterizationCanvas = window.document.createElement("canvas");
-    rasterizationCanvas.width = width;
-    rasterizationCanvas.height = height;
+    rasterizationCanvas.width = RASTERIZED_SVG_WIDTH;
+    rasterizationCanvas.height = RASTERIZED_SVG_HEIGHT;
     const rasterizationContext = rasterizationCanvas.getContext("2d");
     if (!rasterizationContext) throw new InvalidOperationError(Operation.Create, rasterizeSvg.name, svgUrl);
-    rasterizationContext.drawImage(svgImage, 0, 0, width, height);
+    rasterizationContext.drawImage(svgImage, 0, 0, RASTERIZED_SVG_WIDTH, RASTERIZED_SVG_HEIGHT);
 
     const rasterizedSvgBlobUrl = await new Promise<string>((resolve, reject) => {
       rasterizationCanvas.toBlob((rasterizedSvgBlob) => {
         if (!rasterizedSvgBlob) {
-          reject(new InvalidOperationError(Operation.Create, svgUrl, "Canvas toBlob returned null"));
+          reject(
+            new InvalidOperationError(Operation.Create, rasterizeSvg.name, `Canvas toBlob returned null for ${svgUrl}`),
+          );
           return;
         }
         resolve(URL.createObjectURL(rasterizedSvgBlob));

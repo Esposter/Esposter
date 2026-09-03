@@ -20,7 +20,7 @@ const getEmoji = (slug: string) => {
   return emoji;
 };
 
-describe("getEmojiIndex", () => {
+describe(getEmojiIndex, () => {
   const RED_HEART = "❤️";
   const { slugEmojiMap } = getEmojiIndex();
 
@@ -90,7 +90,7 @@ describe("getEmojiIndex", () => {
   });
 });
 
-describe("applySkinTone", () => {
+describe(applySkinTone, () => {
   const MAN_BEARD = "🧔‍♂️";
   const MAN_BOUNCING_BALL = "⛹️‍♂️";
   const RED_HEART = "❤️";
@@ -134,7 +134,7 @@ describe("applySkinTone", () => {
 // Rather than a character and are searched in the same call
 const searchUnicodeEmojis = (query: string) => searchEmojis(query).filter((emoji) => emoji.type === EmojiType.Unicode);
 
-describe("searchEmojis", () => {
+describe(searchEmojis, () => {
   const GRINNING_FACE = "😀";
   const MELTING_FACE = "🫠";
   const THUMBS_UP = "👍";
