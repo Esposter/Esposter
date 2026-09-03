@@ -12,23 +12,23 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
   readonly type = CommandType.NullStrategy;
 
   get description() {
-    return `Null Strategy (${this.#mode})`;
+    return `Null Strategy (${this.#nullStrategy})`;
   }
 
   readonly #affectedCells: AffectedCell[];
   readonly #affectedRows: IndexedRow[];
-  readonly #mode: NullStrategy;
+  readonly #nullStrategy: NullStrategy;
 
-  constructor(mode: NullStrategy, affectedCells: AffectedCell[], affectedRows: IndexedRow[]) {
+  constructor(nullStrategy: NullStrategy, affectedCells: AffectedCell[], affectedRows: IndexedRow[]) {
     super();
-    this.#mode = mode;
+    this.#nullStrategy = nullStrategy;
     this.#affectedCells = affectedCells;
     this.#affectedRows = affectedRows;
   }
 
   execute(dataSource: DataSource) {
     const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
-    if (this.#mode === NullStrategy.ReplaceWithNA)
+    if (this.#nullStrategy === NullStrategy.ReplaceWithNA)
       for (const { columnName, rowIndex } of this.#affectedCells) {
         const row = takeOne(dataSource.rows, rowIndex);
         const column = columnMap.get(columnName);
@@ -47,7 +47,7 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
   }
 
   undo(dataSource: DataSource) {
-    if (this.#mode === NullStrategy.ReplaceWithNA) {
+    if (this.#nullStrategy === NullStrategy.ReplaceWithNA) {
       const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
       for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
         const row = takeOne(dataSource.rows, rowIndex);

@@ -33,10 +33,10 @@ export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn
   }
 
   #moveColumn(dataSource: DataSource, fromIndex: number, toIndex: number) {
-    const moved = dataSource.columns[fromIndex];
-    if (!moved) return;
+    const movedColumn = dataSource.columns[fromIndex];
+    if (!movedColumn) return;
 
-    const columns = dataSource.columns.toSpliced(fromIndex, 1).toSpliced(toIndex, 0, moved);
+    const columns = dataSource.columns.toSpliced(fromIndex, 1).toSpliced(toIndex, 0, movedColumn);
     dataSource.columns = columns;
     const columnNames = columns.map(({ name }) => name);
     for (const row of dataSource.rows) {

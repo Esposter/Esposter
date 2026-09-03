@@ -32,19 +32,19 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
     const ascendingRows = this.#indexedRows.toSorted((a, b) => a.index - b.index);
     for (const { row } of ascendingRows)
       for (const column of dataSource.columns) column.size += getValueSize(takeOne(row.data, column.name));
-    const result: Row[] = [];
+    const restoredRows: Row[] = [];
     let existingIndex = 0;
     for (const { index, row } of ascendingRows) {
-      while (result.length < index) {
-        result.push(takeOne(dataSource.rows, existingIndex));
+      while (restoredRows.length < index) {
+        restoredRows.push(takeOne(dataSource.rows, existingIndex));
         existingIndex++;
       }
-      result.push(row);
+      restoredRows.push(row);
     }
     while (existingIndex < dataSource.rows.length) {
-      result.push(takeOne(dataSource.rows, existingIndex));
+      restoredRows.push(takeOne(dataSource.rows, existingIndex));
       existingIndex++;
     }
-    dataSource.rows = result;
+    dataSource.rows = restoredRows;
   }
 }

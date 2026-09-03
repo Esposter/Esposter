@@ -30,6 +30,6 @@ export class CreateRowCommand extends ADataSourceCommand<CommandType.CreateRow> 
   undo(dataSource: DataSource) {
     const row = takeOne(dataSource.rows, this.#index);
     for (const column of dataSource.columns) column.size -= getValueSize(takeOne(row.data, column.name));
-    dataSource.rows = dataSource.rows.filter((_, i) => i !== this.#index);
+    dataSource.rows = dataSource.rows.filter((_row, index) => index !== this.#index);
   }
 }

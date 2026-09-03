@@ -28,21 +28,21 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
 
   undo(dataSource: DataSource) {
     const ascendingColumns = this.#indexedColumns.toSorted((a, b) => a.columnIndex - b.columnIndex);
-    const result: Column[] = [];
+    const restoredColumns: Column[] = [];
     let existingIndex = 0;
     for (const { columnIndex, originalColumn } of ascendingColumns) {
-      while (result.length < columnIndex) {
-        result.push(takeOne(dataSource.columns, existingIndex));
+      while (restoredColumns.length < columnIndex) {
+        restoredColumns.push(takeOne(dataSource.columns, existingIndex));
         existingIndex++;
       }
-      result.push(originalColumn);
+      restoredColumns.push(originalColumn);
     }
     while (existingIndex < dataSource.columns.length) {
-      result.push(takeOne(dataSource.columns, existingIndex));
+      restoredColumns.push(takeOne(dataSource.columns, existingIndex));
       existingIndex++;
     }
-    dataSource.columns = result;
-    const restoredColumnNames = result.map(({ name }) => name);
+    dataSource.columns = restoredColumns;
+    const restoredColumnNames = restoredColumns.map(({ name }) => name);
     for (const [rowIndex, row] of dataSource.rows.entries()) {
       for (const { originalColumn, originalRowValues } of ascendingColumns)
         row.data[originalColumn.name] = takeOne(originalRowValues, rowIndex);
