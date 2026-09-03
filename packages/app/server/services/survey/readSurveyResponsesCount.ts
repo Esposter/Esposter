@@ -4,7 +4,7 @@ import type { Resource } from "@esposter/db-schema";
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getPartitionKeyFilter } from "@esposter/azure";
-import { countEntities } from "@esposter/db";
+import { readEntitiesCount } from "@esposter/db";
 import { AzureTable } from "@esposter/db-schema";
 
 // The one response count, for the overview blade and the Responses dataset alike. It counts keys-only rows up
@@ -17,7 +17,7 @@ import { AzureTable } from "@esposter/db-schema";
 // Difference, and it pays it to say the same number twice
 export const readSurveyResponsesCount = async (surveyId: Resource["id"]): Promise<ReadSurveyResponsesCountResult> => {
   const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
-  const count = await countEntities(
+  const count = await readEntitiesCount(
     surveyResponseClient,
     { filter: getPartitionKeyFilter(surveyId) },
     DATASET_MAX_COUNTED_ROWS + 1,

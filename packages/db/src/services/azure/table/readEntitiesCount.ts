@@ -8,7 +8,7 @@ import { AZURE_MAX_PAGE_SIZE, CompositeKeyPropertyNames, serializeKey } from "@e
 // Projection keeps that walk at its smallest possible payload. It is never free — reach for it only once
 // A capped read is already known to have truncated, never on the happy path. The walk can be bounded by
 // MaxCount, and a bounded result reads as a floor rather than an exact total.
-export const countEntities = async <TEntity extends CompositeKey>(
+export const readEntitiesCount = async <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,
   queryOptions?: TableEntityQueryOptions,
   maxCount = Number.POSITIVE_INFINITY,
