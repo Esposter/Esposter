@@ -15,7 +15,7 @@
 | `packages/xml2js`                                       | —     | `Parser.ts`                                               |
 | repo root — `scripts/`, `.agents/`, root `*.config.ts`  | —     | workflow scripts and their tests                          |
 
-Each pass re-checks only files changed since its unit's date, then bumps it. A new rule resets every date — the doc-block rule (6) landed on 2026-08-20 and every row was re-read against it. Every row reset again on 2026-09-02, when grep 8 was added: the rule it looks for was already stated in the `formatting` skill on the 2026-08-20 pass, but nothing here could find it, so no unit was ever read against it and the dates recorded coverage that did not exist. Greps:
+Greps, per unit:
 
 1. `^\s*//.{85,}` over `*.ts`, `*.vue`
 2. `\n[ \t]*\n[ \t]*//` multiline (skip `.test.ts`/`.test-d.ts` and the import→body boundary)

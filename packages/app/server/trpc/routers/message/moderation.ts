@@ -58,7 +58,7 @@ import { and, eq, getColumns, ilike, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
 // The membership row an admin action removes, times out, or replaces
-const getRoomMembership = (roomId: string, userId: string) =>
+const roomMembershipWhere = (roomId: string, userId: string) =>
   and(eq(usersToRoomsInMessage.userId, userId), eq(usersToRoomsInMessage.roomId, roomId));
 // A ban revokes membership and records the ban in one commit — both the ban and the soft ban start here.
 // The membership row comes back so the caller can announce the removal, which is not part of the commit
@@ -66,7 +66,7 @@ const banRoomMember = (db: Context["db"], actorUserId: string, roomId: string, t
   db.transaction(async (tx) => {
     const [deletedMember] = await tx
       .delete(usersToRoomsInMessage)
-      .where(getRoomMembership(roomId, targetUserId))
+      .where(roomMembershipWhere(roomId, targetUserId))
       .returning();
     await tx
       .insert(bansInMessage)
@@ -155,7 +155,7 @@ export const moderationRouter = router({
         case AdminActionType.KickFromRoom: {
           const [deletedMember] = await ctx.db
             .delete(usersToRoomsInMessage)
-            .where(getRoomMembership(roomId, targetUserId))
+            .where(roomMembershipWhere(roomId, targetUserId))
             .returning();
           if (deletedMember) await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, sessionId, "kicked");
           break;
@@ -175,15 +175,15 @@ export const moderationRouter = router({
           const callSessionId = await readCallSessionId(ctx.db, roomId);
           if (!callSessionId) break;
 
-          const sessionMap = callSessionParticipantMap.get(callSessionId);
-          if (sessionMap) await stopLiveKitScreenShare(callSessionId, sessionMap, targetUserId);
+          const participantMap = callSessionParticipantMap.get(callSessionId);
+          if (participantMap) await stopLiveKitScreenShare(callSessionId, participantMap, targetUserId);
           break;
         }
         case AdminActionType.TimeoutUser:
           await ctx.db
             .update(usersToRoomsInMessage)
             .set({ timeoutUntil: new Date(Date.now() + input.durationMs) })
-            .where(getRoomMembership(roomId, targetUserId));
+            .where(roomMembershipWhere(roomId, targetUserId));
           break;
         case AdminActionType.Warn:
           break;
@@ -222,7 +222,7 @@ export const moderationRouter = router({
     if (filter?.name) wheres.push(ilike(users.name, `%${escapeLike(filter.name)}%`));
 
     const bannedByUsers = alias(users, "bannedByUsers");
-    const readBans = await ctx.db
+    const bans = await ctx.db
       .select({
         ...getColumns(bansInMessage),
         bannedByUser: getColumns(bannedByUsers),
@@ -234,7 +234,7 @@ export const moderationRouter = router({
       .where(and(...wheres))
       .orderBy(...parseSortByToSql(bansInMessage, sortBy))
       .limit(limit + 1);
-    return getCursorPaginationData(readBans, limit, sortBy);
+    return getCursorPaginationData(bans, limit, sortBy);
   }),
   readModerationLog: getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId").query<
     CursorPaginationData<ModerationLogEntity>

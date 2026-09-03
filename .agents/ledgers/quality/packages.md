@@ -2,13 +2,13 @@
 
 Grouped so each row is one review-sized commit.
 
-| Unit                                                             | Swept      | Notes                                                                                                                                                                                                                                  |
-| ---------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/azure-mock`, `packages/db-mock`                        | 2026-08-20 | Blob item, listing envelope, batch sub-response, queue message item and container accessor each own one home; filter clauses and orderBy parsed once per predicate rather than per row; snapshot read memoised.                        |
-| `packages/db`                                                    | 2026-08-20 | resumed: the search rework's `serializeClause` wrote its serialized key back onto the caller's clause, and built the same invalid-value error twice; a `filter(Boolean) as SQL[]` cast became a narrowing filter                       |
-| `packages/db-schema`                                             | 2026-08-20 | resumed: `Clause`'s third union arm was `Exclude<SearchOperator, both of its members>`, so nothing could ever inhabit it                                                                                                               |
-| `packages/azure-functions`                                       | 2026-08-20 | The push payload envelope — absolute deep link and body cap — owned by `getPushNotificationPayload` and pinned by its own suite, so senders pass a route rather than a url; the scheduled-message job's writes address their row once. |
-| `packages/virrun`                                                | 2026-08-20 | `getChangedExcludes` reconciles the planner's materialize decision with the diff's delete list; `formatVirrunError` and one cache-removal helper own their repeats; `toAppError` re-wrapping was unreachable branches.                 |
-| `packages/vue-phaserjs`, `packages/parse-tmx`, `packages/xml2js` | 2026-08-20 | `getDepthInsertIndex` and `IsoSetterMap` extracted; `xml2js`'s dead `trim`/`normalize` options fixed and pinned, and its five processors given their first tests.                                                                      |
-| `packages/infra`                                                 | 2026-08-20 | The workflows' 88-line endpoints block and the budgets' guard ceiling each own one home, halving the workflow files; four drift findings raised separately.                                                                            |
-| `packages/configuration`                                         | 2026-08-20 | Nothing found — every source file read, no duplication, no dead abstraction, no work repeated per call.                                                                                                                                |
+| Unit                                                             | Swept      | Notes |
+| ---------------------------------------------------------------- | ---------- | ----- |
+| `packages/azure-mock`, `packages/db-mock`                        | 2026-08-20 |       |
+| `packages/db`                                                    | 2026-08-20 |       |
+| `packages/db-schema`                                             | 2026-08-20 |       |
+| `packages/azure-functions`                                       | 2026-08-20 |       |
+| `packages/virrun`                                                | 2026-08-20 |       |
+| `packages/vue-phaserjs`, `packages/parse-tmx`, `packages/xml2js` | 2026-08-20 |       |
+| `packages/infra`                                                 | 2026-08-20 |       |
+| `packages/configuration`                                         | 2026-08-20 |       |

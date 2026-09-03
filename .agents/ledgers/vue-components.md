@@ -4,9 +4,6 @@ The reading rules that decide a component tree's shape — how much a component 
 its file sits — carried across the components written before them. Standing: a unit's date says they held there
 on that date, and the pass resumes from the files changed since.
 
-Consolidates the former **component-granularity** and **computed-extraction** ledgers. They always ran over the
-same files and handed work to each other in both directions, so reading a tree twice only meant reading it twice.
-
 ## Rules
 
 | Rule                                                     | Owner                                                      |
@@ -34,15 +31,10 @@ owning skill.
 Behaviour-preserving, except that restoring a stable `:rules` reference stops a Vuetify field re-validating
 every render. That is a fix, not a regression.
 
-Every row resets when a rule joins this table — except a rule whose whole scope is carried in the change that
-adds it, which leaves nothing behind to date. The naming rule joined that way on 2026-08-21: its mechanical half
-became the test below in the same commit, and its judgement half is one pass over the directory listing rather
-than over the files, so the whole tree was read at once. The dates above stand.
-
 | Unit                                                                                       | Swept      | Notes                                                                                                                                                |
 | ------------------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `pages/` + `layouts/`                                                                      | 2026-08-20 | The page-decomposition rule: a page holding no element's state; a bound configuration literal is not a constant to relocate (`vue-page-composition`) |
-| `Message/Model/Message`                                                                    | 2026-08-20 | Gained the reaction hover card and Reactions dialog                                                                                                  |
+| `Message/Model/Message`                                                                    | 2026-08-20 | the densest tree in the app                                                                                                                          |
 | `Message/Model/Room`                                                                       | 2026-08-20 |                                                                                                                                                      |
 | `Message/Model/User`                                                                       | 2026-08-20 |                                                                                                                                                      |
 | `Message/Content/Call`                                                                     | 2026-08-20 |                                                                                                                                                      |
@@ -116,8 +108,7 @@ answered in one look. Most crowded directories have no fold at all — `Styled`,
 
 ## Find recipe — computed extraction
 
-The old recipe counted identifier occurrences, which is exactly the signal the rule no longer uses. There is no
-grep for "does this expression do work" — the pass reads each file. These two locate the candidates worth reading
+There is no grep for "does this expression do work" — the pass reads each file. These two locate the candidates worth reading
 first, from the repository root:
 
 ```bash
@@ -134,15 +125,14 @@ grep -rnoE '(\{\{[^}]*|:[a-z-]+="[^"]*)\b[a-z][a-zA-Z0-9]*\(' --include=*.vue pa
 ```
 
 The third command is the one that matters and the easy one to skip. It deliberately matches **any** callee, not
-a `get|format|build|…` prefix set: the first version of this recipe carried that allowlist and missed `emojify`
-(a node-emoji lookup), `prettify` (two lookbehind regex passes, four call sites) and `unemojify` (a reverse
-lookup over a constant menu) — every one of them work, none of them prefixed. Read the deduped callee list, drop
-the CSS functions and framework slot predicates, and open what remains.
+a `get|format|build|…` prefix set — `emojify`, `prettify` and `unemojify` are each real work behind an unprefixed
+name, and an allowlist misses every one of them. Read the deduped callee list, drop the CSS functions and
+framework slot predicates, and open what remains.
 
 All three over-report — `:style="{ color }"` on a plain element binds to no child, `.map` over a two-element
 array is not work, and most `getX` helpers are a property read. The rule decides; these only narrow what to open.
 
-The first recipe's largest cluster is the `Dungeons` `:configuration` literals, and none of them is a finding:
+The first recipe's largest cluster is the `Dungeons` `:configuration` literals, and none is a finding:
 `useInitializeGameObjectSetters` watches `() => configuration[key]` **per key**, so the wrapper never reads the
 object's identity and a fresh one costs nothing. Its siblings in that list are static literals, which the
 compiler hoists. What remains after those two are subtracted is the real set.

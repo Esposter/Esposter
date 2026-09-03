@@ -52,13 +52,13 @@ export const emojiRouter = router({
         value: input.emojiTag,
       },
     ];
-    const foundEmoji = (
+    const existingEmoji = (
       await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
         filter: serializeClauses(clauses),
       })
     )[0];
-    if (foundEmoji)
-      throw getInvalidOperationError(Operation.Create, MessageMetadataType.Emoji, JSON.stringify(foundEmoji));
+    if (existingEmoji)
+      throw getInvalidOperationError(Operation.Create, MessageMetadataType.Emoji, JSON.stringify(existingEmoji));
 
     const newEmoji = createMessageEmojiMetadataEntity({ ...input, userIds: [ctx.getSessionPayload.user.id] });
     await createEntity(messagesMetadataClient, newEmoji);
@@ -93,15 +93,18 @@ export const emojiRouter = router({
   updateEmoji: getMemberProcedure(updateEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation<void>(
     async ({ ctx, input }) => {
       const messagesMetadataClient = await useMessageEmojiMetadataClient();
-      const readEmoji = await requireEntity(
+      const existingEmoji = await requireEntity(
         getEntity(messagesMetadataClient, MessageEmojiMetadataEntity, input.partitionKey, input.rowKey),
         MessageMetadataType.Emoji,
         JSON.stringify(input),
       );
-      if (readEmoji.userIds.length === 1 && readEmoji.userIds[0] === ctx.getSessionPayload.user.id)
-        throw getInvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(readEmoji));
+      if (existingEmoji.userIds.length === 1 && existingEmoji.userIds[0] === ctx.getSessionPayload.user.id)
+        throw getInvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(existingEmoji));
 
-      const updatedEmoji = { ...input, userIds: getUpdatedUserIds(readEmoji.userIds, ctx.getSessionPayload.user.id) };
+      const updatedEmoji = {
+        ...input,
+        userIds: getUpdatedUserIds(existingEmoji.userIds, ctx.getSessionPayload.user.id),
+      };
       await updateEntity(messagesMetadataClient, updatedEmoji);
       emojiEventEmitter.emit("updateEmoji", [updatedEmoji, getDevice(ctx.getSessionPayload)]);
     },

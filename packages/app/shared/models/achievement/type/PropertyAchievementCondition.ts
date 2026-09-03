@@ -6,7 +6,7 @@ import type { BinaryOperator } from "@esposter/azure";
 import type { GetProperties, ItemEntityType } from "@esposter/shared";
 import type { Get } from "type-fest";
 
-export type PropertyCondition<TPath extends TRPCPaths> =
+export type PropertyAchievementCondition<TPath extends TRPCPaths> =
   GetProperties<Get<TRPCRouterInputs, TPath>> extends infer R
     ? R extends { path: infer Path extends string; value: infer Value }
       ? ItemEntityType<AchievementConditionType.Property> &

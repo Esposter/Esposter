@@ -35,6 +35,6 @@ export const buildPointsLeaderboard = (
   }
   return {
     entries: rankedEntries.slice(0, MAX_POINTS_LEADERBOARD_ENTRIES),
-    self: rankedEntries.find(({ user }) => user.id === callerUserId),
+    myEntry: rankedEntries.find(({ user }) => user.id === callerUserId),
   };
 };

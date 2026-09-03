@@ -122,7 +122,7 @@ describe("achievement", () => {
     const emptyLeaderboard = await caller.achievement.readPointsLeaderboard();
 
     expect(emptyLeaderboard.entries).toStrictEqual([]);
-    expect(emptyLeaderboard.self).toBeUndefined();
+    expect(emptyLeaderboard.myEntry).toBeUndefined();
 
     const newResource = await caller.webpage.createResource({ name });
     await caller.webpage.saveResourceContent({
@@ -135,7 +135,7 @@ describe("achievement", () => {
     expect(leaderboard.entries).toHaveLength(1);
     expect(takeOne(leaderboard.entries).user.id).toBe(getMockSession().user.id);
     expect(takeOne(leaderboard.entries).rank).toBe(1);
-    expect(leaderboard.self).toStrictEqual(takeOne(leaderboard.entries));
+    expect(leaderboard.myEntry).toStrictEqual(takeOne(leaderboard.entries));
   });
 
   test("on updates", async () => {

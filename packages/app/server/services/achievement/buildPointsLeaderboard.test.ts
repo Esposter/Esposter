@@ -37,15 +37,15 @@ describe(buildPointsLeaderboard, () => {
     expect(entries.map(({ rank }) => rank)).toStrictEqual([1, 1, 3]);
   });
 
-  test("returns the caller's own entry with its global rank via self", () => {
+  test("returns the caller's own entry with its global rank via myEntry", () => {
     expect.hasAssertions();
 
-    const { self } = buildPointsLeaderboard(
+    const { myEntry } = buildPointsLeaderboard(
       [createUserTotal("high", HIGH_POINTS), createUserTotal("low", LOW_POINTS)],
       "low",
     );
 
-    expect(self).toStrictEqual({
+    expect(myEntry).toStrictEqual({
       points: LOW_POINTS,
       rank: 2,
       unlockCount: 1,
@@ -53,11 +53,11 @@ describe(buildPointsLeaderboard, () => {
     });
   });
 
-  test("self is undefined when the caller has unlocked nothing", () => {
+  test("myEntry is undefined when the caller has unlocked nothing", () => {
     expect.hasAssertions();
 
-    const { self } = buildPointsLeaderboard([createUserTotal("high", HIGH_POINTS)], "absent");
+    const { myEntry } = buildPointsLeaderboard([createUserTotal("high", HIGH_POINTS)], "absent");
 
-    expect(self).toBeUndefined();
+    expect(myEntry).toBeUndefined();
   });
 });

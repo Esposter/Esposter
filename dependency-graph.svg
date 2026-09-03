@@ -17,8 +17,10 @@
 <polygon fill="#c0efba" stroke="none" points="13,-85.2 13,-105.6 52,-105.6 52,-85.2 13,-85.2"/>
 <polygon fill="none" stroke="#4d994c" points="13,-85.2 13,-105.6 52,-105.6 52,-85.2 13,-85.2"/>
 <text xml:space="preserve" text-anchor="start" x="60" y="-90.6" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#8b949e">foundation · reaches no sibling at runtime</text>
-<polygon fill="#d7c2fd" stroke="none" points="13,-59.8 13,-80.2 52,-80.2 52,-59.8 13,-59.8"/>
-<polygon fill="none" stroke="#7f65bd" stroke-dasharray="5,2" points="13,-59.8 13,-80.2 52,-80.2 52,-59.8 13,-59.8"/>
+<polygon fill="none" stroke="#8b949e" stroke-dasharray="5,2" points="13,-59.8 13,-80.2 52,-80.2 52,-59.8 13,-59.8"/>
+<polygon fill="#eea0b7" stroke="none" stroke-dasharray="5,2" points="14,-60.8 14,-79.2 26.33,-79.2 26.33,-60.8 14,-60.8"/>
+<polygon fill="#d7c2fd" stroke="none" stroke-dasharray="5,2" points="26.33,-60.8 26.33,-79.2 38.67,-79.2 38.67,-60.8 26.33,-60.8"/>
+<polygon fill="#c0efba" stroke="none" stroke-dasharray="5,2" points="38.67,-60.8 38.67,-79.2 51,-79.2 51,-60.8 38.67,-60.8"/>
 <text xml:space="preserve" text-anchor="start" x="60" y="-65.2" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#8b949e">dashed outline · private, never published</text>
 <polygon fill="#207372" stroke="none" stroke-dasharray="5,2" points="19,-40.4 19,-48.8 46,-48.8 46,-40.4 19,-40.4"/>
 <text xml:space="preserve" text-anchor="start" x="60" y="-39.8" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#8b949e">runtime dependency</text>

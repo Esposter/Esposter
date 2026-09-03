@@ -57,7 +57,7 @@ describe(useScheduledMessageJobStore, () => {
     expect.hasAssertions();
 
     server.use(
-      trpcMsw.message.scheduledMessageJob.cancelScheduledJob.mutation(({ input }) => {
+      trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(({ input }) => {
         if (input.id === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
         return createJob(input.id);
       }),
@@ -80,7 +80,7 @@ describe(useScheduledMessageJobStore, () => {
     expect.hasAssertions();
 
     server.use(
-      trpcMsw.message.scheduledMessageJob.cancelScheduledJob.mutation(() => {
+      trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(() => {
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
       }),
       trpcMsw.message.scheduledMessageJob.sendScheduledMessageNow.mutation(() =>

@@ -200,7 +200,7 @@ describe("webhook", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newWebhook = await webhookCaller.createWebhook({ name, roomId: newRoom.id });
-    const users = await webhookCaller.readAppUsersByIds({ ids: [newWebhook.userId], roomId: newRoom.id });
+    const users = await webhookCaller.readAppUsers({ ids: [newWebhook.userId], roomId: newRoom.id });
 
     expect(takeOne(users).id).toBe(newWebhook.userId);
   });
@@ -213,7 +213,7 @@ describe("webhook", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      webhookCaller.readAppUsersByIds({ ids: [newWebhook.userId], roomId: newRoom.id }),
+      webhookCaller.readAppUsers({ ids: [newWebhook.userId], roomId: newRoom.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

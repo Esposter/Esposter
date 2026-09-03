@@ -110,7 +110,7 @@ describe("scheduledMessageJob", () => {
     expect.hasAssertions();
 
     const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
-    const scheduledMessageJobs = await scheduledMessageJobCaller.readScheduledJobs({ roomId });
+    const scheduledMessageJobs = await scheduledMessageJobCaller.readScheduledMessageJobs({ roomId });
 
     expect(scheduledMessageJobs).toHaveLength(1);
     expect(takeOne(scheduledMessageJobs).id).toBe(scheduledMessageJob.id);
@@ -120,7 +120,7 @@ describe("scheduledMessageJob", () => {
     expect.hasAssertions();
 
     const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
-    const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledJobs();
+    const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledMessageJobs();
 
     expect(scheduledMessageJobs.items).toHaveLength(1);
     expect(takeOne(scheduledMessageJobs.items).id).toBe(scheduledMessageJob.id);
@@ -131,19 +131,19 @@ describe("scheduledMessageJob", () => {
     expect.hasAssertions();
 
     await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
-    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledMessageJobsCount();
 
     expect(scheduledMessageJobCount).toBe(1);
   });
 
-  test("excludes other users from readMyScheduledJobs", async () => {
+  test("excludes other users from readMyScheduledMessageJobs", async () => {
     expect.hasAssertions();
 
     await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
     const { user } = await mockSessionOnce(mockContext.db);
-    const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledJobs();
+    const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledMessageJobs();
     await mockSessionOnce(mockContext.db, user);
-    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledMessageJobsCount();
 
     expect(scheduledMessageJobs.items).toStrictEqual([]);
     expect(scheduledMessageJobCount).toBe(0);
@@ -153,17 +153,17 @@ describe("scheduledMessageJob", () => {
     expect.hasAssertions();
 
     const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
-    const cancelledScheduledMessageJob = await scheduledMessageJobCaller.cancelScheduledJob({
+    const cancelledScheduledMessageJob = await scheduledMessageJobCaller.cancelScheduledMessageJob({
       id: scheduledMessageJob.id,
     });
-    const scheduledMessageJobs = await scheduledMessageJobCaller.readScheduledJobs({ roomId });
+    const scheduledMessageJobs = await scheduledMessageJobCaller.readScheduledMessageJobs({ roomId });
 
     expect(cancelledScheduledMessageJob.id).toBe(scheduledMessageJob.id);
     expect(cancelledScheduledMessageJob.cancelledAt).toStrictEqual(new Date(0));
     expect(scheduledMessageJobs).toStrictEqual([]);
   });
 
-  test("excludes completed jobs from readScheduledJobs", async () => {
+  test("excludes completed jobs from readScheduledMessageJobs", async () => {
     expect.hasAssertions();
 
     const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
@@ -171,7 +171,7 @@ describe("scheduledMessageJob", () => {
       .update(scheduledMessageJobsInMessage)
       .set({ completedAt: new Date() })
       .where(eq(scheduledMessageJobsInMessage.id, scheduledMessageJob.id));
-    const scheduledMessageJobs = await scheduledMessageJobCaller.readScheduledJobs({ roomId });
+    const scheduledMessageJobs = await scheduledMessageJobCaller.readScheduledMessageJobs({ roomId });
 
     expect(scheduledMessageJobs).toStrictEqual([]);
   });
@@ -183,7 +183,7 @@ describe("scheduledMessageJob", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      scheduledMessageJobCaller.cancelScheduledJob({ id: scheduledMessageJob.id }),
+      scheduledMessageJobCaller.cancelScheduledMessageJob({ id: scheduledMessageJob.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Update, name: ScheduledMessageJob, ${scheduledMessageJob.id}]`,
     );
@@ -217,7 +217,7 @@ describe("scheduledMessageJob", () => {
     );
 
     await mockSessionOnce(mockContext.db, member);
-    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledMessageJobsCount();
 
     expect(scheduledMessageJobCount).toBe(1);
   });
@@ -239,7 +239,7 @@ describe("scheduledMessageJob", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
     await mockSessionOnce(mockContext.db, member);
-    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledMessageJobsCount();
 
     expect(scheduledMessageJobCount).toBe(0);
   });
@@ -261,7 +261,7 @@ describe("scheduledMessageJob", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
     await mockSessionOnce(mockContext.db, member);
-    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledMessageJobsCount();
 
     expect(scheduledMessageJobCount).toBe(0);
   });
@@ -289,8 +289,8 @@ describe("scheduledMessageJob", () => {
 
     await mockSessionOnce(mockContext.db);
 
-    await expect(scheduledMessageJobCaller.readScheduledJobs({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
+    await expect(
+      scheduledMessageJobCaller.readScheduledMessageJobs({ roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

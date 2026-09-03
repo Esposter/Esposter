@@ -4,9 +4,6 @@ Every test-file convention the `testing` skill owns, carried across the suites w
 down. Standing: a unit's date says the rules below all held there on that date, and the pass resumes from the
 files changed since.
 
-Consolidates the former **test-trimming** and **test-constant-scope** ledgers — one subject, one skill, one set
-of units, and a suite is read once against all of it rather than once per convention.
-
 ## Rules
 
 | Rule                                                       | Owner                                                 |
@@ -17,15 +14,13 @@ of units, and a suite is read once against all of it rather than once per conven
 | `expect.hasAssertions()`, exact assertions, no polling     | `testing` — "Assertions"                              |
 | The cheapest environment that runs the file (`app` only)   | this ledger — "The environment a suite declares"      |
 
-The row **`vi.fn` always takes its signature** has left this table.
-`packages/configuration/eslint/restrictedTestSyntaxes.js` bans the bare zero-argument form, and a pass on
-2026-08-18 confirmed the repo holds — it fails on the line that writes it, so there is nothing left to sweep.
+A bare zero-argument `vi.fn` is not in this table because
+`packages/configuration/eslint/restrictedTestSyntaxes.js` fails on the line that writes it.
 
 Every row resets when a rule joins this table: a unit dated against a narrower rule set is not swept against the
 current one, and there is no partially-swept state. The environment row is the one exception, and only because
 its scope is narrower than the ledger's: `packages/app` is the sole package whose vitest config offers a choice
 of environment, so the rule cannot fail anywhere else and the rows outside it keep their dates.
-Trimming last ran across every unit on 2026-08-12.
 
 ## Areas
 
@@ -45,11 +40,6 @@ Coverage lives in the area file, never here. A pass loads this file and the one 
 
 The area names are [quality](../quality/)'s, so "was this area swept, for which question, and when" reads off one
 set of names across both ledgers.
-
-Most rows opened at `—` when the ledger split on 2026-08-30. The thirteen rows it replaced were trees, not
-units: one of them named 133 suites and another 155, which is a tree a pass greps rather than reads, and a grep
-pass that ticks its row records a sweep that never happened (`sweeps` skill). Only the rows whose whole unit was
-small enough to have been read keep their dates.
 
 ## Find recipe
 

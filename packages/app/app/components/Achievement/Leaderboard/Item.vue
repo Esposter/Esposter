@@ -5,14 +5,23 @@ import { RoutePath } from "@esposter/shared";
 
 interface LeaderboardItemProps {
   entry: PointsLeaderboardEntry;
-  isSelf?: true;
+  isMyEntry?: true;
 }
 
-const { entry, isSelf } = defineProps<LeaderboardItemProps>();
+const { entry, isMyEntry } = defineProps<LeaderboardItemProps>();
 </script>
 
 <template>
-  <v-sheet px-3 py-2 rd flex gap-x-3 items-center :border="isSelf" :color="isSelf ? 'primary-opacity-10' : undefined">
+  <v-sheet
+    px-3
+    py-2
+    rd
+    flex
+    gap-x-3
+    items-center
+    :border="isMyEntry"
+    :color="isMyEntry ? 'primary-opacity-10' : undefined"
+  >
     <span font-bold text-center w-8 text-title-medium>{{ entry.rank }}</span>
     <NuxtInvisibleLink :to="RoutePath.User(entry.user.id)">
       <StyledAvatar :image="entry.user.image" :name="entry.user.name" />

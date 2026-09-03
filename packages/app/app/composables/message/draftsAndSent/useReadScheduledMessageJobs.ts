@@ -9,8 +9,8 @@ export const useReadScheduledMessageJobs = () => {
     readItems(
       async () => {
         const [data, total] = await Promise.all([
-          $trpc.message.scheduledMessageJob.readMyScheduledJobs.query(),
-          $trpc.message.scheduledMessageJob.readMyScheduledJobsCount.query(),
+          $trpc.message.scheduledMessageJob.readMyScheduledMessageJobs.query(),
+          $trpc.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query(),
         ]);
         count.value = total;
         return data;
@@ -20,6 +20,9 @@ export const useReadScheduledMessageJobs = () => {
       },
     );
   const readMoreScheduledMessageJobs = (onComplete: () => void) =>
-    readMoreItems((offset) => $trpc.message.scheduledMessageJob.readMyScheduledJobs.query({ offset }), onComplete);
+    readMoreItems(
+      (offset) => $trpc.message.scheduledMessageJob.readMyScheduledMessageJobs.query({ offset }),
+      onComplete,
+    );
   return { readMoreScheduledMessageJobs, readScheduledMessageJobs };
 };

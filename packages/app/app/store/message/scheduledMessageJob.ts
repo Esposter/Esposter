@@ -33,7 +33,7 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
   };
   const cancelScheduledMessageJob = async (id: ScheduledMessageJobInMessage["id"]) => {
     await executeScheduledMessageJobMutation(
-      () => $trpc.message.scheduledMessageJob.cancelScheduledJob.mutate({ id }),
+      () => $trpc.message.scheduledMessageJob.cancelScheduledMessageJob.mutate({ id }),
       { applyOptimistic: getApplyOptimisticRemoval(id), key: id },
     );
   };

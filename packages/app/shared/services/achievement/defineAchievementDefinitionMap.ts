@@ -3,7 +3,7 @@ import type { AchievementCategory } from "#shared/models/achievement/Achievement
 // Entry — which is the only thing that could ever put a Clicker-category achievement in the Post map.
 // The entries are constrained to `object` rather than to a definition shape: each one is already checked
 // By defineAchievementDefinition against its own triggerPath, and a constraint naming
-// AchievementDefinition<TRPCPaths> resolves PropertyCondition over the whole path union, which is never
+// AchievementDefinition<TRPCPaths> resolves PropertyAchievementCondition over the whole path union, which is never
 export const defineAchievementDefinitionMap = <
   TCategory extends AchievementCategory,
   TDefinitionMap extends Record<string, object>,

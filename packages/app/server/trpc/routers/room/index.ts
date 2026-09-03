@@ -337,12 +337,12 @@ export const baseRoomRouter = router({
     .use(isRoom)
     .mutation<RoomInMessage["id"]>(async ({ ctx, input }) => {
       const userId = ctx.getSessionPayload.user.id;
-      const isCreator = await ctx.db.query.roomsInMessage.findFirst({
+      const ownedRoom = await ctx.db.query.roomsInMessage.findFirst({
         columns: { id: true },
         where: { id: { eq: input }, userId: { eq: userId } },
       });
 
-      if (isCreator) {
+      if (ownedRoom) {
         const { id } = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
         return id;
       }
@@ -451,14 +451,14 @@ export const baseRoomRouter = router({
       if (cursor) wheres.push(getCursorWhere(users, cursor, sortBy));
       if (filter?.name) wheres.push(ilike(users.name, `%${escapeLike(filter.name)}%`));
 
-      const readUsers = await ctx.db
+      const members = await ctx.db
         .select(getColumns(users))
         .from(users)
         .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
         .where(and(...wheres))
         .orderBy(...parseSortByToSql(users, sortBy))
         .limit(limit + 1);
-      return getCursorPaginationData(readUsers, limit, sortBy);
+      return getCursorPaginationData(members, limit, sortBy);
     },
   ),
   readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query<User[]>(
@@ -524,7 +524,7 @@ export const baseRoomRouter = router({
       });
       return requireEntity(room, DatabaseEntityType.Room, input);
     }
-    const readRoom = (
+    const latestRoom = (
       await ctx.db
         .select(getColumns(roomsInMessage))
         .from(roomsInMessage)
@@ -535,7 +535,7 @@ export const baseRoomRouter = router({
         .orderBy(desc(roomsInMessage.updatedAt))
         .limit(1)
     )[0];
-    return readRoom ?? null;
+    return latestRoom ?? null;
   }),
   readRoomInvites: getPermissionsProcedure(RoomPermission.ManageRoom, readRoomInvitesInputSchema, "roomId").query<
     CursorPaginationData<InviteInMessageWithCreator>
@@ -544,7 +544,7 @@ export const baseRoomRouter = router({
     const wheres: (SQL | undefined)[] = [eq(invitesInMessage.roomId, roomId)];
     if (cursor) wheres.push(getCursorWhere(invitesInMessage, cursor, sortBy));
 
-    const readInvites = await ctx.db
+    const invites = await ctx.db
       .select({ ...getColumns(invitesInMessage), user: getColumns(users) })
       .from(invitesInMessage)
       .innerJoin(users, eq(invitesInMessage.userId, users.id))
@@ -555,7 +555,7 @@ export const baseRoomRouter = router({
     // Copy of it in SQL — a lapsed row is inert wherever it is read, and the panel lists what a joiner could use.
     // The page is cut over every row and only then filtered, so a batch of lapsed links narrows what this page
     // Shows without ending the walk: the cursor still names the oldest row read rather than the oldest usable one
-    const { hasMore, items, nextCursor } = getCursorPaginationData(readInvites, limit, sortBy);
+    const { hasMore, items, nextCursor } = getCursorPaginationData(invites, limit, sortBy);
     return { hasMore, items: items.filter((invite) => checkIsInviteUsable(invite)), nextCursor };
   }),
   readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query<CursorPaginationData<RoomInMessage>>(
@@ -583,14 +583,14 @@ export const baseRoomRouter = router({
       if (filter?.name) wheres.push(ilike(roomsInMessage.name, `%${escapeLike(filter.name)}%`));
       if (room) wheres.push(ne(roomsInMessage.id, room.id));
 
-      const readRooms = await ctx.db
+      const rooms = await ctx.db
         .select(getColumns(roomsInMessage))
         .from(roomsInMessage)
         .innerJoin(usersToRoomsInMessage, innerJoinCondition)
         .where(and(...wheres))
         .orderBy(...parseSortByToSql(roomsInMessage, sortBy))
         .limit(limit + 1);
-      const cursorPaginationData = getCursorPaginationData(readRooms, limit, sortBy);
+      const cursorPaginationData = getCursorPaginationData(rooms, limit, sortBy);
       if (room) cursorPaginationData.items.push(room);
       return cursorPaginationData;
     },

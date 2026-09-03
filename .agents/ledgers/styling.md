@@ -2,22 +2,22 @@
 
 What a component looks like rather than how it is composed: attributify props over `class`, theme primitives over bespoke values, the MD3 type set, `rem` over `px`, no hardcoded layout dimensions, `StyledButton` and the shared shells, and the narrow-viewport collapse.
 
-| Unit                                                                                       | Swept      | Notes                                                                                                                                         |
-| ------------------------------------------------------------------------------------------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `app/components/Styled`                                                                    | 2026-08-27 | clean — no `px`, and all six `class=` uses are the sanctioned exceptions (two scoped CSS refs, four dynamic bindings). One open finding below |
-| `app/components/Message/Model/Message`                                                     | —          | the densest surface; the message row and its variants                                                                                         |
-| `app/components/Message/Model/Room`                                                        | —          | settings panels and dialogs                                                                                                                   |
-| `app/components/Message/Model/User`                                                        | —          | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`                                                                           |
-| `app/components/Message/Content`                                                           | —          |                                                                                                                                               |
-| `app/components/Message` — the rest                                                        | —          | `RightSideBar`, `DraftsAndSent`, `Friends`, `LeftSideBar`                                                                                     |
-| `app/components/Resource/Sheet`                                                            | —          | the sheet editor's own chrome                                                                                                                 |
-| `app/components/Resource` — the rest                                                       | —          | `List`, `Survey`, `TodoList`, `Home`, `Search` and the small per-type folders                                                                 |
-| `app/components/Dungeons`                                                                  | —          | canvas-adjacent; much of it is Phaser rather than DOM                                                                                         |
-| `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | —          | the chrome                                                                                                                                    |
-| `app/components/Clicker`, `Visual`, `User`, `Docs`, `Dashboard`, `Achievement`             | —          |                                                                                                                                               |
-| `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | —          |                                                                                                                                               |
-| `app/pages`, `app/layouts`                                                                 | —          | page-level layout; region sizing and the sidebar/panel rules                                                                                  |
-| `app/**/*.scss`, `rules.config.ts`                                                         | —          | the style blocks and the UnoCSS rule set behind the attributify vocabulary                                                                    |
+| Unit                                                                                       | Swept      | Notes                                                                         |
+| ------------------------------------------------------------------------------------------ | ---------- | ----------------------------------------------------------------------------- |
+| `app/components/Styled`                                                                    | 2026-08-27 | the shared shells; carries one open finding below                             |
+| `app/components/Message/Model/Message`                                                     | —          | the densest surface; the message row and its variants                         |
+| `app/components/Message/Model/Room`                                                        | —          | settings panels and dialogs                                                   |
+| `app/components/Message/Model/User`                                                        | —          | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`           |
+| `app/components/Message/Content`                                                           | —          |                                                                               |
+| `app/components/Message` — the rest                                                        | —          | `RightSideBar`, `DraftsAndSent`, `Friends`, `LeftSideBar`                     |
+| `app/components/Resource/Sheet`                                                            | —          | the sheet editor's own chrome                                                 |
+| `app/components/Resource` — the rest                                                       | —          | `List`, `Survey`, `TodoList`, `Home`, `Search` and the small per-type folders |
+| `app/components/Dungeons`                                                                  | —          | canvas-adjacent; much of it is Phaser rather than DOM                         |
+| `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | —          | the chrome                                                                    |
+| `app/components/Clicker`, `Visual`, `User`, `Docs`, `Dashboard`, `Achievement`             | —          |                                                                               |
+| `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | —          |                                                                               |
+| `app/pages`, `app/layouts`                                                                 | —          | page-level layout; region sizing and the sidebar/panel rules                  |
+| `app/**/*.scss`, `rules.config.ts`                                                         | —          | the style blocks and the UnoCSS rule set behind the attributify vocabulary    |
 
 ## Exclusions
 
@@ -39,8 +39,7 @@ What a component looks like rather than how it is composed: attributify props ov
   `Styled/Dialog.test.ts` asserts the current inline style. Neither can be settled without looking at the rendered
   page, which no agent here does (`run-app` skill) — so it is a question for a human, not a rewrite to attempt.
 
-- **Two static utility classes that attributify would carry**, found incidentally while sampling the `class=`
-  Recipe rather than by a pass over their unit:
+- **Two static utility classes that attributify would carry.**
   `Message/Model/Message/File/ViewerDialog.vue` writes `class="max-h-[80vh]"` on both the video and the image,
   Where the attribute form is `max-h="[80vh]"`. Left for the pass that reads that tree, since the file has no
   Test and the change is only visible on the rendered dialog.
