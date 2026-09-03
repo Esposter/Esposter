@@ -6,9 +6,9 @@ import { useSentMessageStore } from "@/store/message/sentMessage";
 const tab = defineModel<DraftsAndSentTab>({ required: true });
 const draftItems = useDraftItems();
 const scheduledMessageJobStore = useScheduledMessageJobStore();
-const { count: scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
+const { scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
 const sentMessageStore = useSentMessageStore();
-const { count: sentMessageCount } = storeToRefs(sentMessageStore);
+const { sentMessageCount } = storeToRefs(sentMessageStore);
 const tabs = computed(() => [
   { count: draftItems.value.length, icon: "mdi-pencil", title: "Drafts", value: DraftsAndSentTab.Drafts },
   {

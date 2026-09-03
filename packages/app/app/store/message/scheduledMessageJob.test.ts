@@ -24,14 +24,14 @@ describe(useScheduledMessageJobStore, () => {
     expect.hasAssertions();
 
     const scheduledMessageJobStore = useScheduledMessageJobStore();
-    const { count, items } = storeToRefs(scheduledMessageJobStore);
-    const { removeScheduledMessageJob } = scheduledMessageJobStore;
+    const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
+    const { deleteScheduledMessageJob } = scheduledMessageJobStore;
     items.value = [createJob(id), createJob(otherId)];
-    count.value = 2;
-    removeScheduledMessageJob(id);
+    scheduledMessageJobCount.value = 2;
+    deleteScheduledMessageJob(id);
 
     expect(items.value.map((scheduledMessageJob) => scheduledMessageJob.id)).toStrictEqual([otherId]);
-    expect(count.value).toBe(1);
+    expect(scheduledMessageJobCount.value).toBe(1);
   });
 
   // The badge counts every scheduled job the user has, not just the page on screen, so a cancel of a job this
@@ -40,14 +40,14 @@ describe(useScheduledMessageJobStore, () => {
     expect.hasAssertions();
 
     const scheduledMessageJobStore = useScheduledMessageJobStore();
-    const { count, items } = storeToRefs(scheduledMessageJobStore);
-    const { removeScheduledMessageJob } = scheduledMessageJobStore;
+    const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
+    const { deleteScheduledMessageJob } = scheduledMessageJobStore;
     items.value = [createJob(id)];
-    count.value = 2;
-    removeScheduledMessageJob(otherId);
+    scheduledMessageJobCount.value = 2;
+    deleteScheduledMessageJob(otherId);
 
     expect(items.value).toHaveLength(1);
-    expect(count.value).toBe(2);
+    expect(scheduledMessageJobCount.value).toBe(2);
   });
 
   // Each job is its own target, so two cancels overlap on one page. The failing one must put back only its own
@@ -63,14 +63,14 @@ describe(useScheduledMessageJobStore, () => {
       }),
     );
     const scheduledMessageJobStore = useScheduledMessageJobStore();
-    const { count, items } = storeToRefs(scheduledMessageJobStore);
+    const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
     const { cancelScheduledMessageJob } = scheduledMessageJobStore;
     items.value = [createJob(id), createJob(otherId)];
-    count.value = 2;
+    scheduledMessageJobCount.value = 2;
     await Promise.all([cancelScheduledMessageJob(id), cancelScheduledMessageJob(otherId)]);
 
     expect(items.value.map((scheduledMessageJob) => scheduledMessageJob.id)).toStrictEqual([id]);
-    expect(count.value).toBe(1);
+    expect(scheduledMessageJobCount.value).toBe(1);
   });
 
   // Cancelling and sending one job are two writes to the same row, so they run one after the other and the
@@ -88,13 +88,13 @@ describe(useScheduledMessageJobStore, () => {
       ),
     );
     const scheduledMessageJobStore = useScheduledMessageJobStore();
-    const { count, items } = storeToRefs(scheduledMessageJobStore);
+    const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
     const { cancelScheduledMessageJob, sendScheduledMessageNow } = scheduledMessageJobStore;
     items.value = [createJob(id), createJob(otherId)];
-    count.value = 2;
+    scheduledMessageJobCount.value = 2;
     await Promise.all([cancelScheduledMessageJob(id), sendScheduledMessageNow(id)]);
 
     expect(items.value.map((scheduledMessageJob) => scheduledMessageJob.id)).toStrictEqual([otherId]);
-    expect(count.value).toBe(1);
+    expect(scheduledMessageJobCount.value).toBe(1);
   });
 });

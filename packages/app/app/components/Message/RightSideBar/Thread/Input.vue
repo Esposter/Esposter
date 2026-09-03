@@ -6,7 +6,7 @@ import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 const threadStore = useThreadStore();
 const { activeRoomId, activeRootRowKey } = storeToRefs(threadStore);
 const target = computed(() => ({ roomId: activeRoomId.value, threadRootRowKey: activeRootRowKey.value }));
-const { extensions, sendMessage, uploadFiles, validateInput } = await useComposer(target);
+const { extensions, sendComposerMessage, uploadFiles, validateInput } = await useComposer(target);
 const inputStore = useInputStore();
 const { threadInput, threadTarget } = storeToRefs(inputStore);
 // The composer tells the input store which thread it is on, rather than the store reading it back out of the
@@ -42,7 +42,7 @@ watchImmediate(target, (newTarget) => {
           @click="
             () => {
               if (!editor) return;
-              sendMessage(editor, target);
+              sendComposerMessage(editor, target);
             }
           "
         />

@@ -28,7 +28,7 @@ Adding a command touches three places (per the registry pattern): the `SlashComm
 
 All execution happens in `useExecuteSlashCommand` via a `switch` on `SlashCommandType` — the definition is static metadata only, with no `execute()` method. Three execution paths:
 
-- **Client-only** (`Flip`, `Me`, `Roll`, `Shrug`, `TableFlip`, `Unflip`) — build `createMessageInput` inline and fall through to the normal `storeSendMessage`.
+- **Client-only** (`Flip`, `Me`, `Roll`, `Shrug`, `TableFlip`, `Unflip`) — build `createMessageInput` inline and fall through to the normal `sendMessage`.
 - **Server call** (`Topic`) — call a tRPC mutation directly (`room.updateRoom`), no message posted by the command itself.
 - **Dialog** (`Poll`, `Remind`, `Schedule`) — open a dialog that owns its own submit, so richer inputs use normal form controls instead of inline parameter chips.
 
@@ -79,4 +79,4 @@ Collapsing parameter mode back to text (Escape, or Backspace in an empty command
 
 The three commands that open a dialog rather than send something — `/poll`, `/schedule` and `/remind` — are also the composer's `+` menu, which is Discord's home for creating a poll. The menu runs the same `useExecuteSlashCommand` with the same type and takes each entry's icon from `SlashCommandDefinitionMap`, so a command and its menu entry cannot drift; only the entry's wording differs, because a command's title names the command (`/poll`) where a menu of actions wants a verb.
 
-The send pipeline is untouched by commands: `sendMessage`, `RichTextEditor`, and the mention suggestion know nothing about slash commands. Client-only commands go through the same `storeSendMessage` as a hand-typed message.
+The send pipeline is untouched by commands: `sendComposerMessage`, `RichTextEditor`, and the mention suggestion know nothing about slash commands. Client-only commands go through the same `sendMessage` as a hand-typed message.

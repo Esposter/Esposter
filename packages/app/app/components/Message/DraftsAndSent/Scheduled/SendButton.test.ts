@@ -33,11 +33,11 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
     );
     // The component mounts into the nuxt app's pinia, so seed the store it reads rather than a local one
     const scheduledMessageJobStore = useScheduledMessageJobStore();
-    const { count, items } = storeToRefs(scheduledMessageJobStore);
+    const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
     const sentScheduledMessageJob = createJob("sent");
     const otherScheduledMessageJob = createJob("other");
     items.value = [sentScheduledMessageJob, otherScheduledMessageJob];
-    count.value = 2;
+    scheduledMessageJobCount.value = 2;
 
     const component = await mountSuspended(MessageDraftsAndSentScheduledSendButton, {
       props: { scheduledMessageJob: sentScheduledMessageJob },
@@ -46,6 +46,6 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
     await flushPromises();
 
     expect(items.value.map(({ id }) => id)).toStrictEqual([otherScheduledMessageJob.id]);
-    expect(count.value).toBe(1);
+    expect(scheduledMessageJobCount.value).toBe(1);
   });
 });

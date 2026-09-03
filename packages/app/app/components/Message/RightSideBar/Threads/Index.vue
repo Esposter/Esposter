@@ -9,8 +9,8 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const threadFollowStore = useThreadFollowStore();
 const { followedThreads } = storeToRefs(threadFollowStore);
-const { readFollowedThreads } = threadFollowStore;
-useQuery(() => (currentRoomId.value ? readFollowedThreads(currentRoomId.value) : Promise.resolve()));
+const { refetchFollowedThreads } = threadFollowStore;
+useQuery(() => (currentRoomId.value ? refetchFollowedThreads(currentRoomId.value) : Promise.resolve()));
 </script>
 
 <template>

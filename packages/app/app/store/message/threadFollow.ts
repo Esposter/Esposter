@@ -27,7 +27,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   // The gated read loads once per room, so the follow-state check is accurate without re-fetching on every
   // Thread open and every follow button in the room joins that one read rather than each issuing its own —
   // A caller handed nothing renders an unfollowed star for a thread the user follows
-  const { read: ensureFollowedThreadsLoaded, refetch: readFollowedThreads } = useCachedRead(
+  const { read: readFollowedThreads, refetch: refetchFollowedThreads } = useCachedRead(
     (roomId) => $trpc.message.readFollowedThreads.query({ roomId }),
     {
       onSuccess: ({ threadRootRowKeys, threads }, roomId) => {
@@ -49,7 +49,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   const followThread = async (roomId: string, threadRootRowKey: StandardMessageEntity["rowKey"]) => {
     await $trpc.message.followThread.mutate({ roomId, threadRootRowKey });
     // Re-read rather than mirror locally: the drawer lists the root message entity, which only the server resolves.
-    await readFollowedThreads(roomId);
+    await refetchFollowedThreads(roomId);
   };
   const unfollowThread = async (roomId: string, threadRootRowKey: StandardMessageEntity["rowKey"]) => {
     await $trpc.message.unfollowThread.mutate({ roomId, threadRootRowKey });
@@ -65,10 +65,10 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
 
   return {
     checkIsFollowing,
-    ensureFollowedThreadsLoaded,
     followedThreads,
     followThread,
     readFollowedThreads,
+    refetchFollowedThreads,
     storeFollowThread,
     unfollowThread,
   };

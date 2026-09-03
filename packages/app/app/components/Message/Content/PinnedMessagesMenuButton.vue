@@ -5,7 +5,7 @@ import { usePinStore } from "@/store/message/pin";
 const { readMorePinnedMessages, readPinnedMessages } = useReadPinnedMessages();
 const { isPending } = await readPinnedMessages();
 const pinStore = usePinStore();
-const { hasMore, messages } = storeToRefs(pinStore);
+const { displayMessages, hasMore } = storeToRefs(pinStore);
 </script>
 
 <template>
@@ -25,7 +25,7 @@ const { hasMore, messages } = storeToRefs(pinStore);
       <template v-if="isPending">
         <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
       </template>
-      <MessageModelMessageSearchList v-else :messages>
+      <MessageModelMessageSearchList v-else :messages="displayMessages">
         <div v-if="hasMore" flex justify-center>
           <v-btn variant="text" density="comfortable" @click="readMorePinnedMessages">Load more</v-btn>
         </div>
