@@ -14,21 +14,23 @@ export const useReadRooms = async () => {
   const readRooms = () => {
     requirePartitionKey(session.value?.user.id, readRooms.name);
     return readItems(async () => {
-      const data = await $trpc.room.readRooms.query(currentRoomId.value ? { roomId: currentRoomId.value } : {});
-      const roomIds = data.items.map(({ id }) => id);
+      const cursorPaginationData = await $trpc.room.readRooms.query(
+        currentRoomId.value ? { roomId: currentRoomId.value } : {},
+      );
+      const roomIds = cursorPaginationData.items.map(({ id }) => id);
       if (roomIds.length > 0)
         await Promise.all([readMyUsersToRooms(roomIds), readMyPermissions(roomIds), readRoles(roomIds)]);
-      return data;
+      return cursorPaginationData;
     });
   };
   const readMoreRooms = (onComplete: () => void) => {
     requirePartitionKey(session.value?.user.id, readMoreRooms.name);
     return readMoreItems(async (cursor) => {
-      const response = await $trpc.room.readRooms.query({ cursor });
-      const roomIds = response.items.map(({ id }) => id);
-      if (roomIds.length === 0) return response;
+      const cursorPaginationData = await $trpc.room.readRooms.query({ cursor });
+      const roomIds = cursorPaginationData.items.map(({ id }) => id);
+      if (roomIds.length === 0) return cursorPaginationData;
       await Promise.all([readMyUsersToRooms(roomIds), readMyPermissions(roomIds), readRoles(roomIds)]);
-      return response;
+      return cursorPaginationData;
     }, onComplete);
   };
   return { readMoreRooms, readRooms };

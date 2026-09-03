@@ -12,7 +12,7 @@ const liveKitStore = useLiveKitStore();
 const { setActiveDevice } = liveKitStore;
 const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
 const { cameraDeviceId } = storeToRefs(voiceDeviceSettingsStore);
-const { deviceSections, menu } = useCallDeviceSettings([
+const { deviceSections, isMenuOpen } = useCallDeviceSettings([
   {
     kind: "videoinput",
     selectedId: cameraDeviceId,
@@ -23,7 +23,7 @@ const { deviceSections, menu } = useCallDeviceSettings([
 
 <template>
   <StyledTooltipMenuIconButton
-    v-model="menu"
+    v-model="isMenuOpen"
     :button-props="{ ripple: false, size: 'small', variant: 'plain' }"
     icon="mdi-chevron-up"
     :menu-props="{ closeOnContentClick: false, location: 'top' }"

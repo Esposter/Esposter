@@ -6,7 +6,7 @@ const liveKitStore = useLiveKitStore();
 const { setActiveDevice } = liveKitStore;
 const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
 const { inputDeviceId, outputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
-const { deviceSections, menu } = useCallDeviceSettings([
+const { deviceSections, isMenuOpen } = useCallDeviceSettings([
   {
     kind: "audioinput",
     selectedId: inputDeviceId,
@@ -22,7 +22,7 @@ const { deviceSections, menu } = useCallDeviceSettings([
 
 <template>
   <StyledTooltipMenuIconButton
-    v-model="menu"
+    v-model="isMenuOpen"
     :button-props="{ ripple: false, size: 'small', variant: 'plain' }"
     icon="mdi-chevron-up"
     :menu-props="{ closeOnContentClick: false, location: 'top' }"
