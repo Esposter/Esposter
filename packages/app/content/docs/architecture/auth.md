@@ -15,12 +15,12 @@ flowchart LR
   ba --> pg[(users / sessions tables<br/>Drizzle adapter)]
   page[auth-gated page] --> mw[auth middleware<br/>session? else /login]
   client[$trpc call] --> proc[standardAuthedProcedure]
-  proc --> isAuthed[getIsAuthed + rate limiter<br/>session → AuthedContext]
+  proc --> isAuthed[getAuthedMiddleware + rate limiter<br/>session → AuthedContext]
   proc --> plugin[achievementPlugin]
 ```
 
 - **Route gating** — `definePageMeta({ middleware: "auth" })` redirects signed-out visitors to `/login`; the login page itself uses the inverse `guest` middleware. Everything else is public by default.
-- **Procedure gating** — `standardAuthedProcedure` = `publicProcedure` + `getIsAuthed(RateLimiterType.Standard)` (session check + rate limiting in one middleware, yielding `AuthedContext` with `getSessionPayload`) + the [achievement plugin](/docs/achievements/unlock-pipeline). `standardRateLimitedProcedure` is the unauthenticated sibling for public reads. Room-scoped RBAC procedures build on top (see [esbabbler RBAC](/docs/esbabbler/rbac)).
+- **Procedure gating** — `standardAuthedProcedure` = `publicProcedure` + `getAuthedMiddleware(RateLimiterType.Standard)` (session check + rate limiting in one middleware, yielding `AuthedContext` with `getSessionPayload`) + the [achievement plugin](/docs/achievements/unlock-pipeline). `standardRateLimitedProcedure` is the unauthenticated sibling for public reads. Room-scoped RBAC procedures build on top (see [esbabbler RBAC](/docs/esbabbler/rbac)).
 - **Users table** — better-auth owns the `users`/`sessions` schema; Esposter adds `biography` via `additionalFields`, validated by the Drizzle-derived Zod schema. better-auth's own endpoints share the standard rate-limiter budget.
 - **One query per session read** — `advanced.database.joins` is on, and the adapter comes from `@better-auth/drizzle-adapter/relations-v2` because only that entrypoint resolves a join through our v2 relations. It derives the relation key from the schema table key, so `sessions` and `accounts` name their relation to a user `users`, not the singular `user` every other table uses — rename either one and better-auth silently drops back to a second round trip per read, or throws where drizzle cannot find the relation.
 - **Device identity** — `getDeviceId`/`checkIsSameDevice` fingerprint requests (push-subscription scoping), and `generateToken` mints the shared-secret tokens used by webhook delivery.
@@ -36,7 +36,7 @@ Paths relative to `packages/app`.
 | `server/api/auth/[...].ts`                          | the mounted auth handler           |
 | `app/services/auth/authClient.ts`                   | typed Vue session client           |
 | `app/middleware/auth.ts`, `app/middleware/guest.ts` | route gating                       |
-| `server/trpc/middleware/getIsAuthed.ts`             | session + rate-limit middleware    |
+| `server/trpc/middleware/getAuthedMiddleware.ts`     | session + rate-limit middleware    |
 | `server/trpc/procedure/standardAuthedProcedure.ts`  | the standard authed chain          |
 | `server/services/auth/`                             | device id + webhook token services |
 
