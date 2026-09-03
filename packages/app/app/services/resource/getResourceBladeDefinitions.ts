@@ -20,18 +20,18 @@ const BuiltInBladeDefinitionMap = {
 // Is a panel opened from the action bar rather than a blade, because every type has revisions and a nav entry
 // Every type carries is a nav entry that says nothing. The type's own blades come last.
 export const getResourceBladeDefinitions = (type: ResourceType): Except<BladeDefinition, "component">[] => {
-  const results: Except<BladeDefinition, "component">[] = [
+  const bladeDefinitions: Except<BladeDefinition, "component">[] = [
     { ...BuiltInBladeDefinitionMap[ResourceBladeType.Overview], slug: ResourceBladeType.Overview },
   ];
   // Blade-only types (Sheet/TodoList) have no inline editor, so their nav skips the Editor blade entirely
   if (ResourceEditorComponentMap[type])
-    results.push({
+    bladeDefinitions.push({
       ...BuiltInBladeDefinitionMap[ResourceBladeType.Editor],
       icon: ResourceDefinitionMap[type].icon,
       slug: ResourceBladeType.Editor,
     });
   // Activity is built-in for every type, and sits above the type's own blades like the portal's
-  results.push({ ...BuiltInBladeDefinitionMap[ResourceBladeType.Activity], slug: ResourceBladeType.Activity });
-  for (const { icon, slug, title } of ResourceBladeDefinitionMap[type]) results.push({ icon, slug, title });
-  return results;
+  bladeDefinitions.push({ ...BuiltInBladeDefinitionMap[ResourceBladeType.Activity], slug: ResourceBladeType.Activity });
+  for (const { icon, slug, title } of ResourceBladeDefinitionMap[type]) bladeDefinitions.push({ icon, slug, title });
+  return bladeDefinitions;
 };

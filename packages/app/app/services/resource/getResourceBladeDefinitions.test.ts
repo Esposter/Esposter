@@ -3,7 +3,7 @@
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import { getResourceBladeDefinitions } from "@/services/resource/getResourceBladeDefinitions";
-import { isValidResourceBlade } from "@/services/resource/isValidResourceBlade";
+import { checkIsValidResourceBlade } from "@/services/resource/checkIsValidResourceBlade";
 import { ResourceType, ResourceTypes } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
@@ -47,18 +47,19 @@ describe(getResourceBladeDefinitions, () => {
     expect.hasAssertions();
 
     for (const type of ResourceTypes)
-      for (const { slug } of getResourceBladeDefinitions(type)) expect(isValidResourceBlade(type, slug)).toBe(true);
+      for (const { slug } of getResourceBladeDefinitions(type))
+        expect(checkIsValidResourceBlade(type, slug)).toBe(true);
   });
 
   test("rejects a blade no type offers", () => {
     expect.hasAssertions();
-    expect(isValidResourceBlade(ResourceType.Note, "not-a-blade")).toBe(false);
+    expect(checkIsValidResourceBlade(ResourceType.Note, "not-a-blade")).toBe(false);
   });
 
   // A guard that only checks the slug against the whole blade vocabulary would route a Sheet to an Editor
   // Blade it renders nothing in — the blade has to be one *this* type offers
   test("rejects a real blade the type does not offer", () => {
     expect.hasAssertions();
-    expect(isValidResourceBlade(ResourceType.Sheet, ResourceBladeType.Editor)).toBe(false);
+    expect(checkIsValidResourceBlade(ResourceType.Sheet, ResourceBladeType.Editor)).toBe(false);
   });
 });

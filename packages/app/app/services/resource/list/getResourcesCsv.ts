@@ -8,9 +8,9 @@ import { escapeCsvCell } from "@/services/resource/sheet/csv/escapeCsvCell";
 
 const HEADER_TITLES = ["Type", "Name", "Created At", "Updated At"];
 
-export const getResourcesCsv = (resourceItems: Resource[]): string => {
+export const getResourcesCsv = (resources: Resource[]): string => {
   const headerRow = HEADER_TITLES.map((title) => escapeCsvCell(title, CsvDelimiter.Comma)).join(CsvDelimiter.Comma);
-  const dataRows = resourceItems.map(({ createdAt, name, type, updatedAt }) =>
+  const dataRows = resources.map(({ createdAt, name, type, updatedAt }) =>
     [
       ResourceDefinitionMap[type].title,
       name,
