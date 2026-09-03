@@ -23,9 +23,9 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 
 - `snapshot.json` and generated `migration.sql` — machine state; a fixup is a `drizzle` task, not a sweep finding.
   An applied migration is history rather than a source of names: a schema rename is swept here and emits a new
-  Forward migration, never an edit to the old file.
+  forward migration, never an edit to the old file.
 - Column casing — `drizzle`'s `pgTable` wrapper applies it, so there is nothing to carry. The **words** in a
-  Column, table or enum member name are the `naming` ledger's.
+  column, table or enum member name are the `naming` ledger's.
 
 ## Find recipe
 
@@ -43,9 +43,9 @@ grep -rn -A 40 'z\.discriminatedUnion(' --include=*.ts packages/app/app packages
 ## Next enforceable
 
 - **The inherited-key rule is not lint-decidable, and a ban on the computed form was wrong.** `.safeExtend`
-  Legitimately adds new fields as well as layering over existing ones, so nothing syntactic separates the key that
-  Must match from the key that must not. It stays with the sweep; the `zod` skill carries the measured table of
-  Which positions check a key and which do not.
+  legitimately adds new fields as well as layering over existing ones, so nothing syntactic separates the key that
+  must match from the key that must not. It stays with the sweep; the `zod` skill carries the measured table of
+  which positions check a key and which do not.
 - **Registration completeness belongs to `schema.test.ts`.** The relations half stays with the sweep:
   `relations.ts` spreads its parts rather than holding them, so there is no identity to compare and no crisp
   invariant — not every table earns a relation.
@@ -53,7 +53,7 @@ grep -rn -A 40 'z\.discriminatedUnion(' --include=*.ts packages/app/app packages
   rule tells them apart — a receiver-name heuristic would ban the first by accident. It stays with the sweep, and
   the recipe above carries the anchor instead.
 - A `z.discriminatedUnion` without a trailing `satisfies` is decidable from the AST, and the skill states the rule
-  With no exceptions — which is exactly what a rule needs. Worth a plugin once a second violation appears; the
-  Tree currently holds none.
+  with no exceptions — which is exactly what a rule needs. Worth a plugin once a second violation appears; the
+  tree currently holds none.
 - `export type X = z.infer<...>` is allowed in the narrow composed-schema case, so it needs the judgement the
-  Sweep provides — leave it.
+  sweep provides — leave it.

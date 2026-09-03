@@ -42,7 +42,7 @@ the grounds that a rename is expensive — that is the argument
   upgrade — and dropping it collides. What the pair should be called instead is the open question.
 - **`getIsAuthed` / `getIsRateLimited` / `getIsEntityIdEqualComparator` — `get*` is right, the `Is` is not.**
   All three return a function rather than a boolean, so `check*` would be wrong, but the `Is` still reads as a
-  Predicate. The middleware pair wants a name saying what it builds; the comparator already has one.
+  predicate. The middleware pair wants a name saying what it builds; the comparator already has one.
 
 ## Next enforceable
 

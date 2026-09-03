@@ -61,7 +61,7 @@ used only inside its own file produce the same result, and the pass tells them a
 - Generated barrels (`index.ts` from `ctix`) and `snapshot.json` — machine state.
 - Literals a postinstall-evaluated or JSON config must repeat, which the skill names as the one sanctioned duplication.
 - `getSynchronizedFunction.ts` exporting `waitForSynchronizedFunctions` beside it: the pair shares the pending
-  Set through closure, so one-export-per-file cannot reach them without making that state a module global.
+  set through closure, so one-export-per-file cannot reach them without making that state a module global.
 
 ## Next enforceable
 

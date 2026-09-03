@@ -100,29 +100,29 @@ local writes has nothing to terminate.
 
 - `.isOk()` / `.isErr()` call sites are a lint finding, not a sweep finding — they fail on the line that writes them.
 - Unimplemented stubs, which the skill exempts from the `new Error` ban. `azure-mock`'s `Method not implemented.`
-  Throws are that exemption at scale — they are the bulk of every `new Error` grep and none of them is a finding.
+  throws are that exemption at scale — they are the bulk of every `new Error` grep and none of them is a finding.
 - `azure-mock`'s "not supported by this mock" throws, which are the same exemption worn differently.
 - `toAppError` itself, which is the mechanism that wraps an unknown throw into an `Error`.
 - The five `console.warn` calls: two report a browser capability in `store/message/room/liveKit.ts`, two are the
-  Same rate-limiter bypass note in the tRPC middleware and the Nitro asset route, and one is `ignoreWarn.ts`'s own
-  Mechanism. None terminates a `Result`, which is what the `.orTee(console.error)` rule is about. That the
-  Rate-limiter pair states its key derivation, its warning and its rationale twice is a `file-organization`
-  Finding, raised rather than swept here.
+  same rate-limiter bypass note in the tRPC middleware and the Nitro asset route, and one is `ignoreWarn.ts`'s own
+  mechanism. None terminates a `Result`, which is what the `.orTee(console.error)` rule is about. That the
+  rate-limiter pair states its key derivation, its warning and its rationale twice is a `file-organization`
+  finding, raised rather than swept here.
 - `requireAuthData`, where the whole point is that the auth api's own sentence reaches the user — the wrapper
-  Would prefix it with an operation and an entity name and bury it. The reason is written at the call site.
+  would prefix it with an operation and an entity name and bury it. The reason is written at the call site.
 
 ## Next enforceable
 
 - **`new Error` is a `no-restricted-syntax` candidate and nothing bans it today** — the convention is currently
-  Carried by review alone. A selector would need the stub exemption above, which is a message match rather than a
-  Shape, so it is worth doing only for `packages/app/**` where no stubs live.
+  carried by review alone. A selector would need the stub exemption above, which is a message match rather than a
+  shape, so it is worth doing only for `packages/app/**` where no stubs live.
 - An unterminated `Result` is the bigger prize: a type-aware rule could flag a `ResultAsync` whose value is
-  Discarded, the way `no-floating-promises` does for promises. Nothing checks it today, and the skill says an
-  Unterminated chain fails silently — but nothing type-aware runs in either linter here (`oxlint` skill), so this
-  Stays with the sweep until that changes.
+  discarded, the way `no-floating-promises` does for promises. Nothing checks it today, and the skill says an
+  unterminated chain fails silently — but nothing type-aware runs in either linter here (`oxlint` skill), so this
+  stays with the sweep until that changes.
 - `console.warn` and an empty `catch {}` are syntactic and already candidates.
 - A **fire-and-forget body that does not terminate** is the widest one left, and the census above finds every
-  Candidate site. What no selector can decide is whether the body has anything to terminate, since a body whose
-  Whole work is an `executeMutation` with an `onError` is already done — so it stays a read.
+  candidate site. What no selector can decide is whether the body has anything to terminate, since a body whose
+  whole work is an `executeMutation` with an `onError` is already done — so it stays a read.
 - **A Vue template's inline handler** is outside `error-alert/no-raw-error-alert`'s reach, so an alert written
-  There is still the sweep's to find.
+  there is still the sweep's to find.

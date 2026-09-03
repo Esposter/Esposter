@@ -30,10 +30,10 @@ sweep. Two ways it has actually happened here, both silent:
   `new RegExp` as a **backspace character** and the regex matches nothing. It survives a glance because
   `JSON.stringify` renders a real backspace as `\b` as well, so printing `regex.source` looks right. Use a regex
   **literal** (`/\bfoo\b/u`), `String.raw`, or a plain `.includes` — a literal is unaffected, `/getResult\(/u`
-  Still means an escaped paren. A quoted heredoc (`<<'PY'`, `<<'JS'`) keeps the shell out of it entirely, which
-  Is why the longer recipes use one; it removes no JavaScript layer, so the same three fixes still apply inside.
+  still means an escaped paren. A quoted heredoc (`<<'PY'`, `<<'JS'`) keeps the shell out of it entirely, which
+  is why the longer recipes use one; it removes no JavaScript layer, so the same three fixes still apply inside.
 - **A filter on the wrong field.** An author login that differs between two APIs, a path prefix that never
-  Matches, a `--jq` selector against the wrong payload shape — each returns an empty set and exit 0.
+  matches, a `--jq` selector against the wrong payload shape — each returns an empty set and exit 0.
 
 So **prove the scan can fail before believing it passed**: run it against a known violation, or break one on
 purpose and confirm it is reported. The rule the `testing` skill applies to a new test applies to a new recipe —
