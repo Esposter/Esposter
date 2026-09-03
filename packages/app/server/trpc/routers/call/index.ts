@@ -105,19 +105,6 @@ export const baseCallRouter = router({
       const isDeleted = await leaveCallAsParticipant(ctx.db, callSessionId, session.id, user.id);
       if (!isDeleted) throw getNotFoundError(DatabaseEntityType.CallSession, callSessionId);
     }),
-  onHandRaisedChanged: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    const events = on(callEventEmitter, "handRaisedChanged", { signal });
-    await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input);
-
-    for await (const [{ callSessionId, id, isHandRaised }] of events) {
-      if (callSessionId !== input) continue;
-      yield { id, isHandRaised };
-    }
-  }),
   onJoinCall: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
     ctx,
     input,
@@ -144,6 +131,32 @@ export const baseCallRouter = router({
       yield id;
     }
   }),
+  onSetCamera: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    const events = on(callEventEmitter, "videoChanged", { signal });
+    await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input);
+
+    for await (const [{ callSessionId, id, isCameraEnabled }] of events) {
+      if (callSessionId !== input) continue;
+      yield { id, isCameraEnabled };
+    }
+  }),
+  onSetHandRaised: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    const events = on(callEventEmitter, "handRaisedChanged", { signal });
+    await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input);
+
+    for await (const [{ callSessionId, id, isHandRaised }] of events) {
+      if (callSessionId !== input) continue;
+      yield { id, isHandRaised };
+    }
+  }),
   onSetMute: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
     ctx,
     input,
@@ -155,19 +168,6 @@ export const baseCallRouter = router({
     for await (const [{ callSessionId, id, isMuted }] of events) {
       if (callSessionId !== input) continue;
       yield { id, isMuted };
-    }
-  }),
-  onVideoChanged: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    const events = on(callEventEmitter, "videoChanged", { signal });
-    await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input);
-
-    for await (const [{ callSessionId, id, isCameraEnabled }] of events) {
-      if (callSessionId !== input) continue;
-      yield { id, isCameraEnabled };
     }
   }),
   readCallParticipantMap: standardAuthedProcedure
@@ -195,10 +195,9 @@ export const baseCallRouter = router({
     }),
   setHandRaised: standardAuthedProcedure
     .input(setHandRaisedInputSchema)
-    .mutation<void>(async ({ ctx, input: { callSessionId, isHandRaised, participantId } }) => {
+    .mutation<void>(async ({ ctx, input: { callSessionId, isHandRaised, participantId: targetSessionId } }) => {
       const callSession = await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, callSessionId);
       const sessionId = ctx.getSessionPayload.session.id;
-      const targetSessionId = participantId;
       if (targetSessionId !== sessionId) {
         if (isHandRaised) throw getForbiddenError("Cannot raise another hand");
         else if (!callSession.roomId) throw getForbiddenError("Only room call moderators can lower another hand");

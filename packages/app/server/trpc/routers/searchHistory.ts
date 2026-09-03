@@ -28,7 +28,7 @@ const readSearchHistoriesInputSchema = z.object({
 export const searchHistoryRouter = router({
   createSearchHistory: getMemberProcedure(createSearchHistoryInputSchema, "roomId").mutation<SearchHistoryInMessage>(
     async ({ ctx, input }) => {
-      const newHistory = requireMutation(
+      const newSearchHistory = requireMutation(
         (
           await ctx.db
             .insert(searchHistoriesInMessage)
@@ -39,7 +39,7 @@ export const searchHistoryRouter = router({
         DatabaseEntityType.SearchHistory,
         JSON.stringify(input),
       );
-      return newHistory;
+      return newSearchHistory;
     },
   ),
   deleteSearchHistory: standardAuthedProcedure

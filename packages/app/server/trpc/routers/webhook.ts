@@ -28,7 +28,7 @@ import { z } from "zod";
 
 const readWebhooksInputSchema = roomIdSchema;
 
-const readAppUsersByIdsInputSchema = z.object({
+const readAppUsersInputSchema = z.object({
   ...roomIdSchema.shape,
   ids: createUniqueArraySchema(selectAppUserInMessageSchema.shape.id).min(1).max(MAX_READ_LIMIT),
 });
@@ -100,7 +100,7 @@ export const webhookRouter = router({
     );
     return webhook;
   }),
-  readAppUsersByIds: getMemberProcedure(readAppUsersByIdsInputSchema, "roomId").query<AppUserInMessage[]>(
+  readAppUsers: getMemberProcedure(readAppUsersInputSchema, "roomId").query<AppUserInMessage[]>(
     ({ ctx, input: { ids, roomId } }) =>
       ctx.db
         .select(getColumns(appUsersInMessage))

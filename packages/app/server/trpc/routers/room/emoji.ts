@@ -85,7 +85,7 @@ export const roomEmojiRouter = router({
     if (checkIsUnicodeEmojiSlug(name))
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, name);
 
-    const createdRoomEmoji = await ctx.db.transaction(async (tx) => {
+    const newRoomEmoji = await ctx.db.transaction(async (tx) => {
       // The room row is locked first, because the cap is a count and a count has no constraint behind it: two
       // Transactions reading 49 would both insert. The unique index is what makes a duplicate name impossible;
       // This is what makes the cap impossible to exceed, and it serializes only creates for the same room
@@ -122,7 +122,7 @@ export const roomEmojiRouter = router({
         JSON.stringify({ name, roomId }),
       );
     });
-    const roomEmojiWithSasUrl = await getRoomEmojiWithSasUrl(containerClient, createdRoomEmoji);
+    const roomEmojiWithSasUrl = await getRoomEmojiWithSasUrl(containerClient, newRoomEmoji);
     roomEmojiEventEmitter.emit("createRoomEmoji", [
       roomEmojiWithSasUrl,
       { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },

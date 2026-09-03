@@ -231,18 +231,29 @@ export const directMessageRouter = router({
   readDirectMessageParticipants: standardAuthedProcedure
     .input(readDirectMessageParticipantsInputSchema)
     .query<DirectMessageParticipants[]>(async ({ ctx, input: roomIds }) => {
-      const utr1 = alias(usersToRoomsInMessage, "utr1");
-      const utr2 = alias(usersToRoomsInMessage, "utr2");
+      const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
+      const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
       const rows = await ctx.db
-        .select({ roomId: utr2.roomId, user: users })
-        .from(utr1)
+        .select({ roomId: usersToRoomsInMessage2.roomId, user: users })
+        .from(usersToRoomsInMessage1)
         .innerJoin(
           roomsInMessage,
-          and(eq(roomsInMessage.id, utr1.roomId), eq(roomsInMessage.type, RoomType.DirectMessage)),
+          and(eq(roomsInMessage.id, usersToRoomsInMessage1.roomId), eq(roomsInMessage.type, RoomType.DirectMessage)),
         )
-        .innerJoin(utr2, and(eq(utr2.roomId, utr1.roomId), ne(utr2.userId, ctx.getSessionPayload.user.id)))
-        .innerJoin(users, eq(users.id, utr2.userId))
-        .where(and(eq(utr1.userId, ctx.getSessionPayload.user.id), inArray(utr1.roomId, roomIds)));
+        .innerJoin(
+          usersToRoomsInMessage2,
+          and(
+            eq(usersToRoomsInMessage2.roomId, usersToRoomsInMessage1.roomId),
+            ne(usersToRoomsInMessage2.userId, ctx.getSessionPayload.user.id),
+          ),
+        )
+        .innerJoin(users, eq(users.id, usersToRoomsInMessage2.userId))
+        .where(
+          and(
+            eq(usersToRoomsInMessage1.userId, ctx.getSessionPayload.user.id),
+            inArray(usersToRoomsInMessage1.roomId, roomIds),
+          ),
+        );
       const participantsMap = new Map<string, User[]>();
       for (const { roomId, user } of rows) {
         const existingParticipants = participantsMap.get(roomId) ?? [];
@@ -262,13 +273,13 @@ export const directMessageRouter = router({
       const wheres: (SQL | undefined)[] = [eq(roomsInMessage.type, RoomType.DirectMessage)];
       if (cursor) wheres.push(getCursorWhere(roomsInMessage, cursor, sortBy));
 
-      const readRooms = await ctx.db
+      const rooms = await ctx.db
         .select(getColumns(roomsInMessage))
         .from(roomsInMessage)
         .innerJoin(usersToRoomsInMessage, innerJoinCondition)
         .where(and(...wheres))
         .orderBy(...parseSortByToSql(roomsInMessage, sortBy))
         .limit(limit + 1);
-      return getCursorPaginationData(readRooms, limit, sortBy);
+      return getCursorPaginationData(rooms, limit, sortBy);
     }),
 });

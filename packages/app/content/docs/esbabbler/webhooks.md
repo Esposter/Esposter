@@ -53,16 +53,16 @@ The url a member copies points at the **app**, not at Azure: `server/api/webhook
 
 All webhook procedures live in the `webhook` router.
 
-| Procedure           | Auth             | Purpose                                                           |
-| ------------------- | ---------------- | ----------------------------------------------------------------- |
-| `createWebhook`     | `ManageWebhooks` | creates the app user and the webhook together, on the slow budget |
-| `readWebhooks`      | `ManageWebhooks` | lists a room's webhooks with their tokens                         |
-| `updateWebhook`     | `ManageWebhooks` | renames a webhook or toggles `isActive`                           |
-| `rotateToken`       | `ManageWebhooks` | mints a new token, invalidating the old url                       |
-| `deleteWebhook`     | `ManageWebhooks` | deletes the app user, cascading the webhook                       |
-| `readAppUsersByIds` | room member      | resolves bot identities for rendering the message list            |
+| Procedure       | Auth             | Purpose                                                           |
+| --------------- | ---------------- | ----------------------------------------------------------------- |
+| `createWebhook` | `ManageWebhooks` | creates the app user and the webhook together, on the slow budget |
+| `readWebhooks`  | `ManageWebhooks` | lists a room's webhooks with their tokens                         |
+| `updateWebhook` | `ManageWebhooks` | renames a webhook or toggles `isActive`                           |
+| `rotateToken`   | `ManageWebhooks` | mints a new token, invalidating the old url                       |
+| `deleteWebhook` | `ManageWebhooks` | deletes the app user, cascading the webhook                       |
+| `readAppUsers`  | room member      | resolves bot identities for rendering the message list            |
 
-`createWebhook` is the one procedure on the slow rate-limit budget, because it is the only one that mints a credential. `readAppUsersByIds` is deliberately open to any member: rendering a room's history requires the identities of everything that has spoken in it, while the tokens stay behind the permission gate.
+`createWebhook` is the one procedure on the slow rate-limit budget, because it is the only one that mints a credential. `readAppUsers` is deliberately open to any member: rendering a room's history requires the identities of everything that has spoken in it, while the tokens stay behind the permission gate.
 
 ## UI
 

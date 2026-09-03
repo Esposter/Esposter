@@ -16,6 +16,6 @@ export const useReadAppUsers = () => {
     const ids = appUserIds.filter((id) => !appUserMap.value.has(id));
     if (ids.length === 0) return;
 
-    storeAppUsers(await $trpc.webhook.readAppUsersByIds.query({ ids, roomId: currentRoomId.value }));
+    storeAppUsers(await $trpc.webhook.readAppUsers.query({ ids, roomId: currentRoomId.value }));
   };
 };

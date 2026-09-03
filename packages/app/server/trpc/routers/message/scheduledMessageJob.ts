@@ -35,31 +35,31 @@ import { and, asc, count, eq, isNull, sql } from "drizzle-orm";
 // Not yet cancelled, completed, or claimed by the delivery handler. `processingStartedAt` is what makes the claim
 // Single-shot: once ProcessScheduledMessageJob has stamped it the job is being delivered, so the owner can no
 // Longer cancel, reschedule or send it — every one of those would race a message that is already on its way out
-const isActiveScheduledMessageJob = and(
+const activeScheduledMessageJobWhere = and(
   isNull(scheduledMessageJobsInMessage.cancelledAt),
   isNull(scheduledMessageJobsInMessage.completedAt),
   isNull(scheduledMessageJobsInMessage.processingStartedAt),
 );
 // An active scheduled-message job owned by the user — the precondition for cancelling/rescheduling/sending it.
-const isCancellableScheduledMessage = (id: string, userId: string) =>
+const cancellableScheduledMessageWhere = (id: string, userId: string) =>
   and(
     ownedBy(scheduledMessageJobsInMessage, id, userId),
-    isActiveScheduledMessageJob,
+    activeScheduledMessageJobWhere,
     sql`${scheduledMessageJobsInMessage.payload}->>'type' = ${ScheduledMessageJobType.ScheduledMessage}`,
   );
 // Every write in this router either lands a job row or must fail — the row is what the delivery handler reads
 const requireScheduledMessageJob = (
-  job: ScheduledMessageJobInMessage | undefined,
+  scheduledMessageJob: ScheduledMessageJobInMessage | undefined,
   operation: Operation,
   context: string,
   code?: "BAD_REQUEST" | "NOT_FOUND",
-) => requireMutation(job, operation, DatabaseEntityType.ScheduledMessageJob, context, code);
+) => requireMutation(scheduledMessageJob, operation, DatabaseEntityType.ScheduledMessageJob, context, code);
 // A persisted job is only delivered once its queue message exists, so the queue binding lives in one place
 const enqueueJob = ({ id, runAt }: ScheduledMessageJobInMessage) =>
   enqueueScheduledMessageJob(useServiceBusSender(AzureQueue.ScheduledMessageJobs), id, runAt);
 
 export const scheduledMessageJobRouter = router({
-  cancelScheduledJob: standardAuthedProcedure
+  cancelScheduledMessageJob: standardAuthedProcedure
     .input(cancelScheduledMessageJobInputSchema)
     .mutation<ScheduledMessageJobInMessage>(async ({ ctx, input }) =>
       requireScheduledMessageJob(
@@ -70,7 +70,7 @@ export const scheduledMessageJobRouter = router({
             .where(
               and(
                 ownedBy(scheduledMessageJobsInMessage, input.id, ctx.getSessionPayload.user.id),
-                isActiveScheduledMessageJob,
+                activeScheduledMessageJobWhere,
               ),
             )
             .returning()
@@ -80,7 +80,7 @@ export const scheduledMessageJobRouter = router({
         "NOT_FOUND",
       ),
     ),
-  readMyScheduledJobs: standardAuthedProcedure
+  readMyScheduledMessageJobs: standardAuthedProcedure
     .input(readMyScheduledMessageJobsInputSchema)
     .query<OffsetPaginationData<ScheduledMessageJobInMessageWithRoom>>(async ({ ctx, input: { limit, offset } }) => {
       const rows = await ctx.db
@@ -91,7 +91,7 @@ export const scheduledMessageJobRouter = router({
         .from(scheduledMessageJobsInMessage)
         .innerJoin(roomsInMessage, eq(scheduledMessageJobsInMessage.roomId, roomsInMessage.id))
         .where(
-          and(eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id), isActiveScheduledMessageJob),
+          and(eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id), activeScheduledMessageJobWhere),
         )
         .orderBy(asc(scheduledMessageJobsInMessage.runAt))
         .limit(limit + 1)
@@ -101,18 +101,21 @@ export const scheduledMessageJobRouter = router({
         limit,
       );
     }),
-  readMyScheduledJobsCount: standardAuthedProcedure.query<number>(
+  readMyScheduledMessageJobsCount: standardAuthedProcedure.query<number>(
     async ({ ctx }) =>
       (
         await ctx.db
           .select({ count: count() })
           .from(scheduledMessageJobsInMessage)
           .where(
-            and(eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id), isActiveScheduledMessageJob),
+            and(
+              eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
+              activeScheduledMessageJobWhere,
+            ),
           )
       )[0]?.count ?? 0,
   ),
-  readScheduledJobs: getMemberProcedure(readScheduledMessageJobsInputSchema, "roomId").query<
+  readScheduledMessageJobs: getMemberProcedure(readScheduledMessageJobsInputSchema, "roomId").query<
     ScheduledMessageJobInMessage[]
   >(({ ctx, input }) =>
     ctx.db
@@ -122,7 +125,7 @@ export const scheduledMessageJobRouter = router({
         and(
           eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
           eq(scheduledMessageJobsInMessage.roomId, input.roomId),
-          isActiveScheduledMessageJob,
+          activeScheduledMessageJobWhere,
         ),
       )
       .orderBy(asc(scheduledMessageJobsInMessage.runAt)),
@@ -130,13 +133,13 @@ export const scheduledMessageJobRouter = router({
   rescheduleMessage: getMemberProcedure(rescheduleMessageInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
     async ({ ctx, input }) => {
       await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
-      const job = await ctx.db.transaction(async (tx) => {
+      const scheduledMessageJob = await ctx.db.transaction(async (tx) => {
         requireScheduledMessageJob(
           (
             await tx
               .update(scheduledMessageJobsInMessage)
               .set({ cancelledAt: new Date() })
-              .where(isCancellableScheduledMessage(input.id, ctx.getSessionPayload.user.id))
+              .where(cancellableScheduledMessageWhere(input.id, ctx.getSessionPayload.user.id))
               .returning()
           )[0],
           Operation.Update,
@@ -163,14 +166,14 @@ export const scheduledMessageJobRouter = router({
           JSON.stringify(input),
         );
       });
-      await enqueueJob(job);
-      return job;
+      await enqueueJob(scheduledMessageJob);
+      return scheduledMessageJob;
     },
   ),
   scheduleMessage: getMemberProcedure(scheduleMessageInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
     async ({ ctx, input }) => {
       await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
-      const job = requireScheduledMessageJob(
+      const scheduledMessageJob = requireScheduledMessageJob(
         (
           await ctx.db
             .insert(scheduledMessageJobsInMessage)
@@ -189,13 +192,13 @@ export const scheduledMessageJobRouter = router({
         Operation.Create,
         JSON.stringify(input),
       );
-      await enqueueJob(job);
-      return job;
+      await enqueueJob(scheduledMessageJob);
+      return scheduledMessageJob;
     },
   ),
   scheduleReminder: getMemberProcedure(scheduleReminderInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
     async ({ ctx, input }) => {
-      const job = requireScheduledMessageJob(
+      const scheduledMessageJob = requireScheduledMessageJob(
         (
           await ctx.db
             .insert(scheduledMessageJobsInMessage)
@@ -210,14 +213,14 @@ export const scheduledMessageJobRouter = router({
         Operation.Create,
         JSON.stringify(input),
       );
-      await enqueueJob(job);
-      return job;
+      await enqueueJob(scheduledMessageJob);
+      return scheduledMessageJob;
     },
   ),
   sendScheduledMessageNow: standardAuthedProcedure
     .input(cancelScheduledMessageJobInputSchema)
     .mutation<MessageEntity>(async ({ ctx, input }) => {
-      const where = isCancellableScheduledMessage(input.id, ctx.getSessionPayload.user.id);
+      const where = cancellableScheduledMessageWhere(input.id, ctx.getSessionPayload.user.id);
       const scheduledMessageJob = requireScheduledMessageJob(
         (await ctx.db.select().from(scheduledMessageJobsInMessage).where(where).limit(1))[0],
         Operation.Update,
@@ -239,7 +242,7 @@ export const scheduledMessageJobRouter = router({
           await ctx.db.update(scheduledMessageJobsInMessage).set({ cancelledAt: new Date() }).where(where);
         throw error;
       });
-      // The claim is this update, not the select above: `isCancellableScheduledMessage` excludes a job the
+      // The claim is this update, not the select above: `cancellableScheduledMessageWhere` excludes a job the
       // Delivery handler has already stamped, so a handler that wins the gap leaves nothing to cancel here and
       // The caller is told NOT_FOUND rather than both paths posting the same message
       requireScheduledMessageJob(

@@ -62,8 +62,8 @@ const assertCanManageMemberRole = async (
 ) => {
   if (!checkIsManageable(actor.topPosition, rolePosition, actor.isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-  const target = await getRoomMemberAuthority(db, userId, roomId);
-  if (!checkIsMemberManageable(actor, target)) throw new TRPCError({ code: "UNAUTHORIZED" });
+  const targetAuthority = await getRoomMemberAuthority(db, userId, roomId);
+  if (!checkIsMemberManageable(actor, targetAuthority)) throw new TRPCError({ code: "UNAUTHORIZED" });
 };
 
 export const roleRouter = router({
@@ -73,7 +73,7 @@ export const roleRouter = router({
     "roomId",
   ).mutation<RoomRoleInMessage>(async ({ ctx, input: { roleId, roomId, userId } }) => {
     const actorUserId = ctx.getSessionPayload.user.id;
-    const [role, actorContext] = await Promise.all([
+    const [role, actorAuthority] = await Promise.all([
       requireEntity(
         ctx.db.query.roomRolesInMessage.findFirst({
           where: { id: { eq: roleId }, roomId: { eq: roomId } },
@@ -94,7 +94,7 @@ export const roleRouter = router({
 
     if (role.isEveryone) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoomRole, roleId);
 
-    await assertCanManageMemberRole(ctx.db, actorContext, role.position, roomId, userId);
+    await assertCanManageMemberRole(ctx.db, actorAuthority, role.position, roomId, userId);
 
     const device = { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId };
     const [userToRoomRole] = await ctx.db
@@ -117,7 +117,7 @@ export const roleRouter = router({
 
     await assertCanGrantPermissions(ctx.db, actorUserId, roomId, permissions, isOwner);
 
-    const createdRole = requireMutation(
+    const newRole = requireMutation(
       (await ctx.db.insert(roomRolesInMessage).values({ color, name, permissions, position, roomId }).returning())[0],
       Operation.Create,
       DatabaseEntityType.RoomRole,
@@ -125,10 +125,10 @@ export const roleRouter = router({
     );
 
     roleEventEmitter.emit("createRole", [
-      createdRole,
+      newRole,
       { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId },
     ]);
-    return createdRole;
+    return newRole;
   }),
   deleteRole: getPermissionsProcedure(
     RoomPermission.ManageRoles,
@@ -136,7 +136,7 @@ export const roleRouter = router({
     "roomId",
   ).mutation<RoomRoleInMessage>(async ({ ctx, input: { id, roomId } }) => {
     const actorUserId = ctx.getSessionPayload.user.id;
-    const [role, actorContext] = await Promise.all([
+    const [role, actorAuthority] = await Promise.all([
       requireEntity(
         ctx.db.query.roomRolesInMessage.findFirst({
           columns: { isEveryone: true, position: true },
@@ -150,7 +150,7 @@ export const roleRouter = router({
 
     if (role.isEveryone) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.RoomRole, id);
 
-    const { isOwner, topPosition: actorTopPosition } = actorContext;
+    const { isOwner, topPosition: actorTopPosition } = actorAuthority;
     if (!checkIsManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
     const deletedRole = requireMutation(
@@ -216,7 +216,7 @@ export const roleRouter = router({
   revokeRole: getPermissionsProcedure(RoomPermission.ManageRoles, revokeRoleInputSchema, "roomId").mutation<void>(
     async ({ ctx, input: { roleId, roomId, userId } }) => {
       const actorUserId = ctx.getSessionPayload.user.id;
-      const [role, actorContext] = await Promise.all([
+      const [role, actorAuthority] = await Promise.all([
         requireEntity(
           ctx.db.query.roomRolesInMessage.findFirst({
             columns: { position: true },
@@ -228,7 +228,7 @@ export const roleRouter = router({
         getRoomMemberAuthority(ctx.db, actorUserId, roomId),
       ]);
 
-      await assertCanManageMemberRole(ctx.db, actorContext, role.position, roomId, userId);
+      await assertCanManageMemberRole(ctx.db, actorAuthority, role.position, roomId, userId);
 
       // No requireMutation, unlike deleteRole: this asks for an end state — the member does not hold the role
       // — rather than for a row, and it returns nothing to be missing. Two moderators revoking at once, or one
@@ -255,7 +255,7 @@ export const roleRouter = router({
     "roomId",
   ).mutation<RoomRoleInMessage>(async ({ ctx, input: { id, roomId, ...rest } }) => {
     const actorUserId = ctx.getSessionPayload.user.id;
-    const [role, actorContext] = await Promise.all([
+    const [role, actorAuthority] = await Promise.all([
       requireEntity(
         ctx.db.query.roomRolesInMessage.findFirst({
           columns: { position: true },
@@ -267,7 +267,7 @@ export const roleRouter = router({
       getRoomMemberAuthority(ctx.db, actorUserId, roomId),
     ]);
 
-    const { isOwner, topPosition: actorTopPosition } = actorContext;
+    const { isOwner, topPosition: actorTopPosition } = actorAuthority;
     if (
       !checkIsManageable(actorTopPosition, role.position, isOwner) ||
       (rest.position !== undefined && !checkIsManageable(actorTopPosition, rest.position, isOwner))

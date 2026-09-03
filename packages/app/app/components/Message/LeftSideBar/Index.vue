@@ -8,7 +8,7 @@ const { $trpc } = useNuxtApp();
 const { currentRoute } = useRouter();
 const inputStore = useInputStore();
 const { drafts } = storeToRefs(inputStore);
-const scheduledMessageJobCount = await $trpc.message.scheduledMessageJob.readMyScheduledJobsCount.query();
+const scheduledMessageJobCount = await $trpc.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query();
 const items = computed(
   () =>
     [

@@ -44,7 +44,7 @@ export const useCallSubscribables = () => {
           deleteSpeaker(id);
         },
       });
-      const handRaisedChangedUnsubscribable = $trpc.callSession.onHandRaisedChanged.subscribe(callSessionId, {
+      const setHandRaisedUnsubscribable = $trpc.callSession.onSetHandRaised.subscribe(callSessionId, {
         onData: ({ id, isHandRaised }) => {
           setHandRaised(callSessionId, id, isHandRaised);
         },
@@ -54,7 +54,7 @@ export const useCallSubscribables = () => {
           setMute(callSessionId, muteChange.id, muteChange.isMuted);
         },
       });
-      const videoChangedUnsubscribable = $trpc.callSession.onVideoChanged.subscribe(callSessionId, {
+      const setCameraUnsubscribable = $trpc.callSession.onSetCamera.subscribe(callSessionId, {
         onData: ({ id, isCameraEnabled }) => {
           setParticipantCamera(callSessionId, id, isCameraEnabled);
         },
@@ -65,9 +65,9 @@ export const useCallSubscribables = () => {
         clearSpeakers();
         participantJoinUnsubscribable.unsubscribe();
         participantLeaveUnsubscribable.unsubscribe();
-        handRaisedChangedUnsubscribable.unsubscribe();
+        setHandRaisedUnsubscribable.unsubscribe();
         muteChangedUnsubscribable.unsubscribe();
-        videoChangedUnsubscribable.unsubscribe();
+        setCameraUnsubscribable.unsubscribe();
       };
     },
     onlineSubscribableContext,
