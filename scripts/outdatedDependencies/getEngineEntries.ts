@@ -2,11 +2,11 @@ import type { DependencyEntry } from "#scripts/outdatedDependencies/models/Depen
 import type { ManifestFile } from "#scripts/outdatedDependencies/models/ManifestFile";
 
 export const getEngineEntries = (manifests: ManifestFile[]): DependencyEntry[] => {
-  const entriesByKey = new Map<string, DependencyEntry>();
+  const entryMap = new Map<string, DependencyEntry>();
 
   for (const { manifest } of manifests)
     for (const [pkg, specifier] of Object.entries(manifest.engines ?? {}))
-      entriesByKey.set(`${pkg}@${specifier}`, { group: "engines", pkg, specifier });
+      entryMap.set(`${pkg}@${specifier}`, { group: "engines", pkg, specifier });
 
-  return [...entriesByKey.values()];
+  return [...entryMap.values()];
 };

@@ -16,14 +16,14 @@ const getSortedEdges = (workspaceEdges: Map<string, WorkspaceEdge>): WorkspaceEd
     .toSorted((left, right) => (getEdgeKey(left) < getEdgeKey(right) ? -1 : 1));
 
 export const getWorkspaceEdges = (workspacePackages: WorkspacePackage[]): WorkspaceEdges => {
-  const directoryByName = new Map(
+  const nameDirectoryMap = new Map(
     workspacePackages.flatMap(({ directory, manifest }) =>
       manifest.name === undefined ? [] : [[manifest.name, directory] as const],
     ),
   );
   const getDependencyDirectories = (dependencies: Record<string, string> = {}): string[] =>
     Object.entries(dependencies).flatMap(([name, specifier]) => {
-      const directory = directoryByName.get(name);
+      const directory = nameDirectoryMap.get(name);
       return directory !== undefined && specifier.startsWith(WORKSPACE_SPECIFIER_PREFIX) ? [directory] : [];
     });
   const runtime = new Map<string, WorkspaceEdge>();
