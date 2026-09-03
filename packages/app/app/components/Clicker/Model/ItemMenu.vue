@@ -5,7 +5,7 @@ import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 import type { VMenu } from "vuetify/components";
 
 import { Target } from "#shared/models/clicker/data/Target";
-import { formatNumberLong } from "@/services/clicker/format";
+import { formatNumberLong } from "@/services/clicker/formatNumberLong";
 import { BuildingIconMap } from "@/services/clicker/icon/BuildingIconMap";
 import { MenuIconMap } from "@/services/clicker/icon/MenuIconMap";
 import { UpgradeIconMap } from "@/services/clicker/icon/UpgradeIconMap";

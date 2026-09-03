@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatNumberLong } from "@/services/clicker/format";
+import { formatNumberLong } from "@/services/clicker/formatNumberLong";
 import { useClickerStore } from "@/store/clicker";
 
 export interface PointsPopupProps {

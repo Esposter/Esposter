@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { OFFLINE_CAP } from "@/services/clicker/constants";
-import { formatNumberLong } from "@/services/clicker/format";
+import { OFFLINE_CAP_MS } from "@/services/clicker/constants";
+import { formatNumberLong } from "@/services/clicker/formatNumberLong";
 import { useClickerStore } from "@/store/clicker";
 import { useOfflineProgressStore } from "@/store/clicker/offlineProgress";
 import { formatDuration } from "@/util/date/formatDuration";
@@ -19,7 +19,7 @@ const isOpen = computed({
 });
 const displayElapsedDuration = computed(() => formatDuration(elapsedMs.value));
 const displayAwardedPoints = computed(() => formatNumberLong(awardedPoints.value, 3));
-const displayOfflineCap = formatDuration(OFFLINE_CAP);
+const displayOfflineCap = formatDuration(OFFLINE_CAP_MS);
 </script>
 
 <template>
@@ -34,6 +34,6 @@ const displayOfflineCap = formatDuration(OFFLINE_CAP);
     While you were away for {{ displayElapsedDuration }}, your buildings produced
     <span font-bold>{{ displayAwardedPoints }}</span>
     {{ clickerItemProperties.pluralName
-    }}<template v-if="elapsedMs > OFFLINE_CAP"> (production is capped at {{ displayOfflineCap }})</template>.
+    }}<template v-if="elapsedMs > OFFLINE_CAP_MS"> (production is capped at {{ displayOfflineCap }})</template>.
   </StyledDialog>
 </template>

@@ -4,7 +4,7 @@ import type { BuildingWithStatistics } from "#shared/models/clicker/data/buildin
 
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 import { getBuildingPrice as baseGetBuildingPrice } from "@/services/clicker/building/getBuildingPrice";
-import { formatNumberLong } from "@/services/clicker/format";
+import { formatNumberLong } from "@/services/clicker/formatNumberLong";
 import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUpgrade";
 import { applyBuildingUpgrades } from "@/services/clicker/upgrade/applyBuildingUpgrades";
 import { useClickerStore } from "@/store/clicker";

@@ -2,7 +2,7 @@ import type { Color } from "vuetify/lib/util/colorUtils.mjs";
 
 import { ClickerType } from "#shared/models/clicker/data/ClickerType";
 
-export const getColorMap = ({ error, info, primary }: { error: Color; info: Color; primary: Color }) =>
+export const getClickerColorMap = ({ error, info, primary }: { error: Color; info: Color; primary: Color }) =>
   ({
     [ClickerType.Default]: primary,
     [ClickerType.Magical]: info,

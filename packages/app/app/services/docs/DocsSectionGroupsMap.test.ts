@@ -8,12 +8,12 @@ import { beforeAll, describe, expect, test } from "vitest";
 // The map is the sidebar, and it is hand-maintained against a tree nothing links it to — so it is checked in
 // Both directions. One way a group points at a page that was renamed or deleted; the other a page ships with
 // No way to reach it from the navigation, which is invisible in review because the page itself renders fine
-describe("docsSectionGroupsMap", () => {
+describe("DocsSectionGroupsMap", () => {
   // Pages every section owns that the sidebar map never lists — they trail in an automatic Planning group.
   const UNMAPPED_PAGES = new Set(["index", "roadmap"]);
   const PLANNING_DIRECTORIES = new Set(["deferred", "rejected"]);
   const docsDirectory = join(import.meta.dirname, "..", "..", "..", "content", DOCS_DIRECTORY);
-  const getIsPage = (slugPath: string) =>
+  const checkIsPage = (slugPath: string) =>
     existsSync(join(docsDirectory, `${slugPath}.md`)) || existsSync(join(docsDirectory, slugPath, "index.md"));
   let pagePaths: string[] = [];
 
@@ -30,7 +30,7 @@ describe("docsSectionGroupsMap", () => {
       .flatMap(([section, groups]) =>
         Object.entries(groups).flatMap(([group, slugs]) => slugs.map((slug) => ({ group, section, slug }))),
       )
-      .filter(({ section, slug }) => !getIsPage(`${section}/${slug}`))
+      .filter(({ section, slug }) => !checkIsPage(`${section}/${slug}`))
       .map(({ group, section, slug }) => `${section} → ${group} → ${slug}`);
 
     expect(missingPages).toStrictEqual([]);

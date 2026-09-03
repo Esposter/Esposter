@@ -1,6 +1,6 @@
 import { ClickerType } from "#shared/models/clicker/data/ClickerType";
 
-export const IconComponentMap = {
+export const ClickerIconComponentMap = {
   [ClickerType.Default]: defineAsyncComponent(() => import("@/components/Clicker/Icon/PinaColada.vue")),
   [ClickerType.Magical]: defineAsyncComponent(() => import("@/components/Clicker/Icon/Mana.vue")),
   [ClickerType.Physical]: defineAsyncComponent(() => import("@/components/Clicker/Icon/Strength.vue")),
