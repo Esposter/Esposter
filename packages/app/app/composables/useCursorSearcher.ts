@@ -28,8 +28,8 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>>(
   return {
     hasMore,
     items,
-    readSearchedItems,
     readMoreSearchedItems,
+    readSearchedItems,
     searchQuery,
   };
 };

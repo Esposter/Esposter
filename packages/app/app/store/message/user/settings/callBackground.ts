@@ -16,7 +16,7 @@ const getCallBackgroundKey = (slot: CallBackground["slot"]) => `callBackground${
 
 export const useCallBackgroundStore = defineStore("message/user/settings/callBackground", () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation, checkIsPending } = useMutation();
+  const { checkIsPending, executeMutation } = useMutation();
   const callBackgrounds = ref<CallBackground[]>([]);
   // Read once per session for the picker's own render: the set is capped and only this store writes it, so
   // Every surface that opens the grid joins one listing instead of issuing its own

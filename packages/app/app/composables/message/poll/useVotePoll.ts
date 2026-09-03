@@ -13,7 +13,7 @@ export const useVotePoll = async (
 ) => {
   const { $trpc } = useNuxtApp();
   // Single-flight per poll: a second vote while one is in flight is dropped rather than racing it
-  const { executeMutation, checkIsPending } = useMutation();
+  const { checkIsPending, executeMutation } = useMutation();
   const { data: session } = await authClient.useSession(useFetch);
   const dataStore = useDataStore();
   const { storeUpdateMessage } = dataStore;

@@ -2,8 +2,8 @@
 // The editor component map reaches GrapesJS, which touches `window` at import time
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
-import { getResourceBladeDefinitions } from "@/services/resource/getResourceBladeDefinitions";
 import { checkIsValidResourceBlade } from "@/services/resource/checkIsValidResourceBlade";
+import { getResourceBladeDefinitions } from "@/services/resource/getResourceBladeDefinitions";
 import { ResourceType, ResourceTypes } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

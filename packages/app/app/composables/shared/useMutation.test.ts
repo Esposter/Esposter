@@ -378,7 +378,7 @@ describe(useMutation, () => {
   test("scopes checkIsPending to its key while isPending aggregates", async () => {
     expect.hasAssertions();
 
-    const { executeMutation, checkIsPending, isPending } = useMutation();
+    const { checkIsPending, executeMutation, isPending } = useMutation();
     const { promise: mutatePromise, resolve: resolveMutate } = Promise.withResolvers<void>();
     const pendingWrite = executeMutation(() => mutatePromise, { key });
     const isKeyPendingWhileInFlight = checkIsPending(key);
@@ -396,7 +396,7 @@ describe(useMutation, () => {
   test("clears pending state when onSuccess throws", async () => {
     expect.hasAssertions();
 
-    const { executeMutation, checkIsPending, isPending } = useMutation();
+    const { checkIsPending, executeMutation, isPending } = useMutation();
 
     await expect(
       executeMutation(() => Promise.resolve(), {
@@ -414,7 +414,7 @@ describe(useMutation, () => {
   test("clears pending state when onError throws", async () => {
     expect.hasAssertions();
 
-    const { executeMutation, checkIsPending, isPending } = useMutation();
+    const { checkIsPending, executeMutation, isPending } = useMutation();
 
     await expect(
       executeMutation(() => Promise.reject(new Error("error")), {
@@ -432,7 +432,7 @@ describe(useMutation, () => {
   test("clears pending state when applyOptimistic throws", async () => {
     expect.hasAssertions();
 
-    const { executeMutation, checkIsPending, isPending } = useMutation();
+    const { checkIsPending, executeMutation, isPending } = useMutation();
 
     await expect(
       executeMutation(() => Promise.resolve(), {

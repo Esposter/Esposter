@@ -194,5 +194,5 @@ export const useMutation = () => {
       },
     );
   };
-  return { executeMutation, executeQuery, checkIsPending, isPending, supersedeKey };
+  return { checkIsPending, executeMutation, executeQuery, isPending, supersedeKey };
 };

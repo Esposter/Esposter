@@ -12,7 +12,7 @@ export const useRestoreResource = (refresh: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
-  const { executeMutation: executeRestoreResourceMutation, checkIsPending: checkIsRestorePending } = useMutation();
+  const { checkIsPending: checkIsRestorePending, executeMutation: executeRestoreResourceMutation } = useMutation();
   const restoreResource = async (resource: Resource) => {
     await executeRestoreResourceMutation(() => $trpc.resource.restoreResource.mutate({ id: resource.id }), {
       // The row is reachable again, so every cache of which resources are live is stale — the stars and the
