@@ -75,7 +75,7 @@ export const reserveStorageBytes = async (
     // Late `BlobCreated` can still find it, and a dead write target must never hold space or a slot in the
     // Meantime
     const [pendingTotals] = await tx
-      .select({ pendingReservationCount: count(), pendingBytes: sum(storageLedger.declaredBytes) })
+      .select({ pendingBytes: sum(storageLedger.declaredBytes), pendingReservationCount: count() })
       .from(storageLedger)
       .where(
         and(eq(storageLedger.userId, userId), isNull(storageLedger.reconciledAt), gt(storageLedger.expiresAt, now)),

@@ -13,12 +13,12 @@ export const createPost = (overrides: Partial<PostWithRelations> = {}): PostWith
   const user = createUser({ emailVerified: true, id: "userId" });
   return {
     ancestorIds: [],
+    commentCount: 0,
     createdAt,
     deletedAt: null,
     depth: 0,
     description: "description",
     id: crypto.randomUUID(),
-    commentCount: 0,
     likeCount: 0,
     parentId: null,
     ranking: 0,

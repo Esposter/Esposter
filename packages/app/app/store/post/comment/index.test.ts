@@ -56,7 +56,7 @@ describe(useCommentStore, () => {
         return { ancestorIds: [postId], removedCommentCount: 1 };
       }),
     );
-    const parentPost = createPost({ id: postId, commentCount: 2 });
+    const parentPost = createPost({ commentCount: 2, id: postId });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
     const { deleteComment, getSlice } = commentStore;
@@ -76,7 +76,7 @@ describe(useCommentStore, () => {
 
     const reply = createPost({ depth: 2, parentId: comment.id });
     server.use(trpcMsw.post.deleteComment.mutation(() => ({ ancestorIds: [postId], removedCommentCount: 2 })));
-    const parentPost = createPost({ id: postId, commentCount: 2 });
+    const parentPost = createPost({ commentCount: 2, id: postId });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
     const { deleteComment, getSlice } = commentStore;
@@ -106,7 +106,7 @@ describe(useCommentStore, () => {
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
     const { deleteComment, getSlice } = commentStore;
-    currentPost.value = createPost({ id: postId, commentCount: 2 });
+    currentPost.value = createPost({ commentCount: 2, id: postId });
     getSlice(postId).items.value = [comment];
     const replyBranch = getSlice(comment.id);
     replyBranch.initializeCursorPaginationData(new CursorPaginationData({ hasMore: false, items: [reply] }));
@@ -125,12 +125,12 @@ describe(useCommentStore, () => {
 
     // Built here rather than at describe scope: the counters are what this asserts, and the store writes them
     // Into the rows it is handed
-    const repliedToComment = createPost({ depth: 1, commentCount: 0, parentId: postId });
+    const repliedToComment = createPost({ commentCount: 0, depth: 1, parentId: postId });
     const reply = createPost({ depth: 2, parentId: repliedToComment.id });
     server.use(
       trpcMsw.post.createComment.mutation(() => ({ ancestorIds: [postId, repliedToComment.id], comment: reply })),
     );
-    const parentPost = createPost({ id: postId, commentCount: 1 });
+    const parentPost = createPost({ commentCount: 1, id: postId });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
     const { createComment, getSlice } = commentStore;
