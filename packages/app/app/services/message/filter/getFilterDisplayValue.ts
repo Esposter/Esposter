@@ -32,8 +32,8 @@ const getDisplayValue = (type: FilterType, value: SerializableValue) => {
 
       const userStore = useUserStore();
       const { userMap } = storeToRefs(userStore);
-      const member = userMap.value.get(value);
-      return member?.name ?? value;
+      const user = userMap.value.get(value);
+      return user?.name ?? value;
     }
     case FilterType.In: {
       if (typeof value !== "string") throw getInvalidValueError(value);

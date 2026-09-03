@@ -2,7 +2,7 @@ import { SettingsType } from "@/models/message/room/SettingsType";
 import { SettingsCategoryMap } from "@/services/message/settings/SettingsCategoryMap";
 import { describe, expect, test } from "vitest";
 
-describe("settingsCategoryMap", () => {
+describe("SettingsCategoryMap", () => {
   test("every settings type except Delete belongs to exactly one category", () => {
     expect.hasAssertions();
 
