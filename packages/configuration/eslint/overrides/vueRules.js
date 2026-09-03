@@ -118,7 +118,6 @@ export default {
   "vue/no-v-html": "off",
   "vue/no-v-text-v-html-on-component": "off",
   "vue/padding-line-between-blocks": ["error", "always"],
-  "vue/require-default-prop": "off",
   "vue/v-bind-style": ["error", "shorthand", { sameNameShorthand: "always" }],
   "vue/v-slot-style": ["error", { atComponent: "shorthand" }],
   "vue/valid-template-root": "off",

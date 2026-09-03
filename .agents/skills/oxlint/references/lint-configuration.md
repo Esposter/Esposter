@@ -1,5 +1,11 @@
 # Maintaining `.oxlintrc.json` and Disable Directives
 
+## Changing a rule is a check-only exercise — never run `lint:fix`
+
+Turning a rule on, loosening its options, or probing what one would report all mean running the linter against code that has not agreed to the rule yet, and a fix variant then **rewrites the repo to satisfy a decision nobody has made**. An autofixable rule lands across the whole tree in one pass, so the diff is too large to read, and the fixes for a rule you go on to reject have to be picked back out of a commit carrying the ones you kept. Some of them do not come back by re-running either: `require-await` strips a keyword the signature needed (`SKILL.md`), and a `no-duplicate-imports` merge folds a top-level `import type` back inline — the opposite of what `import/consistent-type-specifier-style` asks for.
+
+So while `.oxlintrc.json` is being edited, run the **check-only** `pnpm lint` (or `oxlint -c <probe>`), never `lint:fix`/`lint:fix:packages`. The probe-config audit below is the same rule in practice: it reads diagnostics off a copy of the config and touches no source at all. A fix pass earns its run once the rule is settled and committed, not before.
+
 ## Categories — always list `correctness` explicitly
 
 Oxlint keeps the `correctness` category enabled by default even when the config specifies other categories — but `eslint-plugin-oxlint` **replaces** its default categories with whatever the config lists. If `correctness` is missing from the explicit `categories` map, the plugin assumes the category is off and leaves every correctness rule's ESLint twin enabled — ESLint then re-runs the expensive type-aware rules (`no-floating-promises`, `await-thenable`, …) that oxlint/tsgolint already checks. Symptom: a rule shows up in ESLint `TIMING` output even though oxlint covers it. See `packages/app/content/docs/proposals/refactors/eslint-to-oxlint-migration.md` for the ongoing migration process.
@@ -14,7 +20,7 @@ A bump can also _regress_ a rule that was green the release before. A release ma
 
 ## Configure a plugin rule under its prefixed name only
 
-Oxlint resolves a bare rule name to the plugin rule of that name, so a bare entry and a prefixed entry are **the same rule** — and the bare one wins. `"no-unassigned-import": "off"` therefore silently voids an `"import/no-unassigned-import": ["error", { allow: … }]` entry above it: the rule never runs and its options are never read. The same aliasing applies to `no-async-await` (oxc), `no-namespace` (import), `no-await-expression-member`/`prefer-add-event-listener`/`prefer-global-this` (unicorn).
+Oxlint resolves a bare rule name to the plugin rule of that name, so a bare entry and a prefixed entry are **the same rule** — and the bare one wins. `"no-unassigned-import": "off"` therefore silently voids an `"import/no-unassigned-import": ["error", { allow: … }]` entry above it: the rule never runs and its options are never read. The same aliasing applies to `no-async-await` (oxc), `no-namespace` (import), `no-await-expression-member`/`prefer-add-event-listener`/`prefer-global-this` (unicorn). Write every entry prefixed from the start; a bare one arriving in a diff is the thing to catch.
 
 A dead entry looks exactly like a passing one, so audit it empirically: copy `.oxlintrc.json`, delete the suspect `"off"` entries, run `oxlint -c <probe> --format=json`, and count diagnostics per `code`. A rule reporting hits under the probe while the real config is green was never enforcing anything. Rules with **zero** hits are free to enable — delete the `"off"` line — but first plant a violation and confirm the rule fires, since a stale or unimplemented rule name also scores zero.
 
@@ -32,7 +38,7 @@ The vitest rules come from oxlint's `vitest` plugin (`@vitest/eslint-plugin` is 
 
 - **Configured with options** — `consistent-test-it` (`fn: "test"`; the default demands `it` inside `describe`) and `valid-title` (`ignoreTypeOfDescribeName`/`ignoreTypeOfTestName` allow the repo's `describe(functionRef)` convention). The rules are already on via categories; the entries restate `"error"` only to carry the options.
 - **Pair rules** — oxlint ships both sides of style pairs; exactly one must be off or they fight: `prefer-called-once` is off because `prefer-called-times` matches the repo's `toHaveBeenCalledTimes(1)`; `no-importing-vitest-globals` is off because the repo imports vitest APIs explicitly (its counterpart `prefer-importing-vitest-globals` stays on).
-- **`prefer-each` is off** — its only remedy is `test.each`/`it.each`, which the `testing` skill bans outright. A matrix over an enum is written as a `for...of` over the values wrapping one `test(...)` per value, which the rule reads as a manual loop; folding those into one test to satisfy it would trade a named case per enum value for a single opaque failure. A rule whose sole fix is a banned construct enforces nothing here.
+- **`prefer-each` is on and owns that ban alone.** It asks for what the `testing` skill mandates — `test.each` for a table of cases, never a loop around `test` — so no `no-restricted-syntax` twin sits beside it; adding one back would only ask for a second disable comment on the same line. Measured against planted cases it catches `for`/`for...in`/`for...of` around `test`/`it`, the `.skip` and `.concurrent` forms included, and does not catch a `while` loop.
 - **`prefer-describe-function-title` is off** — its fixer only checks that an identifier matching the title is in scope, not that it's a function; for arrays, Zod schemas, routers, or plugin objects the fix produces a `[object Object]` suite title.
 - **`warn-todo`/`require-test-timeout`/`require-top-level-describe` are off** — `describe.todo` placeholders and hook-registering `setup*`/test-setup files are conventions here, and per-test timeouts are not used.
 
@@ -59,6 +65,10 @@ oxlint has no per-file type-aware toggle — `overrides` cannot set `options.typ
 ## `ignorePatterns` — `.agents/worktrees` is load-bearing
 
 Agent worktrees are full parallel checkouts of this monorepo nested at `.agents/worktrees/<name>/`, so without that entry both linters walk a second copy of the whole repo per live worktree and report every diagnostic at another branch's path. It has to be stated here rather than left to git: the only thing hiding those paths from git is the agent harness's machine-local `.git/info/exclude`, which no clone or CI runner has. This one entry covers ESLint too — `eslint-plugin-oxlint`'s `buildFromOxlintConfigFile` turns `ignorePatterns` into flat-config `ignores`. The path itself is owned by `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` (which carries the full rationale) and pinned to this file by `scripts/agentDirectories.test.ts`.
+
+## `no-duplicate-imports` is only usable with `allowSeparateTypeImports`
+
+A module's type imports are written as their own `import type` statement here — `import/consistent-type-specifier-style`, on through the `style` category, asks for exactly that — so the rule's default reads every one of those pairs as a duplicate, hundreds of them, all of them the convention. The entry has to carry `{ "allowSeparateTypeImports": true }`, which is what takes it to zero. `includeExports` is on beside it at no cost: the barrels ctix generates re-export without importing, so nothing here pairs an `import` with an `export … from` for the same module.
 
 ## Finding stale disable directives
 

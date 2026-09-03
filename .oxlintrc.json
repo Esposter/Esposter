@@ -28,6 +28,7 @@
     {
       "files": ["packages/app/server/**/*.ts"],
       "rules": {
+        "persist-then-notify/no-unhandled-effect-after-emit": "error",
         "trpc-procedure/no-hand-rolled-error": "error"
       }
     },
@@ -47,12 +48,6 @@
       "files": ["packages/app/server/trpc/**/*.test.ts"],
       "rules": {
         "trpc-procedure/require-return-type": "off"
-      }
-    },
-    {
-      "files": ["packages/app/server/**/*.ts"],
-      "rules": {
-        "persist-then-notify/no-unhandled-effect-after-emit": "error"
       }
     },
     {
@@ -164,6 +159,7 @@
     "import/no-default-export": "off",
     "import/no-dynamic-require": "off",
     "import/no-named-export": "off",
+    "import/no-namespace": "off",
     "import/no-nodejs-modules": "off",
     "import/no-relative-parent-imports": "off",
     "import/no-unassigned-import": [
@@ -190,19 +186,22 @@
     "max-params": "off",
     "max-statements": "off",
     "new-cap": "off",
-    "no-async-await": "off",
-    "no-await-expression-member": "off",
     "no-await-in-loop": "off",
     "no-bitwise": "off",
     "no-console": "off",
     "no-continue": "off",
-    "no-duplicate-imports": "off",
+    "no-duplicate-imports": [
+      "error",
+      {
+        "allowSeparateTypeImports": true,
+        "includeExports": true
+      }
+    ],
     "no-else-return": "off",
     "no-empty-function": "off",
     "no-inline-comments": "off",
     "no-magic-numbers": "off",
     "no-multi-assign": "off",
-    "no-namespace": "off",
     "no-nested-ternary": "off",
     "no-plusplus": "off",
     "no-redeclare": "off",
@@ -271,12 +270,11 @@
     "no-use-before-define": "off",
     "no-useless-return": "off",
     "one-var": "off",
+    "oxc/no-async-await": "off",
     "oxc/no-optional-chaining": "off",
     "oxc/no-rest-spread-properties": "off",
     "pass-through-helper/no-forwarding-wrapper": "error",
-    "prefer-add-event-listener": "off",
     "prefer-destructuring": "off",
-    "prefer-global-this": "off",
     "promise/avoid-new": "off",
     "promise/no-return-wrap": "off",
     "promise/param-names": [
@@ -338,6 +336,7 @@
     "unicorn/import-style": "off",
     "unicorn/max-nested-calls": "off",
     "unicorn/no-array-reduce": "off",
+    "unicorn/no-await-expression-member": "off",
     "unicorn/no-nested-ternary": "off",
     "unicorn/no-null": "off",
     "unicorn/no-object-as-default-parameter": "off",
@@ -350,9 +349,11 @@
         "onlyIfContainsSeparator": true
       }
     ],
+    "unicorn/prefer-add-event-listener": "off",
     "unicorn/prefer-dom-node-append": "off",
     "unicorn/prefer-event-target": "off",
     "unicorn/prefer-export-from": "off",
+    "unicorn/prefer-global-this": "off",
     "unicorn/prefer-query-selector": "off",
     "unicorn/prefer-ternary": "off",
     "unicorn/require-module-specifiers": "off",
@@ -371,7 +372,6 @@
     "vitest/no-large-snapshots": "off",
     "vitest/prefer-called-once": "off",
     "vitest/prefer-describe-function-title": "off",
-    "vitest/prefer-each": "off",
     "vitest/prefer-to-be-falsy": "off",
     "vitest/prefer-to-be-truthy": "off",
     "vitest/require-hook": "off",
