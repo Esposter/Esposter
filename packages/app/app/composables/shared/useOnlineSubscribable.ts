@@ -82,9 +82,9 @@ export function useOnlineSubscribable(
   const disposeHandler = getSynchronizedFunction(() =>
     getResultAsync(async () => {
       isActive = false;
-      const fn = currentCleanup;
+      const cleanup = currentCleanup;
       currentCleanup = undefined;
-      await fn?.();
+      await cleanup?.();
     }).match(noop, console.error),
   );
 
