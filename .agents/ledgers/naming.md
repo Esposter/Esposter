@@ -48,10 +48,6 @@ the grounds that a rename is expensive — that is the argument
   `*ByIds` read dropped it, but these two share a feature with a paginated read of the same rows
   (`readMembers`, `readMessages`), so the suffix is what separates two procedures rather than marking a batch
   upgrade — and dropping it collides. What the pair should be called instead is the open question.
-- **The flowchart drag store's `type` ref and `useDragAndDrop`'s `nodeType` parameter are one rename across two
-  units.** `type` is the vague field name the conventions ban, and the composable already spells the good name —
-  but taking it for the ref shadows that parameter inside `onDragStart`. The call is whether the parameter moves
-  (to what) or the destructure aliases; whichever way, both files change together in the `app/composables` pass.
 - **`countEntities` is `packages/db`'s, and it is an async fetch under the `count*` prefix.** Every count
   procedure and service in `packages/app` is now `read*Count`; the storage primitive underneath them keeps
   `count*`, so the question of whether a generic table-client tally is exempt belongs to the `packages/db`

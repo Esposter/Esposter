@@ -3,11 +3,11 @@ import { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNode
 export const useDragStore = defineStore("flowchartEditor/drag", () => {
   const isDragging = ref(false);
   const isDragOver = ref(false);
-  const type = ref(GeneralNodeType.Rectangle);
+  const nodeType = ref(GeneralNodeType.Rectangle);
 
   watch(isDragging, (newIsDragging) => {
     window.document.body.style.userSelect = newIsDragging ? "none" : "";
   });
 
-  return { isDragging, isDragOver, type };
+  return { isDragging, isDragOver, nodeType };
 });
