@@ -33,11 +33,11 @@ export const friendRequestRouter = router({
       requireMutation(
         (
           await ctx.db.transaction(async (tx) => {
-            const [deletedRequest] = await tx
+            const [deletedFriendRequest] = await tx
               .delete(friendRequests)
               .where(and(eq(friendRequests.id, friendshipId), eq(friendRequests.receiverId, userId)))
               .returning();
-            if (!deletedRequest) return [];
+            if (!deletedFriendRequest) return [];
             return tx.insert(friends).values({ id: friendshipId, receiverId: userId, senderId }).returning();
           })
         )[0],
@@ -115,7 +115,7 @@ export const friendRequestRouter = router({
       if (userId === receiverId) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId);
       const [receiverUser, senderUser] = await readUserPair(ctx.db, receiverId, userId);
       const friendshipId = getFriendshipId(userId, receiverId);
-      const [newRequest] = await ctx.db.transaction(async (tx) => {
+      const [newFriendRequest] = await ctx.db.transaction(async (tx) => {
         const existingBlock = await tx.query.blocks.findFirst({
           where: {
             OR: [
@@ -136,17 +136,17 @@ export const friendRequestRouter = router({
           .onConflictDoNothing({ target: friendRequests.id })
           .returning();
       });
-      if (!newRequest) {
-        const existingRequest = await ctx.db.query.friendRequests.findFirst({
+      if (!newFriendRequest) {
+        const existingFriendRequest = await ctx.db.query.friendRequests.findFirst({
           where: { id: { eq: friendshipId } },
           with: FriendRequestRelations,
         });
-        if (existingRequest?.senderId !== userId)
+        if (existingFriendRequest?.senderId !== userId)
           throw getInvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId);
-        return existingRequest;
+        return existingFriendRequest;
       }
       const friendRequest: FriendRequestWithRelations = {
-        ...newRequest,
+        ...newFriendRequest,
         receiver: receiverUser,
         sender: senderUser,
       };

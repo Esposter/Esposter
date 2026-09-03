@@ -50,17 +50,17 @@ describe("post", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const readPost = await postCaller.readPost(newPost.id);
+    const post = await postCaller.readPost(newPost.id);
 
-    expect(readPost).toStrictEqual(newPost);
+    expect(post).toStrictEqual(newPost);
   });
 
   test("reads empty posts", async () => {
     expect.hasAssertions();
 
-    const readPosts = await postCaller.readPosts();
+    const postsPage = await postCaller.readPosts();
 
-    expect(readPosts).toStrictEqual(getCursorPaginationData([], 0, []));
+    expect(postsPage).toStrictEqual(getCursorPaginationData([], 0, []));
   });
 
   test("updates", async () => {
@@ -119,12 +119,12 @@ describe("post", () => {
 
     const newPost = await postCaller.createPost({ title });
     const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
-    const readPost = await postCaller.readPost(newPost.id);
-    const readComment = await postCaller.readPost(newComment.id);
+    const post = await postCaller.readPost(newPost.id);
+    const comment = await postCaller.readPost(newComment.id);
 
     expect(newComment.description).toBe(description);
-    expect(readPost.noComments).toBe(1);
-    expect(readComment).toStrictEqual(newComment);
+    expect(post.noComments).toBe(1);
+    expect(comment).toStrictEqual(newComment);
   });
 
   test("updates comment", async () => {
@@ -166,11 +166,11 @@ describe("post", () => {
 
     const newPost = await postCaller.createPost({ title });
     const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
-    const deleted = await postCaller.deleteComment(newComment.id);
-    const readPost = await postCaller.readPost(newPost.id);
+    const deletedComment = await postCaller.deleteComment(newComment.id);
+    const post = await postCaller.readPost(newPost.id);
 
-    expect(deleted.noRemovedComments).toBe(1);
-    expect(readPost.noComments).toBe(0);
+    expect(deletedComment.noRemovedComments).toBe(1);
+    expect(post.noComments).toBe(0);
   });
 
   // A reply is a comment on a comment, so a counter that stopped at direct children would leave a feed card
@@ -181,12 +181,12 @@ describe("post", () => {
     const newPost = await postCaller.createPost({ title });
     const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
     const { comment: newReply } = await postCaller.createComment({ description, parentId: newComment.id });
-    const readPost = await postCaller.readPost(newPost.id);
-    const readComment = await postCaller.readPost(newComment.id);
+    const post = await postCaller.readPost(newPost.id);
+    const comment = await postCaller.readPost(newComment.id);
 
     expect(newReply.depth).toBe(2);
-    expect(readPost.noComments).toBe(2);
-    expect(readComment.noComments).toBe(1);
+    expect(post.noComments).toBe(2);
+    expect(comment.noComments).toBe(1);
   });
 
   // The delete cascades down the parentId chain, so the rows it removes are gone before anything could count
@@ -199,11 +199,11 @@ describe("post", () => {
     const { comment: newReply } = await postCaller.createComment({ description, parentId: newComment.id });
     await postCaller.createComment({ description, parentId: newReply.id });
 
-    const deleted = await postCaller.deleteComment(newComment.id);
-    const readPost = await postCaller.readPost(newPost.id);
+    const deletedComment = await postCaller.deleteComment(newComment.id);
+    const post = await postCaller.readPost(newPost.id);
 
-    expect(deleted.noRemovedComments).toBe(3);
-    expect(readPost.noComments).toBe(0);
+    expect(deletedComment.noRemovedComments).toBe(3);
+    expect(post.noComments).toBe(0);
   });
 
   test("deletes comment with deleting post", async () => {
@@ -245,11 +245,11 @@ describe("post", () => {
 
     const newPost = await postCaller.createPost({ title });
     const newLike = await likeCaller.createLike({ postId: newPost.id, value: 1 });
-    const readPost = await postCaller.readPost(newPost.id);
-    const readPosts = await postCaller.readPosts();
+    const post = await postCaller.readPost(newPost.id);
+    const { items } = await postCaller.readPosts();
 
-    expect(readPost.viewerLike).toStrictEqual(newLike);
-    expect(takeOne(readPosts.items, 0).viewerLike).toStrictEqual(newLike);
+    expect(post.viewerLike).toStrictEqual(newLike);
+    expect(takeOne(items, 0).viewerLike).toStrictEqual(newLike);
   });
 
   test("reads no viewer like for other user", async () => {
@@ -258,9 +258,9 @@ describe("post", () => {
     const newPost = await postCaller.createPost({ title });
     await likeCaller.createLike({ postId: newPost.id, value: 1 });
     await mockSessionOnce(mockContext.db);
-    const readPost = await postCaller.readPost(newPost.id);
+    const post = await postCaller.readPost(newPost.id);
 
-    expect(readPost.viewerLike).toBeUndefined();
+    expect(post.viewerLike).toBeUndefined();
   });
 
   test("reads posts excluding blocked users' posts", async () => {
@@ -270,9 +270,9 @@ describe("post", () => {
     await postCaller.createPost({ title });
     const newPost = await postCaller.createPost({ title });
     await blockCaller.blockUser(blockedUser.id);
-    const readPosts = await postCaller.readPosts();
+    const { items } = await postCaller.readPosts();
 
-    expect(readPosts.items.map(({ id }) => id)).toStrictEqual([newPost.id]);
+    expect(items.map(({ id }) => id)).toStrictEqual([newPost.id]);
   });
 
   test("reads comments excluding blocked users' comments", async () => {
@@ -282,25 +282,25 @@ describe("post", () => {
     const { user: blockedUser } = await mockSessionOnce(mockContext.db);
     await postCaller.createComment({ description, parentId: newPost.id });
     await blockCaller.blockUser(blockedUser.id);
-    const readComments = await postCaller.readPosts({ parentId: newPost.id });
-    const readPost = await postCaller.readPost(newPost.id);
+    const { items: comments } = await postCaller.readPosts({ parentId: newPost.id });
+    const post = await postCaller.readPost(newPost.id);
 
-    expect(readComments.items).toStrictEqual([]);
+    expect(comments).toStrictEqual([]);
     // Blocked users' comments are hidden, not erased — the denormalized counter keeps counting them
-    expect(readPost.noComments).toBe(1);
+    expect(post.noComments).toBe(1);
   });
 
   test("reads posts filtered by user excluding comments", async () => {
     expect.hasAssertions();
 
-    const post = await postCaller.createPost({ title });
+    const newPost = await postCaller.createPost({ title });
     const { user: author } = await mockSessionOnce(mockContext.db);
     const authorPost = await postCaller.createPost({ title });
     await mockSessionOnce(mockContext.db, author);
-    await postCaller.createComment({ description, parentId: post.id });
-    const readPosts = await postCaller.readPosts({ userId: author.id });
+    await postCaller.createComment({ description, parentId: newPost.id });
+    const { items } = await postCaller.readPosts({ userId: author.id });
 
-    expect(readPosts.items.map(({ id }) => id)).toStrictEqual([authorPost.id]);
+    expect(items.map(({ id }) => id)).toStrictEqual([authorPost.id]);
   });
 
   test("reads blocked user's post by id", async () => {
@@ -309,9 +309,9 @@ describe("post", () => {
     const { user: blockedUser } = await mockSessionOnce(mockContext.db);
     const blockedPost = await postCaller.createPost({ title });
     await blockCaller.blockUser(blockedUser.id);
-    const readPost = await postCaller.readPost(blockedPost.id);
+    const post = await postCaller.readPost(blockedPost.id);
 
-    expect(readPost.id).toBe(blockedPost.id);
+    expect(post.id).toBe(blockedPost.id);
   });
 
   test("reads posts sorted by top with cursor", async () => {

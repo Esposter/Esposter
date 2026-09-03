@@ -14,7 +14,7 @@
 | `app/shared/models` — the rest                                                                                                              | 2026-09-03 | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler`, `trpc`, `room`, `auth` |
 | `server/trpc/routers` — `message`, `room`, `userToRoom`, `role`, `call`, `webhook`, `searchHistory`                                         | 2026-09-03 | procedure and result naming; the `trpc` skill owns the pattern                                  |
 | `server/trpc/routers` — `resource`, `blueprint`, `note`, `program`, `sheet`, `todoList`, `survey`                                           | 2026-09-03 | an error constructor is `get*Error`, matching the guards                                        |
-| `server/trpc/routers` — `dashboard`, `dataset`, `email`, `flowchart`, `webpage`, `post`, `like`, `block`, `friend`, `friendRequest`, `user` | —          |                                                                                                 |
+| `server/trpc/routers` — `dashboard`, `dataset`, `email`, `flowchart`, `webpage`, `post`, `like`, `block`, `friend`, `friendRequest`, `user` | 2026-09-03 |                                                                                                 |
 | `server/trpc/routers` — `achievement`, `app`, `clicker`, `dungeons`, `notification`, `pushSubscription`, `session`, `storage`               | —          |                                                                                                 |
 | `server/trpc/{guards,procedure,plugins,middleware}`, `context.ts`                                                                           | —          |                                                                                                 |
 | `server/services`, `server/composables`, `server/api`, `server/routes`                                                                      | —          | `get*` vs `read*` on the server side                                                            |
@@ -50,3 +50,6 @@ the grounds that a rename is expensive — that is the argument
 - `is*`/`has*`/`show*` on a boolean-typed declaration needs types, which `typeAware: true` already provides.
 - Abbreviation bans need a word list, not a rule — leave with the sweep.
 - A `getIs*`/`getHas*` declaration is decidable from the name alone; the three `get*`-returning-a-function cases above are what a rule would have to carve out first.
+- A `const` bound to the call it names — `const readPost = await caller.readPost(…)` — is decidable from the AST alone
+  (declarator name equal to the callee's last property), and it is the finding this ledger has now written in five
+  files. The fix is always the same: drop the verb prefix, since the binding is the value rather than the fetch.

@@ -51,11 +51,11 @@ describe("friendRequest", () => {
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
-    const friendRequest1 = await friendRequestCaller.sendFriendRequest(userId);
+    const firstFriendRequest = await friendRequestCaller.sendFriendRequest(userId);
     await mockSessionOnce(mockContext.db, user);
-    const friendRequest2 = await friendRequestCaller.sendFriendRequest(userId);
+    const secondFriendRequest = await friendRequestCaller.sendFriendRequest(userId);
 
-    expect(friendRequest1.id).toBe(friendRequest2.id);
+    expect(firstFriendRequest.id).toBe(secondFriendRequest.id);
   });
 
   test("fails send friend request to self", async () => {
