@@ -58,13 +58,13 @@ export const useCellStore = defineStore("resource/sheet/cell", () => {
   };
 
   return {
+    checkIsCellInRange,
+    checkIsEditingCell,
     clearCellSelection,
     clearFocus,
     editingCell,
     extendCellSelection,
     focusedCell,
-    checkIsCellInRange,
-    checkIsEditingCell,
     requestFocus,
     selectedCellRange,
     shiftStartCellSelection,
