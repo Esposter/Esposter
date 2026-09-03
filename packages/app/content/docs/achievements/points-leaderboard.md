@@ -17,12 +17,12 @@ flowchart TB
   totals --> build["buildPointsLeaderboard"]
   build -->|"sort desc, competition rank"| ranked["ranked entries"]
   ranked --> entries["top MAX_POINTS_LEADERBOARD_ENTRIES"]
-  ranked --> self["caller entry + global rank"]
+  ranked --> myEntry["caller entry + global rank"]
   entries --> page["Leaderboard tab on /achievements"]
-  self --> page
+  myEntry --> page
 ```
 
-- **Ranking** — competition-style: an entry's rank is one plus the number of strictly higher totals, so ties share a rank. The caller's `self` entry carries its global rank even when it falls outside the top window; the client highlights the caller's row and appends `self` when it is not already shown.
+- **Ranking** — competition-style: an entry's rank is one plus the number of strictly higher totals, so ties share a rank. The caller's own `myEntry` carries its global rank even when it falls outside the top window; the client highlights the caller's row and appends `myEntry` when it is not already shown.
 - **Identity** — only the public profile columns (`id`, `name`, `image`) are carried, never email — mirroring the public-profile allowlist (`readUser`). Each row links to `/user/<id>`.
 - **Hidden achievements** count toward totals. A total could in principle be decomposed to infer a hidden unlock, but that infers nothing new: any user's full unlock list — hidden included — is already public via `readUserAchievements`. Hiddenness masks names and descriptions in the gallery, not the fact of an unlock.
 - **No denormalized total** — points change only on unlock, so the aggregate runs off existing tables; a `points` column on users is added only if the query ever hurts.
@@ -41,7 +41,7 @@ Paths relative to `packages/app`.
 | ------------------------------------------------------- | -------------------------------------------------- |
 | `server/trpc/routers/achievement.ts`                    | `readPointsLeaderboard` procedure + SQL points sum |
 | `server/services/achievement/buildPointsLeaderboard.ts` | pure competition ranking over per-user totals      |
-| `shared/models/achievement/PointsLeaderboard.ts`        | the `{ entries, self }` payload shape              |
+| `shared/models/achievement/PointsLeaderboard.ts`        | the `{ entries, myEntry }` payload shape           |
 | `shared/services/achievement/constants.ts`              | `MAX_POINTS_LEADERBOARD_ENTRIES`                   |
 | `app/pages/achievements.vue`                            | Gallery / Leaderboard view tabs                    |
 | `app/components/Achievement/Leaderboard/Index.vue`      | wrapper — non-blocking `useQuery` fetch            |

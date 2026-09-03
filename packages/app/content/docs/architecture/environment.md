@@ -24,7 +24,7 @@ Use `import.meta.env` for universal env constants. Vite replaces these at build 
 ```ts
 // packages/app/shared/util/environment/constants.ts
 export const IS_PRODUCTION = import.meta.env.PROD;
-export const IS_TEST = import.meta.env.MODE === Environment.test;
+export const IS_TEST = import.meta.env.MODE === Environment.Test;
 export const IS_DEVELOPMENT = import.meta.env.DEV;
 ```
 

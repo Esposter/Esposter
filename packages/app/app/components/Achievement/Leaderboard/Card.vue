@@ -6,9 +6,10 @@ interface LeaderboardProps {
 }
 
 const { leaderboard } = defineProps<LeaderboardProps>();
-const isSelfAppended = computed(
+const isMyEntryAppended = computed(
   () =>
-    leaderboard.self !== undefined && !leaderboard.entries.some(({ user }) => user.id === leaderboard.self?.user.id),
+    leaderboard.myEntry !== undefined &&
+    !leaderboard.entries.some(({ user }) => user.id === leaderboard.myEntry?.user.id),
 );
 </script>
 
@@ -31,11 +32,11 @@ const isSelfAppended = computed(
           v-for="entry in leaderboard.entries"
           :key="entry.user.id"
           :entry
-          :is-self="entry.user.id === leaderboard.self?.user.id || undefined"
+          :is-my-entry="entry.user.id === leaderboard.myEntry?.user.id || undefined"
         />
-        <template v-if="isSelfAppended && leaderboard.self">
+        <template v-if="isMyEntryAppended && leaderboard.myEntry">
           <v-divider my-1 />
-          <AchievementLeaderboardItem :entry="leaderboard.self" is-self />
+          <AchievementLeaderboardItem :entry="leaderboard.myEntry" is-my-entry />
         </template>
       </div>
     </v-card-text>

@@ -100,7 +100,7 @@ vi.mock("nitropack/runtime", () => ({
       cdnURL: "",
     },
     public: {
-      appEnv: Environment.development,
+      appEnv: Environment.Development,
       azure: {
         container: {
           baseUrl: MOCK_BLOB_BASE_URL,
