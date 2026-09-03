@@ -44,7 +44,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   });
   // The same declaration getMessageProcedure guards with, so the menu can never offer an operation the procedure
   // Refuses — presence answers whether the type supports it, the value answers whether this caller may perform it
-  const getIsOperationPermitted = (operation: MessageOperation) =>
+  const checkIsOperationPermitted = (operation: MessageOperation) =>
     checkIsMessageOperationPermitted(getMessageOperationPermission(message.type, operation), {
       hasManageMessages: hasManageMessages.value,
       isAuthor: isCreator.value,
@@ -158,7 +158,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     title: "Mark Unread From Here",
   };
   const pinMessageItems = computed<Item[]>(() =>
-    getIsOperationPermitted(MessageOperation.Pin) ? [pinMessageItem.value] : [],
+    checkIsOperationPermitted(MessageOperation.Pin) ? [pinMessageItem.value] : [],
   );
   // Discord's hover bar carries the thread button beside reply, and burying it in the overflow menu is what made
   // A thread something you had to know about rather than something the message offers
@@ -198,7 +198,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     }
   });
   const deleteMessageItem = computed<Item | undefined>(() =>
-    getIsOperationPermitted(MessageOperation.Delete)
+    checkIsOperationPermitted(MessageOperation.Delete)
       ? {
           color: "error",
           icon: "mdi-delete",

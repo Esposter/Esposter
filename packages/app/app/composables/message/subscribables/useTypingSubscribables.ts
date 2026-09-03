@@ -30,7 +30,7 @@ export const useTypingSubscribables = async () => {
           onData: (typing) => {
             clearTypingTimeout(typing.userId);
 
-            const id = window.setTimeout(
+            const timeoutId = window.setTimeout(
               () => {
                 typings.value = typings.value.filter(({ userId }) => userId !== typing.userId);
                 clearTypingTimeout(typing.userId);
@@ -38,7 +38,7 @@ export const useTypingSubscribables = async () => {
               Temporal.Duration.from({ seconds: 3 }).total("milliseconds"),
             );
 
-            typingTimeoutIdMap.value.set(typing.userId, id);
+            typingTimeoutIdMap.value.set(typing.userId, timeoutId);
             if (!typings.value.some(({ userId }) => userId === typing.userId)) typings.value.push(typing);
           },
         },

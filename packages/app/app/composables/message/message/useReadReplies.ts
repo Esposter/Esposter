@@ -12,10 +12,10 @@ export const useReadReplies = () => {
   return async (replyRowKeys: MessageEntity["rowKey"][]) => {
     if (!currentRoomId.value || replyRowKeys.length === 0) return;
 
-    const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({
+    const messages = await $trpc.message.readMessagesByRowKeys.query({
       roomId: currentRoomId.value,
       rowKeys: replyRowKeys,
     });
-    for (const messageByRowKey of messagesByRowKeys) replyMap.value.set(messageByRowKey.rowKey, messageByRowKey);
+    for (const message of messages) replyMap.value.set(message.rowKey, message);
   };
 };

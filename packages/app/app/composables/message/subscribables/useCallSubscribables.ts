@@ -33,12 +33,12 @@ export const useCallSubscribables = () => {
       const participantMap = await $trpc.callSession.readCallParticipantMap.query({ callSessionId });
       setParticipantMap(callSessionId, participantMap);
 
-      const participantJoinUnsubscribable = $trpc.callSession.onJoinCall.subscribe(callSessionId, {
+      const joinCallUnsubscribable = $trpc.callSession.onJoinCall.subscribe(callSessionId, {
         onData: (participant) => {
           createCallParticipant(callSessionId, participant);
         },
       });
-      const participantLeaveUnsubscribable = $trpc.callSession.onLeaveCall.subscribe(callSessionId, {
+      const leaveCallUnsubscribable = $trpc.callSession.onLeaveCall.subscribe(callSessionId, {
         onData: (id) => {
           deleteCallParticipant(callSessionId, id);
           deleteSpeaker(id);
@@ -49,9 +49,9 @@ export const useCallSubscribables = () => {
           setParticipantHandRaised(callSessionId, id, isHandRaised);
         },
       });
-      const muteChangedUnsubscribable = $trpc.callSession.onSetMute.subscribe(callSessionId, {
-        onData: (muteChange) => {
-          setParticipantMuted(callSessionId, muteChange.id, muteChange.isMuted);
+      const setMuteUnsubscribable = $trpc.callSession.onSetMute.subscribe(callSessionId, {
+        onData: ({ id, isMuted }) => {
+          setParticipantMuted(callSessionId, id, isMuted);
         },
       });
       const setCameraUnsubscribable = $trpc.callSession.onSetCamera.subscribe(callSessionId, {
@@ -63,10 +63,10 @@ export const useCallSubscribables = () => {
       return () => {
         setCurrentRoomCallSessionId("");
         clearSpeakers();
-        participantJoinUnsubscribable.unsubscribe();
-        participantLeaveUnsubscribable.unsubscribe();
+        joinCallUnsubscribable.unsubscribe();
+        leaveCallUnsubscribable.unsubscribe();
         setHandRaisedUnsubscribable.unsubscribe();
-        muteChangedUnsubscribable.unsubscribe();
+        setMuteUnsubscribable.unsubscribe();
         setCameraUnsubscribable.unsubscribe();
       };
     },
