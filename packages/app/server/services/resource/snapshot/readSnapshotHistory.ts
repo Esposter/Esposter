@@ -26,7 +26,7 @@ export const readSnapshotHistory = async (
 ): Promise<SnapshotVersion[]> => {
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   const prefix = `${id}/${channel}/`;
-  const entries: Except<SnapshotVersion, "isCurrent">[] = [];
+  const snapshotVersions: Except<SnapshotVersion, "isCurrent">[] = [];
   // The reason and the label ride the blob's own metadata, which is what lets a row say what it is without
   // The listing opening a single snapshot — the alternative is one download per row on every history read
   for await (const blob of containerClient.listBlobsByHierarchy("/", { includeMetadata: true, prefix })) {
@@ -37,7 +37,7 @@ export const readSnapshotHistory = async (
     // Typed. A snapshot written before either field existed simply has neither, which reads as an unlabelled
     // Row rather than as a parse failure
     const { label = "", reason, summary = "" } = blob.metadata ?? {};
-    entries.push({
+    snapshotVersions.push({
       channel,
       label: getDecodedUriComponent(label, label),
       reason: reason as SnapshotReason | undefined,
@@ -46,5 +46,7 @@ export const readSnapshotHistory = async (
       version,
     });
   }
-  return entries.map((entry) => Object.assign(entry, { isCurrent: entry.version === currentVersion }));
+  return snapshotVersions.map((snapshotVersion) =>
+    Object.assign(snapshotVersion, { isCurrent: snapshotVersion.version === currentVersion }),
+  );
 };
