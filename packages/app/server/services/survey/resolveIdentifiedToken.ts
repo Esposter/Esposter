@@ -2,7 +2,7 @@ import type { SurveyResponseModeValidator } from "@@/server/models/survey/Survey
 import type { Clause } from "@esposter/azure";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { invalidParticipantTokenError } from "@@/server/services/survey/invalidParticipantTokenError";
+import { getInvalidParticipantTokenError } from "@@/server/services/survey/getInvalidParticipantTokenError";
 import { BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { getTopNEntities } from "@esposter/db";
 import { AzureTable, ProgramParticipantEntity, ResourceType } from "@esposter/db-schema";
@@ -10,12 +10,12 @@ import { AzureTable, ProgramParticipantEntity, ResourceType } from "@esposter/db
 // The program is the issuer, the survey is the gate — a token only passes when it was issued by a
 // Program actually bound to this survey, so another survey's token is as good as a forged one
 export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, surveyId, participantToken) => {
-  if (!participantToken) throw invalidParticipantTokenError();
+  if (!participantToken) throw getInvalidParticipantTokenError();
 
   const survey = await db.query.resources.findFirst({
     where: { deletedAt: { isNull: true }, id: { eq: surveyId }, type: { eq: ResourceType.Survey } },
   });
-  if (!survey) throw invalidParticipantTokenError();
+  if (!survey) throw getInvalidParticipantTokenError();
   // Only the survey's owner can bind it to a program, so their programs are the whole candidate set.
   // A recycle-binned program stays in the set: its token links were already distributed to participants,
   // And only an actual purge — not a recoverable soft-delete — should invalidate them.
@@ -43,5 +43,5 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, su
     });
     if (participant) return participantToken;
   }
-  throw invalidParticipantTokenError();
+  throw getInvalidParticipantTokenError();
 };

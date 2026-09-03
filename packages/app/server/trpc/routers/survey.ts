@@ -4,7 +4,7 @@ import type { SurveyResponseRecords } from "#shared/models/resource/survey/Surve
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { transformPublishedBlobUrls } from "@@/server/services/resource/transformPublishedBlobUrls";
 import { countSurveyResponses } from "@@/server/services/survey/countSurveyResponses";
-import { invalidParticipantTokenError } from "@@/server/services/survey/invalidParticipantTokenError";
+import { getInvalidParticipantTokenError } from "@@/server/services/survey/getInvalidParticipantTokenError";
 import { readSurveyResponseRecords } from "@@/server/services/survey/readSurveyResponseRecords";
 import { resolveSurveyResponseRead } from "@@/server/services/survey/resolveSurveyResponseRead";
 import { resolveSurveyResponseWrite } from "@@/server/services/survey/resolveSurveyResponseWrite";
@@ -123,7 +123,7 @@ export const surveyRouter = router({
       // A resume must carry the identity it started with, so swapping tokens mid-response is a forgery.
       // Only Identified mode resolves a token to compare — Anonymous carries no identity to contradict
       if (participantToken && participantToken !== surveyResponse.participantToken)
-        throw invalidParticipantTokenError();
+        throw getInvalidParticipantTokenError();
       // Response models are plain records, so duplicates are detected structurally rather than by reference.
       // A page-only write persists only when it advances the resume position — identical answers on the same
       // Or an earlier page is a no-op (and must not regress a stored later page)

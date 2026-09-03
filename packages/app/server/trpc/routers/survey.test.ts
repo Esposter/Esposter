@@ -166,24 +166,24 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await createSurveyResponse(newResource.id, 1);
-    const readSurveyResponse = await caller.readSurveyResponse({
+    const surveyResponse = await caller.readSurveyResponse({
       partitionKey: newSurveyResponse.partitionKey,
       rowKey: newSurveyResponse.rowKey,
     });
 
-    expect(readSurveyResponse).toStrictEqual(newSurveyResponse);
+    expect(surveyResponse).toStrictEqual(newSurveyResponse);
   });
 
   test("reads undefined survey response with non-existent id", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const readSurveyResponse = await caller.readSurveyResponse({
+    const surveyResponse = await caller.readSurveyResponse({
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
 
-    expect(readSurveyResponse).toBeUndefined();
+    expect(surveyResponse).toBeUndefined();
   });
 
   test("updates survey response", async () => {

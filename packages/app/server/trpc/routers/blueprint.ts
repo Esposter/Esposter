@@ -5,7 +5,7 @@ import { captureBlueprintInputSchema } from "#shared/models/db/blueprint/Capture
 import { deployBlueprintInputSchema } from "#shared/models/db/blueprint/DeployBlueprintInput";
 import { blueprintResourceSchema } from "#shared/models/resource/blueprint/BlueprintResource";
 import { captureBlueprint } from "@@/server/services/blueprint/captureBlueprint";
-import { createInvalidBlueprintError } from "@@/server/services/blueprint/createInvalidBlueprintError";
+import { getInvalidBlueprintError } from "@@/server/services/blueprint/getInvalidBlueprintError";
 import { deployBlueprint } from "@@/server/services/blueprint/deployBlueprint";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { router } from "@@/server/trpc";
@@ -24,7 +24,7 @@ export const blueprintRouter = router({
     BlueprintDeployment[]
   >(async ({ ctx, input: { parameterValues } }) => {
     const content = await readResourceContent(blueprintResourceSchema, ctx.resource.id);
-    if (content === undefined) throw createInvalidBlueprintError("cannot deploy blueprint without content");
+    if (content === undefined) throw getInvalidBlueprintError("cannot deploy blueprint without content");
 
     return deployBlueprint(ctx, content, parameterValues);
   }),

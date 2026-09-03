@@ -3,7 +3,7 @@ import type { BlueprintEntry } from "#shared/models/resource/blueprint/Blueprint
 import { blueprintEntrySchema } from "#shared/models/resource/blueprint/BlueprintEntry";
 import { BLUEPRINT_ENTRY_TOKEN_REGEX } from "#shared/services/resource/blueprint/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { createInvalidBlueprintError } from "@@/server/services/blueprint/createInvalidBlueprintError";
+import { getInvalidBlueprintError } from "@@/server/services/blueprint/getInvalidBlueprintError";
 import { mapBlueprintEntryContentStrings } from "@@/server/services/blueprint/mapBlueprintEntryContentStrings";
 
 // Pre-validates every substituted entry — its name against the resource name rules, and its content against
@@ -19,7 +19,7 @@ export const validateBlueprintEntries = (entries: BlueprintEntry[]): Map<Bluepri
   const referencesByKey = new Map<BlueprintEntry["key"], string[]>();
   for (const entry of entries) {
     if (!blueprintEntrySchema.shape.name.safeParse(entry.name).success)
-      throw createInvalidBlueprintError(`invalid name for entry ${entry.key}`);
+      throw getInvalidBlueprintError(`invalid name for entry ${entry.key}`);
 
     const references = new Set<string>();
     const content = mapBlueprintEntryContentStrings(entry, (value) =>
@@ -33,7 +33,7 @@ export const validateBlueprintEntries = (entries: BlueprintEntry[]): Map<Bluepri
 
     const { contentSchema } = ResourceDefinitionMap[entry.type];
     if (!contentSchema.safeParse(content).success)
-      throw createInvalidBlueprintError(`invalid content for entry ${entry.key}`);
+      throw getInvalidBlueprintError(`invalid content for entry ${entry.key}`);
   }
   return referencesByKey;
 };

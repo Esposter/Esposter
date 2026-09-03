@@ -225,7 +225,7 @@ const createResourcesWhere = (
 };
 
 export const resourceRouter = router({
-  count: standardAuthedProcedure.input(resourceFilterInputSchema.prefault({})).query<number>(
+  countResources: standardAuthedProcedure.input(resourceFilterInputSchema.prefault({})).query<number>(
     async ({ ctx, input }) =>
       takeOne(
         await ctx.db

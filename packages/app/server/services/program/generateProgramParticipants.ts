@@ -5,7 +5,7 @@ import type { Resource } from "@esposter/db-schema";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { DatasetProviderMap } from "@@/server/services/dataset/DatasetProviderMap";
-import { danglingProgramBindingError } from "@@/server/services/program/danglingProgramBindingError";
+import { getDanglingProgramBindingError } from "@@/server/services/program/getDanglingProgramBindingError";
 import { getProgramParticipantId } from "@@/server/services/program/getProgramParticipantId";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { AZURE_MAX_BATCH_SIZE, AZURE_MAX_PAGE_SIZE, getPartitionKeyFilter } from "@esposter/azure";
@@ -34,7 +34,7 @@ export const generateProgramParticipants = async (
   programId: Resource["id"],
 ): Promise<ProgramParticipant[]> => {
   const content = await readResourceContent(programResourceSchema, programId);
-  if (!content?.audience || !content.keyColumn) throw danglingProgramBindingError();
+  if (!content?.audience || !content.keyColumn) throw getDanglingProgramBindingError();
   // A deleted audience makes its provider throw UNAUTHORIZED — surfaced as the program's own
   // Dangling-binding error rather than thrown through as if the owner had lost access to their program.
   // Every other failure is a real fault and propagates, so a transient storage or parse error is never
@@ -43,11 +43,11 @@ export const generateProgramParticipants = async (
   const { columns, rows } = await getResultAsync(() => DatasetProviderMap[audience.type](ctx, audience)).match(
     (dataset) => dataset,
     (error) => {
-      if (error instanceof TRPCError && error.code === "UNAUTHORIZED") throw danglingProgramBindingError();
+      if (error instanceof TRPCError && error.code === "UNAUTHORIZED") throw getDanglingProgramBindingError();
       throw error;
     },
   );
-  if (!columns.some(({ name }) => name === content.keyColumn)) throw danglingProgramBindingError();
+  if (!columns.some(({ name }) => name === content.keyColumn)) throw getDanglingProgramBindingError();
 
   const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
   // The capped page is a warm cache, never the source of truth — a participant past the cap is simply one
