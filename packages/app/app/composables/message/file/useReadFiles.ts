@@ -1,14 +1,14 @@
 import type { FileEntity } from "@esposter/db-schema";
 
-import { useDownloadFileStore } from "@/store/message/file";
+import { useFileStore } from "@/store/message/file";
 import { useRoomStore } from "@/store/message/room";
 import { READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 
 export const useReadFiles = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
-  const downloadFileStore = useDownloadFileStore();
-  const { fileUrlMap } = storeToRefs(downloadFileStore);
+  const fileStore = useFileStore();
+  const { fileUrlMap } = storeToRefs(fileStore);
   return async (files: FileEntity[]) => {
     const roomId = currentRoomId.value;
     if (!roomId) return;
@@ -21,6 +21,6 @@ export const useReadFiles = () => {
     });
     if (newFiles.length === 0) return;
 
-    await downloadFileStore.storeReadFileUrls(roomId, newFiles);
+    await fileStore.readFileUrls(roomId, newFiles);
   };
 };

@@ -2,11 +2,11 @@
 import { downloadUrl } from "@/services/app/downloadUrl";
 import { getInferredMimetype } from "@/services/file/getInferredMimetype";
 import { MAX_ZOOM_SCALE, MIN_ZOOM_SCALE, ZOOM_SCALE_PER_WHEEL_STEP } from "@/services/message/file/constants";
-import { useDownloadFileStore } from "@/store/message/file";
+import { useFileStore } from "@/store/message/file";
 import { useFileDialogStore } from "@/store/message/file/dialog";
 
-const downloadFileStore = useDownloadFileStore();
-const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
+const fileStore = useFileStore();
+const { fileUrlMap, viewableFiles } = storeToRefs(fileStore);
 const fileDialogStore = useFileDialogStore();
 const { viewingFileId } = storeToRefs(fileDialogStore);
 const { isOpen, item: file } = useSingletonDialog(viewingFileId, () =>

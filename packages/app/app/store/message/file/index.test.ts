@@ -6,13 +6,13 @@ import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
-import { useDownloadFileStore } from "@/store/message/file";
+import { useFileStore } from "@/store/message/file";
 import { createMessageEntity, MessageType, READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-describe(useDownloadFileStore, () => {
+describe(useFileStore, () => {
   const server = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const otherRoomId = crypto.randomUUID();
@@ -40,8 +40,8 @@ describe(useDownloadFileStore, () => {
     server.use(trpcMsw.message.generateDownloadFileSasUrls.query(() => [freshUrl]));
     vi.useFakeTimers();
     const dataStore = useDataStore();
-    const downloadFileStore = useDownloadFileStore();
-    const { fileUrlMap } = storeToRefs(downloadFileStore);
+    const fileStore = useFileStore();
+    const { fileUrlMap } = storeToRefs(fileStore);
     const { getSlice } = dataStore;
     getSlice(roomId).items.value.push(
       createMessageEntity({
@@ -67,8 +67,8 @@ describe(useDownloadFileStore, () => {
     expect.hasAssertions();
 
     const dataStore = useDataStore();
-    const downloadFileStore = useDownloadFileStore();
-    const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
+    const fileStore = useFileStore();
+    const { fileUrlMap, viewableFiles } = storeToRefs(fileStore);
     const { getSlice } = dataStore;
     const files = [
       { mimetype: "image/png", name: "image" },
@@ -96,8 +96,8 @@ describe(useDownloadFileStore, () => {
     expect.hasAssertions();
 
     const dataStore = useDataStore();
-    const downloadFileStore = useDownloadFileStore();
-    const { viewableFiles } = storeToRefs(downloadFileStore);
+    const fileStore = useFileStore();
+    const { viewableFiles } = storeToRefs(fileStore);
     const { getSlice } = dataStore;
     getSlice(roomId).items.value.push(
       createMessageEntity({
@@ -123,8 +123,8 @@ describe(useDownloadFileStore, () => {
     server.use(trpcMsw.message.generateDownloadFileSasUrls.query(generateDownloadFileSasUrls));
     vi.useFakeTimers();
     const dataStore = useDataStore();
-    const downloadFileStore = useDownloadFileStore();
-    const { fileUrlMap } = storeToRefs(downloadFileStore);
+    const fileStore = useFileStore();
+    const { fileUrlMap } = storeToRefs(fileStore);
     const { getSlice } = dataStore;
     const files = Array.from({ length: MAX_READ_LIMIT + 1 }, () => ({
       filename,
@@ -159,7 +159,7 @@ describe(useDownloadFileStore, () => {
         return [freshUrl];
       }),
     );
-    useDownloadFileStore();
+    useFileStore();
     await MessageHookMap[Operation.Create].run(
       createMessageEntity({
         files: [{ filename, hasThumbnail: false, id: fileId, mimetype: "text/plain", size: 1 }],
@@ -179,8 +179,8 @@ describe(useDownloadFileStore, () => {
     const generateDownloadFileSasUrls = vi.fn<() => string[]>(() => [freshUrl]);
     server.use(trpcMsw.message.generateDownloadFileSasUrls.query(generateDownloadFileSasUrls));
     vi.useFakeTimers();
-    const downloadFileStore = useDownloadFileStore();
-    const { fileUrlMap } = storeToRefs(downloadFileStore);
+    const fileStore = useFileStore();
+    const { fileUrlMap } = storeToRefs(fileStore);
     fileUrlMap.value.set(fileId, { expiresAt: Date.now() + READ_SAS_REFRESH_INTERVAL_MS * 10, url: staleUrl });
     await vi.advanceTimersByTimeAsync(READ_SAS_REFRESH_INTERVAL_MS);
 
