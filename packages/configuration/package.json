@@ -70,6 +70,7 @@
     "@vue/language-core": "catalog:",
     "ctix": "catalog:",
     "eslint-plugin-depend": "catalog:",
+    "eslint-plugin-jsonc": "catalog:",
     "eslint-plugin-oxlint": "catalog:",
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",

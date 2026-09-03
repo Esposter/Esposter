@@ -10,16 +10,19 @@ So while `.oxlintrc.json` is being edited, run the **check-only** `pnpm lint` (o
 
 Oxlint keeps the `correctness` category enabled by default even when the config specifies other categories — but `eslint-plugin-oxlint` **replaces** its default categories with whatever the config lists. If `correctness` is missing from the explicit `categories` map, the plugin assumes the category is off and leaves every correctness rule's ESLint twin enabled — ESLint then re-runs the expensive type-aware rules (`no-floating-promises`, `await-thenable`, …) that oxlint/tsgolint already checks. Symptom: a rule shows up in ESLint `TIMING` output even though oxlint covers it. See `packages/app/content/docs/proposals/refactors/eslint-to-oxlint-migration.md` for the ongoing migration process.
 
-**An unimported config file under `eslint/plugins/` is not automatically dead.** `plugins/json.js` is deliberately left out of `plugins/index.js`: it stages `json/recommended` and `json/sort-keys`, kept ready to switch on rather than rewritten when the tree can take them. Check a file for a rule set staged this way before calling it unreferenced.
-
-Two things stand between that file and green, both measured by wiring it in and reading the run:
-
-- **`json/sort-keys` reports six figures**, and nearly all of it is generated — the drizzle migration snapshots and the asset data blobs, where sorting the keys rewrites an artifact its generator owns. What survives excluding those is package manifests, where alphabetical is the _wrong_ order: the rule wants `description` before `version` and `devDependencies` before `scripts`. Enabling it means ignoring the generated trees and deciding that manifests are exempt, not a mechanical pass.
-- **A JSONC file fails to parse under the `json/json` language** — `.vscode/settings.json` reports `Unexpected character '/'` on its first comment. Those paths need a second block using `json/jsonc`.
-
-`json/recommended` on its own is already green repo-wide, and oxlint lints no JSON at all, so it is the half that can go on whenever someone wants it.
-
 **A manual ESLint disable is dead weight only for a rule oxlint actually _runs_.** `eslint-plugin-oxlint` is appended last in every flat config, so its `"off"` entries win — but it generates one per rule in an enabled **category** and then deletes that entry again for every rule `.oxlintrc.json` deactivates, because a rule turned off is a rule not covered. An oxlint-side `"off"` and an ESLint-side `"off"` for the same rule are therefore a **pair**, not a duplicate: drop the ESLint half as redundant and the rule comes back on in ESLint alone, reporting across a tree oxlint passes clean. Check the root map for an `"off"` before deleting any ESLint disable. Notable exception: its `vue-svelte-astro-exceptions` config deliberately keeps `no-unused-vars`, `@typescript-eslint/no-unused-vars`, and `@typescript-eslint/consistent-type-imports` **enabled on `.vue` files**, so vue-side offs for those are load-bearing. Verify with `eslint --print-config <file>` on both a `.ts` and a `.vue` file before deleting a manual disable.
+
+## JSON linting — `eslint-plugin-jsonc`, and the manifest exception
+
+`plugins/json.js` runs the plugin's recommended set over the repo's JSON — oxlint lints no JSON at all, so nothing here is a duplicate. Three things about the wiring are not guessable:
+
+- **`recommended-with-json` bans comments, so a JSONC file needs the other config.** `recommended-with-jsonc` is the same set minus `jsonc/no-comments`, and the files that take it are JSONC by contract rather than by extension — the editor settings and the tsconfigs. Matched by the wrong one, a comment is a hard parse failure rather than a rule report.
+- **A manifest stays on `@eslint/json`.** `depend/ban-dependencies` (`plugins/depend.js`) listens on `Document > Object > Member`, which is momoa's AST and not the ESTree-shaped tree this plugin parses to — and a file carries exactly one `language`. A jsonc entry reaching a manifest leaves that rule matching nothing, which looks exactly like passing, so manifests are excluded here rather than covered twice.
+- **Generated JSON is excluded** — migration snapshots and asset blobs are written and re-read by their generators. They are also most of the JSON in the repo, so the exclusion is most of the run.
+
+**Don't add `jsonc/sort-keys`.** It ships in `flat/all` rather than in either recommended set, and alphabetical is the wrong order for the files it would reach: it wants `description` before `version` and `devDependencies` before `scripts` in a manifest, and the generated snapshots underneath it are not ours to reorder.
+
+The `**/*.json` glob itself lives in `eslint/jsonFilePatterns.js` because three configs have to agree on it — the one that lints JSON, plus `nuxt/javascript` and perfectionist, which match every file and would otherwise run script rules against a JSON AST.
 
 ## A bump can enable a rule that contradicts the repo's own style
 
