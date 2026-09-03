@@ -11,27 +11,37 @@ describe(hasPermission, () => {
     expect.hasAssertions();
 
     const owner = getMockSession().user;
-    const result = await hasPermission(getMockContext().db, owner.id, getRoomId(), RoomPermission.ManageRoom);
+    const hasManageRoom = await hasPermission(getMockContext().db, owner.id, getRoomId(), RoomPermission.ManageRoom);
 
-    expect(result).toBe(true);
+    expect(hasManageRoom).toBe(true);
   });
 
   test("returns false for non-existent room", async () => {
     expect.hasAssertions();
 
     const owner = getMockSession().user;
-    const result = await hasPermission(getMockContext().db, owner.id, crypto.randomUUID(), RoomPermission.ReadMessages);
+    const hasReadMessages = await hasPermission(
+      getMockContext().db,
+      owner.id,
+      crypto.randomUUID(),
+      RoomPermission.ReadMessages,
+    );
 
-    expect(result).toBe(false);
+    expect(hasReadMessages).toBe(false);
   });
 
   test("administrator bit grants all permissions", async () => {
     expect.hasAssertions();
 
     const { member } = await setupMemberWithRole(RoomPermission.Administrator, 1);
-    const result = await hasPermission(getMockContext().db, member.id, getRoomId(), RoomPermission.ManageMessages);
+    const hasManageMessages = await hasPermission(
+      getMockContext().db,
+      member.id,
+      getRoomId(),
+      RoomPermission.ManageMessages,
+    );
 
-    expect(result).toBe(true);
+    expect(hasManageMessages).toBe(true);
   });
 
   test("specific permission check works", async () => {

@@ -14,9 +14,9 @@ describe(getTopRolePosition, () => {
     expect.hasAssertions();
 
     const owner = getMockSession().user;
-    const result = await getTopRolePosition(getMockContext().db, owner.id, getRoomId());
+    const topPosition = await getTopRolePosition(getMockContext().db, owner.id, getRoomId());
 
-    expect(result).toBe(-1);
+    expect(topPosition).toBe(-1);
   });
 
   test("returns the assigned role position", async () => {
@@ -28,9 +28,9 @@ describe(getTopRolePosition, () => {
     const role = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: owner.id });
 
-    const result = await getTopRolePosition(getMockContext().db, owner.id, roomId);
+    const topPosition = await getTopRolePosition(getMockContext().db, owner.id, roomId);
 
-    expect(result).toBe(position);
+    expect(topPosition).toBe(position);
   });
 
   test("returns max position across multiple roles", async () => {
@@ -49,9 +49,9 @@ describe(getTopRolePosition, () => {
     await roleCaller.assignRole({ roleId: moderatorRole.id, roomId, userId: owner.id });
     await roleCaller.assignRole({ roleId: seniorRole.id, roomId, userId: owner.id });
 
-    const result = await getTopRolePosition(getMockContext().db, owner.id, roomId);
+    const topPosition = await getTopRolePosition(getMockContext().db, owner.id, roomId);
 
-    expect(result).toBe(updatedPosition);
+    expect(topPosition).toBe(updatedPosition);
   });
 
   test("returns positions across multiple roomsInMessage", async () => {
@@ -71,9 +71,9 @@ describe(getTopRolePosition, () => {
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: owner.id });
     await roleCaller.assignRole({ roleId: otherRole.id, roomId: otherRoom.id, userId: owner.id });
 
-    const result = await getTopRolePosition(getMockContext().db, owner.id, [roomId, otherRoom.id]);
+    const topPositionMap = await getTopRolePosition(getMockContext().db, owner.id, [roomId, otherRoom.id]);
 
-    expect(result.get(roomId)).toBe(position);
-    expect(result.get(otherRoom.id)).toBe(updatedPosition);
+    expect(topPositionMap.get(roomId)).toBe(position);
+    expect(topPositionMap.get(otherRoom.id)).toBe(updatedPosition);
   });
 });

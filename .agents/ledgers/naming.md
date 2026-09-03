@@ -20,7 +20,7 @@
 | `server/composables`, `server/api`, `server/routes`                                                                                         | 2026-09-03 | `get*` vs `read*` on the server side                                                            |
 | `server/services/message`                                                                                                                   | —          |                                                                                                 |
 | `server/services/resource`                                                                                                                  | —          |                                                                                                 |
-| `server/services` — `room`, `role`, `user`, `friend`, `post`                                                                                | —          |                                                                                                 |
+| `server/services` — `room`, `role`, `user`, `friend`, `post`                                                                                | 2026-09-03 |                                                                                                 |
 | `server/services` — `blueprint`, `program`, `survey`, `dataset`, `dashboard`, `emailEditor`                                                 | —          |                                                                                                 |
 | `server/services` — `azure`, `storage`, `livekit`, `notification`, `events`, `request`                                                      | —          |                                                                                                 |
 | `server/services` — `auth`, `rateLimiter`, `achievement`, `pagination`, `db`, `blobState`                                                   | —          |                                                                                                 |
@@ -46,6 +46,11 @@ the grounds that a rename is expensive — that is the argument
   `*ByIds` read dropped it, but these two share a feature with a paginated read of the same rows
   (`readMembers`, `readMessages`), so the suffix is what separates two procedures rather than marking a batch
   upgrade — and dropping it collides. What the pair should be called instead is the open question.
+- **`list*` is a third async fetch prefix beside `read*`, and it cannot be settled one side at a time.**
+  `listRoomProfileImageBlobNames` wraps `@esposter/db`'s `listBlobNames`, which wraps Azure's own
+  `listBlobsFlat`; renaming ours to `read*` while the helper under it keeps `list*` splits one family across two
+  spellings. Whether `list*` is sanctioned for an enumerating fetch belongs to the `packages/db` pass, which owns
+  the name the wrapper mirrors.
 - **`getIsAuthed` / `getIsRateLimited` / `getIsEntityIdEqualComparator` — `get*` is right, the `Is` is not.**
   All three return a function rather than a boolean, so `check*` would be wrong, but the `Is` still reads as a
   predicate. The middleware pair wants a name saying what it builds; the comparator already has one.
