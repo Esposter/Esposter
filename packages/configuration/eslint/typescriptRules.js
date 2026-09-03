@@ -1,4 +1,9 @@
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
+// The map-naming selector reads these three shapes in every branch, so each is written once: the two name
+// Patterns it matches, and the type references that say the annotated thing is a lookup table.
+const MAP_NAME_REGEX = "/^[a-z][A-Za-z0-9]*(By|To)[A-Z]/";
+const BY_MAP_NAME_REGEX = "/^[a-z][A-Za-z0-9]*By[A-Z]/";
+const MAP_TYPE_NAME_REGEX = "/^(Map|ReadonlyMap|Record)$/";
 // Everything typescript-eslint's strict/stylistic sets covered is now enforced natively by oxlint
 // (see /docs/proposals/refactors/eslint-to-oxlint-migration). The only survivor is `no-restricted-syntax`:
 // Oxlint has no selector-based rule yet, so these AST-selector bans stay on the ESLint side.
@@ -26,13 +31,16 @@ export default {
     {
       // One structure, one spelling: the repo's own lookup tables already fix the word order
       // (`EmojiGroupIconMap` is group -> icon), so a local reading `iconsByEmojiGroup` or `idToAlias` says the
-      // Same thing a second way. Only the map's own name is matched — a function keeps its `By<Selector>`, which
-      // Is why the `by*` branches exclude a function value or type: a map is data, and `byPage` on azure-mock's
-      // `PagedAsyncIterableIterator` is the azure sdk's own paging contract rather than a lookup we named.
+      // Same thing a second way. Every branch reads what the name is attached to rather than the name alone,
+      // Because the shape is what makes it a lookup: a map is data, so a function keeps its `By<Selector>`
+      // (`getDataSourceTypeByFileName`), `byPage` on azure-mock's `PagedAsyncIterableIterator` is the azure
+      // Sdk's own paging contract, and `isGroupedByType` is a boolean. So a lookup is recognised by a
+      // `Map`/`Record` annotation, a `new Map`/`Object.groupBy` initialiser, or an object literal — and the
+      // Object-literal branches take the `By` infix only, since `To` collides with the `usersToRooms` join
+      // Table's own name, which reads as `<key>To<value>` and is no more ours to rename than `byPage`.
       message:
         "Name a map `<key><value>Map` (or `<value>Map` where the key is a field the value already carries) — not `<value>By<key>` or `<key>To<value>`. See the naming skill.",
-      selector:
-        ":matches(VariableDeclarator[id.name=/^[a-z][A-Za-z0-9]*(By|To)[A-Z]/]:matches([init.callee.name='Map'], [init.callee.object.name='Object'][init.callee.property.name='groupBy']), :matches(PropertyDefinition, Property)[key.name=/^by[A-Z]/]:not([value.type=/^(Arrow)?FunctionExpression$/]), TSPropertySignature[key.name=/^by[A-Z]/]:not([typeAnnotation.typeAnnotation.type='TSFunctionType']), VariableDeclarator[id.name=/^by[A-Z]/]:not([init.type=/^(Arrow)?FunctionExpression$/]))",
+      selector: `:matches(VariableDeclarator[id.name=${MAP_NAME_REGEX}]:matches([init.callee.name='Map'], [init.callee.object.name='Object'][init.callee.property.name='groupBy'], [id.typeAnnotation.typeAnnotation.typeName.name=${MAP_TYPE_NAME_REGEX}]), VariableDeclarator[id.name=${BY_MAP_NAME_REGEX}]:matches([init.type='ObjectExpression'], [init.expression.type='ObjectExpression']), :matches(PropertyDefinition, TSPropertySignature)[key.name=${MAP_NAME_REGEX}][typeAnnotation.typeAnnotation.typeName.name=${MAP_TYPE_NAME_REGEX}], Property[key.name=${BY_MAP_NAME_REGEX}]:matches([value.type='ObjectExpression'], [value.callee.name='Map'], [value.callee.object.name='Object'][value.callee.property.name='groupBy']), :matches(PropertyDefinition, Property)[key.name=/^by[A-Z]/]:not([value.type=/^(Arrow)?FunctionExpression$/]), TSPropertySignature[key.name=/^by[A-Z]/]:not([typeAnnotation.typeAnnotation.type='TSFunctionType']), VariableDeclarator[id.name=/^by[A-Z]/]:not([init.type=/^(Arrow)?FunctionExpression$/]))`,
     },
     {
       message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
