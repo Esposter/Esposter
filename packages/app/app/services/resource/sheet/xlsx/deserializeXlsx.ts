@@ -10,8 +10,8 @@ export const deserializeXlsx = async (file: File, settings: XlsxFileSettings): P
   // Xlsx is one format of the one portable type that has it — the eight types that can neither import nor
   // Export would otherwise ship a workbook parser they can never run, so it is fetched when one is read
   const { readSheet } = await import("read-excel-file/browser");
-  const rawData = await readSheet(file, settings.configuration.sheetIndex + 1);
-  const [headerCells, ...bodyCells] = rawData;
+  const cellRows = await readSheet(file, settings.configuration.sheetIndex + 1);
+  const [headerCells, ...bodyCells] = cellRows;
   const sourceNames = headerCells
     ? headerCells.map((cell, index) => getSourceColumnName(cell?.toString() ?? "", index))
     : [];
