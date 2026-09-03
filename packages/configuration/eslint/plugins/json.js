@@ -1,5 +1,5 @@
 import jsonFilePatterns from "@esposter/configuration/eslint/jsonFilePatterns.js";
-import jsonc from "eslint-plugin-jsonc";
+import { configs } from "eslint-plugin-jsonc";
 import { defineConfig } from "eslint/config";
 
 // Generated JSON is not ours to lint: a drizzle migration snapshot is written and re-read by `db:gen`, and the
@@ -17,12 +17,12 @@ const PACKAGE_MANIFEST_FILE_PATTERNS = ["**/package.json"];
 
 export default defineConfig(
   {
-    extends: [jsonc.configs["flat/recommended-with-json"]],
+    extends: [configs["flat/recommended-with-json"]],
     files: jsonFilePatterns,
     ignores: [...GENERATED_JSON_FILE_PATTERNS, ...JSONC_FILE_PATTERNS, ...PACKAGE_MANIFEST_FILE_PATTERNS],
   },
   {
-    extends: [jsonc.configs["flat/recommended-with-jsonc"]],
+    extends: [configs["flat/recommended-with-jsonc"]],
     files: JSONC_FILE_PATTERNS,
     ignores: GENERATED_JSON_FILE_PATTERNS,
   },
