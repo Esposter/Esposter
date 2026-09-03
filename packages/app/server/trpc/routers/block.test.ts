@@ -32,7 +32,7 @@ describe("block", () => {
     expect.hasAssertions();
 
     const user = await createMockUser(mockContext.db);
-    const blockedUser = await blockCaller.blockUser(user.id);
+    const blockedUser = await blockCaller.createBlock(user.id);
 
     expect(blockedUser.id).toBe(user.id);
   });
@@ -41,7 +41,7 @@ describe("block", () => {
     expect.hasAssertions();
 
     const { user } = await createFriendship(mockContext);
-    await blockCaller.blockUser(user.id);
+    await blockCaller.createBlock(user.id);
     const friendUsers = await friendCaller.readFriends();
 
     expect(friendUsers).toHaveLength(0);
@@ -52,7 +52,7 @@ describe("block", () => {
 
     const userId = getMockSession().user.id;
 
-    await expect(blockCaller.blockUser(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(blockCaller.createBlock(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Block, userId).message}]`,
     );
   });
@@ -62,7 +62,7 @@ describe("block", () => {
 
     const userId = crypto.randomUUID();
 
-    await expect(blockCaller.blockUser(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(blockCaller.createBlock(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.User, userId).message}]`,
     );
   });
@@ -71,8 +71,8 @@ describe("block", () => {
     expect.hasAssertions();
 
     const user = await createMockUser(mockContext.db);
-    await blockCaller.blockUser(user.id);
-    const blockedUser = await blockCaller.blockUser(user.id);
+    await blockCaller.createBlock(user.id);
+    const blockedUser = await blockCaller.createBlock(user.id);
 
     expect(blockedUser.id).toBe(user.id);
   });
@@ -81,7 +81,7 @@ describe("block", () => {
     expect.hasAssertions();
 
     const user = await createMockUser(mockContext.db);
-    await blockCaller.blockUser(user.id);
+    await blockCaller.createBlock(user.id);
     const blockedUsers = await blockCaller.readBlockedUsers();
 
     expect(blockedUsers).toHaveLength(1);
@@ -92,8 +92,8 @@ describe("block", () => {
     expect.hasAssertions();
 
     const user = await createMockUser(mockContext.db);
-    await blockCaller.blockUser(user.id);
-    await blockCaller.unblockUser(user.id);
+    await blockCaller.createBlock(user.id);
+    await blockCaller.deleteBlock(user.id);
     const blockedUsers = await blockCaller.readBlockedUsers();
 
     expect(blockedUsers).toHaveLength(0);
@@ -104,7 +104,7 @@ describe("block", () => {
 
     const userId = getMockSession().user.id;
 
-    await expect(blockCaller.unblockUser(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(blockCaller.deleteBlock(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Block, userId).message}]`,
     );
   });
@@ -114,7 +114,7 @@ describe("block", () => {
 
     const userId = crypto.randomUUID();
 
-    await expect(blockCaller.unblockUser(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(blockCaller.deleteBlock(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Block, userId).message}]`,
     );
   });
@@ -123,7 +123,7 @@ describe("block", () => {
     expect.hasAssertions();
 
     const blockedUser = await createMockUser(mockContext.db);
-    await blockCaller.blockUser(blockedUser.id);
+    await blockCaller.createBlock(blockedUser.id);
     const searchedUsers = await friendCaller.searchUsers(blockedUser.name);
 
     expect(searchedUsers.every(({ id }) => id !== blockedUser.id)).toBe(true);
@@ -134,7 +134,7 @@ describe("block", () => {
 
     const user = getMockSession().user;
     const { user: blockerUser } = await mockSessionOnce(mockContext.db);
-    await blockCaller.blockUser(user.id);
+    await blockCaller.createBlock(user.id);
     await mockSessionOnce(mockContext.db, user);
 
     const searchedUsers = await friendCaller.searchUsers(blockerUser.name);

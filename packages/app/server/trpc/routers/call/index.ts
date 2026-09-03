@@ -43,13 +43,13 @@ const roomCallInputSchema = z.object({
   ...roomIdSchema.shape,
   threadRootRowKey: z.string().default(""),
 });
-const setCameraInputSchema = z.object({ ...callSessionIdSchema.shape, isCameraEnabled: z.boolean() });
+const setCameraEnabledInputSchema = z.object({ ...callSessionIdSchema.shape, isCameraEnabled: z.boolean() });
 const setHandRaisedInputSchema = z.object({
   ...callSessionIdSchema.shape,
   isHandRaised: z.boolean(),
   participantId: z.string(),
 });
-const setMuteInputSchema = z.object({ ...callSessionIdSchema.shape, isMuted: z.boolean() });
+const setMutedInputSchema = z.object({ ...callSessionIdSchema.shape, isMuted: z.boolean() });
 // The live participant row is the only place a per-session flag lives, so every setter reaches it the same
 // Way — a session with no row has not joined, whether it is the caller's own or the target of a moderation
 const requireCallParticipant = (callSessionId: string, sessionId: string) => {
@@ -131,7 +131,7 @@ export const baseCallRouter = router({
       yield id;
     }
   }),
-  onSetCamera: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
+  onSetCameraEnabled: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
     ctx,
     input,
     signal,
@@ -157,7 +157,7 @@ export const baseCallRouter = router({
       yield { id, isHandRaised };
     }
   }),
-  onSetMute: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
+  onSetMuted: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
     ctx,
     input,
     signal,
@@ -185,8 +185,8 @@ export const baseCallRouter = router({
   readCallSessionId: getMemberProcedure(roomCallInputSchema, "roomId").query<string>(
     ({ ctx, input: { roomId, threadRootRowKey } }) => readCallSessionId(ctx.db, roomId, threadRootRowKey),
   ),
-  setCamera: standardAuthedProcedure
-    .input(setCameraInputSchema)
+  setCameraEnabled: standardAuthedProcedure
+    .input(setCameraEnabledInputSchema)
     .mutation<void>(({ ctx, input: { callSessionId, isCameraEnabled } }) => {
       const sessionId = ctx.getSessionPayload.session.id;
       requireCallParticipant(callSessionId, sessionId).isCameraEnabled = isCameraEnabled;
@@ -215,8 +215,8 @@ export const baseCallRouter = router({
 
       callEventEmitter.emit("handRaisedChanged", { callSessionId, id: targetSessionId, isHandRaised });
     }),
-  setMute: standardAuthedProcedure
-    .input(setMuteInputSchema)
+  setMuted: standardAuthedProcedure
+    .input(setMutedInputSchema)
     .mutation<void>(({ ctx, input: { callSessionId, isMuted } }) => {
       const sessionId = ctx.getSessionPayload.session.id;
       requireCallParticipant(callSessionId, sessionId).isMuted = isMuted;

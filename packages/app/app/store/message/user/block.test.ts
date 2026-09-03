@@ -23,7 +23,7 @@ describe(useBlockStore, () => {
     expect.hasAssertions();
 
     server.use(
-      trpcMsw.block.blockUser.mutation(({ input: targetUserId }) => {
+      trpcMsw.block.createBlock.mutation(({ input: targetUserId }) => {
         if (targetUserId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
         return second;
       }),
@@ -43,7 +43,7 @@ describe(useBlockStore, () => {
     expect.hasAssertions();
 
     server.use(
-      trpcMsw.block.unblockUser.mutation(({ input: blockedUserId }) => {
+      trpcMsw.block.deleteBlock.mutation(({ input: blockedUserId }) => {
         if (blockedUserId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
 
         return blockedUserId;
@@ -66,8 +66,8 @@ describe(useBlockStore, () => {
 
     const { promise: unblockReleased, resolve: releaseUnblock } = Promise.withResolvers<void>();
     server.use(
-      trpcMsw.block.blockUser.mutation(() => first),
-      trpcMsw.block.unblockUser.mutation(async () => {
+      trpcMsw.block.createBlock.mutation(() => first),
+      trpcMsw.block.deleteBlock.mutation(async () => {
         await unblockReleased;
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
       }),
