@@ -4,7 +4,7 @@ import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
 import { createCallerFactory, publicProcedure, router } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockNoSessionOnce } from "@@/server/trpc/context.test";
-import { getIsRateLimited } from "@@/server/trpc/middleware/getIsRateLimited";
+import { getRateLimitedMiddleware } from "@@/server/trpc/middleware/getRateLimitedMiddleware";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The middleware only enforces in production, and the branch under test is the one taken when no address can be
@@ -15,9 +15,9 @@ vi.mock(import("#shared/util/environment/constants"), async (importOriginal) => 
 }));
 vi.mock(import("@@/server/services/request/getIpAddress"), () => ({ getIpAddress: () => undefined }));
 
-describe(getIsRateLimited, () => {
+describe(getRateLimitedMiddleware, () => {
   const testRouter = router({
-    ping: publicProcedure.use(getIsRateLimited(RateLimiterType.Standard)).query(() => true),
+    ping: publicProcedure.use(getRateLimitedMiddleware(RateLimiterType.Standard)).query(() => true),
   });
   const createTestCaller = createCallerFactory(testRouter);
 

@@ -2,7 +2,7 @@
 import type { LinkPreviewResponse, MessageEntity } from "@esposter/db-schema";
 
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
-import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
+import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { useDataStore } from "@/store/message/data";
 import { noop } from "@esposter/shared";
 
@@ -24,7 +24,7 @@ const deleteLinkPreviewResponse = async (onComplete: () => void) => {
     // Its embeds are read as the write is sent, so a rejected removal restores what the write ahead of it stored
     // Rather than what was on screen when the user confirmed
     applyOptimistic: () => {
-      const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }));
+      const message = items.value.find(getEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }));
       if (!message) return noop;
 
       const previousLinkPreviewResponse = message.linkPreviewResponse;

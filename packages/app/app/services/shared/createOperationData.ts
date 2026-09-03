@@ -2,7 +2,7 @@ import type { EntityIdKeys } from "@/models/entity/EntityIdKeys";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 import type { EntityTypeKey } from "@esposter/db-schema";
 
-import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
+import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { Operation, takeOne, uncapitalize } from "@esposter/shared";
 
 export const createOperationData = <
@@ -24,22 +24,22 @@ export const createOperationData = <
   const createItem = (newItem: TItem, isReversed?: true) => {
     // Guard against duplicate delivery from transport reconnections (e.g. SSE Last-Event-ID catch-up
     // Re-yielding stored events, WebPubSub reconnect buffering).
-    if (items.value.some(getIsEntityIdEqualComparator(idKeys as (keyof TItem & string)[], newItem))) return;
+    if (items.value.some(getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], newItem))) return;
     else if (isReversed) items.value.unshift(newItem);
     else items.value.push(newItem);
   };
   const updateItem = (updatedItem: Partial<TItem>) => {
     // Built once and then searched with, rather than inside the callback: the comparator closes over the
     // Target, so constructing it per element rebuilds the same predicate for every row in the list
-    const getIsUpdatedItem = getIsEntityIdEqualComparator(idKeys as (keyof TItem & string)[], updatedItem);
-    const index = items.value.findIndex(getIsUpdatedItem);
+    const checkIsUpdatedItem = getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], updatedItem);
+    const index = items.value.findIndex(checkIsUpdatedItem);
     if (index === -1) return;
 
     Object.assign(takeOne(items.value, index), updatedItem);
   };
   const deleteItem = (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => {
     items.value = items.value.filter(
-      (i) => !getIsEntityIdEqualComparator(idKeys as (keyof TItem & string)[], ids as Partial<TItem>)(i),
+      (i) => !getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], ids as Partial<TItem>)(i),
     );
   };
   return {

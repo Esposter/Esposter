@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
-import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
+import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useDataStore } from "@/store/message/data";
 import { useMessageDialogStore } from "@/store/message/dialog";
@@ -24,7 +24,7 @@ const deleteMessage = async (onComplete: () => void) => {
   await executeMutation(() => $trpc.message.deleteMessage.mutate({ partitionKey, rowKey }), {
     applyOptimistic: async () => {
       const deletedMessage = items.value.find(
-        getIsEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }),
+        getEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }),
       );
       await storeDeleteMessage({ partitionKey, rowKey });
       if (!deletedMessage) return noop;

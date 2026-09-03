@@ -1,7 +1,7 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
-import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
+import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useDataStore } from "@/store/message/data";
@@ -29,7 +29,7 @@ export const usePinStore = defineStore("message/pin", () => {
       // `dataStore.items` is the room on screen, so a pin toggled from elsewhere would find nothing there
       const message = dataStore
         .getSlice(input.partitionKey)
-        .items.value.find(getIsEntityIdEqualComparator<MessageEntity>(CompositeAzureKeyPath, input));
+        .items.value.find(getEntityIdEqualComparator<MessageEntity>(CompositeAzureKeyPath, input));
       if (!message) return;
 
       createMessage(message);

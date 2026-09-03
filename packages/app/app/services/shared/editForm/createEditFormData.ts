@@ -3,7 +3,7 @@ import type { EntityIdKeys } from "@/models/entity/EntityIdKeys";
 import type { ToData } from "@esposter/shared";
 import type { VForm } from "vuetify/components";
 
-import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
+import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { toRawDeep } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 
@@ -18,7 +18,7 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   const originalItem = computed(() => {
     const editedItemValue = editedItem.value;
     return editedItemValue
-      ? items.value.find((i) => getIsEntityIdEqualComparator(idKeys as (keyof TItem & string)[], editedItemValue)(i))
+      ? items.value.find((i) => getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], editedItemValue)(i))
       : undefined;
   });
   const isFullScreenDialog = ref(false);
@@ -40,11 +40,11 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   const isDirty = computed(() => !isEditFormValid.value || isSavable.value);
 
   const editItem = async (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => {
-    const isEntityIdEqualComparator = getIsEntityIdEqualComparator(
+    const checkIsEntityIdEqual = getEntityIdEqualComparator(
       Object.keys(ids) as (keyof TItem & string)[],
       ids as Partial<TItem>,
     );
-    const item = items.value.find((i) => isEntityIdEqualComparator(i));
+    const item = items.value.find((i) => checkIsEntityIdEqual(i));
     if (!item) return;
 
     editedItem.value = structuredClone(toRawDeep(item));
