@@ -33,10 +33,10 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
     }).match(noop, console.error),
   ),
   items: ({ query }) => {
-    const lowerQuery = query.toLowerCase();
+    const normalizedQuery = query.toLowerCase();
     return SlashCommandDefinitions.filter(
       ({ description, title }) =>
-        title.toLowerCase().includes(lowerQuery) || description.toLowerCase().includes(lowerQuery),
+        title.toLowerCase().includes(normalizedQuery) || description.toLowerCase().includes(normalizedQuery),
     );
   },
   pluginKey: new PluginKey("slashCommandSuggestion"),

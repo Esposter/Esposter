@@ -1,7 +1,7 @@
 import type { ReadFileUrl } from "@/models/message/file/ReadFileUrl";
 import type { FileEntity } from "@esposter/db-schema";
 
-import { getHasThumbnail } from "@/services/message/file/getHasThumbnail";
+import { checkHasThumbnail } from "@/services/message/file/checkHasThumbnail";
 import { READ_SAS_DURATION_MS } from "@esposter/db-schema";
 import { getResultAsync, takeOne } from "@esposter/shared";
 
@@ -18,7 +18,7 @@ export const useReadFileUrls = () => {
     if (files.length === 0) return fileUrlMap;
     // A file whose upload recorded no thumbnail gets no thumbnail url minted for it — nothing downstream has
     // To discover that from a failed image load
-    const imageFiles = files.filter((file) => getHasThumbnail(file));
+    const imageFiles = files.filter((file) => checkHasThumbnail(file));
     const [downloadFileSasUrls, downloadThumbnailSasUrls] = await Promise.all([
       $trpc.message.generateDownloadFileSasUrls.query(
         {

@@ -4,7 +4,7 @@ import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { authClient } from "@/services/auth/authClient";
-import { getVoteCountMap } from "@/services/message/poll/getVoteCountMap";
+import { getOptionIdVoteCountMap } from "@/services/message/poll/getOptionIdVoteCountMap";
 import { getVoteDescription } from "@/services/message/poll/getVoteDescription";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 
@@ -19,7 +19,7 @@ const pollContent = computed(() => {
   return result.data;
 });
 const totalVotes = computed(() => Object.keys(pollContent.value.votes).length);
-const voteCountMap = computed(() => getVoteCountMap(pollContent.value.votes));
+const optionIdVoteCountMap = computed(() => getOptionIdVoteCountMap(pollContent.value.votes));
 const userId = computed(() => session.value?.user.id);
 const totalVotesDescription = computed(() => getVoteDescription(totalVotes.value));
 const { isVoting, vote } = await useVotePoll(
@@ -53,7 +53,7 @@ const { isVoting, vote } = await useVotePoll(
             :key="id"
             :label
             :total-votes
-            :vote-count="voteCountMap.get(id) ?? 0"
+            :vote-count="optionIdVoteCountMap.get(id) ?? 0"
           />
           <v-list-subheader>{{ totalVotesDescription }}</v-list-subheader>
         </v-radio-group>
