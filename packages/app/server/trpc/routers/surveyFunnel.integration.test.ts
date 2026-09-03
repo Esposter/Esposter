@@ -137,7 +137,7 @@ describe("survey funnel — café feedback drive", () => {
       { isResponded: true, keyValue: secondParticipant.keyValue },
       { isResponded: false, keyValue: silentParticipant.keyValue },
     ]);
-    await expect(surveyCaller.countSurveyResponses({ id: survey.id })).resolves.toStrictEqual({
+    await expect(surveyCaller.readSurveyResponsesCount({ id: survey.id })).resolves.toStrictEqual({
       count: 2,
       isCapped: false,
     });

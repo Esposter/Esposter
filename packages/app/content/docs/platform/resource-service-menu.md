@@ -59,13 +59,13 @@ Home keeps its Recent and Favorites card. The card and the routes are the same t
 
 Paths relative to `packages/app`.
 
-| File                                                            | Role                                                             |
-| --------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `app/components/Resource/ServiceMenu.vue`                       | the entries and their exact-path active matching                 |
-| `app/components/Styled/Navigation/Overlay.vue`                  | the drawer shell — slide-in, elevated, scrimless                 |
-| `app/layouts/resource.vue`                                      | owns the `☰`, the open state and where the drawer mounts        |
-| `app/components/Resource/List/View.vue`                         | the one list surface, parameterised by `source`                  |
-| `app/services/resource/list/ResourceListSourceDefinitionMap.ts` | what each source filters, sorts and pins                         |
-| `app/components/Resource/TagList.vue`                           | the Tags entry's list                                            |
-| `../db-schema/src/schema/resourceAccesses.ts`                   | one row per user per resource, holding the last open             |
-| `server/trpc/routers/resource.ts`                               | `isFavorite`/`isAccessed` filters, `recordAccess`, `countsByTag` |
+| File                                                            | Role                                                                       |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `app/components/Resource/ServiceMenu.vue`                       | the entries and their exact-path active matching                           |
+| `app/components/Styled/Navigation/Overlay.vue`                  | the drawer shell — slide-in, elevated, scrimless                           |
+| `app/layouts/resource.vue`                                      | owns the `☰`, the open state and where the drawer mounts                  |
+| `app/components/Resource/List/View.vue`                         | the one list surface, parameterised by `source`                            |
+| `app/services/resource/list/ResourceListSourceDefinitionMap.ts` | what each source filters, sorts and pins                                   |
+| `app/components/Resource/TagList.vue`                           | the Tags entry's list                                                      |
+| `../db-schema/src/schema/resourceAccesses.ts`                   | one row per user per resource, holding the last open                       |
+| `server/trpc/routers/resource.ts`                               | `isFavorite`/`isAccessed` filters, `recordAccess`, `readResourceTagCounts` |

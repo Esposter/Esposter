@@ -24,10 +24,10 @@ Survey is a resource type: the SurveyJS model lives in the content blob, the res
 
 The `survey` router is `createResourceProcedures(ResourceType.Survey, …)` plus the type-specific procedures that are deliberately **not** capabilities (single consumer — see the admission rule in [resources](/docs/architecture/resources)):
 
-| Procedure                                                                     | Auth                 | Purpose                          |
-| ----------------------------------------------------------------------------- | -------------------- | -------------------------------- |
-| `createSurveyResponse` / `updateSurveyResponse` / `readSurveyResponse`        | public, rate-limited | respondent answers → Azure Table |
-| `countSurveyResponses` / `deleteSurveyResponse` / `readSurveyResponseRecords` | owner                | response management tooling      |
+| Procedure                                                                         | Auth                 | Purpose                          |
+| --------------------------------------------------------------------------------- | -------------------- | -------------------------------- |
+| `createSurveyResponse` / `updateSurveyResponse` / `readSurveyResponse`            | public, rate-limited | respondent answers → Azure Table |
+| `readSurveyResponsesCount` / `deleteSurveyResponse` / `readSurveyResponseRecords` | owner                | response management tooling      |
 
 Asset uploads are not listed here: they come from the shared FileAssets capability rather than a survey-owned set ([resource file assets](/docs/platform/resource-file-assets)).
 

@@ -49,11 +49,11 @@ describe(useReadMembers, () => {
     const { promise: readsPromise, resolve: releaseReads } = Promise.withResolvers<void>();
     const readGate = readsPromise;
     server.use(
-      trpcMsw.room.countMembers.query(async () => {
+      trpcMsw.room.readMembersCount.query(async () => {
         await readGate;
         return newCount;
       }),
-      trpcMsw.room.countMembersByTopRole.query(async () => {
+      trpcMsw.room.readMemberCountsByTopRole.query(async () => {
         await readGate;
         return [{ count: newCount, roleId }];
       }),

@@ -1,11 +1,11 @@
-import type { CountSurveyResponsesResult } from "#shared/models/resource/survey/CountSurveyResponsesResult";
+import type { ReadSurveyResponsesCountResult } from "#shared/models/resource/survey/ReadSurveyResponsesCountResult";
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { transformPublishedBlobUrls } from "@@/server/services/resource/transformPublishedBlobUrls";
-import { countSurveyResponses } from "@@/server/services/survey/countSurveyResponses";
 import { getInvalidParticipantTokenError } from "@@/server/services/survey/getInvalidParticipantTokenError";
 import { readSurveyResponseRecords } from "@@/server/services/survey/readSurveyResponseRecords";
+import { readSurveyResponsesCount } from "@@/server/services/survey/readSurveyResponsesCount";
 import { resolveSurveyResponseRead } from "@@/server/services/survey/resolveSurveyResponseRead";
 import { resolveSurveyResponseWrite } from "@@/server/services/survey/resolveSurveyResponseWrite";
 import { router } from "@@/server/trpc";
@@ -63,11 +63,6 @@ export const surveyRouter = router({
   ...createResourceProcedures(ResourceType.Survey, {
     transformPublishedContent: transformPublishedBlobUrls,
   }),
-  countSurveyResponses: getOwnerProcedure(
-    ResourceType.Survey,
-    surveyIdInputSchema,
-    "id",
-  ).query<CountSurveyResponsesResult>(({ ctx }) => countSurveyResponses(ctx.resource.id)),
   createSurveyResponse: standardRateLimitedProcedure
     .input(createSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {
@@ -110,6 +105,11 @@ export const surveyRouter = router({
     surveyIdInputSchema,
     "id",
   ).query<SurveyResponseRecords>(({ ctx }) => readSurveyResponseRecords(ctx.resource.id)),
+  readSurveyResponsesCount: getOwnerProcedure(
+    ResourceType.Survey,
+    surveyIdInputSchema,
+    "id",
+  ).query<ReadSurveyResponsesCountResult>(({ ctx }) => readSurveyResponsesCount(ctx.resource.id)),
   updateSurveyResponse: standardRateLimitedProcedure
     .input(updateSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {

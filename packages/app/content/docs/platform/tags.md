@@ -37,7 +37,7 @@ Names are non-empty through the `normalizeString` pipe; values are not. An empty
 | ---------------------------------- | ------ | ---------------------- | ----------------------------------------- |
 | `<type>.updateResource` (factory)  | owner  | + `tags?`              | Whole-record replace (Azure semantics)    |
 | `resource.readResources` / `count` | authed | + `tags?` / `tagName?` | Containment or key-existence filter       |
-| `resource.countsByTag`             | authed | —                      | Tag names + how many resources carry each |
+| `resource.readResourceTagCounts`   | authed | —                      | Tag names + how many resources carry each |
 
 ## Key files
 
@@ -55,5 +55,5 @@ Names are non-empty through the `normalizeString` pipe; values are not. An empty
 - Flat name:value only, faithful to Azure — no hierarchies, no typed values.
 - A tags-only update leaves no `Renamed` entry in the [activity log](/docs/platform/activity-log): changing a label is not renaming a resource.
 - Free-text tag search inside [global search](/docs/platform/global-search) is not wired up; the `/all` filter pill and the `/resource-explorer/tags` list ([service menu](/docs/platform/resource-service-menu)) are the retrieval paths.
-- `countsByTag` groups by **name only**. Tag names live inside one `jsonb` column, so the read expands the keys in a subquery and groups over that — a set-returning function cannot sit beside an aggregate in one select list. A value narrows the result afterwards, through the pill.
+- `readResourceTagCounts` groups by **name only**. Tag names live inside one `jsonb` column, so the read expands the keys in a subquery and groups over that — a set-returning function cannot sit beside an aggregate in one select list. A value narrows the result afterwards, through the pill.
 - If tag usage grows into "give me a folder", that is the [resource groups](/docs/platform/deferred/resource-groups) revisit trigger, not more tag features.

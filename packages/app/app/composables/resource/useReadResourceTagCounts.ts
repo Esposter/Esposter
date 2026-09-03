@@ -2,5 +2,5 @@
 // Since a grouped count over tag names is not a filter of the resource list
 export const useReadResourceTagCounts = () => {
   const { $trpc } = useNuxtApp();
-  return useReadCounts("useReadResourceTagCounts", () => $trpc.resource.countsByTag.query());
+  return useReadCounts("useReadResourceTagCounts", () => $trpc.resource.readResourceTagCounts.query());
 };

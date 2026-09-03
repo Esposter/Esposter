@@ -52,8 +52,8 @@ export const useReadMembers = () => {
     // While these are in flight must not file this room's totals under the one being entered
     const boundMemberCounts = getBoundMemberCounts();
     const [newCount, newCountsByTopRole] = await Promise.all([
-      $trpc.room.countMembers.query({ roomId }),
-      $trpc.room.countMembersByTopRole.query({ roomId }),
+      $trpc.room.readMembersCount.query({ roomId }),
+      $trpc.room.readMemberCountsByTopRole.query({ roomId }),
     ]);
     boundMemberCounts.value.count = newCount;
     boundMemberCounts.value.countsByTopRole = newCountsByTopRole;

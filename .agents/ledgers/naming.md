@@ -12,8 +12,8 @@
 | `app/shared/models/dungeons`                                                                                                                | 2026-09-02 | the grid-engine `Direction` casing is theirs                                                    |
 | `app/shared/models` — the editor and game trees                                                                                             | 2026-09-02 | these mirror `@vue-flow/core` and ApexCharts field for field, so their spellings are not ours   |
 | `app/shared/models` — the rest                                                                                                              | 2026-09-03 | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler`, `trpc`, `room`, `auth` |
-| `server/trpc/routers` — `message`, `room`, `userToRoom`, `role`, `call`, `webhook`, `searchHistory`                                         | 2026-09-03 | procedure and result naming; the `trpc` skill owns the pattern                                  |
-| `server/trpc/routers` — `resource`, `blueprint`, `note`, `program`, `sheet`, `todoList`, `survey`                                           | 2026-09-03 | an error constructor is `get*Error`, matching the guards                                        |
+| `server/trpc/routers` — `message`, `room`, `userToRoom`, `role`, `call`, `webhook`, `searchHistory`                                         | —          | procedure and result naming; the `trpc` skill owns the pattern                                  |
+| `server/trpc/routers` — `resource`, `blueprint`, `note`, `program`, `sheet`, `todoList`, `survey`                                           | —          | an error constructor is `get*Error`, matching the guards                                        |
 | `server/trpc/routers` — `dashboard`, `dataset`, `email`, `flowchart`, `webpage`, `post`, `like`, `block`, `friend`, `friendRequest`, `user` | 2026-09-03 |                                                                                                 |
 | `server/trpc/routers` — `achievement`, `app`, `clicker`, `dungeons`, `notification`, `pushSubscription`, `session`, `storage`               | 2026-09-03 | a caller-scoped read is `readMy*`, never `readOwn*`                                             |
 | `server/trpc/{guards,procedure,plugins,middleware}`, `context.ts`                                                                           | 2026-09-03 | a guard that throws is `assert*`; `is*` is a stored boolean and nothing else                    |
@@ -21,7 +21,7 @@
 | `server/services/message`                                                                                                                   | —          |                                                                                                 |
 | `server/services/resource`                                                                                                                  | 2026-09-03 |                                                                                                 |
 | `server/services` — `room`, `role`, `user`, `friend`, `post`                                                                                | 2026-09-03 |                                                                                                 |
-| `server/services` — `blueprint`, `program`, `survey`, `dataset`, `dashboard`, `emailEditor`                                                 | 2026-09-03 |                                                                                                 |
+| `server/services` — `blueprint`, `program`, `survey`, `dataset`, `dashboard`, `emailEditor`                                                 | —          |                                                                                                 |
 | `server/services` — `azure`, `storage`, `livekit`, `notification`, `events`, `request`                                                      | 2026-09-03 |                                                                                                 |
 | `server/services` — `auth`, `rateLimiter`, `achievement`, `pagination`, `db`, `blobState`                                                   | 2026-09-03 |                                                                                                 |
 | `app/store`                                                                                                                                 | —          | CRUD verbs, `store*` subscription handlers; split at `message` if too large                     |
@@ -46,6 +46,10 @@ the grounds that a rename is expensive — that is the argument
   `*ByIds` read dropped it, but these two share a feature with a paginated read of the same rows
   (`readMembers`, `readMessages`), so the suffix is what separates two procedures rather than marking a batch
   upgrade — and dropping it collides. What the pair should be called instead is the open question.
+- **`countEntities` is `packages/db`'s, and it is an async fetch under the `count*` prefix.** Every count
+  procedure and service in `packages/app` is now `read*Count`; the storage primitive underneath them keeps
+  `count*`, so the question of whether a generic table-client tally is exempt belongs to the `packages/db`
+  pass that owns the name.
 - **`list*` is a third async fetch prefix beside `read*`, and it cannot be settled one side at a time.**
   `listRoomProfileImageBlobNames` wraps `@esposter/db`'s `listBlobNames`, which wraps Azure's own
   `listBlobsFlat`; renaming ours to `read*` while the helper under it keeps `list*` splits one family across two

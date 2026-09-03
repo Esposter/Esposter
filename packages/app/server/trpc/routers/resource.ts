@@ -225,53 +225,6 @@ const createResourcesWhere = (
 };
 
 export const resourceRouter = router({
-  countResources: standardAuthedProcedure.input(resourceFilterInputSchema.prefault({})).query<number>(
-    async ({ ctx, input }) =>
-      takeOne(
-        await ctx.db
-          .select({ count: count() })
-          .from(resources)
-          .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input)),
-      ).count,
-  ),
-  countDeletedResources: standardAuthedProcedure.query<number>(
-    async ({ ctx }) =>
-      takeOne(
-        await ctx.db
-          .select({ count: count() })
-          .from(resources)
-          .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}, true)),
-      ).count,
-  ),
-  // The Tags list. Tag names live inside one jsonb column rather than their own table, so the breakdown is a
-  // Grouped count over the expanded keys — the expansion is a subquery because a set-returning function
-  // Cannot sit beside an aggregate in one select list. Values are deliberately not part of the grouping: the
-  // Tags entry answers "which tags do I use", and the /all Tag pill is where a value narrows it further
-  countsByTag: standardAuthedProcedure.query<ResourceTagCount[]>(({ ctx }) => {
-    const tagNames = ctx.db
-      .select({ name: sql<string>`jsonb_object_keys(${resources.tags})`.as("name") })
-      .from(resources)
-      .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}))
-      .as("tag_names");
-    return ctx.db
-      .select({ count: count(), name: tagNames.name })
-      .from(tagNames)
-      .groupBy(tagNames.name)
-      .orderBy(desc(count()), asc(tagNames.name));
-  }),
-  // The summary cards own the type breakdown, so `types` is the one filter they cannot pass — a card is
-  // The affordance for setting it. Behind the same createResourcesWhere, so the cards can never disagree
-  // With the list they navigate into
-  countsByType: standardAuthedProcedure
-    .input(resourceFilterInputSchema.omit({ types: true }).prefault({}))
-    .query<ResourceTypeCount[]>(({ ctx, input }) =>
-      ctx.db
-        .select({ count: count(), type: resources.type })
-        .from(resources)
-        .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input))
-        .groupBy(resources.type)
-        .orderBy(desc(count())),
-    ),
   deleteResources: standardAuthedProcedure
     .input(deleteResourcesInputSchema)
     // Owner-scoped where so callers can only ever soft-delete their own rows
@@ -378,6 +331,15 @@ export const resourceRouter = router({
         .offset(offset);
       return getOffsetPaginationData(resultResources, limit);
     }),
+  readDeletedResourcesCount: standardAuthedProcedure.query<number>(
+    async ({ ctx }) =>
+      takeOne(
+        await ctx.db
+          .select({ count: count() })
+          .from(resources)
+          .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}, true)),
+      ).count,
+  ),
   // Starred-first rather than updated-first, which is the one thing the Favorites list route cannot do: the
   // Star's own timestamp is not a column any list shows. Otherwise it is the same predicate the `isFavorite`
   // Filter expresses, taken from createResourcesWhere so a rule added there reaches both
@@ -427,6 +389,44 @@ export const resourceRouter = router({
         .offset(offset);
       return getOffsetPaginationData(resultResources, limit);
     }),
+  readResourcesCount: standardAuthedProcedure.input(resourceFilterInputSchema.prefault({})).query<number>(
+    async ({ ctx, input }) =>
+      takeOne(
+        await ctx.db
+          .select({ count: count() })
+          .from(resources)
+          .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input)),
+      ).count,
+  ),
+  // The Tags list. Tag names live inside one jsonb column rather than their own table, so the breakdown is a
+  // Grouped count over the expanded keys — the expansion is a subquery because a set-returning function
+  // Cannot sit beside an aggregate in one select list. Values are deliberately not part of the grouping: the
+  // Tags entry answers "which tags do I use", and the /all Tag pill is where a value narrows it further
+  readResourceTagCounts: standardAuthedProcedure.query<ResourceTagCount[]>(({ ctx }) => {
+    const tagNames = ctx.db
+      .select({ name: sql<string>`jsonb_object_keys(${resources.tags})`.as("name") })
+      .from(resources)
+      .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}))
+      .as("tag_names");
+    return ctx.db
+      .select({ count: count(), name: tagNames.name })
+      .from(tagNames)
+      .groupBy(tagNames.name)
+      .orderBy(desc(count()), asc(tagNames.name));
+  }),
+  // The summary cards own the type breakdown, so `types` is the one filter they cannot pass — a card is
+  // The affordance for setting it. Behind the same createResourcesWhere, so the cards can never disagree
+  // With the list they navigate into
+  readResourceTypeCounts: standardAuthedProcedure
+    .input(resourceFilterInputSchema.omit({ types: true }).prefault({}))
+    .query<ResourceTypeCount[]>(({ ctx, input }) =>
+      ctx.db
+        .select({ count: count(), type: resources.type })
+        .from(resources)
+        .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input))
+        .groupBy(resources.type)
+        .orderBy(desc(count())),
+    ),
   // Which snapshots exist comes from a blob prefix listing — no history table, since the
   // {id}/{channel}/{n} blobs are already the source of truth for that. Which published one is LIVE comes from
   // The publication row instead, because the two can disagree: the unpublish sweep is a best-effort event, so

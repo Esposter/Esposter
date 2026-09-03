@@ -204,7 +204,7 @@ describe("resource", () => {
     await dashboardCaller.createResource({ name });
     await sheetCaller.createResource({ name });
 
-    const count = await caller.countResources();
+    const count = await caller.readResourcesCount();
 
     expect(count).toBe(2);
   });
@@ -215,7 +215,7 @@ describe("resource", () => {
     await dashboardCaller.createResource({ name });
     await sheetCaller.createResource({ name });
 
-    const count = await caller.countResources({ types: [ResourceType.Dashboard] });
+    const count = await caller.readResourcesCount({ types: [ResourceType.Dashboard] });
 
     expect(count).toBe(1);
   });
@@ -226,7 +226,7 @@ describe("resource", () => {
     await dashboardCaller.createResource({ name: "quarterly report" });
     await sheetCaller.createResource({ name: "grocery list" });
 
-    const count = await caller.countResources({ searchQuery: "report" });
+    const count = await caller.readResourcesCount({ searchQuery: "report" });
 
     expect(count).toBe(1);
   });
@@ -238,10 +238,10 @@ describe("resource", () => {
     await sheetCaller.createResource({ name });
     await sheetCaller.createResource({ name });
 
-    const countsByType = await caller.countsByType();
+    const resourceTypeCounts = await caller.readResourceTypeCounts();
 
     // Ordered by count desc, so the busiest type leads the summary cards
-    expect(countsByType).toStrictEqual([
+    expect(resourceTypeCounts).toStrictEqual([
       { count: 2, type: ResourceType.Sheet },
       { count: 1, type: ResourceType.Dashboard },
     ]);
@@ -252,9 +252,9 @@ describe("resource", () => {
 
     await dashboardCaller.createResource({ name });
 
-    const countsByType = await caller.countsByType();
+    const resourceTypeCounts = await caller.readResourceTypeCounts();
 
-    expect(countsByType).toStrictEqual([{ count: 1, type: ResourceType.Dashboard }]);
+    expect(resourceTypeCounts).toStrictEqual([{ count: 1, type: ResourceType.Dashboard }]);
   });
 
   test("counts grouped by type filtered by search query", async () => {
@@ -263,9 +263,9 @@ describe("resource", () => {
     await dashboardCaller.createResource({ name: "quarterly report" });
     await sheetCaller.createResource({ name: "grocery list" });
 
-    const countsByType = await caller.countsByType({ searchQuery: "report" });
+    const resourceTypeCounts = await caller.readResourceTypeCounts({ searchQuery: "report" });
 
-    expect(countsByType).toStrictEqual([{ count: 1, type: ResourceType.Dashboard }]);
+    expect(resourceTypeCounts).toStrictEqual([{ count: 1, type: ResourceType.Dashboard }]);
   });
 
   test("counts grouped by type only for the caller's own resources", async () => {
@@ -275,9 +275,9 @@ describe("resource", () => {
     await dashboardCaller.createResource({ name });
     await sheetCaller.createResource({ name });
 
-    const countsByType = await caller.countsByType();
+    const resourceTypeCounts = await caller.readResourceTypeCounts();
 
-    expect(countsByType).toStrictEqual([{ count: 1, type: ResourceType.Sheet }]);
+    expect(resourceTypeCounts).toStrictEqual([{ count: 1, type: ResourceType.Sheet }]);
   });
 
   test("filters resources by published status", async () => {
@@ -289,7 +289,7 @@ describe("resource", () => {
     const draftResource = await dashboardCaller.createResource({ name });
     const { items: publishedItems } = await caller.readResources({ isPublished: true });
     const { items: draftItems } = await caller.readResources({ isPublished: false });
-    const publishedCount = await caller.countResources({ isPublished: true });
+    const publishedCount = await caller.readResourcesCount({ isPublished: true });
 
     expect(publishedItems.map(({ id }) => id)).toStrictEqual([webpageResource.id]);
     expect(draftItems.map(({ id }) => id)).toStrictEqual([draftResource.id]);
@@ -315,7 +315,7 @@ describe("resource", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     const sheetResource = await sheetCaller.createResource({ name });
     const deletedResources = await caller.deleteResources({ ids: [dashboardResource.id, sheetResource.id] });
-    const count = await caller.countResources();
+    const count = await caller.readResourcesCount();
 
     expect(deletedResources.map(({ id }) => id).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b))).toStrictEqual(
       [dashboardResource.id, sheetResource.id].toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
@@ -601,7 +601,7 @@ describe("resource", () => {
     const otherResource = await sheetCaller.createResource({ name });
     await sheetCaller.updateResource({ id: otherResource.id, name, tags: { env: "dev" } });
     const { items } = await caller.readResources({ tags: { env: "prod" } });
-    const tagCount = await caller.countResources({ tags: { env: "prod" } });
+    const tagCount = await caller.readResourcesCount({ tags: { env: "prod" } });
 
     expect(items.map(({ id }) => id)).toStrictEqual([taggedResource.id]);
     expect(takeOne(items).tags).toStrictEqual({ env: "prod", owner: "ops" });
@@ -628,8 +628,8 @@ describe("resource", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     await caller.deleteResources({ ids: [dashboardResource.id] });
     const { items: deletedItems } = await caller.readDeletedResources();
-    const deletedCount = await caller.countDeletedResources();
-    const liveCount = await caller.countResources();
+    const deletedCount = await caller.readDeletedResourcesCount();
+    const liveCount = await caller.readResourcesCount();
 
     expect(deletedItems.map(({ id }) => id)).toStrictEqual([dashboardResource.id]);
     expect(deletedCount).toBe(1);
@@ -667,8 +667,8 @@ describe("resource", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     await caller.deleteResources({ ids: [dashboardResource.id] });
     const restoredResource = await caller.restoreResource({ id: dashboardResource.id });
-    const liveCount = await caller.countResources();
-    const deletedCount = await caller.countDeletedResources();
+    const liveCount = await caller.readResourcesCount();
+    const deletedCount = await caller.readDeletedResourcesCount();
 
     expect(restoredResource.deletedAt).toBeNull();
     expect(liveCount).toBe(1);
@@ -910,7 +910,7 @@ describe("resource", () => {
     await waitForSynchronizedFunctions();
     await caller.deleteResources({ ids: [dashboardResource.id] });
     await caller.purgeResource({ id: dashboardResource.id });
-    const deletedCount = await caller.countDeletedResources();
+    const deletedCount = await caller.readDeletedResourcesCount();
     // The row is gone, so the blade can no longer resolve it — the partition is swept at purge time,
     // Read straight from the table because no procedure can reach a purged resource any more
     const activityEntities = [...(MockTableDatabase.get(AzureTable.ResourceActivity)?.values() ?? [])];

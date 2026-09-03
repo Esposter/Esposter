@@ -7,7 +7,7 @@ export const useReadDeletedResources = () => {
     // Restore or a purge does
     getFilterInput: () => undefined,
     getFilterKey: () => "",
-    readCount: () => $trpc.resource.countDeletedResources.query(),
+    readCount: () => $trpc.resource.readDeletedResourcesCount.query(),
     readPage: async ({ itemsPerPage, page, sortBy }) =>
       (
         await $trpc.resource.readDeletedResources.query({

@@ -120,36 +120,6 @@ const readMembersByIdsInputSchema = z.object({
 const readInviteInputSchema = selectInviteInMessageSchema.shape.id;
 
 export const baseRoomRouter = router({
-  countMembers: getMemberProcedure(roomIdSchema, "roomId").query<number>(
-    async ({ ctx, input: { roomId } }) =>
-      takeOne(
-        await ctx.db
-          .select({ count: count() })
-          .from(usersToRoomsInMessage)
-          .where(eq(usersToRoomsInMessage.roomId, roomId)),
-      ).count,
-  ),
-  countMembersByTopRole: getMemberProcedure(roomIdSchema, "roomId").query<MemberCountByTopRole[]>(
-    ({ ctx, input: { roomId } }) => {
-      // A member's top role is their highest-positioned assigned role; @everyone is implicit and never groups
-      const topRoles = ctx.db
-        .selectDistinctOn([usersToRoomRolesInMessage.userId], {
-          roleId: usersToRoomRolesInMessage.roleId,
-          userId: usersToRoomRolesInMessage.userId,
-        })
-        .from(usersToRoomRolesInMessage)
-        .innerJoin(
-          roomRolesInMessage,
-          and(eq(roomRolesInMessage.id, usersToRoomRolesInMessage.roleId), not(roomRolesInMessage.isEveryone)),
-        )
-        .where(eq(usersToRoomRolesInMessage.roomId, roomId))
-        .orderBy(usersToRoomRolesInMessage.userId, desc(roomRolesInMessage.position))
-        .as("topRoles");
-      // Only role groups are returned — the roleless trailing group is derived client-side from the
-      // Total member count so join/leave subscription updates keep it current without a refetch
-      return ctx.db.select({ count: count(), roleId: topRoles.roleId }).from(topRoles).groupBy(topRoles.roleId);
-    },
-  ),
   createInvite: getPermissionsProcedure(RoomPermission.ManageInvites, createInviteInputSchema, "roomId")
     .use(assertIsRoomMiddleware)
     .mutation<InviteInMessageWithCreator>(({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) =>
@@ -445,6 +415,27 @@ export const baseRoomRouter = router({
       });
       return { ...invite, isMember: Boolean(membership) };
     }),
+  readMemberCountsByTopRole: getMemberProcedure(roomIdSchema, "roomId").query<MemberCountByTopRole[]>(
+    ({ ctx, input: { roomId } }) => {
+      // A member's top role is their highest-positioned assigned role; @everyone is implicit and never groups
+      const topRoles = ctx.db
+        .selectDistinctOn([usersToRoomRolesInMessage.userId], {
+          roleId: usersToRoomRolesInMessage.roleId,
+          userId: usersToRoomRolesInMessage.userId,
+        })
+        .from(usersToRoomRolesInMessage)
+        .innerJoin(
+          roomRolesInMessage,
+          and(eq(roomRolesInMessage.id, usersToRoomRolesInMessage.roleId), not(roomRolesInMessage.isEveryone)),
+        )
+        .where(eq(usersToRoomRolesInMessage.roomId, roomId))
+        .orderBy(usersToRoomRolesInMessage.userId, desc(roomRolesInMessage.position))
+        .as("topRoles");
+      // Only role groups are returned — the roleless trailing group is derived client-side from the
+      // Total member count so join/leave subscription updates keep it current without a refetch
+      return ctx.db.select({ count: count(), roleId: topRoles.roleId }).from(topRoles).groupBy(topRoles.roleId);
+    },
+  ),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
@@ -468,6 +459,15 @@ export const baseRoomRouter = router({
         .from(users)
         .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
         .where(and(eq(usersToRoomsInMessage.roomId, roomId), inArray(users.id, ids))),
+  ),
+  readMembersCount: getMemberProcedure(roomIdSchema, "roomId").query<number>(
+    async ({ ctx, input: { roomId } }) =>
+      takeOne(
+        await ctx.db
+          .select({ count: count() })
+          .from(usersToRoomsInMessage)
+          .where(eq(usersToRoomsInMessage.roomId, roomId)),
+      ).count,
   ),
   readMutualRooms: standardAuthedProcedure.input(userIdSchema).query<RoomInMessage[]>(({ ctx, input }) => {
     const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");

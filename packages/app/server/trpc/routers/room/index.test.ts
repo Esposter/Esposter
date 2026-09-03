@@ -837,7 +837,7 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newCount = await roomCaller.countMembers({ roomId: newRoom.id });
+    const newCount = await roomCaller.readMembersCount({ roomId: newRoom.id });
 
     expect(newCount).toBe(1);
   });
@@ -846,13 +846,13 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const rolelessCounts = await roomCaller.countMembersByTopRole({ roomId: newRoom.id });
+    const rolelessCounts = await roomCaller.readMemberCountsByTopRole({ roomId: newRoom.id });
 
     expect(rolelessCounts).toStrictEqual([]);
 
     const newRole = await roleCaller.createRole({ name, roomId: newRoom.id });
     await roleCaller.assignRole({ roleId: newRole.id, roomId: newRoom.id, userId: getMockSession().user.id });
-    const counts = await roomCaller.countMembersByTopRole({ roomId: newRoom.id });
+    const counts = await roomCaller.readMemberCountsByTopRole({ roomId: newRoom.id });
 
     expect(counts).toStrictEqual([{ count: 1, roleId: newRole.id }]);
   });

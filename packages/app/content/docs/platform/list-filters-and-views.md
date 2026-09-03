@@ -48,17 +48,17 @@ flowchart LR
   PILLS["FilterBar pills"] --> STATE
   STATE --> WHERE["createResourcesWhere<br/>(single filter source)"]
   WHERE --> RR["resource.readResources"] --> TABLE["StyledDataTableServer"]
-  WHERE --> CNT["resource.countResources"] --> FOOTER["footer x–y of N"]
+  WHERE --> CNT["resource.readResourcesCount"] --> FOOTER["footer x–y of N"]
   TABLE -->|"select n → Delete (n)"| BULK["resource.deleteResources"] -->|"deletedAt + publications dropped"| GONE[("recycle bin")]
   TABLE -->|"Export CSV (chunked)"| CSV["getResourcesCsv"]
 ```
 
 ## Procedures
 
-| Procedure                                            | Auth                          | Input                                                                                       | Purpose                                                 |
-| ---------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `resource.readResources` / `resource.countResources` | authed                        | `isPublished?`, `isFavorite?`, `isAccessed?: boolean`, `updatedAfter?/updatedBefore?: Date` | status, set and date filters via `createResourcesWhere` |
-| `resource.deleteResources`                           | authed (owner-scoped `where`) | `ids: string[]` (unique, bounded)                                                           | bulk soft delete — `deletedAt` + publication rows       |
+| Procedure                                                | Auth                          | Input                                                                                       | Purpose                                                 |
+| -------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `resource.readResources` / `resource.readResourcesCount` | authed                        | `isPublished?`, `isFavorite?`, `isAccessed?: boolean`, `updatedAfter?/updatedBefore?: Date` | status, set and date filters via `createResourcesWhere` |
+| `resource.deleteResources`                               | authed (owner-scoped `where`) | `ids: string[]` (unique, bounded)                                                           | bulk soft delete — `deletedAt` + publication rows       |
 
 ## Key files
 

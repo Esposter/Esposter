@@ -540,7 +540,7 @@ describe("survey", () => {
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await createSurveyResponse(newResource.id, 1);
     await caller.deleteSurveyResponse({ id: newResource.id, rowKey: newSurveyResponse.rowKey });
-    const responseCount = await caller.countSurveyResponses({ id: newResource.id });
+    const responseCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
     await expect(
@@ -593,12 +593,12 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const emptyCount = await caller.countSurveyResponses({ id: newResource.id });
+    const emptyCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
     expect(emptyCount).toStrictEqual({ count: 0, isCapped: false });
 
     await createSurveyResponse(newResource.id, 0);
-    const responseCount = await caller.countSurveyResponses({ id: newResource.id });
+    const responseCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
   });
