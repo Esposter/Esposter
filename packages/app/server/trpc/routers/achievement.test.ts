@@ -55,9 +55,9 @@ describe("achievement", () => {
     test("when no achievements are unlocked, hidden achievements show '???'", async () => {
       expect.hasAssertions();
 
-      const result = await caller.achievement.readAchievementMap();
+      const achievementMap = await caller.achievement.readAchievementMap();
 
-      expect(result).toStrictEqual(
+      expect(achievementMap).toStrictEqual(
         Object.fromEntries(
           Object.entries(AchievementDefinitionMap).map(([achievementName, achievementDefinition]) => [
             achievementName,
@@ -78,9 +78,9 @@ describe("achievement", () => {
         message: "😀😀😀😀😀😀😀😀😀😀",
         roomId: room.id,
       });
-      const result = await caller.achievement.readAchievementMap();
+      const achievementMap = await caller.achievement.readAchievementMap();
 
-      expect(result[SpecialAchievementName.EmojiLover].description).toBe(
+      expect(achievementMap[SpecialAchievementName.EmojiLover].description).toBe(
         AchievementDefinitionMap[SpecialAchievementName.EmojiLover].description,
       );
     });
@@ -90,9 +90,9 @@ describe("achievement", () => {
     test("reads own achievements", async () => {
       expect.hasAssertions();
 
-      const result = await caller.achievement.readUserAchievements();
+      const userAchievements = await caller.achievement.readUserAchievements();
 
-      expect(result).toStrictEqual([]);
+      expect(userAchievements).toStrictEqual([]);
     });
 
     // The endpoint is public, so this is the difference between a profile and a progress report: one message

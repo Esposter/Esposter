@@ -26,8 +26,8 @@ describe("clicker", () => {
 
     const clickerSave = new ClickerSave();
     await caller.saveClicker(clickerSave);
-    const readClickerSave = await caller.readClicker();
+    const storedClickerSave = await caller.readClicker();
 
-    expect(readClickerSave).toStrictEqual(clickerSave);
+    expect(storedClickerSave).toStrictEqual(clickerSave);
   });
 });

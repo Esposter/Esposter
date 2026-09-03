@@ -15,7 +15,7 @@ import { count, eq, isNotNull, sql } from "drizzle-orm";
 const readUserAchievementsInputSchema = selectUserSchema.shape.id.optional();
 // Points live in the definition map, not the DB, so the summation injects them as a CASE over the
 // Achievement name — keeping the aggregation in SQL bounds the result set to one row per user.
-const achievementPointsSum = sql<number>`sum(case ${achievements.name} ${sql.join(
+const achievementPointsSummation = sql<number>`sum(case ${achievements.name} ${sql.join(
   Object.entries(AchievementDefinitionMap).map(
     ([achievementName, { points }]) => sql`when ${achievementName} then ${points}`,
   ),
@@ -52,7 +52,7 @@ export const achievementRouter = router({
   readPointsLeaderboard: standardRateLimitedProcedure.query<PointsLeaderboard>(async ({ ctx }) => {
     const userTotals = await ctx.db
       .select({
-        points: achievementPointsSum,
+        points: achievementPointsSummation,
         unlockCount: count(),
         user: { id: users.id, image: users.image, name: users.name },
       })

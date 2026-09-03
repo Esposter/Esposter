@@ -31,9 +31,9 @@ describe("storage", () => {
     test("reads the initial storage usage for the authed user", async () => {
       expect.hasAssertions();
 
-      const result = await caller.storage.readUsage();
+      const storageUsage = await caller.storage.readUsage();
 
-      expect(result).toStrictEqual({
+      expect(storageUsage).toStrictEqual({
         bytesUsed: 0,
         quotaBytes: StorageTierQuotaMap[StorageTier.Free],
         tier: StorageTier.Free,
