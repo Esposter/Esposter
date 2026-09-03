@@ -48,7 +48,7 @@ describe("styledEmojiPickerPanel", () => {
 
     expect(getGridEmojis(component)).toStrictEqual(
       getEmojiIndex()
-        .byGroup.get(EmojiGroup.SmileysAndEmotion)
+        .groupEmojisMap.get(EmojiGroup.SmileysAndEmotion)
         ?.map(({ character }) => character),
     );
   });

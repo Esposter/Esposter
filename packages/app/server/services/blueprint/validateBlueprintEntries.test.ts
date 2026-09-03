@@ -19,9 +19,9 @@ describe(validateBlueprintEntries, () => {
     expect.hasAssertions();
 
     const funnel = createEntry("funnel", { content: { emailId: buildBlueprintEntryToken("audience") } });
-    const referencesByKey = validateBlueprintEntries([createEntry("audience"), funnel]);
+    const keyReferencesMap = validateBlueprintEntries([createEntry("audience"), funnel]);
 
-    expect(referencesByKey).toStrictEqual(
+    expect(keyReferencesMap).toStrictEqual(
       new Map([
         ["audience", []],
         ["funnel", ["audience"]],

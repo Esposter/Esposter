@@ -22,11 +22,11 @@ export const useColumnFormOptions = (
   );
   return computed<VjsfOptions<ColumnFormVjsfContext>>(() => {
     const columnItems: SelectItemCategoryDefinition<Column["id"]>[] = [];
-    const columnItemsByType: Partial<Record<ColumnType, SelectItemCategoryDefinition<Column["id"]>[]>> = {};
+    const columnTypeItemsMap: Partial<Record<ColumnType, SelectItemCategoryDefinition<Column["id"]>[]>> = {};
     for (const column of toValue(dataSource).columns) {
       const item = mapColumnToSelectItemCategoryDefinition(column);
       columnItems.push(item);
-      (columnItemsByType[column.type] ??= []).push(item);
+      (columnTypeItemsMap[column.type] ??= []).push(item);
     }
     return {
       ajvOptions: {
@@ -39,9 +39,9 @@ export const useColumnFormOptions = (
       },
       context: {
         columnItems,
-        dateColumnItems: columnItemsByType[ColumnType.Date] ?? [],
-        numberColumnItems: columnItemsByType[ColumnType.Number] ?? [],
-        stringColumnItems: columnItemsByType[ColumnType.String] ?? [],
+        dateColumnItems: columnTypeItemsMap[ColumnType.Date] ?? [],
+        numberColumnItems: columnTypeItemsMap[ColumnType.Number] ?? [],
+        stringColumnItems: columnTypeItemsMap[ColumnType.String] ?? [],
       },
     };
   });

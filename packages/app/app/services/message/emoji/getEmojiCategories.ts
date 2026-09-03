@@ -17,14 +17,14 @@ import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
 // Recents. Recents are stored as slugs rather than characters so they survive a change of skin tone, and a slug
 // Neither vocabulary knows any more drops out here rather than rendering as its own text
 export const getEmojiCategories = (recentEmojiSlugs: string[], customEmojis: CustomEmoji[]): EmojiCategory[] => {
-  const { byGroup, bySlug } = getEmojiIndex();
-  const customEmojiBySlug = new Map(customEmojis.map((customEmoji) => [customEmoji.slug, customEmoji]));
+  const { groupEmojisMap, slugEmojiMap } = getEmojiIndex();
+  const customEmojiMap = new Map(customEmojis.map((customEmoji) => [customEmoji.slug, customEmoji]));
   const recentEmojis = recentEmojiSlugs.flatMap<PickableEmoji>((recentEmojiSlug) => {
-    const emoji = customEmojiBySlug.get(recentEmojiSlug) ?? bySlug.get(recentEmojiSlug);
+    const emoji = customEmojiMap.get(recentEmojiSlug) ?? slugEmojiMap.get(recentEmojiSlug);
     return emoji ? [emoji] : [];
   });
   const groupCategories = EmojiGroups.map((group) => ({
-    emojis: byGroup.get(group) ?? [],
+    emojis: groupEmojisMap.get(group) ?? [],
     icon: EmojiGroupIconMap[group],
     title: group,
   }));

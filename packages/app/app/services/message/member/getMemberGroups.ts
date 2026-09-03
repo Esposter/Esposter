@@ -8,15 +8,15 @@ export const getMemberGroups = <TMember extends Pick<User, "id">>(
   members: TMember[],
   getMemberRoles: (userId: string) => RoomRoleInMessage[],
 ): { members: TMember[]; role?: RoomRoleInMessage }[] => {
-  const groupByRoleId = new Map<string, { members: TMember[]; role?: RoomRoleInMessage }>();
+  const roleIdGroupMap = new Map<string, { members: TMember[]; role?: RoomRoleInMessage }>();
   for (const member of members) {
     const role = getTopRole(getMemberRoles(member.id));
     const roleId = role?.id ?? "";
-    const group = groupByRoleId.get(roleId) ?? { members: [], role };
+    const group = roleIdGroupMap.get(roleId) ?? { members: [], role };
     group.members.push(member);
-    groupByRoleId.set(roleId, group);
+    roleIdGroupMap.set(roleId, group);
   }
-  return [...groupByRoleId.values()].toSorted((a, b) => {
+  return [...roleIdGroupMap.values()].toSorted((a, b) => {
     if (!a.role) return 1;
     else if (!b.role) return -1;
     return b.role.position - a.role.position;

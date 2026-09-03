@@ -27,11 +27,11 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
   }
 
   execute(dataSource: DataSource) {
-    const columnsByNameMap = new Map(dataSource.columns.map((column) => [column.name, column]));
+    const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
     if (this.#mode === NullStrategy.ReplaceWithNA)
       for (const { columnName, rowIndex } of this.#affectedCells) {
         const row = takeOne(dataSource.rows, rowIndex);
-        const column = columnsByNameMap.get(columnName);
+        const column = columnMap.get(columnName);
         if (!column) continue;
         column.size += getValueSize("N/A") - getValueSize(takeOne(row.data, columnName));
         row.data[columnName] = "N/A";
@@ -39,7 +39,7 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
     else {
       for (const { row } of this.#affectedRows)
         for (const [columnName, value] of Object.entries(row.data)) {
-          const column = columnsByNameMap.get(columnName);
+          const column = columnMap.get(columnName);
           if (column) column.size -= getValueSize(value);
         }
       dataSource.rows = dataSource.rows.filter(({ id }) => !this.#affectedRows.some(({ row }) => row.id === id));
@@ -48,10 +48,10 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
 
   undo(dataSource: DataSource) {
     if (this.#mode === NullStrategy.ReplaceWithNA) {
-      const columnsByNameMap = new Map(dataSource.columns.map((column) => [column.name, column]));
+      const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
       for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
         const row = takeOne(dataSource.rows, rowIndex);
-        const column = columnsByNameMap.get(columnName);
+        const column = columnMap.get(columnName);
         if (!column) continue;
         column.size += getValueSize(originalValue) - getValueSize(takeOne(row.data, columnName));
         row.data[columnName] = originalValue;
@@ -62,10 +62,10 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
       let restoredRows = dataSource.rows;
       for (const { index, row } of this.#affectedRows) restoredRows = restoredRows.toSpliced(index, 0, row);
       dataSource.rows = restoredRows;
-      const columnsByNameMap = new Map(dataSource.columns.map((column) => [column.name, column]));
+      const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
       for (const { row } of this.#affectedRows)
         for (const [columnName, value] of Object.entries(row.data)) {
-          const column = columnsByNameMap.get(columnName);
+          const column = columnMap.get(columnName);
           if (column) column.size += getValueSize(value);
         }
     }

@@ -25,10 +25,10 @@ export class StringTransformationCommand extends ADataSourceCommand<CommandType.
   }
 
   execute(dataSource: DataSource) {
-    const columnsByNameMap = new Map(dataSource.columns.map((column) => [column.name, column]));
+    const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
     for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
       const row = takeOne(dataSource.rows, rowIndex);
-      const column = columnsByNameMap.get(columnName);
+      const column = columnMap.get(columnName);
       if (!column) continue;
       const newValue = computeStringTransformation(String(originalValue), this.#stringTransformationType);
       column.size += getValueSize(newValue) - getValueSize(takeOne(row.data, columnName));
@@ -37,10 +37,10 @@ export class StringTransformationCommand extends ADataSourceCommand<CommandType.
   }
 
   undo(dataSource: DataSource) {
-    const columnsByNameMap = new Map(dataSource.columns.map((column) => [column.name, column]));
+    const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
     for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
       const row = takeOne(dataSource.rows, rowIndex);
-      const column = columnsByNameMap.get(columnName);
+      const column = columnMap.get(columnName);
       if (!column) continue;
       column.size += getValueSize(originalValue) - getValueSize(takeOne(row.data, columnName));
       row.data[columnName] = originalValue;

@@ -31,23 +31,23 @@ export const deployBlueprint = async (
     ),
     name: substituteBlueprintParameterTokens(entry.name, resolvedParameters),
   }));
-  const referencesByKey = validateBlueprintEntries(substitutedEntries);
-  const sortedEntries = sortBlueprintEntriesTopologically(substitutedEntries, referencesByKey);
-  const aliasToId = new Map<string, string>();
+  const keyReferencesMap = validateBlueprintEntries(substitutedEntries);
+  const sortedEntries = sortBlueprintEntriesTopologically(substitutedEntries, keyReferencesMap);
+  const aliasIdMap = new Map<string, string>();
   const createdIds: string[] = [];
   const deployments: BlueprintDeployment[] = [];
   await withResourceRollback(ctx, createdIds, async () => {
     for (const entry of sortedEntries) {
       const newResource = await createResourceRow(ctx, { name: entry.name, type: entry.type });
       createdIds.push(newResource.id);
-      aliasToId.set(entry.key, newResource.id);
+      aliasIdMap.set(entry.key, newResource.id);
       deployments.push({ key: entry.key, resource: newResource });
       // An entry captured from a resource whose content was never written deploys to that same state — the
       // Content blob is written on first save, so a freshly created resource simply has none
       if (entry.content === undefined) continue;
       // Real ids are known only after every dependency is created, so the content is bound here rather than up front
       const content = mapBlueprintEntryContentStrings(entry, (value) =>
-        substituteBlueprintEntryAliasTokens(value, aliasToId),
+        substituteBlueprintEntryAliasTokens(value, aliasIdMap),
       );
       // The one content-write path the editor's save takes, so a deployed resource is never missing the side
       // Effects its content declares — scheduling a TodoList's reminders, and whatever a type registers later.

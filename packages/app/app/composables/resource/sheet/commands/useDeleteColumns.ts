@@ -5,10 +5,10 @@ import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const useDeleteColumns = () =>
   useSheetCommand((dataSource, ids: string[]) => {
-    const columnIndexById = new Map(dataSource.columns.map((column, index) => [column.id, index]));
+    const columnIdIndexMap = new Map(dataSource.columns.map((column, index) => [column.id, index]));
     const indexedColumns: IndexedColumn[] = [];
     for (const id of ids) {
-      const columnIndex = columnIndexById.get(id);
+      const columnIndex = columnIdIndexMap.get(id);
       if (columnIndex === undefined) continue;
       const originalColumn = structuredClone(toRawDeep(takeOne(dataSource.columns, columnIndex)));
       indexedColumns.push({ columnIndex, originalColumn, originalRowValues: [] });

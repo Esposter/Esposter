@@ -7,9 +7,9 @@ import { getInvalidBlueprintError } from "@@/server/services/blueprint/getInvali
 // This is pure graph work. A reference to a missing alias, or a cycle, is a malformed manifest and rejects
 export const sortBlueprintEntriesTopologically = (
   entries: BlueprintEntry[],
-  referencesByKey: Map<BlueprintEntry["key"], string[]>,
+  keyReferencesMap: Map<BlueprintEntry["key"], string[]>,
 ): BlueprintEntry[] => {
-  const entryByKey = new Map(entries.map((entry) => [entry.key, entry]));
+  const entryMap = new Map(entries.map((entry) => [entry.key, entry]));
   const visited = new Set<string>();
   const visiting = new Set<string>();
   const sortedEntries: BlueprintEntry[] = [];
@@ -18,8 +18,8 @@ export const sortBlueprintEntriesTopologically = (
     else if (visiting.has(entry.key)) throw getInvalidBlueprintError(`cyclic entry reference ${entry.key}`);
 
     visiting.add(entry.key);
-    for (const reference of referencesByKey.get(entry.key) ?? []) {
-      const dependency = entryByKey.get(reference);
+    for (const reference of keyReferencesMap.get(entry.key) ?? []) {
+      const dependency = entryMap.get(reference);
       if (!dependency) throw getInvalidBlueprintError(`unknown entry reference ${reference}`);
 
       visit(dependency);

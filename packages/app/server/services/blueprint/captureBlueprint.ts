@@ -32,9 +32,9 @@ export const captureBlueprint = async (ctx: AuthedContext, ids: Resource["id"][]
   const deletedResource = ownedResources.find(({ deletedAt }) => deletedAt !== null);
   if (deletedResource) throw getInvalidBlueprintError(`cannot capture deleted resource ${deletedResource.name}`);
   // The caller's selection order drives key derivation, so a given selection always captures identically
-  const resourceById = new Map(ownedResources.map((resource) => [resource.id, resource]));
+  const resourceMap = new Map(ownedResources.map((resource) => [resource.id, resource]));
   const orderedResources = ids.map((id) => {
-    const resource = resourceById.get(id);
+    const resource = resourceMap.get(id);
     // The ownership check above already proved every id is present, so this only narrows the map read — it
     // Is deliberately not a second authorization gate that weakening that check could silently pass
     if (!resource) throw new NotFoundError(DatabaseEntityType.Resource, id);
@@ -42,7 +42,7 @@ export const captureBlueprint = async (ctx: AuthedContext, ids: Resource["id"][]
   });
   const keys = getBlueprintEntryKeys(orderedResources.map(({ name: resourceName }) => resourceName));
   const captures = orderedResources.map((resource, index) => ({ key: takeOne(keys, index), resource }));
-  const idToAlias = new Map(captures.map(({ key, resource }) => [resource.id, buildBlueprintEntryToken(key)]));
+  const idAliasMap = new Map(captures.map(({ key, resource }) => [resource.id, buildBlueprintEntryToken(key)]));
   const entries = await Promise.all(
     captures.map(async ({ key, resource }): Promise<BlueprintEntry> => {
       // A resource whose content blob was never written captures as an entry with no content, which deploys
@@ -51,7 +51,7 @@ export const captureBlueprint = async (ctx: AuthedContext, ids: Resource["id"][]
       // Unparseable entry rejects every deploy
       const content = await readResourceContent(ResourceDefinitionMap[resource.type].contentSchema, resource.id);
       return {
-        content: rewriteIdsToAliases({ content, type: resource.type }, idToAlias),
+        content: rewriteIdsToAliases({ content, type: resource.type }, idAliasMap),
         key,
         name: resource.name,
         type: resource.type,

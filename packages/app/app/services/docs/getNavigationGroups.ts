@@ -14,21 +14,21 @@ const planningSlugs = new Set<string>([
 
 export const getNavigationGroups = (sectionPath: string, items: ContentNavigationItem[]): DocsNavigationGroup[] => {
   const sectionGroups = DocsSectionGroupsMap[getSlug(sectionPath)] ?? {};
-  const groupTitleBySlug = new Map<string, string>();
+  const slugGroupTitleMap = new Map<string, string>();
   for (const [title, slugs] of Object.entries(sectionGroups))
-    for (const slug of slugs) groupTitleBySlug.set(slug, title);
+    for (const slug of slugs) slugGroupTitleMap.set(slug, title);
 
-  const itemsByGroupTitle = new Map<string | undefined, ContentNavigationItem[]>();
+  const groupTitleItemsMap = new Map<string | undefined, ContentNavigationItem[]>();
   for (const item of items) {
     const slug = getSlug(item.path);
-    const title = planningSlugs.has(slug) ? PLANNING_GROUP_TITLE : groupTitleBySlug.get(slug);
-    const groupItems = itemsByGroupTitle.get(title) ?? [];
+    const title = planningSlugs.has(slug) ? PLANNING_GROUP_TITLE : slugGroupTitleMap.get(slug);
+    const groupItems = groupTitleItemsMap.get(title) ?? [];
     groupItems.push(item);
-    itemsByGroupTitle.set(title, groupItems);
+    groupTitleItemsMap.set(title, groupItems);
   }
   // Ungrouped pages lead, mapped groups follow in declaration order, planning pages always trail
   return [undefined, ...Object.keys(sectionGroups), PLANNING_GROUP_TITLE].flatMap((title) => {
-    const groupItems = itemsByGroupTitle.get(title);
+    const groupItems = groupTitleItemsMap.get(title);
     return groupItems ? [{ items: groupItems, title }] : [];
   });
 };
