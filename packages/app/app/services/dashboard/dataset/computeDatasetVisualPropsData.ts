@@ -17,16 +17,16 @@ export const computeDatasetVisualPropsData = (
   dataset: Dataset,
   query: DatasetQuery,
 ): VisualPropsData => {
-  const categoryRows = new Map<string, Dataset["rows"]>();
+  const categoryRowsMap = new Map<string, Dataset["rows"]>();
   for (const row of dataset.rows) {
     const category = String(row[query.xColumn] ?? "");
-    const rows = categoryRows.get(category);
+    const rows = categoryRowsMap.get(category);
     if (rows) rows.push(row);
-    else categoryRows.set(category, [row]);
+    else categoryRowsMap.set(category, [row]);
   }
-  const categories = [...categoryRows.keys()];
+  const categories = [...categoryRowsMap.keys()];
   const series = query.series.map(({ aggregation, column }) => ({
-    data: [...categoryRows.values()].map((rows) =>
+    data: [...categoryRowsMap.values()].map((rows) =>
       DatasetAggregationComputeMap[aggregation](rows.map((row) => row[column] ?? null)),
     ),
     name: column,

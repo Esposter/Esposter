@@ -39,7 +39,7 @@ export const createOperationData = <
   };
   const deleteItem = (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => {
     items.value = items.value.filter(
-      (i) => !getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], ids as Partial<TItem>)(i),
+      (item) => !getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], ids as Partial<TItem>)(item),
     );
   };
   return {
