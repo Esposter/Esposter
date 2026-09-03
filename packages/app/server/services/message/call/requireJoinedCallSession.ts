@@ -1,7 +1,7 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
 
-import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
 import { requireReadableCallSession } from "@@/server/services/message/call/requireReadableCallSession";
 import { getForbiddenError } from "@@/server/trpc/guards/getForbiddenError";
 

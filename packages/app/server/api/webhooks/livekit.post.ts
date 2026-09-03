@@ -1,5 +1,5 @@
 import { db } from "@@/server/db";
-import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
 import { createCallParticipant } from "@@/server/services/message/call/createCallParticipant";
 import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { leaveCallAsParticipant } from "@@/server/services/message/call/leaveCallAsParticipant";

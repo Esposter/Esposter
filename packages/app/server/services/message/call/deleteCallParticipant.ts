@@ -1,6 +1,6 @@
 import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
 import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
-import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 
 export const deleteCallParticipant = (callSessionId: string, id: string): boolean => {

@@ -1,7 +1,7 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { CallSessionInMessage } from "@esposter/db-schema";
 
-import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
 import { callStartTimeMap } from "@@/server/services/message/call/callStartTimeMap";
 import { createCallParticipant } from "@@/server/services/message/call/createCallParticipant";
 import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";
