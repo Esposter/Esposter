@@ -60,7 +60,7 @@ const getRoomEmojiWithSasUrl = async (
 });
 // An emoji is addressed by both keys so the room the permission was checked against is the room the row must
 // Belong to — an id alone would let a manager of one room rename or delete another's
-const roomEmojiWhere = (id: RoomEmojiInMessage["id"], roomId: RoomEmojiInMessage["roomId"]) =>
+const getRoomEmojiWhere = (id: RoomEmojiInMessage["id"], roomId: RoomEmojiInMessage["roomId"]) =>
   and(eq(roomEmojisInMessage.id, id), eq(roomEmojisInMessage.roomId, roomId));
 
 export const roomEmojiRouter = router({
@@ -94,10 +94,10 @@ export const roomEmojiRouter = router({
         .from(roomsInMessage)
         .where(eq(roomsInMessage.id, roomId))
         .for("update");
-      const roomEmojiCount = takeOne(
+      const noRoomEmojis = takeOne(
         await tx.select({ count: count() }).from(roomEmojisInMessage).where(eq(roomEmojisInMessage.roomId, roomId)),
       ).count;
-      if (roomEmojiCount >= MAX_ROOM_EMOJIS)
+      if (noRoomEmojis >= MAX_ROOM_EMOJIS)
         throw getInvalidOperationError(
           Operation.Create,
           DatabaseEntityType.RoomEmoji,
@@ -135,7 +135,7 @@ export const roomEmojiRouter = router({
     "roomId",
   ).mutation<RoomEmojiInMessage>(async ({ ctx, input: { id, roomId } }) => {
     const deletedRoomEmoji = requireMutation(
-      (await ctx.db.delete(roomEmojisInMessage).where(roomEmojiWhere(id, roomId)).returning())[0],
+      (await ctx.db.delete(roomEmojisInMessage).where(getRoomEmojiWhere(id, roomId)).returning())[0],
       Operation.Delete,
       DatabaseEntityType.RoomEmoji,
       id,
@@ -163,10 +163,10 @@ export const roomEmojiRouter = router({
       );
     // Rejected here rather than at create, so a room at its cap never receives a write target it cannot use.
     // The create counts again inside its own transaction — this check is the early no, not the guarantee
-    const roomEmojiCount = takeOne(
+    const noRoomEmojis = takeOne(
       await ctx.db.select({ count: count() }).from(roomEmojisInMessage).where(eq(roomEmojisInMessage.roomId, roomId)),
     ).count;
-    if (roomEmojiCount >= MAX_ROOM_EMOJIS)
+    if (noRoomEmojis >= MAX_ROOM_EMOJIS)
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, roomId);
 
     const id: string = crypto.randomUUID();
@@ -201,7 +201,7 @@ export const roomEmojiRouter = router({
           .set({ name })
           // The room's other emoji are the ones this name may not already belong to, and the unique index is
           // What makes that true — matching here is what turns a taken name into a stated refusal
-          .where(and(roomEmojiWhere(id, roomId), notExists(getRoomEmojiNameQuery(ctx.db, id, name, roomId))))
+          .where(and(getRoomEmojiWhere(id, roomId), notExists(getRoomEmojiNameQuery(ctx.db, id, name, roomId))))
           .returning()
       )[0],
       Operation.Update,

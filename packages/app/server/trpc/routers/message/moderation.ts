@@ -58,7 +58,7 @@ import { and, eq, getColumns, ilike, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
 // The membership row an admin action removes, times out, or replaces
-const roomMembershipWhere = (roomId: string, userId: string) =>
+const getRoomMembershipWhere = (roomId: string, userId: string) =>
   and(eq(usersToRoomsInMessage.userId, userId), eq(usersToRoomsInMessage.roomId, roomId));
 // A ban revokes membership and records the ban in one commit — both the ban and the soft ban start here.
 // The membership row comes back so the caller can announce the removal, which is not part of the commit
@@ -66,7 +66,7 @@ const banRoomMember = (db: Context["db"], actorUserId: string, roomId: string, t
   db.transaction(async (tx) => {
     const [deletedMember] = await tx
       .delete(usersToRoomsInMessage)
-      .where(roomMembershipWhere(roomId, targetUserId))
+      .where(getRoomMembershipWhere(roomId, targetUserId))
       .returning();
     await tx
       .insert(bansInMessage)
@@ -155,7 +155,7 @@ export const moderationRouter = router({
         case AdminActionType.KickFromRoom: {
           const [deletedMember] = await ctx.db
             .delete(usersToRoomsInMessage)
-            .where(roomMembershipWhere(roomId, targetUserId))
+            .where(getRoomMembershipWhere(roomId, targetUserId))
             .returning();
           if (deletedMember) await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, sessionId, "kicked");
           break;
@@ -183,7 +183,7 @@ export const moderationRouter = router({
           await ctx.db
             .update(usersToRoomsInMessage)
             .set({ timeoutUntil: new Date(Date.now() + input.durationMs) })
-            .where(roomMembershipWhere(roomId, targetUserId));
+            .where(getRoomMembershipWhere(roomId, targetUserId));
           break;
         case AdminActionType.Warn:
           break;

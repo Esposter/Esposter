@@ -12,7 +12,7 @@
 | `app/shared/models/dungeons`                                                                                                                | 2026-09-02 | the grid-engine `Direction` casing is theirs                                                    |
 | `app/shared/models` — the editor and game trees                                                                                             | 2026-09-02 | these mirror `@vue-flow/core` and ApexCharts field for field, so their spellings are not ours   |
 | `app/shared/models` — the rest                                                                                                              | 2026-09-03 | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler`, `trpc`, `room`, `auth` |
-| `server/trpc/routers` — `message`, `room`, `userToRoom`, `role`, `call`, `webhook`, `searchHistory`                                         | —          | procedure and result naming; the `trpc` skill owns the pattern                                  |
+| `server/trpc/routers` — `message`, `room`, `userToRoom`, `role`, `call`, `webhook`, `searchHistory`                                         | 2026-09-03 | procedure and result naming; the `trpc` skill owns the pattern                                  |
 | `server/trpc/routers` — `resource`, `blueprint`, `note`, `program`, `sheet`, `todoList`, `survey`                                           | —          | an error constructor is `get*Error`, matching the guards                                        |
 | `server/trpc/routers` — `dashboard`, `dataset`, `email`, `flowchart`, `webpage`, `post`, `like`, `block`, `friend`, `friendRequest`, `user` | 2026-09-03 |                                                                                                 |
 | `server/trpc/routers` — `achievement`, `app`, `clicker`, `dungeons`, `notification`, `pushSubscription`, `session`, `storage`               | 2026-09-03 | a caller-scoped read is `readMy*`, never `readOwn*`                                             |
@@ -64,6 +64,9 @@ the grounds that a rename is expensive — that is the argument
   other one in the repo is a `check*` the pass has not reached yet. A `no-restricted-syntax` selector on a
   declarator named `^get(Is|Has)[A-Z]` can therefore be written against the swept paths and widened as the
   remaining units drain.
+- A where-fragment helper is decidable from the AST alone: a declarator named `*Where` whose initialiser is a
+  function must start with `get`. Four routers had written the bare noun, so the rule is now in the `trpc` skill
+  and a `no-restricted-syntax` selector can hold it over the swept paths.
 - A `const` bound to the call it names — `const readPost = await caller.readPost(…)` — is decidable from the AST alone
   (declarator name equal to the callee's last property), and it is the finding this ledger has now written in five
   files. The fix is always the same: drop the verb prefix, since the binding is the value rather than the fetch.

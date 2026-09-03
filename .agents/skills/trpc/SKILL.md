@@ -83,7 +83,7 @@ Three builders in `server/trpc/procedure/room/`:
 ## Ownership Guards in Mutations
 
 - **`ownedBy(table, id, userId)`** (`server/services/db/ownedBy.ts`) — the where-predicate for "this row must belong to the caller": `.where(ownedBy(foos, input, ctx.getSessionPayload.user.id))`. Compose extra clauses with `and(ownedBy(...), isNull(...))`. Never hand-write `and(eq(table.id, id), eq(table.userId, userId))`.
-- Repeated multi-clause where-fragments within one router (e.g. "not cancelled and not completed") get a named module-level `const`/helper in that router file.
+- Repeated multi-clause where-fragments within one router (e.g. "not cancelled and not completed") get a named module-level `const`/helper in that router file. **A parameterised one is a function, so it is named `get*Where`** — `getRoomMembershipWhere(roomId, userId)`, matching `getCursorWhere` and `getNotBlockedWhere` in `server/services/`; only a fragment that takes no arguments is a bare `*Where` const, because that name is then a value rather than a call.
 
 ## Router and Store Structure
 
