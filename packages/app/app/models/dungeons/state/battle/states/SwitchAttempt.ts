@@ -1,28 +1,16 @@
 import type { State } from "@/models/dungeons/state/State";
-import type { PhaserEvents } from "@/services/phaser/events";
-import type { EventEmitter } from "eventemitter3";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { phaserEventEmitter } from "@/services/phaser/events";
+import { createPhaserSubscriptions } from "@/services/phaser/createPhaserSubscriptions";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
 
-let unsubscribes: (() => void)[] = [];
-
-const usePhaserListener = <TEvent extends EventEmitter.EventNames<PhaserEvents>>(
-  event: TEvent,
-  listener: EventEmitter.EventListener<PhaserEvents, TEvent>,
-) => {
-  phaserEventEmitter.on(event, listener);
-  unsubscribes.push(() => {
-    phaserEventEmitter.off(event, listener);
-  });
-};
+const { subscribe, unsubscribeAll } = createPhaserSubscriptions();
 
 export const SwitchAttempt: State<StateName> = {
   name: StateName.SwitchAttempt,
@@ -41,7 +29,7 @@ export const SwitchAttempt: State<StateName> = {
       return;
     }
 
-    usePhaserListener(
+    subscribe(
       "switchMonster",
       getSynchronizedFunction(async (monster) => {
         const isActiveMonsterFainted = checkIsMonsterFainted(activeMonster.value);
@@ -56,7 +44,7 @@ export const SwitchAttempt: State<StateName> = {
         }
       }),
     );
-    usePhaserListener(
+    subscribe(
       "unswitchMonster",
       getSynchronizedFunction(() => battleStateMachine.setState(StateName.PlayerInput)),
     );
@@ -65,7 +53,6 @@ export const SwitchAttempt: State<StateName> = {
     launchScene(scene, SceneKey.MonsterParty);
   },
   onExit: () => {
-    for (const unsubscribe of unsubscribes) unsubscribe();
-    unsubscribes = [];
+    unsubscribeAll();
   },
 };
