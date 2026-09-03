@@ -29,7 +29,7 @@ flowchart LR
 
 `ResourceListView` takes a `source` prop, and `ResourceListSourceDefinitionMap` says what each source means: a filter preset merged into every read, a default sort, an empty state, an icon, and optionally the column the view is ordered by. Nothing else differs between the three list routes.
 
-The filter preset is the whole mechanism. `resource.readResources` gained `isFavorite` and `isAccessed` booleans, both resolved as caller-scoped `EXISTS` subqueries inside the same `createResourcesWhere` every other filter goes through — so Favorites and Recent inherit the pill row, the URL-synced filter state, the row count and the summary cards for free, and none of them can disagree with `/all` about what a filter means.
+The filter preset is the whole mechanism. `resource.readResources` gained `isFavorite` and `isAccessed` booleans, both resolved as caller-scoped `EXISTS` subqueries inside the same `getResourcesWhere` every other filter goes through — so Favorites and Recent inherit the pill row, the URL-synced filter state, the row count and the summary cards for free, and none of them can disagree with `/all` about what a filter means.
 
 | Source      | Filter             | Default sort          | Pinned column    |
 | ----------- | ------------------ | --------------------- | ---------------- |

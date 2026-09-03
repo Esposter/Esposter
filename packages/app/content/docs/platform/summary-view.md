@@ -11,12 +11,12 @@ The point is the question the table answers badly: _what do I actually have?_ A 
 
 ## How it works
 
-Summary is a **lens, not a route**. The toggle is a toolbar command (`isSummaryView`, collapsing into the `…` overflow on narrow viewports like every other command), so the filter state, the URL, and the back button are untouched by switching lenses. The cards read the same filters the list does, through the same `createResourcesWhere`, so a card's count is exactly the number of rows the list shows once that card sets its type.
+Summary is a **lens, not a route**. The toggle is a toolbar command (`isSummaryView`, collapsing into the `…` overflow on narrow viewports like every other command), so the filter state, the URL, and the back button are untouched by switching lenses. The cards read the same filters the list does, through the same `getResourcesWhere`, so a card's count is exactly the number of rows the list shows once that card sets its type.
 
 ```mermaid
 flowchart LR
   TOGGLE["Summary toolbar command"] --> MODE{"isSummaryView"}
-  STATE["useResourceListFilters<br/>search · status · updated"] --> WHERE["createResourcesWhere<br/>(single filter source)"]
+  STATE["useResourceListFilters<br/>search · status · updated"] --> WHERE["getResourcesWhere<br/>(single filter source)"]
   MODE -->|false| RR["resource.readResources"] --> TABLE["StyledDataTableServer"]
   MODE -->|true| CBT["resource.readResourceTypeCounts<br/>group by type"] --> CARDS["SummaryCards grid"]
   WHERE --> RR
@@ -38,13 +38,13 @@ flowchart LR
 
 ## Key files
 
-| File                                                    | Role                                                   |
-| ------------------------------------------------------- | ------------------------------------------------------ |
-| `app/components/Resource/List/View.vue`                 | the toggle command and the lens switch                 |
-| `app/components/Resource/List/SummaryCards.vue`         | the card grid, its empty/loading/error states          |
-| `app/composables/resource/useReadResourceTypeCounts.ts` | the grouped-count read over the shared filter input    |
-| `server/trpc/routers/resource.ts`                       | `readResourceTypeCounts` behind `createResourcesWhere` |
-| `shared/models/resource/ResourceTypeCount.ts`           | one card's worth of the grouped count                  |
+| File                                                    | Role                                                |
+| ------------------------------------------------------- | --------------------------------------------------- |
+| `app/components/Resource/List/View.vue`                 | the toggle command and the lens switch              |
+| `app/components/Resource/List/SummaryCards.vue`         | the card grid, its empty/loading/error states       |
+| `app/composables/resource/useReadResourceTypeCounts.ts` | the grouped-count read over the shared filter input |
+| `server/trpc/routers/resource.ts`                       | `readResourceTypeCounts` behind `getResourcesWhere` |
+| `shared/models/resource/ResourceTypeCount.ts`           | one card's worth of the grouped count               |
 
 ## Notes
 

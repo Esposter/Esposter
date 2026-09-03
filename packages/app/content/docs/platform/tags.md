@@ -13,13 +13,13 @@ Tags live on the resource row itself as a `jsonb` column defaulting to `{}`, not
 
 Editing replaces the whole record rather than merging, which is Azure's own tag update semantics and the reason the editor can express "remove this tag" at all: the dialog always sends every tag it knows about, and whatever it omits is gone. It edits an ordered list of name/value rows rather than the record directly — a record cannot hold a half-typed duplicate or a blank name mid-edit, and rows keep their position while the user types. Rows with a blank name are dropped at save, which is what lets an empty row sit on screen as somewhere to type without ever being written.
 
-Filtering splits in two, because the pill's value is optional and one operator cannot cover both cases. A name _and_ value is containment (`tags @> {"env":"prod"}`); a name alone is key-existence (`jsonb_exists(tags, 'env')`) — "tagged with this at all", which is the common case. Both go through `createResourcesWhere`, so `count` and `readResources` can never disagree about what matches, and both are served by the same GIN index.
+Filtering splits in two, because the pill's value is optional and one operator cannot cover both cases. A name _and_ value is containment (`tags @> {"env":"prod"}`); a name alone is key-existence (`jsonb_exists(tags, 'env')`) — "tagged with this at all", which is the common case. Both go through `getResourcesWhere`, so `readResourcesCount` and `readResources` can never disagree about what matches, and both are served by the same GIN index.
 
 ```mermaid
 flowchart LR
   DLG["TagsEditorDialog<br/>(name/value rows)"] -->|"updateResource { tags } — whole-record replace"| COL[("resources.tags jsonb<br/>+ GIN index")]
   COL --> ESS["Essentials tags row (chips)"]
-  PILL["/all Tag filter pill"] -->|"name + value → tags @> input"| WHERE["createResourcesWhere"]
+  PILL["/all Tag filter pill"] -->|"name + value → tags @> input"| WHERE["getResourcesWhere"]
   PILL -->|"name only → jsonb_exists"| WHERE
   COL --> WHERE
   WHERE --> LIST["/all list + count"]
@@ -33,11 +33,11 @@ Names are non-empty through the `normalizeString` pipe; values are not. An empty
 
 ## Procedures
 
-| Procedure                          | Auth   | Input                  | Purpose                                   |
-| ---------------------------------- | ------ | ---------------------- | ----------------------------------------- |
-| `<type>.updateResource` (factory)  | owner  | + `tags?`              | Whole-record replace (Azure semantics)    |
-| `resource.readResources` / `count` | authed | + `tags?` / `tagName?` | Containment or key-existence filter       |
-| `resource.readResourceTagCounts`   | authed | —                      | Tag names + how many resources carry each |
+| Procedure                                       | Auth   | Input                  | Purpose                                   |
+| ----------------------------------------------- | ------ | ---------------------- | ----------------------------------------- |
+| `<type>.updateResource` (factory)               | owner  | + `tags?`              | Whole-record replace (Azure semantics)    |
+| `resource.readResources` / `readResourcesCount` | authed | + `tags?` / `tagName?` | Containment or key-existence filter       |
+| `resource.readResourceTagCounts`                | authed | —                      | Tag names + how many resources carry each |
 
 ## Key files
 

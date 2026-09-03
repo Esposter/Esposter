@@ -13,13 +13,13 @@ Exact-substring matching — ranked prefix-first, then newest-first — is fine 
 
 The `pg_trgm` extension makes Postgres compare strings by the trigrams they share. `similarity(name, query)` returns the fraction in common, so a transposition costs a little similarity instead of all of it. `SEARCH_SIMILARITY_THRESHOLD` is pg_trgm's own default cutoff — the point where "survye" still reaches "Survey" without unrelated names leaking in.
 
-Similarity is added as an **OR-arm** next to the existing substring match, not as a replacement. Trigram similarity degrades on very short queries, where a two-character search shares few trigrams with anything, and dropping the substring arm would lose exact matches the user can see on screen. Both arms live in `createResourcesWhere`, so `count` and `readResources` stay in lockstep.
+Similarity is added as an **OR-arm** next to the existing substring match, not as a replacement. Trigram similarity degrades on very short queries, where a two-character search shares few trigrams with anything, and dropping the substring arm would lose exact matches the user can see on screen. Both arms live in `getResourcesWhere`, so `readResourcesCount` and `readResources` stay in lockstep.
 
 Ranking is a ladder: closest trigram match first so a typo still surfaces its resource at the top, then prefix matches above the remaining substring matches, then newest-first within each tier.
 
 ```mermaid
 flowchart LR
-  Q["searchQuery"] --> W["createResourcesWhere"]
+  Q["searchQuery"] --> W["getResourcesWhere"]
   W -->|"ilike %query%"| OR{{"OR"}}
   W -->|"similarity(name, query) > threshold"| OR
   OR --> IDX[("resources_name_trgm_index<br/>GIN (name gin_trgm_ops)")]
