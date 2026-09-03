@@ -20,13 +20,13 @@ export class KeyboardControls extends BaseControls implements Controls {
     this.enterKey = scene.input.keyboard.addKey(Input.Keyboard.KeyCodes.ENTER);
   }
 
-  override getInput(justDown?: true) {
+  override getInput(isJustDown?: true) {
     const input = super.getInput();
     if (input === -1) return Direction.NONE;
     else if (input) return input;
     else if (Input.Keyboard.JustDown(this.cursorKeys.space)) return PlayerSpecialInput.Confirm;
     else if (Input.Keyboard.JustDown(this.cursorKeys.shift)) return PlayerSpecialInput.Cancel;
     else if (Input.Keyboard.JustDown(this.enterKey)) return PlayerSpecialInput.Enter;
-    else return getDirectionFromCursorKeys(this.cursorKeys, justDown);
+    else return getDirectionFromCursorKeys(this.cursorKeys, isJustDown);
   }
 }

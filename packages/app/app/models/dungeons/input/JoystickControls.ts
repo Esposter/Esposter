@@ -8,10 +8,10 @@ import { Direction } from "grid-engine";
 export class JoystickControls extends BaseControls implements Controls {
   cursorKeys?: BaseCursorKeys;
 
-  override getInput(justDown?: true) {
+  override getInput(isJustDown?: true) {
     const input = super.getInput();
     if (input === -1) return Direction.NONE;
     // We don't have any cursor keys until the joystick is rendered
-    else return input ?? (this.cursorKeys ? getDirectionFromCursorKeys(this.cursorKeys, justDown) : Direction.NONE);
+    else return input ?? (this.cursorKeys ? getDirectionFromCursorKeys(this.cursorKeys, isJustDown) : Direction.NONE);
   }
 }
