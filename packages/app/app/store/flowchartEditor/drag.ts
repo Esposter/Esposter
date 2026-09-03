@@ -5,8 +5,8 @@ export const useDragStore = defineStore("flowchartEditor/drag", () => {
   const isDragOver = ref(false);
   const type = ref(GeneralNodeType.Rectangle);
 
-  watch(isDragging, (dragging) => {
-    window.document.body.style.userSelect = dragging ? "none" : "";
+  watch(isDragging, (newIsDragging) => {
+    window.document.body.style.userSelect = newIsDragging ? "none" : "";
   });
 
   return { isDragging, isDragOver, type };

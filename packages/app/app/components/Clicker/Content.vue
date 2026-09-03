@@ -2,7 +2,7 @@
 import { usePopupStore } from "@/store/clicker/popup";
 
 const popupStore = usePopupStore();
-const { onClick } = popupStore;
+const { createPopup } = popupStore;
 </script>
 
 <template>
@@ -14,7 +14,7 @@ const { onClick } = popupStore;
       size-50
       relative
       :g-attrs="{ class: 'origin-center active:scale-95', cursor: 'pointer' }"
-      @click="onClick"
+      @click="createPopup"
     />
   </div>
 </template>

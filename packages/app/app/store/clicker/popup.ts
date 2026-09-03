@@ -9,7 +9,7 @@ export const usePopupStore = defineStore("clicker/popup", () => {
   const { incrementPoints } = pointStore;
   const popups = ref<Popup[]>([]);
   const duration = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
-  const onClick = (event: MouseEvent) => {
+  const createPopup = (event: MouseEvent) => {
     const id = crypto.randomUUID();
     incrementPoints(mouseStore.mousePower);
     popups.value.push({ duration, id, left: event.pageX, points: mouseStore.mousePower, top: event.pageY });
@@ -19,5 +19,5 @@ export const usePopupStore = defineStore("clicker/popup", () => {
       popups.value = popups.value.toSpliced(index, 1);
     }, duration);
   };
-  return { onClick, popups };
+  return { createPopup, popups };
 });

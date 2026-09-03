@@ -26,7 +26,7 @@
 | `server/services` — `auth`, `rateLimiter`, `achievement`, `pagination`, `db`, `blobState`                                                   | 2026-09-03 |                                                                                                 |
 | `app/store/message`                                                                                                                         | —          | CRUD verbs, `store*` subscription handlers                                                      |
 | `app/store` — `dungeons`, `resource`                                                                                                        | —          |                                                                                                 |
-| `app/store` — the rest                                                                                                                      | —          | the root stores plus `achievement`, `clicker`, `dashboard`, `post`, `survey`, the editors       |
+| `app/store` — the rest                                                                                                                      | 2026-09-03 | the root stores plus `achievement`, `clicker`, `dashboard`, `post`, `survey`, the editors       |
 | `app/composables`                                                                                                                           | —          | `use*` naming, the `{param}Value` `toValue` suffix                                              |
 | `app/services`, `app/util`, `app/models`, `app/types`                                                                                       | —          | filename-is-the-export                                                                          |
 | `app/components/Message`, `app/components/Resource`                                                                                         | —          | two rows if one pass cannot read both                                                           |
@@ -48,6 +48,10 @@ the grounds that a rename is expensive — that is the argument
   `*ByIds` read dropped it, but these two share a feature with a paginated read of the same rows
   (`readMembers`, `readMessages`), so the suffix is what separates two procedures rather than marking a batch
   upgrade — and dropping it collides. What the pair should be called instead is the open question.
+- **The flowchart drag store's `type` ref and `useDragAndDrop`'s `nodeType` parameter are one rename across two
+  units.** `type` is the vague field name the conventions ban, and the composable already spells the good name —
+  but taking it for the ref shadows that parameter inside `onDragStart`. The call is whether the parameter moves
+  (to what) or the destructure aliases; whichever way, both files change together in the `app/composables` pass.
 - **`countEntities` is `packages/db`'s, and it is an async fetch under the `count*` prefix.** Every count
   procedure and service in `packages/app` is now `read*Count`; the storage primitive underneath them keeps
   `count*`, so the question of whether a generic table-client tally is exempt belongs to the `packages/db`

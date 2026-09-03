@@ -31,16 +31,16 @@ export const useAchievementStore = defineStore("achievement", () => {
       ({ achievement }) => achievement.name !== name,
     );
   };
-  const updateAchievement = (userAchievement: UserAchievementWithRelations) => {
+  const updateAchievement = (updatedUserAchievement: UserAchievementWithRelations) => {
     if (!achievementDefinitionMap.value) return;
 
     const userAchievementWithDefinition = mapToUserAchievementWithDefinition(
-      userAchievement,
-      achievementDefinitionMap.value[userAchievement.achievement.name],
+      updatedUserAchievement,
+      achievementDefinitionMap.value[updatedUserAchievement.achievement.name],
     );
     const index = userAchievements.value.findIndex(
       ({ achievementId, userId }) =>
-        userId === userAchievement.userId && achievementId === userAchievement.achievementId,
+        userId === updatedUserAchievement.userId && achievementId === updatedUserAchievement.achievementId,
     );
     if (index === -1) userAchievements.value.push(userAchievementWithDefinition);
     else userAchievements.value[index] = userAchievementWithDefinition;
