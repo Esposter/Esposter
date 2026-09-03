@@ -3,7 +3,7 @@ import type { BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
 import { Direction } from "grid-engine";
 import { Input } from "phaser";
 
-const getDirectionToCursorKeysMap = (
+const getDirectionCursorKeysMap = (
   cursorKeys: BaseCursorKeys,
 ): Record<Exclude<Direction, Direction.NONE>, Input.Keyboard.Key[]> => ({
   [Direction.DOWN]: [cursorKeys.down],
@@ -16,11 +16,11 @@ const getDirectionToCursorKeysMap = (
   [Direction.UP_RIGHT]: [cursorKeys.up, cursorKeys.right],
 });
 
-export const mapCursorKeysToDirection = (cursorKeys: BaseCursorKeys, justDown?: true) => {
-  const cursorKeyMap = getDirectionToCursorKeysMap(cursorKeys);
+export const getDirectionFromCursorKeys = (cursorKeys: BaseCursorKeys, isJustDown?: true) => {
+  const directionCursorKeysMap = getDirectionCursorKeysMap(cursorKeys);
 
-  for (const [direction, directionKeys] of Object.entries(cursorKeyMap)) {
-    if (justDown) {
+  for (const [direction, directionKeys] of Object.entries(directionCursorKeysMap)) {
+    if (isJustDown) {
       // JustDown doesn't support multiple different key presses
       if (directionKeys.length > 1) continue;
       if (directionKeys.every((cursorKey) => Input.Keyboard.JustDown(cursorKey))) return direction as Direction;

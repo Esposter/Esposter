@@ -3,7 +3,9 @@ import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectP
 import { NotFoundError } from "@esposter/shared";
 
 export const getTiledObjectProperty = <TValue = never>(properties: object[], name: string) => {
-  const property = (properties as TiledObjectProperty<TValue>[]).find((p) => p.name === name);
+  const property = (properties as TiledObjectProperty<TValue>[]).find(
+    (tiledObjectProperty) => tiledObjectProperty.name === name,
+  );
   if (!property) throw new NotFoundError(getTiledObjectProperty.name, name);
   return property;
 };

@@ -5,13 +5,13 @@ import type { Tilemaps } from "phaser";
 
 import { ignoreWarn } from "@/util/console/ignoreWarn";
 
-const cache = new Map<TilemapKey, Map<TilesetKey, Tilemaps.Tileset>>();
+const tilesetCache = new Map<TilemapKey, Map<TilesetKey, Tilemaps.Tileset>>();
 // Only our created base tileset keys are used in all our tilemaps
 export const addTilesetImage = (tilemap: Tilemaps.Tilemap, tilemapKey: TilemapKey, tilesetKey: BaseTilesetKey) => {
-  const tilesetMap = cache.get(tilemapKey);
+  const tilesetMap = tilesetCache.get(tilemapKey);
   if (!tilesetMap) {
     const newTileset = baseAddTilesetImage(tilemap, tilesetKey);
-    if (newTileset) cache.set(tilemapKey, new Map([[tilesetKey, newTileset]]));
+    if (newTileset) tilesetCache.set(tilemapKey, new Map([[tilesetKey, newTileset]]));
     return newTileset;
   }
 

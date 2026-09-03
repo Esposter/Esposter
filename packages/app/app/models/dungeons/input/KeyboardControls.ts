@@ -4,7 +4,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { BaseControls } from "@/models/dungeons/input/BaseControls";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { mapCursorKeysToDirection } from "@/services/dungeons/UI/input/mapCursorKeysToDirection";
+import { getDirectionFromCursorKeys } from "@/services/dungeons/UI/input/getDirectionFromCursorKeys";
 import { NotInitializedError } from "@esposter/shared";
 import { Direction } from "grid-engine";
 import { Input } from "phaser";
@@ -27,6 +27,6 @@ export class KeyboardControls extends BaseControls implements Controls {
     else if (Input.Keyboard.JustDown(this.cursorKeys.space)) return PlayerSpecialInput.Confirm;
     else if (Input.Keyboard.JustDown(this.cursorKeys.shift)) return PlayerSpecialInput.Cancel;
     else if (Input.Keyboard.JustDown(this.enterKey)) return PlayerSpecialInput.Enter;
-    else return mapCursorKeysToDirection(this.cursorKeys, justDown);
+    else return getDirectionFromCursorKeys(this.cursorKeys, justDown);
   }
 }
