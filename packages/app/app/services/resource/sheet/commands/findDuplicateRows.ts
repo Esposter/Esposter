@@ -6,18 +6,20 @@ import { KeepDuplicateMode } from "@/models/resource/sheet/commands/KeepDuplicat
 import { takeOne } from "@esposter/shared";
 
 export const findDuplicateRows = (dataSource: DataSource, keepMode = KeepDuplicateMode.First): IndexedRow[] => {
-  const sortedKeys = dataSource.columns.map(({ name }) => name).toSorted((a, b) => a.localeCompare(b));
+  const sortedKeys = dataSource.columns
+    .map(({ name }) => name)
+    .toSorted((firstKey, secondKey) => firstKey.localeCompare(secondKey));
   const getRowKey = (row: Row): string => JSON.stringify(sortedKeys.map((key) => row.data[key]));
 
   if (keepMode === KeepDuplicateMode.First) {
-    const seen = new Set<string>();
-    const duplicates: IndexedRow[] = [];
+    const seenKeys = new Set<string>();
+    const duplicateRows: IndexedRow[] = [];
     for (const [index, row] of dataSource.rows.entries()) {
       const key = getRowKey(row);
-      if (seen.has(key)) duplicates.push({ index, row });
-      else seen.add(key);
+      if (seenKeys.has(key)) duplicateRows.push({ index, row });
+      else seenKeys.add(key);
     }
-    return duplicates;
+    return duplicateRows;
   }
 
   const keys: string[] = [];
@@ -28,8 +30,8 @@ export const findDuplicateRows = (dataSource: DataSource, keepMode = KeepDuplica
     lastIndexByKey.set(key, index);
   }
 
-  const duplicates: IndexedRow[] = [];
+  const duplicateRows: IndexedRow[] = [];
   for (const [index, row] of dataSource.rows.entries())
-    if (lastIndexByKey.get(takeOne(keys, index)) !== index) duplicates.push({ index, row });
-  return duplicates;
+    if (lastIndexByKey.get(takeOne(keys, index)) !== index) duplicateRows.push({ index, row });
+  return duplicateRows;
 };

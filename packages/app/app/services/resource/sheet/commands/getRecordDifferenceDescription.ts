@@ -2,13 +2,13 @@ import { ISO_DATE_FORMAT } from "#shared/util/date/constants";
 import { formatDate } from "#shared/util/date/formatDate";
 import { ItemMetadata } from "@esposter/shared";
 
-const itemMetadataKeySet = new Set(Object.keys(new ItemMetadata()));
+const ItemMetadataKeySet = new Set(Object.keys(new ItemMetadata()));
 
 export const getRecordDifferenceDescription = (original: object, updated: object): string => {
   const keys = new Set([...Object.keys(original), ...Object.keys(updated)]);
   const rows: string[] = [];
   for (const key of keys) {
-    if (itemMetadataKeySet.has(key)) continue;
+    if (ItemMetadataKeySet.has(key)) continue;
     const originalValue = (original as Record<string, unknown>)[key];
     const updatedValue = (updated as Record<string, unknown>)[key];
     if (originalValue !== updatedValue) {

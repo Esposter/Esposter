@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { mount } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
-import { defineComponent, h } from "vue";
+import { defineComponent, h, Suspense } from "vue";
 import { createVuetify } from "vuetify";
 import { VDialog } from "vuetify/components";
 
