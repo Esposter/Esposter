@@ -15,11 +15,11 @@ interface StatusAvatarProps {
 
 const { avatarAttrs = {}, avatarProps = {}, id, image, name } = defineProps<StatusAvatarProps>();
 const statusStore = useStatusStore();
-const { getStatusEnum, getStatusMessage } = statusStore;
-const badge = computed(() => ({ ...StatusBadgePropsMap[getStatusEnum(id)], location: "bottom end" }));
+const { getStatusMessage, getUserStatus } = statusStore;
+const badge = computed(() => ({ ...StatusBadgePropsMap[getUserStatus(id)], location: "bottom end" }));
 const statusTooltip = computed(() => {
   const message = getStatusMessage(id);
-  const status = getStatusEnum(id);
+  const status = getUserStatus(id);
   return message ? `${status} — ${message}` : status;
 });
 </script>

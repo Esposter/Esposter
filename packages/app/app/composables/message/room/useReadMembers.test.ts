@@ -13,8 +13,8 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 describe(useReadMembers, () => {
   const server = setupMswTrpc();
   let wrapper: VueWrapper;
-  let count: Ref<number>;
-  let countsByTopRole: Ref<MemberCountByTopRole[]>;
+  let memberCount: Ref<number>;
+  let memberCountsByTopRole: Ref<MemberCountByTopRole[]>;
   let readMembers: ReturnType<typeof useReadMembers>["readMembers"];
   const roomId = crypto.randomUUID();
   const otherRoomId = crypto.randomUUID();
@@ -28,7 +28,7 @@ describe(useReadMembers, () => {
         setup: () => {
           setCurrentRoomId(roomId);
           const memberStore = useMemberStore();
-          ({ count, countsByTopRole } = storeToRefs(memberStore));
+          ({ memberCount, memberCountsByTopRole } = storeToRefs(memberStore));
           ({ readMembers } = useReadMembers());
         },
       }),
@@ -40,7 +40,7 @@ describe(useReadMembers, () => {
     vi.restoreAllMocks();
   });
 
-  // The member list headers derive the roleless group as count - sum(role groups), so totals filed under the
+  // The member list headers derive the roleless group as memberCount - sum(role groups), so totals filed under the
   // Room switched to render a group count for a membership they never described — negative, where the room
   // Being entered has fewer members than the one left behind
   test("files the member totals under the room they were read for", async () => {
@@ -71,12 +71,12 @@ describe(useReadMembers, () => {
     releaseReads();
     await pendingRead;
 
-    expect(count.value).toBe(0);
-    expect(countsByTopRole.value).toStrictEqual([]);
+    expect(memberCount.value).toBe(0);
+    expect(memberCountsByTopRole.value).toStrictEqual([]);
 
     setCurrentRoomId(roomId);
 
-    expect(count.value).toBe(newCount);
-    expect(countsByTopRole.value).toStrictEqual([{ count: newCount, roleId }]);
+    expect(memberCount.value).toBe(newCount);
+    expect(memberCountsByTopRole.value).toStrictEqual([{ count: newCount, roleId }]);
   });
 });

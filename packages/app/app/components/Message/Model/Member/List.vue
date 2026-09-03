@@ -8,7 +8,7 @@ import { useMemberStore } from "@/store/message/user/member";
 const { readMembers, readMoreMembers } = useReadMembers();
 const { isPending } = await readMembers();
 const memberStore = useMemberStore();
-const { count, countsByTopRole, hasMore, members } = storeToRefs(memberStore);
+const { hasMore, memberCount, memberCountsByTopRole, members } = storeToRefs(memberStore);
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
 const roleStore = useRoleStore();
@@ -19,11 +19,11 @@ const memberGroups = computed(() => {
   return getMemberGroups(members.value, (userId) => getMemberRoles(room.id, userId));
 });
 const memberCountByRoleId = computed(
-  () => new Map(countsByTopRole.value.map((countByTopRole) => [countByTopRole.roleId, countByTopRole.count])),
+  () => new Map(memberCountsByTopRole.value.map((countByTopRole) => [countByTopRole.roleId, countByTopRole.count])),
 );
 // Derived from the running total so member join/leave subscription updates keep the roleless group current
 const rolelessMemberCount = computed(
-  () => count.value - countsByTopRole.value.reduce((sum, countByTopRole) => sum + countByTopRole.count, 0),
+  () => memberCount.value - memberCountsByTopRole.value.reduce((sum, countByTopRole) => sum + countByTopRole.count, 0),
 );
 const getMemberCountSuffix = (roleId: string) => {
   const memberCount = roleId ? memberCountByRoleId.value.get(roleId) : rolelessMemberCount.value;

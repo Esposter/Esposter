@@ -19,7 +19,7 @@ import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useUserSettingsStore } from "@/store/message/user/settings";
 import { useCallBackgroundStore } from "@/store/message/user/settings/callBackground";
-import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
 import {
   DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
   DEFAULT_SPEAKER_VOLUME_PERCENTAGE,

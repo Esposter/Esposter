@@ -14,13 +14,13 @@ const { $trpc } = useNuxtApp();
 const session = authClient.useSession();
 const userId = computed(() => session.value.data?.user.id ?? "");
 const statusStore = useStatusStore();
-const { getStatus, getStatusEnum, getStatusMessage, storeStatus } = statusStore;
+const { getStatusMessage, getStoredUserStatus, getUserStatus, storeStatus } = statusStore;
 // A manual draft, seeded once per open: the menu unmounts its content on close, so every open builds this form
 // Again against the row as it then stands. Automatic sync would re-seed on any write to the status map, and the
 // Map carries more than these two fields — a presence push landing while the user is mid-sentence would clear
 // What they had typed, having changed only the connection state
 const { cloned: editedStatus, sync: syncEditedStatus } = useCloned(
-  () => ({ message: getStatusMessage(userId.value), status: getStatusEnum(userId.value) }),
+  () => ({ message: getStatusMessage(userId.value), status: getUserStatus(userId.value) }),
   { manual: true },
 );
 const { executeMutation } = useMutation();
@@ -37,7 +37,7 @@ const save = async () => {
     // Status on screen when the user clicked. Nothing is applied when there is no record yet — the row carries
     // Fields only the server can fill in, so it is left to onSuccess
     applyOptimistic: () => {
-      const previousStatus = getStatus(userId.value);
+      const previousStatus = getStoredUserStatus(userId.value);
       if (!previousStatus) return noop;
 
       const { message: previousMessage, status: previousUserStatus } = previousStatus;
@@ -45,7 +45,7 @@ const save = async () => {
       return () => {
         // Only the two fields this write moved, against the record as it stands — reinstating the row as a
         // Whole would undo the connection state a presence push landed while this write was in flight
-        const currentStatus = getStatus(userId.value);
+        const currentStatus = getStoredUserStatus(userId.value);
         if (currentStatus)
           storeStatus(userId.value, { ...currentStatus, message: previousMessage, status: previousUserStatus });
       };

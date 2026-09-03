@@ -6,7 +6,7 @@ import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { useUserSettingsStore } from "@/store/message/user/settings";
-import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
 import { AdminActionType, NoiseSuppressionMode } from "@esposter/db-schema";
 import { getResultAsync, noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
 import { Room } from "livekit-client";

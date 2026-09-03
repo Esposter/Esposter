@@ -5,7 +5,7 @@ import { useStatusStore } from "@/store/message/user/status";
 
 const { data: session } = await authClient.useSession(useFetch);
 const statusStore = useStatusStore();
-const { getStatusEnum, getStatusMessage } = statusStore;
+const { getStatusMessage, getUserStatus } = statusStore;
 const callStore = useCallStore();
 const { callRoomId, callRoute, isInCall } = storeToRefs(callStore);
 const callRoomName = useRoomName(callRoomId);
@@ -46,7 +46,7 @@ const callRoomName = useRoomName(callRoomId);
             {{ session.user.name }}
           </div>
           <div truncate text-hint>
-            {{ getStatusMessage(session.user.id) || getStatusEnum(session.user.id) }}
+            {{ getStatusMessage(session.user.id) || getUserStatus(session.user.id) }}
           </div>
         </div>
         <MessageLeftSideBarSettingsButton />

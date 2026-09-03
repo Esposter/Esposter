@@ -8,6 +8,7 @@ import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useUserStore } from "@/store/message/user";
+import { DerivedDatabaseEntityType } from "@esposter/db-schema";
 
 export const useMemberStore = defineStore("message/user/member", () => {
   const roomStore = useRoomStore();
@@ -44,8 +45,8 @@ export const useMemberStore = defineStore("message/user/member", () => {
   );
   // Reading views, like `members` above: every write names its room — the read binds one up front, the join and
   // Leave handlers take the event's room, and an offline hydrate takes the partition it was read for
-  const count = computed(() => memberCounts.value.count);
-  const countsByTopRole = computed(() => memberCounts.value.countsByTopRole);
+  const memberCount = computed(() => memberCounts.value.count);
+  const memberCountsByTopRole = computed(() => memberCounts.value.countsByTopRole);
   // The room the change happened in, which is not necessarily the room on screen: a role assigned from a profile
   // Card in one room while another is open belongs to that room's totals. The roleless group derives from the
   // Total, so a change with no room is written to a slice nothing reads and is thereby a no-op
@@ -63,9 +64,10 @@ export const useMemberStore = defineStore("message/user/member", () => {
   });
   // A join or a leave is subscribed for every room the user is in, so both handlers are told which room the
   // Event happened in — and that is the room its list and its running total are written to, whichever room is on
-  // Screen. `members` and `count` above are the reading views and neither can be written through: `members` is
+  // Screen. `members` and `memberCount` above are the reading views and neither can be written through: `members` is
   // Sorted, so a write through it would land on the copy `toSorted` produced rather than the room's own rows
-  const getRoomOperationData = (roomId: string) => createOperationData(getSlice(roomId).items, ["id"], "Member");
+  const getRoomOperationData = (roomId: string) =>
+    createOperationData(getSlice(roomId).items, ["id"], DerivedDatabaseEntityType.Member);
   const storeCreateMember = (roomId: string, member: User) => {
     storeUser(member);
     getRoomOperationData(roomId).createMember(member);
@@ -81,12 +83,12 @@ export const useMemberStore = defineStore("message/user/member", () => {
     getMemberCountsRef(roomId).value.count--;
   };
   return {
-    count,
-    countsByTopRole,
     getBoundMemberCounts,
     getMemberCountsRef,
     getMemberName,
     getSlice,
+    memberCount,
+    memberCountsByTopRole,
     members,
     ...restData,
     storeCreateMember,

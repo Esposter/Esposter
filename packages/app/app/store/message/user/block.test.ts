@@ -31,9 +31,9 @@ describe(useBlockStore, () => {
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
     const blockStore = useBlockStore();
-    const { blockUser } = blockStore;
+    const { createBlock } = blockStore;
     friends.value = [first, second];
-    await Promise.all([blockUser(first.id), blockUser(second.id)]);
+    await Promise.all([createBlock(first.id), createBlock(second.id)]);
 
     expect(friends.value).toStrictEqual([first]);
   });
@@ -51,9 +51,9 @@ describe(useBlockStore, () => {
     );
     const blockStore = useBlockStore();
     const { blockedUsers } = storeToRefs(blockStore);
-    const { unblockUser } = blockStore;
+    const { deleteBlock } = blockStore;
     blockedUsers.value = [first, second];
-    await Promise.all([unblockUser(first.id), unblockUser(second.id)]);
+    await Promise.all([deleteBlock(first.id), deleteBlock(second.id)]);
 
     expect(blockedUsers.value).toStrictEqual([first]);
   });
@@ -64,8 +64,7 @@ describe(useBlockStore, () => {
   test("does not list a user twice when a rejected unblock overlaps a block", async () => {
     expect.hasAssertions();
 
-    const { promise: unblockPromise, resolve: releaseUnblock } = Promise.withResolvers<void>();
-    const unblockReleased = unblockPromise;
+    const { promise: unblockReleased, resolve: releaseUnblock } = Promise.withResolvers<void>();
     server.use(
       trpcMsw.block.blockUser.mutation(() => first),
       trpcMsw.block.unblockUser.mutation(async () => {
@@ -75,10 +74,10 @@ describe(useBlockStore, () => {
     );
     const blockStore = useBlockStore();
     const { blockedUsers } = storeToRefs(blockStore);
-    const { blockUser, unblockUser } = blockStore;
+    const { createBlock, deleteBlock } = blockStore;
     blockedUsers.value = [first];
-    const unblock = unblockUser(first.id);
-    const block = blockUser(first.id);
+    const unblock = deleteBlock(first.id);
+    const block = createBlock(first.id);
     // Long enough for a block that was never held back to land, which is what the queue has to prevent
     await flushPromises();
     releaseUnblock();

@@ -8,9 +8,9 @@ interface UnblockUserButtonProps {
 
 const { userId } = defineProps<UnblockUserButtonProps>();
 const blockStore = useBlockStore();
-const { unblockUser } = blockStore;
+const { deleteBlock } = blockStore;
 </script>
 
 <template>
-  <v-btn :="FRIENDS_ACTION_BUTTON_PROPS" text="Unblock" @click="unblockUser(userId)" />
+  <v-btn :="FRIENDS_ACTION_BUTTON_PROPS" text="Unblock" @click="deleteBlock(userId)" />
 </template>

@@ -27,7 +27,7 @@
 | `app/store/message` — the root files                                                                                                        | 2026-09-03 | CRUD verbs, `store*` subscription handlers                                                      |
 | `app/store/message/room`                                                                                                                    | 2026-09-03 | a setter is named for the boolean it writes; `apply*` pushes stored state onto something live   |
 | `app/store/message/input`                                                                                                                   | 2026-09-03 | `store*` is for a paired subscription handler; a `getIs*` returning a boolean is `check*`       |
-| `app/store/message/user`                                                                                                                    | —          |                                                                                                 |
+| `app/store/message/user`                                                                                                                    | 2026-09-03 | a store file's name carries every word its export does, the parent path aside                   |
 | `app/store/message` — `file`, `search`, `ui`, `moderation`, `draftsAndSent`                                                                 | —          |                                                                                                 |
 | `app/store` — `dungeons`, `resource`                                                                                                        | —          |                                                                                                 |
 | `app/store` — the rest                                                                                                                      | 2026-09-03 | the root stores plus `achievement`, `clicker`, `dashboard`, `post`, `survey`, the editors       |
@@ -59,6 +59,12 @@ the grounds that a rename is expensive — that is the argument
 - **`getIsAuthed` / `getIsRateLimited` / `getIsEntityIdEqualComparator` — `get*` is right, the `Is` is not.**
   All three return a function rather than a boolean, so `check*` would be wrong, but the `Is` still reads as a
   predicate. The middleware pair wants a name saying what it builds; the comparator already has one.
+
+- **The `block` router's `blockUser` and `unblockUser` procedures name an action, not the row they write.**
+  The store side is now `createBlock` / `deleteBlock` against the `blocks` table, and the router already spells
+  the pair `Operation.Create` / `Operation.Delete` on `DatabaseEntityType.Block` in its own error constructors —
+  but the procedures sit in `server/trpc/routers/block`, whose row was swept before the store pass reached this.
+  They go with the next pass over that row.
 
 - **The `callSession` router's `setMute` and `setCamera` procedures name an action, not the field they write.**
   The store side is now `setParticipantMuted` / `setParticipantCameraEnabled` against `isMuted` / `isCameraEnabled`,

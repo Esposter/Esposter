@@ -2,7 +2,7 @@
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
-import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
 
 const callStore = useCallStore();
 const { selectVirtualBackground } = callStore;

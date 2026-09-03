@@ -17,7 +17,7 @@ Each group subheader shows the group's **total** member count, not the loaded-pa
 
 ```mermaid
 flowchart TD
-  readMembers["useReadMembers.readMembers<br/>(room switch)"] -- "readMemberCountsByTopRole query" --> counts["memberStore.countsByTopRole<br/>(per-role totals)"]
+  readMembers["useReadMembers.readMembers<br/>(room switch)"] -- "readMemberCountsByTopRole query" --> counts["memberStore.memberCountsByTopRole<br/>(per-role totals)"]
   joinLeave["member join/leave<br/>(subscriptions)"] -- "count++ / count--" --> total["memberStore.count"]
   joinLeave -- "leave clears the member's roles" --> roleMutation
   total -- "roleless = count - sum(role groups)" --> headers["group subheader counts"]
