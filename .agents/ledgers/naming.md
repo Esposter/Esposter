@@ -34,7 +34,7 @@
 | `app/store` — the rest                                                                                                                      | 2026-09-03 | the root stores plus `achievement`, `clicker`, `dashboard`, `post`, `survey`, the editors         |
 | `app/composables/message/room`                                                                                                              | 2026-09-03 | `use*` naming, the `{param}Value` `toValue` suffix; an unsubscribable is named for its procedure  |
 | `app/composables/message` — `subscribables`, `message`, `slashCommand`, `moderation`                                                        | 2026-09-03 |                                                                                                   |
-| `app/composables/message` — the rest                                                                                                        | —          | `emoji`, `draftsAndSent`, `user`, `file`, `editor`, `search`, `poll`, the singles, the root files |
+| `app/composables/message` — the rest                                                                                                        | 2026-09-03 | `emoji`, `draftsAndSent`, `user`, `file`, `editor`, `search`, `poll`, the singles, the root files |
 | `app/composables/resource/sheet/commands`                                                                                                   | —          | a command class is named for the edit it applies                                                  |
 | `app/composables/resource` — the rest                                                                                                       | —          | `list`, `autosave`, `todoList`, `search`, `recycleBin`, `sheet`'s root files, the root files      |
 | `app/composables/dungeons`                                                                                                                  | —          |                                                                                                   |
@@ -141,6 +141,10 @@ the grounds that a rename is expensive — that is the argument
 - A where-fragment helper is decidable from the AST alone: a declarator named `*Where` whose initialiser is a
   function must start with `get`. Four routers had written the bare noun, so the rule is now in the `trpc` skill
   and a `no-restricted-syntax` selector can hold it over the swept paths.
+- A redundant alias is decidable from the AST alone: a declarator whose initialiser is a bare identifier declared
+  in the same scope binds a second name to a value that already has one. Every instance so far is a
+  `Promise.withResolvers` destructured under one name and immediately re-bound under another, and the fix is
+  always to destructure to the name the test actually reads.
 - A `const` bound to the call it names — `const readPost = await caller.readPost(…)` — is decidable from the AST alone
   (declarator name equal to the callee's last property), and it is the finding this ledger has now written in five
   files. The fix is always the same: drop the verb prefix, since the binding is the value rather than the fetch.

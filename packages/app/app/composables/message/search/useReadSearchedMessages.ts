@@ -19,7 +19,7 @@ export const useReadSearchedMessages = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
   const { getBoundCount, getBoundIsSearching, getBoundPage, getReadMoreItems } = searchMessageStore;
-  const { menu, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
+  const { isMenuOpen, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
   const searchHistoryStore = useSearchHistoryStore();
   const { createSearchHistory } = searchHistoryStore;
   return getReadMoreItems(async (offset) => {
@@ -43,7 +43,7 @@ export const useReadSearchedMessages = () => {
     // The field clearing itself on blur is what put an empty query here, and the answer to that is not a 400
     if (checkIsSearchQueryEmpty(query, filters)) return { hasMore: false, items: [] };
 
-    menu.value = false;
+    isMenuOpen.value = false;
     // The pending flag is raised and cleared inside the read that owns it rather than by the paginator's own
     // Finalizer, which is shared across every read this composable issues: two searches overlapping across a
     // Room switch would otherwise have the first to land clear the second's flag and leave its own raised
@@ -55,7 +55,7 @@ export const useReadSearchedMessages = () => {
     const boundPage = getBoundPage();
     const searchedMessages = await withFinalizerAsync(
       async () => {
-        const { count: newCount, data } = await $trpc.message.searchMessages.query({
+        const { count: newCount, data: items } = await $trpc.message.searchMessages.query({
           filters,
           offset,
           query,
@@ -67,7 +67,7 @@ export const useReadSearchedMessages = () => {
           await createSearchHistory({ filters: filters.length > 0 ? filters : undefined, query, roomId });
         }
         if (newCount !== undefined) boundCount.value = newCount;
-        return data;
+        return items;
       },
       () => {
         boundIsSearching.value = false;

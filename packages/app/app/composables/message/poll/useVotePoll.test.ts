@@ -48,8 +48,7 @@ describe(useVotePoll, () => {
 
     const message = createPollMessage("first");
     const otherMessage = createPollMessage("second");
-    const { promise: votePromise, resolve: releaseVote } = Promise.withResolvers<void>();
-    const voteReleased = votePromise;
+    const { promise: voteReleased, resolve: releaseVote } = Promise.withResolvers<void>();
     server.use(
       trpcMsw.message.votePoll.mutation(async () => {
         await voteReleased;

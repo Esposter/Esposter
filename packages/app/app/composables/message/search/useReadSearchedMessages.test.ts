@@ -64,8 +64,7 @@ describe(useReadSearchedMessages, () => {
   test("files a search's totals, page and history under the room it was issued for", async () => {
     expect.hasAssertions();
 
-    const { promise: searchPromise, resolve: releaseSearch } = Promise.withResolvers<void>();
-    const searchGate = searchPromise;
+    const { promise: searchGate, resolve: releaseSearch } = Promise.withResolvers<void>();
     server.use(
       trpcMsw.message.searchMessages.query(async () => {
         await searchGate;
