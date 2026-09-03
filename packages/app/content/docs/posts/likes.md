@@ -12,29 +12,29 @@ Reddit-style voting: each user holds at most one like per post with `value ∈ {
 ```mermaid
 flowchart TD
   arrows["up / down arrow on a post card"] --> pick{"viewerLike"}
-  pick -->|"none"| createLike["like.createLike — noLikes += value"]
-  pick -->|"the opposite value"| updateLike["like.updateLike — noLikes += 2 × value"]
-  pick -->|"the same value"| deleteLike["like.deleteLike — noLikes −= value"]
+  pick -->|"none"| createLike["like.createLike — likeCount += value"]
+  pick -->|"the opposite value"| updateLike["like.updateLike — likeCount += 2 × value"]
+  pick -->|"the same value"| deleteLike["like.deleteLike — likeCount −= value"]
   createLike --> txn
   updateLike --> txn
-  deleteLike --> txn["one transaction — the likes row, noLikes, and the recomputed ranking"]
+  deleteLike --> txn["one transaction — the likes row, likeCount, and the recomputed ranking"]
   txn --> row[("posts row")]
-  txn --> patch["useLikeOperations patches viewerLike and noLikes in the owning store"]
+  txn --> patch["useLikeOperations patches viewerLike and likeCount in the owning store"]
   row -->|"getViewerPostRelations — the caller's own like row, never the list"| viewer["every read carries viewerLike"]
   viewer --> arrows
 ```
 
-**Model** — `likes(userId, postId, value)` with a composite primary key (one row per user per post) and a DB check constraining `value` to ±1. The post's `noLikes` is the denormalized net sum.
+**Model** — `likes(userId, postId, value)` with a composite primary key (one row per user per post) and a DB check constraining `value` to ±1. The post's `likeCount` is the denormalized net sum.
 
-**Mutations** — three procedures, each a transaction that writes the like row, adjusts `noLikes`, and recomputes the stored [ranking](/docs/posts/feed-and-ranking) from the new count:
+**Mutations** — three procedures, each a transaction that writes the like row, adjusts `likeCount`, and recomputes the stored [ranking](/docs/posts/feed-and-ranking) from the new count:
 
-- `createLike` — first vote (`noLikes += value`).
-- `updateLike` — flip an existing vote (`noLikes += 2 × value`, rejecting no-op flips).
-- `deleteLike` — retract (`noLikes −= value`).
+- `createLike` — first vote (`likeCount += value`).
+- `updateLike` — flip an existing vote (`likeCount += 2 × value`, rejecting no-op flips).
+- `deleteLike` — retract (`likeCount −= value`).
 
-**Viewer-scoped reads** — every procedure that returns a post (reads and mutations alike) carries `viewerLike: Like | undefined` on `PostWithRelations`: at most the viewer's own like row, never the full list, since the net count already lives in the denormalized `noLikes`. The `likes` relation is only the server-side fetch strategy — `getViewerPostRelations` filters it to the caller, and `getPostWithViewerLike` maps the result. Unauthenticated rate-limited reads have no viewer, so they skip the like lookup entirely and the arrows render uncolored. A hot feed page's payload is O(posts) instead of O(total likes).
+**Viewer-scoped reads** — every procedure that returns a post (reads and mutations alike) carries `viewerLike: Like | undefined` on `PostWithRelations`: at most the viewer's own like row, never the full list, since the net count already lives in the denormalized `likeCount`. The `likes` relation is only the server-side fetch strategy — `getViewerPostRelations` filters it to the caller, and `getPostWithViewerLike` maps the result. Unauthenticated rate-limited reads have no viewer, so they skip the like lookup entirely and the arrows render uncolored. A hot feed page's payload is O(posts) instead of O(total likes).
 
-**Client** — `PostLikeSection` derives `liked`/`unliked` from `viewerLike`, and maps arrow clicks to the right mutation (up while unliked = flip, up while liked = retract, …). `useLikeOperations` applies the result optimistically to whichever store owns the list (feed posts vs a post page's comments — two store instances of the same shape), patching `viewerLike` and `noLikes` in place so counts update without a refetch.
+**Client** — `PostLikeSection` derives `liked`/`unliked` from `viewerLike`, and maps arrow clicks to the right mutation (up while unliked = flip, up while liked = retract, …). `useLikeOperations` applies the result optimistically to whichever store owns the list (feed posts vs a post page's comments — two store instances of the same shape), patching `viewerLike` and `likeCount` in place so counts update without a refetch.
 
 ## Procedures
 

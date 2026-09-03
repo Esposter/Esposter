@@ -74,14 +74,14 @@ describe(useFriendRequestStore, () => {
     useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: appUser.id } } }));
     const friendRequestStore = useFriendRequestStore();
     const { friendRequests } = storeToRefs(friendRequestStore);
-    const { getHasSentFriendRequest } = friendRequestStore;
+    const { checkHasSentFriendRequest } = friendRequestStore;
     friendRequests.value = [
       firstFriendRequest,
       { ...firstFriendRequest, receiver: second, receiverId: second.id, sender: appUser, senderId: appUser.id },
     ];
 
-    expect(getHasSentFriendRequest(second.id)).toBe(true);
-    expect(getHasSentFriendRequest(first.id)).toBe(false);
+    expect(checkHasSentFriendRequest(second.id)).toBe(true);
+    expect(checkHasSentFriendRequest(first.id)).toBe(false);
   });
 
   test("declines a request without waiting on the session", () => {

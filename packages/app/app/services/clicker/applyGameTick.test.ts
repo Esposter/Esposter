@@ -20,7 +20,7 @@ describe(applyGameTick, () => {
     });
     applyGameTick(clicker);
 
-    expect(clicker.noPoints).toBe((cursorPower + grandmaPower) / FPS);
+    expect(clicker.pointCount).toBe((cursorPower + grandmaPower) / FPS);
     expect(takeOne(clicker.boughtBuildings, 0).producedValue).toBe(cursorPower / FPS);
     expect(takeOne(clicker.boughtBuildings, 1).producedValue).toBe(grandmaPower / FPS);
   });
@@ -31,6 +31,6 @@ describe(applyGameTick, () => {
     const clicker = new Clicker();
     applyGameTick(clicker);
 
-    expect(clicker.noPoints).toBe(0);
+    expect(clicker.pointCount).toBe(0);
   });
 });

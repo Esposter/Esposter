@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
-import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
 
 interface DevicesProps {
   userSettings: UserSettingsInMessage;

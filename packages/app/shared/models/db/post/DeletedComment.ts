@@ -4,5 +4,5 @@ import type { Post } from "@esposter/db-schema";
 // Is the only record of a subtree the client may never have read
 export interface DeletedComment {
   ancestorIds: Post["id"][];
-  noRemovedComments: number;
+  removedCommentCount: number;
 }

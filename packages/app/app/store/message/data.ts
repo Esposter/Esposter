@@ -196,7 +196,7 @@ export const useDataStore = defineStore("message/data", () => {
   };
 
   const inputStore = useInputStore();
-  const { clearComposer, getComposerInput, validateInput } = inputStore;
+  const { checkIsInputValid, clearComposer, getComposerInput } = inputStore;
   const uploadFileStore = useUploadFileStore();
   const { getComposerFiles } = uploadFileStore;
   const replyStore = useReplyStore();
@@ -204,9 +204,9 @@ export const useDataStore = defineStore("message/data", () => {
   // Attachments they take and in what the reply points at. A pane send always replies to the thread root — that
   // Is what puts it in the thread rather than merely in the room — where the room composer replies to whatever
   // The user last picked Reply on, if anything
-  const sendMessage = async (editor: Editor, target: ComposerTarget) => {
+  const sendComposerMessage = async (editor: Editor, target: ComposerTarget) => {
     const { roomId, threadRootRowKey } = target;
-    if (!roomId || !validateInput(target, editor, true)) return;
+    if (!roomId || !checkIsInputValid(target, editor, true)) return;
 
     const input: StandardCreateMessageInput = {
       files: getComposerFiles(target),
@@ -215,9 +215,9 @@ export const useDataStore = defineStore("message/data", () => {
       roomId,
       type: MessageType.Message,
     };
-    await storeSendMessage(input, editor, target);
+    await sendMessage(input, editor, target);
   };
-  const storeSendMessage = async (
+  const sendMessage = async (
     input: StandardCreateMessageInput,
     editor?: Editor,
     // Everything that composes outside a composer — a slash command, a poll, a draft sent from the drafts page —
@@ -246,10 +246,10 @@ export const useDataStore = defineStore("message/data", () => {
     hasMoreNewer,
     items,
     nextCursorNewer,
+    sendComposerMessage,
     sendMessage,
     storeCreateMessage,
     storeDeleteMessage,
-    storeSendMessage,
     storeUpdateMessage,
     updateMessage,
     ...restData,

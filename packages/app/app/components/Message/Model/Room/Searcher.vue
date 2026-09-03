@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useSearchStore } from "@/store/message/room/search";
+import { useRoomSearchStore } from "@/store/message/room/search";
 
-const searchStore = useSearchStore();
-const { searchQuery } = storeToRefs(searchStore);
+const roomSearchStore = useRoomSearchStore();
+const { searchQuery } = storeToRefs(roomSearchStore);
 const isOpen = ref(false);
 </script>
 

@@ -60,7 +60,7 @@ describe("messageModelStatusPickerForm", () => {
     expect.hasAssertions();
 
     const statusStore = useStatusStore();
-    const { getStatus, storeStatus } = statusStore;
+    const { getStoredUserStatus, storeStatus } = statusStore;
     storeStatus(userId, {
       createdAt: new Date(0),
       deletedAt: null,
@@ -72,7 +72,7 @@ describe("messageModelStatusPickerForm", () => {
     });
     const textField = await submitRejectedMessage();
 
-    expect(getStatus(userId)?.message).toBe(message);
+    expect(getStoredUserStatus(userId)?.message).toBe(message);
     expect(textField.props("modelValue")).toBe(message);
   });
 
@@ -82,10 +82,10 @@ describe("messageModelStatusPickerForm", () => {
     expect.hasAssertions();
 
     const statusStore = useStatusStore();
-    const { getStatus } = statusStore;
+    const { getStoredUserStatus } = statusStore;
     const textField = await submitRejectedMessage();
 
-    expect(getStatus(userId)).toBeUndefined();
+    expect(getStoredUserStatus(userId)).toBeUndefined();
     expect(textField.props("modelValue")).toBe("");
   });
 

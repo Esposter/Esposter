@@ -4,7 +4,7 @@ import type { VBtn } from "vuetify/components";
 import { ConnectionQualityMetadataMap } from "@/services/message/room/liveKit/ConnectionQualityMetadataMap";
 import { ConnectionStateMetadataMap } from "@/services/message/room/liveKit/ConnectionStateMetadataMap";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
-import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
 
 const liveKitStore = useLiveKitStore();
 const { connectionQuality, connectionState } = storeToRefs(liveKitStore);

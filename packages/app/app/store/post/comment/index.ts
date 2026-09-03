@@ -21,23 +21,23 @@ export const useCommentStore = defineStore("post/comment", () => {
   });
   const updateCommentCounts = (ancestorIds: string[], delta: number) => {
     const ancestorIdSet = new Set(ancestorIds);
-    for (const comment of allComments.value) if (ancestorIdSet.has(comment.id)) comment.noComments += delta;
+    for (const comment of allComments.value) if (ancestorIdSet.has(comment.id)) comment.commentCount += delta;
   };
   // Only branches that already exist are descended into: asking the map for one that does not creates it, so a
   // Walk over the rows themselves would leave an empty partition behind for every reply it passed
-  const removeBranch = (parentId: string) => {
+  const deleteBranch = (parentId: string) => {
     const branchKeys = new Set(keys.value);
-    const removeLoadedBranch = (key: string) => {
+    const deleteLoadedBranch = (key: string) => {
       if (!branchKeys.has(key)) return;
 
       const { isLoaded, items: branchItems } = getSlice(key);
-      for (const { id } of branchItems.value) removeLoadedBranch(id);
+      for (const { id } of branchItems.value) deleteLoadedBranch(id);
       branchItems.value = [];
       // Emptied rather than answered: a branch that keeps saying it is loaded is one a re-expansion will not read
       // Again, so a delete the server rejects would leave the replies underneath it invisible until a reload
       isLoaded.value = false;
     };
-    removeLoadedBranch(parentId);
+    deleteLoadedBranch(parentId);
   };
 
   const { executeMutation: executeCreateCommentMutation } = useMutation();
@@ -88,17 +88,17 @@ export const useCommentStore = defineStore("post/comment", () => {
         // The one row this write removes, read when the write is sent: deletes of different comments do not
         // Queue against each other, so restoring a copy of the list would resurrect one deleted beside this
         const deletedComment = branchItems.value.find(({ id }) => id === input);
-        removeBranch(input);
+        deleteBranch(input);
         storeDeleteComment({ id: input });
         return () => {
-          // Its own replies are not restored: `removeBranch` left every branch beneath it unread, so re-opening
+          // Its own replies are not restored: `deleteBranch` left every branch beneath it unread, so re-opening
           // One reads it again
           if (deletedComment) storeCreateComment(deletedComment);
         };
       },
       key: input,
-      onSuccess: ({ ancestorIds, noRemovedComments }) => {
-        updateCommentCounts(ancestorIds, -noRemovedComments);
+      onSuccess: ({ ancestorIds, removedCommentCount }) => {
+        updateCommentCounts(ancestorIds, -removedCommentCount);
       },
     });
   };

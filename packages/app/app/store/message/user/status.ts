@@ -9,14 +9,14 @@ type StoredUserStatus = SetNonNullable<Except<UserStatusInMessage, "userId">, "s
 
 export const useStatusStore = defineStore("message/user/status", () => {
   const statusMap = ref(new Map<string, StoredUserStatus>());
-  const getStatus = (id: string) => statusMap.value.get(id);
-  const getStatusEnum = (id: string) => getStatus(id)?.status ?? UserStatus.Online;
-  const getStatusMessage = (id: string) => getStatus(id)?.message ?? "";
+  const getStoredUserStatus = (id: string) => statusMap.value.get(id);
+  const getUserStatus = (id: string) => getStoredUserStatus(id)?.status ?? UserStatus.Online;
+  const getStatusMessage = (id: string) => getStoredUserStatus(id)?.message ?? "";
   const storeStatus = (userId: string, userStatus: StoredUserStatus) => {
     statusMap.value.set(userId, userStatus);
   };
   const storeStatuses = (userStatuses: (Pick<UserStatusInMessage, "userId"> & StoredUserStatus)[]) => {
     for (const { userId, ...userStatus } of userStatuses) storeStatus(userId, userStatus);
   };
-  return { getStatus, getStatusEnum, getStatusMessage, statusMap, storeStatus, storeStatuses };
+  return { getStatusMessage, getStoredUserStatus, getUserStatus, statusMap, storeStatus, storeStatuses };
 });

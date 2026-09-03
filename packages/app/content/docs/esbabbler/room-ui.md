@@ -17,7 +17,7 @@ Each group subheader shows the group's **total** member count, not the loaded-pa
 
 ```mermaid
 flowchart TD
-  readMembers["useReadMembers.readMembers<br/>(room switch)"] -- "countMembersByTopRole query" --> counts["memberStore.countsByTopRole<br/>(per-role totals)"]
+  readMembers["useReadMembers.readMembers<br/>(room switch)"] -- "readMemberCountsByTopRole query" --> counts["memberStore.memberCountsByTopRole<br/>(per-role totals)"]
   joinLeave["member join/leave<br/>(subscriptions)"] -- "count++ / count--" --> total["memberStore.count"]
   joinLeave -- "leave clears the member's roles" --> roleMutation
   total -- "roleless = count - sum(role groups)" --> headers["group subheader counts"]
@@ -26,7 +26,7 @@ flowchart TD
   hooks -- "+-1 on the affected role groups" --> counts
 ```
 
-- **Room switch** — `readMembers` fetches `room.countMembersByTopRole` (one `DISTINCT ON` query grouping members by their highest-positioned non-`@everyone` role) alongside the member page and total count.
+- **Room switch** — `readMembers` fetches `room.readMemberCountsByTopRole` (one `DISTINCT ON` query grouping members by their highest-positioned non-`@everyone` role) alongside the member page and total count.
 - **Join/leave** — the roleless group is never fetched; it is derived as `count - sum(role groups)`. A join is roleless by definition, so the subscription's `count++` alone keeps it current. A leave is expressed as the member's top role becoming none — `storeDeleteMember` routes through `mutateMemberRoles` before decrementing `count`, so the role group the leaver belonged to drops with the total. Without that, the roleless remainder absorbs every departure of a roled member and goes negative in a room where everyone holds a role.
 - **Role changes** — every role-membership mutation (optimistic apply, rollback, `onSuccess`, and the role subscription handlers) funnels through the role store's `mutateMemberRoles`, which diffs the member's top role and fires `topRoleChangeHooks`; the member store registers a hook that shifts the affected role-group counts. Reads (`readMemberRoles`) bypass the hooks — server counts already include loaded members.
 

@@ -158,13 +158,13 @@ describe(useInputStore, () => {
     expect(drafts.value.has(roomId1)).toBe(true);
   });
 
-  test("storeDraft saves draft content and updated at", () => {
+  test("setDraft saves draft content and updated at", () => {
     expect.hasAssertions();
 
     const inputStore = useInputStore();
     const { drafts, input } = storeToRefs(inputStore);
-    const { storeDraft } = inputStore;
-    storeDraft(roomId1, draftContent);
+    const { setDraft } = inputStore;
+    setDraft(roomId1, draftContent);
 
     expect(readStoredDraft(roomId1)?.content).toBe(draftContent);
     expect(readStoredDraft(roomId1)?.updatedAt).toStrictEqual(new Date(0));
@@ -172,27 +172,27 @@ describe(useInputStore, () => {
     expect(drafts.value.has(roomId1)).toBe(true);
   });
 
-  test("storeDraft updates the stored draft for a room that already has one", () => {
+  test("setDraft updates the stored draft for a room that already has one", () => {
     expect.hasAssertions();
 
     const updatedDraftContent = marked.parse("updatedDraftContent", { async: false });
     setStoredDraft(roomId1, draftContent);
     const inputStore = useInputStore();
     const { drafts } = storeToRefs(inputStore);
-    const { storeDraft } = inputStore;
-    storeDraft(roomId1, updatedDraftContent);
+    const { setDraft } = inputStore;
+    setDraft(roomId1, updatedDraftContent);
 
     expect(drafts.value.get(roomId1)?.content).toBe(updatedDraftContent);
     expect(readStoredDraft(roomId1)?.content).toBe(updatedDraftContent);
   });
 
-  test("storeDraft removes draft content that sanitizes to empty", () => {
+  test("setDraft removes draft content that sanitizes to empty", () => {
     expect.hasAssertions();
 
     const inputStore = useInputStore();
     const { drafts, input } = storeToRefs(inputStore);
-    const { storeDraft } = inputStore;
-    storeDraft(roomId1, "<script>alert(1)</script>");
+    const { setDraft } = inputStore;
+    setDraft(roomId1, "<script>alert(1)</script>");
 
     expect(readStoredDraft(roomId1)).toBeUndefined();
     expect(input.value).toBe("");

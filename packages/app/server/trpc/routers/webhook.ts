@@ -37,7 +37,7 @@ const readAppUsersInputSchema = z.object({
 // Whole of what rotateToken and updateWebhook share: what is left either side of it is the repo's standard
 // Update-and-require shape, so extracting further would parameterise the `.set()` payload and hide that shape
 // Behind a webhook-specific helper rather than remove any duplication
-const webhookRoomWhere = (id: string, roomId: string) =>
+const getWebhookRoomWhere = (id: string, roomId: string) =>
   and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId));
 
 export const webhookRouter = router({
@@ -127,7 +127,7 @@ export const webhookRouter = router({
         await ctx.db
           .update(webhooksInMessage)
           .set({ token: generateToken() })
-          .where(webhookRoomWhere(id, roomId))
+          .where(getWebhookRoomWhere(id, roomId))
           .returning()
       )[0],
       Operation.Update,
@@ -141,7 +141,7 @@ export const webhookRouter = router({
     "roomId",
   ).mutation<WebhookInMessage>(async ({ ctx, input: { id, roomId, ...rest } }) =>
     requireMutation(
-      (await ctx.db.update(webhooksInMessage).set(rest).where(webhookRoomWhere(id, roomId)).returning())[0],
+      (await ctx.db.update(webhooksInMessage).set(rest).where(getWebhookRoomWhere(id, roomId)).returning())[0],
       Operation.Update,
       DatabaseEntityType.Webhook,
       id,

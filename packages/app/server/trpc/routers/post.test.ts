@@ -123,7 +123,7 @@ describe("post", () => {
     const comment = await postCaller.readPost(newComment.id);
 
     expect(newComment.description).toBe(description);
-    expect(post.noComments).toBe(1);
+    expect(post.commentCount).toBe(1);
     expect(comment).toStrictEqual(newComment);
   });
 
@@ -169,8 +169,8 @@ describe("post", () => {
     const deletedComment = await postCaller.deleteComment(newComment.id);
     const post = await postCaller.readPost(newPost.id);
 
-    expect(deletedComment.noRemovedComments).toBe(1);
-    expect(post.noComments).toBe(0);
+    expect(deletedComment.removedCommentCount).toBe(1);
+    expect(post.commentCount).toBe(0);
   });
 
   // A reply is a comment on a comment, so a counter that stopped at direct children would leave a feed card
@@ -185,8 +185,8 @@ describe("post", () => {
     const comment = await postCaller.readPost(newComment.id);
 
     expect(newReply.depth).toBe(2);
-    expect(post.noComments).toBe(2);
-    expect(comment.noComments).toBe(1);
+    expect(post.commentCount).toBe(2);
+    expect(comment.commentCount).toBe(1);
   });
 
   // The delete cascades down the parentId chain, so the rows it removes are gone before anything could count
@@ -202,8 +202,8 @@ describe("post", () => {
     const deletedComment = await postCaller.deleteComment(newComment.id);
     const post = await postCaller.readPost(newPost.id);
 
-    expect(deletedComment.noRemovedComments).toBe(3);
-    expect(post.noComments).toBe(0);
+    expect(deletedComment.removedCommentCount).toBe(3);
+    expect(post.commentCount).toBe(0);
   });
 
   test("deletes comment with deleting post", async () => {
@@ -287,7 +287,7 @@ describe("post", () => {
 
     expect(comments).toStrictEqual([]);
     // Blocked users' comments are hidden, not erased — the denormalized counter keeps counting them
-    expect(post.noComments).toBe(1);
+    expect(post.commentCount).toBe(1);
   });
 
   test("reads posts filtered by user excluding comments", async () => {
@@ -321,7 +321,7 @@ describe("post", () => {
     const secondPost = await postCaller.createPost({ title });
     await likeCaller.createLike({ postId: secondPost.id, value: 1 });
     const sortBy: SortItem<keyof Post>[] = [
-      { key: "noLikes", order: SortOrder.Desc },
+      { key: "likeCount", order: SortOrder.Desc },
       { key: "id", order: SortOrder.Desc },
     ];
     const firstPage = await postCaller.readPosts({ limit: 1, sortBy });
@@ -337,7 +337,7 @@ describe("post", () => {
     const newPostIds: string[] = [];
     for (let i = 0; i < 3; i++) newPostIds.push((await postCaller.createPost({ title })).id);
     const sortBy: SortItem<keyof Post>[] = [
-      { key: "noLikes", order: SortOrder.Desc },
+      { key: "likeCount", order: SortOrder.Desc },
       { key: "id", order: SortOrder.Desc },
     ];
     const firstPage = await postCaller.readPosts({ limit: 2, sortBy });

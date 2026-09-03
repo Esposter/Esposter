@@ -24,7 +24,7 @@ const isUpdateMode = ref(false);
 const isExpanded = ref(false);
 // Indentation stops at the clamp while the nesting carries on
 const isClamped = computed(() => depth >= MAX_COMMENT_INDENT_DEPTH);
-const replyLabel = computed(() => `${comment.noComments} ${pluralize("reply", comment.noComments, "replies")}`);
+const replyLabel = computed(() => `${comment.commentCount} ${pluralize("reply", comment.commentCount, "replies")}`);
 </script>
 
 <template>
@@ -60,11 +60,11 @@ const replyLabel = computed(() => `${comment.noComments} ${pluralize("reply", co
             v-if="isCreator"
             :button-props="{ size: 'small', tile: true }"
             icon="mdi-delete"
-            :text="comment.noComments > 0 ? 'Delete Comment And Replies' : 'Delete Comment'"
+            :text="comment.commentCount > 0 ? 'Delete Comment And Replies' : 'Delete Comment'"
             @click="setDeletingComment(comment)"
           />
           <v-btn
-            v-if="comment.noComments > 0 && !isClamped"
+            v-if="comment.commentCount > 0 && !isClamped"
             size="small"
             variant="text"
             :prepend-icon="isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"
@@ -72,7 +72,7 @@ const replyLabel = computed(() => `${comment.noComments} ${pluralize("reply", co
             @click="isExpanded = !isExpanded"
           />
           <v-btn
-            v-else-if="comment.noComments > 0"
+            v-else-if="comment.commentCount > 0"
             size="small"
             variant="text"
             append-icon="mdi-arrow-right"

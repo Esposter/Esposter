@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { InviteInMessageWithCreator, RoomInMessage } from "@esposter/db-schema";
 
-import { useDialogStore } from "@/store/message/room/dialog";
+import { useRoomDialogStore } from "@/store/message/room/dialog";
 import { useRoomInviteStore } from "@/store/message/room/roomInvite";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
@@ -13,8 +13,8 @@ interface InviteTableRowProps {
 
 const { invite, isCreator, roomId } = defineProps<InviteTableRowProps>();
 const runtimeConfig = useRuntimeConfig();
-const dialogStore = useDialogStore();
-const { inviteRoomId } = storeToRefs(dialogStore);
+const roomDialogStore = useRoomDialogStore();
+const { inviteRoomId } = storeToRefs(roomDialogStore);
 const roomInviteStore = useRoomInviteStore();
 const { revokeInvite } = roomInviteStore;
 const inviteLink = computed(() => `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(invite.id)}`);

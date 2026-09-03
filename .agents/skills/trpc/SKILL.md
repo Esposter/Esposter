@@ -57,7 +57,14 @@ Routers nested by domain. Root merger: `server/trpc/routers/index.ts`. The clien
 ## Procedure & Result Naming
 
 - **Every query names its verb**: `read*` for a fetch, `search*` for a ranked query, `generate*` for a minted credential (a SAS entity, a Web PubSub access url). A bare noun (`buildVersion`) and a `get*` procedure are both wrong — `get*` is for derivation, which is not what a network round trip is.
-- **A query returning a number is a read of that number**: `readMyScheduledMessageJobsCount`, `readResourceViewCount`. The `count*` family (`countMembers`, `countsByTag`) is for a procedure whose subject _is_ the aggregation — a grouping, or a filtered tally the caller asks for instead of the rows.
+- **A query answering with a count is a `read*Count`** — `readResourcesCount`, `readMembersCount`,
+  `readResourceViewCount`, `readSurveyResponsesCount`. There is no second spelling: whether the caller drove the
+  tally with filters or asked for a number belonging to one subject makes no difference to the name, because a
+  reader cannot tell those apart and neither can the next author.
+- **A grouping answers with rows rather than a number**, so it is plural and named for what it returns —
+  `readResourceTagCounts`, `readMemberCountsByTopRole`, matching the `ResourceTagCount[]` /
+  `MemberCountByTopRole[]` it hands back. No procedure is named `count*`; that prefix is a pure in-memory tally
+  (`naming`), which is not a network round trip.
 - **A named type for what a procedure answers with ends in `Result`** — `ReadInviteResult`, `JoinCallResult` — never `Output`, which is the same idea under a second name and leaves the tree with two spellings of one convention. The type is named for the procedure, so it renames when the procedure does.
 - `upsert*` for procedures that do `insert().onConflictDoUpdate()` — never `update*` (update implies the record already exists). Domain operation names (`subscribe`, `connect`) are exempt.
 - Subscription naming: `on` + exact mutation name (camelCase): `createFoo` → `onCreateFoo`.
@@ -76,7 +83,7 @@ Three builders in `server/trpc/procedure/room/`:
 ## Ownership Guards in Mutations
 
 - **`ownedBy(table, id, userId)`** (`server/services/db/ownedBy.ts`) — the where-predicate for "this row must belong to the caller": `.where(ownedBy(foos, input, ctx.getSessionPayload.user.id))`. Compose extra clauses with `and(ownedBy(...), isNull(...))`. Never hand-write `and(eq(table.id, id), eq(table.userId, userId))`.
-- Repeated multi-clause where-fragments within one router (e.g. "not cancelled and not completed") get a named module-level `const`/helper in that router file.
+- Repeated multi-clause where-fragments within one router (e.g. "not cancelled and not completed") get a named module-level `const`/helper in that router file. **A parameterised one is a function, so it is named `get*Where`** — `getRoomMembershipWhere(roomId, userId)`, matching `getCursorWhere` and `getNotBlockedWhere` in `server/services/`; only a fragment that takes no arguments is a bare `*Where` const, because that name is then a value rather than a call.
 
 ## Router and Store Structure
 

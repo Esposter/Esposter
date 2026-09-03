@@ -25,7 +25,7 @@ describe(useReadResources, () => {
 
     const countHandler = vi.fn<() => number>(() => 0);
     server.use(
-      trpcMsw.resource.countResources.query(countHandler),
+      trpcMsw.resource.readResourcesCount.query(countHandler),
       trpcMsw.resource.readResources.query(() => ({ hasMore: false, items })),
     );
     const searchQuery = ref("");
@@ -50,7 +50,7 @@ describe(useReadResources, () => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const countHandler = vi.fn<() => number>(() => 0);
     server.use(
-      trpcMsw.resource.countResources.query(countHandler),
+      trpcMsw.resource.readResourcesCount.query(countHandler),
       trpcMsw.resource.readResources.query(() => ({ hasMore: false, items })),
     );
     const updatedFilter = ref<"" | ResourceUpdatedFilter>(ResourceUpdatedFilter.Last7Days);

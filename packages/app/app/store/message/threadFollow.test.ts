@@ -26,12 +26,12 @@ describe(useThreadFollowStore, () => {
     }));
     server.use(trpcMsw.message.readFollowedThreads.query(handler));
     const threadFollowStore = useThreadFollowStore();
-    const { checkIsFollowing, ensureFollowedThreadsLoaded } = threadFollowStore;
-    const inFlightLoad = ensureFollowedThreadsLoaded(roomId);
-    await ensureFollowedThreadsLoaded(roomId);
+    const { checkIsFollowing, readFollowedThreads } = threadFollowStore;
+    const inFlightLoad = readFollowedThreads(roomId);
+    await readFollowedThreads(roomId);
     const isFollowingAfterJoinedLoad = checkIsFollowing(roomId, threadRootRowKey);
     await inFlightLoad;
-    await ensureFollowedThreadsLoaded(roomId);
+    await readFollowedThreads(roomId);
 
     expect(isFollowingAfterJoinedLoad).toBe(true);
     expect(handler).toHaveBeenCalledTimes(1);

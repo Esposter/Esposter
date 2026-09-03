@@ -4,12 +4,12 @@ export const useReadSentMessages = () => {
   const { $trpc } = useNuxtApp();
   const sentMessageStore = useSentMessageStore();
   const { readItems, readMoreItems } = sentMessageStore;
-  const { count, isPending } = storeToRefs(sentMessageStore);
+  const { isPending, sentMessageCount } = storeToRefs(sentMessageStore);
   const readSentMessages = () =>
     readItems(
       async () => {
         const { count: total, data } = await $trpc.message.readMySentMessages.query();
-        count.value = total;
+        sentMessageCount.value = total;
         return data;
       },
       () => {

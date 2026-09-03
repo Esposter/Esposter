@@ -1,5 +1,5 @@
 import { useKnockerStore } from "@/store/message/room/call/knocker";
-import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
 import { getResultAsync } from "@esposter/shared";
 
 export const useCallPreJoinMedia = () => {

@@ -34,7 +34,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     if (!boughtBuilding) return 0;
     return boughtBuilding.amount;
   };
-  const getBoughtBuildingStats = (building: Building) => {
+  const getBoughtBuildingStatistics = (building: Building) => {
     const boughtBuilding = getBoughtBuilding(building);
     if (!boughtBuilding) return [];
 
@@ -76,7 +76,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     createBoughtBuilding,
     getBoughtBuildingAmount,
     getBoughtBuildingPower,
-    getBoughtBuildingStats,
+    getBoughtBuildingStatistics,
     getBuildingPriceForQuantity,
     initializeBuildingMap,
   };

@@ -33,7 +33,7 @@ export const ClickerAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     amount: 1,
     condition: {
       operator: BinaryOperator.ge,
-      path: "noPoints",
+      path: "pointCount",
       type: AchievementConditionType.Property,
       value: 1e9,
     },
@@ -66,7 +66,7 @@ export const ClickerAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     amount: 1,
     condition: {
       operator: BinaryOperator.ge,
-      path: "noPoints",
+      path: "pointCount",
       type: AchievementConditionType.Property,
       value: 1e6,
     },
@@ -100,7 +100,7 @@ export const ClickerAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     amount: 1,
     condition: {
       operator: BinaryOperator.ge,
-      path: "noPoints",
+      path: "pointCount",
       type: AchievementConditionType.Property,
       value: 1e12,
     },

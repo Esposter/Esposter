@@ -30,7 +30,7 @@ currentPost.value = post;
               <PostCommentCreateRichTextEditor :parent-id="currentPost.id" />
             </v-container>
             <v-container>
-              <PostCommentEmptyBanner v-if="currentPost.noComments === 0" />
+              <PostCommentEmptyBanner v-if="currentPost.commentCount === 0" />
               <PostCommentBranch v-else :parent-id="currentPost.id" :depth="0" />
             </v-container>
           </StyledCard>

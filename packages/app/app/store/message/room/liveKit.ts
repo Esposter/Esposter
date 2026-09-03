@@ -19,7 +19,7 @@ import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useUserSettingsStore } from "@/store/message/user/settings";
 import { useCallBackgroundStore } from "@/store/message/user/settings/callBackground";
-import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
 import {
   DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
   DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
@@ -85,7 +85,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const remoteAudioElements = new Map<string, { element: HTMLMediaElement; identity: string }>();
   const connectionQuality = ref(ConnectionQuality.Unknown);
   const connectionState = ref(ConnectionState.Disconnected);
-  const cleanupRemoteAudio = () => {
+  const clearRemoteAudio = () => {
     for (const { element } of remoteAudioElements.values()) element.remove();
     remoteAudioElements.clear();
   };
@@ -104,7 +104,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
       mediaStore.participantVolumePercentageMap.get(identity) ?? DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE;
     element.volume = Math.min(1, (speakerVolumePercentage / 100) * (participantVolumePercentage / 100));
   };
-  const setSpeakerVolume = () => {
+  const applySpeakerVolume = () => {
     for (const { element, identity } of remoteAudioElements.values()) applyRemoteAudioVolume(element, identity);
   };
   const setNoiseSuppressionMode = getSynchronizedFunction((noiseSuppressionMode: NoiseSuppressionMode) =>
@@ -361,10 +361,10 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     virtualBackgroundProcessor = undefined;
     connectionQuality.value = ConnectionQuality.Unknown;
     connectionState.value = ConnectionState.Disconnected;
-    cleanupRemoteAudio();
+    clearRemoteAudio();
   };
-  watch(() => userSettingsStore.userSettings?.speakerVolumePercentage, setSpeakerVolume);
-  watch(() => mediaStore.participantVolumePercentageMap, setSpeakerVolume, { deep: true });
+  watch(() => userSettingsStore.userSettings?.speakerVolumePercentage, applySpeakerVolume);
+  watch(() => mediaStore.participantVolumePercentageMap, applySpeakerVolume, { deep: true });
   watch(
     () => userSettingsStore.userSettings?.noiseSuppressionMode,
     (newNoiseSuppressionMode) => {

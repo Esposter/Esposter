@@ -21,7 +21,8 @@ describe(useCallBackgroundStore, () => {
     expect.hasAssertions();
 
     server.use(trpcMsw.user.readCallBackgrounds.query(() => [callBackground]));
-    const { readVirtualBackgroundImagePath } = useCallBackgroundStore();
+    const callBackgroundStore = useCallBackgroundStore();
+    const { readVirtualBackgroundImagePath } = callBackgroundStore;
 
     await expect(readVirtualBackgroundImagePath(getCallBackgroundSelection(callBackground))).resolves.toBe(
       callBackground.sasUrl,
@@ -34,7 +35,8 @@ describe(useCallBackgroundStore, () => {
     expect.hasAssertions();
 
     server.use(trpcMsw.user.readCallBackgrounds.query(() => []));
-    const { readVirtualBackgroundImagePath } = useCallBackgroundStore();
+    const callBackgroundStore = useCallBackgroundStore();
+    const { readVirtualBackgroundImagePath } = callBackgroundStore;
 
     await expect(readVirtualBackgroundImagePath(getCallBackgroundSelection(callBackground))).resolves.toBe("");
   });
@@ -61,7 +63,8 @@ describe(useCallBackgroundStore, () => {
 
     const handler = vi.fn<() => CallBackground[]>(() => []);
     server.use(trpcMsw.user.readCallBackgrounds.query(handler));
-    const { readVirtualBackgroundImagePath } = useCallBackgroundStore();
+    const callBackgroundStore = useCallBackgroundStore();
+    const { readVirtualBackgroundImagePath } = callBackgroundStore;
     // The last preset rather than the first, because the first is the None entry and resolves to the empty
     // Sentinel either way — which would pass whether or not presets are resolved at all
     const { imagePath } = takeOne(CallVirtualBackgroundDefinitions.slice(-1));

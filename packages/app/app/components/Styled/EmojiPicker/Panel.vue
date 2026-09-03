@@ -21,7 +21,7 @@ defineSlots<{ footer?: () => VNode }>();
 const emit = defineEmits<{ select: [emojiTag: string, emoji: PickableEmoji] }>();
 const emojiPickerStore = useEmojiPickerStore();
 const { recentEmojiSlugs, skinTone } = storeToRefs(emojiPickerStore);
-const { pushRecentEmojiSlug } = emojiPickerStore;
+const { createRecentEmojiSlug } = emojiPickerStore;
 // The panel fills the sheet it arrives in on a phone, and the rail lies along the top so the grid keeps the full
 // Width. Focusing the field would raise the keyboard over the emoji the user opened the picker to tap, so it is
 // The desktop's alone — on touch, searching is a deliberate tap on the field
@@ -80,7 +80,7 @@ const emojis = computed(() =>
         @hover="previewEmoji = $event"
         @select="
           (emoji: PickableEmoji) => {
-            pushRecentEmojiSlug(emoji.slug);
+            createRecentEmojiSlug(emoji.slug);
             emit('select', getPickableEmojiTag(emoji, skinTone), emoji);
           }
         "

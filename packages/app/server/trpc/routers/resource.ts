@@ -160,21 +160,21 @@ const deleteResourcesInputSchema = z.object({
   ids: createUniqueArraySchema(selectResourceSchema.shape.id).min(1).max(MAX_READ_LIMIT),
 });
 // Appended to a duplicated resource's name; the base name is truncated so the whole stays within the length check
-const duplicateNameSuffix = " (copy)";
+const DUPLICATE_NAME_SUFFIX = " (copy)";
 // Backed by the resources_name_trgm_index GIN index; shared so the filter and the ranking
 // Can never disagree about what "similar" means
-const createSearchSimilarity = (searchQuery: string) => sql`similarity(${resources.name}, ${searchQuery})`;
+const getSearchSimilarity = (searchQuery: string) => sql`similarity(${resources.name}, ${searchQuery})`;
 // Every resource list — the workbench, the recycle bin and the favorites read alike — projects one row shape,
 // Reused as the sort space so a column the list can show is a column it can sort by
 const resourceListSelection = { ...getColumns(resources), lastAccessedAt: resourceAccesses.accessedAt };
 // Caller-scoped relationship predicates, shared by the joins that project them and the EXISTS subqueries that
 // Filter on them, so one user's Recent or Favorites can never reflect another's
-const createLastAccessedJoin = (userId: string) =>
+const getLastAccessedJoin = (userId: string) =>
   and(eq(resourceAccesses.resourceId, resources.id), eq(resourceAccesses.userId, userId));
-const createFavoriteJoin = (userId: string) =>
+const getFavoriteJoin = (userId: string) =>
   and(eq(resourceFavorites.resourceId, resources.id), eq(resourceFavorites.userId, userId));
 // Shared filter so count and readResources stay in lockstep as filters evolve
-const createResourcesWhere = (
+const getResourcesWhere = (
   db: Context["db"],
   userId: string,
   {
@@ -192,14 +192,14 @@ const createResourcesWhere = (
   isDeletedOnly = false,
 ) => {
   // A publication row exists iff the resource is currently published
-  const publicationExists = db
+  const publicationQuery = db
     .select()
     .from(resourcePublications)
     .where(eq(resourcePublications.resourceId, resources.id));
   // Both are scoped to the caller as well as the resource, so one user's Recent or Favorites can never
   // Reflect another's — the row is the relationship, not a property of the resource
-  const accessExists = db.select().from(resourceAccesses).where(createLastAccessedJoin(userId));
-  const favoriteExists = db.select().from(resourceFavorites).where(createFavoriteJoin(userId));
+  const accessQuery = db.select().from(resourceAccesses).where(getLastAccessedJoin(userId));
+  const favoriteQuery = db.select().from(resourceFavorites).where(getFavoriteJoin(userId));
   return and(
     eq(resources.userId, userId),
     // Soft-deleted resources live on for the Recycle bin window, so every normal read excludes them
@@ -208,7 +208,7 @@ const createResourcesWhere = (
     searchQuery
       ? or(
           ilike(resources.name, `%${escapeLike(searchQuery)}%`),
-          sql`${createSearchSimilarity(searchQuery)} > ${SEARCH_SIMILARITY_THRESHOLD}`,
+          sql`${getSearchSimilarity(searchQuery)} > ${SEARCH_SIMILARITY_THRESHOLD}`,
         )
       : undefined,
     ids ? inArray(resources.id, ids) : undefined,
@@ -216,62 +216,15 @@ const createResourcesWhere = (
     // Both operators are backed by the resources_tags_index GIN index
     tagName ? sql`jsonb_exists(${resources.tags}, ${tagName})` : undefined,
     types && types.length > 0 ? inArray(resources.type, types) : undefined,
-    isAccessed === undefined ? undefined : isAccessed ? exists(accessExists) : notExists(accessExists),
-    isFavorite === undefined ? undefined : isFavorite ? exists(favoriteExists) : notExists(favoriteExists),
-    isPublished === undefined ? undefined : isPublished ? exists(publicationExists) : notExists(publicationExists),
+    isAccessed === undefined ? undefined : isAccessed ? exists(accessQuery) : notExists(accessQuery),
+    isFavorite === undefined ? undefined : isFavorite ? exists(favoriteQuery) : notExists(favoriteQuery),
+    isPublished === undefined ? undefined : isPublished ? exists(publicationQuery) : notExists(publicationQuery),
     updatedAfter ? gte(resources.updatedAt, updatedAfter) : undefined,
     updatedBefore ? lte(resources.updatedAt, updatedBefore) : undefined,
   );
 };
 
 export const resourceRouter = router({
-  countResources: standardAuthedProcedure.input(resourceFilterInputSchema.prefault({})).query<number>(
-    async ({ ctx, input }) =>
-      takeOne(
-        await ctx.db
-          .select({ count: count() })
-          .from(resources)
-          .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input)),
-      ).count,
-  ),
-  countDeletedResources: standardAuthedProcedure.query<number>(
-    async ({ ctx }) =>
-      takeOne(
-        await ctx.db
-          .select({ count: count() })
-          .from(resources)
-          .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}, true)),
-      ).count,
-  ),
-  // The Tags list. Tag names live inside one jsonb column rather than their own table, so the breakdown is a
-  // Grouped count over the expanded keys — the expansion is a subquery because a set-returning function
-  // Cannot sit beside an aggregate in one select list. Values are deliberately not part of the grouping: the
-  // Tags entry answers "which tags do I use", and the /all Tag pill is where a value narrows it further
-  countsByTag: standardAuthedProcedure.query<ResourceTagCount[]>(({ ctx }) => {
-    const tagNames = ctx.db
-      .select({ name: sql<string>`jsonb_object_keys(${resources.tags})`.as("name") })
-      .from(resources)
-      .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}))
-      .as("tag_names");
-    return ctx.db
-      .select({ count: count(), name: tagNames.name })
-      .from(tagNames)
-      .groupBy(tagNames.name)
-      .orderBy(desc(count()), asc(tagNames.name));
-  }),
-  // The summary cards own the type breakdown, so `types` is the one filter they cannot pass — a card is
-  // The affordance for setting it. Behind the same createResourcesWhere, so the cards can never disagree
-  // With the list they navigate into
-  countsByType: standardAuthedProcedure
-    .input(resourceFilterInputSchema.omit({ types: true }).prefault({}))
-    .query<ResourceTypeCount[]>(({ ctx, input }) =>
-      ctx.db
-        .select({ count: count(), type: resources.type })
-        .from(resources)
-        .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input))
-        .groupBy(resources.type)
-        .orderBy(desc(count())),
-    ),
   deleteResources: standardAuthedProcedure
     .input(deleteResourcesInputSchema)
     // Owner-scoped where so callers can only ever soft-delete their own rows
@@ -299,7 +252,7 @@ export const resourceRouter = router({
     const newResource = await createResourceRow(
       ctx,
       {
-        name: `${name.slice(0, RESOURCE_NAME_MAX_LENGTH - duplicateNameSuffix.length)}${duplicateNameSuffix}`,
+        name: `${name.slice(0, RESOURCE_NAME_MAX_LENGTH - DUPLICATE_NAME_SUFFIX.length)}${DUPLICATE_NAME_SUFFIX}`,
         tags,
         type,
       },
@@ -371,24 +324,33 @@ export const resourceRouter = router({
       const resultResources = await ctx.db
         .select(resourceListSelection)
         .from(resources)
-        .leftJoin(resourceAccesses, createLastAccessedJoin(userId))
-        .where(createResourcesWhere(ctx.db, userId, {}, true))
+        .leftJoin(resourceAccesses, getLastAccessedJoin(userId))
+        .where(getResourcesWhere(ctx.db, userId, {}, true))
         .orderBy(...(sortBy.length > 0 ? parseSortByToSql(resourceListSelection, sortBy) : [desc(resources.deletedAt)]))
         .limit(limit + 1)
         .offset(offset);
       return getOffsetPaginationData(resultResources, limit);
     }),
+  readDeletedResourcesCount: standardAuthedProcedure.query<number>(
+    async ({ ctx }) =>
+      takeOne(
+        await ctx.db
+          .select({ count: count() })
+          .from(resources)
+          .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}, true)),
+      ).count,
+  ),
   // Starred-first rather than updated-first, which is the one thing the Favorites list route cannot do: the
   // Star's own timestamp is not a column any list shows. Otherwise it is the same predicate the `isFavorite`
-  // Filter expresses, taken from createResourcesWhere so a rule added there reaches both
+  // Filter expresses, taken from getResourcesWhere so a rule added there reaches both
   readFavorites: standardAuthedProcedure.query<ResourceListItem[]>(({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     return ctx.db
       .select(resourceListSelection)
       .from(resources)
-      .innerJoin(resourceFavorites, createFavoriteJoin(userId))
-      .leftJoin(resourceAccesses, createLastAccessedJoin(userId))
-      .where(createResourcesWhere(ctx.db, userId, {}))
+      .innerJoin(resourceFavorites, getFavoriteJoin(userId))
+      .leftJoin(resourceAccesses, getLastAccessedJoin(userId))
+      .where(getResourcesWhere(ctx.db, userId, {}))
       .orderBy(desc(resourceFavorites.createdAt))
       .limit(MAX_READ_LIMIT);
   }),
@@ -409,15 +371,15 @@ export const resourceRouter = router({
       const resultResources = await ctx.db
         .select(resourceListSelection)
         .from(resources)
-        .leftJoin(resourceAccesses, createLastAccessedJoin(userId))
-        .where(createResourcesWhere(ctx.db, userId, filter))
+        .leftJoin(resourceAccesses, getLastAccessedJoin(userId))
+        .where(getResourcesWhere(ctx.db, userId, filter))
         .orderBy(
           // Relevance ladder: closest trigram match first so a typo still ranks its resource top, then
           // Prefix matches above the remaining substring matches (true sorts before false under desc),
           // Then newest-first within each tier; every search value is bound through the query builder
           ...(filter.searchQuery
             ? [
-                desc(createSearchSimilarity(filter.searchQuery)),
+                desc(getSearchSimilarity(filter.searchQuery)),
                 desc(ilike(resources.name, `${escapeLike(filter.searchQuery)}%`)),
               ]
             : []),
@@ -427,6 +389,44 @@ export const resourceRouter = router({
         .offset(offset);
       return getOffsetPaginationData(resultResources, limit);
     }),
+  readResourcesCount: standardAuthedProcedure.input(resourceFilterInputSchema.prefault({})).query<number>(
+    async ({ ctx, input }) =>
+      takeOne(
+        await ctx.db
+          .select({ count: count() })
+          .from(resources)
+          .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input)),
+      ).count,
+  ),
+  // The Tags list. Tag names live inside one jsonb column rather than their own table, so the breakdown is a
+  // Grouped count over the expanded keys — the expansion is a subquery because a set-returning function
+  // Cannot sit beside an aggregate in one select list. Values are deliberately not part of the grouping: the
+  // Tags entry answers "which tags do I use", and the /all Tag pill is where a value narrows it further
+  readResourceTagCounts: standardAuthedProcedure.query<ResourceTagCount[]>(({ ctx }) => {
+    const tagNames = ctx.db
+      .select({ name: sql<string>`jsonb_object_keys(${resources.tags})`.as("name") })
+      .from(resources)
+      .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}))
+      .as("tag_names");
+    return ctx.db
+      .select({ count: count(), name: tagNames.name })
+      .from(tagNames)
+      .groupBy(tagNames.name)
+      .orderBy(desc(count()), asc(tagNames.name));
+  }),
+  // The summary cards own the type breakdown, so `types` is the one filter they cannot pass — a card is
+  // The affordance for setting it. Behind the same getResourcesWhere, so the cards can never disagree
+  // With the list they navigate into
+  readResourceTypeCounts: standardAuthedProcedure
+    .input(resourceFilterInputSchema.omit({ types: true }).prefault({}))
+    .query<ResourceTypeCount[]>(({ ctx, input }) =>
+      ctx.db
+        .select({ count: count(), type: resources.type })
+        .from(resources)
+        .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input))
+        .groupBy(resources.type)
+        .orderBy(desc(count())),
+    ),
   // Which snapshots exist comes from a blob prefix listing — no history table, since the
   // {id}/{channel}/{n} blobs are already the source of truth for that. Which published one is LIVE comes from
   // The publication row instead, because the two can disagree: the unpublish sweep is a best-effort event, so

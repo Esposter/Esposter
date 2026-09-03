@@ -2,7 +2,7 @@
 import { useLayoutStore } from "@/store/layout";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { useDialogStore } from "@/store/message/room/dialog";
+import { useRoomDialogStore } from "@/store/message/room/dialog";
 import { MessageType, ROOM_NAME_MAX_LENGTH, selectRoomInMessageSchema } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 
@@ -15,8 +15,8 @@ const { storeUpdateRoom } = roomStore;
 const { currentRoom, isCreator, rooms } = storeToRefs(roomStore);
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
-const dialogStore = useDialogStore();
-const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
+const roomDialogStore = useRoomDialogStore();
+const { isEditRoomDialogOpen } = storeToRefs(roomDialogStore);
 const roomName = useRoomName(() => currentRoom.value?.id ?? "");
 const placeholder = useRoomPlaceholder(currentRoom);
 const { cloned: editedImage } = useCloned(() => currentRoom.value?.image ?? "");

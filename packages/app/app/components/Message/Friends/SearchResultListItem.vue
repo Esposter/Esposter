@@ -14,11 +14,11 @@ const { id, image, name } = defineProps<SearchResultListItemProps>();
 const blockStore = useBlockStore();
 const { blockedUsers } = storeToRefs(blockStore);
 const friendRequestStore = useFriendRequestStore();
-const { getHasSentFriendRequest, sendFriendRequest } = friendRequestStore;
+const { checkHasSentFriendRequest, sendFriendRequest } = friendRequestStore;
 const friendStore = useFriendStore();
-const { getIsFriend } = friendStore;
-const hasSentFriendRequest = computed(() => getHasSentFriendRequest(id));
-const isFriend = computed(() => getIsFriend(id));
+const { checkIsFriend } = friendStore;
+const hasSentFriendRequest = computed(() => checkHasSentFriendRequest(id));
+const isFriend = computed(() => checkIsFriend(id));
 const isBlocked = computed(() => blockedUsers.value.some((blockedUser) => blockedUser.id === id));
 </script>
 

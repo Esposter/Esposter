@@ -29,7 +29,7 @@ describe(useDataStore, () => {
   const server = setupMswTrpc();
   let router: Router;
   const roomId = crypto.randomUUID();
-  // Every send here is the room's own composer, which is the target `storeSendMessage` defaults to
+  // Every send here is the room's own composer, which is the target `sendMessage` defaults to
   const target: ComposerTarget = { roomId, threadRootRowKey: "" };
   const userId = getMockSession().user.id;
   const message = "message";
@@ -97,15 +97,15 @@ describe(useDataStore, () => {
 
   // The reset clears the editor, the reply target and the composer's attachments, so the bubble is the sender's
   // Only copy of what they typed — a send that fails before the bubble exists must leave the composer alone
-  test("storeSendMessage resets the composer only once the optimistic message is in the list", async () => {
+  test("sendMessage resets the composer only once the optimistic message is in the list", async () => {
     expect.hasAssertions();
 
     signIn();
     const dataStore = useDataStore();
-    const { storeSendMessage } = dataStore;
+    const { sendMessage } = dataStore;
     vi.spyOn(MessageHookMap[Operation.Create], "run").mockRejectedValueOnce(new Error(message));
     const resetSendSpy = vi.spyOn(MessageHookMap.ResetSend, "run");
-    await storeSendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+    await sendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
     expect(resetSendSpy).not.toHaveBeenCalled();
   });
@@ -113,19 +113,19 @@ describe(useDataStore, () => {
   // The reset runs behind the optimistic bubble, so a room switch — or another thread being opened — can land
   // In between: every registration is handed the composer the send was for rather than resolving the current
   // One after the await
-  test("storeSendMessage resets the composer the send was for", async () => {
+  test("sendMessage resets the composer the send was for", async () => {
     expect.hasAssertions();
 
     signIn();
     const dataStore = useDataStore();
-    const { storeSendMessage } = dataStore;
+    const { sendMessage } = dataStore;
     server.use(
       trpcMsw.message.createMessage.mutation(() =>
         createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
       ),
     );
     const resetSendSpy = vi.spyOn(MessageHookMap.ResetSend, "run");
-    await storeSendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+    await sendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
     expect(resetSendSpy).toHaveBeenCalledWith(target, [], undefined);
   });
@@ -139,7 +139,7 @@ describe(useDataStore, () => {
     signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
-    const { storeSendMessage } = dataStore;
+    const { sendMessage } = dataStore;
     const { getComposerFiles } = uploadFileStore;
     vi.spyOn(URL, "createObjectURL").mockReturnValue("");
     vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
@@ -152,7 +152,7 @@ describe(useDataStore, () => {
       }),
     );
     uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
-    await storeSendMessage({
+    await sendMessage({
       files: [{ filename, hasThumbnail: false, id: sentFileId, mimetype, size }],
       message,
       replyRowKey: "",
@@ -171,7 +171,7 @@ describe(useDataStore, () => {
     signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
-    const { storeSendMessage } = dataStore;
+    const { sendMessage } = dataStore;
     const { getComposerFiles } = uploadFileStore;
     vi.spyOn(URL, "createObjectURL").mockReturnValue("");
     vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
@@ -182,7 +182,7 @@ describe(useDataStore, () => {
       }),
     );
     uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
-    await storeSendMessage({
+    await sendMessage({
       files: [{ filename, hasThumbnail: false, id: sentFileId, mimetype, size }],
       message,
       replyRowKey: "",

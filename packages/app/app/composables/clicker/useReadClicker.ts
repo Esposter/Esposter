@@ -16,10 +16,10 @@ export const useReadClicker = async () => {
   const { applyOfflineProgress } = offlineProgressStore;
   // This is used for tracking when we should save
   // I.e. every time the user manually updates the state
-  // Which is everything excluding automatic updates like noPoints
+  // Which is everything excluding automatic updates like pointCount
   // And updatedAt, which is stamped by saving itself and must not retrigger the save watcher
   const virtualClicker = computed((oldVirtualClicker) => {
-    const newVirtualClicker = omitDeep(clicker.value, "noPoints", "producedValue", "updatedAt");
+    const newVirtualClicker = omitDeep(clicker.value, "pointCount", "producedValue", "updatedAt");
     return oldVirtualClicker && deepEqual(newVirtualClicker, oldVirtualClicker) ? oldVirtualClicker : newVirtualClicker;
   });
 

@@ -1,4 +1,4 @@
-import type { CountSurveyResponsesResult } from "#shared/models/resource/survey/CountSurveyResponsesResult";
+import type { ReadSurveyResponsesCountResult } from "#shared/models/resource/survey/ReadSurveyResponsesCountResult";
 import type { Resource } from "@esposter/db-schema";
 
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
@@ -15,7 +15,7 @@ import { AzureTable } from "@esposter/db-schema";
 // Rather than eleven — but a survey between the two ceilings then reads "1000+" on the overview and its real
 // Total on the Responses blade, which is one survey with two totals. Only a partition past ten pages pays the
 // Difference, and it pays it to say the same number twice
-export const countSurveyResponses = async (surveyId: Resource["id"]): Promise<CountSurveyResponsesResult> => {
+export const readSurveyResponsesCount = async (surveyId: Resource["id"]): Promise<ReadSurveyResponsesCountResult> => {
   const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
   const count = await countEntities(
     surveyResponseClient,

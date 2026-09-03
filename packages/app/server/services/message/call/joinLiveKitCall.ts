@@ -12,7 +12,7 @@ export const joinLiveKitCall = async (
   userId: string,
 ): Promise<JoinCallResult> => {
   await createLiveKitRoom(callSession.id);
-  const livekit = await createLiveKitToken(callSession.id, participant);
-  const result = await joinCallAsParticipant(callSession, participant, participant.id, userId);
-  return { ...result, ...livekit };
+  const liveKit = await createLiveKitToken(callSession.id, participant);
+  const joinedCall = await joinCallAsParticipant(callSession, participant, participant.id, userId);
+  return { ...joinedCall, ...liveKit };
 };

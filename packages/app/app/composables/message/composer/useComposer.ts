@@ -7,8 +7,10 @@ import { useInputStore } from "@/store/message/input";
 // Differ only in their target, the room's extra slash-command extension, and the header above the editor
 export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
   const dataStore = useDataStore();
-  const { sendMessage } = dataStore;
-  const keyboardExtension = await useKeyboardShortcutsExtension((editor) => sendMessage(editor, toValue(target)));
+  const { sendComposerMessage } = dataStore;
+  const keyboardExtension = await useKeyboardShortcutsExtension((editor) =>
+    sendComposerMessage(editor, toValue(target)),
+  );
   const codeBlockExtension = useCodeBlockExtension();
   const emojiExtension = useEmojiExtension();
   const customEmojiExtension = useCustomEmojiExtension();
@@ -22,11 +24,11 @@ export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
     mentionExtension.value,
   ]);
   const inputStore = useInputStore();
-  const { validateInput } = inputStore;
+  const { checkIsInputValid } = inputStore;
   return {
+    checkIsInputValid,
     extensions,
-    sendMessage,
+    sendComposerMessage,
     uploadFiles: useUploadFiles(target),
-    validateInput,
   };
 };

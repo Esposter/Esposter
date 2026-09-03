@@ -12,7 +12,7 @@ const { isCommentStore, post } = defineProps<PostLikeSectionProps>();
 <template>
   <div flex flex-col items-center>
     <PostVoteButton :post :is-comment-store :value="1" />
-    {{ post.noLikes }}
+    {{ post.likeCount }}
     <PostVoteButton :post :is-comment-store :value="-1" />
   </div>
 </template>

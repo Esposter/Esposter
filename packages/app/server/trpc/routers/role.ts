@@ -48,8 +48,9 @@ const assertCanGrantPermissions = async (
 ) => {
   if (isOwner) return;
   const actorPermissions = await getPermissions(db, actorUserId, roomId);
-  const hasAdmin = Boolean(actorPermissions & RoomPermission.Administrator);
-  if (!hasAdmin && (permissions & ~actorPermissions) !== 0n) throw new TRPCError({ code: "UNAUTHORIZED" });
+  const hasAdministratorPermission = Boolean(actorPermissions & RoomPermission.Administrator);
+  if (!hasAdministratorPermission && (permissions & ~actorPermissions) !== 0n)
+    throw new TRPCError({ code: "UNAUTHORIZED" });
 };
 // Granting and revoking are both two hierarchy checks, never one: the role has to be below the actor, and so
 // Does the member it is being moved on or off, or a peer could be stripped through a role they outrank

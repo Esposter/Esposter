@@ -10,7 +10,7 @@ Posts are Esposter's core product — "a nice and casual place for posting rando
 ## Key concepts
 
 - **Comments are posts** — one `posts` table, self-referencing: a comment is a row with a `parentId` (and `depth = parent + 1`); top-level posts have `parentId = null` and a required title. One model, one router, shared machinery — and a reply tree that needs no route of its own, since a comment already has a page.
-- **Denormalized counters** — `noLikes` and `noComments` live on the post row and are updated transactionally with every like/comment mutation, so feed cards never aggregate. A comment write moves `noComments` on every post above it, named by the `ancestorIds` chain the row carries rather than found by walking `parentId`.
+- **Denormalized counters** — `likeCount` and `commentCount` live on the post row and are updated transactionally with every like/comment mutation, so feed cards never aggregate. A comment write moves `commentCount` on every post above it, named by the `ancestorIds` chain the row carries rather than found by walking `parentId`.
 - **Stored ranking** — a Reddit-style hot score computed at write time and stored on the row, so the feed is a simple indexed sort. See [feed and ranking](/docs/posts/feed-and-ranking).
 - **Profanity filtering** — every create/update of user text goes through `getProfanityFilterProcedure`, which censors configured input fields in middleware before the mutation runs.
 - **Achievements** — post, comment, and like actions feed a rich set of achievement definitions (including condition-based ones like "50 comments under 50 characters") through the tRPC-path plugin.

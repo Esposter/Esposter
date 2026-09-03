@@ -8,47 +8,47 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
   // Serialised while they in fact raced, and the rejected one would put the row back over the other's removal
   const { executeMutation: executeScheduledMessageJobMutation } = useMutation();
   const { items, ...restOffsetPaginationData } = useOffsetPaginationData<ScheduledMessageJobInMessageWithRoom>();
-  const count = ref(0);
+  const scheduledMessageJobCount = ref(0);
   const isPending = ref(true);
-  const removeScheduledMessageJob = (id: ScheduledMessageJobInMessage["id"]) => {
+  const deleteScheduledMessageJob = (id: ScheduledMessageJobInMessage["id"]) => {
     const remainingScheduledMessageJobs = items.value.filter((scheduledMessageJob) => scheduledMessageJob.id !== id);
     // The badge counts every scheduled job, not just the loaded page, so it only moves when this page really
     // Lost a row — a cancel of something not on screen would otherwise decrement it for nothing
     if (remainingScheduledMessageJobs.length === items.value.length) return;
 
     items.value = remainingScheduledMessageJobs;
-    count.value = Math.max(0, count.value - 1);
+    scheduledMessageJobCount.value = Math.max(0, scheduledMessageJobCount.value - 1);
   };
   // Cancelling and sending end the job the same way, so they share one optimistic apply. The row is read when
   // The write is sent, so the second of two queued writes on one job finds it already gone and owes nothing back
-  const getApplyOptimisticRemoval = (id: ScheduledMessageJobInMessage["id"]) => () => {
-    const removedScheduledMessageJob = items.value.find((scheduledMessageJob) => scheduledMessageJob.id === id);
-    removeScheduledMessageJob(id);
+  const getApplyOptimisticDelete = (id: ScheduledMessageJobInMessage["id"]) => () => {
+    const deletedScheduledMessageJob = items.value.find((scheduledMessageJob) => scheduledMessageJob.id === id);
+    deleteScheduledMessageJob(id);
     return () => {
-      if (!removedScheduledMessageJob) return;
+      if (!deletedScheduledMessageJob) return;
       // Back at the end of the page rather than where it stood — a cosmetic loss, taken over dropping a row
-      items.value = [...items.value, removedScheduledMessageJob];
-      count.value += 1;
+      items.value = [...items.value, deletedScheduledMessageJob];
+      scheduledMessageJobCount.value += 1;
     };
   };
   const cancelScheduledMessageJob = async (id: ScheduledMessageJobInMessage["id"]) => {
     await executeScheduledMessageJobMutation(
       () => $trpc.message.scheduledMessageJob.cancelScheduledMessageJob.mutate({ id }),
-      { applyOptimistic: getApplyOptimisticRemoval(id), key: id },
+      { applyOptimistic: getApplyOptimisticDelete(id), key: id },
     );
   };
   const sendScheduledMessageNow = async (id: ScheduledMessageJobInMessage["id"]) => {
     await executeScheduledMessageJobMutation(
       () => $trpc.message.scheduledMessageJob.sendScheduledMessageNow.mutate({ id }),
-      { applyOptimistic: getApplyOptimisticRemoval(id), key: id },
+      { applyOptimistic: getApplyOptimisticDelete(id), key: id },
     );
   };
   return {
     cancelScheduledMessageJob,
-    count,
+    deleteScheduledMessageJob,
     isPending,
     items,
-    removeScheduledMessageJob,
+    scheduledMessageJobCount,
     sendScheduledMessageNow,
     ...restOffsetPaginationData,
   };

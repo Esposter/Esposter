@@ -17,7 +17,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
   const { getFriendRequestsByUser, storeCreateFriendRequest, storeDeleteFriendRequestsByUser } = friendRequestStore;
   const blockedUsers = ref<User[]>([]);
 
-  const blockUser = async (userId: FriendUserIdInput) => {
+  const createBlock = async (userId: FriendUserIdInput) => {
     await executeBlockMutation(() => $trpc.block.blockUser.mutate(userId), {
       // Only the rows this write removes, not copies of both lists: blocks of different users never queue against
       // Each other, so reinstating the lists would resurrect a friend or a request another write already dropped
@@ -40,7 +40,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
     });
   };
 
-  const unblockUser = async (blockedUserId: FriendUserIdInput) => {
+  const deleteBlock = async (blockedUserId: FriendUserIdInput) => {
     await executeBlockMutation(() => $trpc.block.unblockUser.mutate(blockedUserId), {
       // The one row this write removes, not a copy of the list: unblocks of different users never queue against
       // Each other, so reinstating the list would resurrect a user another unblock already removed and drop
@@ -58,7 +58,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
 
   return {
     blockedUsers,
-    blockUser,
-    unblockUser,
+    createBlock,
+    deleteBlock,
   };
 });

@@ -12,7 +12,7 @@ import { z } from "zod";
 export class ClickerSave extends AItemEntity implements ItemEntityType<ClickerType> {
   boughtBuildings: BoughtBuilding[] = [];
   boughtUpgrades: UpgradeId[] = [];
-  noPoints = 0;
+  pointCount = 0;
   type = ClickerType.Default;
 
   constructor(init?: Partial<ClickerSave>) {
@@ -26,5 +26,5 @@ export const clickerSaveSchema = z.object({
   ...createItemEntityTypeSchema(clickerTypeSchema).shape,
   boughtBuildings: createUniqueArraySchema(boughtBuildingSchema, "id"),
   boughtUpgrades: createUniqueArraySchema(upgradeIdSchema),
-  noPoints: z.number().nonnegative(),
+  pointCount: z.number().nonnegative(),
 }) satisfies z.ZodType<ToData<ClickerSave>>;

@@ -8,7 +8,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { danglingProgramBindingReason } from "@@/server/services/program/constants";
+import { DANGLING_PROGRAM_BINDING_REASON } from "@@/server/services/program/constants";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "@@/server/trpc/routers/createAudienceSheet.test";
@@ -63,7 +63,7 @@ describe("program", () => {
   const danglingProgramBindingErrorMessage = new InvalidOperationError(
     Operation.Create,
     AzureEntityType.ProgramParticipant,
-    danglingProgramBindingReason,
+    DANGLING_PROGRAM_BINDING_REASON,
   ).message;
   // Every participant test starts from the same pair — an Identified survey and a program bound to it plus an
   // Audience sheet — and varies only the audience it issues against

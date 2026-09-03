@@ -2,7 +2,7 @@ import type { DatasetProvider } from "@@/server/models/dataset/DatasetProvider";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { getUtcDateString } from "#shared/util/date/getUtcDateString";
-import { countProgramParticipantEntities } from "@@/server/services/program/countProgramParticipantEntities";
+import { readProgramParticipantEntitiesCount } from "@@/server/services/program/readProgramParticipantEntitiesCount";
 import { readProgramStatusRows } from "@@/server/services/program/readProgramStatusRows";
 import { requireOwnedResource } from "@@/server/services/resource/requireOwnedResource";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
@@ -17,7 +17,9 @@ export const readProgramStatusDataset: DatasetProvider = async (ctx, reference) 
   const { isRespondedPartial, rows: statusRows } = await readProgramStatusRows(resource.id);
   // A read that fit under the cap answers for itself; only a read that filled it pays for the count
   const totalRows =
-    statusRows.length < AZURE_MAX_PAGE_SIZE ? statusRows.length : await countProgramParticipantEntities(resource.id);
+    statusRows.length < AZURE_MAX_PAGE_SIZE
+      ? statusRows.length
+      : await readProgramParticipantEntitiesCount(resource.id);
   return {
     columns: [
       { name: "participant", type: ColumnType.String },

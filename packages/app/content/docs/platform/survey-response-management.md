@@ -15,18 +15,18 @@ flowchart LR
   BLADE -->|"delete action → confirm"| DEL["deleteSurveyResponse<br/>owner-gated"]
   DEL --> AT[("SurveyResponseEntity")]
   BLADE -->|readSurveyResponseRecords| RECORDS["columns + rows, each row<br/>carrying its own rowKey"]
-  OV["Survey Overview Essentials"] -->|countSurveyResponses| COUNT["N responses → Responses blade"]
+  OV["Survey Overview Essentials"] -->|readSurveyResponsesCount| COUNT["N responses → Responses blade"]
 ```
 
 - **Detail dialog** — a per-row action opening the response as a question → answer list, the dataset row rendered vertically. Answers already arrive flattened through the dataset, so there is no new read path. One singleton dialog serves the whole table, driven by the target row key.
 - **Delete** — `deleteSurveyResponse({ id, rowKey })`. The partition key is the survey id **derived server-side from the owner-checked `id`**, never accepted from the caller, so one owner's survey id can never reach another survey's rows. Existence is proven before deleting, so a second delete of the same key errors rather than silently passing. The confirm follows the [resource page parity](/docs/platform/resource-page-parity) guard patterns.
-- **Count** — `countSurveyResponses({ id })`, owner-gated, surfaced on the Survey Overview Essentials grid as an "N responses" link to the Responses blade. Azure Table has no cheap server-side count, so this counts keys-only pages up to one past `AZURE_MAX_PAGE_SIZE` and returns the count plus an `isCapped` flag — that extra key is what distinguishes exactly-cap from beyond-cap, and only `isCapped` renders the `1000+` form.
+- **Count** — `readSurveyResponsesCount({ id })`, owner-gated, surfaced on the Survey Overview Essentials grid as an "N responses" link to the Responses blade. Azure Table has no cheap server-side count, so this counts keys-only pages up to one past `AZURE_MAX_PAGE_SIZE` and returns the count plus an `isCapped` flag — that extra key is what distinguishes exactly-cap from beyond-cap, and only `isCapped` renders the `1000+` form.
 
 ## Procedures
 
 | Procedure                   | Auth  | Input            | Purpose                             |
 | --------------------------- | ----- | ---------------- | ----------------------------------- |
-| `countSurveyResponses`      | owner | `{ id }`         | capped response count + `isCapped`  |
+| `readSurveyResponsesCount`  | owner | `{ id }`         | capped response count + `isCapped`  |
 | `deleteSurveyResponse`      | owner | `{ id, rowKey }` | remove one response entity          |
 | `readSurveyResponseRecords` | owner | `{ id }`         | the blade's rows, each with its key |
 
@@ -34,7 +34,7 @@ flowchart LR
 
 | File                                                                   | Role                            |
 | ---------------------------------------------------------------------- | ------------------------------- |
-| `packages/app/server/services/survey/countSurveyResponses.ts`          | the capped count                |
+| `packages/app/server/services/survey/readSurveyResponsesCount.ts`      | the capped count                |
 | `packages/app/server/services/survey/readSurveyResponseRecords.ts`     | rows + their keys from one read |
 | `packages/app/app/components/Resource/Survey/Responses.vue`            | row actions                     |
 | `packages/app/app/components/Resource/Survey/ResponseDetailDialog.vue` | the detail dialog               |

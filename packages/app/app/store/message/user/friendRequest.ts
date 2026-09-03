@@ -28,8 +28,8 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     DatabaseEntityType.FriendRequest,
   );
   // Single source of truth for "has the app user already asked this user" — the counterpart to the friend
-  // Store's getIsFriend, and asked by the same surfaces
-  const getHasSentFriendRequest = (targetUserId: User["id"]) =>
+  // Store's checkIsFriend, and asked by the same surfaces
+  const checkHasSentFriendRequest = (targetUserId: User["id"]) =>
     sentFriendRequests.value.some(({ receiverId }) => receiverId === targetUserId);
   // Accepting, declining and blocking all resolve the same thing: the pending requests between the app user and
   // One other party. The list only ever holds requests the app user is a party to — the read filters on it and
@@ -94,10 +94,10 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
 
   return {
     acceptFriendRequest,
+    checkHasSentFriendRequest,
     declineFriendRequest,
     friendRequests,
     getFriendRequestsByUser,
-    getHasSentFriendRequest,
     receivedFriendRequests,
     sendFriendRequest,
     sentFriendRequests,

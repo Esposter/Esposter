@@ -4,7 +4,7 @@
 // Many such uploads a user may have in flight at once — without it a tiny declaration buys unlimited holds.
 export const MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES = 64;
 
-export const storageQuotaExceededErrorMessage = "You have run out of storage.";
+export const STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE = "You have run out of storage.";
 
 // Where the usage bar stops being informational and starts being a warning. Percentages rather than byte
 // Thresholds so they hold for every tier.

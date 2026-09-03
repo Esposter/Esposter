@@ -21,6 +21,19 @@ reviews:
         invoke ctix — a wrapper, never a replacement. Never report a reference to `ctix`, or to a barrel as
         `ctix-generated`, as a stale generator name to be renamed to `generate-exports`.
 
+    # Raised once per rename that touches a persisted shape, always as a data-loss finding with correct mechanics
+    # And the wrong conclusion. One entry ends the class; the two docs pages below are the settled decision.
+    - path: "**"
+      instructions: |
+        Never report a missing migration, back-compat arm or legacy read path for a renamed or reshaped
+        persisted field, and never ask for regression tests covering a pre-rename payload. This repository
+        carries no compatibility debt (`packages/app/content/docs/architecture/no-compatibility-debt.md`) and
+        app-owned persisted state parses the latest shape or resets
+        (`packages/app/content/docs/architecture/persisted-data-latest-shape-only.md`) — a schema rejecting an
+        older payload is the specified behaviour, not data loss. Server-owned relational data moves by a real
+        forward-only Drizzle migration in the same change. Report a rename that is incomplete — a reference the
+        rename missed, or a migration absent for a changed DB column — never one that is complete.
+
   path_filters:
     - "!pnpm-lock.yaml"
     # auto-generated migrations

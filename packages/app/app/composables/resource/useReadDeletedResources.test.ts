@@ -20,7 +20,7 @@ describe(useReadDeletedResources, () => {
 
     const countHandler = vi.fn<() => number>(() => 0);
     server.use(
-      trpcMsw.resource.countDeletedResources.query(countHandler),
+      trpcMsw.resource.readDeletedResourcesCount.query(countHandler),
       trpcMsw.resource.readDeletedResources.query(() => ({ hasMore: false, items: firstPage })),
     );
     const { readDeletedResources, refresh } = useReadDeletedResources();

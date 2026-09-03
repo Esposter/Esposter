@@ -29,7 +29,7 @@ flowchart LR
 
 `ResourceListView` takes a `source` prop, and `ResourceListSourceDefinitionMap` says what each source means: a filter preset merged into every read, a default sort, an empty state, an icon, and optionally the column the view is ordered by. Nothing else differs between the three list routes.
 
-The filter preset is the whole mechanism. `resource.readResources` gained `isFavorite` and `isAccessed` booleans, both resolved as caller-scoped `EXISTS` subqueries inside the same `createResourcesWhere` every other filter goes through — so Favorites and Recent inherit the pill row, the URL-synced filter state, the row count and the summary cards for free, and none of them can disagree with `/all` about what a filter means.
+The filter preset is the whole mechanism. `resource.readResources` gained `isFavorite` and `isAccessed` booleans, both resolved as caller-scoped `EXISTS` subqueries inside the same `getResourcesWhere` every other filter goes through — so Favorites and Recent inherit the pill row, the URL-synced filter state, the row count and the summary cards for free, and none of them can disagree with `/all` about what a filter means.
 
 | Source      | Filter             | Default sort          | Pinned column    |
 | ----------- | ------------------ | --------------------- | ---------------- |
@@ -59,13 +59,13 @@ Home keeps its Recent and Favorites card. The card and the routes are the same t
 
 Paths relative to `packages/app`.
 
-| File                                                            | Role                                                             |
-| --------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `app/components/Resource/ServiceMenu.vue`                       | the entries and their exact-path active matching                 |
-| `app/components/Styled/Navigation/Overlay.vue`                  | the drawer shell — slide-in, elevated, scrimless                 |
-| `app/layouts/resource.vue`                                      | owns the `☰`, the open state and where the drawer mounts        |
-| `app/components/Resource/List/View.vue`                         | the one list surface, parameterised by `source`                  |
-| `app/services/resource/list/ResourceListSourceDefinitionMap.ts` | what each source filters, sorts and pins                         |
-| `app/components/Resource/TagList.vue`                           | the Tags entry's list                                            |
-| `../db-schema/src/schema/resourceAccesses.ts`                   | one row per user per resource, holding the last open             |
-| `server/trpc/routers/resource.ts`                               | `isFavorite`/`isAccessed` filters, `recordAccess`, `countsByTag` |
+| File                                                            | Role                                                                       |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `app/components/Resource/ServiceMenu.vue`                       | the entries and their exact-path active matching                           |
+| `app/components/Styled/Navigation/Overlay.vue`                  | the drawer shell — slide-in, elevated, scrimless                           |
+| `app/layouts/resource.vue`                                      | owns the `☰`, the open state and where the drawer mounts                  |
+| `app/components/Resource/List/View.vue`                         | the one list surface, parameterised by `source`                            |
+| `app/services/resource/list/ResourceListSourceDefinitionMap.ts` | what each source filters, sorts and pins                                   |
+| `app/components/Resource/TagList.vue`                           | the Tags entry's list                                                      |
+| `../db-schema/src/schema/resourceAccesses.ts`                   | one row per user per resource, holding the last open                       |
+| `server/trpc/routers/resource.ts`                               | `isFavorite`/`isAccessed` filters, `recordAccess`, `readResourceTagCounts` |

@@ -50,7 +50,7 @@ With a query set the dropdown shows three groups plus a footer:
 
 ## Relevance
 
-`readResources` ranks the closest trigram match first, then prefix matches above the remaining substring matches, newest-first within each tier. The search value is escaped and bound through the query builder throughout, and `createResourcesWhere` stays the single filter source so `count` never drifts from the list. Typo tolerance and the ranking ladder are covered in [global search relevance](/docs/platform/global-search-relevance); Azure AI Search stays [deferred](/docs/platform/deferred/azure-ai-search).
+`readResources` ranks the closest trigram match first, then prefix matches above the remaining substring matches, newest-first within each tier. The search value is escaped and bound through the query builder throughout, and `getResourcesWhere` stays the single filter source so `readResourcesCount` never drifts from the list. Typo tolerance and the ranking ladder are covered in [global search relevance](/docs/platform/global-search-relevance); Azure AI Search stays [deferred](/docs/platform/deferred/azure-ai-search).
 
 ## Key files
 

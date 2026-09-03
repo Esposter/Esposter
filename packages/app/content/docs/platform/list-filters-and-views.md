@@ -13,7 +13,7 @@ The workbench is one component, `ResourceListView`, and every list route renders
 
 - **Filter-pill row** (`ResourceListFilterBar`): each active filter renders as a `v-chip` pill opening a `v-menu` editor; `+ Add filter` offers the remaining filters. A pill stays visible while empty ("all") until its ✕ removes it; a deep-linked value surfaces its pill automatically.
   - **Type** — multi-select over `ResourceDefinitionMap` (icon + title), bound to the `types` ref `useReadResources` accepts.
-  - **Status** — Published/Draft; `isPublished?: boolean` on `resourceFilterInputSchema`, implemented as an `exists`/`notExists` on `resource_publications` inside `createResourcesWhere` (the one filter source for both `count` and `readResources`).
+  - **Status** — Published/Draft; `isPublished?: boolean` on `resourceFilterInputSchema`, implemented as an `exists`/`notExists` on `resource_publications` inside `getResourcesWhere` (the one filter source for both `readResourcesCount` and `readResources`).
   - **Updated** — date-range presets (24h / 7d / 30d / custom), `gte`/`lte` on `updatedAt`, resolved at fetch time (`getResourceUpdatedRange`) so relative presets stay anchored to "now".
   - **Tag** — name + optional value ([tags](/docs/platform/tags)): a value pins the tag through jsonb containment, a name alone matches any value through key-existence.
 - **URL state** (`useResourceListFilters`): `search`, `types`, `status`, `sortBy`, `page` mirror to query params via `useRouteQuery` (defaults drop out of the URL); `?search=` from Home stays the entry point. `sortBy` serializes to `key:order,…`. Named saved views are [deferred](/docs/platform/deferred/saved-views).
@@ -46,19 +46,19 @@ One filter state, mirrored to the URL, consumed by count + list:
 flowchart LR
   URL["query params<br/>search · types · status · sortBy · page"] <-->|"useRouteQuery ↔ update:options"| STATE["useResourceListFilters refs"]
   PILLS["FilterBar pills"] --> STATE
-  STATE --> WHERE["createResourcesWhere<br/>(single filter source)"]
+  STATE --> WHERE["getResourcesWhere<br/>(single filter source)"]
   WHERE --> RR["resource.readResources"] --> TABLE["StyledDataTableServer"]
-  WHERE --> CNT["resource.countResources"] --> FOOTER["footer x–y of N"]
+  WHERE --> CNT["resource.readResourcesCount"] --> FOOTER["footer x–y of N"]
   TABLE -->|"select n → Delete (n)"| BULK["resource.deleteResources"] -->|"deletedAt + publications dropped"| GONE[("recycle bin")]
   TABLE -->|"Export CSV (chunked)"| CSV["getResourcesCsv"]
 ```
 
 ## Procedures
 
-| Procedure                                            | Auth                          | Input                                                                                       | Purpose                                                 |
-| ---------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `resource.readResources` / `resource.countResources` | authed                        | `isPublished?`, `isFavorite?`, `isAccessed?: boolean`, `updatedAfter?/updatedBefore?: Date` | status, set and date filters via `createResourcesWhere` |
-| `resource.deleteResources`                           | authed (owner-scoped `where`) | `ids: string[]` (unique, bounded)                                                           | bulk soft delete — `deletedAt` + publication rows       |
+| Procedure                                                | Auth                          | Input                                                                                       | Purpose                                              |
+| -------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `resource.readResources` / `resource.readResourcesCount` | authed                        | `isPublished?`, `isFavorite?`, `isAccessed?: boolean`, `updatedAfter?/updatedBefore?: Date` | status, set and date filters via `getResourcesWhere` |
+| `resource.deleteResources`                               | authed (owner-scoped `where`) | `ids: string[]` (unique, bounded)                                                           | bulk soft delete — `deletedAt` + publication rows    |
 
 ## Key files
 
@@ -73,12 +73,12 @@ flowchart LR
 | `app/composables/resource/list/useReadResourcesPage.ts`         | the shared paged reader: stale guard + filter-keyed count                |
 | `app/composables/resource/list/useDebouncedFilter.ts`           | field ↔ filter bridge that debounces typing                              |
 | `app/composables/resource/useExportResourcesCsv.ts`             | selected-rows + chunked full export with truncation warning              |
-| `server/trpc/routers/resource.ts`                               | filter schema, `createResourcesWhere`, bulk delete                       |
+| `server/trpc/routers/resource.ts`                               | filter schema, `getResourcesWhere`, bulk delete                          |
 
 ## Notes
 
 - Publish **status stays off the default columns** — it appears only as an opt-in filter pill.
-- One filter source: every filter lands in `createResourcesWhere` so `count` and `readResources` can never disagree. That includes a source's own preset, which is why Favorites and Recent get the pill row, the total and the summary cards without a line of their own.
+- One filter source: every filter lands in `getResourcesWhere` so `readResourcesCount` and `readResources` can never disagree. That includes a source's own preset, which is why Favorites and Recent get the pill row, the total and the summary cards without a line of their own.
 - The `Last accessed` column is sortable because the join that produces it is also the sort space: `readResources` selects the resource columns alongside `resourceAccesses.accessedAt` once and hands that same selection to `parseSortByToSql`, so a column the list can show is a column it can sort by.
 - All filters funnel through the data table's `search` prop (a JSON key of the filter state) so Vuetify resets to page 1 and refires `update:options` on any change. That is also why every text filter — the search box and a tag pill's name and value — writes through `useDebouncedFilter` instead of per keystroke: a raw binding would reset to page 1 and re-run both queries on every character.
 - **The total is only ever written by a read.** A bulk delete drops its rows from the page optimistically, because those rows are what the user is looking at, but the count is the server's number over the whole filter — so the delete re-reads instead of nudging it. Nudging is wrong in both directions: a refresh landing mid-flight has already re-counted, so the adjustment is applied on top of a number that no longer needs it, and the rollback of a rejected delete then adds back rows the fresh count never included.

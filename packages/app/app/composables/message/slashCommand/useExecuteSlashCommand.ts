@@ -19,7 +19,7 @@ export const useExecuteSlashCommand = () => {
   const { storeUpdateRoom } = roomStore;
   const { currentRoom, currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
-  const { storeSendMessage } = dataStore;
+  const { sendMessage } = dataStore;
   const pollDialogStore = usePollDialogStore();
   const { isOpen } = storeToRefs(pollDialogStore);
   const scheduledMessageJobDialogStore = useScheduledMessageJobDialogStore();
@@ -92,7 +92,7 @@ export const useExecuteSlashCommand = () => {
 
     if (!createMessageInput) return;
 
-    await storeSendMessage({
+    await sendMessage({
       ...createMessageInput,
       message: createMessageInput.message ? marked.parse(createMessageInput.message, { async: false }) : undefined,
       replyRowKey: replyRowKey.value,

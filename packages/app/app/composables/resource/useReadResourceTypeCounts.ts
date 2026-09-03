@@ -8,6 +8,6 @@ export const useReadResourceTypeCounts = (getFilters: () => Except<ResourceFilte
   const { $trpc } = useNuxtApp();
   return useReadCounts("useReadResourceTypeCounts", () =>
     // Shared with the list so a card's count is the number the list shows once the card sets its type
-    $trpc.resource.countsByType.query(getResourceFilterInput({ ...getFilters(), types: [] })),
+    $trpc.resource.readResourceTypeCounts.query(getResourceFilterInput({ ...getFilters(), types: [] })),
   );
 };

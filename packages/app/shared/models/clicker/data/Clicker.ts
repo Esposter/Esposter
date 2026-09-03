@@ -8,7 +8,7 @@ import { AItemEntity } from "#shared/models/entity/AItemEntity";
 export class Clicker extends AItemEntity implements ItemEntityType<ClickerType> {
   boughtBuildings: BuildingWithStatistics[] = [];
   boughtUpgrades: Upgrade[] = [];
-  noPoints = 0;
+  pointCount = 0;
   type = ClickerType.Default;
 
   constructor(init?: Partial<Clicker>) {

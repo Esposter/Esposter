@@ -9,25 +9,25 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
   const speakingIds = ref<string[]>([]);
   const sessionId = computed(() => session.value.data?.session.id);
   const createCallParticipant = (callSessionId: string, participant: CallParticipant) => {
-    const existing = callSessionParticipantsMap.value.get(callSessionId);
-    if (existing?.has(participant.id)) return;
-    if (existing) existing.set(participant.id, participant);
+    const existingParticipantMap = callSessionParticipantsMap.value.get(callSessionId);
+    if (existingParticipantMap?.has(participant.id)) return;
+    if (existingParticipantMap) existingParticipantMap.set(participant.id, participant);
     else callSessionParticipantsMap.value.set(callSessionId, new Map([[participant.id, participant]]));
 
     if (participant.id !== sessionId.value) joinNoticeParticipant.value = participant;
   };
   const deleteCallParticipant = (callSessionId: string, id: string) => {
-    const sessionMap = callSessionParticipantsMap.value.get(callSessionId);
-    if (!sessionMap) return;
-    sessionMap.delete(id);
+    const participantMap = callSessionParticipantsMap.value.get(callSessionId);
+    if (!participantMap) return;
+    participantMap.delete(id);
     if (joinNoticeParticipant.value?.id === id) joinNoticeParticipant.value = undefined;
   };
-  const setMute = (callSessionId: string, id: string, isMuted: boolean) => {
+  const setParticipantMuted = (callSessionId: string, id: string, isMuted: boolean) => {
     const participant = callSessionParticipantsMap.value.get(callSessionId)?.get(id);
     if (!participant) return;
     participant.isMuted = isMuted;
   };
-  const setParticipantCamera = (callSessionId: string, id: string, isCameraEnabled: boolean) => {
+  const setParticipantCameraEnabled = (callSessionId: string, id: string, isCameraEnabled: boolean) => {
     const participant = callSessionParticipantsMap.value.get(callSessionId)?.get(id);
     if (!participant) return;
     participant.isCameraEnabled = isCameraEnabled;
@@ -35,7 +35,7 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
   const setParticipantMap = (callSessionId: string, participants: Map<string, CallParticipant>) => {
     callSessionParticipantsMap.value.set(callSessionId, participants);
   };
-  const setHandRaised = (callSessionId: string, id: string, isHandRaised: boolean) => {
+  const setParticipantHandRaised = (callSessionId: string, id: string, isHandRaised: boolean) => {
     const participant = callSessionParticipantsMap.value.get(callSessionId)?.get(id);
     if (!participant) return;
     participant.isHandRaised = isHandRaised;
@@ -64,10 +64,10 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
     deleteSpeaker,
     joinNoticeParticipant,
     sessionId,
-    setHandRaised,
-    setMute,
-    setParticipantCamera,
+    setParticipantCameraEnabled,
+    setParticipantHandRaised,
     setParticipantMap,
+    setParticipantMuted,
     speakingIds,
   };
 });

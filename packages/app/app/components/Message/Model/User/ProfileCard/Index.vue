@@ -18,7 +18,7 @@ const { currentRoomId } = storeToRefs(roomStore);
 const userToRoomStore = useUserToRoomStore();
 const { getDisplayName } = userToRoomStore;
 const statusStore = useStatusStore();
-const { getStatusEnum, getStatusMessage } = statusStore;
+const { getStatusMessage, getUserStatus } = statusStore;
 const isSelf = computed(() => session.value?.user.id === user.id);
 // The row this card pops out of already shows the room nickname, so the card has to resolve the same way —
 // Otherwise hovering a renamed member swaps the name out from under the cursor
@@ -39,7 +39,7 @@ const { data: mutualRooms } = useQuery(() => $trpc.room.readMutualRooms.query({ 
     <v-card-text pt-2 flex flex-col gap-y-3>
       <div>
         <div font-bold>{{ displayName }}</div>
-        <div op-medium-emphasis text-body-medium>{{ getStatusMessage(user.id) || getStatusEnum(user.id) }}</div>
+        <div op-medium-emphasis text-body-medium>{{ getStatusMessage(user.id) || getUserStatus(user.id) }}</div>
       </div>
       <template v-if="!isSelf">
         <v-divider />

@@ -18,13 +18,19 @@
 | `server/trpc/routers` — `achievement`, `app`, `clicker`, `dungeons`, `notification`, `pushSubscription`, `session`, `storage`               | 2026-09-03 | a caller-scoped read is `readMy*`, never `readOwn*`                                             |
 | `server/trpc/{guards,procedure,plugins,middleware}`, `context.ts`                                                                           | 2026-09-03 | a guard that throws is `assert*`; `is*` is a stored boolean and nothing else                    |
 | `server/composables`, `server/api`, `server/routes`                                                                                         | 2026-09-03 | `get*` vs `read*` on the server side                                                            |
-| `server/services/message`                                                                                                                   | —          |                                                                                                 |
+| `server/services/message`                                                                                                                   | 2026-09-03 | a product's own casing carries into a local — `liveKit`, never `livekit`                        |
 | `server/services/resource`                                                                                                                  | 2026-09-03 |                                                                                                 |
 | `server/services` — `room`, `role`, `user`, `friend`, `post`                                                                                | 2026-09-03 |                                                                                                 |
-| `server/services` — `blueprint`, `program`, `survey`, `dataset`, `dashboard`, `emailEditor`                                                 | 2026-09-03 |                                                                                                 |
+| `server/services` — `blueprint`, `program`, `survey`, `dataset`, `dashboard`, `emailEditor`                                                 | 2026-09-03 | a constant map or set stays PascalCase; a scalar is `SCREAMING_SNAKE`                           |
 | `server/services` — `azure`, `storage`, `livekit`, `notification`, `events`, `request`                                                      | 2026-09-03 |                                                                                                 |
 | `server/services` — `auth`, `rateLimiter`, `achievement`, `pagination`, `db`, `blobState`                                                   | 2026-09-03 |                                                                                                 |
-| `app/store`                                                                                                                                 | —          | CRUD verbs, `store*` subscription handlers; split at `message` if too large                     |
+| `app/store/message` — the root files                                                                                                        | 2026-09-03 | CRUD verbs, `store*` subscription handlers                                                      |
+| `app/store/message/room`                                                                                                                    | 2026-09-03 | a setter is named for the boolean it writes; `apply*` pushes stored state onto something live   |
+| `app/store/message/input`                                                                                                                   | 2026-09-03 | `store*` is for a paired subscription handler; a `getIs*` returning a boolean is `check*`       |
+| `app/store/message/user`                                                                                                                    | 2026-09-03 | a store file's name carries every word its export does, the parent path aside                   |
+| `app/store/message` — `file`, `search`, `ui`, `moderation`, `draftsAndSent`                                                                 | —          |                                                                                                 |
+| `app/store` — `dungeons`, `resource`                                                                                                        | —          |                                                                                                 |
+| `app/store` — the rest                                                                                                                      | 2026-09-03 | the root stores plus `achievement`, `clicker`, `dashboard`, `post`, `survey`, the editors       |
 | `app/composables`                                                                                                                           | —          | `use*` naming, the `{param}Value` `toValue` suffix                                              |
 | `app/services`, `app/util`, `app/models`, `app/types`                                                                                       | —          | filename-is-the-export                                                                          |
 | `app/components/Message`, `app/components/Resource`                                                                                         | —          | two rows if one pass cannot read both                                                           |
@@ -46,14 +52,25 @@ the grounds that a rename is expensive — that is the argument
   `*ByIds` read dropped it, but these two share a feature with a paginated read of the same rows
   (`readMembers`, `readMessages`), so the suffix is what separates two procedures rather than marking a batch
   upgrade — and dropping it collides. What the pair should be called instead is the open question.
-- **`list*` is a third async fetch prefix beside `read*`, and it cannot be settled one side at a time.**
-  `listRoomProfileImageBlobNames` wraps `@esposter/db`'s `listBlobNames`, which wraps Azure's own
-  `listBlobsFlat`; renaming ours to `read*` while the helper under it keeps `list*` splits one family across two
-  spellings. Whether `list*` is sanctioned for an enumerating fetch belongs to the `packages/db` pass, which owns
-  the name the wrapper mirrors.
+- **`countEntities` is `packages/db`'s, and it is an async fetch under the `count*` prefix.** Every count
+  procedure and service in `packages/app` is now `read*Count`; the storage primitive underneath them keeps
+  `count*`, so the question of whether a generic table-client tally is exempt belongs to the `packages/db`
+  pass that owns the name.
 - **`getIsAuthed` / `getIsRateLimited` / `getIsEntityIdEqualComparator` — `get*` is right, the `Is` is not.**
   All three return a function rather than a boolean, so `check*` would be wrong, but the `Is` still reads as a
   predicate. The middleware pair wants a name saying what it builds; the comparator already has one.
+
+- **The `block` router's `blockUser` and `unblockUser` procedures name an action, not the row they write.**
+  The store side is now `createBlock` / `deleteBlock` against the `blocks` table, and the router already spells
+  the pair `Operation.Create` / `Operation.Delete` on `DatabaseEntityType.Block` in its own error constructors —
+  but the procedures sit in `server/trpc/routers/block`, whose row was swept before the store pass reached this.
+  They go with the next pass over that row.
+
+- **The `callSession` router's `setMute` and `setCamera` procedures name an action, not the field they write.**
+  The store side is now `setParticipantMuted` / `setParticipantCameraEnabled` against `isMuted` / `isCameraEnabled`,
+  and the rule is now in the `naming` skill — but the procedures sit in `server/trpc/routers/call`, whose row was
+  swept before that rule existed. They go with the next pass over that row, along with the `onSetMute` /
+  `onSetCamera` subscriptions that mirror them.
 
 ## Next enforceable
 
@@ -65,6 +82,9 @@ the grounds that a rename is expensive — that is the argument
   other one in the repo is a `check*` the pass has not reached yet. A `no-restricted-syntax` selector on a
   declarator named `^get(Is|Has)[A-Z]` can therefore be written against the swept paths and widened as the
   remaining units drain.
+- A where-fragment helper is decidable from the AST alone: a declarator named `*Where` whose initialiser is a
+  function must start with `get`. Four routers had written the bare noun, so the rule is now in the `trpc` skill
+  and a `no-restricted-syntax` selector can hold it over the swept paths.
 - A `const` bound to the call it names — `const readPost = await caller.readPost(…)` — is decidable from the AST alone
   (declarator name equal to the callee's last property), and it is the finding this ledger has now written in five
   files. The fix is always the same: drop the verb prefix, since the binding is the value rather than the fetch.

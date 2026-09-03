@@ -6,16 +6,16 @@ import { useVueFlow } from "@vue-flow/core";
 
 export const useDragAndDrop = () => {
   const dragStore = useDragStore();
-  const { isDragging, isDragOver, type } = storeToRefs(dragStore);
+  const { isDragging, isDragOver, nodeType } = storeToRefs(dragStore);
   const { addNodes, onNodesInitialized, screenToFlowCoordinate, updateNode } = useVueFlow();
 
-  const onDragStart = (event: DragEvent, nodeType = GeneralNodeType.Rectangle) => {
+  const onDragStart = (event: DragEvent, newNodeType = GeneralNodeType.Rectangle) => {
     if (event.dataTransfer) {
-      event.dataTransfer.setData("application/vueflow", nodeType);
+      event.dataTransfer.setData("application/vueflow", newNodeType);
       event.dataTransfer.effectAllowed = "move";
     }
 
-    type.value = nodeType;
+    nodeType.value = newNodeType;
     isDragging.value = true;
     window.document.addEventListener("drop", onDragEnd);
   };
@@ -35,7 +35,7 @@ export const useDragAndDrop = () => {
   const onDragEnd = () => {
     isDragging.value = false;
     isDragOver.value = false;
-    type.value = GeneralNodeType.Rectangle;
+    nodeType.value = GeneralNodeType.Rectangle;
     window.document.removeEventListener("drop", onDragEnd);
   };
 
@@ -56,7 +56,7 @@ export const useDragAndDrop = () => {
       }));
       off();
     });
-    addNodes({ id, position, type: type.value });
+    addNodes({ id, position, type: nodeType.value });
   };
 
   return {

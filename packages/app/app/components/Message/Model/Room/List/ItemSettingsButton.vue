@@ -2,7 +2,7 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
-import { useDialogStore } from "@/store/message/room/dialog";
+import { useRoomDialogStore } from "@/store/message/room/dialog";
 import { useRoleStore } from "@/store/message/room/role";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
@@ -16,8 +16,8 @@ const { isActive, isHovering, room } = defineProps<ListItemSettingsButtonProps>(
 const { data: session } = await authClient.useSession(useFetch);
 const roleStore = useRoleStore();
 const { checkIsManageable } = roleStore;
-const dialogStore = useDialogStore();
-const { settingsRoomId } = storeToRefs(dialogStore);
+const roomDialogStore = useRoomDialogStore();
+const { settingsRoomId } = storeToRefs(roomDialogStore);
 const isVisible = computed(() => room.userId === session.value?.user.id || checkIsManageable(room.id));
 </script>
 

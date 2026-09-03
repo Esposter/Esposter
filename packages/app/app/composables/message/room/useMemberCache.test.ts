@@ -19,8 +19,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMemberCache, () => {
   let wrapper: VueWrapper;
-  let count: ComputedRef<number>;
-  let countsByTopRole: ComputedRef<MemberCountByTopRole[]>;
+  let memberCount: ComputedRef<number>;
+  let memberCountsByTopRole: ComputedRef<MemberCountByTopRole[]>;
   let members: Ref<User[]>;
   let getMemberCountsRef: ReturnType<typeof useMemberStore>["getMemberCountsRef"];
   let initializeCursorPaginationData: (data: CursorPaginationData<User>) => void;
@@ -34,7 +34,7 @@ describe(useMemberCache, () => {
         setup: () => {
           setCurrentRoomId(initialRouteId);
           const memberStore = useMemberStore();
-          ({ count, countsByTopRole, members } = storeToRefs(memberStore));
+          ({ memberCount, memberCountsByTopRole, members } = storeToRefs(memberStore));
           ({ getMemberCountsRef, initializeCursorPaginationData } = memberStore);
           useMemberCache();
 
@@ -74,8 +74,8 @@ describe(useMemberCache, () => {
     await flushCache();
 
     expect(members.value).toHaveLength(1);
-    expect(count.value).toBe(1);
-    expect(countsByTopRole.value).toStrictEqual([]);
+    expect(memberCount.value).toBe(1);
+    expect(memberCountsByTopRole.value).toStrictEqual([]);
     expect(takeOne(members.value).id).toStrictEqual(user.id);
   });
 });

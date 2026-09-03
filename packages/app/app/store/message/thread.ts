@@ -12,14 +12,14 @@ export const useThreadStore = defineStore("message/thread", () => {
   // The drawer shows one thread at a time, so every open supersedes the one before it and a slower earlier
   // Response can never land on the thread the user asked for next
   const readThreadKey = Symbol("readThread");
-  const { executeQuery, isPending: isReadingThread } = useMutation();
+  const { executeQuery, isPending: isReadThreadPending } = useMutation();
   const activeRootRowKey = ref<MessageEntity["rowKey"]>("");
   const activeRoomId = ref<MessageEntity["partitionKey"]>("");
   const threadMessages = ref<MessageEntity[]>([]);
   const layoutStore = useLayoutStore();
   const messageLayoutStore = useMessageLayoutStore();
   const threadFollowStore = useThreadFollowStore();
-  const { ensureFollowedThreadsLoaded } = threadFollowStore;
+  const { readFollowedThreads } = threadFollowStore;
 
   const openThread = async (roomId: string, threadRootRowKey: string) => {
     activeRoomId.value = roomId;
@@ -51,7 +51,7 @@ export const useThreadStore = defineStore("message/thread", () => {
       }),
       // The pane's menu offers the reply notification toggle, so the follow state it reads loads with the
       // Thread rather than on the menu's first open — cached per room, so this is free after the first thread
-      ensureFollowedThreadsLoaded(roomId),
+      readFollowedThreads(roomId),
     ]);
   };
   const closeThread = () => {
@@ -73,7 +73,7 @@ export const useThreadStore = defineStore("message/thread", () => {
   // Lands in the room list and the thread it belongs to shows nothing until it is reopened — including the
   // Sender's own reply, which is the composer's entire feedback. The optimistic bubble is the same reactive
   // Entity the room list holds, so the server's fields reach the pane through the object it already pushed
-  const getIsActiveThreadMessage = ({ partitionKey, rowKey }: Pick<MessageEntity, "partitionKey" | "rowKey">) =>
+  const checkIsActiveThreadMessage = ({ partitionKey, rowKey }: Pick<MessageEntity, "partitionKey" | "rowKey">) =>
     partitionKey === activeRoomId.value && threadMessages.value.some((message) => message.rowKey === rowKey);
   MessageHookMap[Operation.Create].register((message) => {
     if (message.partitionKey !== activeRoomId.value || message.replyRowKey !== activeRootRowKey.value) return;
@@ -83,7 +83,7 @@ export const useThreadStore = defineStore("message/thread", () => {
     threadMessages.value.push(message);
   });
   MessageHookMap[Operation.Update].register((input) => {
-    if (!getIsActiveThreadMessage(input)) return;
+    if (!checkIsActiveThreadMessage(input)) return;
 
     const message = threadMessages.value.find(({ rowKey }) => rowKey === input.rowKey);
     if (message) Object.assign(message, input);
@@ -102,7 +102,7 @@ export const useThreadStore = defineStore("message/thread", () => {
     activeRoomId,
     activeRootRowKey,
     closeThread,
-    isReadingThread,
+    isReadThreadPending,
     openThread,
     threadMessages,
   };

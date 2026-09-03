@@ -28,7 +28,7 @@ describe(usePinStore, () => {
     const dataStore = useDataStore();
     const { getSlice } = dataStore;
     const pinStore = usePinStore();
-    const { messages } = storeToRefs(pinStore);
+    const { displayMessages } = storeToRefs(pinStore);
     const pinnedMessage = createMessage();
     getSlice(pinnedMessage.partitionKey).items.value = [pinnedMessage];
     await MessageHookMap[Operation.Update].run({
@@ -37,7 +37,7 @@ describe(usePinStore, () => {
       rowKey: pinnedMessage.rowKey,
     });
 
-    expect(messages.value.map(({ rowKey }) => rowKey)).toStrictEqual([pinnedMessage.rowKey]);
+    expect(displayMessages.value.map(({ rowKey }) => rowKey)).toStrictEqual([pinnedMessage.rowKey]);
   });
 
   // A pin toggled from a search result or a thread names a room the reader is not in. Read against the room on
@@ -67,7 +67,7 @@ describe(usePinStore, () => {
     const dataStore = useDataStore();
     const { getSlice } = dataStore;
     const pinStore = usePinStore();
-    const { messages } = storeToRefs(pinStore);
+    const { displayMessages } = storeToRefs(pinStore);
     const pinnedMessage = createMessage();
     getSlice(pinnedMessage.partitionKey).items.value = [pinnedMessage];
     const pinnedInput = {
@@ -79,6 +79,6 @@ describe(usePinStore, () => {
     // `true | undefined`, so an unpin the hook can see is never a `false` and never an absent key
     await MessageHookMap[Operation.Update].run({ ...pinnedInput, isPinned: undefined });
 
-    expect(messages.value).toStrictEqual([]);
+    expect(displayMessages.value).toStrictEqual([]);
   });
 });

@@ -122,7 +122,7 @@ export const postRouter = router({
         // Under-report its own thread
         await tx
           .update(posts)
-          .set({ noComments: sql`${posts.noComments} + 1` })
+          .set({ commentCount: sql`${posts.commentCount} + 1` })
           .where(inArray(posts.id, ancestorIds));
 
         return {
@@ -175,7 +175,7 @@ export const postRouter = router({
         .where(or(eq(posts.id, input), arrayContains(posts.ancestorIds, [input])))
         .orderBy(posts.id)
         .for("update");
-      const noRemovedComments = removedComments.length;
+      const removedCommentCount = removedComments.length;
       const deletedComment = requireMutation(
         (
           await tx
@@ -191,9 +191,9 @@ export const postRouter = router({
       const { ancestorIds } = deletedComment;
       await tx
         .update(posts)
-        .set({ noComments: sql`${posts.noComments} - ${noRemovedComments}` })
+        .set({ commentCount: sql`${posts.commentCount} - ${removedCommentCount}` })
         .where(inArray(posts.id, ancestorIds));
-      return { ancestorIds, noRemovedComments };
+      return { ancestorIds, removedCommentCount };
     }),
   ),
   deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<Post>(async ({ ctx, input }) => {

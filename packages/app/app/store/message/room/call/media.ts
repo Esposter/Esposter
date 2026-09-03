@@ -32,7 +32,7 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
   });
   // One presenter list, maintained the same way for the local share and every remote one — and the pin follows,
   // Since a pinned participant who has stopped sharing has nothing left to show
-  const setScreenSharingParticipantId = (participantId: string, isParticipantScreenSharing: boolean) => {
+  const setParticipantScreenSharing = (participantId: string, isParticipantScreenSharing: boolean) => {
     screenSharingParticipantIds.value = [
       ...screenSharingParticipantIds.value.filter((id) => id !== participantId),
       ...(isParticipantScreenSharing ? [participantId] : []),
@@ -43,7 +43,7 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
     localScreenShareStream.value = stream;
     if (!participantStore.sessionId) return;
 
-    setScreenSharingParticipantId(participantStore.sessionId, Boolean(stream));
+    setParticipantScreenSharing(participantStore.sessionId, Boolean(stream));
   };
   const setParticipantVolumePercentage = (participantId: string, volumePercentage: number) => {
     participantVolumePercentageMap.value.set(participantId, volumePercentage);
@@ -58,7 +58,7 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
   const setRemoteScreenShareStream = (identity: string, stream: MediaStream | undefined) => {
     if (stream) remoteScreenShareStreams.value.set(identity, stream);
     else remoteScreenShareStreams.value.delete(identity);
-    setScreenSharingParticipantId(identity, Boolean(stream));
+    setParticipantScreenSharing(identity, Boolean(stream));
   };
   const resetCallMedia = () => {
     isCameraEnabled.value = false;

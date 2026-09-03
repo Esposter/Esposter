@@ -15,15 +15,15 @@ const { building } = defineProps<BuildingListItemProps>();
 const clickerStore = useClickerStore();
 const { clicker } = storeToRefs(clickerStore);
 const buildingStore = useBuildingStore();
-const { createBoughtBuilding, getBoughtBuildingAmount, getBoughtBuildingStats, getBuildingPriceForQuantity } =
+const { createBoughtBuilding, getBoughtBuildingAmount, getBoughtBuildingStatistics, getBuildingPriceForQuantity } =
   buildingStore;
 const { buyQuantity } = storeToRefs(buildingStore);
 const { play } = useClickerSound(Sound.Buy);
 const buildingStatsHtml = computed(() =>
-  getBoughtBuildingStats(building).map((s) => marked.parse(s, { async: false })),
+  getBoughtBuildingStatistics(building).map((s) => marked.parse(s, { async: false })),
 );
 const buildingPrice = computed(() => getBuildingPriceForQuantity(building, buyQuantity.value));
-const isAffordable = computed(() => clicker.value.noPoints >= buildingPrice.value);
+const isAffordable = computed(() => clicker.value.pointCount >= buildingPrice.value);
 const amount = computed(() => getBoughtBuildingAmount(building));
 const displayFlavorDescription = useDecompileString(building.flavorDescription);
 </script>

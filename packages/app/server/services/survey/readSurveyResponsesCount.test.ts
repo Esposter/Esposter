@@ -1,6 +1,6 @@
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { countSurveyResponses } from "@@/server/services/survey/countSurveyResponses";
+import { readSurveyResponsesCount } from "@@/server/services/survey/readSurveyResponsesCount";
 import { createEntity } from "@esposter/db";
 import { AzureTable, SurveyResponseEntity } from "@esposter/db-schema";
 import { MockTableDatabase } from "azure-mock";
@@ -8,7 +8,7 @@ import { afterEach, describe, expect, test } from "vitest";
 
 // Router-level counting is covered in survey.test.ts; the cap needs more rows than callers can
 // Affordably create, so the ceiling is proven directly against the table
-describe(countSurveyResponses, () => {
+describe(readSurveyResponsesCount, () => {
   const surveyId = crypto.randomUUID();
   const createSurveyResponses = async (count: number) => {
     const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
@@ -27,7 +27,7 @@ describe(countSurveyResponses, () => {
     expect.hasAssertions();
 
     await createSurveyResponses(1);
-    const responseCount = await countSurveyResponses(surveyId);
+    const responseCount = await readSurveyResponsesCount(surveyId);
 
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
   });
@@ -38,7 +38,7 @@ describe(countSurveyResponses, () => {
     expect.hasAssertions();
 
     await createSurveyResponses(DATASET_MAX_COUNTED_ROWS);
-    const responseCount = await countSurveyResponses(surveyId);
+    const responseCount = await readSurveyResponsesCount(surveyId);
 
     // Exactly-at-cap is still an exact count — only beyond-cap renders the "10000+" form
     expect(responseCount).toStrictEqual({ count: DATASET_MAX_COUNTED_ROWS, isCapped: false });
@@ -48,7 +48,7 @@ describe(countSurveyResponses, () => {
     expect.hasAssertions();
 
     await createSurveyResponses(DATASET_MAX_COUNTED_ROWS + 1);
-    const responseCount = await countSurveyResponses(surveyId);
+    const responseCount = await readSurveyResponsesCount(surveyId);
 
     expect(responseCount).toStrictEqual({ count: DATASET_MAX_COUNTED_ROWS, isCapped: true });
   });

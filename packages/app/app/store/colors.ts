@@ -3,8 +3,8 @@ import type { Store } from "pinia";
 
 import { takeOne } from "@esposter/shared";
 
-const id = "colors";
-const useBaseColorsStore = defineStore<typeof id, Colors>(id, () => {
+const COLORS_STORE_ID = "colors";
+const useBaseColorsStore = defineStore<typeof COLORS_STORE_ID, Colors>(COLORS_STORE_ID, () => {
   const { global } = useVTheme();
   const colors = Object.fromEntries(
     Object.keys(global.current.value.colors).map((color) => [

@@ -13,13 +13,13 @@ Tags live on the resource row itself as a `jsonb` column defaulting to `{}`, not
 
 Editing replaces the whole record rather than merging, which is Azure's own tag update semantics and the reason the editor can express "remove this tag" at all: the dialog always sends every tag it knows about, and whatever it omits is gone. It edits an ordered list of name/value rows rather than the record directly — a record cannot hold a half-typed duplicate or a blank name mid-edit, and rows keep their position while the user types. Rows with a blank name are dropped at save, which is what lets an empty row sit on screen as somewhere to type without ever being written.
 
-Filtering splits in two, because the pill's value is optional and one operator cannot cover both cases. A name _and_ value is containment (`tags @> {"env":"prod"}`); a name alone is key-existence (`jsonb_exists(tags, 'env')`) — "tagged with this at all", which is the common case. Both go through `createResourcesWhere`, so `count` and `readResources` can never disagree about what matches, and both are served by the same GIN index.
+Filtering splits in two, because the pill's value is optional and one operator cannot cover both cases. A name _and_ value is containment (`tags @> {"env":"prod"}`); a name alone is key-existence (`jsonb_exists(tags, 'env')`) — "tagged with this at all", which is the common case. Both go through `getResourcesWhere`, so `readResourcesCount` and `readResources` can never disagree about what matches, and both are served by the same GIN index.
 
 ```mermaid
 flowchart LR
   DLG["TagsEditorDialog<br/>(name/value rows)"] -->|"updateResource { tags } — whole-record replace"| COL[("resources.tags jsonb<br/>+ GIN index")]
   COL --> ESS["Essentials tags row (chips)"]
-  PILL["/all Tag filter pill"] -->|"name + value → tags @> input"| WHERE["createResourcesWhere"]
+  PILL["/all Tag filter pill"] -->|"name + value → tags @> input"| WHERE["getResourcesWhere"]
   PILL -->|"name only → jsonb_exists"| WHERE
   COL --> WHERE
   WHERE --> LIST["/all list + count"]
@@ -33,11 +33,11 @@ Names are non-empty through the `normalizeString` pipe; values are not. An empty
 
 ## Procedures
 
-| Procedure                          | Auth   | Input                  | Purpose                                   |
-| ---------------------------------- | ------ | ---------------------- | ----------------------------------------- |
-| `<type>.updateResource` (factory)  | owner  | + `tags?`              | Whole-record replace (Azure semantics)    |
-| `resource.readResources` / `count` | authed | + `tags?` / `tagName?` | Containment or key-existence filter       |
-| `resource.countsByTag`             | authed | —                      | Tag names + how many resources carry each |
+| Procedure                                                | Auth   | Input                  | Purpose                                   |
+| -------------------------------------------------------- | ------ | ---------------------- | ----------------------------------------- |
+| `<type>.updateResource` (factory)                        | owner  | + `tags?`              | Whole-record replace (Azure semantics)    |
+| `resource.readResources` / `resource.readResourcesCount` | authed | + `tags?` / `tagName?` | Containment or key-existence filter       |
+| `resource.readResourceTagCounts`                         | authed | —                      | Tag names + how many resources carry each |
 
 ## Key files
 
@@ -55,5 +55,5 @@ Names are non-empty through the `normalizeString` pipe; values are not. An empty
 - Flat name:value only, faithful to Azure — no hierarchies, no typed values.
 - A tags-only update leaves no `Renamed` entry in the [activity log](/docs/platform/activity-log): changing a label is not renaming a resource.
 - Free-text tag search inside [global search](/docs/platform/global-search) is not wired up; the `/all` filter pill and the `/resource-explorer/tags` list ([service menu](/docs/platform/resource-service-menu)) are the retrieval paths.
-- `countsByTag` groups by **name only**. Tag names live inside one `jsonb` column, so the read expands the keys in a subquery and groups over that — a set-returning function cannot sit beside an aggregate in one select list. A value narrows the result afterwards, through the pill.
+- `readResourceTagCounts` groups by **name only**. Tag names live inside one `jsonb` column, so the read expands the keys in a subquery and groups over that — a set-returning function cannot sit beside an aggregate in one select list. A value narrows the result afterwards, through the pill.
 - If tag usage grows into "give me a folder", that is the [resource groups](/docs/platform/deferred/resource-groups) revisit trigger, not more tag features.

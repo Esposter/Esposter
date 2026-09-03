@@ -2,7 +2,7 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
-import { useDialogStore } from "@/store/message/room/dialog";
+import { useRoomDialogStore } from "@/store/message/room/dialog";
 
 interface InvitesProps {
   room: RoomInMessage;
@@ -10,8 +10,8 @@ interface InvitesProps {
 
 const { room } = defineProps<InvitesProps>();
 const { data: session } = await authClient.useSession(useFetch);
-const dialogStore = useDialogStore();
-const { inviteRoomId } = storeToRefs(dialogStore);
+const roomDialogStore = useRoomDialogStore();
+const { inviteRoomId } = storeToRefs(roomDialogStore);
 const { hasMore, items, readMoreRoomInvites, readRoomInvites } = useReadRoomInvites(room.id);
 const saveRoom = useSaveRoom(() => room);
 

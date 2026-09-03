@@ -13,7 +13,7 @@ export const PostSortTypeSortByMap = {
   ],
   [PostSortType.New]: [CREATED_AT_DESCENDING_SORT_ITEM, { key: "id", order: SortOrder.Desc }],
   [PostSortType.Top]: [
-    { key: "noLikes", order: SortOrder.Desc },
+    { key: "likeCount", order: SortOrder.Desc },
     { key: "id", order: SortOrder.Desc },
   ],
 } satisfies Record<PostSortType, SortItem<keyof Post>[]>;

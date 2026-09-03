@@ -1,6 +1,6 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
-import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
 
 // Returns the session's participant map, so a caller that needs it back does not re-read a map this just
 // Guaranteed exists — and so nothing has to invent a fallback for a lookup that cannot miss

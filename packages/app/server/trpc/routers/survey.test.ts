@@ -6,7 +6,10 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
-import { closedSurveyErrorReason, invalidParticipantTokenErrorReason } from "@@/server/services/survey/constants";
+import {
+  CLOSED_SURVEY_ERROR_REASON,
+  INVALID_PARTICIPANT_TOKEN_ERROR_REASON,
+} from "@@/server/services/survey/constants";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { createBoundProgram } from "@@/server/trpc/routers/createBoundProgram.test";
@@ -45,12 +48,12 @@ describe("survey", () => {
   const invalidParticipantTokenErrorMessage = new InvalidOperationError(
     Operation.Create,
     AzureEntityType.SurveyResponse,
-    invalidParticipantTokenErrorReason,
+    INVALID_PARTICIPANT_TOKEN_ERROR_REASON,
   ).message;
   const closedSurveyErrorMessage = new InvalidOperationError(
     Operation.Create,
     AzureEntityType.SurveyResponse,
-    closedSurveyErrorReason,
+    CLOSED_SURVEY_ERROR_REASON,
   ).message;
   // Settings are live working state rather than snapshot state, so most tests reach the behaviour they are after
   // By writing content at a known version — the version is what the caller varies, never the envelope
@@ -540,7 +543,7 @@ describe("survey", () => {
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await createSurveyResponse(newResource.id, 1);
     await caller.deleteSurveyResponse({ id: newResource.id, rowKey: newSurveyResponse.rowKey });
-    const responseCount = await caller.countSurveyResponses({ id: newResource.id });
+    const responseCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
     await expect(
@@ -593,12 +596,12 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const emptyCount = await caller.countSurveyResponses({ id: newResource.id });
+    const emptyCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
     expect(emptyCount).toStrictEqual({ count: 0, isCapped: false });
 
     await createSurveyResponse(newResource.id, 0);
-    const responseCount = await caller.countSurveyResponses({ id: newResource.id });
+    const responseCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
   });

@@ -10,13 +10,13 @@ interface ProfileCardAddFriendButtonProps {
 
 const { user } = defineProps<ProfileCardAddFriendButtonProps>();
 const friendStore = useFriendStore();
-const { getIsFriend } = friendStore;
+const { checkIsFriend } = friendStore;
 const friendRequestStore = useFriendRequestStore();
-const { getHasSentFriendRequest, sendFriendRequest } = friendRequestStore;
+const { checkHasSentFriendRequest, sendFriendRequest } = friendRequestStore;
 </script>
 
 <template>
-  <v-avatar v-if="!getIsFriend(user.id) && !getHasSentFriendRequest(user.id)" color="surface">
+  <v-avatar v-if="!checkIsFriend(user.id) && !checkHasSentFriendRequest(user.id)" color="surface">
     <StyledTooltipIconButton
       :button-props="{ size: 'small' }"
       icon="mdi-account-plus"

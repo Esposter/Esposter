@@ -12,7 +12,7 @@ describe(toClicker, () => {
   const clicker = new Clicker({
     boughtBuildings: [{ ...BuildingMap[BuildingId.Cursor], amount: 1, id: BuildingId.Cursor, producedValue: 0 }],
     boughtUpgrades: [{ ...UpgradeMap[upgradeId], id: upgradeId }],
-    noPoints: 1,
+    pointCount: 1,
   });
 
   test("round trips the in-memory state through the save shape", () => {

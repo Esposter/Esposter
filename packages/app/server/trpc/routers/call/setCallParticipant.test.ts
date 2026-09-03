@@ -1,6 +1,6 @@
 import type { getMockSession } from "@@/server/trpc/context.test";
 
-import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
 import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { describe } from "vitest";
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useLiveKitStore } from "@/store/message/room/liveKit";
-import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
 
 const liveKitStore = useLiveKitStore();
 const { setActiveDevice } = liveKitStore;

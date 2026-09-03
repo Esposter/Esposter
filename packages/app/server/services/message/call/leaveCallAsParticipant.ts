@@ -1,6 +1,6 @@
 import type { Context } from "@@/server/trpc/context";
 
-import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
 import { callStartTimeMap } from "@@/server/services/message/call/callStartTimeMap";
 import { deleteCallParticipant } from "@@/server/services/message/call/deleteCallParticipant";
 import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";

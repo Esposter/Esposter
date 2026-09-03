@@ -8,9 +8,9 @@ interface BlockUserButtonProps {
 
 const { userId } = defineProps<BlockUserButtonProps>();
 const blockStore = useBlockStore();
-const { blockUser } = blockStore;
+const { createBlock } = blockStore;
 </script>
 
 <template>
-  <v-btn :="FRIENDS_ACTION_BUTTON_PROPS" color="error" text="Block" @click="blockUser(userId)" />
+  <v-btn :="FRIENDS_ACTION_BUTTON_PROPS" color="error" text="Block" @click="createBlock(userId)" />
 </template>

@@ -2,7 +2,7 @@ import type { SentMessageWithRoom } from "#shared/models/db/message/SentMessageW
 
 export const useSentMessageStore = defineStore("message/sentMessage", () => {
   const offsetPaginationData = useOffsetPaginationData<SentMessageWithRoom>();
-  const count = ref(0);
   const isPending = ref(true);
-  return { count, isPending, ...offsetPaginationData };
+  const sentMessageCount = ref(0);
+  return { isPending, sentMessageCount, ...offsetPaginationData };
 });

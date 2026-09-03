@@ -5,7 +5,7 @@ import { useThreadStore } from "@/store/message/thread";
 
 const threadStore = useThreadStore();
 const { closeThread } = threadStore;
-const { activeRootRowKey, isReadingThread, threadMessages } = storeToRefs(threadStore);
+const { activeRootRowKey, isReadThreadPending, threadMessages } = storeToRefs(threadStore);
 const actionItems = useThreadActionItems();
 // Oldest first, so the thread reads top-down into the composer below it — the root is the earliest message in
 // Its own thread, so it needs no special case to stay at the top
@@ -31,7 +31,7 @@ const sortedThreadMessages = computed(() =>
       </div>
     </div>
     <v-divider />
-    <div v-if="isReadingThread" flex-1 overflow-y-auto>
+    <div v-if="isReadThreadPending" flex-1 overflow-y-auto>
       <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" pa-4 />
     </div>
     <MessageModelMessageSearchList v-else :messages="sortedThreadMessages">

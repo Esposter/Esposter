@@ -10,11 +10,11 @@ export const useEmojiPickerStore = defineStore("message/emojiPicker", () => {
   const skinTone = useLocalStorage<SkinTone>(LocalStorageKey.EmojiSkinTone, SkinTone.Default);
   // Most-recent-first with the previous entry removed, so picking the same emoji promotes it rather than
   // Filling the row with copies of it
-  const pushRecentEmojiSlug = (slug: string) => {
+  const createRecentEmojiSlug = (slug: string) => {
     recentEmojiSlugs.value = [
       slug,
       ...recentEmojiSlugs.value.filter((recentEmojiSlug) => recentEmojiSlug !== slug),
     ].slice(0, MAX_RECENT_EMOJIS);
   };
-  return { pushRecentEmojiSlug, recentEmojiSlugs, skinTone };
+  return { createRecentEmojiSlug, recentEmojiSlugs, skinTone };
 });
