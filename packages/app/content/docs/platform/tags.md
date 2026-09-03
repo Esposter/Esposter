@@ -33,11 +33,11 @@ Names are non-empty through the `normalizeString` pipe; values are not. An empty
 
 ## Procedures
 
-| Procedure                                       | Auth   | Input                  | Purpose                                   |
-| ----------------------------------------------- | ------ | ---------------------- | ----------------------------------------- |
-| `<type>.updateResource` (factory)               | owner  | + `tags?`              | Whole-record replace (Azure semantics)    |
-| `resource.readResources` / `readResourcesCount` | authed | + `tags?` / `tagName?` | Containment or key-existence filter       |
-| `resource.readResourceTagCounts`                | authed | —                      | Tag names + how many resources carry each |
+| Procedure                                                | Auth   | Input                  | Purpose                                   |
+| -------------------------------------------------------- | ------ | ---------------------- | ----------------------------------------- |
+| `<type>.updateResource` (factory)                        | owner  | + `tags?`              | Whole-record replace (Azure semantics)    |
+| `resource.readResources` / `resource.readResourcesCount` | authed | + `tags?` / `tagName?` | Containment or key-existence filter       |
+| `resource.readResourceTagCounts`                         | authed | —                      | Tag names + how many resources carry each |
 
 ## Key files
 
