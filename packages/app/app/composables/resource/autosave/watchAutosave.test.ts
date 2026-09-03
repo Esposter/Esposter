@@ -6,7 +6,7 @@ import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-// The debounce, its scope cleanup and its resource binding are useAutosaveFn's, and their matrix lives in that
+// The debounce, its scope cleanup and its resource binding are useAutosaveFunction's, and their matrix lives in that
 // File's test; here only the wiring — a nested edit reaches the same cadence
 describe(watchAutosave, () => {
   let wrapper: VueWrapper;

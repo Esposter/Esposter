@@ -12,7 +12,7 @@ const elapseDebounce = async () => {
   await waitForSynchronizedFunctions();
 };
 
-describe(useAutosaveFn, () => {
+describe(useAutosaveFunction, () => {
   let router: Router;
   let wrapper: VueWrapper;
   let save: ReturnType<typeof vi.fn<() => Promise<void>>>;
@@ -24,7 +24,7 @@ describe(useAutosaveFn, () => {
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          autosave = useAutosaveFn(save);
+          autosave = useAutosaveFunction(save);
         },
       }),
     );

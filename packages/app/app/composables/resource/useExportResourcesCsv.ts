@@ -13,9 +13,9 @@ export const useExportResourcesCsv = () => {
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
   const exportFile = useExportFile();
-  const exportResourcesCsv = async (resourceItems: Resource[]) => {
+  const exportResourcesCsv = async (resources: Resource[]) => {
     const isExported = await exportFile(
-      (mimeType) => Promise.resolve(new Blob([getResourcesCsv(resourceItems)], { type: mimeType })),
+      (mimeType) => Promise.resolve(new Blob([getResourcesCsv(resources)], { type: mimeType })),
       "resources",
       MimeType.Csv,
       CSV_ACCEPT,
@@ -23,7 +23,7 @@ export const useExportResourcesCsv = () => {
     if (isExported)
       createNotification({
         severity: NotificationSeverity.Success,
-        title: `Exported ${resourceItems.length} resources to CSV`,
+        title: `Exported ${resources.length} resources to CSV`,
       });
     return isExported;
   };

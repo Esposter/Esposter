@@ -11,7 +11,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Would land against a different resource — `load()` replaces the loaded resource one await before the store
 // Re-seeds its content ref, so an unbound late save uploads the previous resource's content under this one's
 // Id and contentVersion. Cancellation alone only shortens that window; the id closes it
-export const useAutosaveFn = (save: () => Promisable<unknown>) => {
+export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
   const { currentRoute } = useRouter();
   const { start } = useTimeoutFn(
     getSynchronizedFunction((scheduledResourceId: string) =>

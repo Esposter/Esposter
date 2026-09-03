@@ -20,8 +20,8 @@ describe(useDebouncedFilter, () => {
     expect.hasAssertions();
 
     const filter = ref("");
-    const { input } = useDebouncedFilter(filter);
-    input.value = value;
+    const { editedFilter } = useDebouncedFilter(filter);
+    editedFilter.value = value;
     await nextTick();
 
     expect(filter.value).toBe("");
@@ -37,10 +37,10 @@ describe(useDebouncedFilter, () => {
     expect.hasAssertions();
 
     const filter = ref("");
-    const { input } = useDebouncedFilter(filter);
+    const { editedFilter } = useDebouncedFilter(filter);
     filter.value = value;
     await nextTick();
 
-    expect(input.value).toBe(value);
+    expect(editedFilter.value).toBe(value);
   });
 });

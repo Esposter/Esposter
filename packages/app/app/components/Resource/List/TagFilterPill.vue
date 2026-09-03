@@ -6,8 +6,8 @@ const tagValue = defineModel<string>("tagValue", { required: true });
 const emit = defineEmits<{ remove: [] }>();
 const rules = useVRules();
 // Both fields write query params the data table treats as its `search`, so they debounce like the search box
-const { input: tagNameInput } = useDebouncedFilter(tagName);
-const { input: tagValueInput } = useDebouncedFilter(tagValue);
+const { editedFilter: tagNameInput } = useDebouncedFilter(tagName);
+const { editedFilter: tagValueInput } = useDebouncedFilter(tagValue);
 // Without a name there is nothing to match on, so the pill reads as unset until one is typed.
 // A name with no value means "tagged with this at all", which is the common case.
 // Reads the fields rather than the debounced filters so the chip keeps up with typing
