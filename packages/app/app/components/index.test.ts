@@ -7,7 +7,7 @@ const componentPaths = (await Array.fromAsync(glob("**/*.vue", { cwd: import.met
 );
 // Every folder that holds a component, keyed by the folder it sits in. Derived from the component paths rather
 // Than read separately, because a folder with no component in it has nothing to fold into
-const folderNamesByParent = componentPaths.reduce<Map<string, Set<string>>>((folderNames, componentPath) => {
+const parentFolderNamesMap = componentPaths.reduce<Map<string, Set<string>>>((folderNames, componentPath) => {
   const segments = componentPath.split("/").slice(0, -1);
   for (const [index, segment] of segments.entries()) {
     const parent = segments.slice(0, index).join("/");
@@ -36,7 +36,7 @@ describe("componentFolders", () => {
         .slice(0, -1)
         .map((word, index) => words.slice(0, index).join("") + word)
         .toReversed()
-        .find((prefix) => folderNamesByParent.get(parent)?.has(prefix));
+        .find((prefix) => parentFolderNamesMap.get(parent)?.has(prefix));
       return folderName ? [`${componentPath} belongs in ${parent}/${folderName}/`] : [];
     });
 

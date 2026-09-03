@@ -43,7 +43,7 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
   execute(dataSource: DataSource) {
     const { columns, rows } = dataSource;
     const targetNames = this.#targetColumnNames.slice(this.#anchorColumnIndex);
-    const columnsByName = new Map(columns.map((column) => [column.name, column]));
+    const columnMap = new Map(columns.map((column) => [column.name, column]));
     for (const [rowOffset, pastedRow] of this.#pastedValues.entries()) {
       const rowIndex = this.#anchorRowIndex + rowOffset;
       if (rowIndex < rows.length) {
@@ -51,7 +51,7 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
         for (const [columnOffset, value] of pastedRow.entries()) {
           if (columnOffset >= targetNames.length) break;
           const columnName = takeOne(targetNames, columnOffset);
-          const column = columnsByName.get(columnName);
+          const column = columnMap.get(columnName);
           if (!column) continue;
           const newValue = coerceValue(value, column.type);
           column.size += getValueSize(newValue) - getValueSize(row.data[columnName]);
@@ -64,7 +64,7 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
         for (const [columnOffset, value] of pastedRow.entries()) {
           if (columnOffset >= targetNames.length) break;
           const columnName = takeOne(targetNames, columnOffset);
-          const column = columnsByName.get(columnName);
+          const column = columnMap.get(columnName);
           if (!column) continue;
           appendedRow.data[columnName] = coerceValue(value, column.type);
         }

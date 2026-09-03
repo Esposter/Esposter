@@ -7,7 +7,7 @@ import { createMessageEmojiMetadataEntity } from "#shared/services/message/creat
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { authClient } from "@/services/auth/authClient";
-import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
+import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { MessageMetadataType } from "@esposter/db-schema";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 
@@ -47,7 +47,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
           // Toggle this user back out of the reaction as it stands, rather than reinstating the ids this write
           // Was issued with — that copy would drop every other reaction delivered while the write was in flight
           const currentEmoji = getEmojis(input.messageRowKey).find((emoji) =>
-            getIsEntityIdEqualComparator(CompositeAzureKeyPath, input)(emoji),
+            getEntityIdEqualComparator(CompositeAzureKeyPath, input)(emoji),
           );
           if (!currentEmoji) return;
 
@@ -62,7 +62,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
       // Read as the write is sent, so a rejected removal puts back the reaction as the write ahead of it left it
       applyOptimistic: () => {
         const deletedEmoji = getEmojis(input.messageRowKey).find((emoji) =>
-          getIsEntityIdEqualComparator(CompositeAzureKeyPath, input)(emoji),
+          getEntityIdEqualComparator(CompositeAzureKeyPath, input)(emoji),
         );
         storeDeleteEmoji(input);
         return () => {
@@ -92,7 +92,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   // Cannot name, and the assign below is what applies them
   const storeUpdateEmoji = (input: Partial<MessageEmojiMetadataEntity> & UpdateEmojiInput) => {
     const emojis = getEmojis(input.messageRowKey);
-    const index = emojis.findIndex((emoji) => getIsEntityIdEqualComparator(CompositeAzureKeyPath, input)(emoji));
+    const index = emojis.findIndex((emoji) => getEntityIdEqualComparator(CompositeAzureKeyPath, input)(emoji));
     if (index === -1) return;
 
     Object.assign(takeOne(emojis, index), input);
@@ -102,7 +102,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     const emojis = getEmojis(input.messageRowKey);
     setEmojis(
       input.messageRowKey,
-      emojis.filter((emoji) => !getIsEntityIdEqualComparator(CompositeAzureKeyPath, input)(emoji)),
+      emojis.filter((emoji) => !getEntityIdEqualComparator(CompositeAzureKeyPath, input)(emoji)),
     );
   };
 

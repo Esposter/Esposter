@@ -45,12 +45,12 @@ export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubs
           setParticipantHandRaised(callSessionId, participantId, isHandRaised);
         },
       });
-      const setMuteUnsubscribable = $trpc.callSession.onSetMute.subscribe(callSessionId, {
+      const setMutedUnsubscribable = $trpc.callSession.onSetMuted.subscribe(callSessionId, {
         onData: ({ id: participantId, isMuted }) => {
           setParticipantMuted(callSessionId, participantId, isMuted);
         },
       });
-      const setCameraUnsubscribable = $trpc.callSession.onSetCamera.subscribe(callSessionId, {
+      const setCameraEnabledUnsubscribable = $trpc.callSession.onSetCameraEnabled.subscribe(callSessionId, {
         onData: ({ id: participantId, isCameraEnabled }) => {
           setParticipantCameraEnabled(callSessionId, participantId, isCameraEnabled);
         },
@@ -65,8 +65,8 @@ export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubs
         joinCallUnsubscribable.unsubscribe();
         leaveCallUnsubscribable.unsubscribe();
         setHandRaisedUnsubscribable.unsubscribe();
-        setMuteUnsubscribable.unsubscribe();
-        setCameraUnsubscribable.unsubscribe();
+        setMutedUnsubscribable.unsubscribe();
+        setCameraEnabledUnsubscribable.unsubscribe();
         knockCallUnsubscribable.unsubscribe();
       };
     },

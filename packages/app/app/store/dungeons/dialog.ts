@@ -24,7 +24,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   const isQueuedMessagesAnimationPlaying = ref(false);
   const isWaitingForPlayerSpecialInput = ref(false);
 
-  const handleShowMessageInput = async (scene: SceneWithPlugins, input: PlayerInput) => {
+  const onPlayerInput = async (scene: SceneWithPlugins, input: PlayerInput) => {
     if (isQueuedMessagesAnimationPlaying.value) return true;
     else if (isWaitingForPlayerSpecialInput.value) {
       if (input === PlayerSpecialInput.Confirm) await showMessage(scene);
@@ -122,11 +122,11 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   };
 
   return {
-    handleShowMessageInput,
     inputPromptCursorDisplayWidth,
     inputPromptCursorX,
     isInputPromptCursorVisible,
     isWaitingForPlayerSpecialInput,
+    onPlayerInput,
     showMessageNoInputRequired,
     updateQueuedMessagesAndShowMessage,
   };

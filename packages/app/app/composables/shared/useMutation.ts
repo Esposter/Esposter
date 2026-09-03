@@ -62,7 +62,7 @@ export const useMutation = () => {
   const pendingCounts = ref(new Map<PropertyKey, number>());
   const isPending = computed(() => pendingCounts.value.size > 0);
   // Per-key pending for per-item surfaces (a table row's own button), same getter idiom as getRoles(roomId)
-  const getIsPending = (key: PropertyKey) => pendingCounts.value.has(key);
+  const checkIsPending = (key: PropertyKey) => pendingCounts.value.has(key);
   const getCheckIsStale = (key: PropertyKey) => {
     const id = (callIds.get(key) ?? 0) + 1;
     callIds.set(key, id);
@@ -194,5 +194,5 @@ export const useMutation = () => {
       },
     );
   };
-  return { executeMutation, executeQuery, getIsPending, isPending, supersedeKey };
+  return { checkIsPending, executeMutation, executeQuery, isPending, supersedeKey };
 };

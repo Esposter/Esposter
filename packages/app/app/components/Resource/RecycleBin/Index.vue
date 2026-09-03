@@ -15,11 +15,11 @@ const { closeTo } = storeToRefs(navigationTrailStore);
 const recycleBinDialogStore = useRecycleBinDialogStore();
 const { purgingId } = storeToRefs(recycleBinDialogStore);
 const purgingResource = computed(() => items.value.find(({ id }) => id === purgingId.value));
-const { getIsRestorePending, restoreResource } = useRestoreResource(refresh);
+const { checkIsRestorePending, restoreResource } = useRestoreResource(refresh);
 const purgeResource = usePurgeResource(refresh);
 const getActionItems = (resource: Resource): Item[] => [
   {
-    disabled: getIsRestorePending(resource.id),
+    disabled: checkIsRestorePending(resource.id),
     icon: "mdi-restore",
     onClick: () => restoreResource(resource),
     title: "Restore",

@@ -16,7 +16,7 @@ const getCallBackgroundKey = (slot: CallBackground["slot"]) => `callBackground${
 
 export const useCallBackgroundStore = defineStore("message/user/settings/callBackground", () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation, getIsPending } = useMutation();
+  const { checkIsPending, executeMutation } = useMutation();
   const callBackgrounds = ref<CallBackground[]>([]);
   // Read once per session for the picker's own render: the set is capped and only this store writes it, so
   // Every surface that opens the grid joins one listing instead of issuing its own
@@ -28,7 +28,7 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
       },
     },
   );
-  const isUploadingCallBackground = computed(() => getIsPending(CALL_BACKGROUND_UPLOAD_KEY));
+  const isUploadingCallBackground = computed(() => checkIsPending(CALL_BACKGROUND_UPLOAD_KEY));
   const createCallBackground = async (file: File) => {
     const usedSlots = new Set(callBackgrounds.value.map(({ slot }) => slot));
     // The client allocates, because it is the only party holding a view that already accounts for a delete it

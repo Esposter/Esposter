@@ -9,7 +9,7 @@ import type { Editor } from "@tiptap/core";
 
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { authClient } from "@/services/auth/authClient";
-import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
+import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
@@ -133,9 +133,7 @@ export const useDataStore = defineStore("message/data", () => {
       // So calling storeUpdateMessage here would double-fire the update hooks. Read as the write is sent, so a
       // Rejected edit restores the body the edit ahead of it stored rather than the one on screen at the click
       applyOptimistic: () => {
-        const previousMessage = roomItems.value.find(
-          getIsEntityIdEqualComparator(CompositeAzureKeyPath, input),
-        )?.message;
+        const previousMessage = roomItems.value.find(getEntityIdEqualComparator(CompositeAzureKeyPath, input))?.message;
         baseStoreUpdateMessage(input);
         return () => {
           if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
@@ -149,7 +147,7 @@ export const useDataStore = defineStore("message/data", () => {
   const deleteFile = async ({ id, ...compositeKey }: DeleteFileInput) => {
     const { items: roomItems } = getSlice(compositeKey.partitionKey);
     const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(compositeKey.partitionKey);
-    const message = roomItems.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, compositeKey));
+    const message = roomItems.value.find(getEntityIdEqualComparator(CompositeAzureKeyPath, compositeKey));
     if (!message) return;
 
     await executeMutation(() => $trpc.message.deleteFile.mutate({ id, ...compositeKey }), {

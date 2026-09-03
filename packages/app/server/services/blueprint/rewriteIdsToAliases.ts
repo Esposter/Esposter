@@ -9,5 +9,5 @@ import { mapBlueprintEntryContentStrings } from "@@/server/services/blueprint/ma
 // Blueprint's own manifest is handed through untouched — its entry aliases are its own namespace
 export const rewriteIdsToAliases = (
   entry: Pick<BlueprintEntry, "content" | "type">,
-  idToAlias: Map<string, string>,
-): unknown => mapBlueprintEntryContentStrings(entry, (value) => idToAlias.get(value) ?? value);
+  idAliasMap: Map<string, string>,
+): unknown => mapBlueprintEntryContentStrings(entry, (value) => idAliasMap.get(value) ?? value);

@@ -1,8 +1,11 @@
 import { StringTransformationType } from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
 import { exhaustiveGuard } from "@esposter/shared";
 
-export const computeStringTransformation = (value: string, transform: StringTransformationType): string => {
-  switch (transform) {
+export const computeStringTransformation = (
+  value: string,
+  stringTransformationType: StringTransformationType,
+): string => {
+  switch (stringTransformationType) {
     case StringTransformationType.LowerCase:
       return value.toLowerCase();
     case StringTransformationType.TitleCase:
@@ -12,6 +15,6 @@ export const computeStringTransformation = (value: string, transform: StringTran
     case StringTransformationType.UpperCase:
       return value.toUpperCase();
     default:
-      return exhaustiveGuard(transform);
+      return exhaustiveGuard(stringTransformationType);
   }
 };

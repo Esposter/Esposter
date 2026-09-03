@@ -3,7 +3,7 @@ import type { PlayOptions } from "@/models/sound/PlayOptions";
 
 import { Howl } from "howler";
 
-const cache = new Map<string, Howl>();
+const howlCache = new Map<string, Howl>();
 
 export const useSound = (
   src: string,
@@ -21,7 +21,7 @@ export const useSound = (
   }
 
   onMounted(() => {
-    let howl = cache.get(src);
+    let howl = howlCache.get(src);
     if (howl) {
       sound.value = howl;
       return;
@@ -29,7 +29,7 @@ export const useSound = (
 
     howl = new Howl({ onload: handleLoad, rate: unref(rate), src, volume: unref(volume), ...rest });
     sound.value = howl;
-    cache.set(src, sound.value);
+    howlCache.set(src, sound.value);
   });
 
   watch(

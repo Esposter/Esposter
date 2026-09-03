@@ -18,7 +18,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
   const blockedUsers = ref<User[]>([]);
 
   const createBlock = async (userId: FriendUserIdInput) => {
-    await executeBlockMutation(() => $trpc.block.blockUser.mutate(userId), {
+    await executeBlockMutation(() => $trpc.block.createBlock.mutate(userId), {
       // Only the rows this write removes, not copies of both lists: blocks of different users never queue against
       // Each other, so reinstating the lists would resurrect a friend or a request another write already dropped
       // — and lose whatever a subscription delivered while this one was in flight
@@ -41,7 +41,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
   };
 
   const deleteBlock = async (blockedUserId: FriendUserIdInput) => {
-    await executeBlockMutation(() => $trpc.block.unblockUser.mutate(blockedUserId), {
+    await executeBlockMutation(() => $trpc.block.deleteBlock.mutate(blockedUserId), {
       // The one row this write removes, not a copy of the list: unblocks of different users never queue against
       // Each other, so reinstating the list would resurrect a user another unblock already removed and drop
       // Whoever a block added meanwhile. Back at the end rather than where it stood — a cosmetic loss

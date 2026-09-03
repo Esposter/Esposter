@@ -18,11 +18,11 @@ const KEEP_DUPLICATE_MODES = [KeepDuplicateMode.First, KeepDuplicateMode.Last];
 // All-unique-First baseline, instead of conflating shape with scale.
 describe(findDuplicateRows, () => {
   describe.each(BENCH_ROW_COUNTS)("%i rows", (rowCount) => {
-    for (const [shapeTitle, readUniqueValues] of DUPLICATE_SHAPES) {
+    for (const [shapeTitle, getUniqueValueCount] of DUPLICATE_SHAPES) {
       // Shared across this group's tasks rather than rebuilt per iteration: finding duplicates reads the data
       // Source and writes nothing, so no iteration can see another's state.
       const dataSource = createBenchDataSource(
-        generateBenchRows(rowCount, { uniqueValues: readUniqueValues(rowCount) }),
+        generateBenchRows(rowCount, { uniqueValues: getUniqueValueCount(rowCount) }),
       );
       for (const keepMode of KEEP_DUPLICATE_MODES)
         bench(`${shapeTitle} — ${keepMode} mode`, () => {

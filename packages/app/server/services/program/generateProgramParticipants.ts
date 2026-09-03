@@ -58,7 +58,7 @@ export const generateProgramParticipants = async (
     ProgramParticipantEntity,
     { filter: getPartitionKeyFilter(programId) },
   );
-  const participantsByKeyValue = new Map<string, ProgramParticipant>(
+  const keyValueParticipantMap = new Map<string, ProgramParticipant>(
     existingParticipants.map(({ keyValue, token }) => [keyValue, { keyValue, token }]),
   );
   // One token per distinct key value — the same recipient twice in the audience is one participant
@@ -66,7 +66,7 @@ export const generateProgramParticipants = async (
   const newKeyValues = new Set<string>();
   for (const row of rows) {
     const keyValue = row[content.keyColumn];
-    if (typeof keyValue !== "string" || !keyValue || participantsByKeyValue.has(keyValue) || newKeyValues.has(keyValue))
+    if (typeof keyValue !== "string" || !keyValue || keyValueParticipantMap.has(keyValue) || newKeyValues.has(keyValue))
       continue;
 
     newKeyValues.add(keyValue);
@@ -88,7 +88,7 @@ export const generateProgramParticipants = async (
       programParticipantClient.submitTransaction(batch.map((participant) => ["create", serializeEntity(participant)])),
     );
     if (isBatchCreated) {
-      for (const { keyValue, token } of batch) participantsByKeyValue.set(keyValue, { keyValue, token });
+      for (const { keyValue, token } of batch) keyValueParticipantMap.set(keyValue, { keyValue, token });
       continue;
     }
     // A transaction is all-or-nothing, so one recipient a concurrent run already claimed rolls back the
@@ -97,7 +97,7 @@ export const generateProgramParticipants = async (
       const { keyValue, rowKey, token } = participant;
       const isCreated = await checkIsCreated(() => createEntity(programParticipantClient, participant));
       if (isCreated) {
-        participantsByKeyValue.set(keyValue, { keyValue, token });
+        keyValueParticipantMap.set(keyValue, { keyValue, token });
         continue;
       }
       // Someone else got there first, so their token is the one that may already be sitting in an inbox —
@@ -108,8 +108,8 @@ export const generateProgramParticipants = async (
         programId,
         rowKey,
       );
-      if (existingParticipant) participantsByKeyValue.set(keyValue, { keyValue, token: existingParticipant.token });
+      if (existingParticipant) keyValueParticipantMap.set(keyValue, { keyValue, token: existingParticipant.token });
     }
   }
-  return [...participantsByKeyValue.values()];
+  return [...keyValueParticipantMap.values()];
 };

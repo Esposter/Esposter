@@ -17,7 +17,6 @@ import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/sha
 
 export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/input", () => {
   const dialogStore = useDialogStore();
-  const { handleShowMessageInput } = dialogStore;
   const monsterPartySceneStore = useMonsterPartySceneStore();
   const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
   const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
@@ -25,7 +24,10 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const { launchScene, previousSceneKey, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
 
   const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
-    if (monsterPartySceneStore.sceneMode !== SceneMode.Default || (await handleShowMessageInput(scene, justDownInput)))
+    if (
+      monsterPartySceneStore.sceneMode !== SceneMode.Default ||
+      (await dialogStore.onPlayerInput(scene, justDownInput))
+    )
       return;
     else if (checkIsPlayerSpecialInput(justDownInput)) await onPlayerSpecialInput(scene, justDownInput);
     else onPlayerDirectionInput(justDownInput);

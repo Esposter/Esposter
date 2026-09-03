@@ -109,9 +109,9 @@ export const useRoleStore = defineStore("message/room/role", () => {
 
   const readRoles = async (input: ReadRolesInput) => {
     const fetchedRoles = await $trpc.role.readRoles.query(input);
-    const rolesByRoomId = Object.groupBy(fetchedRoles, ({ roomId }) => roomId);
+    const roomIdRolesMap = Object.groupBy(fetchedRoles, ({ roomId }) => roomId);
     for (const roomId of input.roomIds) {
-      const roomRoles = rolesByRoomId[roomId] ?? [];
+      const roomRoles = roomIdRolesMap[roomId] ?? [];
       setRoles(roomId, roomRoles);
 
       const roomSelectedRoleId = getSelectedRoleId(roomId);
@@ -126,12 +126,12 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   const readMemberRoles = async (input: ReadMemberRolesInput) => {
     const memberRoles = await $trpc.role.readMemberRoles.query(input);
-    const memberRolesByUserId = Object.groupBy(memberRoles, ({ userId }) => userId);
+    const userIdMemberRolesMap = Object.groupBy(memberRoles, ({ userId }) => userId);
     for (const userId of input.userIds)
       setMemberRoles(
         input.roomId,
         userId,
-        (memberRolesByUserId[userId] ?? []).map(({ role }) => role),
+        (userIdMemberRolesMap[userId] ?? []).map(({ role }) => role),
       );
   };
   const { executeMutation: executeCreateRoleMutation } = useMutation();

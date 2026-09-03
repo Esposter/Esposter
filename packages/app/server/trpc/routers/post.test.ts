@@ -269,7 +269,7 @@ describe("post", () => {
     const { user: blockedUser } = await mockSessionOnce(mockContext.db);
     await postCaller.createPost({ title });
     const newPost = await postCaller.createPost({ title });
-    await blockCaller.blockUser(blockedUser.id);
+    await blockCaller.createBlock(blockedUser.id);
     const { items } = await postCaller.readPosts();
 
     expect(items.map(({ id }) => id)).toStrictEqual([newPost.id]);
@@ -281,7 +281,7 @@ describe("post", () => {
     const newPost = await postCaller.createPost({ title });
     const { user: blockedUser } = await mockSessionOnce(mockContext.db);
     await postCaller.createComment({ description, parentId: newPost.id });
-    await blockCaller.blockUser(blockedUser.id);
+    await blockCaller.createBlock(blockedUser.id);
     const { items: comments } = await postCaller.readPosts({ parentId: newPost.id });
     const post = await postCaller.readPost(newPost.id);
 
@@ -308,7 +308,7 @@ describe("post", () => {
 
     const { user: blockedUser } = await mockSessionOnce(mockContext.db);
     const blockedPost = await postCaller.createPost({ title });
-    await blockCaller.blockUser(blockedUser.id);
+    await blockCaller.createBlock(blockedUser.id);
     const post = await postCaller.readPost(blockedPost.id);
 
     expect(post.id).toBe(blockedPost.id);

@@ -5,7 +5,7 @@ import { RoutePath } from "@esposter/shared";
 
 const emit = defineEmits<{ "update:room": [] }>();
 const roomSearchStore = useRoomSearchStore();
-const { readMoreItemsSearched } = roomSearchStore;
+const { readMoreSearchedItems } = roomSearchStore;
 const { hasMore, items } = storeToRefs(roomSearchStore);
 </script>
 
@@ -23,7 +23,7 @@ const { hasMore, items } = storeToRefs(roomSearchStore);
         </template>
       </v-list-item>
     </NuxtInvisibleLink>
-    <StyledWaypoint :is-active="hasMore" @change="readMoreItemsSearched">
+    <StyledWaypoint :is-active="hasMore" @change="readMoreSearchedItems">
       <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </StyledWaypoint>
   </v-list>

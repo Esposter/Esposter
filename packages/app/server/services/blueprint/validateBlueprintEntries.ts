@@ -16,7 +16,7 @@ import { mapBlueprintEntryContentStrings } from "@@/server/services/blueprint/ma
 // State, so there is nothing to validate against the type's schema
 export const validateBlueprintEntries = (entries: BlueprintEntry[]): Map<BlueprintEntry["key"], string[]> => {
   const placeholderId = crypto.randomUUID();
-  const referencesByKey = new Map<BlueprintEntry["key"], string[]>();
+  const keyReferencesMap = new Map<BlueprintEntry["key"], string[]>();
   for (const entry of entries) {
     if (!blueprintEntrySchema.shape.name.safeParse(entry.name).success)
       throw getInvalidBlueprintError(`invalid name for entry ${entry.key}`);
@@ -28,12 +28,12 @@ export const validateBlueprintEntries = (entries: BlueprintEntry[]): Map<Bluepri
         return placeholderId;
       }),
     );
-    referencesByKey.set(entry.key, [...references]);
+    keyReferencesMap.set(entry.key, [...references]);
     if (entry.content === undefined) continue;
 
     const { contentSchema } = ResourceDefinitionMap[entry.type];
     if (!contentSchema.safeParse(content).success)
       throw getInvalidBlueprintError(`invalid content for entry ${entry.key}`);
   }
-  return referencesByKey;
+  return keyReferencesMap;
 };

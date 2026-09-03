@@ -10,7 +10,7 @@ import { middleware } from "@@/server/trpc";
 import { getResultAsync, ID_SEPARATOR } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
-export const getIsRateLimited = (type: RateLimiterType) =>
+export const getRateLimitedMiddleware = (type: RateLimiterType) =>
   middleware(async ({ ctx, next, path }) => {
     const getSessionPayload = await auth.api.getSession({ headers: ctx.headers });
     if (!IS_PRODUCTION) return next({ ctx: { getSessionPayload } });

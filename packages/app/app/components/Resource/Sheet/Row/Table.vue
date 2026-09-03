@@ -44,10 +44,10 @@ const isDraggable = computed(
 const cellStore = useCellStore();
 const { selectedCellRange } = storeToRefs(cellStore);
 const {
-  clearCellSelection,
-  extendCellSelection,
   checkIsCellInRange,
   checkIsEditingCell,
+  clearCellSelection,
+  extendCellSelection,
   shiftStartCellSelection,
   startCellSelection,
 } = cellStore;

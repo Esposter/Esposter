@@ -16,8 +16,8 @@ The fix is metadata, not pagination. A [`Dataset`](/docs/architecture/datasets) 
 ```mermaid
 flowchart TD
   SHEET["readSheetDataset<br/>totalRows = data.rows.length"] --> DS[("Dataset<br/>columns · rows · totalRows?")]
-  SURVEY["readSurveyResponsesDataset<br/>totalRows = bounded countEntities when capped"] --> DS
-  PROGRAM["readProgramStatusDataset<br/>totalRows = bounded countEntities when capped"] --> DS
+  SURVEY["readSurveyResponsesDataset<br/>totalRows = bounded readEntitiesCount when capped"] --> DS
+  PROGRAM["readProgramStatusDataset<br/>totalRows = bounded readEntitiesCount when capped"] --> DS
   DS --> CHECK["getDatasetTruncation<br/>rows.length < totalRows?"]
   CHECK -->|"no"| SILENT["render as complete"]
   CHECK -->|"yes"| FOOT["Dashboard visual — TruncationFootnote"]
@@ -29,7 +29,7 @@ flowchart TD
 ### The providers
 
 - **Sheet** parses the whole content blob before slicing to the cap, so `totalRows` costs nothing — it is already holding every row.
-- **SurveyResponses** and **ProgramStatus** cannot count for free: Azure Table Storage has no count API, so a total means walking every matching row. They therefore **only pay when they have to, and never more than a bounded walk**. A read that proved itself complete answers for itself (`totalRows = rows.length`) — the survey read fetches one entity past the cap so a partition holding exactly the cap never pays for a count — and only a read known to be truncated runs `countEntities`: a keys-only page walk, bounded at `DATASET_MAX_COUNTED_ROWS` so a huge partition cannot stall the read just to render a banner number. A count that hit the bound is a floor: `getDatasetTruncation` marks it `isCountCapped`, and every surface renders it as "M+" via `formatTruncationCount` rather than as an exact total.
+- **SurveyResponses** and **ProgramStatus** cannot count for free: Azure Table Storage has no count API, so a total means walking every matching row. They therefore **only pay when they have to, and never more than a bounded walk**. A read that proved itself complete answers for itself (`totalRows = rows.length`) — the survey read fetches one entity past the cap so a partition holding exactly the cap never pays for a count — and only a read known to be truncated runs `readEntitiesCount`: a keys-only page walk, bounded at `DATASET_MAX_COUNTED_ROWS` so a huge partition cannot stall the read just to render a banner number. A count that hit the bound is a floor: `getDatasetTruncation` marks it `isCountCapped`, and every surface renders it as "M+" via `formatTruncationCount` rather than as an exact total.
 
 ### The consumers
 
@@ -51,7 +51,7 @@ Each surface is chosen by what an unnoticed truncation would cost there:
 | `app/components/Dataset/TruncationAlert.vue`                            | banner form (Survey Responses)                          |
 | `app/components/Dataset/TruncationFootnote.vue`                         | footnote form (Dashboard visual)                        |
 | `app/components/Resource/Email/ExportTruncationDialog.vue`              | the pre-export confirm                                  |
-| `packages/db/src/services/azure/table/countEntities.ts`                 | keys-only page walk — the only way to count Azure Table |
+| `packages/db/src/services/azure/table/readEntitiesCount.ts`             | keys-only page walk — the only way to count Azure Table |
 | `server/services/dataset/sheet/readSheetDataset.ts`                     | free total from the parsed blob                         |
 | `server/services/dataset/surveyResponses/readSurveyResponsesDataset.ts` | count only once a read is known to have capped          |
 
@@ -59,4 +59,4 @@ Each surface is chosen by what an unnoticed truncation would cost there:
 
 - Deliberately metadata-only. The fix for _actually needing_ more rows is [pagination](/docs/platform/deferred/dataset-row-cap-pagination), and this warning is what gives that page a consumer: once users see "of M" and complain, it has earned its build.
 - One phrasing service backs every surface, so a chart footnote and a table banner can never quote different numbers for the same read.
-- `countEntities` is never free and never on the happy path — the guard that only calls it on a filled page is load-bearing, not an optimization. Its `maxCount` bound is load-bearing too: without it, every open of a huge partition's blade pays a full key-walk to render one number.
+- `readEntitiesCount` is never free and never on the happy path — the guard that only calls it on a filled page is load-bearing, not an optimization. Its `maxCount` bound is load-bearing too: without it, every open of a huge partition's blade pays a full key-walk to render one number.

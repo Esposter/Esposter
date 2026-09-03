@@ -121,7 +121,7 @@ describe("friendRequest", () => {
 
     const receiverUser = getMockSession().user;
     const { user: blockerUser } = await mockSessionOnce(mockContext.db);
-    await blockCaller.blockUser(receiverUser.id);
+    await blockCaller.createBlock(receiverUser.id);
     await consumeMockSessionOnce();
 
     await expect(friendRequestCaller.sendFriendRequest(blockerUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -134,7 +134,7 @@ describe("friendRequest", () => {
 
     const blockedUser = getMockSession().user;
     const { user: blockerUser } = await mockSessionOnce(mockContext.db);
-    await blockCaller.blockUser(blockedUser.id);
+    await blockCaller.createBlock(blockedUser.id);
     await mockSessionOnce(mockContext.db, blockerUser);
 
     await expect(friendRequestCaller.sendFriendRequest(blockedUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(

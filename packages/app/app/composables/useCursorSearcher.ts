@@ -11,8 +11,8 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>>(
   const searchQuery = ref("");
   const { hasMore, initializeCursorPaginationData, items, readItems, readMoreItems, resetCursorPaginationData } =
     useCursorPaginationData<TItem>();
-  const readItemsSearched = (onComplete: () => void) => readItems(() => query(searchQuery.value, ""), { onComplete });
-  const readMoreItemsSearched = (onComplete: () => void) =>
+  const readSearchedItems = (onComplete: () => void) => readItems(() => query(searchQuery.value, ""), { onComplete });
+  const readMoreSearchedItems = (onComplete: () => void) =>
     readMoreItems((cursor) => query(searchQuery.value, cursor), onComplete);
 
   if (isAutoSearch)
@@ -28,8 +28,8 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>>(
   return {
     hasMore,
     items,
-    readItemsSearched,
-    readMoreItemsSearched,
+    readMoreSearchedItems,
+    readSearchedItems,
     searchQuery,
   };
 };

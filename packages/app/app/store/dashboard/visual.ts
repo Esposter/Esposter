@@ -1,6 +1,6 @@
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
-import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
+import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { useDashboardStore } from "@/store/dashboard";
@@ -41,7 +41,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     // The unwind is this write's own visual rather than a copy of the list: a save is not instant, so a visual
     // Added or removed while this one is in flight is already on screen by the time it fails, and a list-wide
     // Restore would delete it. Cloned because updateVisual assigns onto the live visual
-    const previousVisual = visuals.value.find(getIsEntityIdEqualComparator<Visual>(["id"], editedVisual));
+    const previousVisual = visuals.value.find(getEntityIdEqualComparator<Visual>(["id"], editedVisual));
     const snapshot = previousVisual ? structuredClone(toRawDeep(previousVisual)) : undefined;
     updateVisual(editedVisual);
     const isSuccessful = await saveDashboard();
@@ -55,7 +55,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     // Touching it. It returns at the end, which costs it nothing: the grid places a visual by its own x/y,
     // So array order is not where it sits. Restoring the whole list instead would drop a visual the user
     // Added while the delete was in flight
-    const deletedVisual = visuals.value.find(getIsEntityIdEqualComparator<Visual>(["id"], ids));
+    const deletedVisual = visuals.value.find(getEntityIdEqualComparator<Visual>(["id"], ids));
     storeDeleteVisual(ids);
     const isSuccessful = await saveDashboard();
     if (!isSuccessful && deletedVisual) storeCreateVisual(deletedVisual);

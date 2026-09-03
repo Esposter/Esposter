@@ -27,7 +27,7 @@ The webhook and asset limiters sit outside that map deliberately, because neithe
 ```mermaid
 flowchart TD
   call["$trpc call"] --> builder["standardAuthedProcedure — slowAuthedProcedure — standardRateLimitedProcedure"]
-  builder -->|"getIsAuthed pipes getIsRateLimited before the session check"| middleware["getIsRateLimited(type)"]
+  builder -->|"getAuthedMiddleware pipes getRateLimitedMiddleware before the session check"| middleware["getRateLimitedMiddleware(type)"]
   middleware -->|"RateLimiterMap[type].consume(key)"| procedureLimiter["standardRateLimiter or slowRateLimiter"]
   webhookRoute["POST /api/webhooks/{id}/{token}"] -->|"consume(webhook id)"| webhookLimiter["webhookRateLimiter"]
   assetRoute["GET /api/resource-assets/{path}"] -->|"consume(user id or IP)"| assetLimiter["assetRateLimiter"]
@@ -39,9 +39,9 @@ flowchart TD
   middleware -->|"rejected — checkIsRateLimitExceeded"| tooMany["TOO_MANY_REQUESTS"]
 ```
 
-`server/trpc/middleware/getIsRateLimited.ts` is the whole tRPC enforcement path. It resolves the session first, then consumes a point: on the user id when a session exists, and otherwise on `` `${path}${ID_SEPARATOR}${ipAddress}` `` so an anonymous caller is budgeted per procedure per address rather than globally. On success it writes `Retry-After` and the `X-RateLimit-Limit` / `X-RateLimit-Remaining` / `X-RateLimit-Reset` headers so a client can back off before it is refused. Outside production the middleware short-circuits after resolving the session. In production the bypass is narrower than it looks: only an **anonymous** request whose IP address cannot be determined is warned about and allowed through, because that is the one case with no key to spend a point against — a signed-in caller is keyed on its user id and is budgeted regardless. `getIpAddress` also falls back to the socket's remote address, so the header being absent is not by itself enough to reach the bypass.
+`server/trpc/middleware/getRateLimitedMiddleware.ts` is the whole tRPC enforcement path. It resolves the session first, then consumes a point: on the user id when a session exists, and otherwise on `` `${path}${ID_SEPARATOR}${ipAddress}` `` so an anonymous caller is budgeted per procedure per address rather than globally. On success it writes `Retry-After` and the `X-RateLimit-Limit` / `X-RateLimit-Remaining` / `X-RateLimit-Reset` headers so a client can back off before it is refused. Outside production the middleware short-circuits after resolving the session. In production the bypass is narrower than it looks: only an **anonymous** request whose IP address cannot be determined is warned about and allowed through, because that is the one case with no key to spend a point against — a signed-in caller is keyed on its user id and is budgeted regardless. `getIpAddress` also falls back to the socket's remote address, so the header being absent is not by itself enough to reach the bypass.
 
-Because the middleware already resolved the session, `getIsAuthed.ts` simply pipes it and then rejects when there is no session. Authentication and rate limiting are therefore a single middleware in one order: **a caller is charged before it is told it is unauthorized**, which is what stops an unauthenticated attacker from probing authed procedures for free.
+Because the middleware already resolved the session, `getAuthedMiddleware.ts` simply pipes it and then rejects when there is no session. Authentication and rate limiting are therefore a single middleware in one order: **a caller is charged before it is told it is unauthorized**, which is what stops an unauthenticated attacker from probing authed procedures for free.
 
 Every limiter writes to one table, so each carries its **own key prefix** and the budgets stay independent. Without one, three of the four would share a counter row per signed-in user — both procedure limiters and the asset limiter key an authed caller on the bare user id — and the slow budget would be spent out by ordinary app traffic, refusing the first slow call of the session, while one published page full of images would 429 the app around it. That is a correctness invariant rather than a nicety, so `createRateLimiter` takes `keyPrefix` as a **required** parameter: a new limiter cannot inherit a shared keyspace by omission, and `createRateLimiter.test.ts` pins that the four prefixes are distinct.
 
@@ -71,8 +71,8 @@ Paths relative to `packages/app` unless noted.
 | `server/services/rateLimiter/RateLimiterMap.ts`           | enum → limiter registry for the procedure budgets         |
 | `server/services/rateLimiter/checkIsRateLimitExceeded.ts` | recognises the rejection through a neverthrow wrapper     |
 | `server/models/rateLimiter/RateLimiterType.ts`            | the `Slow` / `Standard` enum                              |
-| `server/trpc/middleware/getIsRateLimited.ts`              | consumes a point and sets the response headers            |
-| `server/trpc/middleware/getIsAuthed.ts`                   | pipes the rate limiter, then requires a session           |
+| `server/trpc/middleware/getRateLimitedMiddleware.ts`      | consumes a point and sets the response headers            |
+| `server/trpc/middleware/getAuthedMiddleware.ts`           | pipes the rate limiter, then requires a session           |
 | `server/trpc/procedure/AuthedProcedureMap.ts`             | enum → authed procedure builder                           |
 | `server/api/webhooks/[id]/[token].post.ts`                | inbound webhook route, 429 on overspend                   |
 | `server/api/resource-assets/[...path].get.ts`             | asset redirect route, 429 on overspend                    |

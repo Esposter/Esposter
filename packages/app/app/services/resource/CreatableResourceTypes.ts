@@ -15,5 +15,5 @@ export const CreatableResourceTypes = [
 
 export type CreatableResourceType = (typeof CreatableResourceTypes)[number];
 
-export const isCreatableResourceType = (value: string): value is CreatableResourceType =>
+export const checkIsCreatableResourceType = (value: string): value is CreatableResourceType =>
   CreatableResourceTypes.some((type) => type === value);

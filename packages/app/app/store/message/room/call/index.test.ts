@@ -54,7 +54,7 @@ describe(useCallStore, () => {
     expect.hasAssertions();
 
     server.use(
-      trpcMsw.callSession.setCamera.mutation(() => {
+      trpcMsw.callSession.setCameraEnabled.mutation(() => {
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
       }),
     );

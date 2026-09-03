@@ -36,7 +36,7 @@ export const setupPluginSuite = ({
   getCodes: () => string[];
   getViolations: (name: string) => number | undefined;
 } => {
-  const violationsByFixture = new Map<string, number>();
+  const fixtureViolationsMap = new Map<string, number>();
   let directory = "";
   let codes: string[] = [];
 
@@ -71,10 +71,10 @@ export const setupPluginSuite = ({
     const { diagnostics } = jsonDateParse<{ diagnostics: { code: string; filename: string }[] }>(stdout);
     codes = diagnostics.map(({ code }) => code);
 
-    for (const { name } of fixtures) violationsByFixture.set(name, 0);
+    for (const { name } of fixtures) fixtureViolationsMap.set(name, 0);
     for (const { filename } of diagnostics) {
       const name = basename(filename, ".ts");
-      violationsByFixture.set(name, (violationsByFixture.get(name) ?? 0) + 1);
+      fixtureViolationsMap.set(name, (fixtureViolationsMap.get(name) ?? 0) + 1);
     }
   });
 
@@ -82,7 +82,7 @@ export const setupPluginSuite = ({
     rmSync(directory, { force: true, recursive: true });
   });
 
-  return { getCodes: () => codes, getViolations: (name: string) => violationsByFixture.get(name) };
+  return { getCodes: () => codes, getViolations: (name: string) => fixtureViolationsMap.get(name) };
 };
 
 describe.todo("setupPluginSuite");

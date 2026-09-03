@@ -10,7 +10,7 @@ export const useReadUserFromRoute = async () => {
   // Only a genuine "user not found" becomes a 404 — transport/server failures propagate rather than being
   // Masked as an absent user
   const user = await getResultAsync(() => $trpc.user.readUser.query(userId)).match(
-    (readUser) => readUser,
+    (newUser) => newUser,
     (error) => {
       if (error instanceof TRPCClientError && error.data?.code === "NOT_FOUND")
         throw createError({ status: 404, statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.User, userId) });

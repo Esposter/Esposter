@@ -9,25 +9,25 @@ import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
 import { getEmojiSlug } from "@/services/message/emoji/getEmojiSlug";
 import { searchEmojis } from "@/services/message/emoji/searchEmojis";
 import { takeOne } from "@esposter/shared";
-import dataByCharacter from "unicode-emoji-json/data-by-emoji.json";
+import characterEmojiRecordMap from "unicode-emoji-json/data-by-emoji.json";
 import { describe, expect, test } from "vitest";
 
 // Throws rather than returning undefined so a slug that stops existing upstream fails as a missing emoji
 // Rather than as a confusing assertion about `undefined` further down
 const getEmoji = (slug: string) => {
-  const emoji = getEmojiIndex().bySlug.get(slug);
+  const emoji = getEmojiIndex().slugEmojiMap.get(slug);
   if (!emoji) throw new Error(`No emoji indexed under "${slug}"`);
   return emoji;
 };
 
 describe("getEmojiIndex", () => {
   const RED_HEART = "❤️";
-  const { bySlug } = getEmojiIndex();
+  const { slugEmojiMap } = getEmojiIndex();
 
   test("round trips every emoji from character to slug and back", () => {
     expect.hasAssertions();
 
-    for (const emoji of bySlug.values()) expect(getEmojiSlug(emoji.character)).toBe(emoji.slug);
+    for (const emoji of slugEmojiMap.values()) expect(getEmojiSlug(emoji.character)).toBe(emoji.slug);
   });
 
   // A tooltip can be asked for a toned glyph, which has no record of its own — it resolves to its base
@@ -61,7 +61,7 @@ describe("getEmojiIndex", () => {
   test("matches the shape the dataset actually ships", () => {
     expect.hasAssertions();
 
-    expect(dataByCharacter["👋"]).toStrictEqual({
+    expect(characterEmojiRecordMap["👋"]).toStrictEqual({
       emoji_version: "0.6",
       group: "People & Body",
       name: "waving hand",
@@ -72,7 +72,7 @@ describe("getEmojiIndex", () => {
     });
     // The version key is present on exactly the toneable records, which is what makes it the only optional one
     expect(
-      Object.values(dataByCharacter).every(({ skin_tone_support, skin_tone_support_unicode_version }) =>
+      Object.values(characterEmojiRecordMap).every(({ skin_tone_support, skin_tone_support_unicode_version }) =>
         skin_tone_support
           ? skin_tone_support_unicode_version !== undefined
           : skin_tone_support_unicode_version === undefined,
@@ -83,10 +83,10 @@ describe("getEmojiIndex", () => {
   test("files every emoji under a group the enum lists", () => {
     expect.hasAssertions();
 
-    const { byGroup } = getEmojiIndex();
+    const { groupEmojisMap } = getEmojiIndex();
 
-    expect([...byGroup.keys()]).toStrictEqual(EmojiGroups);
-    expect([...byGroup.values()].reduce((total, emojis) => total + emojis.length, 0)).toBe(bySlug.size);
+    expect([...groupEmojisMap.keys()]).toStrictEqual(EmojiGroups);
+    expect([...groupEmojisMap.values()].reduce((total, emojis) => total + emojis.length, 0)).toBe(slugEmojiMap.size);
   });
 });
 
@@ -138,7 +138,7 @@ describe("searchEmojis", () => {
   const GRINNING_FACE = "😀";
   const MELTING_FACE = "🫠";
   const THUMBS_UP = "👍";
-  const { bySlug } = getEmojiIndex();
+  const { slugEmojiMap } = getEmojiIndex();
 
   // A room's own emoji lead the list, which is the ranking Discord gives a server's own, and they take slots
   // From the cap rather than being appended past it
@@ -172,7 +172,7 @@ describe("searchEmojis", () => {
   test("intersects a multi-word query rather than unioning it", () => {
     expect.hasAssertions();
 
-    expect(searchEmojis("grin f").length).toBeLessThan(bySlug.size);
+    expect(searchEmojis("grin f").length).toBeLessThan(slugEmojiMap.size);
     expect(searchEmojis("grin f").length).toBeLessThanOrEqual(searchEmojis("grin").length);
   });
 

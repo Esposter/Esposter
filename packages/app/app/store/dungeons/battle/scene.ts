@@ -15,7 +15,6 @@ import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
 
 export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const dialogStore = useDialogStore();
-  const { handleShowMessageInput } = dialogStore;
   const attackOptionGrid = useAttackOptionGrid();
   const activePanel = ref(ActivePanel.Info);
   const experienceBarStore = useExperienceBarStore();
@@ -24,7 +23,7 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   // Entry point runs reports its own failure rather than leaving one rejection per frame with no handler
   const onPlayerInput = (scene: SceneWithPlugins, input: PlayerInput) =>
     getResultAsync(async () => {
-      if (await handleShowMessageInput(scene, input)) return;
+      if (await dialogStore.onPlayerInput(scene, input)) return;
       else if (checkIsPlayerSpecialInput(input)) await onPlayerSpecialInput(input);
       else onPlayerDirectionInput(input);
     }).match(noop, console.error);

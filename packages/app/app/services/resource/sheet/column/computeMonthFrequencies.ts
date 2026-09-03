@@ -9,5 +9,5 @@ export const computeMonthFrequencies = (dates: string[]): readonly (readonly [st
     .map((value) => parseLooseDate(value))
     .filter((parsedDate) => parsedDate !== undefined)
     .map((parsedDate) => formatDate(parsedDate, MONTH_FORMAT));
-  return [...countOccurrences(months)].toSorted(([monthA], [monthB]) => monthA.localeCompare(monthB));
+  return [...countOccurrences(months)].toSorted(([firstMonth], [secondMonth]) => firstMonth.localeCompare(secondMonth));
 };

@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import StyledDialog from "@/components/Styled/Dialog.vue";
+import { sleep } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -13,6 +14,7 @@ const getGradientButtons = (body: HTMLElement) => [
 
 describe("styledDialog", () => {
   const text = "Confirm";
+  const pendingMs = 20;
   // The dialog teleports to the overlay container, so assertions read the document rather than the wrapper —
   // Which makes the teardown load-bearing: every mount appends its own overlay, so without it the second test
   // In the file counts the first test's buttons too. The helper mutates this, so the two live together
@@ -33,6 +35,37 @@ describe("styledDialog", () => {
     wrapper?.unmount();
     wrapper = undefined;
     document.body.innerHTML = "";
+    document.documentElement.style.overflowY = "";
+  });
+
+  // A dialog that is already open when it is created — one whose model is set by the page's own async setup —
+  // Has no overlay root until it mounts, and a navigation defers that mount by rendering the incoming page into
+  // A suspense that is still pending. Vuetify's block scroll strategy reads the root a tick later either way, so
+  // Without the mount gate it throws on `undefined.classList` and takes the page render down with it. The
+  // Strategy only reaches the root when the document scrolls, which is why the test gives it a scrollbar
+  test("opens a dialog created open while its mount waits on a pending sibling", async () => {
+    expect.hasAssertions();
+    document.documentElement.style.overflowY = "scroll";
+    const PendingSibling = defineComponent({
+      async setup() {
+        await sleep(pendingMs);
+        return () => h("div");
+      },
+    });
+
+    wrapper = await mountSuspended(
+      defineComponent({
+        setup: () => () => [
+          h(PendingSibling),
+          h(StyledDialog, { modelValue: true }, { default: () => h("p", "body") }),
+        ],
+      }),
+      { attachTo: document.body },
+    );
+    // The strategy runs on its own timeout once the overlay activates, so the throw lands after the mount
+    await sleep(pendingMs);
+
+    expect(document.body.querySelector(".v-overlay__content")?.textContent).toContain("body");
   });
 
   // Every dialog is meant to reach for this shell, so what these pin are the two shapes whose absence forces a

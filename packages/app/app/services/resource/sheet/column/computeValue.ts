@@ -12,17 +12,17 @@ export const computeValue = (
   columns: Column[],
   column: Column,
   rowIndex?: number,
-  visited = new Set<string>(),
+  visitedColumnIds = new Set<string>(),
 ): ColumnValue => {
   if (column.type !== ColumnType.Computed) return takeOne(row.data, column.name);
-  else if (visited.has(column.id)) return null;
+  else if (visitedColumnIds.has(column.id)) return null;
   else {
-    visited.add(column.id);
+    visitedColumnIds.add(column.id);
     return ColumnTransformationComputeMap[column.transformation.type](column.transformation as never, {
       computeSource: (sourceColumnId) => {
         const sourceColumn = columns.find(({ id }) => id === sourceColumnId);
         if (!sourceColumn) return null;
-        return computeValue(rows, row, columns, sourceColumn, rowIndex, visited);
+        return computeValue(rows, row, columns, sourceColumn, rowIndex, visitedColumnIds);
       },
       findSource: (sourceColumnId) => columns.find(({ id }) => id === sourceColumnId),
       rowIndex,

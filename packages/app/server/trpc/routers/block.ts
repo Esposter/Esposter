@@ -12,7 +12,7 @@ import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 export const blockRouter = router({
-  blockUser: standardAuthedProcedure
+  createBlock: standardAuthedProcedure
     .input(friendUserIdInputSchema)
     .mutation<User>(async ({ ctx, input: targetUserId }) => {
       const userId = ctx.getSessionPayload.user.id;
@@ -31,15 +31,7 @@ export const blockRouter = router({
       });
       return blockedUser;
     }),
-  readBlockedUsers: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    const blockedRows = await ctx.db.query.blocks.findMany({
-      where: { blockerId: { eq: userId } },
-      with: BlockRelations,
-    });
-    return blockedRows.map(({ blocked }) => blocked);
-  }),
-  unblockUser: standardAuthedProcedure
+  deleteBlock: standardAuthedProcedure
     .input(friendUserIdInputSchema)
     .mutation<User["id"]>(async ({ ctx, input: blockedUserId }) => {
       const userId = ctx.getSessionPayload.user.id;
@@ -59,4 +51,12 @@ export const blockRouter = router({
       );
       return blockedUserId;
     }),
+  readBlockedUsers: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
+    const userId = ctx.getSessionPayload.user.id;
+    const blockedRows = await ctx.db.query.blocks.findMany({
+      where: { blockerId: { eq: userId } },
+      with: BlockRelations,
+    });
+    return blockedRows.map(({ blocked }) => blocked);
+  }),
 });

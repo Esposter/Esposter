@@ -43,22 +43,22 @@ describe(computeValue, () => {
   test("returns null when two computed columns form a cycle", () => {
     expect.hasAssertions();
 
-    const columnA = createComputedColumn("a", "");
-    const columnB = createComputedColumn("b", columnA.id);
-    const columnAWithCycle = new ComputedColumn({
-      id: columnA.id,
+    const firstColumn = createComputedColumn("a", "");
+    const secondColumn = createComputedColumn("b", firstColumn.id);
+    const firstColumnWithCycle = new ComputedColumn({
+      id: firstColumn.id,
       name: "a",
       size: 0,
       sourceName: "a",
       transformation: {
-        sourceColumnId: columnB.id,
+        sourceColumnId: secondColumn.id,
         targetType: ColumnType.String,
         type: ColumnTransformationType.ConvertTo,
       },
     });
     const row = createRow({});
-    const dataSource = createDataSource([columnAWithCycle, columnB], [row]);
+    const dataSource = createDataSource([firstColumnWithCycle, secondColumn], [row]);
 
-    expect(computeValue(dataSource.rows, row, dataSource.columns, columnAWithCycle)).toBeNull();
+    expect(computeValue(dataSource.rows, row, dataSource.columns, firstColumnWithCycle)).toBeNull();
   });
 });

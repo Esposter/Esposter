@@ -375,14 +375,14 @@ describe(useMutation, () => {
     expect(isPending.value).toBe(false);
   });
 
-  test("scopes getIsPending to its key while isPending aggregates", async () => {
+  test("scopes checkIsPending to its key while isPending aggregates", async () => {
     expect.hasAssertions();
 
-    const { executeMutation, getIsPending, isPending } = useMutation();
+    const { checkIsPending, executeMutation, isPending } = useMutation();
     const { promise: mutatePromise, resolve: resolveMutate } = Promise.withResolvers<void>();
     const pendingWrite = executeMutation(() => mutatePromise, { key });
-    const isKeyPendingWhileInFlight = getIsPending(key);
-    const isOtherKeyPendingWhileInFlight = getIsPending(otherKey);
+    const isKeyPendingWhileInFlight = checkIsPending(key);
+    const isOtherKeyPendingWhileInFlight = checkIsPending(otherKey);
     await flushPromises();
     resolveMutate();
     await pendingWrite;
@@ -390,13 +390,13 @@ describe(useMutation, () => {
     expect(isKeyPendingWhileInFlight).toBe(true);
     expect(isOtherKeyPendingWhileInFlight).toBe(false);
     expect(isPending.value).toBe(false);
-    expect(getIsPending(key)).toBe(false);
+    expect(checkIsPending(key)).toBe(false);
   });
 
   test("clears pending state when onSuccess throws", async () => {
     expect.hasAssertions();
 
-    const { executeMutation, getIsPending, isPending } = useMutation();
+    const { checkIsPending, executeMutation, isPending } = useMutation();
 
     await expect(
       executeMutation(() => Promise.resolve(), {
@@ -407,14 +407,14 @@ describe(useMutation, () => {
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: error]`);
 
-    expect(getIsPending(key)).toBe(false);
+    expect(checkIsPending(key)).toBe(false);
     expect(isPending.value).toBe(false);
   });
 
   test("clears pending state when onError throws", async () => {
     expect.hasAssertions();
 
-    const { executeMutation, getIsPending, isPending } = useMutation();
+    const { checkIsPending, executeMutation, isPending } = useMutation();
 
     await expect(
       executeMutation(() => Promise.reject(new Error("error")), {
@@ -425,14 +425,14 @@ describe(useMutation, () => {
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
-    expect(getIsPending(key)).toBe(false);
+    expect(checkIsPending(key)).toBe(false);
     expect(isPending.value).toBe(false);
   });
 
   test("clears pending state when applyOptimistic throws", async () => {
     expect.hasAssertions();
 
-    const { executeMutation, getIsPending, isPending } = useMutation();
+    const { checkIsPending, executeMutation, isPending } = useMutation();
 
     await expect(
       executeMutation(() => Promise.resolve(), {
@@ -444,7 +444,7 @@ describe(useMutation, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: error]`);
 
     expect(isPending.value).toBe(false);
-    expect(getIsPending(key)).toBe(false);
+    expect(checkIsPending(key)).toBe(false);
   });
 
   test("keeps a target's queue running after a write throws from a callback", async () => {

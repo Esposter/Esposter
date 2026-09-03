@@ -100,7 +100,7 @@ export const useCallStore = defineStore("message/room/call", () => {
 
     await executeSetCameraMutation(
       () =>
-        $trpc.callSession.setCamera.mutate({
+        $trpc.callSession.setCameraEnabled.mutate({
           callSessionId,
           isCameraEnabled: newIsCameraEnabled,
         }),
@@ -125,7 +125,7 @@ export const useCallStore = defineStore("message/room/call", () => {
 
     await executeSetMuteMutation(
       () =>
-        $trpc.callSession.setMute.mutate({
+        $trpc.callSession.setMuted.mutate({
           callSessionId,
           isMuted: newIsMuted,
         }),

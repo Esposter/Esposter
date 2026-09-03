@@ -46,6 +46,12 @@ const slots = defineSlots<{
   "prepend-confirm"?: () => VNode;
 }>();
 const isFullScreen = ref(false);
+// Vuetify's block scroll strategy reads the overlay root element a tick after the overlay activates, and an
+// Overlay born open has none yet whenever its mount is deferred — a page navigation renders the incoming tree
+// Inside a still-pending suspense, so `mounted` has not run and VOverlay renders nothing until it has. The
+// Strategy then throws on `undefined.classList` and the whole page render goes with it, so the open state
+// Waits for the mount that gives it a root
+const isMounted = useMounted();
 const hasActions = computed(() => Boolean(confirmButtonProps ?? slots["prepend-actions"] ?? slots["prepend-confirm"]));
 const mergedConfirmButtonProps = computed(() => mergeProps(confirmButtonProps ?? {}, confirmButtonAttrs));
 const confirm = () => {
@@ -54,7 +60,12 @@ const confirm = () => {
 </script>
 
 <template>
-  <v-dialog v-model="modelValue" :="dialogProps" :fullscreen="isFullScreen">
+  <v-dialog
+    :model-value="modelValue && isMounted"
+    :="dialogProps"
+    :fullscreen="isFullScreen"
+    @update:model-value="modelValue = $event"
+  >
     <template #activator>
       <slot name="activator" :is-open="modelValue" :update-is-open="(value) => (modelValue = value)" />
     </template>

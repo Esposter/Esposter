@@ -8,7 +8,7 @@ import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
 
 const modelValue = defineModel<SkinTone>({ required: true });
 // One tone for every emoji that supports one, chosen once and persisted, rather than a per-emoji long-press
-const skinToneEmoji = getEmojiIndex().bySlug.get(SKIN_TONE_PREVIEW_EMOJI_SLUG);
+const skinToneEmoji = getEmojiIndex().slugEmojiMap.get(SKIN_TONE_PREVIEW_EMOJI_SLUG);
 </script>
 
 <template>

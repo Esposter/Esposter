@@ -38,13 +38,13 @@
 | `app/composables/resource/sheet/commands`                                                                                                   | 2026-09-03 | a command class is named for the edit it applies                                                  |
 | `app/composables/resource` — the rest                                                                                                       | 2026-09-03 | `list`, `autosave`, `todoList`, `search`, `recycleBin`, `sheet`'s root files, the root files      |
 | `app/composables/dungeons`                                                                                                                  | 2026-09-03 |                                                                                                   |
-| `app/composables` — `shared`, `data`                                                                                                        | —          | `useQuery` / `useMutation` and the primitives around them                                         |
-| `app/composables` — the small product subdirs and the root files                                                                            | —          |                                                                                                   |
-| `app/services/resource/sheet/column` — the root files                                                                                       | —          | filename-is-the-export                                                                            |
-| `app/services/resource/sheet/column/transformation`                                                                                         | —          |                                                                                                   |
-| `app/services/resource/sheet/commands`                                                                                                      | —          |                                                                                                   |
-| `app/services/resource/sheet` — `dataSource`, `csv`, `json`, `xlsx`, the root files                                                         | —          |                                                                                                   |
-| `app/services/resource` — the rest                                                                                                          | —          | `list`, `search`, `todoList`, `tag`, `activity`, `survey`, `note`, the root files                 |
+| `app/composables` — `shared`, `data`                                                                                                        | 2026-09-03 | `useQuery` / `useMutation` and the primitives around them                                         |
+| `app/composables` — the small product subdirs and the root files                                                                            | 2026-09-03 |                                                                                                   |
+| `app/services/resource/sheet/column` — the root files                                                                                       | 2026-09-03 | filename-is-the-export; a comparator pair is `first*`/`second*`, never a letter suffix            |
+| `app/services/resource/sheet/column/transformation`                                                                                         | 2026-09-03 |                                                                                                   |
+| `app/services/resource/sheet/commands`                                                                                                      | 2026-09-03 | a fixed lookup table is PascalCase; a mutable runtime cache that happens to be a Map stays camel  |
+| `app/services/resource/sheet` — `dataSource`, `csv`, `json`, `xlsx`, the root files                                                         | 2026-09-03 |                                                                                                   |
+| `app/services/resource` — the rest                                                                                                          | 2026-09-03 | `list`, `search`, `todoList`, `tag`, `activity`, `survey`, `note`, the root files                 |
 | `app/services/message` — `room`, `emoji`                                                                                                    | —          |                                                                                                   |
 | `app/services/message` — `moderation`, `settings`, `filter`, `draftsAndSent`, `user`, `roomCategory`, `member`                              | —          |                                                                                                   |
 | `app/services/message` — the rest                                                                                                           | —          | `file`, `slashCommands`, `composer`, `poll`, `subscribables`, the singles, the root files         |
@@ -94,57 +94,15 @@ the same way it reads any other identifier. The prefix-and-fold question over th
 the grounds that a rename is expensive — that is the argument
 [no compatibility debt](/docs/architecture/no-compatibility-debt) already refuses, migrations included.
 
-## Open findings
-
-- **`readMembersByIds` and `readMessagesByRowKeys` keep a suffix the cardinality rule bans.** Every other
-  `*ByIds` read dropped it, but these two share a feature with a paginated read of the same rows
-  (`readMembers`, `readMessages`), so the suffix is what separates two procedures rather than marking a batch
-  upgrade — and dropping it collides. What the pair should be called instead is the open question.
-- **`countEntities` is `packages/db`'s, and it is an async fetch under the `count*` prefix.** Every count
-  procedure and service in `packages/app` is now `read*Count`; the storage primitive underneath them keeps
-  `count*`, so the question of whether a generic table-client tally is exempt belongs to the `packages/db`
-  pass that owns the name.
-- **`getIsAuthed` / `getIsRateLimited` / `getIsEntityIdEqualComparator` — `get*` is right, the `Is` is not.**
-  All three return a function rather than a boolean, so `check*` would be wrong, but the `Is` still reads as a
-  predicate. The middleware pair wants a name saying what it builds; the comparator already has one.
-
-- **The dungeons input path spells one role three ways, and the skill sanctions none of them outright.**
-  A scene store's entry point is `onPlayerInput`, the resolver classes it dispatches to declare `handleInput`,
-  and the dialog store's own entry point is `handleShowMessageInput` — all three take a `PlayerInput` and answer
-  whether they consumed it. The `on*` rule covers a handler that wraps an existing named function, which none of
-  these does, so `handle*` is not straightforwardly wrong and renaming one family in isolation would only widen
-  the split. Which prefix the family takes is the open question, and it is settled with
-  `app/models` — `resolvers`, `shared`, where the abstract classes that fix the method name live.
-
-- **A `Map` local is spelled two ways, and settling it costs this ledger its dates.** The dominant shape is
-  `<value>Map` or `<key><value>Map` — `userMap`, `fileUrlMap`, `callSessionParticipantsMap`, `rowIdIndexMap` —
-  but a handful read as English instead: `columnIndexById`, `rowIndexById`, `newIndexById`,
-  `newRelativePositionByRowId`. Neither is wrong on its own and no enforcer decides the word order, so the fix
-  is a rule in the `naming` skill — which resets every date in this table, since a unit swept without it is not
-  swept against it. The call is whether that reset is worth paying now or at the next convention change that
-  earns one anyway; until it is made, a `*ById` name is left alone.
-
-- **The `block` router's `blockUser` and `unblockUser` procedures name an action, not the row they write.**
-  The store side is now `createBlock` / `deleteBlock` against the `blocks` table, and the router already spells
-  the pair `Operation.Create` / `Operation.Delete` on `DatabaseEntityType.Block` in its own error constructors —
-  but the procedures sit in `server/trpc/routers/block`, whose row was swept before the store pass reached this.
-  They go with the next pass over that row.
-
-- **The `callSession` router's `setMute` and `setCamera` procedures name an action, not the field they write.**
-  The store side is now `setParticipantMuted` / `setParticipantCameraEnabled` against `isMuted` / `isCameraEnabled`,
-  and the rule is now in the `naming` skill — but the procedures sit in `server/trpc/routers/call`, whose row was
-  swept before that rule existed. They go with the next pass over that row, along with the `onSetMute` /
-  `onSetCamera` subscriptions that mirror them.
-
 ## Next enforceable
 
 - Filename-is-the-export is decidable from the AST plus the path; a custom oxlint plugin could take it whole.
 - `is*`/`has*`/`show*` on a boolean-typed declaration needs types, which `typeAware: true` already provides.
 - Abbreviation bans need a word list, not a rule — leave with the sweep.
-- **A `getIs*`/`getHas*` declaration is decidable from the name alone, and the carve-out is now closed.** The
-  only ones that may keep the prefix are the three above, which return a function rather than a boolean; every
-  other one in the repo is a `check*` the pass has not reached yet. A `no-restricted-syntax` selector on a
-  declarator named `^get(Is|Has)[A-Z]` can therefore be written against the swept paths and widened as the
+- **A `getIs*`/`getHas*` declaration is decidable from the name alone, and there is no longer an exception to
+  carve out.** The three that returned a function rather than a boolean now say what they build instead, so
+  every remaining one in the repo is a `check*` the pass has not reached yet. A `no-restricted-syntax` selector
+  on a declarator named `^get(Is|Has)[A-Z]` can therefore be written against the swept paths and widened as the
   remaining units drain.
 - A where-fragment helper is decidable from the AST alone: a declarator named `*Where` whose initialiser is a
   function must start with `get`. Four routers had written the bare noun, so the rule is now in the `trpc` skill
