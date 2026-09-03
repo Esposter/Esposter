@@ -56,7 +56,7 @@ import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
-import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
+import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
 import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessageProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
@@ -203,7 +203,7 @@ export const baseMessageRouter = router({
   ),
   forwardMessage: getMemberProcedure(forwardMessageInputSchema, CompositeKeyPropertyNames.partitionKey).mutation<void>(
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
-      await isMember(ctx.db, ctx.getSessionPayload, roomIds);
+      await assertIsMember(ctx.db, ctx.getSessionPayload, roomIds);
       // Every client provisions its own table/container, so acquiring them together costs one round trip
       // Instead of three
       const [messageClient, messageAscendingClient, containerClient] = await Promise.all([
@@ -426,7 +426,7 @@ export const baseMessageRouter = router({
       const inFilterRoomIds = input.filters.filter(({ type }) => type === FilterType.In).map(({ value }) => value);
       if (!inFilterRoomIds.every((value) => typeof value === "string"))
         throw getInvalidOperationError(Operation.Read, AzureEntityType.Message, JSON.stringify(inFilterRoomIds));
-      else if (inFilterRoomIds.length > 0) await isMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds);
+      else if (inFilterRoomIds.length > 0) await assertIsMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds);
       return searchMessages(input);
     },
   ),

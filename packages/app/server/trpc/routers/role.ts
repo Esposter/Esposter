@@ -20,7 +20,7 @@ import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
+import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
@@ -207,7 +207,7 @@ export const roleRouter = router({
   readRoles: standardAuthedProcedure
     .input(readRolesInputSchema)
     .query<RoomRoleInMessage[]>(async ({ ctx, input: { roomIds } }) => {
-      await isMember(ctx.db, ctx.getSessionPayload, roomIds);
+      await assertIsMember(ctx.db, ctx.getSessionPayload, roomIds);
       return ctx.db.query.roomRolesInMessage.findMany({
         orderBy: { position: "desc" },
         where: { roomId: { in: roomIds } },

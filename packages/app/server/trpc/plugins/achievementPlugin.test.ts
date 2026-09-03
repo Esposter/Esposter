@@ -43,10 +43,10 @@ describe("achievementPlugin", () => {
     });
     const clickerSave = new ClickerSave();
     await caller.clicker.saveClicker(clickerSave);
-    const readClicker = await caller.clicker.readClicker();
+    const storedClickerSave = await caller.clicker.readClicker();
     const userAchievements = await caller.achievement.readUserAchievements();
 
-    expect(readClicker).toStrictEqual(clickerSave);
+    expect(storedClickerSave).toStrictEqual(clickerSave);
     expect(userAchievements).toStrictEqual([]);
     expect(consoleErrorSpy).toHaveBeenCalledTimes(
       achievementDefinitions.filter(({ condition, triggerPath }) => triggerPath === "clicker.saveClicker" && !condition)

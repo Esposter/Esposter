@@ -31,7 +31,7 @@ import { assertIsManageable } from "@@/server/services/room/rbac/assertIsManagea
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { isRoom } from "@@/server/trpc/middleware/userToRoom/isRoom";
+import { assertIsRoomMiddleware } from "@@/server/trpc/middleware/userToRoom/assertIsRoomMiddleware";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
@@ -119,7 +119,7 @@ export const moderationRouter = router({
   executeAdminAction: getMemberProcedure(executeAdminActionInputSchema, "roomId")
     // A direct message has no roles and no moderators — the pair block each other instead, so an admin action
     // Aimed at one is rejected before it can write a ban row and a log entry nothing will ever read
-    .use(isRoom)
+    .use(assertIsRoomMiddleware)
     .concat(moderationLogPlugin)
     .mutation<void>(async ({ ctx, input }) => {
       const { roomId, targetUserId } = input;

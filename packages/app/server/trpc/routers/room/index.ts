@@ -40,8 +40,8 @@ import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
-import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
-import { isRoom } from "@@/server/trpc/middleware/userToRoom/isRoom";
+import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
+import { assertIsRoomMiddleware } from "@@/server/trpc/middleware/userToRoom/assertIsRoomMiddleware";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
@@ -151,7 +151,7 @@ export const baseRoomRouter = router({
     },
   ),
   createInvite: getPermissionsProcedure(RoomPermission.ManageInvites, createInviteInputSchema, "roomId")
-    .use(isRoom)
+    .use(assertIsRoomMiddleware)
     .mutation<InviteInMessageWithCreator>(({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) =>
       ctx.db.transaction(async (tx) => {
         // The room row is locked first, because the pause is a read with no constraint behind it: without the lock
@@ -334,7 +334,7 @@ export const baseRoomRouter = router({
   }),
   leaveRoom: standardAuthedProcedure
     .input(leaveRoomInputSchema)
-    .use(isRoom)
+    .use(assertIsRoomMiddleware)
     .mutation<RoomInMessage["id"]>(async ({ ctx, input }) => {
       const userId = ctx.getSessionPayload.user.id;
       const ownedRoom = await ctx.db.query.roomsInMessage.findFirst({
@@ -383,7 +383,7 @@ export const baseRoomRouter = router({
     input,
     signal,
   }) {
-    await isMember(ctx.db, ctx.getSessionPayload, input);
+    await assertIsMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "deleteRoom", { signal })) {
       if (!input.includes(roomId) || checkIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
@@ -391,7 +391,7 @@ export const baseRoomRouter = router({
     }
   }),
   onJoinRoom: standardAuthedProcedure.input(roomIdsInputSchema).subscription(async function* ({ ctx, input, signal }) {
-    await isMember(ctx.db, ctx.getSessionPayload, input);
+    await assertIsMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ roomId, sessionId, user }] of on(roomEventEmitter, "joinRoom", { signal })) {
       if (!input.includes(roomId) || checkIsSameDevice({ sessionId, userId: user.id }, ctx.getSessionPayload)) continue;
@@ -402,7 +402,7 @@ export const baseRoomRouter = router({
     }
   }),
   onLeaveRoom: standardAuthedProcedure.input(roomIdsInputSchema).subscription(async function* ({ ctx, input, signal }) {
-    await isMember(ctx.db, ctx.getSessionPayload, input);
+    await assertIsMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "leaveRoom", { signal })) {
       if (!input.includes(roomId) || checkIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
@@ -416,7 +416,7 @@ export const baseRoomRouter = router({
     input,
     signal,
   }) {
-    await isMember(ctx.db, ctx.getSessionPayload, input);
+    await assertIsMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [data] of on(roomEventEmitter, "updateRoom", { signal })) {
       if (!input.includes(data.id)) continue;
@@ -491,7 +491,7 @@ export const baseRoomRouter = router({
       .limit(MAX_READ_LIMIT);
   }),
   readMyInvite: getMemberProcedure(roomIdSchema, "roomId")
-    .use(isRoom)
+    .use(assertIsRoomMiddleware)
     .query<InviteInMessage | null>(({ ctx, input: { roomId } }) =>
       readMyInvite(ctx.db, ctx.getSessionPayload.user.id, roomId),
     ),
