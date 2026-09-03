@@ -46,8 +46,7 @@ describe(useReadMembers, () => {
   test("files the member totals under the room they were read for", async () => {
     expect.hasAssertions();
 
-    const { promise: readsPromise, resolve: releaseReads } = Promise.withResolvers<void>();
-    const readGate = readsPromise;
+    const { promise: readGate, resolve: releaseReads } = Promise.withResolvers<void>();
     server.use(
       trpcMsw.room.readMembersCount.query(async () => {
         await readGate;

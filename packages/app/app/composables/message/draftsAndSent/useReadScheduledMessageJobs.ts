@@ -8,12 +8,12 @@ export const useReadScheduledMessageJobs = () => {
   const readScheduledMessageJobs = () =>
     readItems(
       async () => {
-        const [data, total] = await Promise.all([
+        const [scheduledMessageJobs, count] = await Promise.all([
           $trpc.message.scheduledMessageJob.readMyScheduledMessageJobs.query(),
           $trpc.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query(),
         ]);
-        scheduledMessageJobCount.value = total;
-        return data;
+        scheduledMessageJobCount.value = count;
+        return scheduledMessageJobs;
       },
       () => {
         isPending.value = false;

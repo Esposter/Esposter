@@ -1,4 +1,4 @@
-export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => {
+export const useBattleInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => {
   const line2Text = ref("");
   return {
     ...useDialogMessage("line1"),

@@ -5,7 +5,7 @@ import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
 import { useRowStore } from "@/store/resource/sheet/row";
 
-const getIsInputFocused = () => {
+const checkIsInputFocused = () => {
   const activeElement = window.document.activeElement;
   return activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement;
 };
@@ -19,7 +19,7 @@ export const useCellKeyboardShortcuts = () => {
   const rowStore = useRowStore();
   const { filteredRows } = storeToRefs(rowStore);
   const cellStore = useCellStore();
-  const { editingCell, focusCell, selectedCellRange } = storeToRefs(cellStore);
+  const { editingCell, focusedCell, selectedCellRange } = storeToRefs(cellStore);
   const { clearCellSelection, extendCellSelection, startCellSelection } = cellStore;
   const copyRangeToClipboard = useCopyRangeToClipboard();
   const pasteRangeFromClipboard = usePasteRangeFromClipboard();
@@ -29,7 +29,7 @@ export const useCellKeyboardShortcuts = () => {
     getSynchronizedFunction(async (event: KeyboardEvent) => {
       if (
         editingCell.value ||
-        getIsInputFocused() ||
+        checkIsInputFocused() ||
         (!event.ctrlKey && !event.metaKey) ||
         event.shiftKey ||
         !selectedCellRange.value
@@ -43,7 +43,7 @@ export const useCellKeyboardShortcuts = () => {
   onKeyStroke(
     ["v", "V"],
     getSynchronizedFunction(async (event: KeyboardEvent) => {
-      if (editingCell.value || getIsInputFocused() || (!event.ctrlKey && !event.metaKey) || !selectedCellRange.value)
+      if (editingCell.value || checkIsInputFocused() || (!event.ctrlKey && !event.metaKey) || !selectedCellRange.value)
         return;
       event.preventDefault();
       await pasteRangeFromClipboard(event.shiftKey ? PasteMode.ShiftDown : PasteMode.Overwrite);
@@ -51,7 +51,7 @@ export const useCellKeyboardShortcuts = () => {
   );
 
   onKeyStroke(["a", "A"], (event) => {
-    if (editingCell.value || getIsInputFocused() || (!event.ctrlKey && !event.metaKey) || event.shiftKey) return;
+    if (editingCell.value || checkIsInputFocused() || (!event.ctrlKey && !event.metaKey) || event.shiftKey) return;
     event.preventDefault();
     const rowCount = filteredRows.value.length;
     const columnCount = displayColumns.value.length;
@@ -62,21 +62,21 @@ export const useCellKeyboardShortcuts = () => {
   });
 
   onKeyStroke(["ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp"], (event) => {
-    if (editingCell.value || getIsInputFocused() || !focusCell.value) return;
+    if (editingCell.value || checkIsInputFocused() || !focusedCell.value) return;
     const arrowDelta = ArrowKeyDeltaMap[event.key];
     if (!arrowDelta) return;
     event.preventDefault();
     const [rowDelta, columnDelta] = arrowDelta;
     const rowCount = filteredRows.value.length;
     const columnCount = displayColumns.value.length;
-    const newRowIndex = Math.max(0, Math.min(rowCount - 1, focusCell.value.rowIndex + rowDelta));
-    const newColumnIndex = Math.max(0, Math.min(columnCount - 1, focusCell.value.columnIndex + columnDelta));
+    const newRowIndex = Math.max(0, Math.min(rowCount - 1, focusedCell.value.rowIndex + rowDelta));
+    const newColumnIndex = Math.max(0, Math.min(columnCount - 1, focusedCell.value.columnIndex + columnDelta));
     if (event.shiftKey) extendCellSelection(newRowIndex, newColumnIndex);
     else startCellSelection(newRowIndex, newColumnIndex);
   });
 
   onKeyStroke("Escape", () => {
-    if (editingCell.value || getIsInputFocused()) return;
+    if (editingCell.value || checkIsInputFocused()) return;
     clearCellSelection();
   });
 };

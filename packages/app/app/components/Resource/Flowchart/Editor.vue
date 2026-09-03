@@ -20,7 +20,7 @@ const { addEdges, onConnect } = useVueFlow();
 const { onDragLeave, onDragOver, onDrop } = useDragAndDrop();
 const isLoading = ref(true);
 // VueFlow emits on every drag frame; coalesce so overlapping saves don't fight over contentVersion
-const debouncedSave = useAutosaveFn(saveFlowchartEditor);
+const debouncedSave = useAutosaveFunction(saveFlowchartEditor);
 
 onConnect(addEdges);
 

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
 
-import { useDownloadFileStore } from "@/store/message/file";
+import { useFileStore } from "@/store/message/file";
 
 const { file, isPreview, url } = defineProps<FileRendererComponentProps>();
-const downloadFileStore = useDownloadFileStore();
-const { fileUrlMap } = storeToRefs(downloadFileStore);
+const fileStore = useFileStore();
+const { fileUrlMap } = storeToRefs(fileStore);
 // Show the lightweight thumbnail inline when one exists — the lightbox still opens the full-resolution original.
 // It rides the same batched read as the original url, so a rendered list costs no extra query per image.
 const thumbnailUrl = computed(() =>

@@ -16,7 +16,7 @@ import { Cameras } from "phaser";
 import { useCameraStore } from "vue-phaserjs";
 
 export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
-  const teleportObject = useGetInteractiveObject(teleportObjects);
+  const teleportObject = useInteractiveObject(teleportObjects);
   if (!teleportObject) return false;
 
   const teleportTargetTiledObjectProperty = getTiledObjectProperty<TeleportTarget>(

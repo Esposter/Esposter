@@ -11,7 +11,7 @@ import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
-import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
+import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -20,7 +20,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const { handleShowMessageInput } = dialogStore;
   const monsterPartySceneStore = useMonsterPartySceneStore();
   const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
-  const infoPanelStore = useInfoPanelStore();
+  const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
   const battlePlayerStore = useBattlePlayerStore();
   const { launchScene, previousSceneKey, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
 
@@ -55,10 +55,10 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
     switch (previousSceneKey.value) {
       case SceneKey.Battle:
         if (checkIsMonsterFainted(value)) {
-          infoPanelStore.infoDialogMessage.text = "Selected monster is fainted.";
+          monsterPartyInfoPanelStore.infoDialogMessage.text = "Selected monster is fainted.";
           return;
         } else if (battlePlayerStore.activeMonster.id === value.id) {
-          infoPanelStore.infoDialogMessage.text = "Selected monster is already battling.";
+          monsterPartyInfoPanelStore.infoDialogMessage.text = "Selected monster is already battling.";
           return;
         }
         switchToPreviousScene(scene);
@@ -86,7 +86,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
 
   const onCancel = (scene: SceneWithPlugins) => {
     if (previousSceneKey.value === SceneKey.Battle && checkIsMonsterFainted(battlePlayerStore.activeMonster)) {
-      infoPanelStore.infoDialogMessage.text = "You need to select a monster to switch to.";
+      monsterPartyInfoPanelStore.infoDialogMessage.text = "You need to select a monster to switch to.";
       return;
     }
 

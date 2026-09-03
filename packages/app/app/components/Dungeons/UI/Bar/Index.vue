@@ -28,7 +28,7 @@ const settingsStore = useSettingsStore();
 const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore);
 const barWidth = computed(() => (width * barPercentage) / 100);
 const barDisplayWidth = ref(barWidth.value);
-const { leftCapDisplayWidth, middleDisplayWidth, rightCapDisplayWidth, syncDisplayWidths } = useVDisplayWidths(
+const { leftCapDisplayWidth, middleDisplayWidth, rightCapDisplayWidth, syncDisplayWidths } = useDisplayWidths(
   () => width,
   barWidth,
 );

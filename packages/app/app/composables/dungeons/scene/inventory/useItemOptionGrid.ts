@@ -21,7 +21,7 @@ const ItemOptionGrid = new Grid<(Item | PlayerSpecialInput.Cancel)[][]>({
 export const useItemOptionGrid = createUseGrid(ItemOptionGrid, (grid) => {
   const inventorySceneStore = useInventorySceneStore();
   const { inventory } = storeToRefs(inventorySceneStore);
-  grid.grid = computed(() => [...inventory.value.map((i) => [i]), [PlayerSpecialInput.Cancel]]);
+  grid.grid = computed(() => [...inventory.value.map((item) => [item]), [PlayerSpecialInput.Cancel]]);
 
   watchDeep(inventory, () => {
     if (unref(grid.validate(grid.position.value))) return;

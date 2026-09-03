@@ -6,12 +6,12 @@ import { RESOURCE_SEARCH_DEBOUNCE_MS } from "@/services/resource/search/constant
 // Buffers in a local clone and lands on the filter once it settles; the clone keeps filter → field flowing
 // (back navigation, Clear filters) while the debounced value follows field → filter
 export const useDebouncedFilter = (filter: Ref<string>) => {
-  const { cloned: input } = useCloned(filter);
-  const debounced = refDebounced(input, RESOURCE_SEARCH_DEBOUNCE_MS);
+  const { cloned: editedFilter } = useCloned(filter);
+  const debouncedFilter = refDebounced(editedFilter, RESOURCE_SEARCH_DEBOUNCE_MS);
 
-  watch(debounced, (newValue) => {
+  watch(debouncedFilter, (newValue) => {
     filter.value = newValue;
   });
 
-  return { debounced, input };
+  return { debouncedFilter, editedFilter };
 };

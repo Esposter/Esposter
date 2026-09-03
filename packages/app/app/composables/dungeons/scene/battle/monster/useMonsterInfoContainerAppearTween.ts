@@ -4,9 +4,9 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 import { useTween } from "vue-phaserjs";
 
 export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {
-  const store = useBattleMonsterStore(isEnemy);
-  const { initialMonsterInfoContainerPosition } = store;
-  const { monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(store);
+  const battleMonsterStore = useBattleMonsterStore(isEnemy);
+  const { initialMonsterInfoContainerPosition } = battleMonsterStore;
+  const { monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(battleMonsterStore);
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   const xEnd = isEnemy ? 0 : 556;

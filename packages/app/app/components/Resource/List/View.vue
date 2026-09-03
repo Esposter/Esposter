@@ -40,7 +40,7 @@ const {
   updatedBefore,
   updatedFilter,
 } = useResourceListFilters(defaultSortBy);
-const { debounced: search, input: searchInput } = useDebouncedFilter(searchQuery);
+const { debouncedFilter: search, editedFilter: searchInput } = useDebouncedFilter(searchQuery);
 const { count, createResourcesPageReader, error, isPending, items, readResources, refresh } = useReadResources(
   {
     searchQuery: search,

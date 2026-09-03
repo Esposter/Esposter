@@ -3,7 +3,7 @@ import type { FileEntity, MessageEntity } from "@esposter/db-schema";
 
 import { getFileCornerStyle } from "@/services/message/file/getFileCornerStyle";
 import { useDataStore } from "@/store/message/data";
-import { useDownloadFileStore } from "@/store/message/file";
+import { useFileStore } from "@/store/message/file";
 import { useFileDialogStore } from "@/store/message/file/dialog";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
@@ -19,8 +19,8 @@ const { columnLayout, file, index, isPreview, message } = defineProps<FileProps>
 const isCreator = await useIsCreator(() => message);
 const dataStore = useDataStore();
 const { deleteFile } = dataStore;
-const downloadFileStore = useDownloadFileStore();
-const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
+const fileStore = useFileStore();
+const { fileUrlMap, viewableFiles } = storeToRefs(fileStore);
 const fileDialogStore = useFileDialogStore();
 const { viewingFileId } = storeToRefs(fileDialogStore);
 const url = computed(() => fileUrlMap.value.get(file.id)?.url ?? "");

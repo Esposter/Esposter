@@ -26,11 +26,11 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
   const sortBy = ref<readonly SortItem[]>([]);
   const selectedRowIds = ref<string[]>([]);
   const filteredRows = computed(() => filterDataSourceRows(sheetStore.dataSource.rows, filterStore.columnFilters));
-  const rowIndexIdMap = computed(() => new Map(filteredRows.value.map((row, index) => [row.id, index])));
+  const rowIdIndexMap = computed(() => new Map(filteredRows.value.map((row, index) => [row.id, index])));
   // A computed column keeps nothing in `row.data`, so every cell — displayed, searched or sorted — has to come
   // Through `computeValue` rather than off the row
   const getCellValue = (row: Row, column: Column): ColumnValue =>
-    computeValue(filteredRows.value, row, columnStore.columns, column, rowIndexIdMap.value.get(row.id));
+    computeValue(filteredRows.value, row, columnStore.columns, column, rowIdIndexMap.value.get(row.id));
   const getCellText = (row: Row, column: Column): string => getDisplayText(getCellValue(row, column), column);
   const headers = computed<DataTableHeader<Row>[]>(() => [
     { key: "data-table-select", sortable: false, title: "" },
@@ -75,7 +75,7 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
     headers,
     itemsPerPage,
     page,
-    rowIndexIdMap,
+    rowIdIndexMap,
     search,
     selectedRowIds,
     sortBy,

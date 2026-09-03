@@ -4,7 +4,7 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import { DEFAULT_INFO_DIALOG_MESSAGE } from "@/services/dungeons/scene/monsterParty/constants";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useDialogStore } from "@/store/dungeons/dialog";
-import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
+import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { Input } from "phaser";
 import { Container, onCreate, Rectangle, Text } from "vue-phaserjs";
 
@@ -14,8 +14,8 @@ const { controls } = storeToRefs(controlsStore);
 const dialogStore = useDialogStore();
 const { isWaitingForPlayerSpecialInput } = storeToRefs(dialogStore);
 const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
-const infoPanelStore = useInfoPanelStore();
-const { infoDialogMessage, infoTextDisplayWidth } = storeToRefs(infoPanelStore);
+const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
+const { infoDialogMessage, infoTextDisplayWidth } = storeToRefs(monsterPartyInfoPanelStore);
 const rectangleHeight = 65;
 const cancelButtonActive = computed(() => monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel);
 const y = ref<number>();

@@ -6,7 +6,7 @@ export const useFilterStore = defineStore("resource/sheet/filter", () => {
     columnFilters.value = {};
   };
   const setColumnFilter = (columnName: string, filter: ColumnFilter | undefined) => {
-    const { [columnName]: _, ...rest } = columnFilters.value;
+    const { [columnName]: _removedFilter, ...rest } = columnFilters.value;
     columnFilters.value = filter ? { ...rest, [columnName]: filter } : rest;
   };
   return { clearColumnFilters, columnFilters, setColumnFilter };

@@ -6,7 +6,7 @@ import { useSearchMessageStore } from "@/store/message/search";
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
 const { createFilter } = searchMessageStore;
-const { isSearchQueryEmpty, menu, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
+const { isMenuOpen, isSearchQueryEmpty, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
 const searchQueryOnFocus = ref("");
 const searchInput = useTemplateRef("searchInput");
 const blur = () => {
@@ -39,7 +39,7 @@ const blur = () => {
         // Enter only ever searches: the colon is what converts a keyword, so by the time Enter is pressed the query
         // Is search text. It never fills a pending chip either — only a picker gives a filter its value
         if (isSearchQueryEmpty) return;
-        menu = false;
+        isMenuOpen = false;
         // The read captures the query a microtask after this call, and blurring clears the field — so the search
         // Goes out first and the field is left afterwards, or the capture reads the emptiness the blur caused
         await readSearchedMessages();
@@ -51,7 +51,7 @@ const blur = () => {
         // 1. The menu tracks focus in both directions. Losing focus has to close it here rather than leaving it to
         // The overlay's own click-away, because Vuetify's clear lands first and the closed menu is what makes
         // `@update:search` ignore it — interacting with the menu never reaches this, since it prevents mousedown
-        menu = value;
+        isMenuOpen = value;
         // 2. Focus gained: save the current search query, because Vuetify is about to clear the field
         if (value) searchQueryOnFocus = searchQuery;
         // 3. Focus lost with a now-empty query: the user selected an item, so restore empty to stop old text reappearing.
@@ -66,8 +66,8 @@ const blur = () => {
     @update:search="
       (value: string) => {
         // Ignore internal clear value callback on blur event
-        if (!value && !menu) return;
-        if (value) menu = true;
+        if (!value && !isMenuOpen) return;
+        if (value) isMenuOpen = true;
 
         const filterType = getFilterTypeFromSearchQuery(value);
         if (filterType) {

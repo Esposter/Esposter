@@ -36,13 +36,13 @@ export const useSubmitSlashCommand = () => {
       return;
     }
 
-    const payload = {
+    const command = {
       parameterValues: parameterValues.value,
       type: pendingSlashCommand.value.type,
     } as {
       [P in SlashCommandType]: { parameterValues: SlashCommandParameters<P>; type: P };
     }[SlashCommandType];
     clearPendingSlashCommand();
-    await executeSlashCommand(payload);
+    await executeSlashCommand(command);
   };
 };

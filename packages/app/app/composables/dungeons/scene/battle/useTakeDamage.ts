@@ -1,10 +1,10 @@
 export const useTakeDamage = (isEnemy: boolean) => (damage: number) => {
-  const store = useBattleMonsterStore(isEnemy);
-  const { activeMonster } = storeToRefs(store);
+  const battleMonsterStore = useBattleMonsterStore(isEnemy);
+  const { activeMonster } = storeToRefs(battleMonsterStore);
 
-  let newHp = activeMonster.value.status.health - damage;
-  if (newHp < 0) newHp = 0;
-  activeMonster.value.status.health = newHp;
+  let newHealth = activeMonster.value.status.health - damage;
+  if (newHealth < 0) newHealth = 0;
+  activeMonster.value.status.health = newHealth;
 
   return useMonsterTakeDamageTween(isEnemy);
 };

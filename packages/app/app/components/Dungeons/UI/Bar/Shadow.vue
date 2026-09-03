@@ -13,7 +13,7 @@ const { imagePosition, scaleY, width } = defineProps<ShadowProps>();
 const leftCapShadowDisplayWidth = ref<number>();
 const rightCapShadowDisplayWidth = ref<number>();
 // The shadow is always full: the middle takes whatever the two caps leave, where the bar in front of it has a
-// Fill to animate and gets its widths from `useVDisplayWidths`
+// Fill to animate and gets its widths from `useDisplayWidths`
 const middleShadowDisplayWidth = computed(
   () => width - ((leftCapShadowDisplayWidth.value ?? 0) + (rightCapShadowDisplayWidth.value ?? 0)),
 );

@@ -12,7 +12,7 @@ import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 export const chestInteractionEffect: Effect = async (scene, chestObjects) => {
-  const chestObject = useGetInteractiveObject(chestObjects);
+  const chestObject = useInteractiveObject(chestObjects);
   if (!chestObject) return false;
 
   const worldSceneStore = useWorldSceneStore();

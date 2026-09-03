@@ -53,34 +53,34 @@ export const useReadMessages = () => {
     return readItems(async () => {
       const rowKey = getRouteParamString(currentRoute.value.params.rowKey);
       if (rowKey) {
-        const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
-        if (messagesByRowKeys.length > 0) {
-          const response = await $trpc.message.readMessages.query({
-            cursor: serialize({ rowKey: takeOne(messagesByRowKeys).rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
+        const messages = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
+        if (messages.length > 0) {
+          const cursorPaginationData = await $trpc.message.readMessages.query({
+            cursor: serialize({ rowKey: takeOne(messages).rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
             isIncludeValue: true,
             roomId,
           });
           hasMoreNewer.value = true;
           nextCursorNewer.value = serialize({ rowKey: getReverseTickedTimestamp(rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
-          await readMetadata(response.items);
-          return response;
+          await readMetadata(cursorPaginationData.items);
+          return cursorPaginationData;
         }
       }
 
-      const response = await $trpc.message.readMessages.query({ roomId });
+      const cursorPaginationData = await $trpc.message.readMessages.query({ roomId });
       hasMoreNewer.value = false;
       nextCursorNewer.value = "";
-      await readMetadata(response.items);
-      return response;
+      await readMetadata(cursorPaginationData.items);
+      return cursorPaginationData;
     });
   };
 
   const readMoreMessages = (onComplete: () => void) => {
     const roomId = requirePartitionKey(currentRoomId.value, readMoreMessages.name);
     return readMoreItems(async (cursor) => {
-      const response = await $trpc.message.readMessages.query({ cursor, roomId });
-      await readMetadata(response.items);
-      return response;
+      const cursorPaginationData = await $trpc.message.readMessages.query({ cursor, roomId });
+      await readMetadata(cursorPaginationData.items);
+      return cursorPaginationData;
     }, onComplete);
   };
 

@@ -10,10 +10,10 @@ import { useRoomStore } from "@/store/message/room";
 import { READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 import { checkIsServer, chunk, getResultAsync, MAX_READ_LIMIT, noop, Operation } from "@esposter/shared";
 
-export const useDownloadFileStore = defineStore("message/file", () => {
+export const useFileStore = defineStore("message/file", () => {
   const roomStore = useRoomStore();
   const dataStore = useDataStore();
-  const readFileUrls = useReadFileUrls();
+  const baseReadFileUrls = useReadFileUrls();
   const {
     data: fileUrlMap,
     getData,
@@ -32,9 +32,9 @@ export const useDownloadFileStore = defineStore("message/file", () => {
   // Out together and are merged once every response is in — serialised, the last chunk's images stay broken
   // For as many round-trip latencies as there are chunks. Merging after they all resolve is what keeps the
   // Single read-modify-write of the room map from losing a concurrent chunk's entries.
-  const storeReadFileUrls = async (roomId: string, files: FileEntity[]) => {
+  const readFileUrls = async (roomId: string, files: FileEntity[]) => {
     const newFileUrlMaps = await Promise.all(
-      chunk(files, MAX_READ_LIMIT).map((fileChunk) => readFileUrls(fileChunk, roomId)),
+      chunk(files, MAX_READ_LIMIT).map((fileChunk) => baseReadFileUrls(fileChunk, roomId)),
     );
     const roomFileUrlMap = getData(roomId) ?? new Map<string, ReadFileUrl>();
     for (const newFileUrlMap of newFileUrlMaps)
@@ -48,7 +48,7 @@ export const useDownloadFileStore = defineStore("message/file", () => {
   MessageHookMap[Operation.Create].register(async ({ files, partitionKey }) => {
     if (files.length === 0) return;
 
-    await storeReadFileUrls(partitionKey, files);
+    await readFileUrls(partitionKey, files);
   });
   MessageHookMap[Operation.Delete].register((input) => {
     const message = dataStore.items.find(({ rowKey }) => rowKey === input.rowKey);
@@ -69,18 +69,18 @@ export const useDownloadFileStore = defineStore("message/file", () => {
       const roomId = roomStore.currentRoomId;
       if (!roomId) return;
 
-      const expiredAt = Date.now() + READ_SAS_REFRESH_INTERVAL_MS;
+      const expiringAt = Date.now() + READ_SAS_REFRESH_INTERVAL_MS;
       const expiringFiles = dataStore.files.filter((file) => {
         const fileUrl = fileUrlMap.value.get(file.id);
         if (!fileUrl) return false;
-        else if (fileUrl.expiresAt <= expiredAt) return true;
+        else if (fileUrl.expiresAt <= expiringAt) return true;
         // A file that recorded a thumbnail but holds no thumbnail url was only half re-minted: the thumbnail
         // Query resolves to nothing on failure rather than failing the batch the bubble needs. Its original
         // Came back with a full expiry, so without this the entry sits outside the margin for a whole SAS
         // Duration and the room serves multi-megabyte originals until reload. Eligible, it retries next tick.
         else return getHasThumbnail(file) && !fileUrl.thumbnailUrl;
       });
-      await storeReadFileUrls(roomId, expiringFiles);
+      await readFileUrls(roomId, expiringFiles);
     }).match(noop, console.error);
   // The server renders once and discards the store, so the timer would only ever be a leak there.
   if (!checkIsServer()) useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_SAS_REFRESH_INTERVAL_MS);
@@ -99,5 +99,5 @@ export const useDownloadFileStore = defineStore("message/file", () => {
     return files;
   });
 
-  return { fileUrlMap, storeReadFileUrls, viewableFiles };
+  return { fileUrlMap, readFileUrls, viewableFiles };
 });

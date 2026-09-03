@@ -14,7 +14,7 @@ export const useReadEmojis = () => {
     for (const messageRowKey of messageRowKeys)
       setEmojis(
         messageRowKey,
-        emojis.filter((e) => e.messageRowKey === messageRowKey),
+        emojis.filter((emoji) => emoji.messageRowKey === messageRowKey),
       );
   };
 };

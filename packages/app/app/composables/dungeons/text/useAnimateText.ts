@@ -12,18 +12,18 @@ export const useAnimateText = (scene: SceneWithPlugins, targetText: Ref<string>,
   const { play, stop } = getDungeonsSoundEffect(scene, SoundEffectKey.TextBlip, { loop: true });
   const textDelay = useTextDelay();
   const textSections = text.split(/(?<token>\S|\s+)/u).filter(Boolean);
-  let i = 0;
+  let sectionIndex = 0;
 
   play();
 
   return new Promise<void>((resolve) => {
     scene.time.addEvent({
       callback: async () => {
-        const textSection = textSections[i];
+        const textSection = textSections[sectionIndex];
         targetText.value += textSection;
-        i++;
+        sectionIndex++;
 
-        if (i === textSections.length) {
+        if (sectionIndex === textSections.length) {
           stop();
           // Resolve after vue's rendering cycle has caught up with phaser
           await nextTick();

@@ -7,16 +7,16 @@ export const useDraftItems = () => {
   const { drafts } = storeToRefs(inputStore);
   const roomStore = useRoomStore();
   const { rooms } = storeToRefs(roomStore);
-  const roomById = computed(() => new Map(rooms.value.map((room) => [room.id, room])));
+  const roomMap = computed(() => new Map(rooms.value.map((room) => [room.id, room])));
   return computed(() =>
     [...drafts.value]
       .flatMap(([composerKey, draft]) => {
         const { roomId, threadRootRowKey } = getComposerTarget(composerKey);
-        const room = roomById.value.get(roomId);
+        const room = roomMap.value.get(roomId);
         return room
           ? [{ composerKey, content: draft.content, room, threadRootRowKey, updatedAt: draft.updatedAt }]
           : [];
       })
-      .toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()),
+      .toSorted((firstDraft, secondDraft) => secondDraft.updatedAt.getTime() - firstDraft.updatedAt.getTime()),
   );
 };

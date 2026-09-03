@@ -28,7 +28,7 @@ export const useCallParticipantActions = () => {
   const getActions = (
     participantId: string,
     userId: string,
-    participantIsMuted: boolean,
+    isParticipantMuted: boolean,
     isHandRaised: boolean,
   ): Item[] => {
     const roomId = callRoomId.value;
@@ -48,12 +48,12 @@ export const useCallParticipantActions = () => {
               }),
             {
               applyOptimistic: () => {
-                const oldIsHandRaised =
+                const previousIsHandRaised =
                   participantStore.callSessionParticipantsMap.get(callSessionId)?.get(participantId)?.isHandRaised ??
                   false;
                 setParticipantHandRaised(callSessionId, participantId, false);
                 return () => {
-                  setParticipantHandRaised(callSessionId, participantId, oldIsHandRaised);
+                  setParticipantHandRaised(callSessionId, participantId, previousIsHandRaised);
                 };
               },
               key: participantId,
@@ -62,7 +62,7 @@ export const useCallParticipantActions = () => {
         },
         title: "Lower Hand",
       });
-    if (isForceMuteable.value && !participantIsMuted)
+    if (isForceMuteable.value && !isParticipantMuted)
       items.push({
         icon: "mdi-microphone-off",
         onClick: async () => {
@@ -78,7 +78,7 @@ export const useCallParticipantActions = () => {
         },
         title: "Force Mute",
       });
-    if (isForceMuteable.value && participantIsMuted)
+    if (isForceMuteable.value && isParticipantMuted)
       items.push({
         icon: "mdi-microphone",
         onClick: async () => {

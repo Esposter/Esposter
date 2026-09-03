@@ -7,7 +7,7 @@ import { useRoomStore } from "@/store/message/room";
 export const useSearchMessageStore = defineStore("message/search", () => {
   const roomStore = useRoomStore();
   const { data: searchQuery } = useDataMap(() => roomStore.currentRoomId, "");
-  const menu = ref(false);
+  const isMenuOpen = ref(false);
   const { data: selectedFilters } = useDataMap<Filter[]>(() => roomStore.currentRoomId, []);
   // The chip a picker is currently filling in. Only ever the last one, because a filter is added by typing its
   // Keyword and immediately needs its value, and the picker writes onto the filter itself rather than replacing it
@@ -37,7 +37,7 @@ export const useSearchMessageStore = defineStore("message/search", () => {
     isSearching,
     isSearchQueryEmpty,
     items,
-    menu,
+    isMenuOpen,
     page,
     pageCount,
     searchQuery,

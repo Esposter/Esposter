@@ -42,21 +42,21 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
     await setVolume(newVolumePercentage);
     volumeIncrementCooldown.value += increment;
   };
-  const isUpdateVolume = (input: PlayerInput, settingsOption: SettingsOption): input is Direction => {
-    const shouldUpdateVolume =
+  const checkIsUpdateVolume = (input: PlayerInput, settingsOption: SettingsOption): input is Direction => {
+    const isUpdateVolume =
       settingsOption === SettingsOption.VolumePercentage && (input === Direction.LEFT || input === Direction.RIGHT);
     // We can do a little bit of magic here if we're not updating the volume
     // And reset the volume delta metadata if it's not 0 since we know that the user
     // Has lifted the input direction key
-    if (!shouldUpdateVolume) {
+    if (!isUpdateVolume) {
       if (volumeDelta.value !== 0) volumeDelta.value = 0;
       if (volumeIncrementCooldown.value !== 0) volumeIncrementCooldown.value = 0;
     }
-    return shouldUpdateVolume;
+    return isUpdateVolume;
   };
 
   return {
-    isUpdateVolume,
+    checkIsUpdateVolume,
     setVolume,
     updateVolume,
     volumePercentage,

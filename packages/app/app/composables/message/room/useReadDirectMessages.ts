@@ -7,26 +7,28 @@ export const useReadDirectMessages = () => {
 
   const readDirectMessages = () =>
     readItems(async () => {
-      const data = await $trpc.room.directMessage.readDirectMessages.query();
-      if (data.items.length > 0) {
-        const participantsData = await $trpc.room.directMessage.readDirectMessageParticipants.query(
-          data.items.map(({ id }) => id),
+      const cursorPaginationData = await $trpc.room.directMessage.readDirectMessages.query();
+      if (cursorPaginationData.items.length > 0) {
+        const directMessageParticipants = await $trpc.room.directMessage.readDirectMessageParticipants.query(
+          cursorPaginationData.items.map(({ id }) => id),
         );
-        for (const { participants, roomId } of participantsData) storeDirectMessageParticipants(roomId, participants);
+        for (const { participants, roomId } of directMessageParticipants)
+          storeDirectMessageParticipants(roomId, participants);
       }
-      return data;
+      return cursorPaginationData;
     });
 
   const readMoreDirectMessages = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {
-      const data = await $trpc.room.directMessage.readDirectMessages.query({ cursor });
-      if (data.items.length > 0) {
-        const participantsData = await $trpc.room.directMessage.readDirectMessageParticipants.query(
-          data.items.map(({ id }) => id),
+      const cursorPaginationData = await $trpc.room.directMessage.readDirectMessages.query({ cursor });
+      if (cursorPaginationData.items.length > 0) {
+        const directMessageParticipants = await $trpc.room.directMessage.readDirectMessageParticipants.query(
+          cursorPaginationData.items.map(({ id }) => id),
         );
-        for (const { participants, roomId } of participantsData) storeDirectMessageParticipants(roomId, participants);
+        for (const { participants, roomId } of directMessageParticipants)
+          storeDirectMessageParticipants(roomId, participants);
       }
-      return data;
+      return cursorPaginationData;
     }, onComplete);
 
   return { readDirectMessages, readMoreDirectMessages };

@@ -8,9 +8,9 @@ export const useReadSentMessages = () => {
   const readSentMessages = () =>
     readItems(
       async () => {
-        const { count: total, data } = await $trpc.message.readMySentMessages.query();
-        sentMessageCount.value = total;
-        return data;
+        const { count, data: sentMessages } = await $trpc.message.readMySentMessages.query();
+        sentMessageCount.value = count;
+        return sentMessages;
       },
       () => {
         isPending.value = false;
@@ -18,8 +18,8 @@ export const useReadSentMessages = () => {
     );
   const readMoreSentMessages = (onComplete: () => void) =>
     readMoreItems(async (offset) => {
-      const { data } = await $trpc.message.readMySentMessages.query({ offset });
-      return data;
+      const { data: sentMessages } = await $trpc.message.readMySentMessages.query({ offset });
+      return sentMessages;
     }, onComplete);
   return { readMoreSentMessages, readSentMessages };
 };

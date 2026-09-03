@@ -9,7 +9,7 @@ const { note } = storeToRefs(noteStore);
 // The Suspense-wrapped blade awaits the content before creating the editor, so it opens seeded with the doc
 await loadContent();
 // Tiptap onUpdate fires per keystroke, so writes coalesce on the shared autosave cadence like the other editors
-const debouncedSave = useAutosaveFn(saveNote);
+const debouncedSave = useAutosaveFunction(saveNote);
 // UseEditor constructs the editor in onMounted (client-only), so the doc is already loaded by then, and
 // Tears it down in its own onBeforeUnmount — nothing here has to
 const editor = useEditor({

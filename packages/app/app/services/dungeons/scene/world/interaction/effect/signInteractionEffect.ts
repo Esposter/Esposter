@@ -6,7 +6,7 @@ import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { Direction } from "grid-engine";
 
 export const signInteractionEffect: Effect = async (scene, signObjects) => {
-  const signObject = useGetInteractiveObject(signObjects, {
+  const signObject = useInteractiveObject(signObjects, {
     [Direction.DOWN]: false,
     [Direction.LEFT]: false,
     [Direction.RIGHT]: false,

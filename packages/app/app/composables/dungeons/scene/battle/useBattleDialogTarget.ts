@@ -1,12 +1,12 @@
 import { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
-import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
+import { useBattleInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { useDialogStore } from "@/store/dungeons/dialog";
 
 export const useBattleDialogTarget = () => {
   const dialogStore = useDialogStore();
   const { inputPromptCursorDisplayWidth } = storeToRefs(dialogStore);
-  const infoPanelStore = useInfoPanelStore();
-  const { line1DialogMessage, line1TextDisplayWidth } = storeToRefs(infoPanelStore);
+  const battleInfoPanelStore = useBattleInfoPanelStore();
+  const { line1DialogMessage, line1TextDisplayWidth } = storeToRefs(battleInfoPanelStore);
   const inputPromptCursorX = computed(
     () => (line1TextDisplayWidth.value ?? 0) + (inputPromptCursorDisplayWidth.value ?? 0) * 2.7,
   );

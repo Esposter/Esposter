@@ -23,7 +23,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const settingsStore = useSettingsStore();
   const { setSettings } = settingsStore;
   const volumeStore = useVolumeStore();
-  const { isUpdateVolume, updateVolume } = volumeStore;
+  const { checkIsUpdateVolume, updateVolume } = volumeStore;
   const colorPickerStore = useColorPickerStore();
   const { updateThemeModeSetting } = colorPickerStore;
   const selectedSettingsOption = computed(
@@ -67,7 +67,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     getResultAsync(async () => {
       if (checkIsPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
       // Handle special cases first with player direction input
-      else if (isUpdateVolume(input, selectedSettingsOption.value)) await updateVolume(input, delta);
+      else if (checkIsUpdateVolume(input, selectedSettingsOption.value)) await updateVolume(input, delta);
       else if (checkIsUpdateThemeModeSetting(justDownInput, selectedSettingsOption.value))
         await updateThemeModeSetting(justDownInput);
       // We ignore validation when moving up/down since we auto update grid x

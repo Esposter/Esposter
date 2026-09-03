@@ -20,7 +20,7 @@ const table = useTemplateRef("table");
 const columnStore = useColumnStore();
 const { displayColumns } = storeToRefs(columnStore);
 const rowStore = useRowStore();
-const { filteredRows, itemsPerPage, page, rowIndexIdMap, search, selectedRowIds, sortBy, tableHeaders } =
+const { filteredRows, itemsPerPage, page, rowIdIndexMap, search, selectedRowIds, sortBy, tableHeaders } =
   storeToRefs(rowStore);
 const rowDialogStore = useRowDialogStore();
 const { editingId } = storeToRefs(rowDialogStore);
@@ -46,8 +46,8 @@ const { selectedCellRange } = storeToRefs(cellStore);
 const {
   clearCellSelection,
   extendCellSelection,
-  isCellInRange,
-  isEditingCell,
+  checkIsCellInRange,
+  checkIsEditingCell,
   shiftStartCellSelection,
   startCellSelection,
 } = cellStore;
@@ -59,13 +59,13 @@ const cellProps: CellPropsFunction<Row> = ({ column: headerColumn, item }) => {
   const columnData = columnKeyMap.value.get(headerColumn.key);
   if (!columnData) return {};
   const { column, columnIndex } = columnData;
-  const rowIndex = rowIndexIdMap.value.get(item.id);
+  const rowIndex = rowIdIndexMap.value.get(item.id);
   if (rowIndex === undefined) return {};
   const result: Record<string, unknown> = {
     onMousedown: (event: MouseEvent) => {
       if (
         event.button !== 0 ||
-        isEditingCell(rowIndex, column.name) ||
+        checkIsEditingCell(rowIndex, column.name) ||
         event.target instanceof HTMLInputElement ||
         event.target instanceof HTMLTextAreaElement
       )
@@ -78,7 +78,7 @@ const cellProps: CellPropsFunction<Row> = ({ column: headerColumn, item }) => {
       if (selectedCellRange.value && event.buttons & 1) extendCellSelection(rowIndex, columnIndex);
     },
   };
-  if (isCellInRange(rowIndex, columnIndex))
+  if (checkIsCellInRange(rowIndex, columnIndex))
     result.style = { background: "rgba(var(--v-theme-info), var(--v-disabled-opacity))" };
   return result;
 };
@@ -118,13 +118,13 @@ onClickOutside(table, () => {
           <ResourceSheetRowTopSlot />
         </template>
         <template #[`item.#`]="{ item }">
-          {{ (rowIndexIdMap.get(item.id) ?? -1) + 1 }}
+          {{ (rowIdIndexMap.get(item.id) ?? -1) + 1 }}
         </template>
         <template #[`item.drag`]>
           <v-icon v-if="isDraggable" :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
         </template>
         <template #[`item.actions`]="{ item }">
-          <ResourceSheetRowActionSlot :index="rowIndexIdMap.get(item.id) ?? -1" :row="item" />
+          <ResourceSheetRowActionSlot :index="rowIdIndexMap.get(item.id) ?? -1" :row="item" />
         </template>
         <template
           v-for="column of displayColumns"
@@ -134,7 +134,7 @@ onClickOutside(table, () => {
           <ResourceSheetRowHeaderSlot :column :get-sort-icon :header-column :is-sorted :toggle-sort />
         </template>
         <template v-for="column of displayColumns" :key="column.id" #[`item.${toColumnKey(column.name)}`]="{ item }">
-          <ResourceSheetRowItemSlot :column :item :row-index="rowIndexIdMap.get(item.id) ?? -1" />
+          <ResourceSheetRowItemSlot :column :item :row-index="rowIdIndexMap.get(item.id) ?? -1" />
         </template>
         <template #tfoot>
           <ResourceSheetRowFooterSlot />
@@ -145,7 +145,7 @@ onClickOutside(table, () => {
       v-if="editingRow"
       :key="editingRow.id"
       :columns="dataSource.columns"
-      :index="rowIndexIdMap.get(editingRow.id) ?? -1"
+      :index="rowIdIndexMap.get(editingRow.id) ?? -1"
       :row="editingRow"
     />
     <ResourceSheetRowConfirmDeleteDialog />

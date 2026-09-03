@@ -4,7 +4,7 @@ import { SearchFilterComponentMap } from "@/services/message/filter/SearchFilter
 import { useSearchMessageStore } from "@/store/message/search";
 
 const searchMessageStore = useSearchMessageStore();
-const { activeSelectedFilter, menu } = storeToRefs(searchMessageStore);
+const { activeSelectedFilter, isMenuOpen } = storeToRefs(searchMessageStore);
 // The menu is the field's own dropdown, so it hangs directly below it at exactly its width — a panel wider or
 // Narrower than the input reads as a separate surface, and one above it covers the text being typed. Vuetify
 // Matches an activator's width only for its own select menus, so the width is measured rather than declared
@@ -14,7 +14,7 @@ const { width } = useElementSize(activator);
 
 <template>
   <v-menu
-    v-model="menu"
+    v-model="isMenuOpen"
     location="bottom"
     :close-on-content-click="false"
     :height="500"
