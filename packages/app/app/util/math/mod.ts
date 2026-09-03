@@ -1,1 +1,1 @@
-export const mod = (n: number, m: number) => ((n % m) + m) % m;
+export const mod = (dividend: number, divisor: number) => ((dividend % divisor) + divisor) % divisor;
