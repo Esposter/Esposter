@@ -18,7 +18,7 @@ export const buildPointsLeaderboard = (
   userTotals: readonly UserPointsTotal[],
   callerUserId?: string,
 ): PointsLeaderboard => {
-  const ranked = userTotals.toSorted(
+  const sortedUserTotals = userTotals.toSorted(
     (first, second) =>
       second.points - first.points ||
       second.unlockCount - first.unlockCount ||
@@ -27,11 +27,11 @@ export const buildPointsLeaderboard = (
   const rankedEntries: PointsLeaderboardEntry[] = [];
   let previousPoints = Number.NaN;
   let previousRank = 0;
-  for (const [index, entry] of ranked.entries()) {
-    const rank = entry.points === previousPoints ? previousRank : index + 1;
-    previousPoints = entry.points;
+  for (const [index, userTotal] of sortedUserTotals.entries()) {
+    const rank = userTotal.points === previousPoints ? previousRank : index + 1;
+    previousPoints = userTotal.points;
     previousRank = rank;
-    rankedEntries.push({ points: entry.points, rank, unlockCount: entry.unlockCount, user: entry.user });
+    rankedEntries.push({ points: userTotal.points, rank, unlockCount: userTotal.unlockCount, user: userTotal.user });
   }
   return {
     entries: rankedEntries.slice(0, MAX_POINTS_LEADERBOARD_ENTRIES),

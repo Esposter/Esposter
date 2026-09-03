@@ -20,14 +20,14 @@ describe(getCursorPaginationData, () => {
   test("gets partial", () => {
     expect.hasAssertions();
 
-    const item1: CompositeKey = { partitionKey: "", rowKey: "" };
-    const item2: CompositeKey = { partitionKey: " ", rowKey: " " };
-    const items: CompositeKey[] = [item1, item2];
+    const firstItem: CompositeKey = { partitionKey: "", rowKey: "" };
+    const secondItem: CompositeKey = { partitionKey: " ", rowKey: " " };
+    const items: CompositeKey[] = [firstItem, secondItem];
 
     expect(getCursorPaginationData(items, 1, [])).toStrictEqual({
       hasMore: true,
-      items: [item1],
-      nextCursor: getNextCursor([item1], []),
+      items: [firstItem],
+      nextCursor: getNextCursor([firstItem], []),
     });
   });
 });

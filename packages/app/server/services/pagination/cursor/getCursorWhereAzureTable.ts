@@ -15,7 +15,7 @@ export const getCursorWhereAzureTable = <TItem extends AzureEntity>(
   const serializedSortBy = sortBy.map(({ key, ...rest }) => ({ key: serializeKey(key), ...rest }));
   return Object.entries(cursors).map(([key, value]) => {
     const serializedKey = serializeKey(key);
-    const sortItem = serializedSortBy.find((s) => s.key === serializedKey);
+    const sortItem = serializedSortBy.find(({ key: sortKey }) => sortKey === serializedKey);
     if (!sortItem) throw new NotFoundError(getCursorWhereAzureTable.name, key);
 
     let operator: BinaryOperator;
