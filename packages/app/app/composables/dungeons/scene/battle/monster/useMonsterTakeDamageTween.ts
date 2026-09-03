@@ -7,8 +7,8 @@ export const useMonsterTakeDamageTween = (isEnemy: boolean) => {
   const { isSkipAnimations } = storeToRefs(settingsStore);
   if (isSkipAnimations.value) return undefined;
 
-  const store = useBattleMonsterStore(isEnemy);
-  const { monsterTween } = storeToRefs(store);
+  const battleMonsterStore = useBattleMonsterStore(isEnemy);
+  const { monsterTween } = storeToRefs(battleMonsterStore);
   return new Promise<void>((resolve) => {
     useTween(monsterTween, {
       alpha: getTweenRange(1, 0),

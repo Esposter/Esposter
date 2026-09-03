@@ -10,7 +10,7 @@ export const useInteractWithNpc = async (scene: SceneWithPlugins): Promise<boole
   const { player } = storeToRefs(playerStore);
   const npcStore = useNpcStore();
   const { items } = storeToRefs(npcStore);
-  const npc = useGetInteractiveObject(
+  const npc = useInteractiveObject(
     items.value.map((npcItem) => Object.assign(npcItem, npcItem.path[npcItem.pathIndex])),
   );
   if (!npc) return false;

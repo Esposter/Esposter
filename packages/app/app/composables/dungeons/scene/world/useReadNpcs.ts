@@ -27,10 +27,10 @@ export const useReadNpcs = () => {
     if (!(layerName.includes(ObjectType.Npc) && npcLayer)) continue;
 
     const npcLayerObjects = getObjects(tilemap.value, npcLayer);
-    const npcObject = npcLayerObjects.find((obj) => obj.type === ObjectType.Npc);
+    const npcObject = npcLayerObjects.find((object) => object.type === ObjectType.Npc);
     if (!npcObject) continue;
 
-    const npcPathObjects = npcLayerObjects.filter((obj) => obj.type === ObjectType.NpcPath);
+    const npcPathObjects = npcLayerObjects.filter((object) => object.type === ObjectType.NpcPath);
     const npcPath: Record<number, Position> = {
       0: { x: npcObject.x, y: npcObject.y },
     };
