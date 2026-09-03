@@ -24,6 +24,15 @@ export default {
       selector: "TSInterfaceDeclaration[id.name=/^A[A-Z]/]",
     },
     {
+      // One structure, one spelling: the repo's own lookup tables already fix the word order
+      // (`EmojiGroupIconMap` is group -> icon), so a local reading `iconsByEmojiGroup` or `idToAlias` says the
+      // Same thing a second way. Only the map's own name is matched — a function keeps its `By<Selector>`.
+      message:
+        "Name a map `<key><value>Map` (or `<value>Map` where the key is a field the value already carries) — not `<value>By<key>` or `<key>To<value>`. See the naming skill.",
+      selector:
+        ":matches(VariableDeclarator[id.name=/^[a-z][A-Za-z0-9]*(By|To)[A-Z]/]:matches([init.callee.name='Map'], [init.callee.object.name='Object'][init.callee.property.name='groupBy']), :matches(VariableDeclarator, TSPropertySignature, PropertyDefinition, Property)[key.name=/^by[A-Z]/], VariableDeclarator[id.name=/^by[A-Z]/])",
+    },
+    {
       message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
       selector:
         ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",
