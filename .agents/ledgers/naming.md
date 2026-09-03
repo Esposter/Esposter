@@ -21,7 +21,7 @@
 | `server/services/message`                                                                                                                   | —          |                                                                                                 |
 | `server/services/resource`                                                                                                                  | —          |                                                                                                 |
 | `server/services` — `room`, `role`, `user`, `friend`, `post`                                                                                | 2026-09-03 |                                                                                                 |
-| `server/services` — `blueprint`, `program`, `survey`, `dataset`, `dashboard`, `emailEditor`                                                 | —          |                                                                                                 |
+| `server/services` — `blueprint`, `program`, `survey`, `dataset`, `dashboard`, `emailEditor`                                                 | 2026-09-03 |                                                                                                 |
 | `server/services` — `azure`, `storage`, `livekit`, `notification`, `events`, `request`                                                      | 2026-09-03 |                                                                                                 |
 | `server/services` — `auth`, `rateLimiter`, `achievement`, `pagination`, `db`, `blobState`                                                   | 2026-09-03 |                                                                                                 |
 | `app/store`                                                                                                                                 | —          | CRUD verbs, `store*` subscription handlers; split at `message` if too large                     |
@@ -60,7 +60,11 @@ the grounds that a rename is expensive — that is the argument
 - Filename-is-the-export is decidable from the AST plus the path; a custom oxlint plugin could take it whole.
 - `is*`/`has*`/`show*` on a boolean-typed declaration needs types, which `typeAware: true` already provides.
 - Abbreviation bans need a word list, not a rule — leave with the sweep.
-- A `getIs*`/`getHas*` declaration is decidable from the name alone; the three `get*`-returning-a-function cases above are what a rule would have to carve out first.
+- **A `getIs*`/`getHas*` declaration is decidable from the name alone, and the carve-out is now closed.** The
+  only ones that may keep the prefix are the three above, which return a function rather than a boolean; every
+  other one in the repo is a `check*` the pass has not reached yet. A `no-restricted-syntax` selector on a
+  declarator named `^get(Is|Has)[A-Z]` can therefore be written against the swept paths and widened as the
+  remaining units drain.
 - A `const` bound to the call it names — `const readPost = await caller.readPost(…)` — is decidable from the AST alone
   (declarator name equal to the callee's last property), and it is the finding this ledger has now written in five
   files. The fix is always the same: drop the verb prefix, since the binding is the value rather than the fetch.

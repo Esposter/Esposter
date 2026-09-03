@@ -17,7 +17,7 @@ import { TRPCError } from "@trpc/server";
 // A create whose row already exists is the one rejection this path expects — it means a concurrent run
 // Claimed the recipient first. Every other failure is a real fault and propagates, so a transient storage
 // Error is never mistaken for a collision and degraded into a per-row storm that fails anyway
-const getIsCreated = (create: () => Promise<unknown>): Promise<boolean> =>
+const checkIsCreated = (create: () => Promise<unknown>): Promise<boolean> =>
   getResultAsync(create).match(
     () => true,
     (error) => {
@@ -84,7 +84,7 @@ export const generateProgramParticipants = async (
   // Instead of a round trip each — an audience at the read cap costs ten calls rather than a thousand,
   // And this is a single mutation request the owner waits on
   for (const batch of chunk(newParticipants, AZURE_MAX_BATCH_SIZE)) {
-    const isBatchCreated = await getIsCreated(() =>
+    const isBatchCreated = await checkIsCreated(() =>
       programParticipantClient.submitTransaction(batch.map((participant) => ["create", serializeEntity(participant)])),
     );
     if (isBatchCreated) {
@@ -95,7 +95,7 @@ export const generateProgramParticipants = async (
     // Whole batch — replay it insert by insert, which lands everyone this run is still the first to reach
     for (const participant of batch) {
       const { keyValue, rowKey, token } = participant;
-      const isCreated = await getIsCreated(() => createEntity(programParticipantClient, participant));
+      const isCreated = await checkIsCreated(() => createEntity(programParticipantClient, participant));
       if (isCreated) {
         participantsByKeyValue.set(keyValue, { keyValue, token });
         continue;
