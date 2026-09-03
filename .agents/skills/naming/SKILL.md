@@ -22,6 +22,11 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 - `get*` for derivation/display functions: `getFooTooltip`, `getFooTitle`
 - `read*` for async data-fetching functions — never `fetch*` (`fetch` is reserved for the Web API): `readFoos`
   - **A fetch that returns a count is one of them** — `readFoosCount`, and the service behind it takes the procedure's name. `count*` names a pure in-memory tally (`countOccurrences`), where the verb is the whole operation and nothing is fetched. A fetch that groups answers with rows, so it is plural and named for them (`readFooTagCounts`) — the `trpc` skill owns that under Procedure & Result Naming
+- **A thin wrapper over a dependency's own listing keeps that dependency's verb** — `listBlobNames` and
+  `listRoomProfileImageBlobNames` sit on `@azure/storage-blob`'s `listBlobsFlat`, and are read beside that SDK's
+  documentation at every call site. The exception is the operation's verb alone, and only while the wrapper is
+  thin enough that the dependency's call is the whole body; anything that derives an answer from a listing is a
+  `read*` like every other fetch.
 - CRUD prefixes (`create*`, `update*`, `delete*`) for data/store operations
 - `store*` prefix for subscription-driven state-update counterparts of async user actions: `deleteFoo` (user action) + `storeDeleteFoo` (subscription update). Never on unpaired methods
 - `on*` prefix for handlers **only when wrapping an existing named store/service fn**: `onUpdateFoo` wraps `updateFoo`. Direct actions use the action name: `submit`, `save`, `delete` — never `onSubmit`/`onSave`/`onDelete`

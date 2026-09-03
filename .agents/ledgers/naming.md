@@ -50,11 +50,6 @@ the grounds that a rename is expensive — that is the argument
   procedure and service in `packages/app` is now `read*Count`; the storage primitive underneath them keeps
   `count*`, so the question of whether a generic table-client tally is exempt belongs to the `packages/db`
   pass that owns the name.
-- **`list*` is a third async fetch prefix beside `read*`, and it cannot be settled one side at a time.**
-  `listRoomProfileImageBlobNames` wraps `@esposter/db`'s `listBlobNames`, which wraps Azure's own
-  `listBlobsFlat`; renaming ours to `read*` while the helper under it keeps `list*` splits one family across two
-  spellings. Whether `list*` is sanctioned for an enumerating fetch belongs to the `packages/db` pass, which owns
-  the name the wrapper mirrors.
 - **`getIsAuthed` / `getIsRateLimited` / `getIsEntityIdEqualComparator` — `get*` is right, the `Is` is not.**
   All three return a function rather than a boolean, so `check*` would be wrong, but the `Is` still reads as a
   predicate. The middleware pair wants a name saying what it builds; the comparator already has one.
