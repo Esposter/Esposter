@@ -43,13 +43,13 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   // Would drop every knocker the live subscription delivered while the write was in flight
   const getResolveKnockerOptions = (sessionId: string) => ({
     applyOptimistic: () => {
-      const removedIndex = knockers.value.findIndex(({ id }) => id === sessionId);
-      const removedKnocker = knockers.value[removedIndex];
+      const deletedIndex = knockers.value.findIndex(({ id }) => id === sessionId);
+      const deletedKnocker = knockers.value[deletedIndex];
       deleteKnocker(sessionId);
       return () => {
-        if (!removedKnocker || knockers.value.some(({ id }) => id === removedKnocker.id)) return;
+        if (!deletedKnocker || knockers.value.some(({ id }) => id === deletedKnocker.id)) return;
 
-        knockers.value = knockers.value.toSpliced(Math.min(removedIndex, knockers.value.length), 0, removedKnocker);
+        knockers.value = knockers.value.toSpliced(Math.min(deletedIndex, knockers.value.length), 0, deletedKnocker);
       };
     },
     key: sessionId,

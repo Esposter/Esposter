@@ -8,7 +8,7 @@ import type { RevokeRoleInput } from "#shared/models/db/role/RevokeRoleInput";
 import type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
 import type { RoomPermission, RoomRoleInMessage } from "@esposter/db-schema";
 
-import { checkIsManageable as checkIsManageableByPosition } from "#shared/services/room/rbac/checkIsManageable";
+import { checkIsManageable as baseCheckIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { getTopRole } from "@/services/message/member/getTopRole";
 import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks";
 import { MANAGEMENT_PERMISSIONS } from "@/services/room/rbac/constants";
@@ -66,7 +66,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     const roomPermissions = getMyPermissions(roomId);
     if (!roomPermissions) return false;
     return (
-      checkIsManageableByPosition(roomPermissions.topRolePosition, 0, roomPermissions.isRoomOwner) ||
+      baseCheckIsManageable(roomPermissions.topRolePosition, 0, roomPermissions.isRoomOwner) ||
       Boolean(roomPermissions.permissions & MANAGEMENT_PERMISSIONS)
     );
   };
@@ -114,8 +114,8 @@ export const useRoleStore = defineStore("message/room/role", () => {
       const roomRoles = rolesByRoomId[roomId] ?? [];
       setRoles(roomId, roomRoles);
 
-      const currentSelectedId = getSelectedRoleId(roomId);
-      if (currentSelectedId && roomRoles.some(({ id }) => id === currentSelectedId)) continue;
+      const roomSelectedRoleId = getSelectedRoleId(roomId);
+      if (roomSelectedRoleId && roomRoles.some(({ id }) => id === roomSelectedRoleId)) continue;
       const everyoneRole = roomRoles.find(({ isEveryone }) => isEveryone);
       setSelectedRoleId(roomId, (everyoneRole ?? roomRoles[0])?.id ?? "");
     }

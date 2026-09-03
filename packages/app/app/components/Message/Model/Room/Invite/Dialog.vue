@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/message/room";
-import { useDialogStore } from "@/store/message/room/dialog";
+import { useRoomDialogStore } from "@/store/message/room/dialog";
 
-const dialogStore = useDialogStore();
-const { inviteRoomId } = storeToRefs(dialogStore);
+const roomDialogStore = useRoomDialogStore();
+const { inviteRoomId } = storeToRefs(roomDialogStore);
 const roomStore = useRoomStore();
 const { rooms } = storeToRefs(roomStore);
 // Resolved through the primitive so a target whose room has left the list — deleted, left, or paged out — closes

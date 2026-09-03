@@ -3,7 +3,7 @@ import { createRoom } from "@/services/message/room/createRoom.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useRoomStore } from "@/store/message/room";
-import { useDialogStore } from "@/store/message/room/dialog";
+import { useRoomDialogStore } from "@/store/message/room/dialog";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -28,8 +28,8 @@ describe(useRoomStore, () => {
     setCurrentRoomId(first.id);
     const roomStore = useRoomStore();
     const { scopedRoomId } = storeToRefs(roomStore);
-    const dialogStore = useDialogStore();
-    const { settingsRoomId } = storeToRefs(dialogStore);
+    const roomDialogStore = useRoomDialogStore();
+    const { settingsRoomId } = storeToRefs(roomDialogStore);
 
     expect(scopedRoomId.value).toBe(first.id);
 

@@ -27,10 +27,10 @@ export const useCallStore = defineStore("message/room/call", () => {
     clearJoinNotice,
     clearSpeakers,
     deleteCallParticipant,
-    setHandRaised,
-    setMute,
-    setParticipantCamera,
+    setParticipantCameraEnabled,
+    setParticipantHandRaised,
     setParticipantMap,
+    setParticipantMuted,
   } = participantStore;
   const liveKitStore = useLiveKitStore();
   const { connect, disconnect, setCamera, setMicrophone, setRemoteAudioMuted, setScreenShare, setVirtualBackground } =
@@ -65,11 +65,11 @@ export const useCallStore = defineStore("message/room/call", () => {
   usePushToTalk(isInCall);
   const isHandRaised = computed(() => selfParticipant.value?.isHandRaised ?? false);
   const isMuted = computed(() => selfParticipant.value?.isMuted ?? false);
-  const setHandRaisedEnabled = async (newIsHandRaised: boolean, targetSessionId?: string) => {
+  const setHandRaised = async (newIsHandRaised: boolean, targetSessionId?: string) => {
     const callSessionId = activeCallSessionId.value;
-    const sessionIdValue = participantStore.sessionId;
-    const participantSessionId = targetSessionId ?? sessionIdValue;
-    if (!callSessionId || !sessionIdValue || !participantSessionId) return;
+    const sessionId = participantStore.sessionId;
+    const participantSessionId = targetSessionId ?? sessionId;
+    if (!callSessionId || !sessionId || !participantSessionId) return;
 
     await executeSetHandRaisedMutation(
       () =>
@@ -83,9 +83,9 @@ export const useCallStore = defineStore("message/room/call", () => {
           const oldIsHandRaised =
             participantStore.callSessionParticipantsMap.get(callSessionId)?.get(participantSessionId)?.isHandRaised ??
             false;
-          setHandRaised(callSessionId, participantSessionId, newIsHandRaised);
+          setParticipantHandRaised(callSessionId, participantSessionId, newIsHandRaised);
           return () => {
-            setHandRaised(callSessionId, participantSessionId, oldIsHandRaised);
+            setParticipantHandRaised(callSessionId, participantSessionId, oldIsHandRaised);
           };
         },
         // Keyed per participant so a moderator lowering several hands never queues behind the other
@@ -95,8 +95,8 @@ export const useCallStore = defineStore("message/room/call", () => {
   };
   const setCameraEnabled = async (newIsCameraEnabled: boolean) => {
     const callSessionId = activeCallSessionId.value;
-    const sessionIdValue = participantStore.sessionId;
-    if (!callSessionId || !sessionIdValue) return;
+    const sessionId = participantStore.sessionId;
+    if (!callSessionId || !sessionId) return;
 
     await executeSetCameraMutation(
       () =>
@@ -108,20 +108,20 @@ export const useCallStore = defineStore("message/room/call", () => {
         applyOptimistic: () => {
           const oldIsCameraEnabled = mediaStore.isCameraEnabled;
           mediaStore.isCameraEnabled = newIsCameraEnabled;
-          setParticipantCamera(callSessionId, sessionIdValue, newIsCameraEnabled);
+          setParticipantCameraEnabled(callSessionId, sessionId, newIsCameraEnabled);
           return () => {
             mediaStore.isCameraEnabled = oldIsCameraEnabled;
-            setParticipantCamera(callSessionId, sessionIdValue, oldIsCameraEnabled);
+            setParticipantCameraEnabled(callSessionId, sessionId, oldIsCameraEnabled);
           };
         },
-        key: sessionIdValue,
+        key: sessionId,
       },
     );
   };
-  const setMuteEnabled = async (newIsMuted: boolean) => {
+  const setMuted = async (newIsMuted: boolean) => {
     const callSessionId = activeCallSessionId.value;
-    const sessionIdValue = participantStore.sessionId;
-    if (!callSessionId || !sessionIdValue) return;
+    const sessionId = participantStore.sessionId;
+    if (!callSessionId || !sessionId) return;
 
     await executeSetMuteMutation(
       () =>
@@ -132,19 +132,19 @@ export const useCallStore = defineStore("message/room/call", () => {
       {
         applyOptimistic: () => {
           const oldIsMuted = isMuted.value;
-          setMute(callSessionId, sessionIdValue, newIsMuted);
+          setParticipantMuted(callSessionId, sessionId, newIsMuted);
           return () => {
-            setMute(callSessionId, sessionIdValue, oldIsMuted);
+            setParticipantMuted(callSessionId, sessionId, oldIsMuted);
           };
         },
-        key: sessionIdValue,
+        key: sessionId,
       },
     );
   };
   const setCurrentRoomCallSessionId = (callSessionId: string) => {
     currentRoomCallSessionId.value = callSessionId;
   };
-  const createRoom = () =>
+  const createLiveKitRoom = () =>
     new Room({
       adaptiveStream: true,
       audioCaptureDefaults: {
@@ -194,14 +194,14 @@ export const useCallStore = defineStore("message/room/call", () => {
         id,
       });
       const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
-      await connect(createRoom(), liveKitUrl, liveKitToken, leaveCall, isMicrophoneEnabled);
+      await connect(createLiveKitRoom(), liveKitUrl, liveKitToken, leaveCall, isMicrophoneEnabled);
       activeCallSessionId.value = callSessionId;
       joinedCallSessionId = callSessionId;
       isJoined = true;
       setParticipantMap(callSessionId, participantMap);
       // The call is connected by here, so these only sync the participant row and report their own
       // Failures — a rejected flag must not tear down a call that is already up
-      if (!isMicrophoneEnabled) await setMuteEnabled(true);
+      if (!isMicrophoneEnabled) await setMuted(true);
       if (isCameraEnabled) {
         await setCamera(true);
         await setCameraEnabled(true);
@@ -228,7 +228,7 @@ export const useCallStore = defineStore("message/room/call", () => {
           roomId,
           threadRootRowKey,
         });
-      await connect(createRoom(), liveKitUrl, liveKitToken, leaveCall, true);
+      await connect(createLiveKitRoom(), liveKitUrl, liveKitToken, leaveCall, true);
       // Only the room's own call is the one the room header offers to join — a thread's call is reached from
       // Its pane, and writing it here would light up the header for a call that is not the room's
       if (!threadRootRowKey) currentRoomCallSessionId.value = callSessionId;
@@ -300,10 +300,10 @@ export const useCallStore = defineStore("message/room/call", () => {
     const newIsMuted = !isMuted.value;
     await getResultAsync(async () => {
       await setMicrophone(!newIsMuted);
-      await setMuteEnabled(newIsMuted);
+      await setMuted(newIsMuted);
     }).match(noop, console.error);
   };
-  const toggleHandRaised = () => setHandRaisedEnabled(!isHandRaised.value);
+  const toggleHandRaised = () => setHandRaised(!isHandRaised.value);
   const toggleScreenShare = async () => {
     const newIsScreenSharing = !mediaStore.isScreenSharing;
     await getResultAsync(async () => {
@@ -323,13 +323,13 @@ export const useCallStore = defineStore("message/room/call", () => {
   // The participant map is keyed by the call the user is actually in, which is the thread's session during a
   // Thread call — `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here
   AdminActionHookMap[AdminActionType.ForceMute].register(async (roomId) => {
-    if (participantStore.sessionId) setMute(activeCallSessionId.value, participantStore.sessionId, true);
+    if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, true);
     if (callRoomId.value !== roomId) return;
     await setMicrophone(false);
     mediaStore.isForceMuted = true;
   });
   AdminActionHookMap[AdminActionType.ForceUnmute].register(async (roomId) => {
-    if (participantStore.sessionId) setMute(activeCallSessionId.value, participantStore.sessionId, false);
+    if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, false);
     if (callRoomId.value !== roomId) return;
     await setMicrophone(true);
     mediaStore.isForceMuted = false;

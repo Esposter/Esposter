@@ -9,7 +9,7 @@ export const useReadMyInvite = (roomId: RoomInMessage["id"], onSuccess?: (invite
   const { $trpc } = useNuxtApp();
   const inviteStore = useInviteStore();
   const { invites } = storeToRefs(inviteStore);
-  const { seedInvite, storeInvite } = inviteStore;
+  const { seedInvite, setInvite } = inviteStore;
   return useQuery(() => $trpc.room.readMyInvite.query({ roomId }), {
     onSuccess: (newInvite) => {
       const invite = newInvite ?? undefined;
@@ -17,7 +17,7 @@ export const useReadMyInvite = (roomId: RoomInMessage["id"], onSuccess?: (invite
       // A read that finds nothing beats a stored link that has since lapsed — the server deletes an expired or
       // Exhausted row lazily, so the map would otherwise go on offering a token nobody can join with. A stored
       // Link that is still usable stays: it is a create that raced ahead of this read, and it is the live one
-      if (!invite && storedInvite && !checkIsInviteUsable(storedInvite)) storeInvite(roomId, undefined);
+      if (!invite && storedInvite && !checkIsInviteUsable(storedInvite)) setInvite(roomId, undefined);
       else seedInvite(roomId, invite);
       onSuccess?.(invite);
     },

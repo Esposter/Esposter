@@ -13,8 +13,14 @@ export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubs
   const mediaStore = useMediaStore();
   const { deleteParticipantVolumePercentage } = mediaStore;
   const participantStore = useParticipantStore();
-  const { createCallParticipant, deleteCallParticipant, deleteSpeaker, setHandRaised, setMute, setParticipantCamera } =
-    participantStore;
+  const {
+    createCallParticipant,
+    deleteCallParticipant,
+    deleteSpeaker,
+    setParticipantCameraEnabled,
+    setParticipantHandRaised,
+    setParticipantMuted,
+  } = participantStore;
   const { createKnocker } = knockerStore;
 
   useOnlineSubscribable(
@@ -36,17 +42,17 @@ export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubs
       });
       const setHandRaisedUnsubscribable = $trpc.callSession.onSetHandRaised.subscribe(callSessionId, {
         onData: ({ id: participantId, isHandRaised }) => {
-          setHandRaised(callSessionId, participantId, isHandRaised);
+          setParticipantHandRaised(callSessionId, participantId, isHandRaised);
         },
       });
       const muteChangedUnsubscribable = $trpc.callSession.onSetMute.subscribe(callSessionId, {
         onData: ({ id: participantId, isMuted }) => {
-          setMute(callSessionId, participantId, isMuted);
+          setParticipantMuted(callSessionId, participantId, isMuted);
         },
       });
       const setCameraUnsubscribable = $trpc.callSession.onSetCamera.subscribe(callSessionId, {
         onData: ({ id: participantId, isCameraEnabled }) => {
-          setParticipantCamera(callSessionId, participantId, isCameraEnabled);
+          setParticipantCameraEnabled(callSessionId, participantId, isCameraEnabled);
         },
       });
       const knockCallUnsubscribable = $trpc.callSession.knocker.onKnockCall.subscribe(callSessionId, {

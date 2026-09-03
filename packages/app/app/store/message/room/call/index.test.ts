@@ -214,7 +214,7 @@ describe(useParticipantStore, () => {
     });
   });
 
-  describe("setHandRaised", () => {
+  describe("setParticipantHandRaised", () => {
     test("sets raised hand state", () => {
       expect.hasAssertions();
 
@@ -229,14 +229,14 @@ describe(useParticipantStore, () => {
         userId: user.id,
       };
       const participantStore = useParticipantStore();
-      const { createCallParticipant, setHandRaised } = participantStore;
+      const { createCallParticipant, setParticipantHandRaised } = participantStore;
       const { callSessionParticipantsMap } = storeToRefs(participantStore);
       createCallParticipant(callSessionId, participant);
-      setHandRaised(callSessionId, session.id, true);
+      setParticipantHandRaised(callSessionId, session.id, true);
 
       expect(callSessionParticipantsMap.value.get(callSessionId)?.get(session.id)?.isHandRaised).toBe(true);
 
-      setHandRaised(callSessionId, session.id, false);
+      setParticipantHandRaised(callSessionId, session.id, false);
 
       expect(callSessionParticipantsMap.value.get(callSessionId)?.get(session.id)?.isHandRaised).toBe(false);
     });
@@ -290,7 +290,7 @@ describe(useParticipantStore, () => {
     });
   });
 
-  describe("setMute", () => {
+  describe("setParticipantMuted", () => {
     test("updates participant mute state", () => {
       expect.hasAssertions();
 
@@ -305,10 +305,10 @@ describe(useParticipantStore, () => {
         userId: user.id,
       };
       const participantStore = useParticipantStore();
-      const { createCallParticipant, setMute } = participantStore;
+      const { createCallParticipant, setParticipantMuted } = participantStore;
       const { callSessionParticipantsMap } = storeToRefs(participantStore);
       createCallParticipant(callSessionId, participant);
-      setMute(callSessionId, participant.id, true);
+      setParticipantMuted(callSessionId, participant.id, true);
 
       expect(callSessionParticipantsMap.value.get(callSessionId)?.get(participant.id)?.isMuted).toBe(true);
     });

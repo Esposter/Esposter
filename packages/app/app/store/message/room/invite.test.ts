@@ -39,9 +39,9 @@ describe(useInviteStore, () => {
     expect.hasAssertions();
 
     const inviteStore = useInviteStore();
-    const { seedInvite, storeInvite } = inviteStore;
+    const { seedInvite, setInvite } = inviteStore;
     const { invites } = storeToRefs(inviteStore);
-    storeInvite(roomId, invite);
+    setInvite(roomId, invite);
     seedInvite(roomId, undefined);
 
     expect(invites.value.get(roomId)).toStrictEqual(invite);

@@ -25,7 +25,7 @@
 | `server/services` — `azure`, `storage`, `livekit`, `notification`, `events`, `request`                                                      | 2026-09-03 |                                                                                                 |
 | `server/services` — `auth`, `rateLimiter`, `achievement`, `pagination`, `db`, `blobState`                                                   | 2026-09-03 |                                                                                                 |
 | `app/store/message` — the root files                                                                                                        | 2026-09-03 | CRUD verbs, `store*` subscription handlers                                                      |
-| `app/store/message/room`                                                                                                                    | —          |                                                                                                 |
+| `app/store/message/room`                                                                                                                    | 2026-09-03 | a setter is named for the boolean it writes; `apply*` pushes stored state onto something live   |
 | `app/store/message` — `input`, `user`, `file`, `search`, `ui`, `moderation`, `draftsAndSent`                                                | —          |                                                                                                 |
 | `app/store` — `dungeons`, `resource`                                                                                                        | —          |                                                                                                 |
 | `app/store` — the rest                                                                                                                      | 2026-09-03 | the root stores plus `achievement`, `clicker`, `dashboard`, `post`, `survey`, the editors       |
@@ -57,6 +57,12 @@ the grounds that a rename is expensive — that is the argument
 - **`getIsAuthed` / `getIsRateLimited` / `getIsEntityIdEqualComparator` — `get*` is right, the `Is` is not.**
   All three return a function rather than a boolean, so `check*` would be wrong, but the `Is` still reads as a
   predicate. The middleware pair wants a name saying what it builds; the comparator already has one.
+
+- **The `callSession` router's `setMute` and `setCamera` procedures name an action, not the field they write.**
+  The store side is now `setParticipantMuted` / `setParticipantCameraEnabled` against `isMuted` / `isCameraEnabled`,
+  and the rule is now in the `naming` skill — but the procedures sit in `server/trpc/routers/call`, whose row was
+  swept before that rule existed. They go with the next pass over that row, along with the `onSetMute` /
+  `onSetCamera` subscriptions that mirror them.
 
 ## Next enforceable
 

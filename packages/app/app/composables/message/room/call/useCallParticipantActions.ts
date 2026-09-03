@@ -12,7 +12,7 @@ export const useCallParticipantActions = () => {
   const callStore = useCallStore();
   const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
   const participantStore = useParticipantStore();
-  const { setHandRaised } = participantStore;
+  const { setParticipantHandRaised } = participantStore;
   const roleStore = useRoleStore();
   const { getMyPermissions } = roleStore;
   const myPermissions = computed(() => (callRoomId.value ? getMyPermissions(callRoomId.value) : undefined));
@@ -51,9 +51,9 @@ export const useCallParticipantActions = () => {
                 const oldIsHandRaised =
                   participantStore.callSessionParticipantsMap.get(callSessionId)?.get(participantId)?.isHandRaised ??
                   false;
-                setHandRaised(callSessionId, participantId, false);
+                setParticipantHandRaised(callSessionId, participantId, false);
                 return () => {
-                  setHandRaised(callSessionId, participantId, oldIsHandRaised);
+                  setParticipantHandRaised(callSessionId, participantId, oldIsHandRaised);
                 };
               },
               key: participantId,

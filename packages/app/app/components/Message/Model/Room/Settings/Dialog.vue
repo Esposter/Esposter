@@ -3,10 +3,10 @@ import type { SettingsContentMap } from "@/services/message/settings/SettingsCon
 
 import { SettingsType } from "@/models/message/room/SettingsType";
 import { useRoomStore } from "@/store/message/room";
-import { useDialogStore } from "@/store/message/room/dialog";
+import { useRoomDialogStore } from "@/store/message/room/dialog";
 
-const dialogStore = useDialogStore();
-const { settingsRoomId } = storeToRefs(dialogStore);
+const roomDialogStore = useRoomDialogStore();
+const { settingsRoomId } = storeToRefs(roomDialogStore);
 const roomStore = useRoomStore();
 const { rooms } = storeToRefs(roomStore);
 // Resolved through the primitive rather than a computed of our own, so a target whose room has left the list —

@@ -1,6 +1,6 @@
 import { normalizeString } from "@esposter/shared";
 
-export const useSearchStore = defineStore("message/room/search", () => {
+export const useRoomSearchStore = defineStore("message/room/search", () => {
   const { $trpc } = useNuxtApp();
   return useCursorSearcher((searchQuery, cursor, opts) => {
     const normalizedSearchQuery = normalizeString(searchQuery);

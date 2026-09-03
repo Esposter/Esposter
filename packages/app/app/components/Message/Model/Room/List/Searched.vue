@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
-import { useSearchStore } from "@/store/message/room/search";
+import { useRoomSearchStore } from "@/store/message/room/search";
 import { RoutePath } from "@esposter/shared";
 
 const emit = defineEmits<{ "update:room": [] }>();
-const searchStore = useSearchStore();
-const { readMoreItemsSearched } = searchStore;
-const { hasMore, items } = storeToRefs(searchStore);
+const roomSearchStore = useRoomSearchStore();
+const { readMoreItemsSearched } = roomSearchStore;
+const { hasMore, items } = storeToRefs(roomSearchStore);
 </script>
 
 <template>
