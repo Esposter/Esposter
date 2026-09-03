@@ -64,8 +64,8 @@ export const useSurveyCreator = () => {
         }
 
         const url = await uploadFile(file);
-        const oldUrl = (element as Base).getPropertyValue(propertyName.toString());
-        if (oldUrl) await deleteFile(oldUrl);
+        const previousUrl = (element as Base).getPropertyValue(propertyName.toString());
+        if (previousUrl) await deleteFile(previousUrl);
 
         callback("success", url);
       }).match(noop, () => {

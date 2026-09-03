@@ -6,7 +6,7 @@ export interface UseDocumentPictureInPictureOptions {
   width?: number;
 }
 
-const isStyleNode = (node: Node): node is HTMLLinkElement | HTMLStyleElement =>
+const checkIsStyleNode = (node: Node): node is HTMLLinkElement | HTMLStyleElement =>
   node instanceof HTMLStyleElement || (node instanceof HTMLLinkElement && node.rel === "stylesheet");
 // Resolves once the re-linked sheet has loaded (or errored, so one bad sheet can't stall forever)
 // So callers can await every sheet before revealing content and avoid a flash of unstyled content.
@@ -80,7 +80,7 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
         getResultAsync(async () => {
           for (const mutation of mutations)
             for (const node of mutation.addedNodes)
-              if (isStyleNode(node) && node.sheet) await cloneStyleSheet(target, node.sheet);
+              if (checkIsStyleNode(node) && node.sheet) await cloneStyleSheet(target, node.sheet);
         }).match(noop, console.error),
       ),
     );
