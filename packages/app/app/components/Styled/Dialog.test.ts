@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import StyledDialog from "@/components/Styled/Dialog.vue";
+import { sleep } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -47,7 +48,7 @@ describe("styledDialog", () => {
     document.documentElement.style.overflowY = "scroll";
     const PendingSibling = defineComponent({
       async setup() {
-        await new Promise((resolve) => setTimeout(resolve, pendingMs));
+        await sleep(pendingMs);
         return () => h("div");
       },
     });
@@ -62,7 +63,7 @@ describe("styledDialog", () => {
       { attachTo: document.body },
     );
     // The strategy runs on its own timeout once the overlay activates, so the throw lands after the mount
-    await new Promise((resolve) => setTimeout(resolve, pendingMs));
+    await sleep(pendingMs);
 
     expect(document.body.querySelector(".v-overlay__content")?.textContent).toContain("body");
   });
