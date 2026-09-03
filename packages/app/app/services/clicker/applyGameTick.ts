@@ -12,5 +12,5 @@ export const applyGameTick = (clicker: Clicker) => {
     boughtBuilding.producedValue += boughtBuildingPower / FPS;
     allBoughtBuildingPower += boughtBuildingPower;
   }
-  clicker.noPoints += allBoughtBuildingPower / FPS;
+  clicker.pointCount += allBoughtBuildingPower / FPS;
 };

@@ -17,13 +17,13 @@ flowchart LR
   waypoint[StyledWaypoint at list end] -->|readMorePosts + cursor| store
   store --> proc[post.readPosts<br/>cursor pagination + viewer block filter]
   proc --> pg[(posts, parentId IS NULL)]
-  mutation[likes / comments] -->|transactional| counters[noLikes, noComments, ranking]
+  mutation[likes / comments] -->|transactional| counters[likeCount, commentCount, ranking]
   counters --> pg
 ```
 
-**Pagination** — `readPosts` takes cursor pagination params (default sort: `ranking` desc with the unique `id` as tiebreaker), fetches `limit + 1` rows to detect `hasMore`, and returns a cursor for the next page — the app-standard cursor pattern (`getCursorWhere` / `getCursorPaginationData`). Compound sort keys compare lexicographically — `(k1 < v1) OR (k1 = v1 AND k2 < v2)` — so pages of tied values (every new post has `noLikes = 0`) never skip rows. The same procedure serves comment lists via the `parentId` filter.
+**Pagination** — `readPosts` takes cursor pagination params (default sort: `ranking` desc with the unique `id` as tiebreaker), fetches `limit + 1` rows to detect `hasMore`, and returns a cursor for the next page — the app-standard cursor pattern (`getCursorWhere` / `getCursorPaginationData`). Compound sort keys compare lexicographically — `(k1 < v1) OR (k1 = v1 AND k2 < v2)` — so pages of tied values (every new post has `likeCount = 0`) never skip rows. The same procedure serves comment lists via the `parentId` filter.
 
-**Sort options** — a Reddit-style sort menu above the feed (`PostSortMenu`: a pill button showing the current sort's icon + label, opening a "Sort by" dropdown whose per-sort icons come from `PostSortTypeIconMap`) switches between Hot (`ranking` desc), New (`createdAt` desc), and Top (`noLikes` desc, all-time), each mapped to a `sortBy` by `PostSortTypeSortByMap` with `id` as second key. The chosen sort lives in the post store; switching clears the list and refetches page one, and the waypoint continues from the new cursor. Comments keep their fixed sort.
+**Sort options** — a Reddit-style sort menu above the feed (`PostSortMenu`: a pill button showing the current sort's icon + label, opening a "Sort by" dropdown whose per-sort icons come from `PostSortTypeIconMap`) switches between Hot (`ranking` desc), New (`createdAt` desc), and Top (`likeCount` desc, all-time), each mapped to a `sortBy` by `PostSortTypeSortByMap` with `id` as second key. The chosen sort lives in the post store; switching clears the list and refetches page one, and the waypoint continues from the new cursor. Comments keep their fixed sort.
 
 **Block filtering** — authenticated feed reads exclude posts and comments authored by users the viewer has blocked — see [feed block filtering](/docs/posts/feed-block-filtering).
 

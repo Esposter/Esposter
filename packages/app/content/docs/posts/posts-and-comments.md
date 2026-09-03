@@ -25,11 +25,11 @@ The two guards are why a post procedure cannot touch a comment and vice versa, e
 
 ## How it works
 
-**Model** — `posts(id, userId, title, description, parentId, ancestorIds, depth, noComments, noLikes, ranking)` with DB-level length checks (`title ≤ 300`, `description ≤ 1000`); `selectPostSchema` vs `selectCommentSchema` differ only in which text field is required. Rows relate to their author via `PostRelations` and carry the viewer's own like as `viewerLike` (see [likes](/docs/posts/likes)).
+**Model** — `posts(id, userId, title, description, parentId, ancestorIds, depth, commentCount, likeCount, ranking)` with DB-level length checks (`title ≤ 300`, `description ≤ 1000`); `selectPostSchema` vs `selectCommentSchema` differ only in which text field is required. Rows relate to their author via `PostRelations` and carry the viewer's own like as `viewerLike` (see [likes](/docs/posts/likes)).
 
 **Creating** — `/post/create` hosts the post form (`PostUpsertForm`); descriptions are Tiptap rich text (`DescriptionRichTextEditor`). Comments are created inline on the post page (`Comment/CreateRichTextEditor`). Both mutations run through the profanity-filter procedure, which censors the configured text fields in middleware, and compute the initial [ranking](/docs/posts/feed-and-ranking) from zero likes.
 
-**Comment bookkeeping** — `createComment`/`deleteComment` run in a transaction that also moves `noComments` on **every post above** the one written, not just its parent. Once replies nest, a counter that stopped at direct children makes a feed card under-report its own thread — thirty comments showing as three. Neither write walks the chain to find it: every row carries its own `ancestorIds`, so a create inherits its parent's list plus the parent, and both mutations move counters with a plain `id IN (...)`. A delete decrements by the size of the subtree the cascade takes with it, itself included, counted before the delete — by containment against that same column, since afterwards nothing could say what it was. That read locks the rows it counts: two deletes overlapping in the tree would otherwise each subtract the same replies from the ancestors above them, and the counter would end up short. Both mutations return the ids they counted against, so the client adjusts exactly the rows on screen instead of rediscovering the chain by scanning what it has loaded.
+**Comment bookkeeping** — `createComment`/`deleteComment` run in a transaction that also moves `commentCount` on **every post above** the one written, not just its parent. Once replies nest, a counter that stopped at direct children makes a feed card under-report its own thread — thirty comments showing as three. Neither write walks the chain to find it: every row carries its own `ancestorIds`, so a create inherits its parent's list plus the parent, and both mutations move counters with a plain `id IN (...)`. A delete decrements by the size of the subtree the cascade takes with it, itself included, counted before the delete — by containment against that same column, since afterwards nothing could say what it was. That read locks the rows it counts: two deletes overlapping in the tree would otherwise each subtract the same replies from the ancestors above them, and the counter would end up short. Both mutations return the ids they counted against, so the client adjusts exactly the rows on screen instead of rediscovering the chain by scanning what it has loaded.
 
 **Ownership** — update/delete are guarded by `ownedBy(posts, id, userId)` plus a `parentId IS (NOT) NULL` check, so post procedures can't touch comments and vice versa; there is no moderator override (moderation is an esbabbler concept, not a posts one).
 
@@ -45,7 +45,7 @@ flowchart TD
   CARD -->|"scroll — the waypoint on that branch"| BRANCH
   CARD -->|"past the indent clamp — continue this thread"| ROUTE
   CARD -->|"reply, delete"| WRITE["createComment, deleteComment"]
-  WRITE -->|"id IN ancestorIds"| COUNT[("noComments on every post above")]
+  WRITE -->|"id IN ancestorIds"| COUNT[("commentCount on every post above")]
   WRITE -->|"returns the ids it counted against"| CARD
 ```
 

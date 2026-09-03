@@ -21,7 +21,7 @@ export const useCommentStore = defineStore("post/comment", () => {
   });
   const updateCommentCounts = (ancestorIds: string[], delta: number) => {
     const ancestorIdSet = new Set(ancestorIds);
-    for (const comment of allComments.value) if (ancestorIdSet.has(comment.id)) comment.noComments += delta;
+    for (const comment of allComments.value) if (ancestorIdSet.has(comment.id)) comment.commentCount += delta;
   };
   // Only branches that already exist are descended into: asking the map for one that does not creates it, so a
   // Walk over the rows themselves would leave an empty partition behind for every reply it passed
@@ -97,8 +97,8 @@ export const useCommentStore = defineStore("post/comment", () => {
         };
       },
       key: input,
-      onSuccess: ({ ancestorIds, noRemovedComments }) => {
-        updateCommentCounts(ancestorIds, -noRemovedComments);
+      onSuccess: ({ ancestorIds, removedCommentCount }) => {
+        updateCommentCounts(ancestorIds, -removedCommentCount);
       },
     });
   };

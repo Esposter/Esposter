@@ -94,10 +94,10 @@ export const roomEmojiRouter = router({
         .from(roomsInMessage)
         .where(eq(roomsInMessage.id, roomId))
         .for("update");
-      const noRoomEmojis = takeOne(
+      const roomEmojiCount = takeOne(
         await tx.select({ count: count() }).from(roomEmojisInMessage).where(eq(roomEmojisInMessage.roomId, roomId)),
       ).count;
-      if (noRoomEmojis >= MAX_ROOM_EMOJIS)
+      if (roomEmojiCount >= MAX_ROOM_EMOJIS)
         throw getInvalidOperationError(
           Operation.Create,
           DatabaseEntityType.RoomEmoji,
@@ -163,10 +163,10 @@ export const roomEmojiRouter = router({
       );
     // Rejected here rather than at create, so a room at its cap never receives a write target it cannot use.
     // The create counts again inside its own transaction — this check is the early no, not the guarantee
-    const noRoomEmojis = takeOne(
+    const roomEmojiCount = takeOne(
       await ctx.db.select({ count: count() }).from(roomEmojisInMessage).where(eq(roomEmojisInMessage.roomId, roomId)),
     ).count;
-    if (noRoomEmojis >= MAX_ROOM_EMOJIS)
+    if (roomEmojiCount >= MAX_ROOM_EMOJIS)
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, roomId);
 
     const id: string = crypto.randomUUID();

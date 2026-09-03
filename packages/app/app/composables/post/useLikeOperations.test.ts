@@ -37,12 +37,12 @@ describe(useLikeOperations, () => {
         return createLike(input.value);
       }),
     );
-    const post = createPost({ id: postId, noLikes: 1, viewerLike: createLike(1) });
+    const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
     const { updateLike } = useLikeOperations([post]);
     await Promise.all([updateLike({ postId, value: -1 }), updateLike({ postId, value: 1 })]);
 
     expect(post.viewerLike).toStrictEqual(createLike(-1));
-    expect(post.noLikes).toBe(-1);
+    expect(post.likeCount).toBe(-1);
   });
 
   // A second withdrawal queues behind the first and finds the vote already gone, so it has nothing to take off
@@ -51,11 +51,11 @@ describe(useLikeOperations, () => {
     expect.hasAssertions();
 
     server.use(trpcMsw.like.deleteLike.mutation(() => createLike(1)));
-    const post = createPost({ id: postId, noLikes: 1, viewerLike: createLike(1) });
+    const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
     const { deleteLike } = useLikeOperations([post]);
     await Promise.all([deleteLike(postId), deleteLike(postId)]);
 
     expect(post.viewerLike).toBeUndefined();
-    expect(post.noLikes).toBe(0);
+    expect(post.likeCount).toBe(0);
   });
 });

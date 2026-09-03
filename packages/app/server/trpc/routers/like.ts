@@ -17,23 +17,23 @@ import { and, eq } from "drizzle-orm";
 
 // The three vote writes all read the same slice of the post and all rewrite the same pair of columns, so the
 // Projection and the recount live once — a ranking input added here can never reach only two of them.
-// Every one of them is a read-modify-write of `noLikes`, so the row is locked for the rest of the transaction:
+// Every one of them is a read-modify-write of `likeCount`, so the row is locked for the rest of the transaction:
 // Two votes landing together would otherwise both read the pre-vote count and the later write would replace
 // Rather than add, losing a vote and leaving `ranking` derived from a count that never existed. The lock is what
 // Lets `getPostRanking` stay the one ranking formula — a SQL-side increment would need a second copy of it
 const readLikedPost = async (tx: Transaction, postId: string) =>
   (
     await tx
-      .select({ createdAt: posts.createdAt, id: posts.id, noLikes: posts.noLikes })
+      .select({ createdAt: posts.createdAt, id: posts.id, likeCount: posts.likeCount })
       .from(posts)
       .where(eq(posts.id, postId))
       .for("update")
   )[0];
 
-const updateLikeCount = (tx: Transaction, post: { createdAt: Date; id: string }, noLikes: number) =>
+const updateLikeCount = (tx: Transaction, post: { createdAt: Date; id: string }, likeCount: number) =>
   tx
     .update(posts)
-    .set({ noLikes, ranking: getPostRanking(noLikes, post.createdAt) })
+    .set({ likeCount, ranking: getPostRanking(likeCount, post.createdAt) })
     .where(eq(posts.id, post.id));
 
 export const likeRouter = router({
@@ -69,7 +69,7 @@ export const likeRouter = router({
         DatabaseEntityType.Like,
         JSON.stringify(input),
       );
-      await updateLikeCount(tx, post, post.noLikes + newLike.value);
+      await updateLikeCount(tx, post, post.likeCount + newLike.value);
       return newLike;
     }),
   ),
@@ -88,7 +88,7 @@ export const likeRouter = router({
         DatabaseEntityType.Like,
         input,
       );
-      await updateLikeCount(tx, post, post.noLikes - deletedLike.value);
+      await updateLikeCount(tx, post, post.likeCount - deletedLike.value);
       return deletedLike;
     }),
   ),
@@ -124,7 +124,7 @@ export const likeRouter = router({
         DatabaseEntityType.Like,
         JSON.stringify({ postId, value }),
       );
-      await updateLikeCount(tx, post, post.noLikes + value * 2);
+      await updateLikeCount(tx, post, post.likeCount + value * 2);
       return updatedLike;
     }),
   ),

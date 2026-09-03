@@ -19,11 +19,11 @@ export const posts = pgTable(
     // Counters move, and how many rows a delete takes with it — and holding it on the row answers both with an
     // Ordinary predicate rather than a walk down a level at a time
     ancestorIds: uuid().array().notNull().default([]),
+    commentCount: integer().notNull().default(0),
     depth: integer().notNull().default(0),
     description: text().notNull().default(""),
     id: uuid().primaryKey().defaultRandom(),
-    noComments: integer().notNull().default(0),
-    noLikes: integer().notNull().default(0),
+    likeCount: integer().notNull().default(0),
     parentId: uuid().references((): AnyPgColumn => posts.id, { onDelete: "cascade" }),
     ranking: doublePrecision().notNull(),
     title: text().notNull().default(""),

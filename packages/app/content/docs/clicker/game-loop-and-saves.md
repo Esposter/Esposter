@@ -11,14 +11,14 @@ Production runs on one worker-based game tick, and the entire game state is one 
 
 `pages/clicker.vue` loads the save with `useReadClicker`, then `useTimers` starts two intervals through the shared `useWorkerInterval`, which schedules on `worker-timers` — a Web Worker, so production continues when the tab is backgrounded (browsers throttle main-thread timers there) — and clears the interval on unmount.
 
-- the game tick — one 60 FPS interval calling `applyGameTick`: it computes each bought building's power once per tick, accumulates the building's lifetime `producedValue`, and adds the summed power to `noPoints`. Powers are read fresh every tick, so purchases apply on the next tick with no watch/teardown machinery.
+- the game tick — one 60 FPS interval calling `applyGameTick`: it computes each bought building's power once per tick, accumulates the building's lifetime `producedValue`, and adds the summed power to `pointCount`. Powers are read fresh every tick, so purchases apply on the next tick with no watch/teardown machinery.
 - the autosave — saves the full state every 60 seconds.
 
 Clicking the central item goes through the popup store: it adds `mousePower` points and spawns a floating `+N` popup at the cursor that despawns after 10 seconds.
 
 ```mermaid
 flowchart TD
-  click[click on item] -->|mousePower| points[clicker.noPoints]
+  click[click on item] -->|mousePower| points[clicker.pointCount]
   tick[60 FPS game tick] -->|sum of building powers / 60| points
   tick -->|per-building power / 60| produced[boughtBuilding.producedValue]
   buy[buy building / upgrade] --> save60[virtualClicker watch: immediate save]
@@ -31,7 +31,7 @@ flowchart TD
   load -->|clickerSaveSchema + toClicker| clicker[in-memory Clicker]
 ```
 
-**Save timing** — `useReadClicker` watches a `virtualClicker` computed that deep-omits `noPoints` and `producedValue`; only _manual_ state changes (purchases, type switches) trigger an immediate save, while the ever-ticking counters are picked up by the periodic autosave. The omitted view is reference-stabilized with `deepEqual` so the watch doesn't fire on every tick, and `useSave` stamps `updatedAt` on the serialized copy rather than the in-memory state so saving never re-triggers the watch.
+**Save timing** — `useReadClicker` watches a `virtualClicker` computed that deep-omits `pointCount` and `producedValue`; only _manual_ state changes (purchases, type switches) trigger an immediate save, while the ever-ticking counters are picked up by the periodic autosave. The omitted view is reference-stabilized with `deepEqual` so the watch doesn't fire on every tick, and `useSave` stamps `updatedAt` on the serialized copy rather than the in-memory state so saving never re-triggers the watch.
 
 **Normalized save data** — the save stores only what the player _did_: `boughtUpgrades` as `UpgradeId[]` and `boughtBuildings` as `{ id, amount, producedValue }[]` (the `ClickerSave` entity). On write, `toClickerSave` strips the in-memory definitions down to ids, and on load `toClicker` resolves them back through `UpgradeMap`/`BuildingMap` — so a balance change to the content maps reaches every existing save on its next load. The in-memory `Clicker` keeps full definition objects, leaving the effect engine and components untouched. Per the [latest-shape-only convention](/docs/architecture/persisted-data-latest-shape-only), there is no migration or self-heal path: a save that fails `clickerSaveSchema` (old shape, removed content ids) resets to a fresh game.
 
@@ -44,7 +44,7 @@ flowchart TD
 | `clicker.readClicker` | user | —                   | read the user's save blob      |
 | `clicker.saveClicker` | user | `clickerSaveSchema` | overwrite the user's save blob |
 
-`saveClicker` is also the trigger path for all ten clicker achievements: five save-count thresholds (1/5/10/100/1000) and five milestones whose `condition` reads the save payload ([unlock pipeline](/docs/achievements/unlock-pipeline)) — ClickerMillionaire / ClickerBillionaire / ClickerTrillionaire (`noPoints` at 1e6/1e9/1e12), ClickerArchitect (every building owned), and ClickerCompletionist (every upgrade bought). The 60-second autosave cadence works for the milestones: progress is evaluated at least once a minute while playing, and unlocks are idempotent.
+`saveClicker` is also the trigger path for all ten clicker achievements: five save-count thresholds (1/5/10/100/1000) and five milestones whose `condition` reads the save payload ([unlock pipeline](/docs/achievements/unlock-pipeline)) — ClickerMillionaire / ClickerBillionaire / ClickerTrillionaire (`pointCount` at 1e6/1e9/1e12), ClickerArchitect (every building owned), and ClickerCompletionist (every upgrade bought). The 60-second autosave cadence works for the milestones: progress is evaluated at least once a minute while playing, and unlocks are idempotent.
 
 ## Key files
 

@@ -17,7 +17,7 @@ const { clicker } = storeToRefs(clickerStore);
 const upgradeStore = useUpgradeStore();
 const { createBoughtUpgrade } = upgradeStore;
 const { play } = useClickerSound(Sound.Buy);
-const isAffordable = computed(() => clicker.value.noPoints >= upgrade.price);
+const isAffordable = computed(() => clicker.value.pointCount >= upgrade.price);
 const menuProps = computed(() => ({ location: isBought ? ("left center" as const) : ("right center" as const) }));
 const displayDescription = useDecompileString(upgrade.description);
 const displayFlavorDescription = useDecompileString(upgrade.flavorDescription);

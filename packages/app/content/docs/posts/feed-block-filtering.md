@@ -14,7 +14,7 @@ When the caller of `readPosts` is authenticated, the query adds `userId NOT IN (
 Deliberate boundaries:
 
 - **`readPost` stays readable** — navigating directly to a blocked user's post is an intentional act, and rate-limited/unauthenticated readers have no block list anyway. Only the feeds filter.
-- **Hidden, not erased** — mutations, counters, and ranking are untouched: blocked users' likes and comments still count in `noLikes`/`noComments` (an off-by-N banner is cheaper than divergent counters).
+- **Hidden, not erased** — mutations, counters, and ranking are untouched: blocked users' likes and comments still count in `likeCount`/`commentCount` (an off-by-N banner is cheaper than divergent counters).
 - **Silent omission** — no "blocked content" placeholders, which would leak that a specific user posted.
 
 ## Key files

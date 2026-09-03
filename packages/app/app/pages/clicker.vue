@@ -6,7 +6,7 @@ await useReadClicker();
 useTimers();
 const clickerStore = useClickerStore();
 const { clicker, clickerItemProperties } = storeToRefs(clickerStore);
-const displayNoPoints = computed(() => formatNumberLong(clicker.value.noPoints, 3));
+const displayNoPoints = computed(() => formatNumberLong(clicker.value.pointCount, 3));
 </script>
 
 <template>

@@ -11,7 +11,7 @@ export const toClickerSave = (clicker: Clicker) =>
     createdAt: clicker.createdAt,
     deletedAt: clicker.deletedAt,
     id: clicker.id,
-    noPoints: clicker.noPoints,
+    pointCount: clicker.pointCount,
     type: clicker.type,
     updatedAt: clicker.updatedAt,
   });

@@ -75,7 +75,7 @@ export const reserveStorageBytes = async (
     // Late `BlobCreated` can still find it, and a dead write target must never hold space or a slot in the
     // Meantime
     const [pendingTotals] = await tx
-      .select({ noPendingReservations: count(), pendingBytes: sum(storageLedger.declaredBytes) })
+      .select({ pendingReservationCount: count(), pendingBytes: sum(storageLedger.declaredBytes) })
       .from(storageLedger)
       .where(
         and(eq(storageLedger.userId, userId), isNull(storageLedger.reconciledAt), gt(storageLedger.expiresAt, now)),
@@ -85,7 +85,7 @@ export const reserveStorageBytes = async (
     if (user.storageBytesUsed + pendingBytes + declaredBytes > StorageTierQuotaMap[user.storageTier])
       throw getForbiddenError(STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE);
     else if (
-      (pendingTotals?.noPendingReservations ?? 0) + reservations.length >
+      (pendingTotals?.pendingReservationCount ?? 0) + reservations.length >
       MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES
     )
       throw new TRPCError({

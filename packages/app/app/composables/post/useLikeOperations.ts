@@ -22,7 +22,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
         if (!post) return;
 
         post.viewerLike = newLike;
-        post.noLikes += newLike.value;
+        post.likeCount += newLike.value;
       },
     });
   };
@@ -40,10 +40,10 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
 
         const delta = input.value - previousViewerLike.value;
         post.viewerLike = { ...previousViewerLike, value: input.value };
-        post.noLikes += delta;
+        post.likeCount += delta;
         return () => {
           post.viewerLike = previousViewerLike;
-          post.noLikes -= delta;
+          post.likeCount -= delta;
         };
       },
       key: input.postId,
@@ -65,10 +65,10 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
         if (!previousViewerLike) return noop;
 
         post.viewerLike = undefined;
-        post.noLikes -= previousViewerLike.value;
+        post.likeCount -= previousViewerLike.value;
         return () => {
           post.viewerLike = previousViewerLike;
-          post.noLikes += previousViewerLike.value;
+          post.likeCount += previousViewerLike.value;
         };
       },
       key: postId,

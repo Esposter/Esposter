@@ -48,10 +48,10 @@ export const webhookRouter = router({
     RateLimiterType.Slow,
   ).mutation<WebhookInMessage>(({ ctx, input: { name, roomId } }) =>
     ctx.db.transaction(async (tx) => {
-      const noWebhooks = takeOne(
+      const webhookCount = takeOne(
         await tx.select({ count: count() }).from(webhooksInMessage).where(eq(webhooksInMessage.roomId, roomId)),
       ).count;
-      if (noWebhooks >= WEBHOOK_MAX_LENGTH)
+      if (webhookCount >= WEBHOOK_MAX_LENGTH)
         throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Webhook, JSON.stringify({ name, roomId }));
 
       const newAppUser = requireMutation(

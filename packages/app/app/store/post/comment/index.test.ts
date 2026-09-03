@@ -53,10 +53,10 @@ describe(useCommentStore, () => {
       trpcMsw.post.deleteComment.mutation(({ input }) => {
         if (input === comment.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
 
-        return { ancestorIds: [postId], noRemovedComments: 1 };
+        return { ancestorIds: [postId], removedCommentCount: 1 };
       }),
     );
-    const parentPost = createPost({ id: postId, noComments: 2 });
+    const parentPost = createPost({ id: postId, commentCount: 2 });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
     const { deleteComment, getSlice } = commentStore;
@@ -65,7 +65,7 @@ describe(useCommentStore, () => {
     await Promise.all([deleteComment(comment.id, postId), deleteComment(otherComment.id, postId)]);
 
     expect(getSlice(postId).items.value).toStrictEqual([comment]);
-    expect(parentPost.noComments).toBe(1);
+    expect(parentPost.commentCount).toBe(1);
   });
 
   // A delete cascades, so the rows beneath the one removed are gone server-side whether or not anybody had
@@ -75,8 +75,8 @@ describe(useCommentStore, () => {
     expect.hasAssertions();
 
     const reply = createPost({ depth: 2, parentId: comment.id });
-    server.use(trpcMsw.post.deleteComment.mutation(() => ({ ancestorIds: [postId], noRemovedComments: 2 })));
-    const parentPost = createPost({ id: postId, noComments: 2 });
+    server.use(trpcMsw.post.deleteComment.mutation(() => ({ ancestorIds: [postId], removedCommentCount: 2 })));
+    const parentPost = createPost({ id: postId, commentCount: 2 });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
     const { deleteComment, getSlice } = commentStore;
@@ -88,7 +88,7 @@ describe(useCommentStore, () => {
 
     expect(getSlice(postId).items.value).toStrictEqual([]);
     expect(getSlice(comment.id).items.value).toStrictEqual([]);
-    expect(parentPost.noComments).toBe(0);
+    expect(parentPost.commentCount).toBe(0);
   });
 
   // The rows beneath a deleted comment go optimistically, and a branch that still claims to be loaded is one a
@@ -106,7 +106,7 @@ describe(useCommentStore, () => {
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
     const { deleteComment, getSlice } = commentStore;
-    currentPost.value = createPost({ id: postId, noComments: 2 });
+    currentPost.value = createPost({ id: postId, commentCount: 2 });
     getSlice(postId).items.value = [comment];
     const replyBranch = getSlice(comment.id);
     replyBranch.initializeCursorPaginationData(new CursorPaginationData({ hasMore: false, items: [reply] }));
@@ -125,12 +125,12 @@ describe(useCommentStore, () => {
 
     // Built here rather than at describe scope: the counters are what this asserts, and the store writes them
     // Into the rows it is handed
-    const repliedToComment = createPost({ depth: 1, noComments: 0, parentId: postId });
+    const repliedToComment = createPost({ depth: 1, commentCount: 0, parentId: postId });
     const reply = createPost({ depth: 2, parentId: repliedToComment.id });
     server.use(
       trpcMsw.post.createComment.mutation(() => ({ ancestorIds: [postId, repliedToComment.id], comment: reply })),
     );
-    const parentPost = createPost({ id: postId, noComments: 1 });
+    const parentPost = createPost({ id: postId, commentCount: 1 });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
     const { createComment, getSlice } = commentStore;
@@ -140,7 +140,7 @@ describe(useCommentStore, () => {
     await createComment({ description: newDescription, parentId: repliedToComment.id });
 
     expect(getSlice(repliedToComment.id).items.value).toStrictEqual([reply]);
-    expect(takeOne(getSlice(postId).items.value).noComments).toBe(1);
-    expect(parentPost.noComments).toBe(2);
+    expect(takeOne(getSlice(postId).items.value).commentCount).toBe(1);
+    expect(parentPost.commentCount).toBe(2);
   });
 });
