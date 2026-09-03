@@ -11,7 +11,7 @@ const checkIsInteractableDirection = (
 ): direction is InteractableDirection =>
   direction in interactableDirectionMap && interactableDirectionMap[direction as keyof InteractableDirectionMap];
 
-export const InteractiveObjectPositionComparator = (
+export const checkIsInteractiveObjectPosition = (
   playerPosition: Position,
   playerDirection: Direction,
   objectPosition: Position,
