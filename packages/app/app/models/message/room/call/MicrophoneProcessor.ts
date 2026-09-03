@@ -74,8 +74,8 @@ export class MicrophoneProcessor implements TrackProcessor<Track.Kind.Audio, Aud
       this.#analyser.getFloatTimeDomainData(this.#timeDomainData);
       let sumSquares = 0;
       for (const sample of this.#timeDomainData) sumSquares += sample * sample;
-      const rms = Math.sqrt(sumSquares / this.#timeDomainData.length);
-      const decibels = rms > 0 ? 20 * Math.log10(rms) : MIN_INPUT_SENSITIVITY_DECIBELS;
+      const rootMeanSquare = Math.sqrt(sumSquares / this.#timeDomainData.length);
+      const decibels = rootMeanSquare > 0 ? 20 * Math.log10(rootMeanSquare) : MIN_INPUT_SENSITIVITY_DECIBELS;
       this.#gainNode.gain.value = this.#checkIsOpen(decibels) ? this.microphoneVolumePercentage / 100 : 0;
     }
     this.#animationFrameId = window.requestAnimationFrame(this.#tick);
