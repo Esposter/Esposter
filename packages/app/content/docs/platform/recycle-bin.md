@@ -41,12 +41,13 @@ The timer purges per resource rather than as one batch, so one poisoned resource
 
 ## Procedures
 
-| Procedure                                                              | Auth                    | Input      | Purpose                                      |
-| ---------------------------------------------------------------------- | ----------------------- | ---------- | -------------------------------------------- |
-| `<type>.deleteResource` / `resource.deleteResources`                   | owner                   | unchanged  | Set `deletedAt`, delete the publication row  |
-| `resource.readDeletedResources` / `resource.readDeletedResourcesCount` | authed                  | pagination | The caller's own bin list                    |
-| `resource.restoreResource`                                             | owner (`isDeletedOnly`) | `{ id }`   | Clear `deletedAt`, append a `Restored` entry |
-| `resource.purgeResource`                                               | owner (`isDeletedOnly`) | `{ id }`   | Hard delete blob dir, activity, then the row |
+| Procedure                                            | Auth                    | Input      | Purpose                                      |
+| ---------------------------------------------------- | ----------------------- | ---------- | -------------------------------------------- |
+| `<type>.deleteResource` / `resource.deleteResources` | owner                   | unchanged  | Set `deletedAt`, delete the publication row  |
+| `resource.readDeletedResources`                      | authed                  | pagination | The caller's own bin list                    |
+| `resource.readDeletedResourcesCount`                 | authed                  | none       | The caller's own bin total                   |
+| `resource.restoreResource`                           | owner (`isDeletedOnly`) | `{ id }`   | Clear `deletedAt`, append a `Restored` entry |
+| `resource.purgeResource`                             | owner (`isDeletedOnly`) | `{ id }`   | Hard delete blob dir, activity, then the row |
 
 ## Key files
 

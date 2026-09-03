@@ -15,7 +15,7 @@ const roomName = useRoomName(currentRoomId);
 const target = computed(() => ({ roomId: currentRoomId.value, threadRootRowKey: "" }));
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
-const { extensions, sendComposerMessage, uploadFiles, validateInput } = await useComposer(target);
+const { checkIsInputValid, extensions, sendComposerMessage, uploadFiles } = await useComposer(target);
 // Slash commands are the room composer's alone, so they ride on top of the shared stack rather than in it
 const slashCommandExtension = useSlashCommandExtension();
 const inputStore = useInputStore();
@@ -70,7 +70,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
       <template #append-footer="{ editor }">
         <RichTextEditorCustomAudioRecorderButton @upload-file="uploadFiles" />
         <MessageModelMessageInputSendMessageButton
-          :disabled="!validateInput(target, editor)"
+          :disabled="!checkIsInputValid(target, editor)"
           @click="
             () => {
               if (!editor) return;

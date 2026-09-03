@@ -30,9 +30,9 @@ declare global {
 // Note: Keep in sync with packages/nuxt/src/core/templates.ts
 declare module "nitropack" {
   interface NitroRouteConfig {
-    /** @deprecated Use `scriptCount` instead */
+    /** @deprecated Use `noScripts` instead */
     experimentalNoScripts?: boolean;
-    scriptCount?: boolean;
+    noScripts?: boolean;
     ssr?: boolean;
   }
   interface NitroRuntimeConfig extends RuntimeConfig {}
@@ -47,9 +47,9 @@ declare module "nitropack" {
 }
 declare module "nitropack/types" {
   interface NitroRouteConfig {
-    /** @deprecated Use `scriptCount` instead */
+    /** @deprecated Use `noScripts` instead */
     experimentalNoScripts?: boolean;
-    scriptCount?: boolean;
+    noScripts?: boolean;
     ssr?: boolean;
   }
   interface NitroRuntimeConfig extends RuntimeConfig {}

@@ -48,7 +48,7 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
   };
   const getComposerFileUrlMap = (target: ComposerTarget) =>
     getFileUrlMap(getComposerKey(target)) ?? new Map<string, UploadFileUrl>();
-  const getIsFileLoading = (target: ComposerTarget) => (getUploadingCount(getComposerKey(target)) ?? 0) > 0;
+  const checkIsFileLoading = (target: ComposerTarget) => (getUploadingCount(getComposerKey(target)) ?? 0) > 0;
   const storeUploadStart = (target: ComposerTarget) => {
     const key = getComposerKey(target);
     setUploadingCount(key, (getUploadingCount(key) ?? 0) + 1);
@@ -183,10 +183,10 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
     releaseSendUploadFiles(target, fileIds);
   });
   return {
+    checkIsFileLoading,
     discardUploadFiles,
     getComposerFiles,
     getComposerFileUrlMap,
-    getIsFileLoading,
     storeUploadEnd,
     storeUploadFileProgress,
     storeUploadFiles,

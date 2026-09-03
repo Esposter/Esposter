@@ -25,7 +25,7 @@ flowchart LR
   OR --> IDX[("resources_name_trgm_index<br/>GIN (name gin_trgm_ops)")]
   IDX --> RANK["order by similarity desc,<br/>then prefix desc, then updatedAt desc"]
   RANK --> LIST["readResources"]
-  W --> CNT["count — same predicate, never drifts"]
+  W --> CNT["readResourcesCount<br/>same predicate, never drifts"]
 ```
 
 ## Data model

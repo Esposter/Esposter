@@ -76,7 +76,7 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     lastAddedParameterName.value = "";
   };
 
-  const buildText = (): string => {
+  const getText = (): string => {
     if (!pendingSlashCommand.value) return "";
     const parts = [`/${pendingSlashCommand.value.type}`];
 
@@ -101,7 +101,7 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
   };
 
   const collapseToText = () => {
-    inputStore.input = buildText();
+    inputStore.input = getText();
     clearPendingSlashCommand();
   };
 

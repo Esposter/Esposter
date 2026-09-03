@@ -196,7 +196,7 @@ export const useDataStore = defineStore("message/data", () => {
   };
 
   const inputStore = useInputStore();
-  const { clearComposer, getComposerInput, validateInput } = inputStore;
+  const { checkIsInputValid, clearComposer, getComposerInput } = inputStore;
   const uploadFileStore = useUploadFileStore();
   const { getComposerFiles } = uploadFileStore;
   const replyStore = useReplyStore();
@@ -206,7 +206,7 @@ export const useDataStore = defineStore("message/data", () => {
   // The user last picked Reply on, if anything
   const sendComposerMessage = async (editor: Editor, target: ComposerTarget) => {
     const { roomId, threadRootRowKey } = target;
-    if (!roomId || !validateInput(target, editor, true)) return;
+    if (!roomId || !checkIsInputValid(target, editor, true)) return;
 
     const input: StandardCreateMessageInput = {
       files: getComposerFiles(target),

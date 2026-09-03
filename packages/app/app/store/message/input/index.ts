@@ -29,7 +29,7 @@ export const useInputStore = defineStore("message/input", () => {
     },
   });
   const uploadFileStore = useUploadFileStore();
-  const { getComposerFiles, getIsFileLoading } = uploadFileStore;
+  const { checkIsFileLoading, getComposerFiles } = uploadFileStore;
   // Persisted state rather than a Map mirrored into localStorage by hand: the write happens because the Map
   // Changed, and a server render reads the default empty one — see /docs/architecture/browser-execution
   // `flush: "sync"` because a draft is persisted state rather than rendered state: the default pre-flush write
@@ -64,7 +64,7 @@ export const useInputStore = defineStore("message/input", () => {
   for (const [composerKey, storedDraft] of drafts.value)
     setInput(composerKey, syncDraft(composerKey, storedDraft.content, storedDraft.updatedAt)?.content ?? "");
 
-  const storeDraft = (composerKey: string, content: string) => {
+  const setDraft = (composerKey: string, content: string) => {
     setInput(composerKey, syncDraft(composerKey, content)?.content ?? "");
   };
   // One watcher per composer rather than one over "whatever is being typed in": both are on screen at once, so
@@ -111,26 +111,26 @@ export const useInputStore = defineStore("message/input", () => {
     clearDraft(getComposerKey(target));
   };
 
-  const validateInput = (target: ComposerTarget, editor?: Editor, isDisplayError?: true) => {
+  const checkIsInputValid = (target: ComposerTarget, editor?: Editor, isDisplayError?: true) => {
     const files = getComposerFiles(target);
     if (isDisplayError && !files.every(({ size }) => validateFile(size).isValid)) {
       useEmptyFileAlert();
       return false;
     } else
       return (
-        !getIsFileLoading(target) && (Boolean(editor && !EMPTY_TEXT_REGEX.test(editor.getText())) || files.length > 0)
+        !checkIsFileLoading(target) && (Boolean(editor && !EMPTY_TEXT_REGEX.test(editor.getText())) || files.length > 0)
       );
   };
 
   return {
+    checkIsInputValid,
     clearComposer,
     clearDraft,
     drafts,
     getComposerInput,
     input,
-    storeDraft,
+    setDraft,
     threadInput,
     threadTarget,
-    validateInput,
   };
 });

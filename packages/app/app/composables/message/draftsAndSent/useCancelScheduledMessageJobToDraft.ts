@@ -6,11 +6,11 @@ import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob
 
 export const useCancelScheduledMessageJobToDraft = () => {
   const inputStore = useInputStore();
-  const { storeDraft } = inputStore;
+  const { setDraft } = inputStore;
   const scheduledMessageJobStore = useScheduledMessageJobStore();
   const { cancelScheduledMessageJob } = scheduledMessageJobStore;
   return async (scheduledMessageJob: ScheduledMessageJobInMessageWithRoom) => {
     await cancelScheduledMessageJob(scheduledMessageJob.id);
-    storeDraft(scheduledMessageJob.roomId, getScheduledMessageJobText(scheduledMessageJob));
+    setDraft(scheduledMessageJob.roomId, getScheduledMessageJobText(scheduledMessageJob));
   };
 };

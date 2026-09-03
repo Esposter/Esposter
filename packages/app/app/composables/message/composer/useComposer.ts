@@ -24,11 +24,11 @@ export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
     mentionExtension.value,
   ]);
   const inputStore = useInputStore();
-  const { validateInput } = inputStore;
+  const { checkIsInputValid } = inputStore;
   return {
+    checkIsInputValid,
     extensions,
     sendComposerMessage,
     uploadFiles: useUploadFiles(target),
-    validateInput,
   };
 };
