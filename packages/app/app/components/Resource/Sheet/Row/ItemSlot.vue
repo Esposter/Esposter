@@ -13,13 +13,13 @@ interface ItemSlotProps {
 
 const { column, item, rowIndex } = defineProps<ItemSlotProps>();
 const cellStore = useCellStore();
-const { isEditingCell } = cellStore;
+const { checkIsEditingCell } = cellStore;
 const editableColumn = computed(() => (checkIsEditableColumnValue(column) ? column : undefined));
 </script>
 
 <template>
   <ResourceSheetRowFieldEditable
-    v-if="isEditingCell(rowIndex, column.name) && editableColumn"
+    v-if="checkIsEditingCell(rowIndex, column.name) && editableColumn"
     :column="editableColumn"
     :item
     :row-index

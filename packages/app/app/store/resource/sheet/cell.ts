@@ -28,10 +28,10 @@ export const useCellStore = defineStore("resource/sheet/cell", () => {
   const clearFocus = () => {
     if (cellState.value.mode === CellMode.Edit) cellState.value = { mode: CellMode.View };
   };
-  const isEditingCell = (rowIndex: number, columnName: string) =>
+  const checkIsEditingCell = (rowIndex: number, columnName: string) =>
     editingCell.value?.rowIndex === rowIndex && editingCell.value.columnName === columnName;
 
-  const focusCell = computed(() => (cellState.value.mode === CellMode.Select ? cellState.value.focus : undefined));
+  const focusedCell = computed(() => (cellState.value.mode === CellMode.Select ? cellState.value.focus : undefined));
 
   const startCellSelection = (rowIndex: number, columnIndex: number) => {
     cellState.value = {
@@ -51,7 +51,7 @@ export const useCellStore = defineStore("resource/sheet/cell", () => {
   const clearCellSelection = () => {
     if (cellState.value.mode === CellMode.Select) cellState.value = { mode: CellMode.View };
   };
-  const isCellInRange = (rowIndex: number, columnIndex: number) => {
+  const checkIsCellInRange = (rowIndex: number, columnIndex: number) => {
     if (!selectedCellRange.value) return false;
     const { columnEnd, columnStart, rowEnd, rowStart } = selectedCellRange.value;
     return rowIndex >= rowStart && rowIndex <= rowEnd && columnIndex >= columnStart && columnIndex <= columnEnd;
@@ -62,9 +62,9 @@ export const useCellStore = defineStore("resource/sheet/cell", () => {
     clearFocus,
     editingCell,
     extendCellSelection,
-    focusCell,
-    isCellInRange,
-    isEditingCell,
+    focusedCell,
+    checkIsCellInRange,
+    checkIsEditingCell,
     requestFocus,
     selectedCellRange,
     shiftStartCellSelection,

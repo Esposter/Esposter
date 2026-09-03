@@ -19,7 +19,7 @@ export const useCellKeyboardShortcuts = () => {
   const rowStore = useRowStore();
   const { filteredRows } = storeToRefs(rowStore);
   const cellStore = useCellStore();
-  const { editingCell, focusCell, selectedCellRange } = storeToRefs(cellStore);
+  const { editingCell, focusedCell, selectedCellRange } = storeToRefs(cellStore);
   const { clearCellSelection, extendCellSelection, startCellSelection } = cellStore;
   const copyRangeToClipboard = useCopyRangeToClipboard();
   const pasteRangeFromClipboard = usePasteRangeFromClipboard();
@@ -62,15 +62,15 @@ export const useCellKeyboardShortcuts = () => {
   });
 
   onKeyStroke(["ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp"], (event) => {
-    if (editingCell.value || getIsInputFocused() || !focusCell.value) return;
+    if (editingCell.value || getIsInputFocused() || !focusedCell.value) return;
     const arrowDelta = ArrowKeyDeltaMap[event.key];
     if (!arrowDelta) return;
     event.preventDefault();
     const [rowDelta, columnDelta] = arrowDelta;
     const rowCount = filteredRows.value.length;
     const columnCount = displayColumns.value.length;
-    const newRowIndex = Math.max(0, Math.min(rowCount - 1, focusCell.value.rowIndex + rowDelta));
-    const newColumnIndex = Math.max(0, Math.min(columnCount - 1, focusCell.value.columnIndex + columnDelta));
+    const newRowIndex = Math.max(0, Math.min(rowCount - 1, focusedCell.value.rowIndex + rowDelta));
+    const newColumnIndex = Math.max(0, Math.min(columnCount - 1, focusedCell.value.columnIndex + columnDelta));
     if (event.shiftKey) extendCellSelection(newRowIndex, newColumnIndex);
     else startCellSelection(newRowIndex, newColumnIndex);
   });

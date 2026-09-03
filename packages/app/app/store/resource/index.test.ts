@@ -196,20 +196,19 @@ describe(useResourceStore, () => {
   test("queues an unpublish behind the publish it shares an executor with", async () => {
     expect.hasAssertions();
 
-    const { promise: isPublishedPromise, resolve: resolveIsPublished } = Promise.withResolvers<void>();
-    const isPublished = isPublishedPromise;
+    const { promise: publishHandled, resolve: resolvePublishHandled } = Promise.withResolvers<void>();
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
     const { publishResource, readResource, unpublishResource } = resourceStore;
     server.use(
       trpcMsw.note.publishResource.mutation(() => {
-        resolveIsPublished();
+        resolvePublishHandled();
         return publication;
       }),
       // Answered only once the publish has been, so the ordering under test is the store's own rather than
       // Whichever response the network happened to deliver first
       trpcMsw.note.unpublishResource.mutation(async () => {
-        await isPublished;
+        await publishHandled;
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
       }),
     );
