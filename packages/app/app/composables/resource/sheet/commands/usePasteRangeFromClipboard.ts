@@ -33,7 +33,9 @@ export const usePasteRangeFromClipboard = () => {
         }
         case PasteMode.ShiftDown: {
           const rows = pastedValues.map((pastedRow) => {
-            const row = new Row({ data: Object.fromEntries(dataSourceValue.columns.map((c) => [c.name, null])) });
+            const row = new Row({
+              data: Object.fromEntries(dataSourceValue.columns.map((column) => [column.name, null])),
+            });
             for (const [columnOffset, pastedValue] of pastedRow.entries()) {
               const columnIndex = anchorColumnIndex + columnOffset;
               if (columnIndex >= displayColumns.value.length) break;

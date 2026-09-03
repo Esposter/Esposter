@@ -35,7 +35,7 @@
 | `app/composables/message/room`                                                                                                              | 2026-09-03 | `use*` naming, the `{param}Value` `toValue` suffix; an unsubscribable is named for its procedure  |
 | `app/composables/message` — `subscribables`, `message`, `slashCommand`, `moderation`                                                        | 2026-09-03 |                                                                                                   |
 | `app/composables/message` — the rest                                                                                                        | 2026-09-03 | `emoji`, `draftsAndSent`, `user`, `file`, `editor`, `search`, `poll`, the singles, the root files |
-| `app/composables/resource/sheet/commands`                                                                                                   | —          | a command class is named for the edit it applies                                                  |
+| `app/composables/resource/sheet/commands`                                                                                                   | 2026-09-03 | a command class is named for the edit it applies                                                  |
 | `app/composables/resource` — the rest                                                                                                       | —          | `list`, `autosave`, `todoList`, `search`, `recycleBin`, `sheet`'s root files, the root files      |
 | `app/composables/dungeons`                                                                                                                  | —          |                                                                                                   |
 | `app/composables` — `shared`, `data`                                                                                                        | —          | `useQuery` / `useMutation` and the primitives around them                                         |
@@ -115,6 +115,14 @@ the grounds that a rename is expensive — that is the argument
   these does, so `handle*` is not straightforwardly wrong and renaming one family in isolation would only widen
   the split. Which prefix the family takes is the open question, and it is settled with
   `app/models` — `resolvers`, `shared`, where the abstract classes that fix the method name live.
+
+- **A `Map` local is spelled two ways, and settling it costs this ledger its dates.** The dominant shape is
+  `<value>Map` or `<key><value>Map` — `userMap`, `fileUrlMap`, `callSessionParticipantsMap`, `rowIdIndexMap` —
+  but a handful read as English instead: `columnIndexById`, `rowIndexById`, `newIndexById`,
+  `newRelativePositionByRowId`. Neither is wrong on its own and no enforcer decides the word order, so the fix
+  is a rule in the `naming` skill — which resets every date in this table, since a unit swept without it is not
+  swept against it. The call is whether that reset is worth paying now or at the next convention change that
+  earns one anyway; until it is made, a `*ById` name is left alone.
 
 - **The `block` router's `blockUser` and `unblockUser` procedures name an action, not the row they write.**
   The store side is now `createBlock` / `deleteBlock` against the `blocks` table, and the router already spells

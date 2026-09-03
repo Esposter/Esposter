@@ -10,7 +10,7 @@ import { describe } from "vitest";
 export const BENCH_COLUMN_NAMES = ["a", "b", "c", "d", "e"];
 
 export const generateBenchRows = (count: number, { offset = 0, uniqueValues = count } = {}): Row[] =>
-  Array.from({ length: count }, (_, index) => {
+  Array.from({ length: count }, (_row, index) => {
     const key = offset + (index % uniqueValues);
     return createRow(Object.fromEntries(BENCH_COLUMN_NAMES.map((name) => [name, key])));
   });
