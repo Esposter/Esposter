@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import StyledDialog from "@/components/Styled/Dialog.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { defineComponent, h } from "vue";
 
 const SlowChild = defineComponent({
@@ -18,18 +18,16 @@ const Wrapper = defineComponent({
 describe("repro", () => {
   test("dialog born active inside a pending suspense", async () => {
     expect.hasAssertions();
-    const errors: unknown[] = [];
-    const onError = (event: PromiseRejectionEvent | ErrorEvent) => errors.push(event);
-    window.addEventListener("error", onError);
-    window.addEventListener("unhandledrejection", onError);
+    const errors: string[] = [];
+    const spy = vi.spyOn(console, "error").mockImplementation((...args: unknown[]) => {
+      errors.push(args.map((a) => String(a instanceof Error ? a.stack : a)).join(" "));
+    });
+    window.addEventListener("error", (event) => errors.push(`window: ${String(event.error)}`));
+    window.addEventListener("unhandledrejection", (event) => errors.push(`rejection: ${String(event.reason)}`));
     const wrapper = await mountSuspended(Wrapper, { attachTo: document.body });
     await new Promise((resolve) => setTimeout(resolve, 300));
-    console.log(
-      "ERRORS",
-      errors.length,
-      errors.map((e) => String((e as ErrorEvent).error ?? (e as PromiseRejectionEvent).reason)),
-    );
+    spy.mockRestore();
     wrapper.unmount();
-    expect(true).toBe(true);
+    expect(errors.join("\n---\n")).toBe("NO ERRORS");
   });
 });
