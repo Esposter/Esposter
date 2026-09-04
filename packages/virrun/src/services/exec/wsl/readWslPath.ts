@@ -5,16 +5,16 @@ import { execWsl } from "#src/services/exec/wsl/execWsl";
 // Mangles the UNC into a bogus `/mnt/c/wsl.localhost...`), so map them here instead via the regex's `linuxPath` group:
 // Take the captured tail and flip the separators. This is what lets the native-ext4 cache (getWslNativeCacheRoot)
 // Reach bwrap as a real `/home/...` path.
-const wslPaths = new Map<string, string>();
+const wslPathCache = new Map<string, string>();
 
 export const readWslPath = (path: string): string => {
-  const wslPath = wslPaths.get(path);
+  const wslPath = wslPathCache.get(path);
   if (wslPath) return wslPath;
   const uncMatch = WSL_UNC_REGEX.exec(path);
   const newWslPath =
     uncMatch === null
       ? execWsl(["--exec", "wslpath", "-a", path]).trim()
       : (uncMatch.groups?.linuxPath ?? "").replaceAll("\\", "/") || "/";
-  wslPaths.set(path, newWslPath);
+  wslPathCache.set(path, newWslPath);
   return newWslPath;
 };

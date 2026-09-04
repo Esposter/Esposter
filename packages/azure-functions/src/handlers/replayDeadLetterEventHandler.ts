@@ -144,7 +144,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     // Each republish carries the incremented count on its id, which Event Grid writes back verbatim if this delivery
     // Dead-letters again — that is what makes the cap hold across cycles instead of restarting on every new blob.
     // Delivery is at-least-once: a send that throws mid-batch is retried whole by the redelivered blob event, so a
-    // Handler that already ran can run twice. Only the handlers IsIdempotentAzureFunctionMap marks idempotent get
+    // Handler that already ran can run twice. Only the handlers AzureFunctionIsIdempotentMap marks idempotent get
     // Here for exactly that reason; the rest were quarantined above rather than duplicated.
     // Chunked against the publish request cap, never sent whole: Event Grid caps a publish REQUEST at 1 MB
     // Independently of the per-event cap, and it batches whatever expired together into one blob up to that same

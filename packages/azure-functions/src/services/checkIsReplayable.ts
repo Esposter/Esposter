@@ -1,5 +1,5 @@
 import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/constants";
-import { azureFunctionSchema, IsIdempotentAzureFunctionMap } from "@esposter/db-schema";
+import { AzureFunctionIsIdempotentMap, azureFunctionSchema } from "@esposter/db-schema";
 
 // Whether a dead-lettered event may go back on the topic, or belongs in quarantine for a human. Two ways to fail it:
 // The per-event replay cap, and a handler that is not idempotent — republishing to one of those does not retry the
@@ -10,5 +10,5 @@ import { azureFunctionSchema, IsIdempotentAzureFunctionMap } from "@esposter/db-
 export const checkIsReplayable = (eventType: string, replayAttempts: number): boolean => {
   if (replayAttempts >= MAX_DEAD_LETTER_REPLAY_ATTEMPTS) return false;
   const { data, success } = azureFunctionSchema.safeParse(eventType);
-  return success && IsIdempotentAzureFunctionMap[data];
+  return success && AzureFunctionIsIdempotentMap[data];
 };

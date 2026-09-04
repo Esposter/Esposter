@@ -61,7 +61,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
     // Single-shot, so every redelivery loses the race, and the row is left neither deliverable nor cancellable
     const payload = scheduledMessageJobPayloadSchema.parse(job.payload);
     // Claiming on `processingStartedAt IS NULL` is what makes this handler idempotent
-    // (IsIdempotentAzureFunctionMap): delivery is at-least-once, and a message carries a fresh reverse-ticked
+    // (AzureFunctionIsIdempotentMap): delivery is at-least-once, and a message carries a fresh reverse-ticked
     // RowKey, so a redelivery that could re-pass this guard would post a second copy rather than repair the first
     const [processingJob] = await db
       .update(scheduledMessageJobsInMessage)

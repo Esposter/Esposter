@@ -1,10 +1,10 @@
 import { BackendType } from "#src/models/virrun/BackendType";
 import { resolveBackend } from "#src/services/configuration/resolveBackend";
-import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
+import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { VIRRUN_ENV_KEY } from "#src/services/exec/util/constants";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/exec/os/isOsBackendSupported"));
+vi.mock(import("#src/services/exec/os/checkIsOsBackendSupported"));
 
 describe(resolveBackend, () => {
   // Pass an explicit empty env so the suite is hermetic: `pnpm test` runs under `virrun -- vitest`, so the real
@@ -13,7 +13,7 @@ describe(resolveBackend, () => {
 
   beforeEach(() => {
     // Default to a supported host; the degrade tests flip this so backend decisions stay host-independent.
-    vi.mocked(isOsBackendSupported).mockReturnValue(true);
+    vi.mocked(checkIsOsBackendSupported).mockReturnValue(true);
   });
 
   test(`defaults to ${BackendType.Os} when there is no config`, () => {
@@ -31,7 +31,7 @@ describe(resolveBackend, () => {
   test(`degrades the default ${BackendType.Os} backend to ${BackendType.Native} when the host lacks bubblewrap support`, () => {
     expect.hasAssertions();
 
-    vi.mocked(isOsBackendSupported).mockReturnValue(false);
+    vi.mocked(checkIsOsBackendSupported).mockReturnValue(false);
 
     expect(resolveBackend(undefined, env)).toBe(BackendType.Native);
   });
@@ -45,7 +45,7 @@ describe(resolveBackend, () => {
   test("degrades an os backend to native when the host lacks bubblewrap support", () => {
     expect.hasAssertions();
 
-    vi.mocked(isOsBackendSupported).mockReturnValue(false);
+    vi.mocked(checkIsOsBackendSupported).mockReturnValue(false);
 
     expect(resolveBackend({ backend: BackendType.Os }, env)).toBe(BackendType.Native);
   });
@@ -53,7 +53,7 @@ describe(resolveBackend, () => {
   test("leaves a non-os backend untouched on an unsupported host", () => {
     expect.hasAssertions();
 
-    vi.mocked(isOsBackendSupported).mockReturnValue(false);
+    vi.mocked(checkIsOsBackendSupported).mockReturnValue(false);
 
     expect(resolveBackend({ backend: BackendType.Vfs }, env)).toBe(BackendType.Vfs);
   });

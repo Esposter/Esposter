@@ -62,20 +62,20 @@ The acceptance test that proves the subprocess wall is broken: `pnpm install` on
 
 Paths relative to `packages/virrun/src/`.
 
-| File                                           | Role                                                                         |
-| ---------------------------------------------- | ---------------------------------------------------------------------------- |
-| `models/exec/ExecBackend.ts`                   | interface every backend implements                                           |
-| `services/exec/native/createNativeBackend.ts`  | native passthrough (the baseline + fallback)                                 |
-| `services/exec/vfs/createVfsBackend.ts`        | parse-and-delegate: in-process when recognised, else native                  |
-| `services/exec/vfs/parseNodeInvocation.ts`     | recognise `node -e`/`--eval` and `node <file>`                               |
-| `services/exec/vfs/runNodeInProcess.ts`        | in-process runner over the overlay-mounted FS layer                          |
-| `models/vfs/FsProvider.ts`                     | internal FS interface the runtime codes against                              |
-| `services/vfs/createPlatformaticFsProvider.ts` | adapter over `@platformatic/vfs`; the lone import = the `node:vfs` swap shim |
-| `services/exec/os/createOsBackend.ts`          | chooses Linux bwrap or Windows/WSL bwrap                                     |
-| `services/exec/bwrap/createLinuxOsBackend.ts`  | spawns commands inside the Linux bwrap RAM overlay                           |
-| `services/exec/wsl/createWslOsBackend.ts`      | spawns Linux bwrap through `wsl.exe` on Windows                              |
-| `services/exec/bwrap/buildBwrapArgs.ts`        | pure builder for the bwrap overlay argv                                      |
-| `services/exec/os/isOsBackendSupported.ts`     | Linux/WSL + bubblewrap availability check                                    |
+| File                                            | Role                                                                         |
+| ----------------------------------------------- | ---------------------------------------------------------------------------- |
+| `models/exec/ExecBackend.ts`                    | interface every backend implements                                           |
+| `services/exec/native/createNativeBackend.ts`   | native passthrough (the baseline + fallback)                                 |
+| `services/exec/vfs/createVfsBackend.ts`         | parse-and-delegate: in-process when recognised, else native                  |
+| `services/exec/vfs/parseNodeInvocation.ts`      | recognise `node -e`/`--eval` and `node <file>`                               |
+| `services/exec/vfs/runNodeInProcess.ts`         | in-process runner over the overlay-mounted FS layer                          |
+| `models/vfs/FsProvider.ts`                      | internal FS interface the runtime codes against                              |
+| `services/vfs/createPlatformaticFsProvider.ts`  | adapter over `@platformatic/vfs`; the lone import = the `node:vfs` swap shim |
+| `services/exec/os/createOsBackend.ts`           | chooses Linux bwrap or Windows/WSL bwrap                                     |
+| `services/exec/bwrap/createLinuxOsBackend.ts`   | spawns commands inside the Linux bwrap RAM overlay                           |
+| `services/exec/wsl/createWslOsBackend.ts`       | spawns Linux bwrap through `wsl.exe` on Windows                              |
+| `services/exec/bwrap/buildBwrapArgs.ts`         | pure builder for the bwrap overlay argv                                      |
+| `services/exec/os/checkIsOsBackendSupported.ts` | Linux/WSL + bubblewrap availability check                                    |
 
 ## Notes
 

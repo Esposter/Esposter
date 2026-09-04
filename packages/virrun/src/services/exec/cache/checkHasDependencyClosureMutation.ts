@@ -8,9 +8,9 @@ import { PNPM_LOCKFILE_FILENAME } from "#src/services/exec/util/constants";
 // A stale dependency closure onto the host, so the caller drops the entry — the run stays correct, merely uncached.
 //
 // The lockfile op is the whole signal: any dep mutation rewrites `pnpm-lock.yaml`, and it always reaches the flush plan
-// As a source-tree path. node_modules itself never appears in a plan — `isUnderSnapshotLower` masks every path with a
+// As a source-tree path. node_modules itself never appears in a plan — `checkIsUnderSnapshotLower` masks every path with a
 // `node_modules` segment out of write-back structurally — so there is nothing else to test.
-export const hasDependencyClosureMutation = (plan: readonly FlushOp[]): boolean =>
+export const checkHasDependencyClosureMutation = (plan: readonly FlushOp[]): boolean =>
   plan.some(
     (op) => op.relativePath === PNPM_LOCKFILE_FILENAME || op.relativePath.endsWith(`/${PNPM_LOCKFILE_FILENAME}`),
   );

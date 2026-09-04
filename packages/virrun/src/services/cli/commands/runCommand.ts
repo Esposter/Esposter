@@ -25,7 +25,7 @@ const runArgs: RunArgs = {
     type: "boolean",
   },
 } satisfies ArgsDef;
-// `--no-cache`/`--debug` are surfaced via the VIRRUN_NO_CACHE/VIRRUN_DEBUG envs (what isTaskCacheEnabled and
+// `--no-cache`/`--debug` are surfaced via the VIRRUN_NO_CACHE/VIRRUN_DEBUG envs (what checkIsTaskCacheEnabled and
 // WriteVirrunDebug read) rather than threaded through the Virrun handle, keeping persist's signature small.
 export const runCommand: CommandDef<RunArgs> = defineCommand({
   args: runArgs,

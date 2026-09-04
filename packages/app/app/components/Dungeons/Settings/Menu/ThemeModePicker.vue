@@ -15,7 +15,6 @@ const { themeModeSetting } = storeToRefs(colorPickerStore);
 const PADDING = 100;
 const LEFT_CURSOR_X = INITIAL_SETTINGS_VALUE_POSITION.x + PADDING;
 const TEXT_X = LEFT_CURSOR_X + PADDING;
-const RIGHT_CURSOR_X = TEXT_X + PADDING;
 const TEXT_Y = getSettingsOptionY(SettingsOption["Theme Mode"]);
 // The cursors are centred on the text rather than aligned to its top
 const CURSOR_Y = TEXT_Y + 12;
@@ -46,7 +45,7 @@ const CURSOR_Y = TEXT_Y + 12;
   />
   <Image
     :configuration="{
-      x: RIGHT_CURSOR_X,
+      x: TEXT_X + PADDING,
       y: CURSOR_Y,
       origin: 0,
       texture: ImageKey.CursorWhite,

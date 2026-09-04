@@ -4,7 +4,7 @@ import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause, serializeClauses } from "@esposter/azure";
 import { getTopNEntitiesByType } from "@esposter/db";
-import { AzureTable, MessageEntityMap } from "@esposter/db-schema";
+import { AzureTable, MessageTypeEntityMap } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 // A named set of a room's messages in one table scan rather than a point read each, with the deleted ones
@@ -27,7 +27,7 @@ export const readMessagesByRowKeys = async (
       value: rowKey,
     });
 
-  const messages = await getTopNEntitiesByType(messageClient, rowKeys.length, MessageEntityMap, {
+  const messages = await getTopNEntitiesByType(messageClient, rowKeys.length, MessageTypeEntityMap, {
     filter: serializeClauses(clauses),
   });
   return messages.toSorted((first, second) => first.rowKey.localeCompare(second.rowKey));

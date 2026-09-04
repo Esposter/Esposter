@@ -51,7 +51,7 @@ export const COREPACK_HOME_KEY = "COREPACK_HOME";
 // Lets CI and tests point the snapshot cache at a disposable dir instead of the real home.
 export const VIRRUN_CACHE_HOME_KEY = "VIRRUN_CACHE_HOME";
 // Host-global file caching the os-backend capability probe's verdict so a fresh `virrun -- <cmd>` process reuses it
-// Instead of re-spawning the bwrap probe every command. See isOsBackendSupported.
+// Instead of re-spawning the bwrap probe every command. See checkIsOsBackendSupported.
 export const CAPABILITY_CACHE_FILENAME = "capability.json";
 // Windows-side files caching the win32 WSL environment probes so a fresh `virrun -- <cmd>` process reuses them
 // Instead of re-spawning wsl.exe (an interactive-login shell for the PATH, two round-trips for the cache root).
@@ -68,7 +68,7 @@ export const PROBE_CACHE_MAX_AGE_MS: number = Temporal.Duration.from({ hours: 6 
 // Set (to any value) to bypass the persisted capability cache and force a fresh probe — the escape hatch for a host
 // Whose bubblewrap/kernel capability changed without a cache-key change (e.g. bwrap was just installed).
 export const VIRRUN_FORCE_PROBE_KEY = "VIRRUN_FORCE_PROBE";
-// Set (to any value) to disable the task cache for a run — the env form of `virrun --no-cache`. See isTaskCacheEnabled.
+// Set (to any value) to disable the task cache for a run — the env form of `virrun --no-cache`. See checkIsTaskCacheEnabled.
 export const VIRRUN_NO_CACHE_KEY = "VIRRUN_NO_CACHE";
 // Set (to any value) to print internal diagnostic lines to stderr — the env form of `virrun run --debug`. The
 // Observability lever for silently-degrading paths (the task cache is best-effort: a failed record leaves the run

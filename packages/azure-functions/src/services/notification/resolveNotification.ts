@@ -18,7 +18,7 @@ export interface ResolvedNotification {
 
 // The one place a published occurrence becomes a rendered notification and a recipient list. Every type answers
 // The same questions — what it says, where it goes, whose it is — so the delivery below it never branches on type
-// Again: it reads NotificationChannelMap and fans out.
+// Again: it reads AppNotificationTypeChannelMap and fans out.
 //
 // Undefined means there is nothing to deliver, which only a message can be: everything else knows its own copy.
 export const resolveNotification = async (

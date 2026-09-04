@@ -1,9 +1,9 @@
 import { checkIsVirrunEnabled } from "#src/services/configuration/checkIsVirrunEnabled";
-import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
+import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { probeOsBackendSupported } from "#src/services/exec/os/probeOsBackendSupported";
 import { describe, expect, test } from "vitest";
 
-describe(isOsBackendSupported, () => {
+describe(checkIsOsBackendSupported, () => {
   // IsOsBackendSupported layers a nesting guard + in-process memo + persisted cache over the raw host probe, so derive
   // The expected verdict from the SAME two inputs the wrapper reads — the raw overlay probe and the VIRRUN nesting
   // Signal. The two assertions are complementary (exactly one runs per environment: a capable un-nested dev box, a bare
@@ -18,12 +18,12 @@ describe(isOsBackendSupported, () => {
   test.skipIf(!(isHostCapable && !isNested))("is true on a capable, un-nested host", () => {
     expect.hasAssertions();
 
-    expect(isOsBackendSupported()).toBe(true);
+    expect(checkIsOsBackendSupported()).toBe(true);
   });
 
   test.skipIf(isHostCapable && !isNested)("is false on an incapable or nested host", () => {
     expect.hasAssertions();
 
-    expect(isOsBackendSupported()).toBe(false);
+    expect(checkIsOsBackendSupported()).toBe(false);
   });
 });

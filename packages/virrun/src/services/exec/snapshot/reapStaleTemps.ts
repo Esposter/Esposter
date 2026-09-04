@@ -1,5 +1,5 @@
 import { sweepStaleEntries } from "#src/services/exec/snapshot/sweepStaleEntries";
-import { isProcessAlive } from "#src/services/exec/util/isProcessAlive";
+import { checkIsProcessAlive } from "#src/services/exec/util/checkIsProcessAlive";
 import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
 // A capture/persist run writes into a private pid-tagged `mkdtemp` sibling of the live snapshot/prepare hash dir
 // (`<base>.<pid>.<rand>`, withPidTempPrefix) and its in-process finalizer removes it on a clean exit. A hard kill
@@ -12,6 +12,6 @@ import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
 export const reapStaleTemps = (dir: string, prefixes: readonly string[]): void => {
   sweepStaleEntries(dir, (name) => {
     const pid = parseTempOwnerPid(name, prefixes);
-    return pid !== undefined && !isProcessAlive(pid);
+    return pid !== undefined && !checkIsProcessAlive(pid);
   });
 };

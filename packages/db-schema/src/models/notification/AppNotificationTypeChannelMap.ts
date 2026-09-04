@@ -7,7 +7,7 @@ import { NotificationChannel } from "#src/models/notification/NotificationChanne
 //
 // Exhaustive over AppNotificationType on purpose — a new type has to state its surfaces rather than inherit a
 // Default that silently drops it from the bell or wakes a device it had no business waking.
-export const NotificationChannelMap: Record<AppNotificationType, readonly NotificationChannel[]> = {
+export const AppNotificationTypeChannelMap: Record<AppNotificationType, readonly NotificationChannel[]> = {
   [AppNotificationType.FriendRequest]: [NotificationChannel.Bell, NotificationChannel.Push],
   // Push only: a room already carries its own unread count and mention badge, so a bell row per chat message
   // Would duplicate a surface that is both more precise and already read where the conversation is.

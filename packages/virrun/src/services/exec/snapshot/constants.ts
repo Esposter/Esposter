@@ -13,7 +13,7 @@ export const VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME = "upper";
 export const VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME = "work";
 // A published snapshot/prepare hash dir carries a `leases/<pid>` file per live run mounting it. pruneStale* keeps a
 // Superseded dir while any lease pid is alive, so a concurrent run on a different lockfile hash can't evict a layer
-// Another live run is still reading. Dead-pid leases are reaped in place (acquireLease / hasLiveLease). The dir sits
+// Another live run is still reading. Dead-pid leases are reaped in place (acquireLease / checkHasLiveLease). The dir sits
 // Beside `upper`/`work`, invisible to the mount (which names only those), the reap, and the flush.
 export const VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME = "leases";
 // The reap prefixes every pid-tagged capture/persist temp starts with inside a snapshot/prepare hash dir, ordered
@@ -60,7 +60,7 @@ for root, _dirs, _files in os.walk(up):
             "isCharacterDevice": stat.S_ISCHR(st.st_mode),
             "isDirectory": is_dir,
             "isOpaque": is_opaque,
-            "isSnapshotLowerPath": is_lower,
+            "checkIsSnapshotLowerPath": is_lower,
             "rdev": st.st_rdev,
             "relativePath": rel,
         })

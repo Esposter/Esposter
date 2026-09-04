@@ -10,7 +10,7 @@ import { createProbeCache } from "#src/services/exec/util/createProbeCache";
 // Window, so it is answered as undefined and shouldPersist drops it, leaving the next process to re-probe against a
 // Warm distro. The entry is age-bounded on top (readCapabilityCache) as the backstop, and a missing/corrupt/
 // Mismatched/expired cache reads as undefined and falls through to the probe, so it self-heals.
-const readIsOsBackendSupported = createProbeCache<boolean | undefined>({
+const readOsBackendSupport = createProbeCache<boolean | undefined>({
   probe: probeOsBackendSupported,
   readPersistedCache: readCapabilityCache,
   shouldPersist: (value) => value !== undefined,
@@ -21,7 +21,7 @@ const readIsOsBackendSupported = createProbeCache<boolean | undefined>({
   },
 });
 
-export const isOsBackendSupported = (): boolean => {
+export const checkIsOsBackendSupported = (): boolean => {
   // A run already nested inside a virrun sandbox (the injected VIRRUN signal is set) can never set up its OWN os
   // Overlay: the outer `--ro-bind / /` makes ~/.virrun read-only (persist/snapshot writes fail EROFS) and re-overlaying
   // The already-overlaid cwd is kernel-dependent (rejected outright on some builds — "userxattr: Invalid argument").
@@ -31,5 +31,5 @@ export const isOsBackendSupported = (): boolean => {
   // Un-nested run under the same fingerprint). Mirrors resolveBackend's nesting degrade — the backend degrades to
   // Native and these os tests skip rather than crash mid-run.
   if (checkIsVirrunEnabled(process.env)) return false;
-  return readIsOsBackendSupported() ?? false;
+  return readOsBackendSupport() ?? false;
 };

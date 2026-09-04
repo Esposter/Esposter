@@ -6,4 +6,4 @@
 const NETWORK_FAILURE_REGEX =
   /fetch failed|getaddrinfo|ENETUNREACH|ENETDOWN|EAI_AGAIN|ENOTFOUND|ECONNREFUSED|ECONNRESET|EHOSTUNREACH|ETIMEDOUT/u;
 
-export const isNetworkFailure = (output: string): boolean => NETWORK_FAILURE_REGEX.test(output);
+export const checkIsNetworkFailure = (output: string): boolean => NETWORK_FAILURE_REGEX.test(output);

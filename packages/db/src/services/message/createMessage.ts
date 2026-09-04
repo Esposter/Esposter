@@ -1,4 +1,9 @@
-import type { AzureTableEntityMap, CreateMessageInput, CustomTableClient, MessageEntityMap } from "@esposter/db-schema";
+import type {
+  AzureTableEntityMap,
+  CreateMessageInput,
+  CustomTableClient,
+  MessageTypeEntityMap,
+} from "@esposter/db-schema";
 
 import { createEntity } from "#src/services/azure/table/createEntity";
 import { addMessageMetadata } from "#src/services/message/addMessageMetadata";
@@ -9,7 +14,7 @@ export const createMessage = async <T extends CreateMessageInput>(
   messageClient: CustomTableClient<AzureTableEntityMap[AzureTable.Messages]>,
   messageAscendingClient: CustomTableClient<AzureTableEntityMap[AzureTable.MessagesAscending]>,
   input: T,
-): Promise<InstanceType<MessageEntityMap[T["type"]]>> => {
+): Promise<InstanceType<MessageTypeEntityMap[T["type"]]>> => {
   const messageEntity = createMessageEntity(input);
   await addMessageMetadata(messageEntity);
   // The index row goes first, and the order is load-bearing: two tables cannot be written atomically, so

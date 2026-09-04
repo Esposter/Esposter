@@ -1,6 +1,6 @@
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useNotificationStore } from "@/store/notification";
-import { NotificationChannel, NotificationChannelMap, pushNotificationPayloadSchema } from "@esposter/db-schema";
+import { AppNotificationTypeChannelMap, NotificationChannel, pushNotificationPayloadSchema } from "@esposter/db-schema";
 import { getResult } from "@esposter/shared";
 
 // The other end of the wire the service worker has always had: every delivered push is posted to each open tab
@@ -26,7 +26,7 @@ export default defineNuxtPlugin(() => {
     const payload = getResult(() => pushNotificationPayloadSchema.parse(event.data)).unwrapOr(undefined);
     // Every push is posted here, including the ones whose type never asked for the bell — a chat message is read
     // Where the conversation is, and re-reading the panel for each one would be a query per message received
-    if (!payload || !NotificationChannelMap[payload.data.type].includes(NotificationChannel.Bell)) return;
+    if (!payload || !AppNotificationTypeChannelMap[payload.data.type].includes(NotificationChannel.Bell)) return;
 
     storeDeliveredNotification();
   });

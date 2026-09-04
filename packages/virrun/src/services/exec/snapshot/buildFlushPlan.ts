@@ -14,12 +14,12 @@ const countSeparators = (relativePath: string): number => {
 // Dir is cleared before its replacement children land; an opaque dir expands to a delete + a copy.
 export const buildFlushPlan = (
   entries: readonly OverlayEntry[],
-  isSnapshotLowerPath: (relativePath: string) => boolean,
+  checkIsSnapshotLowerPath: (relativePath: string) => boolean,
 ): FlushOp[] => {
   const deletes: FlushOp[] = [];
   const copies: FlushOp[] = [];
   for (const { kind, relativePath } of entries) {
-    if (isSnapshotLowerPath(relativePath)) continue;
+    if (checkIsSnapshotLowerPath(relativePath)) continue;
     switch (kind) {
       case OverlayEntryKind.OpaqueDir:
         deletes.push({ relativePath, type: FlushOpType.Delete });

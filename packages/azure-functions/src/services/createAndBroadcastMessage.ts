@@ -1,5 +1,5 @@
 import type { InvocationContext } from "@azure/functions";
-import type { CreateMessageInput, MessageEntityMap } from "@esposter/db-schema";
+import type { CreateMessageInput, MessageTypeEntityMap } from "@esposter/db-schema";
 
 import { getTableClient } from "#src/services/getTableClient";
 import { getWebPubSubServiceClient } from "#src/services/getWebPubSubServiceClient";
@@ -10,7 +10,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 export const createAndBroadcastMessage = async <T extends CreateMessageInput>(
   context: InvocationContext,
   input: T,
-): Promise<InstanceType<MessageEntityMap[T["type"]]>> => {
+): Promise<InstanceType<MessageTypeEntityMap[T["type"]]>> => {
   const messageClient = await getTableClient(AzureTable.Messages);
   const messageAscendingClient = await getTableClient(AzureTable.MessagesAscending);
   const newMessage = await createMessage(messageClient, messageAscendingClient, input);

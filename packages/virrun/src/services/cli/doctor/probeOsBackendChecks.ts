@@ -3,7 +3,7 @@ import type { DiagnosticCheck } from "#src/models/cli/DiagnosticCheck";
 import { DiagnosticCheckType } from "#src/models/cli/DiagnosticCheckType";
 import { DiagnosticStatus } from "#src/models/cli/DiagnosticStatus";
 import { checkIsVersionAtLeast } from "#src/services/cli/run/checkIsVersionAtLeast";
-import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
+import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { getTarExecutable } from "#src/services/exec/util/getTarExecutable";
@@ -123,7 +123,7 @@ const probeTar = (): DiagnosticCheck => {
 const probeSandbox = (): DiagnosticCheck => {
   const label = "overlay sandbox mount";
   const type = DiagnosticCheckType.Sandbox;
-  return isOsBackendSupported()
+  return checkIsOsBackendSupported()
     ? { fix: "", label, note: "bubblewrap RAM overlay mounts", status: DiagnosticStatus.Ok, type }
     : {
         fix: "enable unprivileged user namespaces + overlayfs; unavailable when nested inside another overlay",

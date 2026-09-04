@@ -88,8 +88,8 @@ import {
   FilterType,
   getMimeCategory,
   getReverseTickedTimestamp,
-  MessageEntityMap,
   MessageType,
+  MessageTypeEntityMap,
   roomIdSchema,
   standardCreateMessageInputSchema,
   StandardMessageEntity,
@@ -413,7 +413,7 @@ export const baseMessageRouter = router({
       // The root and its replies are independent reads, so neither waits on the other
       const [rootMessage, replies] = await Promise.all([
         getEntity(messageClient, StandardMessageEntity, roomId, threadRootRowKey),
-        getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageEntityMap, {
+        getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageTypeEntityMap, {
           filter: serializeClauses(replyClauses),
         }),
       ]);

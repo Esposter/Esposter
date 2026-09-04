@@ -5,7 +5,7 @@ import { MessageType } from "#src/models/message/MessageType";
 import { StandardMessageEntity } from "#src/models/message/StandardMessageEntity";
 import { WebhookMessageEntity } from "#src/models/message/WebhookMessageEntity";
 
-export const MessageEntityMap = {
+export const MessageTypeEntityMap = {
   [MessageType.Call]: StandardMessageEntity,
   [MessageType.EditRoom]: StandardMessageEntity,
   [MessageType.Message]: StandardMessageEntity,
@@ -14,4 +14,4 @@ export const MessageEntityMap = {
   [MessageType.System]: StandardMessageEntity,
   [MessageType.Webhook]: WebhookMessageEntity,
 } as const satisfies Record<MessageType, Class<MessageEntity>>;
-export type MessageEntityMap = typeof MessageEntityMap;
+export type MessageTypeEntityMap = typeof MessageTypeEntityMap;
