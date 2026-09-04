@@ -6,15 +6,14 @@ import { getEmojiDescription } from "@/services/message/emoji/getEmojiDescriptio
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { useMessageStore } from "@/store/message";
 
-interface MessageOptionsMenuProps {
+interface OptionsMenuMoreProps {
   actionMessageItems: Item[];
   deleteMessageItem?: Item;
   rowKey: string;
   updateMessageMenuItems: Item[];
 }
 
-const { actionMessageItems, deleteMessageItem, rowKey, updateMessageMenuItems } =
-  defineProps<MessageOptionsMenuProps>();
+const { actionMessageItems, deleteMessageItem, rowKey, updateMessageMenuItems } = defineProps<OptionsMenuMoreProps>();
 const emit = defineEmits<{ "update:menu": [value: boolean]; "update:select-emoji": [emoji: string] }>();
 const messageStore = useMessageStore();
 const { optionsMenu } = storeToRefs(messageStore);

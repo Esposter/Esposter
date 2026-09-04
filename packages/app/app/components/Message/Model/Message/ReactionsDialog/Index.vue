@@ -15,11 +15,11 @@ const { isOpen, item: emojis } = useSingletonDialog(reactionsRowKey, () => {
 const selectedEmojiTag = ref("");
 // Most-reacted first, sorted at display time. The rail's selection is derived rather than assigned on open,
 // So a reaction that overtakes another — or disappears entirely — never leaves the rail pointing at nothing
-const sortedEmojis = computed(() =>
+const displayEmojis = computed(() =>
   (emojis.value ?? []).toSorted((firstEmoji, secondEmoji) => secondEmoji.userIds.length - firstEmoji.userIds.length),
 );
 const selectedEmoji = computed(
-  () => sortedEmojis.value.find(({ emojiTag }) => emojiTag === selectedEmojiTag.value) ?? sortedEmojis.value[0],
+  () => displayEmojis.value.find(({ emojiTag }) => emojiTag === selectedEmojiTag.value) ?? displayEmojis.value[0],
 );
 </script>
 
@@ -27,7 +27,7 @@ const selectedEmoji = computed(
   <StyledDialog v-model="isOpen" :card-props="{ title: 'Reactions' }" :dialog-props="{ maxWidth: '36rem' }">
     <div v-if="selectedEmoji" flex gap-2 min-h-64>
       <MessageModelMessageReactionsDialogRail
-        :emojis="sortedEmojis"
+        :emojis="displayEmojis"
         :model-value="selectedEmoji.emojiTag"
         @update:model-value="selectedEmojiTag = $event"
       />

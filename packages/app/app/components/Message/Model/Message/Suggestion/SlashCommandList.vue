@@ -21,7 +21,7 @@ const selectItem = (index: number) => {
   const slashCommand = takeOne(items, index);
   command(slashCommand);
 };
-const { onKeyDown: onNavigationKeyDown, selectedIndex } = useSuggestionListNavigation(() => items, selectItem);
+const { onKeyDown: baseOnKeyDown, selectedIndex } = useSuggestionListNavigation(() => items, selectItem);
 const onKeyDown = ({ event }: Pick<SuggestionKeyDownProps, "event">) => {
   if (event.key === " ") {
     const matchedItemIndex = items.findIndex(
@@ -34,7 +34,7 @@ const onKeyDown = ({ event }: Pick<SuggestionKeyDownProps, "event">) => {
     }
   }
 
-  return onNavigationKeyDown({ event });
+  return baseOnKeyDown({ event });
 };
 
 defineExpose({ onKeyDown });
