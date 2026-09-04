@@ -35,7 +35,7 @@ const warmCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 // Native host already has. The os side forks over a fresh tmpfs upper every run, so its writes (tsbuildinfo,
 // Dist) vanish and each run is cold without touching the source; the native side regenerates those gitignored
 // Build artifacts in place (idempotent), so it needs no cleanup and stays realistically warm/incremental.
-const SHARED_COMMAND = (script: string): string => `pnpm --filter @esposter/shared ${script}`;
+const getSharedCommand = (script: string): string => `pnpm --filter @esposter/shared ${script}`;
 // Whether the host-global snapshot cache entry already existed before this bench ran. warmCorpus mirrors the real
 // Repo's lockfile, so it resolves to the same lockfile-hash-keyed entry every real virrun run on this repo reuses.
 // If it pre-existed, createSnapshot reuses it (rename-loses-race keeps the existing upper) and teardown must leave
@@ -63,7 +63,7 @@ if (isOsSupported)
   await createSnapshot(createOsBackend(), resolveSetupCommand(), createOsInstallOptions(warmCorpus, "pipe"));
 
 describe.skipIf(!isOsSupported)("typecheck - packages/shared (cold)", () => {
-  const command = SHARED_COMMAND("typecheck");
+  const command = getSharedCommand("typecheck");
   bench(BackendType.Native, async () => {
     await native.exec(command, { cwd: repoRoot, stdio: "pipe" });
   });
@@ -74,7 +74,7 @@ describe.skipIf(!isOsSupported)("typecheck - packages/shared (cold)", () => {
 });
 
 describe.skipIf(!isOsSupported)("build - packages/shared (cold)", () => {
-  const command = SHARED_COMMAND("build");
+  const command = getSharedCommand("build");
   bench(BackendType.Native, async () => {
     await native.exec(command, { cwd: repoRoot, stdio: "pipe" });
   });
@@ -88,7 +88,7 @@ describe.skipIf(!isOsSupported)("build - packages/shared (cold)", () => {
 // Back to the host (specs/write-back.md). vs native shows the net win, and vs the `build` fork above isolates the
 // Flush cost — both must stay below the native baseline for write-back to be worth adopting on a mutation command.
 describe.skipIf(!isOsSupported)("build - write-back persist vs native (produces dist)", () => {
-  const command = SHARED_COMMAND("build");
+  const command = getSharedCommand("build");
   bench(BackendType.Native, async () => {
     await native.exec(command, { cwd: repoRoot, stdio: "pipe" });
   });
@@ -99,7 +99,7 @@ describe.skipIf(!isOsSupported)("build - write-back persist vs native (produces 
 });
 
 describe.skipIf(!isOsSupported)("test - packages/shared", () => {
-  const command = SHARED_COMMAND("test --run");
+  const command = getSharedCommand("test --run");
   bench(BackendType.Native, async () => {
     await native.exec(command, { cwd: repoRoot, stdio: "pipe" });
   });
