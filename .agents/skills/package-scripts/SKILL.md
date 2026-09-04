@@ -1,6 +1,6 @@
 ---
 name: package-scripts
-description: Esposter pnpm script reference — packages/app scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, graph:gen, outdated:dependencies, release), a Settled note that the release stays one local script rather than a CI publish, the rule that every `.ts` script runs under `tsx` so an enum is always available and why a pre-install CI check is shell rather than a script, the `scriptsComments` key that carries a script's comment because JSON has none, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
+description: Esposter pnpm script reference — packages/app scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, graph:gen, outdated:dependencies, release), a Settled note that the release stays one local script rather than a CI publish and another that a renamed export of a published package is never a major, the rule that every `.ts` script runs under `tsx` so an enum is always available and why a pre-install CI check is shell rather than a script, the `scriptsComments` key that carries a script's comment because JSON has none, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
 ---
 
 # Package Scripts
@@ -9,6 +9,11 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 
 ## Settled — do not re-propose
 
+- **Majoring the published packages because an export was renamed.** `lerna.json` is `conventionalCommits: true`
+  in fixed mode, so a `BREAKING CHANGE:` footer moves all seven public packages to the next whole number —
+  including the ones that changed nothing. A renamed export is not a breaking change for these packages and a
+  rename ships as the `refactor` it is; the reasoning, and the condition that would end it, are
+  [no compatibility debt](/docs/architecture/no-compatibility-debt).
 - **Splitting the release into a local `lerna version` and a CI publish** — a tag-triggered job publishing through npm's trusted publishing, which lerna-lite supports out of the box (`id-token: write`, a per-package token exchange, provenance attached for a public package). It buys an attestation that the published tarball is the one CI built. Nobody here is asking for that attestation, and the price is a release path that lives in two places and a per-package trusted-publisher registration on npmjs.com that fails closed the day a new package is added. **One script, run locally, is the whole release**: `pnpm release` gates the tree and hands `lerna publish` a version, a tag and a `dist` it just built, and 🚀 Release turns the pushed tag into a GitHub release. Publishing from a developer's machine is the deliberate simplification, not an oversight.
 
 ## `packages/app`

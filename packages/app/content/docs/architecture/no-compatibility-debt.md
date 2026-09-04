@@ -15,6 +15,15 @@ The usual reason to keep a wrong name is that changing it is expensive. Here it 
 
 - **Names in code** — the compiler finds every reference. A rename that typechecks is complete, and what typecheck cannot see (a path in a docs table, a name in prose) is covered by the docs index test and a grep across `content/docs`, `.agents` and the READMEs.
 - **Deployed identities** — infrastructure is Pulumi code ([platform](/docs/architecture/platform)), so renaming an Azure resource, a function, or the identifier a subscription points at is an ordinary edit followed by `pnpm infra:preview`. The plan says exactly what will happen before anything happens. "This would be a risky infra change" is a claim a preview either supports or refutes, and it is not allowed to stand unpreviewed.
+- **A published package's exports** — `virrun`, `parse-tmx`, `vue-phaserjs`, `azure-mock`, `@esposter/azure`,
+  `@esposter/shared` and `@esposter/xml2js` are published, and renaming an export from one is **not treated as a
+  breaking change here**. The packages exist because this repository needed them factored out, not because they
+  have an audience to keep faith with; every call site of every export lives inside its own package or inside
+  this monorepo, where the compiler finds them. Paying a major — which in lerna's fixed mode drags all seven to
+  the next whole number, including the ones that changed nothing — to protect a consumer nobody has is the same
+  cost argument this page refuses everywhere else. So a rename lands as a `refactor` like any other, and no
+  commit carries a `BREAKING CHANGE:` footer for one. This is a statement about _these_ packages: it stops
+  applying the day one of them is adopted somewhere that is not this repository.
 - **Persisted shapes** — covered in full by [persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only): app-owned state parses the latest shape or resets, and server-owned relational data evolves through a real Drizzle migration.
 
 A migration is forward-only movement to the correct state. That is the opposite of a compatibility shim, which is a permanent second code path funded by a temporary population.
@@ -27,12 +36,14 @@ flowchart TD
   KIND -->|"Code"| CODE["Rename everywhere in one commit<br/>typecheck + docs index test prove completeness"]
   KIND -->|"A deployed resource"| PREVIEW["Rename, then pnpm infra:preview"]
   KIND -->|"Stored data"| OWNED{"Who owns the store?"}
+  KIND -->|"A published export"| PUBLISHED["Rename in one commit<br/>a refactor, never a major"]
   PREVIEW --> PLAN{"Plan says replace?"}
   PLAN -->|"no — update in place"| DONE["Ship it, paste the plan line"]
   PLAN -->|"yes"| CUTOVER["Create, cut over, delete<br/>never an alias"]
   OWNED -->|"App-owned blob or local state"| RESET["Latest-shape schema<br/>unparseable data resets"]
   OWNED -->|"Postgres"| FORWARD["One forward migration<br/>no legacy arm left behind"]
   CODE --> DONE
+  PUBLISHED --> DONE
   CUTOVER --> DONE
   RESET --> DONE
   FORWARD --> DONE
