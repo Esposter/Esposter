@@ -15,14 +15,14 @@ const readRoomCategories = useReadRoomCategories();
 await readRoomCategories();
 
 const roomCategoryStore = useRoomCategoryStore();
-const { categories } = storeToRefs(roomCategoryStore);
+const { roomCategories } = storeToRefs(roomCategoryStore);
 const selectedCategoryId = ref(room.categoryId);
 const isReadOnly = ref(room.isReadOnly);
 const slowmodeMs = ref(room.slowmodeMs);
 const topic = ref(room.topic);
 const categoryItems = computed<SelectItemCategoryDefinition<null | string>[]>(() => [
   { title: "None (uncategorized)", value: null },
-  ...categories.value.map(({ id, name }) => ({ title: name, value: id })),
+  ...roomCategories.value.map(({ id, name }) => ({ title: name, value: id })),
 ]);
 const isDirty = computed(
   () =>

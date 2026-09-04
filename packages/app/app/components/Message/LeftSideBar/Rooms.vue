@@ -14,35 +14,39 @@ import { VueDraggable } from "vue-draggable-plus";
 const isCollapsed = useLocalStorage(LocalStorageKey.MessageSidebarRoomsCollapsed, false);
 const readRoomCategories = useReadRoomCategories();
 const roomCategoryStore = useRoomCategoryStore();
-const { categories } = storeToRefs(roomCategoryStore);
+const { roomCategories } = storeToRefs(roomCategoryStore);
 const { reorderRoomCategories } = roomCategoryStore;
 const roomStore = useRoomStore();
 const { hasMore, rooms } = storeToRefs(roomStore);
 const { readMoreRooms, readRooms } = await useReadRooms();
 const [{ isPending }] = await Promise.all([readRooms(), readRoomCategories()]);
-const roomsByCategoryId = computed(() => {
-  const map = new Map<null | string, RoomInMessage[]>();
+const categoryIdRoomsMap = computed(() => {
+  const roomsMap = new Map<null | string, RoomInMessage[]>();
   for (const room of rooms.value) {
-    const group = map.get(room.categoryId) ?? [];
+    const group = roomsMap.get(room.categoryId) ?? [];
     group.push(room);
-    map.set(room.categoryId, group);
+    roomsMap.set(room.categoryId, group);
   }
-  return map;
+  return roomsMap;
 });
-const uncategorizedRooms = computed(() => roomsByCategoryId.value.get(null) ?? []);
-const displayCategories = computed(() =>
-  categories.value.toSorted((a, b) => a.position - b.position || a.name.localeCompare(b.name)),
+const uncategorizedRooms = computed(() => categoryIdRoomsMap.value.get(null) ?? []);
+const displayRoomCategories = computed(() =>
+  roomCategories.value.toSorted(
+    (firstRoomCategory, secondRoomCategory) =>
+      firstRoomCategory.position - secondRoomCategory.position ||
+      firstRoomCategory.name.localeCompare(secondRoomCategory.name),
+  ),
 );
-const roomsByCategory = computed(() =>
-  displayCategories.value.map((category) => ({
-    category,
-    rooms: roomsByCategoryId.value.get(category.id) ?? [],
+const roomCategoryGroups = computed(() =>
+  displayRoomCategories.value.map((roomCategory) => ({
+    roomCategory,
+    rooms: categoryIdRoomsMap.value.get(roomCategory.id) ?? [],
   })),
 );
 // Undefined means the move cannot happen — already at the edge it is moving towards — so nothing is persisted
-const moveCategory = async (categoryId: RoomCategoryInMessage["id"], direction: -1 | 1) => {
-  const reorderedCategories = getReorderedRoomCategories(displayCategories.value, categoryId, direction);
-  if (reorderedCategories) await reorderRoomCategories(reorderedCategories);
+const moveRoomCategory = async (roomCategoryId: RoomCategoryInMessage["id"], direction: -1 | 1) => {
+  const reorderedRoomCategories = getReorderedRoomCategories(displayRoomCategories.value, roomCategoryId, direction);
+  if (reorderedRoomCategories) await reorderRoomCategories(reorderedRoomCategories);
 };
 </script>
 
@@ -68,15 +72,15 @@ const moveCategory = async (categoryId: RoomCategoryInMessage["id"], direction: 
       delay-on-touch-only
       ghost-class="room-category-ghost"
       :handle="`.${ROOM_CATEGORY_DRAG_HANDLE_CLASS}`"
-      :model-value="displayCategories"
+      :model-value="displayRoomCategories"
       @update:model-value="reorderRoomCategories"
     >
       <MessageModelRoomCategoryRoomGroup
-        v-for="{ category, rooms: categoryRooms } of roomsByCategory"
-        :key="category.id"
-        :category
-        :rooms="categoryRooms"
-        @move="moveCategory(category.id, $event)"
+        v-for="{ roomCategory, rooms: roomCategoryRooms } of roomCategoryGroups"
+        :key="roomCategory.id"
+        :category="roomCategory"
+        :rooms="roomCategoryRooms"
+        @move="moveRoomCategory(roomCategory.id, $event)"
       />
     </VueDraggable>
   </MessageModelRoomBaseList>

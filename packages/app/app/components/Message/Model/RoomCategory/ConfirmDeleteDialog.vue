@@ -4,12 +4,12 @@ import { useRoomCategoryDialogStore } from "@/store/message/roomCategoryDialog";
 import { withFinalizerAsync } from "@esposter/shared";
 
 const roomCategoryStore = useRoomCategoryStore();
-const { categories } = storeToRefs(roomCategoryStore);
+const { roomCategories } = storeToRefs(roomCategoryStore);
 const { deleteRoomCategory } = roomCategoryStore;
 const roomCategoryDialogStore = useRoomCategoryDialogStore();
 const { deletingId } = storeToRefs(roomCategoryDialogStore);
 const { isOpen, item: category } = useSingletonDialog(deletingId, () =>
-  categories.value.find(({ id }) => id === deletingId.value),
+  roomCategories.value.find(({ id }) => id === deletingId.value),
 );
 </script>
 

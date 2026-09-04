@@ -4,7 +4,7 @@ import type { UpdateRoomCategoryInput } from "#shared/models/db/roomCategory/Upd
 import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
-import { getCategoryPositionUpdates } from "@/services/message/roomCategory/getCategoryPositionUpdates";
+import { getRoomCategoryPositionUpdates } from "@/services/message/roomCategory/getRoomCategoryPositionUpdates";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
@@ -15,55 +15,55 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const { executeMutation: executeDeleteRoomCategoryMutation } = useMutation();
   const { executeMutation: executeUpdateRoomCategoryMutation } = useMutation();
   const { executeMutation: executeReorderRoomCategoriesMutation } = useMutation();
-  const categories = ref<RoomCategoryInMessage[]>([]);
+  const roomCategories = ref<RoomCategoryInMessage[]>([]);
   const {
     createRoomCategory: storeCreateRoomCategory,
     deleteRoomCategory: storeDeleteRoomCategory,
     updateRoomCategory: storeUpdateRoomCategory,
-  } = createOperationData(categories, ["id"], DatabaseEntityType.RoomCategory);
+  } = createOperationData(roomCategories, ["id"], DatabaseEntityType.RoomCategory);
   // The server only adds userId and the appended position, so the client can build the
   // Row faithfully — insert a temp-id placeholder now and reconcile the server row onto it in onSuccess.
   const createRoomCategory = async (input: CreateRoomCategoryInput) => {
     if (!session.value.data) return;
     // Reactive so the onSuccess Object.assign onto this same object triggers the list re-render
-    const newCategory = reactive<RoomCategoryInMessage>({
+    const newRoomCategory = reactive<RoomCategoryInMessage>({
       createdAt: new Date(),
       deletedAt: null,
       id: crypto.randomUUID(),
       name: input.name,
       // Mirror the server's append-below-existing-order position so the placeholder lands where the row will
-      position: categories.value.reduce((maxPosition, { position }) => Math.max(maxPosition, position), -1) + 1,
+      position: roomCategories.value.reduce((maxPosition, { position }) => Math.max(maxPosition, position), -1) + 1,
       updatedAt: new Date(),
       userId: session.value.data.user.id,
     });
     await executeCreateRoomCategoryMutation(() => $trpc.room.category.createRoomCategory.mutate(input), {
       applyOptimistic: () => {
-        storeCreateRoomCategory(newCategory);
+        storeCreateRoomCategory(newRoomCategory);
         return () => {
-          storeDeleteRoomCategory({ id: newCategory.id });
+          storeDeleteRoomCategory({ id: newRoomCategory.id });
         };
       },
       // Each create owns a distinct placeholder with no server id yet, so it gets a per-call symbol
       key: Symbol("createRoomCategory"),
       // Reconcile onto the placeholder itself so it keeps its list position instead of being
       // Removed and re-appended under the server id
-      onSuccess: (createdCategory) => {
-        Object.assign(newCategory, createdCategory);
+      onSuccess: (createdRoomCategory) => {
+        Object.assign(newRoomCategory, createdRoomCategory);
       },
     });
   };
 
   const deleteRoomCategory = async (id: DeleteRoomCategoryInput) => {
     await executeDeleteRoomCategoryMutation(() => $trpc.room.category.deleteRoomCategory.mutate(id), {
-      // The one row this write removes, not a copy of the list: deletes are keyed per category and never queue
-      // Against each other, so reinstating the list would resurrect a category another delete already took out
+      // The one row this write removes, not a copy of the list: deletes are keyed per room category and never queue
+      // Against each other, so reinstating the list would resurrect a room category another delete already took out
       // And drop the ones created while this write was in flight. Position drives the rendered order, so where
       // The restored row lands in the array is not observable
       applyOptimistic: () => {
-        const deletedCategory = categories.value.find((category) => category.id === id);
+        const deletedRoomCategory = roomCategories.value.find((roomCategory) => roomCategory.id === id);
         storeDeleteRoomCategory({ id });
         return () => {
-          if (deletedCategory) storeCreateRoomCategory(deletedCategory);
+          if (deletedRoomCategory) storeCreateRoomCategory(deletedRoomCategory);
         };
       },
       key: id,
@@ -76,22 +76,22 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
         // Only the fields this write overwrites, on the one row it touches, and read as the write is sent:
         // A whole-list snapshot restored by reassignment would also undo whatever landed while this was queued
         // And swap every row for a copy, stranding the create placeholder its own onSuccess writes onto
-        const previousCategory = categories.value.find(({ id }) => id === input.id);
-        const rollbackCategory = previousCategory && { ...previousCategory };
+        const previousRoomCategory = roomCategories.value.find(({ id }) => id === input.id);
+        const rollbackRoomCategory = previousRoomCategory && { ...previousRoomCategory };
         storeUpdateRoomCategory(input);
         return () => {
-          if (rollbackCategory) storeUpdateRoomCategory(rollbackCategory);
+          if (rollbackRoomCategory) storeUpdateRoomCategory(rollbackRoomCategory);
         };
       },
       key: input.id,
-      onSuccess: (updatedCategory) => {
-        storeUpdateRoomCategory(updatedCategory);
+      onSuccess: (updatedRoomCategory) => {
+        storeUpdateRoomCategory(updatedRoomCategory);
       },
     });
   };
 
-  const reorderRoomCategories = async (newCategories: RoomCategoryInMessage[]) => {
-    const updates = getCategoryPositionUpdates(newCategories);
+  const reorderRoomCategories = async (newRoomCategories: RoomCategoryInMessage[]) => {
+    const updates = getRoomCategoryPositionUpdates(newRoomCategories);
     if (updates.length === 0) return;
     await executeReorderRoomCategoriesMutation(() => $trpc.room.category.reorderRoomCategories.mutate(updates), {
       // Only the position of each row this write moves: restoring the list would swap every row for a copy —
@@ -99,8 +99,8 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
       // While the reorder was in flight
       applyOptimistic: () => {
         const previousPositions = updates
-          .map(({ id }) => categories.value.find((category) => category.id === id))
-          .filter((category) => category !== undefined)
+          .map(({ id }) => roomCategories.value.find((roomCategory) => roomCategory.id === id))
+          .filter((roomCategory) => roomCategory !== undefined)
           .map(({ id, position }) => ({ id, position }));
         for (const update of updates) storeUpdateRoomCategory(update);
         return () => {
@@ -113,10 +113,10 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   };
 
   return {
-    categories,
     createRoomCategory,
     deleteRoomCategory,
     reorderRoomCategories,
+    roomCategories,
     updateRoomCategory,
   };
 });

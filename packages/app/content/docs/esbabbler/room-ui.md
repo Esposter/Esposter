@@ -48,23 +48,23 @@ On `smAndDown` a bottom action bar sits above the composer, keeping room actions
 
 ## Category drag-reorder
 
-Room categories in the left sidebar reorder by dragging their headers (SortableJS via `vue-draggable-plus`); a ghost placeholder with a primary-colored top border marks the drop target. Touch drags wait `ROOM_CATEGORY_TOUCH_DRAG_DELAY_MS` (`delayOnTouchOnly`) so a swipe that starts on a header scrolls the list instead of reordering it. Alt+↑/Alt+↓ on a focused category header moves it without a pointer. The store applies the new positions optimistically (via [`useMutation`](/docs/architecture/client-data)), then persists only the rows whose position changed (`getCategoryPositionUpdates`) through the `reorderRoomCategories` procedure — a single DB transaction, so a drag either fully lands or fully rolls back. `readRoomCategories` orders by `position` first with `name` as tiebreaker, and `createRoomCategory` appends below the existing order (`max(position) + 1`) so a new category never jumps above a drag-assigned top.
+Room categories in the left sidebar reorder by dragging their headers (SortableJS via `vue-draggable-plus`); a ghost placeholder with a primary-colored top border marks the drop target. Touch drags wait `ROOM_CATEGORY_TOUCH_DRAG_DELAY_MS` (`delayOnTouchOnly`) so a swipe that starts on a header scrolls the list instead of reordering it. Alt+↑/Alt+↓ on a focused category header moves it without a pointer. The store applies the new positions optimistically (via [`useMutation`](/docs/architecture/client-data)), then persists only the rows whose position changed (`getRoomCategoryPositionUpdates`) through the `reorderRoomCategories` procedure — a single DB transaction, so a drag either fully lands or fully rolls back. `readRoomCategories` orders by `position` first with `name` as tiebreaker, and `createRoomCategory` appends below the existing order (`max(position) + 1`) so a new category never jumps above a drag-assigned top.
 
 ## Key files
 
-| File                                                                           | Role                                              |
-| ------------------------------------------------------------------------------ | ------------------------------------------------- |
-| `packages/app/app/services/message/member/getMemberGroups.ts`                  | Discord-style member grouping by top role         |
-| `packages/app/app/services/message/member/getTopRole.ts`                       | Top hoisted role for grouping + name tint         |
-| `packages/app/app/services/message/member/topRoleChangeHooks.ts`               | Role store → member store count-sync hooks        |
-| `packages/app/shared/models/db/room/MemberCountByTopRole.ts`                   | Per-top-role count row from the server            |
-| `packages/app/app/store/message/ui/layout.ts`                                  | Persisted sidebar widths + right drawer selection |
-| `packages/app/app/components/Styled/ResizeHandle.vue`                          | Generic pointer-drag width handle                 |
-| `packages/app/app/store/message/ui/appearance.ts`                              | Persisted message display density                 |
-| `packages/app/app/components/Message/Model/User/Settings/Type/Appearance/`     | Appearance settings panel (Message Display)       |
-| `packages/app/app/components/Styled/EmptyState.vue`                            | Generic icon/title/description empty state        |
-| `packages/app/app/components/Message/Content/MobileActionBar.vue`              | Bottom action bar on small screens                |
-| `packages/app/app/services/message/roomCategory/getCategoryPositionUpdates.ts` | Position diff for category reorder persistence    |
+| File                                                                               | Role                                              |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `packages/app/app/services/message/member/getMemberGroups.ts`                      | Discord-style member grouping by top role         |
+| `packages/app/app/services/message/member/getTopRole.ts`                           | Top hoisted role for grouping + name tint         |
+| `packages/app/app/services/message/member/topRoleChangeHooks.ts`                   | Role store → member store count-sync hooks        |
+| `packages/app/shared/models/db/room/MemberCountByTopRole.ts`                       | Per-top-role count row from the server            |
+| `packages/app/app/store/message/ui/layout.ts`                                      | Persisted sidebar widths + right drawer selection |
+| `packages/app/app/components/Styled/ResizeHandle.vue`                              | Generic pointer-drag width handle                 |
+| `packages/app/app/store/message/ui/appearance.ts`                                  | Persisted message display density                 |
+| `packages/app/app/components/Message/Model/User/Settings/Type/Appearance/`         | Appearance settings panel (Message Display)       |
+| `packages/app/app/components/Styled/EmptyState.vue`                                | Generic icon/title/description empty state        |
+| `packages/app/app/components/Message/Content/MobileActionBar.vue`                  | Bottom action bar on small screens                |
+| `packages/app/app/services/message/roomCategory/getRoomCategoryPositionUpdates.ts` | Position diff for category reorder persistence    |
 
 ## Notes
 
