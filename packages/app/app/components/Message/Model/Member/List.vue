@@ -18,7 +18,7 @@ const memberGroups = computed(() => {
   if (!room) return [];
   return getMemberGroups(members.value, (userId) => getMemberRoles(room.id, userId));
 });
-const memberCountByRoleId = computed(
+const roleIdMemberCountMap = computed(
   () => new Map(memberCountsByTopRole.value.map((countByTopRole) => [countByTopRole.roleId, countByTopRole.count])),
 );
 // Derived from the running total so member join/leave subscription updates keep the roleless group current
@@ -26,7 +26,7 @@ const rolelessMemberCount = computed(
   () => memberCount.value - memberCountsByTopRole.value.reduce((sum, countByTopRole) => sum + countByTopRole.count, 0),
 );
 const getMemberCountSuffix = (roleId: string) => {
-  const groupMemberCount = roleId ? memberCountByRoleId.value.get(roleId) : rolelessMemberCount.value;
+  const groupMemberCount = roleId ? roleIdMemberCountMap.value.get(roleId) : rolelessMemberCount.value;
   return groupMemberCount === undefined ? "" : ` — ${groupMemberCount}`;
 };
 </script>
