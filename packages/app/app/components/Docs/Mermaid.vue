@@ -3,14 +3,14 @@ import { MAX_MERMAID_SCALE, MIN_MERMAID_SCALE } from "@/services/docs/constants"
 import { getResultAsync } from "@esposter/shared";
 import { useTheme } from "vuetify";
 
-interface Props {
-  code: string;
-}
-
 interface MermaidZoomControl {
   icon: string;
   onClick: () => void;
   text: string;
+}
+
+interface Props {
+  code: string;
 }
 
 const { code } = defineProps<Props>();

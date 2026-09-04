@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PopupProps } from "@/components/Clicker/Model/Points/PopupProps";
+
 import { formatNumberLong } from "@/services/clicker/formatNumberLong";
 import { useClickerStore } from "@/store/clicker";
 

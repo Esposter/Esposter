@@ -7,14 +7,14 @@ import { WordFilterAction } from "@esposter/db-schema";
 import { toRawDeep } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 
+interface Props {
+  filter: null | RoomFilterInMessage;
+  roomId: string;
+}
 interface WordFilterFormData {
   action: WordFilterAction;
   timeoutDurationMs: number;
   words: string[];
-}
-interface Props {
-  filter: null | RoomFilterInMessage;
-  roomId: string;
 }
 
 const { filter, roomId } = defineProps<Props>();

@@ -29,6 +29,18 @@ describe("props-interface", () => {
     { name: "importedModel", source: `defineProps<LinkPreviewResponse>();`, violations: 0 },
     { name: "importedGeneric", source: `defineProps<SuggestionProps<Emoji>>();`, violations: 0 },
     { name: "typeExpression", source: `defineProps<Pick<DialogProps, "cardProps">>();`, violations: 0 },
+    // A local declaration is no less local for reaching the macro through a composite.
+    {
+      name: "intersectionWithLocal",
+      source: `interface FooProps { a: string }\ndefineProps<FooProps & SharedProps>();`,
+      violations: 1,
+    },
+    { name: "intersectionOfImported", source: `defineProps<SharedProps & OtherProps>();`, violations: 0 },
+    {
+      name: "typeExpressionOverLocal",
+      source: `interface FooProps { a: string }\ndefineProps<Pick<FooProps, "a">>();`,
+      violations: 1,
+    },
     // An inline object literal names nothing, so there is no declaration for the rest of the file to reuse.
     { name: "inlineTypeLiteral", source: `defineProps<{ a: string }>();`, violations: 1 },
     // A declaration nothing passes to `defineProps` is not a props interface — slot props keep descriptive names.
@@ -39,10 +51,16 @@ describe("props-interface", () => {
       source: `defineProps<FooProps>();\ninterface FooProps { a: string }`,
       violations: 1,
     },
-    // `no-exported-type` — a shape read outside this file belongs in `models/props/`.
+    // `no-exported-type` — a shape read outside this file belongs in its own `.ts` beside the component.
     { name: "exportedInterface", source: `export interface FooProps { a: string }`, violations: 1 },
     { name: "exportedTypeAlias", source: `export type Foo = string;`, violations: 1 },
     { name: "exportedEnum", source: `export enum Foo { A = "A" }`, violations: 1 },
+    // A re-export hands the type out exactly as a declaration would, in either spelling.
+    { name: "exportedTypeSpecifier", source: `interface Foo { a: string }\nexport { type Foo };`, violations: 1 },
+    { name: "exportedTypeStatement", source: `interface Foo { a: string }\nexport type { Foo };`, violations: 1 },
+    { name: "exportedDefaultInterface", source: `export default interface Foo { a: string }`, violations: 1 },
+    // A value re-export is not a type leaving the file.
+    { name: "exportedValueSpecifier", source: `const foo = 1;\nexport { foo };`, violations: 0 },
     // Only type declarations move out; an SFC still exports whatever its own compiler output needs to.
     { name: "exportedConst", source: `export const FOO = 1;`, violations: 0 },
     { name: "localInterface", source: `interface Props { a: string }`, violations: 0 },

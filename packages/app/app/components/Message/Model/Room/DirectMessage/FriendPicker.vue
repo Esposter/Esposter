@@ -3,12 +3,12 @@ import type { User } from "@esposter/db-schema";
 
 import { useFriendStore } from "@/store/message/user/friend";
 
+type ModelValue = TMultiple extends true ? string[] : string | undefined;
+
 interface Props {
   excludedUserIds?: User["id"][];
   isMultiple?: TMultiple;
 }
-
-type ModelValue = TMultiple extends true ? string[] : string | undefined;
 
 const modelValue = defineModel<ModelValue>();
 const { excludedUserIds = [], isMultiple } = defineProps<Props>();
