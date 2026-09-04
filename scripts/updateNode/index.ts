@@ -3,6 +3,7 @@ import { getVersionParts } from "#scripts/services/getVersionParts";
 import { getEnginesNode } from "#scripts/updateNode/getEnginesNode";
 import { getRegistryLatestVersionForPrefix } from "#scripts/updateNode/getRegistryLatestVersionForPrefix";
 import { setCatalogTypesNode } from "#scripts/updateNode/setCatalogTypesNode";
+import { setDevEnginesRuntime } from "#scripts/updateNode/setDevEnginesRuntime";
 import { setEnginesNode } from "#scripts/updateNode/setEnginesNode";
 import { spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -16,18 +17,20 @@ const requested = process.argv[2]?.replace(/^[v^]/u, "");
 const version =
   requested === undefined ? await getLatestVersion("node") : await getRegistryLatestVersionForPrefix("node", requested);
 const { major } = getVersionParts(version);
-// 2. Bump engines.node (CI reads this via `node-version-file: package.json` — single source of truth).
+// 2. Bump the two node pins package.json carries: `devEngines.runtime` is what `pnpm/setup` installs on the
+// Runners, `engines.node` is what every other tool reads. They are the same number by definition, so they are
+// Written together and never separately.
 const packageJsonPath = resolve(root, "package.json");
 const packageJson = readFileSync(packageJsonPath, "utf8");
 const oldVersion = getEnginesNode(packageJson);
-// Engines.node / @types/node only need rewriting when the target differs. We still hand off to fnm
+// The pins / @types/node only need rewriting when the target differs. We still hand off to fnm
 // Below even when it matches: a colleague pulling this repo may have an older node defaulted in fnm (or
 // Not have this version installed at all) and needs switching onto the pinned version.
 const isNewVersion = oldVersion !== version;
 if (isNewVersion) {
   console.info(`Updating node ${oldVersion} → ${version}\n`);
-  writeFileSync(packageJsonPath, setEnginesNode(packageJson, version));
-  console.info(`✔ package.json engines.node → ^${version}`);
+  writeFileSync(packageJsonPath, setDevEnginesRuntime(setEnginesNode(packageJson, version), version));
+  console.info(`✔ package.json devEngines.runtime + engines.node → ^${version}`);
   // 3. Bump the @types/node catalog entry to the highest release matching the new node major.
   const typesVersion = await getRegistryLatestVersionForPrefix("@types/node", String(major));
   const workspacePath = resolve(root, "pnpm-workspace.yaml");

@@ -2,13 +2,16 @@ import { BackendType } from "#src/models/virrun/BackendType";
 import { ExecutionMode } from "#src/models/virrun/ExecutionMode";
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { formatVirrunBanner } from "#src/services/cli/format/formatVirrunBanner";
+import { formatVirrunDegraded } from "#src/services/cli/format/formatVirrunDegraded";
 import { formatVirrunError } from "#src/services/cli/format/formatVirrunError";
 import { formatVirrunPrepare } from "#src/services/cli/format/formatVirrunPrepare";
 import { formatVirrunProvisioning } from "#src/services/cli/format/formatVirrunProvisioning";
 import { formatVirrunResult } from "#src/services/cli/format/formatVirrunResult";
 import { getCommandNotFoundHint } from "#src/services/cli/run/getCommandNotFoundHint";
+import { isVirrunEnabled } from "#src/services/configuration/isVirrunEnabled";
 import { resolveBackend } from "#src/services/configuration/resolveBackend";
 import { resolvePrepareStep } from "#src/services/configuration/resolvePrepareStep";
+import { resolveRequestedBackend } from "#src/services/configuration/resolveRequestedBackend";
 import { resolveVirrunConfiguration } from "#src/services/configuration/resolveVirrunConfiguration";
 import { resolvePrepareLocation } from "#src/services/exec/snapshot/resolvePrepareLocation";
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
@@ -40,6 +43,17 @@ export const runVirrunCommand = async (
         nodeVersion: virrun.backend === BackendType.Os ? getSandboxNodeVersion() : process.version,
       })}\n`,
     );
+    // A run that asked for the sandbox and got native ran un-isolated, and the os-only lines below are the only trace
+    // Of that — so say it instead of leaving their absence to be read as "nothing to report". The test is what was
+    // REQUESTED against what resolved, never "resolved to native": every other configured backend reaches native by
+    // Its own design (`auto` is native today, `vfs` falls back per command) and owes no warning. A nested run
+    // Degrades by design too (resolveBackend), so it stays quiet as well.
+    if (
+      resolveRequestedBackend(configuration) === BackendType.Os &&
+      virrun.backend !== BackendType.Os &&
+      !isVirrunEnabled(process.env)
+    )
+      process.stderr.write(`${formatVirrunDegraded()}\n`);
     // Announce whether this run reuses a warm snapshot or pays the one-time install, so a multi-minute first run is
     // Explained, not a silent stall. Exec skips the snapshot, so it has nothing to announce.
     if (mode !== ExecutionMode.Exec && virrun.backend === BackendType.Os) {

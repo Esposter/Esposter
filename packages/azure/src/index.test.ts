@@ -13,6 +13,6 @@ describe("@esposter/azure", () => {
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 8.17 KB (8362 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 7.78 KB (7965 bytes)"`);
   });
 });

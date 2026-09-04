@@ -1,5 +1,5 @@
 name: Setup Project Dependencies
-description: Checkout repository, install pnpm and setup node
+description: Install pnpm and the node runtime, and restore the pnpm store cache
 inputs:
   bubblewrap-sandbox:
     description: Install bubblewrap and enable unprivileged user namespaces for test/bench jobs that exercise the virrun os backend
@@ -8,18 +8,18 @@ inputs:
 runs:
   using: composite
   steps:
-    # Set up Node *before* pnpm. pnpm/action-setup picks its install strategy from the runner's *system* Node:
-    # `standalone = systemNode.major < 22 || (major === 22 && minor < 13)`. When the system Node is too old it
-    # falls back to the @pnpm/exe standalone bootstrap, whose self-installer crashes
-    # (`ERR_INVALID_ARG_TYPE: paths[0] ... undefined`). Installing a modern Node up front keeps action-setup on
-    # the plain `pnpm` install path. No pnpm cache here yet — pnpm isn't installed, so `cache: pnpm` can't resolve.
-    - name: 🛠️ Setup node
-      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+    # One step installs both: pnpm's self-contained executable (the version from `packageManager`), then the
+    # runtime from `devEngines.runtime`. It still fetches from registry.npmjs.org, deliberately — the registry
+    # package is the GitHub release asset byte for byte, and npm signs a checksum over it that `get-pnpm`
+    # verifies against a pinned key. What is gone is the npm CLI: one signed binary over a retrying HTTP client
+    # instead of a dependency resolution, which is what made setup hostage to registry latency.
+    # `install: false` because each caller owns its own install — `--ignore-scripts` for format, the
+    # artifact-aware `setup-packages` everywhere else.
+    - name: 📦 Install pnpm and node
+      uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
       with:
-        node-version-file: package.json
-
-    - name: 📦 Install pnpm
-      uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        cache: true
+        install: false
     # GitHub's Ubuntu image ships neither bubblewrap nor permissive unprivileged user namespaces, so the
     # virrun os-backend suites would self-gate and silently skip. Test/bench jobs opt into this so the
     # sandbox is available before Vitest collects host-capability checks.
@@ -33,10 +33,3 @@ runs:
         dir="$(mktemp -d)"
         bwrap --unshare-all --die-with-parent --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp \
           --overlay-src "$dir" --tmp-overlay "$dir" --chdir "$dir" -- true
-    # Re-run setup-node now that pnpm exists, solely to wire up the pnpm store cache (Node is already installed,
-    # so this pass is effectively just the cache restore/save).
-    - name: 🛠️ Setup node (pnpm cache)
-      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-      with:
-        node-version-file: package.json
-        cache: pnpm

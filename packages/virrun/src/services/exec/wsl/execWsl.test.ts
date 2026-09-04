@@ -1,6 +1,6 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
-import { PROBE_TIMEOUT_MS, WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { WSL_PROBE_TIMEOUT_MS, WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -16,7 +16,7 @@ describe(execWsl, () => {
 
   // A wedged WSL service never answers a spawn rather than failing it, so an unbounded execFileSync hangs the
   // One-shot CLI forever with nothing printed — every call is bounded, whether or not its site remembered to say so
-  test("runs wsl.exe with a hidden buffered capture, bounded by the probe timeout", () => {
+  test("runs wsl.exe with a hidden buffered capture, bounded by the wsl timeout", () => {
     expect.hasAssertions();
 
     execFileSync.mockReturnValue(Buffer.from("a"));
@@ -25,12 +25,12 @@ describe(execWsl, () => {
     expect(execFileSync).toHaveBeenCalledExactlyOnceWith("wsl.exe", ["--exec", "sh"], {
       encoding: "buffer",
       stdio: "pipe",
-      timeout: PROBE_TIMEOUT_MS,
+      timeout: WSL_PROBE_TIMEOUT_MS,
       windowsHide: true,
     });
   });
 
-  test("lets a call doing real work raise the bound above the probe default", () => {
+  test("lets a call doing real work raise the bound above the wsl default", () => {
     expect.hasAssertions();
 
     execWsl(["--exec", "sh"], { timeout: WSL_WORK_TIMEOUT_MS });

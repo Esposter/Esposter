@@ -20,6 +20,14 @@ describe(getEnginesNode, () => {
     expect(getEnginesNode('{\n  "engines": {\n    "node": "^1.0.0"\n  }\n}')).toBe("1.0.0");
   });
 
+  test("reads past a preceding devEngines block", () => {
+    expect.hasAssertions();
+
+    expect(
+      getEnginesNode('{ "devEngines": { "runtime": { "version": "^2.0.0" } }, "engines": { "node": "^1.0.0" } }'),
+    ).toBe("1.0.0");
+  });
+
   test("throws when engines.node is absent", () => {
     expect.hasAssertions();
 

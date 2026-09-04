@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs), version-capped packages (h3), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues. Apply when updating package versions.
+description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs), version-capped packages (h3, vitest, vuetify), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues. Apply when updating package versions.
 ---
 
 # Dependency Updates
@@ -37,7 +37,7 @@ When updating a GitHub Action to a new release tag:
 
 Don't hand-edit the node version — run `pnpm update:node [version]` from the repo root. With no argument it targets the latest stable node from the npm registry. In one call it:
 
-1. Bumps `engines.node` in root `package.json` (CI reads this via `node-version-file: package.json`, so it's the single source of truth)
+1. Bumps both node pins in root `package.json` together — `devEngines.runtime` (what `pnpm/setup` installs on the runners) and `engines.node` (what every other tool reads). They are the same number by definition; never write one alone
 2. Bumps the `@types/node` catalog entry to the highest release matching the new node major
 3. Installs the new version with fnm and sets it as the default (`fnm install`/`default`) — `fnm default` persists for every new shell. It deliberately does not run `fnm use`: the script runs in a nested non-interactive shell, so a `use` would only mutate a PATH that dies with the script
 4. Enables corepack on the new version (a freshly installed node ships it disabled, so `pnpm` would otherwise be missing)
@@ -63,6 +63,8 @@ Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them pe
 ## Version-capped packages (keep the caret, cap the range)
 
 - **`h3`** — has `^` (both catalog and `overrides:`). Skip major/RC bumps; only update minor/patch within the current major.
+- **`vitest`, `@vitest/coverage-v8`** — have `^`, so the major cap is already the caret's. `@nuxt/test-utils` peers `vitest: ^4.0.2`; until it widens to 5, the 5.x line is unreachable however deliberate the pass. `@vitest/coverage-v8` peers vitest exactly (`5.0.0` peers `vitest: 5.0.0`), so the two move together or not at all.
+- **`vuetify`** — `~4.1.13`, the one catalog entry whose range is a tilde. 4.2.0 does not work under `vuetify-nuxt-module`, and no peer range catches it: the module peers `vuetify: ^3.4.0 || ^4.0.0`, so the install resolves happily and breaks at runtime. The block is a **minor**, so a caret would float straight into it — the cap has to narrow the range itself, and a bump is an explicit widening back to `^` once the module ships support. `vuetify.config.test.ts` is where a bad resolution shows.
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 
@@ -79,7 +81,7 @@ What that trades is real and accepted: a just-published bad version installs imm
 - **`oxlint`** — has `^`; open issue https://github.com/oxc-project/oxc/issues/13204.
 - **`oxlint-tsgolint`** — a bump here is the one thing that could retire the `ignorePatterns` entry covering tsgo's infinite loop on the recursive `three/tsl` types. It ships its own Go binaries, so the `typescript` alias does not move it. Check it on every bump; the exclusion itself, and the CI symptom that does not look like a hang, are documented in the `oxlint` skill's `references/lint-configuration.md`.
 - **`ajv`, `ajv-errors`, `ajv-formats`, `ajv-i18n`, `debug`** — required by `@koumoul/vjsf`; tracked at https://github.com/json-layout/json-layout/issues/5.
-- **`vitest`** — has `^`; the 5.0.0 major is what retires the `Temporal.Now` fake-timer workaround (https://github.com/vitest-dev/vitest/issues/10345, closed against that milestone as a breaking change). Nothing on 4.x fakes `Temporal`, so until the major lands the workaround stays. Take the bump as its own deliberate pass — it is a major — and drop the workaround in it. That row, its probe, and every other shim a bump can retire live in `packages/app/content/docs/proposals/refactors/test-harness-workarounds.md`.
+- **`vitest`** — capped above, so the 5.0.0 the outdated table keeps offering is not takeable yet. What is waiting on it: 5.0.0 retires the `Temporal.Now` fake-timer workaround (https://github.com/vitest-dev/vitest/issues/10345, closed against that milestone as a breaking change), and nothing on 4.x fakes `Temporal`, so the workaround stays as long as the cap does. When `@nuxt/test-utils` widens its peer, take the bump as its own deliberate pass — it is a major — and drop the workaround in it. That row, its probe, and every other shim a bump can retire live in `packages/app/content/docs/proposals/refactors/test-harness-workarounds.md`.
 - **`db:run` script** — workaround for https://github.com/drizzle-team/drizzle-orm/issues/1228.
 
 ## Dependency placement (deps vs peerDeps)
@@ -88,7 +90,7 @@ What that trades is real and accepted: a just-published bad version installs imm
 
 ## Caret rules
 
-Every catalog entry has `^` except the exact-pinned packages listed above (`drizzle-kit`, `drizzle-orm`, `typescript`). Note `h3` **has** a caret — it is capped by policy, not by a missing `^`.
+Every catalog entry has `^` except the exact-pinned packages listed above (`drizzle-kit`, `drizzle-orm`, `typescript`) and `vuetify`, whose cap is a tilde. Note `h3` and `vitest` **have** carets — they are capped by policy, not by a missing `^`.
 
 Before adding a `^` to a caret-less entry, check it against the exact-pinned list; if it's there, leave it alone. If it isn't, the missing caret is likely an oversight — add it.
 
