@@ -111,9 +111,10 @@ demands the opposite. Those are worth writing down precisely because no amount o
 So an exception states its forcing agent by name (`@azure/storage-blob`'s `listBlobsFlat`, `MediaRecorder`'s
 optional properties, `vitest/padding-around-test-blocks`). One that cannot name a source outside the repo is
 either a rule branch wearing the wrong word — `flex-wrap` on a three-control row is _when the rule says yes_,
-not an escape from it — or a defect the exception is hiding, and the fix is the code. `useBattleMonsterStore`
-was the second kind: it was excused from the store-naming rule for "a store type that varies at runtime" while
-four composables beside it had already written `battleMonsterStore` and been fine.
+not an escape from it — or a defect the exception is hiding, and the fix is the code. The second kind reads
+plausibly — a carve-out for "a case the rule cannot express" — so the tell is a grep rather than an argument:
+where neighbouring code already spells the thing the rule’s way and is fine, the exception is describing one
+site’s defect, and deleting it costs a rename.
 
 **Prefer the branch to the carve-out.** Written as a branch the rule stays one rule and its edge is decidable;
 written as an exception it becomes two rules, and the second grows.
