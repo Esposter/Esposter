@@ -2,10 +2,10 @@ import type { ClickerItemProperties } from "@/models/clicker/ClickerItemProperti
 
 import { Clicker } from "#shared/models/clicker/data/Clicker";
 import { clickerSaveSchema } from "#shared/models/clicker/data/ClickerSave";
-import { getClickerColorMap } from "@/services/clicker/properties/getClickerColorMap";
 import { ClickerIconComponentMap } from "@/services/clicker/properties/ClickerIconComponentMap";
 import { ClickerNameMap } from "@/services/clicker/properties/ClickerNameMap";
 import { ClickerPluralNameMap } from "@/services/clicker/properties/ClickerPluralNameMap";
+import { getClickerColorMap } from "@/services/clicker/properties/getClickerColorMap";
 import { toClickerSave } from "@/services/clicker/save/toClickerSave";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useColorsStore } from "@/store/colors";
