@@ -5,8 +5,8 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { calculateExperienceGain } from "@/services/dungeons/monster/calculateExperienceGain";
-import { calculateLevelExperience } from "@/services/dungeons/monster/calculateLevelExperience";
+import { getExperienceGain } from "@/services/dungeons/monster/getExperienceGain";
+import { getLevelExperience } from "@/services/dungeons/monster/getLevelExperience";
 import { levelUp } from "@/services/dungeons/monster/levelUp";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { phaserEventEmitter } from "@/services/phaser/events";
@@ -30,7 +30,7 @@ export const GainExperience: State<StateName> = {
     const { showMessages } = battleDialogStore;
     const experienceBarStore = useExperienceBarStore();
     const { isSkipAnimations } = storeToRefs(experienceBarStore);
-    const experienceGain = calculateExperienceGain(
+    const experienceGain = getExperienceGain(
       enemyActiveMonster.value.statistics.baseExperience,
       enemyActiveMonster.value.statistics.level,
     );
@@ -87,12 +87,12 @@ const gainExperienceForNonActiveMonsters = async (scene: SceneWithPlugins, exper
 
   for (const nonActiveMonster of player.value.monsters.filter(({ id }) => id !== activeMonster.value.id)) {
     nonActiveMonster.status.experience += experienceGain;
-    let levelExperience = calculateLevelExperience(nonActiveMonster.statistics.level);
+    let levelExperience = getLevelExperience(nonActiveMonster.statistics.level);
     const isLeveledUp = nonActiveMonster.status.experience - levelExperience >= 0;
 
     while (nonActiveMonster.status.experience - levelExperience >= 0) {
       levelUp(nonActiveMonster);
-      levelExperience = calculateLevelExperience(nonActiveMonster.statistics.level);
+      levelExperience = getLevelExperience(nonActiveMonster.statistics.level);
     }
 
     if (isLeveledUp) leveledUpNonActiveMonsters.push(nonActiveMonster);

@@ -2,7 +2,7 @@ import type { State } from "@/models/dungeons/state/State";
 
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { getAttack } from "@/services/dungeons/attack/getAttack";
-import { calculateDamage } from "@/services/dungeons/monster/calculateDamage";
+import { getDamage } from "@/services/dungeons/monster/getDamage";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
@@ -31,7 +31,7 @@ export const EnemyAttack: State<StateName> = {
     await sleepScene(scene, 500);
     await useAttackAnimation(scene, randomAttack, false);
     await takeDamage(
-      calculateDamage(
+      getDamage(
         activeMonster.value.statistics.attack,
         randomAttack.power,
         playerActiveMonster.value.statistics.defense,
