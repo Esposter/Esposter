@@ -13,6 +13,6 @@ describe("parse-tmx", () => {
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 12.45 KB (12744 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 11.84 KB (12126 bytes)"`);
   });
 });
