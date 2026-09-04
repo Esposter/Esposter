@@ -4,7 +4,7 @@ import { NotificationType, UserStatus, userStatusesInMessage, usersToRoomsInMess
 import { MENTION_EVERYONE_ID, MENTION_HERE_ID } from "@esposter/shared";
 import { and, eq, isNull, ne, or } from "drizzle-orm";
 
-const broadcastConditions: Record<string, SQL | undefined> = {
+const MentionIdBroadcastConditionMap: Record<string, SQL | undefined> = {
   [MENTION_EVERYONE_ID]: ne(usersToRoomsInMessage.notificationType, NotificationType.Never),
   [MENTION_HERE_ID]: and(
     ne(usersToRoomsInMessage.notificationType, NotificationType.Never),
@@ -12,4 +12,4 @@ const broadcastConditions: Record<string, SQL | undefined> = {
   ),
 };
 
-export const getBroadcastNotificationCondition = (id: string): SQL | undefined => broadcastConditions[id];
+export const getBroadcastNotificationCondition = (id: string): SQL | undefined => MentionIdBroadcastConditionMap[id];
