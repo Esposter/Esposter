@@ -32,13 +32,13 @@ watch(isOpen, (newIsOpen) => {
   deployments.value = [];
 });
 const deploy = async () => {
-  const current = resource.value;
-  if (!current) return;
+  const resourceValue = resource.value;
+  if (!resourceValue) return;
 
   await executeMutation(
-    () => $trpc.blueprint.deployBlueprint.mutate({ id: current.id, parameterValues: parameterValues.value }),
+    () => $trpc.blueprint.deployBlueprint.mutate({ id: resourceValue.id, parameterValues: parameterValues.value }),
     {
-      key: current.id,
+      key: resourceValue.id,
       onError: createErrorNotification,
       onSuccess: (newDeployments) => {
         deployments.value = newDeployments;

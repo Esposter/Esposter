@@ -16,8 +16,8 @@ const error = defineModel<string>("error", { default: "" });
 const isParsing = defineModel<boolean>("isParsing", { default: false });
 // The filename is the best name the user never has to type, so the form takes it as its own
 const emit = defineEmits<{ parse: [name: string] }>();
-const accepts = DataSourceTypes.map((type) => DataSourceConfigurationMap[type].accept);
-const accept = accepts.join(",");
+const ACCEPTS = DataSourceTypes.map((type) => DataSourceConfigurationMap[type].accept);
+const ACCEPT = ACCEPTS.join(",");
 const dropZone = useTemplateRef("dropZone");
 const file = ref<File>();
 const parseFile = async (newFile: File) => {
@@ -25,7 +25,7 @@ const parseFile = async (newFile: File) => {
   sheetResource.value = undefined;
   const type = getDataSourceTypeByFileName(newFile.name);
   if (!type) {
-    error.value = `${newFile.name} is not a ${accepts.join(" or ")} file`;
+    error.value = `${newFile.name} is not a ${ACCEPTS.join(" or ")} file`;
     return;
   }
 
@@ -66,10 +66,10 @@ const onUpdateFile = async (newFile?: File | File[]) => {
 <template>
   <div ref="dropZone" p-4 b-2 rd b-dashed flex flex-col gap-2 :b-primary="isOverDropZone" :b-border="!isOverDropZone">
     <span text-caption op-medium-emphasis>
-      Drop a {{ accept }} file here, or pick one — the rows land in the new sheet's Data blade. Optional.
+      Drop a {{ ACCEPT }} file here, or pick one — the rows land in the new sheet's Data blade. Optional.
     </span>
     <v-file-input
-      :accept
+      :accept="ACCEPT"
       density="comfortable"
       label="File"
       :error-messages="error"

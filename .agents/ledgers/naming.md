@@ -74,7 +74,7 @@
 | `app/components/Message` — `RightSideBar`, `DraftsAndSent`                                                                                  | 2026-09-04 |                                                                                                                                                         |
 | `app/components/Resource/Sheet`                                                                                                             | 2026-09-04 | a create dialog's pristine baseline is `initial*`, like any other dirty-comparison snapshot; a local may not shadow a nuxt auto-import                  |
 | `app/components/Resource` — `List`, `Survey`, `VersionHistory`, `TodoList`, `Search`                                                        | 2026-09-04 | a local copy of a store field is `edited*` at the destructure too, never `*Input` or a bare `cloned`                                                    |
-| `app/components/Resource` — the rest                                                                                                        | —          | the per-resource-type trees and the root files                                                                                                          |
+| `app/components/Resource` — the rest                                                                                                        | 2026-09-04 | the per-resource-type trees and the root files; an import aliased around a clash takes `Base*`                                                          |
 | `app/components/Dungeons` — `Battle`, `World`, `UI`                                                                                         | —          |                                                                                                                                                         |
 | `app/components/Dungeons` — the rest                                                                                                        | —          | `Settings`, `Inventory`, `MonsterParty`, `Title`, `MobileJoystick`, `MonsterDetails`                                                                    |
 | `app/components/Styled`                                                                                                                     | 2026-09-04 | the shell primitives every product renders; `StyledWaypoint`'s `isLoading` is the skill's own named site                                                |
@@ -99,6 +99,10 @@ the grounds that a rename is expensive — that is the argument
 - Filename-is-the-export is decidable from the AST plus the path; a custom oxlint plugin could take it whole.
 - `is*`/`has*`/`show*` on a boolean-typed declaration needs types, which `typeAware: true` already provides.
 - Abbreviation bans need a word list, not a rule — leave with the sweep.
+- A `<script setup>` constant's casing is not decidable by selector: whether a top-level array or object
+  literal is fixed or captures a ref needs scope analysis no `no-restricted-syntax` pattern can do, and the
+  narrow branch that is decidable (`Object.values`/`entries`/`keys` at program scope) catches a fraction of
+  the sites. Leave with the sweep.
 - **A `getIs*`/`getHas*` declaration is decidable from the name alone, and there is no longer an exception to
   carve out.** The three that returned a function rather than a boolean now say what they build instead, so
   every remaining one in the repo is a `check*` the pass has not reached yet. A `no-restricted-syntax` selector
