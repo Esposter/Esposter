@@ -12,20 +12,20 @@ import { Image, Text } from "vue-phaserjs";
 const colorPickerStore = useColorPickerStore();
 const { updateThemeModeSetting } = colorPickerStore;
 const { themeModeSetting } = storeToRefs(colorPickerStore);
-const padding = 100;
-const leftCursorX = INITIAL_SETTINGS_VALUE_POSITION.x + padding;
-const textX = leftCursorX + padding;
-const rightCursorX = textX + padding;
-const y = getSettingsOptionY(SettingsOption["Theme Mode"]);
+const PADDING = 100;
+const LEFT_CURSOR_X = INITIAL_SETTINGS_VALUE_POSITION.x + PADDING;
+const TEXT_X = LEFT_CURSOR_X + PADDING;
+const RIGHT_CURSOR_X = TEXT_X + PADDING;
+const TEXT_Y = getSettingsOptionY(SettingsOption["Theme Mode"]);
 // The cursors are centred on the text rather than aligned to its top
-const cursorY = y + 12;
+const CURSOR_Y = TEXT_Y + 12;
 </script>
 
 <template>
   <Image
     :configuration="{
-      x: leftCursorX,
-      y: cursorY,
+      x: LEFT_CURSOR_X,
+      y: CURSOR_Y,
       originX: 1,
       originY: 0,
       texture: ImageKey.CursorWhite,
@@ -36,8 +36,8 @@ const cursorY = y + 12;
   />
   <Text
     :configuration="{
-      x: textX,
-      y,
+      x: TEXT_X,
+      y: TEXT_Y,
       originX: 0.5,
       originY: 0,
       text: themeModeSetting,
@@ -46,8 +46,8 @@ const cursorY = y + 12;
   />
   <Image
     :configuration="{
-      x: rightCursorX,
-      y: cursorY,
+      x: RIGHT_CURSOR_X,
+      y: CURSOR_Y,
       origin: 0,
       texture: ImageKey.CursorWhite,
       scaleX: 2.5,

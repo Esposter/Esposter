@@ -16,9 +16,11 @@ onCreate((scene) => {
 
 watchImmediate(
   () => itemOptionGrid.value,
-  (newValue) => {
+  (newItemOption) => {
     infoDialogMessage.value.text =
-      newValue === PlayerSpecialInput.Cancel ? "Close your bag and go back to adventuring!" : newValue.description;
+      newItemOption === PlayerSpecialInput.Cancel
+        ? "Close your bag and go back to adventuring!"
+        : newItemOption.description;
   },
 );
 </script>

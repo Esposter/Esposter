@@ -7,12 +7,12 @@ import {
 import { Container } from "vue-phaserjs";
 
 const itemOptionGrid = useItemOptionGrid();
-const panelHeight = 360;
+const PANEL_HEIGHT = 360;
 </script>
 
 <template>
   <Container :configuration="{ x: 300, y: 20 }">
-    <DungeonsInventoryPanel :width="CONTENT_MENU_WIDTH" :height="panelHeight">
+    <DungeonsInventoryPanel :width="CONTENT_MENU_WIDTH" :height="PANEL_HEIGHT">
       <DungeonsInventoryItemList />
       <DungeonsUIInputCursor
         :grid="itemOptionGrid"

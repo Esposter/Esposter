@@ -2,7 +2,8 @@
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { getActiveInputResolvers } from "@/services/dungeons/scene/monsterParty/getActiveInputResolvers";
 
-const update = useResolveInput(getActiveInputResolvers());
+const activeInputResolvers = getActiveInputResolvers();
+const update = useResolveInput(activeInputResolvers);
 </script>
 
 <template>
