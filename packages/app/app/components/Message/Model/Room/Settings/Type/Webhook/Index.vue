@@ -15,7 +15,7 @@ const webhookStore = useWebhookStore();
 const { createWebhook, readWebhooks } = webhookStore;
 const { items } = storeToRefs(webhookStore);
 await readWebhooks(room.id);
-const isLoading = ref(false);
+const isPending = ref(false);
 </script>
 
 <!-- Discord's arrangement: one button creates the webhook and every field of it is edited on its own row, so the
@@ -24,17 +24,17 @@ const isLoading = ref(false);
   <div flex flex-col gap-y-4>
     <div flex justify-end>
       <StyledButton
-        :loading="isLoading"
+        :loading="isPending"
         :disabled="items.length >= WEBHOOK_MAX_LENGTH"
         @click="
           async () => {
-            isLoading = true;
+            isPending = true;
             await withFinalizerAsync(
               async () => {
                 await createWebhook(room.id, { name: DEFAULT_WEBHOOK_NAME });
               },
               () => {
-                isLoading = false;
+                isPending = false;
               },
             );
           }

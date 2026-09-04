@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 
-interface CategoryFieldProps {
+interface OverviewCategoryFieldProps {
   items: SelectItemCategoryDefinition<null | string>[];
 }
 
-const { items } = defineProps<CategoryFieldProps>();
+const { items } = defineProps<OverviewCategoryFieldProps>();
 const modelValue = defineModel<null | string>({ required: true });
 const emit = defineEmits<{ save: [] }>();
 </script>

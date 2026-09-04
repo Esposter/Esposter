@@ -3,12 +3,12 @@ import type { RoomInMessage, WebhookInMessage } from "@esposter/db-schema";
 
 import { useWebhookStore } from "@/store/message/room/webhook";
 
-interface ActiveSwitchProps {
+interface WebhookActiveSwitchProps {
   roomId: RoomInMessage["id"];
   webhook: WebhookInMessage;
 }
 
-const { roomId, webhook } = defineProps<ActiveSwitchProps>();
+const { roomId, webhook } = defineProps<WebhookActiveSwitchProps>();
 const webhookStore = useWebhookStore();
 const { updateWebhook } = webhookStore;
 </script>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-interface RoomSettingsTypeDetailPlaceholderProps {
+interface DetailPlaceholderProps {
   text: string;
 }
 
-const { text } = defineProps<RoomSettingsTypeDetailPlaceholderProps>();
+const { text } = defineProps<DetailPlaceholderProps>();
 </script>
 
 <template>

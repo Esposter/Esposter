@@ -1,11 +1,11 @@
 <script setup lang="ts">
-interface PermissionListItemProps {
+interface RolePermissionListItemProps {
   description: string;
   permission: bigint;
   title: string;
 }
 
-const { description, permission, title } = defineProps<PermissionListItemProps>();
+const { description, permission, title } = defineProps<RolePermissionListItemProps>();
 const modelValue = defineModel<bigint>({ required: true });
 </script>
 

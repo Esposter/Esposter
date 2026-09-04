@@ -54,7 +54,7 @@ const createWord = () => {
         :key="word"
         closable
         size="small"
-        @click:close="words = words.filter((w) => w !== word)"
+        @click:close="words = words.filter((existingWord) => existingWord !== word)"
       >
         {{ word }}
       </v-chip>
