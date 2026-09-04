@@ -7,13 +7,13 @@ import type { GameObjects } from "phaser";
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { VideoSetterMap } from "#src/util/setterMap/VideoSetterMap";
 
-interface VideoEmits extends /** @vue-ignore */ VideoEventEmitsOptions {}
-
 interface Props {
   configuration: Partial<VideoConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, video: GameObjects.Video) => void;
 }
+
+interface VideoEmits extends /** @vue-ignore */ VideoEventEmitsOptions {}
 
 const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<VideoEmits>();

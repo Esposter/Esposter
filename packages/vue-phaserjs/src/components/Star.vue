@@ -7,13 +7,13 @@ import type { GameObjects } from "phaser";
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { StarSetterMap } from "#src/util/setterMap/StarSetterMap";
 
-interface StarEmits extends /** @vue-ignore */ StarEventEmitsOptions {}
-
 interface Props {
   configuration: Partial<StarConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, star: GameObjects.Star) => void;
 }
+
+interface StarEmits extends /** @vue-ignore */ StarEventEmitsOptions {}
 
 const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<StarEmits>();

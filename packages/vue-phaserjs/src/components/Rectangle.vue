@@ -7,13 +7,13 @@ import type { GameObjects } from "phaser";
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { RectangleSetterMap } from "#src/util/setterMap/RectangleSetterMap";
 
-interface RectangleEmits extends /** @vue-ignore */ RectangleEventEmitsOptions {}
-
 interface Props {
   configuration: Partial<RectangleConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, rectangle: GameObjects.Rectangle) => void;
 }
+
+interface RectangleEmits extends /** @vue-ignore */ RectangleEventEmitsOptions {}
 
 const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<RectangleEmits>();

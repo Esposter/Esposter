@@ -7,13 +7,13 @@ import type { GameObjects } from "phaser";
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { TriangleSetterMap } from "#src/util/setterMap/TriangleSetterMap";
 
-interface TriangleEmits extends /** @vue-ignore */ TriangleEventEmitsOptions {}
-
 interface Props {
   configuration: Partial<TriangleConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, triangle: GameObjects.Triangle) => void;
 }
+
+interface TriangleEmits extends /** @vue-ignore */ TriangleEventEmitsOptions {}
 
 const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<TriangleEmits>();

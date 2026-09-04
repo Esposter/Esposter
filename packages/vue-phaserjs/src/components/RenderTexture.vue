@@ -7,13 +7,13 @@ import type { GameObjects } from "phaser";
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { RenderTextureSetterMap } from "#src/util/setterMap/RenderTextureSetterMap";
 
-interface RenderTextureEmits extends /** @vue-ignore */ RenderTextureEventEmitsOptions {}
-
 interface Props {
   configuration: Partial<RenderTextureConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, renderTexture: GameObjects.RenderTexture) => void;
 }
+
+interface RenderTextureEmits extends /** @vue-ignore */ RenderTextureEventEmitsOptions {}
 
 const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<RenderTextureEmits>();
