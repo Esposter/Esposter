@@ -32,7 +32,7 @@ const menuItems = computed<Item[]>(() => [
 const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProps }));
 // The row is one child component already, so its per-item props are hoisted here rather than into another
 // Component — a loop variable has no script scope to memoize them in
-const buttonPropsMap = computed(
+const titleButtonPropsMap = computed(
   () =>
     new Map(
       menuItems.value.map(({ color, title }) => [
@@ -49,7 +49,7 @@ const buttonPropsMap = computed(
       <StyledTooltipIconButton
         v-for="{ icon, shortTitle, title, onClick } of menuItems"
         :key="title"
-        :button-props="buttonPropsMap.get(title)"
+        :button-props="titleButtonPropsMap.get(title)"
         :icon
         :text="shortTitle ?? title"
         @click.stop="onClick?.($event)"

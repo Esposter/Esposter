@@ -4,12 +4,12 @@ import { getVoteDescription } from "@/services/message/poll/getVoteDescription";
 interface PollOptionProps {
   id: string;
   label: string;
-  totalVotes: number;
+  totalVoteCount: number;
   voteCount: number;
 }
 
-const { id, label, totalVotes, voteCount } = defineProps<PollOptionProps>();
-const votePercentage = computed(() => (totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0));
+const { id, label, totalVoteCount, voteCount } = defineProps<PollOptionProps>();
+const votePercentage = computed(() => (totalVoteCount > 0 ? Math.round((voteCount / totalVoteCount) * 100) : 0));
 const voteDescription = computed(() => getVoteDescription(voteCount));
 </script>
 

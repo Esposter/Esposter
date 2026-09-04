@@ -1,9 +1,9 @@
 <script setup lang="ts">
-interface MessageModelMessageEmojiTagProps {
+interface MessageEmojiTagProps {
   emojiTag: string;
 }
 
-const { emojiTag } = defineProps<MessageModelMessageEmojiTagProps>();
+const { emojiTag } = defineProps<MessageEmojiTagProps>();
 const { customEmoji, customEmojiId, description } = useEmojiTag(() => emojiTag);
 </script>
 

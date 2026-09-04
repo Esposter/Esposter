@@ -7,14 +7,14 @@ import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { useRoleStore } from "@/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 
-interface MessageModelMessageEmojiPickerProps {
+interface MessageEmojiPickerProps {
   buttonProps?: VBtn["$props"];
   tooltipProps?: VTooltip["$props"];
 }
 
 defineSlots<{ default?: (props: Record<string, unknown>) => VNode }>();
 const menu = defineModel<boolean>("menu", { default: false });
-const { buttonProps, tooltipProps } = defineProps<MessageModelMessageEmojiPickerProps>();
+const { buttonProps, tooltipProps } = defineProps<MessageEmojiPickerProps>();
 const emit = defineEmits<{ select: [emojiTag: string, emoji: PickableEmoji] }>();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
@@ -22,7 +22,7 @@ const roomEmojiStore = useRoomEmojiStore();
 const { customEmojis } = storeToRefs(roomEmojiStore);
 const roleStore = useRoleStore();
 const { checkHasMyPermission } = roleStore;
-const canManageEmojis = computed(
+const hasManageEmojis = computed(
   () => Boolean(currentRoomId.value) && checkHasMyPermission(currentRoomId.value, RoomPermission.ManageEmojis),
 );
 </script>
@@ -41,7 +41,7 @@ const canManageEmojis = computed(
     <template v-if="$slots.default" #default="activatorProps">
       <slot :="activatorProps" />
     </template>
-    <template v-if="canManageEmojis" #footer>
+    <template v-if="hasManageEmojis" #footer>
       <MessageModelRoomEmojiCreateDialog :room-id="currentRoomId">
         <template #activator="{ updateIsOpen }">
           <!-- Bordered rather than plain: it is the one action in a bar of standing controls, and a text
