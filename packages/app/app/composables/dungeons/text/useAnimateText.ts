@@ -10,7 +10,7 @@ export const useAnimateText = (scene: SceneWithPlugins, targetText: Ref<string>,
   if (isSkipAnimations.value) return undefined;
 
   const { play, stop } = getDungeonsSoundEffect(scene, SoundEffectKey.TextBlip, { loop: true });
-  const textDelay = useTextDelay();
+  const textDelayMs = useTextDelayMs();
   const textSections = text.split(/(?<token>\S|\s+)/u).filter(Boolean);
   let sectionIndex = 0;
 
@@ -30,7 +30,7 @@ export const useAnimateText = (scene: SceneWithPlugins, targetText: Ref<string>,
           resolve();
         }
       },
-      delay: textDelay.value,
+      delay: textDelayMs.value,
       repeat: textSections.length - 1,
     });
   });
