@@ -2,11 +2,11 @@
 import { pluralize } from "#shared/util/text/pluralize";
 import { capitalize } from "@esposter/shared";
 
-interface ResourceSheetSelectionToolbarProps {
+interface Props {
   label: string;
 }
 
-const { label } = defineProps<ResourceSheetSelectionToolbarProps>();
+const { label } = defineProps<Props>();
 const selectedIds = defineModel<string[]>({ required: true });
 const emit = defineEmits<{ delete: [ids: string[]] }>();
 const pluralizedLabel = computed(() => pluralize(label, selectedIds.value.length));

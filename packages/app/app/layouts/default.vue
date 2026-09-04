@@ -7,7 +7,7 @@ import { LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/cons
 import { useLayoutStore } from "@/store/layout";
 import { takeOne } from "@esposter/shared";
 
-interface DefaultProps {
+interface Props {
   footerStyle?: CSSProperties;
   hideGlobalScrollbar?: true;
   leftNavigationDrawerProps?: NavigationDrawerProps;
@@ -26,7 +26,7 @@ const slots = defineSlots<{
   right?: () => VNode;
 }>();
 const { footerStyle, hideGlobalScrollbar, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } =
-  defineProps<DefaultProps>();
+  defineProps<Props>();
 const layoutStore = useLayoutStore();
 const { isDesktop, isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } =
   storeToRefs(layoutStore);

@@ -8,13 +8,13 @@ import { searchEmojis } from "@/services/message/emoji/searchEmojis";
 import { useEmojiPickerStore } from "@/store/message/emojiPicker";
 import { takeOne } from "@esposter/shared";
 
-interface StyledEmojiPickerPanelProps {
+interface Props {
   // The room's own uploads, passed in rather than read from a store: this panel is the app's one emoji picker and
   // Knows nothing about rooms — every surface that has a set hands it over
   customEmojis?: CustomEmoji[];
 }
 
-const { customEmojis = [] } = defineProps<StyledEmojiPickerPanelProps>();
+const { customEmojis = [] } = defineProps<Props>();
 // The tag leads, because reacting is what most surfaces do with a pick; the record follows for the composer,
 // Which needs the content form rather than the reaction form
 defineSlots<{ footer?: () => VNode }>();

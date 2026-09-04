@@ -9,13 +9,13 @@ import { StarSetterMap } from "#src/util/setterMap/StarSetterMap";
 
 interface StarEmits extends /** @vue-ignore */ StarEventEmitsOptions {}
 
-interface StarProps {
+interface Props {
   configuration: Partial<StarConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, star: GameObjects.Star) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<StarProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<StarEmits>();
 
 useInitializeGameObject(

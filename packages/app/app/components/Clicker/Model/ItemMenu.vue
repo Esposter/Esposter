@@ -11,7 +11,7 @@ import { MenuIconMap } from "@/services/clicker/icon/MenuIconMap";
 import { UpgradeIconMap } from "@/services/clicker/icon/UpgradeIconMap";
 import { marked } from "marked";
 
-type ItemMenuProps = Partial<Pick<BuildingWithStatistics, "amount">> &
+type Props = Partial<Pick<BuildingWithStatistics, "amount">> &
   Partial<Pick<Upgrade, "description">> &
   Pick<BuildingWithStatistics | Upgrade, "id"> &
   Pick<Upgrade, "flavorDescription" | "price"> & { isAffordable: boolean; menuProps: VMenu["$props"]; type: ItemType };
@@ -20,8 +20,7 @@ const slots = defineSlots<{
   action?: () => VNode;
   "append-text"?: () => VNode;
 }>();
-const { amount, description, flavorDescription, id, isAffordable, menuProps, price, type } =
-  defineProps<ItemMenuProps>();
+const { amount, description, flavorDescription, id, isAffordable, menuProps, price, type } = defineProps<Props>();
 const descriptionHtml = computed(() => (description ? marked.parse(description, { async: false }) : ""));
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`, { async: false }));
 const displayPrice = computed(() => formatNumberLong(price));

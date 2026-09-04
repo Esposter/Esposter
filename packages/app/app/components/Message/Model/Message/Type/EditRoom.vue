@@ -4,9 +4,9 @@ import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { useRoomDialogStore } from "@/store/message/room/dialog";
 
-interface EditRoomProps extends MessageComponentProps<StandardMessageEntity> {}
+interface Props extends MessageComponentProps<StandardMessageEntity> {}
 
-const { active, creator, isPreview = false, message } = defineProps<EditRoomProps>();
+const { active, creator, isPreview = false, message } = defineProps<Props>();
 const roomDialogStore = useRoomDialogStore();
 const { isEditRoomDialogOpen } = storeToRefs(roomDialogStore);
 </script>

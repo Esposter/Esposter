@@ -12,14 +12,14 @@ import {
 import { getPanelTextPosition } from "@/services/dungeons/scene/battle/menu/getPanelTextPosition";
 import { Container, Rectangle } from "vue-phaserjs";
 
-interface PanelGridProps {
+interface Props {
   getText: (value: GridValue<TGrid>) => string;
   grid: Grid<TGrid>;
   isVisible: boolean;
   x?: number;
 }
 
-const { getText, grid, isVisible, x = 0 } = defineProps<PanelGridProps>();
+const { getText, grid, isVisible, x = 0 } = defineProps<Props>();
 </script>
 
 <template>

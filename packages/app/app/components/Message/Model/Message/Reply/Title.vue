@@ -4,12 +4,12 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { MessageType } from "@esposter/db-schema";
 
-interface ReplyTitleProps {
+interface Props {
   creator: Creator;
   message: MessageEntity;
 }
 
-const { creator, message } = defineProps<ReplyTitleProps>();
+const { creator, message } = defineProps<Props>();
 </script>
 
 <template>

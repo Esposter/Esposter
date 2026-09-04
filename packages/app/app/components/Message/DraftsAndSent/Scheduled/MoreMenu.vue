@@ -5,11 +5,11 @@ import { DRAFTS_AND_SENT_ACTION_BUTTON_PROPS } from "@/services/message/draftsAn
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 import { withFinalizerAsync } from "@esposter/shared";
 
-interface MessageDraftsAndSentScheduledMoreMenuProps {
+interface Props {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
 }
 
-const { scheduledMessageJob } = defineProps<MessageDraftsAndSentScheduledMoreMenuProps>();
+const { scheduledMessageJob } = defineProps<Props>();
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { cancelScheduledMessageJob } = scheduledMessageJobStore;
 const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();

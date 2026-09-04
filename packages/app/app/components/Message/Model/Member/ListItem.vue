@@ -9,7 +9,7 @@ import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { mergeProps } from "vue";
 
-interface MemberListItemProps {
+interface Props {
   member: Pick<User, "id" | "image" | "name">;
   room: RoomInMessage;
 }
@@ -19,7 +19,7 @@ type VHoverSlotProps = Extract<VHover["v-slot:default"], Function> extends (prop
 defineSlots<{
   append: ({ hoverProps, listItemProps }: { hoverProps: VHoverSlotProps; listItemProps: ListItemSlot }) => VNode;
 }>();
-const { member, room } = defineProps<MemberListItemProps>();
+const { member, room } = defineProps<Props>();
 const emit = defineEmits<{ click: [event: KeyboardEvent | MouseEvent] }>();
 const userToRoomStore = useUserToRoomStore();
 const { getDisplayName } = userToRoomStore;

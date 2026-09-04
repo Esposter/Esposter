@@ -6,7 +6,7 @@ import type { ImageConfiguration } from "vue-phaserjs";
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { Image } from "vue-phaserjs";
 
-interface CursorProps {
+interface Props {
   cursorImageKey?: Extract<ImageKey, "CursorWhite">;
   grid: Grid<TGrid>;
   initialPosition: Position;
@@ -22,7 +22,7 @@ const {
   positionIncrement,
   scale = 2.5,
   tween,
-} = defineProps<CursorProps>();
+} = defineProps<Props>();
 const position = computed(() => ({
   x: initialPosition.x + (positionIncrement.x ?? 0) * grid.position.value.x,
   y: initialPosition.y + (positionIncrement.y ?? 0) * grid.position.value.y,

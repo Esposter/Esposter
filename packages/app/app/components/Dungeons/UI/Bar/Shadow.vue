@@ -3,13 +3,13 @@ import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 
 import { BarShadowTextureMap } from "@/services/dungeons/UI/bar/BarTextureMap";
 
-interface ShadowProps {
+interface Props {
   imagePosition: ImagePosition;
   scaleY: number;
   width: number;
 }
 
-const { imagePosition, scaleY, width } = defineProps<ShadowProps>();
+const { imagePosition, scaleY, width } = defineProps<Props>();
 const leftCapShadowDisplayWidth = ref<number>();
 const rightCapShadowDisplayWidth = ref<number>();
 // The shadow is always full: the middle takes whatever the two caps leave, where the bar in front of it has a

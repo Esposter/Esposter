@@ -4,13 +4,13 @@ import type { MessageEntity } from "@esposter/db-schema";
 import { EmojiMenuItems } from "@/services/message/emoji/EmojiMenuItems";
 import { getEmojiDescription } from "@/services/message/emoji/getEmojiDescription";
 
-interface OptionsMenuProps {
+interface Props {
   hoverProps?: Record<string, unknown>;
   isHovering?: boolean | null;
   message: MessageEntity;
 }
 
-const { hoverProps, isHovering, message } = defineProps<OptionsMenuProps>();
+const { hoverProps, isHovering, message } = defineProps<Props>();
 const emit = defineEmits<{ "update:menu": [value: boolean] }>();
 const isCreator = await useIsCreator(() => message);
 const isEditable = computed(() => isCreator.value && !message.isForward);

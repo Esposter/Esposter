@@ -5,14 +5,14 @@ import type { RouteLocationRaw } from "vue-router";
 import { RESOURCE_SEARCH_LISTBOX_ID } from "@/services/resource/search/constants";
 import { getResourceSearchOptionId } from "@/services/resource/search/getResourceSearchOptionId";
 
-interface ResultListProps {
+interface Props {
   items: ResourceSearchItem[];
   searchQuery: string;
   seeAllTo: RouteLocationRaw;
   selectedIndex: number;
 }
 
-const { items, searchQuery, seeAllTo, selectedIndex } = defineProps<ResultListProps>();
+const { items, searchQuery, seeAllTo, selectedIndex } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
 // StyledList scrolls by DOM child index, so the selected flat index is offset by the subheaders before it
 const selectedDomIndex = computed(() => {

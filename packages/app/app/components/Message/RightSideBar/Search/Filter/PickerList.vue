@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 
-interface MessageRightSideBarSearchFilterPickerListProps {
+interface Props {
   hasMore: boolean;
   isPending: boolean;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { hasMore, isPending } = defineProps<MessageRightSideBarSearchFilterPickerListProps>();
+const { hasMore, isPending } = defineProps<Props>();
 const emit = defineEmits<{ readMore: [onComplete: () => void] }>();
 </script>
 

@@ -7,12 +7,12 @@ import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { AdminActionType, hasPermission, RoomPermission } from "@esposter/db-schema";
 
-interface ModerationItemsProps {
+interface Props {
   roomId: string;
   user: Pick<User, "id" | "name">;
 }
 
-const { roomId, user } = defineProps<ModerationItemsProps>();
+const { roomId, user } = defineProps<Props>();
 const roomStore = useRoomStore();
 const { rooms } = storeToRefs(roomStore);
 const roleStore = useRoleStore();

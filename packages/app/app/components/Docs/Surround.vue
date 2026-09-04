@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from "@nuxt/content";
 
-interface SurroundProps {
+interface Props {
   surround: [ContentNavigationItem | undefined, ContentNavigationItem | undefined];
 }
 
-const { surround } = defineProps<SurroundProps>();
+const { surround } = defineProps<Props>();
 const previous = computed(() => surround[0]);
 const next = computed(() => surround[1]);
 </script>

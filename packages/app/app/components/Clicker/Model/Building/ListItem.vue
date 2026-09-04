@@ -7,11 +7,11 @@ import { useClickerStore } from "@/store/clicker";
 import { useBuildingStore } from "@/store/clicker/building";
 import { marked } from "marked";
 
-interface BuildingListItemProps {
+interface Props {
   building: Building;
 }
 
-const { building } = defineProps<BuildingListItemProps>();
+const { building } = defineProps<Props>();
 const clickerStore = useClickerStore();
 const { clicker } = storeToRefs(clickerStore);
 const buildingStore = useBuildingStore();

@@ -3,14 +3,14 @@ import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearch
 
 import { getResourceSearchOptionId } from "@/services/resource/search/getResourceSearchOptionId";
 
-interface ResultListItemProps {
+interface Props {
   index: number;
   isActive: boolean;
   item: ResourceSearchItem;
   searchQuery: string;
 }
 
-const { index, isActive, item, searchQuery } = defineProps<ResultListItemProps>();
+const { index, isActive, item, searchQuery } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
 </script>
 

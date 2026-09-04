@@ -3,11 +3,11 @@ import { useBallStore } from "@/store/dungeons/battle/ball";
 import { Curves, Math } from "phaser";
 import { PathFollower } from "vue-phaserjs";
 
-interface BallProps {
+interface Props {
   scale?: number;
 }
 
-const { scale = 0.1 } = defineProps<BallProps>();
+const { scale = 0.1 } = defineProps<Props>();
 const ballStore = useBallStore();
 const { endPosition, startPosition } = ballStore;
 const { isVisible, pathFollower, texture } = storeToRefs(ballStore);

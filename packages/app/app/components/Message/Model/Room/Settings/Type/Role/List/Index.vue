@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
 
-interface RoleListProps {
+interface Props {
   roles: RoomRoleInMessage[];
   roomId: RoomInMessage["id"];
 }
 
-const { roles, roomId } = defineProps<RoleListProps>();
+const { roles, roomId } = defineProps<Props>();
 </script>
 
 <template>

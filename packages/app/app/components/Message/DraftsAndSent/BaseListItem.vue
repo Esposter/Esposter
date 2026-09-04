@@ -1,5 +1,5 @@
 <script setup lang="ts">
-interface MessageDraftsAndSentBaseListItemProps {
+interface Props {
   displayTime: string;
   subtitle: string;
   title: string;
@@ -7,7 +7,7 @@ interface MessageDraftsAndSentBaseListItemProps {
 
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default?: () => VNode; prepend?: () => VNode }>();
-const { displayTime, subtitle, title } = defineProps<MessageDraftsAndSentBaseListItemProps>();
+const { displayTime, subtitle, title } = defineProps<Props>();
 const listItem = useTemplateRef("listItem");
 // @ts-expect-error TS2590: Expression produces a union type that is too complex to represent.
 const { focused: isFocusWithin } = useFocusWithin(listItem);

@@ -3,11 +3,11 @@ import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
 
 import { useInputStore } from "@/store/message/input";
 
-interface MessageDraftsAndSentDraftDeleteButtonProps {
+interface Props {
   draftItem: DraftItem;
 }
 
-const { draftItem } = defineProps<MessageDraftsAndSentDraftDeleteButtonProps>();
+const { draftItem } = defineProps<Props>();
 const inputStore = useInputStore();
 const { clearComposer } = inputStore;
 </script>

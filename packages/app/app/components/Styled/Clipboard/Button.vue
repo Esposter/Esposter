@@ -1,9 +1,9 @@
 <script setup lang="ts">
-interface StyledClipboardButtonProps {
+interface Props {
   source: string;
 }
 
-const { source } = defineProps<StyledClipboardButtonProps>();
+const { source } = defineProps<Props>();
 const emit = defineEmits<{ create: []; "update:copied": [boolean] }>();
 const { copied, copy } = useClipboard();
 

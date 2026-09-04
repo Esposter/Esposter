@@ -29,7 +29,8 @@
     {
       "files": ["**/*.vue"],
       "rules": {
-        "props-interface/no-exported-type": "error"
+        "props-interface/no-exported-type": "error",
+        "props-interface/require-props-name": "error"
       }
     },
     {

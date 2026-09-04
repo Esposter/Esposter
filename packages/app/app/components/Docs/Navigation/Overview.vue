@@ -5,11 +5,11 @@ import { DocsCategories } from "@/models/docs/DocsCategory";
 import { getSectionCategory } from "@/services/docs/getSectionCategory";
 import { getSectionIcon } from "@/services/docs/getSectionIcon";
 
-interface NavigationOverviewProps {
+interface Props {
   sections: ContentNavigationItem[];
 }
 
-const { sections } = defineProps<NavigationOverviewProps>();
+const { sections } = defineProps<Props>();
 const { currentRoute } = useRouter();
 const categories = computed(() =>
   DocsCategories.map((category) => ({

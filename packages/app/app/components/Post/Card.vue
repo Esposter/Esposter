@@ -4,13 +4,13 @@ import type { PostWithRelations } from "@esposter/db-schema";
 import { authClient } from "@/services/auth/authClient";
 import { usePostDialogStore } from "@/store/post/dialog";
 
-interface PostCardProps {
+interface Props {
   // Comments page only: look up post data in the comment store instead.
   isCommentStore?: true;
   post: PostWithRelations;
 }
 
-const { isCommentStore, post } = defineProps<PostCardProps>();
+const { isCommentStore, post } = defineProps<Props>();
 const { data: session } = await authClient.useSession(useFetch);
 const postDialogStore = usePostDialogStore();
 const { deletingId } = storeToRefs(postDialogStore);

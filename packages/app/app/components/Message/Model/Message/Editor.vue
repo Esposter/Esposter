@@ -5,11 +5,11 @@ import { useDataStore } from "@/store/message/data";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { Extension } from "@tiptap/vue-3";
 
-interface MessageEditorProps {
+interface Props {
   message: MessageEntity;
 }
 
-const { message } = defineProps<MessageEditorProps>();
+const { message } = defineProps<Props>();
 const emit = defineEmits<{
   "update:delete-mode": [value: true];
   "update:update-mode": [value: false];

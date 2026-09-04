@@ -1,11 +1,11 @@
 <script setup lang="ts">
-interface CallScreenShareStageProps {
+interface Props {
   isInteractive?: false;
   presenterName: string;
   stream: MediaStream;
 }
 
-const { isInteractive = true, presenterName, stream } = defineProps<CallScreenShareStageProps>();
+const { isInteractive = true, presenterName, stream } = defineProps<Props>();
 const emit = defineEmits<{ fullscreen: [] }>();
 const video = useTemplateRef("video");
 const videoAspectRatio = ref("16 / 9");

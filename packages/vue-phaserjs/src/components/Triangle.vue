@@ -9,13 +9,13 @@ import { TriangleSetterMap } from "#src/util/setterMap/TriangleSetterMap";
 
 interface TriangleEmits extends /** @vue-ignore */ TriangleEventEmitsOptions {}
 
-interface TriangleProps {
+interface Props {
   configuration: Partial<TriangleConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, triangle: GameObjects.Triangle) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<TriangleProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<TriangleEmits>();
 
 useInitializeGameObject(

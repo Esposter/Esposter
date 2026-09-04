@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { Image } from "vue-phaserjs";
 
-interface MonsterProps {
+interface Props {
   // By default, this will be the player
   isEnemy?: true;
 }
 
-const { isEnemy } = defineProps<MonsterProps>();
+const { isEnemy } = defineProps<Props>();
 const battleMonsterStore = useBattleMonsterStore(isEnemy);
 const { initialMonsterPosition } = battleMonsterStore;
 const { activeMonster, monsterPosition, monsterTween } = storeToRefs(battleMonsterStore);

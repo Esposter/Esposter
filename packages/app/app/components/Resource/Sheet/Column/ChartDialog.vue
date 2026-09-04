@@ -3,12 +3,12 @@ import type { ColumnStatistics } from "#shared/models/resource/sheet/column/Colu
 
 import { computeColumnChartData } from "@/services/resource/sheet/column/computeColumnChartData";
 
-interface ChartDialogProps {
+interface Props {
   columnStatistics?: ColumnStatistics;
 }
 
 const isOpen = defineModel<boolean>();
-const { columnStatistics } = defineProps<ChartDialogProps>();
+const { columnStatistics } = defineProps<Props>();
 const chartData = computed(() => (columnStatistics ? computeColumnChartData(columnStatistics) : undefined));
 </script>
 

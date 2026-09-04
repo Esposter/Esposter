@@ -4,13 +4,13 @@ import { useBlockStore } from "@/store/message/user/block";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
-interface SearchResultListItemProps {
+interface Props {
   id: string;
   image: null | string;
   name: string;
 }
 
-const { id, image, name } = defineProps<SearchResultListItemProps>();
+const { id, image, name } = defineProps<Props>();
 const blockStore = useBlockStore();
 const { blockedUsers } = storeToRefs(blockStore);
 const friendRequestStore = useFriendRequestStore();

@@ -6,12 +6,12 @@ import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { ROOM_EMOJI_NAME_REGEX } from "@esposter/db-schema";
 
-interface EmojiListItemProps {
+interface Props {
   roomEmoji: RoomEmojiWithSasUrl;
   roomId: RoomInMessage["id"];
 }
 
-const { roomEmoji, roomId } = defineProps<EmojiListItemProps>();
+const { roomEmoji, roomId } = defineProps<Props>();
 const roomEmojiStore = useRoomEmojiStore();
 const { updateRoomEmoji } = roomEmojiStore;
 const editedName = ref(roomEmoji.name);

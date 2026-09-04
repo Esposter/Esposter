@@ -6,11 +6,11 @@ import { DIALOG_WIDTH } from "@/services/dungeons/scene/world/constants";
 import { WORD_PADDING } from "@/services/dungeons/UI/constants";
 import { Text } from "vue-phaserjs";
 
-interface DialogTextProps {
+interface Props {
   dialogMessage: DialogMessage;
 }
 
-const { dialogMessage } = defineProps<DialogTextProps>();
+const { dialogMessage } = defineProps<Props>();
 const x = 18;
 const y = 12;
 // A titled message stacks its title above the text, one line height apart

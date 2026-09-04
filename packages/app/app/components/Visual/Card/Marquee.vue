@@ -3,11 +3,11 @@ import type { Card } from "@/models/visual/Card";
 
 import { useColorsStore } from "@/store/colors";
 
-interface VisualCardMarqueeProps {
+interface Props {
   cards: Card[];
 }
 
-const { cards } = defineProps<VisualCardMarqueeProps>();
+const { cards } = defineProps<Props>();
 const colorsStore = useColorsStore();
 const { "on-surface": onSurface, surface } = storeToRefs(colorsStore);
 </script>

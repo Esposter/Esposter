@@ -10,13 +10,13 @@ import { TileSpriteSetterMap } from "#src/util/setterMap/TileSpriteSetterMap";
 
 interface TileSpriteEmits extends /** @vue-ignore */ TileSpriteEventEmitsOptions {}
 
-interface TileSpriteProps {
+interface Props {
   configuration: SetRequired<Partial<TileSpriteConfiguration>, "texture">;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, tileSprite: GameObjects.TileSprite) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<TileSpriteProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<TileSpriteEmits>();
 
 useInitializeGameObject(

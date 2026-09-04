@@ -3,11 +3,11 @@ import type { PostWithRelations } from "@esposter/db-schema";
 
 import { useCommentStore } from "@/store/post/comment";
 
-interface PostCommentUpdateRichTextEditorProps {
+interface Props {
   comment: PostWithRelations;
 }
 
-const { comment } = defineProps<PostCommentUpdateRichTextEditorProps>();
+const { comment } = defineProps<Props>();
 const emit = defineEmits<{
   "update:delete-mode": [value: true];
   "update:update-mode": [value: false];

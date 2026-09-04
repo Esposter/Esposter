@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 
-interface ColumnItemSlotProps {
+interface Props {
   column: Column;
 }
 
-const { column } = defineProps<ColumnItemSlotProps>();
+const { column } = defineProps<Props>();
 </script>
 
 <template>

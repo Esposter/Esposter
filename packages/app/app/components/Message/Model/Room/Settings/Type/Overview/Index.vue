@@ -5,11 +5,11 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { selectRoomInMessageSchema } from "@esposter/db-schema";
 
-interface OverviewProps {
+interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<OverviewProps>();
+const { room } = defineProps<Props>();
 const saveRoom = useSaveRoom(() => room);
 const readRoomCategories = useReadRoomCategories();
 await readRoomCategories();

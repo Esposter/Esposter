@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-interface ResourceListSelectionToolbarProps {
+interface Props {
   selectedResources: Resource[];
 }
 
-const { selectedResources } = defineProps<ResourceListSelectionToolbarProps>();
+const { selectedResources } = defineProps<Props>();
 const emit = defineEmits<{ clear: []; delete: [resources: Resource[]] }>();
 </script>
 

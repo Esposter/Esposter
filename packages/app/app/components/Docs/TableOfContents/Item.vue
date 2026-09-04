@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { TocLink } from "@nuxt/content";
 
-interface TableOfContentsItemProps {
+interface Props {
   depth: number;
   link: TocLink;
   visibleIds: string[];
 }
 
-const { depth, link, visibleIds } = defineProps<TableOfContentsItemProps>();
+const { depth, link, visibleIds } = defineProps<Props>();
 const isActive = computed(() => visibleIds.includes(link.id));
 </script>
 

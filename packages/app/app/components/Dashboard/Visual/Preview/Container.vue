@@ -4,12 +4,12 @@ import type { Visual } from "#shared/models/dashboard/data/Visual";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useVisualStore } from "@/store/dashboard/visual";
 
-interface VisualPreviewContainerProps {
+interface Props {
   id: Visual["id"];
   type: Visual["type"];
 }
 
-const { id, type } = defineProps<VisualPreviewContainerProps>();
+const { id, type } = defineProps<Props>();
 const visualStore = useVisualStore();
 const { editItem } = visualStore;
 const { editedItem } = storeToRefs(visualStore);

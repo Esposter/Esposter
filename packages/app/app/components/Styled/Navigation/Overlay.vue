@@ -3,11 +3,11 @@ import type { NavigationItem } from "@/models/shared/NavigationItem";
 
 import { LEFT_DRAWER_WIDTH } from "#shared/services/app/constants";
 
-interface StyledNavigationOverlayProps {
+interface Props {
   items: NavigationItem[];
 }
 
-const { items } = defineProps<StyledNavigationOverlayProps>();
+const { items } = defineProps<Props>();
 // Closed at every breakpoint until the caller's hamburger opens it, and closed again by the entry that was
 // Picked — navigation is the drawer's whole purpose, so staying open outlives its reason to be there
 const isOpen = defineModel<boolean>({ required: true });

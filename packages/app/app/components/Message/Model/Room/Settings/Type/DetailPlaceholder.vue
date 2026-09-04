@@ -1,9 +1,9 @@
 <script setup lang="ts">
-interface DetailPlaceholderProps {
+interface Props {
   text: string;
 }
 
-const { text } = defineProps<DetailPlaceholderProps>();
+const { text } = defineProps<Props>();
 </script>
 
 <template>

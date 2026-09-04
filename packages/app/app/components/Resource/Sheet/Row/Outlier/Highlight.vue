@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/resource/sheet/constants";
 
-interface OutlierHighlightProps {
+interface Props {
   isOutlier: boolean;
   text: string;
 }
 
-const { isOutlier, text } = defineProps<OutlierHighlightProps>();
+const { isOutlier, text } = defineProps<Props>();
 </script>
 
 <template>

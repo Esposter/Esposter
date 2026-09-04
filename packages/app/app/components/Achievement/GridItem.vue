@@ -5,12 +5,12 @@ import type { UserAchievementWithDefinition } from "@/models/achievement/UserAch
 import { CategoryColorMap } from "@/services/achievement/CategoryColorMap";
 import { prettify } from "@/util/text/prettify";
 
-interface GridItemProps {
+interface Props {
   achievementDefinition: (typeof achievementDefinitions)[number];
   userAchievement?: UserAchievementWithDefinition;
 }
 
-const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
+const { achievementDefinition, userAchievement } = defineProps<Props>();
 const displayName = computed(() => prettify(achievementDefinition.name));
 const amount = computed(() => userAchievement?.amount ?? 0);
 const targetAmount = computed(() => achievementDefinition.amount ?? 1);

@@ -9,13 +9,13 @@ import { CurveSetterMap } from "#src/util/setterMap/CurveSetterMap";
 
 interface CurveEmits extends /** @vue-ignore */ CurveEventEmitsOptions {}
 
-interface CurveProps {
+interface Props {
   configuration: Partial<CurveConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, curve: GameObjects.Curve) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<CurveProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<CurveEmits>();
 
 useInitializeGameObject(

@@ -4,7 +4,7 @@ import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 
 import { Image } from "vue-phaserjs";
 
-interface BarImageProps {
+interface Props {
   displayWidth?: number;
   imagePosition: ImagePosition;
   // The bar's own segments disappear as they empty, while the shadow behind them is always drawn
@@ -13,7 +13,7 @@ interface BarImageProps {
   texture: ImageKey;
 }
 
-const { displayWidth, imagePosition, isHiddenWhenEmpty, scaleY, texture } = defineProps<BarImageProps>();
+const { displayWidth, imagePosition, isHiddenWhenEmpty, scaleY, texture } = defineProps<Props>();
 const emit = defineEmits<{ "update:displayWidth": [value?: number] }>();
 </script>
 

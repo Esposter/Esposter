@@ -4,12 +4,12 @@ import type { MessageEntity, RoomInMessage } from "@esposter/db-schema";
 import { getDisplayTime } from "@/services/message/draftsAndSent/getDisplayTime";
 import { RoutePath } from "@esposter/shared";
 
-interface MessageDraftsAndSentSentListItemProps {
+interface Props {
   message: MessageEntity;
   room: RoomInMessage;
 }
 
-const { message, room } = defineProps<MessageDraftsAndSentSentListItemProps>();
+const { message, room } = defineProps<Props>();
 </script>
 
 <template>

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { User } from "@esposter/db-schema";
 
-interface ProfileCardHeaderProps {
+interface Props {
   displayName: string;
   isSelf: boolean;
   user: Pick<User, "id" | "image">;
 }
 
 defineSlots<{ actions: () => VNode }>();
-const { displayName, isSelf, user } = defineProps<ProfileCardHeaderProps>();
+const { displayName, isSelf, user } = defineProps<Props>();
 </script>
 
 <template>

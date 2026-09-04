@@ -1,10 +1,10 @@
 <script setup lang="ts">
-interface ResourceSrcdocIframeProps {
+interface Props {
   srcdoc: string;
   title: string;
 }
 
-const { srcdoc, title } = defineProps<ResourceSrcdocIframeProps>();
+const { srcdoc, title } = defineProps<Props>();
 </script>
 
 <template>

@@ -4,7 +4,7 @@ import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 
 import { BarOrigin } from "@/models/dungeons/UI/bar/BarOrigin";
 
-interface BarSegmentsProps {
+interface Props {
   imagePosition: ImagePosition;
   isHiddenWhenEmpty?: true;
   middleDisplayWidth?: number;
@@ -14,7 +14,7 @@ interface BarSegmentsProps {
 
 const leftCapDisplayWidth = defineModel<number | undefined>("leftCapDisplayWidth");
 const rightCapDisplayWidth = defineModel<number | undefined>("rightCapDisplayWidth");
-const { imagePosition, isHiddenWhenEmpty, middleDisplayWidth, scaleY, textures } = defineProps<BarSegmentsProps>();
+const { imagePosition, isHiddenWhenEmpty, middleDisplayWidth, scaleY, textures } = defineProps<Props>();
 // Each segment begins where the one before it ends. The caps report their own texture's width back through
 // Their models, so the offsets are read off the rendered images rather than declared anywhere
 const middleX = computed(() => imagePosition.x + (leftCapDisplayWidth.value ?? 0));

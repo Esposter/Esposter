@@ -9,13 +9,13 @@ import { ParticlesSetterMap } from "#src/util/setterMap/ParticlesSetterMap";
 
 interface ParticlesEmits extends /** @vue-ignore */ ParticlesEventEmitsOptions {}
 
-interface ParticlesProps {
+interface Props {
   configuration: Partial<ParticlesConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, particles: GameObjects.Particles.ParticleEmitter) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<ParticlesProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<ParticlesEmits>();
 
 useInitializeGameObject(

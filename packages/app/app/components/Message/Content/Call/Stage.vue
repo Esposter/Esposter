@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useMediaStore } from "@/store/message/room/call/media";
 
-interface CallStageProps {
+interface Props {
   isDense?: true;
 }
 
-const { isDense } = defineProps<CallStageProps>();
+const { isDense } = defineProps<Props>();
 const emit = defineEmits<{ fullscreen: [] }>();
 const mediaStore = useMediaStore();
 const { activeScreenShareStream, hasScreenShare, pinnedParticipantId } = storeToRefs(mediaStore);

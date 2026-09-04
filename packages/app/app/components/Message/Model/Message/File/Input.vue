@@ -2,13 +2,13 @@
 import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
 import type { FileEntity } from "@esposter/db-schema";
 
-interface FileInputProps {
+interface Props {
   file: FileEntity;
   index: number;
   uploadFileUrl?: UploadFileUrl;
 }
 
-const { file, index, uploadFileUrl = { progress: 1, url: "" } } = defineProps<FileInputProps>();
+const { file, index, uploadFileUrl = { progress: 1, url: "" } } = defineProps<Props>();
 const emit = defineEmits<{ delete: [number] }>();
 const progressPercentage = computed(() => uploadFileUrl.progress * 100);
 </script>

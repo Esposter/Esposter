@@ -3,13 +3,13 @@ import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { useUserSettingsStore } from "@/store/message/user/settings";
 
-interface UserVolumeSliderProps {
+interface Props {
   field: "microphoneVolumePercentage" | "speakerVolumePercentage";
   label: string;
   userSettings: UserSettingsInMessage;
 }
 
-const { field, label, userSettings } = defineProps<UserVolumeSliderProps>();
+const { field, label, userSettings } = defineProps<Props>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
 const { cloned: editedVolumePercentage } = useCloned(() => userSettings[field]);

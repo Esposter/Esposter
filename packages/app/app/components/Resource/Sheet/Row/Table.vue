@@ -11,11 +11,11 @@ import { useRowStore } from "@/store/resource/sheet/row";
 import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
 import { VueDraggable } from "vue-draggable-plus";
 
-interface DataTableProps {
+interface Props {
   dataSource: DataSource;
 }
 
-const { dataSource } = defineProps<DataTableProps>();
+const { dataSource } = defineProps<Props>();
 const table = useTemplateRef("table");
 const columnStore = useColumnStore();
 const { displayColumns } = storeToRefs(columnStore);

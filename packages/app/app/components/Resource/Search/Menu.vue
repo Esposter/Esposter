@@ -5,13 +5,13 @@ import { RESOURCE_SEARCH_LISTBOX_ID } from "@/services/resource/search/constants
 import { getResourceSearchOptionId } from "@/services/resource/search/getResourceSearchOptionId";
 import { RoutePath } from "@esposter/shared";
 
-interface SearchMenuProps {
+interface Props {
   // Home's landing mount: the panel drops down over the page instead of rendering statically (dialog mount)
   isInline?: true;
   placeholder?: string;
 }
 
-const { isInline, placeholder = "Search resources, services, and pages" } = defineProps<SearchMenuProps>();
+const { isInline, placeholder = "Search resources, services, and pages" } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
 const searchQuery = ref("");
 const { addRecentSearch, isPending, items } = useResourceSearchItems(searchQuery);

@@ -3,11 +3,11 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { RoutePath } from "@esposter/shared";
 
-interface ProfileCardMutualRoomsProps {
+interface Props {
   mutualRooms: Pick<RoomInMessage, "id" | "image" | "name">[];
 }
 
-const { mutualRooms } = defineProps<ProfileCardMutualRoomsProps>();
+const { mutualRooms } = defineProps<Props>();
 </script>
 
 <template>

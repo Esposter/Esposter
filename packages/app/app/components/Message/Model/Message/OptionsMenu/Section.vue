@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
-interface OptionsMenuSectionProps {
+interface Props {
   items: Item[];
 }
 
-const { items } = defineProps<OptionsMenuSectionProps>();
+const { items } = defineProps<Props>();
 </script>
 
 <template>

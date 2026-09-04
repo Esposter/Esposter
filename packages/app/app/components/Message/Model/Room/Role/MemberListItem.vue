@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { RoomInMessage, RoomRoleInMessage, User } from "@esposter/db-schema";
 
-interface RoleMemberListItemProps {
+interface Props {
   role: RoomRoleInMessage;
   roomId: RoomInMessage["id"];
   userId: User["id"];
 }
 
-const { role, roomId, userId } = defineProps<RoleMemberListItemProps>();
+const { role, roomId, userId } = defineProps<Props>();
 const { hasRole, isManageable, toggleRole } = useToggleMemberRole(
   () => roomId,
   () => userId,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-interface StyledResizeHandleProps {
+interface Props {
   // Reversed handles sit on the left edge and grow their container as the pointer moves left
   isReversed?: boolean;
   max: number;
@@ -7,7 +7,7 @@ interface StyledResizeHandleProps {
 }
 
 const width = defineModel<number>({ required: true });
-const { isReversed = false, max, min } = defineProps<StyledResizeHandleProps>();
+const { isReversed = false, max, min } = defineProps<Props>();
 const isDragging = ref(false);
 const startX = ref(0);
 const startWidth = ref(0);

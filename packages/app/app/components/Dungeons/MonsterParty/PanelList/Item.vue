@@ -9,13 +9,13 @@ import deepEqual from "fast-deep-equal";
 import { Input } from "phaser";
 import { Container, Image, Text } from "vue-phaserjs";
 
-interface PanelListItemProps {
+interface Props {
   columnIndex: number;
   monster: Monster;
   rowIndex: number;
 }
 
-const { columnIndex, monster, rowIndex } = defineProps<PanelListItemProps>();
+const { columnIndex, monster, rowIndex } = defineProps<Props>();
 const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
 const onGridClick = useOnGridClick(monsterPartyOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
 const isActive = computed(() => deepEqual({ x: columnIndex, y: rowIndex }, monsterPartyOptionGrid.position.value));

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { DeviceSection } from "@/models/message/room/call/DeviceSection";
 
-interface CallDeviceSectionListProps {
+interface Props {
   sections: DeviceSection[];
 }
 
-const { sections } = defineProps<CallDeviceSectionListProps>();
+const { sections } = defineProps<Props>();
 const emit = defineEmits<{ select: [kind: MediaDeviceKind, deviceId: string] }>();
 const getDeviceTitle = (device: MediaDeviceInfo, index: number, title: string) =>
   device.label || `${title} ${index + 1}`;

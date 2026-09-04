@@ -4,7 +4,7 @@ import type { LocalStorageKeyValue } from "@/services/shared/LocalStorageKey";
 
 import { takeOne } from "@esposter/shared";
 
-interface StyledNavigationRailProps {
+interface Props {
   // Whole tooltip sentences rather than a noun this interpolates — a component that owns half a sentence
   // Makes every caller guess the other half
   hideText: string;
@@ -13,7 +13,7 @@ interface StyledNavigationRailProps {
   storageKey: LocalStorageKeyValue;
 }
 
-const { hideText, items, showText, storageKey } = defineProps<StyledNavigationRailProps>();
+const { hideText, items, showText, storageKey } = defineProps<Props>();
 // On mobile the rail collapses into a dropdown so the content keeps the full width.
 const { smAndDown } = useVDisplay();
 const isOpen = ref(false);

@@ -4,11 +4,11 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { authClient } from "@/services/auth/authClient";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
 
-interface InviteProps {
+interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<InviteProps>();
+const { room } = defineProps<Props>();
 const { data: session } = await authClient.useSession(useFetch);
 const roomDialogStore = useRoomDialogStore();
 const { inviteRoomId } = storeToRefs(roomDialogStore);

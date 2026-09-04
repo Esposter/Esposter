@@ -10,12 +10,12 @@ import { PathFollowerSetterMap } from "#src/util/setterMap/PathFollowerSetterMap
 
 interface PathFollowerEmits extends /** @vue-ignore */ PathFollowerEventEmitsOptions {}
 
-interface PathFollowerProps {
+interface Props {
   configuration: SetRequired<Partial<PathFollowerConfiguration>, "path" | "texture">;
   onComplete?: (scene: SceneWithPlugins, pathFollower: GameObjects.PathFollower) => void;
 }
 
-const { configuration, onComplete } = defineProps<PathFollowerProps>();
+const { configuration, onComplete } = defineProps<Props>();
 const emit = defineEmits<PathFollowerEmits>();
 
 useInitializeGameObject(

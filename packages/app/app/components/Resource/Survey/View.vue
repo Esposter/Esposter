@@ -7,12 +7,12 @@ import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { Model } from "survey-core";
 import { SurveyComponent } from "survey-vue3-ui";
 
-interface ResourceSurveyViewProps {
+interface Props {
   id: string;
   version?: number;
 }
 
-const { id, version } = defineProps<ResourceSurveyViewProps>();
+const { id, version } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { currentRoute } = useRouter();
 // Read once on load and threaded through every write — the URL carries an opaque token or nothing

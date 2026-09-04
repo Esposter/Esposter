@@ -3,14 +3,14 @@ import type { Item } from "@/models/shared/Item";
 
 import { downloadUrl } from "@/services/app/downloadUrl";
 
-interface FileOptionsMenuProps {
+interface Props {
   filename: string;
   hoverProps?: Record<string, unknown>;
   isHovering?: boolean | null;
   url: string;
 }
 
-const { filename, hoverProps, isHovering, url } = defineProps<FileOptionsMenuProps>();
+const { filename, hoverProps, isHovering, url } = defineProps<Props>();
 const emit = defineEmits<{ delete: [] }>();
 const menuItems = computed<Item[]>(() => [
   {

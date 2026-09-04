@@ -7,12 +7,12 @@ import { parseSnapshotVersionId } from "@/services/resource/parseSnapshotVersion
 import { ViewComponentMap } from "@/services/resource/ViewComponentMap";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
 
-interface ResourceVersionHistoryPreviewProps {
+interface Props {
   resource: Resource;
   snapshotVersionId: string;
 }
 
-const { resource, snapshotVersionId } = defineProps<ResourceVersionHistoryPreviewProps>();
+const { resource, snapshotVersionId } = defineProps<Props>();
 const versionHistoryStore = useVersionHistoryStore();
 const { restoringSnapshotVersionId } = storeToRefs(versionHistoryStore);
 const { stopPreviewingSnapshot } = useVersionHistoryRoute();

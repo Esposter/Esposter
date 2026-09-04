@@ -2,9 +2,9 @@
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
-interface SystemProps extends MessageComponentProps<StandardMessageEntity> {}
+interface Props extends MessageComponentProps<StandardMessageEntity> {}
 
-const { active, isPreview = false, message } = defineProps<SystemProps>();
+const { active, isPreview = false, message } = defineProps<Props>();
 </script>
 
 <template>

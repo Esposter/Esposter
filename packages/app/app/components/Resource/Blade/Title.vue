@@ -5,12 +5,12 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import { getResourceBladeDefinitions } from "@/services/resource/getResourceBladeDefinitions";
 
-interface ResourceBladeTitleProps {
+interface Props {
   activeBlade: string;
   resource: Resource;
 }
 
-const { activeBlade, resource } = defineProps<ResourceBladeTitleProps>();
+const { activeBlade, resource } = defineProps<Props>();
 // Overview is the resource itself rather than a face of it — naming it says nothing the name has not already
 // Said, so only the blades that are somewhere else earn the suffix
 const activeBladeTitle = computed(() => {

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { RoutePath } from "@esposter/shared";
 
-interface PostUpdateButtonProps {
+interface Props {
   postId: string;
 }
 
-const { postId } = defineProps<PostUpdateButtonProps>();
+const { postId } = defineProps<Props>();
 </script>
 
 <template>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-interface PostCommentBranchProps {
+interface Props {
   // Distance below the comment the route names, not the stored `depth`: a rerooted thread opens at zero
   depth: number;
   parentId: string;
 }
 
-const { depth, parentId } = defineProps<PostCommentBranchProps>();
+const { depth, parentId } = defineProps<Props>();
 const { hasMore, isLoaded, items, readComments, readMoreComments } = useReadComments(parentId);
 
 if (!isLoaded.value) await readComments();

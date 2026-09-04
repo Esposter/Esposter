@@ -5,7 +5,7 @@ import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { checkIsCaretAtEnd } from "@/util/dom/checkIsCaretAtEnd";
 import { checkIsCaretAtStart } from "@/util/dom/checkIsCaretAtStart";
 
-interface ChipProps {
+interface Props {
   autofocus?: boolean;
   isFocused?: boolean;
   isRequired: boolean;
@@ -13,7 +13,7 @@ interface ChipProps {
 }
 
 const modelValue = defineModel<string>({ default: "" });
-const { isFocused, isRequired, name } = defineProps<ChipProps>();
+const { isFocused, isRequired, name } = defineProps<Props>();
 const emit = defineEmits<{
   blur: [];
   delete: [];

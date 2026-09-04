@@ -4,11 +4,11 @@ import type { VBtn } from "vuetify/components";
 
 import { useFavoriteStore } from "@/store/resource/favorite";
 
-interface ResourceFavoriteToggleProps {
+interface Props {
   resource: Resource;
 }
 
-const { resource } = defineProps<ResourceFavoriteToggleProps>();
+const { resource } = defineProps<Props>();
 const favoriteStore = useFavoriteStore();
 const { favoriteIds } = storeToRefs(favoriteStore);
 const { toggleFavorite } = favoriteStore;

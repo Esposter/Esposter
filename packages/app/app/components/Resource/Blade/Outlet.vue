@@ -8,12 +8,12 @@ import { ResourceEditorComponentMap } from "@/services/resource/ResourceEditorCo
 import { ResourceOverviewComponentMap } from "@/services/resource/ResourceOverviewComponentMap";
 import { ID_SEPARATOR } from "@esposter/shared";
 
-interface ResourceBladeOutletProps {
+interface Props {
   activeBlade: string;
   resource: Resource;
 }
 
-const { activeBlade, resource } = defineProps<ResourceBladeOutletProps>();
+const { activeBlade, resource } = defineProps<Props>();
 // The type's own blade wins over its inline editor, and the two are mutually exclusive — one Suspense
 // Boundary renders whichever applies rather than two identical ones
 const contentComponent = computed(

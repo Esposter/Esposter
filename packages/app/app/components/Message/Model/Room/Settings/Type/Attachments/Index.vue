@@ -5,11 +5,11 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { MAX_FILE_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
 import { MimeCategory } from "@esposter/db-schema";
 
-interface AttachmentsProps {
+interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<AttachmentsProps>();
+const { room } = defineProps<Props>();
 const saveRoom = useSaveRoom(() => room);
 const editedMaxFileSizeBytes = ref(room.maxFileSizeBytes);
 const editedAllowedMimeCategories = ref([...room.allowedMimeCategories]);

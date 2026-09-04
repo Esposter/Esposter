@@ -1,10 +1,10 @@
 <script setup lang="ts">
-interface StyledNavigationDrawerProps {
+interface Props {
   permanent?: boolean;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { permanent } = defineProps<StyledNavigationDrawerProps>();
+const { permanent } = defineProps<Props>();
 const isOpen = defineModel<boolean>({ required: true });
 </script>
 

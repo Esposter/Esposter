@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VBtn, VTooltip } from "vuetify/components";
 
-interface StyledTooltipIconButtonProps {
+interface Props {
   buttonProps?: VBtn["$props"];
   icon: string;
   isIconButton?: false;
@@ -13,7 +13,7 @@ interface StyledTooltipIconButtonProps {
 // Is what every call site means by them; an explicit buttonProps entry still wins over the same attr
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default?: () => VNode }>();
-const { buttonProps, icon, isIconButton = true, text, tooltipProps } = defineProps<StyledTooltipIconButtonProps>();
+const { buttonProps, icon, isIconButton = true, text, tooltipProps } = defineProps<Props>();
 const emit = defineEmits<{ click: [event: MouseEvent] }>();
 </script>
 

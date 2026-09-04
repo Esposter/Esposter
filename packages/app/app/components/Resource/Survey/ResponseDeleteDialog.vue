@@ -4,11 +4,11 @@ import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDia
 import { NotificationSeverity } from "@esposter/db-schema";
 import { withFinalizerAsync } from "@esposter/shared";
 
-interface ResourceSurveyResponseDeleteDialogProps {
+interface Props {
   surveyId: string;
 }
 
-const { surveyId } = defineProps<ResourceSurveyResponseDeleteDialogProps>();
+const { surveyId } = defineProps<Props>();
 const emit = defineEmits<{ delete: [] }>();
 const { $trpc } = useNuxtApp();
 const surveyResponseDialogStore = useSurveyResponseDialogStore();

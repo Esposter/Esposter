@@ -2,13 +2,13 @@
 import { getToggleColumnVisibilityDescription } from "@/services/resource/sheet/commands/getToggleColumnVisibilityDescription";
 import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 
-interface ToggleVisibilityButtonProps {
+interface Props {
   columnId: string;
   columnName: string;
   isHidden: boolean;
 }
 
-const { columnId, columnName, isHidden } = defineProps<ToggleVisibilityButtonProps>();
+const { columnId, columnName, isHidden } = defineProps<Props>();
 const toggleColumnVisibility = useToggleColumnVisibility();
 </script>
 

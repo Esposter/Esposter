@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { checkIsCaretAtEnd } from "@/util/dom/checkIsCaretAtEnd";
 
-interface CommandInputProps {
+interface Props {
   isFocused?: boolean;
 }
 
-const { isFocused } = defineProps<CommandInputProps>();
+const { isFocused } = defineProps<Props>();
 const emit = defineEmits<{
   blur: [];
   delete: [];

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "@esposter/db-schema";
 
-interface PostPreviewProps {
+interface Props {
   post: PostWithRelations;
 }
 
-const { post } = defineProps<PostPreviewProps>();
+const { post } = defineProps<Props>();
 </script>
 
 <template>

@@ -12,12 +12,12 @@ interface WordFilterFormData {
   timeoutDurationMs: number;
   words: string[];
 }
-interface WordFilterFormProps {
+interface Props {
   filter: null | RoomFilterInMessage;
   roomId: string;
 }
 
-const { filter, roomId } = defineProps<WordFilterFormProps>();
+const { filter, roomId } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const actionSelectItems = Object.values(WordFilterAction).map((value) => ({ title: value, value }));
 const getWordFilterFormData = (roomFilter: null | RoomFilterInMessage): WordFilterFormData => ({

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-interface CreateDirectMessageParticipantButtonProps {
+interface Props {
   roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<CreateDirectMessageParticipantButtonProps>();
+const { roomId } = defineProps<Props>();
 const isOpen = ref(false);
 </script>
 

@@ -2,12 +2,12 @@
 import { getTimelineDateLabel } from "@/util/date/getTimelineDateLabel";
 import { checkIsSameDay } from "@esposter/shared";
 
-interface MessageTimelineProps {
+interface Props {
   messageDate: Date;
   nextMessageDate?: Date;
 }
 
-const { messageDate, nextMessageDate } = defineProps<MessageTimelineProps>();
+const { messageDate, nextMessageDate } = defineProps<Props>();
 const displayDate = computed(() => getTimelineDateLabel(messageDate));
 </script>
 

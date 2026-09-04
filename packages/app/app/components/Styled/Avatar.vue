@@ -4,14 +4,14 @@ import type { VAvatar } from "vuetify/components";
 
 import { mergeProps } from "vue";
 // @TODO: https://github.com/vuejs/core/issues/11371
-interface StyledAvatarProps {
+interface Props {
   avatarAttrs?: VAvatar["$attrs"];
   avatarProps?: VAvatar["$props"];
   image?: User["image"];
   name: User["name"];
 }
 
-const { avatarAttrs = {}, avatarProps = {}, image, name } = defineProps<StyledAvatarProps>();
+const { avatarAttrs = {}, avatarProps = {}, image, name } = defineProps<Props>();
 const mergedAvatarProps = computed(() => mergeProps(avatarAttrs, avatarProps));
 </script>
 

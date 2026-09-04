@@ -9,13 +9,13 @@ import { ArcSetterMap } from "#src/util/setterMap/ArcSetterMap";
 
 interface CircleEmits extends /** @vue-ignore */ ArcEventEmitsOptions {}
 
-interface CircleProps {
+interface Props {
   configuration: Partial<ArcConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, circle: GameObjects.Arc) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<CircleProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<CircleEmits>();
 
 useInitializeGameObject(

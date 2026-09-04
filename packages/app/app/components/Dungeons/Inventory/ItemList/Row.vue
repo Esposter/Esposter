@@ -4,12 +4,12 @@ import { CONTENT_MENU_WIDTH, INITIAL_CURSOR_POSITION } from "@/services/dungeons
 import { Input } from "phaser";
 import { Rectangle, Text } from "vue-phaserjs";
 
-interface ItemListRowProps {
+interface Props {
   text: string;
 }
 
 defineSlots<{ default?: () => VNode }>();
-const { text } = defineProps<ItemListRowProps>();
+const { text } = defineProps<Props>();
 const emit = defineEmits<{ click: [] }>();
 </script>
 

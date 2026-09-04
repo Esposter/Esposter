@@ -6,11 +6,11 @@ import { useNotificationStore } from "@/store/notification";
 import { RESOURCE_NAME_MAX_LENGTH, ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
-interface ResourceCreateFormProps {
+interface Props {
   type: CreatableResourceType;
 }
 
-const { type } = defineProps<ResourceCreateFormProps>();
+const { type } = defineProps<Props>();
 const rules = useVRules();
 const { $trpc } = useNuxtApp();
 const createResource = useCreateResource();

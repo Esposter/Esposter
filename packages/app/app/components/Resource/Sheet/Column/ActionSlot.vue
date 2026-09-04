@@ -8,11 +8,11 @@ import { getEditColumnDescription } from "@/services/resource/sheet/commands/get
 import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
 
-interface ActionSlotProps {
+interface Props {
   column: Column;
 }
 
-const { column } = defineProps<ActionSlotProps>();
+const { column } = defineProps<Props>();
 const columnDialogStore = useColumnDialogStore();
 const { chartingColumnName, deletingColumnName, editingColumnName } = storeToRefs(columnDialogStore);
 </script>

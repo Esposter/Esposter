@@ -3,12 +3,12 @@ import type { RoomInMessage, User } from "@esposter/db-schema";
 
 import { useRoleStore } from "@/store/message/room/role";
 
-interface MemberEditorProps {
+interface Props {
   member: User;
   roomId: RoomInMessage["id"];
 }
 
-const { member, roomId } = defineProps<MemberEditorProps>();
+const { member, roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { getRoles, readMemberRoles } = roleStore;
 const allRoles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));

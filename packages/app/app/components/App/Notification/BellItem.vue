@@ -4,11 +4,11 @@ import type { AppNotification } from "@/models/notification/AppNotification";
 import { NotificationSeverityIconMap } from "@/services/notification/NotificationSeverityIconMap";
 import { useNotificationStore } from "@/store/notification";
 
-interface AppNotificationBellItemProps {
+interface Props {
   notification: AppNotification;
 }
 
-const { notification } = defineProps<AppNotificationBellItemProps>();
+const { notification } = defineProps<Props>();
 const notificationStore = useNotificationStore();
 const { consumeNotificationAction, deleteNotification } = notificationStore;
 </script>

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@esposter/db-schema";
 
-interface ReplyProps {
+interface Props {
   isTopAttached?: boolean;
   message: MessageEntity;
 }
 
-const { isTopAttached, message } = defineProps<ReplyProps>();
+const { isTopAttached, message } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const creator = useCreator(() => message);
 </script>

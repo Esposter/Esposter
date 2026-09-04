@@ -4,11 +4,11 @@ import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
 import { getDisplayTime } from "@/services/message/draftsAndSent/getDisplayTime";
 import { RoutePath } from "@esposter/shared";
 
-interface MessageDraftsAndSentDraftListItemProps {
+interface Props {
   draftItem: DraftItem;
 }
 
-const { draftItem } = defineProps<MessageDraftsAndSentDraftListItemProps>();
+const { draftItem } = defineProps<Props>();
 </script>
 
 <template>

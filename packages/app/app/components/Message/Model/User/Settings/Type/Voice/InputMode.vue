@@ -6,11 +6,11 @@ import { useUserSettingsStore } from "@/store/message/user/settings";
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { VoiceInputMode, VoiceInputModes } from "@esposter/db-schema";
 
-interface InputModeProps {
+interface Props {
   userSettings: UserSettingsInMessage;
 }
 
-const { userSettings } = defineProps<InputModeProps>();
+const { userSettings } = defineProps<Props>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
 </script>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-interface StyledWaypointProps {
+interface Props {
   isActive: boolean;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { isActive } = defineProps<StyledWaypointProps>();
+const { isActive } = defineProps<Props>();
 const emit = defineEmits<{ change: [onComplete: () => void] }>();
 const isLoading = ref(false);
 const container = useTemplateRef("container");

@@ -3,11 +3,11 @@ import { pluralize } from "#shared/util/text/pluralize";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { checkIsCaretAtStart } from "@/util/dom/checkIsCaretAtStart";
 
-interface TrailingInputProps {
+interface Props {
   isFocused?: boolean;
 }
 
-const { isFocused } = defineProps<TrailingInputProps>();
+const { isFocused } = defineProps<Props>();
 const emit = defineEmits<{
   blur: [];
   collapse: [];

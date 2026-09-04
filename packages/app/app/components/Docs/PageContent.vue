@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { PageCollectionItemBase } from "@nuxt/content";
 
-interface PageContentProps {
+interface Props {
   page: PageCollectionItemBase;
 }
 
-const { page } = defineProps<PageContentProps>();
+const { page } = defineProps<Props>();
 </script>
 
 <template>

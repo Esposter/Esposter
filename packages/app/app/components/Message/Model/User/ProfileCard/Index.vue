@@ -6,11 +6,11 @@ import { useRoomStore } from "@/store/message/room";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useStatusStore } from "@/store/message/user/status";
 
-interface UserProfileCardProps {
+interface Props {
   user: Pick<User, "id" | "image" | "name">;
 }
 
-const { user } = defineProps<UserProfileCardProps>();
+const { user } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { data: session } = await authClient.useSession(useFetch);
 const roomStore = useRoomStore();

@@ -3,11 +3,11 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useRoleStore } from "@/store/message/room/role";
 
-interface RoleProps {
+interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<RoleProps>();
+const { room } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { getRoles } = roleStore;
 const { selectedRole } = storeToRefs(roleStore);

@@ -4,14 +4,14 @@ import type { AdminActionType, User } from "@esposter/db-schema";
 import { AdminActionListItemPropsMap } from "@/services/message/moderation/AdminActionListItemPropsMap";
 import { AdminActionTitleMap } from "@/services/message/moderation/AdminActionTitleMap";
 
-interface ConfirmActionDialogProps {
+interface Props {
   text: string;
   title: string;
   type: AdminActionType.CreateBan | AdminActionType.KickFromRoom | AdminActionType.SoftBan;
   user: Pick<User, "id">;
 }
 
-const { text, title, type, user } = defineProps<ConfirmActionDialogProps>();
+const { text, title, type, user } = defineProps<Props>();
 const executeAdminAction = useExecuteAdminAction();
 </script>
 

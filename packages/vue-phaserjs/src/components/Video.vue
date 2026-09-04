@@ -9,13 +9,13 @@ import { VideoSetterMap } from "#src/util/setterMap/VideoSetterMap";
 
 interface VideoEmits extends /** @vue-ignore */ VideoEventEmitsOptions {}
 
-interface VideoProps {
+interface Props {
   configuration: Partial<VideoConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, video: GameObjects.Video) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<VideoProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<VideoEmits>();
 
 useInitializeGameObject(

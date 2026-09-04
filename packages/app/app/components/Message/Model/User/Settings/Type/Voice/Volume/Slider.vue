@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { MAX_USER_VOLUME_PERCENTAGE } from "@esposter/db-schema";
 
-interface SliderProps {
+interface Props {
   label: string;
 }
 
 const modelValue = defineModel<number>({ required: true });
-const { label } = defineProps<SliderProps>();
+const { label } = defineProps<Props>();
 defineEmits<{ end: [value: number] }>();
 </script>
 

@@ -9,11 +9,11 @@ import { useColumnStore } from "@/store/resource/sheet/column";
 import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
 import { VueDraggable } from "vue-draggable-plus";
 
-interface ColumnTableProps {
+interface Props {
   dataSource: DataSource;
 }
 
-const { dataSource } = defineProps<ColumnTableProps>();
+const { dataSource } = defineProps<Props>();
 const columnStore = useColumnStore();
 const { search, selectedColumnIds, sortBy } = storeToRefs(columnStore);
 const columnDialogStore = useColumnDialogStore();

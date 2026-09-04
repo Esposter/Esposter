@@ -4,13 +4,13 @@ import type { Resource } from "@esposter/db-schema";
 import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
-interface ResourceDeleteDialogProps {
+interface Props {
   remove: () => Promise<boolean>;
   resource: Resource;
 }
 
 const isOpen = defineModel<boolean>({ default: false });
-const { remove, resource } = defineProps<ResourceDeleteDialogProps>();
+const { remove, resource } = defineProps<Props>();
 </script>
 
 <template>

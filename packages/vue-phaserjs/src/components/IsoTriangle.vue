@@ -9,13 +9,13 @@ import { IsoTriangleSetterMap } from "#src/util/setterMap/IsoTriangleSetterMap";
 
 interface IsoTriangleEmits extends /** @vue-ignore */ IsoTriangleEventEmitsOptions {}
 
-interface IsoTriangleProps {
+interface Props {
   configuration: Partial<IsoTriangleConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, isoTriangle: GameObjects.IsoTriangle) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<IsoTriangleProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<IsoTriangleEmits>();
 
 useInitializeGameObject(

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-interface SendMessageButtonProps {
+interface Props {
   disabled?: boolean;
 }
 
-const { disabled } = defineProps<SendMessageButtonProps>();
+const { disabled } = defineProps<Props>();
 const emit = defineEmits<{ click: [] }>();
 const backgroundColor = computed(() => (disabled ? "transparent" : "currentColor"));
 </script>

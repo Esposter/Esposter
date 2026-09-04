@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 
-interface MessageReactionsDialogRailProps {
+interface Props {
   emojis: MessageEmojiMetadataEntity[];
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { emojis } = defineProps<MessageReactionsDialogRailProps>();
+const { emojis } = defineProps<Props>();
 </script>
 
 <template>

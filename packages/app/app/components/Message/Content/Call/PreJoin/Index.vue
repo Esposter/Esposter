@@ -5,12 +5,12 @@ import type { VBtn } from "vuetify/components";
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 
-interface CallPreJoinProps {
+interface Props {
   callId: string;
   isCreator: boolean;
 }
 
-const { callId, isCreator } = defineProps<CallPreJoinProps>();
+const { callId, isCreator } = defineProps<Props>();
 const callStore = useCallStore();
 const { joinCall } = callStore;
 const knockerStore = useKnockerStore();

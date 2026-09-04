@@ -4,11 +4,11 @@ import type { User } from "@esposter/db-schema";
 import { useUserStore } from "@/store/message/user";
 import { useMemberStore } from "@/store/message/user/member";
 
-interface MessageReactionsDialogUserListItemProps {
+interface Props {
   userId: User["id"];
 }
 
-const { userId } = defineProps<MessageReactionsDialogUserListItemProps>();
+const { userId } = defineProps<Props>();
 const memberStore = useMemberStore();
 const { getMemberName } = memberStore;
 const userStore = useUserStore();

@@ -18,11 +18,11 @@ const CALENDAR_OPTIONS = {
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, monarchThemePlugin],
 } satisfies CalendarOptions;
 
-interface StyledCalendarProps {
+interface Props {
   calendarOptions?: CalendarOptions;
 }
 
-const { calendarOptions } = defineProps<StyledCalendarProps>();
+const { calendarOptions } = defineProps<Props>();
 // Defaults first so a caller can override them, but the wrapper's own plugins are what make its
 // Toolbars and theme resolve at all, so those are appended to rather than replaced
 const options = computed<CalendarOptions>(() => ({

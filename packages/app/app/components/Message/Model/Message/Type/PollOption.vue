@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { getVoteDescription } from "@/services/message/poll/getVoteDescription";
 
-interface PollOptionProps {
+interface Props {
   id: string;
   label: string;
   totalVoteCount: number;
   voteCount: number;
 }
 
-const { id, label, totalVoteCount, voteCount } = defineProps<PollOptionProps>();
+const { id, label, totalVoteCount, voteCount } = defineProps<Props>();
 const votePercentage = computed(() => (totalVoteCount > 0 ? Math.round((voteCount / totalVoteCount) * 100) : 0));
 const voteDescription = computed(() => getVoteDescription(voteCount));
 </script>

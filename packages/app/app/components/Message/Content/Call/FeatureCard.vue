@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { CallFeature } from "@/models/message/room/call/CallFeature";
 
-interface CallFeatureCardProps extends CallFeature {}
+interface Props extends CallFeature {}
 
-const { description, icon, title } = defineProps<CallFeatureCardProps>();
+const { description, icon, title } = defineProps<Props>();
 </script>
 
 <template>

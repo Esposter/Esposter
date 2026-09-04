@@ -3,11 +3,11 @@ import type { VisualType } from "#shared/models/dashboard/data/VisualType";
 
 import { VisualTypeDemoIconMap } from "@/services/dashboard/demo/VisualTypeDemoIconMap";
 
-interface VisualPreviewProps {
+interface Props {
   type: VisualType;
 }
 
-const { type } = defineProps<VisualPreviewProps>();
+const { type } = defineProps<Props>();
 </script>
 
 <template>

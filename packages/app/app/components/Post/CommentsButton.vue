@@ -3,11 +3,11 @@ import type { PostWithRelations } from "@esposter/db-schema";
 
 import { RoutePath } from "@esposter/shared";
 
-interface PostCommentsButtonProps {
+interface Props {
   post: PostWithRelations;
 }
 
-const { post } = defineProps<PostCommentsButtonProps>();
+const { post } = defineProps<Props>();
 </script>
 
 <template>

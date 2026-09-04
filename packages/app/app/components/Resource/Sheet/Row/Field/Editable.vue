@@ -10,13 +10,13 @@ import { useColumnStore } from "@/store/resource/sheet/column";
 import { useRowStore } from "@/store/resource/sheet/row";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
-interface EditableProps {
+interface Props {
   column: EditableColumnValue;
   item: Row;
   rowIndex: number;
 }
 
-const { column, item, rowIndex } = defineProps<EditableProps>();
+const { column, item, rowIndex } = defineProps<Props>();
 const updateRow = useUpdateRow();
 const columnStore = useColumnStore();
 const { columns } = storeToRefs(columnStore);

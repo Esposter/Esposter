@@ -5,12 +5,12 @@ import { ISO_DATE_FORMAT } from "#shared/util/date/constants";
 import { formatDate } from "#shared/util/date/formatDate";
 import { parseDate } from "#shared/util/date/parseDate";
 
-interface FieldInputDateProps {
+interface Props {
   column: DateColumn;
   isInline?: true;
 }
 
-const { column, isInline } = defineProps<FieldInputDateProps>();
+const { column, isInline } = defineProps<Props>();
 const modelValue = defineModel<null | string>({ required: true });
 const displayModelValue = computed(() => {
   if (typeof modelValue.value !== "string") return modelValue.value;

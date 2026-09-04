@@ -5,11 +5,11 @@ import { useAlertStore } from "@/store/alert";
 import { useForwardStore } from "@/store/message/input/forward";
 import { RoutePath, takeOne } from "@esposter/shared";
 
-interface ForwardSendButtonProps {
+interface Props {
   forward: MessageEntity;
 }
 
-const { forward } = defineProps<ForwardSendButtonProps>();
+const { forward } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;

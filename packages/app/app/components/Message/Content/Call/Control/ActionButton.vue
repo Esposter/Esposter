@@ -1,12 +1,12 @@
 <script setup lang="ts">
-interface CallActionButtonProps {
+interface Props {
   color?: string;
   icon: string;
   tooltip: string;
   variant: "plain" | "tonal";
 }
 
-const { color, icon, tooltip, variant } = defineProps<CallActionButtonProps>();
+const { color, icon, tooltip, variant } = defineProps<Props>();
 const emit = defineEmits<{ click: [] }>();
 const wrapper = useTemplateRef("wrapper");
 // Vuetify positions the tooltip against the main window, so inside a Document PiP window attach it

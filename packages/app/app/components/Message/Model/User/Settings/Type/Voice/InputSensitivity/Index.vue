@@ -3,11 +3,11 @@ import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
 
-interface InputSensitivityProps {
+interface Props {
   userSettings: UserSettingsInMessage;
 }
 
-const { userSettings } = defineProps<InputSensitivityProps>();
+const { userSettings } = defineProps<Props>();
 const { audioInputs, ensurePermissions, permissionGranted } = useDevicesList({ requestPermissions: false });
 </script>
 

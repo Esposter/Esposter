@@ -3,11 +3,11 @@ import type { Resource } from "@esposter/db-schema";
 
 import { useRecycleBinDialogStore } from "@/store/resource/recycleBinDialog";
 
-interface ResourcePurgeDialogProps {
+interface Props {
   resource: Resource;
 }
 
-const { resource } = defineProps<ResourcePurgeDialogProps>();
+const { resource } = defineProps<Props>();
 const emit = defineEmits<{ purge: [resource: Resource] }>();
 const recycleBinDialogStore = useRecycleBinDialogStore();
 const { purgingId } = storeToRefs(recycleBinDialogStore);

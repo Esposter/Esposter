@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { VAvatar } from "vuetify/components";
 
-interface StyledDefaultAvatarProps {
+interface Props {
   avatarProps?: VAvatar["$props"];
 }
 
-const { avatarProps } = defineProps<StyledDefaultAvatarProps>();
+const { avatarProps } = defineProps<Props>();
 </script>
 
 <template>

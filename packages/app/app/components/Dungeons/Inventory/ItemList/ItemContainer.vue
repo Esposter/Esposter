@@ -5,13 +5,13 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import { CURSOR_POSITION_INCREMENT, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";
 import { Container } from "vue-phaserjs";
 
-interface ItemContainerProps {
+interface Props {
   columnIndex: number;
   item: Item | PlayerSpecialInput.Cancel;
   rowIndex: number;
 }
 
-const { columnIndex, item, rowIndex } = defineProps<ItemContainerProps>();
+const { columnIndex, item, rowIndex } = defineProps<Props>();
 const itemOptionGrid = useItemOptionGrid();
 const onGridClick = useOnGridClick(itemOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
 </script>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SettingsType } from "@/models/message/room/SettingsType";
 
-interface RoomSettingsLeftSideBarItemProps {
+interface Props {
   color?: string;
   icon: string;
   isActive: boolean;
@@ -11,7 +11,7 @@ interface RoomSettingsLeftSideBarItemProps {
   title?: string;
 }
 
-const { color, icon, isActive, settingsType, title } = defineProps<RoomSettingsLeftSideBarItemProps>();
+const { color, icon, isActive, settingsType, title } = defineProps<Props>();
 const emit = defineEmits<{ click: [settingsType: SettingsType] }>();
 </script>
 

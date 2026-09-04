@@ -4,12 +4,12 @@ import type { StandardMessageEntity } from "@esposter/db-schema";
 import type { CSSProperties } from "vue";
 import type { VListItem } from "vuetify/components";
 
-interface ListItemProps extends Pick<MessageComponentProps<StandardMessageEntity>, "isPreview"> {
+interface Props extends Pick<MessageComponentProps<StandardMessageEntity>, "isPreview"> {
   active?: boolean;
 }
 
 const slots = defineSlots<Record<keyof VListItem["$slots"], () => VNode>>();
-const { active, isPreview = false } = defineProps<ListItemProps>();
+const { active, isPreview = false } = defineProps<Props>();
 const style = computed<CSSProperties>(() =>
   isPreview ? { pointerEvents: "none", userSelect: "none" } : { pointerEvents: "auto", userSelect: "auto" },
 );

@@ -8,11 +8,11 @@ import { ZoneSetterMap } from "#src/util/setterMap/ZoneSetterMap";
 
 interface ZoneEmits extends /** @vue-ignore */ ZoneEventEmitsOptions {}
 
-interface ZoneProps {
+interface Props {
   configuration: SetRequired<Partial<ZoneConfiguration>, "height" | "width" | "x" | "y">;
 }
 
-const { configuration } = defineProps<ZoneProps>();
+const { configuration } = defineProps<Props>();
 const emit = defineEmits<ZoneEmits>();
 
 useInitializeGameObject(

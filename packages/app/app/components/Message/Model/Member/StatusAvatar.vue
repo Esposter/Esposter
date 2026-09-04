@@ -5,7 +5,7 @@ import type { VAvatar } from "vuetify/components/VAvatar";
 import { StatusBadgePropsMap } from "@/services/message/StatusBadgePropsMap";
 import { useStatusStore } from "@/store/message/user/status";
 // @TODO: https://github.com/vuejs/core/issues/11371
-interface MemberStatusAvatarProps {
+interface Props {
   avatarAttrs?: VAvatar["$attrs"];
   avatarProps?: VAvatar["$props"];
   id: User["id"];
@@ -13,7 +13,7 @@ interface MemberStatusAvatarProps {
   name: User["name"];
 }
 
-const { avatarAttrs = {}, avatarProps = {}, id, image, name } = defineProps<MemberStatusAvatarProps>();
+const { avatarAttrs = {}, avatarProps = {}, id, image, name } = defineProps<Props>();
 const statusStore = useStatusStore();
 const { getStatusMessage, getUserStatus } = statusStore;
 const badge = computed(() => ({ ...StatusBadgePropsMap[getUserStatus(id)], location: "bottom end" }));

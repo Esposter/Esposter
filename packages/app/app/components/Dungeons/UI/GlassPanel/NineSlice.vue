@@ -2,12 +2,12 @@
 import { GLASS_PANEL_CORNER_CUT_LENGTH } from "@/services/dungeons/UI/glassPanel/constants";
 import { Nineslice } from "vue-phaserjs";
 
-interface GlassPanelNineSliceProps {
+interface Props {
   height?: number;
   width?: number;
 }
 
-const { height, width } = defineProps<GlassPanelNineSliceProps>();
+const { height, width } = defineProps<Props>();
 const glassPanelImageKey = useGlassPanelImageKey();
 </script>
 

@@ -4,11 +4,11 @@ import type { MenuItem } from "@/models/shared/MenuItem";
 import { checkIsDivider } from "@/services/shared/checkIsDivider";
 import { mergeProps } from "vue";
 
-interface MenuBarButtonsProps {
+interface Props {
   items: MenuItem[];
 }
 
-const { items } = defineProps<MenuBarButtonsProps>();
+const { items } = defineProps<Props>();
 </script>
 
 <template>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-interface RoomSettingsFieldProps {
+interface Props {
   hint?: string;
   title: string;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { hint = "", title } = defineProps<RoomSettingsFieldProps>();
+const { hint = "", title } = defineProps<Props>();
 </script>
 
 <template>

@@ -5,11 +5,11 @@ import { DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
 import { toRawDeep } from "@esposter/shared";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
-interface DashboardProps {
+interface Props {
   visuals: Visual[];
 }
 
-const { visuals } = defineProps<DashboardProps>();
+const { visuals } = defineProps<Props>();
 // The main dashboard shouldn't actually modify any persisted data
 const layout = ref(structuredClone(toRawDeep(visuals)));
 </script>

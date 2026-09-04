@@ -5,7 +5,7 @@ import type { IconValue } from "vuetify/lib/composables/icons.mjs";
 
 import { useFilterStore } from "@/store/resource/sheet/filter";
 
-interface HeaderSlotProps {
+interface Props {
   column: Column;
   getSortIcon: (column: InternalDataTableHeader) => IconValue;
   headerColumn: InternalDataTableHeader;
@@ -13,7 +13,7 @@ interface HeaderSlotProps {
   toggleSort: (column: InternalDataTableHeader) => void;
 }
 
-const { column, getSortIcon, headerColumn, isSorted, toggleSort } = defineProps<HeaderSlotProps>();
+const { column, getSortIcon, headerColumn, isSorted, toggleSort } = defineProps<Props>();
 const filterStore = useFilterStore();
 const { setColumnFilter } = filterStore;
 const { columnFilters } = storeToRefs(filterStore);

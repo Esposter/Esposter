@@ -10,13 +10,13 @@ import { NinesliceSetterMap } from "#src/util/setterMap/NinesliceSetterMap";
 
 interface NinesliceEmits extends /** @vue-ignore */ NinesliceEventEmitsOptions {}
 
-interface NinesliceProps {
+interface Props {
   configuration: SetRequired<Partial<NinesliceConfiguration>, "texture">;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, nineSlice: GameObjects.NineSlice) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<NinesliceProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<NinesliceEmits>();
 
 useInitializeGameObject(

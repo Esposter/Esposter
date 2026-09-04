@@ -8,11 +8,11 @@ import { useClipboardStore } from "@/store/clipboard";
 import { takeOne } from "@esposter/shared";
 import { defu } from "defu";
 
-interface VisualProps {
+interface Props {
   visual: Visual;
 }
 
-const { visual } = defineProps<VisualProps>();
+const { visual } = defineProps<Props>();
 const container = useTemplateRef("container");
 const chart = useTemplateRef("chart");
 const height = ref<number>();

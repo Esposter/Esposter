@@ -6,14 +6,14 @@ import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import { Input } from "phaser";
 import { Text } from "vue-phaserjs";
 
-interface TextProps {
+interface Props {
   grid: Grid<TGrid>;
   gridPosition: Position;
   position: Position;
   text: string;
 }
 
-const { grid, gridPosition, position, text } = defineProps<TextProps>();
+const { grid, gridPosition, position, text } = defineProps<Props>();
 const onGridClick = useOnGridClick(grid, () => gridPosition);
 </script>
 

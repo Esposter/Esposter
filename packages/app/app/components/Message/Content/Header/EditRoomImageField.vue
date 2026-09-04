@@ -5,13 +5,13 @@ import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync } from "@esposter/shared";
 import { mergeProps } from "vue";
 
-interface EditRoomImageFieldProps {
+interface Props {
   name: NonNullable<RoomInMessage["name"]>;
   roomId: RoomInMessage["id"];
 }
 
 const modelValue = defineModel<RoomInMessage["image"]>({ required: true });
-const { name, roomId } = defineProps<EditRoomImageFieldProps>();
+const { name, roomId } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const validateFile = useValidateFile();
 const input = useTemplateRef("input");

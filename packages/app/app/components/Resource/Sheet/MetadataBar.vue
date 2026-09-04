@@ -4,11 +4,11 @@ import type { Metadata } from "#shared/models/resource/sheet/datasource/Metadata
 import { getFileSize } from "@/services/file/getFileSize";
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 
-interface MetadataBarProps {
+interface Props {
   metadata: Metadata;
 }
 
-const { metadata } = defineProps<MetadataBarProps>();
+const { metadata } = defineProps<Props>();
 const displaySize = computed(() => getFileSize(metadata.size));
 </script>
 

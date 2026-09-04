@@ -4,11 +4,11 @@ import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { takeOne } from "@esposter/shared";
 
-interface FileInputContainerProps {
+interface Props {
   target: ComposerTarget;
 }
 
-const { target } = defineProps<FileInputContainerProps>();
+const { target } = defineProps<Props>();
 const uploadFileStore = useUploadFileStore();
 const { discardUploadFiles, getComposerFiles, getComposerFileUrlMap } = uploadFileStore;
 const files = computed(() => getComposerFiles(target));

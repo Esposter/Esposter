@@ -5,11 +5,11 @@ import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { getGridKey } from "@/services/dungeons/getGridKey";
 import { INITIAL_MENU_CURSOR_POSITION, MENU_CURSOR_POSITION_INCREMENT } from "@/services/dungeons/UI/menu/constants";
 
-interface ContentProps {
+interface Props {
   grid: Grid<TGrid>;
 }
 
-const { grid } = defineProps<ContentProps>();
+const { grid } = defineProps<Props>();
 </script>
 
 <template>

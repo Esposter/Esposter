@@ -6,12 +6,12 @@ import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { getAnimationConfiguration } from "@/services/dungeons/animation/getAnimationConfiguration";
 import { Sprite, useAnimations } from "vue-phaserjs";
 
-interface ChestProps {
+interface Props {
   chest: Chest;
   position: Position;
 }
 
-const { chest, position } = defineProps<ChestProps>();
+const { chest, position } = defineProps<Props>();
 const startFrame = 18 * 32 + 19;
 const endFrame = 18 * 32 + 21;
 // Reactivity will be handled by animations

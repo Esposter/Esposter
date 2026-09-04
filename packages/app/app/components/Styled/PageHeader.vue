@@ -1,9 +1,9 @@
 <script setup lang="ts">
-interface StyledPageHeaderProps {
+interface Props {
   title?: string;
 }
 
-const { title } = defineProps<StyledPageHeaderProps>();
+const { title } = defineProps<Props>();
 const slots = defineSlots<{
   actions?: () => VNode;
   filters?: () => VNode;

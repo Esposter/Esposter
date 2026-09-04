@@ -3,12 +3,12 @@
 import { Dashboard as DashboardModel } from "#shared/models/dashboard/data/Dashboard";
 import { ResourceType } from "@esposter/db-schema";
 
-interface ResourceDashboardViewProps {
+interface Props {
   id: string;
   version?: number;
 }
 
-const { id, version } = defineProps<ResourceDashboardViewProps>();
+const { id, version } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { content, name } = await useReadPublishedResourceContent(
   ResourceType.Dashboard,

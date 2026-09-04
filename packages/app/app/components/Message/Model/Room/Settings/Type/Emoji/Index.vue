@@ -3,11 +3,11 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 
-interface EmojiProps {
+interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<EmojiProps>();
+const { room } = defineProps<Props>();
 const roomEmojiStore = useRoomEmojiStore();
 const { items } = storeToRefs(roomEmojiStore);
 </script>

@@ -6,11 +6,11 @@ import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionT
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
 import { withFinalizerAsync } from "@esposter/shared";
 
-interface ResourceVersionHistoryRestoreDialogProps {
+interface Props {
   versions: SnapshotVersion[];
 }
 
-const { versions } = defineProps<ResourceVersionHistoryRestoreDialogProps>();
+const { versions } = defineProps<Props>();
 const versionHistoryStore = useVersionHistoryStore();
 const { restoringSnapshotVersionId } = storeToRefs(versionHistoryStore);
 const { restoreSnapshot } = versionHistoryStore;

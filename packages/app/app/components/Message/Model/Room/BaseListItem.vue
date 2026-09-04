@@ -3,7 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { RoutePath } from "@esposter/shared";
 
-interface RoomBaseListItemProps {
+interface Props {
   image?: RoomInMessage["image"];
   isActive: boolean;
   isBold?: true;
@@ -12,7 +12,7 @@ interface RoomBaseListItemProps {
 }
 
 defineSlots<{ append: (props: { isHovering: boolean }) => VNode }>();
-const { image, isActive, isBold, name, roomId } = defineProps<RoomBaseListItemProps>();
+const { image, isActive, isBold, name, roomId } = defineProps<Props>();
 </script>
 
 <template>

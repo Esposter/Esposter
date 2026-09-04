@@ -10,13 +10,13 @@ import { DISABLED_OPACITY } from "@/services/vuetify/constants";
 import { Input } from "phaser";
 import { Text } from "vue-phaserjs";
 
-interface ContentTextProps {
+interface Props {
   columnIndex: number;
   rowIndex: number;
   text: string;
 }
 
-const { columnIndex, rowIndex, text } = defineProps<ContentTextProps>();
+const { columnIndex, rowIndex, text } = defineProps<Props>();
 const onGridClick = useOnGridClick(PlayerTitleMenuOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
 const isValid = computed(() => unref(PlayerTitleMenuOptionGrid.validate({ x: columnIndex, y: rowIndex })));
 </script>

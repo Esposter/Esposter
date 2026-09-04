@@ -5,12 +5,12 @@ import type { ColumnTypeModelValueMap } from "@/models/resource/sheet/column/Col
 
 import { FieldInputComponentMap } from "@/services/resource/sheet/column/FieldInputComponentMap";
 
-interface FieldInputProps {
+interface Props {
   column: ColumnTypeColumnMap[TColumnType];
   isInline?: true;
 }
 
-const { column, isInline } = defineProps<FieldInputProps>();
+const { column, isInline } = defineProps<Props>();
 const modelValue = defineModel<ColumnTypeModelValueMap[TColumnType]>({ required: true });
 </script>
 

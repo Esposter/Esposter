@@ -7,13 +7,13 @@ import { getEditRowDescription } from "@/services/resource/sheet/commands/getEdi
 import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
-interface EditDialogProps {
+interface Props {
   columns: DataSource["columns"];
   index: number;
   row: DataSource["rows"][number];
 }
 
-const { columns, index, row } = defineProps<EditDialogProps>();
+const { columns, index, row } = defineProps<Props>();
 const rowDialogStore = useRowDialogStore();
 const { editingId } = storeToRefs(rowDialogStore);
 const { isOpen } = useSingletonDialog(editingId);

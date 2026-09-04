@@ -11,12 +11,12 @@ import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionT
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
 import { RoutePath } from "@esposter/shared";
 
-interface ResourceVersionHistoryListItemProps {
+interface Props {
   resource: Resource;
   snapshotVersion: SnapshotVersion;
 }
 
-const { resource, snapshotVersion } = defineProps<ResourceVersionHistoryListItemProps>();
+const { resource, snapshotVersion } = defineProps<Props>();
 const versionHistoryStore = useVersionHistoryStore();
 const { restoringSnapshotVersionId } = storeToRefs(versionHistoryStore);
 const { previewSnapshot, previewSnapshotVersionId } = useVersionHistoryRoute();

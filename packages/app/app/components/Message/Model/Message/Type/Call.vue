@@ -2,9 +2,9 @@
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
-interface CallProps extends MessageComponentProps<StandardMessageEntity> {}
+interface Props extends MessageComponentProps<StandardMessageEntity> {}
 
-const { active, creator, isPreview = false, message } = defineProps<CallProps>();
+const { active, creator, isPreview = false, message } = defineProps<Props>();
 const isCallEnded = computed(() => Boolean(message.message));
 const formattedDuration = computed(() => {
   if (!isCallEnded.value) return;

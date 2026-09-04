@@ -4,13 +4,13 @@ import type { ResourceListSource } from "@/models/resource/list/ResourceListSour
 
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
 
-interface ResourceHomeListProps {
+interface Props {
   isPending?: boolean;
   resources: ResourceListItem[];
   source: ResourceListSource;
 }
 
-const { isPending, resources, source } = defineProps<ResourceHomeListProps>();
+const { isPending, resources, source } = defineProps<Props>();
 </script>
 
 <template>

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-interface ResourceListContextMenuProps {
+interface Props {
   position: [number, number];
   resource: Resource;
 }
 
 const isOpen = defineModel<boolean>({ required: true });
-const { position, resource } = defineProps<ResourceListContextMenuProps>();
+const { position, resource } = defineProps<Props>();
 const { getActionItems } = useResourceListActionItems();
 const actionItems = computed(() => getActionItems(resource));
 </script>

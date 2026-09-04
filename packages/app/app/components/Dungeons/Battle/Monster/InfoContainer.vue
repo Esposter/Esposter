@@ -7,12 +7,12 @@ import { phaserEventEmitter } from "@/services/phaser/events";
 import { prettify } from "@/util/text/prettify";
 import { Container, Image, Text } from "vue-phaserjs";
 
-interface InfoContainerProps {
+interface Props {
   isEnemy?: true;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { isEnemy } = defineProps<InfoContainerProps>();
+const { isEnemy } = defineProps<Props>();
 const battleMonsterStore = useBattleMonsterStore(isEnemy);
 const { initialMonsterInfoContainerPosition } = battleMonsterStore;
 const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(battleMonsterStore);

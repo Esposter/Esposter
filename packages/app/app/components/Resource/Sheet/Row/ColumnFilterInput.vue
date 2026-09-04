@@ -6,11 +6,11 @@ import type { ColumnFilter } from "@/models/resource/sheet/column/ColumnFilter";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { BooleanFilterValueItemCategoryDefinitions } from "@/services/resource/sheet/column/BooleanFilterValueItemCategoryDefinitions";
 
-interface ColumnFilterInputProps {
+interface Props {
   column: Column;
 }
 
-const { column } = defineProps<ColumnFilterInputProps>();
+const { column } = defineProps<Props>();
 const modelValue = defineModel<ColumnFilter | undefined>({ required: true });
 const booleanValue = computed<BooleanFilterValue>({
   get: () => (modelValue.value?.type === ColumnType.Boolean ? modelValue.value.value : ""),

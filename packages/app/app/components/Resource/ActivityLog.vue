@@ -5,11 +5,11 @@ import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useActivityStore } from "@/store/resource/activity";
 import { getResultAsync, noop } from "@esposter/shared";
 
-interface ResourceActivityLogProps {
+interface Props {
   resourceId: Resource["id"];
 }
 
-const { resourceId } = defineProps<ResourceActivityLogProps>();
+const { resourceId } = defineProps<Props>();
 const { readActivities, readMoreActivities } = useReadActivities(resourceId);
 const activityStore = useActivityStore();
 const { hasMore, items } = storeToRefs(activityStore);

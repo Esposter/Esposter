@@ -5,13 +5,13 @@ import { useRoomDialogStore } from "@/store/message/room/dialog";
 import { useRoomInviteStore } from "@/store/message/room/roomInvite";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
-interface InviteTableRowProps {
+interface Props {
   invite: InviteInMessageWithCreator;
   isCreator: boolean;
   roomId: RoomInMessage["id"];
 }
 
-const { invite, isCreator, roomId } = defineProps<InviteTableRowProps>();
+const { invite, isCreator, roomId } = defineProps<Props>();
 const runtimeConfig = useRuntimeConfig();
 const roomDialogStore = useRoomDialogStore();
 const { inviteRoomId } = storeToRefs(roomDialogStore);

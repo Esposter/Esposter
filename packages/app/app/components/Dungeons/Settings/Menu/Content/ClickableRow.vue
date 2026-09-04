@@ -6,11 +6,11 @@ import { useControlsStore } from "@/store/dungeons/controls";
 import { Input } from "phaser";
 import { Rectangle } from "vue-phaserjs";
 
-interface ContentTextProps {
+interface Props {
   rowIndex: number;
 }
 
-const { rowIndex } = defineProps<ContentTextProps>();
+const { rowIndex } = defineProps<Props>();
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
 const onGridClick = useOnGridClick(

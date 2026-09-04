@@ -3,11 +3,11 @@ import type { VBtn } from "vuetify/components";
 
 const RETRY_BUTTON_PROPS: VBtn["$props"] = { prependIcon: "mdi-refresh", text: "Retry" };
 
-interface StyledErrorStateProps {
+interface Props {
   error: string;
 }
 
-const { error } = defineProps<StyledErrorStateProps>();
+const { error } = defineProps<Props>();
 const emit = defineEmits<{ retry: [] }>();
 </script>
 

@@ -3,11 +3,11 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useForwardStore } from "@/store/message/input/forward";
 
-interface ForwardRoomListItemProps {
+interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<ForwardRoomListItemProps>();
+const { room } = defineProps<Props>();
 const forwardStore = useForwardStore();
 const { roomIds } = storeToRefs(forwardStore);
 const roomName = useRoomName(() => room.id);

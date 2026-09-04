@@ -4,12 +4,12 @@ import type { RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
 import { useRoleStore } from "@/store/message/room/role";
 import { withFinalizerAsync } from "@esposter/shared";
 
-interface RoleDeleteButtonProps {
+interface Props {
   roleId: RoomRoleInMessage["id"];
   roomId: RoomInMessage["id"];
 }
 
-const { roleId, roomId } = defineProps<RoleDeleteButtonProps>();
+const { roleId, roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { deleteRole } = roleStore;
 </script>

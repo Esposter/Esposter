@@ -11,12 +11,12 @@ import { useFavoriteStore } from "@/store/resource/favorite";
 import { useListDialogStore } from "@/store/resource/listDialog";
 import { RoutePath } from "@esposter/shared";
 
-interface ResourceListViewProps {
+interface Props {
   source?: ResourceListSource;
 }
 // Every menu entry renders this one surface pointed at a different set, so a capability built here — filters,
 // Columns, grouping, selection, export — appears on all of them at once
-const { source = ResourceListSource.All } = defineProps<ResourceListViewProps>();
+const { source = ResourceListSource.All } = defineProps<Props>();
 const { sortBy: defaultSortBy } = ResourceListSourceDefinitionMap[source];
 const { getActionItems } = useResourceListActionItems();
 const listDialogStore = useListDialogStore();

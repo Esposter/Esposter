@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-interface RoomWelcomeProps {
+interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<RoomWelcomeProps>();
+const { room } = defineProps<Props>();
 const roomName = useRoomName(() => room.id);
 </script>
 

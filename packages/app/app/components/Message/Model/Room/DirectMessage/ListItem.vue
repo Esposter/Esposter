@@ -3,11 +3,11 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 
-interface DirectMessageListItemProps {
+interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<DirectMessageListItemProps>();
+const { room } = defineProps<Props>();
 const directMessageName = useDirectMessageName(() => room);
 const directMessageStore = useDirectMessageStore();
 const { hideDirectMessage } = directMessageStore;

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useUserSettingsStore } from "@/store/message/user/settings";
 
-interface PushToTalkKeybindButtonProps {
+interface Props {
   keybind: string;
 }
 
-const { keybind } = defineProps<PushToTalkKeybindButtonProps>();
+const { keybind } = defineProps<Props>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
 const isCapturingKeybind = ref(false);

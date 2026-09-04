@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { SerializableValue } from "@esposter/azure";
 
-interface MessageRightSideBarSearchFilterOptionListProps {
+interface Props {
   items: { icon: string; label: string; value: SerializableValue }[];
 }
 
-const { items } = defineProps<MessageRightSideBarSearchFilterOptionListProps>();
+const { items } = defineProps<Props>();
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
 </script>
 

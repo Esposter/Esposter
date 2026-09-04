@@ -3,12 +3,12 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { useCallStore } from "@/store/message/room/call";
 
-interface CallParticipantActionMenuProps {
+interface Props {
   participant: CallParticipant;
 }
 
 defineSlots<{ activator: (props: { props: Record<string, unknown> }) => VNode }>();
-const { participant } = defineProps<CallParticipantActionMenuProps>();
+const { participant } = defineProps<Props>();
 const callStore = useCallStore();
 const { isInCall } = storeToRefs(callStore);
 const { getActions } = useCallParticipantActions();

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { VBtn } from "vuetify/components";
 
-interface StyledButtonProps {
+interface Props {
   buttonProps?: VBtn["$props"];
 }
 
 const slots = defineSlots<Record<keyof VBtn["$slots"], () => VNode>>();
-const { buttonProps } = defineProps<StyledButtonProps>();
+const { buttonProps } = defineProps<Props>();
 </script>
 
 <template>

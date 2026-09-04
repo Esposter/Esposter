@@ -3,12 +3,12 @@ import type { PointsLeaderboardEntry } from "#shared/models/achievement/PointsLe
 
 import { RoutePath } from "@esposter/shared";
 
-interface LeaderboardItemProps {
+interface Props {
   entry: PointsLeaderboardEntry;
   isMyEntry?: true;
 }
 
-const { entry, isMyEntry } = defineProps<LeaderboardItemProps>();
+const { entry, isMyEntry } = defineProps<Props>();
 </script>
 
 <template>

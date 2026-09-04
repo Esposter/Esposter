@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
-interface OptionsMenuItemsProps {
+interface Props {
   items: Item[];
 }
 
-const { items } = defineProps<OptionsMenuItemsProps>();
+const { items } = defineProps<Props>();
 </script>
 
 <template>

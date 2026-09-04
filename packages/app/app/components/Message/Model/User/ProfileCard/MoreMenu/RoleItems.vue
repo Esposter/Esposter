@@ -6,12 +6,12 @@ import { useRoleStore } from "@/store/message/room/role";
 import { hasPermission, RoomPermission } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
-interface RoleItemsProps {
+interface Props {
   roomId: RoomInMessage["id"];
   user: Pick<User, "id" | "name">;
 }
 
-const { roomId, user } = defineProps<RoleItemsProps>();
+const { roomId, user } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { getMyPermissions, getRoles, readMemberRoles } = roleStore;
 const roles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));

@@ -4,11 +4,11 @@ import type { AppNotificationAction } from "@/models/notification/AppNotificatio
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync, noop } from "@esposter/shared";
 
-interface AppNotificationActionButtonProps {
+interface Props {
   action: AppNotificationAction;
 }
 
-const { action } = defineProps<AppNotificationActionButtonProps>();
+const { action } = defineProps<Props>();
 const emit = defineEmits<{ complete: [] }>();
 const isLoading = ref(false);
 </script>

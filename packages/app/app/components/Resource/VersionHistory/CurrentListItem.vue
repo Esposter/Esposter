@@ -3,11 +3,11 @@ import type { Resource } from "@esposter/db-schema";
 
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 
-interface ResourceVersionHistoryCurrentListItemProps {
+interface Props {
   resource: Resource;
 }
 
-const { resource } = defineProps<ResourceVersionHistoryCurrentListItemProps>();
+const { resource } = defineProps<Props>();
 const { previewSnapshotVersionId, stopPreviewingSnapshot } = useVersionHistoryRoute();
 </script>
 

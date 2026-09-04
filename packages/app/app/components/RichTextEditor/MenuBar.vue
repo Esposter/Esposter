@@ -2,11 +2,11 @@
 import type { MenuItem } from "@/models/shared/MenuItem";
 import type { Editor } from "@tiptap/vue-3";
 
-interface MenuBarProps {
+interface Props {
   editor?: Editor;
 }
 
-const { editor } = defineProps<MenuBarProps>();
+const { editor } = defineProps<Props>();
 const items = computed<MenuItem[]>(() => [
   {
     active: editor?.isActive("bold"),

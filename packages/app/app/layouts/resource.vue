@@ -1,5 +1,5 @@
 <script setup lang="ts">
-interface ResourceProps {
+interface Props {
   isHeaderBordered?: true;
   isServiceMenuShown?: true;
   title?: string;
@@ -10,7 +10,7 @@ const slots = defineSlots<{
   default?: () => VNode;
   filters?: () => VNode;
 }>();
-const { isHeaderBordered, isServiceMenuShown, title } = defineProps<ResourceProps>();
+const { isHeaderBordered, isServiceMenuShown, title } = defineProps<Props>();
 const isServiceMenuOpen = ref(false);
 </script>
 

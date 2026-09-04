@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Card } from "@/models/visual/Card";
 
-interface VisualCardBaseProps {
+interface Props {
   card: Card;
 }
 
-const { card } = defineProps<VisualCardBaseProps>();
+const { card } = defineProps<Props>();
 const { sm, xs } = useVDisplay();
 </script>
 

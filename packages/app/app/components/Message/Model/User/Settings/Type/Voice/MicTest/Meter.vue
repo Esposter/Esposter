@@ -2,11 +2,11 @@
 import { INPUT_LEVEL_METER_SEGMENT_COUNT } from "@/services/message/settings/constants";
 import { MAX_INPUT_SENSITIVITY_DECIBELS, MIN_INPUT_SENSITIVITY_DECIBELS } from "@esposter/db-schema";
 
-interface MeterProps {
+interface Props {
   level: number;
 }
 
-const { level } = defineProps<MeterProps>();
+const { level } = defineProps<Props>();
 const levelFraction = computed(
   () => (level - MIN_INPUT_SENSITIVITY_DECIBELS) / (MAX_INPUT_SENSITIVITY_DECIBELS - MIN_INPUT_SENSITIVITY_DECIBELS),
 );

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ResourceType } from "@esposter/db-schema";
 
-interface ResourceWebpageViewProps {
+interface Props {
   id: string;
   version?: number;
 }
 
-const { id, version } = defineProps<ResourceWebpageViewProps>();
+const { id, version } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { content, name } = await useReadPublishedResourceContent(
   ResourceType.Webpage,

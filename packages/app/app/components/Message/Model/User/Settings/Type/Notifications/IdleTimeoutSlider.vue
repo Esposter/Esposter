@@ -4,11 +4,11 @@ import type { UserSettingsInMessage } from "@esposter/db-schema";
 import { useUserSettingsStore } from "@/store/message/user/settings";
 import { MAX_AUTO_IDLE_THRESHOLD_MS, MIN_AUTO_IDLE_THRESHOLD_MS } from "@esposter/db-schema";
 
-interface IdleTimeoutSliderProps {
+interface Props {
   userSettings: UserSettingsInMessage;
 }
 
-const { userSettings } = defineProps<IdleTimeoutSliderProps>();
+const { userSettings } = defineProps<Props>();
 const MS_PER_MINUTE = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;

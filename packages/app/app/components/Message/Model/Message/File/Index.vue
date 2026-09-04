@@ -7,7 +7,7 @@ import { useFileStore } from "@/store/message/file";
 import { useFileDialogStore } from "@/store/message/file/dialog";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
-interface FileProps {
+interface Props {
   columnLayout: number[];
   file: FileEntity;
   index: number;
@@ -15,7 +15,7 @@ interface FileProps {
   message: MessageEntity;
 }
 
-const { columnLayout, file, index, isPreview, message } = defineProps<FileProps>();
+const { columnLayout, file, index, isPreview, message } = defineProps<Props>();
 const isCreator = await useIsCreator(() => message);
 const dataStore = useDataStore();
 const { deleteFile } = dataStore;

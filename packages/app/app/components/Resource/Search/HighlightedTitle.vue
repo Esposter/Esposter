@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { getHighlightParts } from "@/services/resource/search/getHighlightParts";
 
-interface HighlightedTitleProps {
+interface Props {
   searchQuery: string;
   text: string;
 }
 
-const { searchQuery, text } = defineProps<HighlightedTitleProps>();
+const { searchQuery, text } = defineProps<Props>();
 const highlightParts = computed(() => getHighlightParts(text, searchQuery));
 </script>
 

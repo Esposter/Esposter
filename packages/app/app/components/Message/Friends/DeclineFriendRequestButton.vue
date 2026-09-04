@@ -2,11 +2,11 @@
 import { FRIENDS_ACTION_BUTTON_PROPS } from "@/services/message/friend/constants";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
-interface DeclineFriendRequestButtonProps {
+interface Props {
   userId: string;
 }
 
-const { userId } = defineProps<DeclineFriendRequestButtonProps>();
+const { userId } = defineProps<Props>();
 const friendRequestStore = useFriendRequestStore();
 const { declineFriendRequest } = friendRequestStore;
 </script>

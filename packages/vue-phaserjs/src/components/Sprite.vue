@@ -10,13 +10,13 @@ import { SpriteSetterMap } from "#src/util/setterMap/SpriteSetterMap";
 
 interface SpriteEmits extends /** @vue-ignore */ SpriteEventEmitsOptions {}
 
-interface SpriteProps {
+interface Props {
   configuration: SetRequired<Partial<SpriteConfiguration>, "texture">;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, sprite: GameObjects.Sprite) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<SpriteProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<SpriteEmits>();
 
 useInitializeGameObject(

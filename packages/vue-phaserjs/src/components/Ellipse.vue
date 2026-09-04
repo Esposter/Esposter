@@ -9,13 +9,13 @@ import { EllipseSetterMap } from "#src/util/setterMap/EllipseSetterMap";
 
 interface EllipseEmits extends /** @vue-ignore */ EllipseEventEmitsOptions {}
 
-interface EllipseProps {
+interface Props {
   configuration: Partial<EllipseConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, ellipse: GameObjects.Ellipse) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<EllipseProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<EllipseEmits>();
 
 useInitializeGameObject(

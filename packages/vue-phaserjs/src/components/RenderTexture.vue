@@ -9,13 +9,13 @@ import { RenderTextureSetterMap } from "#src/util/setterMap/RenderTextureSetterM
 
 interface RenderTextureEmits extends /** @vue-ignore */ RenderTextureEventEmitsOptions {}
 
-interface RenderTextureProps {
+interface Props {
   configuration: Partial<RenderTextureConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, renderTexture: GameObjects.RenderTexture) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<RenderTextureProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<RenderTextureEmits>();
 
 useInitializeGameObject(

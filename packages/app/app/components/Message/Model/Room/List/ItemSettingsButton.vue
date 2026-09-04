@@ -6,13 +6,13 @@ import { useRoomDialogStore } from "@/store/message/room/dialog";
 import { useRoleStore } from "@/store/message/room/role";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
-interface RoomListItemSettingsButtonProps {
+interface Props {
   isActive: boolean;
   isHovering: boolean;
   room: RoomInMessage;
 }
 
-const { isActive, isHovering, room } = defineProps<RoomListItemSettingsButtonProps>();
+const { isActive, isHovering, room } = defineProps<Props>();
 const { data: session } = await authClient.useSession(useFetch);
 const roleStore = useRoleStore();
 const { checkIsManageable } = roleStore;

@@ -3,13 +3,13 @@ import { useColorsStore } from "@/store/colors";
 import { VueDatePicker } from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 
-interface StyledDatePickerProps {
+interface Props {
   datePickerProps?: InstanceType<typeof VueDatePicker>["$props"];
 }
 
 const slots = defineSlots<Record<keyof (typeof VueDatePicker)["$slots"], () => VNode>>();
 const modelValue = defineModel<Date | null>({ required: true });
-const { datePickerProps } = defineProps<StyledDatePickerProps>();
+const { datePickerProps } = defineProps<Props>();
 const isDark = useIsDark();
 const colorsStore = useColorsStore();
 const { border, surface } = storeToRefs(colorsStore);

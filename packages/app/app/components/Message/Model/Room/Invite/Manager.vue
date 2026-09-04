@@ -10,11 +10,11 @@ import { InviteMaxUsesSelectItems } from "@/services/message/room/invite/InviteM
 import { useInviteStore } from "@/store/message/room/invite";
 import { RoutePath } from "@esposter/shared";
 
-interface InviteManagerProps {
+interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<InviteManagerProps>();
+const { room } = defineProps<Props>();
 const runtimeConfig = useRuntimeConfig();
 const inviteStore = useInviteStore();
 const { createInvite } = inviteStore;

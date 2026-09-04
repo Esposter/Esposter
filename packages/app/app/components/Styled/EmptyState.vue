@@ -1,11 +1,11 @@
 <script setup lang="ts">
-interface StyledEmptyStateProps {
+interface Props {
   description?: string;
   icon?: string;
   title: string;
 }
 
-const { description, icon = "mdi-inbox-outline", title } = defineProps<StyledEmptyStateProps>();
+const { description, icon = "mdi-inbox-outline", title } = defineProps<Props>();
 defineSlots<{ default?: () => VNode }>();
 </script>
 
