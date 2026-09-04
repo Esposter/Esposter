@@ -1,9 +1,9 @@
 import { BackendType } from "#src/models/virrun/BackendType";
 import { createNativeBackend } from "#src/services/exec/native/createNativeBackend";
+import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
 import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
 import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
-import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
 import { createSnapshot } from "#src/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "#src/services/exec/snapshot/forkSnapshot";
 import { persistRun } from "#src/services/exec/snapshot/persistRun";
@@ -21,7 +21,7 @@ import { afterAll, bench, describe } from "vitest";
 // Bind, the WSL login PATH, network, corepack home and CI=true. Routing through those builders keeps the bench from
 // Drifting from production — hand-rolled options miss e.g. the WSL login PATH and die with `node: not found` (the
 // WSL bridge resolves the Windows pnpm shim instead).
-const isOsSupported = isOsBackendSupported();
+const isOsSupported = checkIsOsBackendSupported();
 const isWindows = process.platform === "win32";
 const OS_TASK_NAME = isWindows ? `${BackendType.Os}/wsl` : `${BackendType.Os}/linux`;
 const native = createNativeBackend();

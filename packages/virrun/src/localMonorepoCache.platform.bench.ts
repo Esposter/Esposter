@@ -23,7 +23,7 @@ import { afterAll, bench, describe } from "vitest";
 // With native?"; this one answers "what is each cache layer worth?". Baseline = cold (declared first, no `native`
 // Task), so the reporter renders each warm layer as a speedup multiplier: cold − (+snapshot) is the install the
 // SNAPSHOT layer saves, (+snapshot) − (+snapshot+prepare) is the `nuxt prepare` the PREPARE layer saves. Gated on
-// IsSandboxInstallSupported (stronger than isOsBackendSupported — cold performs a real install, so node/pnpm must be
+// IsSandboxInstallSupported (stronger than checkIsOsBackendSupported — cold performs a real install, so node/pnpm must be
 // Reachable and $HOME writable). A `.platform.bench.ts`: the os backend runs os/linux natively and os/wsl bridged
 // From win32, so each host writes its own committed artifact.
 //

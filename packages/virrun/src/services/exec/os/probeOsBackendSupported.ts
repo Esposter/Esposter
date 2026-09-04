@@ -9,7 +9,7 @@ import { getResult, noop, withFinalizer } from "@esposter/shared";
 // Was KILLED is not — the only thing that kills one here is its own timeout, and a bound elapsing says nothing about
 // Whether bwrap can mount an overlay. That case answers `undefined` ("not answered") rather than false, so the caller
 // Degrades this run to native without persisting a stall as a capability fact for the cache's whole window
-// (isOsBackendSupported). Both failure shapes trace, since a run that silently went native is the symptom either way.
+// (checkIsOsBackendSupported). Both failure shapes trace, since a run that silently went native is the symptom either way.
 const readProbeVerdict = (probe: () => void): boolean | undefined =>
   getResult(probe).match(
     () => true,
@@ -34,7 +34,7 @@ const readProbeVerdict = (probe: () => void): boolean | undefined =>
 // To cwd (the upper is a discarded tmpfs), so the probe is side-effect-free. The probed command is `true`
 // (engine-agnostic): toolchain reachability is an orthogonal axis handled by the captured WSL login PATH
 // (readWslLoginEnvironment), so probing a specific binary here would conflate the two and hardcode an engine. This is the
-// Raw host-capability probe: it does NOT account for nesting (isOsBackendSupported layers the VIRRUN nesting guard,
+// Raw host-capability probe: it does NOT account for nesting (checkIsOsBackendSupported layers the VIRRUN nesting guard,
 // The in-process memo, and the persisted cache on top), so it is safe to reuse anywhere the un-cached truth is wanted.
 // `undefined` is the third answer, and it means the probe never got one — see readProbeVerdict.
 export const probeOsBackendSupported = (): boolean | undefined => {

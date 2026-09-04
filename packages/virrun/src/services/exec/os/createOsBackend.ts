@@ -2,7 +2,7 @@ import type { ExecBackend } from "#src/models/exec/ExecBackend";
 import type { Environment } from "#src/models/virrun/Environment";
 
 import { createLinuxOsBackend } from "#src/services/exec/bwrap/createLinuxOsBackend";
-import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
+import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { createWslOsBackend } from "#src/services/exec/wsl/createWslOsBackend";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 // Runs every command (including native binaries) inside a bubblewrap RAM-overlay: reads fall through to the
@@ -13,7 +13,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // `environment` is only read on win32, where the source mirror's exclude set is derived from the same preset the
 // Write-back mask is (createWslOsBackend). Linux mounts the real source, so there is no mirror and nothing to align.
 export const createOsBackend = (environment?: Environment): ExecBackend => {
-  if (!isOsBackendSupported())
+  if (!checkIsOsBackendSupported())
     throw new InvalidOperationError(Operation.Create, createOsBackend.name, "requires Linux/WSL + bubblewrap");
   switch (process.platform) {
     case "linux":

@@ -1,8 +1,8 @@
-import { isTaskCacheEnabled } from "#src/services/exec/cache/isTaskCacheEnabled";
+import { checkIsTaskCacheEnabled } from "#src/services/exec/cache/checkIsTaskCacheEnabled";
 import { CI_ENV_KEY, VIRRUN_NO_CACHE_KEY } from "#src/services/exec/util/constants";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-describe(isTaskCacheEnabled, () => {
+describe(checkIsTaskCacheEnabled, () => {
   let previousCi: string | undefined;
   let previousNoCache: string | undefined;
 
@@ -23,7 +23,7 @@ describe(isTaskCacheEnabled, () => {
   test("is on by default when neither CI nor the opt-out is set", () => {
     expect.hasAssertions();
 
-    expect(isTaskCacheEnabled()).toBe(true);
+    expect(checkIsTaskCacheEnabled()).toBe(true);
   });
 
   test("is off in CI so a zero-hit environment does not pay the source-hash cost", () => {
@@ -31,7 +31,7 @@ describe(isTaskCacheEnabled, () => {
 
     process.env[CI_ENV_KEY] = "true";
 
-    expect(isTaskCacheEnabled()).toBe(false);
+    expect(checkIsTaskCacheEnabled()).toBe(false);
   });
 
   test("treats an empty or falsy CI value as not-CI", () => {
@@ -39,7 +39,7 @@ describe(isTaskCacheEnabled, () => {
 
     process.env[CI_ENV_KEY] = "false";
 
-    expect(isTaskCacheEnabled()).toBe(true);
+    expect(checkIsTaskCacheEnabled()).toBe(true);
   });
 
   test("is off when the explicit opt-out is set", () => {
@@ -47,6 +47,6 @@ describe(isTaskCacheEnabled, () => {
 
     process.env[VIRRUN_NO_CACHE_KEY] = "true";
 
-    expect(isTaskCacheEnabled()).toBe(false);
+    expect(checkIsTaskCacheEnabled()).toBe(false);
   });
 });

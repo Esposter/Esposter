@@ -4,7 +4,7 @@ import { getResult } from "@esposter/shared";
 // 0) sends no signal — it only probes existence: success (or EPERM, alive but owned by another user) => alive; ESRCH
 // (no such process) => dead. A non-positive pid has special process-group semantics and is never a real owner, so it
 // Reads as dead.
-export const isProcessAlive = (pid: number): boolean => {
+export const checkIsProcessAlive = (pid: number): boolean => {
   if (pid <= 0) return false;
   return getResult(() => {
     process.kill(pid, 0);

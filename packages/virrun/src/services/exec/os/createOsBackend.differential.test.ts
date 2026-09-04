@@ -1,7 +1,7 @@
 import { assertDifferential } from "#src/services/exec/differential/assertDifferential.test";
 import { SHELL_DIFFERENTIAL_CORPUS } from "#src/services/exec/differential/differentialCorpus.test";
+import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
-import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
 import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
@@ -13,7 +13,7 @@ import { afterEach, describe, expect, test } from "vitest";
 // Compares the observable command result (exit code + stdout + stderr) against native - not host disk
 // Side-effects, since the os backend intentionally hides writes from the host. The isolation contract
 // Is asserted separately below. See packages/app/content/docs/virrun/correctness.md.
-describe.skipIf(!isOsBackendSupported())(createOsBackend, () => {
+describe.skipIf(!checkIsOsBackendSupported())(createOsBackend, () => {
   const native = createOsBaselineBackend();
   const temporaryDirectories = createTemporaryDirectoryTracker();
   // Each case spawns a real bwrap sandbox (win32: over the wsl.exe bridge). In isolation that is ~1-3s, but the suite

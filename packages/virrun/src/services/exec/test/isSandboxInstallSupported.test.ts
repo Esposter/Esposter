@@ -1,4 +1,4 @@
-import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
+import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { HOME_CACHE_DIRECTORY_NAME, VIRRUN_TEMP_DIR_PREFIX } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { buildWslLoginShellCommand } from "#src/services/exec/wsl/buildWslLoginShellCommand";
@@ -26,7 +26,7 @@ const checkIsCacheHomeWritable = (): boolean =>
 // Node manager (fnm, nvm…) is off the non-interactive PATH, so a plain probe skips the suite even though the backend
 // Can reach node. This keeps the gate in lockstep with what readWslLoginEnvironment injects.
 export const isSandboxInstallSupported: boolean =
-  isOsBackendSupported() &&
+  checkIsOsBackendSupported() &&
   getResult(() =>
     process.platform === "win32"
       ? execFileHidden("wsl.exe", [

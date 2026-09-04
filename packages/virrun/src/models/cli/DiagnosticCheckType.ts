@@ -6,7 +6,7 @@ export enum DiagnosticCheckType {
   Bubblewrap = "bubblewrap",
   // Python3, used by write-back to flush produced files back to host.
   Python3 = "python3",
-  // The real overlay-mount probe (isOsBackendSupported) — the authoritative "would fall back to native" verdict.
+  // The real overlay-mount probe (checkIsOsBackendSupported) — the authoritative "would fall back to native" verdict.
   Sandbox = "sandbox",
   // Host tar (win32 only), used to stage the source-mirror archive that syncs the repo source onto the ext4 mirror
   // (createSourceMirrorArchive).

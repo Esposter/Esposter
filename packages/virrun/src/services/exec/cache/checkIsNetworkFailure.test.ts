@@ -1,7 +1,7 @@
-import { isNetworkFailure } from "#src/services/exec/cache/isNetworkFailure";
+import { checkIsNetworkFailure } from "#src/services/exec/cache/checkIsNetworkFailure";
 import { describe, expect, test } from "vitest";
 
-describe(isNetworkFailure, () => {
+describe(checkIsNetworkFailure, () => {
   test.each([
     "│ @pnpm/pacquet    │ fetch failed │",
     "Error: getaddrinfo ENOTFOUND registry.npmjs.org",
@@ -10,7 +10,7 @@ describe(isNetworkFailure, () => {
   ])("flags the network-failure signature in %j", (output) => {
     expect.hasAssertions();
 
-    expect(isNetworkFailure(output)).toBe(true);
+    expect(checkIsNetworkFailure(output)).toBe(true);
   });
 
   test.each(["", "TypeError: cannot read property 'x' of undefined", "1 error found in foo.ts"])(
@@ -18,7 +18,7 @@ describe(isNetworkFailure, () => {
     (output) => {
       expect.hasAssertions();
 
-      expect(isNetworkFailure(output)).toBe(false);
+      expect(checkIsNetworkFailure(output)).toBe(false);
     },
   );
 });

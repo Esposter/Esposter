@@ -2,7 +2,7 @@ import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
 import { BackendType } from "#src/models/virrun/BackendType";
 import { createNativeBackend } from "#src/services/exec/native/createNativeBackend";
-import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
+import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { spawnHidden } from "#src/services/exec/util/spawnHidden";
 import { toExitCode } from "#src/services/exec/util/toExitCode";
@@ -43,7 +43,7 @@ export const createOsBaselineBackend = (): ExecBackend => {
 };
 
 describe(createOsBaselineBackend, () => {
-  test.skipIf(process.platform !== "win32" || !isOsBackendSupported())(
+  test.skipIf(process.platform !== "win32" || !checkIsOsBackendSupported())(
     "captures stdout and zero exit code from WSL",
     async () => {
       expect.hasAssertions();
@@ -56,7 +56,7 @@ describe(createOsBaselineBackend, () => {
     },
   );
 
-  test.skipIf(process.platform !== "win32" || !isOsBackendSupported())(
+  test.skipIf(process.platform !== "win32" || !checkIsOsBackendSupported())(
     "propagates a non-zero exit code from WSL",
     async () => {
       expect.hasAssertions();
@@ -68,7 +68,7 @@ describe(createOsBaselineBackend, () => {
     },
   );
 
-  test.skipIf(process.platform !== "win32" || !isOsBackendSupported())(
+  test.skipIf(process.platform !== "win32" || !checkIsOsBackendSupported())(
     "passes an argv array as discrete arguments in WSL",
     async () => {
       expect.hasAssertions();
@@ -83,7 +83,7 @@ describe(createOsBaselineBackend, () => {
     },
   );
 
-  test.skipIf(process.platform !== "win32" || !isOsBackendSupported())(
+  test.skipIf(process.platform !== "win32" || !checkIsOsBackendSupported())(
     "passes environments correctly to WSL",
     async () => {
       expect.hasAssertions();

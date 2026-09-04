@@ -8,7 +8,7 @@ import { getExcludeRelativePath } from "#src/services/exec/util/getExcludeRelati
 // A directory but not its contents is never what a caller means. Which shape a pattern is comes from
 // GetIsBareNameExclude, never re-derived here. Segment-anchored, so a prefix sibling (`.gitignore` vs `.git`,
 // `packages/app-e2e` vs `packages/app`) is never a match.
-export const isExcludedPath = (relativePath: string, excludes: readonly string[]): boolean =>
+export const checkIsExcludedPath = (relativePath: string, excludes: readonly string[]): boolean =>
   excludes.some((exclude) => {
     if (checkIsBareNameExclude(exclude))
       return (

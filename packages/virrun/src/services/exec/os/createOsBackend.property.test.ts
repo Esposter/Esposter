@@ -1,5 +1,5 @@
+import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
-import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
 import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import * as fc from "fast-check";
@@ -14,7 +14,7 @@ import { afterEach, describe, expect, test } from "vitest";
 //   3. Well-formedness — every command yields a finite exit code + string stdio; the sandbox never wedges.
 // Real subprocesses, so host-gated and kept to small run counts.
 
-describe.skipIf(!isOsBackendSupported())(createOsBackend, () => {
+describe.skipIf(!checkIsOsBackendSupported())(createOsBackend, () => {
   // Seeded empty, so any cross-exec write leak surfaces as a non-empty read.
   const CANARY = "a";
   // Never seeded on the host — a command that writes it must leave the host disk untouched.

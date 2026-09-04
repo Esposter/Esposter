@@ -5,10 +5,10 @@ import type { ExecResult } from "#src/models/exec/ExecResult";
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { formatVirrunCacheHit } from "#src/services/cli/format/formatVirrunCacheHit";
 import { formatVirrunNetworkHint } from "#src/services/cli/format/formatVirrunNetworkHint";
+import { checkHasDependencyClosureMutation } from "#src/services/exec/cache/checkHasDependencyClosureMutation";
+import { checkIsNetworkFailure } from "#src/services/exec/cache/checkIsNetworkFailure";
+import { checkIsTaskCacheEnabled } from "#src/services/exec/cache/checkIsTaskCacheEnabled";
 import { computeTaskCacheKey } from "#src/services/exec/cache/computeTaskCacheKey";
-import { hasDependencyClosureMutation } from "#src/services/exec/cache/hasDependencyClosureMutation";
-import { isNetworkFailure } from "#src/services/exec/cache/isNetworkFailure";
-import { isTaskCacheEnabled } from "#src/services/exec/cache/isTaskCacheEnabled";
 import { recordTaskCache } from "#src/services/exec/cache/recordTaskCache";
 import { replayTaskCache } from "#src/services/exec/cache/replayTaskCache";
 import { resolveTaskCacheLocation } from "#src/services/exec/cache/resolveTaskCacheLocation";
@@ -28,10 +28,10 @@ export const persistWithCache = async (
   extraLowerDirs: readonly string[] = [],
   maskedPaths: readonly string[] = [],
 ): Promise<ExecResult> => {
-  const key = isTaskCacheEnabled() ? computeTaskCacheKey(command, options.cwd, maskedPaths) : null;
+  const key = checkIsTaskCacheEnabled() ? computeTaskCacheKey(command, options.cwd, maskedPaths) : null;
   if (key === null) {
     writeVirrunDebug(
-      isTaskCacheEnabled()
+      checkIsTaskCacheEnabled()
         ? "task cache off — no key (not a git repo or no lockfile)"
         : "task cache off — disabled (CI or VIRRUN_NO_CACHE)",
     );
@@ -67,7 +67,7 @@ export const persistWithCache = async (
       // A write-network install (`pnpm install`/`add`/`update`) can still succeed offline from the warm store, so the
       // Net-unshare gate alone would cache it. Its output isn't determined by the key it mutates, so skip recording —
       // The run is flushed and correct, just uncached.
-      if (hasDependencyClosureMutation(plan)) {
+      if (checkHasDependencyClosureMutation(plan)) {
         writeVirrunDebug("task cache record skipped — run mutated the dependency closure");
         return;
       }
@@ -77,7 +77,11 @@ export const persistWithCache = async (
   // The run above was hermetic (network unshared). If it FAILED reaching the network, the tool's own error is opaque (a
   // Buried "fetch failed"), so translate it into the cause + the --no-cache fix — human CLI path only (inherit, matching
   // The hit label; a programmatic pipe caller reads the streams itself). Recording was already skipped (exit != 0).
-  if (result.exitCode !== 0 && options.stdio === "inherit" && isNetworkFailure(`${result.stdout}\n${result.stderr}`))
+  if (
+    result.exitCode !== 0 &&
+    options.stdio === "inherit" &&
+    checkIsNetworkFailure(`${result.stdout}\n${result.stderr}`)
+  )
     process.stderr.write(`${formatVirrunNetworkHint(command)}\n`);
   return toResult(result);
 };

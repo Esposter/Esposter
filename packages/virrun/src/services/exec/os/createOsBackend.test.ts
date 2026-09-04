@@ -1,5 +1,5 @@
+import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
-import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
 import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
 import { TEST_DIR } from "#src/services/exec/util/constants.test";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
@@ -12,14 +12,14 @@ describe(createOsBackend, () => {
   const acceptanceTimeoutMs = Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds");
 
   // No-fallback contract: on an unsupported host, construction throws rather than running un-isolated.
-  test.skipIf(isOsBackendSupported())("throws on an unsupported host instead of falling back", () => {
+  test.skipIf(checkIsOsBackendSupported())("throws on an unsupported host instead of falling back", () => {
     expect.hasAssertions();
     expect(() => createOsBackend()).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, createOsBackend.name, "requires Linux/WSL + bubblewrap").message}]`,
     );
   });
 
-  test.skipIf(!isOsBackendSupported())(
+  test.skipIf(!checkIsOsBackendSupported())(
     "captures stdout and a zero exit code",
     async () => {
       expect.hasAssertions();
@@ -33,7 +33,7 @@ describe(createOsBackend, () => {
     acceptanceTimeoutMs,
   );
 
-  test.skipIf(!isOsBackendSupported())(
+  test.skipIf(!checkIsOsBackendSupported())(
     "propagates a non-zero exit code as a result, not a throw",
     async () => {
       expect.hasAssertions();
@@ -51,7 +51,7 @@ describe(createOsBackend, () => {
   // Reported and the backend must reject rather than invent a result. The reject message carries the
   // Base sentinel plus bwrap's own (host-/version-specific) diagnostic appended, so match the stable
   // Sentinel as a substring — the exact stderr-surfacing contract is pinned in createBwrapBackend.test.ts.
-  test.skipIf(!isOsBackendSupported())(
+  test.skipIf(!checkIsOsBackendSupported())(
     "rejects with a sandbox error when bubblewrap fails to set up",
     async () => {
       expect.hasAssertions();
