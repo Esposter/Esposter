@@ -591,8 +591,8 @@ catalogs:
       specifier: ^8.2.0
       version: 8.2.0
     node-html-parser:
-      specifier: ^9.0.2
-      version: 9.0.2
+      specifier: ^9.0.3
+      version: 9.0.3
     nuxt:
       specifier: ^4.5.2
       version: 4.5.2
@@ -1114,7 +1114,7 @@ importers:
         version: 7.2.0
       node-html-parser:
         specifier: 'catalog:'
-        version: 9.0.2
+        version: 9.0.3
       p-progress:
         specifier: 'catalog:'
         version: 1.0.0
@@ -1425,7 +1425,7 @@ importers:
         version: 1.0.0-rc.4(@electric-sql/pglite@0.5.8)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(valibot@1.4.2(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(zod@4.5.4)
       node-html-parser:
         specifier: 'catalog:'
-        version: 9.0.2
+        version: 9.0.3
       postgres:
         specifier: 'catalog:'
         version: 3.4.9
@@ -1631,7 +1631,7 @@ importers:
         version: 3.0.2
       node-html-parser:
         specifier: 'catalog:'
-        version: 9.0.2
+        version: 9.0.3
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -1798,7 +1798,7 @@ importers:
         version: 8.2.0
       node-html-parser:
         specifier: 'catalog:'
-        version: 9.0.2
+        version: 9.0.3
       sanitize-html:
         specifier: 'catalog:'
         version: 2.17.7
@@ -11719,8 +11719,8 @@ packages:
     engines: {node: ^20.17.0 || >=22.9.0}
     hasBin: true
 
-  node-html-parser@9.0.2:
-    resolution: {integrity: sha512-XhM0CTeF4Hkw3el7VCyasGJCEvp500Xf0s1J3ZigYfTOkVqZRQRY3EiAw1CbJzNrxaKSDthXiT9c/4CBwIJyfw==}
+  node-html-parser@9.0.3:
+    resolution: {integrity: sha512-iaQ9rokcYNp99IY0h82q04Wtc27SObRT+OEytdJh0bFv2IN0fypnU63KUNVavkPSiwsmIELG1eUenajGhzrvpg==}
 
   node-int64@0.4.0:
     resolution: {integrity: sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==}
@@ -26131,7 +26131,7 @@ snapshots:
       undici: 6.28.0
       which: 6.0.1
 
-  node-html-parser@9.0.2:
+  node-html-parser@9.0.3:
     dependencies:
       css-select: 5.2.2
       entities: 8.0.0

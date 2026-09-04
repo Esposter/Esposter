@@ -177,7 +177,7 @@ catalog:
   msw: ^2.15.0
   msw-trpc: ^2.0.1
   neverthrow: ^8.2.0
-  node-html-parser: ^9.0.2
+  node-html-parser: ^9.0.3
   nuxt: ^4.5.2
   nuxt-security: ^2.6.0
   oxfmt: ^0.66.0
