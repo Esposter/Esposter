@@ -5,7 +5,7 @@ import { normalizeString, RoutePath, withFinalizerAsync } from "@esposter/shared
 const callCodeOrLink = ref("");
 const isJoining = ref(false);
 const callId = computed(() => normalizeString(callCodeOrLink.value).match(CALL_ID_REGEX)?.[0] ?? "");
-const canJoin = computed(() => selectCallSessionInMessageSchema.shape.id.safeParse(callId.value).success);
+const isJoinable = computed(() => selectCallSessionInMessageSchema.shape.id.safeParse(callId.value).success);
 </script>
 
 <template>
@@ -17,7 +17,7 @@ const canJoin = computed(() => selectCallSessionInMessageSchema.shape.id.safePar
     justify-center
     @submit.prevent="
       async () => {
-        if (!canJoin) return;
+        if (!isJoinable) return;
         isJoining = true;
         await withFinalizerAsync(
           async () => {
@@ -40,7 +40,14 @@ const canJoin = computed(() => selectCallSessionInMessageSchema.shape.id.safePar
     />
     <v-tooltip text="Join call">
       <template #activator="{ props }">
-        <v-btn :="props" :disabled="!canJoin" :loading="isJoining" prepend-icon="mdi-login" text="Join" type="submit" />
+        <v-btn
+          :="props"
+          :disabled="!isJoinable"
+          :loading="isJoining"
+          prepend-icon="mdi-login"
+          text="Join"
+          type="submit"
+        />
       </template>
     </v-tooltip>
   </v-form>

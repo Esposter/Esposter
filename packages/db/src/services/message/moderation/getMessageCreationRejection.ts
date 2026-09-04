@@ -47,16 +47,16 @@ export const getMessageCreationRejection = async (
       : undefined,
   ]);
   if (!room || !member) return { type: MessageCreationRejectionType.NotAMember };
-  // Only a rule that actually engages asks whether the sender can moderate, and however many of them ask,
+  // Only a rule that actually engages asks whether the sender may moderate, and however many of them ask,
   // Storage answers once — the promise is what is memoized, so concurrent askers share the one lookup. An
   // Unrestricted room is the common case and never asks at all
-  let canManageMessages: Promise<boolean> | undefined;
-  const getCanManageMessages = (): Promise<boolean> =>
-    (canManageMessages ??= hasPermission(db, userId, roomId, RoomPermission.ManageMessages));
+  let hasManageMessages: Promise<boolean> | undefined;
+  const checkHasManageMessages = (): Promise<boolean> =>
+    (hasManageMessages ??= hasPermission(db, userId, roomId, RoomPermission.ManageMessages));
   // A timeout outranks every permission — a moderator who times themselves out stays timed out
   if (member.timeoutUntil && member.timeoutUntil > new Date()) return { type: MessageCreationRejectionType.Timeout };
-  else if (room.isReadOnly && !(await getCanManageMessages())) return { type: MessageCreationRejectionType.ReadOnly };
-  else if (room.slowmodeMs && member.lastMessageAt && !(await getCanManageMessages())) {
+  else if (room.isReadOnly && !(await checkHasManageMessages())) return { type: MessageCreationRejectionType.ReadOnly };
+  else if (room.slowmodeMs && member.lastMessageAt && !(await checkHasManageMessages())) {
     const elapsedMs = Date.now() - member.lastMessageAt.getTime();
     if (elapsedMs < room.slowmodeMs) return { type: MessageCreationRejectionType.Slowmode };
   }
@@ -65,6 +65,6 @@ export const getMessageCreationRejection = async (
 
   const normalizedMessage = message.toLowerCase();
   if (!filter.words.some((word) => normalizedMessage.includes(word.toLowerCase()))) return undefined;
-  else if (await getCanManageMessages()) return undefined;
+  else if (await checkHasManageMessages()) return undefined;
   return { filter, type: MessageCreationRejectionType.WordFilter };
 };

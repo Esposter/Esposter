@@ -43,6 +43,15 @@ export default {
       selector: `:matches(VariableDeclarator[id.name=${MAP_NAME_REGEX}]:matches([init.callee.name='Map'], [init.callee.object.name='Object'][init.callee.property.name='groupBy'], [id.typeAnnotation.typeAnnotation.typeName.name=${MAP_TYPE_NAME_REGEX}]), VariableDeclarator[id.name=${BY_MAP_NAME_REGEX}]:matches([init.type='ObjectExpression'], [init.expression.type='ObjectExpression']), :matches(PropertyDefinition, TSPropertySignature)[key.name=${MAP_NAME_REGEX}][typeAnnotation.typeAnnotation.typeName.name=${MAP_TYPE_NAME_REGEX}], Property[key.name=${BY_MAP_NAME_REGEX}]:matches([value.type='ObjectExpression'], [value.callee.name='Map'], [value.callee.object.name='Object'][value.callee.property.name='groupBy']), :matches(PropertyDefinition, Property)[key.name=/^by[A-Z]/]:not([value.type=/^(Arrow)?FunctionExpression$/]), TSPropertySignature[key.name=/^by[A-Z]/]:not([typeAnnotation.typeAnnotation.type='TSFunctionType']), VariableDeclarator[id.name=/^by[A-Z]/]:not([init.type=/^(Arrow)?FunctionExpression$/]))`,
     },
     {
+      // A boolean says what is true, not what is permitted: `can`/`should` name a policy the value does not
+      // Carry, and the repo already spells a permission check `hasManageRoles` and a capability check
+      // `isScreenShareSupported`. Only a declarator is matched, so a dependency's own key stays its own —
+      // LiveKit's `canPublish`/`canSubscribe` grants and `URL.canParse` are read and written under their names.
+      message:
+        "Name a boolean `is*` (or `has*` for possession/membership) — `can*` and `should*` name a policy rather than the value. See the naming skill.",
+      selector: "VariableDeclarator[id.name=/^(can|should)[A-Z]/]",
+    },
+    {
       message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
       selector:
         ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",
