@@ -22,7 +22,7 @@ import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { knockerRouter } from "@@/server/trpc/routers/call/knocker";
-import { hasPermission } from "@esposter/db";
+import { checkHasPermission } from "@esposter/db";
 import {
   AzureEntityType,
   callSessionIdSchema,
@@ -202,7 +202,7 @@ export const baseCallRouter = router({
         if (isHandRaised) throw getForbiddenError("Cannot raise another hand");
         else if (!callSession.roomId) throw getForbiddenError("Only room call moderators can lower another hand");
 
-        const hasMuteMembersPermission = await hasPermission(
+        const hasMuteMembersPermission = await checkHasPermission(
           ctx.db,
           ctx.getSessionPayload.user.id,
           callSession.roomId,

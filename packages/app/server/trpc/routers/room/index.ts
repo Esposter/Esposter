@@ -50,7 +50,7 @@ import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { roomEmojiRouter } from "@@/server/trpc/routers/room/emoji";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
-import { generateWriteSasUrl, hasPermission } from "@esposter/db";
+import { checkHasPermission, generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -601,7 +601,7 @@ export const baseRoomRouter = router({
       // Role carries `ManageInvites` so that every member can mint a link at all, which makes it the wrong gate
       // For a control over other people's — Discord splits the same two acts the same way
       const { user } = ctx.getSessionPayload;
-      const isInviteManager = await hasPermission(ctx.db, user.id, roomId, RoomPermission.ManageRoom);
+      const isInviteManager = await checkHasPermission(ctx.db, user.id, roomId, RoomPermission.ManageRoom);
       const wheres = [eq(invitesInMessage.id, id), eq(invitesInMessage.roomId, roomId)];
       if (!isInviteManager) wheres.push(eq(invitesInMessage.userId, user.id));
 

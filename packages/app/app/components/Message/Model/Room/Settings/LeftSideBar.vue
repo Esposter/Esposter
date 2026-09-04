@@ -8,7 +8,7 @@ import { SettingsCategoryMap } from "@/services/message/settings/SettingsCategor
 import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
 import { SettingsPermissionMap } from "@/services/message/settings/SettingsPermissionMap";
 import { useRoleStore } from "@/store/message/room/role";
-import { hasPermission } from "@esposter/db-schema";
+import { checkHasPermission } from "@esposter/db-schema";
 
 interface Props {
   room: RoomInMessage;
@@ -28,7 +28,7 @@ const checkIsVisible = (settingsType: SettingsType) => {
   const permission = SettingsPermissionMap[settingsType];
   if (!permission) return true;
   if (!myPermissions.value) return false;
-  return hasPermission(myPermissions.value.permissions, permission, myPermissions.value.isRoomOwner);
+  return checkHasPermission(myPermissions.value.permissions, permission, myPermissions.value.isRoomOwner);
 };
 const visibleCategories = computed(() =>
   Object.entries(SettingsCategoryMap)

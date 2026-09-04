@@ -5,10 +5,10 @@ import { describe, expect, test } from "vitest";
 
 describe(parseOverlayManifest, () => {
   const entry: OverlayManifestEntry = {
-    isSnapshotLowerPath: false,
     isCharacterDevice: false,
     isDirectory: false,
     isOpaque: false,
+    isSnapshotLowerPath: false,
     rdev: 0,
     relativePath: "",
   };

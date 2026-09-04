@@ -3,7 +3,7 @@ import type { RoomInMessage, User } from "@esposter/db-schema";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useRoleStore } from "@/store/message/room/role";
-import { hasPermission, RoomPermission } from "@esposter/db-schema";
+import { checkHasPermission, RoomPermission } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 interface Props {
@@ -18,7 +18,7 @@ const roles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEver
 const hasManageRoles = computed(() => {
   const myPermissions = getMyPermissions(roomId);
   if (!myPermissions) return false;
-  return hasPermission(myPermissions.permissions, RoomPermission.ManageRoles, myPermissions.isRoomOwner);
+  return checkHasPermission(myPermissions.permissions, RoomPermission.ManageRoles, myPermissions.isRoomOwner);
 });
 // The card is a popout that appears on hover, so the member's own roles load behind it rather than blocking it.
 // Nothing awaits the read and nobody asked for it, so it reports its own failure — the group renders empty,

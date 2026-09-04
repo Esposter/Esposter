@@ -23,7 +23,7 @@ Two fields can express a fourth state the model does not have — a bit set in b
 
 ```mermaid
 flowchart TD
-  ask["hasPermission(userId, roomId, permission)"] --> owner{"room owner?"}
+  ask["checkHasPermission(userId, roomId, permission)"] --> owner{"room owner?"}
   owner -->|yes| yes["granted"]
   owner -->|no| admin{"Administrator bit, from a role?"}
   admin -->|yes| yes
@@ -63,7 +63,7 @@ Leaving a room deletes the row with the membership. A permission bit that is ret
 | File                                                                               | Change                                                   |
 | :--------------------------------------------------------------------------------- | :------------------------------------------------------- |
 | `packages/db-schema/src/schema.ts`                                                 | registers the new `roomMemberPermissions` table          |
-| `packages/db/src/services/room/rbac/hasPermission.ts`                              | the resolution chain above                               |
+| `packages/db/src/services/room/rbac/checkHasPermission.ts`                         | the resolution chain above                               |
 | `packages/app/server/services/room/rbac/getRoomMemberAuthority.ts`                 | an override counts toward what a member may be given     |
 | `packages/app/server/trpc/routers/role.ts`                                         | write and delete an override, behind the hierarchy check |
 | `packages/app/app/components/Message/Model/Room/Settings/Type/Role/List/`          | entries rather than roles                                |

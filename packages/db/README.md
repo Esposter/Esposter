@@ -33,7 +33,7 @@ is paid once per process rather than once per request (`createProvisionedClientC
 
 Around them sit the domain services: message creation and mention targeting, moderation logging and automod,
 resource purging, blob SAS minting and cloning, Azure Table entity marshalling (`serializeEntity`,
-`deserializeEntity`) and the RBAC reads `hasPermission` / `getPermissions`. The filter vocabulary those
+`deserializeEntity`) and the RBAC reads `checkHasPermission` / `getPermissions`. The filter vocabulary those
 services build their queries from — clause serialization, key casing, service limits — is `@esposter/azure`.
 
 ### Architecture Notes
