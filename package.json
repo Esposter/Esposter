@@ -87,6 +87,13 @@
     "virrun": "workspace:*",
     "vitest": "catalog:"
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^26.8.1",
+      "onFail": "warn"
+    }
+  },
   "engines": {
     "node": "^26.8.1"
   },

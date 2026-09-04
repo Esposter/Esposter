@@ -26,7 +26,7 @@ The committed `virrun.config.ts` branches on `process.platform`: **win32 → `os
 
 What the os-backend warm layers provided in CI maps onto standard, backend-free equivalents:
 
-- **Dependency snapshot → the pnpm store cache.** Every job runs a plain `pnpm i` restored from the `actions/setup-node` pnpm store cache — the same lockfile-keyed reuse, without bubblewrap, the warm-capture job, or the multi-gigabyte snapshot `actions/cache` entry.
+- **Dependency snapshot → the pnpm store cache.** Every job runs a plain `pnpm i` restored from the `pnpm/setup` pnpm store cache — the same lockfile-keyed reuse, without bubblewrap, the warm-capture job, or the multi-gigabyte snapshot `actions/cache` entry.
 - **Prepare layer → `postinstall: nuxt prepare`.** The install itself regenerates the Linux `.nuxt` in place on every job, platform-correct by construction.
 
 This dropped an entire serialization stage from the critical path (the former `warm-cache.yaml` job every verify job `needs`-ed) plus the per-job bubblewrap install, and let every non-bwrap job move from the pinned `ubuntu-26.04` image back to `ubuntu-latest` (26.04 was only needed for bubblewrap >= 0.10.0; 24.04 ships 0.9.0). The one exception is `coverage`: it stays on `ubuntu-26.04` **with** bubblewrap because the suite tests virrun's own os backend — on an image without a capable bwrap the `*.differential.test.ts` files `describe.skipIf` themselves away, silently deleting the correctness gate.

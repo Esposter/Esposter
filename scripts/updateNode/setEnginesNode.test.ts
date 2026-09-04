@@ -16,6 +16,17 @@ describe(setEnginesNode, () => {
     );
   });
 
+  test("leaves a preceding devEngines.runtime untouched", () => {
+    expect.hasAssertions();
+
+    expect(
+      setEnginesNode(
+        '{ "devEngines": { "runtime": { "version": "^0.0.0" } }, "engines": { "node": "^0.0.0" } }',
+        "1.0.0",
+      ),
+    ).toBe('{ "devEngines": { "runtime": { "version": "^0.0.0" } }, "engines": { "node": "^1.0.0" } }');
+  });
+
   test("throws when engines.node is absent", () => {
     expect.hasAssertions();
 
