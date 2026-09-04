@@ -4,11 +4,11 @@ import type { MessageEntity } from "@esposter/db-schema";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useThreadStore } from "@/store/message/thread";
 
-interface ThreadsListItemProps {
+interface MessageRightSideBarThreadsListItemProps {
   thread: MessageEntity;
 }
 
-const { thread } = defineProps<ThreadsListItemProps>();
+const { thread } = defineProps<MessageRightSideBarThreadsListItemProps>();
 const creator = useCreator(() => thread);
 const threadStore = useThreadStore();
 const { openThread } = threadStore;

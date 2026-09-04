@@ -4,11 +4,11 @@ import type { SearchHistoryInMessage } from "@esposter/db-schema";
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
 import { useSearchMessageStore } from "@/store/message/search";
 
-interface SearchHistoryListItemProps {
+interface MessageRightSideBarSearchHistoryListItemProps {
   searchHistory: SearchHistoryInMessage;
 }
 
-const { searchHistory } = defineProps<SearchHistoryListItemProps>();
+const { searchHistory } = defineProps<MessageRightSideBarSearchHistoryListItemProps>();
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
 const { searchQuery, selectedFilters } = storeToRefs(searchMessageStore);

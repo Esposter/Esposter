@@ -5,7 +5,7 @@ import { FilterTypeHasIconMap } from "@/models/message/FilterTypeHasIconMap";
 import { FilterTypeHases } from "@esposter/db-schema";
 
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
-const items = FilterTypeHases.map((filterTypeHas) => ({
+const HAS_ITEMS = FilterTypeHases.map((filterTypeHas) => ({
   icon: FilterTypeHasIconMap[filterTypeHas],
   label: filterTypeHas,
   value: filterTypeHas,
@@ -13,5 +13,5 @@ const items = FilterTypeHases.map((filterTypeHas) => ({
 </script>
 
 <template>
-  <MessageRightSideBarSearchFilterOptionList :items @select="emit('select', $event)" />
+  <MessageRightSideBarSearchFilterOptionList :items="HAS_ITEMS" @select="emit('select', $event)" />
 </template>
