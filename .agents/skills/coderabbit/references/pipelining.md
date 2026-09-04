@@ -26,4 +26,24 @@ through the last one that fits. Never undo working-tree edits to make a window s
 committed and the tail is simply held, so nothing is redone and nothing is lost. A rename too large for one
 window splits by **which identifiers it renames**, never by which files, so every commit is green on its own.
 
+## Re-opening the standing PR after it merges
+
+The pipeline assumes the `develop` → `main` PR is open; once it merges there is none, and the next window has to
+open one. That is a slot spend like any push, so it is asked for rather than assumed (`SKILL.md`, "Opening a PR
+Spends a Review Slot").
+
+Size that window from the **merge base**, not from a reviewed sha — a PR's first review reads the cumulative diff
+(`references/measuring-the-window.md`), so the count is `git diff --name-only $(git merge-base origin/main HEAD)..HEAD`
+and the ~90-file target applies to it whole. Everything already on `main` is outside it, which is why the merge
+base rather than `main` is the left-hand side.
+
+```bash
+git push origin develop
+gh pr create --base main --head develop --title "<type>(<scope>): <what the window carries>" --body "<summary>"
+```
+
+The body is the window's summary rather than the last commit's: what moved, what was deliberately left and why
+(the same reasons the commit messages carry), and a test plan naming the checks that were run. A reader arriving
+at the PR should not have to read sixteen commits to learn what one window did.
+
 The invariant: a chunk is a **push** boundary, not a work boundary. If step 4's fixes plus the queued chunk exceed the budget, push the fixes with only part of the queue and hold the rest — never split a fix away from the finding it answers. Which commits ride in a window, and how a late-authored fix is moved to its front: `references/window-composition.md`.
