@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 
-interface MessageModelRoomDirectMessageListProps {
+interface DirectMessageListProps {
   isCollapsed?: boolean;
 }
 
 defineSlots<{ prepend: () => VNode }>();
-const { isCollapsed = false } = defineProps<MessageModelRoomDirectMessageListProps>();
+const { isCollapsed = false } = defineProps<DirectMessageListProps>();
 const directMessageStore = useDirectMessageStore();
 const { directMessages, hasMore } = storeToRefs(directMessageStore);
 const { readDirectMessages, readMoreDirectMessages } = useReadDirectMessages();

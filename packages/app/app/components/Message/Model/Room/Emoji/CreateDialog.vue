@@ -9,13 +9,13 @@ import { validateFile } from "@/services/file/validateFile";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { takeOne, withFinalizerAsync } from "@esposter/shared";
 
-interface MessageModelRoomEmojiCreateDialogProps {
+interface EmojiCreateDialogProps {
   roomId: RoomInMessage["id"];
 }
 
 defineSlots<{ activator?: (props: StyledDialogActivatorSlotProps) => VNode }>();
 const modelValue = defineModel<boolean>({ default: false });
-const { roomId } = defineProps<MessageModelRoomEmojiCreateDialogProps>();
+const { roomId } = defineProps<EmojiCreateDialogProps>();
 const roomEmojiStore = useRoomEmojiStore();
 const { createRoomEmoji } = roomEmojiStore;
 const { items } = storeToRefs(roomEmojiStore);
