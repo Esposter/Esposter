@@ -20,7 +20,7 @@ import { getTopNEntities, getTopNEntitiesByType } from "@esposter/db";
 import {
   AzureTable,
   getReverseTickedTimestamp,
-  MessageEntityMap,
+  MessageTypeEntityMap,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
@@ -62,7 +62,7 @@ export const readMessages = async ({
         value: getReverseTickedTimestamp(rowKey),
       });
     // No need to fetch limit + 1 here; the index table determines the pagination metadata.
-    const messages = await getTopNEntitiesByType(messageClient, limit, MessageEntityMap, {
+    const messages = await getTopNEntitiesByType(messageClient, limit, MessageTypeEntityMap, {
       filter: serializeClauses(clauses),
     });
     // The Messages table scans newest-first (reverse-ticked rowKey), so re-project onto the ascending
@@ -86,7 +86,7 @@ export const readMessages = async ({
   // Default: Desc via reverse-ticked RowKey (efficient)
   if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
   const messageClient = await useTableClient(AzureTable.Messages);
-  const messages = await getTopNEntitiesByType(messageClient, limit + 1, MessageEntityMap, {
+  const messages = await getTopNEntitiesByType(messageClient, limit + 1, MessageTypeEntityMap, {
     filter: serializeClauses(clauses),
   });
   return getCursorPaginationData(messages, limit, sortBy);

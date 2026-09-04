@@ -7,11 +7,11 @@ import { resolveNotification } from "#src/services/notification/resolveNotificat
 import { sendWebPushNotifications } from "#src/services/notification/sendWebPushNotifications";
 import { getPushSubscriptionsForUsers } from "@esposter/db";
 import {
+  AppNotificationTypeChannelMap,
+  AppNotificationTypeSeverityMap,
   NOTIFICATION_RETENTION_MS,
   NotificationChannel,
-  NotificationChannelMap,
   notifications,
-  NotificationSeverityMap,
 } from "@esposter/db-schema";
 import { and, inArray, lt } from "drizzle-orm";
 
@@ -31,8 +31,8 @@ export const sendNotification = async (context: InvocationContext, data: Notific
     return;
   }
 
-  const severity = NotificationSeverityMap[data.type];
-  const channels = NotificationChannelMap[data.type];
+  const severity = AppNotificationTypeSeverityMap[data.type];
+  const channels = AppNotificationTypeChannelMap[data.type];
   if (channels.includes(NotificationChannel.Bell)) {
     // One statement for every recipient: the bell is a row per user, and a notification with a hundred recipients
     // Is still one round trip

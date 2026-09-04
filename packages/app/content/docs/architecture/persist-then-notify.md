@@ -72,7 +72,7 @@ An Azure Functions handler that rethrows asks for a retry — EventGrid delivery
 
 Both reduce to the same sentence: after the persist, the only honest thing a failure can do is get logged.
 
-Idempotent post-write steps are the one place a rethrow is admissible — a step that can rerun without duplicating anything loses nothing by being retried. Handlers declare this explicitly rather than by inference (`IsIdempotentAzureFunctionMap`), and everything not on that list is best-effort.
+Idempotent post-write steps are the one place a rethrow is admissible — a step that can rerun without duplicating anything loses nothing by being retried. Handlers declare this explicitly rather than by inference (`AzureFunctionIsIdempotentMap`), and everything not on that list is best-effort.
 
 ## Enforcement
 
@@ -107,7 +107,7 @@ Server-side (tRPC routers, services, Nitro routes) the terminal handler is `cons
 
 Deleting a message attachment is the worked example. The delete sits after the primary write, so it cannot be fatal — but `console.error` on a failed delete is not enough either, because read urls are signed for a day ([resource file assets](/docs/platform/resource-file-assets)): a dropped delete leaves a file the user believes is gone downloadable to anyone already holding its url, for as long as that signature lives.
 
-So the effect escalates rather than changing severity. Every delete funnels through one helper, `publishBlobDeletion` (`packages/app/server/services/azure/eventGrid/`), which publishes `ProcessBlobDeletion` best-effort — chunked, and accepting a thunk so a fallible blob listing runs inside the same best-effort unit — and `processBlobDeletionHandler` performs the delete, retried by Event Grid and then by [dead-letter replay](/docs/infra/eventgrid-dead-letter). The handler deletes with `deleteIfExists`, which is what earns its `true` in `IsIdempotentAzureFunctionMap` — a replayed batch converges on the same empty state instead of failing on the blobs the first attempt already removed.
+So the effect escalates rather than changing severity. Every delete funnels through one helper, `publishBlobDeletion` (`packages/app/server/services/azure/eventGrid/`), which publishes `ProcessBlobDeletion` best-effort — chunked, and accepting a thunk so a fallible blob listing runs inside the same best-effort unit — and `processBlobDeletionHandler` performs the delete, retried by Event Grid and then by [dead-letter replay](/docs/infra/eventgrid-dead-letter). The handler deletes with `deleteIfExists`, which is what earns its `true` in `AzureFunctionIsIdempotentMap` — a replayed batch converges on the same empty state instead of failing on the blobs the first attempt already removed.
 
 **The publish itself stays best-effort and post-persist.** That is the honest boundary: what changed is not that failure became impossible, but that a publish which _lands_ carries the delete to completion instead of dropping it after one attempt. A publish that never lands has no event to retry and no dead letter to alert on — it reaches `console.error` and nothing else, so it is invisible to the [scheduled query rules](/docs/infra/observability), which watch the delivery pipeline rather than the doorway into it. Accepted: the alternative is making a blob delete fatal to the mutation that already committed, which is the failure mode this whole standard exists to remove.
 

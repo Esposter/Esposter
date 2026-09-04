@@ -16,7 +16,7 @@ flowchart TD
   SRC["Any mutation — message, friend request, reminder, resource operation"] --> PUB["publishNotification<br/>one typed event, one topic"]
   PUB --> FN["ProcessNotification<br/>one Azure Function"]
   FN --> RES["resolveNotification<br/>copy, deep link, recipient user ids"]
-  RES --> POL{"NotificationChannelMap[type]"}
+  RES --> POL{"AppNotificationTypeChannelMap[type]"}
   POL -->|Bell| ROW["insert notifications rows<br/>+ retention trim"]
   POL -->|Push| SUB["getPushSubscriptionsForUsers<br/>minus the session that caused it"]
   SUB --> WP["sendWebPushNotifications"]
@@ -39,7 +39,7 @@ Two properties fall out of the shape rather than out of discipline:
 
 ## Channels
 
-`NotificationChannelMap` declares which surfaces each type reaches. It is exhaustive over `AppNotificationType`, so a new type has to state its surfaces rather than inherit a default that silently drops it from the bell or wakes a device it had no business waking.
+`AppNotificationTypeChannelMap` declares which surfaces each type reaches. It is exhaustive over `AppNotificationType`, so a new type has to state its surfaces rather than inherit a default that silently drops it from the bell or wakes a device it had no business waking.
 
 | Type                | Bell | Push | Why                                                             |
 | ------------------- | ---- | ---- | --------------------------------------------------------------- |
@@ -53,7 +53,7 @@ Feedback about the tab's own action — a mutation error, a save conflict, an ex
 
 ## The bell row
 
-A type whose channels include the bell writes one `notifications` row per recipient, in one statement. The row is the render shape the panel already uses, and its `severity` comes from `NotificationSeverityMap` rather than from a field every publisher would restate identically.
+A type whose channels include the bell writes one `notifications` row per recipient, in one statement. The row is the render shape the panel already uses, and its `severity` comes from `AppNotificationTypeSeverityMap` rather than from a field every publisher would restate identically.
 
 Rows are trimmed to `NOTIFICATION_RETENTION_MS` on the write path, where the recipients are already known — nothing else trims them, and the only other delete is the cascade that takes a user's rows with the user, so an untrimmed bell is a table that only grows. The unread badge is a property of what the panel read, so no count rides on the push payload and no service worker writes one.
 
@@ -70,21 +70,21 @@ Failure is Event Grid's once it has the event, not the publisher's. Every notifi
 Three edits, and the type system asks for all three:
 
 1. A member on `AppNotificationType`, and its data shape in the `NotificationEventGridData` union.
-2. An entry in `NotificationChannelMap` and `NotificationSeverityMap` — both exhaustive, so omitting one is a type error.
+2. An entry in `AppNotificationTypeChannelMap` and `AppNotificationTypeSeverityMap` — both exhaustive, so omitting one is a type error.
 3. A `case` in `resolveNotification` returning the copy, the deep link and the recipient user ids.
 
 There is no new Function, no new Event Grid subscription and no new delivery path. Adding the enum member also widens the `appNotificationType` Postgres enum, so the change carries a migration.
 
 ## Key files
 
-| File                                                                         | Role                                                 |
-| ---------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `packages/db-schema/src/services/azure/eventGrid/publishNotification.ts`     | the single publish path                              |
-| `packages/db-schema/src/models/azure/eventGrid/NotificationEventGridData.ts` | the one envelope, discriminated by type              |
-| `packages/db-schema/src/models/notification/NotificationChannelMap.ts`       | which surfaces each type reaches                     |
-| `packages/db-schema/src/schema/notifications.ts`                             | the persisted bell row                               |
-| `packages/azure-functions/src/services/notification/resolveNotification.ts`  | copy, deep link and recipients per type              |
-| `packages/azure-functions/src/services/notification/sendNotification.ts`     | the fan-out — bell rows, then devices                |
-| `packages/db/src/services/notification/getMessageRecipientUserIds.ts`        | a message's recipients, thread followers included    |
-| `packages/db/src/services/notification/getPushSubscriptionsForUsers.ts`      | the one device lookup, minus the originating session |
-| `packages/app/app/plugins/pushNotification.client.ts`                        | the tab end of the service worker's postMessage      |
+| File                                                                          | Role                                                 |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `packages/db-schema/src/services/azure/eventGrid/publishNotification.ts`      | the single publish path                              |
+| `packages/db-schema/src/models/azure/eventGrid/NotificationEventGridData.ts`  | the one envelope, discriminated by type              |
+| `packages/db-schema/src/models/notification/AppNotificationTypeChannelMap.ts` | which surfaces each type reaches                     |
+| `packages/db-schema/src/schema/notifications.ts`                              | the persisted bell row                               |
+| `packages/azure-functions/src/services/notification/resolveNotification.ts`   | copy, deep link and recipients per type              |
+| `packages/azure-functions/src/services/notification/sendNotification.ts`      | the fan-out — bell rows, then devices                |
+| `packages/db/src/services/notification/getMessageRecipientUserIds.ts`         | a message's recipients, thread followers included    |
+| `packages/db/src/services/notification/getPushSubscriptionsForUsers.ts`       | the one device lookup, minus the originating session |
+| `packages/app/app/plugins/pushNotification.client.ts`                         | the tab end of the service worker's postMessage      |

@@ -11,7 +11,7 @@ export const appNotificationTypeEnum = pgEnum("appNotificationType", AppNotifica
 export const notificationSeverityEnum = pgEnum("notificationSeverity", NotificationSeverity);
 
 // One row per recipient per notification, written by ProcessNotification for every type whose
-// NotificationChannelMap entry includes the bell. Persisted rather than session-scoped because a push delivered
+// AppNotificationTypeChannelMap entry includes the bell. Persisted rather than session-scoped because a push delivered
 // While the app was closed has nowhere else to land: the tab that would have held it in memory did not exist, and
 // The unread badge that used to need the count on the push payload is a query against these rows instead.
 //

@@ -1,6 +1,6 @@
 import { z } from "zod";
 // Every kind of notification this system publishes. One member per kind, and the registries keyed on it
-// (NotificationChannelMap, NotificationSeverityMap) are exhaustive, so a new kind that forgets to say where it
+// (AppNotificationTypeChannelMap, AppNotificationTypeSeverityMap) are exhaustive, so a new kind that forgets to say where it
 // Renders is a type error rather than a notification nobody ever sees.
 //
 // Client-only feedback — a mutation error, a save conflict, an export that finished in this tab — is not a member:
