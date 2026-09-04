@@ -94,7 +94,7 @@
 | `packages/azure-mock`                                                                                                                       | —          |                                                                                                                                                         |
 | `packages/virrun/src/services/exec` — `snapshot`, `wsl`                                                                                     | —          |                                                                                                                                                         |
 | `packages/virrun/src/services/exec` — the rest                                                                                              | —          | `bwrap`, `cache`, `differential`, `native`, `os`, `store`, `test`, `util`, `vfs`                                                                        |
-| `packages/virrun/src/services` — the rest                                                                                                   | —          | `cli`, `configuration`, `source`, `vfs`, `virrun`                                                                                                       |
+| `packages/virrun/src/services` — the rest                                                                                                   | 2026-09-04 | `cli`, `configuration`, `source`, `vfs`, `virrun`; an in-file lookup table here is `SCREAMING_SNAKE` with the `_MAP` suffix                             |
 | `packages/virrun/src/models`, the `packages/virrun` root files                                                                              | 2026-09-04 | the constant casing says a value is fixed, not that a call site reads like one                                                                          |
 | `packages/infra/src/azure/resources`                                                                                                        | —          | a resource file's name is the export's, and `pulumi-infra` owns the casing there                                                                        |
 | `packages/infra/src/azure` — `constants`, `services`, the root files                                                                        | —          |                                                                                                                                                         |
@@ -112,6 +112,10 @@ the grounds that a rename is expensive — that is the argument
 
 - Filename-is-the-export is decidable from the AST plus the path; a custom oxlint plugin could take it whole.
 - `is*`/`has*`/`show*` on a boolean-typed declaration needs types, which `typeAware: true` already provides.
+  The **function** half of that needs no types at all: a declarator named `^(is|has)[A-Z]` whose initialiser is
+  an arrow or function expression with an explicit `: boolean` return annotation is decidable from the AST, and
+  every one found so far writes that annotation. A `no-restricted-syntax` selector can hold it over the swept
+  paths and widen as the six remaining `exec` ones drain.
 - Abbreviation bans need a word list, not a rule — leave with the sweep.
 - A `<script setup>` constant's casing is not decidable by selector: whether a top-level array or object
   literal is fixed or captures a ref needs scope analysis no `no-restricted-syntax` pattern can do, and the

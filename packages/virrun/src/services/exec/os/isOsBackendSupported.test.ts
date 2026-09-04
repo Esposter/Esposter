@@ -1,4 +1,4 @@
-import { isVirrunEnabled } from "#src/services/configuration/isVirrunEnabled";
+import { checkIsVirrunEnabled } from "#src/services/configuration/checkIsVirrunEnabled";
 import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
 import { probeOsBackendSupported } from "#src/services/exec/os/probeOsBackendSupported";
 import { describe, expect, test } from "vitest";
@@ -13,7 +13,7 @@ describe(isOsBackendSupported, () => {
   // Persist/snapshot writes hit the outer read-only ~/.virrun), so the wrapper degrades on the VIRRUN signal regardless
   // Of what the probe reports.
   const isHostCapable = probeOsBackendSupported();
-  const isNested = isVirrunEnabled(process.env);
+  const isNested = checkIsVirrunEnabled(process.env);
 
   test.skipIf(!(isHostCapable && !isNested))("is true on a capable, un-nested host", () => {
     expect.hasAssertions();

@@ -1,4 +1,4 @@
-import { isVirrunEnabled } from "#src/services/configuration/isVirrunEnabled";
+import { checkIsVirrunEnabled } from "#src/services/configuration/checkIsVirrunEnabled";
 import { probeOsBackendSupported } from "#src/services/exec/os/probeOsBackendSupported";
 import { readCapabilityCache } from "#src/services/exec/os/readCapabilityCache";
 import { writeCapabilityCache } from "#src/services/exec/os/writeCapabilityCache";
@@ -30,6 +30,6 @@ export const isOsBackendSupported = (): boolean => {
   // We neither trust that stale true nor write a nested-only `false` back (which would then leak out to the next
   // Un-nested run under the same fingerprint). Mirrors resolveBackend's nesting degrade — the backend degrades to
   // Native and these os tests skip rather than crash mid-run.
-  if (isVirrunEnabled(process.env)) return false;
+  if (checkIsVirrunEnabled(process.env)) return false;
   return readIsOsBackendSupported() ?? false;
 };
