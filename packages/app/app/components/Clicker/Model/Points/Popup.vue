@@ -2,14 +2,14 @@
 import { formatNumberLong } from "@/services/clicker/formatNumberLong";
 import { useClickerStore } from "@/store/clicker";
 
-export interface PointsPopupProps {
+export interface ClickerModelPointsPopupProps {
   duration: number;
   left: number;
   points: number;
   top: number;
 }
 
-const { duration, left, points, top } = defineProps<PointsPopupProps>();
+const { duration, left, points, top } = defineProps<ClickerModelPointsPopupProps>();
 const clickerStore = useClickerStore();
 const { clickerItemProperties } = storeToRefs(clickerStore);
 const color = computed(() => clickerItemProperties.value.color);

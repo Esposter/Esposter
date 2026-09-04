@@ -2,12 +2,12 @@
 import { useCommentStore } from "@/store/post/comment";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
-interface PostCreateCommentRichTextEditorProps {
+interface PostCommentCreateRichTextEditorProps {
   // The comment being replied to, or the post itself
   parentId: string;
 }
 
-const { parentId } = defineProps<PostCreateCommentRichTextEditorProps>();
+const { parentId } = defineProps<PostCommentCreateRichTextEditorProps>();
 const commentStore = useCommentStore();
 const { createComment } = commentStore;
 const description = ref("");
