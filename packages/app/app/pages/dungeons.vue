@@ -20,7 +20,7 @@ prioritizedParallelSceneKeys.value = [SceneKey.MobileJoystick];
 const textStore = useTextStore();
 const { defaultTextStyle } = storeToRefs(textStore);
 defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
-const sceneComponentEntries = Object.entries(SceneComponentMap);
+const SCENE_COMPONENT_ENTRIES = Object.entries(SceneComponentMap);
 </script>
 
 <template>
@@ -70,7 +70,7 @@ const sceneComponentEntries = Object.entries(SceneComponentMap);
         },
       }"
     >
-      <component :is="component" v-for="[sceneKey, component] of sceneComponentEntries" :key="sceneKey" />
+      <component :is="component" v-for="[sceneKey, component] of SCENE_COMPONENT_ENTRIES" :key="sceneKey" />
     </Game>
   </NuxtLayout>
 </template>
