@@ -114,8 +114,8 @@ catalogs:
       specifier: ^0.18.5
       version: 0.18.5
     '@azure/core-client':
-      specifier: ^1.11.0
-      version: 1.11.0
+      specifier: ^1.11.1
+      version: 1.11.1
     '@azure/core-http-compat':
       specifier: ^2.5.0
       version: 2.5.0
@@ -1465,7 +1465,7 @@ importers:
     dependencies:
       '@azure/core-http-compat':
         specifier: 'catalog:'
-        version: 2.5.0(@azure/core-client@1.11.0(supports-color@10.2.2))(@azure/core-rest-pipeline@1.25.0(supports-color@10.2.2))
+        version: 2.5.0(@azure/core-client@1.11.1(supports-color@10.2.2))(@azure/core-rest-pipeline@1.25.0(supports-color@10.2.2))
       '@azure/core-rest-pipeline':
         specifier: 'catalog:'
         version: 1.25.0(supports-color@10.2.2)
@@ -1586,7 +1586,7 @@ importers:
     dependencies:
       '@azure/core-client':
         specifier: 'catalog:'
-        version: 1.11.0(supports-color@10.2.2)
+        version: 1.11.1(supports-color@10.2.2)
       '@azure/core-rest-pipeline':
         specifier: 'catalog:'
         version: 1.25.0(supports-color@10.2.2)
@@ -2045,6 +2045,10 @@ packages:
 
   '@azure/core-client@1.11.0':
     resolution: {integrity: sha512-JjQWO6akOck45PH/XBrxzsQGAiKrfFl4m5iggJ0ItMIz5omRufOXWpqCPpdjKN3vKDzlSUvFjaMb7Zwf0gvAdA==}
+    engines: {node: '>=22.0.0'}
+
+  '@azure/core-client@1.11.1':
+    resolution: {integrity: sha512-2QygG2F76ZpMP2eMztiJvAiFMu71M9rDeU7vO/QKg5Css7MgM4frUOslFjhVjRhbGaCNPtz/S8M6y46/fFKVuQ==}
     engines: {node: '>=22.0.0'}
 
   '@azure/core-http-compat@2.5.0':
@@ -15071,10 +15075,28 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@azure/core-client@1.11.1(supports-color@10.2.2)':
+    dependencies:
+      '@azure/abort-controller': 2.2.0
+      '@azure/core-auth': 1.11.0(supports-color@10.2.2)
+      '@azure/core-rest-pipeline': 1.25.0(supports-color@10.2.2)
+      '@azure/core-tracing': 1.4.0
+      '@azure/core-util': 1.14.0(supports-color@10.2.2)
+      '@azure/logger': 1.4.0(supports-color@10.2.2)
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
+
   '@azure/core-http-compat@2.5.0(@azure/core-client@1.11.0(supports-color@10.2.2))(@azure/core-rest-pipeline@1.25.0(supports-color@10.2.2))':
     dependencies:
       '@azure/abort-controller': 2.2.0
       '@azure/core-client': 1.11.0(supports-color@10.2.2)
+      '@azure/core-rest-pipeline': 1.25.0(supports-color@10.2.2)
+
+  '@azure/core-http-compat@2.5.0(@azure/core-client@1.11.1(supports-color@10.2.2))(@azure/core-rest-pipeline@1.25.0(supports-color@10.2.2))':
+    dependencies:
+      '@azure/abort-controller': 2.2.0
+      '@azure/core-client': 1.11.1(supports-color@10.2.2)
       '@azure/core-rest-pipeline': 1.25.0(supports-color@10.2.2)
 
   '@azure/core-lro@2.7.2(supports-color@10.2.2)':
