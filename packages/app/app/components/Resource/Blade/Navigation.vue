@@ -7,12 +7,12 @@ import { getResourceBladeDefinitions } from "@/services/resource/getResourceBlad
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { RoutePath } from "@esposter/shared";
 
-interface ResourceBladeNavigationigationProps {
+interface ResourceBladeNavigationProps {
   activeBlade: string;
   resource: Resource;
 }
 
-const { activeBlade, resource } = defineProps<ResourceBladeNavigationigationProps>();
+const { activeBlade, resource } = defineProps<ResourceBladeNavigationProps>();
 // Overview is the resource's own path; every other blade hangs off it as a segment
 const items = computed<NavigationItem[]>(() => {
   const resourcePath = RoutePath.Resource(resource.id);

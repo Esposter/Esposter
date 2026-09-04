@@ -22,7 +22,9 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // Switch, which is unreadable state for anything asking "are these rows this room's" — the offline cache asks
   // Exactly that before it hydrates or persists, and cannot answer it from a list that outlives the partition
   const { getSlice, items, ...restData } = useCursorPaginationDataMap<User>(() => roomStore.scopedRoomId);
-  const members = computed(() => items.value.toSorted((a, b) => EN_US_COMPARATOR.compare(a.name, b.name)));
+  const members = computed(() =>
+    items.value.toSorted((firstMember, secondMember) => EN_US_COMPARATOR.compare(firstMember.name, secondMember.name)),
+  );
   // Single source of truth for resolving a member id to its room display name (nickname over global name),
   // Falling back to the raw id for actors/targets no longer in the loaded member list.
   const getMemberName = (userId: User["id"]): string => {

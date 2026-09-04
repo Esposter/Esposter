@@ -4,11 +4,11 @@ import type { UserAchievementWithDefinition } from "@/models/achievement/UserAch
 import { MAX_RECENT_ACHIEVEMENTS } from "@/services/achievement/constants";
 import { getUnlockedUserAchievements } from "@/services/achievement/getUnlockedUserAchievements";
 
-interface AchievementSummaryProps {
+interface UserProfileAchievementSummaryProps {
   userAchievements: UserAchievementWithDefinition[];
 }
 
-const { userAchievements } = defineProps<AchievementSummaryProps>();
+const { userAchievements } = defineProps<UserProfileAchievementSummaryProps>();
 const unlockedUserAchievements = computed(() => getUnlockedUserAchievements(userAchievements));
 // The read is public and scoped to the profile's own user, so the whole list is already here — the dialog is
 // The rest of what the summary is truncating, about the user on screen, the way GitHub opens a profile's

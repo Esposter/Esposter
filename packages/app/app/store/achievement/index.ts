@@ -5,7 +5,7 @@ import type { AchievementName, UserAchievementWithRelations } from "@esposter/db
 
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 import { getUnlockedUserAchievements } from "@/services/achievement/getUnlockedUserAchievements";
-import { mapToUserAchievementWithDefinition } from "@/services/achievement/mapToUserAchievementWithDefinition";
+import { toUserAchievementWithDefinition } from "@/services/achievement/toUserAchievementWithDefinition";
 
 export const useAchievementStore = defineStore("achievement", () => {
   const achievementDefinitionMap = ref<typeof AchievementDefinitionMap>();
@@ -34,7 +34,7 @@ export const useAchievementStore = defineStore("achievement", () => {
   const updateAchievement = (updatedUserAchievement: UserAchievementWithRelations) => {
     if (!achievementDefinitionMap.value) return;
 
-    const userAchievementWithDefinition = mapToUserAchievementWithDefinition(
+    const userAchievementWithDefinition = toUserAchievementWithDefinition(
       updatedUserAchievement,
       achievementDefinitionMap.value[updatedUserAchievement.achievement.name],
     );

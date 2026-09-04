@@ -1,10 +1,10 @@
 <script setup lang="ts">
-interface MessageLeftSideBarCollapsibleHeaderProps {
+interface LeftSideBarCollapsibleHeaderProps {
   title: string;
 }
 
 defineSlots<{ append?: () => VNode }>();
-const { title } = defineProps<MessageLeftSideBarCollapsibleHeaderProps>();
+const { title } = defineProps<LeftSideBarCollapsibleHeaderProps>();
 const isCollapsed = defineModel<boolean>("collapsed", { required: true });
 </script>
 

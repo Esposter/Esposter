@@ -1,10 +1,10 @@
 <script setup lang="ts">
-interface MessageFriendsSectionProps {
+interface SectionProps {
   title: string;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { title } = defineProps<MessageFriendsSectionProps>();
+const { title } = defineProps<SectionProps>();
 </script>
 
 <template>

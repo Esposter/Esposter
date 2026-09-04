@@ -15,30 +15,30 @@ const readRoomCategories = useReadRoomCategories();
 await readRoomCategories();
 
 const roomCategoryStore = useRoomCategoryStore();
-const { categories } = storeToRefs(roomCategoryStore);
-const selectedCategoryId = ref(room.categoryId);
-const isReadOnly = ref(room.isReadOnly);
-const slowmodeMs = ref(room.slowmodeMs);
-const topic = ref(room.topic);
+const { roomCategories } = storeToRefs(roomCategoryStore);
+const editedCategoryId = ref(room.categoryId);
+const editedIsReadOnly = ref(room.isReadOnly);
+const editedSlowmodeMs = ref(room.slowmodeMs);
+const editedTopic = ref(room.topic);
 const categoryItems = computed<SelectItemCategoryDefinition<null | string>[]>(() => [
   { title: "None (uncategorized)", value: null },
-  ...categories.value.map(({ id, name }) => ({ title: name, value: id })),
+  ...roomCategories.value.map(({ id, name }) => ({ title: name, value: id })),
 ]);
 const isDirty = computed(
   () =>
-    selectedCategoryId.value !== room.categoryId ||
-    isReadOnly.value !== room.isReadOnly ||
-    slowmodeMs.value !== room.slowmodeMs ||
-    selectRoomInMessageSchema.shape.topic.safeParse(topic.value).data !== room.topic,
+    editedCategoryId.value !== room.categoryId ||
+    editedIsReadOnly.value !== room.isReadOnly ||
+    editedSlowmodeMs.value !== room.slowmodeMs ||
+    selectRoomInMessageSchema.shape.topic.safeParse(editedTopic.value).data !== room.topic,
 );
 const save = async () => {
   if (!isDirty.value) return;
 
   await saveRoom({
-    categoryId: selectedCategoryId.value,
-    isReadOnly: isReadOnly.value,
-    slowmodeMs: slowmodeMs.value,
-    topic: topic.value,
+    categoryId: editedCategoryId.value,
+    isReadOnly: editedIsReadOnly.value,
+    slowmodeMs: editedSlowmodeMs.value,
+    topic: editedTopic.value,
   });
 };
 </script>
@@ -53,7 +53,7 @@ const save = async () => {
     <v-row>
       <v-col cols="12" md="6" sm="8">
         <MessageModelRoomSettingsTypeOverviewCategoryField
-          v-model="selectedCategoryId"
+          v-model="editedCategoryId"
           :items="categoryItems"
           @save="save()"
         />
@@ -61,17 +61,17 @@ const save = async () => {
     </v-row>
     <v-row>
       <v-col cols="12" md="6" sm="8">
-        <MessageModelRoomSettingsTypeOverviewTopicField v-model="topic" @save="save()" />
+        <MessageModelRoomSettingsTypeOverviewTopicField v-model="editedTopic" @save="save()" />
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12" md="6" sm="8">
-        <MessageModelRoomSettingsTypeOverviewSlowmodeField v-model="slowmodeMs" @save="save()" />
+        <MessageModelRoomSettingsTypeOverviewSlowmodeField v-model="editedSlowmodeMs" @save="save()" />
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12" md="6" sm="8">
-        <MessageModelRoomSettingsTypeOverviewReadOnlyField v-model="isReadOnly" @save="save()" />
+        <MessageModelRoomSettingsTypeOverviewReadOnlyField v-model="editedIsReadOnly" @save="save()" />
       </v-col>
     </v-row>
   </v-container>

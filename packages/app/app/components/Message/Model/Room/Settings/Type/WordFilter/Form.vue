@@ -25,36 +25,36 @@ const getWordFilterFormData = (roomFilter: null | RoomFilterInMessage): WordFilt
   timeoutDurationMs: roomFilter?.timeoutDurationMs ?? TimeoutDurationMap["5 minutes"],
   words: roomFilter?.words ?? [],
 });
-const baseline = ref(getWordFilterFormData(filter));
-const { cloned: formData, sync } = useCloned(baseline, { manual: true });
-const isTimeout = computed(() => formData.value.action === WordFilterAction.Timeout);
+const initialFormData = ref(getWordFilterFormData(filter));
+const { cloned: editedFormData, sync } = useCloned(initialFormData, { manual: true });
+const isTimeout = computed(() => editedFormData.value.action === WordFilterAction.Timeout);
 const isDirty = computed(
   () =>
-    !deepEqual(formData.value.words, baseline.value.words) ||
-    formData.value.action !== baseline.value.action ||
-    (isTimeout.value && formData.value.timeoutDurationMs !== baseline.value.timeoutDurationMs),
+    !deepEqual(editedFormData.value.words, initialFormData.value.words) ||
+    editedFormData.value.action !== initialFormData.value.action ||
+    (isTimeout.value && editedFormData.value.timeoutDurationMs !== initialFormData.value.timeoutDurationMs),
 );
 const { executeMutation } = useMutation();
 const saveFilter = async () => {
   await executeMutation(
     () =>
       $trpc.room.filter.upsertRoomFilter.mutate({
-        action: formData.value.action,
+        action: editedFormData.value.action,
         roomId,
-        timeoutDurationMs: isTimeout.value ? formData.value.timeoutDurationMs : null,
-        words: formData.value.words,
+        timeoutDurationMs: isTimeout.value ? editedFormData.value.timeoutDurationMs : null,
+        words: editedFormData.value.words,
       }),
     {
       applyOptimistic: () => {
-        const previousBaseline = baseline.value;
-        baseline.value = structuredClone(toRawDeep(formData.value));
+        const previousInitialFormData = initialFormData.value;
+        initialFormData.value = structuredClone(toRawDeep(editedFormData.value));
         return () => {
-          baseline.value = previousBaseline;
+          initialFormData.value = previousInitialFormData;
         };
       },
       key: roomId,
       onSuccess: (updatedFilter) => {
-        baseline.value = getWordFilterFormData(updatedFilter);
+        initialFormData.value = getWordFilterFormData(updatedFilter);
         sync();
       },
     },
@@ -64,12 +64,12 @@ const saveFilter = async () => {
 
 <template>
   <div flex flex-col gap-2>
-    <MessageModelRoomSettingsTypeWordFilterWordsInput v-model="formData.words" />
+    <MessageModelRoomSettingsTypeWordFilterWordsInput v-model="editedFormData.words" />
     <div font-semibold mt-2>Action</div>
-    <v-select v-model="formData.action" :items="actionSelectItems" density="compact" label="On match" />
+    <v-select v-model="editedFormData.action" :items="actionSelectItems" density="compact" label="On match" />
     <v-select
       v-if="isTimeout"
-      v-model="formData.timeoutDurationMs"
+      v-model="editedFormData.timeoutDurationMs"
       :items="TimeoutDurationSelectItems"
       density="compact"
       label="Timeout duration"

@@ -10,7 +10,7 @@ export const playDungeonsBackgroundMusic = (scene: SceneWithPlugins, key: Backgr
 
   const allPlayingSounds = scene.sound.getAllPlaying();
   if (backgroundMusicKey) scene.sound.stopByKey(backgroundMusicKey);
-  if (allPlayingSounds.some((s) => s.key === key)) return;
+  if (allPlayingSounds.some((sound) => sound.key === key)) return;
 
   backgroundMusicKey = key;
   const { play } = getDungeonsSound(scene, backgroundMusicKey, { loop: true });

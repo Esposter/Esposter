@@ -1,7 +1,7 @@
 import { ClickerType } from "#shared/models/clicker/data/ClickerType";
 
-export const NameMap = {
-  [ClickerType.Default]: "Piña Colada",
+export const ClickerPluralNameMap = {
+  [ClickerType.Default]: "Piña Coladas",
   [ClickerType.Magical]: "Mana",
   [ClickerType.Physical]: "Strength",
 } as const satisfies Record<ClickerType, string>;

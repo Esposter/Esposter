@@ -3,7 +3,7 @@ import type { FileEntity } from "@esposter/db-schema";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { getInferredMimetype } from "@/services/file/getInferredMimetype";
-import { getHasThumbnail } from "@/services/message/file/getHasThumbnail";
+import { checkHasThumbnail } from "@/services/message/file/checkHasThumbnail";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
@@ -78,7 +78,7 @@ export const useFileStore = defineStore("message/file", () => {
         // Query resolves to nothing on failure rather than failing the batch the bubble needs. Its original
         // Came back with a full expiry, so without this the entry sits outside the margin for a whole SAS
         // Duration and the room serves multi-megabyte originals until reload. Eligible, it retries next tick.
-        else return getHasThumbnail(file) && !fileUrl.thumbnailUrl;
+        else return checkHasThumbnail(file) && !fileUrl.thumbnailUrl;
       });
       await readFileUrls(roomId, expiringFiles);
     }).match(noop, console.error);

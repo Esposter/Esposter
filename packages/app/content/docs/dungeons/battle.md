@@ -47,7 +47,7 @@ stateDiagram-v2
 The math, all in small pure services under `services/dungeons/monster/` and `services/dungeons/item/`:
 
 - **Damage** — `ceil(random(0.85, 1.01) × attacker.statistics.attack × power / (power + defense))`. Each attack carries a `power` (Slash 40, Ice Shard 55) and every monster a `defense` stat, so move choice and bulk both matter. The saturating `power / (power + defense)` factor means defense meaningfully reduces damage without ever granting immunity, and tuning stays two-knob.
-- **Experience** — on a kill, `round(baseExperience × enemyLevel / 7)`; `useExperience` applies it and loops `levelUp` while the threshold (`calculateLevelExperience`) is crossed. Level-ups add randomized `maxHealth` (+5–8), `attack` (+1–2), and `defense` (+1–2).
+- **Experience** — on a kill, `round(baseExperience × enemyLevel / 7)`; `useExperience` applies it and loops `levelUp` while the threshold (`getLevelExperience`) is crossed. Level-ups add randomized `maxHealth` (+5–8), `attack` (+1–2), and `defense` (+1–2).
 - **Capture** — ball items roll `0.5 + (1 − health/maxHealth) × 0.2` against a uniform random: success joins the party, a near miss (within 0.1) gets its own dialog, otherwise failure — so weakening the enemy first genuinely helps.
 - **Flee** — a random escape attempt; failure forfeits the turn.
 
@@ -62,9 +62,9 @@ Paths relative to `packages/app/app`.
 | `models/dungeons/state/StateMachine.ts`                | generic state machine                             |
 | `models/dungeons/state/battle/StateMap.ts`             | the 17 battle states                              |
 | `services/dungeons/scene/battle/battleStateMachine.ts` | the singleton instance                            |
-| `services/dungeons/monster/calculateDamage.ts`         | damage roll                                       |
+| `services/dungeons/monster/getDamage.ts`               | damage roll                                       |
 | `assets/dungeons/data/attacks.ts`                      | per-attack power values                           |
-| `services/dungeons/monster/calculateExperienceGain.ts` | experience award                                  |
+| `services/dungeons/monster/getExperienceGain.ts`       | experience award                                  |
 | `services/dungeons/monster/levelUp.ts`                 | stat growth                                       |
 | `services/dungeons/item/createCaptureResult.ts`        | capture roll                                      |
 | `store/dungeons/battle/`                               | per-battle stores (player, enemy, dialog, action) |

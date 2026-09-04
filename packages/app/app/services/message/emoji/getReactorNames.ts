@@ -6,8 +6,8 @@ import { MAX_REACTION_HOVER_NAMES } from "@/services/message/emoji/constants";
 // Conjunction: appending " and N others" by hand would produce "Alice and Bob and 4 others"
 export const getReactorNames = (userIds: string[], getMemberName: (userId: string) => string) => {
   const names = userIds.slice(0, MAX_REACTION_HOVER_NAMES).map((userId) => getMemberName(userId));
-  const overflow = userIds.length - names.length;
+  const overflowCount = userIds.length - names.length;
   return EN_US_CONJUNCTION_FORMATTER.format(
-    overflow > 0 ? [...names, `${overflow} other${overflow > 1 ? "s" : ""}`] : names,
+    overflowCount > 0 ? [...names, `${overflowCount} other${overflowCount > 1 ? "s" : ""}`] : names,
   );
 };

@@ -4,7 +4,7 @@ import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { authClient } from "@/services/auth/authClient";
-import { getVoteCountMap } from "@/services/message/poll/getVoteCountMap";
+import { getOptionIdVoteCountMap } from "@/services/message/poll/getOptionIdVoteCountMap";
 import { getVoteDescription } from "@/services/message/poll/getVoteDescription";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 
@@ -18,10 +18,10 @@ const pollContent = computed(() => {
   if (!result.success) throw new InvalidOperationError(Operation.Read, message.rowKey, result.error.message);
   return result.data;
 });
-const totalVotes = computed(() => Object.keys(pollContent.value.votes).length);
-const voteCountMap = computed(() => getVoteCountMap(pollContent.value.votes));
+const totalVoteCount = computed(() => Object.keys(pollContent.value.votes).length);
+const optionIdVoteCountMap = computed(() => getOptionIdVoteCountMap(pollContent.value.votes));
 const userId = computed(() => session.value?.user.id);
-const totalVotesDescription = computed(() => getVoteDescription(totalVotes.value));
+const totalVoteDescription = computed(() => getVoteDescription(totalVoteCount.value));
 const { isVoting, vote } = await useVotePoll(
   () => message,
   () => pollContent.value,
@@ -52,10 +52,10 @@ const { isVoting, vote } = await useVotePoll(
             :id
             :key="id"
             :label
-            :total-votes
-            :vote-count="voteCountMap.get(id) ?? 0"
+            :total-vote-count
+            :vote-count="optionIdVoteCountMap.get(id) ?? 0"
           />
-          <v-list-subheader>{{ totalVotesDescription }}</v-list-subheader>
+          <v-list-subheader>{{ totalVoteDescription }}</v-list-subheader>
         </v-radio-group>
       </v-card-text>
     </v-card>

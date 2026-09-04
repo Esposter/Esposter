@@ -6,9 +6,9 @@ export const createImportTypeLinesString = (lines: ImportTypeLine[]) =>
   lines.length === 0
     ? ""
     : `${lines
-        .toSorted((a, b) => EN_US_COMPARATOR.compare(a.src, b.src))
+        .toSorted((firstLine, secondLine) => EN_US_COMPARATOR.compare(firstLine.src, secondLine.src))
         .map(
           ({ properties, src }) =>
-            `import type { ${properties.toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)).join(",")} } from "${src}";`,
+            `import type { ${properties.toSorted((firstProperty, secondProperty) => EN_US_COMPARATOR.compare(firstProperty, secondProperty)).join(",")} } from "${src}";`,
         )
         .join("\n")}\n\n`;

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { VBtn } from "vuetify/components";
 
-interface MediaControlsProps {
+interface CallPreJoinMediaControlsProps {
   isCameraEnabled: boolean;
   isMicrophoneEnabled: boolean;
 }
 
-const { isCameraEnabled, isMicrophoneEnabled } = defineProps<MediaControlsProps>();
+const { isCameraEnabled, isMicrophoneEnabled } = defineProps<CallPreJoinMediaControlsProps>();
 const emit = defineEmits<{ toggleCamera: []; toggleMicrophone: [] }>();
 const getMediaButtonProps = (isEnabled: boolean): VBtn["$props"] => ({
   color: isEnabled ? undefined : "error",

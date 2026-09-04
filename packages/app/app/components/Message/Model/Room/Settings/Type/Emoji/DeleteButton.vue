@@ -3,11 +3,11 @@ import type { RoomEmojiInMessage } from "@esposter/db-schema";
 
 import { useRoomEmojiDialogStore } from "@/store/message/room/emojiDialog";
 
-interface DeleteButtonProps {
+interface EmojiDeleteButtonProps {
   id: RoomEmojiInMessage["id"];
 }
 
-const { id } = defineProps<DeleteButtonProps>();
+const { id } = defineProps<EmojiDeleteButtonProps>();
 const roomEmojiDialogStore = useRoomEmojiDialogStore();
 const { deletingId } = storeToRefs(roomEmojiDialogStore);
 </script>

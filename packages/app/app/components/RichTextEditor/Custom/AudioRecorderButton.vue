@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MimeType } from "#shared/models/file/MimeType";
 import { formatDate } from "#shared/util/date/formatDate";
-import { AUDIO_MESSAGE_DATE_FORMAT, AUDIO_RECORDER_TIMER_INTERVAL } from "@/services/richTextEditor/constants";
+import { AUDIO_MESSAGE_DATE_FORMAT, AUDIO_RECORDER_TIMER_INTERVAL_MS } from "@/services/richTextEditor/constants";
 import { clearInterval, setInterval } from "worker-timers";
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
@@ -20,7 +20,7 @@ const { data, start, state, stop } = useMediaRecorder({
   onStart: () => {
     timerInterval = setInterval(() => {
       timer.value++;
-    }, AUDIO_RECORDER_TIMER_INTERVAL);
+    }, AUDIO_RECORDER_TIMER_INTERVAL_MS);
   },
   onStop: () => {
     resetTimer();

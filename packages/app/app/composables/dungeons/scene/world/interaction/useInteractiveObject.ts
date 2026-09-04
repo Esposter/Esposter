@@ -2,7 +2,7 @@ import type { InteractableDirectionMap } from "@/models/dungeons/direction/Inter
 import type { Position } from "grid-engine";
 
 import { DEFAULT_INTERACTABLE_DIRECTION_MAP } from "@/services/dungeons/direction/constants";
-import { InteractiveObjectPositionComparator } from "@/services/dungeons/scene/world/interaction/InteractiveObjectPositionComparator";
+import { checkIsInteractiveObjectPosition } from "@/services/dungeons/scene/world/interaction/checkIsInteractiveObjectPosition";
 import { usePlayerStore } from "@/store/dungeons/player";
 // We have to assume that only the unit position is passed in
 export const useInteractiveObject = <T extends Position>(
@@ -12,11 +12,6 @@ export const useInteractiveObject = <T extends Position>(
   const playerStore = usePlayerStore();
   const { player } = storeToRefs(playerStore);
   return objects.find((object) =>
-    InteractiveObjectPositionComparator(
-      player.value.position,
-      player.value.direction,
-      object,
-      interactableDirectionMap,
-    ),
+    checkIsInteractiveObjectPosition(player.value.position, player.value.direction, object, interactableDirectionMap),
   );
 };

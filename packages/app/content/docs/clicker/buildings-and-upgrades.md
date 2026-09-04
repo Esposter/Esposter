@@ -48,7 +48,7 @@ Paths relative to `packages/app`.
 | `app/components/Clicker/Model/Store/Header.vue`      | ×1/×10/×100 buy-quantity toggle                |
 | `app/components/Clicker/Model/Building/ListItem.vue` | building row with stats + Buy                  |
 | `app/components/Clicker/Model/Upgrade/ListItem.vue`  | upgrade row with Buy                           |
-| `app/services/clicker/format.ts`                     | long-word number notation (`formatNumberLong`) |
+| `app/services/clicker/formatNumberLong.ts`           | long-word number notation (`formatNumberLong`) |
 
 ## Notes
 

@@ -147,11 +147,23 @@ describe("resource", () => {
     const sheetResource = await sheetCaller.createResource({ name });
     const { items } = await caller.readResources();
 
-    expect(items.map(({ id }) => id).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b))).toStrictEqual(
-      [dashboardResource.id, sheetResource.id].toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+    expect(
+      items
+        .map(({ id }) => id)
+        .toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
+    ).toStrictEqual(
+      [dashboardResource.id, sheetResource.id].toSorted((firstValue, secondValue) =>
+        EN_US_COMPARATOR.compare(firstValue, secondValue),
+      ),
     );
-    expect(items.map(({ type }) => type).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b))).toStrictEqual(
-      [ResourceType.Dashboard, ResourceType.Sheet].toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+    expect(
+      items
+        .map(({ type }) => type)
+        .toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
+    ).toStrictEqual(
+      [ResourceType.Dashboard, ResourceType.Sheet].toSorted((firstValue, secondValue) =>
+        EN_US_COMPARATOR.compare(firstValue, secondValue),
+      ),
     );
   });
 
@@ -317,8 +329,14 @@ describe("resource", () => {
     const deletedResources = await caller.deleteResources({ ids: [dashboardResource.id, sheetResource.id] });
     const count = await caller.readResourcesCount();
 
-    expect(deletedResources.map(({ id }) => id).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b))).toStrictEqual(
-      [dashboardResource.id, sheetResource.id].toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+    expect(
+      deletedResources
+        .map(({ id }) => id)
+        .toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
+    ).toStrictEqual(
+      [dashboardResource.id, sheetResource.id].toSorted((firstValue, secondValue) =>
+        EN_US_COMPARATOR.compare(firstValue, secondValue),
+      ),
     );
     expect(count).toBe(0);
   });
@@ -696,7 +714,9 @@ describe("resource", () => {
 
     // The blob lastModified timestamp is non-deterministic, so only version + current are asserted
     expect(
-      versions.map(({ isCurrent, version }) => ({ isCurrent, version })).toSorted((a, b) => a.version - b.version),
+      versions
+        .map(({ isCurrent, version }) => ({ isCurrent, version }))
+        .toSorted((firstVersion, secondVersion) => firstVersion.version - secondVersion.version),
     ).toStrictEqual([
       { isCurrent: false, version: 1 },
       { isCurrent: true, version: 2 },
@@ -768,14 +788,16 @@ describe("resource", () => {
     expect(saveEvent.contentVersion).toBe(restoredResource.contentVersion);
     expect(saveEvent.content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
     expect(
-      items.map(({ activityType }) => activityType).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+      items
+        .map(({ activityType }) => activityType)
+        .toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
     ).toStrictEqual(
       [
         ResourceActivityType.ContentSaved,
         ResourceActivityType.Created,
         ResourceActivityType.Published,
         ResourceActivityType.Restored,
-      ].toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+      ].toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
     );
   });
 
@@ -934,9 +956,13 @@ describe("resource", () => {
     const renamedActivity = items.find(({ activityType }) => activityType === ResourceActivityType.Renamed);
 
     expect(
-      items.map(({ activityType }) => activityType).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+      items
+        .map(({ activityType }) => activityType)
+        .toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
     ).toStrictEqual(
-      [ResourceActivityType.Renamed, ResourceActivityType.Created].toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+      [ResourceActivityType.Renamed, ResourceActivityType.Created].toSorted((firstValue, secondValue) =>
+        EN_US_COMPARATOR.compare(firstValue, secondValue),
+      ),
     );
     expect(renamedActivity?.oldName).toBe(name);
     expect(renamedActivity?.newName).toBe("renamed");
@@ -989,10 +1015,12 @@ describe("resource", () => {
     const { items } = await caller.readActivities({ id: webpageResource.id });
 
     expect(
-      items.map(({ activityType }) => activityType).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+      items
+        .map(({ activityType }) => activityType)
+        .toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
     ).toStrictEqual(
-      [ResourceActivityType.ContentSaved, ResourceActivityType.Created].toSorted((a, b) =>
-        EN_US_COMPARATOR.compare(a, b),
+      [ResourceActivityType.ContentSaved, ResourceActivityType.Created].toSorted((firstValue, secondValue) =>
+        EN_US_COMPARATOR.compare(firstValue, secondValue),
       ),
     );
   });
@@ -1012,10 +1040,12 @@ describe("resource", () => {
     const { items } = await caller.readActivities({ id: webpageResource.id });
 
     expect(
-      items.map(({ activityType }) => activityType).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+      items
+        .map(({ activityType }) => activityType)
+        .toSorted((firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue)),
     ).toStrictEqual(
       [ResourceActivityType.ContentSaved, ResourceActivityType.ContentSaved, ResourceActivityType.Created].toSorted(
-        (a, b) => EN_US_COMPARATOR.compare(a, b),
+        (firstValue, secondValue) => EN_US_COMPARATOR.compare(firstValue, secondValue),
       ),
     );
   });

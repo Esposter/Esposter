@@ -1,6 +1,6 @@
 import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster } from "#shared/models/dungeons/monster/Monster";
-import { calculateLevelExperience } from "@/services/dungeons/monster/calculateLevelExperience";
+import { getLevelExperience } from "@/services/dungeons/monster/getLevelExperience";
 import { levelUp } from "@/services/dungeons/monster/levelUp";
 import { describe, expect, test, vi } from "vitest";
 
@@ -13,7 +13,7 @@ describe(levelUp, () => {
 
     const monster = new Monster(MonsterKey.Iguanignite);
     const { attack, defense, level, maxHealth } = monster.statistics;
-    monster.status.experience = calculateLevelExperience(level);
+    monster.status.experience = getLevelExperience(level);
     levelUp(monster);
 
     expect(monster.statistics.level).toBe(level + 1);

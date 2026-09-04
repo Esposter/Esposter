@@ -12,13 +12,13 @@ const { userSettings } = defineProps<IdleTimeoutSliderProps>();
 const MS_PER_MINUTE = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
-const { cloned: autoIdleThresholdMinutes } = useCloned(() => userSettings.autoIdleThresholdMs / MS_PER_MINUTE);
+const { cloned: editedAutoIdleThresholdMinutes } = useCloned(() => userSettings.autoIdleThresholdMs / MS_PER_MINUTE);
 </script>
 
 <template>
-  <div mb-2 text-body-medium>{{ autoIdleThresholdMinutes }} min</div>
+  <div mb-2 text-body-medium>{{ editedAutoIdleThresholdMinutes }} min</div>
   <v-slider
-    v-model="autoIdleThresholdMinutes"
+    v-model="editedAutoIdleThresholdMinutes"
     :max="MAX_AUTO_IDLE_THRESHOLD_MS / MS_PER_MINUTE"
     :min="MIN_AUTO_IDLE_THRESHOLD_MS / MS_PER_MINUTE"
     :step="1"

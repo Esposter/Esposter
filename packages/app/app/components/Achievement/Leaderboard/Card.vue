@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { PointsLeaderboard } from "#shared/models/achievement/PointsLeaderboard";
 
-interface LeaderboardProps {
+interface LeaderboardCardProps {
   leaderboard: PointsLeaderboard;
 }
 
-const { leaderboard } = defineProps<LeaderboardProps>();
+const { leaderboard } = defineProps<LeaderboardCardProps>();
 const isMyEntryAppended = computed(
   () =>
     leaderboard.myEntry !== undefined &&

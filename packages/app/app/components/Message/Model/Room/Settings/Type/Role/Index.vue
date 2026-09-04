@@ -3,15 +3,17 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useRoleStore } from "@/store/message/room/role";
 
-interface RolesProps {
+interface RoleProps {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<RolesProps>();
+const { room } = defineProps<RoleProps>();
 const roleStore = useRoleStore();
 const { getRoles } = roleStore;
 const { selectedRole } = storeToRefs(roleStore);
-const roles = computed(() => getRoles(room.id).toSorted((a, b) => (a.isEveryone ? -1 : b.isEveryone ? 1 : 0)));
+const roles = computed(() =>
+  getRoles(room.id).toSorted((firstRole, secondRole) => (firstRole.isEveryone ? -1 : secondRole.isEveryone ? 1 : 0)),
+);
 </script>
 
 <template>

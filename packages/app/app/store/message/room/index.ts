@@ -20,7 +20,9 @@ export const useRoomStore = defineStore("message/room", () => {
     updateRoom: storeUpdateRoom,
     ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.Room);
-  const rooms = computed(() => items.value.toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()));
+  const rooms = computed(() =>
+    items.value.toSorted((firstRoom, secondRoom) => secondRoom.updatedAt.getTime() - firstRoom.updatedAt.getTime()),
+  );
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = router.currentRoute.value.params.id;

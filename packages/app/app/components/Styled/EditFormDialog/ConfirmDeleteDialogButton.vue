@@ -1,12 +1,12 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
 import type { ItemEntityType } from "@esposter/shared";
 
-interface ConfirmDeleteDialogButtonProps<T> {
+interface StyledEditFormDialogConfirmDeleteDialogButtonProps<T> {
   name: string;
   originalItem?: T;
 }
 
-const { name, originalItem } = defineProps<ConfirmDeleteDialogButtonProps<T>>();
+const { name, originalItem } = defineProps<StyledEditFormDialogConfirmDeleteDialogButtonProps<T>>();
 const emit = defineEmits<{ delete: [onComplete: (isSuccessful?: boolean) => void] }>();
 const cardProps = computed(() => ({ title: `Confirm Deletion of ${originalItem?.type}` }));
 </script>

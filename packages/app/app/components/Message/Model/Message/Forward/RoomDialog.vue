@@ -17,7 +17,7 @@ const { isOpen, item: forward } = useSingletonDialog(rowKey, () =>
 const creator = useCreator(forward);
 const {
   hasMore,
-  items: itemsSearched,
+  items: rooms,
   readMoreSearchedItems,
   searchQuery,
 } = useCursorSearcher(
@@ -54,7 +54,7 @@ const {
       </v-card-title>
       <v-card-text p-4 overflow-y-auto>
         <v-list py-0>
-          <MessageModelMessageForwardRoomListItem v-for="room of itemsSearched" :key="room.id" :room />
+          <MessageModelMessageForwardRoomListItem v-for="room of rooms" :key="room.id" :room />
           <StyledWaypoint :is-active="hasMore" @change="readMoreSearchedItems">
             <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
           </StyledWaypoint>

@@ -13,7 +13,7 @@ describe("docsSectionGroupsMap", () => {
   const UNMAPPED_PAGES = new Set(["index", "roadmap"]);
   const PLANNING_DIRECTORIES = new Set(["deferred", "rejected"]);
   const docsDirectory = join(import.meta.dirname, "..", "..", "..", "content", DOCS_DIRECTORY);
-  const getIsPage = (slugPath: string) =>
+  const checkIsPage = (slugPath: string) =>
     existsSync(join(docsDirectory, `${slugPath}.md`)) || existsSync(join(docsDirectory, slugPath, "index.md"));
   let pagePaths: string[] = [];
 
@@ -30,7 +30,7 @@ describe("docsSectionGroupsMap", () => {
       .flatMap(([section, groups]) =>
         Object.entries(groups).flatMap(([group, slugs]) => slugs.map((slug) => ({ group, section, slug }))),
       )
-      .filter(({ section, slug }) => !getIsPage(`${section}/${slug}`))
+      .filter(({ section, slug }) => !checkIsPage(`${section}/${slug}`))
       .map(({ group, section, slug }) => `${section} → ${group} → ${slug}`);
 
     expect(missingPages).toStrictEqual([]);

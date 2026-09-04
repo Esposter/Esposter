@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
-interface MessageModelMessageOptionsMenuSectionProps {
+interface OptionsMenuSectionProps {
   items: Item[];
 }
 
-const { items } = defineProps<MessageModelMessageOptionsMenuSectionProps>();
+const { items } = defineProps<OptionsMenuSectionProps>();
 </script>
 
 <template>

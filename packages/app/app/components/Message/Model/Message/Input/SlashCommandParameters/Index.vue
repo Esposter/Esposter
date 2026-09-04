@@ -14,10 +14,10 @@ const {
   setPendingSlashCommand,
 } = slashCommandStore;
 const submit = useSubmitSlashCommand();
-const commandTitle = ref(pendingSlashCommand.value?.type ?? "");
+const editedCommandType = ref(pendingSlashCommand.value?.type ?? "");
 
 watch(pendingSlashCommand, (newPendingSlashCommand) => {
-  if (newPendingSlashCommand) commandTitle.value = newPendingSlashCommand.type;
+  if (newPendingSlashCommand) editedCommandType.value = newPendingSlashCommand.type;
 });
 
 const deleteParameter = (index: number) => {
@@ -29,7 +29,7 @@ const deleteParameter = (index: number) => {
 };
 const commandNavigateNext = async () => {
   const newSlashCommand = SlashCommandDefinitions.find(
-    ({ type }) => type.toLowerCase() === commandTitle.value.toLowerCase(),
+    ({ type }) => type.toLowerCase() === editedCommandType.value.toLowerCase(),
   );
   if (newSlashCommand && newSlashCommand.type !== pendingSlashCommand.value?.type) await selectCommand(newSlashCommand);
   else if (activeParameters.value.length > 0) focus(0);
@@ -67,7 +67,7 @@ onKeyStroke("Backspace", () => {
     <StyledCard>
       <div px-4 pb-2 pt-3 flex gap-2 items-center>
         <MessageModelMessageInputSlashCommandParametersCommandInput
-          v-model="commandTitle"
+          v-model="editedCommandType"
           :is-focused="focusedIndex === -1"
           @navigate:next="commandNavigateNext"
           @delete="collapseToText"

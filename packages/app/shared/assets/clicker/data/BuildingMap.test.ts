@@ -11,6 +11,6 @@ describe("clicker data", () => {
   ])("%s is sorted by price", (_name, prices) => {
     expect.hasAssertions();
 
-    expect(prices).toStrictEqual(prices.toSorted((a, b) => a - b));
+    expect(prices).toStrictEqual(prices.toSorted((firstPrice, secondPrice) => firstPrice - secondPrice));
   });
 });

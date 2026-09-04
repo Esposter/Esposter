@@ -1,6 +1,6 @@
 import { TextSpeedSetting } from "#shared/models/dungeons/data/settings/TextSpeedSetting";
 
-export const TextSpeedDelayMap = {
+export const TextSpeedDelayMsMap = {
   [TextSpeedSetting.Fast]: 50,
   [TextSpeedSetting.Mid]: 30,
   [TextSpeedSetting.Slow]: 15,

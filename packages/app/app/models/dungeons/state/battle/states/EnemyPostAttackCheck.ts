@@ -23,7 +23,11 @@ export const EnemyPostAttackCheck: State<StateName> = {
 
     if (checkIsMonsterFainted(activeMonster.value)) {
       await useMonsterDeathTween(false);
-      if (player.value.monsters.some((m) => m.id !== activeMonster.value.id && !checkIsMonsterFainted(m))) {
+      if (
+        player.value.monsters.some(
+          (monster) => monster.id !== activeMonster.value.id && !checkIsMonsterFainted(monster),
+        )
+      ) {
         await showMessages(scene, [
           `${prettify(activeMonster.value.key)} has fainted!`,
           "Select another monster to continue the battle.",

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { SITE_NAME } from "@esposter/shared";
 
-interface StyledLogoProps {
+interface AppLogoProps {
   width?: string;
 }
 
-const { width = "2rem" } = defineProps<StyledLogoProps>();
+const { width = "2rem" } = defineProps<AppLogoProps>();
 const logoImageUrl = useLogoImageUrl();
 </script>
 

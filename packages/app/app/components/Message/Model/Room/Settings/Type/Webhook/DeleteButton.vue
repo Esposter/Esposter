@@ -3,11 +3,11 @@ import type { WebhookInMessage } from "@esposter/db-schema";
 
 import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
 
-interface DeleteButtonProps {
+interface WebhookDeleteButtonProps {
   id: WebhookInMessage["id"];
 }
 
-const { id } = defineProps<DeleteButtonProps>();
+const { id } = defineProps<WebhookDeleteButtonProps>();
 const webhookDialogStore = useWebhookDialogStore();
 const { deletingId } = storeToRefs(webhookDialogStore);
 </script>

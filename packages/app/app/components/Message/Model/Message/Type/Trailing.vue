@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@esposter/db-schema";
 
-interface MessageModelMessageTypeTrailingProps {
+interface TrailingProps {
   isPreview?: boolean;
   message: MessageEntity;
 }
 
-const { isPreview = false, message } = defineProps<MessageModelMessageTypeTrailingProps>();
+const { isPreview = false, message } = defineProps<TrailingProps>();
 </script>
 
 <template>

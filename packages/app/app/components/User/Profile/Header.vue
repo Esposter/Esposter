@@ -4,12 +4,12 @@ import type { User } from "@esposter/db-schema";
 import { authClient } from "@/services/auth/authClient";
 import { RoutePath } from "@esposter/shared";
 
-interface HeaderProps {
+interface UserProfileHeaderProps {
   user: Pick<User, "biography" | "image" | "name">;
   userId: User["id"];
 }
 
-const { user, userId } = defineProps<HeaderProps>();
+const { user, userId } = defineProps<UserProfileHeaderProps>();
 const { data: session } = await authClient.useSession(useFetch);
 // Looking at your own profile is the moment the avatar or the biography reads wrong, and until now the only way
 // To act on that was to leave for the settings page and find it. The form itself stays there — this is the entry

@@ -6,7 +6,7 @@ export const parseTextAndParameters = (
   text: string,
   parameters: SlashCommandParameter[],
 ): { parameterValues: Record<string, string>; trailingMessage: string } => {
-  const result: Record<string, string> = {};
+  const parameterValues: Record<string, string> = {};
   let remainingText = normalizeString(text);
 
   while (remainingText.length > 0) {
@@ -26,14 +26,14 @@ export const parseTextAndParameters = (
     }
 
     if (nextParameterStartIndex === -1) {
-      result[name] = remainingText;
+      parameterValues[name] = remainingText;
       remainingText = "";
       break;
     } else {
-      result[name] = remainingText.slice(0, nextParameterStartIndex);
+      parameterValues[name] = remainingText.slice(0, nextParameterStartIndex);
       remainingText = remainingText.slice(nextParameterStartIndex + 1).trimStart();
     }
   }
 
-  return { parameterValues: result, trailingMessage: remainingText };
+  return { parameterValues, trailingMessage: remainingText };
 };

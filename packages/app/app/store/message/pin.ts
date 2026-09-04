@@ -12,7 +12,11 @@ import { Operation } from "@esposter/shared";
 export const usePinStore = defineStore("message/pin", () => {
   const roomStore = useRoomStore();
   const { getSlice, items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
-  const displayMessages = computed(() => items.value.toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()));
+  const displayMessages = computed(() =>
+    items.value.toSorted(
+      (firstMessage, secondMessage) => secondMessage.updatedAt.getTime() - firstMessage.updatedAt.getTime(),
+    ),
+  );
   const dataStore = useDataStore();
   // The pin belongs to the room the message is in, which is not necessarily the room on screen — a pin toggled
   // From a search result or a thread in another room writes that room's list, and `displayMessages` above only reads

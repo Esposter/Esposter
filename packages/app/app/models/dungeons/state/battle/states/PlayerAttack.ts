@@ -1,7 +1,7 @@
 import type { State } from "@/models/dungeons/state/State";
 
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { calculateDamage } from "@/services/dungeons/monster/calculateDamage";
+import { getDamage } from "@/services/dungeons/monster/getDamage";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
@@ -27,7 +27,7 @@ export const PlayerAttack: State<StateName> = {
     await sleepScene(scene, 500);
     await useAttackAnimation(scene, attack, true);
     await takeDamage(
-      calculateDamage(activeMonster.value.statistics.attack, attack.power, enemyActiveMonster.value.statistics.defense),
+      getDamage(activeMonster.value.statistics.attack, attack.power, enemyActiveMonster.value.statistics.defense),
     );
     await battleStateMachine.setState(StateName.PlayerPostAttackCheck);
   },

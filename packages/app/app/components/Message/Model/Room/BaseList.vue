@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 
-interface MessageModelRoomBaseListProps {
+interface RoomBaseListProps {
   hasMore: boolean;
   isCollapsed?: boolean;
   isPending: boolean;
 }
 
 defineSlots<{ default: () => VNode; prepend: () => VNode }>();
-const { hasMore, isCollapsed = false, isPending } = defineProps<MessageModelRoomBaseListProps>();
+const { hasMore, isCollapsed = false, isPending } = defineProps<RoomBaseListProps>();
 const emit = defineEmits<{ loadMore: [onComplete: () => void] }>();
 </script>
 

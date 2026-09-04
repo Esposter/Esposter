@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
-import type { EditorView } from "@codemirror/view";
 
 import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
 import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
@@ -23,7 +22,6 @@ code.value = await getResultAsync(async () => {
   .unwrapOr("");
 const baseExtensions = computedAsync(() => getLanguageExtension(language), []);
 const extensions = useExtensions(baseExtensions);
-const editorView = shallowRef<EditorView>();
 </script>
 
 <template>
@@ -33,7 +31,6 @@ const editorView = shallowRef<EditorView>();
       :style="isPreview ? { maxHeight: PREVIEW_MAX_HEIGHT, pointerEvents: 'auto', userSelect: 'auto' } : undefined"
       :extensions
       disabled
-      @ready="({ view }) => (editorView = view)"
     />
   </StyledCard>
 </template>

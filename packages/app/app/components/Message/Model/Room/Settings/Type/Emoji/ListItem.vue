@@ -14,13 +14,13 @@ interface EmojiListItemProps {
 const { roomEmoji, roomId } = defineProps<EmojiListItemProps>();
 const roomEmojiStore = useRoomEmojiStore();
 const { updateRoomEmoji } = roomEmojiStore;
-const name = ref(roomEmoji.name);
+const editedName = ref(roomEmoji.name);
 // A rename from another device replaces the field, unless what is in it is an edit of the previous name that
 // Has not been committed yet — that edit is the one the user is still typing
 watch(
   () => roomEmoji.name,
   (newName, oldName) => {
-    if (name.value === oldName) name.value = newName;
+    if (editedName.value === oldName) editedName.value = newName;
   },
 );
 </script>
@@ -31,16 +31,16 @@ watch(
       <NuxtImg :alt="getEmojiShortcode(roomEmoji.name)" :src="roomEmoji.sasUrl" mr-4 size-8 object-contain />
     </template>
     <MessageModelRoomEmojiNameField
-      v-model="name"
+      v-model="editedName"
       density="compact"
       variant="plain"
       @blur="
         () => {
-          if (name === roomEmoji.name || !ROOM_EMOJI_NAME_REGEX.test(name)) {
-            name = roomEmoji.name;
+          if (editedName === roomEmoji.name || !ROOM_EMOJI_NAME_REGEX.test(editedName)) {
+            editedName = roomEmoji.name;
             return;
           }
-          updateRoomEmoji(roomId, { id: roomEmoji.id, name });
+          updateRoomEmoji(roomId, { id: roomEmoji.id, name: editedName });
         }
       "
     />

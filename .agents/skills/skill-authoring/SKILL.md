@@ -100,6 +100,25 @@ ledger (the `sweeps` skill), and the rule belongs here as an **invariant plus it
 package declares X" true is the test that fails when one does not; the sentence claiming it can only ever go
 quietly out of date.
 
+## An exception has to name what forces it
+
+We own the whole codebase, so almost nothing is genuinely un-fixable: a rule that would be inconvenient to apply
+is a rule to apply anyway, and an exception written for it is a permanent licence bought to save one commit. The
+bar is that something **outside our control** forces the shape — a dependency's own spelling or interface, a
+platform or language requirement, a published surface whose rename is a breaking change, an enforcer that
+demands the opposite. Those are worth writing down precisely because no amount of editing our code removes them.
+
+So an exception states its forcing agent by name (`@azure/storage-blob`'s `listBlobsFlat`, `MediaRecorder`'s
+optional properties, `vitest/padding-around-test-blocks`). One that cannot name a source outside the repo is
+either a rule branch wearing the wrong word — `flex-wrap` on a three-control row is _when the rule says yes_,
+not an escape from it — or a defect the exception is hiding, and the fix is the code. The second kind reads
+plausibly — a carve-out for "a case the rule cannot express" — so the tell is a grep rather than an argument:
+where neighbouring code already spells the thing the rule’s way and is fine, the exception is describing one
+site’s defect, and deleting it costs a rename.
+
+**Prefer the branch to the carve-out.** Written as a branch the rule stays one rule and its edge is decidable;
+written as an exception it becomes two rules, and the second grows.
+
 ## SKILL.md is the always-on layer; `references/` holds the rest
 
 A selected skill loads **whole**, so every byte of `SKILL.md` is paid for by every task that trips its trigger — including the tasks that needed one rule from it. The budget is **~15 KB, and ~150 lines**: bytes are what the context actually costs, lines are the readability proxy, and this repo's long prose lines make it easy to pass the first while meeting the second. Past that a skill stops being a rule list and becomes a manual nobody reads to the end, which is the same failure as not writing it.

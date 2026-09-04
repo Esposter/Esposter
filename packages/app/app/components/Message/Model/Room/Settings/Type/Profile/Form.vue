@@ -13,12 +13,12 @@ const { $trpc } = useNuxtApp();
 const userToRoomStore = useUserToRoomStore();
 const { setMyUserToRoom } = userToRoomStore;
 const { executeMutation } = useMutation();
-const nickname = ref(userToRoom.nickname);
+const editedNickname = ref(userToRoom.nickname);
 const save = async () => {
   // The field emits save from both blur and Enter, so the same value would otherwise be written twice
-  if (nickname.value === userToRoom.nickname) return;
+  if (editedNickname.value === userToRoom.nickname) return;
 
-  const newNickname = nickname.value;
+  const newNickname = editedNickname.value;
   await executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ nickname: newNickname, roomId }), {
     applyOptimistic: () => {
       const oldNickname = userToRoom.nickname;
@@ -41,7 +41,7 @@ const save = async () => {
     </v-row>
     <v-row>
       <v-col cols="12" md="6" sm="8">
-        <MessageModelRoomSettingsTypeProfileNicknameField v-model="nickname" @save="save()" />
+        <MessageModelRoomSettingsTypeProfileNicknameField v-model="editedNickname" @save="save()" />
       </v-col>
     </v-row>
   </v-container>

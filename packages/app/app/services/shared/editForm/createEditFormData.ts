@@ -18,7 +18,9 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   const originalItem = computed(() => {
     const editedItemValue = editedItem.value;
     return editedItemValue
-      ? items.value.find((i) => getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], editedItemValue)(i))
+      ? items.value.find((item) =>
+          getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], editedItemValue)(item),
+        )
       : undefined;
   });
   const isFullScreenDialog = ref(false);
@@ -44,7 +46,7 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
       Object.keys(ids) as (keyof TItem & string)[],
       ids as Partial<TItem>,
     );
-    const item = items.value.find((i) => checkIsEntityIdEqual(i));
+    const item = items.value.find((currentItem) => checkIsEntityIdEqual(currentItem));
     if (!item) return;
 
     editedItem.value = structuredClone(toRawDeep(item));

@@ -7,8 +7,8 @@ export const createEnumString = (name: string, properties: string[]) =>
     : [
         `export enum ${name} {`,
         properties
-          .toSorted((a, b) => EN_US_COMPARATOR.compare(a, b))
-          .map((m) => `  ${createEnumPropertyString(m)} = "${m}",`)
+          .toSorted((firstProperty, secondProperty) => EN_US_COMPARATOR.compare(firstProperty, secondProperty))
+          .map((property) => `  ${createEnumPropertyString(property)} = "${property}",`)
           .join("\n"),
         "}\n",
       ].join("\n");

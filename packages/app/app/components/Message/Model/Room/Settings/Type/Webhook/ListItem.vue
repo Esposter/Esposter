@@ -3,16 +3,16 @@ import type { RoomInMessage, WebhookInMessage } from "@esposter/db-schema";
 
 import { useWebhookStore } from "@/store/message/room/webhook";
 
-interface ListItemProps {
+interface WebhookListItemProps {
   roomId: RoomInMessage["id"];
   webhook: WebhookInMessage;
 }
 
-const { roomId, webhook } = defineProps<ListItemProps>();
+const { roomId, webhook } = defineProps<WebhookListItemProps>();
 const runtimeConfig = useRuntimeConfig();
 const webhookStore = useWebhookStore();
 const { updateWebhook } = webhookStore;
-const name = ref(webhook.name);
+const editedName = ref(webhook.name);
 </script>
 
 <template>
@@ -23,10 +23,10 @@ const name = ref(webhook.name);
       </v-avatar>
     </template>
     <v-text-field
-      v-model="name"
+      v-model="editedName"
       label="Name"
       density="compact"
-      @blur="updateWebhook(roomId, { id: webhook.id, name })"
+      @blur="updateWebhook(roomId, { id: webhook.id, name: editedName })"
     />
     <template #append>
       <StyledClipboardIconButton

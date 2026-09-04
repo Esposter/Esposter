@@ -1,4 +1,4 @@
-import { MIN_OFFLINE_DIALOG_ELAPSED, OFFLINE_CAP, OFFLINE_RATE } from "@/services/clicker/constants";
+import { MIN_OFFLINE_DIALOG_ELAPSED_MS, OFFLINE_CAP_MS, OFFLINE_RATE } from "@/services/clicker/constants";
 import { useClickerStore } from "@/store/clicker";
 import { useBuildingStore } from "@/store/clicker/building";
 import { usePointStore } from "@/store/clicker/point";
@@ -18,7 +18,7 @@ export const useOfflineProgressStore = defineStore("clicker/offlineProgress", ()
     const newElapsedMs = Date.now() - clickerStore.clicker.updatedAt.getTime();
     if (newElapsedMs <= 0) return;
 
-    const cappedSeconds = Temporal.Duration.from({ milliseconds: Math.min(newElapsedMs, OFFLINE_CAP) }).total(
+    const cappedSeconds = Temporal.Duration.from({ milliseconds: Math.min(newElapsedMs, OFFLINE_CAP_MS) }).total(
       "seconds",
     );
     const newAwardedPoints = buildingStore.allBuildingPower * cappedSeconds * OFFLINE_RATE;
@@ -31,7 +31,7 @@ export const useOfflineProgressStore = defineStore("clicker/offlineProgress", ()
     // Otherwise reloading before the next autosave re-awards the same offline window indefinitely
     await saveClicker();
 
-    if (newElapsedMs < MIN_OFFLINE_DIALOG_ELAPSED) return;
+    if (newElapsedMs < MIN_OFFLINE_DIALOG_ELAPSED_MS) return;
 
     awardedPoints.value = newAwardedPoints;
     elapsedMs.value = newElapsedMs;

@@ -14,12 +14,13 @@ const modelValue = defineModel<ModelValue>();
 const { excludedUserIds = [], isMultiple } = defineProps<DirectMessageFriendPickerProps>();
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
-const search = ref("");
+const searchQuery = ref("");
 const excludedUserIdSet = computed(() => new Set(excludedUserIds));
 const displayFriends = computed(() =>
   friends.value.filter(
     ({ id, name }) =>
-      !excludedUserIdSet.value.has(id) && (!search.value || name.toLowerCase().includes(search.value.toLowerCase())),
+      !excludedUserIdSet.value.has(id) &&
+      (!searchQuery.value || name.toLowerCase().includes(searchQuery.value.toLowerCase())),
   ),
 );
 // The single/multiple split is the component's generic, which the template cannot narrow — so the two shapes of
@@ -38,7 +39,7 @@ const toggleFriend = (id: string) => {
 };
 
 const reset = () => {
-  search.value = "";
+  searchQuery.value = "";
 };
 
 defineExpose({ reset });
@@ -49,7 +50,7 @@ await readFriends();
 
 <template>
   <v-container>
-    <v-text-field v-model="search" placeholder="Search friends" autofocus clearable />
+    <v-text-field v-model="searchQuery" placeholder="Search friends" autofocus clearable />
     <v-list overflow-y-auto lines="two" max-height="360">
       <v-list-item v-for="{ id, image, name } of displayFriends" :key="id" :title="name" @click="toggleFriend(id)">
         <template #prepend>

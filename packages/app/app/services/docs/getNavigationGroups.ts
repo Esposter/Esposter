@@ -6,7 +6,7 @@ import { DocsSectionGroupsMap } from "@/services/docs/DocsSectionGroupsMap";
 import { getSlug } from "@/services/docs/getSlug";
 
 const PLANNING_GROUP_TITLE = "Planning";
-const planningSlugs = new Set<string>([
+const PlanningSlugs = new Set<string>([
   DocsNavigationSlug.Deferred,
   DocsNavigationSlug.Rejected,
   DocsNavigationSlug.Roadmap,
@@ -21,7 +21,7 @@ export const getNavigationGroups = (sectionPath: string, items: ContentNavigatio
   const groupTitleItemsMap = new Map<string | undefined, ContentNavigationItem[]>();
   for (const item of items) {
     const slug = getSlug(item.path);
-    const title = planningSlugs.has(slug) ? PLANNING_GROUP_TITLE : slugGroupTitleMap.get(slug);
+    const title = PlanningSlugs.has(slug) ? PLANNING_GROUP_TITLE : slugGroupTitleMap.get(slug);
     const groupItems = groupTitleItemsMap.get(title) ?? [];
     groupItems.push(item);
     groupTitleItemsMap.set(title, groupItems);

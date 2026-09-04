@@ -37,10 +37,26 @@ export default {
       // Sdk's own paging contract, and `isGroupedByType` is a boolean. So a lookup is recognised by a
       // `Map`/`Record` annotation, a `new Map`/`Object.groupBy` initialiser, or an object literal — and the
       // Object-literal branches take the `By` infix only, since `To` collides with the `usersToRooms` join
-      // Table's own name, which reads as `<key>To<value>` and is no more ours to rename than `byPage`.
+      // Table's own name, which reads as `<key>To<value>` and is no more ours to rename than `byPage`. A lookup
+      // Built inside a `computed` is the same lookup — the initialiser is the `computed` call rather than the
+      // `new Map`, so the arrow's body is read directly instead of by descent, which would report the wrong node
+      // And catch a `Map` built anywhere deeper for some other purpose.
       message:
         "Name a map `<key><value>Map` (or `<value>Map` where the key is a field the value already carries) — not `<value>By<key>` or `<key>To<value>`. See the naming skill.",
-      selector: `:matches(VariableDeclarator[id.name=${MAP_NAME_REGEX}]:matches([init.callee.name='Map'], [init.callee.object.name='Object'][init.callee.property.name='groupBy'], [id.typeAnnotation.typeAnnotation.typeName.name=${MAP_TYPE_NAME_REGEX}]), VariableDeclarator[id.name=${BY_MAP_NAME_REGEX}]:matches([init.type='ObjectExpression'], [init.expression.type='ObjectExpression']), :matches(PropertyDefinition, TSPropertySignature)[key.name=${MAP_NAME_REGEX}][typeAnnotation.typeAnnotation.typeName.name=${MAP_TYPE_NAME_REGEX}], Property[key.name=${BY_MAP_NAME_REGEX}]:matches([value.type='ObjectExpression'], [value.callee.name='Map'], [value.callee.object.name='Object'][value.callee.property.name='groupBy']), :matches(PropertyDefinition, Property)[key.name=/^by[A-Z]/]:not([value.type=/^(Arrow)?FunctionExpression$/]), TSPropertySignature[key.name=/^by[A-Z]/]:not([typeAnnotation.typeAnnotation.type='TSFunctionType']), VariableDeclarator[id.name=/^by[A-Z]/]:not([init.type=/^(Arrow)?FunctionExpression$/]))`,
+      selector: `:matches(VariableDeclarator[id.name=${MAP_NAME_REGEX}]:matches([init.callee.name='Map'], [init.callee.object.name='Object'][init.callee.property.name='groupBy'], [id.typeAnnotation.typeAnnotation.typeName.name=${MAP_TYPE_NAME_REGEX}], [init.callee.name='computed'][init.arguments.0.body.callee.name='Map'], [init.callee.name='computed'][init.arguments.0.body.callee.object.name='Object'][init.arguments.0.body.callee.property.name='groupBy']), VariableDeclarator[id.name=${BY_MAP_NAME_REGEX}]:matches([init.type='ObjectExpression'], [init.expression.type='ObjectExpression']), :matches(PropertyDefinition, TSPropertySignature)[key.name=${MAP_NAME_REGEX}][typeAnnotation.typeAnnotation.typeName.name=${MAP_TYPE_NAME_REGEX}], Property[key.name=${BY_MAP_NAME_REGEX}]:matches([value.type='ObjectExpression'], [value.callee.name='Map'], [value.callee.object.name='Object'][value.callee.property.name='groupBy']), :matches(PropertyDefinition, Property)[key.name=/^by[A-Z]/]:not([value.type=/^(Arrow)?FunctionExpression$/]), TSPropertySignature[key.name=/^by[A-Z]/]:not([typeAnnotation.typeAnnotation.type='TSFunctionType']), VariableDeclarator[id.name=/^by[A-Z]/]:not([init.type=/^(Arrow)?FunctionExpression$/]))`,
+    },
+    {
+      // A boolean says what is true, not what is permitted: `can`/`should` name a policy the value does not
+      // Carry, and the repo already spells a permission check `hasManageRoles` and a capability check
+      // `isScreenShareSupported`. Only a **named** declarator is matched, so a dependency's own key stays its own —
+      // LiveKit's `canPublish`/`canSubscribe` grants and `URL.canParse` are read and written under their names.
+      // A destructuring pattern is therefore out of scope on purpose rather than by omission: the name in
+      // `const { canPublish } = grant` is the foreign object's, so the only way to satisfy the rule there is to
+      // Rename on the spot and desync our vocabulary from the sdk's at every call site. A boolean we author has
+      // Its own declarator, which this does match.
+      message:
+        "Name a boolean `is*` (or `has*` for possession/membership) — `can*` and `should*` name a policy rather than the value. See the naming skill.",
+      selector: "VariableDeclarator[id.name=/^(can|should)[A-Z]/]",
     },
     {
       message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",

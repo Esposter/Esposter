@@ -11,8 +11,8 @@ interface AttachmentsProps {
 
 const { room } = defineProps<AttachmentsProps>();
 const saveRoom = useSaveRoom(() => room);
-const maxFileSizeBytes = ref(room.maxFileSizeBytes);
-const allowedMimeCategories = ref([...room.allowedMimeCategories]);
+const editedMaxFileSizeBytes = ref(room.maxFileSizeBytes);
+const editedAllowedMimeCategories = ref([...room.allowedMimeCategories]);
 const maxFileSizeMegabytes = MAX_FILE_REQUEST_SIZE / MEGABYTE;
 const categoryItems = Object.values(MimeCategory).map<SelectItemCategoryDefinition<MimeCategory>>((category) => ({
   title: category,
@@ -20,15 +20,15 @@ const categoryItems = Object.values(MimeCategory).map<SelectItemCategoryDefiniti
 }));
 const isDirty = computed(
   () =>
-    maxFileSizeBytes.value !== room.maxFileSizeBytes ||
-    allowedMimeCategories.value.join(",") !== room.allowedMimeCategories.join(","),
+    editedMaxFileSizeBytes.value !== room.maxFileSizeBytes ||
+    editedAllowedMimeCategories.value.join(",") !== room.allowedMimeCategories.join(","),
 );
 const save = async () => {
   if (!isDirty.value) return;
 
   await saveRoom({
-    allowedMimeCategories: allowedMimeCategories.value,
-    maxFileSizeBytes: maxFileSizeBytes.value,
+    allowedMimeCategories: editedAllowedMimeCategories.value,
+    maxFileSizeBytes: editedMaxFileSizeBytes.value,
   });
 };
 </script>
@@ -47,14 +47,14 @@ const save = async () => {
           title="Maximum file size"
         >
           <v-text-field
-            :model-value="maxFileSizeBytes != null ? maxFileSizeBytes / MEGABYTE : ''"
+            :model-value="editedMaxFileSizeBytes != null ? editedMaxFileSizeBytes / MEGABYTE : ''"
             :max="maxFileSizeMegabytes"
             density="compact"
             placeholder="Default"
             type="number"
             min="1"
             suffix="MB"
-            @update:model-value="maxFileSizeBytes = $event ? Number($event) * MEGABYTE : null"
+            @update:model-value="editedMaxFileSizeBytes = $event ? Number($event) * MEGABYTE : null"
             @blur="save()"
             @keydown.enter.prevent="save()"
           />
@@ -68,7 +68,7 @@ const save = async () => {
           title="Allowed attachment types"
         >
           <v-select
-            v-model="allowedMimeCategories"
+            v-model="editedAllowedMimeCategories"
             :items="categoryItems"
             density="compact"
             multiple

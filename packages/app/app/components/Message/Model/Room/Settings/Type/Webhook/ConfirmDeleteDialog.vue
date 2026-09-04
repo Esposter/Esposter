@@ -5,11 +5,11 @@ import { useWebhookStore } from "@/store/message/room/webhook";
 import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
 import { withFinalizerAsync } from "@esposter/shared";
 
-interface ConfirmDeleteDialogProps {
+interface WebhookConfirmDeleteDialogProps {
   roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<ConfirmDeleteDialogProps>();
+const { roomId } = defineProps<WebhookConfirmDeleteDialogProps>();
 const webhookStore = useWebhookStore();
 const { items } = storeToRefs(webhookStore);
 const { deleteWebhook } = webhookStore;

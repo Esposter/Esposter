@@ -1,10 +1,10 @@
 <script setup lang="ts">
-interface CameraPreviewProps {
+interface CallPreJoinCameraPreviewProps {
   isCameraEnabled: boolean;
   stream?: MediaStream;
 }
 
-const { isCameraEnabled, stream } = defineProps<CameraPreviewProps>();
+const { isCameraEnabled, stream } = defineProps<CallPreJoinCameraPreviewProps>();
 </script>
 
 <template>

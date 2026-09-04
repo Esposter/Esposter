@@ -6,11 +6,11 @@ import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { withFinalizerAsync } from "@esposter/shared";
 
-interface KnockerItemProps {
+interface CallJoinNoticeKnockerItemProps {
   knocker: CallParticipant;
 }
 
-const { knocker } = defineProps<KnockerItemProps>();
+const { knocker } = defineProps<CallJoinNoticeKnockerItemProps>();
 const callStore = useCallStore();
 const { activeCallSessionId } = storeToRefs(callStore);
 const knockerStore = useKnockerStore();

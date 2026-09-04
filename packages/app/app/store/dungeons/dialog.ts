@@ -68,11 +68,11 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     phaserEventEmitter.emit(`${SceneEventKey.ShowMessage}${scene.scene.key}`);
 
     if (settingsStore.isSkipAnimations) {
-      const textDelay = useTextDelay();
+      const textDelayMs = useTextDelayMs();
       dialogTarget.setMessage(message);
       // Show the cursor after vue's rendering cycle has caught up with phaser
       // Seems like it takes exactly 2 ticks for vue to register phaser's text changes
-      await sleepScene(scene, textDelay.value * 2);
+      await sleepScene(scene, textDelayMs.value * 2);
       showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
       isWaitingForPlayerSpecialInput.value = true;
       return;

@@ -10,11 +10,11 @@ import { SettingsPermissionMap } from "@/services/message/settings/SettingsPermi
 import { useRoleStore } from "@/store/message/room/role";
 import { hasPermission } from "@esposter/db-schema";
 
-interface LeftSideBarProps {
+interface RoomSettingsLeftSideBarProps {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<LeftSideBarProps>();
+const { room } = defineProps<RoomSettingsLeftSideBarProps>();
 const modelValue = defineModel<keyof typeof SettingsContentMap>({ required: true });
 const isDrawerOpen = defineModel<boolean>("open", { default: false });
 const emit = defineEmits<{ "open:delete": [] }>();

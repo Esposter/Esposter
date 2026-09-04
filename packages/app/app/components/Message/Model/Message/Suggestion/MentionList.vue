@@ -12,12 +12,12 @@ import { MentionType, takeOne } from "@esposter/shared";
 const { command, items, query } =
   defineProps<SuggestionProps<BroadcastMentionItem | RoleMentionItem | User, MentionNodeAttributes>>();
 const title = computed(() => getSuggestionListTitle("MEMBERS", SuggestionTrigger.Mention, query));
-const isRoleMentionItem = (item: BroadcastMentionItem | RoleMentionItem | User): item is RoleMentionItem =>
+const checkIsRoleMentionItem = (item: BroadcastMentionItem | RoleMentionItem | User): item is RoleMentionItem =>
   "type" in item && item.type === MentionType.Role;
 const selectItem = (index: number) => {
   const item = takeOne(items, index);
   const mentionNodeAttributes: MentionNodeAttributes = { id: item.id, label: item.name };
-  if (isRoleMentionItem(item)) mentionNodeAttributes.type = item.type;
+  if (checkIsRoleMentionItem(item)) mentionNodeAttributes.type = item.type;
   command(mentionNodeAttributes);
 };
 const { onKeyDown, selectedIndex } = useSuggestionListNavigation(() => items, selectItem);
@@ -35,7 +35,7 @@ defineExpose({ onKeyDown });
       @click="selectItem(index)"
     >
       <template #prepend>
-        <v-avatar v-if="isRoleMentionItem(item)" size="x-small">
+        <v-avatar v-if="checkIsRoleMentionItem(item)" size="x-small">
           <v-icon :color="item.color || undefined">mdi-circle</v-icon>
         </v-avatar>
         <MessageModelMemberStatusAvatar

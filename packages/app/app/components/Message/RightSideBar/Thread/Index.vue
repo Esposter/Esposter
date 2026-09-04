@@ -9,8 +9,10 @@ const { activeRootRowKey, isReadThreadPending, threadMessages } = storeToRefs(th
 const actionItems = useThreadActionItems();
 // Oldest first, so the thread reads top-down into the composer below it — the root is the earliest message in
 // Its own thread, so it needs no special case to stay at the top
-const sortedThreadMessages = computed(() =>
-  threadMessages.value.toSorted((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
+const displayThreadMessages = computed(() =>
+  threadMessages.value.toSorted(
+    (firstMessage, secondMessage) => firstMessage.createdAt.getTime() - secondMessage.createdAt.getTime(),
+  ),
 );
 </script>
 
@@ -34,7 +36,7 @@ const sortedThreadMessages = computed(() =>
     <div v-if="isReadThreadPending" flex-1 overflow-y-auto>
       <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" pa-4 />
     </div>
-    <MessageModelMessageSearchList v-else :messages="sortedThreadMessages">
+    <MessageModelMessageSearchList v-else :messages="displayThreadMessages">
       <template #no-data>
         <v-container text-center>
           <span v-if="activeRootRowKey" op-medium-emphasis>No replies yet.</span>
