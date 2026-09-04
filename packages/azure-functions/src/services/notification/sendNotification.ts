@@ -53,19 +53,19 @@ export const sendNotification = async (context: InvocationContext, data: Notific
   if (!channels.includes(NotificationChannel.Push)) return;
   // A subscription is per-session, so the session that caused the notification is excluded here rather than by
   // Dropping the recipient: the user's other devices are still owed the push
-  const readPushSubscriptions = await getPushSubscriptionsForUsers(
+  const pushSubscriptions = await getPushSubscriptionsForUsers(
     db,
     userIds,
     "excludedSessionId" in data ? data.excludedSessionId : undefined,
   );
-  if (readPushSubscriptions.length === 0) {
+  if (pushSubscriptions.length === 0) {
     context.log(`No push subscriptions for ${data.type}.`);
     return;
   }
 
   await sendWebPushNotifications(
     context,
-    readPushSubscriptions,
+    pushSubscriptions,
     getPushNotificationPayload({ body, icon, path, severity, title, type: data.type }),
   );
 };
