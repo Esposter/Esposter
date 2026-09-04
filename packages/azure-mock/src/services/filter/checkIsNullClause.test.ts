@@ -1,16 +1,16 @@
 import type { Clause } from "@esposter/azure";
 
-import { isNullClause } from "#src/services/filter/isNullClause";
+import { checkIsNullClause } from "#src/services/filter/checkIsNullClause";
 import { BinaryOperator, getTableNullClause } from "@esposter/azure";
 import { describe, expect, test } from "vitest";
 
-describe(isNullClause, () => {
+describe(checkIsNullClause, () => {
   const key = "";
 
   test("matches the canonical table null clause", () => {
     expect.hasAssertions();
 
-    expect(isNullClause(getTableNullClause(key))).toBe(true);
+    expect(checkIsNullClause(getTableNullClause(key))).toBe(true);
   });
 
   // IsNullClause compares its argument against getTableNullClause(clause.key), so the positive case holds by
@@ -21,6 +21,6 @@ describe(isNullClause, () => {
 
     const clause: Clause<Record<string, unknown>> = { key, operator: BinaryOperator.eq, value: "" };
 
-    expect(isNullClause(clause)).toBe(false);
+    expect(checkIsNullClause(clause)).toBe(false);
   });
 });

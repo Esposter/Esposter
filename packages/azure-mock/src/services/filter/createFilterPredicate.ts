@@ -1,5 +1,5 @@
+import { checkIsNullClause } from "#src/services/filter/checkIsNullClause";
 import { compare } from "#src/services/filter/compare";
-import { isNullClause } from "#src/services/filter/isNullClause";
 import { BinaryOperator, deserializeClause } from "@esposter/azure";
 import { takeOne } from "@esposter/shared";
 
@@ -15,7 +15,7 @@ export const createFilterPredicate = (filter: string): ((document: Record<string
       .filter(Boolean)
       .map((clauseString) => {
         const clause = deserializeClause(clauseString);
-        return { clause, isNull: isNullClause(clause) };
+        return { clause, isNull: checkIsNullClause(clause) };
       }),
   );
   return (document) => {
