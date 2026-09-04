@@ -1,18 +1,18 @@
 import { assertNode } from "#src/test/assertNode.test";
 import { createEmbeddedTilesetShared } from "#src/test/createEmbeddedTilesetShared.test";
-import { isExternalTileset } from "#src/util/isExternalTileset";
+import { checkIsExternalTileset } from "#src/util/checkIsExternalTileset";
 import { describe, expect, test } from "vitest";
 
-describe(isExternalTileset, () => {
+describe(checkIsExternalTileset, () => {
   test("external tileset", () => {
     expect.hasAssertions();
 
-    expect(isExternalTileset(assertNode({ firstgid: 0, source: "a" }))).toBe(true);
+    expect(checkIsExternalTileset(assertNode({ firstgid: 0, source: "a" }))).toBe(true);
   });
 
   test("embedded tileset", () => {
     expect.hasAssertions();
 
-    expect(isExternalTileset(createEmbeddedTilesetShared())).toBe(false);
+    expect(checkIsExternalTileset(createEmbeddedTilesetShared())).toBe(false);
   });
 });

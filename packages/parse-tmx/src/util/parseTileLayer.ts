@@ -3,9 +3,9 @@ import type { TMXLayerParsed } from "#src/models/tmx/parsed/TMXLayerParsed";
 
 import { Compression } from "#src/models/Compression";
 import { Encoding } from "#src/models/Encoding";
+import { checkIsTMXEmbeddedTilesetNode } from "#src/util/checkIsTMXEmbeddedTilesetNode";
 import { cloneNodeWithType } from "#src/util/cloneNodeWithType";
 import { getDecompressedBytes } from "#src/util/getDecompressedBytes";
-import { isTMXEmbeddedTilesetNode } from "#src/util/isTMXEmbeddedTilesetNode";
 import { parseFlips } from "#src/util/parseFlips";
 import { parseProperties } from "#src/util/parseProperties";
 import { parseTileId } from "#src/util/parseTileId";
@@ -25,7 +25,7 @@ export const parseTileLayer = async (
 
   const nodeData = takeOne(data);
   // Xml Deprecated
-  if (isTMXEmbeddedTilesetNode(nodeData)) layer.data = nodeData.tile?.map(({ $ }) => $.gid ?? 0) ?? [];
+  if (checkIsTMXEmbeddedTilesetNode(nodeData)) layer.data = nodeData.tile?.map(({ $ }) => $.gid ?? 0) ?? [];
   else {
     // Base64, Csv
     const { $, _ } = nodeData;
