@@ -7,7 +7,7 @@ const { height, width } = useWindowSize();
 const flowchartEditorStore = useFlowchartEditorStore();
 const { isSidebarOpen } = storeToRefs(flowchartEditorStore);
 const { createNode, onDragStart } = useDragAndDrop();
-const nodeCategoryTypes = Object.entries(NodeCategoryTypeMap);
+const NODE_CATEGORY_TYPES = Object.entries(NodeCategoryTypeMap);
 </script>
 
 <template>
@@ -15,7 +15,7 @@ const nodeCategoryTypes = Object.entries(NodeCategoryTypeMap);
     <v-list flex flex-1 flex-col gap-y-4 items-center>
       <v-expansion-panels variant="accordion">
         <v-expansion-panel
-          v-for="[nodeCategory, nodeTypes] of nodeCategoryTypes"
+          v-for="[nodeCategory, nodeTypes] of NODE_CATEGORY_TYPES"
           :key="nodeCategory"
           :title="nodeCategory"
         >

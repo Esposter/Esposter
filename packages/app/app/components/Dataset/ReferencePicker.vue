@@ -12,7 +12,7 @@ const modelValue = defineModel<DatasetReference | undefined>({ required: true })
 const { $trpc } = useNuxtApp();
 const session = authClient.useSession();
 const type = ref(modelValue.value?.type ?? DatasetProviderType.SurveyResponses);
-const readSourcesMap: Record<DatasetProviderType, () => Promise<{ id: string; name: string }[]>> = {
+const datasetProviderTypeSourceReaderMap: Record<DatasetProviderType, () => Promise<{ id: string; name: string }[]>> = {
   [DatasetProviderType.ProgramStatus]: async () =>
     (await $trpc.program.readResources.query({ limit: MAX_READ_LIMIT })).items,
   [DatasetProviderType.Sheet]: async () => (await $trpc.sheet.readResources.query({ limit: MAX_READ_LIMIT })).items,
@@ -24,7 +24,10 @@ const sourceIds = ref<SelectItemCategoryDefinition<string>[]>([]);
 watchImmediate([() => session.value.data, type], async ([newSession, newType]) => {
   if (!newSession) return;
   await getResultAsync(async () => {
-    sourceIds.value = (await readSourcesMap[newType]()).map(({ id, name }) => ({ title: name, value: id }));
+    sourceIds.value = (await datasetProviderTypeSourceReaderMap[newType]()).map(({ id, name }) => ({
+      title: name,
+      value: id,
+    }));
   }).match(noop, createErrorAlert);
 });
 </script>
