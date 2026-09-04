@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
+
+### Bug Fixes
+
+* bundle size ([7f6168f](https://github.com/Esposter/Esposter/commit/7f6168f41e4c36242cb682bdad15c97ccadecedb))
+* **ci:** unbreak the function deploy pnpm 12 broke, and pin the rule ([6c874d2](https://github.com/Esposter/Esposter/commit/6c874d274abeab8072e782838c709f9db86bff7f))
+* **lint:** re-sort the declarations the shorter props name reorders ([5fdb447](https://github.com/Esposter/Esposter/commit/5fdb44731cc255c02ba2314d1eaded356a6e9615))
+* **platform:** the size snapshots measure files the build emits ([4731e95](https://github.com/Esposter/Esposter/commit/4731e95d07487f58d646ae1ce7607e9ad255dd72))
+* **platform:** vue-phaserjs's augmentation points merge from source ([58210ab](https://github.com/Esposter/Esposter/commit/58210ab44ce93fca697dc9df5511355a59aa3716))
+* **vue-phaserjs:** sleepScene settles on shutdown, so a stopped scene strands no caller ([e1f45c8](https://github.com/Esposter/Esposter/commit/e1f45c884bb915c3f113c4aa6082e6e9e19b16f9))
+
+### Performance Improvements
+
+* **platform:** the build generates its own barrel, and skips it when it can ([696835c](https://github.com/Esposter/Esposter/commit/696835c457837d8737b8cd09b940dc97577cfc24))
+
 ## [2.38.1](https://github.com/Esposter/Esposter/compare/v2.38.0...v2.38.1) (2026-08-23)
 
 ### Bug Fixes

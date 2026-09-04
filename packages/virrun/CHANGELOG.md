@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
+
+### Bug Fixes
+
+* **ci:** unbreak the function deploy pnpm 12 broke, and pin the rule ([6c874d2](https://github.com/Esposter/Esposter/commit/6c874d274abeab8072e782838c709f9db86bff7f))
+* rewrap the comment lines capitalized-comments renamed an identifier on ([10c74e6](https://github.com/Esposter/Esposter/commit/10c74e6eed1706782c4851615d9f7a30cbd2653f))
+* **scripts:** target devEngines.runtime rather than its first sibling ([17598de](https://github.com/Esposter/Esposter/commit/17598de1d775a274b311c6c500f29e3b0ca232bf)), closes [#1126](https://github.com/Esposter/Esposter/issues/1126)
+* **use-mutation:** superseding a key drops its joinable read too ([385ed67](https://github.com/Esposter/Esposter/commit/385ed67910687a9155dfbbf20a0a702f33cbee28))
+* **virrun:** a cold WSL distro is not a host that cannot sandbox ([47a7033](https://github.com/Esposter/Esposter/commit/47a70335f26738cd2c3fa4b7ac3d984113c7d037))
+* **virrun:** isSnapshotLowerPath is a field, so it keeps its `is*` ([02554e7](https://github.com/Esposter/Esposter/commit/02554e74026ed401fdbe39be7304d0af4636fafc))
+
+### Performance Improvements
+
+* **ci:** install pnpm and node from GitHub releases via pnpm/setup ([60cd635](https://github.com/Esposter/Esposter/commit/60cd6359cb01ce321529629ed06f92e954a06209))
+* **platform:** the build generates its own barrel, and skips it when it can ([696835c](https://github.com/Esposter/Esposter/commit/696835c457837d8737b8cd09b940dc97577cfc24))
+
 ## [2.38.1](https://github.com/Esposter/Esposter/compare/v2.38.0...v2.38.1) (2026-08-23)
 
 **Note:** Version bump only for package virrun

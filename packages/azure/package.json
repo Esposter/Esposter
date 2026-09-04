@@ -1,6 +1,6 @@
 {
   "name": "@esposter/azure",
-  "version": "2.38.1",
+  "version": "2.39.0",
   "description": "The Azure wire conventions Esposter's clients and its mocks both speak — OData filter clauses, entity key casing, and service limits.",
   "keywords": [
     "azure",

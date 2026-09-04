@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
+
+### Bug Fixes
+
+* **azure-functions:** declare the entry point the Functions host loads ([b3a3721](https://github.com/Esposter/Esposter/commit/b3a3721bd388d0787c4d5e483dddccb27f59f431))
+* **ci:** resnapshot the infra bundle for the shorter action pattern ([9bb18a6](https://github.com/Esposter/Esposter/commit/9bb18a6ecfc5f12b520d7d6740c664a29699679f))
+* **ci:** unbreak the function deploy pnpm 12 broke, and pin the rule ([6c874d2](https://github.com/Esposter/Esposter/commit/6c874d274abeab8072e782838c709f9db86bff7f))
+* **infra:** fetch each Function App's package with its own identity ([1e45b4b](https://github.com/Esposter/Esposter/commit/1e45b4b6a96bcec9c6c5d52d15ebbac8554f23ff))
+* **storage:** reject a BlobCreated event older than the one already applied ([6ec9ce8](https://github.com/Esposter/Esposter/commit/6ec9ce891ae2cf1a3f2f1ec27b8f78b405891ef5))
+
+### Performance Improvements
+
+* **ci:** install pnpm and node from GitHub releases via pnpm/setup ([60cd635](https://github.com/Esposter/Esposter/commit/60cd6359cb01ce321529629ed06f92e954a06209))
+* **platform:** a private package emits no declarations ([fa31aa4](https://github.com/Esposter/Esposter/commit/fa31aa4b26d5ba1d3e1573e2d1464990dd9272cb))
+* **platform:** the build generates its own barrel, and skips it when it can ([696835c](https://github.com/Esposter/Esposter/commit/696835c457837d8737b8cd09b940dc97577cfc24))
+
 ## [2.38.1](https://github.com/Esposter/Esposter/compare/v2.38.0...v2.38.1) (2026-08-23)
 
 ### Bug Fixes

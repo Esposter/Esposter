@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
+
+### Bug Fixes
+
+* **azure-functions:** declare the entry point the Functions host loads ([b3a3721](https://github.com/Esposter/Esposter/commit/b3a3721bd388d0787c4d5e483dddccb27f59f431))
+* **build:** every package answers the side-effects question ([ecb4dc1](https://github.com/Esposter/Esposter/commit/ecb4dc1d6fb1610cb446fc0560a5ba62dca22f81))
+* **build:** only the barrels ctix writes are excluded from the fingerprint ([1770e1d](https://github.com/Esposter/Esposter/commit/1770e1d4a1857c30dd687a41d32a83b77e5c163c))
+* **ci:** unbreak the function deploy pnpm 12 broke, and pin the rule ([6c874d2](https://github.com/Esposter/Esposter/commit/6c874d274abeab8072e782838c709f9db86bff7f))
+* **docs:** answer the review findings on the naming ledger, clicker page and lint rule ([8d65534](https://github.com/Esposter/Esposter/commit/8d65534942817992ae399f0b7f76ee5cc666e894))
+* **lint:** let the map naming rule read the shape it is attached to ([9396684](https://github.com/Esposter/Esposter/commit/9396684822a617ced0658e4fd280a319b9493517))
+* **lint:** restore the vue/require-default-prop ESLint disable ([a12e248](https://github.com/Esposter/Esposter/commit/a12e248270bfe62acc888d1e8c7f1a444e4e57c7))
+* **lint:** stop the map naming rule firing on a by* function ([1cc9969](https://github.com/Esposter/Esposter/commit/1cc99698e4e5f84a03278346d7e273c750beb943))
+* **lint:** take eslint-plugin-jsonc's configs through its named export ([231773f](https://github.com/Esposter/Esposter/commit/231773f69272f1ed4b663b7565a0fffac40a395d))
+* **review:** the export bin reads source, and a mode is an own property ([f5708d2](https://github.com/Esposter/Esposter/commit/f5708d2765a269a07b7966d7f1c89d2181f591e2))
+* **review:** the invite walk, the branch a rejected delete left unread, and a subtree count two deletes could share ([7c876a5](https://github.com/Esposter/Esposter/commit/7c876a5975a103012000e87726cb2ed6df39af3d))
+* rewrap the comment lines capitalized-comments renamed an identifier on ([10c74e6](https://github.com/Esposter/Esposter/commit/10c74e6eed1706782c4851615d9f7a30cbd2653f))
+
+### Features
+
+* **lint:** lint JSON with eslint-plugin-jsonc and wire the staged config in ([90a19aa](https://github.com/Esposter/Esposter/commit/90a19aa41f3b124e0c8abdbdc3a81d3c2e5cd6c3))
+
+### Performance Improvements
+
+* **platform:** a private package emits no declarations ([fa31aa4](https://github.com/Esposter/Esposter/commit/fa31aa4b26d5ba1d3e1573e2d1464990dd9272cb))
+* **platform:** the barrel guard sees the one content change a barrel depends on ([afff291](https://github.com/Esposter/Esposter/commit/afff2915613dfea7f814a6080fa3c9f3bae0a5e9))
+* **platform:** the build generates its own barrel, and skips it when it can ([696835c](https://github.com/Esposter/Esposter/commit/696835c457837d8737b8cd09b940dc97577cfc24))
+
+### Reverts
+
+* **lint:** keep the unimported json ESLint plugin config ([0ab8a3e](https://github.com/Esposter/Esposter/commit/0ab8a3e70992b682dd19fdb9cd086763a08699be))
+
 ## [2.38.1](https://github.com/Esposter/Esposter/compare/v2.38.0...v2.38.1) (2026-08-23)
 
 ### Bug Fixes

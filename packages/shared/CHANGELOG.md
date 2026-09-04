@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
+
+### Bug Fixes
+
+* **ci:** the import order and the three size snapshots catch up with develop ([0cc14ea](https://github.com/Esposter/Esposter/commit/0cc14ea68b9c2a7a7ea1a1e37744fff2bcad19b7))
+* **ci:** unbreak the function deploy pnpm 12 broke, and pin the rule ([6c874d2](https://github.com/Esposter/Esposter/commit/6c874d274abeab8072e782838c709f9db86bff7f))
+* **platform:** an exhaustive switch proves its assignment again ([74bad7e](https://github.com/Esposter/Esposter/commit/74bad7e656bf26251d7afa703494cd83c1027e7e))
+* **shared:** keep the takeOne default an overload makes optional ([89fb9e8](https://github.com/Esposter/Esposter/commit/89fb9e851767f96917126da1304e43972e76554b))
+* **shared:** uniqueness without a key is closed to object schemas ([778e0b8](https://github.com/Esposter/Esposter/commit/778e0b8f5af9c76225307509b30bb54292bbb989))
+
+### Features
+
+* **date:** Temporal answers the date questions, and the repo owns the two it cannot ([e298795](https://github.com/Esposter/Esposter/commit/e2987953a4dab58b3a89a758c1d431a9c33a1195))
+
+### Performance Improvements
+
+* **platform:** the build generates its own barrel, and skips it when it can ([696835c](https://github.com/Esposter/Esposter/commit/696835c457837d8737b8cd09b940dc97577cfc24))
+
 ## [2.38.1](https://github.com/Esposter/Esposter/compare/v2.38.0...v2.38.1) (2026-08-23)
 
 **Note:** Version bump only for package @esposter/shared

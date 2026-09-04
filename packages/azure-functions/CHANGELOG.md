@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
+
+### Bug Fixes
+
+* **azure-functions:** declare the entry point the Functions host loads ([b3a3721](https://github.com/Esposter/Esposter/commit/b3a3721bd388d0787c4d5e483dddccb27f59f431))
+* **azure-functions:** declare the side effects its entry exists for ([346c732](https://github.com/Esposter/Esposter/commit/346c73234f76ae390e6774b2eddfdedc0f149dfe))
+* **azure-functions:** drain dead letters stranded while the app was down ([1c79922](https://github.com/Esposter/Esposter/commit/1c799222c46dab0cf3eae5eca463227f7c7ee5d9))
+* **azure-functions:** give each best-effort step of a scheduled send its own Result ([b707516](https://github.com/Esposter/Esposter/commit/b707516ef584db0779fd9bc61c64d1c3c8a3a91a))
+* **azure-functions:** key the drain on lastModified and claim each blob ([1557775](https://github.com/Esposter/Esposter/commit/155777568d3abbc89214d1c4e801488a79e3535f))
+* **azure-functions:** tsdown generates the entry field and the vendored list ([7e41246](https://github.com/Esposter/Esposter/commit/7e412461c97298ef764e634eec5f908fbf600b51))
+* bundle size ([e3e7da0](https://github.com/Esposter/Esposter/commit/e3e7da0d93804d3c0cf5e8bb664d24bdb9c5ce4c))
+* **ci:** close the oxlint findings and re-record the bundle sizes ([539008c](https://github.com/Esposter/Esposter/commit/539008caa99bb25762b922a049fda526dde833c3))
+* **ci:** drain the lint errors and the drifted size snapshots ([a75cea2](https://github.com/Esposter/Esposter/commit/a75cea2c2cdc4376a5351d77ea4962b8abe56a1f))
+* **ci:** the checks pass on the tree the snapshot work left ([acd98a2](https://github.com/Esposter/Esposter/commit/acd98a2753b981c618d0632f9950e52f7614a033))
+* **ci:** the import order and the three size snapshots catch up with develop ([0cc14ea](https://github.com/Esposter/Esposter/commit/0cc14ea68b9c2a7a7ea1a1e37744fff2bcad19b7))
+* **ci:** unbreak the function deploy pnpm 12 broke, and pin the rule ([6c874d2](https://github.com/Esposter/Esposter/commit/6c874d274abeab8072e782838c709f9db86bff7f))
+* close the CodeRabbit findings on the call backgrounds ([c8590f7](https://github.com/Esposter/Esposter/commit/c8590f76285e5a9769d0498fcee24edab6e63952))
+* **message:** follow the thread a scheduled reply lands in ([0349e7f](https://github.com/Esposter/Esposter/commit/0349e7fec190c0fbd9c256548e36a5e0b7245d2c))
+* **platform:** the storage meter hears the counter its other process moves ([4cf9866](https://github.com/Esposter/Esposter/commit/4cf98664f7ebb9afd4ebccc74a2987d0c7bb7a7a))
+* repair the CI fallout from the count column renames ([bbe1c03](https://github.com/Esposter/Esposter/commit/bbe1c035bc81988a32cbe488148b0faf24787a76))
+* **slowmode:** a typed fraction truncates to whole seconds instead of throwing ([ac2c4a0](https://github.com/Esposter/Esposter/commit/ac2c4a073f960eae2847179905b30568887a0c64))
+* **storage:** reject a BlobCreated event older than the one already applied ([6ec9ce8](https://github.com/Esposter/Esposter/commit/6ec9ce891ae2cf1a3f2f1ec27b8f78b405891ef5))
+
+### Performance Improvements
+
+* **azure-functions:** stop the two storage polls that dominate the bill ([8c650d5](https://github.com/Esposter/Esposter/commit/8c650d5b74e638da29acedca6f9f10a1ff4e1ec0)), closes [high-throughput](https://github.com/hi/issues/throughput)
+* **platform:** a private package emits no declarations ([fa31aa4](https://github.com/Esposter/Esposter/commit/fa31aa4b26d5ba1d3e1573e2d1464990dd9272cb))
+* **platform:** the build generates its own barrel, and skips it when it can ([696835c](https://github.com/Esposter/Esposter/commit/696835c457837d8737b8cd09b940dc97577cfc24))
+
 ## [2.38.1](https://github.com/Esposter/Esposter/compare/v2.38.0...v2.38.1) (2026-08-23)
 
 ### Bug Fixes

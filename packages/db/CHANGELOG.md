@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
+
+### Bug Fixes
+
+* **azure-functions:** declare the entry point the Functions host loads ([b3a3721](https://github.com/Esposter/Esposter/commit/b3a3721bd388d0787c4d5e483dddccb27f59f431))
+* **azure-functions:** key the drain on lastModified and claim each blob ([1557775](https://github.com/Esposter/Esposter/commit/155777568d3abbc89214d1c4e801488a79e3535f))
+* **build:** every package answers the side-effects question ([ecb4dc1](https://github.com/Esposter/Esposter/commit/ecb4dc1d6fb1610cb446fc0560a5ba62dca22f81))
+* charge the counter on every save, not just the blob's first ([72d6a33](https://github.com/Esposter/Esposter/commit/72d6a33b1f85054f599fbfaa28ce8a18a7c13fd3))
+* **ci:** the checks pass on the tree the snapshot work left ([acd98a2](https://github.com/Esposter/Esposter/commit/acd98a2753b981c618d0632f9950e52f7614a033))
+* **ci:** unbreak the function deploy pnpm 12 broke, and pin the rule ([6c874d2](https://github.com/Esposter/Esposter/commit/6c874d274abeab8072e782838c709f9db86bff7f))
+* **db:** vendor link-preview-js so no consumer interops with its CJS barrel ([99cd1f1](https://github.com/Esposter/Esposter/commit/99cd1f1a352f4d14ce1047fc9118939e8b53f8e4))
+* **message:** follow the thread a scheduled reply lands in ([0349e7f](https://github.com/Esposter/Esposter/commit/0349e7fec190c0fbd9c256548e36a5e0b7245d2c))
+* **platform:** a deleted mock blob takes its metadata with it ([7d95802](https://github.com/Esposter/Esposter/commit/7d9580231534f4b75e3a26d35b684260b149192b))
+* **platform:** the storage meter hears the counter its other process moves ([4cf9866](https://github.com/Esposter/Esposter/commit/4cf98664f7ebb9afd4ebccc74a2987d0c7bb7a7a))
+* **storage:** address the review — badge guards, a queued badge write, and docs ([b3688f9](https://github.com/Esposter/Esposter/commit/b3688f935746e92ea8e4fdb7e02180c6167ab8e7))
+* **storage:** drop a provisional charge once an event has settled the blob ([c5f83fb](https://github.com/Esposter/Esposter/commit/c5f83fb3495d26c157a5388dede35ae96e96cf9a))
+* **storage:** reject a BlobCreated event older than the one already applied ([6ec9ce8](https://github.com/Esposter/Esposter/commit/6ec9ce891ae2cf1a3f2f1ec27b8f78b405891ef5))
+* **virrun:** isSnapshotLowerPath is a field, so it keeps its `is*` ([02554e7](https://github.com/Esposter/Esposter/commit/02554e74026ed401fdbe39be7304d0af4636fafc))
+
+### Features
+
+* **storage:** charge a resource's own content blob to its owner ([245902d](https://github.com/Esposter/Esposter/commit/245902d9818693374b8f79ed965839240b274cc0))
+
+### Performance Improvements
+
+* **platform:** a private package emits no declarations ([fa31aa4](https://github.com/Esposter/Esposter/commit/fa31aa4b26d5ba1d3e1573e2d1464990dd9272cb))
+* **platform:** the build generates its own barrel, and skips it when it can ([696835c](https://github.com/Esposter/Esposter/commit/696835c457837d8737b8cd09b940dc97577cfc24))
+
 ## [2.38.1](https://github.com/Esposter/Esposter/compare/v2.38.0...v2.38.1) (2026-08-23)
 
 ### Bug Fixes

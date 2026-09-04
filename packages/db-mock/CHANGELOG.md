@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
+
+### Bug Fixes
+
+* **ci:** unbreak the function deploy pnpm 12 broke, and pin the rule ([6c874d2](https://github.com/Esposter/Esposter/commit/6c874d274abeab8072e782838c709f9db86bff7f))
+* correct three message-table columns that contradict themselves ([ec9a7c8](https://github.com/Esposter/Esposter/commit/ec9a7c80282b476bef2537978624c35439a4c5d7))
+* **db-mock:** regenerate the snapshot for the sessions cascade ([91dd47a](https://github.com/Esposter/Esposter/commit/91dd47a229ed35fb2810c4b75d3b3a062cf360d4))
+* **platform:** the watcher exists, and the snapshot travels with the build ([cf67bc4](https://github.com/Esposter/Esposter/commit/cf67bc4d3aa9c3a08f8f2635e7eb75e1c382ce73))
+* repair the CI fallout from the count column renames ([bbe1c03](https://github.com/Esposter/Esposter/commit/bbe1c035bc81988a32cbe488148b0faf24787a76))
+* **storage:** reject a BlobCreated event older than the one already applied ([6ec9ce8](https://github.com/Esposter/Esposter/commit/6ec9ce891ae2cf1a3f2f1ec27b8f78b405891ef5))
+
+### Features
+
+* **esbabbler:** custom call backgrounds in fixed per-user slots ([573cb77](https://github.com/Esposter/Esposter/commit/573cb779ae6b4f70a496c434fdcd78c0128b545d))
+* **platform:** every resource type gets revisions it can return to ([ef108dc](https://github.com/Esposter/Esposter/commit/ef108dcc49c4e3a3685d4a0e5de888a5edf9f019))
+* **post:** Reddit-style reply trees, with the chain on the row ([d422cd7](https://github.com/Esposter/Esposter/commit/d422cd73faf08b60f7a5612ec1b9684f597149c9))
+* **users:** list and revoke the account's sessions ([bedfeb7](https://github.com/Esposter/Esposter/commit/bedfeb7958de0771ed6b813759ac5224588f02d4))
+
+### Performance Improvements
+
+* **db-schema:** index the unread notification count by its own predicate ([59b96d6](https://github.com/Esposter/Esposter/commit/59b96d6a0f822df4e85832774a1c056a6c33d61b))
+* **platform:** a private package emits no declarations ([fa31aa4](https://github.com/Esposter/Esposter/commit/fa31aa4b26d5ba1d3e1573e2d1464990dd9272cb))
+* **platform:** the build generates its own barrel, and skips it when it can ([696835c](https://github.com/Esposter/Esposter/commit/696835c457837d8737b8cd09b940dc97577cfc24))
+
 ## [2.38.1](https://github.com/Esposter/Esposter/compare/v2.38.0...v2.38.1) (2026-08-23)
 
 **Note:** Version bump only for package @esposter/db-mock

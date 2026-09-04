@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
+
+### Bug Fixes
+
+* **azure-functions:** key the drain on lastModified and claim each blob ([1557775](https://github.com/Esposter/Esposter/commit/155777568d3abbc89214d1c4e801488a79e3535f))
+* **azure-mock:** read a blob's dates through one reader ([2b3f017](https://github.com/Esposter/Esposter/commit/2b3f01707244d9028b08cf007f6918c714238842))
+* **ci:** unbreak the function deploy pnpm 12 broke, and pin the rule ([6c874d2](https://github.com/Esposter/Esposter/commit/6c874d274abeab8072e782838c709f9db86bff7f))
+* **platform:** a deleted mock blob takes its metadata with it ([7d95802](https://github.com/Esposter/Esposter/commit/7d9580231534f4b75e3a26d35b684260b149192b))
+* **platform:** a failed storage subscription takes its socket down with it ([ec1ca38](https://github.com/Esposter/Esposter/commit/ec1ca386f1799bf3e47aa3865bb28f844f77a2aa))
+
+### Features
+
+* **platform:** every resource type gets revisions it can return to ([ef108dc](https://github.com/Esposter/Esposter/commit/ef108dcc49c4e3a3685d4a0e5de888a5edf9f019))
+
+### Performance Improvements
+
+* **platform:** the build generates its own barrel, and skips it when it can ([696835c](https://github.com/Esposter/Esposter/commit/696835c457837d8737b8cd09b940dc97577cfc24))
+
 ## [2.38.1](https://github.com/Esposter/Esposter/compare/v2.38.0...v2.38.1) (2026-08-23)
 
 **Note:** Version bump only for package azure-mock
