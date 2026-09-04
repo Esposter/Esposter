@@ -3,7 +3,7 @@ import type { Clause, SerializableValue } from "@esposter/azure";
 /* eslint-disable perfectionist/sort-switch-case */
 import type { Filter, MessageEntity } from "@esposter/db-schema";
 
-import { ContentTypes } from "#src/models/ContentType";
+import { ContentTypes } from "#src/models/ContentTypes";
 import {
   BinaryOperator,
   CompositeKeyPropertyNames,
