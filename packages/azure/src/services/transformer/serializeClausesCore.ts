@@ -17,7 +17,7 @@ export const serializeClausesCore = (clauses: Clause<Record<string, unknown>>[],
   for (const clauseGroup of Object.values(groupedClauses))
     if (clauseGroup.length === 1) groupedStrings.push(serializeClause(takeOne(clauseGroup), isTableFilter));
     else {
-      const serializedClauses = clauseGroup.map((c) => serializeClause(c, isTableFilter));
+      const serializedClauses = clauseGroup.map((clause) => serializeClause(clause, isTableFilter));
       const isRangeClause = clauseGroup.some(({ operator }) => RangeOperators.includes(operator));
       const groupedString = isRangeClause
         ? serializedClauses.join(` ${UnaryOperator.and} `)
