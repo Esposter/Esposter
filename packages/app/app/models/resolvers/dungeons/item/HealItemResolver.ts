@@ -17,11 +17,11 @@ export class HealItemResolver extends AItemResolver {
   override async handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
     const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
     const { showMessages } = monsterPartyInfoPanelStore;
-    const oldHp = monster.value.status.health;
-    const newHp = Math.min(oldHp + item.value.effect.value, monster.value.statistics.maxHealth);
+    const oldHealth = monster.value.status.health;
+    const newHealth = Math.min(oldHealth + item.value.effect.value, monster.value.statistics.maxHealth);
 
-    monster.value.status.health = newHp;
-    await showMessages(scene, [`Healed ${monster.value.key} by ${newHp - oldHp} HP.`]);
+    monster.value.status.health = newHealth;
+    await showMessages(scene, [`Healed ${monster.value.key} by ${newHealth - oldHealth} HP.`]);
     phaserEventEmitter.emit("useItem", scene, item.value, monster.value, () =>
       battleStateMachine.setState(StateName.EnemyInput),
     );

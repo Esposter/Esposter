@@ -25,7 +25,7 @@ export class FunnelResolver extends AVisualTypeResolver {
           enabled: true,
         },
         enabled: true,
-        formatter: (_val, opts) => opts?.w.globals.labels[opts.dataPointIndex],
+        formatter: (_value, options) => options?.w.globals.labels[options.dataPointIndex],
       },
       apexOptions.dataLabels,
     );
