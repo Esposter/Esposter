@@ -94,7 +94,7 @@ export class Parser {
           object = object[this.#options.charkey] as Record<string, unknown>;
       }
 
-      if (isEmpty(object))
+      if (checkIsEmpty(object))
         if (typeof this.#options.emptyTag === "function") object = this.#options.emptyTag();
         else object = (this.#options.emptyTag || emptyString) as unknown as Record<string, unknown>;
 
@@ -216,8 +216,8 @@ export const parseStringPromise = <T>(
   return parserInstance.parseStringPromise(convertableToString);
 };
 // Underscore has a nice function for this, but we go without dependencies.
-const isEmpty = (thing: unknown): boolean =>
-  typeof thing === "object" && thing !== null && Object.keys(thing).length === 0;
+const checkIsEmpty = (value: unknown): boolean =>
+  typeof value === "object" && value !== null && Object.keys(value).length === 0;
 
 const processItem = (processors: ((value: string, name: string) => string)[], item: string, key: string): string => {
   let processedItem = item;
