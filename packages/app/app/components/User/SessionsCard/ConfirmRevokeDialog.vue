@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useUserSessionDialogStore } from "@/store/user/sessionDialog";
 
-export interface UserSessionsCardConfirmRevokeDialogProps {
+interface Props {
   deviceLabel: string;
   isCurrent?: true;
 }
 
-const { deviceLabel, isCurrent } = defineProps<UserSessionsCardConfirmRevokeDialogProps>();
+const { deviceLabel, isCurrent } = defineProps<Props>();
 const emit = defineEmits<{ revoke: [onComplete: (isSuccessful?: boolean) => void] }>();
 const userSessionDialogStore = useUserSessionDialogStore();
 const { revokingId } = storeToRefs(userSessionDialogStore);

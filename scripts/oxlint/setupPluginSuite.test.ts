@@ -12,6 +12,8 @@ interface OxlintFixture {
 }
 
 interface SetupOxlintPluginSuiteOptions {
+  // The extension fixtures are written with, for a rule whose subject only exists in one file type
+  extension?: string;
   fixtures: OxlintFixture[];
   // The plugin module's file name without its extension — it sits beside this helper
   plugin: string;
@@ -28,6 +30,7 @@ const TEMPORARY_DIRECTORY_PREFIX = "oxlint-plugin-";
 // Fixtures are written outside the repo so the deliberately-violating ones are never picked up by the root
 // Oxlint pass. One run answers for every fixture, so the whole thing happens once in `beforeAll`
 export const setupPluginSuite = ({
+  extension = ".ts",
   fixtures,
   plugin,
   rules,
@@ -52,7 +55,8 @@ export const setupPluginSuite = ({
       }),
     );
 
-    for (const { name, source } of fixtures) writeFileSync(join(directory, `${name}.ts`), `${wrapSource(source)}\n`);
+    for (const { name, source } of fixtures)
+      writeFileSync(join(directory, `${name}${extension}`), `${wrapSource(source)}\n`);
 
     const { status, stderr, stdout } = spawnSync(
       process.execPath,
@@ -73,7 +77,7 @@ export const setupPluginSuite = ({
 
     for (const { name } of fixtures) fixtureViolationsMap.set(name, 0);
     for (const { filename } of diagnostics) {
-      const name = basename(filename, ".ts");
+      const name = basename(filename, extension);
       fixtureViolationsMap.set(name, (fixtureViolationsMap.get(name) ?? 0) + 1);
     }
   });

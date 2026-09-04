@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { StyledDeleteFormDialogProps } from "@/components/Styled/DeleteFormDialog.vue";
+import type { DeleteFormDialogProps } from "@/components/Styled/DeleteFormDialogProps";
 import type { VBtn } from "vuetify/components";
 
 // The same shape every other icon button in a row or a toolbar has, so a delete never reads as a different kind of
@@ -7,7 +7,7 @@ import type { VBtn } from "vuetify/components";
 const DELETE_BUTTON_PROPS: VBtn["$props"] = { size: "small" };
 
 defineSlots<{ default?: () => VNode }>();
-const { cardProps } = defineProps<Pick<StyledDeleteFormDialogProps, "cardProps">>();
+const { cardProps } = defineProps<Pick<DeleteFormDialogProps, "cardProps">>();
 const emit = defineEmits<{ delete: [onComplete: () => void] }>();
 </script>
 

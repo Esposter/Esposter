@@ -17,11 +17,11 @@ Default to `v-model="ref"`. Keep the split form only when the update is not a di
 When a form handles both create and edit, use an explicit `isCreate` prop (default `false`) rather than deriving mode from `initialValues`. The parent passes `is-create` explicitly. Use a single `values` ref over per-field refs:
 
 ```ts
-interface FooUpsertFormProps {
+interface Props {
   initialValues?: Pick<Foo, "bar" | "baz">;
   isCreate?: boolean;
 }
-const { initialValues = { bar: "", baz: "" }, isCreate = false } = defineProps<FooUpsertFormProps>();
+const { initialValues = { bar: "", baz: "" }, isCreate = false } = defineProps<Props>();
 const { cloned: values } = useCloned(() => initialValues);
 ```
 

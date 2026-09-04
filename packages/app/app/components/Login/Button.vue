@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ButtonProps } from "@/components/Login/ButtonProps";
 import type { betterAuth } from "better-auth";
 import type { CSSProperties } from "vue";
 
@@ -8,15 +9,7 @@ import { useAlertStore } from "@/store/alert";
 import { toTitleCase } from "@/util/text/toTitleCase";
 import { getResultAsync, noop } from "@esposter/shared";
 
-export interface LoginButtonProps {
-  logo: Component;
-  logoAttrs?: Record<string, unknown>;
-  logoStyle?: CSSProperties;
-  provider: keyof NonNullable<Parameters<typeof betterAuth>[0]["socialProviders"]>;
-  style?: CSSProperties;
-}
-
-const { logo, logoAttrs, logoStyle, provider, style } = defineProps<LoginButtonProps>();
+const { logo, logoAttrs, logoStyle, provider, style } = defineProps<ButtonProps>();
 const { signIn } = authClient;
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;

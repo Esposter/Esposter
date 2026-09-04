@@ -19,12 +19,19 @@
     "./scripts/oxlint/errorAlert.ts",
     "./scripts/oxlint/passThroughHelper.ts",
     "./scripts/oxlint/persistThenNotify.ts",
+    "./scripts/oxlint/propsInterface.ts",
     "./scripts/oxlint/trpcProcedure.ts"
   ],
   "options": {
     "typeAware": true
   },
   "overrides": [
+    {
+      "files": ["**/*.vue"],
+      "rules": {
+        "props-interface/no-exported-type": "error"
+      }
+    },
     {
       "files": ["packages/app/server/**/*.ts"],
       "rules": {

@@ -33,6 +33,4 @@ The collapse is against the folder path's **trailing run**, not just its last wo
 
 This is also the one shape where folding a prefix into a folder **does** change the name: the flat file was collapsing against a word further up the path, and the folder form no longer is (`ThisAndThat/ThatList.vue` → `FeatureThisAndThatList` becomes `ThisAndThat/That/List.vue` → `FeatureThisAndThatThatList`). Update the tags in the same change.
 
-Collapse affects **only the template tag**. A props interface is a plain TS type and does not collapse, so a redundant-looking `FeatureThisAndThatThatListProps` stays valid — don't "fix" it to match the tag.
-
 Verify with `typecheck`, which flags an unknown collapsed tag.

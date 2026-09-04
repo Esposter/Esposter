@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+import type { DialogActivatorSlotProps } from "@/components/Styled/DialogActivatorSlotProps";
 import type { FileFieldValue } from "@/models/vuetify/FileFieldValue";
 import type { RoomInMessage } from "@esposter/db-schema";
 
@@ -9,13 +9,13 @@ import { validateFile } from "@/services/file/validateFile";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { takeOne, withFinalizerAsync } from "@esposter/shared";
 
-interface EmojiCreateDialogProps {
+interface Props {
   roomId: RoomInMessage["id"];
 }
 
-defineSlots<{ activator?: (props: StyledDialogActivatorSlotProps) => VNode }>();
+defineSlots<{ activator?: (props: DialogActivatorSlotProps) => VNode }>();
 const modelValue = defineModel<boolean>({ default: false });
-const { roomId } = defineProps<EmojiCreateDialogProps>();
+const { roomId } = defineProps<Props>();
 const roomEmojiStore = useRoomEmojiStore();
 const { createRoomEmoji } = roomEmojiStore;
 const { items } = storeToRefs(roomEmojiStore);

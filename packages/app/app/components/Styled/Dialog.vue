@@ -1,15 +1,12 @@
 <script setup lang="ts">
+import type { DialogActivatorSlotProps } from "@/components/Styled/DialogActivatorSlotProps";
 import type { Except } from "type-fest";
 import type { VBtn, VCard, VDialog } from "vuetify/components";
 
 import { mergeProps } from "vue";
 
-export interface StyledDialogActivatorSlotProps {
-  isOpen: boolean;
-  updateIsOpen: (value: true) => boolean;
-}
 // @TODO: https://github.com/vuejs/core/issues/11371
-interface StyledDialogProps {
+interface Props {
   cardProps?: VCard["$props"];
   confirmButtonAttrs?: VBtn["$attrs"];
   // Absent when the dialog has nothing to confirm — a search palette, a reference sheet. The whole actions row
@@ -36,10 +33,10 @@ const {
   dialogProps = {},
   hideCancelButton,
   hideToolbarActions,
-} = defineProps<StyledDialogProps>();
+} = defineProps<Props>();
 const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
 const slots = defineSlots<{
-  activator?: (props: StyledDialogActivatorSlotProps) => VNode;
+  activator?: (props: DialogActivatorSlotProps) => VNode;
   default?: () => VNode;
   header?: () => VNode;
   "prepend-actions"?: () => VNode;

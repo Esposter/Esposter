@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { CharacterProps } from "@/components/Dungeons/World/Character/Index.vue";
+import type { CharacterProps } from "@/components/Dungeons/World/Character/CharacterProps";
 import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import type { Direction } from "grid-engine";
 
 import { takeOne } from "@esposter/shared";
 
-interface NpcProps {
+interface Props {
   asset: Npc["asset"];
   id: CharacterProps["id"];
   path: Npc["path"];
@@ -16,8 +16,7 @@ interface NpcProps {
 
 const direction = defineModel<Direction | undefined>("direction", { required: true });
 const isMoving = defineModel<boolean>("isMoving", { required: true });
-const { asset, id, path, pathIndex, singleSidedSpritesheetDirection, walkingAnimationMapping } =
-  defineProps<NpcProps>();
+const { asset, id, path, pathIndex, singleSidedSpritesheetDirection, walkingAnimationMapping } = defineProps<Props>();
 </script>
 
 <template>
