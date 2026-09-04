@@ -7,18 +7,18 @@ import { Container, Image, onCreate } from "vue-phaserjs";
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { monsters } = storeToRefs(monsterPartySceneStore);
 const x = ref<number>();
-const visible = ref(false);
+const isVisible = ref(false);
 
 onCreate((scene) => {
   x.value = scene.scale.width - 24;
 });
 
 usePhaserListener("playerMonsterInfoContainerAppear", () => {
-  visible.value = true;
+  isVisible.value = true;
 });
 
 onUnmounted(() => {
-  visible.value = false;
+  isVisible.value = false;
 });
 </script>
 
@@ -28,7 +28,7 @@ onUnmounted(() => {
       v-for="(monster, index) of monsters"
       :key="monster.id"
       :configuration="{
-        visible,
+        visible: isVisible,
         x: -30 * index,
         texture: AssetKey.CosmoBall,
         scale: 0.8,

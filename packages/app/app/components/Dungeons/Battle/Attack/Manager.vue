@@ -14,9 +14,9 @@ const { attackId, isActive, isToEnemy } = storeToRefs(attackManagerStore);
     :is-to-enemy
     @complete="
       () => {
-        const callback = ExternalAttackManagerStore.onComplete;
+        const onComplete = ExternalAttackManagerStore.onComplete;
         attackId = isToEnemy = ExternalAttackManagerStore.onComplete = undefined;
-        callback?.();
+        onComplete?.();
       }
     "
   />

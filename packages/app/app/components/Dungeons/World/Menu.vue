@@ -20,5 +20,5 @@ onUpdate((scene) => {
 </script>
 
 <template>
-  <DungeonsUIMenu v-if="position" v-model:menu="isMenuVisible" :grid="WorldMenuOptionGrid" :position />
+  <DungeonsUIMenu v-if="position" v-model:is-visible="isMenuVisible" :grid="WorldMenuOptionGrid" :position />
 </template>

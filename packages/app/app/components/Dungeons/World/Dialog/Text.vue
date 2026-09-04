@@ -11,8 +11,8 @@ interface Props {
 }
 
 const { dialogMessage } = defineProps<Props>();
-const x = 18;
-const y = 12;
+const TEXT_X = 18;
+const TEXT_Y = 12;
 // A titled message stacks its title above the text, one line height apart
 const lines = computed(() => (dialogMessage.title ? [dialogMessage.title, dialogMessage.text] : [dialogMessage.text]));
 </script>
@@ -22,8 +22,8 @@ const lines = computed(() => (dialogMessage.title ? [dialogMessage.title, dialog
     v-for="(line, index) of lines"
     :key="index"
     :configuration="{
-      x,
-      y: y + DialogTextStyle.fontSize * index,
+      x: TEXT_X,
+      y: TEXT_Y + DialogTextStyle.fontSize * index,
       text: line,
       style: {
         ...DialogTextStyle,

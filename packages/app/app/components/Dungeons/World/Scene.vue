@@ -9,7 +9,8 @@ import { useCameraStore } from "vue-phaserjs";
 
 const cameraStore = useCameraStore();
 const { fadeIn } = cameraStore;
-const update = useResolveInput(getActiveInputResolvers());
+const activeInputResolvers = getActiveInputResolvers();
+const update = useResolveInput(activeInputResolvers);
 
 const create = (scene: SceneWithPlugins) => {
   playDungeonsBackgroundMusic(scene, BackgroundMusicKey.AndTheJourneyBegins);
