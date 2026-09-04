@@ -20,8 +20,8 @@ const selectedSurveyId = ref("");
 const getImportTruncationMessage = (truncation: DatasetTruncation) =>
   `${getDatasetTruncationText(truncation)} — the remaining ${truncation.hiddenRows} were not imported`;
 
-watch(isOpen, async (newDialog) => {
-  if (!newDialog) return;
+watch(isOpen, async (newIsOpen) => {
+  if (!newIsOpen) return;
   await executeQuery(() => $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT }), {
     isExclusive: true,
     key: "survey/readResources",

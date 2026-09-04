@@ -12,16 +12,16 @@ const rowFormColumns = computed(() => getRowFormColumns(dataSource.value.columns
 // Every editable column, hidden ones included: a new row carries a cell for each of them, and the form is what
 // Narrows to the ones on screen.
 // StructuredClone to a plain object: fast-deep-equal compares constructors, so class instances never equal their clones.
-const blankRow = structuredClone(
+const initialRow = structuredClone(
   new Row({
     data: Object.fromEntries(
       dataSource.value.columns.filter(checkIsEditableColumnValue).map(({ name }) => [name, null]),
     ),
   }),
 );
-const editedRow = ref(structuredClone(blankRow));
+const editedRow = ref(structuredClone(initialRow));
 const resetForm = () => {
-  editedRow.value = structuredClone(blankRow);
+  editedRow.value = structuredClone(initialRow);
 };
 </script>
 
@@ -32,7 +32,7 @@ const resetForm = () => {
     :schema="rowSchema"
     title="Create Row"
     tooltip-text="Add Row"
-    :value="blankRow"
+    :value="initialRow"
     @reset="resetForm()"
     @submit="
       (onComplete) => {
