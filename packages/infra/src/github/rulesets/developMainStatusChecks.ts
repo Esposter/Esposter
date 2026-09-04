@@ -1,9 +1,7 @@
+import CoverageShardCount from "#src/github/constants/CoverageShardCount";
 import GitHubAdminRepositoryRoleActorId from "#src/github/constants/GitHubAdminRepositoryRoleActorId";
 import { repository } from "#src/github/repository";
 import * as github from "@pulumi/github";
-// Must match the length of the `coverage` job's `matrix.shard` in .github/workflows/CI.yaml — each shard
-// Publishes its own `Coverage (n)` check context, and only contexts listed here are enforced.
-const coverageShardCount = 8;
 // Required status checks live in their own ruleset so that Renovate is not a bypass actor for them.
 // Renovate bypasses the pull request requirement in developMainProtection so branch automerge can push
 // Straight to the base branch, but its updates must still land green. Bypass is granted per ruleset and
@@ -42,7 +40,7 @@ export const developMainStatusChecks: github.RepositoryRuleset = new github.Repo
           // @TODO: Restore when the `build-docs` job in .github/workflows/CI.yaml is uncommented — a context no
           // Job reports is never satisfied, so leaving it required blocks every merge.
           // { context: "Build Documentation" },
-          ...Array.from({ length: coverageShardCount }, (_, shardIndex) => ({
+          ...Array.from({ length: CoverageShardCount }, (_, shardIndex) => ({
             context: `Coverage (${shardIndex + 1})`,
           })),
           { context: "Merge Coverage" },
