@@ -1,15 +1,15 @@
 import vuejsAccessibility from "eslint-plugin-vuejs-accessibility";
 import { defineConfig } from "eslint/config";
 /** @type {import("@eslint/core").ConfigObject} */
-const config = vuejsAccessibility.configs["flat/recommended"][1];
+const configuration = vuejsAccessibility.configs["flat/recommended"][1];
 // Only `files`, `plugins` and `rules` are taken from the plugin's flat config. Its `languageOptions` sets
 // `parser: vue-eslint-parser` with no `parserOptions.parser`, which would override the Nuxt config's TS
 // Sub-parser and turn every `<script setup lang="ts">` into a parse error.
 export default defineConfig({
-  files: config.files,
-  plugins: config.plugins,
+  files: configuration.files,
+  plugins: configuration.plugins,
   rules: {
-    ...config.rules,
+    ...configuration.rules,
     // A raw `<div @click>` needs `role` + `tabindex` + a key handler to satisfy these, and adding a tab stop
     // Per clickable element is a design decision, not a markup fix — a list of reaction pills or sheet cells
     // Needs a roving-tabindex composite, not one tab stop each. Promote each once its widgets have a keyboard

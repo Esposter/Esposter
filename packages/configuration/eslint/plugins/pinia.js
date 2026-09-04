@@ -1,12 +1,12 @@
 import pinia from "eslint-plugin-pinia";
 import { defineConfig } from "eslint/config";
 /** @type {import("@eslint/core").ConfigObject} */
-const config = pinia.configs["all-flat"];
+const configuration = pinia.configs["all-flat"];
 
 export default defineConfig({
-  ...config,
+  ...configuration,
   rules: {
-    ...config.rules,
+    ...configuration.rules,
     "pinia/require-setup-store-properties-export": "off",
   },
 });

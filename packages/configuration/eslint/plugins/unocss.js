@@ -1,12 +1,12 @@
 import unocss from "@unocss/eslint-config/flat";
 import { defineConfig } from "eslint/config";
 /** @type {import("@eslint/core").ConfigObject} */
-const config = unocss;
+const configuration = unocss;
 
 export default defineConfig({
-  ...config,
+  ...configuration,
   rules: {
-    ...config.rules,
+    ...configuration.rules,
     "unocss/order": "error",
     "unocss/order-attributify": "error",
   },
