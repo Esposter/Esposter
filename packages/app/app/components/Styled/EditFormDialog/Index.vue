@@ -3,7 +3,7 @@ import type { ItemEntityType } from "@esposter/shared";
 import type { VForm } from "vuetify/components";
 import type { z } from "zod";
 
-interface EditFormDialogProps<T> {
+interface StyledEditFormDialogProps<T> {
   editedItem: T;
   isDirty: boolean;
   isEditFormValid: boolean;
@@ -17,7 +17,7 @@ defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode; "prepend-fo
 const dialog = defineModel<boolean>({ required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
 const { editedItem, isDirty, isEditFormValid, isSavable, name, originalItem, schema } =
-  defineProps<EditFormDialogProps<T>>();
+  defineProps<StyledEditFormDialogProps<T>>();
 const emit = defineEmits<{
   close: [];
   delete: [onComplete: (isSuccessful?: boolean) => void];

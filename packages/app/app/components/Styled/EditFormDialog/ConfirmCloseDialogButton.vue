@@ -3,14 +3,14 @@ import type { ItemEntityType } from "@esposter/shared";
 
 import { prettify } from "@/util/text/prettify";
 
-interface ConfirmCloseDialogButtonProps<T> {
+interface StyledEditFormDialogConfirmCloseDialogButtonProps<T> {
   editedItem: T;
   isDirty: boolean;
   isSavable: boolean;
 }
 
 const dialog = defineModel<boolean>({ required: true });
-const { editedItem, isDirty, isSavable } = defineProps<ConfirmCloseDialogButtonProps<T>>();
+const { editedItem, isDirty, isSavable } = defineProps<StyledEditFormDialogConfirmCloseDialogButtonProps<T>>();
 const emit = defineEmits<{ save: []; "update:edit-form-dialog": [value: false] }>();
 const confirmButtonProps = computed(() => ({ disabled: !isSavable, text: "Save changes" }));
 const displayItemType = computed(() => prettify(editedItem.type));
