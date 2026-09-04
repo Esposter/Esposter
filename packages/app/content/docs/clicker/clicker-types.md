@@ -9,7 +9,7 @@ The clicker type is a pure theming layer: switching between Default, Magical, an
 
 ## How it works
 
-Constant maps in `app/services/clicker/properties/` key every display property by `ClickerType`: `NameMap` / `PluralNameMap` (what a point is called), `IconComponentMap` (the SVG component rendered as the clickable item), and `getColorMap` (theme-aware color per type, resolved from the colors store).
+Constant maps in `app/services/clicker/properties/` key every display property by `ClickerType`: `ClickerNameMap` / `ClickerPluralNameMap` (what a point is called), `ClickerIconComponentMap` (the SVG component rendered as the clickable item), and `getClickerColorMap` (theme-aware color per type, resolved from the colors store).
 
 Flavor text in the content maps is written once with **compiled variables** — `BuildingMap` descriptions embed `compileVariable("pluralName")` placeholders, and `useDecompileString` substitutes the active type's properties reactively at render time. One content set therefore serves all three themes.
 

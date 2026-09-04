@@ -48,8 +48,12 @@ export default {
     {
       // A boolean says what is true, not what is permitted: `can`/`should` name a policy the value does not
       // Carry, and the repo already spells a permission check `hasManageRoles` and a capability check
-      // `isScreenShareSupported`. Only a declarator is matched, so a dependency's own key stays its own —
+      // `isScreenShareSupported`. Only a **named** declarator is matched, so a dependency's own key stays its own —
       // LiveKit's `canPublish`/`canSubscribe` grants and `URL.canParse` are read and written under their names.
+      // A destructuring pattern is therefore out of scope on purpose rather than by omission: the name in
+      // `const { canPublish } = grant` is the foreign object's, so the only way to satisfy the rule there is to
+      // Rename on the spot and desync our vocabulary from the sdk's at every call site. A boolean we author has
+      // Its own declarator, which this does match.
       message:
         "Name a boolean `is*` (or `has*` for possession/membership) — `can*` and `should*` name a policy rather than the value. See the naming skill.",
       selector: "VariableDeclarator[id.name=/^(can|should)[A-Z]/]",

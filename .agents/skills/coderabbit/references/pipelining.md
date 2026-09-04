@@ -33,9 +33,12 @@ open one. That is a slot spend like any push, so it is asked for rather than ass
 Spends a Review Slot").
 
 Size that window from the **merge base**, not from a reviewed sha — a PR's first review reads the cumulative diff
-(`references/measuring-the-window.md`), so the count is `git diff --name-only $(git merge-base origin/main HEAD)..HEAD`
-and the ~90-file target applies to it whole. Everything already on `main` is outside it, which is why the merge
-base rather than `main` is the left-hand side.
+(`references/measuring-the-window.md`), so the count is
+`git fetch origin main && git diff --name-only $(git merge-base origin/main HEAD)..HEAD` and the ~90-file target
+applies to it whole. Everything already on `main` is outside it, which is why the merge base rather than `main` is
+the left-hand side — and the fetch is load-bearing rather than hygiene, because this measurement is taken exactly
+once the previous PR has merged: `origin/main` is a remote-tracking ref, so an unfetched one still points at the
+commit before that merge and the merge base walks back past it, counting the whole merged window a second time.
 
 ```bash
 git push origin develop
