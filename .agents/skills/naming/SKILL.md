@@ -99,6 +99,7 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 ## Constants
 
 - **A module-scope constant holding a fixed scalar is `SCREAMING_SNAKE_CASE`** — `MAX_INVITE_ID_RETRIES`, `SEARCH_SIMILARITY_THRESHOLD`, `DUPLICATE_NAME_SUFFIX`, `CLOSED_SURVEY_ERROR_REASON`. The casing is what separates the value that is fixed for the life of the process from the local that happens to be `const`, and a camelCase one reads as the latter at every use site. A constant holding a **lookup structure** — a map, record or set the code indexes into — is PascalCase named after its file instead (`file-organization`, `references/constant-maps.md`), because there the name stands for the table rather than for one value. `packages/infra` is the one package this does not reach: a constant there is one per file named after that file, scalars included, so its casing is the file name's (`pulumi-infra`).
+  - **A fixed list or object that is not a table the code indexes into takes the scalar's casing, not the table's** — `DELETE_BUTTON_PROPS`, `CARD_PROPS`, `MENU_COMMANDS`, `KEYBOARD_SHORTCUTS`. PascalCase is earned by being a lookup with a file of its own to be named after; a bound configuration or an iterated list inside a `<script setup>` has neither, and left camelCase it reads as one more local among the refs around it.
 - Named regex constants use `_REGEX` suffix — `FOO_REGEX`. **Never** `_RE`, `_PATTERN`, or any other suffix.
 
 ## Framework-Specific Naming

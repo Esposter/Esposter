@@ -12,12 +12,12 @@ interface UserVolumeSliderProps {
 const { field, label, userSettings } = defineProps<UserVolumeSliderProps>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
-const { cloned: volumePercentage } = useCloned(() => userSettings[field]);
+const { cloned: editedVolumePercentage } = useCloned(() => userSettings[field]);
 </script>
 
 <template>
   <MessageModelUserSettingsTypeVoiceVolumeSlider
-    v-model="volumePercentage"
+    v-model="editedVolumePercentage"
     :label
     @end="updateUserSettings({ [field]: $event })"
   />

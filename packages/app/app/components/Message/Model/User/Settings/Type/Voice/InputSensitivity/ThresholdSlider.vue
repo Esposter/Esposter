@@ -11,16 +11,16 @@ interface ThresholdSliderProps {
 const { userSettings } = defineProps<ThresholdSliderProps>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
-const { cloned: inputSensitivityDecibels } = useCloned(() => userSettings.inputSensitivityDecibels);
+const { cloned: editedInputSensitivityDecibels } = useCloned(() => userSettings.inputSensitivityDecibels);
 const { level, start } = useMicrophoneLevel();
-const trackRef = useTemplateRef<HTMLDivElement>("track");
+const track = useTemplateRef("track");
 const isDragging = ref(false);
 const range = MAX_INPUT_SENSITIVITY_DECIBELS - MIN_INPUT_SENSITIVITY_DECIBELS;
 const setThresholdFromClientX = (clientX: number) => {
-  if (!trackRef.value) return;
-  const rect = trackRef.value.getBoundingClientRect();
+  if (!track.value) return;
+  const rect = track.value.getBoundingClientRect();
   const fraction = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
-  inputSensitivityDecibels.value = Math.round(MIN_INPUT_SENSITIVITY_DECIBELS + fraction * range);
+  editedInputSensitivityDecibels.value = Math.round(MIN_INPUT_SENSITIVITY_DECIBELS + fraction * range);
 };
 const startDrag = (event: PointerEvent) => {
   isDragging.value = true;
@@ -33,7 +33,7 @@ useEventListener("pointermove", (event) => {
 useEventListener("pointerup", async () => {
   if (!isDragging.value) return;
   isDragging.value = false;
-  await updateUserSettings({ inputSensitivityDecibels: inputSensitivityDecibels.value });
+  await updateUserSettings({ inputSensitivityDecibels: editedInputSensitivityDecibels.value });
 });
 
 onMounted(async () => {
@@ -73,7 +73,7 @@ onMounted(async () => {
       size-5
       shadow
       absolute
-      :style="{ left: `${((inputSensitivityDecibels - MIN_INPUT_SENSITIVITY_DECIBELS) / range) * 100}%` }"
+      :style="{ left: `${((editedInputSensitivityDecibels - MIN_INPUT_SENSITIVITY_DECIBELS) / range) * 100}%` }"
     />
   </div>
 </template>

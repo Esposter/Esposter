@@ -2,7 +2,7 @@
 import { KeybindsSettingsSection } from "@/models/message/user/settings/KeybindsSettingsSection";
 
 // Read-only reference for now; rebinding is a future enhancement (the PTT keybind is editable under Voice & Video).
-const shortcuts = [
+const KEYBOARD_SHORTCUTS = [
   { keys: "Ctrl + K", title: "Open command palette" },
   { keys: "↑", title: "Edit your last message" },
   { keys: "Esc", title: "Cancel editing / close" },
@@ -12,7 +12,7 @@ const shortcuts = [
 <template>
   <MessageModelUserSettingsSection :title="KeybindsSettingsSection.Shortcuts">
     <v-list>
-      <v-list-item v-for="{ keys, title } of shortcuts" :key="title" :title>
+      <v-list-item v-for="{ keys, title } of KEYBOARD_SHORTCUTS" :key="title" :title>
         <template #append>
           <kbd>{{ keys }}</kbd>
         </template>
