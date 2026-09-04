@@ -17,7 +17,9 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
 
   constructor(indexedColumns: IndexedColumn[]) {
     super();
-    this.#indexedColumns = indexedColumns.toSorted((a, b) => b.columnIndex - a.columnIndex);
+    this.#indexedColumns = indexedColumns.toSorted(
+      (firstIndexedColumn, secondIndexedColumn) => secondIndexedColumn.columnIndex - firstIndexedColumn.columnIndex,
+    );
   }
 
   execute(dataSource: DataSource) {
@@ -27,7 +29,9 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
   }
 
   undo(dataSource: DataSource) {
-    const ascendingColumns = this.#indexedColumns.toSorted((a, b) => a.columnIndex - b.columnIndex);
+    const ascendingColumns = this.#indexedColumns.toSorted(
+      (firstIndexedColumn, secondIndexedColumn) => firstIndexedColumn.columnIndex - secondIndexedColumn.columnIndex,
+    );
     const restoredColumns: Column[] = [];
     let existingIndex = 0;
     for (const { columnIndex, originalColumn } of ascendingColumns) {

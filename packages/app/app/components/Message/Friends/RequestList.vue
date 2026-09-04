@@ -4,7 +4,10 @@ import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 const friendRequestStore = useFriendRequestStore();
 const { receivedFriendRequests } = storeToRefs(friendRequestStore);
 const displayReceivedFriendRequests = computed(() =>
-  receivedFriendRequests.value.toSorted((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
+  receivedFriendRequests.value.toSorted(
+    (firstFriendRequest, secondFriendRequest) =>
+      secondFriendRequest.createdAt.getTime() - firstFriendRequest.createdAt.getTime(),
+  ),
 );
 </script>
 

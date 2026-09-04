@@ -15,7 +15,9 @@ const { isOpen, item: emojis } = useSingletonDialog(reactionsRowKey, () => {
 const selectedEmojiTag = ref("");
 // Most-reacted first, sorted at display time. The rail's selection is derived rather than assigned on open,
 // So a reaction that overtakes another — or disappears entirely — never leaves the rail pointing at nothing
-const sortedEmojis = computed(() => (emojis.value ?? []).toSorted((a, b) => b.userIds.length - a.userIds.length));
+const sortedEmojis = computed(() =>
+  (emojis.value ?? []).toSorted((firstEmoji, secondEmoji) => secondEmoji.userIds.length - firstEmoji.userIds.length),
+);
 const selectedEmoji = computed(
   () => sortedEmojis.value.find(({ emojiTag }) => emojiTag === selectedEmojiTag.value) ?? sortedEmojis.value[0],
 );

@@ -14,8 +14,11 @@ const { initializeBuildingMap } = buildingStore;
 const { buildings } = storeToRefs(buildingStore);
 const unlockedStoreUpgrades = computed(() =>
   unlockedUpgrades.value
-    .filter((u) => !clicker.value.boughtUpgrades.some((bu) => bu.id === u.id))
-    .toSorted((a, b) => a.price - b.price),
+    .filter(
+      (unlockedUpgrade) =>
+        !clicker.value.boughtUpgrades.some((boughtUpgrade) => boughtUpgrade.id === unlockedUpgrade.id),
+    )
+    .toSorted((firstUpgrade, secondUpgrade) => firstUpgrade.price - secondUpgrade.price),
 );
 
 const [upgradeMap, buildingMap] = await Promise.all([

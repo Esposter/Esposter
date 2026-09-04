@@ -3,7 +3,9 @@ import { useClickerStore } from "@/store/clicker";
 
 const clickerStore = useClickerStore();
 const { clicker } = storeToRefs(clickerStore);
-const inventoryUpgrades = computed(() => clicker.value.boughtUpgrades.toSorted((a, b) => a.price - b.price));
+const inventoryUpgrades = computed(() =>
+  clicker.value.boughtUpgrades.toSorted((firstUpgrade, secondUpgrade) => firstUpgrade.price - secondUpgrade.price),
+);
 </script>
 
 <template>

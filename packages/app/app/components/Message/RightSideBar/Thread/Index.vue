@@ -10,7 +10,9 @@ const actionItems = useThreadActionItems();
 // Oldest first, so the thread reads top-down into the composer below it — the root is the earliest message in
 // Its own thread, so it needs no special case to stay at the top
 const sortedThreadMessages = computed(() =>
-  threadMessages.value.toSorted((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
+  threadMessages.value.toSorted(
+    (firstMessage, secondMessage) => firstMessage.createdAt.getTime() - secondMessage.createdAt.getTime(),
+  ),
 );
 </script>
 

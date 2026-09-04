@@ -26,7 +26,9 @@ const { getDisplayName } = userToRoomStore;
 const displayName = computed(() => getDisplayName(member, room.id));
 const roleStore = useRoleStore();
 const { getMemberRoles } = roleStore;
-const memberRoles = computed(() => getMemberRoles(room.id, member.id).toSorted((a, b) => b.position - a.position));
+const memberRoles = computed(() =>
+  getMemberRoles(room.id, member.id).toSorted((firstRole, secondRole) => secondRole.position - firstRole.position),
+);
 const topRoleColor = computed(() => getTopRole(memberRoles.value)?.color || undefined);
 const isMenuOpen = ref(false);
 </script>

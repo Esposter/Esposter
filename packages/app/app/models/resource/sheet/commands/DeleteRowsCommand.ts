@@ -18,7 +18,9 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
 
   constructor(indexedRows: IndexedRow[]) {
     super();
-    this.#indexedRows = indexedRows.toSorted((a, b) => b.index - a.index);
+    this.#indexedRows = indexedRows.toSorted(
+      (firstIndexedRow, secondIndexedRow) => secondIndexedRow.index - firstIndexedRow.index,
+    );
   }
 
   execute(dataSource: DataSource) {
@@ -29,7 +31,9 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
   }
 
   undo(dataSource: DataSource) {
-    const ascendingRows = this.#indexedRows.toSorted((a, b) => a.index - b.index);
+    const ascendingRows = this.#indexedRows.toSorted(
+      (firstIndexedRow, secondIndexedRow) => firstIndexedRow.index - secondIndexedRow.index,
+    );
     for (const { row } of ascendingRows)
       for (const column of dataSource.columns) column.size += getValueSize(takeOne(row.data, column.name));
     const restoredRows: Row[] = [];
