@@ -17,7 +17,7 @@ export const buildHostFlushPlan = (
 ): FlushOp[] => {
   const manifest = parseOverlayManifest(runOverlayScript(OVERLAY_PROBE_SCRIPT, [upperDir, snapshotUpperDir]));
   const snapshotLowerPaths = new Set(
-    manifest.filter((entry) => entry.checkIsSnapshotLowerPath).map((entry) => entry.relativePath),
+    manifest.filter((entry) => entry.isSnapshotLowerPath).map((entry) => entry.relativePath),
   );
   const entries = manifest.map((entry) => ({
     kind: parseOverlayEntryKind(entry, entry.isOpaque),

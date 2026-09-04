@@ -5,7 +5,7 @@ import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMembe
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
-import { AdminActionType, hasPermission, RoomPermission } from "@esposter/db-schema";
+import { AdminActionType, checkHasPermission, RoomPermission } from "@esposter/db-schema";
 
 interface Props {
   roomId: string;
@@ -43,7 +43,7 @@ const manageablePermissions = computed(() => {
 const checkHasManageablePermission = (permission: RoomPermission) =>
   Boolean(
     manageablePermissions.value &&
-    hasPermission(manageablePermissions.value.permissions, permission, manageablePermissions.value.isRoomOwner),
+    checkHasPermission(manageablePermissions.value.permissions, permission, manageablePermissions.value.isRoomOwner),
   );
 const isBannable = computed(() => checkHasManageablePermission(RoomPermission.BanMembers));
 const isKickable = computed(() => checkHasManageablePermission(RoomPermission.KickMembers));

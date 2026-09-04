@@ -4,12 +4,12 @@ import type { TMXTilesetParsed } from "#src/models/tmx/parsed/TMXTilesetParsed";
 import type { TMXImageShared } from "#src/models/tmx/shared/TMXImageShared";
 
 import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
-import { isExternalTileset } from "#src/util/isExternalTileset";
+import { checkIsExternalTileset } from "#src/util/checkIsExternalTileset";
 import { parseTile } from "#src/util/parseTile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const parseTileset = (node: TMXTilesetNode): TMXTilesetParsed => {
-  if (isExternalTileset(node.$)) return structuredClone(node.$);
+  if (checkIsExternalTileset(node.$)) return structuredClone(node.$);
 
   const { $, $$, tile } = node as TMXEmbeddedTilesetNode;
 

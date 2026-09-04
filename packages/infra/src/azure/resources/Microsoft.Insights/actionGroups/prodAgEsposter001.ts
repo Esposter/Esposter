@@ -5,7 +5,7 @@ import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/re
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
-const config = new pulumi.Config();
+const configuration = new pulumi.Config();
 
 const actionGroupName = "prod-ag-esposter-001";
 
@@ -18,7 +18,7 @@ export const prodAgEsposter001: azure_native.monitor.ActionGroup = new azure_nat
     location: AzureGlobalDisplayLocation,
     logicAppReceivers: [
       {
-        callbackUrl: config.requireSecret("prodAgEsposterAe001CallbackUrl"),
+        callbackUrl: configuration.requireSecret("prodAgEsposterAe001CallbackUrl"),
         name: "prod-stop-function",
         resourceId: prodLogicEsposterAe001.id,
         useCommonAlertSchema: true,

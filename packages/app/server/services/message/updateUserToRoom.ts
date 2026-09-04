@@ -4,7 +4,7 @@ import type { User } from "@esposter/db-schema";
 
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
-import { hasPermission } from "@esposter/db";
+import { checkHasPermission } from "@esposter/db";
 import { DatabaseEntityType, RoomPermission, usersToRoomsInMessage } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -18,7 +18,7 @@ export const updateUserToRoom = async (
   const effectiveUserId = targetUserId ?? userId;
 
   if (targetUserId && targetUserId !== userId) {
-    const isPermitted = await hasPermission(db, userId, roomId, RoomPermission.ManageNicknames);
+    const isPermitted = await checkHasPermission(db, userId, roomId, RoomPermission.ManageNicknames);
     if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 

@@ -1,6 +1,6 @@
 import type { Database, RoomFilterInMessage } from "@esposter/db-schema";
 
-import { hasPermission } from "#src/services/room/rbac/hasPermission";
+import { checkHasPermission } from "#src/services/room/rbac/checkHasPermission";
 import { MessageCreationRejectionType, RoomPermission } from "@esposter/db-schema";
 
 export type MessageCreationRejection =
@@ -50,9 +50,9 @@ export const getMessageCreationRejection = async (
   // Only a rule that actually engages asks whether the sender may moderate, and however many of them ask,
   // Storage answers once — the promise is what is memoized, so concurrent askers share the one lookup. An
   // Unrestricted room is the common case and never asks at all
-  let hasManageMessages: Promise<boolean> | undefined;
+  let hasManageMessagesPromise: Promise<boolean> | undefined;
   const checkHasManageMessages = (): Promise<boolean> =>
-    (hasManageMessages ??= hasPermission(db, userId, roomId, RoomPermission.ManageMessages));
+    (hasManageMessagesPromise ??= checkHasPermission(db, userId, roomId, RoomPermission.ManageMessages));
   // A timeout outranks every permission — a moderator who times themselves out stays timed out
   if (member.timeoutUntil && member.timeoutUntil > new Date()) return { type: MessageCreationRejectionType.Timeout };
   else if (room.isReadOnly && !(await checkHasManageMessages())) return { type: MessageCreationRejectionType.ReadOnly };

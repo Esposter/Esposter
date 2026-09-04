@@ -32,11 +32,12 @@ const toComparable = (value: unknown): number | string => {
   else return String(value);
 };
 
-const compareValues = (leftHandSide: unknown, rightHandSide: unknown): number => {
-  const left = toComparable(leftHandSide);
-  const right = toComparable(rightHandSide);
-  if (typeof left === "number" && typeof right === "number") return left - right;
-  return String(left).localeCompare(String(right));
+const compareValues = (firstValue: unknown, secondValue: unknown): number => {
+  const firstComparable = toComparable(firstValue);
+  const secondComparable = toComparable(secondValue);
+  if (typeof firstComparable === "number" && typeof secondComparable === "number")
+    return firstComparable - secondComparable;
+  return String(firstComparable).localeCompare(String(secondComparable));
 };
 
 const sortDocuments = (documents: Record<string, unknown>[], orderBy: string[]): Record<string, unknown>[] => {
@@ -45,9 +46,9 @@ const sortDocuments = (documents: Record<string, unknown>[], orderBy: string[]):
     const [field = "", direction = "asc"] = clause.split(/\s+/u);
     return { direction, key: deserializeKey(field) };
   });
-  return documents.toSorted((leftHandSide, rightHandSide) => {
+  return documents.toSorted((firstDocument, secondDocument) => {
     for (const { direction, key } of parsedOrderBy) {
-      const comparison = compareValues(leftHandSide[key], rightHandSide[key]);
+      const comparison = compareValues(firstDocument[key], secondDocument[key]);
       if (comparison !== 0) return direction === "desc" ? -comparison : comparison;
     }
     return 0;

@@ -5,10 +5,10 @@ import { describe, expect, test } from "vitest";
 
 describe(parseOverlayManifest, () => {
   const entry: OverlayManifestEntry = {
-    checkIsSnapshotLowerPath: false,
     isCharacterDevice: false,
     isDirectory: false,
     isOpaque: false,
+    isSnapshotLowerPath: false,
     rdev: 0,
     relativePath: "",
   };
@@ -44,7 +44,7 @@ describe(parseOverlayManifest, () => {
       ✖ Invalid input: expected boolean, received undefined
         → at [0].isOpaque
       ✖ Invalid input: expected boolean, received undefined
-        → at [0].checkIsSnapshotLowerPath
+        → at [0].isSnapshotLowerPath
       ✖ Invalid input: expected number, received undefined
         → at [0].rdev]
     `);

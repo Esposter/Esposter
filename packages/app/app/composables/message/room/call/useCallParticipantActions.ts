@@ -3,7 +3,7 @@ import type { Item } from "@/models/shared/Item";
 import { useCallStore } from "@/store/message/room/call";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useRoleStore } from "@/store/message/room/role";
-import { AdminActionType, hasPermission, RoomPermission } from "@esposter/db-schema";
+import { AdminActionType, checkHasPermission, RoomPermission } from "@esposter/db-schema";
 
 export const useCallParticipantActions = () => {
   const { $trpc } = useNuxtApp();
@@ -18,11 +18,19 @@ export const useCallParticipantActions = () => {
   const myPermissions = computed(() => (callRoomId.value ? getMyPermissions(callRoomId.value) : undefined));
   const isForceMuteable = computed(() => {
     if (!myPermissions.value) return false;
-    return hasPermission(myPermissions.value.permissions, RoomPermission.MuteMembers, myPermissions.value.isRoomOwner);
+    return checkHasPermission(
+      myPermissions.value.permissions,
+      RoomPermission.MuteMembers,
+      myPermissions.value.isRoomOwner,
+    );
   });
   const isKickableFromCall = computed(() => {
     if (!myPermissions.value) return false;
-    return hasPermission(myPermissions.value.permissions, RoomPermission.MoveMembers, myPermissions.value.isRoomOwner);
+    return checkHasPermission(
+      myPermissions.value.permissions,
+      RoomPermission.MoveMembers,
+      myPermissions.value.isRoomOwner,
+    );
   });
 
   const getActions = (

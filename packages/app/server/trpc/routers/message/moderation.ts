@@ -36,7 +36,7 @@ import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin"
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause } from "@esposter/azure";
-import { createEntity, hasPermission } from "@esposter/db";
+import { checkHasPermission, createEntity } from "@esposter/db";
 import {
   AdminActionType,
   AzureTable,
@@ -135,7 +135,7 @@ export const moderationRouter = router({
         );
 
       const [isPermitted] = await Promise.all([
-        hasPermission(ctx.db, actorUserId, roomId, AdminActionPermissionMap[input.type]),
+        checkHasPermission(ctx.db, actorUserId, roomId, AdminActionPermissionMap[input.type]),
         assertIsManageable(ctx.db, actorUserId, targetUserId, roomId),
       ]);
       if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });

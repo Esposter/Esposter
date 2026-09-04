@@ -1,1 +1,1 @@
-export const stripBOM = (str: string): string => (str.startsWith("\uFEFF") ? str.slice(1) : str);
+export const stripBOM = (string: string): string => (string.startsWith("\uFEFF") ? string.slice(1) : string);

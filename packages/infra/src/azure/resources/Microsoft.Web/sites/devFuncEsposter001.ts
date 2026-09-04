@@ -6,7 +6,7 @@ import { devAspEsposterAe001 } from "#src/azure/resources/Microsoft.Web/serverFa
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
-const config = new pulumi.Config();
+const configuration = new pulumi.Config();
 
 const siteName = "dev-func-esposter-001";
 
@@ -62,28 +62,31 @@ export const devFuncEsposter001: azure_native.web.WebApp = new azure_native.web.
     siteConfig: {
       appSettings: [
         { name: "AZURE_EVENT_GRID_TOPIC_ENDPOINT", value: devEvgtEsposterAe001.endpoint },
-        { name: "AZURE_EVENT_GRID_TOPIC_KEY", value: config.requireSecret("devFuncEsposter001EventGridTopicKey") },
+        {
+          name: "AZURE_EVENT_GRID_TOPIC_KEY",
+          value: configuration.requireSecret("devFuncEsposter001EventGridTopicKey"),
+        },
         {
           name: "AZURE_SERVICE_BUS_CONNECTION_STRING",
-          value: config.requireSecret("devFuncEsposter001ServiceBusConnectionString"),
+          value: configuration.requireSecret("devFuncEsposter001ServiceBusConnectionString"),
         },
         {
           name: "AZURE_STORAGE_ACCOUNT_CONNECTION_STRING",
-          value: config.requireSecret("devFuncEsposter001StorageAccountConnectionString"),
+          value: configuration.requireSecret("devFuncEsposter001StorageAccountConnectionString"),
         },
         {
           name: "AZURE_WEB_PUBSUB_CONNECTION_STRING",
-          value: config.requireSecret("devFuncEsposter001WebPubSubConnectionString"),
+          value: configuration.requireSecret("devFuncEsposter001WebPubSubConnectionString"),
         },
         { name: "AzureWebJobsStorage__blobServiceUri", value: "https://devstesposter001.blob.core.windows.net" },
         { name: "AzureWebJobsStorage__credential", value: "managedidentity" },
         { name: "AzureWebJobsStorage__queueServiceUri", value: "https://devstesposter001.queue.core.windows.net" },
         { name: "AzureWebJobsStorage__tableServiceUri", value: "https://devstesposter001.table.core.windows.net" },
         { name: "BASE_URL", value: "https://esposter-develop.up.railway.app" },
-        { name: "DATABASE_URL", value: config.requireSecret("devFuncEsposter001DatabaseUrl") },
+        { name: "DATABASE_URL", value: configuration.requireSecret("devFuncEsposter001DatabaseUrl") },
         { name: "FUNCTIONS_EXTENSION_VERSION", value: "~4" },
         { name: "FUNCTIONS_WORKER_RUNTIME", value: "node" },
-        { name: "VAPID_PRIVATE_KEY", value: config.requireSecret("devFuncEsposter001VapidPrivateKey") },
+        { name: "VAPID_PRIVATE_KEY", value: configuration.requireSecret("devFuncEsposter001VapidPrivateKey") },
         {
           name: "VAPID_PUBLIC_KEY",
           value: "BM7bFHT5jh2S--s_l4pPXGNlmpH-fwrT7RM4-JWYvbafCQkO0g2JeO2gUf_yHFOS-0rY6O6d0X7qkuYWmDiJSPE",

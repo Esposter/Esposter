@@ -13,7 +13,7 @@ import { getTopRole } from "@/services/message/member/getTopRole";
 import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks";
 import { MANAGEMENT_PERMISSIONS } from "@/services/room/rbac/constants";
 import { useRoomStore } from "@/store/message/room";
-import { hasPermission } from "@esposter/db-schema";
+import { checkHasPermission } from "@esposter/db-schema";
 import { ID_SEPARATOR, noop } from "@esposter/shared";
 
 export const useRoleStore = defineStore("message/room/role", () => {
@@ -60,7 +60,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const checkHasMyPermission = (roomId: string, permission: RoomPermission) => {
     const myRoomPermissions = getMyPermissions(roomId);
     if (!myRoomPermissions) return false;
-    return hasPermission(myRoomPermissions.permissions, permission, myRoomPermissions.isRoomOwner);
+    return checkHasPermission(myRoomPermissions.permissions, permission, myRoomPermissions.isRoomOwner);
   };
   const checkIsManageable = (roomId: string) => {
     const roomPermissions = getMyPermissions(roomId);

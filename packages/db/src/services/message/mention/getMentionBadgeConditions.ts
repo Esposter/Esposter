@@ -3,10 +3,11 @@ import type { ClassifiedMentions } from "@esposter/shared";
 import type { SQL } from "drizzle-orm";
 
 import { getMentionConditions } from "#src/services/message/mention/getMentionConditions";
-import { MentionBadgeConditionBuilders } from "#src/services/message/mention/MentionBadgeConditionBuilders";
+import { MentionBadgeConditionBuilderMap } from "#src/services/message/mention/MentionBadgeConditionBuilderMap";
 
 export const getMentionBadgeConditions = (
   db: Database,
   roomId: string,
   classifiedMentions: ClassifiedMentions,
-): Promise<(SQL | undefined)[]> => getMentionConditions(db, roomId, classifiedMentions, MentionBadgeConditionBuilders);
+): Promise<(SQL | undefined)[]> =>
+  getMentionConditions(db, roomId, classifiedMentions, MentionBadgeConditionBuilderMap);

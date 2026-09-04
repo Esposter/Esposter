@@ -5,7 +5,7 @@ import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/res
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
-const config = new pulumi.Config();
+const configuration = new pulumi.Config();
 
 const actionGroupName = "dev-ag-esposter-003";
 
@@ -18,7 +18,7 @@ export const devAgEsposter003: azure_native.monitor.ActionGroup = new azure_nati
     location: AzureGlobalDisplayLocation,
     logicAppReceivers: [
       {
-        callbackUrl: config.requireSecret("devAgEsposterAe003CallbackUrl"),
+        callbackUrl: configuration.requireSecret("devAgEsposterAe003CallbackUrl"),
         name: "dev-delete-sub",
         resourceId: devLogicEsposterAe003.id,
         useCommonAlertSchema: true,

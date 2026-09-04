@@ -15,7 +15,7 @@ describe("@esposter/azure-functions", () => {
 
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 5010.17 KB (5130416 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 5010.32 KB (5130563 bytes)"`);
   });
 
   // The Functions host loads a v4-model app by reading "main", and never consults the generated exports map, so

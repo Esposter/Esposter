@@ -1,6 +1,6 @@
 import type { HttpRequestBody } from "@azure/storage-blob";
 
-import { isReadableStream } from "#src/services/container/isReadableStream";
+import { checkIsReadableStream } from "#src/services/container/checkIsReadableStream";
 import { exhaustiveGuard, streamToText } from "@esposter/shared";
 
 export const bodyToBuffer = async (body: HttpRequestBody): Promise<Buffer> => {
@@ -19,7 +19,7 @@ export const bodyToBuffer = async (body: HttpRequestBody): Promise<Buffer> => {
     return Buffer.from(arrayBuffer);
   }
   // NodeJS.ReadableStream
-  else if (isReadableStream(body)) return Buffer.from(await streamToText(body));
+  else if (checkIsReadableStream(body)) return Buffer.from(await streamToText(body));
   // Web API ReadableStream
   else if (body instanceof ReadableStream) {
     const reader = body.getReader();

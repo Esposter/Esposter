@@ -10,9 +10,9 @@ export const EVENT_GRID_DATA_VERSION = "1.0";
 // Its event must outlive this window, or the redelivery that finally succeeds finds nothing and the event is
 // Silently lost. The storage ledger is the one that obeys it (/docs/platform/storage-quotas). Both readings come
 // Off the one duration, in the unit each end actually takes, so neither can drift from the other.
-const eventGridDeliveryTtl = Temporal.Duration.from({ hours: 1 });
-export const EVENT_GRID_DELIVERY_TTL_MINUTES: number = eventGridDeliveryTtl.total("minutes");
-export const EVENT_GRID_DELIVERY_TTL_MS: number = eventGridDeliveryTtl.total("milliseconds");
+const EVENT_GRID_DELIVERY_TTL = Temporal.Duration.from({ hours: 1 });
+export const EVENT_GRID_DELIVERY_TTL_MINUTES: number = EVENT_GRID_DELIVERY_TTL.total("minutes");
+export const EVENT_GRID_DELIVERY_TTL_MS: number = EVENT_GRID_DELIVERY_TTL.total("milliseconds");
 
 // Event Grid caps a single event at 1 MB. A blob name is bounded in CHARACTERS, not bytes — a filename is
 // Arbitrary user text, so one maximal name of CJK or emoji serialises to several times its length in UTF-8 and a

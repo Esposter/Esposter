@@ -4,5 +4,5 @@ import type { ClassifiedMentions } from "@esposter/shared";
 import { createMentionConditionBuilders } from "#src/services/message/mention/createMentionConditionBuilders";
 import { getDirectMessageNotificationCondition } from "#src/services/message/mention/getDirectMessageNotificationCondition";
 
-export const MentionNotificationConditionBuilders: Record<keyof ClassifiedMentions, MentionConditionBuilder> =
+export const MentionNotificationConditionBuilderMap: Record<keyof ClassifiedMentions, MentionConditionBuilder> =
   createMentionConditionBuilders(getDirectMessageNotificationCondition);

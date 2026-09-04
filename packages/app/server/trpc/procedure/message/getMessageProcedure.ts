@@ -10,7 +10,7 @@ import { useTableClient } from "@@/server/composables/azure/table/useTableClient
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { getEntityWithEtag, hasPermission } from "@esposter/db";
+import { checkHasPermission, getEntityWithEtag } from "@esposter/db";
 import { AzureEntityType, AzureTable, RoomPermission, StandardMessageEntity } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -48,7 +48,12 @@ export const getMessageProcedure = <T extends z.ZodType<Pick<MessageEntity, "par
     const hasManageMessages =
       permission === MessageOperationPermission.AnyMember
         ? false
-        : await hasPermission(ctx.db, ctx.getSessionPayload.user.id, input.partitionKey, RoomPermission.ManageMessages);
+        : await checkHasPermission(
+            ctx.db,
+            ctx.getSessionPayload.user.id,
+            input.partitionKey,
+            RoomPermission.ManageMessages,
+          );
     if (
       !checkIsMessageOperationPermitted(permission, {
         hasManageMessages,

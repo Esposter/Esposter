@@ -1,9 +1,9 @@
 import type { Database } from "@esposter/db-schema";
 
 import { getPermissions } from "#src/services/room/rbac/getPermissions";
-import { hasPermission as getHasPermission, RoomPermission } from "@esposter/db-schema";
+import { checkHasPermission as baseCheckHasPermission, RoomPermission } from "@esposter/db-schema";
 
-export const hasPermission = async (
+export const checkHasPermission = async (
   db: Database,
   userId: string,
   roomId: string,
@@ -20,5 +20,5 @@ export const hasPermission = async (
   if (!permissions) return false;
   // What the bits mean is `@esposter/db-schema`'s to say, so this function is only the query around it.
   // The owner already returned above — reaching here means the caller is not one
-  return getHasPermission(permissions, permission, false);
+  return baseCheckHasPermission(permissions, permission, false);
 };

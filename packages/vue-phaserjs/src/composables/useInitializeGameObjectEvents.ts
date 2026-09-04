@@ -2,9 +2,9 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects, Types } from "phaser";
 import type { SetupContext } from "vue";
 
+import { checkIsEvent } from "#src/util/emit/checkIsEvent";
 import { GameObjectEventMap } from "#src/util/emit/GameObjectEventMap";
 import { getEventName } from "#src/util/emit/getEventName";
-import { isEvent } from "#src/util/emit/isEvent";
 import { takeOne } from "@esposter/shared";
 import ClickOutside from "phaser4-rex-plugins/plugins/clickoutside.js";
 
@@ -12,7 +12,7 @@ export const useInitializeGameObjectEvents = () => {
   const currentInstance = getCurrentInstance();
   const events = new Set(
     Object.keys(currentInstance?.attrs ?? {})
-      .filter((key) => isEvent(key))
+      .filter((key) => checkIsEvent(key))
       .map((key) => getEventName(key)),
   );
   const gameObjectEvents = Object.keys(GameObjectEventMap).filter((key) =>

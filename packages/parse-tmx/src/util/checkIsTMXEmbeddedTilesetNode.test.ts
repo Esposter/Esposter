@@ -4,15 +4,15 @@ import type { TMXEmbeddedTilesetNode } from "#src/models/tmx/node/TMXEmbeddedTil
 import { Encoding } from "#src/models/Encoding";
 import { assertNode } from "#src/test/assertNode.test";
 import { createEmbeddedTilesetShared } from "#src/test/createEmbeddedTilesetShared.test";
-import { isTMXEmbeddedTilesetNode } from "#src/util/isTMXEmbeddedTilesetNode";
+import { checkIsTMXEmbeddedTilesetNode } from "#src/util/checkIsTMXEmbeddedTilesetNode";
 import { describe, expect, test } from "vitest";
 
-describe(isTMXEmbeddedTilesetNode, () => {
+describe(checkIsTMXEmbeddedTilesetNode, () => {
   test("embedded tileset node", () => {
     expect.hasAssertions();
 
     expect(
-      isTMXEmbeddedTilesetNode(
+      checkIsTMXEmbeddedTilesetNode(
         assertNode<TMXEmbeddedTilesetNode>({ $: createEmbeddedTilesetShared(), $$: [], tile: [] }),
       ),
     ).toBe(true);
@@ -22,7 +22,7 @@ describe(isTMXEmbeddedTilesetNode, () => {
     expect.hasAssertions();
 
     expect(
-      isTMXEmbeddedTilesetNode(
+      checkIsTMXEmbeddedTilesetNode(
         assertNode<TMXDataNode>({
           $: {
             encoding: Encoding.Base64,
