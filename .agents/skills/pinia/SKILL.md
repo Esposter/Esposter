@@ -9,7 +9,7 @@ description: Esposter Pinia store conventions — full store name, destructure w
 
 Applies **everywhere a store is consumed** — components, composables, services and **tests alike**. Tests are not exempt: a test that reaches into a store differently from the code it covers stops being a description of how the store is used.
 
-- **Full descriptive store variable name** — `const fooBarStore = useFooBarStore()`, never `const store = ...`. Exception: conditional assignment where the store type varies at runtime.
+- **Full descriptive store variable name** — `const fooBarStore = useFooBarStore()`, never `const store = ...`. **A selector that picks one of several stores at runtime is not an exception**: `useBattleMonsterStore(isEnemy)` returns the player's store or the enemy's, and the binding is still `battleMonsterStore`, because the name says which store the caller asked for rather than which one it got.
 - **`storeToRefs` and `defineStore` are auto-imported** — never `import { storeToRefs } from "pinia"`.
 - Assign the store to a named variable first, then destructure. **Never destructure directly from the `useXxxStore()` call** — neither `storeToRefs(useFooStore())` nor `const { method } = useFooStore()`.
 - Keep each store's lines grouped — fully extract one store before the next, never all inits, then all refs, then all methods. Order per store: `const xyzStore = useXyzStore()`, then `const { ref1 } = storeToRefs(xyzStore)`, then `const { method1 } = xyzStore` (omit either line if empty).

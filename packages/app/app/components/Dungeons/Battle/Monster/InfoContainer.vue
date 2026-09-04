@@ -13,9 +13,9 @@ interface InfoContainerProps {
 
 defineSlots<{ default: () => VNode }>();
 const { isEnemy } = defineProps<InfoContainerProps>();
-const store = useBattleMonsterStore(isEnemy);
-const { initialMonsterInfoContainerPosition } = store;
-const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(store);
+const battleMonsterStore = useBattleMonsterStore(isEnemy);
+const { initialMonsterInfoContainerPosition } = battleMonsterStore;
+const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(battleMonsterStore);
 const monsterName = computed(() => prettify(activeMonster.value.key));
 const nameDisplayWidth = ref<number>();
 const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
