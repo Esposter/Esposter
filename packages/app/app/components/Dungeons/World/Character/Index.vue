@@ -55,22 +55,22 @@ onUnmounted(() => {
           speed,
         });
         if (onMovementStarted) {
-          const fn = onMovementStarted;
+          const baseOnMovementStarted = onMovementStarted;
           subscriptions.push(
             scene.gridEngine
               .movementStarted()
               .pipe(filter(({ charId }) => charId === id))
-              .subscribe((movement) => fn(scene, movement)),
+              .subscribe((movement) => baseOnMovementStarted(scene, movement)),
           );
         }
 
         if (onMovementStopped) {
-          const fn = onMovementStopped;
+          const baseOnMovementStopped = onMovementStopped;
           subscriptions.push(
             scene.gridEngine
               .movementStopped()
               .pipe(filter(({ charId }) => charId === id))
-              .subscribe((movement) => fn(scene, movement)),
+              .subscribe((movement) => baseOnMovementStopped(scene, movement)),
           );
         }
 

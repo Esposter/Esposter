@@ -18,9 +18,9 @@ describe(getWebhookCreateMessageInput, () => {
   test("maps payload and webhook to create message input", () => {
     expect.hasAssertions();
 
-    const result = getWebhookCreateMessageInput(payload, webhook);
+    const webhookCreateMessageInput = getWebhookCreateMessageInput(payload, webhook);
 
-    expect(result).toStrictEqual({
+    expect(webhookCreateMessageInput).toStrictEqual({
       appUser: { id: webhook.userId, image: payload.avatar_url, name: payload.username },
       message: payload.content,
       roomId: webhook.roomId,

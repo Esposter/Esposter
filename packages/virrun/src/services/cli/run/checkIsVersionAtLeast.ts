@@ -10,7 +10,7 @@ const parseVersionTriple = (version: string): [number, number, number] | null =>
 };
 // Whether `version` is >= `minimum`, compared field-by-field on the major.minor.patch triple. An unparseable
 // Version (or minimum) reads as below the minimum — unknown is treated as unsupported.
-export const isVersionAtLeast = (version: string, minimum: string): boolean => {
+export const checkIsVersionAtLeast = (version: string, minimum: string): boolean => {
   const actual = parseVersionTriple(version);
   const required = parseVersionTriple(minimum);
   if (actual === null || required === null) return false;

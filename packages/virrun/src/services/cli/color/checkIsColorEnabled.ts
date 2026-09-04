@@ -5,7 +5,7 @@
 // Gating on stderr (not stdout) because every virrun banner/result/doctor line is a stderr write, and it keeps the
 // Child's stdout diffs byte-clean. Re-read per call so a short-lived CLI honors a late-set env without an import-time
 // Snapshot; the check is a couple of property reads, so the cost is irrelevant.
-export const isColorEnabled = (): boolean => {
+export const checkIsColorEnabled = (): boolean => {
   const { FORCE_COLOR, NO_COLOR } = process.env;
   if (NO_COLOR) return false;
   else if (FORCE_COLOR === "0" || FORCE_COLOR === "false") return false;

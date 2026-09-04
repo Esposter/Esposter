@@ -9,7 +9,7 @@ interface Props {
 defineOptions({ inheritAttrs: false });
 const { code = "", language } = defineProps<Props>();
 const { copied, copy } = useClipboard({ source: code });
-const copyButtonProps = { color: "grey-lighten-1", density: "comfortable", size: "small", variant: "text" } as const;
+const COPY_BUTTON_PROPS = { color: "grey-lighten-1", density: "comfortable", size: "small", variant: "text" } as const;
 </script>
 
 <template>
@@ -27,7 +27,7 @@ const copyButtonProps = { color: "grey-lighten-1", density: "comfortable", size:
       absolute
       focus:op-100
       group-hover:op-100
-      :button-props="copyButtonProps"
+      :button-props="COPY_BUTTON_PROPS"
       :icon="copied ? 'mdi-check' : 'mdi-content-copy'"
       :text="copied ? 'Copied' : 'Copy'"
       @click="copy()"

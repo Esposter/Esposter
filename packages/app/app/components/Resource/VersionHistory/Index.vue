@@ -19,7 +19,7 @@ const { closeVersionHistory } = useVersionHistoryRoute();
 // Nowhere else — on every other type the timeline is revisions and nothing but
 const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
 const isPublishedOnly = ref(false);
-const timelineVersions = computed(() =>
+const displayVersions = computed(() =>
   isPublishedOnly.value
     ? versions.value.filter(({ channel }) => channel === SnapshotChannel.Published)
     : versions.value,
@@ -49,7 +49,7 @@ onUnmounted(clearVersionHistory);
         and the mental model — current, plus the points behind it — is there from the first visit -->
       <ResourceVersionHistoryCurrentListItem :resource />
       <ResourceVersionHistoryListItem
-        v-for="snapshotVersion of timelineVersions"
+        v-for="snapshotVersion of displayVersions"
         :key="getSnapshotVersionId(snapshotVersion)"
         :resource
         :snapshot-version

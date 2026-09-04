@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Aliased so the auto-imported <Dashboard> component isn't shadowed by the model class
-import { Dashboard as DashboardModel } from "#shared/models/dashboard/data/Dashboard";
+import { Dashboard as BaseDashboard } from "#shared/models/dashboard/data/Dashboard";
 import { ResourceType } from "@esposter/db-schema";
 
 interface Props {
@@ -19,7 +19,7 @@ const { content, name } = await useReadPublishedResourceContent(
       : $trpc.dashboard.readPublishedResourceContent.query(id),
   version,
 );
-const dashboard = new DashboardModel(content as never);
+const dashboard = new BaseDashboard(content as never);
 </script>
 
 <template>

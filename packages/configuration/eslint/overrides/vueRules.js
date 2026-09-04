@@ -6,7 +6,7 @@ import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxe
 // `hide-details` ban below so the static and bound forms can never cover different tags. A component missing from
 // This list is caught by neither, which is the failure to watch for: adding an input to `vuetify.config.ts` means
 // Adding it here in the same change, or its instances may quietly restate the default.
-const VUETIFY_INPUT_ELEMENT_PATTERN =
+const VUETIFY_INPUT_ELEMENT_REGEX =
   "/^v-(autocomplete|checkbox|color-input|combobox|file-input|radio-group|select|slider|switch|textarea|text-field)$/";
 
 export default {
@@ -66,7 +66,7 @@ export default {
   "vue/no-restricted-static-attribute": [
     "error",
     {
-      element: VUETIFY_INPUT_ELEMENT_PATTERN,
+      element: VUETIFY_INPUT_ELEMENT_REGEX,
       key: "hide-details",
       message:
         'Don\'t write `hide-details` on a Vuetify input — `vuetify.config.ts` already declares `hideDetails: "auto"` for it. The bare attribute is `true`, which hides the validation message a field with rules has to show.',
@@ -109,7 +109,7 @@ export default {
       // Its own validation message.
       message:
         'Don\'t bind `:hide-details`. `vuetify.config.ts` declares `hideDetails` as "auto" for every input, which already hides the details row exactly when there is no message to show.',
-      selector: `VElement[rawName=${VUETIFY_INPUT_ELEMENT_PATTERN}] > VStartTag > VAttribute[directive=true][key.name.name='bind'][key.argument.name='hide-details']`,
+      selector: `VElement[rawName=${VUETIFY_INPUT_ELEMENT_REGEX}] > VStartTag > VAttribute[directive=true][key.name.name='bind'][key.argument.name='hide-details']`,
     },
     ...restrictedDateSyntaxes,
     ...restrictedStoreSyntaxes,

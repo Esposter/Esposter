@@ -35,7 +35,7 @@ import { existsSync } from "node:fs";
 // "auto" resolves to native until vfs beats it on the gates. Every factory takes the run's `environment` so the one
 // Backend that narrows what the sandbox can see (os on win32, via the source mirror) derives its exclude set from the
 // Same preset `maskedPaths` below does; the others have no mirror and ignore it.
-const backendFactories: Record<BackendType, (environment?: Environment) => ExecBackend> = {
+const BACKEND_FACTORY_MAP: Record<BackendType, (environment?: Environment) => ExecBackend> = {
   [BackendType.Auto]: createNativeBackend,
   [BackendType.Native]: createNativeBackend,
   [BackendType.Os]: createOsBackend,
@@ -48,7 +48,7 @@ export const createVirrun = async ({
   environment,
   source = { dir: "", type: SourceType.Dir },
 }: Partial<VirrunOptions> = {}): Promise<Virrun> => {
-  const execBackend = backendFactories[backend](environment);
+  const execBackend = BACKEND_FACTORY_MAP[backend](environment);
   const { cwd, dispose: disposeSource } = await loadSource(source);
   // Leases this run holds on the snapshot/prepare hash dirs it mounts — released on dispose so pruneStale* can reclaim
   // A superseded layer once no live run is reading it.

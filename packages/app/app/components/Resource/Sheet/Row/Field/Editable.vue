@@ -27,21 +27,21 @@ const { clearFocus, requestFocus } = cellStore;
 const editableColumns = computed(() =>
   columns.value.filter((candidateColumn) => checkIsEditableColumnValue(candidateColumn)),
 );
-const localValue = ref<ColumnValue>(takeOne(item.data, column.name) ?? null);
+const editedValue = ref<ColumnValue>(takeOne(item.data, column.name) ?? null);
 let isSubmitted = false;
-// Fire-and-forget: navigateTo focuses the next cell straight after this, and awaiting the row save
+// Fire-and-forget: focusCell focuses the next cell straight after this, and awaiting the row save
 // Would stall focus behind the network round-trip on every keyboard move.
 const submitEdit = getSynchronizedFunction(async () => {
   if (isSubmitted) return;
   isSubmitted = true;
   clearFocus();
-  if (localValue.value === (takeOne(item.data, column.name) ?? null)) return;
+  if (editedValue.value === (takeOne(item.data, column.name) ?? null)) return;
   await updateRow(
-    Object.assign(structuredClone(toRawDeep(item)), { data: { ...item.data, [column.name]: localValue.value } }),
+    Object.assign(structuredClone(toRawDeep(item)), { data: { ...item.data, [column.name]: editedValue.value } }),
   );
 });
 
-const navigateTo = (targetRowIndex: number, targetColumnName: string) => {
+const focusCell = (targetRowIndex: number, targetColumnName: string) => {
   submitEdit();
   requestFocus(targetRowIndex, targetColumnName);
 };
@@ -50,8 +50,8 @@ const navigateTo = (targetRowIndex: number, targetColumnName: string) => {
 <template>
   <div
     @blur.capture="submitEdit()"
-    @keydown.arrow-down.stop="rowIndex + 1 < filteredRows.length && navigateTo(rowIndex + 1, column.name)"
-    @keydown.arrow-up.stop="rowIndex - 1 >= 0 && navigateTo(rowIndex - 1, column.name)"
+    @keydown.arrow-down.stop="rowIndex + 1 < filteredRows.length && focusCell(rowIndex + 1, column.name)"
+    @keydown.arrow-up.stop="rowIndex - 1 >= 0 && focusCell(rowIndex - 1, column.name)"
     @keydown.enter.stop="!$event.isComposing && submitEdit()"
     @keydown.esc.stop="clearFocus()"
     @keydown.tab.stop="
@@ -61,10 +61,10 @@ const navigateTo = (targetRowIndex: number, targetColumnName: string) => {
         const nextIndex = event.shiftKey ? currentIndex - 1 : currentIndex + 1;
         if (nextIndex < 0 || nextIndex >= editableColumns.length) return;
         event.preventDefault();
-        navigateTo(rowIndex, takeOne(editableColumns, nextIndex).name);
+        focusCell(rowIndex, takeOne(editableColumns, nextIndex).name);
       }
     "
   >
-    <ResourceSheetRowFieldInput v-model="localValue" :column autofocus is-inline />
+    <ResourceSheetRowFieldInput v-model="editedValue" :column autofocus is-inline />
   </div>
 </template>

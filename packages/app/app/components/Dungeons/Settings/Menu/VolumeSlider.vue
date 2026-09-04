@@ -22,13 +22,13 @@ import { Rectangle, Text } from "vue-phaserjs";
 const volumeStore = useVolumeStore();
 const { setVolume } = volumeStore;
 const { volumePercentage, volumeSlider } = storeToRefs(volumeStore);
-const baseY = getSettingsOptionY(SettingsOption.VolumePercentage);
-const baseSliderBarConfiguration: Partial<RectangleConfiguration> = {
+const BASE_Y = getSettingsOptionY(SettingsOption.VolumePercentage);
+const BASE_SLIDER_BAR_CONFIGURATION: Partial<RectangleConfiguration> = {
   originX: 0,
   originY: 0.5,
   width: VOLUME_SLIDER_BAR_WIDTH,
   x: INITIAL_SETTINGS_VALUE_POSITION.x,
-  y: baseY + 17,
+  y: BASE_Y + 17,
 };
 const onSliderBarClick = getSynchronizedFunction(({ x }: Input.Pointer) =>
   getResultAsync(async () => {
@@ -43,11 +43,11 @@ const onSliderBarClick = getSynchronizedFunction(({ x }: Input.Pointer) =>
 
 <template>
   <Rectangle
-    :configuration="{ ...baseSliderBarConfiguration, height: VOLUME_SLIDER_HEIGHT }"
+    :configuration="{ ...BASE_SLIDER_BAR_CONFIGURATION, height: VOLUME_SLIDER_HEIGHT }"
     @[`${Input.Events.GAMEOBJECT_POINTER_DOWN}`]="onSliderBarClick"
   />
   <Rectangle
-    :configuration="{ ...baseSliderBarConfiguration, height: 4, fillColor: 0xffffff }"
+    :configuration="{ ...BASE_SLIDER_BAR_CONFIGURATION, height: 4, fillColor: 0xffffff }"
     @[`${Input.Events.GAMEOBJECT_POINTER_DOWN}`]="onSliderBarClick"
   />
   <Rectangle
@@ -63,8 +63,8 @@ const onSliderBarClick = getSynchronizedFunction(({ x }: Input.Pointer) =>
         volumeSlider = markRaw(
           useSlider(scene, rectangle, {
             endPoints: [
-              { x: VOLUME_SLIDER_START_X, y: baseY + 17 },
-              { x: VOLUME_SLIDER_END_X, y: baseY + 17 },
+              { x: VOLUME_SLIDER_START_X, y: BASE_Y + 17 },
+              { x: VOLUME_SLIDER_END_X, y: BASE_Y + 17 },
             ],
             value: volumePercentage / 100,
             // Keep cursor sliding smooth: handled by the plugin, not the store.
@@ -84,7 +84,7 @@ const onSliderBarClick = getSynchronizedFunction(({ x }: Input.Pointer) =>
   <Text
     :configuration="{
       x: INITIAL_SETTINGS_VALUE_POSITION.x + 340,
-      y: baseY,
+      y: BASE_Y,
       text: `${volumePercentage}%`,
       style: MenuTextStyle,
     }"

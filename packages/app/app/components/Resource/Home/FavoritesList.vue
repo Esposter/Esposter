@@ -6,17 +6,17 @@ const favoriteStore = useFavoriteStore();
 const { favorites, isPending } = storeToRefs(favoriteStore);
 const { readFavorites } = favoriteStore;
 // Fetched after mount (not awaited in setup) so the card shows its skeleton instead of blocking navigation
-const hasLoaded = ref(false);
+const isLoaded = ref(false);
 
 onMounted(async () => {
   await readFavorites();
-  hasLoaded.value = true;
+  isLoaded.value = true;
 });
 </script>
 
 <template>
   <ResourceHomeList
-    :is-pending="isPending || !hasLoaded"
+    :is-pending="isPending || !isLoaded"
     :resources="favorites"
     :source="ResourceListSource.Favorites"
   />

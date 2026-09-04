@@ -12,12 +12,12 @@ interface Props {
 }
 
 const { chest, position } = defineProps<Props>();
-const startFrame = 18 * 32 + 19;
-const endFrame = 18 * 32 + 21;
+const START_FRAME = 18 * 32 + 19;
+const END_FRAME = 18 * 32 + 21;
 // Reactivity will be handled by animations
-const frame = chest.isOpened ? endFrame : startFrame;
+const frame = chest.isOpened ? END_FRAME : START_FRAME;
 const animations = useAnimations((scene) => [
-  getAnimationConfiguration(scene, TilesetKey.Dungeon, { end: endFrame, start: startFrame }),
+  getAnimationConfiguration(scene, TilesetKey.Dungeon, { end: END_FRAME, start: START_FRAME }),
 ]);
 const playAnimationKey = ref<TilesetKey>();
 

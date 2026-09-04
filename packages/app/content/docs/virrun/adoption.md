@@ -19,7 +19,7 @@ flowchart LR
     resolve -->|"unsupported host<br/>(no bwrap, no WSL node)"| fallback["degrade to native<br/>never error the build"]
 ```
 
-The `virrun -- <cmd>` prefix **is** the switch: every prefixed command is sandboxed, and opting a command in or out is adding or removing the prefix — a reviewable one-token edit. There is no allowlist and no on/off env flag. The committed config only decides _which backend_ a prefixed command runs through ([configuration](/docs/virrun/configuration)). virrun does inject a vitest-style `VIRRUN=true` into every command's environment (read via `isVirrunEnabled`) so a test or tool can detect it runs under virrun — but that is an output virrun sets, never an input that gates routing.
+The `virrun -- <cmd>` prefix **is** the switch: every prefixed command is sandboxed, and opting a command in or out is adding or removing the prefix — a reviewable one-token edit. There is no allowlist and no on/off env flag. The committed config only decides _which backend_ a prefixed command runs through ([configuration](/docs/virrun/configuration)). virrun does inject a vitest-style `VIRRUN=true` into every command's environment (read via `checkIsVirrunEnabled`) so a test or tool can detect it runs under virrun — but that is an output virrun sets, never an input that gates routing.
 
 ## Levels (escalating opt-in, each reversible)
 
@@ -61,7 +61,7 @@ Paths relative to `packages/virrun/src/`.
 | `services/cli/` (citty commands)                       | `run`/`exec`/`warm`/`init`/`cache`/`doctor` subcommands |
 | `services/cli/doctor/probeOsBackendChecks.ts`          | the per-prerequisite doctor probes                      |
 | `services/configuration/resolveVirrunConfiguration.ts` | config discovery + loading (unconfig)                   |
-| `services/configuration/isVirrunEnabled.ts`            | reads the injected `VIRRUN=true` signal                 |
+| `services/configuration/checkIsVirrunEnabled.ts`       | reads the injected `VIRRUN=true` signal                 |
 
 ## Notes
 

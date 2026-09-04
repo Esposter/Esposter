@@ -11,13 +11,13 @@ interface Props {
   position: Position;
 }
 
-const menu = defineModel<boolean>("menu", { required: true });
+const isVisible = defineModel<boolean>("isVisible", { required: true });
 const { grid, position } = defineProps<Props>();
 const { border, primary } = useDungeonsColors();
 </script>
 
 <template>
-  <Container :configuration="{ visible: menu, ...position, depth: MENU_DEPTH }">
+  <Container :configuration="{ visible: isVisible, ...position, depth: MENU_DEPTH }">
     <Rectangle
       :configuration="{
         x: 1,
@@ -28,7 +28,7 @@ const { border, primary } = useDungeonsColors();
         alpha: 0.9,
         strokeStyle: [8, border],
       }"
-      @clickoutside="menu = false"
+      @clickoutside="isVisible = false"
     />
     <DungeonsUIMenuContent :grid />
   </Container>

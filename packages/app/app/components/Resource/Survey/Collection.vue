@@ -10,12 +10,14 @@ const { saveSettings } = surveyStore;
 const { settings } = storeToRefs(surveyStore);
 // Edited on a local copy so a failed save leaves the store showing what the server still has.
 // The store ref hands over a reactive proxy, which structuredClone refuses outright — unwrap it first
-const { cloned, sync } = useCloned(settings, { clone: (source) => structuredClone(toRawDeep(source)) });
+const { cloned: editedSettings, sync: resetSettings } = useCloned(settings, {
+  clone: (source) => structuredClone(toRawDeep(source)),
+});
 const isPending = ref(false);
 const save = async () => {
   isPending.value = true;
-  const isSuccessful = await saveSettings(structuredClone(toRawDeep(cloned.value)));
-  if (!isSuccessful) sync();
+  const isSuccessful = await saveSettings(structuredClone(toRawDeep(editedSettings.value)));
+  if (!isSuccessful) resetSettings();
   isPending.value = false;
 };
 </script>
@@ -25,14 +27,14 @@ const save = async () => {
   <v-card>
     <v-card-text flex flex-col gap-4>
       <v-switch
-        v-model="cloned.isAcceptingResponses"
+        v-model="editedSettings.isAcceptingResponses"
         label="Accepting responses"
         :disabled="isPending"
         @update:model-value="save"
       />
       <v-textarea
-        v-if="!cloned.isAcceptingResponses"
-        v-model="cloned.closedMessage"
+        v-if="!editedSettings.isAcceptingResponses"
+        v-model="editedSettings.closedMessage"
         label="Closed message"
         :placeholder="DEFAULT_CLOSED_MESSAGE"
         :counter="MAX_CLOSED_MESSAGE_LENGTH"
@@ -43,7 +45,7 @@ const save = async () => {
         @blur="save"
       />
       <v-select
-        v-model="cloned.responseMode"
+        v-model="editedSettings.responseMode"
         max-width="16rem"
         :items="SurveyResponseModeItemCategoryDefinitions"
         label="Response mode"
@@ -53,7 +55,7 @@ const save = async () => {
       <!-- Modes are collection-time postures, not privacy promises about the answers themselves -->
       <span text-caption op-medium-emphasis>
         {{
-          cloned.responseMode === SurveyResponseMode.Identified
+          editedSettings.responseMode === SurveyResponseMode.Identified
             ? "Only participants holding a link from a program can answer, and you can see who said what."
             : "Anyone with the link can answer and you structurally cannot tell who said what."
         }}

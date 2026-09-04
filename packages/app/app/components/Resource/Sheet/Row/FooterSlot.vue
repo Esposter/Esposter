@@ -11,7 +11,7 @@ const columnStore = useColumnStore();
 const { displayColumns } = storeToRefs(columnStore);
 const rowStore = useRowStore();
 const { filteredRows, headers } = storeToRefs(rowStore);
-const columnSummaries = computed(() => {
+const columnKeySummaryMap = computed(() => {
   const result = new Map<string, string>();
   for (const column of displayColumns.value) {
     if (column.type !== ColumnType.Number || !column.footerStatisticsKey) continue;
@@ -28,7 +28,7 @@ const columnSummaries = computed(() => {
 <template>
   <tr>
     <td v-for="header of headers" :key="header.key" font-weight-bold>
-      {{ columnSummaries.get(header.key) ?? "" }}
+      {{ columnKeySummaryMap.get(header.key) ?? "" }}
     </td>
   </tr>
 </template>

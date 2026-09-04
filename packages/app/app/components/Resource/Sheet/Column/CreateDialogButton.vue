@@ -16,10 +16,10 @@ interface Props {
 const { dataSource } = defineProps<Props>();
 const createColumn = useCreateColumn();
 // StructuredClone to a plain object: vjsf rejects class instances, and fast-deep-equal compares constructors.
-const defaultColumn = structuredClone(ColumnTypeCreateMap[ColumnType.String].create());
-const editedColumn = ref<Column>(structuredClone(defaultColumn));
+const initialColumn = structuredClone(ColumnTypeCreateMap[ColumnType.String].create());
+const editedColumn = ref<Column>(structuredClone(initialColumn));
 const jsonSchema = zodToJsonSchema(columnFormSchema);
-const value = extractSchemaFields(ColumnTypeFormSchemaMap[defaultColumn.type], defaultColumn);
+const value = extractSchemaFields(ColumnTypeFormSchemaMap[initialColumn.type], initialColumn);
 const editedValue = computed(() =>
   extractSchemaFields(ColumnTypeFormSchemaMap[editedColumn.value.type], editedColumn.value),
 );
@@ -28,7 +28,7 @@ const options = useColumnFormOptions(
   () => "",
 );
 const resetForm = () => {
-  editedColumn.value = structuredClone(defaultColumn);
+  editedColumn.value = structuredClone(initialColumn);
 };
 </script>
 

@@ -8,7 +8,7 @@ import { formatVirrunPrepare } from "#src/services/cli/format/formatVirrunPrepar
 import { formatVirrunProvisioning } from "#src/services/cli/format/formatVirrunProvisioning";
 import { formatVirrunResult } from "#src/services/cli/format/formatVirrunResult";
 import { getCommandNotFoundHint } from "#src/services/cli/run/getCommandNotFoundHint";
-import { isVirrunEnabled } from "#src/services/configuration/isVirrunEnabled";
+import { checkIsVirrunEnabled } from "#src/services/configuration/checkIsVirrunEnabled";
 import { resolveBackend } from "#src/services/configuration/resolveBackend";
 import { resolvePrepareStep } from "#src/services/configuration/resolvePrepareStep";
 import { resolveRequestedBackend } from "#src/services/configuration/resolveRequestedBackend";
@@ -51,7 +51,7 @@ export const runVirrunCommand = async (
     if (
       resolveRequestedBackend(configuration) === BackendType.Os &&
       virrun.backend !== BackendType.Os &&
-      !isVirrunEnabled(process.env)
+      !checkIsVirrunEnabled(process.env)
     )
       process.stderr.write(`${formatVirrunDegraded()}\n`);
     // Announce whether this run reuses a warm snapshot or pays the one-time install, so a multi-minute first run is

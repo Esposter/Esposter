@@ -3,7 +3,7 @@ import type { Clause, SerializableValue } from "@esposter/azure";
 /* eslint-disable perfectionist/sort-switch-case */
 import type { Filter, MessageEntity } from "@esposter/db-schema";
 
-import { ContentTypes } from "#src/models/ContentType";
+import { ContentTypes } from "#src/models/ContentTypes";
 import {
   BinaryOperator,
   CompositeKeyPropertyNames,
@@ -22,7 +22,7 @@ import {
 import { getEndOfDay, getStartOfDay, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 
 // The one categorisation of a mimetype, so a category the uploader recognises is a category search can filter by
-const ContentTypesByMimeCategory = Object.groupBy([...ContentTypes], getMimeCategory);
+const MimeCategoryContentTypesMap = Object.groupBy([...ContentTypes], getMimeCategory);
 // Each media filter asks for one mime category; the clause it builds is the same either way
 const FilterTypeHasMimeCategoryMap = {
   [FilterTypeHas.Image]: MimeCategory.Image,
@@ -47,24 +47,24 @@ export const filtersToClauses = (
 ): Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] => {
   const clauses: Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] = [];
 
-  for (const [type, filtersByType] of Object.entries(Object.groupBy(filters, ({ type: filterType }) => filterType)))
+  for (const [type, typeFilters] of Object.entries(Object.groupBy(filters, ({ type: filterType }) => filterType)))
     switch (type) {
       case FilterType.After:
       case FilterType.Before:
       case FilterType.From:
       case FilterType.In:
-        for (const { value } of filtersByType) clauses.push({ ...FilterTypeClauseMap[type], value });
+        for (const { value } of typeFilters) clauses.push({ ...FilterTypeClauseMap[type], value });
         break;
       case FilterType.Mentions: {
         clauses.push({
           key: StandardMessageEntityPropertyNames.mentions,
           operator: SearchOperator.arrayContains,
-          value: filtersByType.map(({ value }) => value),
+          value: typeFilters.map(({ value }) => value),
         });
         break;
       }
       case FilterType.Has: {
-        for (const { value } of filtersByType)
+        for (const { value } of typeFilters)
           switch (value) {
             case FilterTypeHas.Link:
             case FilterTypeHas.Embed:
@@ -77,7 +77,7 @@ export const filtersToClauses = (
               clauses.push({
                 key: `${StandardMessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
                 operator: SearchOperator.arrayContains,
-                value: ContentTypesByMimeCategory[FilterTypeHasMimeCategoryMap[value]] ?? [],
+                value: MimeCategoryContentTypesMap[FilterTypeHasMimeCategoryMap[value]] ?? [],
               });
               break;
             case FilterTypeHas.File:
@@ -99,7 +99,7 @@ export const filtersToClauses = (
         break;
       }
       case FilterType.During: {
-        for (const { value } of filtersByType) {
+        for (const { value } of typeFilters) {
           if (!(value instanceof Date)) throw getInvalidValueError(value);
 
           clauses.push(
@@ -118,7 +118,7 @@ export const filtersToClauses = (
         break;
       }
       case FilterType.Pinned: {
-        for (const { value } of filtersByType) {
+        for (const { value } of typeFilters) {
           if (typeof value !== "boolean") throw getInvalidValueError(value);
 
           clauses.push({

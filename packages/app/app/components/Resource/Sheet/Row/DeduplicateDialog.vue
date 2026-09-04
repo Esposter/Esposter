@@ -8,21 +8,21 @@ import { findDuplicateRows } from "@/services/resource/sheet/commands/findDuplic
 import { useSheetStore } from "@/store/resource/sheet";
 import { takeOne } from "@esposter/shared";
 
+const KEEP_DUPLICATE_MODES = Object.values(KeepDuplicateMode);
 const sheetStore = useSheetStore();
 const { dataSource } = storeToRefs(sheetStore);
 const isOpen = defineModel<boolean>({ default: false });
 const keepMode = ref(KeepDuplicateMode.First);
-const keepDuplicateModes = Object.values(KeepDuplicateMode);
 const deleteDuplicateRows = useDeleteDuplicateRows();
-const duplicateRowEntries = computed<IndexedRow[]>(() => findDuplicateRows(dataSource.value, keepMode.value));
-const duplicateCount = computed(() => duplicateRowEntries.value.length);
+const duplicateRows = computed<IndexedRow[]>(() => findDuplicateRows(dataSource.value, keepMode.value));
+const duplicateCount = computed(() => duplicateRows.value.length);
 const duplicateHeaders = computed(() => [
-  { key: "index", title: "#", value: (entry: IndexedRow) => entry.index },
+  { key: "index", title: "#", value: (indexedRow: IndexedRow) => indexedRow.index },
   ...getVisibleColumns(dataSource.value.columns).map((column) => ({
     key: column.name,
     title: column.name,
-    value: (entry: IndexedRow) => {
-      const value = takeOne(entry.row.data, column.name);
+    value: (indexedRow: IndexedRow) => {
+      const value = takeOne(indexedRow.row.data, column.name);
       return value === null ? "" : String(value);
     },
   })),
@@ -35,15 +35,9 @@ const duplicateHeaders = computed(() => [
     <template v-else>
       <span>{{ duplicateCount }} duplicate {{ pluralize("row", duplicateCount) }} will be deleted.</span>
       <v-btn-toggle v-model="keepMode" density="compact" mandatory mt-4>
-        <v-btn v-for="mode of keepDuplicateModes" :key="mode" :value="mode">Keep {{ mode }}</v-btn>
+        <v-btn v-for="mode of KEEP_DUPLICATE_MODES" :key="mode" :value="mode">Keep {{ mode }}</v-btn>
       </v-btn-toggle>
-      <v-data-table
-        mt-4
-        density="compact"
-        item-value="index"
-        :headers="duplicateHeaders"
-        :items="duplicateRowEntries"
-      />
+      <v-data-table mt-4 density="compact" item-value="index" :headers="duplicateHeaders" :items="duplicateRows" />
     </template>
     <template #actions>
       <v-btn

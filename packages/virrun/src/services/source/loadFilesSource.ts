@@ -14,8 +14,8 @@ export const loadFilesSource = async (source: FilesSource): Promise<LoadedSource
   await getResultAsync(async () => {
     for (const [relativePath, content] of Object.entries(source.files)) {
       const filePath = resolve(cwd, relativePath);
-      const rel = relative(cwd, filePath);
-      if (rel.startsWith("..") || isAbsolute(rel))
+      const resolvedRelativePath = relative(cwd, filePath);
+      if (resolvedRelativePath.startsWith("..") || isAbsolute(resolvedRelativePath))
         throw new InvalidOperationError(Operation.Create, relativePath, "path escapes sandbox directory");
       await mkdir(dirname(filePath), { recursive: true });
       await writeFile(filePath, content);

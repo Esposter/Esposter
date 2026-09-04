@@ -1,11 +1,11 @@
-import { isColorEnabled } from "#src/services/cli/color/isColorEnabled";
+import { checkIsColorEnabled } from "#src/services/cli/color/checkIsColorEnabled";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 const stubIsTTY = (isTTY: boolean): void => {
   Object.defineProperty(process.stderr, "isTTY", { configurable: true, value: isTTY });
 };
 
-describe(isColorEnabled, () => {
+describe(checkIsColorEnabled, () => {
   const originalIsTTY = Object.getOwnPropertyDescriptor(process.stderr, "isTTY");
 
   afterEach(() => {
@@ -19,7 +19,7 @@ describe(isColorEnabled, () => {
     vi.stubEnv("NO_COLOR", "1");
     vi.stubEnv("FORCE_COLOR", "1");
 
-    expect(isColorEnabled()).toBe(false);
+    expect(checkIsColorEnabled()).toBe(false);
   });
 
   test(`returns true when FORCE_COLOR is set and NO_COLOR is not`, () => {
@@ -27,7 +27,7 @@ describe(isColorEnabled, () => {
 
     vi.stubEnv("FORCE_COLOR", "1");
 
-    expect(isColorEnabled()).toBe(true);
+    expect(checkIsColorEnabled()).toBe(true);
   });
 
   test(`returns false when FORCE_COLOR is "0"`, () => {
@@ -36,7 +36,7 @@ describe(isColorEnabled, () => {
     vi.stubEnv("FORCE_COLOR", "0");
     stubIsTTY(true);
 
-    expect(isColorEnabled()).toBe(false);
+    expect(checkIsColorEnabled()).toBe(false);
   });
 
   test(`falls back to the stderr TTY state when no env override is set`, () => {
@@ -44,10 +44,10 @@ describe(isColorEnabled, () => {
 
     stubIsTTY(true);
 
-    expect(isColorEnabled()).toBe(true);
+    expect(checkIsColorEnabled()).toBe(true);
 
     stubIsTTY(false);
 
-    expect(isColorEnabled()).toBe(false);
+    expect(checkIsColorEnabled()).toBe(false);
   });
 });

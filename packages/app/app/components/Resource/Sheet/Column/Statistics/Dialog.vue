@@ -11,7 +11,7 @@ const isChartOpen = ref(false);
 const selectedStatistics = ref<ColumnStatistics | undefined>();
 // A row is the column paired with its statistics, so every column reads through an accessor rather than through
 // A key naming a top-level field
-const headers = [
+const HEADERS = [
   { key: "chart", sortable: false, title: "" },
   { key: "columnName", sortable: false, title: "Column", value: ({ column }: ColumnStatisticsRow) => column.name },
   {
@@ -32,7 +32,7 @@ const itemValue = ({ column }: ColumnStatisticsRow) => column.name;
 
 <template>
   <ResourceSheetDialog v-model="isOpen" title="Column Statistics">
-    <v-data-table density="compact" :headers :item-value :items="columnStatistics">
+    <v-data-table density="compact" :headers="HEADERS" :item-value :items="columnStatistics">
       <template #[`item.chart`]="{ item }">
         <v-tooltip v-if="ChartableColumnTypes.has(item.statistics.columnType)" text="View Chart">
           <template #activator="{ props }">

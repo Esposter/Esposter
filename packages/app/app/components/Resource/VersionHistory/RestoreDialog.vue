@@ -14,17 +14,17 @@ const { versions } = defineProps<Props>();
 const versionHistoryStore = useVersionHistoryStore();
 const { restoringSnapshotVersionId } = storeToRefs(versionHistoryStore);
 const { restoreSnapshot } = versionHistoryStore;
-const { isOpen, item: restoringVersion } = useSingletonDialog(restoringSnapshotVersionId, () =>
-  versions.find((version) => getSnapshotVersionId(version) === restoringSnapshotVersionId.value),
+const { isOpen, item: restoringSnapshotVersion } = useSingletonDialog(restoringSnapshotVersionId, () =>
+  versions.find((snapshotVersion) => getSnapshotVersionId(snapshotVersion) === restoringSnapshotVersionId.value),
 );
 const restore = async () => {
-  if (!restoringVersion.value) return;
+  if (!restoringSnapshotVersion.value) return;
 
-  await restoreSnapshot(restoringVersion.value);
+  await restoreSnapshot(restoringSnapshotVersion.value);
 };
 // The row's own words, so the confirmation names the version the owner clicked
-const restoringVersionTitle = computed(() =>
-  restoringVersion.value ? getSnapshotVersionTitle(restoringVersion.value) : "",
+const restoringSnapshotVersionTitle = computed(() =>
+  restoringSnapshotVersion.value ? getSnapshotVersionTitle(restoringSnapshotVersion.value) : "",
 );
 </script>
 
@@ -39,7 +39,7 @@ const restoringVersionTitle = computed(() =>
       }
     "
   >
-    Restore <b>{{ restoringVersionTitle }}</b> into the working draft? The draft it replaces becomes a version of its
-    own first, so this can be undone — and the published version stays live until you re-publish.
+    Restore <b>{{ restoringSnapshotVersionTitle }}</b> into the working draft? The draft it replaces becomes a version
+    of its own first, so this can be undone — and the published version stays live until you re-publish.
   </StyledFormDialog>
 </template>

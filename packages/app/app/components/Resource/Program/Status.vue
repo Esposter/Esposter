@@ -20,7 +20,7 @@ const statusRows = ref<ProgramStatusRow[]>([]);
 // Set when the response scan hit its cap, which makes every count on this blade a floor rather than a total
 const isRespondedPartial = ref(false);
 const respondedCount = computed(() => statusRows.value.filter(({ isResponded }) => isResponded).length);
-const headers = [
+const HEADERS = [
   { key: "keyValue", title: "Participant" },
   { key: "addedAt", title: "Added" },
   { key: "isResponded", title: "Responded" },
@@ -84,7 +84,7 @@ await readStatus();
       title="No participants yet"
       description="Bind an audience on the Setup blade, then generate participants."
     />
-    <v-data-table v-else :headers :items="statusRows">
+    <v-data-table v-else :headers="HEADERS" :items="statusRows">
       <template #[`item.addedAt`]="{ item }">
         <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="item.addedAt" />
       </template>

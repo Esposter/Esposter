@@ -7,7 +7,7 @@ import { resolveWorkspaceRoot } from "#src/services/exec/util/resolveWorkspaceRo
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { basename, dirname } from "node:path";
 // Matches nuxt.config.{js,ts,mjs,cjs,mts,cts} — the config file whose owning package `nuxt prepare` regenerates.
-const NUXT_CONFIG_PATTERN = /^nuxt\.config\.[cm]?[jt]s$/u;
+const NUXT_CONFIG_REGEX = /^nuxt\.config\.[cm]?[jt]s$/u;
 // Resolve the concrete prepare step for an environment preset (there are no user overrides — every field is
 // Preset-derived). An absent (`undefined`) environment has no prepare step. `nuxt` locates the git-tracked nuxt.config
 // (git ls-files avoids a glob dependency and is already the source-hash mechanism), targets its package by path filter
@@ -28,7 +28,7 @@ export const resolvePrepareStep = (environment: Environment | undefined, cwd: st
       (output) => output.split("\n").map((line) => line.trim()),
       () => [],
     )
-    .find((line) => NUXT_CONFIG_PATTERN.test(basename(line)));
+    .find((line) => NUXT_CONFIG_REGEX.test(basename(line)));
   if (configPath === undefined)
     throw new InvalidOperationError(
       Operation.Read,

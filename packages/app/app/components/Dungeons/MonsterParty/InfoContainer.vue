@@ -16,17 +16,17 @@ const { isWaitingForPlayerSpecialInput } = storeToRefs(dialogStore);
 const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
 const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
 const { infoDialogMessage, infoTextDisplayWidth } = storeToRefs(monsterPartyInfoPanelStore);
-const rectangleHeight = 65;
-const cancelButtonActive = computed(() => monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel);
+const RECTANGLE_HEIGHT = 65;
+const isCancelButtonActive = computed(() => monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel);
 const y = ref<number>();
 
 onCreate((scene) => {
   y.value = scene.scale.height - 69;
 });
 
-watchImmediate(cancelButtonActive, (newCancelButtonActive) => {
+watchImmediate(isCancelButtonActive, (newIsCancelButtonActive) => {
   // Info text stays a ref since other things set it (e.g. using items).
-  infoDialogMessage.value.text = newCancelButtonActive ? "Go back to previous menu." : DEFAULT_INFO_DIALOG_MESSAGE;
+  infoDialogMessage.value.text = newIsCancelButtonActive ? "Go back to previous menu." : DEFAULT_INFO_DIALOG_MESSAGE;
 });
 </script>
 
@@ -36,7 +36,7 @@ watchImmediate(cancelButtonActive, (newCancelButtonActive) => {
       :configuration="{
         origin: 0,
         width: 867,
-        height: rectangleHeight,
+        height: RECTANGLE_HEIGHT,
         fillColor: 0xede4f3,
         strokeStyle: [8, 0x905ac2],
       }"
@@ -58,6 +58,6 @@ watchImmediate(cancelButtonActive, (newCancelButtonActive) => {
       }"
       @update:display-width="infoTextDisplayWidth = $event"
     />
-    <DungeonsUIInputPromptCursor :y="rectangleHeight / 2 - 3" />
+    <DungeonsUIInputPromptCursor :y="RECTANGLE_HEIGHT / 2 - 3" />
   </Container>
 </template>

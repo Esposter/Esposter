@@ -2,7 +2,7 @@ import type { DiagnosticCheck } from "#src/models/cli/DiagnosticCheck";
 
 import { DiagnosticCheckType } from "#src/models/cli/DiagnosticCheckType";
 import { DiagnosticStatus } from "#src/models/cli/DiagnosticStatus";
-import { isVersionAtLeast } from "#src/services/cli/run/isVersionAtLeast";
+import { checkIsVersionAtLeast } from "#src/services/cli/run/checkIsVersionAtLeast";
 import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
 import { PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
@@ -39,7 +39,7 @@ const probeBubblewrap = (): DiagnosticCheck => {
       status: DiagnosticStatus.Missing,
       type,
     };
-  if (isVersionAtLeast(output, MINIMUM_BUBBLEWRAP_VERSION))
+  if (checkIsVersionAtLeast(output, MINIMUM_BUBBLEWRAP_VERSION))
     return { fix: "", label, note: output, status: DiagnosticStatus.Ok, type };
   return {
     fix: `upgrade bubblewrap to >= ${MINIMUM_BUBBLEWRAP_VERSION} for RAM-overlay support`,

@@ -6,11 +6,11 @@ const recentStore = useRecentStore();
 const { error, isPending, recents } = storeToRefs(recentStore);
 const { readRecents } = recentStore;
 // Fetched after mount (not awaited in setup) so the card shows its skeleton instead of blocking navigation
-const hasLoaded = ref(false);
+const isLoaded = ref(false);
 
 onMounted(async () => {
   await readRecents();
-  hasLoaded.value = true;
+  isLoaded.value = true;
 });
 </script>
 
@@ -22,7 +22,7 @@ onMounted(async () => {
   </v-alert>
   <ResourceHomeList
     v-else
-    :is-pending="isPending || !hasLoaded"
+    :is-pending="isPending || !isLoaded"
     :resources="recents"
     :source="ResourceListSource.Recents"
   />
