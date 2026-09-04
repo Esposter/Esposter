@@ -1,16 +1,16 @@
-import { isUnderSnapshotLower } from "#src/services/exec/snapshot/isUnderSnapshotLower";
+import { checkIsUnderSnapshotLower } from "#src/services/exec/snapshot/checkIsUnderSnapshotLower";
 import { GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 
-describe(isUnderSnapshotLower, () => {
+describe(checkIsUnderSnapshotLower, () => {
   const emptyPaths = new Set<string>();
   const noMaskedPaths: readonly string[] = [];
 
   test("masks a write inside a node_modules tree even when it has no snapshot entry of its own", () => {
     expect.hasAssertions();
 
-    expect(isUnderSnapshotLower(`${NODE_MODULES_DIRECTORY}/${TEST_FILENAME}/${TEST_FILENAME}`, emptyPaths, noMaskedPaths)).toBe(
+    expect(checkIsUnderSnapshotLower(`${NODE_MODULES_DIRECTORY}/${TEST_FILENAME}/${TEST_FILENAME}`, emptyPaths, noMaskedPaths)).toBe(
       true,
     );
   });
@@ -18,14 +18,14 @@ describe(isUnderSnapshotLower, () => {
   test("masks a snapshot-lower entry itself", () => {
     expect.hasAssertions();
 
-    expect(isUnderSnapshotLower(TEST_FILENAME, new Set([TEST_FILENAME]), noMaskedPaths)).toBe(true);
+    expect(checkIsUnderSnapshotLower(TEST_FILENAME, new Set([TEST_FILENAME]), noMaskedPaths)).toBe(true);
   });
 
   test("masks an output dir itself and everything inside it", () => {
     expect.hasAssertions();
 
-    expect(isUnderSnapshotLower(TEST_FILENAME, emptyPaths, [TEST_FILENAME])).toBe(true);
-    expect(isUnderSnapshotLower(`${TEST_FILENAME}/${TEST_FILENAME}`, emptyPaths, [TEST_FILENAME])).toBe(true);
+    expect(checkIsUnderSnapshotLower(TEST_FILENAME, emptyPaths, [TEST_FILENAME])).toBe(true);
+    expect(checkIsUnderSnapshotLower(`${TEST_FILENAME}/${TEST_FILENAME}`, emptyPaths, [TEST_FILENAME])).toBe(true);
   });
 
   test("does not mask a source file under a shared parent the snapshot lower also materialises", () => {
@@ -40,7 +40,7 @@ describe(isUnderSnapshotLower, () => {
     ]);
 
     expect(
-      isUnderSnapshotLower(`${TEST_FILENAME}/${TEST_FILENAME}/${TEST_FILENAME}`, snapshotLowerPaths, noMaskedPaths),
+      checkIsUnderSnapshotLower(`${TEST_FILENAME}/${TEST_FILENAME}/${TEST_FILENAME}`, snapshotLowerPaths, noMaskedPaths),
     ).toBe(false);
   });
 
@@ -48,7 +48,7 @@ describe(isUnderSnapshotLower, () => {
     expect.hasAssertions();
 
     // `a` is an output dir; `aa` shares the prefix but is not under it, so it must still flush.
-    expect(isUnderSnapshotLower(`${TEST_FILENAME}${TEST_FILENAME}`, emptyPaths, [TEST_FILENAME])).toBe(false);
+    expect(checkIsUnderSnapshotLower(`${TEST_FILENAME}${TEST_FILENAME}`, emptyPaths, [TEST_FILENAME])).toBe(false);
   });
 
   // The write-back half of the source-mirror exclude rule: on win32 the sandbox reads a mirror those paths were
@@ -61,18 +61,18 @@ describe(isUnderSnapshotLower, () => {
     const worktreePath = `${TEST_FILENAME}/worktree`;
     const maskedPaths = [worktreePath, GIT_DIRECTORY];
 
-    expect(isUnderSnapshotLower(`${worktreePath}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(true);
-    expect(isUnderSnapshotLower(`${GIT_DIRECTORY}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(true);
-    expect(isUnderSnapshotLower(`${TEST_FILENAME}/${GIT_DIRECTORY}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(
+    expect(checkIsUnderSnapshotLower(`${worktreePath}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(true);
+    expect(checkIsUnderSnapshotLower(`${GIT_DIRECTORY}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(true);
+    expect(checkIsUnderSnapshotLower(`${TEST_FILENAME}/${GIT_DIRECTORY}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(
       true,
     );
     // Source that merely shares a masked path's prefix is a normal flush — the mask is segment-anchored.
-    expect(isUnderSnapshotLower(`${GIT_DIRECTORY}ignore`, emptyPaths, maskedPaths)).toBe(false);
+    expect(checkIsUnderSnapshotLower(`${GIT_DIRECTORY}ignore`, emptyPaths, maskedPaths)).toBe(false);
   });
 
   test("does not mask a produced file outside the dependency closure", () => {
     expect.hasAssertions();
 
-    expect(isUnderSnapshotLower(TEST_FILENAME, emptyPaths, noMaskedPaths)).toBe(false);
+    expect(checkIsUnderSnapshotLower(TEST_FILENAME, emptyPaths, noMaskedPaths)).toBe(false);
   });
 });

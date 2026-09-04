@@ -84,7 +84,7 @@ Paths relative to `packages/virrun/src/`.
 | `models/exec/snapshot/OverlayEntryKind.ts`              | enum `Regular`/`Whiteout`/`OpaqueDir` — the classification result                                                   |
 | `services/exec/snapshot/parseOverlayEntryKind.ts`       | pure: classify an upper entry from a parsed manifest entry + opaque flag                                            |
 | `services/exec/snapshot/buildFlushPlan.ts`              | pure: turn an upper walk into an ordered `FlushOp[]`, skipping snapshot-lower paths                                 |
-| `services/exec/snapshot/isUnderSnapshotLower.ts`        | pure: the skip predicate — snapshot-lower membership, any `node_modules` tree, and `maskedPaths`                    |
+| `services/exec/snapshot/checkIsUnderSnapshotLower.ts`   | pure: the skip predicate — snapshot-lower membership, any `node_modules` tree, and `maskedPaths`                    |
 | `services/exec/util/checkIsExcludedPath.ts`             | pure: the one exclude matcher, shared with the source-mirror walk so the boundary's two directions agree            |
 | `services/exec/snapshot/runOverlayScript.ts`            | run the probe/apply python3 seam (direct on Linux; via `wsl.exe` on win32)                                          |
 | `services/exec/snapshot/parseOverlayManifest.ts`        | zod-validate the probe script's JSON manifest into typed entries                                                    |

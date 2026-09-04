@@ -27,7 +27,7 @@ import { join } from "node:path";
 // Whether the two exclude sets disagree on a bare name — the one exclude shape a delete list can't target, since it
 // Matches that segment at any depth rather than one path. The changed set itself comes from getChangedExcludes, the
 // Same derivation diffSourceMirrorManifests turns into deletes, so the two can never disagree on what changed.
-const getHasBareNameExcludeChange = (previous: readonly string[], current: readonly string[]): boolean =>
+const checkHasBareNameExcludeChange = (previous: readonly string[], current: readonly string[]): boolean =>
   getChangedExcludes(previous, current).some((exclude) => checkIsBareNameExclude(exclude));
 // Plan the win32 source-mirror sync for a host cwd and return { mirrorPath, script }: the ext4 mirror tree's Linux
 // Path (the `--overlay-src` lower createWslBwrapArgs points at) plus the sh script that brings it up to date, which
@@ -94,7 +94,9 @@ export const createWslSourceMirrorSync = (cwd: string, excludes: readonly string
   // So that alone falls back to the clearing full materialize.
   const current = { entries: manifest, excludes };
   const previous =
-    publication !== undefined && !getHasBareNameExcludeChange(publication.excludes, excludes) ? publication : undefined;
+    publication !== undefined && !checkHasBareNameExcludeChange(publication.excludes, excludes)
+      ? publication
+      : undefined;
   const delta = previous === undefined ? undefined : diffSourceMirrorManifests(previous, current);
   if (delta?.copyPaths.length === 0 && delta.deletePaths.length === 0) {
     // A live repo returns here on nearly every run, so this is where a marker that failed to publish gets a second

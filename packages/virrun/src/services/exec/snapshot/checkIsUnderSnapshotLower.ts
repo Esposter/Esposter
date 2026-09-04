@@ -10,7 +10,7 @@ import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
 // The whole mirror exclude set: a path kept out of the source mirror has no upper entry that could legitimately have
 // Come from the host, so anything the sandbox wrote there is a ghost of a stale mirror — flushing it materialises a
 // Tree the user already deleted. A sibling that merely shares a masked path's prefix still flushes.
-export const isUnderSnapshotLower = (
+export const checkIsUnderSnapshotLower = (
   relativePath: string,
   snapshotLowerPaths: ReadonlySet<string>,
   maskedPaths: readonly string[],

@@ -21,7 +21,7 @@ import { join } from "node:path";
 // `extraLowerDirs`, e.g. the prepare layer) stack as read-only lowers, so node_modules is never in the upper and
 // Never flushed. `maskedPaths` (an environment's prepare outputs, e.g. `.nuxt`, plus the source-mirror excludes on
 // Win32) are masked from the flush like node_modules — owned by a layer or by the host alone, so a persist run never
-// Writes them back (isUnderSnapshotLower). Requires a captured snapshot; the
+// Writes them back (checkIsUnderSnapshotLower). Requires a captured snapshot; the
 // Temp upper/work are always torn down. `onPersist` fires after the host flush with the still-live upper and the
 // Built plan (only on a clean exit — a failed run is flushed but never cached), so the task cache can record the
 // Output diff without re-probing (persistWithCache).

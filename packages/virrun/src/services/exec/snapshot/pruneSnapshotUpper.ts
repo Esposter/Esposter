@@ -5,9 +5,9 @@ import { join } from "node:path";
 // A cheap structural probe: does this subtree hold a node_modules anywhere? Short-circuits on the first match and
 // Never descends *into* a node_modules — a symlink-dense forest there is nothing to learn from — so it stays a pure
 // Readdir walk with no removal cost, runnable even from the host over a `\\wsl.localhost` UNC by listing alone.
-const hasNodeModules = (dir: string): boolean =>
+const checkHasNodeModules = (dir: string): boolean =>
   readdirSync(dir, { withFileTypes: true }).some(
-    (entry) => entry.isDirectory() && (entry.name === NODE_MODULES_DIRECTORY || hasNodeModules(join(dir, entry.name))),
+    (entry) => entry.isDirectory() && (entry.name === NODE_MODULES_DIRECTORY || checkHasNodeModules(join(dir, entry.name))),
   );
 // A captured snapshot upper is everything the frozen `pnpm install` wrote: the dependency closure (node_modules)
 // Plus any source-tree artifact a postinstall lifecycle script generated (e.g. `nuxt prepare` → packages/app/.nuxt).
@@ -24,7 +24,7 @@ export const pruneSnapshotUpper = (dir: string): void => {
     // The closure itself — keep it whole, never descend.
     if (entry.isDirectory() && entry.name === NODE_MODULES_DIRECTORY) continue;
     // A directory only worth keeping as the path to a deeper closure: keep it, but prune the artifacts beside it.
-    else if (entry.isDirectory() && hasNodeModules(entryPath)) pruneSnapshotUpper(entryPath);
+    else if (entry.isDirectory() && checkHasNodeModules(entryPath)) pruneSnapshotUpper(entryPath);
     // A pure artifact subtree, or a file/symlink the install wrote outside any closure (a regenerated lockfile,
     // A codegen output) — drop the whole thing in one removal.
     else removeSnapshotDirectory(entryPath);

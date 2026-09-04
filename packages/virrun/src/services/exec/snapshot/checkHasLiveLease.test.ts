@@ -1,5 +1,5 @@
+import { checkHasLiveLease } from "#src/services/exec/snapshot/checkHasLiveLease";
 import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
-import { hasLiveLease } from "#src/services/exec/snapshot/hasLiveLease";
 import { DEAD_PID } from "#src/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { writeLeaseFile } from "#src/services/exec/test/writeLeaseFile.test";
@@ -7,7 +7,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-describe(hasLiveLease, () => {
+describe(checkHasLiveLease, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   let hashDirectory = "";
   const seedLease = (pid: number): string =>
@@ -24,7 +24,7 @@ describe(hasLiveLease, () => {
 
     seedLease(process.pid);
 
-    expect(hasLiveLease(hashDirectory)).toBe(true);
+    expect(checkHasLiveLease(hashDirectory)).toBe(true);
   });
 
   test(`is false once only dead leases remain, reaping them`, () => {
@@ -32,13 +32,13 @@ describe(hasLiveLease, () => {
 
     const deadLeaseFile = seedLease(DEAD_PID);
 
-    expect(hasLiveLease(hashDirectory)).toBe(false);
+    expect(checkHasLiveLease(hashDirectory)).toBe(false);
     expect(existsSync(deadLeaseFile)).toBe(false);
   });
 
   test(`is false when the hash dir has no leases directory`, () => {
     expect.hasAssertions();
 
-    expect(hasLiveLease(hashDirectory)).toBe(false);
+    expect(checkHasLiveLease(hashDirectory)).toBe(false);
   });
 });

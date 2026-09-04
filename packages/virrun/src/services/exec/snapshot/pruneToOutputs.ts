@@ -14,16 +14,16 @@ export const pruneToOutputs = (upperDir: string, outputs: readonly string[]): vo
     const segments = output.split("/");
     for (let index = 1; index < segments.length; index++) prefixSet.add(segments.slice(0, index).join("/"));
   }
-  const walk = (absoluteDir: string, relative: string): void => {
+  const walk = (absoluteDir: string, relativePath: string): void => {
     for (const entry of readdirSync(absoluteDir, { withFileTypes: true })) {
-      const childRelative = relative ? `${relative}/${entry.name}` : entry.name;
-      const childAbsolute = join(absoluteDir, entry.name);
+      const childRelativePath = relativePath ? `${relativePath}/${entry.name}` : entry.name;
+      const childAbsolutePath = join(absoluteDir, entry.name);
       // An output root — keep the whole subtree, never descend.
-      if (outputSet.has(childRelative)) continue;
+      if (outputSet.has(childRelativePath)) continue;
       // On the path to a deeper output — descend to keep the output while pruning its siblings.
-      else if (entry.isDirectory() && prefixSet.has(childRelative)) walk(childAbsolute, childRelative);
+      else if (entry.isDirectory() && prefixSet.has(childRelativePath)) walk(childAbsolutePath, childRelativePath);
       // Anything else the prepare command wrote (dep-tree churn, caches, a regenerated lockfile) — drop it whole.
-      else removeSnapshotDirectory(childAbsolute);
+      else removeSnapshotDirectory(childAbsolutePath);
     }
   };
   walk(upperDir, "");

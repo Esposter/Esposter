@@ -8,7 +8,7 @@ import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 
 const checkNever = (): boolean => false;
-const isSnapshotLowerPath = (relativePath: string): boolean => relativePath.startsWith(`${NODE_MODULES_DIRECTORY}/`);
+const checkIsSnapshotLowerPath = (relativePath: string): boolean => relativePath.startsWith(`${NODE_MODULES_DIRECTORY}/`);
 
 describe(buildFlushPlan, () => {
   test(`a ${OverlayEntryKind.Whiteout} becomes a single ${FlushOpType.Delete}`, () => {
@@ -46,7 +46,7 @@ describe(buildFlushPlan, () => {
       { kind: OverlayEntryKind.Regular, relativePath: TEST_FILENAME },
     ];
 
-    expect(buildFlushPlan(entries, isSnapshotLowerPath)).toStrictEqual([
+    expect(buildFlushPlan(entries, checkIsSnapshotLowerPath)).toStrictEqual([
       { relativePath: TEST_FILENAME, type: FlushOpType.Copy },
     ]);
   });
