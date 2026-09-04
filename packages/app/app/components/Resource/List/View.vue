@@ -40,7 +40,7 @@ const {
   updatedBefore,
   updatedFilter,
 } = useResourceListFilters(defaultSortBy);
-const { debouncedFilter: search, editedFilter: searchInput } = useDebouncedFilter(searchQuery);
+const { debouncedFilter: search, editedFilter: editedSearchQuery } = useDebouncedFilter(searchQuery);
 const { count, createResourcesPageReader, error, isPending, items, readResources, refresh } = useReadResources(
   {
     searchQuery: search,
@@ -116,7 +116,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
 <template>
   <div flex flex-col h-full min-w-0>
     <ResourceListToolbar
-      v-model:search="searchInput"
+      v-model:search="editedSearchQuery"
       v-model:is-summary-view="isSummaryView"
       v-model:is-grouped-by-type="isGroupedByType"
       :source
