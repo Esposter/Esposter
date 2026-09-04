@@ -32,6 +32,25 @@ describe(setDevEnginesRuntime, () => {
     ).toBe('{ "devEngines": { "runtime": { "version": "^1.0.0" } }, "engines": { "node": "^0.0.0" } }');
   });
 
+  test("rewrites runtime past a packageManager sibling declared before it", () => {
+    expect.hasAssertions();
+
+    expect(
+      setDevEnginesRuntime(
+        '{ "devEngines": { "packageManager": { "version": "12.1.0" }, "runtime": { "version": "^0.0.0" } } }',
+        "1.0.0",
+      ),
+    ).toBe('{ "devEngines": { "packageManager": { "version": "12.1.0" }, "runtime": { "version": "^1.0.0" } } }');
+  });
+
+  test("throws when runtime is absent even though a sibling carries a version", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      setDevEnginesRuntime('{ "devEngines": { "packageManager": { "version": "12.1.0" } } }', "1.0.0"),
+    ).toThrowErrorMatchingInlineSnapshot(`[Error: Could not find devEngines.runtime.version in package.json]`);
+  });
+
   test("throws when devEngines.runtime.version is absent", () => {
     expect.hasAssertions();
 
