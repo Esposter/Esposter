@@ -8,17 +8,22 @@ import { PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { getTarExecutable } from "#src/services/exec/util/getTarExecutable";
 import { buildWslLoginShellCommand } from "#src/services/exec/wsl/buildWslLoginShellCommand";
+import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { getResult, takeOne } from "@esposter/shared";
 // The oldest bubblewrap exposing `--overlay-src` / `--tmp-overlay` (the RAM-overlay flags the os backend needs).
 const MINIMUM_BUBBLEWRAP_VERSION = "0.10.0";
-// Resolve a command to where the os backend actually runs it — directly on Linux, or through `wsl.exe --exec` on
-// Win32 — so every doctor probe reaches the same place the backend does. Returns the [binary, args] pair to spawn.
-const resolveHostCommand = (file: string, args: readonly string[]): [string, string[]] =>
-  process.platform === "win32" ? ["wsl.exe", ["--exec", file, ...args]] : [file, [...args]];
-// Run a probe command on the host (via resolveHostCommand) and return trimmed stdout, or null when the command is
-// Absent or errors (getResult swallows the throw; a missing tool has no partial result to report).
+// Run a probe command where the os backend actually runs it — directly on Linux, or through `wsl.exe --exec` on
+// Win32 — so every doctor probe reaches the same place the backend does, and returns trimmed stdout, or null when
+// The command is absent or errors (getResult swallows the throw; a missing tool has no partial result to report).
+// The win32 side goes through execWsl rather than spawning wsl.exe here, so it inherits the cold-boot-tolerant WSL
+// Bound: reporting `not found on PATH` for a tool that was only waiting on the distro to boot is the same wrong
+// Answer the capability probe used to cache.
 const readProbeOutput = (file: string, args: readonly string[]): null | string =>
-  getResult(() => execFileHidden(...resolveHostCommand(file, args), { timeout: PROBE_TIMEOUT_MS }))
+  getResult(() =>
+    process.platform === "win32"
+      ? execWsl(["--exec", file, ...args])
+      : execFileHidden(file, args, { timeout: PROBE_TIMEOUT_MS }),
+  )
     .map((stdout) => stdout.trim())
     .unwrapOr(null);
 
@@ -86,7 +91,7 @@ const probePython3 = (): DiagnosticCheck => {
 };
 // Off win32 the source already lives on the host FS, so no mirror and no archive — the check is N/A. On win32 the
 // Source is synced onto the ext4 mirror through a tar archive staged by the HOST tar (createSourceMirrorArchive) —
-// Probed directly on Windows, never through resolveHostCommand, because that is where it runs — so a missing tar.exe
+// Probed directly on Windows, never through readProbeOutput, because that is where it runs — so a missing tar.exe
 // Aborts every os run that has a delta to apply. The extract side inside WSL needs no probe: GNU tar is an essential
 // Package in every distro, unlike the rsync this replaced.
 const probeTar = (): DiagnosticCheck => {

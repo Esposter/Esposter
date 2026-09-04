@@ -5,6 +5,7 @@ import { stripAnsi } from "#src/services/cli/color/stripAnsi.test";
 import { formatVirrunBanner } from "#src/services/cli/format/formatVirrunBanner";
 import { formatVirrunCacheHit } from "#src/services/cli/format/formatVirrunCacheHit";
 import { formatVirrunDebug } from "#src/services/cli/format/formatVirrunDebug";
+import { formatVirrunDegraded } from "#src/services/cli/format/formatVirrunDegraded";
 import { formatVirrunError } from "#src/services/cli/format/formatVirrunError";
 import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 import { formatVirrunNetworkHint } from "#src/services/cli/format/formatVirrunNetworkHint";
@@ -47,6 +48,16 @@ describe(formatVirrunDebug, () => {
     expect.hasAssertions();
 
     expect(stripAnsi(formatVirrunDebug("task cache off"))).toBe("[virrun] debug — task cache off");
+  });
+});
+
+describe(formatVirrunDegraded, () => {
+  test("names the native fallback and the command that explains it", () => {
+    expect.hasAssertions();
+
+    expect(stripAnsi(formatVirrunDegraded())).toBe(
+      "[virrun] os backend unavailable — running native (un-isolated); run `virrun doctor` to see what's missing",
+    );
   });
 });
 

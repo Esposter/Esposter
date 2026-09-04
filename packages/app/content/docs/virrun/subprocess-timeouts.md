@@ -14,7 +14,10 @@ Both halves are true. What settles it is not weighing them again, it is asking w
 ```mermaid
 flowchart TD
   W{"what does this child's runtime scale with?"}
-  W -->|"nothing — a fixed question"| P["probe tier — seconds"]
+  W -->|"nothing — a fixed question"| P["probe tiers — seconds"]
+  P --> B{"does asking it wake a distro first?"}
+  B -->|yes| PW["WSL probe tier — 30s"]
+  B -->|no| PP["probe tier — 10s"]
   W -->|"one cache entry, one staged archive"| K["work tier — minutes"]
   W -->|"what this run produced"| D["data-proportional tier — its own constant"]
   W -->|"the entire cache"| U["unbounded — 0"]
@@ -26,6 +29,7 @@ flowchart TD
 | Tier              | Constant                                                         | Scales with                   |
 | ----------------- | ---------------------------------------------------------------- | ----------------------------- |
 | Probe             | `PROBE_TIMEOUT_MS` (10s)                                         | nothing — a fixed question    |
+| WSL probe         | `WSL_PROBE_TIMEOUT_MS` (30s)                                     | nothing, plus a distro boot   |
 | Work              | `WSL_WORK_TIMEOUT_MS`, `SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS` (5min) | one cache entry / one archive |
 | Data-proportional | `OVERLAY_WRITE_BACK_TIMEOUT_MS` (30min)                          | what the run itself wrote     |
 | Unbounded         | `CACHE_CLEAN_TIMEOUT_MS` (0)                                     | the whole cache               |
@@ -44,14 +48,15 @@ flowchart TD
 
 ## Key files
 
-| File                                                             | Role                                       |
-| ---------------------------------------------------------------- | ------------------------------------------ |
-| `packages/virrun/src/services/exec/util/constants.ts`            | every bound, each with its own rationale   |
-| `packages/virrun/src/services/exec/util/execFileHidden.ts`       | the single `execFileSync` wrapper          |
-| `packages/virrun/src/services/exec/wsl/execWsl.ts`               | defaults WSL round-trips to the probe tier |
-| `packages/virrun/src/services/exec/snapshot/runOverlayScript.ts` | the data-proportional case                 |
+| File                                                             | Role                                     |
+| ---------------------------------------------------------------- | ---------------------------------------- |
+| `packages/virrun/src/services/exec/util/constants.ts`            | every bound, each with its own rationale |
+| `packages/virrun/src/services/exec/util/execFileHidden.ts`       | the single `execFileSync` wrapper        |
+| `packages/virrun/src/services/exec/wsl/execWsl.ts`               | defaults WSL round-trips to the WSL tier |
+| `packages/virrun/src/services/exec/snapshot/runOverlayScript.ts` | the data-proportional case               |
 
 ## Notes
 
 - Two bounds are expressed in **seconds**, not milliseconds (`SOURCE_MIRROR_TIMEOUT_SECONDS`, `ORPHAN_REAP_MINIMUM_AGE_SECONDS`), because their consumers are Linux shell utilities (`flock -w`, `timeout`, `ps -o etimes`) rather than `execFileSync`. The tier rule is the same; only the unit changes.
-- `execWsl` defaults to the probe tier so a call site that forgets to pass one gets the conservative bound rather than none. A call site doing real work must pass its own.
+- `execWsl` defaults to the WSL probe tier so a call site that forgets to pass one gets a conservative bound rather than none. A call site doing real work must pass its own.
+- **A fixed question asked across a boundary that has to wake up is not the same fixed question.** The win32 round-trips ask exactly what the Linux probe asks, but the first of them boots the distro first — measured around 7.5s against a 10s probe bound, so a host merely busy enough to cross it reported "this machine cannot sandbox" and, before the unanswered verdict was made uncacheable, [cached that](/docs/virrun/cache) for six hours. Hence a tier of its own rather than a wider probe tier: the in-process probe should still fail in seconds, and only the calls paying for the boot get the wider bound.

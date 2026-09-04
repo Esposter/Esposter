@@ -93,6 +93,11 @@ export const CI_ENV_VALUE = "true";
 // Are sub-second on a healthy host; a corrupt/unresponsive WSL distro can hang execFileSync forever, so the cap lets
 // The probe fail (degrade to unsupported) instead of blocking the whole CLI.
 export const PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
+// Upper bound for a wsl.exe round-trip (execWsl). Sized apart from the in-process probe cap because the first call
+// After a shutdown boots the distro before it runs anything — measured at ~7.5s on a healthy host, so the probe cap
+// Leaves no margin at all, and a machine merely busy enough to cross it turns a cold boot into a "this host cannot
+// Sandbox" verdict. The bound still exists only as a hang guard for a wedged WSL service, which never answers at all.
+export const WSL_PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
 // Upper bound for a synchronous WSL-side `rm -rf` of a cache dir (removeSnapshotDirectory). Real work — an
 // Unlink of a whole node_modules closure — so it gets minutes rather than the probe's seconds, and its size is
 // Bounded by one cache entry rather than by what the run did. The bound exists only so a wedged WSL service or 9p bridge fails

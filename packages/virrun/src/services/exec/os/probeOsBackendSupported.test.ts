@@ -37,4 +37,17 @@ describe.skipIf(process.platform !== "linux")(probeOsBackendSupported, () => {
 
     expect(probeOsBackendSupported()).toBe(false);
   });
+
+  // The bound elapsing is not a verdict on the host — node reports the kill as the signal it sent — so the probe
+  // Answers "not answered" rather than false, which is what keeps isOsBackendSupported from caching a cold WSL
+  // Distro (or any busy host) as permanently sandbox-incapable for the cache window.
+  test("is undefined when the probe's own timeout kills it", () => {
+    expect.hasAssertions();
+
+    execFileSync.mockImplementation(() => {
+      throw Object.assign(new Error("spawnSync bwrap ETIMEDOUT"), { signal: "SIGTERM" });
+    });
+
+    expect(probeOsBackendSupported()).toBeUndefined();
+  });
 });

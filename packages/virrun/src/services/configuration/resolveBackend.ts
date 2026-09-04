@@ -2,6 +2,7 @@ import type { VirrunConfiguration } from "#src/models/virrun/VirrunConfiguration
 
 import { BackendType } from "#src/models/virrun/BackendType";
 import { isVirrunEnabled } from "#src/services/configuration/isVirrunEnabled";
+import { resolveRequestedBackend } from "#src/services/configuration/resolveRequestedBackend";
 import { isOsBackendSupported } from "#src/services/exec/os/isOsBackendSupported";
 // An unset backend (no config file, or a config that omits `backend`) defaults to `os` — the isolating sandbox is the
 // Intended way to run the toolchain now. An `os` backend on a host without bubblewrap degrades to Native so adoption
@@ -16,7 +17,7 @@ export const resolveBackend = (
   env: NodeJS.ProcessEnv = process.env,
 ): BackendType => {
   if (isVirrunEnabled(env)) return BackendType.Native;
-  const backend = configuration?.backend ?? BackendType.Os;
+  const backend = resolveRequestedBackend(configuration);
   if (backend === BackendType.Os && !isOsBackendSupported()) return BackendType.Native;
   return backend;
 };
