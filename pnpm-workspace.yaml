@@ -127,7 +127,7 @@ catalog:
   drizzle-kit: 1.0.0-rc.4
   drizzle-orm: 1.0.0-rc.4
   emojilib: ^4.0.3
-  eslint: ^10.9.1
+  eslint: ^10.10.0
   eslint-plugin-depend: ^1.5.0
   eslint-plugin-jsonc: ^3.4.2
   eslint-plugin-oxlint: ^1.81.0
