@@ -60,7 +60,7 @@ for root, _dirs, _files in os.walk(up):
             "isCharacterDevice": stat.S_ISCHR(st.st_mode),
             "isDirectory": is_dir,
             "isOpaque": is_opaque,
-            "checkIsSnapshotLowerPath": is_lower,
+            "isSnapshotLowerPath": is_lower,
             "rdev": st.st_rdev,
             "relativePath": rel,
         })

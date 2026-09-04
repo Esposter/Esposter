@@ -1,26 +1,26 @@
 import { RoomPermission } from "#src/schema/roomRolesInMessage";
-import { hasPermission } from "#src/services/room/rbac/hasPermission";
+import { checkHasPermission } from "#src/services/room/rbac/checkHasPermission";
 import { describe, expect, test } from "vitest";
 
-describe(hasPermission, () => {
+describe(checkHasPermission, () => {
   test("owner always has permission regardless of permission bits", () => {
     expect.hasAssertions();
-    expect(hasPermission(0n, RoomPermission.ManageRoom, true)).toBe(true);
+    expect(checkHasPermission(0n, RoomPermission.ManageRoom, true)).toBe(true);
   });
 
   test("administrator bit grants any permission", () => {
     expect.hasAssertions();
-    expect(hasPermission(RoomPermission.Administrator, RoomPermission.ManageRoom, false)).toBe(true);
+    expect(checkHasPermission(RoomPermission.Administrator, RoomPermission.ManageRoom, false)).toBe(true);
   });
 
   test("exact single-bit match returns true", () => {
     expect.hasAssertions();
-    expect(hasPermission(RoomPermission.ReadMessages, RoomPermission.ReadMessages, false)).toBe(true);
+    expect(checkHasPermission(RoomPermission.ReadMessages, RoomPermission.ReadMessages, false)).toBe(true);
   });
 
   test("missing single-bit returns false", () => {
     expect.hasAssertions();
-    expect(hasPermission(RoomPermission.ReadMessages, RoomPermission.ManageRoom, false)).toBe(false);
+    expect(checkHasPermission(RoomPermission.ReadMessages, RoomPermission.ManageRoom, false)).toBe(false);
   });
 
   test("combined mask: all bits present returns true", () => {
@@ -28,7 +28,7 @@ describe(hasPermission, () => {
 
     const combinedPermissions = RoomPermission.ReadMessages | RoomPermission.SendMessages;
 
-    expect(hasPermission(combinedPermissions, combinedPermissions, false)).toBe(true);
+    expect(checkHasPermission(combinedPermissions, combinedPermissions, false)).toBe(true);
   });
 
   test("combined mask: partial bit match returns false", () => {
@@ -36,6 +36,6 @@ describe(hasPermission, () => {
 
     const combinedPermissions = RoomPermission.ReadMessages | RoomPermission.SendMessages;
 
-    expect(hasPermission(RoomPermission.ReadMessages, combinedPermissions, false)).toBe(false);
+    expect(checkHasPermission(RoomPermission.ReadMessages, combinedPermissions, false)).toBe(false);
   });
 });
