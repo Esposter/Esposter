@@ -1,6 +1,6 @@
-import type { LoginButtonProps } from "@/components/Login/Button.vue";
+import type { ButtonProps } from "@/components/Login/ButtonProps";
 
-export const LoginButtonItems: LoginButtonProps[] = [
+export const LoginButtonItems: ButtonProps[] = [
   {
     logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Google.vue`))),
     logoStyle: {

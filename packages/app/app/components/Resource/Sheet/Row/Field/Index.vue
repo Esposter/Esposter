@@ -10,13 +10,13 @@ import { useFindReplaceStore } from "@/store/resource/sheet/findReplace";
 import { useOutlierStore } from "@/store/resource/sheet/outlier";
 import { useRowStore } from "@/store/resource/sheet/row";
 
-interface FieldProps {
+interface Props {
   column: Column;
   item: Row;
   rowIndex: number;
 }
 
-const { column, item, rowIndex } = defineProps<FieldProps>();
+const { column, item, rowIndex } = defineProps<Props>();
 const rowStore = useRowStore();
 const { getCellText } = rowStore;
 const findReplaceStore = useFindReplaceStore();

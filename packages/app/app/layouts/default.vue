@@ -7,17 +7,17 @@ import { LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/cons
 import { useLayoutStore } from "@/store/layout";
 import { takeOne } from "@esposter/shared";
 
-interface DefaultProps {
+// `StyledNavigationDrawer` owns the open state, so a caller styles and positions the drawer through this bag
+// But never binds its model — passing one back would put two answers on the same prop
+type NavigationDrawerProps = Except<VNavigationDrawer["$props"], "modelValue" | "onUpdate:modelValue">;
+
+interface Props {
   footerStyle?: CSSProperties;
   hideGlobalScrollbar?: true;
   leftNavigationDrawerProps?: NavigationDrawerProps;
   mainStyle?: CSSProperties;
   rightNavigationDrawerProps?: NavigationDrawerProps;
 }
-
-// `StyledNavigationDrawer` owns the open state, so a caller styles and positions the drawer through this bag
-// But never binds its model — passing one back would put two answers on the same prop
-type NavigationDrawerProps = Except<VNavigationDrawer["$props"], "modelValue" | "onUpdate:modelValue">;
 
 const slots = defineSlots<{
   default?: () => VNode;
@@ -26,7 +26,7 @@ const slots = defineSlots<{
   right?: () => VNode;
 }>();
 const { footerStyle, hideGlobalScrollbar, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } =
-  defineProps<DefaultProps>();
+  defineProps<Props>();
 const layoutStore = useLayoutStore();
 const { isDesktop, isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } =
   storeToRefs(layoutStore);

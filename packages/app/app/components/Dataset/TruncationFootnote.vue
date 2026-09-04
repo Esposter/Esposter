@@ -4,11 +4,11 @@ import type { DatasetTruncation } from "@/models/dataset/DatasetTruncation";
 import { DATASET_ROW_CAP_DESCRIPTION } from "#shared/services/dataset/constants";
 import { getDatasetTruncationText } from "@/services/dataset/getDatasetTruncationText";
 
-interface DatasetTruncationFootnoteProps {
+interface Props {
   truncation: DatasetTruncation;
 }
 
-const { truncation } = defineProps<DatasetTruncationFootnoteProps>();
+const { truncation } = defineProps<Props>();
 </script>
 
 <template>

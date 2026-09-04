@@ -10,12 +10,12 @@ import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
 import { toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 
-interface EditDialogProps {
+interface Props {
   column: Column;
   dataSource: DataSource;
 }
 
-const { column, dataSource } = defineProps<EditDialogProps>();
+const { column, dataSource } = defineProps<Props>();
 const columnDialogStore = useColumnDialogStore();
 const { editingColumnName } = storeToRefs(columnDialogStore);
 const { isOpen } = useSingletonDialog(editingColumnName);

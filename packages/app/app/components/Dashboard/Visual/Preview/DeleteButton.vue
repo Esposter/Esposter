@@ -5,12 +5,12 @@ import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
 import { withFinalizerAsync } from "@esposter/shared";
 
-interface VisualPreviewDeleteButtonProps {
+interface Props {
   id: Visual["id"];
   type: Visual["type"];
 }
 
-const { id, type } = defineProps<VisualPreviewDeleteButtonProps>();
+const { id, type } = defineProps<Props>();
 const visualStore = useVisualStore();
 const { deleteVisual } = visualStore;
 const cardProps = computed(() => ({ title: `Delete ${prettify(type)} Visual` }));

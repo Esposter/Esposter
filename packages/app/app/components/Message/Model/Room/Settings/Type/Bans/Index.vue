@@ -4,11 +4,11 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useBanStore } from "@/store/message/user/ban";
 
-interface BansProps {
+interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<BansProps>();
+const { room } = defineProps<Props>();
 const { isPending, readMoreBans, searchQuery } = useReadBans(room.id);
 const banStore = useBanStore();
 const { hasMore, items } = storeToRefs(banStore);

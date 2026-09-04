@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@esposter/db-schema";
 
-interface MessageListItemContainerProps {
+interface Props {
   message: MessageEntity;
   nextMessage?: MessageEntity;
 }
 
-const { message, nextMessage } = defineProps<MessageListItemContainerProps>();
+const { message, nextMessage } = defineProps<Props>();
 const creator = useCreator(() => message);
 </script>
 

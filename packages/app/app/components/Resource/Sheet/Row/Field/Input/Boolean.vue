@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { BooleanColumn } from "#shared/models/resource/sheet/column/BooleanColumn";
 
-interface FieldInputBooleanProps {
+interface Props {
   column: BooleanColumn;
   isInline?: true;
 }
 
-const { column, isInline } = defineProps<FieldInputBooleanProps>();
+const { column, isInline } = defineProps<Props>();
 const modelValue = defineModel<boolean | null>({ required: true });
 </script>
 

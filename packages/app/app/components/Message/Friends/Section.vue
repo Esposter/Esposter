@@ -1,10 +1,10 @@
 <script setup lang="ts">
-interface SectionProps {
+interface Props {
   title: string;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { title } = defineProps<SectionProps>();
+const { title } = defineProps<Props>();
 </script>
 
 <template>

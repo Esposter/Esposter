@@ -2,12 +2,12 @@
 import type { achievementDefinitions as baseAchievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
-interface GridProps {
+interface Props {
   achievementDefinitions: (typeof baseAchievementDefinitions)[number][];
   userAchievements: UserAchievementWithDefinition[];
 }
 
-const { achievementDefinitions, userAchievements } = defineProps<GridProps>();
+const { achievementDefinitions, userAchievements } = defineProps<Props>();
 </script>
 
 <template>

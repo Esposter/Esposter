@@ -2,11 +2,11 @@
 import { FRIENDS_ACTION_BUTTON_PROPS } from "@/services/message/friend/constants";
 import { useBlockStore } from "@/store/message/user/block";
 
-interface UnblockUserButtonProps {
+interface Props {
   userId: string;
 }
 
-const { userId } = defineProps<UnblockUserButtonProps>();
+const { userId } = defineProps<Props>();
 const blockStore = useBlockStore();
 const { deleteBlock } = blockStore;
 </script>

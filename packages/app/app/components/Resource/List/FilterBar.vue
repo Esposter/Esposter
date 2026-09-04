@@ -5,7 +5,7 @@ import type { ResourceType } from "@esposter/db-schema";
 
 import { ResourceListFilterType, ResourceListFilterTypes } from "@/models/resource/list/ResourceListFilterType";
 
-interface ResourceListFilterBarProps {
+interface Props {
   hasActiveFilters: boolean;
 }
 
@@ -14,7 +14,7 @@ interface ResourceListFilterTypeDefinition {
   reset: () => void;
 }
 
-const { hasActiveFilters } = defineProps<ResourceListFilterBarProps>();
+const { hasActiveFilters } = defineProps<Props>();
 const types = defineModel<ResourceType[]>("types", { required: true });
 const status = defineModel<"" | ResourceStatusFilter>("status", { required: true });
 const updatedFilter = defineModel<"" | ResourceUpdatedFilter>("updatedFilter", { required: true });

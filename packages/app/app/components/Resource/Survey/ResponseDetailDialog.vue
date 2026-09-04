@@ -4,12 +4,12 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 
 import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
 
-interface ResourceSurveyResponseDetailDialogProps {
+interface Props {
   columns: DatasetColumn[];
   items: (Record<string, ColumnValue> & { rowKey: string })[];
 }
 
-const { columns, items } = defineProps<ResourceSurveyResponseDetailDialogProps>();
+const { columns, items } = defineProps<Props>();
 const surveyResponseDialogStore = useSurveyResponseDialogStore();
 const { detailRowKey } = storeToRefs(surveyResponseDialogStore);
 // One dialog for the whole table, driven by the target row key — never one dialog per row. The item is resolved

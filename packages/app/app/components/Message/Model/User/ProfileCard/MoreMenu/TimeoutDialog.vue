@@ -6,12 +6,12 @@ import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDuratio
 import { TimeoutDurationSelectItems } from "@/services/message/moderation/TimeoutDurationSelectItems";
 import { AdminActionType } from "@esposter/db-schema";
 
-interface TimeoutDialogProps {
+interface Props {
   displayName: string;
   user: Pick<User, "id">;
 }
 
-const { displayName, user } = defineProps<TimeoutDialogProps>();
+const { displayName, user } = defineProps<Props>();
 const executeAdminAction = useExecuteAdminAction();
 const selectedTimeoutDurationMs = ref<number>(TimeoutDurationMap["1 minute"]);
 </script>

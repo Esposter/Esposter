@@ -1,9 +1,9 @@
 <script setup lang="ts">
-export interface UserSessionsCardSignOutOtherSessionsButtonProps {
+interface Props {
   otherSessionCount: number;
 }
 
-const { otherSessionCount } = defineProps<UserSessionsCardSignOutOtherSessionsButtonProps>();
+const { otherSessionCount } = defineProps<Props>();
 const emit = defineEmits<{ signOut: [onComplete: (isSuccessful?: boolean) => void] }>();
 </script>
 

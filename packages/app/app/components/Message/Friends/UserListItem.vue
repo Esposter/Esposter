@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { User } from "better-auth";
 
-interface UserListItemProps {
+interface Props {
   image?: User["image"];
   name: User["name"];
 }
 
 defineSlots<{ append?: () => VNode }>();
-const { image, name } = defineProps<UserListItemProps>();
+const { image, name } = defineProps<Props>();
 </script>
 
 <template>

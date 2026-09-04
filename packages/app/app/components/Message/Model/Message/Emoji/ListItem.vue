@@ -5,11 +5,11 @@ import { authClient } from "@/services/auth/authClient";
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useEmojiStore } from "@/store/message/emoji";
 
-interface MessageEmojiListItemProps {
+interface Props {
   emoji: MessageEmojiMetadataEntity;
 }
 
-const { emoji } = defineProps<MessageEmojiListItemProps>();
+const { emoji } = defineProps<Props>();
 // Rendered inside a `v-for`, so the bare form keeps this component synchronous rather than suspending the list
 const session = authClient.useSession();
 const messageDialogStore = useMessageDialogStore();

@@ -3,11 +3,11 @@ import type { User } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
 
-interface ProfileCardMoreMenuProps {
+interface Props {
   user: Pick<User, "id" | "name">;
 }
 
-const { user } = defineProps<ProfileCardMoreMenuProps>();
+const { user } = defineProps<Props>();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 </script>

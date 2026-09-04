@@ -4,11 +4,11 @@ import { CallVirtualBackgroundDefinitions } from "@/services/message/room/call/C
 import { getCallBackgroundSelection } from "@/services/message/room/call/getCallBackgroundSelection";
 import { useCallBackgroundStore } from "@/store/message/user/settings/callBackground";
 
-interface CallVirtualBackgroundGridProps {
+interface Props {
   selectedVirtualBackground: string;
 }
 
-const { selectedVirtualBackground } = defineProps<CallVirtualBackgroundGridProps>();
+const { selectedVirtualBackground } = defineProps<Props>();
 const emit = defineEmits<{ select: [virtualBackground: string] }>();
 const callBackgroundStore = useCallBackgroundStore();
 const { createCallBackground, deleteCallBackground, readCallBackgrounds } = callBackgroundStore;

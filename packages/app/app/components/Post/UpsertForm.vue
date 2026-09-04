@@ -4,14 +4,14 @@ import type { SubmitEventPromise } from "vuetify";
 
 import { POST_TITLE_MAX_LENGTH } from "@esposter/db-schema";
 
-interface PostUpsertFormProps {
+interface Props {
   initialValues?: Pick<Post, "description" | "title">;
   isCreate?: true;
 }
 
-const { initialValues = { description: "", title: "" }, isCreate } = defineProps<PostUpsertFormProps>();
+const { initialValues = { description: "", title: "" }, isCreate } = defineProps<Props>();
 const emit = defineEmits<{
-  submit: [event: SubmitEventPromise, values: NonNullable<PostUpsertFormProps["initialValues"]>];
+  submit: [event: SubmitEventPromise, values: NonNullable<Props["initialValues"]>];
 }>();
 const rules = useVRules();
 const titleRules = computed(() => [rules.required(), rules.maxLength(POST_TITLE_MAX_LENGTH), rules.isNotProfanity()]);

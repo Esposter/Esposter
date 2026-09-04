@@ -3,14 +3,14 @@ import type { VList } from "vuetify/components";
 
 import { mergeProps } from "vue";
 // @TODO: https://github.com/vuejs/core/issues/11371
-interface StyledListProps {
+interface Props {
   listAttrs?: VList["$attrs"];
   listProps?: VList["$props"];
   selectedIndex?: number;
 }
 
 const slots = defineSlots<Record<keyof VList["$slots"], () => VNode>>();
-const { listAttrs = {}, listProps = {}, selectedIndex } = defineProps<StyledListProps>();
+const { listAttrs = {}, listProps = {}, selectedIndex } = defineProps<Props>();
 const list = useTemplateRef("list");
 const mergedListProps = computed(() => mergeProps(listProps, listAttrs));
 

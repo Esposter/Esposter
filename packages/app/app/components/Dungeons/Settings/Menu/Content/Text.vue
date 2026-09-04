@@ -14,13 +14,13 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 import { Input } from "phaser";
 import { Text } from "vue-phaserjs";
 
-interface ContentTextProps {
+interface Props {
   columnIndex: number;
   rowIndex: number;
   text: string;
 }
 
-const { columnIndex, rowIndex, text } = defineProps<ContentTextProps>();
+const { columnIndex, rowIndex, text } = defineProps<Props>();
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
 const settingsStore = useSettingsStore();

@@ -3,13 +3,13 @@ import type { ResourceListSource } from "@/models/resource/list/ResourceListSour
 
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
 
-interface ResourceListNoDataSlotProps {
+interface Props {
   error: string;
   hasActiveFilters: boolean;
   source: ResourceListSource;
 }
 
-const { error, hasActiveFilters, source } = defineProps<ResourceListNoDataSlotProps>();
+const { error, hasActiveFilters, source } = defineProps<Props>();
 const emit = defineEmits<{ clear: []; refresh: [] }>();
 </script>
 

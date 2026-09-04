@@ -4,12 +4,12 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import { authClient } from "@/services/auth/authClient";
 import { useCallStore } from "@/store/message/room/call";
 
-interface CallParticipantBarAvatarProps {
+interface Props {
   isSpeaking: boolean;
   participant: CallParticipant;
 }
 
-const { isSpeaking, participant } = defineProps<CallParticipantBarAvatarProps>();
+const { isSpeaking, participant } = defineProps<Props>();
 const { data: session } = await authClient.useSession(useFetch);
 const callStore = useCallStore();
 const { isInCall } = storeToRefs(callStore);

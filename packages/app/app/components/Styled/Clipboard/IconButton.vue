@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useClipboardStore } from "@/store/clipboard";
 
-interface StyledClipboardIconButtonProps {
+interface Props {
   source: string;
   text?: string;
 }
 
-const { source, text } = defineProps<StyledClipboardIconButtonProps>();
+const { source, text } = defineProps<Props>();
 const clipboardStore = useClipboardStore();
 const { copy } = clipboardStore;
 </script>

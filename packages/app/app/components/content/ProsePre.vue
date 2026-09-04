@@ -1,5 +1,5 @@
 <script setup lang="ts">
-interface ProsePreProps {
+interface Props {
   code?: string;
   language?: string;
 }
@@ -7,7 +7,7 @@ interface ProsePreProps {
 // So the fallthrough attrs have to reach the <pre> rather than this wrapper — and the mermaid branch
 // Must not inherit them at all, or that stylesheet also repaints the diagram's foreignObject labels
 defineOptions({ inheritAttrs: false });
-const { code = "", language } = defineProps<ProsePreProps>();
+const { code = "", language } = defineProps<Props>();
 const { copied, copy } = useClipboard({ source: code });
 const copyButtonProps = { color: "grey-lighten-1", density: "comfortable", size: "small", variant: "text" } as const;
 </script>

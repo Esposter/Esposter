@@ -6,11 +6,11 @@ import { pluralize } from "#shared/util/text/pluralize";
 import { useWebhookStore } from "@/store/message/room/webhook";
 import { withFinalizerAsync } from "@esposter/shared";
 
-interface WebhookProps {
+interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<WebhookProps>();
+const { room } = defineProps<Props>();
 const webhookStore = useWebhookStore();
 const { createWebhook, readWebhooks } = webhookStore;
 const { items } = storeToRefs(webhookStore);

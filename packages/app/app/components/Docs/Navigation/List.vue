@@ -4,11 +4,11 @@ import type { ContentNavigationItem } from "@nuxt/content";
 import { DOCS_NAVIGATION_OVERVIEW_SUFFIX } from "@/services/docs/constants";
 import { getChildNavigationItems } from "@/services/docs/getChildNavigationItems";
 
-interface NavigationListProps {
+interface Props {
   items: ContentNavigationItem[];
 }
 
-const { items } = defineProps<NavigationListProps>();
+const { items } = defineProps<Props>();
 const { currentRoute } = useRouter();
 const itemsWithChildren = computed(() => items.map((item) => ({ children: getChildNavigationItems(item), item })));
 </script>

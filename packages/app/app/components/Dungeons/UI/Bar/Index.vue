@@ -9,7 +9,7 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 import { Math } from "phaser";
 import { Image, useTween } from "vue-phaserjs";
 
-interface BarProps {
+interface Props {
   barPercentage: number;
   imagePosition: ImagePosition;
   isSkipAnimations?: boolean;
@@ -18,7 +18,7 @@ interface BarProps {
   width: number;
 }
 
-const { barPercentage, imagePosition, isSkipAnimations = false, scaleY, type, width } = defineProps<BarProps>();
+const { barPercentage, imagePosition, isSkipAnimations = false, scaleY, type, width } = defineProps<Props>();
 const emit = defineEmits<{
   "complete:display-width": [];
   "start:display-width": [tween: Tweens.Tween];

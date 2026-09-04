@@ -2,11 +2,11 @@
 import { FRIENDS_ACTION_BUTTON_PROPS } from "@/services/message/friend/constants";
 import { useFriendStore } from "@/store/message/user/friend";
 
-interface RemoveFriendButtonProps {
+interface Props {
   userId: string;
 }
 
-const { userId } = defineProps<RemoveFriendButtonProps>();
+const { userId } = defineProps<Props>();
 const friendStore = useFriendStore();
 const { deleteFriend } = friendStore;
 </script>

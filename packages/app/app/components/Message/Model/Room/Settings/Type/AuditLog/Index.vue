@@ -3,11 +3,11 @@ import type { AdminActionType, RoomInMessage } from "@esposter/db-schema";
 
 import { useModerationLogStore } from "@/store/message/moderation/log";
 
-interface AuditLogProps {
+interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<AuditLogProps>();
+const { room } = defineProps<Props>();
 const type = ref<"" | AdminActionType>("");
 const actorUserId = ref("");
 const targetUserId = ref("");

@@ -4,11 +4,11 @@ import type { UserSettingsInMessage } from "@esposter/db-schema";
 import { useUserSettingsStore } from "@/store/message/user/settings";
 import { MAX_INPUT_SENSITIVITY_DECIBELS, MIN_INPUT_SENSITIVITY_DECIBELS } from "@esposter/db-schema";
 
-interface ThresholdSliderProps {
+interface Props {
   userSettings: UserSettingsInMessage;
 }
 
-const { userSettings } = defineProps<ThresholdSliderProps>();
+const { userSettings } = defineProps<Props>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
 const { cloned: editedInputSensitivityDecibels } = useCloned(() => userSettings.inputSensitivityDecibels);

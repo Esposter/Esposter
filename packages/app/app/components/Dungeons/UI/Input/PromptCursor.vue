@@ -4,12 +4,12 @@ import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { Image } from "vue-phaserjs";
 
-interface InputPromptCursorProps {
+interface Props {
   scale?: number;
   y: number;
 }
 
-const { scale = 1, y } = defineProps<InputPromptCursorProps>();
+const { scale = 1, y } = defineProps<Props>();
 const dialogStore = useDialogStore();
 const { inputPromptCursorDisplayWidth, inputPromptCursorX, isInputPromptCursorVisible } = storeToRefs(dialogStore);
 </script>

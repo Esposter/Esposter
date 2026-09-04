@@ -1,11 +1,11 @@
 <script setup lang="ts">
-interface FindReplaceHighlightProps {
+interface Props {
   isCurrentOccurrence: boolean;
   search: string;
   text: string;
 }
 
-const { isCurrentOccurrence, search, text } = defineProps<FindReplaceHighlightProps>();
+const { isCurrentOccurrence, search, text } = defineProps<Props>();
 const container = useTemplateRef("container");
 const parts = computed(() => {
   if (!search) return [{ isMatch: false, text }];

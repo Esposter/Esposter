@@ -10,12 +10,12 @@ import { ImageSetterMap } from "#src/util/setterMap/ImageSetterMap";
 
 interface ImageEmits extends /** @vue-ignore */ ImageEventEmitsOptions {}
 
-interface ImageProps {
+interface Props {
   configuration: SetRequired<Partial<ImageConfiguration>, "texture">;
   onComplete?: (scene: SceneWithPlugins, image: GameObjects.Image) => void;
 }
 
-const { configuration, onComplete } = defineProps<ImageProps>();
+const { configuration, onComplete } = defineProps<Props>();
 const emit = defineEmits<ImageEmits>();
 
 useInitializeGameObject(

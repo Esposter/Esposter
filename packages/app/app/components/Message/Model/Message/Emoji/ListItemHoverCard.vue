@@ -4,11 +4,11 @@ import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metad
 import { getReactorNames } from "@/services/message/emoji/getReactorNames";
 import { useMemberStore } from "@/store/message/user/member";
 
-interface MessageEmojiListItemHoverCardProps {
+interface Props {
   emoji: MessageEmojiMetadataEntity;
 }
 
-const { emoji } = defineProps<MessageEmojiListItemHoverCardProps>();
+const { emoji } = defineProps<Props>();
 defineEmits<{ open: [] }>();
 const memberStore = useMemberStore();
 const { getMemberName } = memberStore;

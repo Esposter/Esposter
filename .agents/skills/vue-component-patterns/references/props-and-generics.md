@@ -36,17 +36,19 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 ## Boolean props — the literal forms
 
 ```ts
-// defaults false → only `true` is meaningful
-interface FooProps {
+// Foo.vue — defaults false → only `true` is meaningful
+interface Props {
   isDense?: true;
 }
-const { isDense } = defineProps<FooProps>(); // isDense: true | undefined
+const { isDense } = defineProps<Props>(); // isDense: true | undefined
+```
 
-// defaults true → only `false` is meaningful
-interface BarProps {
+```ts
+// Bar.vue — defaults true → only `false` is meaningful
+interface Props {
   isInteractive?: false; /* ... */
 }
-const { isInteractive = true } = defineProps<BarProps>(); // boolean at runtime
+const { isInteractive = true } = defineProps<Props>(); // boolean at runtime
 ```
 
 A **derived/computed** value still fits the literal type as long as it can only be the default or its opposite — map the default branch to `undefined` instead of widening to `boolean`:

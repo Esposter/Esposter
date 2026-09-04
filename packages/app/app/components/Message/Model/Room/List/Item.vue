@@ -6,11 +6,11 @@ import { useInputStore } from "@/store/message/input";
 import { useRoomStore } from "@/store/message/room";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 
-interface RoomListItemProps {
+interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<RoomListItemProps>();
+const { room } = defineProps<Props>();
 const roomName = useRoomName(() => room.id);
 const inputStore = useInputStore();
 const { drafts } = storeToRefs(inputStore);

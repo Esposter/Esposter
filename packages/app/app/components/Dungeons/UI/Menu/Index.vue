@@ -6,13 +6,13 @@ import { MENU_DEPTH, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { getMenuHeight } from "@/services/dungeons/UI/menu/getMenuHeight";
 import { Container, Rectangle } from "vue-phaserjs";
 
-interface MenuProps {
+interface Props {
   grid: Grid<TGrid>;
   position: Position;
 }
 
 const menu = defineModel<boolean>("menu", { required: true });
-const { grid, position } = defineProps<MenuProps>();
+const { grid, position } = defineProps<Props>();
 const { border, primary } = useDungeonsColors();
 </script>
 

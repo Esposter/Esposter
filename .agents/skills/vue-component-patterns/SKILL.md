@@ -70,7 +70,12 @@ This avoids async races where a `ref` initialized once at setup time (before the
 
 <!-- Form.vue — pure: prop is guaranteed non-undefined, so the ref init is safe -->
 <script setup lang="ts">
-const { foo, parentId } = defineProps<{ foo: Foo; parentId: string }>();
+interface Props {
+  foo: Foo;
+  parentId: string;
+}
+
+const { foo, parentId } = defineProps<Props>();
 const bar = ref(foo.bar);
 </script>
 ```

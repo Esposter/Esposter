@@ -6,11 +6,11 @@ import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
 import { noop } from "@esposter/shared";
 
-interface MemberListProps {
+interface Props {
   roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<MemberListProps>();
+const { roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { selectMember } = roleStore;
 const { selectedMemberId } = storeToRefs(roleStore);

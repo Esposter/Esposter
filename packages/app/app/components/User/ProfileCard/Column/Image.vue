@@ -7,13 +7,13 @@ import { validateFile } from "@/services/file/validateFile";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync, takeOne } from "@esposter/shared";
 
-export interface UserProfileCardColumnImageProps {
+interface Props {
   editMode: boolean;
   value: Row<RowValueType.Image>["value"];
 }
 
 const modelValue = defineModel<Row<RowValueType.Image>["value"]>({ required: true });
-const { editMode, value } = defineProps<UserProfileCardColumnImageProps>();
+const { editMode, value } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { isLoading, uploadImage } = useUploadImage(() => $trpc.user.generateProfileImageUploadUrl.mutate());
 const validateFileRule = (fileValue: FileFieldValue) => {

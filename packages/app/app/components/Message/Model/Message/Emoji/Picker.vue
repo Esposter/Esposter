@@ -7,14 +7,14 @@ import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { useRoleStore } from "@/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 
-interface MessageEmojiPickerProps {
+interface Props {
   buttonProps?: VBtn["$props"];
   tooltipProps?: VTooltip["$props"];
 }
 
 defineSlots<{ default?: (props: Record<string, unknown>) => VNode }>();
 const menu = defineModel<boolean>("menu", { default: false });
-const { buttonProps, tooltipProps } = defineProps<MessageEmojiPickerProps>();
+const { buttonProps, tooltipProps } = defineProps<Props>();
 const emit = defineEmits<{ select: [emojiTag: string, emoji: PickableEmoji] }>();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);

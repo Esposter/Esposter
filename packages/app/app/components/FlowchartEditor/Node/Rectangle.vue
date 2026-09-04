@@ -6,12 +6,12 @@ import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Handle, Position } from "@vue-flow/core";
 import { NodeResizer } from "@vue-flow/node-resizer";
 // @TODO: https://github.com/vuejs/core/issues/11371
-interface RectangleProps {
+interface Props {
   data: GraphNode["data"];
   id: GraphNode["id"];
 }
 
-const { data, id } = defineProps<RectangleProps>();
+const { data, id } = defineProps<Props>();
 const colorsStore = useColorsStore();
 const { text } = storeToRefs(colorsStore);
 const flowchartEditorStore = useFlowchartEditorStore();

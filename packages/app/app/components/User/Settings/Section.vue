@@ -3,12 +3,12 @@ import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSect
 
 import { UserSettingsPageSectionMap } from "@/services/user/settings/UserSettingsPageSectionMap";
 
-interface UserSettingsSectionProps {
+interface Props {
   section: UserSettingsPageSection;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { section } = defineProps<UserSettingsSectionProps>();
+const { section } = defineProps<Props>();
 </script>
 
 <template>

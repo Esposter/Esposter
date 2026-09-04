@@ -2,11 +2,11 @@
 import { UserSettingsContentMap } from "@/services/message/user/settings/UserSettingsContentMap";
 import { useUserSettingsDialogStore } from "@/store/message/user/settings/dialog";
 
-interface UserSettingsContentProps {
+interface Props {
   settingsType: keyof typeof UserSettingsContentMap;
 }
 
-const { settingsType } = defineProps<UserSettingsContentProps>();
+const { settingsType } = defineProps<Props>();
 const userSettingsDialogStore = useUserSettingsDialogStore();
 const { isDrawerOpen, isVisible } = storeToRefs(userSettingsDialogStore);
 const component = computed(() => UserSettingsContentMap[settingsType]);

@@ -3,12 +3,12 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
 
-interface RoomSettingsContentProps {
+interface Props {
   room: RoomInMessage;
   settingsType: keyof typeof SettingsContentMap;
 }
 
-const { room, settingsType } = defineProps<RoomSettingsContentProps>();
+const { room, settingsType } = defineProps<Props>();
 const emit = defineEmits<{ close: []; "open:drawer": [] }>();
 const component = computed(() => SettingsContentMap[settingsType]);
 </script>

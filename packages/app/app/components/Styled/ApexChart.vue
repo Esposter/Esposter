@@ -5,9 +5,9 @@ import type { VueApexChartsComponentProps } from "vue3-apexcharts";
 import { defu } from "defu";
 import VueApexCharts from "vue3-apexcharts";
 
-type ApexChartProps = Pick<VueApexChartsComponentProps, "options" | "series" | "type">;
+type Props = Pick<VueApexChartsComponentProps, "options" | "series" | "type">;
 
-const { options = {}, series, type } = defineProps<ApexChartProps>();
+const { options = {}, series, type } = defineProps<Props>();
 const isDark = useIsDark();
 const chart = useTemplateRef<{ chart?: ApexCharts }>("chart");
 // Vuetify owns the theme, so the mode is pinned instead of letting ApexCharts auto-resolve it. The mode flip

@@ -5,13 +5,13 @@ import type { ResourceType } from "@esposter/db-schema";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { pluralize } from "#shared/util/text/pluralize";
 
-interface ResourceListSummaryCardsProps {
+interface Props {
   counts: ResourceTypeCount[];
   error: string;
   isPending: boolean;
 }
 
-const { counts, error, isPending } = defineProps<ResourceListSummaryCardsProps>();
+const { counts, error, isPending } = defineProps<Props>();
 const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
 </script>
 

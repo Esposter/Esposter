@@ -6,12 +6,12 @@ import { Sound } from "@/models/clicker/Sound";
 import { useClickerStore } from "@/store/clicker";
 import { useUpgradeStore } from "@/store/clicker/upgrade";
 
-interface UpgradeListItemProps {
+interface Props {
   isBought?: true;
   upgrade: Upgrade;
 }
 
-const { isBought, upgrade } = defineProps<UpgradeListItemProps>();
+const { isBought, upgrade } = defineProps<Props>();
 const clickerStore = useClickerStore();
 const { clicker } = storeToRefs(clickerStore);
 const upgradeStore = useUpgradeStore();

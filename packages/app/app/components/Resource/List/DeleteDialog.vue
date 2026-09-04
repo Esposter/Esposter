@@ -4,11 +4,11 @@ import type { Resource } from "@esposter/db-schema";
 import { useListDialogStore } from "@/store/resource/listDialog";
 import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 
-interface ResourceListDeleteDialogProps {
+interface Props {
   resource: Resource;
 }
 
-const { resource } = defineProps<ResourceListDeleteDialogProps>();
+const { resource } = defineProps<Props>();
 const emit = defineEmits<{ delete: [resources: Resource[]] }>();
 const listDialogStore = useListDialogStore();
 const { deletingId } = storeToRefs(listDialogStore);

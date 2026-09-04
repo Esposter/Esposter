@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+import type { DialogActivatorSlotProps } from "@/components/Styled/DialogActivatorSlotProps";
 import type { VDialog } from "vuetify/components";
 
-export interface StyledSearchDialogProps {
+interface Props {
   // Registered with useVHotkey to toggle the dialog, e.g. "ctrl+k"
   hotkey: string;
   placeholder: string;
@@ -11,12 +11,12 @@ export interface StyledSearchDialogProps {
 const DIALOG_PROPS: VDialog["$props"] = { width: 600 };
 
 defineSlots<{
-  activator?: (props: StyledDialogActivatorSlotProps) => VNode;
+  activator?: (props: DialogActivatorSlotProps) => VNode;
   default: () => VNode;
 }>();
 const isOpen = defineModel<boolean>({ default: false });
 const searchQuery = defineModel<string>("searchQuery", { required: true });
-const { hotkey, placeholder } = defineProps<StyledSearchDialogProps>();
+const { hotkey, placeholder } = defineProps<Props>();
 
 useVHotkey(hotkey, () => {
   isOpen.value = !isOpen.value;

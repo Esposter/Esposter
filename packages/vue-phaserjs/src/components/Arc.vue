@@ -9,13 +9,13 @@ import { ArcSetterMap } from "#src/util/setterMap/ArcSetterMap";
 
 interface ArcEmits extends /** @vue-ignore */ ArcEventEmitsOptions {}
 
-interface ArcProps {
+interface Props {
   configuration: Partial<ArcConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, arc: GameObjects.Arc) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<ArcProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<ArcEmits>();
 
 useInitializeGameObject(

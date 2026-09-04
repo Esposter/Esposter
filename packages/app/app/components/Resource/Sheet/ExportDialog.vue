@@ -10,12 +10,12 @@ import { useSheetStore } from "@/store/resource/sheet";
 import { useFilterStore } from "@/store/resource/sheet/filter";
 import { useRowStore } from "@/store/resource/sheet/row";
 
-interface ExportDialogProps {
+interface Props {
   dataSourceType: DataSourceType;
 }
 
 const isOpen = defineModel<boolean>({ default: false });
-const { dataSourceType } = defineProps<ExportDialogProps>();
+const { dataSourceType } = defineProps<Props>();
 const exportFile = useExportFile();
 const resourceStore = useResourceStore();
 const { resource } = storeToRefs(resourceStore);

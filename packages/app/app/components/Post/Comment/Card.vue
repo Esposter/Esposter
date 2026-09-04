@@ -7,12 +7,12 @@ import { COMMENT_INDENT_STEP, MAX_COMMENT_INDENT_DEPTH } from "@/services/post/c
 import { useCommentDialogStore } from "@/store/post/comment/dialog";
 import { RoutePath } from "@esposter/shared";
 
-interface PostCommentCardProps {
+interface Props {
   comment: PostWithRelations;
   depth: number;
 }
 
-const { comment, depth } = defineProps<PostCommentCardProps>();
+const { comment, depth } = defineProps<Props>();
 // The synchronous form: a tree renders one of these per node, and the awaited one makes every node an async
 // Boundary for something that only gates action affordances
 const session = authClient.useSession();

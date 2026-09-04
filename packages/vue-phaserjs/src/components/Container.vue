@@ -11,13 +11,13 @@ import { ContainerSetterMap } from "#src/util/setterMap/ContainerSetterMap";
 
 interface ContainerEmits extends /** @vue-ignore */ ContainerEventEmitsOptions {}
 
-interface ContainerProps {
+interface Props {
   configuration?: Partial<ContainerConfiguration>;
   onComplete?: (scene: SceneWithPlugins, container: GameObjects.Container) => void;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { configuration = {}, onComplete } = defineProps<ContainerProps>();
+const { configuration = {}, onComplete } = defineProps<Props>();
 const emit = defineEmits<ContainerEmits>();
 const container = ref<GameObjects.Container>();
 

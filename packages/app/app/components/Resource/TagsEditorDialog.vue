@@ -5,13 +5,13 @@ import { getResourceTags } from "@/services/resource/tag/getResourceTags";
 import { getTagRows } from "@/services/resource/tag/getTagRows";
 import { MAX_TAG_NAME_LENGTH, MAX_TAG_VALUE_LENGTH, MAX_TAGS_COUNT } from "@esposter/db-schema";
 
-interface ResourceTagsEditorDialogProps {
+interface Props {
   tags: ResourceTags;
   updateTags: (tags: ResourceTags) => Promise<void>;
 }
 
 const isOpen = defineModel<boolean>({ default: false });
-const { tags, updateTags } = defineProps<ResourceTagsEditorDialogProps>();
+const { tags, updateTags } = defineProps<Props>();
 const rules = useVRules();
 const nameRules = computed(() => [rules.maxLength(MAX_TAG_NAME_LENGTH)]);
 const valueRules = computed(() => [rules.maxLength(MAX_TAG_VALUE_LENGTH)]);

@@ -7,7 +7,7 @@ import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { mergeProps } from "vue";
 import { VBottomSheet, VMenu } from "vuetify/components";
 // @TODO: https://github.com/vuejs/core/issues/11371
-interface StyledEmojiPickerProps {
+interface Props {
   buttonProps?: VBtn["$props"];
   customEmojis?: CustomEmoji[];
   tooltipProps?: VTooltip["$props"];
@@ -19,7 +19,7 @@ const {
   buttonProps = {},
   customEmojis = [],
   tooltipProps = { text: EMOJI_PICKER_TOOLTIP_TEXT },
-} = defineProps<StyledEmojiPickerProps>();
+} = defineProps<Props>();
 const emit = defineEmits<{ select: [emojiTag: string, emoji: PickableEmoji] }>();
 // A phone has no room beside the composer for a panel this size, and a menu anchored to a button near the screen
 // Edge is dragged back into the viewport wherever it fits. It comes up off the bottom edge instead — the same

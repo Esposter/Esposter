@@ -7,13 +7,13 @@ import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
 import { onCreate } from "#src/hooks/onCreate";
 import { getScene } from "#src/util/getScene";
 
-interface TilemapProps {
+interface Props {
   configuration: Types.Tilemaps.TilemapConfig;
   onComplete?: (scene: SceneWithPlugins, tilemap: Tilemaps.Tilemap) => void;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { configuration, onComplete } = defineProps<TilemapProps>();
+const { configuration, onComplete } = defineProps<Props>();
 const sceneKey = useInjectSceneKey();
 const tilemap = ref<Tilemaps.Tilemap>();
 

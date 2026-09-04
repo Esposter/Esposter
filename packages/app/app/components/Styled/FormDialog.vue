@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+import type { DialogActivatorSlotProps } from "@/components/Styled/DialogActivatorSlotProps";
 import type { SubmitEventPromise } from "vuetify";
 import type { VBtn, VCard, VForm } from "vuetify/components";
 
 import { mergeProps } from "vue";
 // @TODO: https://github.com/vuejs/core/issues/11371
-export interface StyledFormDialogProps {
+interface Props {
   cardProps?: VCard["$props"];
   confirmButtonAttrs?: VBtn["$attrs"];
   confirmButtonProps?: VBtn["$props"];
 }
 
 defineSlots<{
-  activator?: (props: StyledDialogActivatorSlotProps) => VNode;
+  activator?: (props: DialogActivatorSlotProps) => VNode;
   default?: () => VNode;
   "prepend-actions"?: () => VNode;
   "prepend-confirm"?: () => VNode;
 }>();
 const modelValue = defineModel<boolean>({ default: false });
-const { cardProps, confirmButtonAttrs = {}, confirmButtonProps = {} } = defineProps<StyledFormDialogProps>();
+const { cardProps, confirmButtonAttrs = {}, confirmButtonProps = {} } = defineProps<Props>();
 const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: (isSuccessful?: boolean) => void] }>();
 const editForm = ref<InstanceType<typeof VForm>>();
 const isEditFormValid = ref(true);

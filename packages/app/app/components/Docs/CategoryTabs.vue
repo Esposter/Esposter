@@ -8,12 +8,12 @@ import { getSectionCategory } from "@/services/docs/getSectionCategory";
 import { useLayoutStore } from "@/store/layout";
 import { RoutePath } from "@esposter/shared";
 
-interface CategoryTabsProps {
+interface Props {
   activeCategory?: DocsCategory;
   sections: ContentNavigationItem[];
 }
 
-const { activeCategory, sections } = defineProps<CategoryTabsProps>();
+const { activeCategory, sections } = defineProps<Props>();
 const layoutStore = useLayoutStore();
 const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 const { currentRoute } = useRouter();

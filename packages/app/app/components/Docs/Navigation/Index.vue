@@ -7,11 +7,11 @@ import { getNavigationGroups } from "@/services/docs/getNavigationGroups";
 import { getOpenedNavigationPaths } from "@/services/docs/getOpenedNavigationPaths";
 import { getSectionIcon } from "@/services/docs/getSectionIcon";
 
-interface NavigationProps {
+interface Props {
   sections: ContentNavigationItem[];
 }
 
-const { sections } = defineProps<NavigationProps>();
+const { sections } = defineProps<Props>();
 const router = useRouter();
 const { cloned: opened } = useCloned(() => getOpenedNavigationPaths(router.currentRoute.value.path));
 const sectionsWithGroups = computed(() =>

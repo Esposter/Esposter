@@ -1,12 +1,12 @@
 <script setup lang="ts">
-interface ResourceSheetDialogProps {
+interface Props {
   closeButtonText?: string;
   title: string;
 }
 
 defineSlots<{ actions?: () => VNode; default: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
-const { closeButtonText = "Close" } = defineProps<ResourceSheetDialogProps>();
+const { closeButtonText = "Close" } = defineProps<Props>();
 const isFullScreen = ref(false);
 </script>
 

@@ -7,17 +7,17 @@ import { WordFilterAction } from "@esposter/db-schema";
 import { toRawDeep } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 
+interface Props {
+  filter: null | RoomFilterInMessage;
+  roomId: string;
+}
 interface WordFilterFormData {
   action: WordFilterAction;
   timeoutDurationMs: number;
   words: string[];
 }
-interface WordFilterFormProps {
-  filter: null | RoomFilterInMessage;
-  roomId: string;
-}
 
-const { filter, roomId } = defineProps<WordFilterFormProps>();
+const { filter, roomId } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const actionSelectItems = Object.values(WordFilterAction).map((value) => ({ title: value, value }));
 const getWordFilterFormData = (roomFilter: null | RoomFilterInMessage): WordFilterFormData => ({

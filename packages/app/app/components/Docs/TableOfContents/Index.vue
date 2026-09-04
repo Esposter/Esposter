@@ -3,11 +3,11 @@ import type { TocLink } from "@nuxt/content";
 
 import { getTocLinkIds } from "@/services/docs/getTocLinkIds";
 
-interface TableOfContentsProps {
+interface Props {
   links: TocLink[];
 }
 
-const { links } = defineProps<TableOfContentsProps>();
+const { links } = defineProps<Props>();
 const visibleIds = useVisibleSectionIds(() => getTocLinkIds(links));
 </script>
 

@@ -5,11 +5,11 @@ import { getDisplayTime } from "@/services/message/draftsAndSent/getDisplayTime"
 import { getScheduledMessageJobText } from "@/services/message/draftsAndSent/getScheduledMessageJobText";
 import { ScheduledMessageJobIconMap } from "@/services/message/draftsAndSent/ScheduledMessageJobIconMap";
 
-interface MessageDraftsAndSentScheduledListItemProps {
+interface Props {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
 }
 
-const { scheduledMessageJob } = defineProps<MessageDraftsAndSentScheduledListItemProps>();
+const { scheduledMessageJob } = defineProps<Props>();
 </script>
 
 <template>

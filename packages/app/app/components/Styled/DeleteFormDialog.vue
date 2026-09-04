@@ -1,20 +1,14 @@
 <script setup lang="ts">
-import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+import type { DeleteFormDialogProps } from "@/components/Styled/DeleteFormDialogProps";
+import type { DialogActivatorSlotProps } from "@/components/Styled/DialogActivatorSlotProps";
 import type { VBtn, VCard } from "vuetify/components";
 
-export interface StyledDeleteFormDialogProps {
-  cardProps?: VCard["$props"];
-  confirmButtonProps?: VBtn["$props"];
-  // Azure-style destructive guard: Delete stays disabled until this exact text is typed
-  confirmName?: string;
-}
-
 defineSlots<{
-  activator: (props: StyledDialogActivatorSlotProps) => VNode;
+  activator: (props: DialogActivatorSlotProps) => VNode;
   default: () => VNode;
 }>();
 const modelValue = defineModel<boolean>({ default: false });
-const { cardProps, confirmButtonProps, confirmName = "" } = defineProps<StyledDeleteFormDialogProps>();
+const { cardProps, confirmButtonProps, confirmName = "" } = defineProps<DeleteFormDialogProps>();
 const emit = defineEmits<{ delete: [onComplete: (isSuccessful?: boolean) => void] }>();
 const confirmNameValue = ref("");
 const mergedCardProps = computed(() => ({ prependIcon: "mdi-delete-alert-outline", ...cardProps }));

@@ -3,12 +3,12 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { getColumnLayout } from "@/services/message/file/getColumnLayout";
 
-interface FileContainerProps {
+interface Props {
   isPreview?: boolean;
   message: MessageEntity;
 }
 
-const { isPreview = false, message } = defineProps<FileContainerProps>();
+const { isPreview = false, message } = defineProps<Props>();
 const columnLayout = computed(() => getColumnLayout(message.files.length));
 </script>
 

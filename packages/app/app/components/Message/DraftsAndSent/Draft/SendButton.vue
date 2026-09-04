@@ -5,11 +5,11 @@ import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { MessageType } from "@esposter/db-schema";
 
-interface MessageDraftsAndSentDraftSendButtonProps {
+interface Props {
   draftItem: DraftItem;
 }
 
-const { draftItem } = defineProps<MessageDraftsAndSentDraftSendButtonProps>();
+const { draftItem } = defineProps<Props>();
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const inputStore = useInputStore();

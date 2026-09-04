@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useReplyStore } from "@/store/message/input/reply";
 
-interface ReplySpineProps {
+interface Props {
   replyRowKey: string;
   roomId: string;
 }
 
-const { replyRowKey, roomId } = defineProps<ReplySpineProps>();
+const { replyRowKey, roomId } = defineProps<Props>();
 const replyStore = useReplyStore();
 const { isIndicatorActive } = storeToRefs(replyStore);
 const scrollToMessage = useScrollToMessage();

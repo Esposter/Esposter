@@ -3,11 +3,11 @@ import type { Resource } from "@esposter/db-schema";
 
 import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
 
-interface ResourceListSelectionCaptureBlueprintButtonProps {
+interface Props {
   selectedResources: Resource[];
 }
 
-const { selectedResources } = defineProps<ResourceListSelectionCaptureBlueprintButtonProps>();
+const { selectedResources } = defineProps<Props>();
 const blueprintCaptureDialogStore = useBlueprintCaptureDialogStore();
 const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
 </script>

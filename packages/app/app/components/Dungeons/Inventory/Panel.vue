@@ -2,13 +2,13 @@
 import { MENU_PADDING } from "@/services/dungeons/scene/inventory/constants";
 import { Rectangle } from "vue-phaserjs";
 
-interface InventoryPanelProps {
+interface Props {
   height: number;
   width: number;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { height, width } = defineProps<InventoryPanelProps>();
+const { height, width } = defineProps<Props>();
 </script>
 
 <template>

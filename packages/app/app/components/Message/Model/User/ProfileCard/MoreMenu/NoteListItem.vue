@@ -3,11 +3,11 @@ import type { ModerationNoteEntity } from "@esposter/db-schema";
 
 import { useMemberStore } from "@/store/message/user/member";
 
-interface NoteListItemProps {
+interface Props {
   note: ModerationNoteEntity;
 }
 
-const { note } = defineProps<NoteListItemProps>();
+const { note } = defineProps<Props>();
 const memberStore = useMemberStore();
 const { getMemberName } = memberStore;
 const actorName = computed(() => getMemberName(note.actorUserId));

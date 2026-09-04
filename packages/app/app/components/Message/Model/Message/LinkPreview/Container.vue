@@ -6,13 +6,13 @@ import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualCo
 import { useDataStore } from "@/store/message/data";
 import { noop } from "@esposter/shared";
 
-interface LinkPreviewContainerProps {
+interface Props {
   linkPreviewResponse: LinkPreviewResponse;
   partitionKey: MessageEntity["partitionKey"];
   rowKey: MessageEntity["rowKey"];
 }
 
-const { linkPreviewResponse, partitionKey, rowKey } = defineProps<LinkPreviewContainerProps>();
+const { linkPreviewResponse, partitionKey, rowKey } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FooterBarSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
+import type { FooterBarSlotProps } from "@/components/RichTextEditor/FooterBarSlotProps";
 import type { FileHandlePluginOptions } from "@tiptap/extension-file-handler";
 import type { AnyExtension, FocusPosition } from "@tiptap/vue-3";
 import type { CSSProperties } from "vue";
@@ -10,7 +10,7 @@ import { CharacterCount, Placeholder } from "@tiptap/extensions";
 import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 
-interface RichTextEditorProps {
+interface Props {
   autofocus?: FocusPosition;
   cardProps?: VCard["$props"];
   extensions?: AnyExtension[];
@@ -33,7 +33,7 @@ const {
   height = "auto",
   limit,
   placeholder = "Text (optional)",
-} = defineProps<RichTextEditorProps>();
+} = defineProps<Props>();
 const emit = defineEmits<{ paste: Parameters<NonNullable<FileHandlePluginOptions["onPaste"]>> }>();
 const linkCursorStyle = ref<CSSProperties["cursor"]>("text");
 // UseEditor tears the editor down in its own onBeforeUnmount — nothing here has to

@@ -9,7 +9,7 @@ import { getAttackPosition } from "@/services/dungeons/scene/battle/attack/getAt
 import { Animations } from "phaser";
 import { Sprite, useAnimations } from "vue-phaserjs";
 
-interface AttackProps {
+interface Props {
   configuration:
     | {
         // Position can be inferred if we know that the attack is just a base sprite
@@ -27,7 +27,7 @@ interface AttackProps {
 
 const isActive = defineModel<boolean>("isActive", { required: true });
 const { configuration, createAnimationConfigurations, isToEnemy, playAnimationKey, spritesheetKey } =
-  defineProps<AttackProps>();
+  defineProps<Props>();
 const frame = ref<number>();
 const animations = createAnimationConfigurations ? useAnimations(createAnimationConfigurations, true) : undefined;
 </script>

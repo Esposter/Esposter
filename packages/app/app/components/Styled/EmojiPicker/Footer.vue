@@ -4,13 +4,13 @@ import type { SkinTone } from "@/models/message/emoji/SkinTone";
 
 import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
 
-interface StyledEmojiPickerFooterProps {
+interface Props {
   emoji?: PickableEmoji;
 }
 
 defineSlots<{ default?: () => VNode }>();
 const skinTone = defineModel<SkinTone>("skinTone", { required: true });
-const { emoji } = defineProps<StyledEmojiPickerFooterProps>();
+const { emoji } = defineProps<Props>();
 </script>
 
 <!-- A bar tinted against the panel's own surface the way the app bar is: the picker's background token is one step

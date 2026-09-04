@@ -7,7 +7,7 @@ import type { Tweens } from "phaser";
 import { clamp } from "@vueuse/core";
 import { Container } from "vue-phaserjs";
 
-interface BarContainerProps {
+interface Props {
   barPercentage: number;
   isSkipAnimations?: boolean;
   position: Position;
@@ -23,7 +23,7 @@ const {
   scaleY = 0.7,
   type,
   width = 372,
-} = defineProps<BarContainerProps>();
+} = defineProps<Props>();
 const emit = defineEmits<{
   "complete:display-width": [];
   "start:display-width": [tween: Tweens.Tween];

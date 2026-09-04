@@ -1,10 +1,10 @@
 <script setup lang="ts">
-interface MessageDraftsAndSentSectionProps {
+interface Props {
   title: string;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { title } = defineProps<MessageDraftsAndSentSectionProps>();
+const { title } = defineProps<Props>();
 </script>
 
 <template>

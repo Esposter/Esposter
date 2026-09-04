@@ -9,13 +9,13 @@ import { GraphicsSetterMap } from "#src/util/setterMap/GraphicsSetterMap";
 
 interface GraphicsEmits extends /** @vue-ignore */ GraphicsEventEmitsOptions {}
 
-interface GraphicsProps {
+interface Props {
   configuration?: Partial<GraphicsConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, graphics: GameObjects.Graphics) => void;
 }
 
-const { configuration = {}, immediate, onComplete } = defineProps<GraphicsProps>();
+const { configuration = {}, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<GraphicsEmits>();
 
 useInitializeGameObject(

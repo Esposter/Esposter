@@ -4,11 +4,11 @@ import type { ResourceActivityEntity } from "@esposter/db-schema";
 import { getResourceActivityDetail } from "@/services/resource/activity/getResourceActivityDetail";
 import { ResourceActivityDefinitionMap } from "@/services/resource/activity/ResourceActivityDefinitionMap";
 
-interface ResourceActivityLogListItemProps {
+interface Props {
   activity: ResourceActivityEntity;
 }
 
-const { activity } = defineProps<ResourceActivityLogListItemProps>();
+const { activity } = defineProps<Props>();
 const detail = computed(() => getResourceActivityDetail(activity));
 </script>
 

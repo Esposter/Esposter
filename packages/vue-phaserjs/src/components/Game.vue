@@ -8,7 +8,7 @@ import { registerTiledJSONExternalLoader } from "#src/plugins/registerTiledJSONE
 import { usePhaserStore } from "#src/store/index";
 import { Game } from "phaser";
 
-interface GameProps {
+interface Props {
   // We're gonna stop people from being stupid and adding scenes like this
   // Because Phaser automatically starts the first scene under-the-hood
   // Which is totally un-obvious and also the correct way of adding scenes
@@ -17,7 +17,7 @@ interface GameProps {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { configuration } = defineProps<GameProps>();
+const { configuration } = defineProps<Props>();
 const phaserStore = usePhaserStore();
 const { game: storeGame } = storeToRefs(phaserStore);
 const canvasRoot = useTemplateRef("canvasRoot");

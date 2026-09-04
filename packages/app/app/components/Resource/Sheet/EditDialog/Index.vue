@@ -3,7 +3,7 @@ import type { z } from "zod";
 
 import deepEqual from "fast-deep-equal";
 
-interface EditDialogProps {
+interface Props {
   editedValue: unknown;
   isCreate?: true;
   schema: z.ZodType;
@@ -13,7 +13,7 @@ interface EditDialogProps {
 
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
 const modelValue = defineModel<boolean>({ default: false });
-const { editedValue, isCreate, schema, title, value } = defineProps<EditDialogProps>();
+const { editedValue, isCreate, schema, title, value } = defineProps<Props>();
 const emit = defineEmits<{ reset: []; submit: [onComplete: () => void] }>();
 const styledDialog = useTemplateRef("styledDialog");
 const errorIcon = useTemplateRef("errorIcon");

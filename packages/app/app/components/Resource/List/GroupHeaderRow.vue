@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { GroupHeaderSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
-type ResourceListGroupHeaderRowProps = Pick<GroupHeaderSlot, "columns" | "isGroupOpen" | "item" | "toggleGroup">;
+type Props = Pick<GroupHeaderSlot, "columns" | "isGroupOpen" | "item" | "toggleGroup">;
 
-defineProps<ResourceListGroupHeaderRowProps>();
+defineProps<Props>();
 </script>
 
 <template>

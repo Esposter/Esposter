@@ -6,13 +6,13 @@ import type { SetRequired } from "type-fest";
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
 import { ZoneSetterMap } from "#src/util/setterMap/ZoneSetterMap";
 
-interface ZoneEmits extends /** @vue-ignore */ ZoneEventEmitsOptions {}
-
-interface ZoneProps {
+interface Props {
   configuration: SetRequired<Partial<ZoneConfiguration>, "height" | "width" | "x" | "y">;
 }
 
-const { configuration } = defineProps<ZoneProps>();
+interface ZoneEmits extends /** @vue-ignore */ ZoneEventEmitsOptions {}
+
+const { configuration } = defineProps<Props>();
 const emit = defineEmits<ZoneEmits>();
 
 useInitializeGameObject(

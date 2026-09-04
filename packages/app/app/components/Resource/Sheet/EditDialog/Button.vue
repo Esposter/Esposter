@@ -3,7 +3,7 @@ import type { z } from "zod";
 
 import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 
-interface EditDialogButtonProps {
+interface Props {
   editedValue: unknown;
   icon: string;
   schema: z.ZodType;
@@ -13,7 +13,7 @@ interface EditDialogButtonProps {
 }
 
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
-const { editedValue, icon, schema, title, tooltipText, value } = defineProps<EditDialogButtonProps>();
+const { editedValue, icon, schema, title, tooltipText, value } = defineProps<Props>();
 const emit = defineEmits<{ reset: []; submit: [onComplete: () => void] }>();
 const isOpen = ref(false);
 </script>

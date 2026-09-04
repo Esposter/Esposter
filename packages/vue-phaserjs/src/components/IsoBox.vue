@@ -9,13 +9,13 @@ import { IsoBoxSetterMap } from "#src/util/setterMap/IsoBoxSetterMap";
 
 interface IsoBoxEmits extends /** @vue-ignore */ IsoBoxEventEmitsOptions {}
 
-interface IsoBoxProps {
+interface Props {
   configuration: Partial<IsoBoxConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, isoBox: GameObjects.IsoBox) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<IsoBoxProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<IsoBoxEmits>();
 
 useInitializeGameObject(

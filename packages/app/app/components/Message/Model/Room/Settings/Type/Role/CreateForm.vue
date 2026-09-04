@@ -4,11 +4,11 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { createRoleInputSchema } from "#shared/models/db/role/CreateRoleInput";
 import { useRoleStore } from "@/store/message/room/role";
 
-interface RoleCreateFormProps {
+interface Props {
   roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<RoleCreateFormProps>();
+const { roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { createRole } = roleStore;
 const name = ref("");

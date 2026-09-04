@@ -6,12 +6,12 @@ import { getEditRowDescription } from "@/services/resource/sheet/commands/getEdi
 import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
 
-interface ActionSlotProps {
+interface Props {
   index: number;
   row: DataSource["rows"][number];
 }
 
-const { index, row } = defineProps<ActionSlotProps>();
+const { index, row } = defineProps<Props>();
 const rowDialogStore = useRowDialogStore();
 const { deletingId, editingId } = storeToRefs(rowDialogStore);
 </script>

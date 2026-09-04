@@ -4,11 +4,11 @@ import { useReplyStore } from "@/store/message/input/reply";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MessageType } from "@esposter/db-schema";
 
-interface ReplyProps {
+interface Props {
   rowKey: string;
 }
 
-const { rowKey } = defineProps<ReplyProps>();
+const { rowKey } = defineProps<Props>();
 const colorsStore = useColorsStore();
 const { text } = storeToRefs(colorsStore);
 const replyStore = useReplyStore();

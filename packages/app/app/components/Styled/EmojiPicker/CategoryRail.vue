@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { EmojiCategory } from "@/models/message/emoji/EmojiCategory";
 
-interface StyledEmojiPickerCategoryRailProps {
+interface Props {
   categories: EmojiCategory[];
   isHorizontal?: boolean;
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { categories, isHorizontal } = defineProps<StyledEmojiPickerCategoryRailProps>();
+const { categories, isHorizontal } = defineProps<Props>();
 </script>
 
 <template>

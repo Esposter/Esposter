@@ -4,11 +4,11 @@ import type { User } from "@esposter/db-schema";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
-interface ProfileCardAddFriendButtonProps {
+interface Props {
   user: Pick<User, "id">;
 }
 
-const { user } = defineProps<ProfileCardAddFriendButtonProps>();
+const { user } = defineProps<Props>();
 const friendStore = useFriendStore();
 const { checkIsFriend } = friendStore;
 const friendRequestStore = useFriendRequestStore();

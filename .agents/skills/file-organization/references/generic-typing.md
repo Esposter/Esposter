@@ -43,7 +43,7 @@ Use `<script setup lang="ts" generic="T extends SomeBase">` to make a component 
 <FooPicker :item="modelValue" :configuration="FooConfigurationMap[FooType.Bar]" />
 <!-- Child: -->
 <script setup lang="ts" generic="TFooItem extends FooItemTypeMap[keyof FooItemTypeMap]">
-interface FooPickerProps {
+interface Props {
   configuration: FooConfiguration<TFooItem>;
   item: TFooItem;
 }

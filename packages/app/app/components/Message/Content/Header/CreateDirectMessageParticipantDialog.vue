@@ -5,12 +5,12 @@ import { authClient } from "@/services/auth/authClient";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { useFriendStore } from "@/store/message/user/friend";
 
-interface CreateDirectMessageParticipantDialogProps {
+interface Props {
   roomId: RoomInMessage["id"];
 }
 
 const isOpen = defineModel<boolean>({ default: false });
-const { roomId } = defineProps<CreateDirectMessageParticipantDialogProps>();
+const { roomId } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { data: session } = await authClient.useSession(useFetch);
 const directMessageStore = useDirectMessageStore();

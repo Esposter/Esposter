@@ -4,11 +4,11 @@ import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/mes
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
 
-interface MessageDraftsAndSentScheduledSendButtonProps {
+interface Props {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
 }
 
-const { scheduledMessageJob } = defineProps<MessageDraftsAndSentScheduledSendButtonProps>();
+const { scheduledMessageJob } = defineProps<Props>();
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { sendScheduledMessageNow } = scheduledMessageJobStore;
 const buttonProps = computed(() => ({

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "@esposter/db-schema";
 
-interface PostLikeSectionProps {
+interface Props {
   isCommentStore?: true;
   post: PostWithRelations;
 }
 
-const { isCommentStore, post } = defineProps<PostLikeSectionProps>();
+const { isCommentStore, post } = defineProps<Props>();
 </script>
 
 <template>

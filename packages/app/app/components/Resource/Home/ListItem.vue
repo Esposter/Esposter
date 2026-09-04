@@ -4,11 +4,11 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { RoutePath } from "@esposter/shared";
 
-interface ResourceHomeListItemProps {
+interface Props {
   resource: ResourceListItem;
 }
 
-const { resource } = defineProps<ResourceHomeListItemProps>();
+const { resource } = defineProps<Props>();
 </script>
 
 <template>

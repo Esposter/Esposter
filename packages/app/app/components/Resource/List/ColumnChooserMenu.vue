@@ -3,11 +3,11 @@ import type { ResourceListSource } from "@/models/resource/list/ResourceListSour
 
 import { mergeProps } from "vue";
 
-interface ResourceListColumnChooserMenuProps {
+interface Props {
   source: ResourceListSource;
 }
 
-const { source } = defineProps<ResourceListColumnChooserMenuProps>();
+const { source } = defineProps<Props>();
 // Reads the same composable the table does rather than taking the column state as a model — one owner of
 // Which columns exist, which are pinned, and which are hidden
 const { hiddenColumnKeys, toggleableHeaders, toggleColumn } = useResourceListColumns(source);

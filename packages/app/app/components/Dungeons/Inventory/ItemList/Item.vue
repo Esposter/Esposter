@@ -7,13 +7,13 @@ import { DISABLED_OPACITY } from "@/services/vuetify/constants";
 import { prettify } from "@/util/text/prettify";
 import { Container, Text } from "vue-phaserjs";
 
-interface ItemProps {
+interface Props {
   columnIndex: number;
   item: Item;
   rowIndex: number;
 }
 
-const { columnIndex, item, rowIndex } = defineProps<ItemProps>();
+const { columnIndex, item, rowIndex } = defineProps<Props>();
 const emit = defineEmits<{ click: [] }>();
 const itemOptionGrid = useItemOptionGrid();
 const isUsableItem = useIsUsableItem(() => item);

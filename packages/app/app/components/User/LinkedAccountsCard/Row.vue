@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import type { LoginButtonProps } from "@/components/Login/Button.vue";
+import type { ButtonProps } from "@/components/Login/ButtonProps";
 
 import { toTitleCase } from "@/util/text/toTitleCase";
 
-export interface UserLinkedAccountsCardRowProps extends LoginButtonProps {
+interface Props extends ButtonProps {
   isLinked?: true;
   linkedAccountCount: number;
 }
 
-const { isLinked, linkedAccountCount, logo, logoAttrs, logoStyle, provider, style } =
-  defineProps<UserLinkedAccountsCardRowProps>();
+const { isLinked, linkedAccountCount, logo, logoAttrs, logoStyle, provider, style } = defineProps<Props>();
 const emit = defineEmits<{ link: []; unlink: [] }>();
 </script>
 

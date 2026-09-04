@@ -6,13 +6,13 @@ import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useModerationNoteStore } from "@/store/message/moderation/note";
 import { MODERATION_NOTE_MAX_LENGTH } from "@esposter/db-schema";
 
-interface NotesDialogProps {
+interface Props {
   displayName: string;
   roomId: string;
   user: Pick<User, "id">;
 }
 
-const { displayName, roomId, user } = defineProps<NotesDialogProps>();
+const { displayName, roomId, user } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const rules = useVRules();
 const noteRules = computed(() => [rules.maxLength(MODERATION_NOTE_MAX_LENGTH)]);

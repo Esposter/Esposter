@@ -4,11 +4,11 @@ import type { UserAchievementWithDefinition } from "@/models/achievement/UserAch
 import { prettify } from "@/util/text/prettify";
 import { RoutePath } from "@esposter/shared";
 
-interface NotificationSnackBarProps {
+interface Props {
   userAchievement: UserAchievementWithDefinition;
 }
 
-const { userAchievement } = defineProps<NotificationSnackBarProps>();
+const { userAchievement } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const displayName = computed(() => prettify(userAchievement.achievement.name));
 </script>

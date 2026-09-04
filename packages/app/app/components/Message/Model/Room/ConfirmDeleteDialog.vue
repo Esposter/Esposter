@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+import type { DialogActivatorSlotProps } from "@/components/Styled/DialogActivatorSlotProps";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
 import { withFinalizerAsync } from "@esposter/shared";
 
-interface RoomConfirmDeleteDialogProps {
+interface Props {
   room: RoomInMessage;
 }
 
 defineSlots<{
-  activator: (props: StyledDialogActivatorSlotProps & { tooltipProps: Record<string, unknown> }) => VNode;
+  activator: (props: DialogActivatorSlotProps & { tooltipProps: Record<string, unknown> }) => VNode;
 }>();
 const modelValue = defineModel<boolean>({ default: false });
-const { room } = defineProps<RoomConfirmDeleteDialogProps>();
+const { room } = defineProps<Props>();
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => room.userId === session.value?.user.id);
 const roomStore = useRoomStore();

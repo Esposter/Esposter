@@ -9,13 +9,13 @@ import { BitmapTextSetterMap } from "#src/util/setterMap/BitmapTextSetterMap";
 
 interface BitmapTextEmits extends /** @vue-ignore */ BitmapTextEventEmitsOptions {}
 
-interface BitmapTextProps {
+interface Props {
   configuration: Partial<BitmapTextConfiguration> & Pick<BitmapTextConfiguration, "font">;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, bitmapText: GameObjects.BitmapText) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<BitmapTextProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<BitmapTextEmits>();
 
 useInitializeGameObject(

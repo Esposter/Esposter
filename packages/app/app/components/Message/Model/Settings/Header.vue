@@ -1,11 +1,11 @@
 <script setup lang="ts">
-interface SettingsHeaderProps {
+interface Props {
   title: string;
 }
 // Belongs in the shell's `#header` slot, which renders outside the scroll container — so it stays put without
 // `sticky`, and a panel scrolled past it is genuinely out of view rather than hidden underneath it. The Room
 // And User dialogs render the same three controls; only what they do on close differs
-const { title } = defineProps<SettingsHeaderProps>();
+const { title } = defineProps<Props>();
 const emit = defineEmits<{ close: []; "open:drawer": [] }>();
 const { smAndDown } = useVDisplay();
 </script>

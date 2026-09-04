@@ -3,11 +3,11 @@ import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
 
 import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
 
-interface MessageDraftsAndSentDraftScheduleButtonProps {
+interface Props {
   draftItem: DraftItem;
 }
 
-const { draftItem } = defineProps<MessageDraftsAndSentDraftScheduleButtonProps>();
+const { draftItem } = defineProps<Props>();
 const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = scheduleDialogStore;
 </script>

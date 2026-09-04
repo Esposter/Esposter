@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 
-interface UpgradeListGroupProps {
+interface Props {
   isBought?: true;
   upgrades: Upgrade[];
 }
 
-const { isBought, upgrades } = defineProps<UpgradeListGroupProps>();
+const { isBought, upgrades } = defineProps<Props>();
 </script>
 
 <template>

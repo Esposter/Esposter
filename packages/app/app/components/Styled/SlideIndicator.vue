@@ -7,11 +7,11 @@
 // One per list, never one per section of it: a bar that is `v-if`-ed per group is destroyed and rebuilt as the
 // Selection crosses a boundary, and the new one has no position to slide from, so every move starts at the top
 // Of its own group. Sliding is only continuous while the same element survives the change.
-interface StyledSlideIndicatorProps {
+interface Props {
   activeKeys: string[];
 }
 
-const { activeKeys } = defineProps<StyledSlideIndicatorProps>();
+const { activeKeys } = defineProps<Props>();
 const indicator = useTemplateRef("indicator");
 const indicatorStyle = ref<{ height: string; transform: string; transitionDuration?: string }>();
 // `isTracking` is a layout change moving the list under the bar — a group expanding, the drawer resizing — where

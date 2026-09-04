@@ -5,11 +5,11 @@ import { pluralize } from "#shared/util/text/pluralize";
 import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
-interface ResourceListSelectionDeleteButtonProps {
+interface Props {
   selectedResources: Resource[];
 }
 
-const { selectedResources } = defineProps<ResourceListSelectionDeleteButtonProps>();
+const { selectedResources } = defineProps<Props>();
 const emit = defineEmits<{ delete: [resources: Resource[]] }>();
 const selectedLabel = computed(() => `${selectedResources.length} ${pluralize("resource", selectedResources.length)}`);
 const cardProps = computed(() => ({ title: `Delete ${selectedLabel.value}` }));

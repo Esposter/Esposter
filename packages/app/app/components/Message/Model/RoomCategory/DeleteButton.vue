@@ -3,11 +3,11 @@ import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
 import { useRoomCategoryDialogStore } from "@/store/message/roomCategoryDialog";
 
-interface RoomCategoryDeleteButtonProps {
+interface Props {
   category: RoomCategoryInMessage;
 }
 
-const { category } = defineProps<RoomCategoryDeleteButtonProps>();
+const { category } = defineProps<Props>();
 const roomCategoryDialogStore = useRoomCategoryDialogStore();
 const { deletingId } = storeToRefs(roomCategoryDialogStore);
 </script>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
-interface AppMenuLinkListItemProps {
+interface Props {
   item: ListLinkItem;
 }
 
-const { item } = defineProps<AppMenuLinkListItemProps>();
+const { item } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
 </script>
 

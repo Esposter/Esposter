@@ -5,14 +5,14 @@ import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
 
-interface ExperienceBarProps {
+interface Props {
   barPercentage: number;
   position: Position;
   scaleY?: number;
   width?: number;
 }
 
-const { barPercentage: baseBarPercentage, position, scaleY = 0.4, width = 372 } = defineProps<ExperienceBarProps>();
+const { barPercentage: baseBarPercentage, position, scaleY = 0.4, width = 372 } = defineProps<Props>();
 const emit = defineEmits<{ "level-up": [onComplete: () => void] }>();
 const settingsStore = useSettingsStore();
 const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore);

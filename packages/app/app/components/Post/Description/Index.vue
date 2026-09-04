@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
-interface PostDescriptionProps {
+interface Props {
   description: string;
 }
 
-const { description } = defineProps<PostDescriptionProps>();
+const { description } = defineProps<Props>();
 </script>
 
 <template>

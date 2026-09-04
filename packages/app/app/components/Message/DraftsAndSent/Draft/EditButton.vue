@@ -3,11 +3,11 @@ import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
 
 import { RoutePath } from "@esposter/shared";
 
-interface MessageDraftsAndSentDraftEditButtonProps {
+interface Props {
   draftItem: DraftItem;
 }
 
-const { draftItem } = defineProps<MessageDraftsAndSentDraftEditButtonProps>();
+const { draftItem } = defineProps<Props>();
 </script>
 
 <template>

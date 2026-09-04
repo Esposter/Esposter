@@ -7,12 +7,12 @@ import { Colors } from "@/models/desmos/Colors";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
 import { getResultAsync, noop, takeOne } from "@esposter/shared";
 
-interface VisualDesmosDisplayGraphProps {
+interface Props {
   expressions: Expression[];
   id: string;
 }
 
-const { expressions, id } = defineProps<VisualDesmosDisplayGraphProps>();
+const { expressions, id } = defineProps<Props>();
 const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: MouseEvent] }>();
 const { onLoaded } = useDesmos();
 const isDark = useIsDark();

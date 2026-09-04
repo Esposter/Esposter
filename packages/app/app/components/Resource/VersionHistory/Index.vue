@@ -6,11 +6,11 @@ import { hasCapability } from "#shared/services/resource/hasCapability";
 import { getSnapshotVersionId } from "@/services/resource/getSnapshotVersionId";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
 
-interface ResourceVersionHistoryProps {
+interface Props {
   resource: Resource;
 }
 
-const { resource } = defineProps<ResourceVersionHistoryProps>();
+const { resource } = defineProps<Props>();
 const versionHistoryStore = useVersionHistoryStore();
 const { isPending, versions } = storeToRefs(versionHistoryStore);
 const { clearVersionHistory, readSnapshotHistory } = versionHistoryStore;

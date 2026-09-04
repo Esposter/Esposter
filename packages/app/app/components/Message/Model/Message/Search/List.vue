@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@esposter/db-schema";
 
-interface SearchListProps {
+interface Props {
   messages: MessageEntity[];
 }
 
 defineSlots<{ default: () => VNode; "no-data": () => VNode }>();
-const { messages } = defineProps<SearchListProps>();
+const { messages } = defineProps<Props>();
 </script>
 
 <template>

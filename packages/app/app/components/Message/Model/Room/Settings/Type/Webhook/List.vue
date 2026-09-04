@@ -3,11 +3,11 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useWebhookStore } from "@/store/message/room/webhook";
 
-interface WebhookListProps {
+interface Props {
   roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<WebhookListProps>();
+const { roomId } = defineProps<Props>();
 const webhookStore = useWebhookStore();
 const { items } = storeToRefs(webhookStore);
 </script>

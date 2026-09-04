@@ -12,7 +12,7 @@ interface CardStyleVariables {
   scaleY?: string;
 }
 
-interface VisualCardCarouselProps {
+interface Props {
   cards: Card[];
   cardScaleYRatioLoss?: number;
   cardTemplate?: Component;
@@ -28,7 +28,7 @@ const {
   // Duration before cards move
   duration = Temporal.Duration.from({ seconds: 10 }).total("milliseconds"),
   maxShownCards = 5,
-} = defineProps<VisualCardCarouselProps>();
+} = defineProps<Props>();
 /**
  * Generate CSS card styling for smooth, non-jumping animations.
  * Layout is a 1x2 grid: the left item holds the moving card, the right item holds the stack.

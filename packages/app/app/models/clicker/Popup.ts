@@ -1,5 +1,5 @@
-import type { ClickerModelPointsPopupProps } from "@/components/Clicker/Model/Points/Popup.vue";
+import type { PopupProps } from "@/components/Clicker/Model/Points/PopupProps";
 
-export interface Popup extends ClickerModelPointsPopupProps {
+export interface Popup extends PopupProps {
   id: string;
 }

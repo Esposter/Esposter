@@ -2,9 +2,9 @@
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
-interface PinMessageProps extends MessageComponentProps<StandardMessageEntity> {}
+interface Props extends MessageComponentProps<StandardMessageEntity> {}
 
-const { active, creator, isPreview = false, message } = defineProps<PinMessageProps>();
+const { active, creator, isPreview = false, message } = defineProps<Props>();
 const scrollToMessage = useScrollToMessage();
 </script>
 

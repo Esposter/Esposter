@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-interface ResourceListSelectionExportButtonProps {
+interface Props {
   selectedResources: Resource[];
 }
 
-const { selectedResources } = defineProps<ResourceListSelectionExportButtonProps>();
+const { selectedResources } = defineProps<Props>();
 const { exportResourcesCsv } = useExportResourcesCsv();
 </script>
 

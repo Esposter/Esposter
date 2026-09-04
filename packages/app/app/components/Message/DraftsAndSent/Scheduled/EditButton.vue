@@ -3,11 +3,11 @@ import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/mes
 
 import { RoutePath } from "@esposter/shared";
 
-interface MessageDraftsAndSentScheduledEditButtonProps {
+interface Props {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
 }
 
-const { scheduledMessageJob } = defineProps<MessageDraftsAndSentScheduledEditButtonProps>();
+const { scheduledMessageJob } = defineProps<Props>();
 const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
 </script>
 

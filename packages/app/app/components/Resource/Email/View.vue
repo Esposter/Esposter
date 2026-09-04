@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ResourceType } from "@esposter/db-schema";
 
-interface ResourceEmailViewProps {
+interface Props {
   id: string;
 }
 
-const { id } = defineProps<ResourceEmailViewProps>();
+const { id } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { content, name } = await useReadPublishedResourceContent(ResourceType.Email, id, () =>
   $trpc.email.readPublishedResourceContent.query(id),

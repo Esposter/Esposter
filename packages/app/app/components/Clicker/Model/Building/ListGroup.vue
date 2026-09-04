@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Building } from "#shared/models/clicker/data/building/Building";
 
-interface BuildingListGroupProps {
+interface Props {
   buildings: Building[];
 }
 
-const { buildings } = defineProps<BuildingListGroupProps>();
+const { buildings } = defineProps<Props>();
 </script>
 
 <template>

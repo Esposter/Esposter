@@ -7,11 +7,11 @@ import { useMemberStore } from "@/store/message/user/member";
 import { formatDuration } from "@/util/date/formatDuration";
 import { AUTOMOD_USER_ID } from "@esposter/db-schema";
 
-interface AuditLogListItemProps {
+interface Props {
   item: ModerationLogEntity;
 }
 
-const { item } = defineProps<AuditLogListItemProps>();
+const { item } = defineProps<Props>();
 const memberStore = useMemberStore();
 const { getMemberName } = memberStore;
 // The actor may be the reserved AutoMod id (word-filter warn/timeout) — render it as "AutoMod".

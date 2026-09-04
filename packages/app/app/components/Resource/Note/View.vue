@@ -4,12 +4,12 @@ import { ResourceType } from "@esposter/db-schema";
 import { sanitizeTextHtml } from "@esposter/shared";
 import { generateHTML } from "@tiptap/html";
 
-interface ResourceNoteViewProps {
+interface Props {
   id: string;
   version?: number;
 }
 
-const { id, version } = defineProps<ResourceNoteViewProps>();
+const { id, version } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { content, name } = await useReadPublishedResourceContent(
   ResourceType.Note,

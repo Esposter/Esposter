@@ -4,11 +4,11 @@ import { CreatableResourceTypes } from "@/services/resource/CreatableResourceTyp
 import { ResourceTypeDescriptionMap } from "@/services/resource/ResourceTypeDescriptionMap";
 import { RoutePath } from "@esposter/shared";
 
-interface CreateGalleryProps {
+interface Props {
   dense?: boolean;
 }
 
-const { dense = false } = defineProps<CreateGalleryProps>();
+const { dense = false } = defineProps<Props>();
 </script>
 
 <template>

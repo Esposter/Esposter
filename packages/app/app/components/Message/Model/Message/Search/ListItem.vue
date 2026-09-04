@@ -3,11 +3,11 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 
-interface SearchListItemProps {
+interface Props {
   message: MessageEntity;
 }
 
-const { message } = defineProps<SearchListItemProps>();
+const { message } = defineProps<Props>();
 const creator = useCreator(() => message);
 const scrollToMessage = useScrollToMessage();
 </script>

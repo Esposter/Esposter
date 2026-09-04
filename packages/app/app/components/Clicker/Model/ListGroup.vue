@@ -1,11 +1,11 @@
 <script setup lang="ts">
-interface ClickerModelListGroupProps {
+interface Props {
   icon: string;
   title: string;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { icon, title } = defineProps<ClickerModelListGroupProps>();
+const { icon, title } = defineProps<Props>();
 </script>
 
 <template>

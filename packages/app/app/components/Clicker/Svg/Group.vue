@@ -1,10 +1,8 @@
 <script setup lang="ts">
-export interface ClickerSvgGroupProps {
-  gAttrs?: Record<string, unknown>;
-}
+import type { GroupProps } from "@/components/Clicker/Svg/GroupProps";
 
 defineSlots<{ default: () => VNode }>();
-const { gAttrs } = defineProps<ClickerSvgGroupProps>();
+const { gAttrs } = defineProps<GroupProps>();
 const emit = defineEmits<{ click: [event: MouseEvent] }>();
 </script>
 

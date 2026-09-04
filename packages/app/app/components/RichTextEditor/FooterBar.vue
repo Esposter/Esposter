@@ -1,20 +1,12 @@
 <script setup lang="ts">
-import type { Editor } from "@tiptap/vue-3";
-
-export interface FooterBarSlotProps {
-  editor?: Editor;
-}
-
-interface FooterBarProps {
-  editor?: Editor;
-}
+import type { FooterBarSlotProps } from "@/components/RichTextEditor/FooterBarSlotProps";
 
 defineSlots<{
   append: (props: FooterBarSlotProps) => VNode;
   prepend: (props: FooterBarSlotProps) => VNode;
 }>();
 
-const { editor } = defineProps<FooterBarProps>();
+const { editor } = defineProps<FooterBarSlotProps>();
 </script>
 
 <template>

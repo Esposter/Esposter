@@ -5,7 +5,7 @@ import type { z } from "zod";
 
 import { prettify } from "@/util/text/prettify";
 
-interface StyledEditFormDialogHeaderProps<T> {
+interface Props<T> {
   editedItem: T;
   editForm?: InstanceType<typeof VForm>;
   formId: string;
@@ -21,7 +21,7 @@ defineSlots<{ "prepend-actions": () => VNode }>();
 const confirmCloseDialog = defineModel<boolean>("confirmCloseDialog", { required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
 const { editedItem, editForm, formId, isDirty, isEditFormValid, isSavable, name, originalItem, schema } =
-  defineProps<StyledEditFormDialogHeaderProps<T>>();
+  defineProps<Props<T>>();
 const errorIcon = useTemplateRef("errorIcon");
 const title = computed(() => `Configuration - ${prettify(editedItem.type)}`);
 const emit = defineEmits<{

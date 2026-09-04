@@ -5,11 +5,11 @@ import type { Item } from "@/models/shared/Item";
 import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { RoutePath } from "@esposter/shared";
 
-interface ResourceListToolbarProps {
+interface Props {
   source: ResourceListSource;
 }
 
-const { source } = defineProps<ResourceListToolbarProps>();
+const { source } = defineProps<Props>();
 const search = defineModel<string>("search", { required: true });
 const isSummaryView = defineModel<boolean>("isSummaryView", { required: true });
 const isGroupedByType = defineModel<boolean>("isGroupedByType", { required: true });

@@ -6,11 +6,11 @@ import { pluralize } from "#shared/util/text/pluralize";
 import { SHEET_IMPORT_PREVIEW_ROW_COUNT } from "@/services/resource/constants";
 import { takeOne } from "@esposter/shared";
 
-interface ResourceSheetPreviewTableProps {
+interface Props {
   dataSource: Pick<DataSource, "columns" | "rows">;
 }
 
-const { dataSource } = defineProps<ResourceSheetPreviewTableProps>();
+const { dataSource } = defineProps<Props>();
 const previewHeaders = computed(() =>
   dataSource.columns.map(({ name }) => ({
     key: name,

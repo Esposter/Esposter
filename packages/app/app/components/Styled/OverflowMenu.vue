@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
-interface StyledOverflowMenuProps {
+interface Props {
   icon?: string;
   items: Item[];
   text?: string;
 }
 
-const { icon = "mdi-dots-vertical", items, text = "More commands" } = defineProps<StyledOverflowMenuProps>();
+const { icon = "mdi-dots-vertical", items, text = "More commands" } = defineProps<Props>();
 </script>
 
 <template>

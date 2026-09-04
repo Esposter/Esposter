@@ -7,12 +7,12 @@ import { useNotificationStore } from "@/store/notification";
 import { MESSAGE_MAX_LENGTH, NotificationSeverity } from "@esposter/db-schema";
 import { getResultAsync, MAX_READ_LIMIT, noop, RoutePath } from "@esposter/shared";
 
-interface ResourceShareDialogProps {
+interface Props {
   resource: Resource;
 }
 
 const isOpen = defineModel<boolean>({ default: false });
-const { resource } = defineProps<ResourceShareDialogProps>();
+const { resource } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;

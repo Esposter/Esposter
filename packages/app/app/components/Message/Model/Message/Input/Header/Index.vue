@@ -1,10 +1,10 @@
 <script setup lang="ts">
-interface HeaderProps {
+interface Props {
   isTopAttached?: boolean;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { isTopAttached } = defineProps<HeaderProps>();
+const { isTopAttached } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 </script>
 

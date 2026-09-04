@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-interface WordFilterProps {
+interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<WordFilterProps>();
+const { room } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { data: filter } = useQuery(() => $trpc.room.filter.readRoomFilter.query({ roomId: room.id }));
 </script>

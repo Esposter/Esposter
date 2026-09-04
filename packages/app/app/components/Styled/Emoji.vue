@@ -5,12 +5,12 @@ import type { SkinTone } from "@/models/message/emoji/SkinTone";
 import { EmojiType } from "@/models/message/emoji/EmojiType";
 import { applySkinTone } from "@/services/message/emoji/applySkinTone";
 
-interface StyledEmojiProps {
+interface Props {
   emoji: PickableEmoji;
   skinTone: SkinTone;
 }
 
-const { emoji, skinTone } = defineProps<StyledEmojiProps>();
+const { emoji, skinTone } = defineProps<Props>();
 </script>
 
 <template>

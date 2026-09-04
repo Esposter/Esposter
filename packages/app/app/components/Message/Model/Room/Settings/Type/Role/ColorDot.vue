@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { RoomRoleInMessage } from "@esposter/db-schema";
 
-interface RoleColorDotProps {
+interface Props {
   color: RoomRoleInMessage["color"];
 }
 
-const { color } = defineProps<RoleColorDotProps>();
+const { color } = defineProps<Props>();
 </script>
 
 <template>

@@ -3,11 +3,11 @@ import type { ResourceType } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 
-interface ResourceListTypeCellProps {
+interface Props {
   type: ResourceType;
 }
 
-defineProps<ResourceListTypeCellProps>();
+defineProps<Props>();
 </script>
 
 <template>

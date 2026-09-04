@@ -9,13 +9,13 @@ import { PolygonSetterMap } from "#src/util/setterMap/PolygonSetterMap";
 
 interface PolygonEmits extends /** @vue-ignore */ PolygonEventEmitsOptions {}
 
-interface PolygonProps {
+interface Props {
   configuration: Partial<PolygonConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, polygon: GameObjects.Polygon) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<PolygonProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<PolygonEmits>();
 
 useInitializeGameObject(

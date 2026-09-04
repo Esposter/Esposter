@@ -1,11 +1,11 @@
 <script setup lang="ts">
-export interface UserSessionsCardRowProps {
+interface Props {
   deviceLabel: string;
   isCurrent?: true;
   updatedAt: Date;
 }
 
-const { deviceLabel, isCurrent, updatedAt } = defineProps<UserSessionsCardRowProps>();
+const { deviceLabel, isCurrent, updatedAt } = defineProps<Props>();
 const emit = defineEmits<{ revoke: [] }>();
 </script>
 

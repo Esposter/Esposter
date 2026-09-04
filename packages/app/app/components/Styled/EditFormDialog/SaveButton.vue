@@ -1,10 +1,10 @@
 <script setup lang="ts">
-interface StyledEditFormDialogSaveButtonProps {
+interface Props {
   formId: string;
   isSavable: boolean;
 }
 
-const { formId, isSavable } = defineProps<StyledEditFormDialogSaveButtonProps>();
+const { formId, isSavable } = defineProps<Props>();
 const buttonProps = computed(() => ({ disabled: !isSavable }));
 </script>
 

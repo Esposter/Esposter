@@ -3,12 +3,12 @@ import type { RoomInMessage, UserToRoomInMessage } from "@esposter/db-schema";
 
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 
-interface ProfileFormProps {
+interface Props {
   roomId: RoomInMessage["id"];
   userToRoom: UserToRoomInMessage;
 }
 
-const { roomId, userToRoom } = defineProps<ProfileFormProps>();
+const { roomId, userToRoom } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const userToRoomStore = useUserToRoomStore();
 const { setMyUserToRoom } = userToRoomStore;

@@ -8,9 +8,9 @@ import { getOptionIdVoteCountMap } from "@/services/message/poll/getOptionIdVote
 import { getVoteDescription } from "@/services/message/poll/getVoteDescription";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 
-interface PollProps extends MessageComponentProps<StandardMessageEntity> {}
+interface Props extends MessageComponentProps<StandardMessageEntity> {}
 
-const { active, creator, isPreview = false, message } = defineProps<PollProps>();
+const { active, creator, isPreview = false, message } = defineProps<Props>();
 const { data: session } = await authClient.useSession(useFetch);
 const pollContent = computed(() => {
   const parsedMessage = jsonDateParse(message.message);

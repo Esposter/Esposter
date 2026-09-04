@@ -3,13 +3,13 @@ import type { Resource } from "@esposter/db-schema";
 
 import { ResourceDialogsComponentMap } from "@/services/resource/ResourceDialogsComponentMap";
 
-interface ResourceExplorerProps {
+interface Props {
   activeBlade: string;
   resource: Resource;
 }
 // The resource itself is threaded because the page's own guard is what makes it non-optional; everything else
 // The blade shows or does — the publication, the loading flag, every write — comes from the resource store
-const { activeBlade, resource } = defineProps<ResourceExplorerProps>();
+const { activeBlade, resource } = defineProps<Props>();
 // The blade nav is a rail beside the content on desktop and a dropdown above it where there is no room for one
 const { smAndDown } = useVDisplay();
 // Version history is a panel over whichever blade is open rather than a blade of its own, because the blade

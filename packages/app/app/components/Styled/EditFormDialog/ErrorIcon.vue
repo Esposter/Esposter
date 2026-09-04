@@ -4,14 +4,14 @@ import type { VForm } from "vuetify/components";
 import { takeOne } from "@esposter/shared";
 import { z } from "zod";
 
-interface StyledEditFormDialogErrorIconProps {
+interface Props {
   editedValue?: unknown;
   editForm?: InstanceType<typeof VForm>;
   isEditFormValid: boolean;
   schema?: z.ZodType;
 }
 
-const { editedValue, editForm, isEditFormValid, schema } = defineProps<StyledEditFormDialogErrorIconProps>();
+const { editedValue, editForm, isEditFormValid, schema } = defineProps<Props>();
 const errorMessage = computed(() => {
   const error = editForm?.errors[0];
   if (error) {

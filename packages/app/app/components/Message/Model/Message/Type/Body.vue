@@ -3,12 +3,12 @@ import type { MessageComponentProps } from "@/models/message/MessageComponentPro
 
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
-interface BodyProps extends Pick<MessageComponentProps, "isPreview" | "message"> {
+interface Props extends Pick<MessageComponentProps, "isPreview" | "message"> {
   messageHtml: string;
 }
 
 defineSlots<{ default?: () => VNode; prepend?: () => VNode }>();
-const { isPreview = false, message, messageHtml } = defineProps<BodyProps>();
+const { isPreview = false, message, messageHtml } = defineProps<Props>();
 </script>
 
 <template>

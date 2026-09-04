@@ -4,12 +4,12 @@ import type { BanInMessageWithRelations } from "@esposter/db-schema";
 import { useBanStore } from "@/store/message/user/ban";
 import { withFinalizerAsync } from "@esposter/shared";
 
-interface BansListItemProps {
+interface Props {
   ban: BanInMessageWithRelations;
   roomId: string;
 }
 
-const { ban, roomId } = defineProps<BansListItemProps>();
+const { ban, roomId } = defineProps<Props>();
 const banStore = useBanStore();
 const { deleteBan } = banStore;
 </script>

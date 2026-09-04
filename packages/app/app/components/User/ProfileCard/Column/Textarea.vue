@@ -4,13 +4,13 @@ import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
 import { USER_BIOGRAPHY_MAX_LENGTH } from "@esposter/db-schema";
 
-export interface UserProfileCardColumnTextareaProps {
+interface Props {
   editMode: boolean;
   value: Row<RowValueType.Textarea>["value"];
 }
 
 const modelValue = defineModel<Row<RowValueType.Textarea>["value"]>({ required: true });
-const { editMode, value } = defineProps<UserProfileCardColumnTextareaProps>();
+const { editMode, value } = defineProps<Props>();
 const rules = useVRules();
 const valueRules = computed(() => [rules.maxLength(USER_BIOGRAPHY_MAX_LENGTH)]);
 </script>

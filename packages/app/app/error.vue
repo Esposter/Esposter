@@ -3,11 +3,11 @@ import type { NuxtError } from "#app";
 
 import { RoutePath } from "@esposter/shared";
 
-interface ErrorProps {
+interface Props {
   error: NuxtError;
 }
 
-const { error } = defineProps<ErrorProps>();
+const { error } = defineProps<Props>();
 const { currentRoute } = useRouter();
 const isNotFound = computed(() => error.statusCode === 404);
 const title = computed(() => (isNotFound.value ? "Page not found" : "Something went wrong"));

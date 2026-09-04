@@ -3,12 +3,12 @@ import type { DataSourceStatistics } from "@/models/resource/sheet/dataSource/Da
 
 import { getFileSize } from "@/services/file/getFileSize";
 
-interface StatisticsBarProps {
+interface Props {
   filteredRowCount: number;
   statistics: DataSourceStatistics;
 }
 
-const { filteredRowCount, statistics } = defineProps<StatisticsBarProps>();
+const { filteredRowCount, statistics } = defineProps<Props>();
 const isFiltered = computed(() => filteredRowCount !== statistics.rowCount);
 const displaySize = computed(() => getFileSize(statistics.size));
 </script>

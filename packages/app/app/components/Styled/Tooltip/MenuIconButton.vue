@@ -3,7 +3,7 @@ import type { VBtn, VMenu, VTooltip } from "vuetify/components";
 
 import { mergeProps } from "vue";
 
-interface StyledTooltipMenuIconButtonProps {
+interface Props {
   buttonProps?: VBtn["$props"];
   icon?: string;
   menuProps?: VMenu["$props"];
@@ -18,7 +18,7 @@ defineOptions({ inheritAttrs: false });
 // Wants; with one it draws whatever the caller gives it — an avatar, a name, a count — and stops being
 // Icon-shaped, since VBtn only rounds itself down to an icon while `icon` is set
 defineSlots<{ activator?: () => VNode; default: () => VNode }>();
-const { buttonProps = {}, icon = "", menuProps, text, tooltipProps } = defineProps<StyledTooltipMenuIconButtonProps>();
+const { buttonProps = {}, icon = "", menuProps, text, tooltipProps } = defineProps<Props>();
 const emit = defineEmits<{ click: [event: MouseEvent] }>();
 const isOpen = defineModel<boolean>({ default: false });
 </script>

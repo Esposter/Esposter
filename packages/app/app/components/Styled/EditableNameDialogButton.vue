@@ -4,7 +4,7 @@ import type { z } from "zod";
 
 import { mergeProps } from "vue";
 
-interface StyledEditableNameDialogButtonProps {
+interface Props {
   cardProps: VCard["$props"];
   isDirty?: boolean;
   isEditable?: boolean;
@@ -26,7 +26,7 @@ const {
   placeholder,
   schema,
   tooltipProps,
-} = defineProps<StyledEditableNameDialogButtonProps>();
+} = defineProps<Props>();
 const emit = defineEmits<{ submit: [name: string] }>();
 const rules = useVRules();
 const { cloned: editedName } = useCloned(() => name);

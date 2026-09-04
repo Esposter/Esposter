@@ -3,12 +3,12 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useWebhookStore } from "@/store/message/room/webhook";
 
-interface WebhookRotateTokenButtonProps {
+interface Props {
   id: string;
   roomId: RoomInMessage["id"];
 }
 
-const { id, roomId } = defineProps<WebhookRotateTokenButtonProps>();
+const { id, roomId } = defineProps<Props>();
 const webhookStore = useWebhookStore();
 const { rotateToken } = webhookStore;
 </script>

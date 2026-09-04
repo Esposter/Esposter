@@ -6,11 +6,11 @@ import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { Codemirror } from "vue-codemirror";
 
-interface FileRendererCodeProps extends FileRendererComponentProps {
+interface Props extends FileRendererComponentProps {
   language: string;
 }
 
-const { isPreview, language, url } = defineProps<FileRendererCodeProps>();
+const { isPreview, language, url } = defineProps<Props>();
 const code = ref("");
 code.value = await getResultAsync(async () => {
   const response = await fetch(url);

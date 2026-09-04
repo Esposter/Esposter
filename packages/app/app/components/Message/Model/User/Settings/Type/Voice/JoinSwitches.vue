@@ -3,11 +3,11 @@ import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { useUserSettingsStore } from "@/store/message/user/settings";
 
-interface JoinSwitchesProps {
+interface Props {
   userSettings: UserSettingsInMessage;
 }
 
-const { userSettings } = defineProps<JoinSwitchesProps>();
+const { userSettings } = defineProps<Props>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
 </script>

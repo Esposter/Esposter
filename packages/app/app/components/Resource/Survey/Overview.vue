@@ -6,11 +6,11 @@ import { pluralize } from "#shared/util/text/pluralize";
 import { useSurveyStore } from "@/store/survey";
 import { getResultAsync, RoutePath } from "@esposter/shared";
 
-interface ResourceSurveyOverviewProps {
+interface Props {
   resource: Resource;
 }
 
-const { resource } = defineProps<ResourceSurveyOverviewProps>();
+const { resource } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const surveyStore = useSurveyStore();
 const { loadContent } = surveyStore;

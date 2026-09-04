@@ -2,11 +2,11 @@
 import { DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE } from "@/services/message/room/call/constants";
 import { useMediaStore } from "@/store/message/room/call/media";
 
-interface CallParticipantVolumeSliderProps {
+interface Props {
   participantId: string;
 }
 
-const { participantId } = defineProps<CallParticipantVolumeSliderProps>();
+const { participantId } = defineProps<Props>();
 const mediaStore = useMediaStore();
 const { participantVolumePercentageMap } = storeToRefs(mediaStore);
 const { setParticipantVolumePercentage } = mediaStore;

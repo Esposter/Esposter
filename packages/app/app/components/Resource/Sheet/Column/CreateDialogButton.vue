@@ -9,11 +9,11 @@ import { ColumnTypeCreateMap } from "@/services/resource/sheet/column/ColumnType
 import { extractSchemaFields } from "@/services/zod/extractSchemaFields";
 import { Vjsf } from "@koumoul/vjsf";
 
-interface CreateDialogButtonProps {
+interface Props {
   dataSource: DataSource;
 }
 
-const { dataSource } = defineProps<CreateDialogButtonProps>();
+const { dataSource } = defineProps<Props>();
 const createColumn = useCreateColumn();
 // StructuredClone to a plain object: vjsf rejects class instances, and fast-deep-equal compares constructors.
 const defaultColumn = structuredClone(ColumnTypeCreateMap[ColumnType.String].create());

@@ -5,11 +5,11 @@ import { getScheduledMessageJobText } from "@/services/message/draftsAndSent/get
 import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
 
-interface MessageDraftsAndSentScheduledRescheduleButtonProps {
+interface Props {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
 }
 
-const { scheduledMessageJob } = defineProps<MessageDraftsAndSentScheduledRescheduleButtonProps>();
+const { scheduledMessageJob } = defineProps<Props>();
 const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = scheduleDialogStore;
 </script>

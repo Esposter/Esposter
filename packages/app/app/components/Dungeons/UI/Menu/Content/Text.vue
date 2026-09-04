@@ -6,14 +6,14 @@ import { INITIAL_MENU_CURSOR_POSITION, MENU_CURSOR_POSITION_INCREMENT } from "@/
 import { Input } from "phaser";
 import { Text } from "vue-phaserjs";
 
-interface ContentTextProps {
+interface Props {
   columnIndex: number;
   grid: Grid<TGrid>;
   rowIndex: number;
   text: string;
 }
 
-const { columnIndex, grid, rowIndex, text } = defineProps<ContentTextProps>();
+const { columnIndex, grid, rowIndex, text } = defineProps<Props>();
 const onGridClick = useOnGridClick(grid, () => ({ x: columnIndex, y: rowIndex }));
 </script>
 

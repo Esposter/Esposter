@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { VSkeletonLoader } from "vuetify/components";
 
-interface StyledSkeletonProps {
+interface Props {
   type?: VSkeletonLoader["$props"]["type"];
 }
 
-const { type = "card" } = defineProps<StyledSkeletonProps>();
+const { type = "card" } = defineProps<Props>();
 </script>
 
 <template>

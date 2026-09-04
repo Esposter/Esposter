@@ -1,12 +1,12 @@
 <script setup lang="ts">
-interface ResourceListFilterPillProps {
+interface Props {
   isClosedOnContentClick?: true;
   isRemovable?: true;
   label: string;
   value: string;
 }
 
-const { isClosedOnContentClick, isRemovable, label, value } = defineProps<ResourceListFilterPillProps>();
+const { isClosedOnContentClick, isRemovable, label, value } = defineProps<Props>();
 const emit = defineEmits<{ remove: [] }>();
 </script>
 

@@ -5,12 +5,12 @@ import type { VCard, VDialog } from "vuetify/components";
 const CARD_PROPS: VCard["$props"] = { prependIcon: "mdi-keyboard", title: "Keyboard Shortcuts" };
 const DIALOG_PROPS: VDialog["$props"] = { maxWidth: 480 };
 
-interface StyledKeyboardShortcutsDialogProps {
+interface Props {
   list: readonly KeyboardShortcutCategory[];
 }
 
 const modelValue = defineModel<boolean>({ default: false });
-const { list } = defineProps<StyledKeyboardShortcutsDialogProps>();
+const { list } = defineProps<Props>();
 </script>
 
 <template>

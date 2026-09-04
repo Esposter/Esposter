@@ -6,13 +6,13 @@ import { PostVoteDefinitionMap } from "@/services/post/PostVoteDefinitionMap";
 import { useCommentLikeStore } from "@/store/post/comment/like";
 import { useLikeStore } from "@/store/post/like";
 
-interface PostVoteButtonProps {
+interface Props {
   isCommentStore?: true;
   post: PostWithRelations;
   value: CreateLikeInput["value"];
 }
 
-const { isCommentStore, post, value } = defineProps<PostVoteButtonProps>();
+const { isCommentStore, post, value } = defineProps<Props>();
 const { createLike, deleteLike, updateLike } = isCommentStore ? useCommentLikeStore() : useLikeStore();
 const isCast = computed(() => post.viewerLike?.value === value);
 const voteDefinition = computed(() => PostVoteDefinitionMap[value]);

@@ -3,13 +3,13 @@ import type { Resource } from "@esposter/db-schema";
 
 import { RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
-interface ResourceRenameDialogProps {
+interface Props {
   rename: (name: string) => Promise<void>;
   resource: Resource;
 }
 
 const isOpen = defineModel<boolean>({ default: false });
-const { rename, resource } = defineProps<ResourceRenameDialogProps>();
+const { rename, resource } = defineProps<Props>();
 const rules = useVRules();
 // The caller mounts this only while it is open, so the field starts from the current name on every open
 const editedName = ref(resource.name);

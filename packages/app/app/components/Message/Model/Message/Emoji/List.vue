@@ -4,12 +4,12 @@ import type { MessageEntity } from "@esposter/db-schema";
 import { authClient } from "@/services/auth/authClient";
 import { useEmojiStore } from "@/store/message/emoji";
 
-interface MessageEmojiListProps {
+interface Props {
   isPreview?: boolean;
   message: MessageEntity;
 }
 
-const { isPreview, message } = defineProps<MessageEmojiListProps>();
+const { isPreview, message } = defineProps<Props>();
 const { data: session } = await authClient.useSession(useFetch);
 const emojiStore = useEmojiStore();
 const { getEmojis } = emojiStore;

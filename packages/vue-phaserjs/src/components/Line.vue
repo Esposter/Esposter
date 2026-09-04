@@ -9,13 +9,13 @@ import { LineSetterMap } from "#src/util/setterMap/LineSetterMap";
 
 interface LineEmits extends /** @vue-ignore */ LineEventEmitsOptions {}
 
-interface LineProps {
+interface Props {
   configuration: Partial<LineConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, line: GameObjects.Line) => void;
 }
 
-const { configuration, immediate, onComplete } = defineProps<LineProps>();
+const { configuration, immediate, onComplete } = defineProps<Props>();
 const emit = defineEmits<LineEmits>();
 
 useInitializeGameObject(

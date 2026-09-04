@@ -3,12 +3,12 @@ import type { PostWithRelations } from "@esposter/db-schema";
 
 import { RoutePath } from "@esposter/shared";
 
-interface PostBylineProps {
+interface Props {
   isLink?: true;
   post: PostWithRelations;
 }
 
-const { isLink, post } = defineProps<PostBylineProps>();
+const { isLink, post } = defineProps<Props>();
 </script>
 
 <template>

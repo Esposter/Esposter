@@ -5,11 +5,11 @@ import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { useRoomEmojiDialogStore } from "@/store/message/room/emojiDialog";
 import { withFinalizerAsync } from "@esposter/shared";
 
-interface EmojiConfirmDeleteDialogProps {
+interface Props {
   roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<EmojiConfirmDeleteDialogProps>();
+const { roomId } = defineProps<Props>();
 const roomEmojiStore = useRoomEmojiStore();
 const { items } = storeToRefs(roomEmojiStore);
 const { deleteRoomEmoji } = roomEmojiStore;

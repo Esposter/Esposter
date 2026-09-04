@@ -3,11 +3,11 @@ import type { Editor } from "@tiptap/vue-3";
 
 import { mergeProps } from "vue";
 
-interface LinkMenuButtonProps {
+interface Props {
   editor?: Editor;
 }
 
-const { editor } = defineProps<LinkMenuButtonProps>();
+const { editor } = defineProps<Props>();
 const isLinkMenuOpen = ref(false);
 const linkUrl = ref("");
 // Prefill from the mark under the cursor so opening the menu on an existing link edits it rather than replacing it

@@ -8,11 +8,11 @@ import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { useResourceStore } from "@/store/resource";
 import { getResultAsync, RoutePath } from "@esposter/shared";
 
-interface ResourceOverviewProps {
+interface Props {
   resource: Resource;
 }
 
-const { resource } = defineProps<ResourceOverviewProps>();
+const { resource } = defineProps<Props>();
 // Essentials takes extra rows from the type (the grid owns the two columns, so a slot renders
 // A label/value pair); summary takes whole cards below the card
 defineSlots<{ essentials?: () => VNode; summary?: () => VNode }>();

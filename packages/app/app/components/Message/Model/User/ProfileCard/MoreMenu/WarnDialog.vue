@@ -4,12 +4,12 @@ import type { User } from "@esposter/db-schema";
 import { AdminActionListItemPropsMap } from "@/services/message/moderation/AdminActionListItemPropsMap";
 import { AdminActionType } from "@esposter/db-schema";
 
-interface WarnDialogProps {
+interface Props {
   displayName: string;
   user: Pick<User, "id">;
 }
 
-const { displayName, user } = defineProps<WarnDialogProps>();
+const { displayName, user } = defineProps<Props>();
 const executeAdminAction = useExecuteAdminAction();
 const reason = ref("");
 </script>

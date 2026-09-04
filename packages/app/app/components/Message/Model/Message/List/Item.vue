@@ -10,7 +10,7 @@ import { useAppearanceStore } from "@/store/message/ui/appearance";
 import { useScrollStore } from "@/store/message/ui/scroll";
 import { MessageType } from "@esposter/db-schema";
 
-interface MessageListItemProps {
+interface Props {
   creator: Creator;
   message: MessageEntity;
   nextMessage?: MessageEntity;
@@ -19,7 +19,7 @@ interface MessageListItemProps {
 // Consecutive messages from the same author within this window render as one batch — one avatar, one header
 const SAME_BATCH_WINDOW_MS = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 
-const { creator, message, nextMessage } = defineProps<MessageListItemProps>();
+const { creator, message, nextMessage } = defineProps<Props>();
 const isSameBatch = computed(
   () =>
     nextMessage &&

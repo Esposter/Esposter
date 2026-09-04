@@ -5,14 +5,14 @@ import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { RowValueComponentMap } from "@/services/user/RowValueComponentMap";
 import { toTitleCase } from "@/util/text/toTitleCase";
 
-export interface UserProfileCardRowProps<TType extends RowValueType> {
+interface Props<TType extends RowValueType> {
   editMode: boolean;
   row: Row<TType>;
   title: string;
 }
 
 const modelValue = defineModel<Row<TType>["value"]>({ required: true });
-const { editMode, row, title } = defineProps<UserProfileCardRowProps<TType>>();
+const { editMode, row, title } = defineProps<Props<TType>>();
 
 watch(
   () => editMode,
