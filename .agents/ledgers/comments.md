@@ -3,7 +3,8 @@
 | Unit                                                   | Swept      | Notes                                                     |
 | ------------------------------------------------------ | ---------- | --------------------------------------------------------- |
 | `packages/app`                                         | —          | components, composables, stores, services, server, shared |
-| `packages/azure-functions`                             | —          |                                                           |
+| `packages/azure-functions` — `handlers`                | —          | the densest prose in the package                          |
+| `packages/azure-functions` — `services`, the rest      | —          | plus `functions`, `hooks`, `models`, `index.test.ts`      |
 | `packages/azure-mock`                                  | 2026-09-05 | filter/search/container mocks                             |
 | `packages/configuration`                               | 2026-09-05 | external lists, `global.d.ts`                             |
 | `packages/db-mock`                                     | 2026-09-05 |                                                           |
