@@ -12,7 +12,7 @@ import { jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("todoList", () => {
+describe("todoListRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["todoList"]>;
   const name = "name";

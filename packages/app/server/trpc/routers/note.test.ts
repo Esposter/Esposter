@@ -10,7 +10,7 @@ import { resources, ResourceType } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("note", () => {
+describe("noteRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["note"]>;
   const name = "name";

@@ -30,7 +30,7 @@ import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 // The survey-specific procedures.
-describe("survey", () => {
+describe("surveyRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["survey"]>;
   let programCaller: DecorateRouterRecord<TRPCRouter["program"]>;

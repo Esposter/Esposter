@@ -45,7 +45,7 @@ const readStoredParticipants = async (programId: string) => {
 };
 
 // The program-specific participant issuance and status join.
-describe("program", () => {
+describe("programRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["program"]>;
   let datasetCaller: DecorateRouterRecord<TRPCRouter["dataset"]>;

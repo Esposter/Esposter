@@ -17,7 +17,7 @@ import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 // The blueprint router's own procedures: the deploy wiring, its validation and owner guards, and capture's
 // Alias rewrite.
-describe("blueprint", () => {
+describe("blueprintRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["blueprint"]>;
   let programCaller: DecorateRouterRecord<TRPCRouter["program"]>;

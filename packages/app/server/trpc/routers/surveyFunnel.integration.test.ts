@@ -31,7 +31,7 @@ import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
 // The composition test for the whole funnel — the per-router suites own the units. Exactly one
 // Scenario lives here on purpose; more scenarios belong in those suites.
 // Scenario-named describe: there is no single function to reference (a documented deviation).
-describe("survey funnel — café feedback drive", () => {
+describe("surveyFunnel", () => {
   let mockContext: Context;
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
   let datasetCaller: DecorateRouterRecord<TRPCRouter["dataset"]>;

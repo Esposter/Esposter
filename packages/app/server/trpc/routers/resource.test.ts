@@ -39,7 +39,7 @@ import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } 
 // Landed, never by rebuilding its name
 const readFilesBlobNames = (id: string): string[] => {
   const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
-  assert(container);
+  assert.exists(container);
   return [...container.keys()].filter((blobName) => blobName.startsWith(`${getFilesDirectoryName(id)}/`));
 };
 
@@ -47,13 +47,13 @@ const readFilesBlobNames = (id: string): string[] => {
 // Directory of cloned assets
 const readPublishedBlobSizes = (id: string): number[] => {
   const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
-  assert(container);
+  assert.exists(container);
   return [...container.entries()]
     .filter(([blobName]) => blobName.startsWith(`${id}/${SnapshotChannel.Published}/`))
     .map(([, data]) => data.byteLength);
 };
 
-describe("resource", () => {
+describe("resourceRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
@@ -497,7 +497,7 @@ describe("resource", () => {
     await saveWebpageContent(webpageResource, webpageEditor);
     // Corrupt the stored draft so reading it back for the copy fails after the copy's row already exists
     const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
-    assert(container);
+    assert.exists(container);
     container.set(getContentBlobName(webpageResource.id), Buffer.from("a"));
 
     await expect(caller.duplicateResource({ id: webpageResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
