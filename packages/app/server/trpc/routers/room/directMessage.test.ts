@@ -12,7 +12,7 @@ import { DatabaseEntityType, DerivedDatabaseEntityType, friends, roomsInMessage 
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("directMessage", () => {
+describe("directMessageRouter", () => {
   let mockContext: Context;
   let directMessageCaller: DecorateRouterRecord<TRPCRouter["room"]["directMessage"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
@@ -183,7 +183,7 @@ describe("directMessage", () => {
     );
   });
 
-  test("fails read direct message participants with non-member room", async () => {
+  test("excludes a room the caller is not a member of from read participants", async () => {
     expect.hasAssertions();
 
     const { directMessage } = await createDirectMessageWithFriend(mockContext);

@@ -9,7 +9,7 @@ import { DatabaseEntityType, roomCategoriesInMessage } from "@esposter/db-schema
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("room/category", () => {
+describe("categoryRouter", () => {
   let mockContext: Context;
   let roomCategoryCaller: DecorateRouterRecord<TRPCRouter["room"]["category"]>;
   const name = "name";
@@ -37,10 +37,11 @@ describe("room/category", () => {
 
     const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
     const readRoomCategories = await roomCategoryCaller.readRoomCategories();
+    const readRoomCategory = takeOne(readRoomCategories);
 
     expect(readRoomCategories).toHaveLength(1);
-    expect(takeOne(readRoomCategories).id).toBe(newRoomCategory.id);
-    expect(takeOne(readRoomCategories).name).toBe(name);
+    expect(readRoomCategory.id).toBe(newRoomCategory.id);
+    expect(readRoomCategory.name).toBe(name);
   });
 
   test("creates", async () => {

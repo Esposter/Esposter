@@ -5,7 +5,7 @@
 | Unit                                                                                                                                 | Swept      | Notes                         |
 | ------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ----------------------------- |
 | `trpc/routers/message` — `emoji`, `index`, `moderation`, `scheduledMessageJob`                                                       | —          | the widest suite in the tree  |
-| `trpc/routers/room` — `category`, `createDirectMessageWithFriend`, `directMessage`, `emoji`, `filter`, `index`                       | —          |                               |
+| `trpc/routers/room` — `category`, `createDirectMessageWithFriend`, `directMessage`, `emoji`, `filter`, `index`                       | 2026-09-05 |                               |
 | `trpc/routers` — `call`, `role`, `searchHistory`, `userToRoom`, `webhook`                                                            | 2026-09-05 | the caller fixtures live here |
 | `trpc/routers` — `resource`, `blueprint`, `note`, `program`, `sheet`, `todoList`, `survey`                                           | —          |                               |
 | `trpc/routers` — `dashboard`, `dataset`, `email`, `flowchart`, `webpage`, `post`, `like`, `block`, `friend`, `friendRequest`, `user` | —          |                               |
