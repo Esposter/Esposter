@@ -4,12 +4,31 @@ import { createDataSource } from "@/composables/resource/sheet/commands/createDa
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
 import { copyToClipboard } from "@/services/resource/sheet/commands/copyToClipboard";
 import { takeOne } from "@esposter/shared";
-import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(copyToClipboard, () => {
   let writtenText = "";
+  // The rich-clipboard path a browser that has `ClipboardItem` takes: installed by the one test that drives it,
+  // Because the default stubs below are what every other case reads
+  const stubClipboardItem = () => {
+    const capturedItems: { "text/html": Blob; "text/plain": Blob }[] = [];
+    vi.stubGlobal(
+      "ClipboardItem",
+      class {
+        items: { "text/html": Blob; "text/plain": Blob };
 
-  beforeAll(() => {
+        constructor(items: { "text/html": Blob; "text/plain": Blob }) {
+          this.items = items;
+          capturedItems.push(items);
+        }
+      },
+    );
+    vi.stubGlobal("navigator", { clipboard: { write: vi.fn<() => Promise<void>>().mockResolvedValue(undefined) } });
+    return capturedItems;
+  };
+
+  beforeEach(() => {
+    writtenText = "";
     vi.stubGlobal("window", globalThis);
     vi.stubGlobal("ClipboardItem", undefined);
     vi.stubGlobal("navigator", {
@@ -19,10 +38,6 @@ describe(copyToClipboard, () => {
         },
       },
     });
-  });
-
-  beforeEach(() => {
-    writtenText = "";
   });
 
   afterAll(() => {
@@ -62,51 +77,19 @@ describe(copyToClipboard, () => {
     expect(takeOne(lines, 1)).toBe("0");
   });
 
-  describe("clipboardItem branch", () => {
-    let writeMock: ReturnType<typeof vi.fn<() => Promise<void>>>;
-    const capturedItems: { "text/html": Blob; "text/plain": Blob }[] = [];
+  test("omits header row from HTML and TSV when includeHeaders is false", async () => {
+    expect.hasAssertions();
 
-    beforeEach(() => {
-      capturedItems.length = 0;
-      writeMock = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
-      vi.stubGlobal(
-        "ClipboardItem",
-        class {
-          items: { "text/html": Blob; "text/plain": Blob };
+    const capturedItems = stubClipboardItem();
+    const dataSource = createDataSource([createColumn("a")], [createRow({ a: "42" })]);
+    await copyToClipboard(dataSource, { includeHeaders: false });
+    const items = takeOne(capturedItems);
+    assert.exists(items);
+    const { "text/html": htmlBlob, "text/plain": tsvBlob } = items;
+    const htmlText = await htmlBlob.text();
+    const tsvText = await tsvBlob.text();
 
-          constructor(items: { "text/html": Blob; "text/plain": Blob }) {
-            this.items = items;
-            capturedItems.push(items);
-          }
-        },
-      );
-      vi.stubGlobal("navigator", { clipboard: { write: writeMock } });
-    });
-
-    afterEach(() => {
-      vi.stubGlobal("ClipboardItem", undefined);
-      vi.stubGlobal("navigator", {
-        clipboard: {
-          writeText: (text: string) => {
-            writtenText = text;
-          },
-        },
-      });
-    });
-
-    test("omits header row from HTML and TSV when includeHeaders is false", async () => {
-      expect.hasAssertions();
-
-      const dataSource = createDataSource([createColumn("a")], [createRow({ a: "42" })]);
-      await copyToClipboard(dataSource, { includeHeaders: false });
-      const items = takeOne(capturedItems);
-      assert.exists(items);
-      const { "text/html": htmlBlob, "text/plain": tsvBlob } = items;
-      const htmlText = await htmlBlob.text();
-      const tsvText = await tsvBlob.text();
-
-      expect(htmlText).toMatchInlineSnapshot(`"<table><tr><td>42</td></tr></table>"`);
-      expect(tsvText).toBe("42");
-    });
+    expect(htmlText).toMatchInlineSnapshot(`"<table><tr><td>42</td></tr></table>"`);
+    expect(tsvText).toBe("42");
   });
 });
