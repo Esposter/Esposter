@@ -2,24 +2,28 @@
 
 The question is where a thing lives and whether it exists twice — one export per file, no magic string where a constant already means it, no duplicate constant, the sole-consumer subfolder rule, alias imports.
 
-| Unit                                                                | Swept      | Notes                                                                    |
-| ------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------ |
-| `packages/shared`, `packages/shared-node`                           | 2026-08-30 |                                                                          |
-| `app/shared/services`, `app/shared/util`                            | 2026-08-27 | `getSynchronizedFunction`'s second export is the exclusion below         |
-| `app/shared/models`                                                 | —          | 319 files; splits again at its own subdirectories on contact             |
-| `app/services`, `app/util`, `app/models`, `app/types`               | —          | models vs services vs utils vs constants; duplicate constants            |
-| `app/composables`                                                   | —          | sole-consumer subfolders                                                 |
-| `app/store`                                                         | —          |                                                                          |
-| `server/services`, `server/composables`, `server/models`            | —          |                                                                          |
-| `server/trpc`                                                       | —          | input schemas belong in `shared/models`, not beside the router           |
-| `app/components/Message`                                            | —          | splits further at `Model/` on contact                                    |
-| `app/components/Resource`                                           | —          |                                                                          |
-| `app/components` — the rest                                         | —          |                                                                          |
-| `packages/db`, `packages/db-schema`, `packages/db-mock`             | —          |                                                                          |
-| `packages/azure`, `packages/azure-functions`, `packages/azure-mock` | —          | cross-package placement: an Azure helper two packages need lives in `db` |
-| `packages/virrun`, `packages/infra`, `packages/configuration`       | —          |                                                                          |
-| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`    | —          | barrel contents are `ctix` output — regenerate, never hand-edit          |
-| `scripts`                                                           | 2026-09-02 | a command is a folder once it has internals                              |
+| Unit                                                                       | Swept      | Notes                                                                    |
+| -------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------ |
+| `packages/shared`, `packages/shared-node`                                  | 2026-08-30 |                                                                          |
+| `app/shared/services`, `app/shared/util`                                   | 2026-08-27 | `getSynchronizedFunction`'s second export is the exclusion below         |
+| `app/shared/models/db`                                                     | —          |                                                                          |
+| `app/shared/models/resource`                                               | —          |                                                                          |
+| `app/shared/models/dungeons`                                               | —          |                                                                          |
+| `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | —          |                                                                          |
+| `app/shared/models` — the rest                                             | —          | the small folders, several of them a single file                         |
+| `app/services`, `app/util`, `app/models`, `app/types`                      | —          | models vs services vs utils vs constants; duplicate constants            |
+| `app/composables`                                                          | —          | sole-consumer subfolders                                                 |
+| `app/store`                                                                | —          |                                                                          |
+| `server/services`, `server/composables`, `server/models`                   | —          |                                                                          |
+| `server/trpc`                                                              | —          | input schemas belong in `shared/models`, not beside the router           |
+| `app/components/Message`                                                   | —          | splits further at `Model/` on contact                                    |
+| `app/components/Resource`                                                  | —          |                                                                          |
+| `app/components` — the rest                                                | —          |                                                                          |
+| `packages/db`, `packages/db-schema`, `packages/db-mock`                    | —          |                                                                          |
+| `packages/azure`, `packages/azure-functions`, `packages/azure-mock`        | —          | cross-package placement: an Azure helper two packages need lives in `db` |
+| `packages/virrun`, `packages/infra`, `packages/configuration`              | —          |                                                                          |
+| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`           | —          | barrel contents are `ctix` output — regenerate, never hand-edit          |
+| `scripts`                                                                  | 2026-09-02 | a command is a folder once it has internals                              |
 
 ## Find recipe
 
