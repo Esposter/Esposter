@@ -14,7 +14,7 @@ import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("userToRoom", () => {
+describe("userToRoomRouter", () => {
   let mockContext: Context;
   let userToRoomCaller: DecorateRouterRecord<TRPCRouter["userToRoom"]>;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;

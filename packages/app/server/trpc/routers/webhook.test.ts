@@ -18,7 +18,7 @@ import {
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
-describe("webhook", () => {
+describe("webhookRouter", () => {
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let webhookCaller: DecorateRouterRecord<TRPCRouter["webhook"]>;
@@ -96,8 +96,12 @@ describe("webhook", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newWebhook = await webhookCaller.createWebhook({ name, roomId: newRoom.id });
     const readWebhooks = await webhookCaller.readWebhooks({ roomId: newRoom.id });
+    const readWebhook = takeOne(readWebhooks);
 
-    expect(readWebhooks.some(({ id }) => id === newWebhook.id)).toBe(true);
+    expect(readWebhooks).toHaveLength(1);
+    expect(readWebhook.id).toBe(newWebhook.id);
+    expect(readWebhook.roomId).toBe(newRoom.id);
+    expect(readWebhook.userId).toBe(newWebhook.userId);
   });
 
   test("reads empty webhooks", async () => {
@@ -177,7 +181,7 @@ describe("webhook", () => {
 
     expect(appUser).toBeUndefined();
     expect(deletedWebhook.id).toBe(newWebhook.id);
-    expect(readWebhooks.find(({ id }) => id === newWebhook.id)).toBeUndefined();
+    expect(readWebhooks).toStrictEqual([]);
   });
 
   test(`fails delete for a member without ${RoomPermission.ManageWebhooks} permission`, async () => {

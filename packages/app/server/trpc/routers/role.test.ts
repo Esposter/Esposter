@@ -9,7 +9,7 @@ import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-describe("role", () => {
+describe("roleRouter", () => {
   const { createMember, getEveryoneRole, getMockContext, getRoleCaller, getRoomId, setupMemberWithRole } =
     setupRoomSuite();
   let mockContext: Context;
@@ -28,7 +28,7 @@ describe("role", () => {
     roomId = getRoomId();
   });
 
-  test("reads empty roles (only @everyone)", async () => {
+  test("reads only the @everyone role", async () => {
     expect.hasAssertions();
 
     const roles = await roleCaller.readRoles({ roomIds: [roomId] });
@@ -37,7 +37,7 @@ describe("role", () => {
     expect(takeOne(roles).isEveryone).toBe(true);
   });
 
-  test("readRoles throws UNAUTHORIZED if not a member", async () => {
+  test("fails readRoles for a non-member", async () => {
     expect.hasAssertions();
 
     await mockSessionOnce(mockContext.db);
@@ -47,7 +47,7 @@ describe("role", () => {
     );
   });
 
-  test("creates role (owner)", async () => {
+  test("creates", async () => {
     expect.hasAssertions();
 
     const role = await roleCaller.createRole({
@@ -62,7 +62,7 @@ describe("role", () => {
     expect(role.roomId).toBe(roomId);
   });
 
-  test("updates role (owner)", async () => {
+  test("updates", async () => {
     expect.hasAssertions();
 
     const createdRole = await roleCaller.createRole({ name, permissions: 0n, position: 0, roomId });
@@ -74,7 +74,7 @@ describe("role", () => {
     expect(updatedRole.position).toBe(createdRole.position);
   });
 
-  test("deletes role (owner)", async () => {
+  test("deletes", async () => {
     expect.hasAssertions();
 
     const createdRole = await roleCaller.createRole({ name, permissions: 0n, position: 0, roomId });
@@ -83,7 +83,7 @@ describe("role", () => {
     expect(deletedRole.id).toBe(createdRole.id);
   });
 
-  test("cannot delete @everyone role", async () => {
+  test("fails delete with the @everyone role", async () => {
     expect.hasAssertions();
 
     const everyoneRole = await getEveryoneRole();
@@ -93,7 +93,7 @@ describe("role", () => {
     );
   });
 
-  test("unauthorized without ManageRoles permission", async () => {
+  test("fails create for a member without ManageRoles permission", async () => {
     expect.hasAssertions();
 
     const member = await createMember();
@@ -104,7 +104,7 @@ describe("role", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("assigns role to member", async () => {
+  test("assigns a role to a member", async () => {
     expect.hasAssertions();
 
     const targetMember = await createMember();
@@ -112,10 +112,10 @@ describe("role", () => {
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
     const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds: [targetMember.id] });
 
-    expect(memberRoles.some(({ roleId }) => roleId === role.id)).toBe(true);
+    expect(memberRoles.map(({ roleId }) => roleId)).toStrictEqual([role.id]);
   });
 
-  test("assignRole throws NOT_FOUND if target is not a room member", async () => {
+  test("fails assignRole with a target who is not a room member", async () => {
     expect.hasAssertions();
 
     const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
@@ -128,7 +128,7 @@ describe("role", () => {
     );
   });
 
-  test("assignRole is idempotent on duplicate", async () => {
+  test("assignRole is idempotent on a duplicate", async () => {
     expect.hasAssertions();
 
     const targetMember = await createMember();
@@ -140,7 +140,7 @@ describe("role", () => {
     expect(assignedRole).toStrictEqual(role);
   });
 
-  test("cannot assign @everyone role explicitly", async () => {
+  test("fails assignRole with the @everyone role", async () => {
     expect.hasAssertions();
 
     const everyoneRole = await getEveryoneRole();
@@ -153,7 +153,7 @@ describe("role", () => {
     );
   });
 
-  test("cannot assign role at or above own top position", async () => {
+  test("fails assignRole with a role at or above the actor top position", async () => {
     expect.hasAssertions();
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
@@ -166,7 +166,7 @@ describe("role", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("cannot assign role to member with equal or higher top position", async () => {
+  test("fails assignRole with a target whose top position is equal or higher", async () => {
     expect.hasAssertions();
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
@@ -179,7 +179,7 @@ describe("role", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("revokes role from member", async () => {
+  test("revokes a role from a member", async () => {
     expect.hasAssertions();
 
     const targetMember = await createMember();
@@ -188,7 +188,7 @@ describe("role", () => {
     await roleCaller.revokeRole({ roleId: role.id, roomId, userId: targetMember.id });
     const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds: [targetMember.id] });
 
-    expect(memberRoles.some(({ roleId }) => roleId === role.id)).toBe(false);
+    expect(memberRoles).toStrictEqual([]);
   });
 
   test("revokes a role the member never held", async () => {
@@ -200,7 +200,7 @@ describe("role", () => {
     await expect(roleCaller.revokeRole({ roleId: role.id, roomId, userId: targetMember.id })).resolves.toBeUndefined();
   });
 
-  test("cannot revoke role at or above own top position", async () => {
+  test("fails revokeRole with a role at or above the actor top position", async () => {
     expect.hasAssertions();
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
@@ -212,7 +212,7 @@ describe("role", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("cannot update role to position at or above own top", async () => {
+  test("fails updateRole with a position at or above the actor top", async () => {
     expect.hasAssertions();
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, 10);
@@ -224,7 +224,7 @@ describe("role", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("cannot create role with permissions not held by actor", async () => {
+  test("fails createRole with permissions the actor does not hold", async () => {
     expect.hasAssertions();
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles | RoomPermission.ReadMessages, 10);
@@ -235,7 +235,7 @@ describe("role", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("cannot grant permissions not held by actor", async () => {
+  test("fails updateRole with permissions the actor does not hold", async () => {
     expect.hasAssertions();
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles | RoomPermission.ReadMessages, 10);
@@ -247,7 +247,7 @@ describe("role", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("owner can update role to any position and permissions", async () => {
+  test("the owner updates a role to any position and permissions", async () => {
     expect.hasAssertions();
 
     const createdRole = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
@@ -262,30 +262,32 @@ describe("role", () => {
     expect(updatedRole.permissions).toBe(RoomPermission.Administrator);
   });
 
-  test("readMyPermissions returns owner status", async () => {
+  test("readMyPermissions reports owner status", async () => {
     expect.hasAssertions();
 
-    const result = await roleCaller.readMyPermissions({ roomIds: [roomId] });
+    const myPermissions = await roleCaller.readMyPermissions({ roomIds: [roomId] });
+    const ownPermissions = takeOne(myPermissions);
 
-    expect(result).toHaveLength(1);
-    expect(takeOne(result).isRoomOwner).toBe(true);
-    expect(takeOne(result).topRolePosition).toBe(-1);
+    expect(myPermissions).toHaveLength(1);
+    expect(ownPermissions.isRoomOwner).toBe(true);
+    expect(ownPermissions.topRolePosition).toBe(-1);
   });
 
-  test("readMyPermissions returns member permissions and top position", async () => {
+  test("readMyPermissions reports member permissions and top position", async () => {
     expect.hasAssertions();
 
     const { member } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
     await mockSessionOnce(mockContext.db, member);
-    const result = await roleCaller.readMyPermissions({ roomIds: [roomId] });
+    const myPermissions = await roleCaller.readMyPermissions({ roomIds: [roomId] });
+    const memberPermissions = takeOne(myPermissions);
 
-    expect(result).toHaveLength(1);
-    expect(takeOne(result).isRoomOwner).toBe(false);
-    expect(takeOne(result).topRolePosition).toBe(position);
-    expect(takeOne(result).permissions & RoomPermission.ManageRoles).toBe(RoomPermission.ManageRoles);
+    expect(myPermissions).toHaveLength(1);
+    expect(memberPermissions.isRoomOwner).toBe(false);
+    expect(memberPermissions.topRolePosition).toBe(position);
+    expect(memberPermissions.permissions & RoomPermission.ManageRoles).toBe(RoomPermission.ManageRoles);
   });
 
-  test("on creates role", async () => {
+  test("onCreateRole emits the created role", async () => {
     expect.hasAssertions();
 
     const onCreateRole = await roleCaller.onCreateRole({ roomId });

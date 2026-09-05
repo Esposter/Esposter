@@ -16,7 +16,7 @@ import { callSessionsInMessage, roomsInMessage } from "@esposter/db-schema";
 import { ForbiddenError } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-describe("call", () => {
+describe("callRouter", () => {
   let mockContext: Context;
   let callCaller: DecorateRouterRecord<TRPCRouter["callSession"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
@@ -102,7 +102,7 @@ describe("call", () => {
       participantId: getSessionPayload.session.id,
     });
 
-    expect(emitSpy).toHaveBeenCalledWith("handRaisedChanged", {
+    expect(emitSpy).toHaveBeenCalledExactlyOnceWith("handRaisedChanged", {
       callSessionId,
       id: getSessionPayload.session.id,
       isHandRaised: true,
