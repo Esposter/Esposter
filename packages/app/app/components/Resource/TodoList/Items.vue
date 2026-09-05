@@ -33,7 +33,7 @@ await loadContent();
       </template>
       <template #[`item.type`]="{ item }">
         <v-chip label>
-          <v-icon pr-2 :icon="getItemCategoryDefinition(TodoListItemTypeItemCategoryDefinitions, item).icon" />
+          <v-icon mr-2 :icon="getItemCategoryDefinition(TodoListItemTypeItemCategoryDefinitions, item).icon" />
           {{ getItemCategoryDefinition(TodoListItemTypeItemCategoryDefinitions, item).title }}
         </v-chip>
       </template>

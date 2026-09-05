@@ -26,8 +26,8 @@ const html = computed(() => sanitizeTextHtml(generateHTML(content.doc, getNoteEx
 </script>
 
 <template>
-  <v-container>
-    <h1 px-4 pt-4>{{ name }}</h1>
-    <div class="rich-text-content" px-4 pb-4 v-html="html" />
+  <v-container pa-8>
+    <h1>{{ name }}</h1>
+    <div class="rich-text-content" v-html="html" />
   </v-container>
 </template>
