@@ -59,15 +59,17 @@ grep -rn -A 20 "v-for" --include=*.vue packages/app/app | grep "@click"
 # a v-for whose item body calls a helper per row — the computed sweep's handover
 grep -rn -A 18 'v-for=' --include=*.vue packages/app/app |
   grep -E '\b[a-z][a-zA-Z0-9]*\(' | grep -vE 'onClick|\$emit|emit\('
-# repeated list items with no v-for — the array-and-loop rule. The trailing [ >] matters: without it
-# every v-list-item-title and -subtitle counts as another row and each single-row shell reads as a hit
-for f in $(grep -rlE '<v-list-item[ >]' --include=*.vue packages/app/app/components); do
-  [ "$(grep -cE '<v-list-item[ >]' "$f")" -ge 3 ] && [ "$(grep -c 'v-for' "$f")" -eq 0 ] && echo "$f"
-done
 # a dialog mounted per row
 grep -rn -A 25 'v-for=' --include=*.vue packages/app/app | grep -E '<(v-dialog|v-menu)'
 # a page or layout owning an element's state
 grep -rlE "\b(ref|computed|useTemplateRef)\(" --include=*.vue packages/app/app/pages packages/app/app/layouts
+```
+
+The array-and-loop rule needs more than a pattern — a count per file, and the absence of a loop in the same
+file — so it is a script rather than a sixth line above (`sweeps`, `references/find-recipes.md`):
+
+```bash
+pnpm sweep:repeated-list-items
 ```
 
 Both greps fire on shape, so read what a hit feeds before calling it a finding. The last one's current hits are

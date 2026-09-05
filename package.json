@@ -60,6 +60,7 @@
     "release": "pnpm format:check && pnpm build:packages && pnpm lint:packages && pnpm typecheck:packages && pnpm test:packages && lerna publish --yes",
     "start": "pnpm --filter @esposter/app run start",
     "sweep:constant-scope": "tsx scripts/sweeps/constantScope/index.ts",
+    "sweep:repeated-list-items": "tsx scripts/sweeps/repeatedListItems/index.ts",
     "sweep:shared-export-consumers": "tsx scripts/sweeps/sharedExportConsumers/index.ts",
     "sweep:skill-docs": "tsx scripts/sweeps/skillDocs/index.ts",
     "sweep:unterminated-results": "tsx scripts/sweeps/unterminatedResults/index.ts",

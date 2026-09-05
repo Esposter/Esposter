@@ -7,7 +7,7 @@ import { resolve } from "node:path";
 const MINIMUM_CONSUMER_PACKAGES = 2;
 const root = resolve(import.meta.dirname, "..", "..", "..");
 const readText = (path: string) => readFileSync(resolve(root, path), "utf8");
-const sourcePaths = getSweepFilePaths("packages/shared/src/**/*.ts").filter(
+const sourcePaths = getSweepFilePaths("packages/shared/src/*.ts").filter(
   (path) => !path.includes(".test.") && !path.endsWith("index.ts"),
 );
 const corpus = [...getSweepFilePaths("*.ts"), ...getSweepFilePaths("*.vue")]

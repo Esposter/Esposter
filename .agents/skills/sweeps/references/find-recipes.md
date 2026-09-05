@@ -40,3 +40,8 @@ the agent tree, living where the toolchain already looks.
   is why the longer recipes use one; it removes no JavaScript layer, so the same three fixes still apply inside.
 - **A filter on the wrong field.** An author login that differs between two APIs, a path prefix that never
   matches, a `--jq` selector against the wrong payload shape — each returns an empty set and exit 0.
+- **`**/` in a `git ls-files` pathspec.** A pathspec is not a shell glob: `*` already crosses `/`, so
+  `a/b/*.vue` reaches every depth, while `a/b/**/*.vue` insists on a directory between them and silently drops
+  every file sitting in `a/b/` itself. The scan then covers almost everything, which is what makes it hard to
+  see — the count looks right and the missing files are exactly the top-level ones a new scan is most likely to
+  be pointed at. Write the pathspec without `**`.
