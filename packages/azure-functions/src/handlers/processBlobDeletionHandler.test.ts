@@ -29,8 +29,6 @@ const { groupMock, sendToAllMock } = vi.hoisted(() => ({
 }));
 
 vi.mock(import("#src/services/getWebPubSubServiceClient"), () => ({
-  // The client is stubbed in the factory and the mocks only record, so a suite-wide restore between tests
-  // Cannot take the stub's own behaviour away with the call history
   getWebPubSubServiceClient: () =>
     ({
       group: (group: string) => {

@@ -92,8 +92,8 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     // Strand the transient failures sharing its blob, and a blob-level count would be meaningless anyway once the
     // Batch splits across cycles. Both bars — the replay cap and handler idempotency — are `checkIsReplayable`'s.
     // The raw objects parsed above stay index-aligned with the narrowed events: the schema keeps only the five
-    // Fields a republish needs, dropping Event Grid's dead-letter diagnostics (deadLetterReason,
-    // DeliveryAttempts, lastDeliveryOutcome). Those are the only record of WHY a payload is here, which is the
+    // Fields a republish needs, dropping Event Grid's dead-letter diagnostics — `deadLetterReason`,
+    // `deliveryAttempts` and `lastDeliveryOutcome`. Those are the only record of WHY a payload is here, which is the
     // Entire point of the copy an operator opens, so the quarantine copy is written from the raw objects
     // Typed, not re-validated: reaching here means the array schema above already parsed `rawEvents`, so this
     // Cannot reject. Expressing it as a fallback (`Array.isArray(...) ? ... : []`, an element-shape check) would
