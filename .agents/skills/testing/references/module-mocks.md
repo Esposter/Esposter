@@ -121,7 +121,8 @@ Getting this wrong is invisible until a call-count assertion reads a neighbour's
 ## Globals and environment variables
 
 - **Globals use `vi.stubGlobal`**, never `Object.defineProperty`; unstub with `vi.unstubAllGlobals()` in `afterEach` (per-test stubs) or `afterAll` (set once in `beforeAll`). `vi.restoreAllMocks()` does **not** undo a `stubGlobal`.
-- **`vi.stubEnv` needs no teardown** — `unstubEnvs: true` in `getVitestConfiguration` restores the env after every test, so never write an `unstubAllEnvs` hook. The globals flag stays off deliberately: it would restore a `beforeAll` `stubGlobal` after the file's first test.
+- **`vi.stubEnv` needs no teardown** — `unstubEnvs: true` in `getVitestConfiguration` restores the env after every test, so never write an `unstubAllEnvs` hook. `vi.stubEnv(KEY, undefined)` is how a test unsets one, which is what a case reading a default owes itself: an ambient `CI` or opt-out from the dev's shell otherwise decides the answer. The globals flag stays off deliberately: it would restore a `beforeAll` `stubGlobal` after the file's first test.
+- **An env var a `beforeAll` sets is the one case `vi.stubEnv` cannot serve**, and for the same reason: the restore runs after every test, so the second test onwards would see the host value. A suite-scoped override reads the previous value, assigns `process.env` directly, and puts it back in `afterAll` — the hand-rolled shape everywhere else is a finding.
 - **A test must never read a color/TTY env var it did not stub.** `checkIsColorEnabled` consults `NO_COLOR`/`FORCE_COLOR`, so an ambient one from the dev's shell repaints CLI output; virrun's `vitest.config.ts` pins both empty for the package, and a test wanting color stubs `FORCE_COLOR` itself.
 
 ## A double that fabricates an entity id owes it a row
