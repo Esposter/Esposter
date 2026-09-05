@@ -12,4 +12,4 @@
 | `trpc/routers` — `achievement`, `app`, `clicker`, `dungeons`, `notification`, `pushSubscription`, `session`, `storage`               | 2026-09-05 |                               |
 | `trpc/{guards,procedure,plugins,middleware}` and `context.test.ts`                                                                   | 2026-09-05 |                               |
 | `services/pagination`, `services/{resource,blueprint}`                                                                               | 2026-09-05 |                               |
-| `services` — the rest, `composables`, `api`, `routes`                                                                                | —          |                               |
+| `services` — the rest, `composables`, `api`, `routes`                                                                                | 2026-09-05 |                               |
