@@ -4,7 +4,7 @@
 | ------------------------------------------------------ | ---------- | --------------------------------------------------------- |
 | `packages/app`                                         | —          | components, composables, stores, services, server, shared |
 | `packages/azure-functions` — `handlers`                | 2026-09-05 | the densest prose in the package                          |
-| `packages/azure-functions` — `services`, the rest      | —          | plus `functions`, `hooks`, `models`, `index.test.ts`      |
+| `packages/azure-functions` — `services`, the rest      | 2026-09-05 | plus `functions`, `hooks`, `models`, `index.test.ts`      |
 | `packages/azure-mock`                                  | 2026-09-05 | filter/search/container mocks                             |
 | `packages/configuration`                               | 2026-09-05 | external lists, `global.d.ts`                             |
 | `packages/db-mock`                                     | 2026-09-05 |                                                           |
