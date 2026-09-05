@@ -36,7 +36,6 @@ const {
 } = defineProps<Props>();
 const emit = defineEmits<{ paste: Parameters<NonNullable<FileHandlePluginOptions["onPaste"]>> }>();
 const linkCursorStyle = ref<CSSProperties["cursor"]>("text");
-// `useEditor` tears the editor down in its own onBeforeUnmount — nothing here has to
 const editor = useEditor({
   autofocus,
   content: modelValue.value,
