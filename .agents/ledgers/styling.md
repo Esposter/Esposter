@@ -2,29 +2,32 @@
 
 What a component looks like rather than how it is composed: attributify props over `class`, theme primitives over bespoke values, the MD3 type set, `rem` over `px`, no hardcoded layout dimensions, `StyledButton` and the shared shells, and the narrow-viewport collapse.
 
-| Unit                                                                                       | Swept      | Notes                                                                      |
-| ------------------------------------------------------------------------------------------ | ---------- | -------------------------------------------------------------------------- |
-| `app/components/Styled`                                                                    | 2026-09-05 | the shared shells                                                          |
-| `app/components/Message/Model/Message`                                                     | 2026-09-05 | the densest surface; the message row and its variants                      |
-| `app/components/Message/Model/Room`                                                        | —          | settings panels and dialogs                                                |
-| `app/components/Message/Model/User`                                                        | —          | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`        |
-| `app/components/Message/Content`                                                           | —          |                                                                            |
-| `app/components/Message` — the rest                                                        | —          | `RightSideBar`, `DraftsAndSent`, `Friends`, `LeftSideBar`                  |
-| `app/components/Resource/Sheet`                                                            | —          | the sheet editor's own chrome                                              |
-| `app/components/Resource/List`                                                             | —          |                                                                            |
-| `app/components/Resource` — the per-type editors                                           | —          | `Survey`, `TodoList`, `Note`, `Program`, `Webpage`, `Email`, `Blueprint`   |
-| `app/components/Resource` — the entry surfaces                                             | —          | `Home`, `Search`, `Explorer`, `RecycleBin`, `Dashboard`, `Flowchart`       |
-| `app/components/Resource` — the shared chrome                                              | —          | `Blade`, `Create`, `VersionHistory` and the loose dialogs                  |
-| `app/components/Dungeons`                                                                  | —          | canvas-adjacent; much of it is Phaser rather than DOM                      |
-| `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | 2026-09-05 | the chrome                                                                 |
-| `app/components/Clicker`                                                                   | —          |                                                                            |
-| `app/components/Visual`                                                                    | —          |                                                                            |
-| `app/components/User`                                                                      | —          |                                                                            |
-| `app/components/Docs`                                                                      | 2026-09-05 | the docs site's own chrome                                                 |
-| `app/components/Dashboard`, `Achievement`                                                  | —          |                                                                            |
-| `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | 2026-09-05 |                                                                            |
-| `app/pages`, `app/layouts`                                                                 | —          | page-level layout; region sizing and the sidebar/panel rules               |
-| `app/**/*.scss`, `rules.config.ts`                                                         | —          | the style blocks and the UnoCSS rule set behind the attributify vocabulary |
+| Unit                                                                                       | Swept      | Notes                                                                              |
+| ------------------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------- |
+| `app/components/Styled`                                                                    | 2026-09-05 | the shared shells                                                                  |
+| `app/components/Message/Model/Message`                                                     | 2026-09-05 | the densest surface; the message row and its variants                              |
+| `app/components/Message/Model/Room/Settings/Type/Role`, `Webhook`, `Emoji`, `Member`       | —          | the settings panels that own a list and an editor                                  |
+| `app/components/Message/Model/Room/Settings/Type` — the rest                               | —          | `Overview`, `Profile`, `AuditLog`, `WordFilter`, `Bans`, `Invite`, `Attachments`   |
+| `app/components/Message/Model/Room/Settings` — the shell                                   | —          | the dialog, its sidebar and the shared field                                       |
+| `app/components/Message/Model/Room` — the rest                                             | —          | `Create`, `DirectMessage`, `Emoji`, `Invite`, `List`, `Role` and the loose dialogs |
+| `app/components/Message/Model/User`                                                        | —          | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`                |
+| `app/components/Message/Content`                                                           | —          |                                                                                    |
+| `app/components/Message` — the rest                                                        | —          | `RightSideBar`, `DraftsAndSent`, `Friends`, `LeftSideBar`                          |
+| `app/components/Resource/Sheet`                                                            | —          | the sheet editor's own chrome                                                      |
+| `app/components/Resource/List`                                                             | —          |                                                                                    |
+| `app/components/Resource` — the per-type editors                                           | —          | `Survey`, `TodoList`, `Note`, `Program`, `Webpage`, `Email`, `Blueprint`           |
+| `app/components/Resource` — the entry surfaces                                             | —          | `Home`, `Search`, `Explorer`, `RecycleBin`, `Dashboard`, `Flowchart`               |
+| `app/components/Resource` — the shared chrome                                              | —          | `Blade`, `Create`, `VersionHistory` and the loose dialogs                          |
+| `app/components/Dungeons`                                                                  | —          | canvas-adjacent; much of it is Phaser rather than DOM                              |
+| `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | 2026-09-05 | the chrome                                                                         |
+| `app/components/Clicker`                                                                   | —          |                                                                                    |
+| `app/components/Visual`                                                                    | —          |                                                                                    |
+| `app/components/User`                                                                      | —          |                                                                                    |
+| `app/components/Docs`                                                                      | 2026-09-05 | the docs site's own chrome                                                         |
+| `app/components/Dashboard`, `Achievement`                                                  | —          |                                                                                    |
+| `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | 2026-09-05 |                                                                                    |
+| `app/pages`, `app/layouts`                                                                 | —          | page-level layout; region sizing and the sidebar/panel rules                       |
+| `app/**/*.scss`, `rules.config.ts`                                                         | —          | the style blocks and the UnoCSS rule set behind the attributify vocabulary         |
 
 ## Exclusions
 
