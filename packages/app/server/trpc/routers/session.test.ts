@@ -86,7 +86,7 @@ describe("session", () => {
 
     const sessionSummaries = await caller.readSessions();
 
-    // toStrictEqual carries the leak checks too: an `ipAddress` or a raw `userAgent` that got through shows up
+    // Leak checks ride along on the equality: an `ipAddress` or a raw `userAgent` that got through shows up
     // As an extra key, and an expired session shows up as an extra row
     expect(sessionSummaries).toStrictEqual([
       { deviceLabel, id: currentSession.id, isCurrent: true, updatedAt: currentSession.updatedAt },
