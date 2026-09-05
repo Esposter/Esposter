@@ -25,7 +25,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | 2026-09-05 | the chrome                                                                         |
 | `app/components/Clicker`                                                                   | —          |                                                                                    |
 | `app/components/Visual`                                                                    | —          |                                                                                    |
-| `app/components/User`                                                                      | —          |                                                                                    |
+| `app/components/User`                                                                      | 2026-09-05 |                                                                                    |
 | `app/components/Docs`                                                                      | 2026-09-05 | the docs site's own chrome                                                         |
 | `app/components/Dashboard`, `Achievement`                                                  | —          |                                                                                    |
 | `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | 2026-09-05 |                                                                                    |
