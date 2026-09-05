@@ -72,12 +72,13 @@ describe("messageRouter", () => {
   const filteredWord = "spam";
   const filteredMessage = `<p>${filteredWord}</p>`;
   const pollOptionId = crypto.randomUUID();
+  const label = "label";
   const pollMessage = JSON.stringify({
     options: [
-      { id: pollOptionId, label: "Option A" },
-      { id: crypto.randomUUID(), label: "Option B" },
+      { id: pollOptionId, label },
+      { id: crypto.randomUUID(), label },
     ],
-    question: "Test question",
+    question: "question",
     votes: {},
   });
   // Every mock Azure client resolves in the same microtask drain, so two concurrent procedures run to completion
