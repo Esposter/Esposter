@@ -13,7 +13,7 @@ import { withResourceRollback } from "@@/server/services/resource/withResourceRo
 
 // Every entry is validated against its type's contentSchema before anything is created, then created
 // Dependencies-first so an entry's `{{entry:key}}` references resolve to real ids. A mid-deploy failure deletes
-// The rows and blobs it already created — best-effort all-or-nothing
+// The rows and blobs it already created — a best-effort rollback rather than a transaction
 export const deployBlueprint = async (
   ctx: AuthedContext,
   blueprint: BlueprintResource,

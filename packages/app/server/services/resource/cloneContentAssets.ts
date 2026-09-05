@@ -18,8 +18,8 @@ import { chargeStorageLedgerEntry, copyBlob, releaseStorageLedgerEntries } from 
 import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
 import { getOrCreate, getResultAsync, ID_SEPARATOR, noop, settleAll } from "@esposter/shared";
 
-// The rewrite entry for one working-copy asset url, or nothing when the blob is missing — a reference the
-// Clone cannot follow is data, carried verbatim rather than failing the whole clone
+// The rewrite entry for one asset url, working copy or published alike, or nothing when the blob is missing — a
+// Reference the clone cannot follow is data, carried verbatim rather than failing the whole clone
 const cloneAsset = async (
   db: Database,
   userId: string,

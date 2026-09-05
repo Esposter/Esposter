@@ -21,7 +21,8 @@ export const writeResourceActivity = ({ resourceId, ...rest }: WriteResourceActi
     const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
     if (rest.activityType === ResourceActivityType.ContentSaved) {
       // Coalesce on existence rather than on the partition head, so the answer does not depend on the order
-      // Entities come back in
+      // Entities come back in. Two saves racing inside the window both read empty and both write, which costs the
+      // Trail one extra line — the alternative is a deterministic rowKey, and the rowKey is what orders the trail
       const recentEntries = await getTopNEntities(resourceActivityClient, 1, ResourceActivityEntity, {
         filter: serializeClauses([
           { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: resourceId },
