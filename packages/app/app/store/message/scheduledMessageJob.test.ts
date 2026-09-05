@@ -50,9 +50,8 @@ describe(useScheduledMessageJobStore, () => {
     expect(scheduledMessageJobCount.value).toBe(2);
   });
 
-  // Each job is its own target, so two cancels overlap on one page. The failing one must put back only its own
-  // Row — reinstating the page as it stood resurrects the job the cancel beside it already took off, and counts
-  // It in the badge, with nothing to reconcile either until the page is read again
+  // Each job is its own target, so two cancels overlap on one page and the failing one must put back only its
+  // Own row — a job counted back into the badge has nothing to reconcile it until the page is read again
   test("puts back only the job whose cancel was rejected", async () => {
     expect.hasAssertions();
 

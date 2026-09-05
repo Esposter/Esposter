@@ -6,7 +6,7 @@
 | `packages/app` — `app/services`, `app/util`            | —          |                                                          |
 | `packages/app` — `app/composables`                     | —          |                                                          |
 | `packages/app` — `app/models`, `app/types`             | —          |                                                          |
-| `packages/app` — `app/store`                           | —          |                                                          |
+| `packages/app` — `app/store`                           | 2026-09-05 | the rollback rationale, restated per call site           |
 | `packages/app` — `app/pages`, `layouts`, the rest      | —          | plus `middleware`, `plugins`, `assets`                   |
 | `packages/app` — `server/trpc`                         | —          |                                                          |
 | `packages/app` — the rest of `server`                  | —          | services, routes, plugins                                |

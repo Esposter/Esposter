@@ -7,7 +7,6 @@ export const useFriendStore = defineStore("message/user/friend", () => {
   const { $trpc } = useNuxtApp();
   const { executeMutation } = useMutation();
   const friends = ref<User[]>([]);
-  // CreateFriend already dedups by id, so a repeated echo delivery is idempotent without a manual guard
   const { createFriend: storeCreateFriend, deleteFriend: baseStoreDeleteFriend } = createOperationData(
     friends,
     ["id"],
@@ -22,9 +21,7 @@ export const useFriendStore = defineStore("message/user/friend", () => {
   const checkIsFriend = (userId: User["id"]) => friends.value.some(({ id }) => id === userId);
   const deleteFriend = async (friendId: User["id"]) => {
     await executeMutation(() => $trpc.friend.deleteFriend.mutate(friendId), {
-      // The one row this write removes, not a copy of the list: removals are keyed per friend and never queue
-      // Against each other, so reinstating the list would resurrect a friend another removal already dropped —
-      // And lose whoever the accept echo delivered while this write was in flight
+      // The one row this write removes — removals are keyed per friend and never queue against each other
       applyOptimistic: () => {
         const deletedFriend = friends.value.find(({ id }) => id === friendId);
         storeDeleteFriend(friendId);

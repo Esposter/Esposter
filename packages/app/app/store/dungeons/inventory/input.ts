@@ -15,7 +15,6 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
   const itemOptionGrid = useItemOptionGrid();
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.Inventory);
 
-  // Terminated here because the frame loop drops what this returns — see the battle scene's own entry point
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) =>
     getResultAsync(async () => {
       if (checkIsPlayerSpecialInput(justDownInput)) await onPlayerSpecialInput(scene, justDownInput);

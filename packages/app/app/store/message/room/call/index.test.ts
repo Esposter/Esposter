@@ -13,9 +13,7 @@ import { RoutePath, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-// AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot be
-// Spied on directly — mock the module and drive useSession through a hoisted mock instead. The participant store
-// Reads the synchronous ref form, which is what resolves the caller's own participant id
+
 const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<() => unknown>() }));
 
 vi.mock(import("@/services/auth/authClient"), () => ({
@@ -48,8 +46,8 @@ describe(useCallStore, () => {
   });
 
   // The camera flag is a participant row like any other, so the primitive unwinds and reports its rejection.
-  // Rethrowing made a rejected server write cancel the local work it was composed with — the picked background
-  // Never reached the camera that was in fact running, and the same throw inside joinCall tore down a live call
+  // Rethrowing lets a rejected server write cancel the local work it is composed with — the picked background
+  // Never reaches the camera that is in fact running, and the same throw inside joinCall tears down a live call
   test("applies a virtual background when the camera write is rejected", async () => {
     expect.hasAssertions();
 
@@ -115,8 +113,8 @@ describe(useCallStore, () => {
   });
 
   // The disconnect is tearing down an attempt that already failed, so its own rejection is not the failure the
-  // User can act on. Propagated, it replaced the join's alert with nothing at all and left the connecting flag
-  // Set, so the composer kept spinning on a call that never started
+  // User can act on. Propagated, it replaces the join's alert with nothing at all and leaves the connecting flag
+  // Set, so the composer keeps spinning on a call that never started
   test.each([
     {
       handler: () =>
@@ -411,9 +409,7 @@ describe(useKnockerStore, () => {
     setActivePinia(createPinia());
   });
 
-  // Each knocker is its own target, so a host working down the lobby has several writes in flight at once. A
-  // Rejected one that reinstated the lobby as it stood would put back the knocker already admitted beside it —
-  // And drop whichever knockers the live subscription delivered meanwhile
+  // Each knocker is its own target, so a host working down the lobby has several writes in flight at once
   test("puts back only the knocker whose admission was rejected, where they stood", async () => {
     expect.hasAssertions();
 

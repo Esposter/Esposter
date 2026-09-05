@@ -39,8 +39,7 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
     knockers.value = knockers.value.filter((knocker) => knocker.id !== knockerId);
   };
   // Admitting and dismissing differ only in the write they send: both take one knocker out of the lobby, and
-  // Both put back that one knocker where it stood if the write is rejected. Reinstating a whole-list snapshot
-  // Would drop every knocker the live subscription delivered while the write was in flight
+  // Both put back that one knocker where it stood if the write is rejected
   const getResolveKnockerOptions = (sessionId: string) => ({
     applyOptimistic: () => {
       const deletedIndex = knockers.value.findIndex(({ id }) => id === sessionId);

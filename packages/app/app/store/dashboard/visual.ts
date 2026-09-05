@@ -38,9 +38,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   // One write path: apply the edit locally, persist the dashboard, revert on failure. The dialog closes only
   // On success so a rejected write keeps the user's draft open for retry instead of losing it
   const save = async (editedVisual: Visual) => {
-    // The unwind is this write's own visual rather than a copy of the list: a save is not instant, so a visual
-    // Added or removed while this one is in flight is already on screen by the time it fails, and a list-wide
-    // Restore would delete it. Cloned because updateVisual assigns onto the live visual
+    // Cloned because updateVisual assigns onto the live visual
     const previousVisual = visuals.value.find(getEntityIdEqualComparator<Visual>(["id"], editedVisual));
     const snapshot = previousVisual ? structuredClone(toRawDeep(previousVisual)) : undefined;
     updateVisual(editedVisual);
@@ -51,10 +49,8 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   };
   // Same write path: remove locally, persist the dashboard, revert on failure so a failed delete keeps the visual
   const deleteVisual = async (ids: { id: Visual["id"] }) => {
-    // Same scoping, and the removed visual itself rather than a clone — a delete filters the list without
-    // Touching it. It returns at the end, which costs it nothing: the grid places a visual by its own x/y,
-    // So array order is not where it sits. Restoring the whole list instead would drop a visual the user
-    // Added while the delete was in flight
+    // The removed visual itself rather than a clone — a delete filters the list without touching it. It returns
+    // At the end, which costs it nothing: the grid places a visual by its own x/y, not by array order
     const deletedVisual = visuals.value.find(getEntityIdEqualComparator<Visual>(["id"], ids));
     storeDeleteVisual(ids);
     const isSuccessful = await saveDashboard();

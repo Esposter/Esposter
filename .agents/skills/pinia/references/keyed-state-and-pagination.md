@@ -65,7 +65,9 @@ const { hasMore, items, readItems, readMoreItems } = useCursorPaginationData<Foo
 const { deleteFoo: storeDeleteFoo } = createOperationData(items, ["parentId", "childId"], DatabaseEntityType.Foo);
 ```
 
-Destructure as `base` aliases and wrap in `storeXxx` functions when the operation needs side effects or a guard, keeping the public API a plain identifier:
+**`createXxx` already dedups on the id keys**, so a repeated echo delivery — an SSE `Last-Event-ID` catch-up, a Web PubSub reconnect replaying its buffer — is idempotent on its own. Never wrap one in a `some(({ id }) => …)` guard: that is the primitive's check written a second time, against a list it is about to re-scan.
+
+Destructure as `base` aliases and wrap in `storeXxx` functions when the operation needs side effects, keeping the public API a plain identifier:
 
 ```ts
 const foos = ref<Foo[]>([]);
@@ -75,7 +77,8 @@ const { createFoo: baseStoreCreateFoo, deleteFoo: baseStoreDeleteFoo } = createO
   DatabaseEntityType.Foo,
 );
 const storeCreateFoo = (foo: Foo) => {
-  if (!foos.value.some(({ id }) => id === foo.id)) baseStoreCreateFoo(foo);
+  baseStoreCreateFoo(foo);
+  registerFooSubscribable(foo.id);
 };
 const storeDeleteFoo = (fooId: string) => {
   baseStoreDeleteFoo({ id: fooId });

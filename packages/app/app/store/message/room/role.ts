@@ -140,8 +140,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const { executeMutation: executeAssignRoleMutation } = useMutation();
   const { executeMutation: executeRevokeRoleMutation } = useMutation();
   const createRole = async (input: CreateRoleInput) => {
-    // Server-generated role — non-optimistic, applied in onSuccess. Creates have no natural entity key,
-    // So each call gets a unique one — overlapping creates must never queue behind each other
     await executeCreateRoleMutation(() => $trpc.role.createRole.mutate(input), {
       key: Symbol("createRole"),
       onSuccess: (newRole) => {
@@ -152,8 +150,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   const updateRole = async (input: UpdateRoleInput) => {
     await executeUpdateRoleMutation(() => $trpc.role.updateRole.mutate(input), {
-      // Read when the write is sent, and unwound one role at a time: restoring the list as it stood would undo
-      // Every other role's edit, creation and deletion that landed while this write was in flight
+      // Read when the write is sent, and unwound one role at a time
       applyOptimistic: () => {
         const previousRole = getRoles(input.roomId).find(({ id }) => id === input.id);
         if (!previousRole) return noop;
@@ -172,8 +169,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const deleteRole = async (input: DeleteRoleInput) => {
     let isSuccessful = false;
     await executeDeleteRoleMutation(() => $trpc.role.deleteRole.mutate(input), {
-      // Put back only this role, at the position it held — reinstating the list as it stood would resurrect a
-      // Role another deletion already removed and drop the ones created while this write was in flight
+      // Put back only this role, at the position it held
       applyOptimistic: () => {
         const previousRoles = getRoles(input.roomId);
         const deletedIndex = previousRoles.findIndex(({ id }) => id === input.id);

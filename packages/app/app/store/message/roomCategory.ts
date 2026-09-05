@@ -43,7 +43,6 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
           storeDeleteRoomCategory({ id: newRoomCategory.id });
         };
       },
-      // Each create owns a distinct placeholder with no server id yet, so it gets a per-call symbol
       key: Symbol("createRoomCategory"),
       // Reconcile onto the placeholder itself so it keeps its list position instead of being
       // Removed and re-appended under the server id
@@ -55,10 +54,8 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
 
   const deleteRoomCategory = async (id: DeleteRoomCategoryInput) => {
     await executeDeleteRoomCategoryMutation(() => $trpc.room.category.deleteRoomCategory.mutate(id), {
-      // The one row this write removes, not a copy of the list: deletes are keyed per room category and never queue
-      // Against each other, so reinstating the list would resurrect a room category another delete already took out
-      // And drop the ones created while this write was in flight. Position drives the rendered order, so where
-      // The restored row lands in the array is not observable
+      // Deletes are keyed per room category and never queue against each other. Position drives the rendered
+      // Order, so where the restored row lands in the array is not observable
       applyOptimistic: () => {
         const deletedRoomCategory = roomCategories.value.find((roomCategory) => roomCategory.id === id);
         storeDeleteRoomCategory({ id });
@@ -73,9 +70,8 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const updateRoomCategory = async (input: UpdateRoomCategoryInput) => {
     await executeUpdateRoomCategoryMutation(() => $trpc.room.category.updateRoomCategory.mutate(input), {
       applyOptimistic: () => {
-        // Only the fields this write overwrites, on the one row it touches, and read as the write is sent:
-        // A whole-list snapshot restored by reassignment would also undo whatever landed while this was queued
-        // And swap every row for a copy, stranding the create placeholder its own onSuccess writes onto
+        // Only the fields this write overwrites, on the one row it touches, and read as the write is sent —
+        // Swapping a row for a copy would strand the create placeholder its own onSuccess writes onto
         const previousRoomCategory = roomCategories.value.find(({ id }) => id === input.id);
         const rollbackRoomCategory = previousRoomCategory && { ...previousRoomCategory };
         storeUpdateRoomCategory(input);
@@ -94,9 +90,8 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     const updates = getRoomCategoryPositionUpdates(newRoomCategories);
     if (updates.length === 0) return;
     await executeReorderRoomCategoriesMutation(() => $trpc.room.category.reorderRoomCategories.mutate(updates), {
-      // Only the position of each row this write moves: restoring the list would swap every row for a copy —
-      // Stranding the placeholder a concurrent create's onSuccess writes onto — and undo whatever else landed
-      // While the reorder was in flight
+      // Only the position of each row this write moves — swapping a row for a copy would strand the placeholder
+      // A concurrent create's onSuccess writes onto
       applyOptimistic: () => {
         const previousPositions = updates
           .map(({ id }) => roomCategories.value.find((roomCategory) => roomCategory.id === id))

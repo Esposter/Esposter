@@ -12,8 +12,8 @@ describe(useAlertStore, () => {
     setActivePinia(createPinia());
   });
 
-  // One rejection cause reaches the store once per operation it rejected — an attachment batch's file and
-  // Thumbnail reads, or every chunk of a paged sweep — and a toast per operation says nothing the first one did
+  // One rejection cause reaches the store once per operation it rejected, so a second copy of an alert already
+  // On screen is a toast that says nothing the first one did
   test("refreshes an identical alert instead of stacking a second copy", () => {
     expect.hasAssertions();
 

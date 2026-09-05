@@ -50,8 +50,7 @@ describe(useFavoriteStore, () => {
   });
 
   // Two quick clicks on one star queue under the same key, so the second one's rollback has to undo its own
-  // Flip — restoring the list from click time would drop the star the first click just persisted, and nothing
-  // Reconciles that until a reload
+  // Flip rather than the state at click time — nothing reconciles a dropped star until a reload
   test("rolls a failed toggle back to the state the toggle ahead of it stored", async () => {
     expect.hasAssertions();
 
@@ -73,8 +72,7 @@ describe(useFavoriteStore, () => {
   });
 
   // This list is replaced wholesale by its own cached read, which refetches the moment a delete elsewhere
-  // Invalidates the resources tag — so a rollback to a copy of the list drops every star that read delivered,
-  // And nothing re-reads them until a reload
+  // Invalidates the resources tag — so anything that read delivered is not re-read until a reload
   test("rolls a failed toggle back without dropping stars a re-read delivered", async () => {
     expect.hasAssertions();
 

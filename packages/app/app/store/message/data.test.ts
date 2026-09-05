@@ -13,9 +13,7 @@ import { Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-// AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and
-// Cannot be spied on directly — mock the module and drive useSession through a hoisted mock instead. The
-// Store reads only session.value.data.user.id, so the mock returns just that slice of the session ref.
+
 interface MockSessionValue {
   data?: { user: { id: string } };
 }
@@ -405,9 +403,8 @@ describe(useDataStore, () => {
     expect(takeOne(items.value).message).toBe(updatedMessage);
   });
 
-  // Each attachment is its own target, so two removals from one message overlap. Reading the list the call was
-  // Issued with makes the second removal write back the file the first one took off, and its rollback reinstate
-  // Both — the message renders attachments the server no longer has
+  // Each attachment is its own target, so two removals from one message overlap: reading the list the call was
+  // Issued with makes the second removal write back the file the first one took off
   test("removes and restores one attachment at a time", async () => {
     expect.hasAssertions();
 

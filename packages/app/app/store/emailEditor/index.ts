@@ -16,7 +16,6 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
   // The live GrapesJS editor, set by the blade — the export command (command bar) reads it from here
   const editor = shallowRef<Editor>();
   const datasetReference = computed(() => content.value.datasetReference);
-  // GrapesJS storage adapter load: serve the selected resource's content
   const readEmailEditor = async () => {
     await readResource();
     const data = await readContent<ResourceType.Email>();

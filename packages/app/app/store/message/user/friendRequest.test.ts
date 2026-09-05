@@ -9,9 +9,7 @@ import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-// AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot be
-// Spied on directly — mock the module and drive useSession through a hoisted mock instead. The store reads only
-// Session.value.data.user.id, so the mock returns just that slice of the session ref.
+
 interface MockSessionValue {
   data?: { user: { id: string } };
 }
@@ -96,9 +94,8 @@ describe(useFriendRequestStore, () => {
     expect(friendRequests.value).toStrictEqual([secondFriendRequest]);
   });
 
-  // Each sender is its own target, so two answers overlap on one list. The failing one has to unwind to the list
-  // The answer ahead of it left, not to the one the user was looking at when they clicked — restoring that would
-  // Put back a request the server has already resolved
+  // Each sender is its own target, so two answers overlap on one list and the failing one has to unwind to the
+  // List the answer ahead of it left, not to the one the user was looking at when they clicked
   test("rolls a failed decline back to the list the decline ahead of it left", async () => {
     expect.hasAssertions();
 
@@ -118,8 +115,7 @@ describe(useFriendRequestStore, () => {
     expect(alertStore.alerts).toHaveLength(1);
   });
 
-  // The failing answer is the one that applied first, so its rollback lands after the other has persisted:
-  // Putting back the list it was sent against resurrects the request that answer resolved
+  // The failing answer is the one that applied first, so its rollback lands after the other has persisted
   test("puts back only the request whose decline was rejected", async () => {
     expect.hasAssertions();
 
@@ -137,8 +133,8 @@ describe(useFriendRequestStore, () => {
     expect(friendRequests.value).toStrictEqual([firstFriendRequest]);
   });
 
-  // An accept and a decline answer different senders, so neither queues behind the other and both write the one
-  // List — a rejected accept that reinstates it puts back the request the decline beside it already resolved
+  // An accept and a decline answer different senders, so neither queues behind the other while both write the
+  // One list
   test("puts back only the request whose accept was rejected", async () => {
     expect.hasAssertions();
 

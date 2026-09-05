@@ -11,7 +11,6 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   // GrapesJS owns the live project once it has loaded, so the content is held plainly rather than reactively —
   // Nothing outside the two adapter callbacks reads it
   let content = new WebpageEditor();
-  // GrapesJS storage adapter load: serve the selected resource's content
   const readWebpageEditor = async () => {
     await readResource();
     content = new WebpageEditor(await readContent<ResourceType.Webpage>());

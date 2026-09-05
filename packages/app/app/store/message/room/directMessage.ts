@@ -22,8 +22,8 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     ),
   );
   // Keyed by room and read by every surface that names a conversation after the people in it. Held behind its
-  // Own accessors rather than handed out: six call sites outside this store used to write it directly, and a
-  // Participant list edited from five places is a list nothing can state the invariants of
+  // Own accessors rather than handed out: a participant list written directly from every surface that reads it
+  // Is a list nothing can state the invariants of
   const directMessageParticipantsMap = ref(new Map<string, User[]>());
   const getDirectMessageParticipants = (roomId: string) => directMessageParticipantsMap.value.get(roomId) ?? [];
   const storeDirectMessageParticipants = (roomId: string, participants: User[]) => {
@@ -54,8 +54,6 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const { executeMutation: executeDeleteDirectMessageParticipantMutation } = useMutation();
   const { executeMutation: executeHideDirectMessageMutation } = useMutation();
   const createDirectMessage = async (userIds: string[]) => {
-    // Server-generated room — non-optimistic, applied in onSuccess. Creates have no natural entity key,
-    // So each call gets a unique one — overlapping creates must never queue behind each other
     await executeCreateDirectMessageMutation(() => $trpc.room.directMessage.createDirectMessage.mutate(userIds), {
       key: Symbol("createDirectMessage"),
       onSuccess: async (room) => {
@@ -80,8 +78,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
           storeDeleteDirectMessageParticipant(roomId, userId);
           return () => {
             if (!deletedParticipant) return;
-            // Restore only this participant, ahead of the first one that still follows it. Reinstating a
-            // Whole-list snapshot would re-add anyone a removal that overlapped this one had already taken out
+            // Restore only this participant, ahead of the first one that still follows it
             const participantsNow = getDirectMessageParticipants(roomId);
             const followingIndex = participantsNow.findIndex(({ id }) => followingIds.has(id));
             storeDirectMessageParticipants(
@@ -102,9 +99,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   };
   const hideDirectMessage = async (input: HideDirectMessageInput) => {
     await executeHideDirectMessageMutation(() => $trpc.room.directMessage.hideDirectMessage.mutate(input), {
-      // Restore only this conversation. Reinstating a whole-list snapshot would un-hide one another call already
-      // Hid and drop whatever arrived while this write was in flight — and the list is sorted for display, so
-      // Where the restored conversation lands in it is not observable
+      // Restore only this conversation. The list is sorted for display, so where it lands in it is not observable
       applyOptimistic: () => {
         const hiddenDirectMessage = items.value.find(({ id }) => id === input);
         storeDeleteDirectMessage({ id: input });

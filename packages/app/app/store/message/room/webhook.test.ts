@@ -83,8 +83,8 @@ describe(useWebhookStore, () => {
     expect(alerts.value.map(({ text }) => text)).toStrictEqual(["1", "2"]);
   });
 
-  // Each row is its own target, so its writes never queue behind another row's: a rejected edit must unwind only
-  // The row it touched, or it reinstates a row a concurrent deletion has already taken off the list
+  // Each row is its own target, so its writes never queue behind another row's and a rejected edit unwinds
+  // Only the row it touched
   test("restores only the row whose edit was rejected", async () => {
     expect.hasAssertions();
 

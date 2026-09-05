@@ -44,8 +44,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
       applyOptimistic: () => {
         storeUpdateEmoji(updatedInput);
         return () => {
-          // Toggle this user back out of the reaction as it stands, rather than reinstating the ids this write
-          // Was issued with — that copy would drop every other reaction delivered while the write was in flight
+          // Toggle this user back out of the reaction as it stands
           const currentEmoji = getEmojis(input.messageRowKey).find((emoji) =>
             getEntityIdEqualComparator(CompositeAzureKeyPath, input)(emoji),
           );

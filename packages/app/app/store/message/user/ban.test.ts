@@ -28,9 +28,8 @@ describe(useBanStore, () => {
     setActivePinia(createPinia());
   });
 
-  // Each ban is its own target, so two unbans overlap on one list. The failing one must put back only the ban it
-  // Lifted — reinstating the list as it stood re-bans someone the server has already released, with nothing to
-  // Reconcile it until the list is read again
+  // Each ban is its own target, so two unbans overlap on one list and the failing one must put back only the
+  // Ban it lifted — someone re-banned locally stays that way until the list is read again
   test("puts back only the ban whose unban was rejected", async () => {
     expect.hasAssertions();
 

@@ -20,7 +20,7 @@ export const useSheetHistoryStore = defineStore("resource/sheet/history", () => 
     history.value = [];
   };
   const push = (command: ADataSourceCommand) => {
-    // MarkRaw so Vue never wraps the command in a reactive Proxy; a Proxy breaks the
+    // `markRaw` so Vue never wraps the command in a reactive Proxy; a Proxy breaks the
     // ECMAScript # private field/method brand checks the command relies on at execute/undo time.
     history.value.push(markRaw(command));
     if (history.value.length > MAX_HISTORY_SIZE) history.value.shift();

@@ -17,8 +17,8 @@ describe(useBlockStore, () => {
     setActivePinia(createPinia());
   });
 
-  // Each blocked user is its own target, so two blocks overlap on the friend list. The failing one must put back
-  // Only the friend it removed — reinstating the list resurrects the friend the block beside it already dropped
+  // Each blocked user is its own target, so two blocks overlap on the friend list and the failing one must put
+  // Back only the friend it removed
   test("puts back only the friend whose block was rejected", async () => {
     expect.hasAssertions();
 

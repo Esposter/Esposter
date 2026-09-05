@@ -50,7 +50,6 @@ export const useCommentStore = defineStore("post/comment", () => {
     // The comment it was written against rather than under whatever is on screen
     const { createComment: storeCreateComment } = getCommentOperationData(input.parentId);
     await executeCreateCommentMutation(() => $trpc.post.createComment.mutate(input), {
-      // Server-generated comment with no id yet, so each create gets a per-call symbol
       key: Symbol("createComment"),
       onSuccess: ({ ancestorIds, comment }) => {
         storeCreateComment(comment);
@@ -85,8 +84,8 @@ export const useCommentStore = defineStore("post/comment", () => {
       // The rows go at once and the counters when the server answers: a delete cascades, so how many rows it
       // Takes is only knowable there — whatever happens to be expanded here is short by every reply nobody opened
       applyOptimistic: () => {
-        // The one row this write removes, read when the write is sent: deletes of different comments do not
-        // Queue against each other, so restoring a copy of the list would resurrect one deleted beside this
+        // The one row this write removes, read when the write is sent — deletes of different comments do not
+        // Queue against each other
         const deletedComment = branchItems.value.find(({ id }) => id === input);
         deleteBranch(input);
         storeDeleteComment({ id: input });

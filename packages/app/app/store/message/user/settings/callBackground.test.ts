@@ -73,8 +73,8 @@ describe(useCallBackgroundStore, () => {
     expect(handler).not.toHaveBeenCalled();
   });
 
-  // Each slot is its own write target, so two deletes run concurrently rather than queueing — and a rejected
-  // One must put back only its own row, never the list as it stood before the other delete landed
+  // Each slot is its own write target, so two deletes run concurrently rather than queueing and a rejected one
+  // Must put back only its own row
   test("a rejected delete does not resurrect a slot deleted beside it", async () => {
     expect.hasAssertions();
 

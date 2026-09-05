@@ -10,9 +10,7 @@ import { TRPCError } from "@trpc/server";
 import { MockContainerDatabase } from "azure-mock";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-// AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot be
-// Spied on directly — mock the module and drive useSession through a hoisted mock instead. The store reads only
-// Session.value.data.user.id, so the mock returns just that slice of the session ref.
+
 interface MockSessionValue {
   data?: { user: { id: string } };
 }
@@ -114,8 +112,8 @@ describe(useEmojiStore, () => {
     expect(calledProcedures).toStrictEqual([expectedProcedure]);
   });
 
-  // A reaction is a shared row: the toggle owes back only the caller's own id, so it is unwound against the ids
-  // As they stand. Reinstating the ids the write was issued with drops every member who reacted meanwhile
+  // A reaction is a shared row, so the toggle owes back only the caller's own id and is unwound against the ids
+  // As they stand
   test("keeps a reaction delivered while the rejected toggle was in flight", async () => {
     expect.hasAssertions();
 

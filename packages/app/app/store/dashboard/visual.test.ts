@@ -80,8 +80,7 @@ describe(useVisualStore, () => {
     expect(isSuccessful).toBe(false);
   });
 
-  // A save is not instant, so the user can add a visual while one is in flight. The rollback owes back the edit
-  // It made and nothing else — reinstating the list as it was when the write went out deletes that visual
+  // A save is not instant, so the user can add a visual while one is in flight
   test("keeps a visual added while the edit was in flight when the save fails", async () => {
     expect.hasAssertions();
 
@@ -101,7 +100,7 @@ describe(useVisualStore, () => {
     expect(takeOne(visuals.value).type).toBe(VisualType.Area);
   });
 
-  // Same for the delete path, which unwinds by putting its own visual back rather than by restoring the list
+  // Same for the delete path, which unwinds by putting its own visual back
   test("keeps a visual added while the delete was in flight when the save fails", async () => {
     expect.hasAssertions();
 

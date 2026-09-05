@@ -2,7 +2,7 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 // The import/export commands live on the blade command bar, which is reachable from every blade — so the dialogs
-// They open cannot live in the Data blade that used to own them. This holds what each one is opened with, and
+// They open cannot live in the Data blade alone. This holds what each one is opened with, and
 // ResourceSheetDialogs (mounted by the blade shell) renders them wherever the reader happens to be
 export const useSheetPortableDialogStore = defineStore("resource/sheet/portableDialog", () => {
   const previewDataSource = ref<DataSource | undefined>();

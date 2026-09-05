@@ -58,9 +58,7 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
   const deleteCallBackground = async (slot: CallBackground["slot"]) => {
     await executeMutation(() => $trpc.user.deleteCallBackground.mutate({ slot }), {
       // The blob is reclaimed by a worker rather than inline, so the listing would hold the slot for as long as
-      // That takes. Dropping it here is what the user asked for, and the next listing agrees. A rejected delete
-      // Puts back only its own row: these run concurrently, so restoring the list as it stood would resurrect a
-      // Slot deleted beside it
+      // That takes. Dropping it here is what the user asked for, and the next listing agrees
       applyOptimistic: () => {
         const deletedCallBackground = callBackgrounds.value.find((callBackground) => callBackground.slot === slot);
         callBackgrounds.value = callBackgrounds.value.filter((callBackground) => callBackground.slot !== slot);

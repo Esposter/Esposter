@@ -244,7 +244,6 @@ export const useResourceStore = defineStore("resource", () => {
     const current = resource.value;
     if (!current) return;
     await executeDuplicateMutation(() => $trpc.resource.duplicateResource.mutate({ id: current.id }), {
-      // A duplicate produces a brand-new resource with no id yet, so each gets a per-call symbol
       key: Symbol("duplicateResource"),
       onError: createErrorNotification,
       onSuccess: async (newResource) => {

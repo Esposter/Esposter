@@ -74,8 +74,7 @@ describe(usePostStore, () => {
     expect(takeOne(items.value).title).toBe(newTitle);
   });
 
-  // Deletes of different posts carry different keys, so they run beside each other — restoring a copy of the
-  // Feed resurrects the post the delete next to this one already removed server-side
+  // Deletes of different posts carry different keys, so they run beside each other
   test("rolls a failed delete back without resurrecting a post deleted beside it", async () => {
     expect.hasAssertions();
 

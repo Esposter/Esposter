@@ -21,8 +21,6 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
   const { executeMutation: executeCreateSearchHistoryMutation } = useMutation();
   const { executeMutation: executeUpdateSearchHistoryMutation } = useMutation();
   const { executeMutation: executeDeleteSearchHistoryMutation } = useMutation();
-  // Server-generated history row — non-optimistic, applied in onSuccess. Creates have no natural entity
-  // Key, so each call gets a unique one — rapid successive searches must all land, never queue behind each other
   const createSearchHistory = async (input: CreateSearchHistoryInput) => {
     const { createSearchHistory: baseCreateSearchHistory } = getRoomOperationData(input.roomId);
     await executeCreateSearchHistoryMutation(() => $trpc.searchHistory.createSearchHistory.mutate(input), {
@@ -38,9 +36,8 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
     const { items: roomItems } = getSlice(roomStore.currentRoomId);
     const { updateSearchHistory: baseUpdateSearchHistory } = getRoomOperationData(roomStore.currentRoomId);
     await executeUpdateSearchHistoryMutation(() => $trpc.searchHistory.updateSearchHistory.mutate(input), {
-      // Only the fields this write overwrites, on the one row it touches, and read as the write is sent: rows are
-      // Keyed per history entry and never queue against each other, so reinstating the list would undo another
-      // Row's edit or deletion and drop whatever the list gained while this write was in flight
+      // Only the fields this write overwrites, on the one row it touches, and read as the write is sent — rows
+      // Are keyed per history entry and never queue against each other
       applyOptimistic: () => {
         const previousSearchHistory = roomItems.value.find(({ id }) => id === input.id);
         const rollbackSearchHistory = previousSearchHistory && { ...previousSearchHistory };

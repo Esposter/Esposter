@@ -43,9 +43,6 @@ describe(useRoomStore, () => {
   });
 
   // Every room is its own target, so removals overlap: the rejected one has to put back its own room only.
-  // Reinstating the list as it stood would re-add the room the successful removal took out.
-  // The rejection is held until the successful removal has settled in the store — issued together, the reject
-  // Can land first and roll back against a list nothing has shortened yet, which passes either implementation
   test("restores only the room whose deletion was rejected", async () => {
     expect.hasAssertions();
 

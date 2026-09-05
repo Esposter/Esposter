@@ -62,7 +62,6 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     },
   );
 
-  // Terminated here because the frame loop drops what this returns — see the battle scene's own entry point
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput, input: PlayerInput, delta: number) =>
     getResultAsync(async () => {
       if (checkIsPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);

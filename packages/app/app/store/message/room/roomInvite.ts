@@ -16,8 +16,8 @@ export const useRoomInviteStore = defineStore("message/room/roomInvite", () => {
   const revokeInvite = async (input: RevokeInviteInput) => {
     const { items } = getSlice(input.roomId);
     await executeMutation(() => $trpc.room.revokeInvite.mutate(input), {
-      // The one row this write removes, read as the write is sent: revokes of different links do not queue
-      // Against each other, so restoring a copy of the list would resurrect one revoked beside this
+      // The one row this write removes, read as the write is sent — revokes of different links do not queue
+      // Against each other
       applyOptimistic: () => {
         const revokedInvite = items.value.find(({ id }) => id === input.id);
         items.value = items.value.filter(({ id }) => id !== input.id);

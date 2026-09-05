@@ -7,7 +7,7 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
   const isForceMuted = ref(false);
   const isPoppedOut = ref(false);
   const isScreenSharing = ref(false);
-  // ParticipantId → volume multiplier percentage; absent = DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE
+  // `participantId` → volume multiplier percentage; absent = DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE
   const participantVolumePercentageMap = ref(new Map<string, number>());
   const pinnedParticipantId = ref("");
   const selectedVirtualBackground = ref("");
