@@ -23,8 +23,7 @@ describe("reorderRoomCategoriesInputSchema", () => {
     expect(reorderRoomCategoriesInputSchema.safeParse([update, { ...update, position: 1 }]).success).toBe(false);
   });
 
-  // The router runs one UPDATE per element in a single transaction, so the batch is bounded like every other
-  // Batched write, and an empty batch is a transaction that writes nothing
+  // An empty batch is a transaction that writes nothing, and the cap is the same one every batched write takes
   test.each([0, MAX_READ_LIMIT + 1])("rejects a batch of %s updates", (length) => {
     expect.hasAssertions();
 

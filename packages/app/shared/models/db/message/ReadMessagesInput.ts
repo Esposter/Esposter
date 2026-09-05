@@ -5,7 +5,7 @@ import { roomIdSchema, standardMessageEntitySchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 // Azure Table Storage has no real sorting; messages are insert-sorted via a reverse-ticked timestamp rowKey.
-// We still pass a dummy default sortBy because cursor pagination always requires one.
+// The default sortBy stands in because cursor pagination always requires one
 export const readMessagesInputSchema = z
   .object({
     ...createCursorPaginationParamsSchema(standardMessageEntitySchema.keyof(), [CREATED_AT_DESCENDING_SORT_ITEM]).shape,
