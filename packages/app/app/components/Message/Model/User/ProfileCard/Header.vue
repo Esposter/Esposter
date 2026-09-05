@@ -22,7 +22,7 @@ const { displayName, isSelf, user } = defineProps<Props>();
       :id="user.id"
       :image="user.image"
       :name="displayName"
-      :avatar-props="{ size: 64 }"
+      :avatar-props="{ size: '4rem' }"
     />
   </div>
 </template>

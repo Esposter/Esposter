@@ -14,7 +14,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Message/Content/Call` — the media surfaces                                 | 2026-09-05 | `Audio`, `Camera`, `Video`, `ScreenShare`, `VirtualBackground`, `Device`, `Pip`    |
 | `app/components/Message/Content/Call` — the session shell                                  | 2026-09-05 | `Control`, `Panel`, `Participant`, `JoinNotice`, `PreJoin`                         |
 | `app/components/Message/Content/Call` — the entry surfaces                                 | 2026-09-05 | the loose cards, forms and buttons                                                 |
-| `app/components/Message/Content` — the rest                                                | —          | `Header`, `Show` and the room chrome                                               |
+| `app/components/Message/Content` — the rest                                                | 2026-09-05 | `Header`, `Show` and the room chrome                                               |
 | `app/components/Message` — the rest                                                        | —          | `RightSideBar`, `DraftsAndSent`, `Friends`, `LeftSideBar`                          |
 | `app/components/Resource/Sheet`                                                            | —          | the sheet editor's own chrome                                                      |
 | `app/components/Resource/List`                                                             | —          |                                                                                    |
@@ -57,6 +57,9 @@ grep -rnE '(rgb|rgba|hsl)\(--|color-mix\(in srgb, --' --include=*.vue --include=
 # A bare bracket attribute — UnoCSS extracts it as a class token, so the rule it emits is a `.class` the
 # Element never carries. Only the valued form `prop="[...]"` produces an attribute selector
 grep -rnoE '(^|[[:space:]])[a-z][A-Za-z0-9:_-]*-\[[^]"'"'"']*\]([[:space:]/>]|$)' --include=*.vue packages/app/app
+# A Vuetify `size` given a bare number, which renders as px rather than the rem it was authored in. Only
+# `size`: `width`/`height` are dominated by SVG attributes and third-party APIs, where the unit is not ours
+grep -rnE "size: *[0-9]+ *[,}]|[[:space:]:]size=\"[0-9]+\"" --include=*.vue packages/app/app
 # A Vuetify theme colour this theme never registers — `warning`/`success` exist at runtime but generate no
 # Utility, so the attribute form is inert while the `color` prop still works
 grep -rnE '(^|[^-a-z"'"'"'])(bg|text|b)-(warning|success)([^-a-z0-9]|$)' --include=*.vue packages/app/app
