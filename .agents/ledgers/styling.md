@@ -13,7 +13,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Message/Model/User`                                                        | —          | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`                |
 | `app/components/Message/Content/Call` — the media surfaces                                 | 2026-09-05 | `Audio`, `Camera`, `Video`, `ScreenShare`, `VirtualBackground`, `Device`, `Pip`    |
 | `app/components/Message/Content/Call` — the session shell                                  | —          | `Control`, `Panel`, `Participant`, `JoinNotice`, `PreJoin`                         |
-| `app/components/Message/Content/Call` — the entry surfaces                                 | —          | the loose cards, forms and buttons                                                 |
+| `app/components/Message/Content/Call` — the entry surfaces                                 | 2026-09-05 | the loose cards, forms and buttons                                                 |
 | `app/components/Message/Content` — the rest                                                | —          | `Header`, `Show` and the room chrome                                               |
 | `app/components/Message` — the rest                                                        | —          | `RightSideBar`, `DraftsAndSent`, `Friends`, `LeftSideBar`                          |
 | `app/components/Resource/Sheet`                                                            | —          | the sheet editor's own chrome                                                      |
@@ -47,8 +47,8 @@ What a component looks like rather than how it is composed: attributify props ov
 ## Find recipe
 
 ```bash
-# px in a template, style block or rules config — rem is the rule, with narrow exceptions
-grep -rnE '[^a-z-][0-9]+px' --include=*.vue --include=*.scss packages/app/app packages/app/app/rules.config.ts
+# px in a template or a style block — rem is the rule, with narrow exceptions
+grep -rnE '[^a-z-][0-9]+px' --include=*.vue --include=*.scss packages/app/app
 # class= where attributify would do — the survivors should be scoped refs, dynamic bindings, or third-party selectors
 grep -rn 'class="' --include=*.vue packages/app/app/components
 # A bare --variable inside a colour function in an arbitrary value: the token matches, the declaration is
