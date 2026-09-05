@@ -25,7 +25,7 @@
 | `packages/virrun` — the rest of `services/exec`        | —          | bwrap, cache, differential, native, os, store, test, vfs  |
 | `packages/vue-phaserjs`                                | 2026-09-05 | composables, store, models, test setup                    |
 | `packages/xml2js`                                      | 2026-09-05 | `Parser.ts`                                               |
-| repo root — `scripts/`, `.agents/`, root `*.config.ts` | —          | workflow scripts and their tests                          |
+| repo root — `scripts/`, `.agents/`, root `*.config.ts` | 2026-09-05 | workflow scripts and their tests                          |
 
 Greps, per unit:
 

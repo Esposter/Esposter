@@ -1,7 +1,6 @@
 import { setupPluginSuite } from "#scripts/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
-// Both rules are oxlint JS plugins; the harness that runs them over these fixtures is setupPluginSuite.
 const ERROR_RULE = "trpc-procedure/no-hand-rolled-error";
 const RETURN_TYPE_RULE = "trpc-procedure/require-return-type";
 

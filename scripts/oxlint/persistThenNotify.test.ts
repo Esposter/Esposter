@@ -1,13 +1,12 @@
 import { setupPluginSuite } from "#scripts/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
-// The rule is an oxlint JS plugin; the harness that runs it over these fixtures is setupPluginSuite.
 const RULE = "persist-then-notify/no-unhandled-effect-after-emit";
 
 describe(RULE, () => {
   const FIXTURES = [
-    // The exemption this rule used to carry keyed off static AST containment, which cannot tell a later
-    // Iteration from the very next line of the same one — so it silently exempted this, the core hazard.
+    // An exemption keyed off static AST containment cannot tell a later iteration from the very next line of
+    // The same one, so it would exempt this — the core hazard.
     { name: "inLoopAfterEmit", source: `for (const x of xs) { aEventEmitter.emit(x); await g(x); }`, violations: 1 },
     // The batched-purge shape: the write is awaited before the emit, so the frame still has no emit when it
     // Is visited. This is why dropping the loop exemption costs the streaming case nothing.

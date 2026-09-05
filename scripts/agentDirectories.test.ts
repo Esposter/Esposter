@@ -21,7 +21,7 @@ describe(AGENT_DIRECTORY, () => {
       .map((line) => line.trim());
 
   // Only a tool that follows directory symlinks enumerates the tree a second time under the alias, which is why
-  // Oxfmt and git are absent here and present below.
+  // Absent here and present below: oxfmt and git.
   describe(AGENT_ALIAS_DIRECTORY, () => {
     test("is excluded from the root typescript program", () => {
       expect.hasAssertions();
