@@ -24,7 +24,7 @@ const segments = computed(() =>
     <div
       v-for="{ fraction, hue, isLit } of segments"
       :key="fraction"
-      rounded-sm
+      rd-sm
       flex-1
       :style="{ backgroundColor: `hsl(${hue}, 70%, 45%)`, opacity: isLit ? 1 : 0.15 }"
     />

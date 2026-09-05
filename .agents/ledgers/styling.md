@@ -10,7 +10,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Message/Model/Room/Settings/Type` — the rest                               | 2026-09-05 | `Overview`, `Profile`, `AuditLog`, `WordFilter`, `Bans`, `Invite`, `Attachments`   |
 | `app/components/Message/Model/Room/Settings` — the shell                                   | 2026-09-05 | the dialog, its sidebar and the shared field                                       |
 | `app/components/Message/Model/Room` — the rest                                             | 2026-09-05 | `Create`, `DirectMessage`, `Emoji`, `Invite`, `List`, `Role` and the loose dialogs |
-| `app/components/Message/Model/User`                                                        | —          | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`                |
+| `app/components/Message/Model/User`                                                        | 2026-09-05 | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`                |
 | `app/components/Message/Content/Call` — the media surfaces                                 | 2026-09-05 | `Audio`, `Camera`, `Video`, `ScreenShare`, `VirtualBackground`, `Device`, `Pip`    |
 | `app/components/Message/Content/Call` — the session shell                                  | 2026-09-05 | `Control`, `Panel`, `Participant`, `JoinNotice`, `PreJoin`                         |
 | `app/components/Message/Content/Call` — the entry surfaces                                 | 2026-09-05 | the loose cards, forms and buttons                                                 |
@@ -65,6 +65,9 @@ grep -rnoE '(^|[[:space:]])[a-z][A-Za-z0-9:_-]*-\[[^]"'"'"']*\]([[:space:]/>]|$)
 # Are dominated by SVG attributes and third-party APIs, where the unit is not ours
 grep -rnE "(maxWidth|minWidth|maxHeight|minHeight|width|height|size): *[0-9]+ *[,}]" --include=*.vue packages/app/app
 grep -rnE "[[:space:]:](size|(min|max)-(width|height))=\"[0-9]+\"" --include=*.vue packages/app/app
+# A long form where the abbreviation is canonical — `rd` for `rounded`, `op-` for `opacity-`. A bare
+# `rounded` on a Vuetify component is that component's own boolean prop and stays
+grep -rnE "(^|[[:space:]])(rounded(-[a-z0-9]+)?|opacity-[0-9]+)([[:space:]/>]|$)" --include=*.vue packages/app/app
 # A Vuetify helper class where the UnoCSS name belongs — as an attribute it generates nothing at all
 grep -rnE "(^|[^-a-z])font-weight-(thin|light|regular|medium|bold|black)" --include=*.vue packages/app/app
 # A Vuetify theme colour this theme never registers — `warning`/`success` exist at runtime but generate no
