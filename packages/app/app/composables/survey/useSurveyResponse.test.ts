@@ -44,7 +44,7 @@ describe(useSurveyResponse, () => {
   });
 
   // The mutation reports a rejection rather than throwing it, so a caller that wraps the save in a Result
-  // Always takes the success branch — the respondent thanked for a response nothing ever stored
+  // Always takes the success branch, thanking the respondent for a response nothing ever stored
   test("reports a rejected save as unpersisted", async () => {
     expect.hasAssertions();
 

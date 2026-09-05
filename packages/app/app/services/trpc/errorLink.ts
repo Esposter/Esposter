@@ -32,7 +32,8 @@ export const errorLink: TRPCLink<TRPCRouter> =
             // `onScopeDispose` and nothing else here would ever reach it
             const scope = effectScope(true);
             const session = scope.run(() => authClient.useSession());
-            // A pending session reads as an absent one, so the redirect waits for the fetch to settle
+            // A request still in flight is not an absent session — the ref is null while pending, so a pending
+            // Session suppresses the redirect for this invocation rather than throwing an authenticated user out
             const isLoggedOut = Boolean(session && !session.value.isPending && !session.value.data);
             scope.stop();
             if (isLoggedOut) await navigateTo(RoutePath.Login);

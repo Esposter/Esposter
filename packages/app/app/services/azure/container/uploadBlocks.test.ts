@@ -21,7 +21,7 @@ describe(uploadBlocks, () => {
   });
 
   // Put Block List is the only request in the upload that sets the blob's own headers, so sending its XML
-  // Body's type as the blob's stores every upload as XML whatever was in it
+  // Body's type as the blob's would store every upload as XML whatever was in it
   test("stores the blob under the file's own content type", async () => {
     expect.hasAssertions();
 
