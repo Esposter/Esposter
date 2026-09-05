@@ -14,7 +14,7 @@ import { replayTaskCache } from "#src/services/exec/cache/replayTaskCache";
 import { resolveTaskCacheLocation } from "#src/services/exec/cache/resolveTaskCacheLocation";
 import { persistRun } from "#src/services/exec/snapshot/persistRun";
 import { resolveCwd } from "#src/services/exec/util/resolveCwd";
-// PersistRun wrapped with the task cache — the "skip unchanged builds" dev-loop lever (roadmap.md). On a hit the
+// `persistRun` wrapped with the task cache — the "skip unchanged builds" dev-loop lever (roadmap.md). On a hit the
 // Sandbox is skipped: the recorded diff is flushed to the host and the recorded streams + exit code reproduced. On a
 // Miss the run executes (capturing output) and its exit-0 result is recorded. Falls back to a plain persistRun when
 // The cache is off or the key can't be computed (not a git repo / no lockfile).

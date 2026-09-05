@@ -22,7 +22,7 @@
 | `packages/virrun` — `services/exec/wsl`                | 2026-09-05 | the mirror prose is the bulk of the package               |
 | `packages/virrun` — `services/exec/snapshot`           | 2026-09-05 | layers, leases, overlay capture                           |
 | `packages/virrun` — `services/exec/util`               | 2026-09-05 |                                                           |
-| `packages/virrun` — the rest of `services/exec`        | —          | bwrap, cache, differential, native, os, store, test, vfs  |
+| `packages/virrun` — the rest of `services/exec`        | 2026-09-05 | bwrap, cache, differential, native, os, store, test, vfs  |
 | `packages/vue-phaserjs`                                | 2026-09-05 | composables, store, models, test setup                    |
 | `packages/xml2js`                                      | 2026-09-05 | `Parser.ts`                                               |
 | repo root — `scripts/`, `.agents/`, root `*.config.ts` | 2026-09-05 | workflow scripts and their tests                          |
