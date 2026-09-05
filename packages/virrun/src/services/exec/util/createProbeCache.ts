@@ -6,7 +6,7 @@ import { getHostFingerprint } from "#src/services/exec/util/getHostFingerprint";
 // In-process memo short-circuits repeat calls within a run; the persisted cross-process cache (getHostFingerprint-
 // Keyed so it self-invalidates on a kernel change; VIRRUN_FORCE_PROBE bypasses it but never the memo, which is
 // Always sound) reuses a prior process's verdict; only a cold cache runs the probe, then persists the values
-// ShouldPersist selects — a probe that degrades on transient failure passes a non-degraded predicate so the failure
+// The `shouldPersist` predicate selects — a probe that degrades on transient failure passes a non-degraded one so the failure
 // Re-probes next process instead of caching the miss. A probe that throws leaves both tiers unset, so the next call
 // Re-probes. Everything probe-specific — filename, value schema, age bound, which side the cache is stored on —
 // Stays with each probe via readPersistedCache/writePersistedCache; only the tier ordering lives here.

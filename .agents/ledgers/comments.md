@@ -21,7 +21,7 @@
 | `packages/virrun` — `services/cli`, `configuration`    | 2026-09-05 | plus `source`, `vfs`, `virrun`                            |
 | `packages/virrun` — `services/exec/wsl`                | 2026-09-05 | the mirror prose is the bulk of the package               |
 | `packages/virrun` — `services/exec/snapshot`           | —          | layers, leases, overlay capture                           |
-| `packages/virrun` — `services/exec/util`               | —          |                                                           |
+| `packages/virrun` — `services/exec/util`               | 2026-09-05 |                                                           |
 | `packages/virrun` — the rest of `services/exec`        | —          | bwrap, cache, differential, native, os, store, test, vfs  |
 | `packages/vue-phaserjs`                                | 2026-09-05 | composables, store, models, test setup                    |
 | `packages/xml2js`                                      | 2026-09-05 | `Parser.ts`                                               |
