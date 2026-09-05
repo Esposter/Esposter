@@ -4,8 +4,8 @@ What a component looks like rather than how it is composed: attributify props ov
 
 | Unit                                                                                       | Swept      | Notes                                                                         |
 | ------------------------------------------------------------------------------------------ | ---------- | ----------------------------------------------------------------------------- |
-| `app/components/Styled`                                                                    | 2026-08-27 | the shared shells; carries one open finding below                             |
-| `app/components/Message/Model/Message`                                                     | —          | the densest surface; the message row and its variants                         |
+| `app/components/Styled`                                                                    | 2026-09-05 | the shared shells                                                             |
+| `app/components/Message/Model/Message`                                                     | 2026-09-05 | the densest surface; the message row and its variants                         |
 | `app/components/Message/Model/Room`                                                        | —          | settings panels and dialogs                                                   |
 | `app/components/Message/Model/User`                                                        | —          | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`           |
 | `app/components/Message/Content`                                                           | —          |                                                                               |
@@ -28,21 +28,6 @@ What a component looks like rather than how it is composed: attributify props ov
   They are the bulk of what the `px` recipe reports, and none of them is a finding.
 - `app/assets/css/settings.scss`'s breakpoint map — Vuetify's SASS API takes px and computes the rem forms from
   them, so the unit there is the framework's rather than ours.
-
-## Open findings
-
-- **Two inline `:style` object bindings where attributify would do — needs eyes on the page.**
-  `Styled/Button.vue` binds `{ backgroundImage: "var(--midnight-bloom)" }`, a static style on the most-used shell
-  in the app, allocating a fresh object every render; `Styled/EditableNameDialogButton.vue` binds a conditional
-  `pointerEvents`. The attributify forms are `bg-[var(--midnight-bloom)]` and a bound `pointer-events`, but
-  UnoCSS's `bg-[…]` is ambiguous between `background-color` and `background-image` for a gradient value, and
-  `Styled/Dialog.test.ts` asserts the current inline style. Neither can be settled without looking at the rendered
-  page, which no agent here does (`run-app` skill) — so it is a question for a human, not a rewrite to attempt.
-
-- **Two static utility classes that attributify would carry.**
-  `Message/Model/Message/File/ViewerDialog.vue` writes `class="max-h-[80vh]"` on both the video and the image,
-  where the attribute form is `max-h="[80vh]"`. Left for the pass that reads that tree, since the file has no
-  test and the change is only visible on the rendered dialog.
 
 ## Find recipe
 

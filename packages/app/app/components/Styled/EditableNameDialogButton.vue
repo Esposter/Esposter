@@ -55,7 +55,7 @@ const confirmButtonAttrs = computed(() => ({
           <v-hover>
             <template #default="{ isHovering, props: hoverProps }">
               <v-btn
-                :style="{ pointerEvents: isEditable ? undefined : 'none' }"
+                :class="isEditable ? undefined : 'pointer-events-none'"
                 :ripple="false"
                 slim
                 font-bold
