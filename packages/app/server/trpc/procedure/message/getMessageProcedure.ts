@@ -24,9 +24,8 @@ export const getMessageProcedure = <T extends z.ZodType<Pick<MessageEntity, "par
 ) =>
   getMemberProcedure(schema, "partitionKey").use(async ({ ctx, input, next }) => {
     const messageClient = await useTableClient(AzureTable.Messages);
-    // Read through the etag reader rather than getEntity, which drops it: every procedure built here already
-    // Performs this read, so carrying the version it saw costs no extra round trip and is what lets a procedure
-    // Whose write echoes back the whole message blob make that write conditional (see votePoll)
+    // Read through the etag reader rather than getEntity, which drops the version: a procedure whose write
+    // Echoes back the whole message blob makes that write conditional on it (see votePoll)
     const messageEntityWithEtag = await getEntityWithEtag(
       messageClient,
       StandardMessageEntity,

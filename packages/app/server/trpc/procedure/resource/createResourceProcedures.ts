@@ -103,7 +103,7 @@ const generateUploadFileSasEntitiesInputSchema = z.object({
 
 const deleteFileInputSchema = z.object({
   // The client recovers this from the stable asset url, so it is always the single `{id}|{filename}` segment
-  // GetBlobName emits — a separator or a `..` could only ever be an attempt to climb out of {id}/files/
+  // `getBlobName` emits — a separator or a `..` could only ever be an attempt to climb out of {id}/files/
   blobPath: z.string().min(1).max(BLOB_SEGMENT_MAX_LENGTH).regex(BLOB_SEGMENT_REGEX),
   id: selectResourceSchema.shape.id,
 });
@@ -120,7 +120,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
     : []
 ) => {
   const { contentSchema } = ResourceDefinitionMap[type];
-  // Args comes from an unresolved-generic conditional tuple, so the hook params collapse to the
+  // `args` comes from an unresolved-generic conditional tuple, so the hook params collapse to the
   // Intersection of every content type; pin them back to this TType's concrete content shape.
   const { transformPublishedContent } = (args[0] ?? {}) as unknown as PublishableResourceProcedureOptions<
     ResourceContent<TType>
@@ -142,11 +142,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
   >;
   const readContent = async (id: Resource["id"]): Promise<ResourceContent<TType> | undefined> =>
     (await readResourceContent(contentSchema, id)) as ResourceContent<TType> | undefined;
-  // The one snapshot read both published paths go through. It reads through `readContentBlob` because
-  // `BlobClient.download()` rejects on a missing blob rather than returning an empty body: a snapshot the
-  // Unpublish prefix sweep removed between the listing and the click must reach the visitor as the 404 page,
-  // Not as an internal error. The generic contentSchema parses to the union of all content types; the
-  // Concrete caller's TType pins it back down so consumers read their own content shape
+  // Reads through `readContentBlob` because `BlobClient.download()` rejects on a missing blob rather than
+  // Returning an empty body: a snapshot the unpublish prefix sweep removed between the listing and the click
+  // Must reach the visitor as the 404 page, not as an internal error. The generic contentSchema parses to the
+  // Union of all content types, which the concrete caller's TType pins back down to its own content shape
   const readPublishedContent = async (
     resource: Resource,
     publishVersion: ResourcePublication["publishVersion"],
@@ -156,7 +155,6 @@ export const createResourceProcedures = <TType extends ResourceType>(
       getSnapshotContentBlobName(resource.id, SnapshotChannel.Published, publishVersion),
     )) as ResourceContent<TType> | undefined;
     if (content === undefined) throw getNotFoundError(DatabaseEntityType.Resource, resource.id);
-
     // Reconstitution, not a plain read: a snapshot's frozen copy of what the type declares live is replaced
     // Here, so the public read and the owner's version preview answer the same content — and so does the
     // Restore, which reconstitutes through the same declaration
@@ -183,8 +181,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
         return deletedResource;
       },
     ),
-    // Every content write funnels through saveResourceContent, so one save event stream is all it
-    // Takes to keep every other device's view of this resource live
+    // Every content write funnels through saveResourceContent, so this one stream keeps every other device's
+    // View of this resource live
     onSaveResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").subscription(async function* ({
       ctx,
       input: { id },
@@ -221,7 +219,6 @@ export const createResourceProcedures = <TType extends ResourceType>(
               eq: ctx.getSessionPayload.user.id,
             },
           },
-          // Publication state rides along so listings can distinguish published resources without n+1 queries
           with: { publication: true },
         });
         return getOffsetPaginationData(resultResources, limit);
@@ -257,7 +254,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
           id,
         );
         // A tags-only edit is not a rename, so it leaves no Renamed entry.
-        // Fire-and-forget: the activity trail is best-effort and the rename must not wait on telemetry
+        // Best-effort: a failed write loses one trail entry, never the rename.
         if (updatedResource.name !== oldName)
           getSynchronizedFunction(writeResourceActivity)({
             activityType: ResourceActivityType.Renamed,
@@ -316,12 +313,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
         const publishedContent = transformPublishedContent
           ? await transformPublishedContent(ctx, ctx.resource, content)
           : content;
-        // One expression for the publish write, since the repair below repeats it at the same version: a change
-        // To where or how the snapshot is written that landed in only one of the two would diverge silently,
-        // And the copy that only runs on the rare concurrency path is the one nobody would notice
-        // The snapshot's own size, recorded rather than returned so both call sites stay the one expression.
-        // Charged once after the transaction — the repair below rewrites the same blob, and the counter must
-        // Carry whichever write was last
+        // The snapshot's own size, recorded rather than returned: the repair below rewrites the same blob at
+        // The same version, and the charge after the transaction must carry whichever write was last
         let publishedContentBytes = 0;
         const uploadPublishedContent = async (
           publishVersion: ResourcePublication["publishVersion"],
@@ -375,18 +368,16 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // Them. Re-cloning now writes past the bound, and the version is already claimed, so the repair is the
         // Transform and the upload again rather than another publish. A concurrent publish trips this too and
         // Pays one redundant clone; a swept snapshot cannot slip through, because a delete restarts the
-        // Sequence at 1 and any successor this attempt could expect is at least 2.
-        // An attempt that read no row expects to claim 1 — reading the successor off the row alone exempted
-        // Every first publish (and every publish after an unpublish) from the check entirely.
+        // Sequence at 1 and any successor this attempt could expect is at least 2. An attempt that read no row
+        // Expects to claim 1, so the successor is computed from the read rather than off the row alone, which
+        // Would exempt every first publish (and every publish after an unpublish) from the check entirely.
         //
-        // Outside the transaction on purpose, and it cannot move in: the transform may read through `ctx.db`
-        // (Dashboard resolves every bound dataset), which deadlocks against a transaction this same connection
-        // Holds. So the publication has already landed by the time the repair runs, and the transaction's
-        // Guarantee is unaffected — the version it claimed does point at a blob that was written. What a failed
-        // Repair leaves behind is that blob still naming the swept assets, i.e. a live publication whose images
-        // 404. The rejection is therefore reported rather than swallowed, and says so: republishing re-clones and
-        // Overwrites, so the owner's own retry is what repairs it, and a silent success would leave the page
-        // Broken with nothing to signal it. See /docs/architecture/publishing
+        // Outside the transaction on purpose, and it cannot move in — the transform deadlocks against one this
+        // Same connection holds, as above. So the publication has already landed by the time the repair runs, and
+        // The transaction's guarantee is unaffected: the version it claimed does point at a blob that was
+        // Written. What a failed repair leaves behind is that blob still naming the swept assets, i.e. a live
+        // Publication whose images 404 — so the rejection is reported rather than swallowed, because a silent
+        // Success would leave the page broken with nothing to signal it. See /docs/architecture/publishing
         if (publication.publishVersion !== (previousPublication?.publishVersion ?? 0) + 1)
           await getResultAsync(async () =>
             uploadPublishedContent(
@@ -398,7 +389,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
             // Which of them tripped the check is not knowable from here, so the cause is carried rather than
             // Asserted: a sweep by a concurrent unpublish, the redundant re-clone a concurrent publish pays, and
             // A transform that rejects outright (a dataset deleted since the first pass) all arrive identically.
-            // Naming one of them told an owner their assets were swept when nothing had been. A TRPCError already
+            // Naming one of them tells an owner their assets were swept when nothing was. A TRPCError already
             // States what happened in the code the client branches on, so it is rethrown as it is
             if (error instanceof TRPCError) throw error;
 
@@ -420,7 +411,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
           getSnapshotContentBlobName(id, SnapshotChannel.Published, publication.publishVersion),
           publishedContentBytes,
         );
-        // Fire-and-forget: the activity trail is best-effort and the publish must not wait on telemetry
+        // Best-effort: a failed write loses one trail entry, never the publish.
         getSynchronizedFunction(writeResourceActivity)({
           activityType: ResourceActivityType.Published,
           publishVersion: publication.publishVersion,
@@ -452,7 +443,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
 
         const content = await readPublishedContent(resource, resource.publication.publishVersion);
         // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets.
-        // Fire-and-forget: the increment swallows its own failures and the viewer must never wait on telemetry
+        // Best-effort: a failed increment loses one view, never the page.
         getSynchronizedFunction(incrementResourceViewCount)(input);
         return { content, name: resource.name };
       }),
@@ -476,25 +467,24 @@ export const createResourceProcedures = <TType extends ResourceType>(
         .delete(resourcePublications)
         .where(eq(resourcePublications.resourceId, id))
         .returning();
-      // Best-effort after the publications delete, but durable: a lingering blob stays downloadable to anyone
-      // Still holding a cached short-lived SAS, and unpublished snapshots must not linger regardless — cleanup
-      // Goes through the one blob-deletion publish every delete funnels through (/docs/architecture/persist-then-notify)
-      // The snapshot directory grows with every retained publication, so the handler enumerates it — walking
-      // It here would put an unbounded listing on the unpublish request itself.
       // Only when a row was actually removed: an unpublish that deletes nothing was never publishing anything,
-      // So every effect below it is a phantom — sweeping regardless is what let a stale tab wipe the assets a
-      // Concurrent FIRST publish had just cloned (the sweep's bound is stamped after those clones, and a delete
-      // That removed no row leaves the version sequence untouched, so the publish's own successor check cannot
-      // See it either), and an activity entry or a push to the owner's other devices would report a state
-      // Change that never happened
+      // So every effect below it is a phantom. Sweeping regardless lets a stale tab wipe the assets a concurrent
+      // FIRST publish has just cloned — the sweep's bound is stamped after those clones, and a delete that
+      // Removed no row leaves the version sequence untouched, so the publish's own successor check cannot see it
+      // Either — and an activity entry or a push to the owner's other devices would report a state change that
+      // Never happened
       if (!deletedPublication) return ctx.resource;
+      // Best-effort after the publications delete, but durable: a lingering blob stays downloadable to anyone
+      // Still holding a cached short-lived SAS, and unpublished snapshots must not linger regardless. The
+      // Snapshot directory grows with every retained publication, so the handler enumerates it — walking it here
+      // Would put an unbounded listing on the unpublish request itself.
       await publishBlobPrefixDeletion(
         id,
         AzureContainer.ResourceAssets,
         `${id}/${SnapshotChannel.Published}`,
         new Date(),
       );
-      // Fire-and-forget: the activity trail is best-effort and the unpublish must not wait on telemetry
+      // Best-effort: a failed write loses one trail entry, never the unpublish.
       getSynchronizedFunction(writeResourceActivity)({
         activityType: ResourceActivityType.Unpublished,
         resourceId: id,

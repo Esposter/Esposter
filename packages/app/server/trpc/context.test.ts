@@ -64,9 +64,6 @@ vi.mock(
   }),
 );
 
-// The Azure client mocks are registered in `shared/test/setup.ts`, not here — only the session mock above needs
-// This module's state, and a registration written here never reaches a test file's own direct import.
-
 // The identity every test reads to learn who it is acting as. One session for the whole run, unlike the ones a
 // Request is handed, so a test comparing what it read against what it passed is comparing the same device
 const defaultGetSessionPayload: GetSessionPayload = {
@@ -125,7 +122,7 @@ export const replayMockSession = (getSessionPayload: GetSessionPayload) => {
   mocks.getSession.mockResolvedValueOnce(getSessionPayload);
 };
 
-// Simulates an unauthenticated request for the next call — better-auth returns null when no session exists
+// `better-auth` answers null when no session exists, which is what an unauthenticated request looks like
 export const mockNoSessionOnce = () => {
   mocks.getSession.mockResolvedValueOnce(null as unknown as GetSessionPayload);
 };

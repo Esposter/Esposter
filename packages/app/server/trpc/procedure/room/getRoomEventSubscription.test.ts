@@ -91,8 +91,6 @@ describe(getRoomEventSubscription, () => {
     expect(data).toStrictEqual(role);
   });
 
-  // A device-less event was caused by no single client, so there is no emitting device to skip and the
-  // Subscriber receives it on the very device the emitting call was made from
   test("yields a device-less event to the device that caused it", async () => {
     expect.hasAssertions();
 
