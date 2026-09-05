@@ -16,8 +16,8 @@ describe(parseTmx, () => {
     expect(tmxParsed).toStrictEqual(new TMXParsed());
   });
 
-  // Disabled for runtime: snapshots every .tmx fixture under maps/, which the parser output for is stable.
-  // Re-enable on any parseTmx change to regenerate against the committed __snapshots__.
+  // Left as a todo for runtime: it snapshots every .tmx fixture under maps/, whose output only moves when
+  // The parser does. Re-enable on a parseTmx change to regenerate against the committed __snapshots__.
   test.todo("snapshots", { timeout: Temporal.Duration.from({ seconds: 60 }).total("milliseconds") }, async () => {
     expect.hasAssertions();
 

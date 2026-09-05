@@ -11,8 +11,7 @@ import { parseNode } from "#src/util/parseNode";
 import { parseTileset } from "#src/util/parseTileset";
 import { parseXmlString } from "#src/util/parseXmlString";
 import { exhaustiveGuard } from "@esposter/shared";
-// We will match phaser's tmx => json tilemap export transformation
-// But also support extra functionality like using external tilesets
+// Matches phaser's tmx => json tilemap export transformation, and additionally supports external tilesets.
 export const parseTmx = async (xmlString: string, translateFlips = false): Promise<TMXParsed> => {
   const {
     map: { $, $$ },

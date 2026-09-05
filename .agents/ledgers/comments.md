@@ -8,7 +8,7 @@
 | `packages/configuration`                                | —          | external lists, `global.d.ts`                             |
 | `packages/db`, `packages/db-mock`, `packages/db-schema` | —          | schema + models                                           |
 | `packages/infra`                                        | —          | event subscriptions, GitHub rulesets                      |
-| `packages/parse-tmx`                                    | —          | `TMXNode.ts`                                              |
+| `packages/parse-tmx`                                    | 2026-09-05 | `TMXNode.ts`                                              |
 | `packages/shared`, `packages/shared-node`               | 2026-09-05 | `takeOne`                                                 |
 | `packages/virrun`                                       | —          | the WSL mirror prose is the bulk of it                    |
 | `packages/vue-phaserjs`                                 | —          | composables, store, models, test setup                    |
