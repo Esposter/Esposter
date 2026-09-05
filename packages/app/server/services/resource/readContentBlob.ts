@@ -11,8 +11,8 @@ export const readContentBlob = async <TSchema extends z.ZodType>(
   contentSchema: TSchema,
   blobName: string,
 ): Promise<undefined | z.infer<TSchema>> => {
-  // BlobClient.download() rejects on a missing blob, so treat a genuine 404 as "no content yet"
-  // While letting transient Azure or parse failures surface as an internal error instead of a false empty.
+  // A missing blob rejects, so a genuine 404 reads as "no content yet" while transient Azure or parse failures
+  // Surface as an internal error rather than a false empty
   const { readableStreamBody } = await getResultAsync(() => useDownload(AzureContainer.ResourceAssets, blobName)).match(
     (response) => response,
     (error) => {
@@ -21,8 +21,6 @@ export const readContentBlob = async <TSchema extends z.ZodType>(
     },
   );
   if (!readableStreamBody) return undefined;
-  // Parse the blob as plain JSON: the content schema owns date coercion (z.coerce.date()) on its
-  // Genuine date fields, so ISO-datetime strings in free-text fields (e.g. Sheet cells) survive as strings.
   // eslint-disable-next-line no-restricted-syntax -- the content schema owns date coercion, so free-text ISO strings survive
   return contentSchema.parse(JSON.parse(await streamToText(readableStreamBody)));
 };

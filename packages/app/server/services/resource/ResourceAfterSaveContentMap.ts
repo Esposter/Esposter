@@ -6,10 +6,9 @@ import { scheduleTodoReminders } from "@@/server/services/resource/todoList/sche
 import { ResourceType } from "@esposter/db-schema";
 
 // The one registry of after-content-write hooks, receiving the prior content for diffing (undefined when the
-// Content is written for the first time). Every hook is best-effort and fire-and-forget: it must never fail
-// Or delay the write. Registered per type here rather than handed to one procedure factory, because a hook
-// Reachable from only one of the paths that write content is a resource whose reminders, schedules or
-// Derived state exist or not depending on which door the content came through
+// Content is written for the first time). A hook that fails costs whatever it derives, never the write. Held per
+// Type here rather than handed to one procedure factory, so no hook is reachable from only some of the paths
+// That write content
 export const ResourceAfterSaveContentMap: {
   [TType in ResourceType]?: (
     ctx: AuthedContext,

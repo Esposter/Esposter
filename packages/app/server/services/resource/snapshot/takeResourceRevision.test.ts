@@ -108,8 +108,7 @@ describe(takeResourceRevision, () => {
   });
 
   // The counter is the ring's position, so eviction is one publish rather than a walk of the prefix on every
-  // Save — and it goes through the deletion event so the evicted revision's bytes are given back with it,
-  // Rather than leaking the owner's quota for every revision they ever roll past
+  // Save, and it goes through the deletion event that gives the evicted revision's bytes back
   test("evicts the oldest revision once the ring buffer is full", async () => {
     expect.hasAssertions();
 

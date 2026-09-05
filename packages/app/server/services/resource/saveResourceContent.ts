@@ -22,37 +22,32 @@ import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 interface SaveResourceContentInput {
-  // What the trail records for this write. Omitted only where `createResourceRow` has already opened the trail
-  // With the entry that says how the resource came to exist — a `ContentSaved` beside a `Duplicated` or a
-  // Blueprint deploy's `Created` would claim the owner edited a resource they have not opened yet
+  // What the trail records for this write. Omitted where `createResourceRow` has already opened the trail with
+  // The entry saying how the resource came to exist — a `ContentSaved` beside a `Duplicated` would claim the
+  // Owner edited a resource they have not opened yet
   activityType?: ResourceActivityType.ContentSaved | ResourceActivityType.Restored;
-  // What the blob now holds, already asset-cloned where the path took its content from somewhere else, since
-  // That is what every reader — the hook, the other devices, the next load — gets back
+  // What the blob now holds, already asset-cloned where the content came from somewhere else, since this is
+  // What every reader gets back
   content: unknown;
   resource: Resource;
   // Bumps `contentVersion` inside the same transaction as the blob write, and returns the updated row.
   // Omitted for a resource's first content write, where there is no version any client caches yet
   updateContentVersion?: (tx: Transaction) => Promise<Resource>;
 }
-// The durable write and everything that must follow it, as one unit — the save event that keeps the owner's
-// Other devices live, the activity entry, and the type's registered after-save hook. The editor's save,
-// Blueprint deploy, duplicate and restore all write their content through here, so none of them can write
-// Content while silently missing one of those; the alternative is a resource whose reminders, schedules or
-// Derived state exist or not depending on which door its content came through
+// The durable write and everything that must follow it, as one unit: the save event, the activity entry and the
+// Type's after-save hook. Every door — editor save, blueprint deploy, duplicate, restore — writes through here,
+// So a resource's reminders, schedules and derived state cannot depend on which door its content came through
 export const saveResourceContent = async (
   ctx: AuthedContext,
   { activityType, content, resource, updateContentVersion }: SaveResourceContentInput,
 ): Promise<Resource> => {
   const { id } = resource;
-  // The first save after a quiet spell keeps a point the owner can return to, and every save after it within
-  // The window keeps none. Only an ordinary save: a restore and a blueprint deploy take (or do not need) their
-  // Own, and a first content write has no prior state to preserve. Before the write, because what is worth
-  // Keeping is what this save is about to replace — and awaited rather than fired off, since a revision racing
-  // The write it precedes would snapshot the content it was meant to come before.
-  //
-  // Best-effort, and only here: a safety net that failed must not fail the autosave it was protecting. Every
-  // Other trigger throws, because they exist to make one deliberate destructive act undoable.
-  // See /docs/platform/resource-snapshots
+  // The first save after a quiet spell keeps a point the owner can return to; every save inside the window keeps
+  // None. Ordinary saves only — a restore and a blueprint deploy take their own, and a first write has no prior
+  // State. Before the write, since what is worth keeping is what this save replaces, and awaited so a revision
+  // Cannot snapshot the content it was meant to precede. Best-effort only here: a failed safety net must not fail
+  // The autosave it was protecting, where every other trigger throws to keep one deliberate destructive act
+  // Undoable (/docs/platform/resource-snapshots)
   if (
     activityType === ResourceActivityType.ContentSaved &&
     Date.now() - resource.updatedAt.getTime() >= SNAPSHOT_IDLE_WINDOW_MS
@@ -61,18 +56,15 @@ export const saveResourceContent = async (
       noop,
       console.error,
     );
-  // The content is parsed here rather than at each door, because this is the door: `content` arrives as
-  // `unknown` and everything downstream — the blob, the save event, the type's after-save hook — reads it as
-  // The type's own shape, so a caller that hands over content it never parsed reaches the hook with strings
-  // Where it declares Dates (a blueprint manifest carries every entry's content as `z.unknown()`, so a
-  // Deployed TodoList's `dueAt` is the ISO string its reminder scheduler calls `.getTime()` on). Parsing at
-  // The one path means no caller can be the one that forgets, and a caller that already parsed pays an
-  // Idempotent second pass
+  // Parsed here rather than at each door, because this is the door: `content` arrives as `unknown` and everything
+  // Downstream reads it as the type's own shape, so an unparsed caller reaches the hook with strings where it
+  // Declares Dates — a blueprint manifest carries content as `z.unknown()`, so a deployed TodoList's `dueAt` is
+  // The ISO string its reminder scheduler calls `.getTime()` on. A caller that already parsed pays an idempotent
+  // Second pass
   const parsedContent: unknown = ResourceDefinitionMap[resource.type].contentSchema.parse(content);
-  // Read the prior content before the write overwrites it, so an after-save hook can diff against it
-  // (undefined on the first write). Only paid when a hook is registered for this type. Best-effort: the hook
-  // Itself is best-effort, so an unreadable or schema-invalid prior blob degrades to "no previous content"
-  // Instead of blocking the write of valid new content
+  // Read before the write overwrites it, so an after-save hook can diff against it (undefined on the first
+  // Write). Only paid where a hook is registered, and best-effort like the hook itself: an unreadable prior blob
+  // Degrades to "no previous content" rather than blocking a valid write
   const previousContent: unknown = ResourceAfterSaveContentMap[resource.type]
     ? await getResultAsync(() =>
         readResourceContent(ResourceDefinitionMap[resource.type].contentSchema, id),
@@ -81,10 +73,9 @@ export const saveResourceContent = async (
         () => undefined,
       )
     : undefined;
-  // Whether the upload was *attempted*, which is what decides how a failed save unwinds. Not whether it resolved:
-  // An upload that rejects may still have landed the blob (a response lost after the write), and the two mistakes
-  // Are not equal — clearing a binding whose upload never landed costs one fallback blob read, while leaving one
-  // Whose upload did land is the fail-open case this whole dance exists to prevent
+  // Whether the upload was attempted, which is what decides how a failed save unwinds — not whether it resolved,
+  // Since an upload that rejects may still have landed the blob. The mistakes are unequal: clearing a binding
+  // Whose upload never landed costs one fallback blob read, leaving one whose upload did land fails open
   let isContentBlobWriteAttempted = false;
   const serializedContent = JSON.stringify(parsedContent);
   const contentBlobName = getContentBlobName(id);
@@ -92,11 +83,10 @@ export const saveResourceContent = async (
     isContentBlobWriteAttempted = true;
     await useUpload(AzureContainer.ResourceAssets, contentBlobName, serializedContent);
   };
-  // Projected here rather than in an after-save hook, and written in the same transaction as the blob. Every
-  // Hook in `ResourceAfterSaveContentMap` is best-effort by contract, and this column is read by
-  // `resolveIdentifiedToken` to decide whether a participant token was issued for the survey being answered —
-  // A binding that lags its blob is an authorization answer computed from content that is no longer there,
-  // And one still naming an unbound survey answers yes to a token the owner has already revoked
+  // Projected here rather than in an after-save hook, which is best-effort by contract, and written in the
+  // Transaction the blob is: `resolveIdentifiedToken` reads this column to decide whether a participant token was
+  // Issued for the survey being answered, so a binding that lags its blob authorizes against content that is
+  // Gone, and one still naming an unbound survey answers yes to a revoked token
   const projectBoundResourceId = ResourceBoundResourceIdMap[resource.type];
   const boundResourceId = projectBoundResourceId?.(parsedContent as never) ?? null;
   // Only when it moved: most saves to a bound type leave the binding alone, and an unbound type has no
@@ -120,19 +110,18 @@ export const saveResourceContent = async (
         )
         .returning()
     )[0];
-  // The binding is cleared inside the transaction and set after it commits, and never holds a value the blob does
-  // Not back. `resolveIdentifiedToken` reads null as "ask the blob", so null is the one value that can never be
-  // Wrong — which makes it what every partial outcome has to land on:
+  // The binding is cleared inside the transaction and set after it commits, so it never holds a value the blob
+  // Does not back. `resolveIdentifiedToken` reads null as "ask the blob", making null the one value that can
+  // Never be wrong — which is what every partial outcome lands on:
   //
   // - the version check loses to a concurrent save: the clear rolls back with it, so the winner's binding stands
-  //   Rather than being flattened by the save that lost
-  // - the transaction fails after the upload: the rollback restores a binding describing content that is already
-  //   Gone, which for an unbind is fail-open — so the clear is reapplied outside the transaction
+  // - the transaction fails after the upload: the rollback restores a binding for content that is already gone,
+  //   Which for an unbind is fail-open, so the clear is reapplied outside the transaction
   // - it commits: the new binding is written after, once the content it describes is durable
   //
-  // The bump and the blob stay in one transaction so a failed write rolls the bump back — a write that did not
-  // Land must never advance the version every client caches against. A first write has no version to protect,
-  // And wrapping it would only hold a pooled connection across a storage round trip
+  // The bump and the blob share one transaction so a failed write rolls the bump back — a write that did not land
+  // Must never advance the version every client caches against. A first write has no version to protect, and
+  // Wrapping it would hold a pooled connection across a storage round trip
   let savedResource = resource;
   if (updateContentVersion)
     savedResource = await getResultAsync(() =>
@@ -153,12 +142,11 @@ export const saveResourceContent = async (
     if (hasBoundResourceIdChanged) await writeBoundResourceId(ctx.db, null);
     await writeContentBlob();
   }
-  // The owner is charged for their own content the same way they are for the files they upload into it — from
-  // Here, because this write knows its own size, and a blob with no reserve behind it has no ledger row for
-  // `BlobCreated` to find. `resource.userId`, not the caller: a blueprint deploy or a restore writes on the
-  // Owner's behalf. After the transaction rather than inside it — the charge takes the ledger row's lock and
-  // Then the user's, and holding a save's transaction open across those is a second connection waiting on
-  // Locks this one is not going to release. See /docs/platform/storage-quotas
+  // The owner is charged for their own content as for any upload, from here because this write knows its size
+  // And a blob with no reserve behind it has no ledger row for `BlobCreated` to find. `resource.userId`, not the
+  // Caller: a blueprint deploy or a restore writes on the owner's behalf. After the transaction, because the
+  // Charge takes the ledger row's lock and then the user's, and a save's transaction held open across those is a
+  // Connection waiting on locks it will not release (/docs/platform/storage-quotas)
   await chargeAndEmitStorageLedgerEntry(
     ctx.db,
     resource.userId,
@@ -167,8 +155,8 @@ export const saveResourceContent = async (
     Buffer.byteLength(serializedContent),
   );
   // Guarded on the version this save established: the bump is what orders two saves, and this write lands after
-  // The transaction that made it, so without the guard a save that committed first can still overwrite the
-  // Binding of one that committed after it. No row back means superseded — the newer binding stands
+  // The transaction that made it, so unguarded a save that committed first could overwrite a later one's binding.
+  // No row back means superseded
   if (hasBoundResourceIdChanged)
     savedResource =
       (await writeBoundResourceId(ctx.db, boundResourceId, savedResource.contentVersion)) ?? savedResource;
@@ -177,8 +165,8 @@ export const saveResourceContent = async (
     { content: parsedContent, contentVersion: savedResource.contentVersion, id },
     { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
   ]);
-  // Fire-and-forget: the activity trail is best-effort and autosave must not pay its coalescing table scan
-  // On every write the user is waiting on
+  // Not awaited — a failure costs one activity row, and the coalescing scan it does would otherwise land on
+  // Every write the user is waiting on
   if (activityType)
     getSynchronizedFunction(writeResourceActivity)({
       activityType,

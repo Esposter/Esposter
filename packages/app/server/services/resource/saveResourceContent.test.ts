@@ -46,9 +46,8 @@ vi.mock(import("@@/server/composables/azure/container/useUpload"), async (import
 });
 
 // The one place a resource's content blob is written, so its whole tail — the save event, the activity entry
-// And the type's registered after-save hook — is asserted here once. Every path that writes content (the
-// Editor's save, blueprint deploy, duplicate, restore) keeps only a wiring test proving it comes through here.
-// TodoList is the representative type: it is the one with a registered after-save hook
+// And the type's registered after-save hook — is asserted here once. TodoList is the representative type: it is
+// The one with a registered after-save hook
 const readActivityTypes = () =>
   [...(MockTableDatabase.get(AzureTable.ResourceActivity)?.values() ?? [])].map(
     ({ activityType }) => activityType as ResourceActivityType,
@@ -122,9 +121,9 @@ describe(saveResourceContent, () => {
     await mockContext.db.update(users).set({ storageBytesUsed: 0 });
   });
 
-  // Autosave fires on every coalesced keystroke batch, so a revision per save would burn the owner's quota
-  // While they type and grow a listing nothing bounds. One per idle window is the ceiling, which is what makes
-  // This recovery across sessions rather than a second undo stack
+  // Autosave fires on every coalesced keystroke batch, so a revision per save would burn the owner's quota while
+  // They type and grow an unbounded listing. One per idle window makes this recovery across sessions rather than
+  // A second undo stack
   test("keeps no revision for a save inside the idle window", async () => {
     expect.hasAssertions();
 
@@ -177,7 +176,6 @@ describe(saveResourceContent, () => {
             .returning(),
         ),
     });
-    // The hook and the activity entry are fire-and-forget off the write, so drain them before asserting
     await waitForSynchronizedFunctions();
     const storedContent = await readResourceContent(contentSchema, resource.id);
     assert.exists(saveEvent);
@@ -276,10 +274,10 @@ describe(saveResourceContent, () => {
     expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([createReminder(resource.id)]);
   });
 
-  // The blob is not transactional, so a transaction that fails *after* the upload cannot be rolled back to match
-  // It. For a Program that means the row can outlive the content it describes — and an unbind is the fail-open
-  // Direction, because `resolveIdentifiedToken` reads the column and would keep accepting tokens the owner just
-  // Revoked. So the failure has to land on null, which the resolver reads as "ask the blob"
+  // The blob is not transactional, so a transaction failing after the upload cannot be rolled back to match it:
+  // For a Program the row can outlive the content it describes, and an unbind is the fail-open direction because
+  // `resolveIdentifiedToken` would keep accepting tokens the owner just revoked. So the failure lands on null,
+  // Which the resolver reads as "ask the blob"
   test("leaves no stale binding when the save fails after the content is written", async () => {
     expect.hasAssertions();
 
@@ -321,10 +319,10 @@ describe(saveResourceContent, () => {
     await expect(readBoundResourceId(program.id)).resolves.toBe(surveyId);
   });
 
-  // The binding is stored after the transaction that bumped the version, so a save that commits first can still
-  // Reach that write last and flatten a newer save's binding. The version this save established guards it.
-  // Stood in for rather than raced: the callback bumps the row the way a save that beat this one would have,
-  // And returns the row this save wrote — which is exactly the pair of facts the losing save holds
+  // The binding is stored after the transaction that bumped the version, so a save committing first can reach
+  // That write last and flatten a newer save's binding, which the established version guards against. Stood in
+  // For rather than raced: the callback bumps the row the way the save that beat this one would have, and returns
+  // The row this save wrote — the pair of facts the losing save holds
   test("leaves a newer save's binding alone when its own version has been superseded", async () => {
     expect.hasAssertions();
 

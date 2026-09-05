@@ -85,8 +85,7 @@ describe(transformPublishedBlobUrls, () => {
   });
 
   // A foreign published url names another resource's publication directory, which that resource's next unpublish
-  // Wipes wholesale — carried verbatim it would leave this snapshot's images 404ing on an operation this owner
-  // Never performed. Blueprint-deployed content carries exactly such urls.
+  // Wipes wholesale. Blueprint-deployed content carries exactly such urls
   test("clones a foreign published reference rather than carrying it verbatim", async () => {
     expect.hasAssertions();
 
