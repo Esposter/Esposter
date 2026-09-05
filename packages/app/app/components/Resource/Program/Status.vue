@@ -51,7 +51,7 @@ await readStatus();
 <template>
   <div p-6 flex flex-col gap-4>
     <div flex flex-wrap gap-4 items-center>
-      <span text-h6>Status</span>
+      <span text-title-large>Status</span>
       <v-spacer />
       <span op-medium-emphasis>
         {{ isRespondedPartial ? "at least " : "" }}{{ respondedCount }} of {{ statusRows.length }} responded

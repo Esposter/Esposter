@@ -54,7 +54,7 @@ onMounted(async () => {
 
 <template>
   <div p-6 flex flex-col gap-4>
-    <span text-h6>Essentials</span>
+    <span text-title-large>Essentials</span>
     <StyledSkeleton v-if="isPending" type="article" />
     <v-card v-else>
       <v-card-text>

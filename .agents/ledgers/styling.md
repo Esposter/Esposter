@@ -40,6 +40,13 @@ grep -rn 'class="' --include=*.vue packages/app/app/components
 
 ## Next enforceable
 
+- An MD2 typography utility (`text-h6`, `text-caption`, `text-subtitle-1`, `text-medium-emphasis`) is a closed
+  set of names, and as an **attribute** it generates nothing at all — Vuetify ships those as classes, so the
+  attribute form is inert and reads on the page as no typography rather than as the wrong typography. A test over
+  the tree decides it; an oxlint plugin cannot, because oxlint hands a JS plugin no Vue template
+  (`scripts/oxlint/errorAlert.ts` says the same about inline handlers). The generic form — every `text-*`
+  attribute in a template resolving to a rule the config generates — catches typos too, and needs an extraction
+  that can tell an attributify utility from a Vuetify `text` prop.
 - `px` outside the skill's named exceptions is a regex against templates and style blocks; a custom oxlint plugin or a test over the tree decides it.
 - A Vuetify global default restated on a component is decidable by comparing the tag's props against the defaults object.
 - Theme primitive vs bespoke colour needs the palette in mind and a judgement about intent; it stays with the sweep.

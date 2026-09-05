@@ -17,7 +17,7 @@ const { truncation } = defineProps<Props>();
     <template #activator="{ props }">
       <div flex gap-1 items-center :="props">
         <v-icon color="warning" icon="mdi-alert-outline" size="small" />
-        <span text-caption op-medium-emphasis>{{ getDatasetTruncationText(truncation) }}</span>
+        <span text-hint>{{ getDatasetTruncationText(truncation) }}</span>
       </div>
     </template>
   </v-tooltip>

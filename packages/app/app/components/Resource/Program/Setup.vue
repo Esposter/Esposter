@@ -37,12 +37,12 @@ watchAutosave(programResource, saveProgram);
 
 <template>
   <div p-6 flex flex-col gap-4 max-w-xl>
-    <span text-h6>Audience</span>
+    <span text-title-large>Audience</span>
     <div flex flex-wrap gap-4>
       <DatasetReferencePicker v-model="audience" />
     </div>
     <v-select v-model="programResource.keyColumn" max-width="16rem" :items="keyColumns" label="Key column" />
-    <span text-h6>Bindings</span>
+    <span text-title-large>Bindings</span>
     <v-select v-model="programResource.emailId" max-width="16rem" :items="emailIds" label="Email" />
     <v-select v-model="programResource.surveyId" max-width="16rem" :items="surveyIds" label="Survey" />
   </div>

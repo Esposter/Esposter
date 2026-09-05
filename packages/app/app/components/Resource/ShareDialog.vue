@@ -88,7 +88,7 @@ const share = async () => {
     <div v-else flex flex-col gap-2>
       <v-select v-model="roomId" autofocus label="Room" :items="roomItems" />
       <v-textarea v-model="note" :counter="MESSAGE_MAX_LENGTH" label="Message (optional)" rows="3" :rules="noteRules" />
-      <span text-caption op-medium-emphasis>The public link is posted as your own message in the room.</span>
+      <span text-hint>The public link is posted as your own message in the room.</span>
     </div>
   </StyledFormDialog>
 </template>

@@ -9,7 +9,7 @@ const { isPoppedOut } = storeToRefs(mediaStore);
   <div p-8 text-center flex flex-1 flex-col gap-y-4 items-center justify-center>
     <v-icon icon="mdi-picture-in-picture-bottom-right" size="4rem" text-primary />
     <div flex flex-col gap-y-1>
-      <span text-h6>Your call is in a mini player</span>
+      <span text-title-large>Your call is in a mini player</span>
       <span text-hint>The call moved to a picture-in-picture window.</span>
     </div>
     <v-btn color="primary" variant="tonal" prepend-icon="mdi-arrow-expand" @click="isPoppedOut = false">

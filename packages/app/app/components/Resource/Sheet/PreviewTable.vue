@@ -23,7 +23,7 @@ const previewRows = computed(() => dataSource.rows.slice(0, SHEET_IMPORT_PREVIEW
 
 <template>
   <div flex flex-col gap-2>
-    <span text-caption op-medium-emphasis>
+    <span text-hint>
       Showing first {{ previewRows.length }} of {{ dataSource.rows.length }}
       {{ pluralize("row", dataSource.rows.length) }}
     </span>
