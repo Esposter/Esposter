@@ -8,7 +8,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Message/Model/Message`                                                     | 2026-09-05 | the densest surface; the message row and its variants                              |
 | `app/components/Message/Model/Room/Settings/Type/Role`, `Webhook`, `Emoji`, `Member`       | 2026-09-05 | the settings panels that own a list and an editor                                  |
 | `app/components/Message/Model/Room/Settings/Type` — the rest                               | —          | `Overview`, `Profile`, `AuditLog`, `WordFilter`, `Bans`, `Invite`, `Attachments`   |
-| `app/components/Message/Model/Room/Settings` — the shell                                   | —          | the dialog, its sidebar and the shared field                                       |
+| `app/components/Message/Model/Room/Settings` — the shell                                   | 2026-09-05 | the dialog, its sidebar and the shared field                                       |
 | `app/components/Message/Model/Room` — the rest                                             | —          | `Create`, `DirectMessage`, `Emoji`, `Invite`, `List`, `Role` and the loose dialogs |
 | `app/components/Message/Model/User`                                                        | —          | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`                |
 | `app/components/Message/Content/Call` — the media surfaces                                 | 2026-09-05 | `Audio`, `Camera`, `Video`, `ScreenShare`, `VirtualBackground`, `Device`, `Pip`    |
@@ -54,6 +54,8 @@ grep -rn 'class="' --include=*.vue packages/app/app/components
 # A bare --variable inside a colour function in an arbitrary value: the token matches, the declaration is
 # Invalid, and the whole property is dropped with nothing to see (styling/references/arbitrary-values.md)
 grep -rnE '(rgb|rgba|hsl)\(--|color-mix\(in srgb, --' --include=*.vue --include=*.scss packages/app/app
+# A numeric opacity spelling out an emphasis token — op-60 is medium, op-87 is high; op-0/op-100 are reveals
+grep -rnE '(^|[^-a-z0-9])op-(38|60|87)([^0-9]|$)' --include=*.vue packages/app/app
 # An emphasis name used as a colour: they are opacity utilities, so b-/bg-/text- prefixed they generate nothing
 grep -rnE '(^|[^-a-z])(b|bg|text)-(medium|high)-emphasis' --include=*.vue packages/app/app
 ```
