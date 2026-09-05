@@ -13,7 +13,7 @@
 | `packages/app` — `server/trpc/routers` subtrees        | 2026-09-05 | `message`, `room`, `call`                                |
 | `packages/app` — the rest of `server/trpc`             | 2026-09-05 | `guards`, `middleware`, `procedure`, `plugins`, root     |
 | `packages/app` — `server/services/resource`            | 2026-09-05 |                                                          |
-| `packages/app` — `server/services/message`             | —          |                                                          |
+| `packages/app` — `server/services/message`             | 2026-09-05 |                                                          |
 | `packages/app` — `server/services` — the dense rest    | —          | `blueprint`, `azure`, `storage`, `survey`, `program`     |
 | `packages/app` — the rest of `server/services`         | —          |                                                          |
 | `packages/app` — the rest of `server`                  | —          | `models`, `composables`, `api`, `plugins`, `db`, root    |

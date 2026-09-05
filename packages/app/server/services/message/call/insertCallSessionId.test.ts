@@ -29,8 +29,8 @@ describe("insertCallSessionId", () => {
   test("rethrows a failure that is not a collision rather than inviting a retry", async () => {
     expect.hasAssertions();
 
-    // The bug this pins: swallowed, a dead connection burns every attempt and then surfaces as an
-    // Id-allocation failure, which is the one thing that did not go wrong
+    // Swallowed, a dead connection burns every attempt and then surfaces as an id-allocation failure, which is
+    // The one thing that did not go wrong
     const db = createDb(() => Promise.reject(Object.assign(new Error("connection terminated"), { code: "57P01" })));
 
     await expect(insertCallSessionId(db, { userId })).rejects.toThrow("connection terminated");

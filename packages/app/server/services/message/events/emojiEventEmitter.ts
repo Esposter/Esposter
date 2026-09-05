@@ -6,8 +6,6 @@ import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/Update
 import { EventEmitter } from "node:events";
 
 interface EmojiEvents {
-  // We need to know who actually operated on the emoji
-  // So we don't send duplicate events back to the original user
   createEmoji: [[MessageEmojiMetadataEntity, Device]];
   deleteEmoji: [[DeleteEmojiInput, Device]];
   updateEmoji: [[Pick<MessageEmojiMetadataEntity, "userIds"> & UpdateEmojiInput, Device]];

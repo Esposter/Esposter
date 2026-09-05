@@ -51,9 +51,9 @@ export const createUserMessage = async (
   // Strictly before the publish below, for the reason `createReplyThreadFollows` states
   await getResultAsync(() => createReplyThreadFollows(db, messageClient, newMessageEntity)).match(noop, console.error);
   // One notification for the send, thread reply or not: the room's own recipients and the thread's followers are
-  // One recipient set resolved by ProcessNotification, so a reply can no longer notify a follower twice and this
-  // Path no longer pays for a recipient query it was only running to decide whether to publish at all.
-  // Best-effort after the Table write — a failed publish loses one notification, never the message that landed
+  // One recipient set resolved by ProcessNotification, so a follower is never notified twice and this path runs
+  // No recipient query of its own. Best-effort after the Table write — a failed publish loses one notification,
+  // Never the message that landed
   await getResultAsync(() =>
     publishNotification(useEventGridPublisherClient(), {
       message: {
