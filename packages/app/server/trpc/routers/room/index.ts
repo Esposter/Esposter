@@ -148,7 +148,7 @@ export const baseRoomRouter = router({
           .delete(invitesInMessage)
           .where(and(eq(invitesInMessage.roomId, roomId), eq(invitesInMessage.userId, ctx.getSessionPayload.user.id)));
         // The creator rides back with the row because the management panel lists one column of them, and the
-        // Session carries the auth user rather than this table's
+        // Session carries the auth user rather than this table's row
         const user = await requireEntity(
           tx.query.users.findFirst({ where: { id: { eq: ctx.getSessionPayload.user.id } } }),
           DatabaseEntityType.User,
@@ -593,7 +593,7 @@ export const baseRoomRouter = router({
     async ({ ctx, input: { id, roomId } }) => {
       // A member revokes their own link; revoking anybody's is `ManageRoom`, not `ManageInvites`. The default
       // Role carries `ManageInvites` so that every member can mint a link at all, which makes it the wrong gate
-      // For a control over other people's
+      // For a control over other people's links
       const { user } = ctx.getSessionPayload;
       const isInviteManager = await checkHasPermission(ctx.db, user.id, roomId, RoomPermission.ManageRoom);
       const wheres = [eq(invitesInMessage.id, id), eq(invitesInMessage.roomId, roomId)];

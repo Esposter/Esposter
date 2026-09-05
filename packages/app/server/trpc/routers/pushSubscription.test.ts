@@ -13,8 +13,8 @@ import { takeOne } from "@esposter/shared";
 import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
-// What the Azure Function receives: the message as stored, and the thread root when the send was a reply. Who it
-// Reaches is resolved at delivery from these fields alone, against the rules getMessageRecipientUserIds owns
+// What the Azure Function receives: the message as stored, and the thread root when the send was a reply.
+// Recipients are resolved at delivery from these fields alone, against the rules getMessageRecipientUserIds owns
 const createMessageNotificationData = (
   messageText: string,
   partitionKey: string,

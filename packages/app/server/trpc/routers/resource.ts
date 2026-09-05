@@ -161,7 +161,7 @@ const deleteResourcesInputSchema = z.object({
 });
 // Appended to a duplicated resource's name; the base name is truncated so the whole stays within the length check
 const DUPLICATE_NAME_SUFFIX = " (copy)";
-// Backed by the resources_name_trgm_index GIN index
+// Not index-backed — resources_name_trgm_index serves the `ilike` arm below, not a `similarity()` inequality
 const getSearchSimilarity = (searchQuery: string) => sql`similarity(${resources.name}, ${searchQuery})`;
 // One row shape for every resource list, doubling as the sort space: a column a list can show is a column it
 // Can sort by, and no list can be handed a key its query cannot order by

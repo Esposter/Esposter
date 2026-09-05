@@ -61,7 +61,8 @@ describe("sheet", () => {
     const newResource = await caller.createResource({ name });
     const column = new StringColumn({ name: "column", sourceName: "column" });
     // A full ISO datetime is exactly the shape `jsonDateParse` would revive into a Date, which
-    // `columnValueSchema` (boolean | null | number | string) then rejects — failing the whole read.
+    // `columnValueSchema` (boolean | null | number | string) would then reject — so the cell has to come back
+    // As the string it was stored as
     const cell = "2026-07-15T09:00:00Z";
     const row = new Row({ data: { [column.id]: cell } });
     const sheetResource: SheetResource = {
