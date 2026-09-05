@@ -17,4 +17,7 @@ export const grapesJsEditorSchema = z
     ...aItemEntitySchema.shape,
     pages: z.unknown().array().min(1),
   })
+  // Every GrapesJS key a model does not name — styles, assets, symbols — rides through here. A subclass
+  // Schema is built by spreading `.shape`, which copies fields and nothing else, so each one re-declares
+  // The catchall or silently strips the editor's own state on parse
   .catchall(z.unknown()) satisfies z.ZodType<ToData<AGrapesJsEditor>>;

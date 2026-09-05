@@ -1,8 +1,8 @@
 export enum EffectType {
   Additive = "Additive",
-  // Adds value based on number of specific buildings we have
+  // Adds value based on how many of the named buildings are owned
   BuildingAdditive = "BuildingAdditive",
-  // Considers all buildings except for buildings we specify
+  // Considers every building except the named ones
   BuildingAdditiveNor = "BuildingAdditiveNor",
   Multiplicative = "Multiplicative",
 }

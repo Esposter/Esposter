@@ -19,9 +19,9 @@
 | `packages/app` — the rest of `server`                  | 2026-09-05 | `models`, `composables`, `api`, `plugins`, `db`, root    |
 | `packages/app` — `shared/models/resource`              | 2026-09-05 |                                                          |
 | `packages/app` — `shared/models/db`                    | 2026-09-05 |                                                          |
-| `packages/app` — the rest of `shared/models`           | —          |                                                          |
+| `packages/app` — the rest of `shared/models`           | 2026-09-05 |                                                          |
 | `packages/app` — `shared/services`                     | 2026-09-05 |                                                          |
-| `packages/app` — the rest of `shared`                  | —          | `util`, `types`, `assets`, `test`                        |
+| `packages/app` — the rest of `shared`                  | 2026-09-05 | `util`, `types`, `assets`, `test`                        |
 | `packages/app` — `configuration`, `content`            | 2026-09-05 | CSP labels, Nuxt config prose                            |
 | `packages/azure-functions` — `handlers`                | 2026-09-05 | the densest prose in the package                         |
 | `packages/azure-functions` — `services`, the rest      | 2026-09-05 | plus `functions`, `hooks`, `models`, `index.test.ts`     |

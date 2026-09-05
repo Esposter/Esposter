@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export interface Statistics {
   attack: number;
-  // This is used to calculate the amount of experience you gain when defeating the monster
+  // The experience a defeat of this monster awards is calculated from it
   baseExperience: number;
   defense: number;
   level: number;

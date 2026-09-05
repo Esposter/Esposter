@@ -1,6 +1,5 @@
 import { z } from "zod";
-// This is different from statistics and is more dynamic
-// As it reflects the current status based on gameplay
+// What gameplay has done to the monster so far, as opposed to the statistics it was defined with
 export interface Status {
   experience: number;
   health: number;
