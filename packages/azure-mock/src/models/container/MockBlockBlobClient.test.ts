@@ -47,7 +47,7 @@ describe(MockBlockBlobClient, () => {
     );
   });
 
-  // GetProperties and a listing describe the same blob, so seeded content reads as pre-existing on both
+  // A listing and `getProperties` describe the same blob, so seeded content reads as pre-existing on both
   test("reports a seeded blob's dates from getProperties", async () => {
     expect.hasAssertions();
 

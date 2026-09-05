@@ -161,8 +161,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     return {
       byPage: () =>
         async function* (this: MockContainerClient): AsyncGenerator<ContainerListBlobHierarchySegmentResponse> {
-          // For a simple mock, we'll return all entities in a single page
-          // A more complex mock could implement maxPageSize and continuationTokens
+          // Every blob comes back in one page: `maxPageSize` and continuation tokens are not implemented
           const allBlobItems: BlobItem[] = [];
           const allBlobItemXml: string[] = [];
           const allBlobPrefixes: { name: string }[] = [];
@@ -200,8 +199,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     return {
       byPage: () =>
         async function* (this: MockContainerClient): AsyncGenerator<ContainerListBlobFlatSegmentResponse> {
-          // For a simple mock, we'll return all entities in a single page
-          // A more complex mock could implement maxPageSize and continuationTokens
+          // Every blob comes back in one page: `maxPageSize` and continuation tokens are not implemented
           const allBlobItems: BlobItem[] = [];
           const allBlobItemXml: string[] = [];
           for await (const blobItem of blobItemIterator) {
@@ -258,18 +256,13 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     const blobsInCurrentLevel: BlobItem[] = [];
 
     for (const [name, buffer] of this.container.entries()) {
-      if (!name.startsWith(prefix))
-        // Filter by prefix
-        continue;
+      if (!name.startsWith(prefix)) continue;
 
       const nameAfterPrefix = name.slice(prefix.length);
       const delimiterIndex = nameAfterPrefix.indexOf(delimiter);
 
-      if (delimiterIndex === -1)
-        // No delimiter found after the prefix, so it's a blob at this level
-        blobsInCurrentLevel.push(this.#getBlobItem(name, buffer, options?.includeMetadata));
+      if (delimiterIndex === -1) blobsInCurrentLevel.push(this.#getBlobItem(name, buffer, options?.includeMetadata));
       else {
-        // Delimiter found, this represents a "subdirectory"
         const subprefix = `${prefix}${nameAfterPrefix.slice(0, delimiterIndex + delimiter.length)}`;
         uniqueSubprefixes.add(subprefix);
       }
