@@ -17,7 +17,7 @@
 | `packages/infra`                                       | 2026-09-05 | event subscriptions, GitHub rulesets                      |
 | `packages/parse-tmx`                                   | 2026-09-05 | `TMXNode.ts`                                              |
 | `packages/shared`, `packages/shared-node`              | 2026-09-05 | `takeOne`                                                 |
-| `packages/virrun` — `models`, package root             | —          |                                                           |
+| `packages/virrun` — `models`, package root             | 2026-09-05 |                                                           |
 | `packages/virrun` — `services/cli`, `configuration`    | —          | plus `source`, `vfs`, `virrun`                            |
 | `packages/virrun` — `services/exec/wsl`                | —          | the mirror prose is the bulk of the package               |
 | `packages/virrun` — `services/exec/snapshot`           | —          | layers, leases, overlay capture                           |

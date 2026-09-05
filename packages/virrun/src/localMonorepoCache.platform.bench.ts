@@ -19,11 +19,11 @@ import { join } from "node:path";
 import { afterAll, bench, describe } from "vitest";
 // End-to-end value of the os backend's warm-cache LAYERS, as a 3-way comparison on a real workspace command:
 // Cold (empty cache) vs +snapshot (deps warm, prepare cold) vs +snapshot+prepare (both warm). Complements
-// LocalMonorepo.platform.bench.ts (native vs os), which answers the orthogonal "is the warm sandbox competitive
+// `localMonorepo.platform.bench.ts` (native vs os), which answers the orthogonal "is the warm sandbox competitive
 // With native?"; this one answers "what is each cache layer worth?". Baseline = cold (declared first, no `native`
 // Task), so the reporter renders each warm layer as a speedup multiplier: cold − (+snapshot) is the install the
 // SNAPSHOT layer saves, (+snapshot) − (+snapshot+prepare) is the `nuxt prepare` the PREPARE layer saves. Gated on
-// IsSandboxInstallSupported (stronger than checkIsOsBackendSupported — cold performs a real install, so node/pnpm must be
+// `isSandboxInstallSupported` (stronger than checkIsOsBackendSupported — cold performs a real install, so node/pnpm must be
 // Reachable and $HOME writable). A `.platform.bench.ts`: the os backend runs os/linux natively and os/wsl bridged
 // From win32, so each host writes its own committed artifact.
 //
@@ -63,7 +63,7 @@ const restoreCacheHome = (): void => {
   else process.env[VIRRUN_CACHE_HOME_KEY] = previousCacheHome;
 };
 // One createVirrun run over the clean checkout through the production fork path (ensureSnapshot → ensurePrepareLayer →
-// ForkSnapshot), so each state is realized purely from what its cache home holds — and the per-invocation lease/
+// `forkSnapshot`), so each state is realized purely from what its cache home holds — and the per-invocation lease/
 // Prune/loadSource cost a real `virrun -- <cmd>` pays is inside the timing. The cache-home redirect is restored in the
 // Finalizer so a throw mid-run (createVirrun/fork) can't strand the wrong home for the next task or bench file.
 const run = async (home: string): Promise<void> => {
@@ -97,7 +97,7 @@ if (isSandboxInstallSupported) {
 afterAll(() => {
   if (!isSandboxInstallSupported) return;
   restoreCacheHome();
-  // RemoveSnapshotDirectory (not rmSync) handles the mode-000 overlay work dir and, on win32, the \\wsl.localhost
+  // `removeSnapshotDirectory` (not rmSync) handles the mode-000 overlay work dir and, on win32, the \\wsl.localhost
   // UNC teardown. Safe unconditionally: these homes are bench-owned leaves, never the developer's real cache.
   removeSnapshotDirectory(COLD_HOME);
   removeSnapshotDirectory(SNAPSHOT_HOME);
