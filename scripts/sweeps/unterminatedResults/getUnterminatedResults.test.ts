@@ -59,6 +59,26 @@ describe(getUnterminatedResults, () => {
     expect(getUnterminatedResults("const wrapped = getResultOrDefault(fn);")).toStrictEqual([]);
   });
 
+  test("does not read a name the call is only the tail of as the call", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults("const wrapped = mygetResult(fn);")).toStrictEqual([]);
+  });
+
+  // Whitespace and a block comment are trivia to the grammar, so the `(` they sit in front of still opens this
+  // Call's argument list
+  test("reports a call written with a space before its bracket", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults("getResult (fn);")).toStrictEqual([{ after: ";", line: 1 }]);
+  });
+
+  test("reports nothing for a terminated call a comment splits from its bracket", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults("getResult /* note */ (fn).match(noop, console.error);")).toStrictEqual([]);
+  });
+
   // The scan reads code rather than text, so a call written inside either is not one
   test("reports nothing for a call quoted inside a string", () => {
     expect.hasAssertions();

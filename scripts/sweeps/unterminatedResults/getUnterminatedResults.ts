@@ -4,8 +4,10 @@ import { scanCode } from "#scripts/sweeps/scanCode";
 
 const ASYNC_NAME = "getResultAsync";
 const CALL_REGEX = /getResult/gu;
+const IDENTIFIER_REGEX = /[$\p{ID_Continue}]/u;
 const NAME = "getResult";
 const TERMINATOR_REGEX = /^\.(?:andTee|andThen|mapErr|map|match|orElse|orTee|unwrapOr)/u;
+const TRIVIA_REGEX = /^(?:\s+|\/\/.*|\/\*[\s\S]*?\*\/)+/u;
 const AFTER_LENGTH = 34;
 
 // A `Result` nothing terminates fails silently, and no line-anchored grep can see it: the terminator sits after
@@ -17,7 +19,9 @@ const AFTER_LENGTH = 34;
 //
 // The name is matched in the code and then re-read from the **source**, because `scanCode` drops the bracket:
 // In the code alone `getResult(fn)` reads as `getResultfn`, so no lookahead can tell a call from a longer
-// Identifier, and only the source says whether a `(` opens right after the name.
+// Identifier, and only the source says whether a `(` opens the argument list. Both edges of the name are read
+// There: an identifier character before it means the match sits inside a longer name, and the `(` is looked for
+// Past whatever whitespace or comment the source writes between the two, which is trivia to the grammar.
 export const getUnterminatedResults = (text: string): UnterminatedResult[] => {
   const tokens = [...scanCode(text)];
   const code = tokens.map(([character]) => character).join("");
@@ -27,8 +31,12 @@ export const getUnterminatedResults = (text: string): UnterminatedResult[] => {
     const start = tokens[match.index];
     if (!start) continue;
 
+    const previous = text[start[2] - 1];
+    if (previous !== undefined && IDENTIFIER_REGEX.test(previous)) continue;
+
     const name = text.startsWith(ASYNC_NAME, start[2]) ? ASYNC_NAME : NAME;
-    if (text[start[2] + name.length] !== "(") continue;
+    const afterName = text.slice(start[2] + name.length).replace(TRIVIA_REGEX, "");
+    if (!afterName.startsWith("(")) continue;
 
     const after = tokens
       .slice(match.index + name.length)
