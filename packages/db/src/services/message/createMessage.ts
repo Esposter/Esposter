@@ -20,9 +20,9 @@ export const createMessage = async <T extends CreateMessageInput>(
   // The index row goes first, and the order is load-bearing: two tables cannot be written atomically, so
   // Whichever lands second decides what a rejection MEANS to the caller. `Messages` is what every read serves,
   // And `MessagesAscending` is only an index into it — one whose orphans `readMessages` already drops when the
-  // Join finds no entity. Writing `Messages` first made a rejection ambiguous: the message could already be live
-  // In the room, which is what let `sendScheduledMessageNow` re-enqueue an already-delivered job and post it
-  // Twice. This way a rejection always means nothing is readable, which is what every caller's rollback assumes.
+  // Join finds no entity. Written the other way round a rejection is ambiguous — the message may already be live
+  // In the room — which is what would let `sendScheduledMessageNow` re-enqueue an already-delivered job and post
+  // It twice. This way a rejection always means nothing is readable, which every caller's rollback assumes.
   // The residual cost is a window in which the index names a message the join cannot yet serve: an ascending page
   // Landing inside it skips that message, and the client is told about it by the subscription instead.
   const ascendingRowKey = getReverseTickedTimestamp(messageEntity.rowKey);

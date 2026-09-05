@@ -8,7 +8,7 @@
 | `packages/configuration`                               | 2026-09-05 | external lists, `global.d.ts`                             |
 | `packages/db-mock`                                     | 2026-09-05 |                                                           |
 | `packages/db` — `services/azure`                       | 2026-09-05 | table, container and event-grid helpers                   |
-| `packages/db` — `services/message`                     | —          | moderation, threads, mentions                             |
+| `packages/db` — `services/message`                     | 2026-09-05 | moderation, threads, mentions                             |
 | `packages/db` — the rest of `services`, `models`       | 2026-09-05 | notification, resource, room, storage                     |
 | `packages/db-schema` — `models`                        | 2026-09-05 | entity classes, Azure payloads                            |
 | `packages/db-schema` — `schema`, `relations`           | 2026-09-05 | tables and their v2 relations                             |

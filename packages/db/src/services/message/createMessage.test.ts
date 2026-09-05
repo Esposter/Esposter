@@ -46,7 +46,7 @@ describe(createMessage, () => {
     const messageEntity = await createMessage(messageClient, messageAscendingClient, input);
 
     // The order is the behaviour, not an implementation detail: it is what makes a rejection mean nothing is
-    // Readable, so asserting only the index arguments would pass against the reverse order this replaced
+    // Readable, so asserting only the index arguments would pass just as well against the reverse order
     expect(takeOne(messageAscendingMock.createEntity.mock.invocationCallOrder)).toBeLessThan(
       takeOne(messageMock.createEntity.mock.invocationCallOrder),
     );
