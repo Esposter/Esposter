@@ -11,7 +11,6 @@ import { z } from "zod";
 export class WebhookMessageEntity extends BaseMessageEntity<MessageType.Webhook> {
   appUser: SetOptional<Pick<AppUserInMessage, "id" | "image" | "name">, "image" | "name">;
   override type: MessageType.Webhook = MessageType.Webhook;
-  // Webhook messages don't have a direct user author
   userId?: undefined;
 
   constructor(init?: Partial<WebhookMessageEntity> & ToData<CompositeKeyEntity>) {

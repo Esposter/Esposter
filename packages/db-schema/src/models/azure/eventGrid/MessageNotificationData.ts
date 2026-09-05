@@ -7,8 +7,8 @@ import { AppNotificationType } from "#src/models/notification/AppNotificationTyp
 import { z } from "zod";
 
 // One event for every message, thread reply included: threadRootRowKey is what a reply adds, and it widens the
-// Recipient set (the thread's followers on top of the room's) rather than raising a second event. That is what
-// Retires the excludedUserIds handshake the two-event shape needed to stop one reply notifying a follower twice.
+// Recipient set (the thread's followers on top of the room's) rather than raising a second event, which would
+// Notify anyone following both the thread and the room twice.
 //
 // The author is carried as an id, never as a resolved name and avatar. A message send is a request the member is
 // Waiting on, and the nickname lookup that renders the notification has no business being on it — the Function

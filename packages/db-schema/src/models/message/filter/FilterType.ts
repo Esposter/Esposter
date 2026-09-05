@@ -10,7 +10,6 @@ export enum FilterType {
   During = "During",
   After = "After",
   Pinned = "Pinned",
-  // AuthorType = "AuthorType",
 }
 
 export const filterTypeSchema = z.enum(FilterType) satisfies z.ZodType<FilterType>;

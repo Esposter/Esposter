@@ -10,7 +10,7 @@
 | `packages/db` — `services/azure`                       | —          | table, container and event-grid helpers                   |
 | `packages/db` — `services/message`                     | —          | moderation, threads, mentions                             |
 | `packages/db` — the rest of `services`, `models`       | —          | notification, resource, room, storage                     |
-| `packages/db-schema` — `models`                        | —          | entity classes, Azure payloads                            |
+| `packages/db-schema` — `models`                        | 2026-09-05 | entity classes, Azure payloads                            |
 | `packages/db-schema` — `schema`, `relations`           | —          | tables and their v2 relations                             |
 | `packages/db-schema` — `services`, package root        | —          | `schema.test.ts`, `pgTable.ts`                            |
 | `packages/infra`                                       | —          | event subscriptions, GitHub rulesets                      |

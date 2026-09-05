@@ -17,5 +17,4 @@ export const SearchFilterComponentMap = {
   [FilterType.Pinned]: defineAsyncComponent(
     () => import("@/components/Message/RightSideBar/Search/Filter/PinPicker.vue"),
   ),
-  // [FilterType.AuthorType]: null,
 } as const satisfies Record<FilterType, Component>;
