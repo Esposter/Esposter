@@ -2,7 +2,7 @@ import { Grid } from "@/models/dungeons/Grid";
 import { Direction } from "grid-engine";
 import { describe, expect, test, vi } from "vitest";
 
-// Grid-engine re-exports Phaser, which touches `window` and a canvas context at import — neither of which this
+// `grid-engine` re-exports Phaser, which touches `window` and a canvas context at import — neither of which this
 // Class uses. Only the direction enum is real machinery here, so it is the only thing the mock supplies
 vi.mock(import("grid-engine"), () => ({
   Direction: {

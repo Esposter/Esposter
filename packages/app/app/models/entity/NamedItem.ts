@@ -4,9 +4,7 @@ import type { ItemEntityType, ToData } from "@esposter/shared";
 import { aNamedItemEntitySchema } from "#shared/models/entity/ANamedItemEntity";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
-// This is not directly used when creating new classes
-// But is only used as a convenient wrapper type for helper functions
-// To enforce that all entities implement Item
+// Not a base to extend: it is the constraint a helper takes so every entity it accepts implements Item
 export type Item = ANamedItemEntity & ItemEntityType<string>;
 
 export const itemSchema = z.object({

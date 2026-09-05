@@ -5,13 +5,13 @@
 | `packages/app` — `app/components`                      | 2026-09-05 | the densest prose in the app                             |
 | `packages/app` — `app/services`, `app/util`            | —          |                                                          |
 | `packages/app` — `app/composables`                     | —          |                                                          |
-| `packages/app` — `app/models`, `app/types`             | —          |                                                          |
+| `packages/app` — `app/models`, `app/types`             | 2026-09-05 | the dungeons tree's legacy prose                         |
 | `packages/app` — `app/store`                           | 2026-09-05 | the rollback rationale, restated per call site           |
-| `packages/app` — `app/pages`, `layouts`, the rest      | —          | plus `middleware`, `plugins`, `assets`                   |
+| `packages/app` — `app/pages`, `layouts`, the rest      | 2026-09-05 | plus `middleware`, `plugins`, `assets`                   |
 | `packages/app` — `server/trpc`                         | —          |                                                          |
 | `packages/app` — the rest of `server`                  | —          | services, routes, plugins                                |
 | `packages/app` — `shared`                              | —          |                                                          |
-| `packages/app` — `configuration`, `content`            | —          |                                                          |
+| `packages/app` — `configuration`, `content`            | 2026-09-05 | CSP labels, Nuxt config prose                            |
 | `packages/azure-functions` — `handlers`                | 2026-09-05 | the densest prose in the package                         |
 | `packages/azure-functions` — `services`, the rest      | 2026-09-05 | plus `functions`, `hooks`, `models`, `index.test.ts`     |
 | `packages/azure-mock`                                  | 2026-09-05 | filter/search/container mocks                            |
