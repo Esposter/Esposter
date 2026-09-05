@@ -20,15 +20,10 @@ import { TRPCError } from "@trpc/server";
 import { and, count, eq, gt, isNull, lte, sum } from "drizzle-orm";
 
 // The gate every upload SAS passes through. Read-then-check would not hold on its own: a client firing many
-// Upload requests concurrently has them all read the same low usage, all pass, and all upload. So everything
-// That decides — the outstanding holds, the decision, the new rows — happens behind the user row's lock, which
-// Is what makes concurrent reserves serialize instead of racing.
-//
-// The counter itself only ever carries bytes that are actually stored; a hold that has not landed yet lives in
-// The ledger and is summed in here. That is what makes an abandoned upload need no cleanup at all: past
-// `expiresAt` its write SAS is dead, so the row simply stops counting. Nothing has to run to release it.
-// Callers mint the SAS first and reserve after: signing is local and has no effect on Azure, so a rejection
-// Here means the client never receives a write target.
+// Upload requests concurrently has them all read the same low usage, all pass, and all upload — so everything
+// That decides happens behind the user row's lock. The counter itself only ever carries bytes that are actually
+// Stored, and a hold that has not landed yet lives in the ledger and is summed in here
+// (/docs/platform/storage-quotas)
 export const reserveStorageBytes = async (
   db: Context["db"],
   userId: User["id"],
@@ -41,20 +36,14 @@ export const reserveStorageBytes = async (
   const now = new Date();
   const expiresAt = new Date(now.getTime() + WRITE_SAS_DURATION_MS);
   // A row must outlive every `BlobCreated` that can still name it, or a retry of one whose blob did land finds
-  // No row, charges nothing, and reports no failure. Storage checks a SAS when it receives the request, not when
-  // It finishes, so the last PUT a write SAS authorizes STARTS at `expiresAt` and its event is raised whenever
-  // That upload completes; Event Grid then keeps retrying it for `EVENT_GRID_DELIVERY_TTL_MS`. The completion
-  // Allowance is the SAS's own duration reused — a bound already in hand, and orders of magnitude beyond what a
-  // `MAX_FILE_REQUEST_SIZE` PUT takes — so nothing new can drift from the policy. See /docs/platform/storage-quotas
+  // No row, charges nothing and reports no failure. The completion allowance is the SAS's own duration reused, so
+  // Nothing new can drift from the policy (/docs/platform/storage-quotas)
   const collectableBefore = new Date(now.getTime() - (EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS));
   await db.transaction(async (tx) => {
-    // `storageLedger` before `users`, the order every path that touches both takes — a release and a reconcile
-    // Lock the ledger row first and move the counter second, so a reserve that took the user row first would
-    // Close a lock cycle with them and deadlock. See /docs/platform/storage-quotas
-    //
-    // The collectable holds are dropped, so the ledger stays bounded without anything sweeping it. They never
-    // Entered the counter, so removing them moves nothing — it is pure garbage collection, and it rides the one
-    // Write path this user already makes
+    // `storageLedger` before `users`, the order every path that touches both takes, so a reserve cannot close a
+    // Lock cycle with a concurrent release or reconcile (/docs/platform/storage-quotas). The collectable holds
+    // Ride this write path rather than a sweep of their own; they never entered the counter, so dropping them
+    // Moves nothing
     await tx
       .delete(storageLedger)
       .where(
@@ -70,10 +59,9 @@ export const reserveStorageBytes = async (
       .where(eq(users.id, userId))
       .for("update");
     if (!user) throw getNotFoundError(DatabaseEntityType.User, userId);
-    // Read behind that lock, so a concurrent reserve cannot see the same outstanding set and pass on it.
-    // Expiry is what stops a hold counting, not the collection above — a row is kept past `expiresAt` only so a
-    // Late `BlobCreated` can still find it, and a dead write target must never hold space or a slot in the
-    // Meantime
+    // Read behind that lock, so a concurrent reserve cannot see the same outstanding set and pass on it. Expiry
+    // Is what stops a hold counting, not the collection above — a row outlives `expiresAt` only so a late
+    // `BlobCreated` can still find it
     const [pendingTotals] = await tx
       .select({ pendingBytes: sum(storageLedger.declaredBytes), pendingReservationCount: count() })
       .from(storageLedger)
