@@ -6,7 +6,7 @@
 | `packages/azure-functions`                             | —          |                                                           |
 | `packages/azure-mock`                                  | 2026-09-05 | filter/search/container mocks                             |
 | `packages/configuration`                               | 2026-09-05 | external lists, `global.d.ts`                             |
-| `packages/db-mock`                                     | —          |                                                           |
+| `packages/db-mock`                                     | 2026-09-05 |                                                           |
 | `packages/db` — `services/azure`                       | —          | table, container and event-grid helpers                   |
 | `packages/db` — `services/message`                     | —          | moderation, threads, mentions                             |
 | `packages/db` — the rest of `services`, `models`       | —          | notification, resource, room, storage                     |

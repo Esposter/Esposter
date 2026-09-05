@@ -7,13 +7,12 @@ import { relations } from "@esposter/db-schema";
 import { drizzle } from "drizzle-orm/pglite";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-// Loads a pre-migrated data directory snapshot instead of running migrations at runtime.
-// This skips PGlite's `initdb` boot + migration generation, cutting ~2.3s per call down to ~0.9s.
-// Regenerate the snapshot with `pnpm snapshot:gen` whenever the schema changes.
-// The createMockDb.test.ts verification fails if the committed snapshot drifts from the schema.
 // The snapshot is immutable, so the read is shared across every call in a worker instead of hitting disk per database
 let snapshotPromise: ReturnType<typeof readFile> | undefined;
 
+// Loads a pre-migrated data directory snapshot instead of running migrations at runtime, which skips
+// PGlite's `initdb` boot and migration generation and takes well under half the time per call.
+// Regenerate the snapshot with `pnpm snapshot:gen` whenever the schema changes.
 export const createMockDb = async (): Promise<Database> => {
   snapshotPromise ??= readFile(join(import.meta.dirname, SNAPSHOT_FILENAME));
   const loadDataDir = new Blob([await snapshotPromise]);
