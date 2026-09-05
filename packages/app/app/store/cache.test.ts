@@ -21,7 +21,7 @@ describe(useCacheStore, () => {
     registerCache([CacheTag.Recents], invalidateRecents);
     await invalidateTags([CacheTag.Resources]);
 
-    expect(invalidateResources).toHaveBeenCalledTimes(1);
+    expect(invalidateResources).toHaveBeenCalledExactlyOnceWith();
     expect(invalidateRecents).not.toHaveBeenCalled();
   });
 
@@ -35,7 +35,7 @@ describe(useCacheStore, () => {
     registerCache([CacheTag.Recents, CacheTag.Resources], invalidate);
     await invalidateTags([CacheTag.Recents, CacheTag.Resources]);
 
-    expect(invalidate).toHaveBeenCalledTimes(1);
+    expect(invalidate).toHaveBeenCalledExactlyOnceWith();
   });
 
   // The write that invalidated it resolves after its caches have caught up, so the surface that triggered the

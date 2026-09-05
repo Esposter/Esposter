@@ -55,7 +55,7 @@ describe(useAutoSearch, () => {
     searchQuery.value = "";
     await flushPromises();
 
-    expect(reset).toHaveBeenCalledTimes(1);
+    expect(reset).toHaveBeenCalledExactlyOnceWith();
 
     searchQuery.value = searchQueryValue;
     await flushPromises();
