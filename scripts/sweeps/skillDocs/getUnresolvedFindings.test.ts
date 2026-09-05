@@ -30,7 +30,7 @@ describe(getUnresolvedFindings, () => {
           { path, text: "the `b` skill's `references/a.md`" },
           { path: ".agents/skills/b/SKILL.md", text: "" },
         ],
-        new Set([path, ".agents/skills/b/references/a.md"]),
+        new Set([".agents/skills/b/references/a.md", path]),
       ),
     ).toStrictEqual([]);
   });
