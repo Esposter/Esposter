@@ -14,7 +14,7 @@
 | `packages/db-schema` — `models`                        | 2026-09-05 | entity classes, Azure payloads                            |
 | `packages/db-schema` — `schema`, `relations`           | 2026-09-05 | tables and their v2 relations                             |
 | `packages/db-schema` — `services`, package root        | 2026-09-05 | `schema.test.ts`, `pgTable.ts`                            |
-| `packages/infra`                                       | —          | event subscriptions, GitHub rulesets                      |
+| `packages/infra`                                       | 2026-09-05 | event subscriptions, GitHub rulesets                      |
 | `packages/parse-tmx`                                   | 2026-09-05 | `TMXNode.ts`                                              |
 | `packages/shared`, `packages/shared-node`              | 2026-09-05 | `takeOne`                                                 |
 | `packages/virrun`                                      | —          | the WSL mirror prose is the bulk of it                    |
