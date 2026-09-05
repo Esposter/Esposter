@@ -57,7 +57,7 @@ export const WSL_REMOVE_SCRIPT = 'for dir; do chmod -R u+rwx -- "$dir" 2>/dev/nu
 // The same teardown driven from the null-delimited list file named by `$1` rather than from the argv, so a sweep is
 // ONE wsl.exe launch however many dirs it holds: a launch is a service RPC plus a relay process, and the per-entry
 // Fan-out it avoids would saturate the WSL service once enough mirrors are stranded to sweep at once, until it
-// Answered every later call with Wsl/Service/E_UNEXPECTED — while an argv-sized batch would trade that for
+// Answers every later call with Wsl/Service/E_UNEXPECTED — while an argv-sized batch would trade that for
 // One launch per batch, which is the fan-out again. `xargs -0` keeps any path intact (spaces, newlines) and runs its
 // `sh` invocations sequentially when it splits. The list is unlinked last, so a sweep leaves nothing behind.
 //

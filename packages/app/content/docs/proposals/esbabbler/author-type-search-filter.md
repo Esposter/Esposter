@@ -23,7 +23,7 @@ flowchart TD
   Hook --> Index["Messages index"]
   Std --> Index
   Index --> From{"from: alice<br/>userId eq"}
-  Index --> Author{"authorType:<br/>type eq / ne Webhook"}
+  Index --> Author{"authorType:<br/>type eq / ne 'Webhook'"}
   From -- "matches" --> Person["one member's posts"]
   From -. "cannot match" .-> Hook
   Author -- "selects either arm" --> Either["members' posts, or the webhook's"]
@@ -35,10 +35,10 @@ The dotted edge is the gap, and `from:` is not where it gets closed — a filter
 
 A new `FilterType.AuthorType` whose picker offers two values:
 
-| Value     | Compiles to       | Reads as              |
-| --------- | ----------------- | --------------------- |
-| `User`    | `type ne Webhook` | what members posted   |
-| `Webhook` | `type eq Webhook` | what a webhook posted |
+| Value     | Serializes to       | Reads as              |
+| --------- | ------------------- | --------------------- |
+| `User`    | `type ne 'Webhook'` | what members posted   |
+| `Webhook` | `type eq 'Webhook'` | what a webhook posted |
 
 Discord's equivalent offers user, bot and webhook. There is no `Bot` value here because there is no bot: `appUsersInMessage` **is** the webhook's identity — the webhooks page calls it "the bot identity" — so an app user and a webhook are one thing wearing two names, and offering both would be one concept in two rows of the same picker.
 

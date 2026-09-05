@@ -1,7 +1,7 @@
 // The on-disk address of a warm snapshot in the host-global cache (`~/.virrun/snapshots/`), resolved from the
 // Lockfile hash. Pure addressing — produced by resolveSnapshotLocation before anything is captured; the
 // Capture run materializes upperDir (via a temp dir it then renames into place), and a fork run stacks
-// The `upperDir`, stacked as a read-only lower.
+// That `upperDir` as a read-only lower.
 export interface SnapshotLocation {
   // The snapshot root: `~/.virrun/snapshots/<lockfile-hash>`.
   readonly dir: string;

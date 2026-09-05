@@ -98,6 +98,15 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 
   Most hits are prose (`Non-Vue`, `Selector-based`) or a real PascalCase name; what fails is a camelCase or lowercase one (`toPrecision`, `tinybench`, `vue-tsc`, `pnpm`).
 
+  **Read the joined sentence, not the new opening word.** The fix moves an identifier off the line front by
+  putting prose in front of it, and the prose has to agree with the line _above_ — which the editor is no longer
+  looking at. Both failures are silent: the previous line's article is repeated (`… the FORCE_COLOR level string
+the` / `The supports-color convention uses`), or its verb loses the object the identifier was (`… a fork run
+stacks` / `The upperDir becomes a read-only lower`). Neither is a lint error and neither is a broken build; a
+  reviewer reads it as a dropped word, because it is one. After a rewrap, read the block start to finish with the
+  leading capitals ignored. Backticking the identifier is the fix that cannot do this — a line opening on a
+  backtick is exempt from the rule, so the sentence is left alone.
+
 ## Line Endings
 
 - Enforced by `.gitattributes` (`text eol=lf` for `.ts`/`.vue`/`.js`/`.json`/`.md`/`.yaml`/`.sh`; `.bat`/`.cmd`/`.ps1` are deliberately `crlf`) and settled by `oxfmt` (`pnpm format`). Never hand-convert line endings.

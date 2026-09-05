@@ -25,11 +25,10 @@ interface SetupOxlintPluginSuiteOptions {
 const OXLINT_BIN = join(import.meta.dirname, "..", "..", "node_modules", "oxlint", "bin", "oxlint");
 const TEMPORARY_DIRECTORY_PREFIX = "oxlint-plugin-";
 
-// A rule only exists as an oxlint JS plugin and @oxlint/plugins ships no RuleTester, so a suite drives the real
-// The oxlint binary over generated fixtures — which covers plugin loading and visitor keys, not just the
-// Predicates.
-// Fixtures are written outside the repo so the deliberately-violating ones are never picked up by the root
-// One oxlint pass answers for every fixture, so the whole thing happens once in `beforeAll`
+// A rule only exists as an oxlint JS plugin and @oxlint/plugins ships no RuleTester, so a suite drives the
+// Real oxlint binary over generated fixtures — which covers plugin loading and visitor keys, not just the
+// Predicates. Fixtures are written outside the repo so the deliberately-violating ones are never picked up by
+// The root lint pass. One oxlint pass answers for every fixture, so the whole thing happens once in `beforeAll`
 export const setupPluginSuite = ({
   extension = ".ts",
   fixtures,
