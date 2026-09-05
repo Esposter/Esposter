@@ -28,7 +28,7 @@ const { dense = false } = defineProps<Props>();
         <v-icon size="large" :icon="ResourceDefinitionMap[type].icon" />
         <span text-title-medium>{{ ResourceDefinitionMap[type].title }}</span>
       </div>
-      <span v-if="!dense" text-body-medium op-medium-emphasis>{{ ResourceTypeDescriptionMap[type] }}</span>
+      <span v-if="!dense" op-medium-emphasis text-body-medium>{{ ResourceTypeDescriptionMap[type] }}</span>
     </v-card>
   </div>
 </template>

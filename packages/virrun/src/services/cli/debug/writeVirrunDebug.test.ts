@@ -19,7 +19,7 @@ describe(writeVirrunDebug, () => {
 
     writeVirrunDebug(message);
 
-    expect(write.mock.calls).toHaveLength(1);
+    expect(write).toHaveBeenCalledTimes(1);
     expect(stripAnsi(String(takeOne(write.mock.calls)[0]))).toBe(`[virrun] debug — ${message}\n`);
   });
 
