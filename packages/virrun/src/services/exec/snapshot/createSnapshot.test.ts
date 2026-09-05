@@ -11,7 +11,7 @@ import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import {beforeEach, describe, expect, test, vi} from "vitest";
+import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(
   import("#src/services/exec/util/getSandboxNodeVersion"),
@@ -86,7 +86,9 @@ describe(createSnapshot, () => {
     expect(call.cwd).toBe(repository);
     expect(call.isNetworkEnabled).toBe(true);
     // The other half of the title: the capture run layers an upper over the working dir so the install persists
-    expect(call.overlayLayers?.upperDir).not.toBe("");
+    assert.exists(call.overlayLayers);
+
+    expect(call.overlayLayers.upperDir).not.toBe("");
   });
 
   test("throws when the setup command fails so a half-installed upper is never reused", async () => {

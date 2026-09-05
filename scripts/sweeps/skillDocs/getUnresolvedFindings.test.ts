@@ -21,7 +21,21 @@ describe(getUnresolvedFindings, () => {
   });
 
   // Every cross-skill pointer would report otherwise, and a check that always reports gates nothing
-  test("reports nothing on a line naming another skill", () => {
+  test("reports nothing when the named skill holds the cited page", () => {
+    expect.hasAssertions();
+
+    expect(
+      getUnresolvedFindings(
+        [
+          { path, text: "the `b` skill's `references/a.md`" },
+          { path: ".agents/skills/b/SKILL.md", text: "" },
+        ],
+        new Set([path, ".agents/skills/b/references/a.md"]),
+      ),
+    ).toStrictEqual([]);
+  });
+
+  test("still reports a cross-skill citation the named skill does not hold", () => {
     expect.hasAssertions();
 
     expect(
@@ -32,7 +46,7 @@ describe(getUnresolvedFindings, () => {
         ],
         new Set([path]),
       ),
-    ).toStrictEqual([]);
+    ).toStrictEqual([{ detail: "-> a.md", path, type: SkillDocsFindingType.Unresolved }]);
   });
 
   test("still reports a line naming its own skill", () => {

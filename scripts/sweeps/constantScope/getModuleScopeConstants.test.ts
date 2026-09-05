@@ -33,6 +33,19 @@ describe(getModuleScopeConstants, () => {
     ).toStrictEqual([]);
   });
 
+  test("skips an async function expression, which holds no state either", () => {
+    expect.hasAssertions();
+
+    expect(getModuleScopeConstants(`const ${name} = async function () {\n  return "";\n};`)).toStrictEqual([]);
+  });
+
+  // The formatter indents everything a describe callback holds, so the column-zero anchor is the whole mechanism
+  test("skips a declaration nested inside a describe callback", () => {
+    expect.hasAssertions();
+
+    expect(getModuleScopeConstants(`describe("suite", () => {\n  const ${name} = { id: "" };\n});`)).toStrictEqual([]);
+  });
+
   test("skips a top-level await, which a synchronous describe callback cannot hold", () => {
     expect.hasAssertions();
 

@@ -2,9 +2,11 @@ import type { ModuleScopeConstant } from "#scripts/sweeps/constantScope/models/M
 
 import { scanCode } from "#scripts/sweeps/constantScope/scanCode";
 
+// Anchored at column zero with no leading-space alternative: that is what scopes the scan to module scope,
+// Since the formatter indents every declaration a `describe` callback holds
 const DECLARATION_REGEX = /^(?:const|let)\s+(?<name>[\w$]+)\s*[:=]/u;
 // Matched on a word boundary, or `awaitable()` and `functionFactory()` would be exempted by their prefixes alone
-const EXEMPT_BODY_REGEX = /^(?:await|function)\b/u;
+const EXEMPT_BODY_REGEX = /^(?:await|(?:async\s+)?function)\b/u;
 
 // A declaration ends at the first `;` genuinely at depth zero — the last non-space token of the text so far
 const checkIsTerminated = (text: string) => {
