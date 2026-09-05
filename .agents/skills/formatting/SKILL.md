@@ -91,8 +91,10 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
   **Rewrapping a comment is what creates this**, so it is the edit to re-check rather than the original text. Changing a word early in a block reflows every line after it, and an identifier that sat mid-line lands at the front of one — the corruption is written by the pass that was fixing the previous one. After editing any comment, grep the added lines for a line-initial identifier before committing:
 
   ```bash
-  git diff -U0 | grep -E '^\+\s*//\s+[A-Z][a-z]+[A-Z-][a-zA-Z]*'
+  git diff -U0 | grep -E '^\+\s*//\s+([A-Z][a-z]+[A-Z-][a-zA-Z]*|(Pnpm|Oxlint|Tsdown|Tinybench|Sdk|Sas))'
   ```
+
+  Two shapes, because one pattern cannot express both. The first catches an identifier with a later capital to anchor on (`ToPrecision`, `Vue-tsc`); a one-word name (`Pnpm`, `Tinybench`) has none, so it is caught by enumeration instead — the comments ledger keeps that list, since it only grows when a new tool name turns up. Broadening the first to any capitalized token is not the fix: `capitalized-comments` capitalizes _every_ continuation line, so it would match nearly all of them.
 
   Most hits are prose (`Non-Vue`, `Selector-based`) or a real PascalCase name; what fails is a camelCase or lowercase one (`toPrecision`, `tinybench`, `vue-tsc`, `pnpm`).
 
