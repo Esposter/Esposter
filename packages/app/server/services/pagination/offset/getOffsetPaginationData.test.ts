@@ -6,7 +6,7 @@ describe(getOffsetPaginationData, () => {
   const firstItem = new AItemEntity();
   const secondItem = new AItemEntity();
 
-  test("gets all", () => {
+  test("hands back every item when the limit covers them", () => {
     expect.hasAssertions();
 
     const items: AItemEntity[] = [firstItem];
@@ -17,7 +17,7 @@ describe(getOffsetPaginationData, () => {
     });
   });
 
-  test("gets partial", () => {
+  test("drops the item past the limit and reports there is more", () => {
     expect.hasAssertions();
 
     const items = [firstItem, secondItem];

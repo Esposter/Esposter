@@ -149,9 +149,10 @@ describe(saveResourceContent, () => {
         container.get(getSnapshotContentBlobName(resource.id, SnapshotChannel.Revisions, 1))?.toString() ?? "",
       ),
     ).toStrictEqual(jsonDateParse(JSON.stringify(content)));
-    await expect(readSnapshotHistory(resource.id, SnapshotChannel.Revisions)).resolves.toMatchObject([
-      { reason: SnapshotReason.Automatic, version: 1 },
-    ]);
+    const [snapshotVersion] = await readSnapshotHistory(resource.id, SnapshotChannel.Revisions);
+
+    expect(snapshotVersion?.reason).toBe(SnapshotReason.Automatic);
+    expect(snapshotVersion?.version).toBe(1);
   });
 
   test("writes the content, emits the save, records the activity and runs the after-save hook as one unit", async () => {
@@ -293,7 +294,7 @@ describe(saveResourceContent, () => {
         resource: program,
         updateContentVersion: (tx) => updateContentVersion(tx, program.id),
       }),
-    ).rejects.toThrow("rejected");
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: rejected]`);
 
     await expect(readBoundResourceId(program.id)).resolves.toBeNull();
   });
@@ -312,7 +313,7 @@ describe(saveResourceContent, () => {
         resource: program,
         updateContentVersion: () => Promise.reject(new Error("stale")),
       }),
-    ).rejects.toThrow("stale");
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: stale]`);
 
     await expect(readBoundResourceId(program.id)).resolves.toBe(surveyId);
   });

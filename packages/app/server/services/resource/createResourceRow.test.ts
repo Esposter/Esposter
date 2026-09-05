@@ -53,15 +53,15 @@ describe(createResourceRow, () => {
       setTimeout(resolve, 0);
     });
 
-    expect(takeOne(entities)).toMatchObject({
-      activityType: ResourceActivityType.Created,
-      partitionKey: resourceId,
-      userId,
-    });
+    const entity = takeOne(entities);
+
+    expect(entity.activityType).toBe(ResourceActivityType.Created);
+    expect(entity.partitionKey).toBe(resourceId);
+    expect(entity.userId).toBe(userId);
     expect(isReturned).toBe(false);
 
     releaseWrite();
 
-    await expect(promise).resolves.toMatchObject({ id: resourceId });
+    await expect(promise.then(({ id }) => id)).resolves.toBe(resourceId);
   });
 });
