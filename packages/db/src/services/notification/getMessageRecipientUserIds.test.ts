@@ -61,7 +61,7 @@ describe(getMessageRecipientUserIds, () => {
       { status: UserStatus.Offline, userId: directMessageOfflineUserId },
       { status: UserStatus.Online, userId: neverUserId },
       { status: UserStatus.Online, userId: senderUserId },
-      // AllNullStatusUserId intentionally has no status row (null status = treated as online for @here)
+      // The all-null-status user has no status row on purpose: a null status counts as online for @here
     ]);
     await db.insert(threadFollowsInMessage).values([
       // Follows the thread but is muted at room level, so the follow never overrides the mute
