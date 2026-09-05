@@ -5,7 +5,7 @@ import { checkIsNotFound } from "#src/services/azure/checkIsNotFound";
 import { deserializeEntity } from "#src/services/azure/transformer/deserializeEntity";
 import { getResultAsync } from "@esposter/shared";
 
-// GetEntity strips the etag for callers that don't need it; optimistic-concurrency callers read through
+// `getEntity` strips the etag for callers that don't need it; optimistic-concurrency callers read through
 // Here instead so their subsequent update can be made conditional on the version they saw.
 // Only the service's own 404 becomes the not-found sentinel — a read that merely failed (throttling, a socket
 // Reset, an entity that will not deserialize) propagates, because a caller cannot tell the two apart once they

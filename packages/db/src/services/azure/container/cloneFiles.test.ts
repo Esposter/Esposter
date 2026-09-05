@@ -12,8 +12,8 @@ describe(cloneFiles, () => {
   const id = crypto.randomUUID();
   const filename = "a";
 
-  // Records the copy source the destination client was handed, which is the whole invariant: it has to be the
-  // Sdk's own percent-encoded url and never an interpolation of the raw name. `rejectSource` fails the one copy
+  // Records the copy source the destination client was handed, which is the whole invariant: it has to be
+  // The SDK's own percent-encoded url and never an interpolation of the raw name. `rejectSource` fails the one copy
   // Whose source ends with it, so a partial clone can be driven without faking the client's shape.
   const setupContainerClient = (rejectSource = "") => {
     const beginCopyFromURL = vi.fn<(copySource: string) => Promise<{ pollUntilDone: () => Promise<void> }>>(

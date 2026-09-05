@@ -6,8 +6,8 @@ import { AZURE_MAX_PAGE_SIZE, CompositeKeyPropertyNames, serializeKey } from "@e
 
 // Azure Table Storage has no count API, so every matching row still has to be walked; the keys-only
 // Projection keeps that walk at its smallest possible payload. It is never free — reach for it only once
-// A capped read is already known to have truncated, never on the happy path. The walk can be bounded by
-// MaxCount, and a bounded result reads as a floor rather than an exact total.
+// A capped read is already known to have truncated, never on the happy path. A bound on the walk makes the
+// Result a floor rather than an exact total.
 export const readEntitiesCount = async <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,
   queryOptions?: TableEntityQueryOptions,
