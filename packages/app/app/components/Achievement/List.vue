@@ -44,7 +44,7 @@ const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, AchievementStatuses, Achi
     <v-card-text>
       <v-progress-linear
         :model-value="(statistics.unlockedAchievements / statistics.totalAchievements) * 100"
-        :height="8"
+        height="0.5rem"
         color="primary"
         rd
       />
