@@ -8,7 +8,7 @@ import { createRecordingBackend } from "#src/services/exec/test/createRecordingB
 import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
 import { VIRRUN_STORE_DIRECTORY_NAME } from "#src/services/exec/util/constants";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {beforeEach, describe, expect, test, vi} from "vitest";
@@ -80,9 +80,13 @@ describe(createSnapshot, () => {
     const store = join(repository, VIRRUN_STORE_DIRECTORY_NAME);
     await createSnapshot(backend, command, { bindDirs: [store], cwd: repository, isNetworkEnabled: true, stdio: "pipe" });
 
-    expect(backend.calls[0]).toStrictEqual(
-      expect.objectContaining({ bindDirs: [store], cwd: repository, isNetworkEnabled: true }),
-    );
+    const call = takeOne(backend.calls);
+
+    expect(call.bindDirs).toStrictEqual([store]);
+    expect(call.cwd).toBe(repository);
+    expect(call.isNetworkEnabled).toBe(true);
+    // The other half of the title: the capture run layers an upper over the working dir so the install persists
+    expect(call.overlayLayers?.upperDir).not.toBe("");
   });
 
   test("throws when the setup command fails so a half-installed upper is never reused", async () => {

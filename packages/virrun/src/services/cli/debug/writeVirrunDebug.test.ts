@@ -1,6 +1,7 @@
 import { stripAnsi } from "#src/services/cli/color/stripAnsi.test";
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { VIRRUN_DEBUG_KEY } from "#src/services/exec/util/constants";
+import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(writeVirrunDebug, () => {
@@ -18,8 +19,8 @@ describe(writeVirrunDebug, () => {
 
     writeVirrunDebug(message);
 
-    expect(write).toHaveBeenCalledExactlyOnceWith(expect.anything());
-    expect(stripAnsi(String(write.mock.lastCall?.[0]))).toBe(`[virrun] debug — ${message}\n`);
+    expect(write.mock.calls).toHaveLength(1);
+    expect(stripAnsi(String(takeOne(write.mock.calls)[0]))).toBe(`[virrun] debug — ${message}\n`);
   });
 
   test("is silent when the debug env is unset", () => {
