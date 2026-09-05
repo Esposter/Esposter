@@ -23,7 +23,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Resource` — the shared chrome                                              | —          | `Blade`, `Create`, `VersionHistory` and the loose dialogs                          |
 | `app/components/Dungeons`                                                                  | —          | canvas-adjacent; much of it is Phaser rather than DOM                              |
 | `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | 2026-09-05 | the chrome                                                                         |
-| `app/components/Clicker`                                                                   | —          |                                                                                    |
+| `app/components/Clicker`                                                                   | 2026-09-05 |                                                                                    |
 | `app/components/Visual`                                                                    | 2026-09-05 |                                                                                    |
 | `app/components/User`                                                                      | 2026-09-05 |                                                                                    |
 | `app/components/Docs`                                                                      | 2026-09-05 | the docs site's own chrome                                                         |
