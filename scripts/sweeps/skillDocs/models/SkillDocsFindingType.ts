@@ -3,8 +3,8 @@ export enum SkillDocsFindingType {
   Budget = "budget",
   // A `/docs/` route named outside the two skills that teach the route forms
   DocsRoute = "docs route",
-  // A `references/…` citation resolving to no file
-  Unresolved = "unresolved",
   // A reference page its own SKILL.md never indexes, so nothing loads it
   Unindexed = "unindexed",
+  // A `references/…` citation resolving to no file
+  Unresolved = "unresolved",
 }
