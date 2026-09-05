@@ -33,7 +33,7 @@ const { isDesktop, isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, is
 const container = useTemplateRef("container");
 const footer = useTemplateRef("footer");
 const bottomOffset = ref(0);
-// Fix the layout structure so navigating does not cause a layout shift
+// Fixed rather than flowed, so navigating between pages cannot shift the layout
 const { bottom, left, middle, right } = useFixedLayoutStyles(
   bottomOffset,
   () => Number(leftNavigationDrawerProps?.width ?? LEFT_DRAWER_WIDTH),

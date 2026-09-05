@@ -20,7 +20,6 @@ import { createTRPCNuxtClient, httpBatchLink, httpLink } from "trpc-nuxt/client"
 export default defineNuxtPlugin(() => {
   const online = useOnline();
   const links: TRPCLink<TRPCRouter>[] = [
-    // Log to your console in development and only log errors in production
     loggerLink({
       enabled: (opts) =>
         (!IS_PRODUCTION && !checkIsServer()) || (opts.direction === "down" && opts.result instanceof Error),
