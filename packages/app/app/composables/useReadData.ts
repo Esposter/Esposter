@@ -6,7 +6,6 @@ export const useReadData = async (unauthedReader: () => Promisable<void>, authed
   // https://antfu.me/posts/async-with-composition-api
   const currentInstance = getCurrentInstance();
   const { data: session } = await authClient.useSession(useFetch);
-  // Watchers created after an await inside a composable are not auto-scoped — stop manually on unmount
   const stop = watch(
     () => session.value,
     async (newSessionData) => {

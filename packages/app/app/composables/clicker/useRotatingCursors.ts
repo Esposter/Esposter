@@ -23,7 +23,7 @@ export const useRotatingCursors = () => {
       const rotatingDivId = takeOne(rotatingDivIds.value, i);
       const rotatingDiv = window.document.getElementById(rotatingDivId);
       if (!rotatingDiv) continue;
-      // Nodes are reused now, so clear any prior infinite animation before adding the new one
+      // Nodes are reused, so any prior infinite animation is cleared before the new one is added
       for (const animation of rotatingDiv.getAnimations()) animation.cancel();
       rotatingDiv.animate(
         [{ transform: `rotate(${rotationOffset}deg)` }, { transform: `rotate(${rotationOffset + 360}deg)` }],

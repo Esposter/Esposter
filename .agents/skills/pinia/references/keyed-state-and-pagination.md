@@ -53,6 +53,8 @@ Both hand out a `CursorPaginationSlice<TItem>` — `{ initializeCursorPagination
 partition's rows (the IndexedDB pagination caches, above all) takes the same shape from either. That slice is the
 **only** writable `items` a keyed store has; the store's ambient `items` is `readonly` and rendering-only.
 
+`isLoaded` is keyed like the rows it describes and lives and dies with them, because an empty list is either "not loaded yet" or "loaded and genuinely empty" and only the load knows which. Held anywhere shorter-lived — a local in whichever composable asks — it starts fresh under a list that did not, and answers for a partition it never watched load.
+
 ## `createOperationData`
 
 Use it **wherever the item type satisfies `ToData<AEntity>`** — it generates typed CRUD (`createXxx`, `updateXxx`, `deleteXxx`, `pushXxxs`, `unshiftXxxs`) for an entity list ref. `Foo` satisfies this (`id`, `createdAt`, `updatedAt`, `deletedAt` from `pgTable`).

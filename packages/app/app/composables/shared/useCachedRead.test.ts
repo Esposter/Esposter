@@ -136,7 +136,7 @@ describe(useCachedRead, () => {
     expect(query).toHaveBeenCalledTimes(2);
   });
 
-  // The per-cache declaration that replaces the eager-versus-lazy judgement every call site used to make
+  // The per-cache declaration of eager versus lazy, made once instead of at every call site that invalidates
   test("re-reads immediately when the cache refetches on invalidation", async () => {
     expect.hasAssertions();
 

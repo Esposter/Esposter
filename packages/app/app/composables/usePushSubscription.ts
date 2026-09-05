@@ -17,7 +17,7 @@ export const usePushSubscription = () => {
       pushSubscription.value = undefined;
       return;
     }
-    // GetSubscription() returns the existing subscription if one exists, avoiding a new
+    // `getSubscription()` returns the existing subscription if one exists, avoiding a new
     // Endpoint being created (and a redundant network call to the push service)
     pushSubscription.value =
       (await registration.pushManager.getSubscription()) ??

@@ -4,7 +4,8 @@
 | ------------------------------------------------------ | ---------- | -------------------------------------------------------- |
 | `packages/app` — `app/components`                      | 2026-09-05 | the densest prose in the app                             |
 | `packages/app` — `app/services`, `app/util`            | 2026-09-05 | the separator and alerting rules, restated per call site |
-| `packages/app` — `app/composables`                     | —          |                                                          |
+| `packages/app` — `app/composables/message`             | —          |                                                          |
+| `packages/app` — the rest of `app/composables`         | 2026-09-05 | the pagination binder and readiness rules, per call site |
 | `packages/app` — `app/models`, `app/types`             | 2026-09-05 | the dungeons tree's legacy prose                         |
 | `packages/app` — `app/store`                           | 2026-09-05 | the rollback rationale, restated per call site           |
 | `packages/app` — `app/pages`, `layouts`, the rest      | 2026-09-05 | plus `middleware`, `plugins`, `assets`                   |

@@ -90,8 +90,8 @@ export const useVisibleSectionIds = (
   //
   // `scrollend` covers the observer's other blind spot: an anchor stops with its section resting exactly on the top
   // Line, an arrival the observer never sees, because the section approaches that line from below and never
-  // Crosses it. The last crossing before it is the previous section leaving, which is why clicking a link used to
-  // Highlight the section above the one clicked
+  // Crosses it. The last crossing before it is the previous section leaving, which would otherwise leave a
+  // Clicked link highlighting the section above the one it named
   useEventListener(["resize", "scrollend"], updateVisibleIds, { passive: true });
   // A panel scrolls itself, and its scrollend never reaches the window
   useEventListener(container, "scrollend", updateVisibleIds, { passive: true });

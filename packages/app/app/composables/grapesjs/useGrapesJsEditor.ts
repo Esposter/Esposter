@@ -74,7 +74,6 @@ export const useGrapesJsEditor = async (
   onMounted(() => {
     trigger();
   }, currentInstance);
-  // The watcher is registered after an await, so the component scope cannot auto-stop it
   onUnmounted(() => {
     stop();
     editor.value?.destroy();

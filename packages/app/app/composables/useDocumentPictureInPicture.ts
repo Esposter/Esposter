@@ -40,7 +40,7 @@ const relinkStyleSheet = (target: Window, styleSheet: CSSStyleSheet) =>
 // The MDI @font-face — resolve against the CSS file's location, which inlining cssText into the
 // PiP document would break (urls would resolve against the PiP base and 404 to index.html).
 // Sheets without an href (Vuetify theme, UnoCSS runtime injected via insertRule, whose <style>
-// TextContent is empty) are rebuilt from their CSSOM rules so those rules carry over. These are
+// `textContent` is empty) are rebuilt from their CSSOM rules so those rules carry over. These are
 // Always inline <style>/constructed sheets, i.e. same-origin, so cssRules never throws.
 const cloneStyleSheet = (target: Window, styleSheet: CSSStyleSheet) => {
   if (styleSheet.href) return relinkStyleSheet(target, styleSheet);

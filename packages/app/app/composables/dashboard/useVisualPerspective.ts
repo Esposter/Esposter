@@ -7,9 +7,9 @@ import { parseViewEntry } from "@/services/dashboard/chart/parseViewEntry";
 import { setViewEntryToken } from "@/services/dashboard/chart/setViewEntryToken";
 import { getResult, noop } from "@esposter/shared";
 
-// A zoom window, the series someone hid and the points they selected are the reader's work, and it used to die
-// With the tab. This puts it in the url instead: one entry per visual, so a link carries the state of every
-// Chart its sender touched and the recipient opens the dashboard already looking at it
+// A zoom window, the series someone hid and the points they selected are the reader's work, so it lives in the
+// Url rather than dying with the tab: one entry per visual, so a link carries the state of every chart its
+// Sender touched and the recipient opens the dashboard already looking at it
 export const useVisualPerspective = (visualId: MaybeRefOrGetter<string>, getChart: () => ApexCharts | undefined) => {
   const router = useRouter();
   const { currentRoute } = router;

@@ -10,8 +10,8 @@ import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 
 // The rows a partition holds are the rows its store keeps, which is the schema's own value type for that store —
-// There is no second item type to be generic over, and pretending otherwise made the slice a partition hands back
-// Un-assignable to the slice the cache asked for
+// There is no second item type to be generic over: one makes the slice a partition hands back un-assignable to
+// The slice the cache asked for
 export interface PaginationCacheOptions<
   TStore extends IndexedDbStoreName,
   TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
@@ -87,7 +87,7 @@ export const usePaginationCache = <
     });
   });
   // The capped write set is both what gets persisted and what the deep watch tracks. Watching the whole
-  // Loaded list instead traversed it on every store write to discover changes that can never reach the cache —
+  // Loaded list instead traverses it on every store write to discover changes that can never reach the cache —
   // A room scrolled back far enough holds many times the rows the cache keeps. Readiness is watched beside it
   // Because a load that lands empty changes nothing in the list, and the previous session's rows would
   // Otherwise stay in the cache — and reachable — for a partition the server has just said is empty. Post-flush
@@ -119,8 +119,7 @@ export const usePaginationCache = <
   // The layout that calls this already has it at setup, so opening the installed app offline on
   // /messages/{roomId}, the flagship offline case, is precisely the mount where the key arrives already set —
   // And connectivity, because a network lost in place leaves a partition whose load never landed empty until a
-  // Switch the user has no reason to make. Watching the key alone covered only a room-to-room switch made
-  // Inside an already-running session, which is the one path the tests happened to cover
+  // Switch the user has no reason to make
   watchImmediate([() => toValue(partitionKey), online], ([newPartitionKey, newOnline]) => {
     if (!newPartitionKey || newOnline) return;
 

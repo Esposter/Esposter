@@ -3,7 +3,7 @@ import type { Except } from "type-fest";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
-// Keep a map of id → CursorPaginationData so we can store separate lists per id (e.g. comments per post).
+
 export const useCursorPaginationDataMap = <TItem>(
   // Left empty by a caller that has no current partition and names every key instead
   currentId: MaybeRefOrGetter<string> = "",
@@ -19,9 +19,6 @@ export const useCursorPaginationDataMap = <TItem>(
   keys: ComputedRef<string[]>;
 } => {
   const { getBoundData, getDataRef, keys } = useDataMap(currentId, () => new CursorPaginationData<TItem>());
-  // Readiness is keyed like the slice it describes, so it lives and dies with those rows. Held anywhere shorter
-  // Lived — a local in whichever composable asks — it starts fresh under a list that did not, and answers for a
-  // Partition it never watched load
   const { getBoundData: getBoundIsLoaded, getDataRef: getIsLoadedRef } = useDataMap(currentId, false);
   const getSlice = (key: string): CursorPaginationSlice<TItem> => {
     const data = getDataRef(key);

@@ -9,7 +9,7 @@ export const useMonsterAppearTween = (isEnemy: boolean) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   const xEnd = isEnemy ? 768 : 256;
-  // Ensure that we are tweening from the correct initial position
+  // The tween runs from wherever the position currently is, so it is reset to the initial one first
   monsterPosition.value = { ...initialMonsterPosition };
 
   if (isSkipAnimations.value) {

@@ -15,9 +15,8 @@ export const usePreviousScene = (currentSceneKey: SceneKey) => {
     scene.scene.pause(currentSceneKey);
     launchParallelScene(scene, sceneKey);
   };
-  // This is a separate method to allow us to remove in-between scenes
-  // E.g. Battle -> Inventory (remove this) -> MonsterParty
-  // When an item has been used in monster party scene
+  // Removes an in-between scene from the stack — Battle -> Inventory (removed) -> MonsterParty, which is what
+  // Using an item in the monster party scene leaves behind
   const removeScene = (scene: SceneWithPlugins, sceneKey: SceneKey) => {
     const index = previousSceneKeyStack.value.indexOf(sceneKey);
     if (index === -1) return;

@@ -57,7 +57,7 @@ describe(useAutosaveFunction, () => {
   });
 
   // VueUse's debounce arms a bare setTimeout with no scope cleanup, so an unmounted blade's last keystroke
-  // Still fired its save — against whichever resource the app had moved on to
+  // Still fires its save — against whichever resource the app has moved on to
   test("drops the pending save when its scope is disposed", async () => {
     expect.hasAssertions();
 

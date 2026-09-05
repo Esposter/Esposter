@@ -3,7 +3,6 @@ import { withFinalizerAsync } from "@esposter/shared";
 
 export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems: Ref<TItem[]>) => {
   const { executeQuery } = useMutation();
-  // This composable is one list, so its reads are one target
   const readMoreItemsKey = Symbol("readMoreItems");
   const items = defaultItems;
   const hasMore = ref(false);
