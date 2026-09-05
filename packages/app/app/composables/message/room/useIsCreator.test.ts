@@ -3,7 +3,7 @@ import { useIsCreator } from "@/composables/message/room/useIsCreator";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-// AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot
+// `authClient` is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot
 // Be spied on directly — mock the module and drive useSession through a hoisted mock instead. Its two call
 // Forms return different shapes: the composable takes the nuxt `{ data }` pair, the room store takes the ref
 const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<(fetcher?: unknown) => unknown>() }));
@@ -24,8 +24,8 @@ describe(useIsCreator, () => {
   });
 
   // Authorship is the message's own userId whatever the type, which is what getMessageProcedure asks. Answering
-  // It only for text messages made every Author-permitted operation on any other type — deleting or pinning
-  // Your own poll — unreachable to the person who authored it, while the procedure accepted them
+  // It only for text messages makes every Author-permitted operation on any other type — deleting or pinning
+  // Your own poll — unreachable to the person who authored it, while the procedure accepts them
   test.each([MessageType.Message, MessageType.Poll] as const)("recognises the author of a %s", async (type) => {
     expect.hasAssertions();
 

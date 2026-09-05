@@ -6,7 +6,7 @@ import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { MessageType, StandardMessageEntity } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-// AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot be
+// `authClient` is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot be
 // Spied on directly — mock the module and drive useSession through a hoisted mock instead
 const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<(fetcher?: unknown) => unknown>() }));
 

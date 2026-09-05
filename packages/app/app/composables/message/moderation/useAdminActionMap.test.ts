@@ -4,7 +4,7 @@ import { useAlertStore } from "@/store/alert";
 import { AdminActionType } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-// AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot
+// `authClient` is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot
 // Be spied on directly — mock the module and drive useSession through a hoisted mock instead
 const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<(fetcher?: unknown) => unknown>() }));
 
@@ -23,8 +23,8 @@ describe(useAdminActionMap, () => {
     );
   });
 
-  // The notices went to a snackbar component nothing ever mounted, so a member who was warned, kicked or timed
-  // Out was told nothing at all. The alert store is the one surface App.vue actually renders
+  // The alert store is the one surface App.vue actually renders — a notice sent anywhere else tells a member
+  // Who was warned, kicked or timed out nothing at all
   test("alerts the member an action was taken against", async () => {
     expect.hasAssertions();
 

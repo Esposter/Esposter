@@ -13,7 +13,7 @@ export const useCallPreJoinMedia = () => {
   const microphoneConstraints = computed<MediaStreamConstraints>(() => ({
     audio: { deviceId: inputDeviceId.value || undefined },
   }));
-  // UseUserMedia retains the live camera stream and releases it on scope dispose.
+  // `useUserMedia` retains the live camera stream and releases it on scope dispose.
   const {
     start: startCameraStream,
     stop: stopCameraStream,
