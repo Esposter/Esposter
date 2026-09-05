@@ -86,9 +86,9 @@ onKeyStroke(["ArrowLeft", "ArrowRight"], (event) => {
       :class="isZoomed ? 'cursor-grab' : 'cursor-zoom-in'"
       @wheel="zoom"
     >
-      <video v-if="isVideo" class="max-h-[80vh]" controls autoplay max-w-full cursor-default :src="url" />
+      <video v-if="isVideo" max-h="[80vh]" controls autoplay max-w-full cursor-default :src="url" />
       <div v-else ref="image">
-        <NuxtImg class="max-h-[80vh]" max-w-full :src="url" :alt="file.filename" />
+        <NuxtImg max-h="[80vh]" max-w-full :src="url" :alt="file.filename" />
       </div>
     </div>
   </StyledDialog>

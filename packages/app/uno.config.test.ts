@@ -13,12 +13,6 @@ describe(defineConfig, () => {
       {
         "rules": [
           [
-            "elevation--1",
-            {
-              "box-shadow": "inset 0 2px 1px -1px rgba(0,0,0,0.2), inset 0 1px 1px 0 rgba(0,0,0,0.14), inset 0 1px 3px 0 rgba(0,0,0,0.12)",
-            },
-          ],
-          [
             "elevation-0",
             {
               "--v-elevation-overlay": "color-mix(in srgb, var(--v-elevation-overlay-color, #000) 0%, transparent)",
@@ -134,6 +128,10 @@ describe(defineConfig, () => {
           "text-info-opacity-10",
           "bg-on-info-opacity-10",
           "text-on-info-opacity-10",
+          "bg-on-primary-opacity-10",
+          "text-on-primary-opacity-10",
+          "bg-primary-opacity-10",
+          "text-primary-opacity-10",
           "bg-surface-opacity-80",
           "text-surface-opacity-80",
           "bg-primary-darken-1",
@@ -302,9 +300,11 @@ describe(defineConfig, () => {
             "info": "rgb(var(--v-theme-info))",
             "info-opacity-10": "rgb(var(--v-theme-info-opacity-10))",
             "on-info-opacity-10": "rgb(var(--v-theme-on-info-opacity-10))",
+            "on-primary-opacity-10": "rgb(var(--v-theme-on-primary-opacity-10))",
             "primary": "rgb(var(--v-theme-primary))",
             "primary-darken-1": "rgb(var(--v-theme-primary-darken-1))",
             "primary-lighten-1": "rgb(var(--v-theme-primary-lighten-1))",
+            "primary-opacity-10": "rgb(var(--v-theme-primary-opacity-10))",
             "surface": "rgb(var(--v-theme-surface))",
             "surface-opacity-80": "rgb(var(--v-theme-surface-opacity-80))",
             "text": "rgb(var(--v-theme-text))",

@@ -43,65 +43,23 @@ set of names across both ledgers.
 
 ## Find recipe
 
-Constant scope, from the repository root. A line-anchored regex is not enough on its own: it reads a multi-line
-arrow as a constant, because the `=>` lands on a later line, and it cannot tell where a declaration ends, since a
-template literal's `${…}` and a `;` inside a string both fool a bracket count. This scanner skips strings,
-template substitutions, and both comment forms, so a declaration ends at the first `;` genuinely at depth zero and a statement is classified by its **whole**
-text. The `await` and `function` exemptions match on a word boundary, or `awaitable()` and `functionFactory()`
-would be exempted by their prefixes alone. Helper files are skipped outright — a `*.test.ts` ending in
-`describe.todo` holds module state by design (`references/test-helper-files.md`).
-
 ```bash
-python3 - <<'PY'
-import glob, io, re
-
-def scan(text):
-    stack, quote, i = [], "", 0
-    while i < len(text):
-        c = text[i]
-        if quote:
-            if c == "\\": i += 2; continue
-            if c == quote: quote = ""
-        elif stack and stack[-1] == "`":
-            if c == "\\": i += 2; continue
-            if c == "`": stack.pop()
-            elif text.startswith("${", i): stack.append("{"); i += 2; continue
-        elif c in "\"'": quote = c
-        elif text.startswith("//", i): i = text.find("\n", i) % (len(text) + 1); continue
-        elif text.startswith("/*", i): i = (text.find("*/", i) + 2) or len(text); continue
-        elif c in "([{`": stack.append(c)
-        elif c in ")]}" and stack: stack.pop()
-        else: yield c, len(stack)
-        i += 1
-
-for f in sorted(glob.glob("packages/**/*.test.ts", recursive=True) + glob.glob(".agents/**/*.test.ts", recursive=True)):
-    if "node_modules" in f or ".nuxt" in f: continue
-    lines = io.open(f, encoding="utf-8").read().split("\n")
-    if any(l.startswith("describe.todo(") for l in lines): continue
-    i = 0
-    while i < len(lines):
-        name = re.match(r"^(?:const|let)\s+([\w$]+)\s*[:=]", lines[i])
-        if name:
-            end = i
-            while end < len(lines) and [t for t in scan("\n".join(lines[i:end + 1])) if not t[0].isspace()][-1:] != [(";", 0)]:
-                end += 1
-            text = "\n".join(lines[i:end + 1])
-            tokens = list(scan(text))
-            assign = next((j for j, (c, d) in enumerate(tokens) if c == "=" and d == 0), None)
-            after = tokens[assign + 1:] if assign is not None else []
-            body = "".join(c for c, _ in after).strip()
-            arrow = any(after[j] == ("=", 0) and after[j + 1:j + 2] == [(">", 0)] for j in range(len(after) - 1))
-            if not (arrow or "vi.hoisted" in text or re.match(r"^(?:await|function)\b", body)):
-                print(f"{f}:{i + 1}: {name.group(1)}")
-            i = end
-        i += 1
-PY
+pnpm sweep:constant-scope
 ```
 
+The scan lives in `scripts/sweeps/constantScope/` rather than in this file, because it is a program: a
+line-anchored regex cannot decide constant scope on its own — it reads a multi-line arrow as a constant, since
+the `=>` lands on a later line, and it cannot tell where a declaration ends, since a template literal's `${…}`
+and a `;` inside a string both fool a bracket count. Its cases are pinned by
+`getModuleScopeConstants.test.ts` and `scanCode.test.ts`, which is what makes "prove the scan can fail before
+believing it passed" (`sweeps` skill) a thing that stays proved rather than a thing each pass re-does by hand.
+
 Everything it still reports on a swept repo is one of the exceptions below, so a clean pass is a **known** list
-rather than an empty one: `app/content/docs/index.test.ts`'s top-level-await cluster, the `mockDb` a hoisted `vi.mock`
-factory returns in each `azure-functions` suite, virrun's two mocked path constants, and each `scripts/oxlint` rule
-name, which names its own `describe` and so is evaluated before the callback the scope rule would move it into.
+rather than an empty one: the top-level-await clusters in `app/content/docs/index.test.ts`, `app/components/index.test.ts`
+and `app/store/index.test.ts` — each with the constants their module-scope readers pin out there alongside them —
+the `mockDb` a hoisted `vi.mock` factory returns in each `azure-functions` suite, virrun's two mocked path constants,
+and each `scripts/oxlint` rule name, which names its own `describe` and so is evaluated before the callback the scope
+rule would move it into.
 
 ## Judging a match
 

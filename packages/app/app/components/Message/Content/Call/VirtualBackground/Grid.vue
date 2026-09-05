@@ -74,8 +74,8 @@ onMounted(async () => {
       <button
         v-if="callBackgrounds.length < MAX_CALL_BACKGROUNDS"
         aria-label="Upload Background"
-        b-medium-emphasis
         b-2
+        b-border
         rd
         b-dashed
         bg-surface
@@ -83,7 +83,7 @@ onMounted(async () => {
         :disabled="isUploadingCallBackground"
         @click="input?.click()"
       >
-        <v-progress-circular v-if="isUploadingCallBackground" indeterminate size="20" />
+        <v-progress-circular v-if="isUploadingCallBackground" indeterminate size="1.25rem" />
         <v-icon v-else icon="mdi-plus" size="small" />
       </button>
       <!-- The tile above is the labelled upload affordance, so this proxy input stays out of the

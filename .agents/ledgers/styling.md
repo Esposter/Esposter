@@ -2,22 +2,37 @@
 
 What a component looks like rather than how it is composed: attributify props over `class`, theme primitives over bespoke values, the MD3 type set, `rem` over `px`, no hardcoded layout dimensions, `StyledButton` and the shared shells, and the narrow-viewport collapse.
 
-| Unit                                                                                       | Swept      | Notes                                                                         |
-| ------------------------------------------------------------------------------------------ | ---------- | ----------------------------------------------------------------------------- |
-| `app/components/Styled`                                                                    | 2026-08-27 | the shared shells; carries one open finding below                             |
-| `app/components/Message/Model/Message`                                                     | —          | the densest surface; the message row and its variants                         |
-| `app/components/Message/Model/Room`                                                        | —          | settings panels and dialogs                                                   |
-| `app/components/Message/Model/User`                                                        | —          | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`           |
-| `app/components/Message/Content`                                                           | —          |                                                                               |
-| `app/components/Message` — the rest                                                        | —          | `RightSideBar`, `DraftsAndSent`, `Friends`, `LeftSideBar`                     |
-| `app/components/Resource/Sheet`                                                            | —          | the sheet editor's own chrome                                                 |
-| `app/components/Resource` — the rest                                                       | —          | `List`, `Survey`, `TodoList`, `Home`, `Search` and the small per-type folders |
-| `app/components/Dungeons`                                                                  | —          | canvas-adjacent; much of it is Phaser rather than DOM                         |
-| `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | —          | the chrome                                                                    |
-| `app/components/Clicker`, `Visual`, `User`, `Docs`, `Dashboard`, `Achievement`             | —          |                                                                               |
-| `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | —          |                                                                               |
-| `app/pages`, `app/layouts`                                                                 | —          | page-level layout; region sizing and the sidebar/panel rules                  |
-| `app/**/*.scss`, `rules.config.ts`                                                         | —          | the style blocks and the UnoCSS rule set behind the attributify vocabulary    |
+| Unit                                                                                       | Swept      | Notes                                                                              |
+| ------------------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------- |
+| `app/components/Styled`                                                                    | 2026-09-05 | the shared shells                                                                  |
+| `app/components/Message/Model/Message`                                                     | 2026-09-05 | the densest surface; the message row and its variants                              |
+| `app/components/Message/Model/Room/Settings/Type/Role`, `Webhook`, `Emoji`, `Member`       | 2026-09-05 | the settings panels that own a list and an editor                                  |
+| `app/components/Message/Model/Room/Settings/Type` — the rest                               | 2026-09-05 | `Overview`, `Profile`, `AuditLog`, `WordFilter`, `Bans`, `Invite`, `Attachments`   |
+| `app/components/Message/Model/Room/Settings` — the shell                                   | 2026-09-05 | the dialog, its sidebar and the shared field                                       |
+| `app/components/Message/Model/Room` — the rest                                             | 2026-09-05 | `Create`, `DirectMessage`, `Emoji`, `Invite`, `List`, `Role` and the loose dialogs |
+| `app/components/Message/Model/User`                                                        | 2026-09-05 | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`                |
+| `app/components/Message/Content/Call` — the media surfaces                                 | 2026-09-05 | `Audio`, `Camera`, `Video`, `ScreenShare`, `VirtualBackground`, `Device`, `Pip`    |
+| `app/components/Message/Content/Call` — the session shell                                  | 2026-09-05 | `Control`, `Panel`, `Participant`, `JoinNotice`, `PreJoin`                         |
+| `app/components/Message/Content/Call` — the entry surfaces                                 | 2026-09-05 | the loose cards, forms and buttons                                                 |
+| `app/components/Message/Content` — the rest                                                | 2026-09-05 | `Header`, `Show` and the room chrome                                               |
+| `app/components/Message/RightSideBar`                                                      | —          | the member list, followed threads and search                                       |
+| `app/components/Message/DraftsAndSent`                                                     | —          | the three tabs and the schedule dialog                                             |
+| `app/components/Message/Friends`, `LeftSideBar`                                            | 2026-09-06 | the friend lists and the room column                                               |
+| `app/components/Resource/Sheet`                                                            | —          | the sheet editor's own chrome                                                      |
+| `app/components/Resource/List`                                                             | —          |                                                                                    |
+| `app/components/Resource` — the per-type editors                                           | —          | `Survey`, `TodoList`, `Note`, `Program`, `Webpage`, `Email`, `Blueprint`           |
+| `app/components/Resource` — the entry surfaces                                             | 2026-09-05 | `Home`, `Search`, `Explorer`, `RecycleBin`, `Dashboard`, `Flowchart`               |
+| `app/components/Resource` — the shared chrome                                              | 2026-09-05 | `Blade`, `Create`, `VersionHistory` and the loose dialogs                          |
+| `app/components/Dungeons`                                                                  | —          | canvas-adjacent; much of it is Phaser rather than DOM                              |
+| `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | 2026-09-05 | the chrome                                                                         |
+| `app/components/Clicker`                                                                   | 2026-09-05 |                                                                                    |
+| `app/components/Visual`                                                                    | 2026-09-05 |                                                                                    |
+| `app/components/User`                                                                      | 2026-09-05 |                                                                                    |
+| `app/components/Docs`                                                                      | 2026-09-05 | the docs site's own chrome                                                         |
+| `app/components/Dashboard`, `Achievement`                                                  | 2026-09-05 |                                                                                    |
+| `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | 2026-09-05 |                                                                                    |
+| `app/pages`, `app/layouts`                                                                 | 2026-09-05 | page-level layout; region sizing and the sidebar/panel rules                       |
+| `app/**/*.scss`, `uno.config.ts`                                                           | 2026-09-05 | the style blocks and the UnoCSS rule set behind the attributify vocabulary         |
 
 ## Exclusions
 
@@ -28,33 +43,64 @@ What a component looks like rather than how it is composed: attributify props ov
   They are the bulk of what the `px` recipe reports, and none of them is a finding.
 - `app/assets/css/settings.scss`'s breakpoint map — Vuetify's SASS API takes px and computes the rem forms from
   them, so the unit there is the framework's rather than ours.
-
-## Open findings
-
-- **Two inline `:style` object bindings where attributify would do — needs eyes on the page.**
-  `Styled/Button.vue` binds `{ backgroundImage: "var(--midnight-bloom)" }`, a static style on the most-used shell
-  in the app, allocating a fresh object every render; `Styled/EditableNameDialogButton.vue` binds a conditional
-  `pointerEvents`. The attributify forms are `bg-[var(--midnight-bloom)]` and a bound `pointer-events`, but
-  UnoCSS's `bg-[…]` is ambiguous between `background-color` and `background-image` for a gradient value, and
-  `Styled/Dialog.test.ts` asserts the current inline style. Neither can be settled without looking at the rendered
-  page, which no agent here does (`run-app` skill) — so it is a question for a human, not a rewrite to attempt.
-
-- **Two static utility classes that attributify would carry.**
-  `Message/Model/Message/File/ViewerDialog.vue` writes `class="max-h-[80vh]"` on both the video and the image,
-  where the attribute form is `max-h="[80vh]"`. Left for the pass that reads that tree, since the file has no
-  test and the change is only visible on the rendered dialog.
+- `app/components/Visual/FloatingAstronaut.scss` — a vendored SVG's own `fclass*` fills, which the skill already
+  names as the one place a raw hex is the source's rather than ours.
+- A length a third-party API owns rather than CSS: `NodeResizer`'s flow coordinates, `useDocumentPictureInPicture`'s
+  window box, Phaser's scale. The dimension recipes report all three every run and none of them is a finding —
+  the unit there is the library's, which is the `px` rule's own stated exception.
 
 ## Find recipe
 
 ```bash
-# px in a template, style block or rules config — rem is the rule, with narrow exceptions
-grep -rnE '[^a-z-][0-9]+px' --include=*.vue --include=*.scss packages/app/app packages/app/app/rules.config.ts
+# px in a template or a style block — rem is the rule, with narrow exceptions
+grep -rnE '[^a-z-][0-9]+px' --include=*.vue --include=*.scss packages/app/app
 # class= where attributify would do — the survivors should be scoped refs, dynamic bindings, or third-party selectors
 grep -rn 'class="' --include=*.vue packages/app/app/components
+# A bare --variable inside a colour function in an arbitrary value: the token matches, the declaration is
+# Invalid, and the whole property is dropped with nothing to see (styling/references/arbitrary-values.md)
+grep -rnE '(rgb|rgba|hsl)\(--|color-mix\(in srgb, --' --include=*.vue --include=*.scss packages/app/app
+# A bare bracket attribute — UnoCSS extracts it as a class token, so the rule it emits is a `.class` the
+# Element never carries. Only the valued form `prop="[...]"` produces an attribute selector
+grep -rnoE '(^|[[:space:]])[a-z][A-Za-z0-9:_-]*-\[[^]"'"'"']*\]([[:space:]/>]|$)' --include=*.vue packages/app/app
+# A Vuetify length given a bare number, which renders as px rather than the rem it was authored in. A props
+# Object takes every name; as an attribute only `size` and the `min-`/`max-` pair, because bare `width`/`height`
+# Are dominated by SVG attributes and third-party APIs, where the unit is not ours
+grep -rnE "(maxWidth|minWidth|maxHeight|minHeight|width|height|size): *[0-9]+ *[,}]" --include=*.vue packages/app/app
+grep -rnE "[[:space:]:](size|(min|max)-(width|height))=\"[0-9]+\"" --include=*.vue packages/app/app
+# A long form where the abbreviation is canonical — `rd` for `rounded`, `op-` for `opacity-`. A bare
+# `rounded` on a Vuetify component is that component's own boolean prop and stays
+grep -rnE "(^|[[:space:]])(rounded(-[a-z0-9]+)?|opacity-[0-9]+)([[:space:]/>]|$)" --include=*.vue packages/app/app
+# A Vuetify helper class where the UnoCSS name belongs — as an attribute it generates nothing at all
+grep -rnE "(^|[^-a-z])font-weight-(thin|light|regular|medium|bold|black)" --include=*.vue packages/app/app
+# A Vuetify theme colour this theme never registers — `warning`/`success` exist at runtime but generate no
+# Utility, so the attribute form is inert while the `color` prop still works
+grep -rnE '(^|[^-a-z"'"'"'])(bg|text|b)-(warning|success)([^-a-z0-9]|$)' --include=*.vue packages/app/app
+# A valueless utility bound as an attribute — an empty-string literal emits nothing, so it matches only when
+# An unrelated file writes the same utility bare. `:class` is the reliable form
+grep -rnE ":[a-z][a-z0-9-]*=\"[^\"]*\? *'' *: *undefined\"" --include=*.vue packages/app/app
+# The `text-hint` shortcut written out — uno.config.ts defines it as exactly this pair
+grep -rn 'op-medium-emphasis text-body-small' --include=*.vue packages/app/app
+# A numeric opacity spelling out an emphasis token — op-60 is medium, op-87 is high; op-0/op-100 are reveals
+grep -rnE '(^|[^-a-z0-9])op-(38|60|87)([^0-9]|$)' --include=*.vue packages/app/app
+# An emphasis name used as a colour: they are opacity utilities, so b-/bg-/text- prefixed they generate nothing
+grep -rnE '(^|[^-a-z])(b|bg|text)-(medium|high)-emphasis' --include=*.vue packages/app/app
 ```
 
 ## Next enforceable
 
+- An MD2 typography utility (`text-h6`, `text-caption`, `text-subtitle-1`, `text-medium-emphasis`) is a closed
+  set of names, and as an **attribute** it generates nothing at all — Vuetify ships those as classes, so the
+  attribute form is inert and reads on the page as no typography rather than as the wrong typography. A test over
+  the tree decides it; an oxlint plugin cannot, because oxlint hands a JS plugin no Vue template
+  (`scripts/oxlint/errorAlert.ts` says the same about inline handlers). The generic form — every `text-*`
+  attribute in a template resolving to a rule the config generates — catches typos too, and needs an extraction
+  that can tell an attributify utility from a Vuetify `text` prop.
+- The general form of the two greps above — **every attributify attribute in a template producing a rule the
+  config actually emits** — subsumes them and catches the next silent no-op nobody has met yet. The generator
+  answers it directly (`createGenerator(config).generate(source)` returns the matched tokens, and a token that
+  matched can still emit nothing), so the blocker is not the check but the input: an attribute on a component is
+  as likely to be a Vuetify prop as a utility, and reporting `text` on a `v-tab` would bury the real findings.
+  It needs an extraction that reads the tag, which is the same thing the typography item below is waiting for.
 - `px` outside the skill's named exceptions is a regex against templates and style blocks; a custom oxlint plugin or a test over the tree decides it.
 - A Vuetify global default restated on a component is decidable by comparing the tag's props against the defaults object.
 - Theme primitive vs bespoke colour needs the palette in mind and a judgement about intent; it stays with the sweep.

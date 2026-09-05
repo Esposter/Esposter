@@ -13,6 +13,7 @@ import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createT
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { TEST_WSL_CACHE_DIR_NAME } from "#src/services/exec/wsl/constants.test";
 import { createVirrun } from "#src/services/virrun/createVirrun";
+import { takeOne } from "@esposter/shared";
 import { existsSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -120,7 +121,7 @@ describe(createVirrun, () => {
     await exec("pnpm install");
     await dispose();
 
-    expect(backend.calls[0]).toStrictEqual(expect.objectContaining({ isNetworkEnabled: true }));
+    expect(takeOne(backend.calls).isNetworkEnabled).toBe(true);
   });
 
   test("fork falls through to exec on a non-os backend, with no snapshot layer", async () => {

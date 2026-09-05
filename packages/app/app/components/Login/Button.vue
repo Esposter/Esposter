@@ -17,6 +17,8 @@ const isLoading = ref(false);
 </script>
 
 <template>
+  <!-- Each provider's own sign-in button, so the elevation pair and the 0.2s it moves in are Google's published
+    Spec rather than the app's theme — the brand colour arrives with them, through `style` -->
   <button
     :style
     shadow="[0_0.125rem_0.25rem_0_rgba(0,0,0,0.25)]"

@@ -46,7 +46,7 @@ onMounted(async () => {
     <div
       top="1/2"
       translate-y="-1/2"
-      rounded
+      rd
       h-2
       w-full
       left-0
@@ -56,7 +56,7 @@ onMounted(async () => {
     >
       <div
         bg-black
-        opacity-30
+        op-30
         h-full
         left-0
         top-0
@@ -68,7 +68,7 @@ onMounted(async () => {
       top="1/2"
       translate-x="-1/2"
       translate-y="-1/2"
-      rounded-full
+      rd-full
       bg-white
       size-5
       shadow

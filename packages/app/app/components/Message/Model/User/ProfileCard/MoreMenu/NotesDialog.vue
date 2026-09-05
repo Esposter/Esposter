@@ -65,7 +65,7 @@ const createNote = (onComplete: (isSuccessful?: boolean) => void) =>
     </template>
     <div flex flex-col gap-2>
       <div v-if="items.length === 0" op-medium-emphasis>No notes yet.</div>
-      <v-list v-else lines="two" max-height="240" style="overflow-y: auto">
+      <v-list v-else lines="two" max-height="15rem" overflow-y-auto>
         <MessageModelUserProfileCardMoreMenuNoteListItem v-for="item of items" :key="item.rowKey" :note="item" />
         <StyledWaypoint :is-active="hasMore" @change="readMoreModerationNotes" />
       </v-list>

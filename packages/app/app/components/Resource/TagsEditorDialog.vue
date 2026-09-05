@@ -46,7 +46,7 @@ const rows = ref(tags && Object.keys(tags).length > 0 ? getTagRows(tags) : [{ na
         w-fit
         @click="rows.push({ name: '', value: '' })"
       />
-      <span v-else text-caption op-medium-emphasis>A resource can have at most {{ MAX_TAGS_COUNT }} tags.</span>
+      <span v-else text-hint>A resource can have at most {{ MAX_TAGS_COUNT }} tags.</span>
     </div>
   </StyledFormDialog>
 </template>

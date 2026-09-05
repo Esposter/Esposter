@@ -6,26 +6,27 @@ import { copyToClipboard } from "@/services/resource/sheet/commands/copyToClipbo
 import { takeOne } from "@esposter/shared";
 import { afterAll, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
+// The rich-clipboard path a browser that has `ClipboardItem` takes: installed by the one test that drives it,
+// Because the suite's `beforeEach` stubs are what every other case reads
+const stubClipboardItem = () => {
+  const capturedItems: { "text/html": Blob; "text/plain": Blob }[] = [];
+  vi.stubGlobal(
+    "ClipboardItem",
+    class {
+      items: { "text/html": Blob; "text/plain": Blob };
+
+      constructor(items: { "text/html": Blob; "text/plain": Blob }) {
+        this.items = items;
+        capturedItems.push(items);
+      }
+    },
+  );
+  vi.stubGlobal("navigator", { clipboard: { write: vi.fn<() => Promise<void>>().mockResolvedValue(undefined) } });
+  return capturedItems;
+};
+
 describe(copyToClipboard, () => {
   let writtenText = "";
-  // The rich-clipboard path a browser that has `ClipboardItem` takes: installed by the one test that drives it,
-  // Because the default stubs below are what every other case reads
-  const stubClipboardItem = () => {
-    const capturedItems: { "text/html": Blob; "text/plain": Blob }[] = [];
-    vi.stubGlobal(
-      "ClipboardItem",
-      class {
-        items: { "text/html": Blob; "text/plain": Blob };
-
-        constructor(items: { "text/html": Blob; "text/plain": Blob }) {
-          this.items = items;
-          capturedItems.push(items);
-        }
-      },
-    );
-    vi.stubGlobal("navigator", { clipboard: { write: vi.fn<() => Promise<void>>().mockResolvedValue(undefined) } });
-    return capturedItems;
-  };
 
   beforeEach(() => {
     writtenText = "";

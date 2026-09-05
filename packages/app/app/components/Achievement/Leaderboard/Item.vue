@@ -28,7 +28,7 @@ const { entry, isMyEntry } = defineProps<Props>();
     </NuxtInvisibleLink>
     <NuxtInvisibleLink font-bold :to="RoutePath.User(entry.user.id)">{{ entry.user.name }}</NuxtInvisibleLink>
     <v-spacer />
-    <span op-medium-emphasis text-body-small>{{ entry.unlockCount }} unlocked</span>
+    <span text-hint>{{ entry.unlockCount }} unlocked</span>
     <v-chip flex gap-x-1 color="orange" size="small">
       <v-icon icon="mdi-trophy" size="x-small" />
       {{ entry.points }}

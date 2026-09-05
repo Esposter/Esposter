@@ -47,6 +47,8 @@ export const getBaseColorsExtension = (colors: BaseColors) => {
     "background-opacity-80": `${sanitisedColors.background}cc`,
     "info-opacity-10": `${sanitisedColors.info}1a`,
     "on-info-opacity-10": colors.text,
+    "on-primary-opacity-10": colors.text,
+    "primary-opacity-10": `${sanitisedColors.primary}1a`,
     "surface-opacity-80": `${sanitisedColors.surface}cc`,
   };
 };

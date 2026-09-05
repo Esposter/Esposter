@@ -9,10 +9,12 @@ const { color } = defineProps<Props>();
 </script>
 
 <template>
-  <div
-    :class="color ? undefined : 'bg-surface'"
-    :style="color ? { backgroundColor: color } : undefined"
-    rd-full
-    size-3
-  />
+  <!-- Unconditional: a role carrying its own colour sets it inline, which outranks this -->
+  <div class="color-dot" :style="color ? { backgroundColor: color } : undefined" rd-full size-3 />
 </template>
+
+<style scoped>
+.color-dot {
+  background-color: rgb(var(--v-theme-surface));
+}
+</style>

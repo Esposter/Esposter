@@ -31,7 +31,7 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 Only when technically required:
 
 - **Scoped CSS refs** — class names referenced in `<style scoped>` (e.g. `class="card"`)
-- **Dynamic bindings** — `:class="..."` always stays as-is
+- **Dynamic bindings** — `:class="..."` always stays as-is, and a **valueless** utility switched on a condition belongs there rather than in a bound attribute. `:py="isCompact ? 0.5 : 1"` is fine: the extractor reads the literals and emits `[py~="0.5"]` and `[py~="1"]`. `:op-loading="isLoading ? '' : undefined"` is not — an empty string is no value, so nothing is emitted and the attribute lands on a rule only when some unrelated file happens to write that utility bare. It fails silently and comes back the day that file changes. `:class="isLoading ? 'op-loading' : undefined"` emits the class and depends on nothing
 - **Third-party component classes** — e.g. `vue-flow__panel`, `v-window__controls`, `fc-event-title`, Vuetify internal `v-`-prefixed classes (e.g. `v-theme--light`)
 - **SVG classes** — e.g. `fclass1`, `a`, `b`
 - **`group`** — UnoCSS group variant token; must stay in `class` so descendant `group-hover:` variants work
@@ -44,9 +44,9 @@ A scoped class (with `v-bind()` for reactive values) also stays correct where at
 
 - Vuetify MD3 typography: **every** role in `typographyPresets.md3` is a shortcut, kebab-cased — the five scales (`display`, `headline`, `title`, `body`, `label`) crossed with `large`/`medium`/`small`. `uno.config.ts` generates them from the preset, so there is no shorter allowlist to check against. Never MD2 utilities like `text-caption`; use the MD3 equivalent (`text-body-small`).
 - Vuetify theme colours: `bg-surface`, `bg-background`, `bg-border`, `text-error`, `text-info`, etc.
-- Opacity emphasis: use `op-medium-emphasis` / `op-high-emphasis`, not `text-medium-emphasis`. **De-emphasised text is an emphasis opacity, never a grey** — `text-gray` resolves against preset-wind4's palette rather than the Vuetify theme, so it paints one fixed grey in both themes and drifts out of contrast in one of them, while `op-medium-emphasis` applies `var(--v-medium-emphasis-opacity)` over the current text colour. Paired with `text-body-small` (captions, timestamps, hints) it already has a name: `text-hint`.
+- Opacity emphasis: use `op-medium-emphasis` / `op-high-emphasis`, not `text-medium-emphasis` — and not the number either. `op-60` is `--v-medium-emphasis-opacity`'s default written out a second time, so it stops tracking the theme the moment that variable moves; the numeric scale is for what is genuinely not emphasis, like the `op-0` → `group-hover:op-100` of a reveal. **De-emphasised text is an emphasis opacity, never a grey** — `text-gray` resolves against preset-wind4's palette rather than the Vuetify theme, so it paints one fixed grey in both themes and drifts out of contrast in one of them, while `op-medium-emphasis` applies `var(--v-medium-emphasis-opacity)` over the current text colour. Paired with `text-body-small` (captions, timestamps, hints) it already has a name: `text-hint`.
 - Custom theme colours: `bg-surface-opacity-80`, `bg-background-opacity-40`, etc.
-- Material Design palette: `text-amber`, `bg-deep-purple`, `text-yellow-darken-4`, etc.
+- The preset's own palette: `text-amber`, `text-orange`, `bg-sky`, etc. Vuetify's palette names are **not** the same set — `bg-deep-purple` and `text-yellow-darken-4` come from `$color-pack`, which emits classes only, so as attributes they generate nothing. Generate the CSS if unsure; a palette name that matches no rule fails silently.
 
 Only registered colors generate utilities — don't assume a Vuetify default theme colour works: use `text-primary` not `text-success`, `bg-surface` not `bg-surface-variant`. Registration rules (theme colours, palette, safelisting) live in the `unocss` skill. When reading hyphenated theme colours from a colours store, destructure quoted keys and alias to camel-case: `const { "hyphenated-key": hyphenatedKey } = storeToRefs(colorsStore);`.
 

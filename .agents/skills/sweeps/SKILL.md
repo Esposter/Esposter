@@ -1,6 +1,6 @@
 ---
 name: sweeps
-description: Esposter repo-wide sweep conventions — a Settled list of the directions already rejected (filing a sweep as a proposal, a progress column or tick count on the index row, fanning one sweep's units out to parallel agents, and inheriting a split row's date onto its children), progress tracked as a ledger in .agents/ledgers/ named after the skill that owns its rules, sweeps being repo state rather than proposals, proving a find recipe can fail before believing it passed, when a mechanical pass earns a ledger and when it is just a commit, splitting a row that reads as too high a level before any pass starts, one unit per commit chunked to the review budget, state living at the leaf with the pass run in the main session one unit at a time, behaviour-preserving passes and where a behaviour-changing finding goes instead, what belongs in the commit message rather than the ledger, every sweep being standing and the changed-files command that resumes one, draining a ledger as a by-product of ordinary work, and handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill — plus a deep dive on the ledger file itself: the six things it may hold, the explanatory prose it may not, and the ban on any record of what a past pass did, promotion to a folder, and a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same), with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
+description: Esposter repo-wide sweep conventions — a Settled list of the directions already rejected (filing a sweep as a proposal, a progress column or tick count on the index row, fanning one sweep's units out to parallel agents, and inheriting a split row's date onto its children), progress tracked as a ledger in .agents/ledgers/ named after the skill that owns its rules, sweeps being repo state rather than proposals, proving a find recipe can fail before believing it passed, when a mechanical pass earns a ledger and when it is just a commit, splitting a row that reads as too high a level before any pass starts, one unit per commit chunked to the review budget, state living at the leaf with the pass run in the main session one unit at a time, behaviour-preserving passes and where a behaviour-changing finding goes instead, what belongs in the commit message rather than the ledger, every sweep being standing and the changed-files command that resumes one, draining a ledger as a by-product of ordinary work, and handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill — plus deep dives on where a find recipe lives (a grep inline, anything with control flow a tested script under scripts/sweeps/), on what a pass does when its rule turns out silent or wrong, and on the ledger file itself: the six things it may hold, the explanatory prose it may not, and the ban on any record of what a past pass did, promotion to a folder, and a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same), with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
 ---
 
 # Sweeps
@@ -23,21 +23,16 @@ Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row i
 ## A scan that reports nothing
 
 A find recipe that comes back empty is the same shape as a clean tree, so a broken scan reads as a finished
-sweep. Two ways it has actually happened here, both silent:
-
-- **`new RegExp` built from a template literal inside `node -e '...'`.** Single quotes hand the backslash to
-  Node intact — the **template literal** is the layer that eats it, so a `\b` written for a word boundary reaches
-  `new RegExp` as a **backspace character** and the regex matches nothing. It survives a glance because
-  `JSON.stringify` renders a real backspace as `\b` as well, so printing `regex.source` looks right. Use a regex
-  **literal** (`/\bfoo\b/u`), `String.raw`, or a plain `.includes` — a literal is unaffected, `/getResult\(/u`
-  still means an escaped paren. A quoted heredoc (`<<'PY'`, `<<'JS'`) keeps the shell out of it entirely, which
-  is why the longer recipes use one; it removes no JavaScript layer, so the same three fixes still apply inside.
-- **A filter on the wrong field.** An author login that differs between two APIs, a path prefix that never
-  matches, a `--jq` selector against the wrong payload shape — each returns an empty set and exit 0.
+sweep. Both ways it has happened here were silent, and they are `references/find-recipes.md` with the three
+fixes for the first.
 
 So **prove the scan can fail before believing it passed**: run it against a known violation, or break one on
 purpose and confirm it is reported. The rule the `testing` skill applies to a new test applies to a new recipe —
 a check that cannot fail is not evidence.
+
+## The find recipe — `references/find-recipes.md`
+
+A grep stays inline in the ledger; anything with control flow is a script under `scripts/sweeps/`, where a colocated test keeps "prove the scan can fail" proved. **Writing one, or moving one out of a code block**, is that page.
 
 ## Does it earn a file?
 
@@ -112,6 +107,10 @@ Scope it to the files the change touches, not the unit around them; widening it 
 **The row stays `—` until the whole unit is swept.** There is no partially-swept state, and inventing one — a fraction, a file list, a third symbol — puts progress state at file granularity in a table that exists to track units, where it drifts the moment anyone touches those files again. The opportunistic pass shortens the eventual unit pass; it never reports it.
 
 This is what keeps a standing ledger moving. The scheduled pass stops being the only thing that drains it and becomes the sweep-up for whatever ordinary work never happened to reach.
+
+## When the rule runs out — `references/rule-gaps.md`
+
+The convention a pass carries is evidence rather than authority: a unit that will not fit it is as likely to have found a gap as to be a violation. **The three shapes a gap takes**, and where the fix lands, are that page.
 
 ## Shrinking beats re-running
 

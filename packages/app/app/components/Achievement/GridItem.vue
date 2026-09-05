@@ -36,7 +36,7 @@ const targetAmount = computed(() => achievementDefinition.amount ?? 1);
         </v-chip>
         <div text-orange font-bold text-body-small>{{ achievementDefinition.points }} points</div>
         <div flex flex-col gap-y-1 w-full>
-          <v-progress-linear :model-value="(amount / targetAmount) * 100" :height="6" color="primary" rd />
+          <v-progress-linear :model-value="(amount / targetAmount) * 100" height="0.375rem" color="primary" rd />
           <div text-body-small>{{ amount }} / {{ targetAmount }}</div>
         </div>
       </v-card-text>

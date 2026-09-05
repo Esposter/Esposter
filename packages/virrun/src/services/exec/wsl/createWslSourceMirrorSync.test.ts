@@ -122,7 +122,7 @@ describe(createWslSourceMirrorSync, () => {
     // The next manifest is staged host-side as a pid-tagged temp the script publishes via atomic mv, carrying the
     // Exclude set it was walked under so a later run can tell a stale mirrored set from a current one.
     expect(jsonDateParse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toStrictEqual({
-      entries: expect.objectContaining({ [TEST_FILENAME]: expect.anything() }),
+      entries: { [TEST_FILENAME]: expect.anything() },
       excludes,
     });
   });

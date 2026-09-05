@@ -50,35 +50,12 @@ grep -rn 'new Error(' --include=*.ts --include=*.vue packages/app/app packages/a
 
 A chain that never terminates cannot be grepped for. A line-anchored `getResult(Async)?\(` reports all 234 call
 sites, and a fixed-size window around one calls the ~40 whose body runs long a finding — the terminator sits
-after the closing paren, which is wherever the callback ends. So the scan **matches the bracket** and reads what
-follows it, which leaves only the sites that genuinely chain nothing:
+after the closing paren, which is wherever the callback ends. So the scan **matches the bracket** and reads the
+code that follows it, through the same `scanCode` walker the `constantScope` scan uses, so a `)` inside a string
+or a comment closes nothing:
 
 ```bash
-node -e '
-const { execSync } = require("node:child_process");
-const fs = require("node:fs");
-const files = execSync("git ls-files \"packages/*/src/**\" \"packages/app/app/**\" \"packages/app/server/**\" \"packages/app/shared/**\"", { encoding: "utf8", maxBuffer: 1 << 28 })
-  .split("
-").filter((f) => (f.endsWith(".ts") || f.endsWith(".vue")) && !f.includes(".test."));
-const findClose = (text, open) => {
-  let depth = 0;
-  for (let i = open; i < text.length; i += 1) {
-    if (text[i] === "(") depth += 1;
-    else if (text[i] === ")") { depth -= 1; if (depth === 0) return i; }
-  }
-  return -1;
-};
-for (const file of files) {
-  const text = fs.readFileSync(file, "utf8");
-  for (const match of text.matchAll(/getResult(?:Async)?\(/gu)) {
-    const close = findClose(text, match.index + match[0].length - 1);
-    if (close === -1) continue;
-    const after = text.slice(close + 1, close + 40).replace(/\s+/gu, " ");
-    if (/^\s*\.(match|orTee|andTee|unwrapOr|mapErr|andThen|map|orElse)/u.test(after)) continue;
-    console.log(`${file}:${text.slice(0, match.index).split("
-").length}  after: ${after.slice(0, 34)}`);
-  }
-}'
+pnpm sweep:unterminated-results
 ```
 
 What it still reports is the chain assigned to a named `const` and terminated on a later line — which is the

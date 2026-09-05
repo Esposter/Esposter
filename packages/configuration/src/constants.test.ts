@@ -9,7 +9,7 @@ import { describe, expect, test } from "vitest";
  * exports any more: every tool resolves a sibling's `dist` instead of its source, silently and correctly, and
  * only a stale build ever shows it.
  */
-describe("SOURCE_CONDITION", () => {
+describe("sourceCondition", () => {
   test("is the condition the tsconfig preset opts into", () => {
     expect.hasAssertions();
 
@@ -29,7 +29,7 @@ describe("SOURCE_CONDITION", () => {
  * ctix would list a test file in the published barrel, and the build program would compile one into the
  * declarations — while every check in the repository still passes.
  */
-describe("NON_SOURCE_SUFFIXES", () => {
+describe("nonSourceSuffixes", () => {
   // A recursive suffix glob and nothing else. `${configDir}/*.config.ts` excludes one root-level file and
   // `${configDir}/scripts/**/*.ts` a whole directory, so neither is a claim about what a non-source file is, and
   // Matching them here would make this assert the rest of an exclude list it has no opinion on.

@@ -35,7 +35,7 @@ describe(deserializeXlsx, () => {
 
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Xlsx].mimeType;
 
-  const createXlsxFile = async (dataSource: DataSource, name = "test.xlsx") => {
+  const createXlsxFile = async (dataSource: DataSource, name = "a.xlsx") => {
     const blob = await serializeXlsx(dataSource, defaultSettings, MIME_TYPE);
     return new File([blob], name, { type: MIME_TYPE });
   };

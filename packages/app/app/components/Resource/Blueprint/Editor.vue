@@ -35,7 +35,7 @@ const save = async () => {
 <template>
   <v-container fluid flex flex-col gap-4 h-full>
     <div flex flex-wrap gap-2 items-center>
-      <span text-h6>Manifest</span>
+      <span text-title-large>Manifest</span>
       <v-spacer />
       <StyledButton :button-props="{ prependIcon: 'mdi-content-save', text: 'Save', variant: 'tonal' }" @click="save" />
       <ResourceBlueprintDeployDialog />

@@ -34,7 +34,7 @@ onUnmounted(clearVersionHistory);
 <template>
   <v-sheet b-0 b-s-1 b-border b-solid flex flex-col overflow-auto w="full sm:1/3">
     <div py-2 pl-4 pr-2 b-0 b-b-1 b-border b-solid flex gap-2 items-center>
-      <span text-subtitle-1>Version history</span>
+      <span text-title-medium>Version history</span>
       <v-spacer />
       <StyledTooltipIconButton icon="mdi-close" text="Close version history" @click="closeVersionHistory" />
     </div>

@@ -20,7 +20,7 @@ const { emoji, skinTone } = defineProps<Props>();
     v-if="emoji.type === EmojiType.Custom"
     :alt="emoji.name"
     :src="emoji.sasUrl"
-    size-[1em]
+    size="[1em]"
     inline-block
     object-contain
   />

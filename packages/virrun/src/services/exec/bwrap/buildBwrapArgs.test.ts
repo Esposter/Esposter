@@ -5,7 +5,7 @@ import {
   VIRRUN_STORE_DIRECTORY_NAME,
 } from "#src/services/exec/util/constants";
 import { TEST_DIR, TEST_FILENAME } from "#src/services/exec/util/constants.test";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(buildBwrapArgs, () => {
@@ -78,11 +78,35 @@ describe(buildBwrapArgs, () => {
     const bindDir = `${TEST_DIR}/${VIRRUN_CACHE_DIRECTORY_NAME}/${VIRRUN_STORE_DIRECTORY_NAME}/${VIRRUN_PNPM_STORE_DIRECTORY_NAME}`;
     const args = buildBwrapArgs("pwd", TEST_DIR, { bindDirs: [bindDir] });
 
-    expect(args).toStrictEqual(
-      expect.arrayContaining(["--overlay-src", TEST_DIR, "--tmp-overlay", TEST_DIR, "--bind", bindDir, bindDir]),
-    );
-    expect(args.indexOf("--bind")).toBeGreaterThan(args.indexOf("--tmp-overlay"));
-    expect(args.indexOf("--chdir")).toBeGreaterThan(args.indexOf("--bind"));
+    // The bind lands after the RAM overlays and before the chdir, which the argv below shows in order
+    expect(args).toMatchInlineSnapshot(`
+      [
+        "--unshare-all",
+        "--die-with-parent",
+        "--ro-bind",
+        "/",
+        "/",
+        "--dev",
+        "/dev",
+        "--proc",
+        "/proc",
+        "--tmpfs",
+        "/tmp",
+        "--overlay-src",
+        "/a",
+        "--tmp-overlay",
+        "/a",
+        "--bind",
+        "/a/.virrun/store/pnpm",
+        "/a/.virrun/store/pnpm",
+        "--chdir",
+        "/a",
+        "--",
+        "/bin/sh",
+        "-c",
+        "pwd",
+      ]
+    `);
   });
 
   test("persists writes to a host upper when capturing a snapshot", () => {
@@ -92,10 +116,33 @@ describe(buildBwrapArgs, () => {
     const workDir = `${TEST_DIR}/work`;
     const args = buildBwrapArgs("pnpm install", TEST_DIR, {}, { upperDir, workDir });
 
-    expect(args).toStrictEqual(
-      expect.arrayContaining(["--overlay-src", TEST_DIR, "--overlay", upperDir, workDir, TEST_DIR]),
-    );
-    expect(args).not.toContain("--tmp-overlay");
+    expect(args).toMatchInlineSnapshot(`
+      [
+        "--unshare-all",
+        "--die-with-parent",
+        "--ro-bind",
+        "/",
+        "/",
+        "--dev",
+        "/dev",
+        "--proc",
+        "/proc",
+        "--tmpfs",
+        "/tmp",
+        "--overlay-src",
+        "/a",
+        "--overlay",
+        "/a/upper",
+        "/a/work",
+        "/a",
+        "--chdir",
+        "/a",
+        "--",
+        "/bin/sh",
+        "-c",
+        "pnpm install",
+      ]
+    `);
   });
 
   test("stacks extra lower layers above the source before the tmpfs upper when forking", () => {
@@ -103,15 +150,35 @@ describe(buildBwrapArgs, () => {
 
     const snapshotUpper = `${TEST_DIR}/${TEST_FILENAME}`;
     const args = buildBwrapArgs("vitest", TEST_DIR, {}, { lowerDirs: [snapshotUpper] });
-    const sourceLower = args.indexOf(TEST_DIR);
-    const snapshotLower = args.indexOf(snapshotUpper);
 
-    expect(args).toStrictEqual(
-      expect.arrayContaining(["--overlay-src", TEST_DIR, "--overlay-src", snapshotUpper, "--tmp-overlay", TEST_DIR]),
-    );
     // The snapshot lower must stack after the source so its files shadow it, and both precede the upper.
-    expect(snapshotLower).toBeGreaterThan(sourceLower);
-    expect(args.indexOf("--tmp-overlay")).toBeGreaterThan(snapshotLower);
+    expect(args).toMatchInlineSnapshot(`
+      [
+        "--unshare-all",
+        "--die-with-parent",
+        "--ro-bind",
+        "/",
+        "/",
+        "--dev",
+        "/dev",
+        "--proc",
+        "/proc",
+        "--tmpfs",
+        "/tmp",
+        "--overlay-src",
+        "/a",
+        "--overlay-src",
+        "/a/a",
+        "--tmp-overlay",
+        "/a",
+        "--chdir",
+        "/a",
+        "--",
+        "/bin/sh",
+        "-c",
+        "vitest",
+      ]
+    `);
   });
 
   test("overlays a distinct sourceDir as the lower while mounting and chdiring at cwd", () => {
@@ -120,13 +187,33 @@ describe(buildBwrapArgs, () => {
     const mirror = `${TEST_DIR}/${TEST_FILENAME}`;
     const args = buildBwrapArgs("pwd", TEST_DIR, {}, {}, mirror);
 
-    // The source content comes from the mirror, but the overlay is mounted at — and the sandbox chdir's into — cwd,
-    // So pwd reports the logical path, not the mirror's.
-    expect(args).toStrictEqual(
-      expect.arrayContaining(["--overlay-src", mirror, "--tmp-overlay", TEST_DIR, "--chdir", TEST_DIR]),
-    );
-    // The lone source lower is the mirror, not cwd — otherwise pwd would leak the mirror path.
-    expect(takeOne(args, args.indexOf("--overlay-src") + 1)).toBe(mirror);
+    // The lone source lower is the mirror, but the overlay is mounted at — and the sandbox chdir's into — cwd, so
+    // Pwd reports the logical path rather than leaking the mirror's
+    expect(args).toMatchInlineSnapshot(`
+      [
+        "--unshare-all",
+        "--die-with-parent",
+        "--ro-bind",
+        "/",
+        "/",
+        "--dev",
+        "/dev",
+        "--proc",
+        "/proc",
+        "--tmpfs",
+        "/tmp",
+        "--overlay-src",
+        "/a/a",
+        "--tmp-overlay",
+        "/a",
+        "--chdir",
+        "/a",
+        "--",
+        "/bin/sh",
+        "-c",
+        "pwd",
+      ]
+    `);
   });
 
   test.each([
