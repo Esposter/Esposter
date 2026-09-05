@@ -12,8 +12,16 @@
 | `packages/app` — `server/trpc/routers`                 | 2026-09-05 | the per-type router suites                               |
 | `packages/app` — `server/trpc/routers` subtrees        | 2026-09-05 | `message`, `room`, `call`                                |
 | `packages/app` — the rest of `server/trpc`             | 2026-09-05 | `guards`, `middleware`, `procedure`, `plugins`, root     |
-| `packages/app` — the rest of `server`                  | —          | services, routes, plugins                                |
-| `packages/app` — `shared`                              | —          |                                                          |
+| `packages/app` — `server/services/resource`            | —          |                                                          |
+| `packages/app` — `server/services/message`             | —          |                                                          |
+| `packages/app` — `server/services` — the dense rest    | —          | `blueprint`, `azure`, `storage`, `survey`, `program`     |
+| `packages/app` — the rest of `server/services`         | —          |                                                          |
+| `packages/app` — the rest of `server`                  | —          | `models`, `composables`, `api`, `plugins`, `db`, root    |
+| `packages/app` — `shared/models/resource`              | —          |                                                          |
+| `packages/app` — `shared/models/db`                    | —          |                                                          |
+| `packages/app` — the rest of `shared/models`           | —          |                                                          |
+| `packages/app` — `shared/services`                     | —          |                                                          |
+| `packages/app` — the rest of `shared`                  | —          | `util`, `types`, `assets`, `test`                        |
 | `packages/app` — `configuration`, `content`            | 2026-09-05 | CSP labels, Nuxt config prose                            |
 | `packages/azure-functions` — `handlers`                | 2026-09-05 | the densest prose in the package                         |
 | `packages/azure-functions` — `services`, the rest      | 2026-09-05 | plus `functions`, `hooks`, `models`, `index.test.ts`     |
