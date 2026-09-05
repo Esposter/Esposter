@@ -18,8 +18,8 @@ describe(MockContainerClient, () => {
     MockContainerDatabase.set(
       containerName,
       new Map([
-        ["a/a", Buffer.from("")],
         ["a", Buffer.from("")],
+        ["a/a", Buffer.from("")],
       ]),
     );
     const client = new MockContainerClient(MOCK_BLOB_BASE_URL, containerName);
