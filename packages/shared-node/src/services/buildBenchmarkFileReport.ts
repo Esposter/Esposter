@@ -26,8 +26,8 @@ const getFullName = (node: BenchmarkTaskNode): string => {
   }
   return names.join(" > ");
 };
-// Projects one bench file's runner task tree into the BenchmarkReport our formatter renders: each suite
-// With bench children becomes a group, keyed by full name, carrying only the fields the schema declares.
+// Projects one bench file's runner task tree into the BenchmarkReport the formatter renders: each suite
+// With bench children becomes a group, keyed by its full name.
 export const buildBenchmarkFileReport = (file: BenchmarkTaskNode): BenchmarkReport => {
   const groups: BenchmarkGroup[] = [];
   for (const suite of collectSuites(file)) {

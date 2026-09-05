@@ -5,7 +5,7 @@ import baseSanitizeHtml from "sanitize-html";
 const appendStyle = (style: string | undefined, declarations: string): string =>
   style ? `${style}; ${declarations}` : declarations;
 // A cell's `align` attribute is dropped in favour of the equivalent style, so the one allowed attribute
-// Carries it. Identical for td and th, which is why they share the transformer rather than declaring one each
+// Carries it. Identical for td and th.
 const transformCellAlign: Transformer = (tagName, attribs): Tag => {
   if (attribs.align) {
     attribs.style = appendStyle(attribs.style, `text-align:${attribs.align}`);

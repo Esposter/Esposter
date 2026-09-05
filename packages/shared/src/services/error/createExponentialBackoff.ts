@@ -1,8 +1,6 @@
 import { getResultAsync } from "#src/services/error/getResultAsync";
 import { sleep } from "#src/util/time/sleep";
 
-// Paces a repeatedly-invoked fallible operation (e.g. a waypoint-driven pagination fetch):
-// Each consecutive failure doubles the delay before the next attempt, a success resets it
 export const createExponentialBackoff = (
   baseDelayMs: number,
   maxDelayMs: number,
