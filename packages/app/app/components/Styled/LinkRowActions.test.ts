@@ -23,7 +23,7 @@ describe("styledLinkRowActions", () => {
     const event = new MouseEvent("click", { bubbles: true, cancelable: true });
     component.get("button").element.dispatchEvent(event);
 
-    expect(onActionClick).toHaveBeenCalledTimes(1);
+    expect(onActionClick).toHaveBeenCalledExactlyOnceWith(event);
     expect(event.defaultPrevented).toBe(true);
     expect(onRowClick).not.toHaveBeenCalled();
   });
