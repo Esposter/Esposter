@@ -5,7 +5,7 @@
 | `packages/app`                                          | —          | components, composables, stores, services, server, shared |
 | `packages/azure-functions`                              | —          |                                                           |
 | `packages/azure-mock`                                   | —          | filter/search/container mocks                             |
-| `packages/configuration`                                | —          | external lists, `global.d.ts`                             |
+| `packages/configuration`                                | 2026-09-05 | external lists, `global.d.ts`                             |
 | `packages/db`, `packages/db-mock`, `packages/db-schema` | —          | schema + models                                           |
 | `packages/infra`                                        | —          | event subscriptions, GitHub rulesets                      |
 | `packages/parse-tmx`                                    | 2026-09-05 | `TMXNode.ts`                                              |

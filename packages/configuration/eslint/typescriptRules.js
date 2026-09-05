@@ -4,9 +4,9 @@ import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxe
 const MAP_NAME_REGEX = "/^[a-z][A-Za-z0-9]*(By|To)[A-Z]/";
 const BY_MAP_NAME_REGEX = "/^[a-z][A-Za-z0-9]*By[A-Z]/";
 const MAP_TYPE_NAME_REGEX = "/^(Map|ReadonlyMap|Record)$/";
-// Everything typescript-eslint's strict/stylistic sets covered is now enforced natively by oxlint
-// (see /docs/proposals/refactors/eslint-to-oxlint-migration). The only survivor is `no-restricted-syntax`:
-// Oxlint has no selector-based rule yet, so these AST-selector bans stay on the ESLint side.
+// Only `no-restricted-syntax` lives on the ESLint side: oxlint enforces the rest natively but has no
+// Selector-based rule, so these AST-selector bans have nowhere else to go
+// (see /docs/proposals/refactors/eslint-to-oxlint-migration).
 export default {
   // `protected` is still allowed — no `#` equivalent exists for subclass access.
   "no-restricted-syntax": [
@@ -100,15 +100,17 @@ export default {
       selector: "CallExpression[callee.name='useRoute']",
     },
   ],
-  // Kept for later: enable via oxlint (`typescript/naming-convention`) once it supports the rule.
-  // Computationally expensive under typescript-eslint, which is why it never shipped here.
-  // "@typescript-eslint/naming-convention": [
-  //   "error",
-  //   {
-  //     Format: ["camelCase", "PascalCase", "UPPER_CASE"],
-  //     Selector: "variable",
-  //     Types: ["array", "boolean", "number", "string"],
-  //     LeadingUnderscore: "allow",
-  //   },
-  // ],
+  // Parked, per /docs/proposals/refactors/eslint-to-oxlint-migration. A block comment because every line
+  // Here opens on a config key, which `//` would capitalize.
+  /*
+  "@typescript-eslint/naming-convention": [
+    "error",
+    {
+      format: ["camelCase", "PascalCase", "UPPER_CASE"],
+      leadingUnderscore: "allow",
+      selector: "variable",
+      types: ["array", "boolean", "number", "string"],
+    },
+  ],
+  */
 };

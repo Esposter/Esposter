@@ -72,9 +72,9 @@ export const getTsdownConfiguration = ({ exportsGeneration }: TsdownConfiguratio
     // Sibling bundling this package from source would resolve its internal specifiers into itself; a subpath
     // Import resolves against the manifest that wrote it no matter who is compiling.
     exports: { devExports: SOURCE_CONDITION },
-    // Every package here is `"type": "module"`, so a `.js` file is already unambiguously ESM and the `.mjs`
-    // Tsdown defaults to on the node platform buys nothing — it only makes the output path differ between the
-    // Node packages and the neutral ones.
+    // Every package here is `"type": "module"`, so a `.js` file is already unambiguously ESM. The `.mjs`
+    // Extension that tsdown defaults to on the node platform buys nothing — it only makes the output path
+    // Differ between the node packages and the neutral ones.
     fixedExtension: false,
     // Barrel generation belongs to the build rather than to a line in front of it — one definition here
     // Instead of the same command repeated in every manifest, and the one place a guard can live.
@@ -90,15 +90,15 @@ export const getTsdownConfiguration = ({ exportsGeneration }: TsdownConfiguratio
     ? // No declarations. A private package's `dist` is only ever reached through the `default` arm, by something
       // That runs it rather than types against it — a host loading a deploy artifact, Node loading the
       // Infrastructure program. Everything that types against one resolves `SOURCE_CONDITION` and reads the
-      // Package's TypeScript, so the emitted `.d.ts` had no reader at all, and the emit is not free: a package
-      // Whose types cannot satisfy `isolatedDeclarations` falls back to a full TypeScript program, and for the
-      // Drizzle schema that was four minutes and a 6.8 MB file nothing opened. Deriving this from `private`
-      // Rather than opting in per package also means it cannot be forgotten. What it leaves behind is one full
-      // Program rather than none: every published package extends `tsconfig.library.json` and emits per file
-      // Under `isolatedDeclarations`, except `vue-phaserjs`, whose `.vue` declarations are vue-tsc's to emit
-      // And have no per-file path to take at all — see `getTsdownConfigurationVue`, which loads the whole
-      // Program on purpose. So the slow path is now exactly the one package that cannot avoid it, and a new
-      // Published package taking it would have to have left the library preset to do so.
+      // Package's TypeScript, so an emitted `.d.ts` has no reader at all — and the emit is not free: a package
+      // Whose types cannot satisfy `isolatedDeclarations` falls back to a full TypeScript program, which for
+      // The Drizzle schema would be minutes of build time and a multi-megabyte file nothing opens. Deriving
+      // From `private` rather than opting in per package also means it cannot be forgotten. What it leaves
+      // Behind is one full program rather than none: every published package extends `tsconfig.library.json`
+      // And emits per file under `isolatedDeclarations`, except `vue-phaserjs`, whose `.vue` declarations
+      // Belong to vue-tsc and have no per-file path to take at all — see `getTsdownConfigurationVue`, which
+      // Loads the whole program on purpose. The slow path is exactly the one package that cannot avoid it,
+      // And a new published package taking it would have to have left the library preset to do so.
       mergeConfig(commonConfiguration, { dts: false })
     : mergeConfig(commonConfiguration, {
         // Declarations are consumed through whatever resolution mode the consumer picked, so they are checked
