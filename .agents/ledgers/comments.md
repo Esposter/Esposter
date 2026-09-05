@@ -9,7 +9,9 @@
 | `packages/app` — `app/models`, `app/types`             | 2026-09-05 | the dungeons tree's legacy prose                         |
 | `packages/app` — `app/store`                           | 2026-09-05 | the rollback rationale, restated per call site           |
 | `packages/app` — `app/pages`, `layouts`, the rest      | 2026-09-05 | plus `middleware`, `plugins`, `assets`                   |
-| `packages/app` — `server/trpc`                         | —          |                                                          |
+| `packages/app` — `server/trpc/routers`                 | —          | the per-type router suites                               |
+| `packages/app` — `server/trpc/routers` subtrees        | —          | `message`, `room`, `call`                                |
+| `packages/app` — the rest of `server/trpc`             | —          | `guards`, `middleware`, `procedure`, `plugins`, root     |
 | `packages/app` — the rest of `server`                  | —          | services, routes, plugins                                |
 | `packages/app` — `shared`                              | —          |                                                          |
 | `packages/app` — `configuration`, `content`            | 2026-09-05 | CSP labels, Nuxt config prose                            |
