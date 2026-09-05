@@ -19,7 +19,7 @@
 | `packages/shared`, `packages/shared-node`              | 2026-09-05 | `takeOne`                                                 |
 | `packages/virrun` — `models`, package root             | 2026-09-05 |                                                           |
 | `packages/virrun` — `services/cli`, `configuration`    | 2026-09-05 | plus `source`, `vfs`, `virrun`                            |
-| `packages/virrun` — `services/exec/wsl`                | —          | the mirror prose is the bulk of the package               |
+| `packages/virrun` — `services/exec/wsl`                | 2026-09-05 | the mirror prose is the bulk of the package               |
 | `packages/virrun` — `services/exec/snapshot`           | —          | layers, leases, overlay capture                           |
 | `packages/virrun` — `services/exec/util`               | —          |                                                           |
 | `packages/virrun` — the rest of `services/exec`        | —          | bwrap, cache, differential, native, os, store, test, vfs  |

@@ -10,7 +10,7 @@ import {
 import { describe } from "vitest";
 
 // The one login capture every suite that mocks `readWslLoginEnvironment` hands back. Non-empty by construction:
-// CreateOsExecOptions treats an empty path on win32 as a *failed* capture and throws, so a suite mocking it empty
+// `createOsExecOptions` treats an empty path on win32 as a *failed* capture and throws, so a suite mocking it empty
 // Asserts that guard instead of its own subject — on win32 hosts only, which is why CI never saw it.
 // Never mutated: two suites return this object itself from their mock factory, so emptying the path in place would
 // Empty it for every later test in that file. A suite that needs the failed-capture path mocks its own holder and
@@ -29,7 +29,7 @@ export const TEST_WSL_HOME = "/a";
 // Name of the in-temp dir the getWslNativeCacheRoot mock points at on win32 (joined under os.tmpdir() by the consumer).
 export const TEST_WSL_CACHE_DIR_NAME = "a";
 // `\\wsl.localhost` (and the legacy `\\wsl$`) UNC prefixes point straight at a distro's ext4 filesystem;
-// CreateTestWslUnc joins the distro segment on (no trailing separator here — it would escape the backtick).
+// `createTestWslUnc` joins the distro segment on (no trailing separator here — it would escape the backtick).
 export const TEST_WSL_UNC_PREFIX: string = String.raw`\\wsl.localhost`;
 export const TEST_WSL_LEGACY_UNC_PREFIX: string = String.raw`\\wsl$`;
 // `/a/.virrun` — the virrun cache root on the distro's own ext4 (what readWslPath maps the UNC back to).

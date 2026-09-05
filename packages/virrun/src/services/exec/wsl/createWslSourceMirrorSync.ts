@@ -31,7 +31,7 @@ const checkHasBareNameExcludeChange = (previous: readonly string[], current: rea
   getChangedExcludes(previous, current).some((exclude) => checkIsBareNameExclude(exclude));
 // Plan the win32 source-mirror sync for a host cwd and return { mirrorPath, script }: the ext4 mirror tree's Linux
 // Path (the `--overlay-src` lower createWslBwrapArgs points at) plus the sh script that brings it up to date, which
-// CreateWslOsBackend folds into the run's own `wsl.exe` invocation ahead of bwrap — no separate sync spawn. The whole
+// `createWslOsBackend` folds into the run's own `wsl.exe` invocation ahead of bwrap — no separate sync spawn. The whole
 // Win32 os gap was reads of the source lower crossing v9fs (an order of magnitude slower or worse); the mirror moves
 // The toolchain's reads to ext4, the manifest diff moves the per-run change detection to the host FS, and the staged
 // Archive moves the data plane off per-file 9p round-trips:
@@ -132,7 +132,7 @@ export const createWslSourceMirrorSync = (cwd: string, excludes: readonly string
     // The manifest is staged host-side as a pid-tagged temp and published by the script via `mv` (atomic same-fs
     // Rename) as the last step inside the lock, so it never claims a state the mirror doesn't hold and a concurrent
     // Planner reads either the old or the new one, never a torn file. The temp carries the *host* pid
-    // ReapStaleSourceMirrorTemps can attribute (a Linux-side `$$` temp would sit in the wrong pid domain forever).
+    // `reapStaleSourceMirrorTemps` can attribute (a Linux-side `$$` temp would sit in the wrong pid domain forever).
     writeFileSync(join(entryUnc, manifestTempFilename), JSON.stringify(current));
     const publish = `mv ${shellQuote(`${entryPath}/${manifestTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}`)}`;
     const withMirrorLock = (sync: string): string =>
@@ -162,7 +162,7 @@ export const createWslSourceMirrorSync = (cwd: string, excludes: readonly string
       sync = [`(cd ${shellQuote(mirrorPath)} && xargs -0r rm -rf -- < ${shellQuote(deleteListPath)})`, ...extract];
     }
     // The staged temps are consumed-then-removed only on success; a failed sync aborts the run and leaves them for
-    // ReapStaleSourceMirrorTemps to reclaim once this process is dead.
+    // `reapStaleSourceMirrorTemps` to reclaim once this process is dead.
     const cleanup =
       consumedPaths.length === 0 ? "" : ` && rm -f ${consumedPaths.map((path) => shellQuote(path)).join(" ")}`;
     return `${withMirrorLock(sync.join(" && "))}${cleanup}`;

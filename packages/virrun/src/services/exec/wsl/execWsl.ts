@@ -7,7 +7,7 @@ import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 // Is wedged) — is UTF-16LE, while an `--exec` child's stdout is that child's raw bytes (utf8). Stderr needs nothing
 // Declared: execFileHidden detects utf16le from the buffer, so a wsl.exe spawn that bypasses this wrapper still
 // Reports its failure. Stdout cannot be detected mid-stream, hence `encoding: "utf16le"` at the call sites reading
-// Wsl.exe's own stdout rather than a child's (getWslNativeCacheRoot's `-l -q`).
+// The `wsl.exe` stdout rather than a child's (getWslNativeCacheRoot's `-l -q`).
 //
 // Every call is bounded here too, defaulting to the WSL cap: a wedged WSL service does not fail a spawn, it never
 // Answers it, and execFileSync waits forever — one such call hangs the whole one-shot CLI with nothing printed. The
