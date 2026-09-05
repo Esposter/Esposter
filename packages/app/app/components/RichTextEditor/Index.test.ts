@@ -17,6 +17,6 @@ describe("richTextEditor", () => {
     const component = await mountSuspended(RichTextEditor, { props: { limit: 100, modelValue: "" } });
     component.unmount();
 
-    expect(destroy).toHaveBeenCalledTimes(1);
+    expect(destroy).toHaveBeenCalledExactlyOnceWith();
   });
 });
