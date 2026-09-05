@@ -1,6 +1,6 @@
 import type { ModuleScopeConstant } from "#scripts/sweeps/constantScope/models/ModuleScopeConstant";
 
-import { scanCode } from "#scripts/sweeps/constantScope/scanCode";
+import { scanCode } from "#scripts/sweeps/scanCode";
 
 // Anchored at column zero with no leading-space alternative: that is what scopes the scan to module scope,
 // Since the formatter indents every declaration a `describe` callback holds

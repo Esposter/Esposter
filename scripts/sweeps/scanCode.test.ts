@@ -1,4 +1,4 @@
-import { scanCode } from "#scripts/sweeps/constantScope/scanCode";
+import { scanCode } from "#scripts/sweeps/scanCode";
 import { describe, expect, test } from "vitest";
 
 const readCode = (text: string) =>
