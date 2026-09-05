@@ -14,7 +14,7 @@ const modelValue = defineModel<bigint>({ required: true });
 <template>
   <v-list-item>
     <v-list-item-title>{{ title }}</v-list-item-title>
-    <div op-medium-emphasis text-body-small>{{ description }}</div>
+    <div text-hint>{{ description }}</div>
     <template #append>
       <v-switch
         :model-value="Boolean(modelValue & permission)"

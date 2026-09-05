@@ -43,7 +43,7 @@ const isPending = ref(false);
         New Webhook
       </StyledButton>
     </div>
-    <div v-if="items.length >= WEBHOOK_MAX_LENGTH" text-red text-body-medium>
+    <div v-if="items.length >= WEBHOOK_MAX_LENGTH" text-error text-body-medium>
       You can only create up to {{ WEBHOOK_MAX_LENGTH }} {{ pluralize("webhook", WEBHOOK_MAX_LENGTH) }}.
     </div>
     <MessageModelRoomSettingsTypeWebhookList :room-id="room.id" />

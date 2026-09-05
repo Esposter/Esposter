@@ -6,7 +6,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | ------------------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------- |
 | `app/components/Styled`                                                                    | 2026-09-05 | the shared shells                                                                  |
 | `app/components/Message/Model/Message`                                                     | 2026-09-05 | the densest surface; the message row and its variants                              |
-| `app/components/Message/Model/Room/Settings/Type/Role`, `Webhook`, `Emoji`, `Member`       | —          | the settings panels that own a list and an editor                                  |
+| `app/components/Message/Model/Room/Settings/Type/Role`, `Webhook`, `Emoji`, `Member`       | 2026-09-05 | the settings panels that own a list and an editor                                  |
 | `app/components/Message/Model/Room/Settings/Type` — the rest                               | —          | `Overview`, `Profile`, `AuditLog`, `WordFilter`, `Bans`, `Invite`, `Attachments`   |
 | `app/components/Message/Model/Room/Settings` — the shell                                   | —          | the dialog, its sidebar and the shared field                                       |
 | `app/components/Message/Model/Room` — the rest                                             | —          | `Create`, `DirectMessage`, `Emoji`, `Invite`, `List`, `Role` and the loose dialogs |
