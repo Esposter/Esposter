@@ -19,7 +19,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Resource/Sheet`                                                            | —          | the sheet editor's own chrome                                                      |
 | `app/components/Resource/List`                                                             | —          |                                                                                    |
 | `app/components/Resource` — the per-type editors                                           | —          | `Survey`, `TodoList`, `Note`, `Program`, `Webpage`, `Email`, `Blueprint`           |
-| `app/components/Resource` — the entry surfaces                                             | —          | `Home`, `Search`, `Explorer`, `RecycleBin`, `Dashboard`, `Flowchart`               |
+| `app/components/Resource` — the entry surfaces                                             | 2026-09-05 | `Home`, `Search`, `Explorer`, `RecycleBin`, `Dashboard`, `Flowchart`               |
 | `app/components/Resource` — the shared chrome                                              | —          | `Blade`, `Create`, `VersionHistory` and the loose dialogs                          |
 | `app/components/Dungeons`                                                                  | —          | canvas-adjacent; much of it is Phaser rather than DOM                              |
 | `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | 2026-09-05 | the chrome                                                                         |
