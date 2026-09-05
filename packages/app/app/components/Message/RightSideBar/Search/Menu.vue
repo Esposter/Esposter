@@ -17,7 +17,7 @@ const { width } = useElementSize(activator);
     v-model="isMenuOpen"
     location="bottom"
     :close-on-content-click="false"
-    :height="500"
+    height="31.25rem"
     :open-on-click="false"
     :width
     @mousedown.prevent

@@ -9,13 +9,11 @@ const { items, page, pageCount } = storeToRefs(searchMessageStore);
 
 <template>
   <MessageModelMessageSearchList :messages="items">
-    <div flex justify-center>
-      <v-pagination
-        v-model="page"
-        w-full
-        :length="pageCount"
-        @update:model-value="readSearchedMessages(($event - 1) * DEFAULT_READ_LIMIT)"
-      />
-    </div>
+    <v-pagination
+      v-model="page"
+      w-full
+      :length="pageCount"
+      @update:model-value="readSearchedMessages(($event - 1) * DEFAULT_READ_LIMIT)"
+    />
   </MessageModelMessageSearchList>
 </template>
