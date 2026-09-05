@@ -60,6 +60,7 @@
     "release": "pnpm format:check && pnpm build:packages && pnpm lint:packages && pnpm typecheck:packages && pnpm test:packages && lerna publish --yes",
     "start": "pnpm --filter @esposter/app run start",
     "sweep:constant-scope": "tsx scripts/sweeps/constantScope/index.ts",
+    "sweep:skill-docs": "tsx scripts/sweeps/skillDocs/index.ts",
     "test": "virrun -- vitest run",
     "test:packages": "virrun -- vitest run --project \"!@esposter/app\"",
     "typecheck": "virrun -- tsc && virrun -- pnpm -r --parallel run typecheck",

@@ -48,6 +48,7 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 | `pnpm graph:gen`             | `tsx scripts/dependencyGraph/index.ts`            | Regenerate `dependency-graph.svg` from the workspace manifests. Run it after changing one.                                              |
 | `pnpm release`               | checks, then `lerna publish`                      | The whole release, run locally — see Settled above.                                                                                     |
 | `pnpm sweep:constant-scope`  | `tsx scripts/sweeps/constantScope/index.ts`       | One sweep find recipe, as a tested script rather than a ledger code block (`sweeps` skill). One `sweep:*` per scan.                     |
+| `pnpm sweep:skill-docs`      | `tsx scripts/sweeps/skillDocs/index.ts`           | The skill tree structural check: a page over budget, a reference nothing indexes, a citation resolving nowhere.                         |
 
 ## Running a TypeScript Script
 

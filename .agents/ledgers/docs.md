@@ -44,52 +44,16 @@ What each pattern means is the owning skill's to say:
    entity's attributes, a subgraph nothing reads in a direction, and a chain whose order is the sentence above it
 
 The skill tree adds a structural check the greps cannot make — a skill over budget, a reference page nothing
-indexes, a `references/` citation resolving nowhere. Run it from the repository root; a clean run prints nothing:
+indexes, a `references/` citation resolving nowhere.
 
 ```bash
-python - <<'PY'
-import glob, io, os, re
-
-norm = lambda path: path.replace("\\", "/")
-skills = [norm(f) for f in glob.glob(".agents/skills/*/SKILL.md")]
-pages = [norm(f) for f in glob.glob(".agents/skills/*/references/*.md")]
-names = {f.split("/")[2] for f in skills}
-
-for f in skills:
-    text = io.open(f, encoding="utf-8").read()
-    lines = len(text.splitlines())
-    # Bytes, not code points: this repo's prose is full of em-dashes, and each is three of them
-    size = len(text.encode("utf-8"))
-    if size > 15000 or lines > 150:
-        print(f"budget      {f}: {size} bytes, {lines} lines")
-
-for f in pages:
-    owner = f.rsplit("/references/", 1)[0] + "/SKILL.md"
-    if f"references/{os.path.basename(f)}" not in io.open(owner, encoding="utf-8").read():
-        print(f"unindexed   {f}")
-
-# `docs` and `readme-standards` teach the route and url forms, so they are the two that may write one
-for f in skills + pages:
-    skill = f.split("/")[2]
-    if skill in {"docs", "readme-standards"}:
-        continue
-    for index, line in enumerate(io.open(f, encoding="utf-8"), start=1):
-        if re.search(r"`/docs/", line):
-            print(f"docs route  {f}:{index}")
-
-for f in skills + pages:
-    skill = f.split("/")[2]
-    for line in io.open(f, encoding="utf-8"):
-        # A line naming another skill is citing that skill's page, and resolving it here would be wrong — without
-        # This every cross-skill pointer reports, and a check that always reports gates nothing
-        cited = re.findall(r"`([\w-]+)`", line) + re.findall(r"\*\*([\w-]+)\*\*", line)
-        if {name for name in cited if name in names} - {skill}:
-            continue
-        for target in sorted(set(re.findall(r"`references/([\w.-]+\.md)`", line))):
-            if not os.path.exists(f".agents/skills/{skill}/references/{target}"):
-                print(f"unresolved  {f} -> {target}")
-PY
+pnpm sweep:skill-docs
 ```
+
+It lives in `scripts/sweeps/skillDocs/` rather than in this file, because it is a program: four checks over the
+whole tree, one of which has to decide when **not** to resolve a pointer. It was a `python3` heredoc, which on a
+Windows checkout prints a Microsoft Store notice and exits 0 — no findings, no error, indistinguishable from a
+clean tree (`sweeps`, `references/find-recipes.md`).
 
 An `unresolved` hit is a pointer nothing resolves, and nothing fails a build on one. A citation from inside
 `references/` to a file at its own skill's root is the recurring shape, and it needs `../`. The one line the
