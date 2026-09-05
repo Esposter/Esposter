@@ -22,7 +22,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/User`                                                                      | —          |                                                                            |
 | `app/components/Docs`                                                                      | 2026-09-05 | the docs site's own chrome                                                 |
 | `app/components/Dashboard`, `Achievement`                                                  | —          |                                                                            |
-| `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | —          |                                                                            |
+| `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | 2026-09-05 |                                                                            |
 | `app/pages`, `app/layouts`                                                                 | —          | page-level layout; region sizing and the sidebar/panel rules               |
 | `app/**/*.scss`, `rules.config.ts`                                                         | —          | the style blocks and the UnoCSS rule set behind the attributify vocabulary |
 
