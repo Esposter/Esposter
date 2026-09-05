@@ -27,9 +27,9 @@ describe(usePostStore, () => {
     const postStore = usePostStore();
     const { createPost: storeCreatePost } = postStore;
 
-    await expect(storeCreatePost({ description: "", title: newTitle })).resolves.toStrictEqual(
-      expect.objectContaining({ id: post.id }),
-    );
+    const createdPost = await storeCreatePost({ description: "", title: newTitle });
+
+    expect(createdPost?.id).toBe(post.id);
   });
 
   test("hands nothing back when the create is rejected", async () => {
@@ -68,7 +68,8 @@ describe(usePostStore, () => {
       updatePost({ id: post.id, title: failingTitle }),
     ]);
 
-    expect(updatedPost).toStrictEqual(expect.objectContaining({ id: post.id, title: newTitle }));
+    expect(updatedPost?.id).toBe(post.id);
+    expect(updatedPost?.title).toBe(newTitle);
     // Nothing back from the rejected edit, so the page it was submitted from stays on the draft
     expect(failedPost).toBeUndefined();
     expect(takeOne(items.value).title).toBe(newTitle);
