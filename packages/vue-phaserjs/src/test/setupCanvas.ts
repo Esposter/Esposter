@@ -3,8 +3,8 @@ import { afterAll, vi } from "vitest";
 /* eslint-disable no-restricted-syntax -- module scope is where a vitest setup file runs, and the environment it
    runs in is the one its config names rather than one SSR decides. The ban this suspends is about a browser
    global read before any phase could have chosen a branch, which is not a question a setup file has */
-// Happy-dom has no canvas, and its instance method resolution bypasses a prototype spy on getContext,
-// So store the original createElement and spy per-instance instead.
+// There is no canvas in happy-dom, and a prototype spy on `getContext` is bypassed by its instance
+// Method resolution, so the original createElement is stored and spied per-instance instead.
 // oxlint-disable-next-line typescript/no-deprecated
 const createElement = window.document.createElement.bind(window.document);
 const mockCanvasContext: CanvasRenderingContext2D = {

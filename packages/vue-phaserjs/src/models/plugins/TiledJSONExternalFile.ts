@@ -48,8 +48,8 @@ export class TiledJSONExternalFile extends MultiFile {
     const [tilemapFile, ...tilesetFiles] = this.files;
     if (!(tilemapFile.type === "json" && Object.hasOwn(tilemapFile.data, "tilesets"))) return;
     // Capture everything we need from `this` and the files before the first await.
-    // Phaser doesn't await addToCache(), so its synchronous lifecycle runs between awaits:
-    // PendingDestroy() nulls tilemapFile.data, and loader cleanup nulls this.loader.
+    // Phaser doesn't await addToCache(), so its synchronous lifecycle runs between awaits: a call to
+    // `pendingDestroy()` nulls tilemapFile.data, and loader cleanup nulls this.loader.
     const tilemapData = tilemapFile.data;
     const tilemapKey = tilemapFile.key;
     const loader = this.loader;
