@@ -12,7 +12,7 @@ import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/d
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("friend", () => {
+describe("friendRouter", () => {
   let mockContext: Context;
   let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
 

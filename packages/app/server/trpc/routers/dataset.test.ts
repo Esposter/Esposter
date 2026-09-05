@@ -20,7 +20,7 @@ import { NotFoundError } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("dataset", () => {
+describe("datasetRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["dataset"]>;
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;

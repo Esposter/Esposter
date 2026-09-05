@@ -16,7 +16,7 @@ import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The dashboard-specific wiring, and the transformPublishedContent dataset-snapshot baking.
-describe("dashboard", () => {
+describe("dashboardRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;

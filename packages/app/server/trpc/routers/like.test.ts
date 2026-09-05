@@ -10,7 +10,7 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { beforeAll, describe, expect, test } from "vitest";
 
-describe("like", () => {
+describe("likeRouter", () => {
   let mockContext: Context;
   let likeCaller: DecorateRouterRecord<TRPCRouter["like"]>;
   let postCaller: DecorateRouterRecord<TRPCRouter["post"]>;

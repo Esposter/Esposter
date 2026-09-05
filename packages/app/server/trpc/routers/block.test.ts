@@ -11,7 +11,7 @@ import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/d
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("block", () => {
+describe("blockRouter", () => {
   let mockContext: Context;
   let blockCaller: DecorateRouterRecord<TRPCRouter["block"]>;
   let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;

@@ -11,7 +11,7 @@ import { jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("flowchart", () => {
+describe("flowchartRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["flowchart"]>;
   const name = "name";

@@ -35,7 +35,7 @@ vi.mock(import("@@/server/services/resource/transformPublishedBlobUrls"), async 
   };
 });
 
-describe("webpage", () => {
+describe("webpageRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
