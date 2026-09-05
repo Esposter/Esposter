@@ -22,7 +22,7 @@ describe("emoji", () => {
   const emojiTag = "👍";
 
   // Every emoji hangs off a message the test has to post first, and every write against one addresses it by the
-  // Same three keys — so the pair is set up once and the keys ride the emoji rather than being restated
+  // Same three keys
   const setupEmoji = async () => {
     const newMessage = await messageCaller.createMessage({ message, roomId });
     const newEmoji = await emojiCaller.createEmoji({

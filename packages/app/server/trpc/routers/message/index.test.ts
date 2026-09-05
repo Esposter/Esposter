@@ -51,11 +51,10 @@ vi.mock(import("@@/server/services/message/readMessages"), async (importOriginal
 });
 
 // Every message posted here mentions whoever is sending it, which is what makes the stored row carry something
-// Worth asserting — so the body follows the session rather than being restated by each test
+// Worth asserting
 const createOwnMentionMessage = () => createMentionMessage(getMockSession().user.id);
 
-// A message addresses itself by the pair its own entity carries, so every write against one is keyed off the row
-// Rather than rebuilding the pair at each call site
+// A message addresses itself by the pair its own entity carries
 const getCompositeKey = ({ partitionKey, rowKey }: MessageEntity) => ({ partitionKey, rowKey });
 
 describe("message", () => {
@@ -245,7 +244,6 @@ describe("message", () => {
     const message = createOwnMentionMessage();
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
-    // Limit 1 should return oldest first
     let readMessages = await messageCaller.readMessages({ limit: 1, order: SortOrder.Asc, roomId });
 
     expect(readMessages.items).toHaveLength(1);
@@ -437,8 +435,7 @@ describe("message", () => {
 
   // A vote is a read-modify-write of the whole poll body, so two members voting at once both compute their votes
   // Map from the same stored version. Without a conditional write the later write echoes back a body that never
-  // Saw the earlier vote, erasing it with nothing surfaced to either voter. The first vote's write is held open
-  // Until the second has landed, which is the interleaving a real deployment produces on its own
+  // Saw the earlier vote, erasing it with nothing surfaced to either voter
   test("keeps both votes when two members vote at once", async () => {
     expect.hasAssertions();
 
@@ -558,9 +555,8 @@ describe("message", () => {
     expect(takeOne(data, 1).rowKey).toBe(thirdMessage.rowKey);
   });
 
-  // The catch-up pages MessagesAscending, whose index row lands ahead of the entity every read serves, so a page
-  // Can step past a message whose entity has not landed yet and never come back for it. The emitter listener is
-  // What covers that window, which it can only do if it is already attached while the catch-up is still paging
+  // The emitter listener covers the window a catch-up page can step past, which it can only do if it is already
+  // Attached while the catch-up is still paging
   test("delivers a message created while the catch-up is still paging", async () => {
     expect.hasAssertions();
 
@@ -787,8 +783,6 @@ describe("message", () => {
     expect(unfilteredMembership?.timeoutUntil).toBeNull();
   });
 
-  // Only one rejection can be surfaced to the caller, so the rest have to be logged — otherwise a room that
-  // Failed for its own reason ends up with no forward and nothing anywhere saying so
   test("logs every room a forward failed for", async () => {
     expect.hasAssertions();
 
@@ -1003,9 +997,6 @@ describe("message", () => {
     expect(takeOne(updatedMessages).files).toHaveLength(0);
   });
 
-  // Removing one file rewrites the whole files array, so the write is conditional: an unconditional second write
-  // Computes its survivors from the version before the first deletion and reinstates that file, leaving the
-  // Message pointing at a blob whose deletion has already been published
   test("deletes two files at once without reinstating either", async () => {
     expect.hasAssertions();
 
@@ -1304,8 +1295,8 @@ describe("message", () => {
     test("second forward within slowmode window throws TOO_MANY_REQUESTS", async () => {
       expect.hasAssertions();
 
-      // A forward is a send, so it advances the same clock it was checked against — otherwise the stale
-      // LastMessageAt keeps passing and forwarding floods a room slowmode is supposed to throttle
+      // A forward is a send, so it advances the same clock it was checked against — otherwise a stale
+      // `lastMessageAt` keeps passing and forwarding floods a room slowmode is supposed to throttle
       const source = await messageCaller.createMessage({
         message: createOwnMentionMessage(),
         roomId,
@@ -1491,8 +1482,6 @@ describe("message", () => {
       expect(takeOne(threads).rowKey).toBe(root.rowKey);
     });
 
-    // The roots are read as one batch, and the batch is a single table scan — so the drawer lists them
-    // Newest-message-first rather than in the order the follows were recorded
     test("readFollowedThreads returns the roots newest-first", async () => {
       expect.hasAssertions();
 

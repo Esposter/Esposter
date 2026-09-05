@@ -147,10 +147,8 @@ export const baseRoomRouter = router({
         await tx
           .delete(invitesInMessage)
           .where(and(eq(invitesInMessage.roomId, roomId), eq(invitesInMessage.userId, ctx.getSessionPayload.user.id)));
-
         // The creator rides back with the row because the management panel lists one column of them, and the
-        // Session carries the auth user rather than this table's — the row a card renders is the server's to hand
-        // Over whole rather than the client's to assemble from what it happens to hold
+        // Session carries the auth user rather than this table's
         const user = await requireEntity(
           tx.query.users.findFirst({ where: { id: { eq: ctx.getSessionPayload.user.id } } }),
           DatabaseEntityType.User,
@@ -503,15 +501,12 @@ export const baseRoomRouter = router({
             const where = andFilter(
               eqFilter(roomTable.id, input),
               exists(
-                // Select a constant '1' - we only care if *any* row matches
                 ctx.db
                   .select({ _: sql`1` })
                   .from(usersToRoomsInMessage)
                   .where(
                     andFilter(
-                      // Condition 1 (Correlation): Link subquery room ID to the outer query room ID
                       eqFilter(usersToRoomsInMessage.roomId, roomTable.id),
-                      // Condition 2: Ensure the row belongs to the specific user
                       eqFilter(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
                     ),
                   ),
@@ -551,10 +546,9 @@ export const baseRoomRouter = router({
       .where(and(...wheres))
       .orderBy(...parseSortByToSql(invitesInMessage, sortBy))
       .limit(limit + 1);
-    // Expiry and exhaustion are decided by the same predicate every other reader uses rather than by a second
-    // Copy of it in SQL — a lapsed row is inert wherever it is read, and the panel lists what a joiner could use.
-    // The page is cut over every row and only then filtered, so a batch of lapsed links narrows what this page
-    // Shows without ending the walk: the cursor still names the oldest row read rather than the oldest usable one
+    // Expiry and exhaustion are decided by `checkIsInviteUsable` rather than by a second copy of it in SQL, so
+    // The page is cut over every row and only then filtered: a batch of lapsed links narrows what this page shows
+    // Without ending the walk, and the cursor still names the oldest row read rather than the oldest usable one
     const { hasMore, items, nextCursor } = getCursorPaginationData(invites, limit, sortBy);
     return { hasMore, items: items.filter((invite) => checkIsInviteUsable(invite)), nextCursor };
   }),
@@ -599,7 +593,7 @@ export const baseRoomRouter = router({
     async ({ ctx, input: { id, roomId } }) => {
       // A member revokes their own link; revoking anybody's is `ManageRoom`, not `ManageInvites`. The default
       // Role carries `ManageInvites` so that every member can mint a link at all, which makes it the wrong gate
-      // For a control over other people's — Discord splits the same two acts the same way
+      // For a control over other people's
       const { user } = ctx.getSessionPayload;
       const isInviteManager = await checkHasPermission(ctx.db, user.id, roomId, RoomPermission.ManageRoom);
       const wheres = [eq(invitesInMessage.id, id), eq(invitesInMessage.roomId, roomId)];
@@ -638,9 +632,8 @@ export const baseRoomRouter = router({
     roomEventEmitter.emit("updateRoom", updatedRoom);
     // The image was cleared or replaced: drop every prior upload the room no longer points at. An update that
     // Resubmits the url it loaded with replaced nothing, so it sweeps nothing — otherwise a settings save that
-    // Only renamed the room would pay two blob listings on the request path to delete nothing. A dropped publish
-    // Only orphans a public blob, never the room update; every blob delete goes through the one durable mechanism
-    // So no call site keeps a weaker one (/docs/architecture/persist-then-notify)
+    // Only renamed the room would pay two blob listings on the request path to delete nothing. Best-effort: a
+    // Dropped publish orphans a public blob, never the room update
     if (image !== undefined && image !== previousImage)
       await publishBlobDeletion(id, AzureContainer.PublicUserAssets, async () => {
         const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);

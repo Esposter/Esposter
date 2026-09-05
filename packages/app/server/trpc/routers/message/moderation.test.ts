@@ -150,10 +150,6 @@ describe("moderation", () => {
       expect(timeoutUntil.getTime()).toBe(durationMs);
     });
 
-    // These three land on the call pipeline rather than the database, so the mutation itself only has to record
-    // The action and resolve
-    // `as const` keeps the rows as their own literals — a plain array widens to `AdminActionType`, which the
-    // Discriminated input union rejects
     // A moderation kick is still a departure, so it owes the room what a leave does — without the event every
     // Other member's list keeps a member the room no longer has
     test(`${AdminActionType.KickFromRoom}: announces the removal`, async () => {
@@ -209,6 +205,9 @@ describe("moderation", () => {
       );
     });
 
+    // These three land on the call pipeline rather than the database, so the mutation itself only has to record
+    // The action and resolve. `as const` keeps the rows as their own literals — a plain array widens to
+    // `AdminActionType`, which the discriminated input union rejects
     test.each([AdminActionType.ForceMute, AdminActionType.ForceUnmute, AdminActionType.KickFromCall] as const)(
       "%s: owner applies it to a member — succeeds with no error",
       async (type) => {
@@ -510,8 +509,7 @@ describe("moderation", () => {
     });
   });
 
-  // Every procedure here is permission-gated and a plain member holds none of them. The guard is one guard, so
-  // What earns a line is that each procedure is actually behind it — not how any one of them refuses
+  // Every procedure here is permission-gated and a plain member holds none of them
   test.each([
     [RoomPermission.BanMembers, "readBans", () => moderationCaller.readBans({ roomId })],
     [

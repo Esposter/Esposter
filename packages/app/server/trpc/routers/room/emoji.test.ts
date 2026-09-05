@@ -81,7 +81,6 @@ describe("room/emoji", () => {
       );
     });
 
-    // The cap is what bounds a room's storage cost, so a full room never receives a write target it could use
     test("refuses a room that already holds its cap", async () => {
       expect.hasAssertions();
 
@@ -111,8 +110,6 @@ describe("room/emoji", () => {
       expect(roomEmoji.sasUrl).not.toBe("");
     });
 
-    // Nothing else proves the upload happened: the write SAS is handed out before the PUT, so a create that
-    // Skipped it would list an emoji that renders as a broken image
     test("refuses an id whose blob never landed", async () => {
       expect.hasAssertions();
 
@@ -133,8 +130,6 @@ describe("room/emoji", () => {
       );
     });
 
-    // The size the SAS was minted for is the client's word: a write SAS cannot cap what is PUT through it, so
-    // The row is only created for a blob whose bytes are within the cap
     test("refuses a blob larger than the cap whatever size was declared", async () => {
       expect.hasAssertions();
 

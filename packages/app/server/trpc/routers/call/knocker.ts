@@ -19,8 +19,8 @@ const callSessionIdInputSchema = selectCallSessionInMessageSchema.shape.id;
 const callSessionInputSchema = z.object({ id: callSessionIdInputSchema });
 const knockerInputSchema = z.object({ callSessionId: z.string(), sessionId: z.string() });
 
-// Only the creator, and only while they are themselves in the call, decides who gets in — the same gate for
-// Admitting and dismissing, so the two can never drift into different answers about who the doorkeeper is
+// Only the creator, and only while they are themselves in the call, decides who gets in — for admitting and
+// Dismissing alike
 const requireCallDoorkeeper = async (
   db: Context["db"],
   sessionPayload: GetSessionPayload,

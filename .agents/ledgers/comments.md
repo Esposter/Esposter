@@ -10,7 +10,7 @@
 | `packages/app` — `app/store`                           | 2026-09-05 | the rollback rationale, restated per call site           |
 | `packages/app` — `app/pages`, `layouts`, the rest      | 2026-09-05 | plus `middleware`, `plugins`, `assets`                   |
 | `packages/app` — `server/trpc/routers`                 | —          | the per-type router suites                               |
-| `packages/app` — `server/trpc/routers` subtrees        | —          | `message`, `room`, `call`                                |
+| `packages/app` — `server/trpc/routers` subtrees        | 2026-09-05 | `message`, `room`, `call`                                |
 | `packages/app` — the rest of `server/trpc`             | 2026-09-05 | `guards`, `middleware`, `procedure`, `plugins`, root     |
 | `packages/app` — the rest of `server`                  | —          | services, routes, plugins                                |
 | `packages/app` — `shared`                              | —          |                                                          |

@@ -608,7 +608,7 @@ describe("room", () => {
     });
     await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
-    // MaxUses is 1, so the invite is now exhausted — read the row directly instead of readMyInvite
+    // `maxUses` is 1, so the invite is now exhausted — read the row directly instead of readMyInvite
     const invite = await mockContext.db.query.invitesInMessage.findFirst({ where: { id: { eq: newInvite.id } } });
 
     expect(invite?.uses).toBe(1);

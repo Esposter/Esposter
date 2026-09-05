@@ -34,8 +34,6 @@ import {
 import { getResultAsync, Operation, takeOne } from "@esposter/shared";
 import { and, count, eq, ne, notExists } from "drizzle-orm";
 
-// Every surface renders an emoji from its row plus a read SAS for the blob the row's id names, so the two
-// Travel together everywhere a row leaves this router
 // The room's other emoji answering to a name, as a subquery so the check and the update are one statement
 const getRoomEmojiNameQuery = (
   db: Context["db"],
@@ -49,6 +47,8 @@ const getRoomEmojiNameQuery = (
     .where(
       and(eq(roomEmojisInMessage.roomId, roomId), eq(roomEmojisInMessage.name, name), ne(roomEmojisInMessage.id, id)),
     );
+// Every surface renders an emoji from its row plus a read SAS for the blob the row's id names, so the two
+// Travel together everywhere a row leaves this router
 const getRoomEmojiWithSasUrl = async (
   containerClient: ContainerClient,
   roomEmoji: RoomEmojiInMessage,

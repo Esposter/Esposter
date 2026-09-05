@@ -82,7 +82,6 @@ export const moderationRouter = router({
     "roomId",
   ).mutation<ModerationNoteEntity>(async ({ ctx, input: { note, roomId, targetUserId } }) => {
     const actorUserId = ctx.getSessionPayload.user.id;
-    // Provisioning the table is independent of the hierarchy check, so neither waits on the other
     const [moderationNotesClient] = await Promise.all([
       useTableClient(AzureTable.ModerationNotes),
       assertIsManageable(ctx.db, actorUserId, targetUserId, roomId),
@@ -271,7 +270,6 @@ export const moderationRouter = router({
     "roomId",
   ).query<CursorPaginationData<ModerationNoteEntity>>(
     async ({ ctx, input: { cursor, limit, roomId, targetUserId } }) => {
-      // Provisioning the table is independent of the hierarchy check, so neither waits on the other
       const [moderationNotesClient] = await Promise.all([
         useTableClient(AzureTable.ModerationNotes),
         assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId),

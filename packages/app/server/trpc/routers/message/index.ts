@@ -244,7 +244,7 @@ export const baseMessageRouter = router({
             ),
             isForward: true,
             message: messageEntity.message,
-            // We don't forward reply information for privacy
+            // Reply information is not forwarded, for privacy
             replyRowKey: undefined,
             roomId,
             type: MessageType.Message,
@@ -410,7 +410,6 @@ export const baseMessageRouter = router({
         { key: StandardMessageEntityPropertyNames.replyRowKey, operator: BinaryOperator.eq, value: threadRootRowKey },
         getTableNullClause(ItemMetadataPropertyNames.deletedAt),
       ];
-      // The root and its replies are independent reads, so neither waits on the other
       const [rootMessage, replies] = await Promise.all([
         getEntity(messageClient, StandardMessageEntity, roomId, threadRootRowKey),
         getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageTypeEntityMap, {
@@ -436,7 +435,7 @@ export const baseMessageRouter = router({
     },
   ),
   // Unpinning needs a Replace — Merge cannot unset a property — so the same conditional write as
-  // DeleteLinkPreviewResponse applies: a full body replayed from a stale read reverts concurrent edits
+  // `deleteLinkPreviewResponse` applies: a full body replayed from a stale read reverts concurrent edits
   unpinMessage: getMessageProcedure(messageCompositeKeySchema, MessageOperation.Pin).mutation<void>(
     async ({ ctx: { messageClient, messageEntity, messageEtag }, input }) => {
       await updateEntityConditionally(messageClient, StandardMessageEntity, {
@@ -497,7 +496,7 @@ export const baseMessageRouter = router({
           else delete pollContent.votes[getSessionPayload.user.id];
           return { message: JSON.stringify(pollContent), partitionKey, rowKey };
         },
-        // The updateMessage service stamps the entity as edited, and a vote is not an edit of the poll
+        // The updateMessage service stamps the entity as edited, which a vote must not do
         writeEntity: (entity, etag) => updateEntity(messageClient, entity, "Merge", { etag }),
       });
       messageEventEmitter.emit("updateMessage", [votedMessageEntity]);
