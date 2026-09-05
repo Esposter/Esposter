@@ -195,8 +195,8 @@ catalogs:
       specifier: ^7.1.0
       version: 7.1.0
     '@hpcc-js/wasm-graphviz':
-      specifier: ^1.28.0
-      version: 1.28.0
+      specifier: ^1.29.0
+      version: 1.29.0
     '@json-layout/vocabulary':
       specifier: ^2.13.1
       version: 2.13.1
@@ -778,7 +778,7 @@ importers:
         version: link:packages/shared-node
       '@hpcc-js/wasm-graphviz':
         specifier: 'catalog:'
-        version: 1.28.0
+        version: 1.29.0
       '@lerna-lite/cli':
         specifier: 'catalog:'
         version: 5.6.1(@lerna-lite/publish@5.6.1(@types/node@26.4.1)(conventional-commits-filter@6.0.1)(supports-color@10.2.2))(@lerna-lite/version@5.6.1(@lerna-lite/publish@5.6.1(@types/node@26.4.1)(conventional-commits-filter@6.0.1)(supports-color@10.2.2))(@types/node@26.4.1)(conventional-commits-filter@6.0.1))(@types/node@26.4.1)
@@ -3564,8 +3564,8 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  '@hpcc-js/wasm-graphviz@1.28.0':
-    resolution: {integrity: sha512-KqvPy7ckxPc1xv8Kt7H3bo9cj8U4gfOXxQ8grLZvDZxyQQjnXsKxrweJLLJtEoWWtQqAk4biUB0g2qsjkTiMVA==}
+  '@hpcc-js/wasm-graphviz@1.29.0':
+    resolution: {integrity: sha512-irr5OCt1G5s5j75jlGZm3Y5fb6DboE2c/aWiM/Fv/b3NygbJY/Rp8335kS5Qeklsib0dWInjAYCj4UEClIYQmQ==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -16889,7 +16889,7 @@ snapshots:
       protobufjs: 7.6.6
       yargs: 17.7.3
 
-  '@hpcc-js/wasm-graphviz@1.28.0': {}
+  '@hpcc-js/wasm-graphviz@1.29.0': {}
 
   '@humanfs/core@0.19.2':
     dependencies:

@@ -43,7 +43,7 @@ catalog:
   "@eslint/json": ^2.1.0
   "@floating-ui/dom": ^1.8.0
   "@fullcalendar/vue3": ^7.1.0
-  "@hpcc-js/wasm-graphviz": ^1.28.0
+  "@hpcc-js/wasm-graphviz": ^1.29.0
   "@json-layout/vocabulary": ^2.13.1
   "@koumoul/vjsf": ^4.5.4
   "@lerna-lite/cli": ^5.6.1
