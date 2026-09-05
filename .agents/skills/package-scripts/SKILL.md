@@ -1,6 +1,6 @@
 ---
 name: package-scripts
-description: Esposter pnpm script reference — packages/app scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, graph:gen, outdated:dependencies, release), a Settled note that the release stays one local script rather than a CI publish and another that a renamed export of a published package is never a major, the rule that every `.ts` script runs under `tsx` so an enum is always available and why a pre-install CI check is shell rather than a script, the `scriptsComments` key that carries a script's comment because JSON has none, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
+description: Esposter pnpm script reference — packages/app scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, graph:gen, outdated:dependencies, release, the sweep:* scans), a Settled note that the release stays one local script rather than a CI publish and another that a renamed export of a published package is never a major, the rule that every `.ts` script runs under `tsx` so an enum is always available and why a pre-install CI check is shell rather than a script, the `scriptsComments` key that carries a script's comment because JSON has none, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
 ---
 
 # Package Scripts
@@ -47,6 +47,7 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 | `pnpm outdated:dependencies` | `tsx scripts/outdatedDependencies/index.ts`       | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest.      |
 | `pnpm graph:gen`             | `tsx scripts/dependencyGraph/index.ts`            | Regenerate `dependency-graph.svg` from the workspace manifests. Run it after changing one.                                              |
 | `pnpm release`               | checks, then `lerna publish`                      | The whole release, run locally — see Settled above.                                                                                     |
+| `pnpm sweep:constant-scope`  | `tsx scripts/sweeps/constantScope/index.ts`       | One sweep find recipe, as a tested script rather than a ledger code block (`sweeps` skill). One `sweep:*` per scan.                     |
 
 ## Running a TypeScript Script
 

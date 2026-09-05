@@ -43,115 +43,16 @@ set of names across both ledgers.
 
 ## Find recipe
 
-Constant scope, from the repository root. A line-anchored regex is not enough on its own: it reads a multi-line
-arrow as a constant, because the `=>` lands on a later line, and it cannot tell where a declaration ends, since a
-template literal's `${…}` and a `;` inside a string both fool a bracket count. This scanner skips strings,
-template substitutions, and both comment forms, so a declaration ends at the first `;` genuinely at depth zero and a
-statement is classified by its **whole** text. The `await` and `function` exemptions match on a word boundary, or
-`awaitable()` and `functionFactory()` would be exempted by their prefixes alone. Helper files are skipped outright —
-a `*.test.ts` ending in `describe.todo` holds module state by design (`references/test-helper-files.md`).
-
-It runs on **node**, which the repo's toolchain guarantees. It was written against `python3`, which on a Windows
-checkout is an App Execution Alias that prints a Microsoft Store notice to stdout and **exits 0** — no findings, no
-error, indistinguishable from a swept tree. That is the silent-pass trap the `sweeps` skill names, walked into by
-the recipe meant to avoid it, so prove this one still reports a planted violation before believing a clean run.
-
-The file list is `git ls-files --cached --others --exclude-standard`: `--others` is load-bearing, because a suite
-written and not yet added would otherwise be out of scope and the run would read as clean.
-
-```js
-const { execFileSync } = require("node:child_process");
-const fs = require("node:fs");
-
-// Yields every character that is real code — outside strings, template substitutions and both comment forms —
-// Paired with its bracket depth, so a `;` at depth 0 is the end of a declaration and a `;` inside a string is not.
-function* scanCode(text) {
-  const stack = [];
-  let quote = "";
-  let index = 0;
-  while (index < text.length) {
-    const character = text[index];
-    if (quote) {
-      if (character === "\\") {
-        index += 2;
-        continue;
-      }
-      if (character === quote) quote = "";
-    } else if (stack.at(-1) === "`") {
-      if (character === "\\") {
-        index += 2;
-        continue;
-      }
-      if (character === "`") stack.pop();
-      else if (text.startsWith("${", index)) {
-        stack.push("{");
-        index += 2;
-        continue;
-      }
-    } else if (character === '"' || character === "'") quote = character;
-    else if (text.startsWith("//", index)) {
-      const newline = text.indexOf("\n", index);
-      index = newline === -1 ? text.length : newline;
-      continue;
-    } else if (text.startsWith("/*", index)) {
-      const close = text.indexOf("*/", index);
-      index = close === -1 ? text.length : close + 2;
-      continue;
-    } else if ("([{`".includes(character)) stack.push(character);
-    else if (")]}".includes(character) && stack.length > 0) stack.pop();
-    else yield [character, stack.length];
-    index += 1;
-  }
-}
-
-const DECLARATION_REGEX = /^(?:const|let)\s+(?<name>[\w$]+)\s*[:=]/u;
-const EXEMPT_BODY_REGEX = /^(?:await|function)\b/u;
-
-// --others keeps a suite that is written but not yet added in scope; without it a new file reads as clean
-const files = execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", "*.test.ts"], {
-  encoding: "utf8",
-  maxBuffer: 1 << 28,
-})
-  .split("\n")
-  .filter(Boolean)
-  .filter((file) => !file.includes("node_modules/") && !file.includes("/.nuxt/"));
-
-for (const file of files) {
-  const lines = fs.readFileSync(file, "utf8").split("\n");
-  // A helper file legitimately holds module state — see the ledger README
-  if (lines.some((line) => line.startsWith("describe.todo("))) continue;
-  let index = 0;
-  while (index < lines.length) {
-    const name = DECLARATION_REGEX.exec(lines[index])?.groups?.name;
-    if (!name) {
-      index += 1;
-      continue;
-    }
-    let end = index;
-    const isTerminated = () => {
-      const tokens = [...scanCode(lines.slice(index, end + 1).join("\n"))].filter(([character]) => character.trim());
-      const last = tokens.at(-1);
-      return last?.[0] === ";" && last[1] === 0;
-    };
-    while (end < lines.length && !isTerminated()) end += 1;
-    const text = lines.slice(index, end + 1).join("\n");
-    const tokens = [...scanCode(text)];
-    const assignment = tokens.findIndex(([character, depth]) => character === "=" && depth === 0);
-    const after = assignment === -1 ? [] : tokens.slice(assignment + 1);
-    const body = after
-      .map(([character]) => character)
-      .join("")
-      .trim();
-    const isArrow = after.some(
-      ([character, depth], position) =>
-        character === "=" && depth === 0 && after[position + 1]?.[0] === ">" && after[position + 1][1] === 0,
-    );
-    if (!isArrow && !text.includes("vi.hoisted") && !EXEMPT_BODY_REGEX.test(body))
-      console.log(`${file}:${(index + 1).toString()}: ${name}`);
-    index = end + 1;
-  }
-}
+```bash
+pnpm sweep:constant-scope
 ```
+
+The scan lives in `scripts/sweeps/constantScope/` rather than in this file, because it is a program: a
+line-anchored regex cannot decide constant scope on its own — it reads a multi-line arrow as a constant, since
+the `=>` lands on a later line, and it cannot tell where a declaration ends, since a template literal's `${…}`
+and a `;` inside a string both fool a bracket count. Its cases are pinned by
+`getModuleScopeConstants.test.ts` and `scanCode.test.ts`, which is what makes "prove the scan can fail before
+believing it passed" (`sweeps` skill) a thing that stays proved rather than a thing each pass re-does by hand.
 
 Everything it still reports on a swept repo is one of the exceptions below, so a clean pass is a **known** list
 rather than an empty one: the top-level-await clusters in `app/content/docs/index.test.ts`, `app/components/index.test.ts`
