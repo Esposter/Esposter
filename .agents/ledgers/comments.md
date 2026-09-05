@@ -1,31 +1,40 @@
 # Comments
 
-| Unit                                                   | Swept      | Notes                                                     |
-| ------------------------------------------------------ | ---------- | --------------------------------------------------------- |
-| `packages/app`                                         | —          | components, composables, stores, services, server, shared |
-| `packages/azure-functions` — `handlers`                | 2026-09-05 | the densest prose in the package                          |
-| `packages/azure-functions` — `services`, the rest      | 2026-09-05 | plus `functions`, `hooks`, `models`, `index.test.ts`      |
-| `packages/azure-mock`                                  | 2026-09-05 | filter/search/container mocks                             |
-| `packages/configuration`                               | 2026-09-05 | external lists, `global.d.ts`                             |
-| `packages/db-mock`                                     | 2026-09-05 |                                                           |
-| `packages/db` — `services/azure`                       | 2026-09-05 | table, container and event-grid helpers                   |
-| `packages/db` — `services/message`                     | 2026-09-05 | moderation, threads, mentions                             |
-| `packages/db` — the rest of `services`, `models`       | 2026-09-05 | notification, resource, room, storage                     |
-| `packages/db-schema` — `models`                        | 2026-09-05 | entity classes, Azure payloads                            |
-| `packages/db-schema` — `schema`, `relations`           | 2026-09-05 | tables and their v2 relations                             |
-| `packages/db-schema` — `services`, package root        | 2026-09-05 | `schema.test.ts`, `pgTable.ts`                            |
-| `packages/infra`                                       | 2026-09-05 | event subscriptions, GitHub rulesets                      |
-| `packages/parse-tmx`                                   | 2026-09-05 | `TMXNode.ts`                                              |
-| `packages/shared`, `packages/shared-node`              | 2026-09-05 | `takeOne`                                                 |
-| `packages/virrun` — `models`, package root             | 2026-09-05 |                                                           |
-| `packages/virrun` — `services/cli`, `configuration`    | 2026-09-05 | plus `source`, `vfs`, `virrun`                            |
-| `packages/virrun` — `services/exec/wsl`                | 2026-09-05 | the mirror prose is the bulk of the package               |
-| `packages/virrun` — `services/exec/snapshot`           | 2026-09-05 | layers, leases, overlay capture                           |
-| `packages/virrun` — `services/exec/util`               | 2026-09-05 |                                                           |
-| `packages/virrun` — the rest of `services/exec`        | 2026-09-05 | bwrap, cache, differential, native, os, store, test, vfs  |
-| `packages/vue-phaserjs`                                | 2026-09-05 | composables, store, models, test setup                    |
-| `packages/xml2js`                                      | 2026-09-05 | `Parser.ts`                                               |
-| repo root — `scripts/`, `.agents/`, root `*.config.ts` | 2026-09-05 | workflow scripts and their tests                          |
+| Unit                                                   | Swept      | Notes                                                    |
+| ------------------------------------------------------ | ---------- | -------------------------------------------------------- |
+| `packages/app` — `app/components`                      | —          |                                                          |
+| `packages/app` — `app/services`, `app/util`            | —          |                                                          |
+| `packages/app` — `app/composables`                     | —          |                                                          |
+| `packages/app` — `app/models`, `app/types`             | —          |                                                          |
+| `packages/app` — `app/store`                           | —          |                                                          |
+| `packages/app` — `app/pages`, `layouts`, the rest      | —          | plus `middleware`, `plugins`, `assets`                   |
+| `packages/app` — `server/trpc`                         | —          |                                                          |
+| `packages/app` — the rest of `server`                  | —          | services, routes, plugins                                |
+| `packages/app` — `shared`                              | —          |                                                          |
+| `packages/app` — `configuration`, `content`            | —          |                                                          |
+| `packages/azure-functions` — `handlers`                | 2026-09-05 | the densest prose in the package                         |
+| `packages/azure-functions` — `services`, the rest      | 2026-09-05 | plus `functions`, `hooks`, `models`, `index.test.ts`     |
+| `packages/azure-mock`                                  | 2026-09-05 | filter/search/container mocks                            |
+| `packages/configuration`                               | 2026-09-05 | external lists, `global.d.ts`                            |
+| `packages/db-mock`                                     | 2026-09-05 |                                                          |
+| `packages/db` — `services/azure`                       | 2026-09-05 | table, container and event-grid helpers                  |
+| `packages/db` — `services/message`                     | 2026-09-05 | moderation, threads, mentions                            |
+| `packages/db` — the rest of `services`, `models`       | 2026-09-05 | notification, resource, room, storage                    |
+| `packages/db-schema` — `models`                        | 2026-09-05 | entity classes, Azure payloads                           |
+| `packages/db-schema` — `schema`, `relations`           | 2026-09-05 | tables and their v2 relations                            |
+| `packages/db-schema` — `services`, package root        | 2026-09-05 | `schema.test.ts`, `pgTable.ts`                           |
+| `packages/infra`                                       | 2026-09-05 | event subscriptions, GitHub rulesets                     |
+| `packages/parse-tmx`                                   | 2026-09-05 | `TMXNode.ts`                                             |
+| `packages/shared`, `packages/shared-node`              | 2026-09-05 | `takeOne`                                                |
+| `packages/virrun` — `models`, package root             | 2026-09-05 |                                                          |
+| `packages/virrun` — `services/cli`, `configuration`    | 2026-09-05 | plus `source`, `vfs`, `virrun`                           |
+| `packages/virrun` — `services/exec/wsl`                | 2026-09-05 | the mirror prose is the bulk of the package              |
+| `packages/virrun` — `services/exec/snapshot`           | 2026-09-05 | layers, leases, overlay capture                          |
+| `packages/virrun` — `services/exec/util`               | 2026-09-05 |                                                          |
+| `packages/virrun` — the rest of `services/exec`        | 2026-09-05 | bwrap, cache, differential, native, os, store, test, vfs |
+| `packages/vue-phaserjs`                                | 2026-09-05 | composables, store, models, test setup                   |
+| `packages/xml2js`                                      | 2026-09-05 | `Parser.ts`                                              |
+| repo root — `scripts/`, `.agents/`, root `*.config.ts` | 2026-09-05 | workflow scripts and their tests                         |
 
 Greps, per unit:
 
