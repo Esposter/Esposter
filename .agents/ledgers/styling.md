@@ -11,7 +11,10 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Message/Model/Room/Settings` — the shell                                   | —          | the dialog, its sidebar and the shared field                                       |
 | `app/components/Message/Model/Room` — the rest                                             | —          | `Create`, `DirectMessage`, `Emoji`, `Invite`, `List`, `Role` and the loose dialogs |
 | `app/components/Message/Model/User`                                                        | —          | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`                |
-| `app/components/Message/Content`                                                           | —          |                                                                                    |
+| `app/components/Message/Content/Call` — the media surfaces                                 | —          | `Audio`, `Camera`, `Video`, `ScreenShare`, `VirtualBackground`, `Device`, `Pip`    |
+| `app/components/Message/Content/Call` — the session shell                                  | —          | `Control`, `Panel`, `Participant`, `JoinNotice`, `PreJoin`                         |
+| `app/components/Message/Content/Call` — the entry surfaces                                 | —          | the loose cards, forms and buttons                                                 |
+| `app/components/Message/Content` — the rest                                                | —          | `Header`, `Show` and the room chrome                                               |
 | `app/components/Message` — the rest                                                        | —          | `RightSideBar`, `DraftsAndSent`, `Friends`, `LeftSideBar`                          |
 | `app/components/Resource/Sheet`                                                            | —          | the sheet editor's own chrome                                                      |
 | `app/components/Resource/List`                                                             | —          |                                                                                    |
