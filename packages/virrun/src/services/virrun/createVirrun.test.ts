@@ -20,7 +20,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // Mock the os backend factory so the network/store wiring can be asserted without bubblewrap on the host.
 vi.mock(import("#src/services/exec/os/createOsBackend"));
 // Mock the snapshot layer so the cold/warm fork provisioning is asserted without a real install:
-// ResolveSnapshotLocation drives the branch, the other two are spied.
+// `resolveSnapshotLocation` drives the branch, the other two are spied.
 vi.mock(import("#src/services/exec/snapshot/createSnapshot"));
 vi.mock(import("#src/services/exec/snapshot/forkSnapshot"));
 vi.mock(import("#src/services/exec/snapshot/resolveSnapshotLocation"));
