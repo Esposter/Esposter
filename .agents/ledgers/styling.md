@@ -24,7 +24,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Dungeons`                                                                  | —          | canvas-adjacent; much of it is Phaser rather than DOM                              |
 | `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | 2026-09-05 | the chrome                                                                         |
 | `app/components/Clicker`                                                                   | —          |                                                                                    |
-| `app/components/Visual`                                                                    | —          |                                                                                    |
+| `app/components/Visual`                                                                    | 2026-09-05 |                                                                                    |
 | `app/components/User`                                                                      | 2026-09-05 |                                                                                    |
 | `app/components/Docs`                                                                      | 2026-09-05 | the docs site's own chrome                                                         |
 | `app/components/Dashboard`, `Achievement`                                                  | 2026-09-05 |                                                                                    |
@@ -54,6 +54,9 @@ grep -rn 'class="' --include=*.vue packages/app/app/components
 # A bare --variable inside a colour function in an arbitrary value: the token matches, the declaration is
 # Invalid, and the whole property is dropped with nothing to see (styling/references/arbitrary-values.md)
 grep -rnE '(rgb|rgba|hsl)\(--|color-mix\(in srgb, --' --include=*.vue --include=*.scss packages/app/app
+# A bare bracket attribute — UnoCSS extracts it as a class token, so the rule it emits is a `.class` the
+# Element never carries. Only the valued form `prop="[...]"` produces an attribute selector
+grep -rnoE '(^|[[:space:]])[a-z][A-Za-z0-9:_-]*-\[[^]"'"'"']*\]([[:space:]/>]|$)' --include=*.vue packages/app/app
 # A numeric opacity spelling out an emphasis token — op-60 is medium, op-87 is high; op-0/op-100 are reveals
 grep -rnE '(^|[^-a-z0-9])op-(38|60|87)([^0-9]|$)' --include=*.vue packages/app/app
 # An emphasis name used as a colour: they are opacity utilities, so b-/bg-/text- prefixed they generate nothing

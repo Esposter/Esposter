@@ -2,7 +2,7 @@
 
 ## Arbitrary CSS Values
 
-Use UnoCSS square-bracket syntax for arbitrary values — including `calc()` and CSS variable references — directly as props:
+Use UnoCSS square-bracket syntax for arbitrary values — including `calc()` and CSS variable references — directly as props. **Always the valued form, `prop="[…]"`; a bare `prop-[…]` attribute is silently inert.** UnoCSS extracts a bracketed token as a class, so `<div font-[Montserrat]>` generates `.font-[Montserrat]` and the element — which carries an attribute, not a class — matches nothing. It fails the same way in every position, so the rule has no exception: brackets go inside the quotes.
 
 ```html
 <div sticky top="[calc(1rem+--app-bar-height)]" />
@@ -42,13 +42,13 @@ The CSS `transition` shorthand is written as separate UnoCSS attributes — one 
 
 ```html
 <!-- Single property + CSS-variable duration -->
-<a transition-colors duration-[--transition-duration] />
+<a transition-colors duration="[--transition-duration]" />
 <!-- Multi-property with the same static duration: single arbitrary value -->
 <button transition="[box-shadow_0.2s,transform_0.2s]" />
 ```
 
 - Single known property → UnoCSS shorthand (`transition-colors`, `transition-shadow`, `transition-transform`, `transition-opacity`, etc.)
-- Override the default duration with a separate `duration-{n}` or `duration-[--x]` (no `var()` wrapper)
+- Override the default duration with a separate `duration-{n}` or `duration="[--x]"` (no `var()` wrapper)
 - Multi-property transitions (e.g. `box-shadow` + `transform`) must stay a single `transition="[...]"` arbitrary value — splitting them makes the second `transition-property` override the first
 - Spaces in arbitrary `transition` values become `_`
 
