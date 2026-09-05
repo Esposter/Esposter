@@ -4,11 +4,9 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { SnapshotSummaryMap } from "#shared/services/resource/SnapshotSummaryMap";
 import { getResult } from "@esposter/shared";
 
-// The one line a history row says about its own content, computed where the snapshot is taken and carried in its
-// Blob metadata — derived on read it would cost one download per row instead of the listing's single round trip.
-// Best-effort, because a snapshot stores the bytes it was taken from rather than whatever today's schema can
-// Parse out of them: content this schema cannot read still becomes a snapshot, with the row falling back to its
-// Reason, label and time
+// Computes the line SnapshotSummaryMap declares, at the moment a snapshot is taken. Best-effort, because a
+// Snapshot stores the bytes it was taken from rather than whatever today's schema can parse out of them: content
+// This schema cannot read still becomes a snapshot, with the row falling back to its reason, label and time
 export const getSnapshotSummary = (type: ResourceType, serializedContent: string): string => {
   const summarize = SnapshotSummaryMap[type];
   if (!summarize) return "";

@@ -121,9 +121,7 @@ describe(saveResourceContent, () => {
     await mockContext.db.update(users).set({ storageBytesUsed: 0 });
   });
 
-  // Autosave fires on every coalesced keystroke batch, so a revision per save would burn the owner's quota while
-  // They type and grow an unbounded listing. One per idle window makes this recovery across sessions rather than
-  // A second undo stack
+  // One revision per idle window rather than per save, which is what SNAPSHOT_IDLE_WINDOW_MS is for
   test("keeps no revision for a save inside the idle window", async () => {
     expect.hasAssertions();
 
