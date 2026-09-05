@@ -14,18 +14,25 @@ Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+--x)` no
 
 ## CSS Variables in Arbitrary Values
 
-**Prefer the bare `--variable` shorthand inside the brackets** — UnoCSS auto-wraps `--variable` names with `var()`:
+**Prefer the bare `--variable` shorthand where the variable is a whole term of the value** — UnoCSS auto-wraps a `--variable` it finds there with `var()`:
 
 ```html
 <!-- Prefer — bare --variable shorthand -->
 <div duration="[--transition-duration]" />
 <div top="[--app-bar-height]!" />
-<div shadow="[0_0_5px_rgb(--v-theme-primary-lighten-1)]" />
 <!-- Valid but verbose — use the shorthand for single variables -->
 <div duration="[var(--transition-duration)]" />
 ```
 
-`var()` inside brackets is not an error — it's the natural form for composite values like `b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`. Just prefer the shorthand for the simple single-variable case.
+**Inside a function argument the shorthand does not apply, and getting it wrong fails silently.** UnoCSS wraps
+only the top-level term, so `shadow="[0_0_0.3125rem_rgb(--v-theme-primary-lighten-1)]"` reaches the browser as
+`rgb(--v-theme-primary-lighten-1)`, which is not a colour: the whole declaration is dropped and the shadow
+simply is not there. The utility still matches, so nothing warns — the tell is a rule the generated CSS never
+contains. Write `rgb(var(--v-theme-primary-lighten-1))` in that position, always.
+
+`var()` inside brackets is therefore not merely tolerated — it is required for composite values like
+`b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`, and the shorthand is for the case where the
+variable stands alone.
 
 Exception: `var()` inside `<style scoped>` blocks and `:style` binding objects stays as-is.
 

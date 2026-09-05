@@ -10,7 +10,7 @@ const { "primary-lighten-1": primaryLighten1 } = storeToRefs(colorsStore);
     :height="2"
     :color="primaryLighten1?.toString()"
     top="[--app-bar-height]!"
-    shadow="[0_0_0.3125rem_rgb(--v-theme-primary-lighten-1)]"
+    shadow="[0_0_0.3125rem_rgb(var(--v-theme-primary-lighten-1))]"
     z="[1500]!"
   />
 </template>
