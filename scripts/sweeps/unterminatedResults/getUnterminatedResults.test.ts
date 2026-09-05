@@ -45,6 +45,39 @@ describe(getUnterminatedResults, () => {
     ]);
   });
 
+  // `scanCode` drops the bracket, so in the code alone this reads as `getResultfn` — every case above hides
+  // That behind an arrow, whose own brackets are dropped too and leave a `=` where the name ends
+  test("reports a call whose argument is a bare identifier", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults("const result = getResult(fn);")).toStrictEqual([{ after: ";", line: 1 }]);
+  });
+
+  test("does not read a longer identifier as the call", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults("const wrapped = getResultOrDefault(fn);")).toStrictEqual([]);
+  });
+
+  // The scan reads code rather than text, so a call written inside either is not one
+  test("reports nothing for a call quoted inside a string", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults(`const documentation = "getResult(() => read());";`)).toStrictEqual([]);
+  });
+
+  test("reports nothing for a call written inside a comment", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults("// getResult(() => read());\nconst first = 1;")).toStrictEqual([]);
+  });
+
+  test("reports nothing for a bare reference the name is not called through", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults("const wrap = getResult;")).toStrictEqual([]);
+  });
+
   test("reports the line of each call rather than of the file", () => {
     expect.hasAssertions();
 

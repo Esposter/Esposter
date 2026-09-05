@@ -4,6 +4,7 @@ import { describe, expect, test } from "vitest";
 describe(getConsumerPackagePaths, () => {
   const name = "takeOne";
 
+  // The caller hands over a corpus the defining package is already out of, so nothing here has to exclude it
   test("names the package of every file referencing the export", () => {
     expect.hasAssertions();
 

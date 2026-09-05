@@ -44,9 +44,11 @@ in memory rather than a grep per name:
 pnpm sweep:shared-export-consumers
 ```
 
-It excludes the export's own file, so a `0` names an export nothing outside that file references — dead code and
-an export used only inside its own file produce the same result, and the pass tells them apart by opening the
-file. A `1` is the rule's own finding: one consumer does not earn a place in a shared package.
+It excludes the export's own **package**, not merely its own file: `packages/shared` naming its own export is the
+library using itself, and counting that would let one real consumer clear a threshold that asks for two. So a
+`0` names an export nothing outside `packages/shared` references — dead code and a helper the package uses
+internally produce the same result, and the pass tells them apart by opening the file. A `1` is the rule's own
+finding: one consumer does not earn a place in a shared package.
 
 ## Exclusions
 
