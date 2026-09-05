@@ -36,7 +36,6 @@ const createNote = (onComplete: (isSuccessful?: boolean) => void) =>
   executeMutation(
     () => $trpc.message.moderation.createModerationNote.mutate({ note: note.value, roomId, targetUserId: user.id }),
     {
-      // Each note is an independent server-generated create with no id yet, so it gets a per-call symbol
       key: Symbol("createModerationNote"),
       onError: (error) => {
         createErrorAlert(error);

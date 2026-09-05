@@ -44,7 +44,6 @@ const scheduleJob = async (onComplete: () => void) => {
               roomId,
               runAt: scheduledAt.value,
             }),
-      // A brand-new scheduled job has no id yet, so each gets a per-call symbol
       { key: Symbol("scheduleJob") },
     );
   onComplete();

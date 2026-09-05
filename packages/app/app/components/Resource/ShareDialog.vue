@@ -47,7 +47,6 @@ const share = async () => {
   await executeMutation(
     () => $trpc.message.createMessage.mutate({ message: shareMessage.value, roomId: roomId.value }),
     {
-      // Each share posts an independent new message with no id yet, so it gets a per-call symbol
       key: Symbol("shareResource"),
       onError: createErrorNotification,
       onSuccess: () => {
