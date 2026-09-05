@@ -13,12 +13,6 @@ describe(defineConfig, () => {
       {
         "rules": [
           [
-            "elevation--1",
-            {
-              "box-shadow": "inset 0 2px 1px -1px rgba(0,0,0,0.2), inset 0 1px 1px 0 rgba(0,0,0,0.14), inset 0 1px 3px 0 rgba(0,0,0,0.12)",
-            },
-          ],
-          [
             "elevation-0",
             {
               "--v-elevation-overlay": "color-mix(in srgb, var(--v-elevation-overlay-color, #000) 0%, transparent)",

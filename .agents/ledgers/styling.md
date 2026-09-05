@@ -30,7 +30,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Dashboard`, `Achievement`                                                  | —          |                                                                                    |
 | `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | 2026-09-05 |                                                                                    |
 | `app/pages`, `app/layouts`                                                                 | —          | page-level layout; region sizing and the sidebar/panel rules                       |
-| `app/**/*.scss`, `rules.config.ts`                                                         | —          | the style blocks and the UnoCSS rule set behind the attributify vocabulary         |
+| `app/**/*.scss`, `uno.config.ts`                                                           | 2026-09-05 | the style blocks and the UnoCSS rule set behind the attributify vocabulary         |
 
 ## Exclusions
 
@@ -41,6 +41,8 @@ What a component looks like rather than how it is composed: attributify props ov
   They are the bulk of what the `px` recipe reports, and none of them is a finding.
 - `app/assets/css/settings.scss`'s breakpoint map — Vuetify's SASS API takes px and computes the rem forms from
   them, so the unit there is the framework's rather than ours.
+- `app/components/Visual/FloatingAstronaut.scss` — a vendored SVG's own `fclass*` fills, which the skill already
+  names as the one place a raw hex is the source's rather than ours.
 
 ## Find recipe
 
