@@ -50,14 +50,12 @@ describe(coerceValue, () => {
     expect(coerceValue(String(Number.NaN), ColumnType.Number)).toBeNull();
   });
 
-  test(`all date formats epoch date stays as ${ColumnType.Date} string`, () => {
+  test.each(DateFormats)(`keeps a %s date as the ${ColumnType.Date} string it was written in`, (format) => {
     expect.hasAssertions();
 
-    for (const format of DateFormats) {
-      const epochDate = formatDate(EPOCH_DATE, format);
+    const epochDate = formatDate(EPOCH_DATE, format);
 
-      expect(coerceValue(epochDate, ColumnType.Date)).toBe(epochDate);
-    }
+    expect(coerceValue(epochDate, ColumnType.Date)).toBe(epochDate);
   });
 
   test(`plain string stays as ${ColumnType.String}`, () => {

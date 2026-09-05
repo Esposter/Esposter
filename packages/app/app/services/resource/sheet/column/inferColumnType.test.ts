@@ -40,14 +40,10 @@ describe(inferColumnType, () => {
     expect(inferColumnType([String(Number.NaN)])).toBe(ColumnType.String);
   });
 
-  test(`all date formats epoch date returns ${ColumnType.Date}`, () => {
+  test.each(DateFormats)(`reads a %s date as ${ColumnType.Date}`, (format) => {
     expect.hasAssertions();
 
-    for (const format of DateFormats) {
-      const epochDate = formatDate(EPOCH_DATE, format);
-
-      expect(inferColumnType([epochDate])).toBe(ColumnType.Date);
-    }
+    expect(inferColumnType([formatDate(EPOCH_DATE, format)])).toBe(ColumnType.Date);
   });
 
   test(`mixed values return ${ColumnType.String}`, () => {
