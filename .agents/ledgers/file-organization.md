@@ -41,24 +41,12 @@ The ≥2-consumers rule is answered by counting the **packages** that name each 
 in memory rather than a grep per name:
 
 ```bash
-node -e '
-const { execSync } = require("node:child_process");
-const fs = require("node:fs");
-const list = (...globs) => execSync(`git ls-files ${globs.map((g) => `"${g}"`).join(" ")}`, { encoding: "utf8", maxBuffer: 1 << 28 }).split("
-").filter(Boolean);
-const sourceFiles = list("packages/shared/src/**/*.ts").filter((f) => !f.includes(".test.") && !f.endsWith("index.ts"));
-const corpus = [...list("*.ts"), ...list("*.vue")].filter((f) => !f.includes("/dist/")).map((f) => [f, fs.readFileSync(f, "utf8")]);
-for (const file of sourceFiles)
-  for (const [, name] of fs.readFileSync(file, "utf8").matchAll(/^export (?:const|function|class|enum|type|interface) ([A-Za-z0-9_$]+)/gmu)) {
-    const packages = [...new Set(corpus.filter(([f, body]) => f !== file && new RegExp(String.raw`${name}`, "u").test(body)).map(([f]) => f.split("/").slice(0, 2).join("/")))];
-    if (packages.length < 2) console.log(`${packages.length}  ${file} -> ${name}`);
-  }'
+pnpm sweep:shared-export-consumers
 ```
 
-`String.raw` is load-bearing — a `\b` written into a template literal here becomes a backspace and the scan
-reports every export as unused, which reads exactly like a tree of dead code (`sweeps` skill). The scan excludes
-the export's own file, so a `0` names an export nothing outside that file references — dead code and an export
-used only inside its own file produce the same result, and the pass tells them apart by opening the file.
+It excludes the export's own file, so a `0` names an export nothing outside that file references — dead code and
+an export used only inside its own file produce the same result, and the pass tells them apart by opening the
+file. A `1` is the rule's own finding: one consumer does not earn a place in a shared package.
 
 ## Exclusions
 
