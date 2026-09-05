@@ -1,13 +1,13 @@
 import { scanCode } from "#scripts/sweeps/constantScope/scanCode";
 import { describe, expect, test } from "vitest";
 
-describe(scanCode, () => {
-  const readCode = (text: string) =>
-    [...scanCode(text)]
-      .map(([character]) => character)
-      .join("")
-      .trim();
+const readCode = (text: string) =>
+  [...scanCode(text)]
+    .map(([character]) => character)
+    .join("")
+    .trim();
 
+describe(scanCode, () => {
   test("drops the brackets and reports the depth of what sits inside them", () => {
     expect.hasAssertions();
 
@@ -33,7 +33,7 @@ describe(scanCode, () => {
   test("skips a template literal but reads its substitution", () => {
     expect.hasAssertions();
 
-    expect(readCode("a`text${b}text`c")).toBe("abc");
+    expect(readCode(`a\`text\${b}text\`c`)).toBe("abc");
   });
 
   test("skips a line comment to the end of its line", () => {

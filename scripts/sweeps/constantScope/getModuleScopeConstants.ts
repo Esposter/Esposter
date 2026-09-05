@@ -6,6 +6,12 @@ const DECLARATION_REGEX = /^(?:const|let)\s+(?<name>[\w$]+)\s*[:=]/u;
 // Matched on a word boundary, or `awaitable()` and `functionFactory()` would be exempted by their prefixes alone
 const EXEMPT_BODY_REGEX = /^(?:await|function)\b/u;
 
+// A declaration ends at the first `;` genuinely at depth zero — the last non-space token of the text so far
+const checkIsTerminated = (text: string) => {
+  const last = [...scanCode(text)].findLast(([character]) => character.trim());
+  return last?.[0] === ";" && last[1] === 0;
+};
+
 // Module-scope state in a test file, which a sibling suite can reach and mutate — the `testing` skill's scope
 // Rule. A line-anchored regex cannot decide this on its own: it reads a multi-line arrow as a constant, because
 // The `=>` lands on a later line, and it cannot tell where a declaration ends. So a statement is classified by
@@ -26,12 +32,7 @@ export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => 
     }
 
     let end = index;
-    const checkIsTerminated = () => {
-      const tokens = [...scanCode(lines.slice(index, end + 1).join("\n"))].filter(([character]) => character.trim());
-      const last = tokens.at(-1);
-      return last?.[0] === ";" && last[1] === 0;
-    };
-    while (end < lines.length && !checkIsTerminated()) end += 1;
+    while (end < lines.length && !checkIsTerminated(lines.slice(index, end + 1).join("\n"))) end += 1;
 
     const declaration = lines.slice(index, end + 1).join("\n");
     const tokens = [...scanCode(declaration)];

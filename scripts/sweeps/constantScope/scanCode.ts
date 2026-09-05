@@ -1,7 +1,7 @@
 // Every character of `text` that is real code, paired with its bracket depth. Strings, template substitutions
 // And both comment forms are skipped, so a `;` at depth 0 genuinely ends a declaration and a `;` inside a string
 // Or a `${…}` does not — a plain bracket count reads both the same and mistakes where a statement stops.
-export function* scanCode(text: string): Generator<readonly [string, number]> {
+export const scanCode = function* (text: string): Generator<readonly [string, number]> {
   const stack: string[] = [];
   let quote = "";
   let index = 0;
@@ -42,4 +42,4 @@ export function* scanCode(text: string): Generator<readonly [string, number]> {
 
     index += 1;
   }
-}
+};
