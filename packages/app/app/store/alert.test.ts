@@ -12,8 +12,6 @@ describe(useAlertStore, () => {
     setActivePinia(createPinia());
   });
 
-  // One rejection cause reaches the store once per operation it rejected, so a second copy of an alert already
-  // On screen is a toast that says nothing the first one did
   test("refreshes an identical alert instead of stacking a second copy", () => {
     expect.hasAssertions();
 

@@ -8,9 +8,9 @@ import type VirtualJoystickPlugin from "phaser4-rex-plugins/plugins/virtualjoyst
 
 import "vue-phaserjs";
 
-// `keyof (A | B)` is the keys A and B have in common, and these two share none — so the union is spelled as
-// Two mapped types rather than one over `typeof SpritesheetKey | typeof TilesetKey`, which resolves to an
-// Empty map and leaves the augmentation below contributing nothing.
+// `keyof (A | B)` is the keys A and B have in common, and these two share none — so the key clause unions the
+// Two `keyof`s rather than taking `keyof` of the union, which resolves to an empty map and leaves the
+// Augmentation below contributing nothing.
 type BaseAnimationKeyMap = {
   [P in keyof typeof SpritesheetKey | keyof typeof TilesetKey]: P;
 };
