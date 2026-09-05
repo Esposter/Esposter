@@ -15,7 +15,7 @@ export const invitesInMessageRelation = defineRelationsPart(schema, (r) => ({
     }),
   },
 }));
-// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
+
 export const InviteInMessageRelations = {
   roomInMessage: {
     with: {

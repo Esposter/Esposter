@@ -12,11 +12,11 @@ export const notificationSeverityEnum = pgEnum("notificationSeverity", Notificat
 
 // One row per recipient per notification, written by ProcessNotification for every type whose
 // AppNotificationTypeChannelMap entry includes the bell. Persisted rather than session-scoped because a push delivered
-// While the app was closed has nowhere else to land: the tab that would have held it in memory did not exist, and
-// The unread badge that used to need the count on the push payload is a query against these rows instead.
+// While the app was closed has nowhere else to land: the tab that would have held it in memory did not exist.
+// The unread badge is a query against these rows, so a push payload never has to carry a count.
 //
-// Public schema, not messageSchema, for the same reason the subscriptions table left it: a resource operation and
-// A todo reminder are notifications with nothing message-shaped about them.
+// Public schema, not messageSchema, for the same reason the subscriptions table is not in it: a resource
+// Operation and a todo reminder are notifications with nothing message-shaped about them.
 export const notifications = pgTable(
   "notifications",
   {

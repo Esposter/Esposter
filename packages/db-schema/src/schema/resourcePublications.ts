@@ -3,7 +3,7 @@ import { resources } from "#src/schema/resources";
 import { integer, timestamp, uuid } from "drizzle-orm/pg-core";
 
 // A row exists iff the resource is currently published — this is the Publishable capability's state.
-// PublishVersion keys the immutable published blob snapshot ({id}/published/{publishVersion}).
+// The version keys the immutable published blob snapshot ({id}/published/{publishVersion}).
 export const resourcePublications = pgTable("resourcePublications", {
   publishedAt: timestamp().notNull().defaultNow(),
   // The working copy's contentVersion at the moment this publish was taken, which is what turns "has the draft

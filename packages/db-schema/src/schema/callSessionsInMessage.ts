@@ -26,7 +26,7 @@ export const callSessionsInMessage = pgTable(
   },
   {
     // One call per room and one per thread, rather than one per room: a standalone call carries no room at all,
-    // And SQL treats each NULL room as distinct, so those stay unconstrained exactly as they were
+    // And SQL treats each NULL room as distinct, so those stay unconstrained
     extraConfig: ({ id, roomId, threadRootRowKey }) => [
       check("callSessions_id_length_check", createExactLengthCheckSql(id, CALL_ID_LENGTH)),
       unique("callSessions_roomId_threadRootRowKey_unique").on(roomId, threadRootRowKey),
