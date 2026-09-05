@@ -230,7 +230,6 @@ export const roleRouter = router({
       ]);
 
       await assertCanManageMemberRole(ctx.db, actorAuthority, role.position, roomId, userId);
-
       // No requireMutation, unlike deleteRole: this asks for an end state — the member does not hold the role
       // — rather than for a row, and it returns nothing to be missing. Two moderators revoking at once, or one
       // Revoking against a member list that has already moved on, would otherwise be refused for arriving at

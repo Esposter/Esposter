@@ -194,8 +194,6 @@ describe("role", () => {
   test("revokes a role the member never held", async () => {
     expect.hasAssertions();
 
-    // Revoke names an end state rather than a row, so it never rejects for reaching it — two moderators
-    // Clicking the same revoke, or one clicking against a stale list, both get the state they asked for
     const targetMember = await createMember();
     const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
 

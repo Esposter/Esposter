@@ -84,7 +84,6 @@ describe("friend", () => {
     expect.hasAssertions();
 
     const user = getMockSession().user;
-    // Session=newUser: search for default user by name
     await mockSessionOnce(mockContext.db);
     const searchedUsers = await friendCaller.searchUsers(user.name);
 

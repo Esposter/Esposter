@@ -155,8 +155,6 @@ describe("call/knocker", () => {
     });
   });
 
-  // Written out rather than shared with admitKnocker: each gate refuses by naming its own operation, and a
-  // `test.each` row cannot carry the inline snapshot that names it
   describe("dismissKnocker", () => {
     test("call creator dismisses knocker — removes knocker and emits event", async () => {
       expect.hasAssertions();

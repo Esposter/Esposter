@@ -15,7 +15,6 @@ import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockEventGridDatabase } from "azure-mock";
 import { assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-// Built from the same error the router throws, so an inline snapshot never bakes in a random id
 const getRoomEmojiErrorMessage = (operation: Operation, context: string) =>
   new InvalidOperationError(operation, DatabaseEntityType.RoomEmoji, context).message;
 

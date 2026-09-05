@@ -8,7 +8,6 @@ import { dungeonsRouter } from "@@/server/trpc/routers/dungeons";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-// The generic blob-state matrix lives in webpage.test.ts; here only the wiring.
 describe("dungeons", () => {
   let caller: DecorateRouterRecord<TRPCRouter["dungeons"]>;
 

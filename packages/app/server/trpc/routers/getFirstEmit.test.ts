@@ -1,6 +1,6 @@
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { assert, describe, expect, test } from "vitest";
-// The canonical "subscription emits" helper: subscribe, fire the trigger, and resolve the first emitted value.
+
 export const getFirstEmit = async <T>(
   createIterator: () => AsyncIterable<T>,
   trigger: () => Promise<unknown>,

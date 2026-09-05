@@ -12,8 +12,6 @@ import { jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-// The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
-// Here only the router wiring: resource type + content schema round-trip.
 describe("todoList", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["todoList"]>;

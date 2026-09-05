@@ -52,9 +52,8 @@ const readPostsInputSchema = z
   })
   .prefault({});
 
-// Every write returns an id and every reader wants the row a card renders — the author beside it, and the
-// Viewer's own like when there is a viewer to have one. Signed out there is no like to look up, so the read drops
-// The filtered relation rather than filtering on nobody
+// The row a card renders: the author beside it, and the viewer's own like when there is a viewer to have one.
+// Signed out there is no like to look up, so the read drops the filtered relation rather than filtering on nobody
 const readPostWithRelations = async (
   db: Context["db"] | Transaction,
   id: Post["id"],
@@ -117,7 +116,6 @@ export const postRouter = router({
           DerivedDatabaseEntityType.Comment,
           JSON.stringify(input),
         );
-
         // Every ancestor, not just the parent: a counter that stops at direct children makes a feed card
         // Under-report its own thread
         await tx

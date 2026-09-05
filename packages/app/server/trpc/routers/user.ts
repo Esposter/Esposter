@@ -49,14 +49,13 @@ import {
 import { Operation } from "@esposter/shared";
 import { eq, inArray } from "drizzle-orm";
 
-// The status reads and the status subscription all address the same thing: a non-empty set of other users
 const userStatusIdsInputSchema = userIdsSchema.shape.userIds.min(1);
 
 const upsertStatusInputSchema = refineAtLeastOne(
   selectUserStatusInMessageSchema.pick({ message: true, status: true }).partial(),
   ["message", "status"],
 );
-// Connecting and disconnecting are one upsert of the same column, so the row and the emit are written once
+
 const upsertConnectedStatus = async (ctx: AuthedContext, isConnected: boolean) => {
   const upsertedStatus = requireMutation(
     (
@@ -203,8 +202,8 @@ export const userRouter = router({
         const foundStatus = statusMap.get(userId);
         if (foundStatus) resultUserStatuses.push({ ...foundStatus, status: getDetectedUserStatus(foundStatus) });
         else
-          // We'll conveniently assume that if they don't have a user status record yet
-          // It means that they're still online as we insert a record as soon as they go offline
+          // A user with no status row is treated as online: a row is inserted the moment they go offline, so
+          // Its absence is the only state left
           resultUserStatuses.push({
             createdAt: new Date(),
             deletedAt: null,

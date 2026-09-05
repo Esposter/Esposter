@@ -32,11 +32,8 @@ const readAppUsersInputSchema = z.object({
   ...roomIdSchema.shape,
   ids: createUniqueArraySchema(selectAppUserInMessageSchema.shape.id).min(1).max(MAX_READ_LIMIT),
 });
-// A webhook is addressed by both keys so the room the permission was checked against is the room the row
-// Must belong to — an id alone would let a moderator of one room rewrite another's. This predicate is the
-// Whole of what rotateToken and updateWebhook share: what is left either side of it is the repo's standard
-// Update-and-require shape, so extracting further would parameterise the `.set()` payload and hide that shape
-// Behind a webhook-specific helper rather than remove any duplication
+// A webhook is addressed by both keys so the room the permission was checked against is the room the row must
+// Belong to — an id alone would let a moderator of one room rewrite another's
 const getWebhookRoomWhere = (id: string, roomId: string) =>
   and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId));
 

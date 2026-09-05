@@ -15,8 +15,7 @@ import { resources, ResourceType } from "@esposter/db-schema";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-// The generic resource-procedure matrix lives in createResourceProcedures.test.ts;
-// Here only dashboard-specific wiring + the transformPublishedContent dataset-snapshot baking.
+// The dashboard-specific wiring, and the transformPublishedContent dataset-snapshot baking.
 describe("dashboard", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["dashboard"]>;

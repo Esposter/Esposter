@@ -22,7 +22,6 @@ import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@espos
 import { MOCK_BLOB_BASE_URL, MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-// Built from the same error the router throws, so an inline snapshot never bakes in a random id
 const getCallBackgroundErrorMessage = (context: string) =>
   new InvalidOperationError(Operation.Create, DatabaseEntityType.CallBackground, context).message;
 const seedSlots = (userId: string, slots: number[], slotSize: number) => {
@@ -181,8 +180,8 @@ describe("user", () => {
     expect.hasAssertions();
 
     const { user } = await mockSessionOnce(mockContext.db);
-    // It's stupid I know, but we need to refresh back to our original user
-    // Since we need to listen to a new mock user with a valid id using our original user
+    // The queued session is spent without a request, so the subscription below is opened by the original user
+    // While listening for the freshly created one
     await consumeMockSessionOnce();
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
@@ -333,7 +332,8 @@ describe("user", () => {
       );
       const callBackgrounds = await caller.readCallBackgrounds();
 
-      // Never listed, and never reclaimed on a guess either — nothing published for a name we did not mint
+      // Never listed, and never reclaimed on a guess either — nothing is published for a name this router did
+      // Not mint
       expect(callBackgrounds).toStrictEqual([]);
       expect(MockEventGridDatabase.get("")).toBeUndefined();
     });
@@ -371,8 +371,6 @@ describe("user", () => {
       );
     });
 
-    // One assertion each rather than a matrix: an inline snapshot is pinned to its source location, so two
-    // Cases sharing one cannot both record the message they were written for
     test("refuses a write target for a file over the size cap", async () => {
       expect.hasAssertions();
 

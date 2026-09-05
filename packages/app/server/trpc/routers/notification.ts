@@ -64,8 +64,6 @@ export const notificationRouter = router({
         unreadCount: unreadCounts[0]?.count ?? 0,
       };
     }),
-  // One statement for the whole panel: closing it marks everything read, and a per-row write would be one round
-  // Trip per notification for a state nothing reads back individually
   updateNotificationsReadStatus: standardAuthedProcedure.mutation<void>(async ({ ctx }) => {
     await ctx.db
       .update(notifications)

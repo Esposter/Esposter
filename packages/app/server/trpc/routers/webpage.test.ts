@@ -35,8 +35,6 @@ vi.mock(import("@@/server/services/resource/transformPublishedBlobUrls"), async 
   };
 });
 
-// The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
-// Here only the router wiring: resource type + content schema round-trip.
 describe("webpage", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["webpage"]>;
