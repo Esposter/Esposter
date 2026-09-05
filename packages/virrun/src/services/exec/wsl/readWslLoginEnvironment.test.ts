@@ -71,7 +71,7 @@ describe("readWslLoginEnvironment", () => {
     const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
 
     expect(readWslLoginEnvironment()).toStrictEqual(environment);
-    expect(execFileSync).toHaveBeenCalledTimes(0);
+    expect(execFileSync).not.toHaveBeenCalled();
   });
 
   test("re-probes when the persisted capture has aged out — the toolchain switch the host key cannot see", async () => {

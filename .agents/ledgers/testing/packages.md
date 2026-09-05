@@ -6,7 +6,7 @@ splits at `services/exec`'s subdirectories.
 | Unit                                                                                                | Swept      | Notes                                                  |
 | --------------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------ |
 | `virrun` — `services/exec/snapshot`                                                                 | —          |                                                        |
-| `virrun` — `services/exec/wsl`                                                                      | —          |                                                        |
+| `virrun` — `services/exec/wsl`                                                                      | 2026-09-05 |                                                        |
 | `virrun` — `services/exec/util`                                                                     | 2026-09-05 |                                                        |
 | `virrun` — `services/exec/{test,cache,os}`                                                          | 2026-09-05 |                                                        |
 | `virrun` — `services/exec` the rest: `vfs`, `bwrap`, `differential`, `store`, `native` and the root | —          |                                                        |
