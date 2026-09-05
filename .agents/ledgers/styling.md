@@ -49,6 +49,11 @@ What a component looks like rather than how it is composed: attributify props ov
 grep -rnE '[^a-z-][0-9]+px' --include=*.vue --include=*.scss packages/app/app packages/app/app/rules.config.ts
 # class= where attributify would do — the survivors should be scoped refs, dynamic bindings, or third-party selectors
 grep -rn 'class="' --include=*.vue packages/app/app/components
+# A bare --variable inside a colour function in an arbitrary value: the token matches, the declaration is
+# Invalid, and the whole property is dropped with nothing to see (styling/references/arbitrary-values.md)
+grep -rnE '(rgb|rgba|hsl)\(--|color-mix\(in srgb, --' --include=*.vue --include=*.scss packages/app/app
+# An emphasis name used as a colour: they are opacity utilities, so b-/bg-/text- prefixed they generate nothing
+grep -rnE '(^|[^-a-z])(b|bg|text)-(medium|high)-emphasis' --include=*.vue packages/app/app
 ```
 
 ## Next enforceable
@@ -60,6 +65,12 @@ grep -rn 'class="' --include=*.vue packages/app/app/components
   (`scripts/oxlint/errorAlert.ts` says the same about inline handlers). The generic form — every `text-*`
   attribute in a template resolving to a rule the config generates — catches typos too, and needs an extraction
   that can tell an attributify utility from a Vuetify `text` prop.
+- The general form of the two greps above — **every attributify attribute in a template producing a rule the
+  config actually emits** — subsumes them and catches the next silent no-op nobody has met yet. The generator
+  answers it directly (`createGenerator(config).generate(source)` returns the matched tokens, and a token that
+  matched can still emit nothing), so the blocker is not the check but the input: an attribute on a component is
+  as likely to be a Vuetify prop as a utility, and reporting `text` on a `v-tab` would bury the real findings.
+  It needs an extraction that reads the tag, which is the same thing the typography item below is waiting for.
 - `px` outside the skill's named exceptions is a regex against templates and style blocks; a custom oxlint plugin or a test over the tree decides it.
 - A Vuetify global default restated on a component is decidable by comparing the tag's props against the defaults object.
 - Theme primitive vs bespoke colour needs the palette in mind and a judgement about intent; it stays with the sweep.
