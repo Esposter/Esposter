@@ -20,7 +20,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Resource/List`                                                             | —          |                                                                                    |
 | `app/components/Resource` — the per-type editors                                           | —          | `Survey`, `TodoList`, `Note`, `Program`, `Webpage`, `Email`, `Blueprint`           |
 | `app/components/Resource` — the entry surfaces                                             | 2026-09-05 | `Home`, `Search`, `Explorer`, `RecycleBin`, `Dashboard`, `Flowchart`               |
-| `app/components/Resource` — the shared chrome                                              | —          | `Blade`, `Create`, `VersionHistory` and the loose dialogs                          |
+| `app/components/Resource` — the shared chrome                                              | 2026-09-05 | `Blade`, `Create`, `VersionHistory` and the loose dialogs                          |
 | `app/components/Dungeons`                                                                  | —          | canvas-adjacent; much of it is Phaser rather than DOM                              |
 | `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | 2026-09-05 | the chrome                                                                         |
 | `app/components/Clicker`                                                                   | 2026-09-05 |                                                                                    |
@@ -63,6 +63,9 @@ grep -rnE "size: *[0-9]+ *[,}]|[[:space:]:]size=\"[0-9]+\"" --include=*.vue pack
 # A Vuetify theme colour this theme never registers — `warning`/`success` exist at runtime but generate no
 # Utility, so the attribute form is inert while the `color` prop still works
 grep -rnE '(^|[^-a-z"'"'"'])(bg|text|b)-(warning|success)([^-a-z0-9]|$)' --include=*.vue packages/app/app
+# A valueless utility bound as an attribute — an empty-string literal emits nothing, so it matches only when
+# An unrelated file writes the same utility bare. `:class` is the reliable form
+grep -rnE ":[a-z][a-z0-9-]*=\"[^\"]*\? *'' *: *undefined\"" --include=*.vue packages/app/app
 # The `text-hint` shortcut written out — uno.config.ts defines it as exactly this pair
 grep -rn 'op-medium-emphasis text-body-small' --include=*.vue packages/app/app
 # A numeric opacity spelling out an emphasis token — op-60 is medium, op-87 is high; op-0/op-100 are reveals

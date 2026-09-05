@@ -71,7 +71,7 @@ const isOptionsMenuVisible = computed(
       :mt="isSameBatch ? undefined : isCompact ? 2 : 4"
       :py="isCompact ? 0.5 : 1"
       min-h-auto
-      :op-loading="message.isLoading ? '' : undefined"
+      :class="message.isLoading ? 'op-loading' : undefined"
       :active="(isActive || activeRowKey === message.rowKey) && !isDeleting"
       :creator
       :is-same-batch

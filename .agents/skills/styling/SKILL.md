@@ -31,7 +31,7 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 Only when technically required:
 
 - **Scoped CSS refs** — class names referenced in `<style scoped>` (e.g. `class="card"`)
-- **Dynamic bindings** — `:class="..."` always stays as-is
+- **Dynamic bindings** — `:class="..."` always stays as-is, and a **valueless** utility switched on a condition belongs there rather than in a bound attribute. `:py="isCompact ? 0.5 : 1"` is fine: the extractor reads the literals and emits `[py~="0.5"]` and `[py~="1"]`. `:op-loading="isLoading ? '' : undefined"` is not — an empty string is no value, so nothing is emitted and the attribute lands on a rule only when some unrelated file happens to write that utility bare. It fails silently and comes back the day that file changes. `:class="isLoading ? 'op-loading' : undefined"` emits the class and depends on nothing
 - **Third-party component classes** — e.g. `vue-flow__panel`, `v-window__controls`, `fc-event-title`, Vuetify internal `v-`-prefixed classes (e.g. `v-theme--light`)
 - **SVG classes** — e.g. `fclass1`, `a`, `b`
 - **`group`** — UnoCSS group variant token; must stay in `class` so descendant `group-hover:` variants work

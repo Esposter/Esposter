@@ -64,7 +64,7 @@ const onUpdateFile = async (newFile?: File | File[]) => {
 </script>
 
 <template>
-  <div ref="dropZone" p-4 b-2 rd b-dashed flex flex-col gap-2 :b-primary="isOverDropZone" :b-border="!isOverDropZone">
+  <div ref="dropZone" p-4 b-2 rd b-dashed flex flex-col gap-2 :class="isOverDropZone ? 'b-primary' : 'b-border'">
     <span text-hint>
       Drop a {{ ACCEPT }} file here, or pick one — the rows land in the new sheet's Data blade. Optional.
     </span>
