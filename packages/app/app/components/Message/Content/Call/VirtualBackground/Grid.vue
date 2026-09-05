@@ -74,8 +74,8 @@ onMounted(async () => {
       <button
         v-if="callBackgrounds.length < MAX_CALL_BACKGROUNDS"
         aria-label="Upload Background"
-        b-border
         b-2
+        b-border
         rd
         b-dashed
         bg-surface
