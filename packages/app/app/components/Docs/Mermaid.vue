@@ -71,7 +71,7 @@ useEventListener(container, "wheel", (event) => {
 </script>
 
 <template>
-  <div ref="wrapper" relative class="group" :class="isFullscreen ? 'bg-surface' : undefined">
+  <div ref="wrapper" relative class="group" :class="isFullscreen ? 'fullscreen' : undefined">
     <div
       ref="container"
       py-2
@@ -93,3 +93,10 @@ useEventListener(container, "wheel", (event) => {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Opaque so the page behind cannot show through the diagram once it fills the screen */
+.fullscreen {
+  background-color: rgb(var(--v-theme-surface));
+}
+</style>

@@ -20,7 +20,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Clicker`                                                                   | —          |                                                                            |
 | `app/components/Visual`                                                                    | —          |                                                                            |
 | `app/components/User`                                                                      | —          |                                                                            |
-| `app/components/Docs`                                                                      | —          | the docs site's own chrome                                                 |
+| `app/components/Docs`                                                                      | 2026-09-05 | the docs site's own chrome                                                 |
 | `app/components/Dashboard`, `Achievement`                                                  | —          |                                                                            |
 | `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | —          |                                                                            |
 | `app/pages`, `app/layouts`                                                                 | —          | page-level layout; region sizing and the sidebar/panel rules               |

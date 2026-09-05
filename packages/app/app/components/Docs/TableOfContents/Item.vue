@@ -14,15 +14,14 @@ const isActive = computed(() => visibleIds.includes(link.id));
 <template>
   <li>
     <NuxtInvisibleLink
-      class="text-[0.9375rem]"
       duration="[--transition-duration]"
+      text="[0.9375rem]"
       :class="isActive ? 'text-primary font-medium' : 'text-inherit op-medium-emphasis hover:op-high-emphasis'"
       :data-slide-indicator-key="link.id"
       :to="{ hash: `#${link.id}` }"
       :style="{ paddingLeft: `${0.75 + depth * 0.75}rem` }"
       replace
       py-1.5
-      no-underline
       block
       transition-colors
     >
