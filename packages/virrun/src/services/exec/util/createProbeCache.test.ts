@@ -3,16 +3,12 @@ import type { KeyedCache } from "#src/models/exec/KeyedCache";
 import { VIRRUN_FORCE_PROBE_KEY } from "#src/services/exec/util/constants";
 import { createProbeCache } from "#src/services/exec/util/createProbeCache";
 import { getHostFingerprint } from "#src/services/exec/util/getHostFingerprint";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 type WritePersistedCache = (cache: Pick<KeyedCache<string>, "key" | "value">) => undefined;
 
 describe(createProbeCache, () => {
   const value = "value";
-
-  afterEach(() => {
-    delete process.env[VIRRUN_FORCE_PROBE_KEY];
-  });
 
   test("probes once on a cold cache, memoizes, and persists the fingerprint-keyed value", () => {
     expect.hasAssertions();
@@ -28,7 +24,7 @@ describe(createProbeCache, () => {
 
     expect(readValue()).toBe(value);
     expect(readValue()).toBe(value);
-    expect(probe).toHaveBeenCalledTimes(1);
+    expect(probe).toHaveBeenCalledExactlyOnceWith();
     expect(writePersistedCache).toHaveBeenCalledExactlyOnceWith({ key: getHostFingerprint(), value });
   });
 
@@ -45,14 +41,14 @@ describe(createProbeCache, () => {
     });
 
     expect(readValue()).toBe(value);
-    expect(probe).toHaveBeenCalledTimes(0);
-    expect(writePersistedCache).toHaveBeenCalledTimes(0);
+    expect(probe).not.toHaveBeenCalled();
+    expect(writePersistedCache).not.toHaveBeenCalled();
   });
 
   test("force-probe bypasses the persisted cache but never the memo", () => {
     expect.hasAssertions();
 
-    process.env[VIRRUN_FORCE_PROBE_KEY] = "1";
+    vi.stubEnv(VIRRUN_FORCE_PROBE_KEY, "1");
     const probe = vi.fn<() => string>(() => value);
     const readPersistedCache = vi.fn<(key: string) => string | undefined>(() => value);
     const readValue = createProbeCache({
@@ -64,8 +60,8 @@ describe(createProbeCache, () => {
 
     expect(readValue()).toBe(value);
     expect(readValue()).toBe(value);
-    expect(readPersistedCache).toHaveBeenCalledTimes(0);
-    expect(probe).toHaveBeenCalledTimes(1);
+    expect(readPersistedCache).not.toHaveBeenCalled();
+    expect(probe).toHaveBeenCalledExactlyOnceWith();
   });
 
   test("does not persist a value shouldPersist rejects", () => {
@@ -80,7 +76,7 @@ describe(createProbeCache, () => {
     });
 
     expect(readValue()).toBe("");
-    expect(writePersistedCache).toHaveBeenCalledTimes(0);
+    expect(writePersistedCache).not.toHaveBeenCalled();
   });
 
   test("a throwing probe leaves both tiers unset, so the next call re-probes", () => {
@@ -100,6 +96,6 @@ describe(createProbeCache, () => {
     expect(() => readValue()).toThrowErrorMatchingInlineSnapshot(`[Error: probe failed]`);
     expect(() => readValue()).toThrowErrorMatchingInlineSnapshot(`[Error: probe failed]`);
     expect(probe).toHaveBeenCalledTimes(2);
-    expect(writePersistedCache).toHaveBeenCalledTimes(0);
+    expect(writePersistedCache).not.toHaveBeenCalled();
   });
 });

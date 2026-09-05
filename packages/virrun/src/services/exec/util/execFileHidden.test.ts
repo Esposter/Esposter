@@ -1,5 +1,6 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
+import { ExecFileError } from "#src/models/exec/util/ExecFileError";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { getResult, noop } from "@esposter/shared";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -154,7 +155,7 @@ describe(execFileHidden, () => {
 
     const error = getResult(() => execFileHidden("tar", ["-c"])).match(noop, (failure) => failure);
 
-    expect(error).toMatchObject({ signal: "SIGTERM" });
+    expect((error as ExecFileError).signal).toBe("SIGTERM");
   });
 
   test("raises the failure with an empty stderr when it was not piped", () => {
