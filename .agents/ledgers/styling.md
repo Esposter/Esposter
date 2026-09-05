@@ -16,7 +16,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Resource` — the entry surfaces                                             | —          | `Home`, `Search`, `Explorer`, `RecycleBin`, `Dashboard`, `Flowchart`       |
 | `app/components/Resource` — the shared chrome                                              | —          | `Blade`, `Create`, `VersionHistory` and the loose dialogs                  |
 | `app/components/Dungeons`                                                                  | —          | canvas-adjacent; much of it is Phaser rather than DOM                      |
-| `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | —          | the chrome                                                                 |
+| `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | 2026-09-05 | the chrome                                                                 |
 | `app/components/Clicker`                                                                   | —          |                                                                            |
 | `app/components/Visual`                                                                    | —          |                                                                            |
 | `app/components/User`                                                                      | —          |                                                                            |
