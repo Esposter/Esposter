@@ -5,8 +5,7 @@ import { AzureContainer } from "@esposter/db-schema";
 // Embedded asset, and every anonymous viewer behind a corporate NAT or a carrier CGNAT arrives on one egress
 // Address, so the traffic on a single key is renders x assets x viewers. At the procedure budget a couple of
 // Dozen page loads a minute from one office exhausts it and every viewer there sees a page of broken images.
-// Its key is a signed-in viewer's user id — the same key the procedure limiters use — so the container prefix
-// Is what keeps that spend out of the caller's API budget.
-// No blockDuration for the same reason as the budget: the sliding window has to let a burst recover on its own
-// Rather than locking out an address — and everything it guards is a published page anyone may read anyway.
+// Its key is a signed-in viewer's user id, the same key the procedure limiters use. No blockDuration for the
+// Same reason as the budget: the sliding window has to let a burst recover on its own rather than locking out an
+// Address, and everything it guards is a published page anyone may read anyway.
 export const assetRateLimiter = createRateLimiter({ keyPrefix: AzureContainer.ResourceAssets, points: 10_000 });

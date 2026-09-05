@@ -6,8 +6,8 @@ import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmi
 import { getResultAsync, noop } from "@esposter/shared";
 
 // A removal a member did not choose is still a departure, so it owes the room exactly what a leave does: the
-// Event every other client prunes its member list from, and the line saying who went. Leaving that to each
-// Call site is what let a moderation kick delete a membership row nobody was told about
+// Event every other client prunes its member list from, and the line saying who went. Left to each call site,
+// A moderation kick deletes a membership row nobody is told about
 export const announceRoomMemberRemoval = async (
   db: Context["db"],
   { roomId, userId }: Pick<UserToRoomInMessage, "roomId" | "userId">,
