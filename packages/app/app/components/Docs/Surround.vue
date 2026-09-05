@@ -14,7 +14,7 @@ const next = computed(() => surround[1]);
   <div v-if="previous || next" mt-12 gap-4 grid grid-cols-1 md:grid-cols-2>
     <v-card v-if="previous" :to="previous.path" variant="outlined" hover>
       <v-card-item>
-        <p mb-1 flex gap-x-1 items-center op-medium-emphasis text-body-small>
+        <p mb-1 flex gap-x-1 items-center text-hint>
           <v-icon icon="mdi-arrow-left" size="small" />
           Previous
         </p>
@@ -25,7 +25,7 @@ const next = computed(() => surround[1]);
     <div v-else />
     <v-card v-if="next" :to="next.path" variant="outlined" hover text-right>
       <v-card-item>
-        <p mb-1 flex gap-x-1 items-center justify-end op-medium-emphasis text-body-small>
+        <p mb-1 flex gap-x-1 items-center justify-end text-hint>
           Next
           <v-icon icon="mdi-arrow-right" size="small" />
         </p>

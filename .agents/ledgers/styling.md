@@ -57,6 +57,8 @@ grep -rnE '(rgb|rgba|hsl)\(--|color-mix\(in srgb, --' --include=*.vue --include=
 # A bare bracket attribute — UnoCSS extracts it as a class token, so the rule it emits is a `.class` the
 # Element never carries. Only the valued form `prop="[...]"` produces an attribute selector
 grep -rnoE '(^|[[:space:]])[a-z][A-Za-z0-9:_-]*-\[[^]"'"'"']*\]([[:space:]/>]|$)' --include=*.vue packages/app/app
+# The `text-hint` shortcut written out — uno.config.ts defines it as exactly this pair
+grep -rn 'op-medium-emphasis text-body-small' --include=*.vue packages/app/app
 # A numeric opacity spelling out an emphasis token — op-60 is medium, op-87 is high; op-0/op-100 are reveals
 grep -rnE '(^|[^-a-z0-9])op-(38|60|87)([^0-9]|$)' --include=*.vue packages/app/app
 # An emphasis name used as a colour: they are opacity utilities, so b-/bg-/text- prefixed they generate nothing
