@@ -51,7 +51,6 @@ export class Parser {
             if (this.#options.mergeAttrs) this.#assignOrPush(newObject, processedKey, newValue);
             else defineProperty(newObject[this.#options.attrkey] as Record<string, unknown>, processedKey, newValue);
           }
-      // Hardcode a place to store the node name.
       newObject[BUILTIN_NAME_KEY] = this.#options.tagNameProcessors
         ? processItem(this.#options.tagNameProcessors, node.name, "")
         : node.name;
@@ -133,7 +132,7 @@ export class Parser {
       // Check whether we closed all the open tags
       if (this.#stack.length > 0) this.#assignOrPush(nextObject ?? {}, nodeName, object);
       else {
-        // If explicitRoot was specified, wrap stuff in the root tag name
+        // Under explicitRoot the result is wrapped in an object keyed by the root tag name
         if (this.#options.explicitRoot) {
           // Avoid circular references
           const oldObject = object;
@@ -215,7 +214,7 @@ export const parseStringPromise = <T>(
   const parserInstance = new Parser(options);
   return parserInstance.parseStringPromise(convertableToString);
 };
-// Underscore has a nice function for this, but we go without dependencies.
+
 const checkIsEmpty = (value: unknown): boolean =>
   typeof value === "object" && value !== null && Object.keys(value).length === 0;
 

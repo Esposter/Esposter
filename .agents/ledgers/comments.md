@@ -12,7 +12,7 @@
 | `packages/shared`, `packages/shared-node`               | 2026-09-05 | `takeOne`                                                 |
 | `packages/virrun`                                       | —          | the WSL mirror prose is the bulk of it                    |
 | `packages/vue-phaserjs`                                 | —          | composables, store, models, test setup                    |
-| `packages/xml2js`                                       | —          | `Parser.ts`                                               |
+| `packages/xml2js`                                       | 2026-09-05 | `Parser.ts`                                               |
 | repo root — `scripts/`, `.agents/`, root `*.config.ts`  | —          | workflow scripts and their tests                          |
 
 Greps, per unit:
