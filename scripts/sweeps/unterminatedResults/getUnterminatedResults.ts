@@ -18,7 +18,7 @@ export const getUnterminatedResults = (text: string): UnterminatedResult[] => {
       .filter(([, depth]) => depth === 0)
       .map(([character]) => character)
       .join("")
-      .replace(/\s+/gu, " ")
+      .replaceAll(/\s+/gu, " ")
       .trim()
       .slice(0, 34);
     if (TERMINATOR_REGEX.test(after)) continue;

@@ -12,6 +12,6 @@ const checkIsInScope = (path: string) =>
 // Prints rather than exits non-zero: what it still reports is the chain assigned to a named `const` and
 // Terminated on a later line, which is the repo's own preference over nesting the call inside its terminator.
 // The ledger names them (`.agents/ledgers/error-handling.md`); telling one from a finding is a read.
-for (const path of [...getSweepFilePaths("*.ts"), ...getSweepFilePaths("*.vue")].filter(checkIsInScope))
+for (const path of [...getSweepFilePaths("*.ts"), ...getSweepFilePaths("*.vue")].filter((path) => checkIsInScope(path)))
   for (const { after, line } of getUnterminatedResults(readFileSync(resolve(root, path), "utf8")))
     console.info(`${path}:${line.toString()}  after: ${after}`);
