@@ -29,7 +29,7 @@ const emit = defineEmits<{ select: [] }>();
     <template #title>
       <ResourceSearchHighlightedTitle :search-query :text="item.title" />
     </template>
-    <!-- Stays imperative: the row is an anchor now, and an anchor inside an anchor is invalid markup -->
+    <!-- Stays imperative: the row is an anchor, and an anchor inside an anchor is invalid markup -->
     <template v-if="item.createTo" #append>
       <StyledLinkRowActions>
         <StyledTooltipIconButton

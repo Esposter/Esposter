@@ -39,7 +39,6 @@ describe("styledTooltipMenuIconButton", () => {
       props: { icon: ICON },
     });
 
-    // A button that took the route renders as an anchor; one that never saw it stays a <button>
     expect(component.get(".v-btn").element.tagName).toBe("A");
   });
 });

@@ -6,8 +6,6 @@ import { getResult, takeOne } from "@esposter/shared";
 const blueprintStore = useBlueprintStore();
 const { loadContent, saveBlueprint } = blueprintStore;
 const { blueprint } = storeToRefs(blueprintStore);
-// The Suspense-wrapped blade awaits the content, so it opens on a populated store and the shell's
-// Skeleton covers the wait — no per-blade loading flag
 await loadContent();
 // The manifest is edited as schema-validated JSON — the escape hatch, since capture is the primary
 // Authoring path. A local clone follows the store's content and carries the user's edits until save

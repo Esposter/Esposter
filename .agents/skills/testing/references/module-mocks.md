@@ -29,6 +29,11 @@ const { fooMock } = vi.hoisted(() => ({ fooMock: {} as { current: () => Promise<
 vi.mock(import("@/services/getFoo"), () => ({ getFoo: () => fooMock.current() }));
 ```
 
+**A module whose export is a dynamic-path `Proxy` can only be mocked at the module seam.** `authClient`
+(better-auth) resolves its methods through a `Proxy`, so `useSession` is not a configurable own property and
+`vi.spyOn(authClient, "useSession")` throws rather than replacing anything. Mock the module and drive the method
+through a hoisted holder, as above.
+
 ### Placement and export
 
 Place mock files directly next to the service, same directory, `.test.ts` suffix (`src/services/getFoo.ts` → `src/services/getFoo.test.ts`).

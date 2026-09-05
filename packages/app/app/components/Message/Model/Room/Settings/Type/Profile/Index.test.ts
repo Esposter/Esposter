@@ -27,7 +27,6 @@ describe("messageModelRoomSettingsTypeProfileIndex", () => {
         return { ...userToRoom, nickname: input.nickname ?? userToRoom.nickname };
       }),
     );
-    // The component mounts into the nuxt app's pinia, so seed the store it reads rather than a local one
     const userToRoomStore = useUserToRoomStore();
     const { setMyUserToRoom } = userToRoomStore;
     setMyUserToRoom(room.id, userToRoom);

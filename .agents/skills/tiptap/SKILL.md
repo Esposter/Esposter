@@ -103,3 +103,10 @@ const slashCommandExtension = useSlashCommandExtension();
 ```
 
 Every entry is a `use*Extension()` call. `RichTextEditor` owns only the always-on extensions (`StarterKit`, `CharacterCount`, `Placeholder`, `FileHandler`, `useLinkClickExtension`); feature extensions come via the `:extensions` prop.
+
+## `useEditor` owns the editor's lifecycle — never register a second teardown
+
+`useEditor` constructs the editor in `onMounted` (so a component that `await`s its content in setup is already
+seeded by then) and destroys it in its own `onBeforeUnmount`. A component adding an `onBeforeUnmount` of its own
+that calls `editor.destroy()` tears the same editor down twice — harmless today and a double-free the moment
+Tiptap's teardown stops being idempotent. Nothing about the editor's lifetime belongs in the calling component.

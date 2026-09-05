@@ -30,9 +30,6 @@ const deleteMessage = async (onComplete: () => void) => {
       if (!deletedMessage) return noop;
 
       return () => {
-        // The one row this write removed, not a copy of the timeline: reinstating that would resurrect a message
-        // A concurrent delete already took out and drop whatever a subscription delivered mid-flight. It lands at
-        // The head of the timeline rather than where it stood — a cosmetic loss, taken over dropping a row.
         // Through storeCreateMessage so the Create hooks undo what the Delete hooks did (attachment urls, the
         // Reply index), and terminated here because nothing awaits a rollback
         getResultAsync(() => storeCreateMessage(deletedMessage)).match(noop, console.error);

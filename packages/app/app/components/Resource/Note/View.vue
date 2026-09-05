@@ -20,8 +20,8 @@ const { content, name } = await useReadPublishedResourceContent(
       : $trpc.note.readPublishedResourceContent.query(id),
   version,
 );
-// JSON is the source of truth at rest — HTML is generated here and sanitized at the render boundary per the
-// String-utils standard. @tiptap/html serializes without a browser DOM, so the render is SSR-safe.
+// JSON is the source of truth at rest — HTML is generated here and sanitized at the render boundary per
+// The `string-utils` standard. @tiptap/html serializes without a browser DOM, so the render is SSR-safe.
 const html = computed(() => sanitizeTextHtml(generateHTML(content.doc, getNoteExtensions())));
 </script>
 

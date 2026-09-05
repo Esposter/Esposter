@@ -24,8 +24,8 @@ onClickExceptDrag(
 <template>
   <div ref="container">
     <DashboardVisualPreview :type />
-    <!-- Clicking the tile opens its edit form and nothing on screen said so, while deleting one has carried a
-      Visible control all along — Power BI puts both on the tile's own corner, so the pair sits together here -->
+    <!-- Clicking the tile opens its edit form, which nothing on screen says on its own — Power BI puts edit
+      And delete together on the tile's own corner, so the pair sits there here too -->
     <div flex right-0 top-0 absolute>
       <StyledTooltipIconButton
         :button-props="{ size: 'small' }"

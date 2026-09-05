@@ -12,8 +12,8 @@ const { removeNodes } = useVueFlow();
 <template>
   <Panel v-if="isSingleNodeSelected" position="top-right">
     <StyledCard p-4>
-      <!-- Removing a node answered only to Backspace, which nothing on screen names — draw.io and Miro both hang
-        A delete off the selection itself, and this panel is already the thing that appears when one is made -->
+      <!-- Backspace removes a node too, but nothing on screen names it — draw.io and Miro both hang a delete
+        Off the selection itself, and this panel is already the thing that appears when one is made -->
       <v-card-title font-bold flex gap-x-2 items-center>
         Properties
         <v-spacer />

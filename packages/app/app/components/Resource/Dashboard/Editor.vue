@@ -4,7 +4,6 @@ import { useDashboardStore } from "@/store/dashboard";
 const dashboardStore = useDashboardStore();
 const { loadContent, saveDashboard } = dashboardStore;
 const { dashboard } = storeToRefs(dashboardStore);
-// The Suspense-wrapped blade awaits the content, so it opens on a populated store — the same shape Note uses
 await loadContent();
 // Layout drags and visual edits mutate the dashboard in place, so the watch has to be deep — and the
 // Store seeds the dirty check with what it just read, so this first deep fire compares equal and saves nothing

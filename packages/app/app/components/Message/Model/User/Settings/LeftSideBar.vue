@@ -16,7 +16,6 @@ const onSelectType = (settingsType: UserSettingsType) => {
   isDrawerOpen.value = false;
 };
 const goTo = useVGoTo();
-// A stable reference, since a literal in the binding allocates a fresh array every render
 const openedTypes = computed(() => [modelValue.value]);
 // Every visible section is highlighted and the rail stretches across them, the same as the docs table of contents.
 // The panel scrolls itself rather than with the page, so the scrollspy is bounded by that container

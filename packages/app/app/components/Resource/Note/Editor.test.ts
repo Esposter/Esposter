@@ -34,7 +34,6 @@ describe("resourceNoteEditor", () => {
     );
   });
 
-  // `useEditor` already registers its own teardown, so a second one here would tear the same editor down twice
   test("tears the editor down once on unmount", async () => {
     expect.hasAssertions();
 

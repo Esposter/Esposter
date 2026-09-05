@@ -4,8 +4,9 @@ import { sleep } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test } from "vitest";
 
-// `primary` is StyledButton's own colour, so naming it explicitly must not opt out of the gradient — the
-// Previous gate read any colour at all as "the caller wants a plain button"
+// `primary` is StyledButton's own colour, so naming it explicitly must not opt out of the gradient: a gate
+// Reading any colour at all as "the caller wants a plain button" strips it from every dialog that spells the
+// Default out
 // StyledButton is a v-btn carrying the gradient as an attributify background-image, so that attribute is what
 // Distinguishes it from the plain button in the rendered output — the generated CSS never loads under jsdom
 const getGradientButtons = (body: HTMLElement) => [

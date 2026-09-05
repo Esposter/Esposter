@@ -20,7 +20,7 @@ watch(isPoppedOut, async (newIsPoppedOut) => {
   // Lost after the screen picker), so if no window materialised, clear the stale intent — otherwise
   // The main view shows an empty PiP placeholder for a call that never popped out.
   if (!pipWindow.value) isPoppedOut.value = false;
-  // IsPoppedOut flipped back to false while requestWindow was pending: undo the stale open.
+  // `isPoppedOut` flipped back to false while requestWindow was pending: undo the stale open.
   else if (!isPoppedOut.value) close();
 });
 // Window closed (native "Back to tab", expand button, or leaveCall clearing isPoppedOut): sync

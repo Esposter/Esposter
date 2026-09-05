@@ -32,8 +32,6 @@ const createDirectMessageParticipants = async (onComplete: (isSuccessful?: boole
   await executeMutation(
     () => $trpc.room.directMessage.createDirectMessageParticipants.mutate({ roomId, userIds: selectedUserIds.value }),
     {
-      // Read as the write is sent, so this builds on whoever the add ahead of it already stored rather than on
-      // The list as it stood when the user confirmed
       applyOptimistic: () => {
         const currentParticipants = getDirectMessageParticipants(roomId);
         const existingParticipantIds = new Set(currentParticipants.map(({ id }) => id));
@@ -42,8 +40,6 @@ const createDirectMessageParticipants = async (onComplete: (isSuccessful?: boole
         );
         storeDirectMessageParticipants(roomId, [...newParticipants, ...currentParticipants]);
         return () => {
-          // Only the people this write added — reinstating the list it was issued with would re-add anyone a
-          // Concurrent removal took out and drop whoever arrived while this write was in flight
           const addedIds = new Set(newParticipants.map(({ id }) => id));
           storeDirectMessageParticipants(
             roomId,

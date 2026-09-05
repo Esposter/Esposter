@@ -9,8 +9,7 @@ import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { VTextField } from "vuetify/components";
-// AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot
-// Be spied on directly — mock the module and drive useSession through a hoisted mock instead
+
 const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<() => unknown>() }));
 
 vi.mock(import("@/services/auth/authClient"), () => ({
@@ -46,8 +45,8 @@ describe("messageModelStatusPickerForm", () => {
 
   beforeEach(() => {
     useSessionMock.mockReturnValue(ref({ data: { user: { id: userId } } }));
-    // The component mounts into the nuxt app's pinia, which every test in the file shares, so each starts from
-    // A user whose status is whatever it seeds
+    // Every test in the file shares the nuxt app's pinia, so each starts from a user whose status is whatever
+    // This seeds
     const statusStore = useStatusStore();
     const { statusMap } = storeToRefs(statusStore);
     statusMap.value.clear();

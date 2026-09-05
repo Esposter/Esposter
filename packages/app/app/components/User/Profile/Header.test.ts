@@ -2,8 +2,7 @@
 import UserProfileHeader from "@/components/User/Profile/Header.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";
-// AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot
-// Be spied on directly — mock the module and drive useSession through a hoisted mock instead
+
 const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<(fetcher?: unknown) => unknown>() }));
 
 vi.mock(import("@/services/auth/authClient"), () => ({

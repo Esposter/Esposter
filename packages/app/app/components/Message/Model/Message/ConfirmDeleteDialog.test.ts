@@ -21,8 +21,6 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
   const message = "message";
   const creator = createUser({ id: userId });
 
-  // A rejected delete owes back the row it took out and nothing else — the timeline also receives subscription
-  // Pushes, so reinstating the copy this write was issued with drops whatever arrived while it was in flight
   test("restores only its own message when the delete is rejected", async () => {
     expect.hasAssertions();
 

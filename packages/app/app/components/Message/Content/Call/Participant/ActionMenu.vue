@@ -12,7 +12,7 @@ const { participant } = defineProps<Props>();
 const callStore = useCallStore();
 const { isInCall } = storeToRefs(callStore);
 const { getActions } = useCallParticipantActions();
-// Close-on-content-click is off so dragging the volume slider keeps the menu open;
+// `close-on-content-click` is off so dragging the volume slider keeps the menu open;
 // Action items close it explicitly instead.
 const isOpen = ref(false);
 const actions = computed(() =>

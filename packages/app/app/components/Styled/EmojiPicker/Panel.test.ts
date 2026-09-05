@@ -39,8 +39,8 @@ describe("styledEmojiPickerPanel", () => {
     localStorage.clear();
   });
 
-  // The whole point of retiring the dependency is that the grid is our own buttons rendering native unicode,
-  // So the first assertion worth having is that a category's emoji are on the page at all
+  // The grid is our own buttons rendering native unicode rather than a dependency's, so the first assertion
+  // Worth having is that a category's emoji are on the page at all
   test("opens on the first category with its emoji rendered", async () => {
     expect.hasAssertions();
 

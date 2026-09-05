@@ -111,8 +111,8 @@ onMounted(async () => {
               {{ tagValue ? `${tagName}: ${tagValue}` : tagName }}
             </v-chip>
             <span v-if="tagRows.length === 0" op-medium-emphasis>None</span>
-            <!-- The only way into the tags editor, and a colourless flat button is transparent here, so it read
-                 as a word sitting beside the chips rather than as the control they are edited from -->
+            <!-- The only way into the tags editor. A colourless flat button is transparent here and reads as a
+                 Word sitting beside the chips rather than as the control they are edited from -->
             <StyledButton
               :button-props="{ prependIcon: 'mdi-pencil', size: 'small', text: 'Edit' }"
               @click="isTagsEditorOpen = true"

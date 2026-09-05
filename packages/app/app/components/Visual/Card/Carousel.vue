@@ -170,7 +170,6 @@ watch(
 <style scoped lang="scss">
 // The JS code handles breakpoints/variables for each card.
 .active-card {
-  // Active cards always show at the very top.
   z-index: 100 !important;
   // Fake grid-gap.
   padding-right: v-bind(gap);
@@ -179,7 +178,6 @@ watch(
 
 @keyframes active-card {
   0% {
-    // Active cards have no scale/translate.
     transform: translateX(0%) scaleY(1);
     // Subtract v-bind(gap) since it has that much padding.
     margin-right: calc(v-bind("activeCardStyle.oldMarginRight") - v-bind(gap));
@@ -198,12 +196,11 @@ watch(
 
 @keyframes inactive-card {
   0% {
-    // No scale/translate.
     transform: translateX(-100%) scale(1);
     margin-right: 0;
     padding-right: v-bind(gap);
   }
-  // Delay moving left until 20%.
+  // Scale in place first — the slide right starts after this.
   20% {
     transform: translateX(-100%) scale(v-bind("inactiveCardStyle.scaleY"));
     margin-right: 0;
@@ -214,7 +211,7 @@ watch(
     transform: translateX(0%) scale(v-bind("inactiveCardStyle.scaleY"));
     margin-right: 0;
   }
-  // End on the left, waiting to be sent back to the right.
+  // End in the place the active card left, at its own scale.
   100% {
     transform: translateX(0%) scaleY(v-bind("inactiveCardStyle.scaleY"));
     margin-right: 0;

@@ -12,8 +12,6 @@ const { editItem, loadContent } = todoListStore;
 const { items, searchQuery } = storeToRefs(todoListStore);
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<TodoListItem>) => editItem({ id: item.id });
 useTodoListSubscribables();
-// The Suspense-wrapped blade awaits the content, so it opens on a populated store and the shell's
-// Skeleton covers the wait — no per-blade loading flag
 await loadContent();
 </script>
 

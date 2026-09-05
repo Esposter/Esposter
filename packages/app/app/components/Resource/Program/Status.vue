@@ -44,8 +44,6 @@ const generateParticipants = async () => {
     },
   });
 };
-// The Suspense-wrapped blade awaits the content and the rows it renders, so it opens populated and the
-// Shell's skeleton covers the wait — no per-blade loading flag
 await loadContent();
 await readStatus();
 </script>
