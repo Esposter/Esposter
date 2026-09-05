@@ -48,7 +48,7 @@ const toolbarItems = computed<Item[]>(() => [
 </script>
 
 <template>
-  <v-toolbar px-4 py-2 b-1 b-border b-solid flex flex-wrap gap-2 items-center>
+  <v-toolbar px-4 py-2 b-0 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center>
     <v-text-field
       v-model="search"
       clearable
