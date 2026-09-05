@@ -34,21 +34,11 @@ const avatarProps = computed(() => ({
       </template>
     </MessageContentCallParticipantActionMenu>
     <StyledAvatar v-else :="avatarProps" />
-    <div
-      v-if="participant.isHandRaised"
-      bg-warning
-      text-black
-      rd-full
-      flex
-      size-4
-      items-center
-      right--1
-      top--1
-      justify-center
-      absolute
-    >
+    <!-- `warning` is Vuetify's colour rather than one this theme registers, so no utility for it generates at
+      All — the badge takes it through the `color` prop, which is how the rest of the app already reaches it -->
+    <v-avatar v-if="participant.isHandRaised" color="warning" size="1rem" text-black right--1 top--1 absolute>
       <v-icon icon="mdi-hand-back-right" size="x-small" />
-    </div>
+    </v-avatar>
     <div
       v-if="isSpeaking"
       inset="-0.1875rem"
