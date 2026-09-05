@@ -25,7 +25,7 @@ vi.mock(import("@@/server/services/auth/closeDeviceConnections"), () => ({
   closeDeviceConnections: mocks.closeDeviceConnections,
 }));
 
-describe("session", () => {
+describe("sessionRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["session"]>;
   let currentSession: Session;

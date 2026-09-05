@@ -8,7 +8,7 @@ import { clickerRouter } from "@@/server/trpc/routers/clicker";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("clicker", () => {
+describe("clickerRouter", () => {
   let caller: DecorateRouterRecord<TRPCRouter["clicker"]>;
 
   beforeAll(async () => {

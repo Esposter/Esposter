@@ -26,7 +26,7 @@ const createMessageNotificationData = (
   type: AppNotificationType.Message,
 });
 
-describe("pushSubscription", () => {
+describe("pushSubscriptionRouter", () => {
   let mockContext: Context;
   let pushSubscriptionCaller: DecorateRouterRecord<TRPCRouter["pushSubscription"]>;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
@@ -97,7 +97,7 @@ describe("pushSubscription", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const events = MockEventGridDatabase.get("");
-    assert(events);
+    assert.exists(events);
 
     // Published unconditionally: whether anyone is subscribed is not a question the request path asks
     expect(events).toHaveLength(1);
@@ -119,7 +119,7 @@ describe("pushSubscription", () => {
       roomId: newRoom.id,
     });
     const events = MockEventGridDatabase.get("");
-    assert(events);
+    assert.exists(events);
 
     // One event rather than two: a thread's followers widen the reply's recipient set instead of raising a
     // Second notification that the first has to be de-duplicated against

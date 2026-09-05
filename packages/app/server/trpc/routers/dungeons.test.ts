@@ -8,7 +8,7 @@ import { dungeonsRouter } from "@@/server/trpc/routers/dungeons";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("dungeons", () => {
+describe("dungeonsRouter", () => {
   let caller: DecorateRouterRecord<TRPCRouter["dungeons"]>;
 
   beforeAll(async () => {
