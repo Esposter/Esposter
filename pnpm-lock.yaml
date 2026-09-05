@@ -192,8 +192,8 @@ catalogs:
       specifier: ^1.8.0
       version: 1.8.0
     '@fullcalendar/vue3':
-      specifier: ^7.0.2
-      version: 7.0.2
+      specifier: ^7.1.0
+      version: 7.1.0
     '@hpcc-js/wasm-graphviz':
       specifier: ^1.28.0
       version: 1.28.0
@@ -889,7 +889,7 @@ importers:
         version: 1.8.0
       '@fullcalendar/vue3':
         specifier: 'catalog:'
-        version: 7.0.2(temporal-polyfill@1.0.4)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
+        version: 7.1.0(temporal-polyfill@1.0.4)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
       '@koumoul/vjsf':
         specifier: 'catalog:'
         version: 4.5.4(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(vuetify@4.1.13(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)))
@@ -3531,19 +3531,19 @@ packages:
   '@floating-ui/vue@1.1.11':
     resolution: {integrity: sha512-HzHKCNVxnGS35r9fCHBc3+uCnjw9IWIlCPL683cGgM9Kgj2BiAl8x1mS7vtvP6F9S/e/q4O6MApwSHj8hNLGfw==}
 
-  '@full-ui/headless-calendar@7.0.2':
-    resolution: {integrity: sha512-i6UlTNjBVuiBca5Sq6OoLxFqK6eaQ/v1XOLObjRkzXLuSuNn+qs9/dUvlzrbeesn7QbRH7+u7lyvlQyq8WvmGA==}
+  '@full-ui/headless-calendar@7.1.0':
+    resolution: {integrity: sha512-T54tSUik/ia9Jj4xduFHv1p98eVBgLnE33Q6qhpg+WWkqKCLBCbtVyMcTPPIOP5jjTV2MbtjrRvRt1RLSryGHA==}
     peerDependencies:
       temporal-polyfill: ^1.0.1
 
-  '@fullcalendar/core@7.0.2':
-    resolution: {integrity: sha512-EkhE1wkPttp5kKNmUNLsMwl8nUuQmLdj30SPKagOEWMJUE4AHETAu/F/SbYoRq+nksm2GWPe9cQs1kbQP2H9pA==}
+  '@fullcalendar/core@7.1.0':
+    resolution: {integrity: sha512-a+ABP7zQpPWpwPT8EsOdShpeOVrJyx/XYStqERd8ibld/FLi/dzpd95r7w3RIdFqFm9iUv0gdGvBshSlI/dbPw==}
     peerDependencies:
-      '@full-ui/headless-calendar': 7.0.2
+      '@full-ui/headless-calendar': 7.1.0
       temporal-polyfill: ^1.0.1
 
-  '@fullcalendar/vue3@7.0.2':
-    resolution: {integrity: sha512-QCCMEA5ydWptaGI4y0i/2G/VsnDIL1Ohj9TMY4KB/bfDGnQE6qi6r8EKs7oAzSyWsTR6V/2U5pLPoN1fGWzCUQ==}
+  '@fullcalendar/vue3@7.1.0':
+    resolution: {integrity: sha512-eCuNgZ9Rk3fbFXyo0XG/4PmGhm8kr0b2fa+JRDfX86kPOlpYBe8fKF9pG/KuLIA2LTslGLUSTzn7LhPt2wIVdg==}
     peerDependencies:
       temporal-polyfill: ^1.0.1
       vue: ^3.0.11
@@ -16848,19 +16848,19 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
-  '@full-ui/headless-calendar@7.0.2(temporal-polyfill@1.0.4)':
+  '@full-ui/headless-calendar@7.1.0(temporal-polyfill@1.0.4)':
     dependencies:
       temporal-polyfill: 1.0.4
 
-  '@fullcalendar/core@7.0.2(@full-ui/headless-calendar@7.0.2(temporal-polyfill@1.0.4))(temporal-polyfill@1.0.4)':
+  '@fullcalendar/core@7.1.0(@full-ui/headless-calendar@7.1.0(temporal-polyfill@1.0.4))(temporal-polyfill@1.0.4)':
     dependencies:
-      '@full-ui/headless-calendar': 7.0.2(temporal-polyfill@1.0.4)
+      '@full-ui/headless-calendar': 7.1.0(temporal-polyfill@1.0.4)
       temporal-polyfill: 1.0.4
 
-  '@fullcalendar/vue3@7.0.2(temporal-polyfill@1.0.4)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))':
+  '@fullcalendar/vue3@7.1.0(temporal-polyfill@1.0.4)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))':
     dependencies:
-      '@full-ui/headless-calendar': 7.0.2(temporal-polyfill@1.0.4)
-      '@fullcalendar/core': 7.0.2(@full-ui/headless-calendar@7.0.2(temporal-polyfill@1.0.4))(temporal-polyfill@1.0.4)
+      '@full-ui/headless-calendar': 7.1.0(temporal-polyfill@1.0.4)
+      '@fullcalendar/core': 7.1.0(@full-ui/headless-calendar@7.1.0(temporal-polyfill@1.0.4))(temporal-polyfill@1.0.4)
       preact: 10.29.8
       temporal-polyfill: 1.0.4
       vue: 3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
