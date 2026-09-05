@@ -17,7 +17,7 @@
 | `packages/app` — `server/services` — the dense rest    | 2026-09-05 | `blueprint`, `azure`, `storage`, `survey`, `program`     |
 | `packages/app` — the rest of `server/services`         | 2026-09-05 |                                                          |
 | `packages/app` — the rest of `server`                  | 2026-09-05 | `models`, `composables`, `api`, `plugins`, `db`, root    |
-| `packages/app` — `shared/models/resource`              | —          |                                                          |
+| `packages/app` — `shared/models/resource`              | 2026-09-05 |                                                          |
 | `packages/app` — `shared/models/db`                    | —          |                                                          |
 | `packages/app` — the rest of `shared/models`           | —          |                                                          |
 | `packages/app` — `shared/services`                     | 2026-09-05 |                                                          |

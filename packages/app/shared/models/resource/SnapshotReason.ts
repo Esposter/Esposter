@@ -1,6 +1,5 @@
-// Why a revision exists, which is the whole of what makes one choosable in a history list — a bare version
-// Number and a timestamp are not something a person can pick between. Carried as blob metadata, so the
-// Listing hands it back without opening a single snapshot
+// Why a revision exists. Carried as blob metadata, so the listing hands it back without opening a single
+// Snapshot
 export enum SnapshotReason {
   // The first save after an idle window elapsed, so a working session leaves a handful of recovery points
   Automatic = "Automatic",
