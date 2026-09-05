@@ -487,7 +487,7 @@ describe("createResourceProcedures", () => {
 
     await webpageCaller.deleteFile({ blobPath, id: newResource.id });
     const blobDeletionEvents = MockEventGridDatabase.get("");
-    assert(blobDeletionEvents);
+    assert.exists(blobDeletionEvents);
 
     // The delete rides the one durable deletion publish, so the blob outlives the mutation and the handler
     // Removes it (/docs/architecture/blob-lifecycle)

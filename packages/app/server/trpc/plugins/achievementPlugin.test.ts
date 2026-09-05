@@ -63,7 +63,7 @@ describe("achievementPlugin", () => {
       ({ achievement }) => achievement.name === ClickerAchievementName.ClickerNovice,
     );
 
-    assert(clickerNovice);
+    assert.exists(clickerNovice);
 
     expect(clickerNovice.amount).toBe(1);
     expect(clickerNovice.unlockedAt).toStrictEqual(new Date(0));
@@ -79,7 +79,7 @@ describe("achievementPlugin", () => {
       ({ achievement }) => achievement.name === ClickerAchievementName.ClickerSaver,
     );
 
-    assert(clickerSaver);
+    assert.exists(clickerSaver);
 
     expect(clickerSaver.amount).toBe(2);
     expect(clickerSaver.unlockedAt).toBeNull();
