@@ -9,7 +9,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Message/Model/Room/Settings/Type/Role`, `Webhook`, `Emoji`, `Member`       | 2026-09-05 | the settings panels that own a list and an editor                                  |
 | `app/components/Message/Model/Room/Settings/Type` — the rest                               | 2026-09-05 | `Overview`, `Profile`, `AuditLog`, `WordFilter`, `Bans`, `Invite`, `Attachments`   |
 | `app/components/Message/Model/Room/Settings` — the shell                                   | 2026-09-05 | the dialog, its sidebar and the shared field                                       |
-| `app/components/Message/Model/Room` — the rest                                             | —          | `Create`, `DirectMessage`, `Emoji`, `Invite`, `List`, `Role` and the loose dialogs |
+| `app/components/Message/Model/Room` — the rest                                             | 2026-09-05 | `Create`, `DirectMessage`, `Emoji`, `Invite`, `List`, `Role` and the loose dialogs |
 | `app/components/Message/Model/User`                                                        | —          | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`                |
 | `app/components/Message/Content/Call` — the media surfaces                                 | 2026-09-05 | `Audio`, `Camera`, `Video`, `ScreenShare`, `VirtualBackground`, `Device`, `Pip`    |
 | `app/components/Message/Content/Call` — the session shell                                  | 2026-09-05 | `Control`, `Panel`, `Participant`, `JoinNotice`, `PreJoin`                         |
@@ -43,6 +43,9 @@ What a component looks like rather than how it is composed: attributify props ov
   them, so the unit there is the framework's rather than ours.
 - `app/components/Visual/FloatingAstronaut.scss` — a vendored SVG's own `fclass*` fills, which the skill already
   names as the one place a raw hex is the source's rather than ours.
+- A length a third-party API owns rather than CSS: `NodeResizer`'s flow coordinates, `useDocumentPictureInPicture`'s
+  window box, Phaser's scale. The dimension recipes report all three every run and none of them is a finding —
+  the unit there is the library's, which is the `px` rule's own stated exception.
 
 ## Find recipe
 
@@ -57,9 +60,13 @@ grep -rnE '(rgb|rgba|hsl)\(--|color-mix\(in srgb, --' --include=*.vue --include=
 # A bare bracket attribute — UnoCSS extracts it as a class token, so the rule it emits is a `.class` the
 # Element never carries. Only the valued form `prop="[...]"` produces an attribute selector
 grep -rnoE '(^|[[:space:]])[a-z][A-Za-z0-9:_-]*-\[[^]"'"'"']*\]([[:space:]/>]|$)' --include=*.vue packages/app/app
-# A Vuetify `size` given a bare number, which renders as px rather than the rem it was authored in. Only
-# `size`: `width`/`height` are dominated by SVG attributes and third-party APIs, where the unit is not ours
-grep -rnE "size: *[0-9]+ *[,}]|[[:space:]:]size=\"[0-9]+\"" --include=*.vue packages/app/app
+# A Vuetify length given a bare number, which renders as px rather than the rem it was authored in. A props
+# Object takes every name; as an attribute only `size` and the `min-`/`max-` pair, because bare `width`/`height`
+# Are dominated by SVG attributes and third-party APIs, where the unit is not ours
+grep -rnE "(maxWidth|minWidth|maxHeight|minHeight|width|height|size): *[0-9]+ *[,}]" --include=*.vue packages/app/app
+grep -rnE "[[:space:]:](size|(min|max)-(width|height))=\"[0-9]+\"" --include=*.vue packages/app/app
+# A Vuetify helper class where the UnoCSS name belongs — as an attribute it generates nothing at all
+grep -rnE "(^|[^-a-z])font-weight-(thin|light|regular|medium|bold|black)" --include=*.vue packages/app/app
 # A Vuetify theme colour this theme never registers — `warning`/`success` exist at runtime but generate no
 # Utility, so the attribute form is inert while the `color` prop still works
 grep -rnE '(^|[^-a-z"'"'"'])(bg|text|b)-(warning|success)([^-a-z0-9]|$)' --include=*.vue packages/app/app

@@ -27,7 +27,7 @@ const columnKeySummaryMap = computed(() => {
 
 <template>
   <tr>
-    <td v-for="header of headers" :key="header.key" font-weight-bold>
+    <td v-for="header of headers" :key="header.key" font-bold>
       {{ columnKeySummaryMap.get(header.key) ?? "" }}
     </td>
   </tr>

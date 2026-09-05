@@ -8,7 +8,7 @@ interface Props {
   placeholder: string;
 }
 
-const DIALOG_PROPS: VDialog["$props"] = { width: 600 };
+const DIALOG_PROPS: VDialog["$props"] = { width: "37.5rem" };
 
 defineSlots<{
   activator?: (props: DialogActivatorSlotProps) => VNode;

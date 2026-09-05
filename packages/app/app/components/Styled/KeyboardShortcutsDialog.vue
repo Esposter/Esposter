@@ -3,7 +3,7 @@ import type { KeyboardShortcutCategory } from "@/models/shared/KeyboardShortcutC
 import type { VCard, VDialog } from "vuetify/components";
 
 const CARD_PROPS: VCard["$props"] = { prependIcon: "mdi-keyboard", title: "Keyboard Shortcuts" };
-const DIALOG_PROPS: VDialog["$props"] = { maxWidth: 480 };
+const DIALOG_PROPS: VDialog["$props"] = { maxWidth: "30rem" };
 
 interface Props {
   list: readonly KeyboardShortcutCategory[];
