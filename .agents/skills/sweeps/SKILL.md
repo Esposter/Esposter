@@ -1,6 +1,6 @@
 ---
 name: sweeps
-description: Esposter repo-wide sweep conventions — a Settled list of the directions already rejected (filing a sweep as a proposal, a progress column or tick count on the index row, fanning one sweep's units out to parallel agents, and inheriting a split row's date onto its children), progress tracked as a ledger in .agents/ledgers/ named after the skill that owns its rules, sweeps being repo state rather than proposals, proving a find recipe can fail before believing it passed, when a mechanical pass earns a ledger and when it is just a commit, splitting a row that reads as too high a level before any pass starts, one unit per commit chunked to the review budget, state living at the leaf with the pass run in the main session one unit at a time, behaviour-preserving passes and where a behaviour-changing finding goes instead, what belongs in the commit message rather than the ledger, every sweep being standing and the changed-files command that resumes one, draining a ledger as a by-product of ordinary work, and handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill — plus a deep dive on the ledger file itself: the six things it may hold, the explanatory prose it may not, and the ban on any record of what a past pass did, promotion to a folder, and a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same), with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
+description: Esposter repo-wide sweep conventions — a Settled list of the directions already rejected (filing a sweep as a proposal, a progress column or tick count on the index row, fanning one sweep's units out to parallel agents, and inheriting a split row's date onto its children), progress tracked as a ledger in .agents/ledgers/ named after the skill that owns its rules, sweeps being repo state rather than proposals, proving a find recipe can fail before believing it passed, when a mechanical pass earns a ledger and when it is just a commit, splitting a row that reads as too high a level before any pass starts, one unit per commit chunked to the review budget, state living at the leaf with the pass run in the main session one unit at a time, behaviour-preserving passes and where a behaviour-changing finding goes instead, what belongs in the commit message rather than the ledger, every sweep being standing and the changed-files command that resumes one, draining a ledger as a by-product of ordinary work, what a pass does when the rule it is carrying turns out to be silent, incomplete or in the wrong skill (the skill edit lands in the same commit as the code, and a rule reached by a link is checked for the return link), and handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill — plus a deep dive on the ledger file itself: the six things it may hold, the explanatory prose it may not, and the ban on any record of what a past pass did, promotion to a folder, and a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same), with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
 ---
 
 # Sweeps
@@ -112,6 +112,37 @@ Scope it to the files the change touches, not the unit around them; widening it 
 **The row stays `—` until the whole unit is swept.** There is no partially-swept state, and inventing one — a fraction, a file list, a third symbol — puts progress state at file granularity in a table that exists to track units, where it drifts the moment anyone touches those files again. The opportunistic pass shortens the eventual unit pass; it never reports it.
 
 This is what keeps a standing ledger moving. The scheduled pass stops being the only thing that drains it and becomes the sweep-up for whatever ordinary work never happened to reach.
+
+## A finding the owning skill does not cover
+
+The convention a sweep carries is written down somewhere, and a pass reads code the writer of that rule never
+saw. So the rule is **evidence, not authority**: a unit that will not fit it is as likely to have found a gap as
+to be a violation, and the pass that shrugs and applies the rule anyway propagates the gap across a tree.
+
+Three shapes, all found by applying a rule and watching it produce something nobody would defend:
+
+- **The rule is silent.** It names the cases its author had. Lowering the first letter of a PascalCase export is
+  a convention; lowering the first letter of a SCREAMING_SNAKE one produces `nON_SOURCE_SUFFIXES`, which is a
+  typo wearing a convention. The carve-out goes in beside the rule, with the reason, so the next pass does not
+  re-derive it.
+- **The rule is true but incomplete in the direction that bites.** "`vi.stubEnv` needs no teardown" is correct
+  and hides that the same auto-restore makes it useless for a `beforeAll` override. A rule that is right for the
+  common case and silently wrong for the neighbouring one is worse than no rule, because it is obeyed.
+- **The rule sits in the wrong skill, or in only one of the two it spans.** One owner per topic
+  (`skill-authoring`), so the fix is to state it once where its subject lives and **link** from the other — never
+  to restate it, and never to leave the second skill silent because the first happens to say it. A pass that
+  reaches a rule by following a link from another skill has found the seam where a rule goes missing: check that
+  the link runs both ways before moving on.
+
+**The skill edit lands in the same commit as the code it came from.** Not a follow-up, not a note in the ledger —
+the ledger holds coverage and never conventions, and a deferred skill edit is one nobody makes. The commit
+message says which rule moved and why; that is the record, and git holds it.
+
+Verify before obeying, in both directions: a rule that turns out to be wrong about the repo is fixed rather than
+followed, and a scan the rule tells you to run is proved able to fail before its clean result is believed ("A scan
+that reports nothing"). The recipe in `.agents/ledgers/testing/README.md` was written against `python3`, which on
+a Windows checkout exits 0 having run nothing — the ledger meant to enforce the rule was the thing quietly
+exempt from it.
 
 ## Shrinking beats re-running
 
