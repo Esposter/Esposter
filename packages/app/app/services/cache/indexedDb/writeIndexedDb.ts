@@ -8,9 +8,6 @@ import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { CompositeKeyPropertyNames } from "@esposter/azure";
 import { toRawDeep } from "@esposter/shared";
 
-// A refused write is reported to whoever asked for it rather than swallowed here — the caller that runs this
-// Through `useMutation` already declares how the cache reports a failure, and a second channel beside that one
-// Is a channel that can disagree with it
 export const writeIndexedDb = async <
   T extends IndexedDbStoreName,
   TIndex extends IndexNames<IndexedDbDatabaseSchema, T>,

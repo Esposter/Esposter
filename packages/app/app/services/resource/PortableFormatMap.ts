@@ -20,8 +20,8 @@ import { getResultAsync, noop } from "@esposter/shared";
 
 // Per-format import/export for Sheet. Both hand off to the dialog the blade shell mounts rather than acting
 // Outright: an import shows what it is about to replace the sheet with, and an export asks which columns to take
-// And honours the row filter and selection — the two things the Data blade's own buttons used to be for, before
-// The command bar became the single place a sheet is imported to or exported from
+// And honours the row filter and selection. The command bar is the single place a sheet is imported to or
+// Exported from
 const createSheetPortableFormat = (type: DataSourceType): PortableFormat => ({
   export: async () => {
     const sheetStore = useSheetStore();
@@ -98,8 +98,8 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
     createSheetPortableFormat(DataSourceType.Csv),
     createSheetPortableFormat(DataSourceType.Json),
     createSheetPortableFormat(DataSourceType.Xlsx),
-    // A survey is a source rather than a file format, so it imports and never exports — but it is still one of
-    // The ways a sheet is filled, and a peer button of its own only made that look like a different kind of act
+    // A survey is a source rather than a file format, so it imports and never exports — it sits among the
+    // Formats because it is one of the ways a sheet is filled
     {
       icon: "mdi-poll",
       import: async () => {

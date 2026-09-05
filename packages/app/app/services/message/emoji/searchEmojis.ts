@@ -38,7 +38,7 @@ const createMiniSearch = () => {
 
 // `fuzzy` is off: on names this short it manufactures noise rather than forgiving typos. Punctuation is a
 // Delimiter and never an operator, so "grin(" searches for "grin" and a query that is punctuation alone
-// Tokenizes to nothing and returns nothing — the empty state, not the thrown regex `node-emoji` gave it
+// Tokenizes to nothing and returns the empty state rather than failing to compile
 export const searchEmojis = (query: string, customEmojis: CustomEmoji[] = []): PickableEmoji[] => {
   const { slugEmojiMap } = getEmojiIndex();
   // The room's set is smaller than the result cap by construction, so it is matched directly rather than merged

@@ -32,8 +32,6 @@ describe(readIndexedDb, () => {
     expect(takeOne(result)).toStrictEqual(message1.toJSON());
   });
 
-  // An empty partition and an unreadable one are different facts, and answering both with an empty list hands
-  // The hydration a "nothing cached here" it cannot tell from the truth
   test("reports a refused read to its caller", async () => {
     expect.hasAssertions();
 

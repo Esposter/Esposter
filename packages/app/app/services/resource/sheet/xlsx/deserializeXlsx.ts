@@ -7,7 +7,7 @@ import { getSourceColumnName } from "@/services/resource/sheet/dataSource/getSou
 
 export const deserializeXlsx = async (file: File, settings: XlsxFileSettings): Promise<DataSource> => {
   // The command bar renders on every resource page and reaches this codec through PortableFormatMap, while
-  // Xlsx is one format of the one portable type that has it — the eight types that can neither import nor
+  // `xlsx` is one format of the one portable type that has it — the eight types that can neither import nor
   // Export would otherwise ship a workbook parser they can never run, so it is fetched when one is read
   const { readSheet } = await import("read-excel-file/browser");
   const cellRows = await readSheet(file, settings.configuration.sheetIndex + 1);

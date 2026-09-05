@@ -12,7 +12,7 @@ describe(getFilterTypeFromSearchQuery, () => {
   });
 
   // Anything that is not one of the keywords is search text and searches for itself, colon and all. Converting
-  // It into a filter is what left a chip with a value no picker chose and no service accepts
+  // It into a filter leaves a chip with a value no picker chose and no service accepts
   test("a word that is not a keyword stays search text", () => {
     expect.hasAssertions();
 

@@ -15,8 +15,8 @@ describe(getFilterDisplayValue, () => {
     expect(getFilterDisplayValue({ type: FilterType.Has, value: "" })).toBe(getFilterKeyword(FilterType.Has));
   });
 
-  // False is a value the user picked, not an absent one — reading it as absent is what left `pinned: false`
-  // Showing as a keyword with nothing after it while its picker stayed open
+  // False is a value the user picked, not an absent one — reading it as absent leaves `pinned: false` showing
+  // As a keyword with nothing after it while its picker is still open
   test.each([true, false])(`${FilterType.Pinned}: renders %s`, (isPinned) => {
     expect.hasAssertions();
 

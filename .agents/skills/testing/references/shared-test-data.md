@@ -9,6 +9,7 @@ The rule — never repeat a literal or object, and never re-declare what product
 - **Repeated arguments** — spread the constant part (`getX(db, { ...sender, message })`).
 - **Uniform bulk inserts** — `.map()` over the varying key.
 - **Event/envelope wrappers** — a `create*` helper taking only the varying payload, so call sites stay type-checked (`createEvent({ … } satisfies PayloadType)`).
+- **Entity fixtures** — a `create*` helper annotated with the whole entity type, **every field spelled out**, plus a `Partial<T>` overrides parameter the caller spreads last. Listing the fields rather than casting a subset is what makes a new required column fail to compile at the fixture, instead of surfacing as a missing key in whichever suite happens to read it.
 
 ## Scope correctly
 

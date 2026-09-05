@@ -17,7 +17,7 @@ const grid = [
 export const SettingsOptionGrid = new Grid<typeof grid>({
   grid,
   position: ref({ x: 2, y: 0 }),
-  // We shouldn't be able to move to the settings option
+  // Column 0 is the option's own name, so the cursor only lands on its values
   validate: ({ x }) => x !== 0,
   wrap: false,
 });

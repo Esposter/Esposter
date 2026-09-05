@@ -4,9 +4,7 @@ import { MimeCategory, RoomType } from "@esposter/db-schema";
 import { describe } from "vitest";
 
 // The room row every room and direct message test stores, removes and rolls back — a direct message is a room
-// Row too, so both suites build their fixtures from here rather than restating every column of the same table.
-// Spelled out in full rather than asserted, so a new required field fails to compile here instead of reaching a
-// Store test as a missing column.
+// Row too, so both suites build their fixtures from here
 export const createRoom = (name: string, type = RoomType.Room): RoomInMessage => ({
   allowedMimeCategories: [MimeCategory.Image],
   categoryId: null,

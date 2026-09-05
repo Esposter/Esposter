@@ -71,8 +71,8 @@ describe(getNextNavigationTrail, () => {
   });
 
   // The plugin writes what comes back onto the history entry, and the browser structured-clones it. The trail it
-  // Passes in is the store's own reactive array, so a branch that returned it untouched put a proxy in front of
-  // The serializer — a DataCloneError that rejected the very navigation the trail was being recorded for
+  // Passes in is the store's own reactive array, so a branch that returns it untouched puts a proxy in front of
+  // The serializer — a DataCloneError that rejects the very navigation the trail is being recorded for
   test("returns a trail the history entry can hold", () => {
     expect.hasAssertions();
 

@@ -3,7 +3,6 @@ import type { Tilemaps } from "phaser";
 
 export const getObjectUnitPosition = (tilemap: Tilemaps.Tilemap, pixelPosition: Position): Position => ({
   x: pixelPosition.x / tilemap.tileWidth,
-  // Phaser objects in Tiled have y values set to the bottom of that tile
-  // So we need to minus 1 to account for that
+  // A Phaser object in Tiled carries the y of its tile's bottom edge, so the tile it sits on is one row up
   y: pixelPosition.y / tilemap.tileHeight - 1,
 });
