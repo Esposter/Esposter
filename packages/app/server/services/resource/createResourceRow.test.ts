@@ -61,7 +61,8 @@ describe(createResourceRow, () => {
     expect(isReturned).toBe(false);
 
     releaseWrite();
+    const resource = await promise;
 
-    await expect(promise.then(({ id }) => id)).resolves.toBe(resourceId);
+    expect(resource.id).toBe(resourceId);
   });
 });
