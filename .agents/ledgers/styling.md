@@ -16,7 +16,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Message/Content/Call` — the entry surfaces                                 | 2026-09-05 | the loose cards, forms and buttons                                                 |
 | `app/components/Message/Content` — the rest                                                | 2026-09-05 | `Header`, `Show` and the room chrome                                               |
 | `app/components/Message/RightSideBar`                                                      | 2026-09-06 | the member list, followed threads and search                                       |
-| `app/components/Message/DraftsAndSent`                                                     | —          | the three tabs and the schedule dialog                                             |
+| `app/components/Message/DraftsAndSent`                                                     | 2026-09-06 | the three tabs and the schedule dialog                                             |
 | `app/components/Message/Friends`, `LeftSideBar`                                            | 2026-09-06 | the friend lists and the room column                                               |
 | `app/components/Resource/Sheet`                                                            | —          | the sheet editor's own chrome                                                      |
 | `app/components/Resource/List`                                                             | —          |                                                                                    |

@@ -22,7 +22,7 @@ const tabs = computed(() => [
 </script>
 
 <template>
-  <v-tabs v-model="tab" mt-4>
+  <v-tabs v-model="tab">
     <v-tab v-for="{ count, icon, title, value } of tabs" :key="value" :value>
       <span>{{ title }}</span>
       <template v-if="count">

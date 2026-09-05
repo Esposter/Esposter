@@ -19,7 +19,7 @@ const sections = computed(() => getTimelineSections(items.value, ({ message }) =
         :room
       />
     </MessageDraftsAndSentSection>
-    <div flex w-full justify-center>
+    <div flex justify-center>
       <StyledWaypoint :is-active="hasMore" @change="readMoreSentMessages" />
     </div>
   </div>
