@@ -17,7 +17,7 @@ import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 // Run a command over the warm snapshot with a persistable upper, then flush that upper to the host whatever the exit
 // Code (native-equivalence; specs/write-back.md) — a non-zero mutation still wrote real files. The persist sibling of
-// ForkSnapshot: the deps snapshot (and any
+// `forkSnapshot`: the deps snapshot (and any
 // `extraLowerDirs`, e.g. the prepare layer) stack as read-only lowers, so node_modules is never in the upper and
 // Never flushed. `maskedPaths` (an environment's prepare outputs, e.g. `.nuxt`, plus the source-mirror excludes on
 // Win32) are masked from the flush like node_modules — owned by a layer or by the host alone, so a persist run never

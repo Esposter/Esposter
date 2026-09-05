@@ -108,7 +108,7 @@ describe(removeSnapshotDirectoriesDetached, () => {
   test("swallows a failing background spawn so the detached sweep never blocks the command", () => {
     expect.hasAssertions();
 
-    // SpawnBackground deliberately lets a synchronous spawn throw reach its caller (EAGAIN/EMFILE) — here that
+    // `spawnBackground` deliberately lets a synchronous spawn throw reach its caller (EAGAIN/EMFILE) — here that
     // Caller is cache hygiene for dirs this run never touches, so it must not fail the user's command.
     spawn.mockImplementation(() => {
       throw new Error(" ");
