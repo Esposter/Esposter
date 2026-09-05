@@ -9,9 +9,10 @@ import { describe, expect, test } from "vitest";
  * exports any more: every tool resolves a sibling's `dist` instead of its source, silently and correctly, and
  * only a stale build ever shows it.
  */
-describe(SOURCE_CONDITION, () => {
+describe("SOURCE_CONDITION", () => {
   test("is the condition the tsconfig preset opts into", () => {
     expect.hasAssertions();
+
     const tsconfigPath = resolve(import.meta.dirname, "../tsconfig.base.json");
     // eslint-disable-next-line no-restricted-syntax -- a tsconfig carries no dates, and this package builds before @esposter/shared so it cannot import jsonDateParse
     const { compilerOptions } = JSON.parse(readFileSync(tsconfigPath, "utf8")) as {
@@ -28,7 +29,7 @@ describe(SOURCE_CONDITION, () => {
  * ctix would list a test file in the published barrel, and the build program would compile one into the
  * declarations — while every check in the repository still passes.
  */
-describe("nON_SOURCE_SUFFIXES", () => {
+describe("NON_SOURCE_SUFFIXES", () => {
   // A recursive suffix glob and nothing else. `${configDir}/*.config.ts` excludes one root-level file and
   // `${configDir}/scripts/**/*.ts` a whole directory, so neither is a claim about what a non-source file is, and
   // Matching them here would make this assert the rest of an exclude list it has no opinion on.

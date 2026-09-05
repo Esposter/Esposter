@@ -58,8 +58,8 @@ describe(MockTableClient, () => {
 
     const client = await createClient(1);
 
-    await expect(readByPage(client, AZURE_MAX_PAGE_SIZE + 1)).rejects.toThrow(
-      "One of the request inputs is not valid.",
+    await expect(readByPage(client, AZURE_MAX_PAGE_SIZE + 1)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[MockRestError: One of the request inputs is not valid.]`,
     );
   });
 
@@ -77,7 +77,9 @@ describe(MockTableClient, () => {
 
     const client = await createClient(1);
 
-    await expect(readByPage(client, 0)).rejects.toThrow("maxPageSize must be greater than 0.");
+    await expect(readByPage(client, 0)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[RangeError: maxPageSize must be greater than 0.]`,
+    );
   });
 
   test("applies a conditional update when the etag matches the stored version", async () => {

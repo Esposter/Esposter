@@ -67,7 +67,9 @@ describe(createMessage, () => {
     const { messageAscendingClient, messageAscendingMock, messageClient } =
       createTableClients(createMessageEntityError);
 
-    await expect(createMessage(messageClient, messageAscendingClient, input)).rejects.toThrow(createMessageEntityError);
+    await expect(
+      createMessage(messageClient, messageAscendingClient, input),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Table write failed]`);
     // The row taken back is the row written, not merely some row
     const [indexEntity] = takeOne(messageAscendingMock.createEntity.mock.calls);
 

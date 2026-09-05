@@ -22,9 +22,12 @@ describe(MockBlockBlobClient, () => {
     MockContainerDatabase.set(containerName, new Map([[blobName, Buffer.from("")]]));
     const client = getClient();
 
-    await expect(
-      client.upload("", 0, { conditions: { ifMatch: MOCK_BLOB_SEEDED_PROPERTIES.etag } }),
-    ).resolves.toMatchObject({ _response: { status: 201 } });
+    const uploadResponse = await client.upload("", 0, {
+      conditions: { ifMatch: MOCK_BLOB_SEEDED_PROPERTIES.etag },
+    });
+
+    expect(uploadResponse._response.status).toBe(201);
+
     await expect(
       client.upload("", 0, { conditions: { ifMatch: MOCK_BLOB_SEEDED_PROPERTIES.etag } }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -54,6 +57,10 @@ describe(MockBlockBlobClient, () => {
     MockContainerDatabase.set(containerName, new Map([[blobName, Buffer.from("")]]));
     const client = getClient();
 
-    await expect(client.getProperties()).resolves.toMatchObject(MOCK_BLOB_SEEDED_PROPERTIES);
+    const properties = await client.getProperties();
+
+    expect(properties.createdOn).toStrictEqual(MOCK_BLOB_SEEDED_PROPERTIES.createdOn);
+    expect(properties.etag).toBe(MOCK_BLOB_SEEDED_PROPERTIES.etag);
+    expect(properties.lastModified).toStrictEqual(MOCK_BLOB_SEEDED_PROPERTIES.lastModified);
   });
 });

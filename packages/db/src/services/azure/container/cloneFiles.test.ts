@@ -81,7 +81,7 @@ describe(cloneFiles, () => {
         sourcePrefix,
         destinationPrefix,
       ),
-    ).rejects.toThrow("CannotVerifyCopySource");
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: CannotVerifyCopySource]`);
 
     expect(deletedBlobNames).toHaveLength(1);
     expect(takeOne(deletedBlobNames).endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
@@ -104,7 +104,7 @@ describe(cloneFiles, () => {
         sourcePrefix,
         destinationPrefix,
       ),
-    ).rejects.toThrow("CannotVerifyCopySource");
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: CannotVerifyCopySource]`);
 
     // Only the sibling that landed — the failing copy wrote nothing to clear
     expect(deletedBlobNames).toHaveLength(1);

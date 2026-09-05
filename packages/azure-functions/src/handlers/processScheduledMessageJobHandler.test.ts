@@ -223,7 +223,7 @@ describe(processScheduledMessageJobHandler, () => {
     const messagesTable = MockTableDatabase.get(AzureTable.Messages);
     assert.exists(messagesTable);
 
-    expect(takeOne([...messagesTable.values()])).toMatchObject({ replyRowKey });
+    expect(takeOne([...messagesTable.values()]).replyRowKey).toBe(replyRowKey);
   });
 
   // The follow rows are what ProcessNotification resolves a reply's recipients from, so a scheduled reply that
