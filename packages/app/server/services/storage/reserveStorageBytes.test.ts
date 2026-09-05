@@ -12,10 +12,11 @@ import {
   users,
   WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("reserveStorageBytes", () => {
+describe(reserveStorageBytes, () => {
   let mockContext: Context;
   let userId: string;
   const containerName = AzureContainer.ResourceAssets;
@@ -47,16 +48,15 @@ describe("reserveStorageBytes", () => {
     await expect(readStorageBytesUsed()).resolves.toBe(0);
 
     const storageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
+    const storageLedgerEntry = takeOne(storageLedgerEntries);
 
     expect(storageLedgerEntries).toHaveLength(1);
-    expect(storageLedgerEntries[0]).toMatchObject({
-      blobName,
-      containerName,
-      countedBytes: 0,
-      declaredBytes,
-      reconciledAt: null,
-      userId,
-    });
+    expect(storageLedgerEntry.blobName).toBe(blobName);
+    expect(storageLedgerEntry.containerName).toBe(containerName);
+    expect(storageLedgerEntry.countedBytes).toBe(0);
+    expect(storageLedgerEntry.declaredBytes).toBe(declaredBytes);
+    expect(storageLedgerEntry.reconciledAt).toBeNull();
+    expect(storageLedgerEntry.userId).toBe(userId);
   });
 
   test("does nothing when there is nothing to reserve", async () => {

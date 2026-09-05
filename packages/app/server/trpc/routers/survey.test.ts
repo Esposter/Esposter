@@ -29,9 +29,8 @@ import { InvalidOperationError, NotFoundError, Operation } from "@esposter/share
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
-// The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
-// Here only the router wiring (resource type + content round-trip) and the survey-specific procedures.
-describe("survey", () => {
+// The survey-specific procedures.
+describe("surveyRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["survey"]>;
   let programCaller: DecorateRouterRecord<TRPCRouter["program"]>;

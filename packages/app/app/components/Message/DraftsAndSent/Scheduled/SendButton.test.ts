@@ -31,7 +31,6 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
         createMessageEntity({ roomId: room.id, type: MessageType.Message, userId }),
       ),
     );
-    // The component mounts into the nuxt app's pinia, so seed the store it reads rather than a local one
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
     const sentScheduledMessageJob = createJob("sent");

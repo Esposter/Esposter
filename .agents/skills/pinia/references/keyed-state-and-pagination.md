@@ -53,6 +53,8 @@ Both hand out a `CursorPaginationSlice<TItem>` — `{ initializeCursorPagination
 partition's rows (the IndexedDB pagination caches, above all) takes the same shape from either. That slice is the
 **only** writable `items` a keyed store has; the store's ambient `items` is `readonly` and rendering-only.
 
+`isLoaded` is keyed like the rows it describes and lives and dies with them, because an empty list is either "not loaded yet" or "loaded and genuinely empty" and only the load knows which. Held anywhere shorter-lived — a local in whichever composable asks — it starts fresh under a list that did not, and answers for a partition it never watched load.
+
 ## `createOperationData`
 
 Use it **wherever the item type satisfies `ToData<AEntity>`** — it generates typed CRUD (`createXxx`, `updateXxx`, `deleteXxx`, `pushXxxs`, `unshiftXxxs`) for an entity list ref. `Foo` satisfies this (`id`, `createdAt`, `updatedAt`, `deletedAt` from `pgTable`).
@@ -65,7 +67,9 @@ const { hasMore, items, readItems, readMoreItems } = useCursorPaginationData<Foo
 const { deleteFoo: storeDeleteFoo } = createOperationData(items, ["parentId", "childId"], DatabaseEntityType.Foo);
 ```
 
-Destructure as `base` aliases and wrap in `storeXxx` functions when the operation needs side effects or a guard, keeping the public API a plain identifier:
+**`createXxx` already dedups on the id keys**, so a repeated echo delivery — an SSE `Last-Event-ID` catch-up, a Web PubSub reconnect replaying its buffer — is idempotent on its own. Never wrap one in a `some(({ id }) => …)` guard: that is the primitive's check written a second time, against a list it is about to re-scan.
+
+Destructure as `base` aliases and wrap in `storeXxx` functions when the operation needs side effects, keeping the public API a plain identifier:
 
 ```ts
 const foos = ref<Foo[]>([]);
@@ -75,7 +79,8 @@ const { createFoo: baseStoreCreateFoo, deleteFoo: baseStoreDeleteFoo } = createO
   DatabaseEntityType.Foo,
 );
 const storeCreateFoo = (foo: Foo) => {
-  if (!foos.value.some(({ id }) => id === foo.id)) baseStoreCreateFoo(foo);
+  baseStoreCreateFoo(foo);
+  registerFooSubscribable(foo.id);
 };
 const storeDeleteFoo = (fooId: string) => {
   baseStoreDeleteFoo({ id: fooId });

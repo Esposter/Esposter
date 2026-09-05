@@ -44,9 +44,8 @@ const readStoredParticipants = async (programId: string) => {
   });
 };
 
-// The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
-// Here only the router wiring plus the program-specific participant issuance and status join.
-describe("program", () => {
+// The program-specific participant issuance and status join.
+describe("programRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["program"]>;
   let datasetCaller: DecorateRouterRecord<TRPCRouter["dataset"]>;

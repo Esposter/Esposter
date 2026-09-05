@@ -4,8 +4,8 @@ import type { H3Event } from "h3";
 import { db } from "@@/server/db";
 
 type ContextInput = CreateWSSContextFnOptions | H3EventInput;
-// Trpc-nuxt bundles its own copy of h3's H3Event declaration, which misses nitro's augmentations,
-// So we structurally accept only the members we read instead of h3's H3Event itself.
+// `trpc-nuxt` bundles its own copy of h3's H3Event declaration, which misses nitro's augmentations, so we
+// Structurally accept only the members we read instead of h3's H3Event itself.
 type H3EventInput = Pick<H3Event, "headers" | "node">;
 
 const checkIsH3Event = (value: ContextInput): value is H3EventInput => "node" in value;

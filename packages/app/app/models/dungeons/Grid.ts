@@ -8,7 +8,7 @@ import { exhaustiveGuard, InvalidOperationError, Operation, takeOne } from "@esp
 import { Direction } from "grid-engine";
 
 export class Grid<TGrid extends readonly (readonly unknown[])[]> {
-  // Our grid may be purely computed based on some external 1D array
+  // A ref because a grid can be derived from an external 1D array rather than held as its own rows
   grid: MaybeRef<TGrid>;
   position: Ref<Position>;
   validate: (this: Grid<TGrid>, position: Position) => MaybeRef<boolean>;
@@ -39,7 +39,6 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
   }: SetRequired<Partial<Grid<TGrid>>, "grid">) {
     this.validate = (targetPosition) => {
       const value = this.getValue(targetPosition);
-      // We want to skip grid values that don't exist
       if (value === undefined) return false;
       return validate?.bind(this)(targetPosition) ?? true;
     };

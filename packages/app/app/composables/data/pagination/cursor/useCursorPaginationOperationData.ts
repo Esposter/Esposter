@@ -14,8 +14,6 @@ interface ReadItemsOptions<TItem> {
 }
 
 export const useCursorPaginationOperationData = <TItem>(
-  // Resolves the slice to write to, at the moment it is called. An operation binds once up front, so its response
-  // Is filed under the key it was issued for rather than whichever key is current by the time it lands.
   bindCursorPaginationData: () => Ref<CursorPaginationData<TItem>>,
   // Whether the rows this slice holds are its own, recorded the moment a read or a hydration lands rather than
   // Inferred from the list — an empty list is either "not loaded yet" or "loaded and genuinely empty", and only
@@ -26,8 +24,6 @@ export const useCursorPaginationOperationData = <TItem>(
   const online = useOnline();
   // The waypoint re-arms via onComplete even when the query fails, so pace retries instead of spinning hot
   const executeWithBackoff = createExponentialBackoff(BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS);
-  // Binding per read resolves the key every time, which is what makes this track the current slice. It is the
-  // Same binder an operation pins once, so the two views can never point at different maps.
   const cursorPaginationData = getBoundComputed(bindCursorPaginationData);
   const isLoaded = getBoundComputed(bindIsLoaded);
   const items = getPropertyComputed(cursorPaginationData, "items");
@@ -50,8 +46,6 @@ export const useCursorPaginationOperationData = <TItem>(
     const boundIsLoaded = bindIsLoaded();
     const storeCursorPaginationData = async (data: CursorPaginationData<TItem>) => {
       boundCursorPaginationData.value = data;
-      // Readiness is recorded whether the page came back full or empty, so a partition the server says is
-      // Empty is distinguishable from one that has not answered yet
       boundIsLoaded.value = true;
       // Absorbs onComplete errors so data already set above is never lost
       await Promise.allSettled([onComplete?.(data)]);

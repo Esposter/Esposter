@@ -17,24 +17,12 @@ import { getResultAsync, streamToText } from "@esposter/shared";
 import { eq, sql } from "drizzle-orm";
 
 // A point the owner can return to, taken from the working copy as it stands. Returns the version it wrote, or
-// Undefined when there was nothing to take — a resource whose content blob does not exist yet has no state
-// Worth a revision, and the paths that take one before overwriting a draft must not fail on a draft that is
-// Empty. See /docs/platform/resource-snapshots
+// Undefined when there was nothing to take — a resource whose content blob does not exist yet has no state worth
+// A revision, and the paths that take one before overwriting a draft must not fail on an empty draft. It throws,
+// So only a caller that can proceed without a revision swallows it (/docs/platform/resource-snapshots)
 //
-// The bytes are copied rather than parsed and re-serialized: a revision is what the working copy *was*, so it
-// Must not be filtered through today's schema on the way in — a field a later version of the type stopped
-// Declaring would be dropped from the very snapshot taken to recover it.
-//
-// A **reference** snapshot, so it clones no assets and its urls keep pointing at the live `{id}/files/…`. The
-// Trade is deliberate and narrow: that directory is only emptied by purge, which destroys these revisions in
-// The same sweep, so the window in which one can rot is exactly "the owner deleted an asset and then rolled
-// Back past the deletion". A rolled-back revision with one broken image beats no rollback, and a per-asset
-// Clone on every revision would mean no revisions at all.
-//
-// This throws. The paths that take one are the paths that are about to overwrite a draft wholesale, and a
-// Restore whose undo silently did not happen is the defect this whole mechanism exists to close — a caller
-// That genuinely can proceed without one (the idle-window trigger, which must never fail a save) is the one
-// That decides to swallow it.
+// The bytes are copied rather than parsed and re-serialized: a revision is what the working copy was, so a field
+// A later version of the type stopped declaring must not be filtered out of the snapshot taken to recover it
 export const takeResourceRevision = async (
   ctx: AuthedContext,
   resource: Resource,
@@ -83,10 +71,9 @@ export const takeResourceRevision = async (
     blobName,
     Buffer.byteLength(serializedContent),
   );
-  // The ring buffer. Evicting by number rather than by listing is what keeps this one publish rather than a
-  // Walk of the prefix on every save, and a number the buffer already passed over names a blob that is not
-  // There — which the deletion path treats as success. Through the deletion event like every other delete, so
-  // The evicted revision's ledger entry is released with it rather than leaking the owner's quota for good
+  // Evicting by number rather than by listing keeps this to one publish rather than a walk of the prefix on
+  // Every save, and a number the buffer already passed over names a blob that is not there — which the deletion
+  // Path treats as success (/docs/platform/resource-snapshots)
   const { maxRetained } = SnapshotChannelDefinitionMap[SnapshotChannel.Revisions];
   const evictedVersion = revisionVersion - maxRetained;
   if (evictedVersion > 0)

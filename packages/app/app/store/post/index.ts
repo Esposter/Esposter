@@ -22,10 +22,8 @@ export const usePostStore = defineStore("post", () => {
   const { executeMutation: executeCreatePostMutation } = useMutation();
   const { executeMutation: executeUpdatePostMutation } = useMutation();
   const { executeMutation: executeDeletePostMutation } = useMutation();
-  // Server-generated post — non-optimistic, applied in onSuccess
   const createPost = async (input: CreatePostInput) => {
     const outcome = await executeCreatePostMutation(() => $trpc.post.createPost.mutate(input), {
-      // Server-generated post with no id yet, so each create gets a per-call symbol
       key: Symbol("createPost"),
       onSuccess: (newPost) => {
         storeCreatePost(newPost);
@@ -44,7 +42,7 @@ export const usePostStore = defineStore("post", () => {
       // Would undo
       applyOptimistic: () => {
         const post = items.value.find(({ id }) => id === input.id);
-        // Only the fields a post edit owns, so a rejection cannot reinstate a vote count that moved meanwhile
+        // Only the fields a post edit owns, so a vote count that moved meanwhile survives a rejection
         const previousPost = post ? { description: post.description, id: post.id, title: post.title } : undefined;
         storeUpdatePost(input);
         return () => {
@@ -64,8 +62,8 @@ export const usePostStore = defineStore("post", () => {
   const deletePost = async (input: DeletePostInput) => {
     await executeDeletePostMutation(() => $trpc.post.deletePost.mutate(input), {
       applyOptimistic: () => {
-        // The one row this write removes, read when the write is sent: deletes of different posts do not queue
-        // Against each other, so restoring a copy of the list would resurrect a post deleted beside this one
+        // The one row this write removes, read when the write is sent — deletes of different posts do not queue
+        // Against each other
         const deletedPost = items.value.find(({ id }) => id === input);
         storeDeletePost({ id: input });
         return () => {

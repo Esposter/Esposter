@@ -5,10 +5,9 @@ import { getTsdownConfiguration } from "#src/getTsdownConfiguration";
 import { mergeConfig } from "tsdown";
 import AutoImport from "unplugin-auto-import/rolldown";
 import Vue from "unplugin-vue/rolldown";
-// The one package that ships `.vue` files. It used to reach rolldown through Vite purely for SFC compilation
-// And a vue-tsc declaration build; tsdown does both directly — `unplugin-vue` compiles the components and
-// `dts.vue` hands declaration generation to vue-tsc — so there is one build path in this repo again rather
-// Than a rolldown one and a Vite one that could drift.
+// The one package that ships `.vue` files, and it builds through tsdown like every other: `unplugin-vue`
+// Compiles the components and `dts.vue` hands declaration generation to vue-tsc. Reaching rolldown through
+// Vite would do the same two jobs behind a second build path, free to drift from this one.
 //
 // Merged rather than spread: `dts` is the base's, plus `vue` and `eager`. Spreading would replace the whole
 // Object and force this file to restate which tsconfig the declarations build against.

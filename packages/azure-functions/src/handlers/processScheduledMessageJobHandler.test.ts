@@ -212,7 +212,7 @@ describe(processScheduledMessageJobHandler, () => {
   });
 
   // Thread placement is the whole point of the payload's replyRowKey, and every other case here sends the
-  // Room-level ""
+  // Room-level empty one
   test("creates the message under the thread root the payload names", async () => {
     expect.hasAssertions();
 
@@ -223,7 +223,7 @@ describe(processScheduledMessageJobHandler, () => {
     const messagesTable = MockTableDatabase.get(AzureTable.Messages);
     assert.exists(messagesTable);
 
-    expect(takeOne([...messagesTable.values()])).toMatchObject({ replyRowKey });
+    expect(takeOne([...messagesTable.values()]).replyRowKey).toBe(replyRowKey);
   });
 
   // The follow rows are what ProcessNotification resolves a reply's recipients from, so a scheduled reply that

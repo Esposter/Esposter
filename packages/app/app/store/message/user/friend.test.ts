@@ -16,9 +16,8 @@ describe(useFriendStore, () => {
     setActivePinia(createPinia());
   });
 
-  // Each friend is its own target, so two removals overlap on one list. The failing one has to unwind to the
-  // List the removal ahead of it left, not to the one the user was looking at when they clicked — restoring
-  // That would resurrect a friend the server has already dropped, with nothing to reconcile it until a reload
+  // Each friend is its own target, so two removals overlap on one list and the failing one has to unwind to the
+  // List the removal ahead of it left, not to the one the user was looking at when they clicked
   test("rolls a failed removal back to the list the removal ahead of it left", async () => {
     expect.hasAssertions();
 
@@ -38,8 +37,7 @@ describe(useFriendStore, () => {
     expect(alertStore.alerts).toHaveLength(1);
   });
 
-  // The failing removal is the one that applied first, so its rollback lands after the other has persisted:
-  // Putting back the list it was sent against resurrects the friend that removal dropped
+  // The failing removal is the one that applied first, so its rollback lands after the other has persisted
   test("puts back only the friend whose removal was rejected", async () => {
     expect.hasAssertions();
 

@@ -13,8 +13,8 @@ describe(checkIsNullClause, () => {
     expect(checkIsNullClause(getTableNullClause(key))).toBe(true);
   });
 
-  // IsNullClause compares its argument against getTableNullClause(clause.key), so the positive case holds by
-  // Construction; only a same-key clause that is NOT the null clause proves the predicate discriminates at all
+  // The predicate compares its argument against getTableNullClause(clause.key), so the positive case holds
+  // By construction; only a same-key clause that is NOT the null clause proves it discriminates at all
   // Rather than always returning true.
   test("rejects a clause on the same key that is not the null clause", () => {
     expect.hasAssertions();

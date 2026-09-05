@@ -27,6 +27,8 @@ describe(useRenameResource, () => {
     await useRenameResource(resource, refresh)(newName);
 
     expect(resource.value.name).toBe(newName);
+    // Called once, not called with nothing: the success path is `onSuccess: refresh`, so the mutation hands it
+    // The server row that `refresh` ignores
     expect(refresh).toHaveBeenCalledTimes(1);
   });
 
@@ -45,6 +47,6 @@ describe(useRenameResource, () => {
     );
     await useRenameResource(resource, refresh)(newName);
 
-    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(refresh).toHaveBeenCalledExactlyOnceWith();
   });
 });

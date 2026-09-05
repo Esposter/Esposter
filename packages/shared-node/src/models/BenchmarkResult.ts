@@ -1,11 +1,10 @@
-// One bench() entry's timing, as emitted by `vitest bench --outputJson`. Only the fields the markdown
-// View renders are declared; z.object strips every other stat Vitest writes (hz, sd, min, max, median,
-// Rank, …) so the schema survives its experimental-format churn and the JSON record stays in step with
-// The table. `rme` is the relative margin of error (±%, the standard benchmark.js confidence figure);
-// `mean` doubles as the per-group baseline the formatter divides to derive each task's `vs base`
-// Multiplier; `p99` is the tail. `sampleCount` is kept as a clarity/confidence indicator for the
-// Baseline even though the fixed-iteration stable runner holds it constant — a bench may still override
-// Its iteration count. We drop hz (it is just `1000 / mean`, no new signal) — it does not earn a column.
+// One bench() entry's timing, narrowed to the fields the markdown view renders. Every other stat Vitest
+// Writes (hz, sd, min, max, median, rank, …) is left behind, so this record survives the experimental
+// Format's churn and stays in step with the table. `rme` is the relative margin of error, the standard
+// ±% confidence figure; `mean` doubles as the per-group baseline the formatter divides to derive each
+// Task's `vs base` multiplier; `p99` is the tail. `sampleCount` stays a confidence indicator for the
+// Baseline even though the fixed-iteration stable runner holds it constant, since a bench may still
+// Override its own iteration count.
 export interface BenchmarkResult {
   mean: number;
   name: string;

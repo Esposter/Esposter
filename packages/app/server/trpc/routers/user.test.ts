@@ -22,7 +22,6 @@ import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@espos
 import { MOCK_BLOB_BASE_URL, MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-// Built from the same error the router throws, so an inline snapshot never bakes in a random id
 const getCallBackgroundErrorMessage = (context: string) =>
   new InvalidOperationError(Operation.Create, DatabaseEntityType.CallBackground, context).message;
 const seedSlots = (userId: string, slots: number[], slotSize: number) => {
@@ -32,13 +31,15 @@ const seedSlots = (userId: string, slots: number[], slotSize: number) => {
   );
 };
 
-describe("user", () => {
+describe("userRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["user"]>;
   const biography = "biography";
   const image = "image";
   const message = "message";
+  const mimetype = "image/png";
   const name = "name";
+  const size = 1;
   const updatedMessage = "updatedMessage";
 
   beforeAll(async () => {
@@ -181,8 +182,8 @@ describe("user", () => {
     expect.hasAssertions();
 
     const { user } = await mockSessionOnce(mockContext.db);
-    // It's stupid I know, but we need to refresh back to our original user
-    // Since we need to listen to a new mock user with a valid id using our original user
+    // The queued session is spent without a request, so the subscription below is opened by the original user
+    // While listening for the freshly created one
     await consumeMockSessionOnce();
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
@@ -307,107 +308,102 @@ describe("user", () => {
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.User, "-1").message}]`,
     );
   });
-  describe("call backgrounds", () => {
-    const mimetype = "image/png";
-    const size = 1;
 
-    test("lists the slots under the caller's own prefix", async () => {
-      expect.hasAssertions();
+  test("readCallBackgrounds lists the slots under the caller's own prefix", async () => {
+    expect.hasAssertions();
 
-      const userId = getMockSession().user.id;
-      seedSlots(userId, [0, 2], size);
+    const userId = getMockSession().user.id;
+    seedSlots(userId, [0, 2], size);
 
-      await expect(caller.readCallBackgrounds()).resolves.toStrictEqual([
-        { sasUrl: expect.stringContaining(getCallBackgroundBlobName(userId, 0)) as string, slot: 0 },
-        { sasUrl: expect.stringContaining(getCallBackgroundBlobName(userId, 2)) as string, slot: 2 },
-      ]);
+    await expect(caller.readCallBackgrounds()).resolves.toStrictEqual([
+      { sasUrl: expect.stringContaining(getCallBackgroundBlobName(userId, 0)) as string, slot: 0 },
+      { sasUrl: expect.stringContaining(getCallBackgroundBlobName(userId, 2)) as string, slot: 2 },
+    ]);
+  });
+
+  test("readCallBackgrounds passes over a blob under the prefix that is not one of the slots", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    MockContainerDatabase.set(
+      AzureContainer.PrivateUserAssets,
+      new Map([[`${getCallBackgroundPrefix(userId)}notASlot`, Buffer.alloc(size)]]),
+    );
+    const callBackgrounds = await caller.readCallBackgrounds();
+
+    // Never listed, and never reclaimed on a guess either — nothing is published for a name this router did
+    // Not mint
+    expect(callBackgrounds).toStrictEqual([]);
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
+  });
+
+  test("readCallBackgrounds drops a slot over the size cap and reclaims it", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    seedSlots(userId, [0], MAX_CALL_BACKGROUND_SIZE_BYTES + 1);
+    const callBackgrounds = await caller.readCallBackgrounds();
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert.exists(blobDeletionEvents);
+
+    expect(callBackgrounds).toStrictEqual([]);
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [getCallBackgroundBlobName(userId, 0)],
+      containerName: AzureContainer.PrivateUserAssets,
     });
+  });
 
-    test("passes over a blob under the prefix that is not one of the slots", async () => {
-      expect.hasAssertions();
+  // A slot the caller already holds is a replacement, not a collision — and one freed a moment ago is still
+  // In the listing until a worker reclaims it, which is exactly why nothing here reads that listing
+  test("generateCallBackgroundUploadUrl mints a write target for the slot it is given, occupied or not", async () => {
+    expect.hasAssertions();
 
-      const userId = getMockSession().user.id;
-      MockContainerDatabase.set(
-        AzureContainer.PrivateUserAssets,
-        new Map([[`${getCallBackgroundPrefix(userId)}notASlot`, Buffer.alloc(size)]]),
-      );
-      const callBackgrounds = await caller.readCallBackgrounds();
+    const userId = getMockSession().user.id;
+    seedSlots(
+      userId,
+      Array.from({ length: MAX_CALL_BACKGROUNDS }, (_, slot) => slot),
+      size,
+    );
 
-      // Never listed, and never reclaimed on a guess either — nothing published for a name we did not mint
-      expect(callBackgrounds).toStrictEqual([]);
-      expect(MockEventGridDatabase.get("")).toBeUndefined();
-    });
+    await expect(caller.generateCallBackgroundUploadUrl({ mimetype, size, slot: 3 })).resolves.toContain(
+      getCallBackgroundBlobName(userId, 3),
+    );
+  });
 
-    test("drops a slot over the size cap and reclaims it", async () => {
-      expect.hasAssertions();
+  test("fails generateCallBackgroundUploadUrl with a file over the size cap", async () => {
+    expect.hasAssertions();
 
-      const userId = getMockSession().user.id;
-      seedSlots(userId, [0], MAX_CALL_BACKGROUND_SIZE_BYTES + 1);
-      const callBackgrounds = await caller.readCallBackgrounds();
-      const blobDeletionEvents = MockEventGridDatabase.get("");
-      assert(blobDeletionEvents);
+    const input = { mimetype, size: MAX_CALL_BACKGROUND_SIZE_BYTES + 1, slot: 0 };
 
-      expect(callBackgrounds).toStrictEqual([]);
-      expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
-        blobNames: [getCallBackgroundBlobName(userId, 0)],
-        containerName: AzureContainer.PrivateUserAssets,
-      });
-    });
+    await expect(caller.generateCallBackgroundUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getCallBackgroundErrorMessage(JSON.stringify({ mimetype: input.mimetype, size: input.size }))}]`,
+    );
+  });
 
-    // A slot the caller already holds is a replacement, not a collision — and one freed a moment ago is still
-    // In the listing until a worker reclaims it, which is exactly why nothing here reads that listing
-    test("mints a write target for the slot it is given, occupied or not", async () => {
-      expect.hasAssertions();
+  test("fails generateCallBackgroundUploadUrl with a file that is not an image", async () => {
+    expect.hasAssertions();
 
-      const userId = getMockSession().user.id;
-      seedSlots(
-        userId,
-        Array.from({ length: MAX_CALL_BACKGROUNDS }, (_, slot) => slot),
-        size,
-      );
+    const input = { mimetype: "application/pdf", size, slot: 0 };
 
-      await expect(caller.generateCallBackgroundUploadUrl({ mimetype, size, slot: 3 })).resolves.toContain(
-        getCallBackgroundBlobName(userId, 3),
-      );
-    });
+    await expect(caller.generateCallBackgroundUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getCallBackgroundErrorMessage(JSON.stringify({ mimetype: input.mimetype, size: input.size }))}]`,
+    );
+  });
 
-    // One assertion each rather than a matrix: an inline snapshot is pinned to its source location, so two
-    // Cases sharing one cannot both record the message they were written for
-    test("refuses a write target for a file over the size cap", async () => {
-      expect.hasAssertions();
+  test("deleteCallBackground publishes a bounded prefix deletion so a re-upload survives a replay", async () => {
+    expect.hasAssertions();
 
-      const input = { mimetype, size: MAX_CALL_BACKGROUND_SIZE_BYTES + 1, slot: 0 };
+    const userId = getMockSession().user.id;
+    seedSlots(userId, [0], size);
+    await caller.deleteCallBackground({ slot: 0 });
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert.exists(blobDeletionEvents);
 
-      await expect(caller.generateCallBackgroundUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${getCallBackgroundErrorMessage(JSON.stringify({ mimetype: input.mimetype, size: input.size }))}]`,
-      );
-    });
-
-    test("refuses a write target for a file that is not an image", async () => {
-      expect.hasAssertions();
-
-      const input = { mimetype: "application/pdf", size, slot: 0 };
-
-      await expect(caller.generateCallBackgroundUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${getCallBackgroundErrorMessage(JSON.stringify({ mimetype: input.mimetype, size: input.size }))}]`,
-      );
-    });
-
-    test("publishes a bounded prefix deletion so a re-upload survives a replay", async () => {
-      expect.hasAssertions();
-
-      const userId = getMockSession().user.id;
-      seedSlots(userId, [0], size);
-      await caller.deleteCallBackground({ slot: 0 });
-      const blobDeletionEvents = MockEventGridDatabase.get("");
-      assert(blobDeletionEvents);
-
-      // The bound is what stops a redelivered delete taking the image that replaced the one it named
-      expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
-        containerName: AzureContainer.PrivateUserAssets,
-        createdBefore: new Date(),
-        prefix: getCallBackgroundBlobName(userId, 0),
-      });
+    // The bound is what stops a redelivered delete taking the image that replaced the one it named
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+      containerName: AzureContainer.PrivateUserAssets,
+      createdBefore: new Date(),
+      prefix: getCallBackgroundBlobName(userId, 0),
     });
   });
 });

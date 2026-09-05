@@ -33,8 +33,6 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   const { executeMutation: executeUpdateWebhookMutation } = useMutation();
   const { executeMutation: executeRotateTokenMutation } = useMutation();
   const { executeMutation: executeDeleteWebhookMutation } = useMutation();
-  // Server-generated webhook (id, token) — non-optimistic, applied in onSuccess. Creates have no natural
-  // Entity key, so each call gets a unique one — overlapping creates must never queue behind each other
   const createWebhook = async (roomId: RoomInMessage["id"], input: Except<CreateWebhookInput, "roomId">) => {
     const { createWebhook: storeCreateWebhook } = getRoomOperationData(roomId);
     await executeCreateWebhookMutation(() => $trpc.webhook.createWebhook.mutate({ ...input, roomId }), {
@@ -49,8 +47,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
     const { updateWebhook: storeUpdateWebhook } = getRoomOperationData(roomId);
     await executeUpdateWebhookMutation(() => $trpc.webhook.updateWebhook.mutate({ ...input, roomId }), {
       // Snapshot when the write is sent rather than when it was issued: a row's name field and its active
-      // Switch write different fields of the same webhook, so the second must roll back to what the first stored.
-      // Only this row is captured — a whole-list snapshot would also undo every other row's edits and deletions
+      // Switch write different fields of the same webhook, so the second must roll back to what the first stored
       applyOptimistic: () => {
         const previousWebhook = roomItems.value.find(({ id }) => id === input.id);
         const previousValues = previousWebhook ? { ...previousWebhook } : undefined;
@@ -66,7 +63,6 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
       },
     });
   };
-  // Server-generated token — non-optimistic, applied in onSuccess
   const rotateToken = async (roomId: RoomInMessage["id"], input: Except<RotateTokenInput, "roomId">) => {
     const { updateWebhook: storeUpdateWebhook } = getRoomOperationData(roomId);
     await executeRotateTokenMutation(() => $trpc.webhook.rotateToken.mutate({ ...input, roomId }), {
@@ -80,8 +76,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
     const { items: roomItems } = getSlice(roomId);
     const { deleteWebhook: storeDeleteWebhook } = getRoomOperationData(roomId);
     await executeDeleteWebhookMutation(() => $trpc.webhook.deleteWebhook.mutate({ ...input, roomId }), {
-      // Put back only this row, at the position it held. Reinstating a whole-list snapshot would resurrect a
-      // Webhook another deletion already removed and undo every edit made while this write was in flight
+      // Put back only this row, at the position it held
       applyOptimistic: () => {
         const deletedIndex = roomItems.value.findIndex(({ id }) => id === input.id);
         const deletedWebhook = roomItems.value[deletedIndex];

@@ -21,7 +21,7 @@ export const security: NuxtConfig["security"] = {
         "data:",
         // Desmos
         BASE_URL,
-        // Grapesjs
+        // `grapesjs`
         TUI_BASE_URL,
         // @livekit/track-processors
         MEDIAPIPE_TASKS_VISION_URL,
@@ -31,22 +31,22 @@ export const security: NuxtConfig["security"] = {
         "'unsafe-inline'",
         // Nuxt
         "'self'",
-        // Grapesjs
+        // `grapesjs`
         CLOUDFLARE_BASE_URL,
         // @nuxt/fonts
         FONTS_BASE_URL,
-        // Grapesjs
+        // `grapesjs`
         TUI_BASE_URL,
       ],
       "worker-src": [
-        // Pdfjs-dist
+        // `pdfjs-dist`
         "'self'",
         // Desmos
         "blob:",
       ],
     },
     permissionsPolicy: {
-      // Live-kit
+      // `livekit-client`
       camera: "self",
       "display-capture": "self",
       // @vue-pdf-viewer/viewer

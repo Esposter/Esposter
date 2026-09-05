@@ -102,8 +102,7 @@ export class EmailEditor extends AGrapesJsEditor {
   }
 }
 
-// The catchall is re-declared, not inherited: spreading `.shape` copies fields and nothing else, and without
-// It every GrapesJS key this model does not name (styles, assets, symbols) is stripped on parse
+// The catchall is re-declared rather than inherited, for the reason AGrapesJsEditor states
 export const emailEditorSchema = z
   .object({
     ...grapesJsEditorSchema.shape,

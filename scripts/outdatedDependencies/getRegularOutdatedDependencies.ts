@@ -13,7 +13,7 @@ export const getRegularOutdatedDependencies = async (
   const result = await runPnpmOutdated(root);
 
   if (result.error) return { errors: [{ error: result.error, pkg: "pnpm outdated -r" }], outdatedDependencies: [] };
-  // Pnpm interleaves warning notices into stdout, so isolate the JSON object printed at column 0.
+  // Warning notices are interleaved into pnpm's stdout, so isolate the JSON object printed at column 0.
   const jsonStart = result.stdout.search(/^\{/mu);
   if (jsonStart === -1) {
     if (result.status !== 0)

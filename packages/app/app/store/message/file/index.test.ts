@@ -61,8 +61,8 @@ describe(useFileStore, () => {
     expect(fileUrlMap.value.get(fileId)?.url).toBe(freshUrl);
   });
 
-  // The viewer walks this list, so what it holds is what a click can open. A video used to be filtered out with
-  // The documents, which left a video card bound to no click at all
+  // The viewer walks this list, so what it holds is what a click can open — filtering video out with the
+  // Documents leaves a video card bound to no click at all
   test("gathers the media a viewer can open, and nothing it cannot", () => {
     expect.hasAssertions();
 

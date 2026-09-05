@@ -3,9 +3,7 @@ import { useAlertStore } from "@/store/alert";
 import { getResultAsync, noop } from "@esposter/shared";
 
 interface UseMediaRecorderOptions {
-  /** Media types to request, with any per-type requirements. */
   constraints?: MaybeRefOrGetter<MediaStreamConstraints>;
-  /** Options passed to the MediaRecorder constructor. */
   mediaRecorderOptions?: MaybeRefOrGetter<MediaRecorderOptions>;
   onError?: (event: Event) => void;
   onPause?: (event: Event) => void;
@@ -41,7 +39,7 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
       callback?.(event);
     };
     newMediaRecorder.ondataavailable = (event) => {
-      // MimeType can resolve only once the first chunk arrives, so refresh it here too.
+      // `mimeType` can resolve only once the first chunk arrives, so refresh it here too.
       mimeType.value = newMediaRecorder.mimeType;
       data.value.push(event.data);
     };

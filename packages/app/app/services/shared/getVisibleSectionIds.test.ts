@@ -47,7 +47,7 @@ describe(getVisibleSectionIds, () => {
   });
 
   // Clicking a table-of-contents link lands its heading on the top line, which leaves a sub-pixel sliver of the
-  // Section above still technically overlapping. Counting that sliver lit up the section before the one clicked
+  // Section above still technically overlapping, and counting it lights up the section before the one clicked
   test("drops the section above when an anchor lands its heading on the top line", () => {
     expect.hasAssertions();
 

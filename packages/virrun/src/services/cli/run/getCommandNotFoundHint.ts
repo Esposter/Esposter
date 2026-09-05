@@ -6,7 +6,7 @@ import { getResult, takeOne } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { z } from "zod";
-// Bwrap prints `bwrap: execvp <cmd>: No such file or directory` and node's ENOENT surfaces as `spawn <cmd> ENOENT`
+// The sandbox prints `bwrap: execvp <cmd>: No such file or directory` and node's ENOENT surfaces as `spawn <cmd> ENOENT`
 // When the intended executable is missing from PATH — both are the same user error: a package script (or a typo)
 // Was passed where virrun expects a real executable, so the sandbox-setup message misleads. When the missing token
 // Is a package.json script in `cwd`, point at the `virrun -- pnpm <script>` form that actually resolves.

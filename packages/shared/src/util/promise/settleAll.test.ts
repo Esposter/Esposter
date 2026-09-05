@@ -95,12 +95,14 @@ describe(settleAll, () => {
 
   test("does not start a wave after a rejecting one", async () => {
     expect.hasAssertions();
+
     let startedCount = 0;
     const task = (): Promise<void> => {
       startedCount += 1;
       return Promise.reject(new Error("a"));
     };
-    await expect(settleAll([task, task], 1)).rejects.toThrow("a");
+
+    await expect(settleAll([task, task], 1)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: a]`);
 
     expect(startedCount).toBe(1);
   });

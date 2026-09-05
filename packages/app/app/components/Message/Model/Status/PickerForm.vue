@@ -33,9 +33,8 @@ const save = async () => {
   emit("save");
   const input = { ...editedStatus.value };
   const { status } = await executeMutation(() => $trpc.user.upsertStatus.mutate(input), {
-    // Read as the write is sent, so a rejected save restores what the save ahead of it stored rather than the
-    // Status on screen when the user clicked. Nothing is applied when there is no record yet — the row carries
-    // Fields only the server can fill in, so it is left to onSuccess
+    // Nothing is applied when there is no record yet — the row carries fields only the server can fill in, so a
+    // First status is left to onSuccess
     applyOptimistic: () => {
       const previousStatus = getStoredUserStatus(userId.value);
       if (!previousStatus) return noop;
@@ -43,8 +42,6 @@ const save = async () => {
       const { message: previousMessage, status: previousUserStatus } = previousStatus;
       storeStatus(userId.value, { ...previousStatus, ...input });
       return () => {
-        // Only the two fields this write moved, against the record as it stands — reinstating the row as a
-        // Whole would undo the connection state a presence push landed while this write was in flight
         const currentStatus = getStoredUserStatus(userId.value);
         if (currentStatus)
           storeStatus(userId.value, { ...currentStatus, message: previousMessage, status: previousUserStatus });

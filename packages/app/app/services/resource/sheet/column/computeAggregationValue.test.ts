@@ -46,7 +46,7 @@ describe(computeAggregationValue, () => {
     // Total = 100, row[0] = 10 → 10%
     expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(10);
 
-    // Row[1] = 20 → 20%
+    // `row[1]` = 20 → 20%
     expect(computeAggregationValue(dataSource.rows, findSource, transformation, 1)).toBe(20);
   });
 

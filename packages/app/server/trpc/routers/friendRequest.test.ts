@@ -19,7 +19,7 @@ import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@espos
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("friendRequest", () => {
+describe("friendRequestRouter", () => {
   let mockContext: Context;
   let blockCaller: DecorateRouterRecord<TRPCRouter["block"]>;
   let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;

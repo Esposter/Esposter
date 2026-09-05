@@ -317,10 +317,8 @@ describe("createResourceProcedures", () => {
     expect(MockEventGridDatabase.get("")?.length ?? 0).toBe(publishedEventCount);
   });
 
-  // Both published reads go through readContentBlob, which maps a genuine 404 to "no content": the live
-  // BlobClient.download() rejects on a missing blob rather than answering with an empty body, so a snapshot
-  // The unpublish prefix sweep removed between the listing and the click has to reach the visitor as the 404
-  // Page instead of an internal error. The mock resolves with an empty body, so the rejection is injected here
+  // The mock resolves with an empty body where the live `BlobClient.download()` rejects, so the rejection a
+  // Swept snapshot raises is injected here
   test("fails read published content with a swept snapshot", async () => {
     expect.hasAssertions();
 
@@ -387,7 +385,6 @@ describe("createResourceProcedures", () => {
 
     await dashboardCaller.readPublishedResourceContent(newResource.id);
     await dashboardCaller.readPublishedResourceContent(newResource.id);
-    // The increment is fire-and-forget off the read path, so drain it deterministically instead of racing it
     await waitForSynchronizedFunctions();
     const viewCount = await dashboardCaller.readResourceViewCount({ id: newResource.id });
 
@@ -425,7 +422,6 @@ describe("createResourceProcedures", () => {
     vi.spyOn(MockTableClient.prototype, "updateEntity").mockRejectedValue(new Error("Table write failed"));
     vi.spyOn(console, "error").mockImplementation(noop);
     const { content } = await dashboardCaller.readPublishedResourceContent(newResource.id);
-    // The failing increment is fire-and-forget off the read path, so drain it before asserting the count
     await waitForSynchronizedFunctions();
 
     // Telemetry must never break serving the page
@@ -440,7 +436,7 @@ describe("createResourceProcedures", () => {
     await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
     await dashboardCaller.publishResource({ id: newResource.id });
     await dashboardCaller.readPublishedResourceContent(newResource.id);
-    // Drain the fire-and-forget increment so the view write can never land after the purge sweep
+    // Drained here so the view write can never land after the purge sweep below
     await waitForSynchronizedFunctions();
     // Delete is soft, so view history survives the Recycle bin window — purge is what sweeps it
     await dashboardCaller.deleteResource({ id: newResource.id });
@@ -491,7 +487,7 @@ describe("createResourceProcedures", () => {
 
     await webpageCaller.deleteFile({ blobPath, id: newResource.id });
     const blobDeletionEvents = MockEventGridDatabase.get("");
-    assert(blobDeletionEvents);
+    assert.exists(blobDeletionEvents);
 
     // The delete rides the one durable deletion publish, so the blob outlives the mutation and the handler
     // Removes it (/docs/architecture/blob-lifecycle)

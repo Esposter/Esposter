@@ -34,11 +34,10 @@ import {
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { z } from "zod";
 
-// One call session addressed by its own id — every subscription and the two id-only procedures take it
 const callSessionIdInputSchema = selectCallSessionInMessageSchema.shape.id;
 const callSessionInputSchema = z.object({ id: callSessionIdInputSchema });
-// A room call and a thread call are the same call addressed by where it is: the empty root rowKey is the
-// Room's own, which is what every existing caller sends
+// A room call and a thread call are the same call addressed by where it is, and the empty root rowKey is the
+// Room's own
 const roomCallInputSchema = z.object({
   ...roomIdSchema.shape,
   threadRootRowKey: z.string().default(""),
@@ -50,8 +49,8 @@ const setHandRaisedInputSchema = z.object({
   participantId: z.string(),
 });
 const setMutedInputSchema = z.object({ ...callSessionIdSchema.shape, isMuted: z.boolean() });
-// The live participant row is the only place a per-session flag lives, so every setter reaches it the same
-// Way — a session with no row has not joined, whether it is the caller's own or the target of a moderation
+// The live participant row is the only place a per-session flag lives: a session with no row has not joined,
+// Whether it is the caller's own or the target of a moderation
 const requireCallParticipant = (callSessionId: string, sessionId: string) => {
   const participant = callSessionParticipantMap.get(callSessionId)?.get(sessionId);
   if (!participant) throw getForbiddenError("Must join call first");

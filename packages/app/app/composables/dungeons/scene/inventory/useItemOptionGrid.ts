@@ -25,8 +25,7 @@ export const useItemOptionGrid = createUseGrid(ItemOptionGrid, (grid) => {
 
   watchDeep(inventory, () => {
     if (unref(grid.validate(grid.position.value))) return;
-    // If our inventory has changed and we are no longer on a valid item,
-    // Simply move down to the next valid item
+    // An inventory that shrank under the cursor leaves it on a hole, so it moves down to the next valid item
     grid.move(Direction.DOWN);
   });
 });

@@ -4,7 +4,7 @@ import type { ToData } from "@esposter/shared";
 import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
 import { selectResourceSchema } from "#src/schema/resources";
 import { z } from "zod";
-// PartitionKey = resource id, rowKey = the UTC date bucket — daily buckets keep entities small
+// `partitionKey` is the resource id and `rowKey` the UTC date bucket — daily buckets keep entities small
 // And make a partition range scan ("views this week") possible without a reshape
 export class ResourceViewEntity extends AzureEntity {
   count = 0;

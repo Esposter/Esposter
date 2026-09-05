@@ -21,7 +21,7 @@ import { exhaustiveGuard, getResult, getResultAsync, noop, withFinalizerAsync } 
 import { performance } from "node:perf_hooks";
 // Shared orchestration behind the passthrough commands: resolve config/backend, construct the sandbox, bracket the
 // Run with a banner + result line, propagate the child's exit code. All outcomes converge on the single
-// FormatVirrunResult write so timing is always reported and neither path duplicates it. Banner/result/provisioning
+// `formatVirrunResult` write so timing is always reported and neither path duplicates it. Banner/result/provisioning
 // Lines go to stderr only — never stdout — so correctness diffs comparing the child's streams are untouched.
 export const runVirrunCommand = async (
   command: readonly string[],
@@ -63,7 +63,7 @@ export const runVirrunCommand = async (
       // Source-keyed prepare layer or rebuilds it (expected on a source edit — the key tracks the working-tree hash),
       // So prepare is as observable as the deps snapshot instead of a silent stall. resolvePrepareStep already returns
       // Undefined when no preset is set, so no separate none-check is needed. A read-only resolve for the log only —
-      // CreateVirrun owns the authoritative build — wrapped so a resolve throw never masks the run. A throw costs
+      // `createVirrun` owns the authoritative build — wrapped so a resolve throw never masks the run. A throw costs
       // The prepare line and nothing else, which is the degradation the debug sink exists for: the run goes on, and
       // A missing line is otherwise indistinguishable from having no preset configured at all.
       getResult(() => {

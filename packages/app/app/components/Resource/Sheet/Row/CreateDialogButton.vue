@@ -11,7 +11,6 @@ const createRow = useCreateRow();
 const rowFormColumns = computed(() => getRowFormColumns(dataSource.value.columns));
 // Every editable column, hidden ones included: a new row carries a cell for each of them, and the form is what
 // Narrows to the ones on screen.
-// StructuredClone to a plain object: fast-deep-equal compares constructors, so class instances never equal their clones.
 const initialRow = structuredClone(
   new Row({
     data: Object.fromEntries(

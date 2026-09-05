@@ -41,6 +41,23 @@ await mountSuspended(Foo, { global: { components: { RouterLink } }, props, route
 
 The `route` option resolves against the app's real routes, so route matching (params, catch-alls) behaves exactly as it does in the browser.
 
+A `v-btn` that resolved the link renders as an `<a>`; one that never saw the router stays a `<button>`. That tag
+is therefore the assertion that the real component was passed back in — `toBe("A")` fails against the stub.
+
+## A mounted component's store is the nuxt app's pinia — resolve it after the mount
+
+`mountSuspended` mounts into the nuxt app's own pinia, so a `useFooStore()` called before it — or after a
+`createPinia()` of the test's own — hands back a different instance from the one the component injected. Seeding
+that one changes nothing on screen and every assertion against it passes vacuously. Resolve the store after the
+mount and seed it there, the same ordering `setCurrentRoomId` needs below and for the same reason.
+
+```ts
+const wrapper = await mountSuspended(Foo);
+const fooStore = useFooStore();
+fooStore.bar = value;
+await nextTick();
+```
+
 ## A room-scoped store has no state until a room is current — `setCurrentRoomId`
 
 Every room-scoped store keys its state by the room id in the route, so before one is set the store's maps are empty and any assertion against them passes vacuously. Two things make the obvious assignment silently do nothing, which is why this is a shared helper (`app/services/message/room/setCurrentRoomId.test.ts`) rather than a line each test writes:

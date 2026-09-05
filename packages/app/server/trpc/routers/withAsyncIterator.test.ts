@@ -27,7 +27,7 @@ describe(withAsyncIterator, () => {
     const returnFn = vi.fn<() => Promise<IteratorResult<unknown>>>();
     await withAsyncIterator(createIterator(returnFn), () => Promise.resolve("result"));
 
-    expect(returnFn).toHaveBeenCalledTimes(1);
+    expect(returnFn).toHaveBeenCalledExactlyOnceWith();
   });
 
   test("calls iterator.return() when fn rejects", async () => {
@@ -38,6 +38,6 @@ describe(withAsyncIterator, () => {
     await expect(
       withAsyncIterator(createIterator(returnFn), () => Promise.reject(new Error("fail"))),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: fail]`);
-    expect(returnFn).toHaveBeenCalledTimes(1);
+    expect(returnFn).toHaveBeenCalledExactlyOnceWith();
   });
 });

@@ -15,15 +15,14 @@ import {
 } from "@esposter/db-schema";
 import { getResultAsync, ItemMetadataPropertyNames, noop } from "@esposter/shared";
 
-// Emitted after the primary write, best-effort: the resource is already saved, so a failed
-// Activity write logs and never fails the user's mutation.
+// Emitted after the primary write, where a failure costs one trail entry and never the user's mutation
 export const writeResourceActivity = ({ resourceId, ...rest }: WriteResourceActivityInput) =>
   getResultAsync(async () => {
     const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
     if (rest.activityType === ResourceActivityType.ContentSaved) {
-      // Coalesce on existence rather than on the partition head: "this user already has a
-      // ContentSaved inside the window" is the flood the window exists to stop, and asking the
-      // Question this way makes the answer independent of the order entities come back in.
+      // Coalesce on existence rather than on the partition head, so the answer does not depend on the order
+      // Entities come back in. Two saves racing inside the window both read empty and both write, which costs the
+      // Trail one extra line — the alternative is a deterministic rowKey, and the rowKey is what orders the trail
       const recentEntries = await getTopNEntities(resourceActivityClient, 1, ResourceActivityEntity, {
         filter: serializeClauses([
           { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: resourceId },

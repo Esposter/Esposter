@@ -9,8 +9,7 @@ import { getResultAsync, takeOne } from "@esposter/shared";
 // Thumbnail the message list renders inline — in one round trip per kind, however many files are on screen.
 // Every read here is one nobody asked for — a page that scrolled, a message that arrived, a sweep on a timer —
 // So the background marker is set once, here, for all of them: a failure has no action the user could take and
-// No command of theirs to attribute it to. Marking it per call site is what left the subscription-driven read
-// Unmarked while the sweep beside it carried it.
+// No command of theirs to attribute it to.
 export const useReadFileUrls = () => {
   const { $trpc } = useNuxtApp();
   return async (files: FileEntity[], roomId: string): Promise<Map<FileEntity["id"], ReadFileUrl>> => {

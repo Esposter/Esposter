@@ -1,8 +1,7 @@
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
-import { getFilterKeyword } from "@/services/message/filter/getFilterKeyword";
 import { serializeValue } from "@esposter/azure";
 import { FilterType, FilterTypeHas } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, uncapitalize } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(getFilterDisplayValue, () => {
@@ -12,25 +11,21 @@ describe(getFilterDisplayValue, () => {
   test("a filter still waiting for its value renders as its keyword", () => {
     expect.hasAssertions();
 
-    expect(getFilterDisplayValue({ type: FilterType.Has, value: "" })).toBe(getFilterKeyword(FilterType.Has));
+    expect(getFilterDisplayValue({ type: FilterType.Has, value: "" })).toBe("has:");
   });
 
-  // False is a value the user picked, not an absent one — reading it as absent is what left `pinned: false`
-  // Showing as a keyword with nothing after it while its picker stayed open
+  // False is a value the user picked, not an absent one — reading it as absent leaves `pinned: false` showing
+  // As a keyword with nothing after it while its picker is still open
   test.each([true, false])(`${FilterType.Pinned}: renders %s`, (isPinned) => {
     expect.hasAssertions();
 
-    expect(getFilterDisplayValue({ type: FilterType.Pinned, value: isPinned })).toBe(
-      `${getFilterKeyword(FilterType.Pinned)} ${isPinned}`,
-    );
+    expect(getFilterDisplayValue({ type: FilterType.Pinned, value: isPinned })).toBe(`pinned: ${isPinned}`);
   });
 
   test(`${FilterType.Has}: renders its media kind uncapitalized`, () => {
     expect.hasAssertions();
 
-    expect(getFilterDisplayValue({ type: FilterType.Has, value: FilterTypeHas.Image })).toBe(
-      `${getFilterKeyword(FilterType.Has)} ${uncapitalize(FilterTypeHas.Image)}`,
-    );
+    expect(getFilterDisplayValue({ type: FilterType.Has, value: FilterTypeHas.Image })).toBe("has: image");
   });
 
   test(`${FilterType.Pinned}: rejects a value no picker could have chosen`, () => {

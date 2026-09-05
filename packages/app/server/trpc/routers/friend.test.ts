@@ -12,7 +12,7 @@ import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/d
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("friend", () => {
+describe("friendRouter", () => {
   let mockContext: Context;
   let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
 
@@ -84,7 +84,6 @@ describe("friend", () => {
     expect.hasAssertions();
 
     const user = getMockSession().user;
-    // Session=newUser: search for default user by name
     await mockSessionOnce(mockContext.db);
     const searchedUsers = await friendCaller.searchUsers(user.name);
 

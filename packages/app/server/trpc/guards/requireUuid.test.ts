@@ -25,9 +25,6 @@ describe(requireUuid, () => {
     });
   });
 
-  // The three room builders pass `input[roomIdKey]`, which the generic signature cannot constrain to a string, and
-  // A room input carries a bigint permission bitfield — so the context is built with String() rather than
-  // JSON.stringify, which throws on one outright and turns a rejected id into an unhandled serializer error
   test("names a bigint value instead of throwing on it", () => {
     expect.hasAssertions();
 

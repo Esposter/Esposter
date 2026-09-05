@@ -33,7 +33,7 @@ import { userToRoomRouter } from "@@/server/trpc/routers/userToRoom";
 import { webhookRouter } from "@@/server/trpc/routers/webhook";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
-// We need to declare a base router without achievements to avoid circular dependencies
+// A base router without achievements, which the achievement router would otherwise import circularly
 const baseTrpcRouter = router({
   app: appRouter,
   block: blockRouter,

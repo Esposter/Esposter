@@ -44,6 +44,11 @@ describe(createOsExecOptions, () => {
 
   const { cleanup, create } = createTemporaryDirectoryTracker();
   const { platform } = process;
+  // `process.platform` is a read-only own property rather than a global binding, so `vi.stubGlobal` cannot reach
+  // It without replacing the whole `process` object; the afterEach below puts the real one back
+  const stubWin32Platform = () => {
+    Object.defineProperty(process, "platform", { configurable: true, value: "win32" });
+  };
 
   beforeEach(() => {
     osCacheRoot.value = create();
@@ -55,35 +60,31 @@ describe(createOsExecOptions, () => {
     cleanup();
   });
 
-  describe("win32", () => {
-    beforeEach(() => {
-      Object.defineProperty(process, "platform", { configurable: true, value: "win32" });
-    });
+  test("win32 prepends the mirror's node_modules/.bin ahead of the leaked host bin so the overlaid binary wins", () => {
+    expect.hasAssertions();
 
-    test("prepends the mirror's node_modules/.bin ahead of the leaked host bin so the overlaid binary wins", () => {
-      expect.hasAssertions();
+    stubWin32Platform();
+    // The regression this guards: without the prepend, a bare command resolves the /mnt/c host bin (win32 build)
+    // Baked into the WSL login PATH and crashes needing its -linux-x64 sibling. The mirror bin must come first.
+    const mirror = getWslSourceMirrorPath(TEST_REPO_ROOT_WIN);
 
-      // The regression this guards: without the prepend, a bare command resolves the /mnt/c host bin (win32 build)
-      // Baked into the WSL login PATH and crashes needing its -linux-x64 sibling. The mirror bin must come first.
-      const mirror = getWslSourceMirrorPath(TEST_REPO_ROOT_WIN);
+    expect(createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe").env?.PATH).toBe(
+      `${mirror}/${NODE_MODULES_BIN_DIRECTORY}:${loginPath}`,
+    );
+  });
 
-      expect(createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe").env?.PATH).toBe(
-        `${mirror}/${NODE_MODULES_BIN_DIRECTORY}:${loginPath}`,
-      );
-    });
+  test("win32 fails loud on an empty login capture instead of running under the interop PATH's broken corepack shim", () => {
+    expect.hasAssertions();
 
-    test("fails loud on an empty login capture instead of running under the interop PATH's broken corepack shim", () => {
-      expect.hasAssertions();
+    stubWin32Platform();
+    // An empty capture on win32 is a *failed* capture (cold-WSL timeout / blocking rc), not "no WSL": the support
+    // Probe already proved WSL is present. Proceeding would resolve `corepack` to the /mnt/c fnm shim and die with a
+    // Cryptic `node: not found` (127), so surface the timeout cause here rather than deep in the sandbox.
+    loginEnvironmentPath.value = "";
 
-      // An empty capture on win32 is a *failed* capture (cold-WSL timeout / blocking rc), not "no WSL": the support
-      // Probe already proved WSL is present. Proceeding would resolve `corepack` to the /mnt/c fnm shim and die with a
-      // Cryptic `node: not found` (127), so surface the timeout cause here rather than deep in the sandbox.
-      loginEnvironmentPath.value = "";
-
-      expect(() => createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe")).toThrowErrorMatchingInlineSnapshot(
-        `[InvalidOperationError: Invalid operation: Read, name: createOsExecOptions, WSL login-shell environment capture returned empty (likely a cold-WSL timeout or a blocking shell profile); start WSL with \`wsl.exe -- true\` and rerun — a warm distro captures immediately]`,
-      );
-    });
+    expect(() => createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: createOsExecOptions, WSL login-shell environment capture returned empty (likely a cold-WSL timeout or a blocking shell profile); start WSL with \`wsl.exe -- true\` and rerun — a warm distro captures immediately]`,
+    );
   });
 
   test("injects no PATH off win32 — native Linux overlays at cwd, so its inherited PATH already resolves right", () => {

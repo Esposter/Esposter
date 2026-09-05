@@ -161,19 +161,17 @@ const deleteResourcesInputSchema = z.object({
 });
 // Appended to a duplicated resource's name; the base name is truncated so the whole stays within the length check
 const DUPLICATE_NAME_SUFFIX = " (copy)";
-// Backed by the resources_name_trgm_index GIN index; shared so the filter and the ranking
-// Can never disagree about what "similar" means
+// Not index-backed — resources_name_trgm_index serves the `ilike` arm below, not a `similarity()` inequality
 const getSearchSimilarity = (searchQuery: string) => sql`similarity(${resources.name}, ${searchQuery})`;
-// Every resource list — the workbench, the recycle bin and the favorites read alike — projects one row shape,
-// Reused as the sort space so a column the list can show is a column it can sort by
+// One row shape for every resource list, doubling as the sort space: a column a list can show is a column it
+// Can sort by, and no list can be handed a key its query cannot order by
 const resourceListSelection = { ...getColumns(resources), lastAccessedAt: resourceAccesses.accessedAt };
-// Caller-scoped relationship predicates, shared by the joins that project them and the EXISTS subqueries that
-// Filter on them, so one user's Recent or Favorites can never reflect another's
+// Caller-scoped relationship predicates: the row is the relationship, not a property of the resource, so one
+// User's Recent or Favorites can never reflect another's
 const getLastAccessedJoin = (userId: string) =>
   and(eq(resourceAccesses.resourceId, resources.id), eq(resourceAccesses.userId, userId));
 const getFavoriteJoin = (userId: string) =>
   and(eq(resourceFavorites.resourceId, resources.id), eq(resourceFavorites.userId, userId));
-// Shared filter so count and readResources stay in lockstep as filters evolve
 const getResourcesWhere = (
   db: Context["db"],
   userId: string,
@@ -196,8 +194,6 @@ const getResourcesWhere = (
     .select()
     .from(resourcePublications)
     .where(eq(resourcePublications.resourceId, resources.id));
-  // Both are scoped to the caller as well as the resource, so one user's Recent or Favorites can never
-  // Reflect another's — the row is the relationship, not a property of the resource
   const accessQuery = db.select().from(resourceAccesses).where(getLastAccessedJoin(userId));
   const favoriteQuery = db.select().from(resourceFavorites).where(getFavoriteJoin(userId));
   return and(
@@ -319,8 +315,6 @@ export const resourceRouter = router({
     .input(readDeletedResourcesInputSchema)
     .query<OffsetPaginationData<ResourceListItem>>(async ({ ctx, input: { limit, offset, sortBy } }) => {
       const userId = ctx.getSessionPayload.user.id;
-      // The bin reads the same row shape as the workbench, so one sort space serves both and neither list can
-      // Be handed a key its query cannot order by
       const resultResources = await ctx.db
         .select(resourceListSelection)
         .from(resources)
@@ -341,8 +335,7 @@ export const resourceRouter = router({
       ).count,
   ),
   // Starred-first rather than updated-first, which is the one thing the Favorites list route cannot do: the
-  // Star's own timestamp is not a column any list shows. Otherwise it is the same predicate the `isFavorite`
-  // Filter expresses, taken from getResourcesWhere so a rule added there reaches both
+  // Star's own timestamp is not a column any list shows
   readFavorites: standardAuthedProcedure.query<ResourceListItem[]>(({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     return ctx.db
@@ -355,8 +348,7 @@ export const resourceRouter = router({
       .limit(MAX_READ_LIMIT);
   }),
   // Publish state rides the row rather than answering a second request: `resourcePublications` is one table
-  // For every type, so this cross-type read resolves it whatever the resource turns out to be, and the
-  // Ownership that second request would re-resolve is the ownership this one already resolved
+  // For every type, so this cross-type read resolves it whatever the resource turns out to be
   readResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").query<ResourceWithPublication>(
     async ({ ctx }) => ({
       ...ctx.resource,
@@ -415,8 +407,7 @@ export const resourceRouter = router({
       .orderBy(desc(count()), asc(tagNames.name));
   }),
   // The summary cards own the type breakdown, so `types` is the one filter they cannot pass — a card is
-  // The affordance for setting it. Behind the same getResourcesWhere, so the cards can never disagree
-  // With the list they navigate into
+  // The affordance for setting it
   readResourceTypeCounts: standardAuthedProcedure
     .input(resourceFilterInputSchema.omit({ types: true }).prefault({}))
     .query<ResourceTypeCount[]>(({ ctx, input }) =>
@@ -472,7 +463,7 @@ export const resourceRouter = router({
         DatabaseEntityType.Resource,
         id,
       );
-      // Fire-and-forget: the activity trail is best-effort and the restore must not wait on telemetry
+      // Best-effort: a failed write loses one trail entry, never the restore.
       getSynchronizedFunction(writeResourceActivity)({
         activityType: ResourceActivityType.Restored,
         resourceId: id,
@@ -511,11 +502,11 @@ export const resourceRouter = router({
     // So a restore that was never going to land does not spend a ring-buffer slot and evict the oldest
     // Recovery point on its way to failing
     const undoRevisionVersion = await takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeRestore);
-    // Reconstitution, not a raw copy: a snapshot froze whatever the type declares live, and writing that
-    // Back over the working copy is how a restore silently reopened a closed survey or flipped its response
-    // Mode — a setting the write boundary makes authorization decisions on, with nothing in the restore or
-    // Its confirmation saying it would happen. The declaration is `ResourceLiveContentMap`, and it is the
-    // Same one the public read and the version preview reconstitute through
+    // Reconstitution, not a raw copy: a snapshot froze whatever the type declares live, and writing that back
+    // Over the working copy would silently reopen a closed survey or flip its response mode — a setting the
+    // Write boundary makes authorization decisions on, with nothing in the restore or its confirmation saying
+    // It would happen. The declaration is `ResourceLiveContentMap`, and it is the same one the public read and
+    // The version preview reconstitute through
     const reappliedContent = await reapplyLiveResourceContent(ctx.resource, snapshotContent);
     // Cloned before the transaction opens, exactly as `publishResource` does it: the clone is one storage
     // Round trip per referenced asset, and running it inside would hold a pooled connection — not just the

@@ -39,7 +39,7 @@ describe(useResourceRouter, () => {
     expect(getResourceRouterProcedureNames(type)).toStrictEqual(expect.arrayContaining(BASE_PROCEDURE_NAMES));
   });
 
-  // UseCreateResource dispatches a create the same way, so a gallery entry whose router cannot create it would
+  // `useCreateResource` dispatches a create the same way, so a gallery entry whose router cannot create it would
   // Otherwise only fail at the click that submits the create form
   test.each(CreatableResourceTypes)("%s: exposes createResource for a type the gallery offers", (type) => {
     expect.hasAssertions();

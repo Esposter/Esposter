@@ -6,7 +6,6 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { createId } from "#shared/util/math/random/createId";
-import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
@@ -29,7 +28,7 @@ import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@espos
 import { MOCK_BLOB_BASE_URL, MockBlockBlobClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-describe("room", () => {
+describe("roomRouter", () => {
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
@@ -91,7 +90,7 @@ describe("room", () => {
 
     const readRooms = await roomCaller.readRooms();
 
-    expect(readRooms).toStrictEqual(getCursorPaginationData([], 0, []));
+    expect(readRooms).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
   });
 
   test("reads empty rooms with undefined roomId", async () => {
@@ -99,7 +98,7 @@ describe("room", () => {
 
     const readRooms = await roomCaller.readRooms({ roomId: undefined });
 
-    expect(readRooms).toStrictEqual(getCursorPaginationData([], 0, []));
+    expect(readRooms).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
   });
 
   test("reads multiple with roomId with inclusive filter", async () => {
@@ -215,7 +214,7 @@ describe("room", () => {
       () => roomCaller.updateRoom({ id: newRoom.id, image: "" }),
     );
     const blobDeletionEvents = MockEventGridDatabase.get("");
-    assert(blobDeletionEvents);
+    assert.exists(blobDeletionEvents);
 
     expect(data.image).toBe("");
     expect(blobDeletionEvents).toHaveLength(1);
@@ -279,7 +278,7 @@ describe("room", () => {
     await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, inFlightBlobName).upload(Buffer.alloc(0), 0);
     await roomCaller.updateRoom({ id: newRoom.id, image: "" });
     const blobDeletionEvents = MockEventGridDatabase.get("");
-    assert(blobDeletionEvents);
+    assert.exists(blobDeletionEvents);
 
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       blobNames: [blobName],
@@ -397,7 +396,7 @@ describe("room", () => {
     );
     await roomCaller.deleteRoom(newRoom.id);
     const blobDeletionEvents = MockEventGridDatabase.get("");
-    assert(blobDeletionEvents);
+    assert.exists(blobDeletionEvents);
 
     expect(blobDeletionEvents).toHaveLength(1);
     // Unbounded in time, unlike every other prefix sweep: the room row is gone, so nothing can re-own this
@@ -425,7 +424,7 @@ describe("room", () => {
     );
     await roomCaller.deleteRoom(newRoom.id);
     const blobDeletionEvents = MockEventGridDatabase.get("");
-    assert(blobDeletionEvents);
+    assert.exists(blobDeletionEvents);
 
     // Profile images stay a resolved list — they are a handful, and their sweep reaches a pre-cutover flat
     // Name that sits outside the room's prefix, so a prefix walk would miss it. The room's attachments go
@@ -473,7 +472,7 @@ describe("room", () => {
     const readInvite = await roomCaller.readInvite(newInvite.id);
     const userId = getMockSession().user.id;
 
-    assert(readInvite);
+    assert.exists(readInvite);
 
     expect(readInvite.userId).toBe(userId);
     expect(readInvite.roomId).toBe(newRoom.id);
@@ -496,7 +495,7 @@ describe("room", () => {
     const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
-    assert(myInvite);
+    assert.exists(myInvite);
 
     // The creator rides back with a created link because the management panel lists that column; a member reading
     // Their own link already knows who minted it, so that half is the whole difference between the two rows
@@ -608,7 +607,7 @@ describe("room", () => {
     });
     await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
-    // MaxUses is 1, so the invite is now exhausted — read the row directly instead of readMyInvite
+    // `maxUses` is 1, so the invite is now exhausted — read the row directly instead of readMyInvite
     const invite = await mockContext.db.query.invitesInMessage.findFirst({ where: { id: { eq: newInvite.id } } });
 
     expect(invite?.uses).toBe(1);

@@ -12,7 +12,7 @@ import { resources, StorageTier } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("storage", () => {
+describe("storageRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
   const name = "name";
@@ -27,39 +27,37 @@ describe("storage", () => {
     await mockContext.db.delete(resources);
   });
 
-  describe("readUsage", () => {
-    test("reads the initial storage usage for the authed user", async () => {
-      expect.hasAssertions();
+  test("readUsage reads the initial storage usage for the authed user", async () => {
+    expect.hasAssertions();
 
-      const storageUsage = await caller.storage.readUsage();
+    const storageUsage = await caller.storage.readUsage();
 
-      expect(storageUsage).toStrictEqual({
-        bytesUsed: 0,
-        quotaBytes: StorageTierQuotaMap[StorageTier.Free],
-        tier: StorageTier.Free,
-      });
+    expect(storageUsage).toStrictEqual({
+      bytesUsed: 0,
+      quotaBytes: StorageTierQuotaMap[StorageTier.Free],
+      tier: StorageTier.Free,
     });
   });
 
-  describe("onUpdateUsage", () => {
-    test("emits updated storage usage when resource content is saved", async () => {
-      expect.hasAssertions();
+  test("onUpdateUsage emits the updated storage usage when resource content is saved", async () => {
+    expect.hasAssertions();
 
-      const newResource = await caller.webpage.createResource({ name });
-      const onUpdateUsage = await caller.storage.onUpdateUsage();
-      const emittedUsage = await getFirstEmit(
-        () => onUpdateUsage,
-        () =>
-          caller.webpage.saveResourceContent({
-            content: new WebpageEditor(),
-            contentVersion: newResource.contentVersion,
-            id: newResource.id,
-          }),
-      );
+    const newResource = await caller.webpage.createResource({ name });
+    const onUpdateUsage = await caller.storage.onUpdateUsage();
+    const emittedUsage = await getFirstEmit(
+      () => onUpdateUsage,
+      () =>
+        caller.webpage.saveResourceContent({
+          content: new WebpageEditor(),
+          contentVersion: newResource.contentVersion,
+          id: newResource.id,
+        }),
+    );
 
-      expect(emittedUsage.bytesUsed).toBeGreaterThan(0);
-      expect(emittedUsage.quotaBytes).toBe(StorageTierQuotaMap[StorageTier.Free]);
-      expect(emittedUsage.tier).toBe(StorageTier.Free);
-    });
+    // The exact figure is the serialized size of an empty editor, which moves with that model rather than with
+    // The metering under test — so what is asserted is that the usage moved off zero
+    expect(emittedUsage.bytesUsed).toBeGreaterThan(0);
+    expect(emittedUsage.quotaBytes).toBe(StorageTierQuotaMap[StorageTier.Free]);
+    expect(emittedUsage.tier).toBe(StorageTier.Free);
   });
 });

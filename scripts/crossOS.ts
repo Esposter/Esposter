@@ -8,7 +8,7 @@ import packageJsonType from "../package.json" with { type: "json" };
 const minArgv = 3;
 const property = "crossOS";
 if (process.argv.length < minArgv)
-  // Pnpm crossOS [args]
+  // Invoked as `pnpm crossOS [args]`
   throw new RangeError(`${property} requires at least ${minArgv - 2} arguments`);
 
 const script = process.argv[2];

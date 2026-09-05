@@ -23,6 +23,5 @@ export const VISUAL_INTERACTION_CHART_OPTIONS = {
 // The query parameter a shared dashboard link carries its view state in, one entry per visual whose view was
 // Captured, so adjusting a second chart adds to the link rather than replacing what the first one said
 export const DASHBOARD_VIEW_QUERY_KEY = "view";
-// Splits a view entry's visual id from its token. Its own named separator rather than ID_SEPARATOR: these
-// Strings live in links people keep, so the url format has a compatibility contract an in-memory key does not
+// Splits a view entry's visual id from its token
 export const DASHBOARD_VIEW_SEPARATOR = "~";

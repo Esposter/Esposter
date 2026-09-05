@@ -13,6 +13,14 @@ Mock the **smallest seam that makes the behaviour under test reachable**, and ne
 
 An ordering contract ("the caller does not return until its side effect is durable") is untestable by observing the side effect afterwards — every assertion that reads it `await`s something first, handing the fire-and-forget chain the turns it needed, so the test passes against the bug. Make the dependency block instead: stub the client so the write returns a promise the test resolves by hand, start the call without awaiting it, drain past one timer boundary (`await new Promise((resolve) => { setTimeout(resolve); })`), and assert the caller has **not** settled; then release and await it. A single one-shot boundary flushes every pending microtask and re-checks nothing, so it is not polling. Verify the test fails against the un-awaited version before keeping it.
 
+## Two overlapping writes: hold the rejection until the success has settled
+
+A test proving a rollback restores only its own row needs the failing write to unwind against a list the
+successful one has **already** shortened. Issued together, the rejection can land first and roll back against a
+list nothing has shortened yet — which passes against the whole-list rollback the test exists to rule out. Gate
+the failing handler on a promise the successful one resolves, so the order is the test's rather than the
+scheduler's.
+
 **Under fake timers that boundary is `await vi.advanceTimersByTimeAsync(0)`, never a bare `setTimeout` promise** — the clock is frozen, so the `setTimeout` above never fires and the test hangs to its timeout instead of failing on the contract. The sync `vi.advanceTimersByTime` is no substitute either: it fires the timer without ever yielding, so the continuations behind it have not run when the assertion reads, and the awaiting caller looks exactly like the un-awaiting one again. Microtask drains (`flushPromises()`, `waitForSynchronizedFunctions()`) are unaffected — Vitest fakes timers and `Date`, not the microtask queue.
 
 ## Colocated mock files
@@ -28,6 +36,11 @@ const { fooMock } = vi.hoisted(() => ({ fooMock: {} as { current: () => Promise<
 
 vi.mock(import("@/services/getFoo"), () => ({ getFoo: () => fooMock.current() }));
 ```
+
+**A module whose export is a dynamic-path `Proxy` can only be mocked at the module seam.** `authClient`
+(better-auth) resolves its methods through a `Proxy`, so `useSession` is not a configurable own property and
+`vi.spyOn(authClient, "useSession")` throws rather than replacing anything. Mock the module and drive the method
+through a hoisted holder, as above.
 
 ### Placement and export
 
@@ -108,7 +121,8 @@ Getting this wrong is invisible until a call-count assertion reads a neighbour's
 ## Globals and environment variables
 
 - **Globals use `vi.stubGlobal`**, never `Object.defineProperty`; unstub with `vi.unstubAllGlobals()` in `afterEach` (per-test stubs) or `afterAll` (set once in `beforeAll`). `vi.restoreAllMocks()` does **not** undo a `stubGlobal`.
-- **`vi.stubEnv` needs no teardown** — `unstubEnvs: true` in `getVitestConfiguration` restores the env after every test, so never write an `unstubAllEnvs` hook. The globals flag stays off deliberately: it would restore a `beforeAll` `stubGlobal` after the file's first test.
+- **`vi.stubEnv` needs no teardown** — `unstubEnvs: true` in `getVitestConfiguration` restores the env after every test, so never write an `unstubAllEnvs` hook. `vi.stubEnv(KEY, undefined)` is how a test unsets one, which is what a case reading a default owes itself: an ambient `CI` or opt-out from the dev's shell otherwise decides the answer. The globals flag stays off deliberately: it would restore a `beforeAll` `stubGlobal` after the file's first test.
+- **An env var a `beforeAll` sets is the one case `vi.stubEnv` cannot serve**, and for the same reason: the restore runs after every test, so the second test onwards would see the host value. A suite-scoped override reads the previous value, assigns `process.env` directly, and puts it back in `afterAll` — the hand-rolled shape everywhere else is a finding.
 - **A test must never read a color/TTY env var it did not stub.** `checkIsColorEnabled` consults `NO_COLOR`/`FORCE_COLOR`, so an ambient one from the dev's shell repaints CLI output; virrun's `vitest.config.ts` pins both empty for the package, and a test wanting color stubs `FORCE_COLOR` itself.
 
 ## A double that fabricates an entity id owes it a row

@@ -10,7 +10,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
   const { executeMutation: executeCreateLikeMutation } = useMutation();
   const { executeMutation: executeUpdateLikeMutation } = useMutation();
   const { executeMutation: executeDeleteLikeMutation } = useMutation();
-  // CreateLike is non-optimistic (the row is server-generated), so viewerLike stays undefined for the whole
+  // `createLike` is non-optimistic (the row is server-generated), so viewerLike stays undefined for the whole
   // Round trip and a rapid second vote would fire another CreateLike, hitting the likes primary-key constraint.
   // Keying the single-flight guard by postId drops the duplicate create while the first is still in flight.
   const createLike = async (input: CreateLikeInput) => {

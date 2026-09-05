@@ -18,7 +18,7 @@ export const copyToClipboard = async (dataSource: DataSource, options: CopyToCli
   const filteredDataSource = { ...dataSource, columns: visibleColumns, rows };
   const cellTextRows = getCellTextRows(visibleColumns, rows);
   const tsv = serializeToTsv(filteredDataSource, includeHeaders, cellTextRows);
-  // Not wrapped: the only handler this had rethrew what it caught, and the caller already terminates and alerts
+  // Not wrapped: the caller already terminates and alerts, so a handler here would have nothing to do but rethrow
   if (typeof ClipboardItem === "undefined") {
     await window.navigator.clipboard.writeText(tsv);
     return;

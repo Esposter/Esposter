@@ -27,18 +27,12 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   const isEditFormValid = computed(() => !editForm.value || editForm.value.errors.length === 0);
   const isSavable = computed(
     () =>
-      // For the form to be savable, it has to:
       Boolean(editedItem.value) &&
-      // 1. Have no errors
       isEditFormValid.value &&
-      // 2. Be a new item, or differ from the original.
-      // The edited item is a clone that drops class information, so it's never strictly equal;
-      // DeepEqual isn't a strict check, so it's fine.
+      // The edited item is a clone that drops class information, so it is never strictly equal —
+      // `deepEqual` is what makes the comparison against the original mean anything
       (!originalItem.value || !deepEqual(editedItem.value, structuredClone(toRawDeep(originalItem.value)))),
   );
-  // The form is dirty if:
-  // 1. The user has interacted and the edit form isn't valid.
-  // 2. Or it is savable.
   const isDirty = computed(() => !isEditFormValid.value || isSavable.value);
 
   const editItem = async (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => {

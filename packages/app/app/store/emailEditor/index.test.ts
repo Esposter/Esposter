@@ -11,8 +11,6 @@ import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-// GrapesJS project data carries only GrapesJS's own keys, so a content class rebuilt from it alone re-runs its
-// Field initializers — minting a fresh identity, and a fresh dirty-check shape, on every autosave tick
 describe(useEmailEditorStore, () => {
   const server = setupMswTrpc();
   const resourceId = crypto.randomUUID();
@@ -53,9 +51,6 @@ describe(useEmailEditorStore, () => {
     expect(takeOne(savedContentIds)).toBe(content.id);
   });
 
-  // GrapesJS stores as soon as it has finished loading, so the first save of a session is an echo of what was
-  // Just read. Unless the load seeds the dirty check, that echo counts as a change: it bumps contentVersion for
-  // Content nobody edited, and every other client holding the page open is told its version is stale
   test("skips the store echo that follows the load", async () => {
     expect.hasAssertions();
 

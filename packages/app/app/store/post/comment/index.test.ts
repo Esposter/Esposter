@@ -44,8 +44,7 @@ describe(useCommentStore, () => {
     expect(takeOne(getSlice(postId).items.value).description).toBe(newDescription);
   });
 
-  // Deletes of different comments carry different keys, so they run beside each other — restoring a copy of the
-  // Branch resurrects the comment the delete next to this one already removed server-side
+  // Deletes of different comments carry different keys, so they run beside each other
   test("rolls a failed delete back without resurrecting a comment deleted beside it", async () => {
     expect.hasAssertions();
 

@@ -19,9 +19,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
 
   const createBlock = async (userId: FriendUserIdInput) => {
     await executeBlockMutation(() => $trpc.block.createBlock.mutate(userId), {
-      // Only the rows this write removes, not copies of both lists: blocks of different users never queue against
-      // Each other, so reinstating the lists would resurrect a friend or a request another write already dropped
-      // — and lose whatever a subscription delivered while this one was in flight
+      // Only the rows this write removes — blocks of different users never queue against each other
       applyOptimistic: () => {
         const deletedFriend = friendStore.friends.find(({ id }) => id === userId);
         const deletedFriendRequests = getFriendRequestsByUser(userId);
@@ -42,9 +40,8 @@ export const useBlockStore = defineStore("message/user/block", () => {
 
   const deleteBlock = async (blockedUserId: FriendUserIdInput) => {
     await executeBlockMutation(() => $trpc.block.deleteBlock.mutate(blockedUserId), {
-      // The one row this write removes, not a copy of the list: unblocks of different users never queue against
-      // Each other, so reinstating the list would resurrect a user another unblock already removed and drop
-      // Whoever a block added meanwhile. Back at the end rather than where it stood — a cosmetic loss
+      // The one row this write removes — unblocks of different users never queue against each other. It comes
+      // Back at the end rather than where it stood, which is a cosmetic loss
       applyOptimistic: () => {
         const deletedBlockedUser = blockedUsers.value.find(({ id }) => id === blockedUserId);
         blockedUsers.value = blockedUsers.value.filter(({ id }) => id !== blockedUserId);

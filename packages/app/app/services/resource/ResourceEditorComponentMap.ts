@@ -3,7 +3,7 @@ import { ResourceType } from "@esposter/db-schema";
 // So their nav skips the Editor blade entirely.
 // Loaded on demand rather than imported: these carry the heaviest vendors in the app — grapesjs behind Email and
 // Webpage, vue-flow behind Flowchart, tiptap behind Note, the survey creator behind Survey — and a static map
-// Puts every one of them in the chunk of whoever reads the map, so opening a note downloaded all the other
+// Puts every one of them in the chunk of whoever reads the map, so opening a note downloads all the other
 // Canvases too. The blade renders each inside a Suspense that already shows a skeleton while one arrives
 export const ResourceEditorComponentMap: Partial<Record<ResourceType, Component>> = {
   [ResourceType.Blueprint]: defineAsyncComponent(() => import("@/components/Resource/Blueprint/Editor.vue")),

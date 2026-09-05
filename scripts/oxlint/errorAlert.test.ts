@@ -1,7 +1,6 @@
 import { setupPluginSuite } from "#scripts/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
-// The rule is an oxlint JS plugin; the harness that runs it over these fixtures is setupPluginSuite.
 const RULE = "error-alert/no-raw-error-alert";
 
 describe(RULE, () => {

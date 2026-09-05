@@ -20,8 +20,8 @@ describe(uploadBlocks, () => {
     vi.unstubAllGlobals();
   });
 
-  // Put Block List is the only request in the upload that sets the blob's own headers, and it used to send its
-  // XML body's type as the blob's — so every blob this app uploaded was stored as XML whatever was in it
+  // Put Block List is the only request in the upload that sets the blob's own headers, so sending its XML
+  // Body's type as the blob's would store every upload as XML whatever was in it
   test("stores the blob under the file's own content type", async () => {
     expect.hasAssertions();
 

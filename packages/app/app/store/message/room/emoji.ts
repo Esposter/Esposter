@@ -76,8 +76,6 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
         return $trpc.room.emoji.createRoomEmoji.mutate({ id, name, roomId });
       },
       {
-        // Server-minted id, so there is no natural entity key — overlapping uploads must never queue behind
-        // Each other while their images are still writing
         key: Symbol("createRoomEmoji"),
         onSuccess: (newRoomEmoji) => {
           storeCreateRoomEmoji(roomId, newRoomEmoji);
@@ -105,8 +103,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   };
   const deleteRoomEmoji = async (roomId: RoomInMessage["id"], input: Except<DeleteRoomEmojiInput, "roomId">) => {
     await executeDeleteRoomEmojiMutation(() => $trpc.room.emoji.deleteRoomEmoji.mutate({ ...input, roomId }), {
-      // Put back only this row, at the position it held — reinstating a whole-list snapshot would resurrect an
-      // Emoji another deletion already removed
+      // Put back only this row, at the position it held
       applyOptimistic: () => {
         const { items: roomItems } = getSlice(roomId);
         const deletedIndex = roomItems.value.findIndex(({ id }) => id === input.id);

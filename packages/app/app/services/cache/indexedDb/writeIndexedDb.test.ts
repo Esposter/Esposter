@@ -78,9 +78,6 @@ describe(writeIndexedDb, () => {
     expect(takeOne(result)).toStrictEqual(Object.assign(structuredClone(room), { partitionKey: userId }));
   });
 
-  // A browser that refuses the write — quota reached, private mode, a database another tab has blocked — is
-  // Reported to the caller, which owns how the cache reports a failure. Swallowing it here would put a second
-  // Error channel beside that one, and the two can disagree about whether anything went wrong
   test("reports a refused write to its caller", async () => {
     expect.hasAssertions();
 

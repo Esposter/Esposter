@@ -15,9 +15,9 @@ import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockServiceBusDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
-// The generic resource-procedure matrix is covered in createResourceProcedures.test.ts; here the blueprint
-// Router's own procedures: the deploy wiring, its validation/owner guards, and capture's alias rewrite.
-describe("blueprint", () => {
+// The blueprint router's own procedures: the deploy wiring, its validation and owner guards, and capture's
+// Alias rewrite.
+describe("blueprintRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["blueprint"]>;
   let programCaller: DecorateRouterRecord<TRPCRouter["program"]>;

@@ -38,8 +38,8 @@ export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
 export const baseMessageEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
-      // Reverse-ticked timestamp
       partitionKey: selectRoomInMessageSchema.shape.id,
+      // `reverseTickedTimestamp`
       rowKey: z.string(),
     }),
   ).shape,

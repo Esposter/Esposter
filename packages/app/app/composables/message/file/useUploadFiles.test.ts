@@ -55,10 +55,10 @@ describe(useUploadFiles, () => {
 
   const createFile = () => new File(["a"], filename, { type: "image/png" });
 
-  // The two features that meet here shipped separately: a failed upload reverts its seeded composer rows, and
-  // Images upload a thumbnail beside the original. The thumbnail is decorative — the renderer falls back to the
-  // Original when its blob is missing — so letting its failure reach the revert throws away originals that are
-  // Already in storage, and empties an attachment tray the user watched upload to 100%.
+  // Two features meet here: a failed upload reverts its seeded composer rows, and images upload a thumbnail
+  // Beside the original. The thumbnail is decorative — the renderer falls back to the original when its blob is
+  // Missing — so letting its failure reach the revert throws away originals that are already in storage, and
+  // Empties an attachment tray the user watched upload to 100%.
   test("keeps uploaded files when only the thumbnail upload fails", async () => {
     expect.hasAssertions();
 

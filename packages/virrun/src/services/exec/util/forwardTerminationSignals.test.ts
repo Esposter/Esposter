@@ -63,8 +63,8 @@ describe(forwardTerminationSignals, () => {
     expect(() => {
       getAddedSignalListener("SIGINT", beforeSigint)?.("SIGINT");
     }).not.toThrow();
-    expect(onTerminate).toHaveBeenCalledTimes(1);
-    expect(kill).toHaveBeenCalledWith("SIGINT");
+    expect(onTerminate).toHaveBeenCalledExactlyOnceWith();
+    expect(kill).toHaveBeenCalledExactlyOnceWith("SIGINT");
   });
 
   test("removes the listeners once the child closes", () => {

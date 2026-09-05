@@ -2,7 +2,6 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { mockSessionOnce } from "@@/server/trpc/context.test";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
@@ -11,7 +10,7 @@ import { searchHistoriesInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-describe("searchHistory", () => {
+describe("searchHistoryRouter", () => {
   const { createMember, getMockContext, getRoomId } = setupRoomSuite();
   let mockContext: Context;
   let searchHistoryCaller: DecorateRouterRecord<TRPCRouter["searchHistory"]>;
@@ -37,7 +36,7 @@ describe("searchHistory", () => {
 
     const readSearchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
 
-    expect(readSearchHistories).toStrictEqual(getCursorPaginationData([], 0, []));
+    expect(readSearchHistories).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
   });
 
   test("reads search histories", async () => {
@@ -45,11 +44,12 @@ describe("searchHistory", () => {
 
     const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId });
     const readSearchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
+    const readSearchHistory = takeOne(readSearchHistories.items);
 
     expect(readSearchHistories.items).toHaveLength(1);
-    expect(takeOne(readSearchHistories.items).id).toBe(newSearchHistory.id);
-    expect(takeOne(readSearchHistories.items).roomId).toBe(roomId);
-    expect(takeOne(readSearchHistories.items).query).toBe(query);
+    expect(readSearchHistory.id).toBe(newSearchHistory.id);
+    expect(readSearchHistory.roomId).toBe(roomId);
+    expect(readSearchHistory.query).toBe(query);
   });
 
   test("excludes another member's search histories", async () => {

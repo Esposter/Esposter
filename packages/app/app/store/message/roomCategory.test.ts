@@ -18,9 +18,8 @@ describe(useRoomCategoryStore, () => {
     setActivePinia(createPinia());
   });
 
-  // Two renames of one room category queue under its id, so the second one's rollback has to undo its own write —
-  // Restoring the list as it looked when the user typed would drop the rename the first one just persisted,
-  // And nothing reconciles that until a reload
+  // Two renames of one room category queue under its id, so the second one's rollback has to undo its own write
+  // Rather than what the user typed over — nothing reconciles a dropped rename until a reload
   test("rolls a failed update back to the state the update ahead of it stored", async () => {
     expect.hasAssertions();
 
@@ -69,8 +68,8 @@ describe(useRoomCategoryStore, () => {
     expect(roomCategories.value.map(({ id: roomCategoryId }) => roomCategoryId)).toStrictEqual([otherId]);
   });
 
-  // Each room category is its own target, so two deletions overlap on one list. The failing one must put back only the
-  // Row it removed — reinstating the list resurrects the room category the deletion beside it already took out
+  // Each room category is its own target, so two deletions overlap on one list and the failing one must put
+  // Back only the row it removed
   test("puts back only the roomCategory whose deletion was rejected", async () => {
     expect.hasAssertions();
 
@@ -89,9 +88,8 @@ describe(useRoomCategoryStore, () => {
     expect(roomCategories.value.map(({ id: roomCategoryId }) => roomCategoryId)).toStrictEqual([id]);
   });
 
-  // A reorder moves positions, so that is all its rollback owes back. Reinstating the list drops whatever landed
-  // While the drag was in flight — here a room category created meanwhile, delivered from inside the request so it
-  // Lands after the reorder applied and before its rejection unwinds
+  // A reorder moves positions, so that is all its rollback owes back. The room category created meanwhile is
+  // Delivered from inside the request, so it lands after the reorder applied and before its rejection unwinds
   test("restores only the positions the rejected reorder moved", async () => {
     expect.hasAssertions();
 

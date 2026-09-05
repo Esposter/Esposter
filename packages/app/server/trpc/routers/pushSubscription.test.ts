@@ -13,9 +13,8 @@ import { takeOne } from "@esposter/shared";
 import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
-// What the Azure Function receives: the message as stored, and the thread root when the send was a reply. Who it
-// Reaches is resolved at delivery from these fields alone — the recipient rules are getMessageRecipientUserIds'
-// Own suite, and nothing on the request path answers them any more
+// What the Azure Function receives: the message as stored, and the thread root when the send was a reply.
+// Recipients are resolved at delivery from these fields alone, against the rules getMessageRecipientUserIds owns
 const createMessageNotificationData = (
   messageText: string,
   partitionKey: string,
@@ -27,7 +26,7 @@ const createMessageNotificationData = (
   type: AppNotificationType.Message,
 });
 
-describe("pushSubscription", () => {
+describe("pushSubscriptionRouter", () => {
   let mockContext: Context;
   let pushSubscriptionCaller: DecorateRouterRecord<TRPCRouter["pushSubscription"]>;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
@@ -98,10 +97,9 @@ describe("pushSubscription", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const events = MockEventGridDatabase.get("");
-    assert(events);
+    assert.exists(events);
 
-    // Published unconditionally: whether anyone is subscribed is not a question the request path asks any more,
-    // Which is what removed a recipient query from every send
+    // Published unconditionally: whether anyone is subscribed is not a question the request path asks
     expect(events).toHaveLength(1);
     expect(takeOne(events).eventType).toBe(AzureFunction.ProcessNotification);
     expect(takeOne(events).data).toStrictEqual(createMessageNotificationData(message, newRoom.id, newMessage.rowKey));
@@ -121,7 +119,7 @@ describe("pushSubscription", () => {
       roomId: newRoom.id,
     });
     const events = MockEventGridDatabase.get("");
-    assert(events);
+    assert.exists(events);
 
     // One event rather than two: a thread's followers widen the reply's recipient set instead of raising a
     // Second notification that the first has to be de-duplicated against

@@ -8,7 +8,8 @@ export const readModerationLogInputSchema = z.object({
   ...createCursorPaginationParamsSchema(moderationLogEntitySchema.keyof(), [CREATED_AT_DESCENDING_SORT_ITEM]).omit({
     sortBy: true,
   }).shape,
-  // "" = unfiltered — the client's empty-string sentinel propagates end-to-end; the server truthiness-guards
+  // "" = unfiltered — the client's empty-string sentinel propagates end-to-end, and the server truthiness-guards
+  // Each field rather than treating the sentinel as a value to match on
   ...moderationLogEntitySchema.pick({ actorUserId: true, targetUserId: true }).shape,
   type: moderationLogEntitySchema.shape.type.or(z.literal("")),
 });

@@ -39,8 +39,8 @@ const isDeduplicateOpen = ref(false);
         @click="copyIncludesHeaders = !copyIncludesHeaders"
       />
       <v-divider />
-      <!-- Both were menu buttons of their own. Nested one level down they read as what they are — two families
-        of the same cleanup, listed the way a Data menu lists them -->
+      <!-- Nested one level down rather than each carrying its own menu button, so they read as what they are —
+        Two families of the same cleanup, listed the way a Data menu lists them -->
       <v-list-subheader>String transformation</v-list-subheader>
       <v-list-item
         v-for="{ title, value } of StringTransformationItemCategoryDefinitions"

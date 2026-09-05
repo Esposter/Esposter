@@ -5,7 +5,6 @@ import { commitBlockList } from "@/services/azure/container/commitBlockList";
 import { PProgress } from "p-progress";
 
 export const uploadBlocks = async (file: Blob, sasUrl: string, progressNotifier?: ProgressNotifier) => {
-  // 4MB block size (adjust as needed)
   const blockSize = 4 * MEGABYTE;
   const totalBlocks = Math.ceil(file.size / blockSize);
   const promises: Promise<Response>[] = [];

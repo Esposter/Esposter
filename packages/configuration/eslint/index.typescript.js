@@ -5,22 +5,20 @@ import restrictedTestSyntaxes from "@esposter/configuration/eslint/restrictedTes
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
 
 import { withNuxt } from "../../app/.nuxt/eslint.config.mjs";
-// TypescriptRules is now just the surviving `no-restricted-syntax` bans (everything else moved to oxlint), scoped to
-// The `.ts` source these non-Vue packages hold.
+// The rules are the `no-restricted-syntax` bans oxlint cannot express, scoped to the `.ts` source these
+// Non-Vue packages hold.
 export default withNuxt(plugins, {
   files: ["**/*.ts"],
   rules: typescriptRules,
 })
   .overrides(nuxtOverrides)
   .append(oxlint)
-  // `public` is generated/static assets (incl. generated tileset `.tsx`); oxlint already ignores it,
-  // So skip it here too — otherwise eslint walks the whole 64MB tree calculating config per file.
-  // A test file carries the script-side bans plus its own — a typed `vi.fn` — which is the same
-  // Carry-the-base-over shape the date bans use above.
   .append({
     files: ["**/*.test.ts"],
     rules: {
       "no-restricted-syntax": ["error", ...typescriptRules["no-restricted-syntax"].slice(1), ...restrictedTestSyntaxes],
     },
   })
+  // `public` is generated/static assets, the generated tileset `.tsx` included, and oxlint already ignores
+  // It. Skipping it here too keeps eslint from walking the whole tree calculating a config per file.
   .append({ ignores: ["**/*.md", "public/**"] });

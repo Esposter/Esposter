@@ -17,8 +17,8 @@ describe(useRecordResourceAccess, () => {
   });
 
   // Recent is read once per session, so the visit this records stays invisible to Home until the write drops
-  // That cache. Recording the visit and leaving the cached ordering alone is what left Recent stale for a
-  // Whole session — listing the set as it was before anything was opened
+  // That cache. Recording the visit and leaving the cached ordering alone leaves Recent stale for a whole
+  // Session, listing the set as it was before anything was opened
   test("invalidates the recency caches once the visit is recorded", async () => {
     expect.hasAssertions();
 

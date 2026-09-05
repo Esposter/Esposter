@@ -41,8 +41,6 @@ const visibleCategories = computed(() =>
 // Discord heads the first category with the server name itself
 const getCategoryTitle = (category: SettingsCategory) => (category === SettingsCategory.General ? room.name : category);
 const openedCategories = ref([...SettingsCategories]);
-// One key, but as a stable reference: a literal in the binding allocates a fresh array every render, and the
-// Indicator watches what it is handed
 const activeKeys = computed(() => [modelValue.value]);
 const onClick = (settingsType: SettingsType) => {
   if (settingsType === SettingsType.Delete) emit("open:delete");

@@ -51,7 +51,7 @@ describe(useFlowchartEditorStore, () => {
   });
 
   // The canvas emits `update:nodes` on every drag frame, so the blade's debounced autosave fires whether or
-  // Not the graph changed. Stamping the content's `updatedAt` per save made each of those a real write
+  // Not the graph changed — stamping the content's `updatedAt` per save turns each of those into a real write
   test("skips a save that changed nothing since the load", async () => {
     expect.hasAssertions();
 

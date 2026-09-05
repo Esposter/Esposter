@@ -165,7 +165,7 @@ describe(searchEmojis, () => {
   test("matches on keywords, not only on names", () => {
     expect.hasAssertions();
 
-    // The query `node-emoji` returned nothing for: `happy` is a keyword of 😀 and appears in no name
+    // `happy` is a keyword of 😀 and appears in no name, so only the keyword blob can match it
     expect(searchUnicodeEmojis("happy").map(({ character }) => character)).toContain(GRINNING_FACE);
   });
 
@@ -179,12 +179,11 @@ describe(searchEmojis, () => {
   test("treats punctuation as a delimiter rather than compiling it", () => {
     expect.hasAssertions();
 
-    // `node-emoji` threw `SyntaxError: Invalid regular expression` on exactly this input
     expect(searchEmojis("((")).toStrictEqual([]);
     expect(searchEmojis("grin(").map(({ slug }) => slug)).toContain("grinning_face");
   });
 
-  test("finds an emoji newer than the dataset the retired library shipped", () => {
+  test("finds an emoji from a recent Unicode release", () => {
     expect.hasAssertions();
 
     expect(searchUnicodeEmojis("melting").map(({ character }) => character)).toContain(MELTING_FACE);

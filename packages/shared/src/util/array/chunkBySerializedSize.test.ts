@@ -24,8 +24,6 @@ describe(chunkBySerializedSize, () => {
     ]);
   });
 
-  // The budget is the size of the request the service receives, which is the whole serialized array — a chunk
-  // Measured as its items alone is accepted at the cap and rejected one byte over it
   test("counts the enclosing brackets against the byte budget", () => {
     expect.hasAssertions();
 
@@ -42,15 +40,12 @@ describe(chunkBySerializedSize, () => {
     expect(chunkBySerializedSize(["a", "b", "c"], maxBytes, 2)).toStrictEqual([["a", "b"], ["c"]]);
   });
 
-  // A count-only bound would ship requests the service rejects: the same count of maximal multi-byte text
-  // Serializes to several times the size of its ASCII equivalent
   test("measures serialized bytes, not characters", () => {
     expect.hasAssertions();
 
     expect(chunkBySerializedSize(["🙂", "🙂"], 9, maxCount)).toStrictEqual([["🙂"], ["🙂"]]);
   });
 
-  // Dropping it would silently strand whatever it named, so it fails loudly at the service instead
   test("gives an item that exceeds the budget on its own its own chunk", () => {
     expect.hasAssertions();
 

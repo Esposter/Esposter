@@ -11,8 +11,7 @@ export const useFixedLayoutStyles = (
 ) => {
   const layoutStore = useLayoutStore();
   const { isDesktop, isLeftDrawerOpen, isRightDrawerOpen } = storeToRefs(layoutStore);
-  // We only need to offset the middle if we are on desktop
-  // As the drawers are floating on non-desktop screens
+  // The drawers float on non-desktop screens, so only a desktop layout owes the middle an offset
   const middleLeftOffset = computed(() => (isDesktop.value && isLeftDrawerOpen.value ? toValue(leftWidth) : 0));
   const middleRightOffset = computed(() => (isDesktop.value && isRightDrawerOpen.value ? toValue(rightWidth) : 0));
   return {

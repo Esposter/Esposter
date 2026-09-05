@@ -42,7 +42,6 @@ export const readMessages = async ({
     clauses.push({ key: StandardMessageEntityPropertyNames.isPinned, operator: BinaryOperator.eq, value: true });
 
   if (order === SortOrder.Asc) {
-    // 1. Get ascending ids from the index table (MessagesAscending)
     const indexClauses: Clause<MessageEntity>[] = [
       { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
     ];
@@ -52,7 +51,6 @@ export const readMessages = async ({
       filter: serializeClauses(indexClauses),
     });
     if (indices.length === 0) return getCursorPaginationData([], 0, []);
-    // 2. Join by ids from main table
     const { hasMore, items, nextCursor } = getCursorPaginationData(indices, limit, sortBy);
     const messageClient = await useTableClient(AzureTable.Messages);
     for (const { rowKey } of items)
@@ -61,21 +59,20 @@ export const readMessages = async ({
         operator: BinaryOperator.eq,
         value: getReverseTickedTimestamp(rowKey),
       });
-    // No need to fetch limit + 1 here; the index table determines the pagination metadata.
+    // The index table already decided the pagination metadata, so this join fetches no extra row
     const messages = await getTopNEntitiesByType(messageClient, limit, MessageTypeEntityMap, {
       filter: serializeClauses(clauses),
     });
-    // The Messages table scans newest-first (reverse-ticked rowKey), so re-project onto the ascending
-    // Sequence the MessagesAscending index established rather than trusting the join's scan order.
+    // The Messages table scans newest-first on its reverse-ticked rowKey, so the rows are re-projected onto the
+    // Ascending sequence the index established rather than trusting the join's scan order.
     //
-    // An index row the join cannot match is dropped and the cursor still advances past it. **The cursor must never
-    // Be held on such a row**, however briefly: the same shape is produced by a soft delete (`deleteMessage` stamps
-    // `deletedAt`, which the join filters, and leaves the index row), so a hole says nothing about whether an entity
-    // Is coming; and every caller advances only by `nextCursor` while `hasMore` is set (`onCreateMessage`'s catch-up
-    // Loop, the newer-messages waypoint), so returning the incoming cursor with `hasMore` is not a wait — it is a
-    // Hot loop that never terminates. The write-side window this leaves is bounded instead: `createMessage` drops
-    // The index row when the entity write fails, so a hole outlives one in-flight write only when that compensating
-    // Delete also fails ([messaging](/docs/esbabbler/messaging)).
+    // An index row the join cannot match is dropped and the cursor still advances past it, and the cursor must
+    // Never be held on such a row: a soft delete produces the same shape — `deleteMessage` stamps `deletedAt`,
+    // Which the join filters, and leaves the index row — so a hole says nothing about whether an entity is
+    // Coming, and every caller advances only by `nextCursor` while `hasMore` is set, making a returned incoming
+    // Cursor a hot loop rather than a wait. The write-side window is bounded instead: `createMessage` drops the
+    // Index row when the entity write fails, so a hole outlives one in-flight write only when that compensating
+    // Delete also fails ([messaging](/docs/esbabbler/messaging))
     const messageMap = new Map(messages.map((message) => [message.rowKey, message]));
     const ascendingMessages = items.flatMap((index) => {
       const message = messageMap.get(getReverseTickedTimestamp(index.rowKey));
@@ -83,7 +80,6 @@ export const readMessages = async ({
     });
     return { hasMore, items: ascendingMessages, nextCursor };
   }
-  // Default: Desc via reverse-ticked RowKey (efficient)
   if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
   const messageClient = await useTableClient(AzureTable.Messages);
   const messages = await getTopNEntitiesByType(messageClient, limit + 1, MessageTypeEntityMap, {

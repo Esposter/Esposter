@@ -13,8 +13,7 @@ export const usePlayAnimation = (
       playAnimationKey.value = startSpritesheetKey;
       return;
     }
-    // We'll assume here that if we're setting isActive to false,
-    // Then that means that we've completed our animation
+    // Deactivating is how the caller says the animation finished
     playAnimationKey.value = undefined;
     emit("complete");
   });

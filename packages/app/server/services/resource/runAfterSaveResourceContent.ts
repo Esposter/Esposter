@@ -14,15 +14,15 @@ export const runAfterSaveResourceContent = (
 ): void => {
   const afterSaveResourceContent = ResourceAfterSaveContentMap[resource.type];
   if (!afterSaveResourceContent) return;
-  // The hook is reached through a runtime resource type, so its parameters collapse to the intersection of
-  // Every content shape; both contents were parsed by that same type's contentSchema on the way in, so they
-  // Are pinned back to what the hook declares
+  // Reached through a runtime resource type, so the hook's parameters collapse to the intersection of every
+  // Content shape; both contents were parsed by that same type's contentSchema on the way in, so they are pinned
+  // Back to what the hook declares
   const runHook = afterSaveResourceContent as (
     ctx: AuthedContext,
     resource: Resource,
     content: unknown,
     previousContent: unknown,
   ) => Promise<void>;
-  // Fire-and-forget: the hook is best-effort and the write must never wait on it or fail because of it
+  // Not awaited — a failure costs whatever the hook derives, never the content write it hangs off
   getSynchronizedFunction(runHook)(ctx, resource, content, previousContent);
 };

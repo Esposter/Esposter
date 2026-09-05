@@ -74,7 +74,7 @@ describe(incrementMentionCounts, () => {
       { status: UserStatus.Online, userId: neverUserId },
       { status: UserStatus.Online, userId: roleMemberUserId },
       { status: UserStatus.Online, userId: senderUserId },
-      // NullStatusUserId intentionally has no status row (null status = treated as online for @here)
+      // The null-status user has no status row on purpose: a null status counts as online for @here
     ]);
   });
 

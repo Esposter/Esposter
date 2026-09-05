@@ -34,114 +34,108 @@ describe(usePasteRangeFromClipboard, () => {
     vi.unstubAllGlobals();
   });
 
-  describe("overwrite mode", () => {
-    test("overwrites cells at selection anchor", async () => {
-      expect.hasAssertions();
+  test("overwrites cells at the selection anchor", async () => {
+    expect.hasAssertions();
 
-      const { dataSource } = setupWithDataSource(
-        createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "1", b: "2" })]),
-      );
-      readTextMock.mockResolvedValueOnce("10\t20");
-      selectAnchor(0, 0);
-      const pasteRangeFromClipboard = usePasteRangeFromClipboard();
-      await pasteRangeFromClipboard();
+    const { dataSource } = setupWithDataSource(
+      createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "1", b: "2" })]),
+    );
+    readTextMock.mockResolvedValueOnce("10\t20");
+    selectAnchor(0, 0);
+    const pasteRangeFromClipboard = usePasteRangeFromClipboard();
+    await pasteRangeFromClipboard();
 
-      expect(takeOne(dataSource.rows).data.a).toBe("10");
-      expect(takeOne(dataSource.rows).data.b).toBe("20");
-    });
-
-    test("overwrites only columns starting at column anchor", async () => {
-      expect.hasAssertions();
-
-      const { dataSource } = setupWithDataSource(
-        createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "1", b: "2" })]),
-      );
-      readTextMock.mockResolvedValueOnce("99");
-      selectAnchor(0, 1);
-      const pasteRangeFromClipboard = usePasteRangeFromClipboard();
-      await pasteRangeFromClipboard();
-
-      expect(takeOne(dataSource.rows).data.a).toBe("1");
-      expect(takeOne(dataSource.rows).data.b).toBe("99");
-    });
-
-    test("appends new rows when pasted data extends past the last row", async () => {
-      expect.hasAssertions();
-
-      const { dataSource } = setupWithDataSource(createSingleCellDataSource());
-      readTextMock.mockResolvedValueOnce("2\n3");
-      selectAnchor(1, 0);
-      const pasteRangeFromClipboard = usePasteRangeFromClipboard();
-      await pasteRangeFromClipboard();
-      const sheetHistoryStore = useSheetHistoryStore();
-      const { undo } = sheetHistoryStore;
-
-      expect(dataSource.rows).toHaveLength(3);
-      expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
-      expect(takeOne(dataSource.rows, 2).data.a).toBe("3");
-
-      undo(dataSource);
-
-      expect(dataSource.rows).toHaveLength(1);
-    });
-
-    test("appends at end when no cell is selected", async () => {
-      expect.hasAssertions();
-
-      const { dataSource } = setupWithDataSource(createSingleCellDataSource());
-      readTextMock.mockResolvedValueOnce("2");
-      const pasteRangeFromClipboard = usePasteRangeFromClipboard();
-      await pasteRangeFromClipboard();
-
-      expect(dataSource.rows).toHaveLength(2);
-      expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
-    });
-
-    test("coerces pasted values to target column type", async () => {
-      expect.hasAssertions();
-
-      const { dataSource } = setupWithDataSource(createDataSource([createNumberColumn("n")], [createRow({ n: 1 })]));
-      readTextMock.mockResolvedValueOnce("42");
-      selectAnchor(0, 0);
-      const pasteRangeFromClipboard = usePasteRangeFromClipboard();
-      await pasteRangeFromClipboard();
-
-      expect(takeOne(dataSource.rows).data.n).toBe(42);
-    });
+    expect(takeOne(dataSource.rows).data.a).toBe("10");
+    expect(takeOne(dataSource.rows).data.b).toBe("20");
   });
 
-  describe("shift down mode", () => {
-    test("inserts rows at anchor row position", async () => {
-      expect.hasAssertions();
+  test("overwrites only the columns from the column anchor on", async () => {
+    expect.hasAssertions();
 
-      const { dataSource } = setupWithDataSource(
-        createDataSource([createColumn("a")], [createRow({ a: "1" }), createRow({ a: "3" })]),
-      );
-      readTextMock.mockResolvedValueOnce("2");
-      selectAnchor(1, 0);
-      const pasteRangeFromClipboard = usePasteRangeFromClipboard();
-      await pasteRangeFromClipboard(PasteMode.ShiftDown);
+    const { dataSource } = setupWithDataSource(
+      createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "1", b: "2" })]),
+    );
+    readTextMock.mockResolvedValueOnce("99");
+    selectAnchor(0, 1);
+    const pasteRangeFromClipboard = usePasteRangeFromClipboard();
+    await pasteRangeFromClipboard();
 
-      expect(dataSource.rows).toHaveLength(3);
-      expect(takeOne(dataSource.rows).data.a).toBe("1");
-      expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
-      expect(takeOne(dataSource.rows, 2).data.a).toBe("3");
-    });
+    expect(takeOne(dataSource.rows).data.a).toBe("1");
+    expect(takeOne(dataSource.rows).data.b).toBe("99");
   });
 
-  describe("no-op cases", () => {
-    test("no-op when clipboard text is empty", async () => {
-      expect.hasAssertions();
+  test("appends new rows when the pasted data extends past the last row", async () => {
+    expect.hasAssertions();
 
-      const { dataSource } = setupWithDataSource(createSingleCellDataSource());
-      readTextMock.mockResolvedValueOnce("");
-      selectAnchor(0, 0);
-      const pasteRangeFromClipboard = usePasteRangeFromClipboard();
-      await pasteRangeFromClipboard();
-      const sheetHistoryStore = useSheetHistoryStore();
+    const { dataSource } = setupWithDataSource(createSingleCellDataSource());
+    readTextMock.mockResolvedValueOnce("2\n3");
+    selectAnchor(1, 0);
+    const pasteRangeFromClipboard = usePasteRangeFromClipboard();
+    await pasteRangeFromClipboard();
+    const sheetHistoryStore = useSheetHistoryStore();
+    const { undo } = sheetHistoryStore;
 
-      expect(sheetHistoryStore.isUndoable).toBe(false);
-      expect(takeOne(dataSource.rows).data.a).toBe("1");
-    });
+    expect(dataSource.rows).toHaveLength(3);
+    expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
+    expect(takeOne(dataSource.rows, 2).data.a).toBe("3");
+
+    undo(dataSource);
+
+    expect(dataSource.rows).toHaveLength(1);
+  });
+
+  test("appends at the end when no cell is selected", async () => {
+    expect.hasAssertions();
+
+    const { dataSource } = setupWithDataSource(createSingleCellDataSource());
+    readTextMock.mockResolvedValueOnce("2");
+    const pasteRangeFromClipboard = usePasteRangeFromClipboard();
+    await pasteRangeFromClipboard();
+
+    expect(dataSource.rows).toHaveLength(2);
+    expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
+  });
+
+  test("coerces pasted values to the target column type", async () => {
+    expect.hasAssertions();
+
+    const { dataSource } = setupWithDataSource(createDataSource([createNumberColumn("n")], [createRow({ n: 1 })]));
+    readTextMock.mockResolvedValueOnce("42");
+    selectAnchor(0, 0);
+    const pasteRangeFromClipboard = usePasteRangeFromClipboard();
+    await pasteRangeFromClipboard();
+
+    expect(takeOne(dataSource.rows).data.n).toBe(42);
+  });
+
+  test("inserts rows at the anchor row in shift-down mode", async () => {
+    expect.hasAssertions();
+
+    const { dataSource } = setupWithDataSource(
+      createDataSource([createColumn("a")], [createRow({ a: "1" }), createRow({ a: "3" })]),
+    );
+    readTextMock.mockResolvedValueOnce("2");
+    selectAnchor(1, 0);
+    const pasteRangeFromClipboard = usePasteRangeFromClipboard();
+    await pasteRangeFromClipboard(PasteMode.ShiftDown);
+
+    expect(dataSource.rows).toHaveLength(3);
+    expect(takeOne(dataSource.rows).data.a).toBe("1");
+    expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
+    expect(takeOne(dataSource.rows, 2).data.a).toBe("3");
+  });
+
+  test("writes nothing when the clipboard text is empty", async () => {
+    expect.hasAssertions();
+
+    const { dataSource } = setupWithDataSource(createSingleCellDataSource());
+    readTextMock.mockResolvedValueOnce("");
+    selectAnchor(0, 0);
+    const pasteRangeFromClipboard = usePasteRangeFromClipboard();
+    await pasteRangeFromClipboard();
+    const sheetHistoryStore = useSheetHistoryStore();
+
+    expect(sheetHistoryStore.isUndoable).toBe(false);
+    expect(takeOne(dataSource.rows).data.a).toBe("1");
   });
 });

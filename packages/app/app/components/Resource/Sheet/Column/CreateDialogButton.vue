@@ -15,7 +15,6 @@ interface Props {
 
 const { dataSource } = defineProps<Props>();
 const createColumn = useCreateColumn();
-// StructuredClone to a plain object: vjsf rejects class instances, and fast-deep-equal compares constructors.
 const initialColumn = structuredClone(ColumnTypeCreateMap[ColumnType.String].create());
 const editedColumn = ref<Column>(structuredClone(initialColumn));
 const jsonSchema = zodToJsonSchema(columnFormSchema);

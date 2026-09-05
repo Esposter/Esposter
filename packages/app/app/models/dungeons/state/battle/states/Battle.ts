@@ -9,17 +9,12 @@ import { useActionStore } from "@/store/dungeons/battle/action";
 export const Battle: State<StateName> = {
   name: StateName.Battle,
   onEnter: async () => {
-    /**
-     * 1. Show attack used
-     * 2. Brief pause
-     * 3. Play attack animation
-     * 4. Brief pause
-     * 5. Play damage animation
-     * 6. Brief pause
-     * 7. Play health bar animation
-     * 8. Brief pause
-     * 9. Repeat the steps above for the other monster if necessary
-     */
+    // The attack sequence, each step separated by a brief pause:
+    // 1. Show attack used
+    // 2. Play attack animation
+    // 3. Play damage animation
+    // 4. Play health bar animation
+    // 5. Repeat for the other monster if necessary
     const actionStore = useActionStore();
     const { attackStatePriorityMap } = storeToRefs(actionStore);
     attackStatePriorityMap.value = useAttackStatePriorityMap();

@@ -7,7 +7,7 @@ import { z } from "zod";
 // Operation's wording depends on what the caller did — one resource or fifty, a version number, the name a row
 // Had before it was deleted — none of which survives to delivery time, so the mutation that knows it composes it.
 //
-// ExcludedSessionId is the session that performed the operation. It already showed the toast synchronously, so
+// The excluded session is the one that performed the operation. It already showed the toast synchronously, so
 // Its own device is the one recipient that must not be pushed; every other session of the same user is.
 export interface ResourceOperationNotificationData extends ItemEntityType<AppNotificationType.ResourceOperation> {
   body?: string;

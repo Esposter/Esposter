@@ -4,13 +4,9 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { SnapshotSummaryMap } from "#shared/services/resource/SnapshotSummaryMap";
 import { getResult } from "@esposter/shared";
 
-// The one line a history row says about its own content, computed where the snapshot is taken and carried in
-// Its blob metadata — the listing is one round trip for the whole history, and a summary derived on read would
-// Cost one download per row.
-//
-// Best-effort by design: a snapshot is stored as the bytes it was taken from rather than as whatever today's
-// Schema can parse out of them, so content this schema cannot read still becomes a snapshot. It simply has no
-// Summary, and the row falls back to its reason, its label and its time
+// Computes the line SnapshotSummaryMap declares, at the moment a snapshot is taken. Best-effort, because a
+// Snapshot stores the bytes it was taken from rather than whatever today's schema can parse out of them: content
+// This schema cannot read still becomes a snapshot, with the row falling back to its reason, label and time
 export const getSnapshotSummary = (type: ResourceType, serializedContent: string): string => {
   const summarize = SnapshotSummaryMap[type];
   if (!summarize) return "";
@@ -21,7 +17,7 @@ export const getSnapshotSummary = (type: ResourceType, serializedContent: string
   ).unwrapOr(undefined);
   if (!parsedContent?.success) return "";
   // Reached through a runtime resource type, so the parameter collapses to the intersection of every content
-  // Shape; the content was parsed by that same type's schema on the line above, so it is pinned back to what
-  // The declaration takes — the same narrowing `reapplyLiveResourceContent` does one layer up
+  // Shape; the line above parsed the content with that same type's schema, so it is pinned back to what the
+  // Declaration takes
   return (summarize as (content: unknown) => string)(parsedContent.data);
 };

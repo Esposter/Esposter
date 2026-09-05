@@ -19,9 +19,9 @@ describe(useSurveyResponse, () => {
     setActivePinia(createPinia());
   });
 
-  // A respondent who answers and immediately submits leaves the create in flight, so the submit used to be
-  // Dropped outright as a duplicate call while still reporting the answers saved — the row then holds only
-  // What the earlier autosave carried, and the resume id the caller clears takes the rest with it
+  // A respondent who answers and immediately submits leaves the create in flight, so a submit dropped outright
+  // As a duplicate call would still report the answers saved — the row then holds only what the earlier
+  // Autosave carried, and the resume id the caller clears takes the rest with it
   test("a submit racing an in-flight create still persists the submitted answers", async () => {
     expect.hasAssertions();
 
@@ -43,8 +43,8 @@ describe(useSurveyResponse, () => {
     expect(updatedModel).toStrictEqual(submittedModel);
   });
 
-  // The mutation reports a rejection rather than throwing it, so a caller that wrapped the save in a Result
-  // Always took the success branch — the respondent was thanked for a response nothing ever stored
+  // The mutation reports a rejection rather than throwing it, so a caller that wraps the save in a Result
+  // Always takes the success branch, thanking the respondent for a response nothing ever stored
   test("reports a rejected save as unpersisted", async () => {
     expect.hasAssertions();
 

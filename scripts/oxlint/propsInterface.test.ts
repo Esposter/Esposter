@@ -1,7 +1,6 @@
 import { setupPluginSuite } from "#scripts/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
-// Both rules are oxlint JS plugins; the harness that runs them over these fixtures is setupPluginSuite.
 const EXPORTED_TYPE_RULE = "props-interface/no-exported-type";
 const PROPS_NAME_RULE = "props-interface/require-props-name";
 

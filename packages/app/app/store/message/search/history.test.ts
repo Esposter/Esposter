@@ -81,8 +81,8 @@ describe(useSearchHistoryStore, () => {
     expect(items.value.map((searchHistory) => searchHistory.id)).toStrictEqual([id]);
   });
 
-  // Rows are keyed per entry, so an edit and another row's removal never queue against each other. The rejected
-  // Edit owes back only the fields it wrote — reinstating the list resurrects the row the removal took out
+  // Rows are keyed per entry, so an edit and another row's removal never queue against each other and the
+  // Rejected edit owes back only the fields it wrote
   test("restores only the row whose edit was rejected", async () => {
     expect.hasAssertions();
 
@@ -109,8 +109,7 @@ describe(useSearchHistoryStore, () => {
     expect(takeOne(items.value).query).toBe(originalQuery);
   });
 
-  // The failing removal is the one that applied first, so its rollback lands after the other has persisted:
-  // Putting back the list it was sent against resurrects the row that removal dropped
+  // The failing removal is the one that applied first, so its rollback lands after the other has persisted
   test("puts back only the row whose removal was rejected", async () => {
     expect.hasAssertions();
 

@@ -15,12 +15,10 @@ import { DatabaseEntityType, likes, posts } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
-// The three vote writes all read the same slice of the post and all rewrite the same pair of columns, so the
-// Projection and the recount live once — a ranking input added here can never reach only two of them.
-// Every one of them is a read-modify-write of `likeCount`, so the row is locked for the rest of the transaction:
+// Every vote write is a read-modify-write of `likeCount`, so the row is locked for the rest of the transaction:
 // Two votes landing together would otherwise both read the pre-vote count and the later write would replace
-// Rather than add, losing a vote and leaving `ranking` derived from a count that never existed. The lock is what
-// Lets `getPostRanking` stay the one ranking formula — a SQL-side increment would need a second copy of it
+// Rather than add, losing a vote and leaving `ranking` derived from a count that never existed. The lock is also
+// What lets `getPostRanking` stay the one ranking formula, since a SQL-side increment could not call it
 const readLikedPost = async (tx: Transaction, postId: string) =>
   (
     await tx
@@ -75,7 +73,6 @@ export const likeRouter = router({
   ),
   deleteLike: standardAuthedProcedure.input(deleteLikeInputSchema).mutation<Like>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
-      // Get post with current like count in a single query
       const post = await requireEntity(readLikedPost(tx, input), DatabaseEntityType.Post, input);
       const deletedLike = requireMutation(
         (

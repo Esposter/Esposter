@@ -1,18 +1,17 @@
-// Greedy chunking against a serialized-JSON byte budget and a count, for every payload an API caps by request
-// Size — Event Grid's 1 MB event and its 1 MB publish request both. Neither bound implies the other: the items are
-// User text (a filename, an event payload), so one chunk of maximal CJK or emoji serializes to several times the
-// Size of the same count in ASCII, while a blob of many tiny events clears the byte budget and is still rejected
-// Whole at the service's event limit — so both are required rather than optional.
-// An item that exceeds the budget on its own still gets its own chunk: dropping it would silently strand whatever
-// It named, and one oversized item failing loudly is the better of the two.
-// Byte length is measured with TextEncoder rather than Buffer: this package is imported by the browser bundle,
-// Where the Node global does not exist
 // What a serialized array costs beyond its items: the two enclosing brackets, less the separating comma the
 // Per-item cost below charges the first item, which has nothing to separate it from. Charged to every chunk up
 // Front, so a chunk filled exactly to the budget serializes to the budget rather than one byte past it — and one
 // Byte past a request cap is rejected exactly as whole as a megabyte past it
 const ARRAY_SERIALIZATION_BYTES = 1;
 
+// The byte budget and the count bound are both required, since neither implies the other: the items are
+// User text (a filename, an event payload), so one chunk of maximal CJK or emoji serializes to several times
+// The size of the same count in ASCII, while a blob of many tiny events clears the byte budget and is still
+// Rejected whole at the service's own event limit.
+// An item that exceeds the budget on its own still gets its own chunk: dropping it would silently strand
+// Whatever it named, and one oversized item failing loudly is the better of the two.
+// Byte length is measured with TextEncoder rather than Buffer, since this package is imported by the browser
+// Bundle, where the Node global does not exist.
 export const chunkBySerializedSize = <T>(items: T[], maxBytes: number, maxCount: number): T[][] => {
   const textEncoder = new TextEncoder();
   const chunks: T[][] = [];

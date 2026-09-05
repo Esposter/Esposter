@@ -1,23 +1,24 @@
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
-import { NotFoundError } from "@esposter/shared";
+import { getResultAsync, noop, NotFoundError } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 
 describe(requireEntity, () => {
-  test("resolves with entity when query returns a value", async () => {
+  test("returns the entity when the query resolves with one", async () => {
     expect.hasAssertions();
 
     const entity = { id: "" };
-    const result = await requireEntity(Promise.resolve(entity), "Entity", "");
+    const returnedEntity = await requireEntity(Promise.resolve(entity), "Entity", "");
 
-    expect(result).toBe(entity);
+    expect(returnedEntity).toBe(entity);
   });
 
-  test("throws TRPCError with code NOT_FOUND when query returns undefined", async () => {
+  test("throws TRPCError with code NOT_FOUND when the query resolves with undefined", async () => {
     expect.hasAssertions();
 
-    await expect(requireEntity(Promise.resolve(undefined), "Entity", "1")).rejects.toMatchObject({
-      code: "NOT_FOUND",
-      message: new NotFoundError("Entity", "1").message,
+    await getResultAsync(() => requireEntity(Promise.resolve(undefined), "Entity", "1")).match(noop, (error) => {
+      expect((error as TRPCError).code).toBe("NOT_FOUND");
+      expect(error).toMatchInlineSnapshot(`[TRPCError: ${new NotFoundError("Entity", "1").message}]`);
     });
   });
 });

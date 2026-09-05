@@ -16,7 +16,6 @@ const isGroupedByType = defineModel<boolean>("isGroupedByType", { required: true
 const emit = defineEmits<{ export: []; refresh: [] }>();
 // When narrow, the toolbar commands collapse into the … overflow menu — the close ✕ never collapses
 const { smAndDown } = useVDisplay();
-// The ✕ peels back to wherever the trail says the visitor came from, so it and the last crumb are one move
 const navigationTrailStore = useNavigationTrailStore();
 const { closeTo } = storeToRefs(navigationTrailStore);
 const toolbarItems = computed<Item[]>(() => [

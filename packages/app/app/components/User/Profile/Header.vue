@@ -11,9 +11,9 @@ interface Props {
 
 const { user, userId } = defineProps<Props>();
 const { data: session } = await authClient.useSession(useFetch);
-// Looking at your own profile is the moment the avatar or the biography reads wrong, and until now the only way
-// To act on that was to leave for the settings page and find it. The form itself stays there — this is the entry
-// Point beside it, which is where every reference profile puts one
+// Looking at your own profile is the moment the avatar or the biography reads wrong, so the way to act on it is
+// Here rather than a trip to the settings page. The form itself lives there — this is the entry point beside it,
+// Which is where every reference profile puts one
 const isCurrentUser = computed(() => session.value?.user.id === userId);
 </script>
 

@@ -27,7 +27,6 @@ describe("resourceSheetRowTable", () => {
 
   const mountWithDataSource = async (dataSource: DataSource) => {
     wrapper = await mountSuspended(ResourceSheetRowTable, { props: { dataSource } });
-    // Resolved after the mount so they are the same stores the component injected from the nuxt app's pinia
     setupWithDataSource(dataSource);
     await nextTick();
     return useRowStore();
@@ -57,7 +56,6 @@ describe("resourceSheetRowTable", () => {
     const row = createRow({ [name]: "" });
     const dataSource = createDataSource([createColumn(name)], [row]);
     wrapper = await mountSuspended(ResourceSheetRowTable, { props: { dataSource }, shallow: true });
-    // Resolved after the mount so they are the same stores the component injected from the nuxt app's pinia
     setupWithDataSource(dataSource);
     const rowDialogStore = useRowDialogStore();
     const filterStore = useFilterStore();

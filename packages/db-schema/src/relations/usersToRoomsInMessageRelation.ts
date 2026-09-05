@@ -19,7 +19,7 @@ export const usersToRoomsInMessageRelation = defineRelationsPart(schema, (r) => 
     }),
   },
 }));
-// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
+
 export const UserToRoomInMessageRelations = {
   roomInMessage: true,
   user: true,

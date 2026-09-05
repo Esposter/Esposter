@@ -13,31 +13,18 @@ const createTransformation = (datePartType: DatePartType): DatePartTransformatio
 });
 
 describe(computeDatePartTransformation, () => {
-  test("extracts each date part from its source format", () => {
+  // Month is 1-indexed and weekday is 0-indexed from Sunday
+  test.each([
+    [DatePartType.Year, 1970, DateFormat["YYYY-MM-DD"], "1970-01-01"],
+    [DatePartType.Month, 1, DateFormat["YYYY-MM-DD"], "1970-01-01"],
+    [DatePartType.Day, 2, DateFormat["YYYY-MM-DD"], "1970-01-02"],
+    [DatePartType.Weekday, 4, DateFormat["YYYY-MM-DD"], "1970-01-01"],
+    [DatePartType.Hour, 0, DateFormat["YYYY-MM-DDTHH:mm:ss"], "1970-01-01T00:00:00"],
+    [DatePartType.Minute, 0, DateFormat["YYYY-MM-DDTHH:mm:ss"], "1970-01-01T00:00:00"],
+  ] as const)("extracts the %s from its source format", (datePartType, expected, format, value) => {
     expect.hasAssertions();
 
-    // Month is 1-indexed and weekday is 0-indexed from Sunday
-    const cases: { datePartType: DatePartType; expected: number; format: DateFormat; value: string }[] = [
-      { datePartType: DatePartType.Year, expected: 1970, format: DateFormat["YYYY-MM-DD"], value: "1970-01-01" },
-      { datePartType: DatePartType.Month, expected: 1, format: DateFormat["YYYY-MM-DD"], value: "1970-01-01" },
-      { datePartType: DatePartType.Day, expected: 2, format: DateFormat["YYYY-MM-DD"], value: "1970-01-02" },
-      { datePartType: DatePartType.Weekday, expected: 4, format: DateFormat["YYYY-MM-DD"], value: "1970-01-01" },
-      {
-        datePartType: DatePartType.Hour,
-        expected: 0,
-        format: DateFormat["YYYY-MM-DDTHH:mm:ss"],
-        value: "1970-01-01T00:00:00",
-      },
-      {
-        datePartType: DatePartType.Minute,
-        expected: 0,
-        format: DateFormat["YYYY-MM-DDTHH:mm:ss"],
-        value: "1970-01-01T00:00:00",
-      },
-    ];
-
-    for (const { datePartType, expected, format, value } of cases)
-      expect(computeDatePartTransformation(value, createTransformation(datePartType), format)).toBe(expected);
+    expect(computeDatePartTransformation(value, createTransformation(datePartType), format)).toBe(expected);
   });
 
   test("returns null for invalid date", () => {

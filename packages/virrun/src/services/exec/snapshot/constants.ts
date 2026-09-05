@@ -19,7 +19,7 @@ export const VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME = "leases";
 // The reap prefixes every pid-tagged capture/persist temp starts with inside a snapshot/prepare hash dir, ordered
 // Longest-first so a persist temp (`upper.persist.<pid>.<rand>`) matches its own prefix rather than the shorter
 // `upper.`. They never match the published bare `upper`/`work` (no trailing `.`) or the `leases/` sibling.
-// ReapStaleTemps reads the owner pid back out of each match (parseTempOwnerPid) and reclaims only a dead owner's corpse.
+// A `reapStaleTemps` pass reads the owner pid back out of each match (parseTempOwnerPid) and reclaims only a dead owner's corpse.
 export const VIRRUN_SNAPSHOT_TEMP_PREFIXES: readonly string[] = [
   `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.`,
   `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.`,

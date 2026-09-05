@@ -10,7 +10,6 @@ describe("richTextEditor", () => {
     setActivePinia(createPinia());
   });
 
-  // `useEditor` already registers its own teardown, so a second one here would tear the same editor down twice
   test("tears the editor down once on unmount", async () => {
     expect.hasAssertions();
 
@@ -18,6 +17,6 @@ describe("richTextEditor", () => {
     const component = await mountSuspended(RichTextEditor, { props: { limit: 100, modelValue: "" } });
     component.unmount();
 
-    expect(destroy).toHaveBeenCalledTimes(1);
+    expect(destroy).toHaveBeenCalledExactlyOnceWith();
   });
 });

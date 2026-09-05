@@ -5,16 +5,13 @@ import { asc, desc, getColumns } from "drizzle-orm";
 import { describe, expect, test } from "vitest";
 
 describe(parseSortByToSql, () => {
-  test(SortOrder.Asc, () => {
+  test.each([
+    [SortOrder.Asc, asc(users.id)],
+    [SortOrder.Desc, desc(users.id)],
+  ] as const)("orders %s", (order, expected) => {
     expect.hasAssertions();
 
-    expect(parseSortByToSql(users, [{ key: "id", order: SortOrder.Asc }])).toStrictEqual([asc(users.id)]);
-  });
-
-  test(SortOrder.Desc, () => {
-    expect.hasAssertions();
-
-    expect(parseSortByToSql(users, [{ key: "id", order: SortOrder.Desc }])).toStrictEqual([desc(users.id)]);
+    expect(parseSortByToSql(users, [{ key: "id", order }])).toStrictEqual([expected]);
   });
 
   // The resource list sorts by a column that lives on the joined access row rather than on `resources`, so it

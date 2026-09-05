@@ -152,8 +152,7 @@ export const useDataStore = defineStore("message/data", () => {
 
     await executeMutation(() => $trpc.message.deleteFile.mutate({ id, ...compositeKey }), {
       // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success. Read as the
-      // Write is sent and unwound one attachment at a time: reinstating the list this call was issued with would
-      // Resurrect a file a concurrent deletion already removed and drop whatever arrived while it was in flight
+      // Write is sent, and unwound one attachment at a time
       applyOptimistic: () => {
         const deletedFile = message.files.find((file) => file.id === id);
         baseStoreUpdateMessage({ ...compositeKey, files: message.files.filter((file) => file.id !== id) });

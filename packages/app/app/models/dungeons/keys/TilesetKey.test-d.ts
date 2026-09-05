@@ -9,8 +9,7 @@ describe("tilesetKey type", () => {
     expect.hasAssertions();
 
     expectTypeOf(TilesetKey).toExtend<
-      // TilesetKey uses the same namespace as ImageKey & SpritesheetKey
-      // So we need to validate that we can't have conflicting values
+      // The three key enums share one namespace, so a value in two of them resolves to whichever loads last
       Partial<Record<ImageKey, never>> & Partial<Record<SpritesheetKey, never>> & Record<string, string>
     >();
   });

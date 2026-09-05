@@ -22,8 +22,6 @@ describe(useDirectMessageStore, () => {
 
   // Each participant is its own target, so removals overlap: the failing one is rolled back into a list the
   // Successful one has already shortened, and an index captured before that would put it back in the wrong place.
-  // The rejection is held until the successful removal has settled in the store — issued together, the reject
-  // Can land first and roll back against a list nothing has shortened yet, which passes either implementation
   test("restores a failed removal beside the participant that followed it", async () => {
     expect.hasAssertions();
 

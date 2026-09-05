@@ -1,4 +1,3 @@
-// @vitest-environment happy-dom
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
@@ -40,7 +39,7 @@ vi.mock(import("@@/server/services/message/moderation/assertCanCreateMessage"), 
   };
 });
 
-describe("scheduledMessageJob", () => {
+describe("scheduledMessageJobRouter", () => {
   const { createMember, getMockContext, getRoomCaller, getRoomId } = setupRoomSuite();
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
@@ -121,10 +120,11 @@ describe("scheduledMessageJob", () => {
 
     const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
     const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledMessageJobs();
+    const myScheduledMessageJob = takeOne(scheduledMessageJobs.items);
 
     expect(scheduledMessageJobs.items).toHaveLength(1);
-    expect(takeOne(scheduledMessageJobs.items).id).toBe(scheduledMessageJob.id);
-    expect(takeOne(scheduledMessageJobs.items).room.id).toBe(roomId);
+    expect(myScheduledMessageJob.id).toBe(scheduledMessageJob.id);
+    expect(myScheduledMessageJob.room.id).toBe(roomId);
   });
 
   test("reads my scheduled jobs count", async () => {

@@ -37,8 +37,8 @@ describe(getPushNotificationPayload, () => {
 
     const longBody = "a".repeat(PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH + 10);
     // Spelled out rather than computed with `truncate`, which is what the payload uses: an expectation built
-    // From the function under test cannot fail on what that function appends, and a stray character in the
-    // Suffix survived here for exactly that reason
+    // From the function under test cannot fail on what that function appends, so a stray character in the
+    // Suffix would pass unnoticed
     const truncatedBody = `${"a".repeat(PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH - 3)}...`;
 
     expect(getPushNotificationPayload({ body: longBody, path, severity, type })).toBe(

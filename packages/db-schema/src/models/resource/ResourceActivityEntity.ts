@@ -8,7 +8,8 @@ import { selectUserSchema } from "#src/schema/users";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
-// PartitionKey = resourceId, rowKey = reverseTickedTimestamp (newest-first without a sort).
+// `partitionKey` is the resourceId and `rowKey` the reverseTickedTimestamp, so a read is newest-first
+// Without a sort.
 // Payload fields are per-activityType and therefore all optional — Azure Table is schemaless per row.
 export class ResourceActivityEntity extends AzureEntity {
   declare activityType: ResourceActivityType;
@@ -28,9 +29,7 @@ export const ResourceActivityEntityPropertyNames = getPropertyNames<ResourceActi
 export const resourceActivityEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
-      // ResourceId
       partitionKey: z.uuid(),
-      // ReverseTickedTimestamp
       rowKey: z.string(),
     }),
   ).shape,

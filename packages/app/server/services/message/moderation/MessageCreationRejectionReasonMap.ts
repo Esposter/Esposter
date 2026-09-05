@@ -1,9 +1,8 @@
 import { MessageCreationRejectionType } from "@esposter/db-schema";
 
 // What the sender is told, per rule. The decision itself carries only its type — the same one the Function
-// Worker reads, where nobody is waiting to be told anything — so the sentence lives on the tRPC side that has
-// A person on the other end. Without it every rule reached the composer as its bare code, and "FORBIDDEN" says
-// Neither what stopped the message nor whether waiting would help
+// Worker reads, where nobody is waiting to be told anything — so the sentence lives here, on the tRPC side with a
+// Person on the other end, for whom a bare code says neither what stopped the message nor whether waiting helps
 export const MessageCreationRejectionReasonMap: Record<MessageCreationRejectionType, string> = {
   [MessageCreationRejectionType.NotAMember]: "You are not a member of this room.",
   [MessageCreationRejectionType.ReadOnly]: "This room is read-only.",

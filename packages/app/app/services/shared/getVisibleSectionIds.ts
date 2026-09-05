@@ -9,7 +9,7 @@ interface SectionAnchor {
 //
 // The top bound is compared in whole pixels because an anchor lands exactly on that line, give or
 // Take the sub-pixel rounding of the scroll. The sliver of the section above that leaves behind is not
-// Something anyone can see, and counting it made clicking a link light up the section before the one clicked
+// Something anyone can see, and counting it lights up the section before the one the link was clicked for
 export const getVisibleSectionIds = (sections: SectionAnchor[], viewportTop: number, viewportBottom: number) =>
   sections
     .filter(({ top }, index) => {

@@ -1,7 +1,7 @@
 import type { Context, ESTree, Plugin } from "@oxlint/plugins";
 
 import { definePlugin, defineRule } from "@oxlint/plugins";
-// Oxlint JS plugin enforcing the persist-then-notify standard (/docs/architecture/persist-then-notify).
+// An oxlint JS plugin enforcing the persist-then-notify standard (/docs/architecture/persist-then-notify).
 //
 // Once a function fires a realtime notify (`<name>EventEmitter.emit(...)`), the entity exists and the
 // Caller's outcome is decided — so every later `await` must be best-effort (never rejects) or the fatal

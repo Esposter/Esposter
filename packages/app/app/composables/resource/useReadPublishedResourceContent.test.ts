@@ -6,7 +6,7 @@ import { assert, describe, expect, test } from "vitest";
 describe(useReadPublishedResourceContent, () => {
   const name = "name";
 
-  // Every published view used to restate this derivation, so a view that forgot it unfurled the site name
+  // Derived once with the read rather than per view: a view that omits the derivation unfurls the site name
   // Instead of the resource. The head entry is asserted rather than the rendered document because the nuxt
   // Test runtime never leaves the paused-DOM state a hydrating client starts in
   test("titles the page and the og unfurl with the name of the resource it read", async () => {

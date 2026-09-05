@@ -5,9 +5,9 @@ import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
 import { on } from "@@/server/services/events/on";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { roomIdSchema } from "@esposter/db-schema";
-// The shared single-room subscription shape: forward `[data, device?]` events matching the input room to
-// Everyone in it. The device is the client that caused the event, and its own subscription skips it; an event
-// That carries none was caused by no single client, so there is nobody to skip and it reaches the whole room.
+// Forwards `[data, device?]` events matching the input room to everyone in it. The device is the client that
+// Caused the event, and its own subscription skips it; an event carrying none was caused by no single client,
+// So there is nobody to skip and it reaches the whole room.
 export const getRoomEventSubscription = <
   TKey extends keyof TEventMap & string,
   TEventMap extends Record<TKey, [[unknown, Device?]]>,

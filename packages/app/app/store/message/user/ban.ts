@@ -17,9 +17,7 @@ export const useBanStore = defineStore("message/user/ban", () => {
 
   const deleteBan = async (input: DeleteBanInput) => {
     await executeMutation(() => $trpc.message.moderation.deleteBan.mutate(input), {
-      // The one row this write lifts, not a copy of the list: unbans are keyed per ban and never queue against
-      // Each other, so reinstating the list would resurrect a ban another unban already lifted — and drop the
-      // Bans the moderation subscription delivered while this write was in flight
+      // The one row this write lifts — unbans are keyed per ban and never queue against each other
       applyOptimistic: () => {
         const deletedBan = items.value.find(({ roomId, userId }) => roomId === input.roomId && userId === input.userId);
         storeDeleteBan(input);

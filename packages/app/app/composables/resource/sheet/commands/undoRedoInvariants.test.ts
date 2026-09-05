@@ -39,7 +39,7 @@ const createCase = (name: string, dataSource: DataSource, invoke: (dataSource: D
   name,
 });
 
-describe("undo/redo invariants", () => {
+describe("undoRedoInvariants", () => {
   // Every command must be a true involution: undo returns the exact pre-execute state and redo the exact
   // Post-execute one. A move command whose undo repeats its own execute only holds for adjacent moves,
   // So the reorder cases below deliberately displace by more than one position

@@ -7,24 +7,21 @@ import { BinaryOperator, CompositeKey, CompositeKeyPropertyNames } from "@espost
 import { describe, expect, test } from "vitest";
 
 describe(getCursorWhereAzureTable, () => {
-  const cursor = { partitionKey: "", rowKey: "" };
-  const BinaryOperatorSortItemMap = {
-    [BinaryOperator.ge]: { isIncludeValue: true, key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Asc },
-    [BinaryOperator.gt]: { key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Asc },
-    [BinaryOperator.le]: { isIncludeValue: true, key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Desc },
-    [BinaryOperator.lt]: { key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Desc },
-  } as const satisfies Partial<Record<BinaryOperator, SortItem<keyof CompositeKey>>>;
-  const BinaryOperatorSortItemMapEntries = Object.entries(BinaryOperatorSortItemMap);
+  const cursor = { partitionKey: "partitionKey", rowKey: "" };
+  const sortItems: [BinaryOperator, SortItem<keyof CompositeKey>][] = [
+    [BinaryOperator.gt, { key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Asc }],
+    [BinaryOperator.ge, { isIncludeValue: true, key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Asc }],
+    [BinaryOperator.lt, { key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Desc }],
+    [BinaryOperator.le, { isIncludeValue: true, key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Desc }],
+  ];
 
-  test("gets", () => {
+  test.each(sortItems)("compares with %s", (operator, sortItem) => {
     expect.hasAssertions();
 
-    for (const [operator, sortItem] of BinaryOperatorSortItemMapEntries) {
-      const serializedCursors = serialize(cursor, [sortItem]);
+    const serializedCursors = serialize(cursor, [sortItem]);
 
-      expect(getCursorWhereAzureTable(serializedCursors, [sortItem as SortItem<keyof CompositeKey>])).toStrictEqual([
-        { key: CompositeKeyPropertyNames.partitionKey, operator, value: cursor.partitionKey },
-      ]);
-    }
+    expect(getCursorWhereAzureTable(serializedCursors, [sortItem])).toStrictEqual([
+      { key: CompositeKeyPropertyNames.partitionKey, operator, value: cursor.partitionKey },
+    ]);
   });
 });

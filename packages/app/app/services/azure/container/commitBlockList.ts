@@ -5,7 +5,7 @@ import dedent from "dedent";
 // The file's type has to be stamped here or the blob keeps whatever Azure defaults to. The two content types
 // Are different things and both are load-bearing: `Content-Type` describes this request's XML body, while
 // `x-ms-blob-content-type` describes the bytes the blocks just committed. Sending the body's type as the
-// Blob's is what stored every upload as XML, so an omitted `contentType` sends no blob header at all rather
+// Blob's would store every upload as XML, so an omitted `contentType` sends no blob header at all rather
 // Than falling back to one that is certainly wrong.
 export const commitBlockList = (sasUrl: string, blockIds: string[], contentType?: string) =>
   fetch(`${sasUrl}&comp=blocklist`, {

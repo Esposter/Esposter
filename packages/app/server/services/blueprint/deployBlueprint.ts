@@ -11,9 +11,9 @@ import { createResourceRow } from "@@/server/services/resource/createResourceRow
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { withResourceRollback } from "@@/server/services/resource/withResourceRollback";
 
-// Substitute parameters → pre-validate every entry against its type's contentSchema → topologically create
-// Each entry (resources row + content blob) with real ids substituted for its `{{entry:key}}` references.
-// A mid-deploy failure deletes the rows and blobs it already created — best-effort all-or-nothing
+// Every entry is validated against its type's contentSchema before anything is created, then created
+// Dependencies-first so an entry's `{{entry:key}}` references resolve to real ids. A mid-deploy failure deletes
+// The rows and blobs it already created — a best-effort rollback rather than a transaction
 export const deployBlueprint = async (
   ctx: AuthedContext,
   blueprint: BlueprintResource,

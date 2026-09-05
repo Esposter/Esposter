@@ -15,11 +15,10 @@ import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockEventGridDatabase } from "azure-mock";
 import { assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-// Built from the same error the router throws, so an inline snapshot never bakes in a random id
 const getRoomEmojiErrorMessage = (operation: Operation, context: string) =>
   new InvalidOperationError(operation, DatabaseEntityType.RoomEmoji, context).message;
 
-describe("room/emoji", () => {
+describe("roomEmojiRouter", () => {
   const { createMember, getMockContext, getRoomId, setupMemberWithRole } = setupRoomSuite();
   let mockContext: Context;
   let roomEmojiCaller: DecorateRouterRecord<TRPCRouter["room"]["emoji"]>;
@@ -27,9 +26,9 @@ describe("room/emoji", () => {
   const name = "party_parrot";
   const mimetype = "image/png";
   const size = 1024;
-  const OVERSIZED_SIZE = 1024 * 1024;
+  const oversizedSize = 1024 * 1024;
   // A slug the dataset owns, which a room may not shadow
-  const UNICODE_EMOJI_SLUG = "fire";
+  const unicodeEmojiSlug = "fire";
   const position = 5;
   // The client's PUT, which is what makes the blob the create insists on exist
   const uploadRoomEmojiBlob = async (id: string, body = "") => {
@@ -51,213 +50,196 @@ describe("room/emoji", () => {
     roomId = getRoomId();
   });
 
-  describe("generateUploadRoomEmojiSasEntity", () => {
-    test("mints an id and a write target", async () => {
-      expect.hasAssertions();
+  test("generateUploadRoomEmojiSasEntity mints an id and a write target", async () => {
+    expect.hasAssertions();
 
-      const sasEntity = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
+    const sasEntity = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
 
-      expect(sasEntity.id).not.toBe("");
-      expect(sasEntity.sasUrl).not.toBe("");
-    });
+    expect(sasEntity.id).not.toBe("");
+    expect(sasEntity.sasUrl).not.toBe("");
+  });
 
-    test("refuses anything but an image", async () => {
-      expect.hasAssertions();
+  test("fails generateUploadRoomEmojiSasEntity with anything but an image", async () => {
+    expect.hasAssertions();
 
-      await expect(
-        roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype: "application/pdf", roomId, size }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, JSON.stringify({ mimetype: "application/pdf", size }))}]`,
-      );
-    });
+    await expect(
+      roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype: "application/pdf", roomId, size }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, JSON.stringify({ mimetype: "application/pdf", size }))}]`,
+    );
+  });
 
-    test("refuses a file past the emoji size cap", async () => {
-      expect.hasAssertions();
+  test("fails generateUploadRoomEmojiSasEntity with a file past the emoji size cap", async () => {
+    expect.hasAssertions();
 
-      await expect(
-        roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size: OVERSIZED_SIZE }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, JSON.stringify({ mimetype, size: OVERSIZED_SIZE }))}]`,
-      );
-    });
+    await expect(
+      roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size: oversizedSize }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, JSON.stringify({ mimetype, size: oversizedSize }))}]`,
+    );
+  });
 
-    // The cap is what bounds a room's storage cost, so a full room never receives a write target it could use
-    test("refuses a room that already holds its cap", async () => {
-      expect.hasAssertions();
+  test("fails generateUploadRoomEmojiSasEntity with a room that already holds its cap", async () => {
+    expect.hasAssertions();
 
-      await mockContext.db.insert(roomEmojisInMessage).values(
-        Array.from({ length: MAX_ROOM_EMOJIS }, (_, index) => ({
-          name: `emoji_${index.toString()}`,
-          roomId,
-        })),
-      );
+    await mockContext.db.insert(roomEmojisInMessage).values(
+      Array.from({ length: MAX_ROOM_EMOJIS }, (_, index) => ({
+        name: `emoji_${index.toString()}`,
+        roomId,
+      })),
+    );
 
-      await expect(
-        roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, roomId)}]`,
-      );
+    await expect(
+      roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, roomId)}]`);
+  });
+
+  test("createRoomEmoji stores the row and hands back a read url for its blob", async () => {
+    expect.hasAssertions();
+
+    const roomEmoji = await createRoomEmoji();
+
+    expect(roomEmoji.name).toBe(name);
+    expect(roomEmoji.roomId).toBe(roomId);
+    expect(roomEmoji.sasUrl).not.toBe("");
+  });
+
+  test("fails createRoomEmoji with an id whose blob never landed", async () => {
+    expect.hasAssertions();
+
+    const { id } = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
+
+    await expect(roomEmojiCaller.createRoomEmoji({ id, name, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, id)}]`,
+    );
+  });
+
+  // Shadowing would make the same `:fire:` render differently per room, and deleting the custom entry would
+  // Silently change every message that used it
+  test("fails createRoomEmoji with a name a unicode slug already owns", async () => {
+    expect.hasAssertions();
+
+    await expect(createRoomEmoji(unicodeEmojiSlug)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, unicodeEmojiSlug)}]`,
+    );
+  });
+
+  test("fails createRoomEmoji with a blob larger than the cap whatever size was declared", async () => {
+    expect.hasAssertions();
+
+    const { id } = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
+    await uploadRoomEmojiBlob(id, "a".repeat(MAX_ROOM_EMOJI_SIZE_BYTES + 1));
+
+    await expect(roomEmojiCaller.createRoomEmoji({ id, name, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, id)}]`,
+    );
+  });
+
+  test("fails createRoomEmoji with a name the room already uses", async () => {
+    expect.hasAssertions();
+
+    await createRoomEmoji();
+
+    await expect(createRoomEmoji()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, JSON.stringify({ name, roomId }))}]`,
+    );
+  });
+
+  test(`fails generateUploadRoomEmojiSasEntity for a member without ${RoomPermission.ManageEmojis}`, async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(
+      roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  test(`createRoomEmoji succeeds for a member with ${RoomPermission.ManageEmojis}`, async () => {
+    expect.hasAssertions();
+
+    const { member } = await setupMemberWithRole(RoomPermission.ManageEmojis, position);
+    await mockSessionOnce(mockContext.db, member);
+    const { id } = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
+    await uploadRoomEmojiBlob(id);
+    await mockSessionOnce(mockContext.db, member);
+    const roomEmoji = await roomEmojiCaller.createRoomEmoji({ id, name, roomId });
+
+    expect(roomEmoji.name).toBe(name);
+  });
+
+  test("updateRoomEmoji renames without disturbing the id every reaction keys on", async () => {
+    expect.hasAssertions();
+
+    const roomEmoji = await createRoomEmoji();
+    const updatedRoomEmoji = await roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: "renamed", roomId });
+
+    expect(updatedRoomEmoji.id).toBe(roomEmoji.id);
+    expect(updatedRoomEmoji.name).toBe("renamed");
+  });
+
+  test("fails updateRoomEmoji with a name another emoji in the room holds", async () => {
+    expect.hasAssertions();
+
+    const roomEmoji = await createRoomEmoji();
+    await createRoomEmoji("other_emoji");
+
+    await expect(
+      roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: "other_emoji", roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Update, roomEmoji.id)}]`,
+    );
+  });
+
+  test("fails updateRoomEmoji with a name a unicode slug already owns", async () => {
+    expect.hasAssertions();
+
+    const roomEmoji = await createRoomEmoji();
+
+    await expect(
+      roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: unicodeEmojiSlug, roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Update, unicodeEmojiSlug)}]`,
+    );
+  });
+
+  test("deleteRoomEmoji removes the row and publishes the blob deletion", async () => {
+    expect.hasAssertions();
+
+    const roomEmoji = await createRoomEmoji();
+    await roomEmojiCaller.deleteRoomEmoji({ id: roomEmoji.id, roomId });
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert.exists(blobDeletionEvents);
+
+    await expect(roomEmojiCaller.readRoomEmojis({ roomId })).resolves.toStrictEqual([]);
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [getRoomEmojiBlobName(roomId, roomEmoji.id)],
+      containerName: AzureContainer.MessageAssets,
     });
   });
 
-  describe("createRoomEmoji", () => {
-    test("stores the row and hands back a read url for its blob", async () => {
-      expect.hasAssertions();
+  test(`fails deleteRoomEmoji for a member without ${RoomPermission.ManageEmojis}`, async () => {
+    expect.hasAssertions();
 
-      const roomEmoji = await createRoomEmoji();
+    const roomEmoji = await createRoomEmoji();
+    const member = await createMember();
+    await mockSessionOnce(mockContext.db, member);
 
-      expect(roomEmoji.name).toBe(name);
-      expect(roomEmoji.roomId).toBe(roomId);
-      expect(roomEmoji.sasUrl).not.toBe("");
-    });
-
-    // Nothing else proves the upload happened: the write SAS is handed out before the PUT, so a create that
-    // Skipped it would list an emoji that renders as a broken image
-    test("refuses an id whose blob never landed", async () => {
-      expect.hasAssertions();
-
-      const { id } = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
-
-      await expect(roomEmojiCaller.createRoomEmoji({ id, name, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, id)}]`,
-      );
-    });
-
-    // Shadowing would make the same `:fire:` render differently per room, and deleting the custom entry would
-    // Silently change every message that used it
-    test("refuses a name a unicode slug already owns", async () => {
-      expect.hasAssertions();
-
-      await expect(createRoomEmoji(UNICODE_EMOJI_SLUG)).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, UNICODE_EMOJI_SLUG)}]`,
-      );
-    });
-
-    // The size the SAS was minted for is the client's word: a write SAS cannot cap what is PUT through it, so
-    // The row is only created for a blob whose bytes are within the cap
-    test("refuses a blob larger than the cap whatever size was declared", async () => {
-      expect.hasAssertions();
-
-      const { id } = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
-      await uploadRoomEmojiBlob(id, "a".repeat(MAX_ROOM_EMOJI_SIZE_BYTES + 1));
-
-      await expect(roomEmojiCaller.createRoomEmoji({ id, name, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, id)}]`,
-      );
-    });
-
-    test("refuses a name the room already uses", async () => {
-      expect.hasAssertions();
-
-      await createRoomEmoji();
-
-      await expect(createRoomEmoji()).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, JSON.stringify({ name, roomId }))}]`,
-      );
-    });
-
-    test(`member without ${RoomPermission.ManageEmojis} cannot create — throws UNAUTHORIZED`, async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      await mockSessionOnce(mockContext.db, member);
-
-      await expect(
-        roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-    });
-
-    test(`member with ${RoomPermission.ManageEmojis} can create`, async () => {
-      expect.hasAssertions();
-
-      const { member } = await setupMemberWithRole(RoomPermission.ManageEmojis, position);
-      await mockSessionOnce(mockContext.db, member);
-      const { id } = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
-      await uploadRoomEmojiBlob(id);
-      await mockSessionOnce(mockContext.db, member);
-      const roomEmoji = await roomEmojiCaller.createRoomEmoji({ id, name, roomId });
-
-      expect(roomEmoji.name).toBe(name);
-    });
+    await expect(
+      roomEmojiCaller.deleteRoomEmoji({ id: roomEmoji.id, roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  describe("updateRoomEmoji", () => {
-    test("renames without disturbing the id every reaction keys on", async () => {
-      expect.hasAssertions();
+  test("readRoomEmojis returns the room's set with a url per entry", async () => {
+    expect.hasAssertions();
 
-      const roomEmoji = await createRoomEmoji();
-      const updatedRoomEmoji = await roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: "renamed", roomId });
+    await createRoomEmoji();
+    const member = await createMember();
+    await mockSessionOnce(mockContext.db, member);
+    const roomEmojis = await roomEmojiCaller.readRoomEmojis({ roomId });
 
-      expect(updatedRoomEmoji.id).toBe(roomEmoji.id);
-      expect(updatedRoomEmoji.name).toBe("renamed");
-    });
-
-    test("refuses a name another emoji in the room holds", async () => {
-      expect.hasAssertions();
-
-      const roomEmoji = await createRoomEmoji();
-      await createRoomEmoji("other_emoji");
-
-      await expect(
-        roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: "other_emoji", roomId }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Update, roomEmoji.id)}]`,
-      );
-    });
-
-    test("refuses a name a unicode slug already owns", async () => {
-      expect.hasAssertions();
-
-      const roomEmoji = await createRoomEmoji();
-
-      await expect(
-        roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: UNICODE_EMOJI_SLUG, roomId }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Update, UNICODE_EMOJI_SLUG)}]`,
-      );
-    });
-  });
-
-  describe("deleteRoomEmoji", () => {
-    test("removes the row and publishes the blob deletion", async () => {
-      expect.hasAssertions();
-
-      const roomEmoji = await createRoomEmoji();
-      await roomEmojiCaller.deleteRoomEmoji({ id: roomEmoji.id, roomId });
-      const blobDeletionEvents = MockEventGridDatabase.get("");
-      assert(blobDeletionEvents);
-
-      await expect(roomEmojiCaller.readRoomEmojis({ roomId })).resolves.toStrictEqual([]);
-      expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
-        blobNames: [getRoomEmojiBlobName(roomId, roomEmoji.id)],
-        containerName: AzureContainer.MessageAssets,
-      });
-    });
-
-    test(`member without ${RoomPermission.ManageEmojis} cannot delete — throws UNAUTHORIZED`, async () => {
-      expect.hasAssertions();
-
-      const roomEmoji = await createRoomEmoji();
-      const member = await createMember();
-      await mockSessionOnce(mockContext.db, member);
-
-      await expect(
-        roomEmojiCaller.deleteRoomEmoji({ id: roomEmoji.id, roomId }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-    });
-  });
-
-  describe("readRoomEmojis", () => {
-    test("a member reads the room's set with a url per entry", async () => {
-      expect.hasAssertions();
-
-      await createRoomEmoji();
-      const member = await createMember();
-      await mockSessionOnce(mockContext.db, member);
-      const roomEmojis = await roomEmojiCaller.readRoomEmojis({ roomId });
-
-      expect(roomEmojis).toHaveLength(1);
-      expect(takeOne(roomEmojis).sasUrl).not.toBe("");
-    });
+    expect(roomEmojis).toHaveLength(1);
+    expect(takeOne(roomEmojis).sasUrl).not.toBe("");
   });
 });

@@ -20,7 +20,6 @@ const columnDialogStore = useColumnDialogStore();
 const { editingColumnName } = storeToRefs(columnDialogStore);
 const { isOpen } = useSingletonDialog(editingColumnName);
 const updateColumn = useUpdateColumn();
-// StructuredClone to a plain object: vjsf rejects class instances, and fast-deep-equal compares constructors.
 const editedColumn = ref(structuredClone(toRawDeep(column)));
 const jsonSchema = zodToJsonSchema(columnFormSchema);
 const value = computed(() => extractSchemaFields(ColumnTypeFormSchemaMap[column.type], column));

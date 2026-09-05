@@ -21,7 +21,6 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const sentFriendRequests = computed(() =>
     friendRequests.value.filter((friendRequest) => friendRequest.senderId === userId.value),
   );
-  // CreateFriendRequest already dedups by id, so a repeated echo delivery is idempotent without a manual guard
   const { createFriendRequest: storeCreateFriendRequest } = createOperationData(
     friendRequests,
     ["id"],
@@ -55,8 +54,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     await executeSendFriendRequestMutation(() => $trpc.friendRequest.sendFriendRequest.mutate(receiverId), {
       key: receiverId,
       // The onSendFriendRequest echo covers the caller for a newly created request, but the already-exists
-      // Conflict path returns the existing row WITHOUT emitting — so this write is the only one on that path.
-      // It is idempotent: storeCreateFriendRequest dedups by id.
+      // Conflict path returns the existing row WITHOUT emitting, so this write is the only one on that path
       onSuccess: (friendRequest) => {
         storeCreateFriendRequest(friendRequest);
       },
@@ -64,9 +62,8 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   };
   const acceptFriendRequest = async (sender: User) => {
     await executeAcceptFriendRequestMutation(() => $trpc.friendRequest.acceptFriendRequest.mutate(sender.id), {
-      // Only the requests this write resolves, not a copy of the list: accepts and declines are keyed per party
-      // And never queue against each other, so reinstating the list would resurrect a request another one already
-      // Resolved — and drop whatever the friend-request subscription delivered while this write was in flight
+      // Only the requests this write resolves — accepts and declines are keyed per party and never queue
+      // Against each other
       applyOptimistic: () => {
         const resolvedFriendRequests = getFriendRequestsByUser(sender.id);
         storeAcceptFriendRequest(sender);

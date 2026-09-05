@@ -4,7 +4,6 @@ import { assetKeySchema } from "#shared/models/dungeons/keys/AssetKey";
 import { z } from "zod";
 
 export interface Asset {
-  // By default, this will be 0
   frame?: number;
   key: AssetKey;
 }

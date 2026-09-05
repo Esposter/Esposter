@@ -9,7 +9,7 @@ import { and, eq, ne, or } from "drizzle-orm";
 
 // Everyone one message notifies, thread reply included. A reply widens this set with the thread's followers
 // Rather than raising a second notification at them, so the two rules are applied to one recipient set and the
-// Union deduplicates — which is what the `excludedUserIds` handshake between two events used to do by hand.
+// Union deduplicates — where two notifications would have to agree by hand on who the other already reached.
 export const getMessageRecipientUserIds = async (
   db: Database,
   {

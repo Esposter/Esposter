@@ -7,7 +7,7 @@ import { toRawDeep } from "@esposter/shared";
 export const filterDataSourceColumns = (
   // The compute context, so always every column of the sheet — computeValue resolves a computed column's
   // Source by id against these and answers null for a source that is missing. Narrowing happens through
-  // ColumnIds alone; hand a display-narrowed list in here and computed cells whose source is hidden go empty
+  // `columnIds` alone; hand a display-narrowed list in here and computed cells whose source is hidden go empty
   columns: Column[],
   rows: Row[],
   columnIds: string[],

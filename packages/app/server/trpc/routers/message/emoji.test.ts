@@ -12,7 +12,7 @@ import { MessageMetadataType } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-describe("emoji", () => {
+describe("emojiRouter", () => {
   const { createMember, getMockContext, getRoomId } = setupRoomSuite();
   let mockContext: Context;
   let emojiCaller: DecorateRouterRecord<TRPCRouter["message"]["emoji"]>;
@@ -22,7 +22,7 @@ describe("emoji", () => {
   const emojiTag = "👍";
 
   // Every emoji hangs off a message the test has to post first, and every write against one addresses it by the
-  // Same three keys — so the pair is set up once and the keys ride the emoji rather than being restated
+  // Same three keys
   const setupEmoji = async () => {
     const newMessage = await messageCaller.createMessage({ message, roomId });
     const newEmoji = await emojiCaller.createEmoji({
@@ -92,7 +92,7 @@ describe("emoji", () => {
     );
   });
 
-  test("on creates emoji", async () => {
+  test("onCreateEmoji emits the created emoji", async () => {
     expect.hasAssertions();
 
     const onCreateEmoji = await emojiCaller.onCreateEmoji({ roomId });
@@ -121,7 +121,7 @@ describe("emoji", () => {
     expect(takeOne(readEmojis).userIds).toStrictEqual([userId, member.id]);
   });
 
-  test("updates twice removes user id", async () => {
+  test("updateEmoji twice removes the user id", async () => {
     expect.hasAssertions();
 
     const { emojiKey, newMessage } = await setupEmoji();

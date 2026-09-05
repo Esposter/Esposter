@@ -5,7 +5,6 @@ import type { BinaryOperator as DrizzleBinaryOperator } from "drizzle-orm";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
-import { BinaryOperator } from "@esposter/azure";
 import { StorageTier, users } from "@esposter/db-schema";
 import { and, eq, gt, gte, lt, lte, or } from "drizzle-orm";
 import { describe, expect, test } from "vitest";
@@ -25,24 +24,27 @@ describe(getCursorWhere, () => {
     storageTier: StorageTier.Free,
     updatedAt: createdAt,
   };
-  const BinaryOperatorSortItemMap = {
-    [BinaryOperator.ge]: { isIncludeValue: true, key: "id", operator: gte, order: SortOrder.Asc },
-    [BinaryOperator.gt]: { key: "id", operator: gt, order: SortOrder.Asc },
-    [BinaryOperator.le]: { isIncludeValue: true, key: "id", operator: lte, order: SortOrder.Desc },
-    [BinaryOperator.lt]: { key: "id", operator: lt, order: SortOrder.Desc },
-  } as const satisfies Partial<Record<BinaryOperator, SortItem<keyof User> & { operator: DrizzleBinaryOperator }>>;
-  const BinaryOperatorSortItemMapValues = Object.values(BinaryOperatorSortItemMap);
+  const sortItems: [string, SortItem<keyof User> & { operator: DrizzleBinaryOperator }][] = [
+    ["ascending", { key: "id", operator: gt, order: SortOrder.Asc }],
+    [
+      "ascending, including the cursor's own row",
+      { isIncludeValue: true, key: "id", operator: gte, order: SortOrder.Asc },
+    ],
+    ["descending", { key: "id", operator: lt, order: SortOrder.Desc }],
+    [
+      "descending, including the cursor's own row",
+      { isIncludeValue: true, key: "id", operator: lte, order: SortOrder.Desc },
+    ],
+  ];
 
-  test("gets", () => {
+  test.each(sortItems)("compares %s", (_, sortItem) => {
     expect.hasAssertions();
 
-    for (const sortItem of BinaryOperatorSortItemMapValues) {
-      const serializedCursors = serialize(user, [sortItem]);
+    const serializedCursors = serialize(user, [sortItem]);
 
-      expect(getCursorWhere(users, serializedCursors, [sortItem])).toStrictEqual(
-        or(and(sortItem.operator(users.id, user.id))),
-      );
-    }
+    expect(getCursorWhere(users, serializedCursors, [sortItem])).toStrictEqual(
+      or(and(sortItem.operator(users.id, user.id))),
+    );
   });
 
   test("gets lexicographic where for compound sort", () => {

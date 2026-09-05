@@ -4,8 +4,8 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
 describe("styledSkeleton", () => {
-  // `v-card` declares `border-style: solid` for its own `b-1`, `v-skeleton-loader` declares nothing — so the
-  // Width alone applied against the initial `none` and every bordered skeleton in the app rendered borderless
+  // `v-card` declares `border-style: solid` for its own `b-1`, `v-skeleton-loader` declares nothing — so a
+  // Width alone applies against the initial `none` and every bordered skeleton renders borderless
   test("declares a border style alongside the border width", async () => {
     expect.hasAssertions();
 

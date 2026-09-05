@@ -1,7 +1,7 @@
 import type { ESTree, Plugin } from "@oxlint/plugins";
 
 import { definePlugin, defineRule } from "@oxlint/plugins";
-// Oxlint JS plugin enforcing the "an extraction earns its existence" rule (file-organization/SKILL.md).
+// An oxlint JS plugin enforcing the "an extraction earns its existence" rule (file-organization/SKILL.md).
 //
 // An exported arrow whose whole body is one call passing exactly its own parameters, in order, adding nothing,
 // Is a rename with an import: the caller still hand-writes every argument, so forgetting one is exactly as easy
@@ -62,8 +62,9 @@ const rule = defineRule({
       if (argumentNames.length !== expectedNames.length) return false;
       return argumentNames.every((argumentName, index) => argumentName === expectedNames[index]);
     };
-    // A read of what a forward would have returned is the same rename one step further out: `() =>
-    // UseVTheme().global` and `(a) => a.b` both hand back a property the caller could have reached itself.
+    // A read of what a forward would have returned is the same rename one step further out:
+    // `() => useVTheme().global` and `(a) => a.b` both hand back a property the caller could have reached
+    // Itself.
     const getIsForwardingRead = (parameterNames: string[], expression: ESTree.MemberExpression): boolean => {
       if (expression.computed) return false;
       const { object } = expression;

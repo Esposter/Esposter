@@ -12,8 +12,6 @@ export const useMemberCache = () => {
   const { storeUsers } = userStore;
   useCursorPaginationCache({
     configuration: MemberIndexedDbStoreConfiguration,
-    // The room the cache is acting on names its own slice, so neither half can read or restore the list of a room
-    // The reader has switched to since
     getSlice,
     // Hydration only ever runs offline, where the server-computed total cannot be fetched. The cached page is
     // The whole of what this room can show, so it is also the only honest total. The per-role breakdown is left

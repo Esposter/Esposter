@@ -24,10 +24,10 @@ export const parseTileLayer = async (
   if (properties) layer.properties = parseProperties(properties);
 
   const nodeData = takeOne(data);
-  // Xml Deprecated
+  // A tile layer written as one `<tile>` element per cell — the form Tiled deprecated in favour of the
+  // Encoded ones below, and still reads.
   if (checkIsTMXEmbeddedTilesetNode(nodeData)) layer.data = nodeData.tile?.map(({ $ }) => $.gid ?? 0) ?? [];
   else {
-    // Base64, Csv
     const { $, _ } = nodeData;
     const { compression, encoding } = $;
     const layerData = normalizeString(_);

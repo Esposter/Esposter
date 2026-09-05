@@ -24,8 +24,8 @@ vi.mock(import("vue-pdf-embed"), () => ({
 vi.mock("pdfjs-dist/build/pdf.worker?url", () => ({ default: "" }));
 
 // The viewer is the whole body, so the dialog is action-less — it has nothing to confirm and nothing to cancel.
-// That shape is `StyledDialog`'s now, and the point of these is that composing the shell did not cost the two
-// Things the hand-rolled `v-dialog` was providing: a title, and a way out that is not clicking the backdrop
+// `StyledDialog` still owes it the two things a bare `v-dialog` would not give: a title, and a way out that is
+// Not clicking the backdrop
 describe("messageModelFileRendererPdf", () => {
   let wrapper: Awaited<ReturnType<typeof mountSuspended>> | undefined;
   const filename = "filename.pdf";

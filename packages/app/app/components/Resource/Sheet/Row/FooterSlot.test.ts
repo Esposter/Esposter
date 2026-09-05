@@ -21,14 +21,13 @@ describe("resourceSheetRowFooterSlot", () => {
   });
 
   // The footer draws one cell per row-store header while the table itself is fed those headers minus
-  // Data-table-select plus showSelect, so a column on one side and not the other shifts every summary sideways
+  // `data-table-select` plus showSelect, so a column on one side and not the other shifts every summary sideways
   test("renders one cell per row header, with the summary under its own column", async () => {
     expect.hasAssertions();
 
     const column = createNumberColumn(name);
     column.footerStatisticsKey = "summation";
     wrapper = await mountSuspended(ResourceSheetRowFooterSlot);
-    // Resolved after the mount so it is the same store the component injected from the nuxt app's pinia
     setupWithDataSource(createDataSource([column], [createRow({ [name]: 0 })]));
     const rowStore = useRowStore();
     await nextTick();

@@ -38,7 +38,7 @@ export const useMicrophoneLevel = () => {
       (stream) => {
         if (!stream) return;
         // A dispose can land while getUserMedia is still pending, and it cannot be cancelled.
-        // UseUserMedia's own dispose then no-ops (its stream ref is still empty) and assigns the live
+        // `useUserMedia`'s own dispose then no-ops (its stream ref is still empty) and assigns the live
         // Stream afterwards, leaving the mic hot with nothing left to tear it down - so stop it here.
         else if (isDisposed) {
           stopStream();

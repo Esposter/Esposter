@@ -6,7 +6,7 @@ import type { Tilemaps } from "phaser";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
 
 const tilesetCache = new Map<TilemapKey, Map<TilesetKey, Tilemaps.Tileset>>();
-// Only our created base tileset keys are used in all our tilemaps
+
 export const addTilesetImage = (tilemap: Tilemaps.Tilemap, tilemapKey: TilemapKey, tilesetKey: BaseTilesetKey) => {
   const tilesetMap = tilesetCache.get(tilemapKey);
   if (!tilesetMap) {
@@ -25,6 +25,6 @@ export const addTilesetImage = (tilemap: Tilemaps.Tilemap, tilemapKey: TilemapKe
 };
 
 const baseAddTilesetImage = (tilemap: Tilemaps.Tilemap, tilesetKey: TilesetKey) =>
-  // Phaser warns on tileset keys the tilemap doesn't require, which is fine since we always create
-  // All of them; the tileset name must exactly match the tileset key.
+  // Phaser warns on tileset keys the tilemap doesn't require, which is harmless because every one of them is
+  // Created; the tileset name must exactly match the tileset key
   ignoreWarn(() => tilemap.addTilesetImage(tilesetKey));

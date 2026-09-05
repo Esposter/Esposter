@@ -53,7 +53,7 @@ describe.todo("forkSnapshot - warm fork matches a cold in-place install (equival
     expect(warmResult).toStrictEqual(coldResult);
   }, Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds"));
 
-  // Pnpm's pre-run dependency verification may auto-install inside the sandbox and fail when writing bin shims into the
+  // The pre-run dependency verification pnpm does may auto-install inside the sandbox and fail when writing bin shims into the
   // Overlay upper (ENOENT node_modules/.bin/*). A warm fork resolves the binary from the frozen snapshot instead.
   test("a forked warm `pnpm exec` runs over the frozen deps without re-installing and matches a cold install", async () => {
     expect.hasAssertions();

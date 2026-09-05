@@ -5,7 +5,7 @@ import { createBasePaginationParamsSchema } from "#shared/models/pagination/Base
 import { z } from "zod";
 
 export interface CursorPaginationParams<T extends string> extends BasePaginationParams<T> {
-  // This will be a serialised string of all the cursors based on sorting
+  // Every sort key's cursor, serialised into one string
   cursor: string;
 }
 
@@ -14,7 +14,7 @@ export const createCursorPaginationParamsSchema = <T extends z.ZodType<string>>(
   defaultSortBy: [SortItem<z.output<T>>, ...SortItem<z.output<T>>[]],
 ) =>
   z.object({
-    // We need at least one sort item so we can derive a primary cursor for pagination
+    // At least one sort item, since the primary cursor is derived from it
     ...createBasePaginationParamsSchema(sortKeySchema, 1, defaultSortBy).shape,
     cursor: z.string().default(""),
   });

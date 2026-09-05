@@ -16,7 +16,7 @@ export const parseJsonWithSchema = <TSchema extends z.ZodType>(
   getResult(() => schema.parse(parseMachineJson(json))).match(
     (value) => value,
     (error) => {
-      // GetResult normalizes whatever was thrown to an Error (toAppError returns Error instances as-is), and ZodError
+      // The `getResult` wrapper normalizes whatever was thrown to an Error (toAppError returns Error instances as-is), and ZodError
       // Extends Error — so a schema failure is still a ZodError here. z.prettifyError turns it into a readable
       // Multi-line message; anything else (a read failure, malformed JSON) carries its own.
       throw new InvalidOperationError(

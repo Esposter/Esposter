@@ -100,9 +100,9 @@ describe(errorLink, () => {
   test("alerts a background rejection it owns, because no caller alerts a code the link claims", async () => {
     expect.hasAssertions();
 
-    // The regression this guards: the link declined every background op wholesale while `checkIsAlertedByErrorLink`
-    // Still reported the code as its own, so an attachment read rejected by the rate limiter rolled the optimistic
-    // Bubble back out of the room with no toast from either side
+    // Declining every background op while `checkIsAlertedByErrorLink` still reports the code as the link's own
+    // Leaves an attachment read the rate limiter rejects rolling the optimistic bubble back out of the room with
+    // No toast from either side
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
     await rejectThrough("TOO_MANY_REQUESTS", true);

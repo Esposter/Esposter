@@ -5,9 +5,9 @@ import type { SQL } from "drizzle-orm";
 import { resourcePublications, resources } from "@esposter/db-schema";
 import { inArray } from "drizzle-orm";
 
-// Soft: the rows, their content blobs and their {id}/ directories all survive the Recycle bin window,
-// Which is exactly what makes restore possible. Purge is what actually destroys them.
-// One transaction so a soft-deleted resource can never linger publicly served
+// Soft: the rows, their content blobs and their {id}/ directories all survive the Recycle bin window, which is
+// What makes restore possible, and purge is what destroys them. One transaction, so a soft-deleted resource can
+// Never linger publicly served
 export const softDeleteResources = (db: Context["db"], where: SQL | undefined): Promise<Resource[]> =>
   db.transaction(async (tx) => {
     const deletedResources = await tx.update(resources).set({ deletedAt: new Date() }).where(where).returning();

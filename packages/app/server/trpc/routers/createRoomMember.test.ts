@@ -12,9 +12,8 @@ import { describe } from "vitest";
 // `mockSessionOnce` queues a single session that whichever join gets there first consumes. Both surface as an
 // Unrelated "Invite is not found", so the guard names the real cause where a comment would only be read after
 let isCreating = false;
-// Joining a second user to a room is an invite, a session and a join — the dance every suite that needs a
-// Non-owner member was writing out at each call site. `mockUser` joins a member the suite already made to a
-// Further room, which is how one member comes to be in several rooms at once
+// Joining a second user to a room is an invite, a session and a join. `mockUser` joins a member the suite
+// Already made to a further room, which is how one member comes to be in several rooms at once
 export const createRoomMember = (mockContext: Context, roomId: string, mockUser?: User) => {
   if (isCreating)
     throw new InvalidOperationError(

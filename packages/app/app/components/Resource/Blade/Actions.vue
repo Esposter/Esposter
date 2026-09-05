@@ -15,7 +15,6 @@ interface Props {
 const { resource } = defineProps<Props>();
 // When narrow, every command collapses into the … overflow menu — the star and the close ✕ never collapse
 const { smAndDown } = useVDisplay();
-// The ✕ peels back to wherever the trail says the visitor came from, so it and the last crumb are one move
 const navigationTrailStore = useNavigationTrailStore();
 const { closeTo } = storeToRefs(navigationTrailStore);
 const resourceStore = useResourceStore();

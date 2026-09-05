@@ -23,7 +23,7 @@ import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-describe("moderation", () => {
+describe("moderationRouter", () => {
   const { createMember, getMockContext, getRoomCaller, getRoomId, setupMemberWithRole } = setupRoomSuite();
   let mockContext: Context;
   let moderationCaller: DecorateRouterRecord<TRPCRouter["message"]["moderation"]>;
@@ -62,456 +62,437 @@ describe("moderation", () => {
     vi.useRealTimers();
   });
 
-  describe("executeAdminAction", () => {
-    test(`${AdminActionType.CreateBan}: owner bansInMessage member — ban row inserted, usersToRoomsInMessage rows deleted`, async () => {
-      expect.hasAssertions();
+  test(`executeAdminAction ${AdminActionType.CreateBan} inserts the ban row and deletes the membership rows`, async () => {
+    expect.hasAssertions();
 
-      const member = await createMember();
-      await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: member.id,
-        type: AdminActionType.CreateBan,
-      });
-
-      const banRows = await readBanRows(member.id);
-      const membershipRows = await readMembershipRows(member.id);
-
-      expect(banRows).toHaveLength(1);
-      expect(takeOne(banRows).userId).toBe(member.id);
-      expect(membershipRows).toHaveLength(0);
+    const member = await createMember();
+    await moderationCaller.executeAdminAction({
+      roomId,
+      targetUserId: member.id,
+      type: AdminActionType.CreateBan,
     });
 
-    // A ban that only deletes the membership row is undone by the link the member still holds. The rejection
-    // Names the condition rather than being a bare UNAUTHORIZED, because it is one the caller can act on —
-    // Retrying the link is the one thing that will never work
-    test(`${AdminActionType.CreateBan}: a banned member cannot rejoin through an invite`, async () => {
-      expect.hasAssertions();
+    const banRows = await readBanRows(member.id);
+    const membershipRows = await readMembershipRows(member.id);
 
-      const member = await createMember();
-      await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: member.id,
-        type: AdminActionType.CreateBan,
-      });
-      const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
-      await mockSessionOnce(mockContext.db, member);
-
-      await expect(roomCaller.joinRoom(invite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: You are banned from this room]`,
-      );
-    });
-
-    // Owner immunity is not a position comparison: the owner holds no role row, so every assigned role outranks
-    // Their floor position and a moderator would be able to ban the member who owns the room
-    test(`${AdminActionType.CreateBan}: moderator cannot ban the room owner`, async () => {
-      expect.hasAssertions();
-
-      const ownerId = getMockSession().user.id;
-      const { member } = await setupMemberWithRole(RoomPermission.BanMembers, position);
-      await mockSessionOnce(mockContext.db, member);
-
-      await expect(
-        moderationCaller.executeAdminAction({ roomId, targetUserId: ownerId, type: AdminActionType.CreateBan }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-    });
-
-    test(`${AdminActionType.KickFromRoom}: owner kicks member — usersToRoomsInMessage row deleted`, async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: member.id,
-        type: AdminActionType.KickFromRoom,
-      });
-      const membershipRows = await readMembershipRows(member.id);
-
-      expect(membershipRows).toHaveLength(0);
-    });
-
-    test(`${AdminActionType.TimeoutUser}: owner times out member — timeoutUntil equals now plus durationMs`, async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      await moderationCaller.executeAdminAction({
-        durationMs,
-        roomId,
-        targetUserId: member.id,
-        type: AdminActionType.TimeoutUser,
-      });
-
-      const membershipRows = await readMembershipRows(member.id);
-
-      expect(membershipRows).toHaveLength(1);
-
-      const { timeoutUntil } = takeOne(membershipRows);
-      assert(timeoutUntil !== null);
-
-      expect(timeoutUntil.getTime()).toBe(durationMs);
-    });
-
-    // These three land on the call pipeline rather than the database, so the mutation itself only has to record
-    // The action and resolve
-    // `as const` keeps the rows as their own literals — a plain array widens to `AdminActionType`, which the
-    // Discriminated input union rejects
-    // A moderation kick is still a departure, so it owes the room what a leave does — without the event every
-    // Other member's list keeps a member the room no longer has
-    test(`${AdminActionType.KickFromRoom}: announces the removal`, async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      const onLeaveRoom = await roomCaller.onLeaveRoom([roomId]);
-      const leaveRoom = await getFirstEmit(
-        () => onLeaveRoom,
-        () =>
-          moderationCaller.executeAdminAction({
-            roomId,
-            targetUserId: member.id,
-            type: AdminActionType.KickFromRoom,
-          }),
-      );
-      const messagesClient = await useTableClient(AzureTable.Messages);
-      const messages = await Array.fromAsync(messagesClient.listEntities<StandardMessageEntity>());
-
-      expect(leaveRoom).toStrictEqual({ roomId, userId: member.id });
-      expect(messages.map(({ message }) => message)).toContain(`${member.name} was kicked from the room.`);
-    });
-
-    // Moderating yourself is not a hierarchy question, and the comparison cannot answer it — an owner outranks
-    // Themselves under every rule it knows
-    test("rejects an action aimed at the actor", async () => {
-      expect.hasAssertions();
-
-      const targetUserId = getMockSession().user.id;
-      const input = { roomId, targetUserId };
-
-      await expect(
-        moderationCaller.executeAdminAction({ ...input, type: AdminActionType.KickFromRoom }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.UserToRoom, JSON.stringify(input)).message}]`,
-      );
-    });
-
-    // A direct message has no roles and no moderators — its pair block each other instead
-    test("rejects an action aimed at a direct message", async () => {
-      expect.hasAssertions();
-
-      const { directMessage, user } = await createDirectMessageWithFriend(mockContext);
-
-      await expect(
-        moderationCaller.executeAdminAction({
-          roomId: directMessage.id,
-          targetUserId: user.id,
-          type: AdminActionType.KickFromRoom,
-        }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, directMessage.id).message}]`,
-      );
-    });
-
-    test.each([AdminActionType.ForceMute, AdminActionType.ForceUnmute, AdminActionType.KickFromCall] as const)(
-      "%s: owner applies it to a member — succeeds with no error",
-      async (type) => {
-        expect.hasAssertions();
-
-        const member = await createMember();
-
-        await expect(
-          moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type }),
-        ).resolves.toBeUndefined();
-      },
-    );
-
-    test(`${AdminActionType.SoftBan}: owner soft-bans member — ban row inserted, usersToRoomsInMessage row deleted`, async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: member.id,
-        type: AdminActionType.SoftBan,
-      });
-      const banRows = await readBanRows(member.id);
-      const membershipRows = await readMembershipRows(member.id);
-
-      expect(banRows).toHaveLength(1);
-      expect(takeOne(banRows).userId).toBe(member.id);
-      expect(membershipRows).toHaveLength(0);
-    });
-
-    test(`${AdminActionType.SoftBan}: soft-deletes all messages`, async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: member.id,
-        type: AdminActionType.SoftBan,
-      });
-
-      const messagesClient = await useTableClient(AzureTable.Messages);
-      // The room's own lines are not the member's — their join and the ban that removed them both stay, so the
-      // Purge is asserted against what the member wrote
-      const memberMessages = (await Array.fromAsync(messagesClient.listEntities<StandardMessageEntity>())).filter(
-        ({ userId }) => userId === member.id,
-      );
-
-      expect(memberMessages).toHaveLength(1);
-      expect(memberMessages.every(({ deletedAt }) => deletedAt)).toBe(true);
-    });
+    expect(banRows).toHaveLength(1);
+    expect(takeOne(banRows).userId).toBe(member.id);
+    expect(membershipRows).toHaveLength(0);
   });
 
-  describe("readBans", () => {
-    test("owner reads empty ban list after room creation", async () => {
-      expect.hasAssertions();
+  // A ban that only deletes the membership row is undone by the link the member still holds. The rejection
+  // Names the condition rather than being a bare UNAUTHORIZED, because it is one the caller can act on —
+  // Retrying the link is the one thing that will never work
+  test(`executeAdminAction ${AdminActionType.CreateBan} stops the member rejoining through an invite`, async () => {
+    expect.hasAssertions();
 
-      const result = await moderationCaller.readBans({ roomId });
+    const member = await createMember();
+    await moderationCaller.executeAdminAction({
+      roomId,
+      targetUserId: member.id,
+      type: AdminActionType.CreateBan,
+    });
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
+    await mockSessionOnce(mockContext.db, member);
 
-      expect(result.items).toHaveLength(0);
+    await expect(roomCaller.joinRoom(invite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: You are banned from this room]`,
+    );
+  });
+
+  // Owner immunity is not a position comparison: the owner holds no role row, so every assigned role outranks
+  // Their floor position and a moderator would be able to ban the member who owns the room
+  test(`fails executeAdminAction ${AdminActionType.CreateBan} against the room owner`, async () => {
+    expect.hasAssertions();
+
+    const ownerId = getMockSession().user.id;
+    const { member } = await setupMemberWithRole(RoomPermission.BanMembers, position);
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(
+      moderationCaller.executeAdminAction({ roomId, targetUserId: ownerId, type: AdminActionType.CreateBan }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  test(`executeAdminAction ${AdminActionType.KickFromRoom} deletes the membership row`, async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await moderationCaller.executeAdminAction({
+      roomId,
+      targetUserId: member.id,
+      type: AdminActionType.KickFromRoom,
+    });
+    const membershipRows = await readMembershipRows(member.id);
+
+    expect(membershipRows).toHaveLength(0);
+  });
+
+  test(`executeAdminAction ${AdminActionType.TimeoutUser} sets timeoutUntil to now plus the duration`, async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await moderationCaller.executeAdminAction({
+      durationMs,
+      roomId,
+      targetUserId: member.id,
+      type: AdminActionType.TimeoutUser,
     });
 
-    test("after banning a user, readBans returns that user in results", async () => {
-      expect.hasAssertions();
+    const membershipRows = await readMembershipRows(member.id);
 
-      const member = await createMember();
-      await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: member.id,
-        type: AdminActionType.CreateBan,
-      });
+    expect(membershipRows).toHaveLength(1);
 
-      const result = await moderationCaller.readBans({ roomId });
+    const { timeoutUntil } = takeOne(membershipRows);
+    assert(timeoutUntil !== null);
 
-      expect(result.items).toHaveLength(1);
-      expect(takeOne(result.items).userId).toBe(member.id);
-    });
+    expect(timeoutUntil.getTime()).toBe(durationMs);
+  });
 
-    // The panel paginates every ban a room has ever placed, so without a predicate finding one person means
-    // Scrolling all of them. The name is the room's, not the ban's — the join that renders the row provides it
-    test("filters bans by the banned user's name", async () => {
-      expect.hasAssertions();
+  // A moderation kick is still a departure, so it owes the room what a leave does — without the event every
+  // Other member's list keeps a member the room no longer has
+  test(`executeAdminAction ${AdminActionType.KickFromRoom} announces the removal`, async () => {
+    expect.hasAssertions();
 
-      const bannedUserNames = ["searched", "other"];
-      for (const bannedUserName of bannedUserNames) {
-        const member = await createMember();
-        await mockContext.db.update(users).set({ name: bannedUserName }).where(eq(users.id, member.id));
-        await moderationCaller.executeAdminAction({
+    const member = await createMember();
+    const onLeaveRoom = await roomCaller.onLeaveRoom([roomId]);
+    const leaveRoom = await getFirstEmit(
+      () => onLeaveRoom,
+      () =>
+        moderationCaller.executeAdminAction({
           roomId,
           targetUserId: member.id,
-          type: AdminActionType.CreateBan,
-        });
-      }
+          type: AdminActionType.KickFromRoom,
+        }),
+    );
+    const messagesClient = await useTableClient(AzureTable.Messages);
+    const messages = await Array.fromAsync(messagesClient.listEntities<StandardMessageEntity>());
 
-      const result = await moderationCaller.readBans({ filter: { name: "search" }, roomId });
-
-      expect(result.items).toHaveLength(1);
-      expect(takeOne(result.items).user.name).toBe("searched");
-    });
-
-    // A name is user input, so the wildcards have to mean themselves — otherwise searching for a literal
-    // Underscore matches every single-character name in the room
-    test("searches a wildcard in a name as itself", async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      await mockContext.db.update(users).set({ name: "ab" }).where(eq(users.id, member.id));
-      await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: member.id,
-        type: AdminActionType.CreateBan,
-      });
-
-      const result = await moderationCaller.readBans({ filter: { name: "a_" }, roomId });
-
-      expect(result.items).toHaveLength(0);
-    });
+    expect(leaveRoom).toStrictEqual({ roomId, userId: member.id });
+    expect(messages.map(({ message }) => message)).toContain(`${member.name} was kicked from the room.`);
   });
 
-  describe("readModerationLog", () => {
-    test("filters by type", async () => {
-      expect.hasAssertions();
+  // Moderating yourself is not a hierarchy question, and the comparison cannot answer it — an owner outranks
+  // Themselves under every rule it knows
+  test("fails executeAdminAction aimed at the actor", async () => {
+    expect.hasAssertions();
 
-      const member = await createMember();
-      await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceMute });
-      vi.setSystemTime(durationMs);
-      await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: member.id,
-        type: AdminActionType.ForceUnmute,
-      });
+    const targetUserId = getMockSession().user.id;
+    const input = { roomId, targetUserId };
 
-      const result = await moderationCaller.readModerationLog({
-        ...emptyFilters,
-        roomId,
-        type: AdminActionType.ForceUnmute,
-      });
-
-      expect(result.items).toHaveLength(1);
-      expect(takeOne(result.items).type).toBe(AdminActionType.ForceUnmute);
-    });
-
-    test("filters by targetUserId", async () => {
-      expect.hasAssertions();
-
-      // Sequential: `createMember` replaces the room's invite for its caller and consumes a one-shot session,
-      // So the two cannot overlap
-      const firstMember = await createMember();
-      const secondMember = await createMember();
-      await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: firstMember.id,
-        type: AdminActionType.ForceMute,
-      });
-      vi.setSystemTime(durationMs);
-      await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: secondMember.id,
-        type: AdminActionType.ForceMute,
-      });
-
-      const result = await moderationCaller.readModerationLog({
-        ...emptyFilters,
-        roomId,
-        targetUserId: secondMember.id,
-      });
-
-      expect(result.items).toHaveLength(1);
-      expect(takeOne(result.items).targetUserId).toBe(secondMember.id);
-    });
-
-    test("filters by actorUserId — non-actor matches nothing", async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceMute });
-
-      const result = await moderationCaller.readModerationLog({ ...emptyFilters, actorUserId: member.id, roomId });
-
-      expect(result.items).toHaveLength(0);
-    });
-
-    test("filters by actorUserId — actor matches their own actions", async () => {
-      expect.hasAssertions();
-
-      const owner = getMockSession().user;
-      const member = await createMember();
-      await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceMute });
-
-      const result = await moderationCaller.readModerationLog({ ...emptyFilters, actorUserId: owner.id, roomId });
-
-      expect(result.items).toHaveLength(1);
-      expect(takeOne(result.items).actorUserId).toBe(owner.id);
-    });
+    await expect(
+      moderationCaller.executeAdminAction({ ...input, type: AdminActionType.KickFromRoom }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.UserToRoom, JSON.stringify(input)).message}]`,
+    );
   });
 
-  describe("deleteBan", () => {
-    test("owner deletes a ban for a previously banned user — ban record deleted, readBans returns empty", async () => {
-      expect.hasAssertions();
+  // A direct message has no roles and no moderators — its pair block each other instead
+  test("fails executeAdminAction aimed at a direct message", async () => {
+    expect.hasAssertions();
 
-      const member = await createMember();
-      await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: member.id,
-        type: AdminActionType.CreateBan,
-      });
-      await moderationCaller.deleteBan({ roomId, userId: member.id });
+    const { directMessage, user } = await createDirectMessageWithFriend(mockContext);
 
-      const result = await moderationCaller.readBans({ roomId });
+    await expect(
+      moderationCaller.executeAdminAction({
+        roomId: directMessage.id,
+        targetUserId: user.id,
+        type: AdminActionType.KickFromRoom,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, directMessage.id).message}]`,
+    );
+  });
 
-      expect(result.items).toHaveLength(0);
-    });
-
-    test("owner deletes a ban that was never created — the delete itself reports nothing was removed", async () => {
+  // These three land on the call pipeline rather than the database, so the mutation itself only has to record
+  // The action and resolve. `as const` keeps the rows as their own literals — a plain array widens to
+  // `AdminActionType`, which the discriminated input union rejects
+  test.each([AdminActionType.ForceMute, AdminActionType.ForceUnmute, AdminActionType.KickFromCall] as const)(
+    "executeAdminAction %s resolves against a member",
+    async (type) => {
       expect.hasAssertions();
 
       const member = await createMember();
 
       await expect(
-        moderationCaller.deleteBan({ roomId, userId: member.id }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Ban, member.id).message}]`,
-      );
+        moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type }),
+      ).resolves.toBeUndefined();
+    },
+  );
+
+  test(`executeAdminAction ${AdminActionType.SoftBan} inserts the ban row and deletes the membership row`, async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await moderationCaller.executeAdminAction({
+      roomId,
+      targetUserId: member.id,
+      type: AdminActionType.SoftBan,
     });
+    const banRows = await readBanRows(member.id);
+    const membershipRows = await readMembershipRows(member.id);
+
+    expect(banRows).toHaveLength(1);
+    expect(takeOne(banRows).userId).toBe(member.id);
+    expect(membershipRows).toHaveLength(0);
   });
 
-  describe("createModerationNote", () => {
-    test("owner creates a note — readModerationNotes returns it", async () => {
-      expect.hasAssertions();
+  test(`executeAdminAction ${AdminActionType.SoftBan} soft-deletes the member messages`, async () => {
+    expect.hasAssertions();
 
+    const member = await createMember();
+    await moderationCaller.executeAdminAction({
+      roomId,
+      targetUserId: member.id,
+      type: AdminActionType.SoftBan,
+    });
+
+    const messagesClient = await useTableClient(AzureTable.Messages);
+    // The room's own lines are not the member's — their join and the ban that removed them both stay, so the
+    // Purge is asserted against what the member wrote
+    const memberMessages = (await Array.fromAsync(messagesClient.listEntities<StandardMessageEntity>())).filter(
+      ({ userId }) => userId === member.id,
+    );
+
+    expect(memberMessages).toHaveLength(1);
+    expect(memberMessages.every(({ deletedAt }) => deletedAt)).toBe(true);
+  });
+
+  test("readBans returns an empty list for a new room", async () => {
+    expect.hasAssertions();
+
+    const result = await moderationCaller.readBans({ roomId });
+
+    expect(result.items).toHaveLength(0);
+  });
+
+  test("readBans returns the banned user", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await moderationCaller.executeAdminAction({
+      roomId,
+      targetUserId: member.id,
+      type: AdminActionType.CreateBan,
+    });
+
+    const result = await moderationCaller.readBans({ roomId });
+
+    expect(result.items).toHaveLength(1);
+    expect(takeOne(result.items).userId).toBe(member.id);
+  });
+
+  // The panel paginates every ban a room has ever placed, so without a predicate finding one person means
+  // Scrolling all of them. The name is the room's, not the ban's — the join that renders the row provides it
+  test("readBans filters by the banned user's name", async () => {
+    expect.hasAssertions();
+
+    const bannedUserNames = ["searched", "other"];
+    for (const bannedUserName of bannedUserNames) {
       const member = await createMember();
+      await mockContext.db.update(users).set({ name: bannedUserName }).where(eq(users.id, member.id));
+      await moderationCaller.executeAdminAction({
+        roomId,
+        targetUserId: member.id,
+        type: AdminActionType.CreateBan,
+      });
+    }
+
+    const result = await moderationCaller.readBans({ filter: { name: "search" }, roomId });
+
+    expect(result.items).toHaveLength(1);
+    expect(takeOne(result.items).user.name).toBe("searched");
+  });
+
+  // A name is user input, so the wildcards have to mean themselves — otherwise searching for a literal
+  // Underscore matches every single-character name in the room
+  test("readBans searches a wildcard in a name as itself", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await mockContext.db.update(users).set({ name: "ab" }).where(eq(users.id, member.id));
+    await moderationCaller.executeAdminAction({
+      roomId,
+      targetUserId: member.id,
+      type: AdminActionType.CreateBan,
+    });
+
+    const result = await moderationCaller.readBans({ filter: { name: "a_" }, roomId });
+
+    expect(result.items).toHaveLength(0);
+  });
+
+  test("readModerationLog filters by type", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceMute });
+    vi.setSystemTime(durationMs);
+    await moderationCaller.executeAdminAction({
+      roomId,
+      targetUserId: member.id,
+      type: AdminActionType.ForceUnmute,
+    });
+
+    const result = await moderationCaller.readModerationLog({
+      ...emptyFilters,
+      roomId,
+      type: AdminActionType.ForceUnmute,
+    });
+
+    expect(result.items).toHaveLength(1);
+    expect(takeOne(result.items).type).toBe(AdminActionType.ForceUnmute);
+  });
+
+  test("readModerationLog filters by targetUserId", async () => {
+    expect.hasAssertions();
+
+    // Sequential: `createMember` replaces the room's invite for its caller and consumes a one-shot session,
+    // So the two cannot overlap
+    const firstMember = await createMember();
+    const secondMember = await createMember();
+    await moderationCaller.executeAdminAction({
+      roomId,
+      targetUserId: firstMember.id,
+      type: AdminActionType.ForceMute,
+    });
+    vi.setSystemTime(durationMs);
+    await moderationCaller.executeAdminAction({
+      roomId,
+      targetUserId: secondMember.id,
+      type: AdminActionType.ForceMute,
+    });
+
+    const result = await moderationCaller.readModerationLog({
+      ...emptyFilters,
+      roomId,
+      targetUserId: secondMember.id,
+    });
+
+    expect(result.items).toHaveLength(1);
+    expect(takeOne(result.items).targetUserId).toBe(secondMember.id);
+  });
+
+  test("readModerationLog filters by actorUserId — a non-actor matches nothing", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceMute });
+
+    const result = await moderationCaller.readModerationLog({ ...emptyFilters, actorUserId: member.id, roomId });
+
+    expect(result.items).toHaveLength(0);
+  });
+
+  test("readModerationLog filters by actorUserId — the actor matches their own actions", async () => {
+    expect.hasAssertions();
+
+    const owner = getMockSession().user;
+    const member = await createMember();
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceMute });
+
+    const result = await moderationCaller.readModerationLog({ ...emptyFilters, actorUserId: owner.id, roomId });
+
+    expect(result.items).toHaveLength(1);
+    expect(takeOne(result.items).actorUserId).toBe(owner.id);
+  });
+
+  test("deleteBan removes the ban row", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await moderationCaller.executeAdminAction({
+      roomId,
+      targetUserId: member.id,
+      type: AdminActionType.CreateBan,
+    });
+    await moderationCaller.deleteBan({ roomId, userId: member.id });
+
+    const result = await moderationCaller.readBans({ roomId });
+
+    expect(result.items).toHaveLength(0);
+  });
+
+  test("fails deleteBan when no ban was ever created", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+
+    await expect(moderationCaller.deleteBan({ roomId, userId: member.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Ban, member.id).message}]`,
+    );
+  });
+
+  test("createModerationNote stores a note readModerationNotes returns", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await moderationCaller.createModerationNote({ note, roomId, targetUserId: member.id });
+
+    const result = await moderationCaller.readModerationNotes({ roomId, targetUserId: member.id });
+    const moderationNote = takeOne(result.items);
+
+    expect(result.items).toHaveLength(1);
+    expect(moderationNote.note).toBe(note);
+    expect(moderationNote.targetUserId).toBe(member.id);
+  });
+
+  test("readModerationNotes returns only the target member's notes", async () => {
+    expect.hasAssertions();
+
+    // Sequential: `createMember` replaces the room's invite for its caller and consumes a one-shot session,
+    // So the two cannot overlap
+    const firstMember = await createMember();
+    const secondMember = await createMember();
+    await moderationCaller.createModerationNote({ note, roomId, targetUserId: firstMember.id });
+    vi.setSystemTime(durationMs);
+    await moderationCaller.createModerationNote({ note, roomId, targetUserId: secondMember.id });
+
+    const result = await moderationCaller.readModerationNotes({ roomId, targetUserId: secondMember.id });
+
+    expect(result.items).toHaveLength(1);
+    expect(takeOne(result.items).targetUserId).toBe(secondMember.id);
+  });
+
+  test("readModerationNotesCount counts every note regardless of page size", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    const noteCount = 3;
+    for (let i = 0; i < noteCount; i++) {
+      vi.setSystemTime(i);
       await moderationCaller.createModerationNote({ note, roomId, targetUserId: member.id });
+    }
 
-      const result = await moderationCaller.readModerationNotes({ roomId, targetUserId: member.id });
+    const firstPage = await moderationCaller.readModerationNotes({ limit: 1, roomId, targetUserId: member.id });
+    const count = await moderationCaller.readModerationNotesCount({ roomId, targetUserId: member.id });
 
-      expect(result.items).toHaveLength(1);
-      expect(takeOne(result.items).note).toBe(note);
-      expect(takeOne(result.items).targetUserId).toBe(member.id);
-    });
+    expect(firstPage.items).toHaveLength(1);
+    expect(count).toBe(noteCount);
   });
 
-  describe("readModerationNotes", () => {
-    test("returns only the target member's notes", async () => {
-      expect.hasAssertions();
+  test("onAdminAction emits the action to the targeted user", async () => {
+    expect.hasAssertions();
 
-      // Sequential: `createMember` replaces the room's invite for its caller and consumes a one-shot session,
-      // So the two cannot overlap
-      const firstMember = await createMember();
-      const secondMember = await createMember();
-      await moderationCaller.createModerationNote({ note, roomId, targetUserId: firstMember.id });
-      vi.setSystemTime(durationMs);
-      await moderationCaller.createModerationNote({ note, roomId, targetUserId: secondMember.id });
+    const member = await createMember();
+    await mockSessionOnce(mockContext.db, member);
+    const onAdminAction = await moderationCaller.onAdminAction({ roomId });
 
-      const result = await moderationCaller.readModerationNotes({ roomId, targetUserId: secondMember.id });
+    const data = await getFirstEmit(
+      () => onAdminAction,
+      () =>
+        moderationCaller.executeAdminAction({
+          roomId,
+          targetUserId: member.id,
+          type: AdminActionType.KickFromCall,
+        }),
+    );
 
-      expect(result.items).toHaveLength(1);
-      expect(takeOne(result.items).targetUserId).toBe(secondMember.id);
-    });
+    expect(data.type).toBe(AdminActionType.KickFromCall);
+    expect(data.durationMs).toBeUndefined();
   });
 
-  describe("readModerationNotesCount", () => {
-    test("counts all of the target member's notes regardless of page size", async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      const noteCount = 3;
-      for (let i = 0; i < noteCount; i++) {
-        vi.setSystemTime(i);
-        await moderationCaller.createModerationNote({ note, roomId, targetUserId: member.id });
-      }
-
-      const firstPage = await moderationCaller.readModerationNotes({ limit: 1, roomId, targetUserId: member.id });
-      const count = await moderationCaller.readModerationNotesCount({ roomId, targetUserId: member.id });
-
-      expect(firstPage.items).toHaveLength(1);
-      expect(count).toBe(noteCount);
-    });
-  });
-
-  describe("onAdminAction", () => {
-    test("targeted user receives the emitted action", async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      await mockSessionOnce(mockContext.db, member);
-      const onAdminAction = await moderationCaller.onAdminAction({ roomId });
-
-      const data = await getFirstEmit(
-        () => onAdminAction,
-        () =>
-          moderationCaller.executeAdminAction({
-            roomId,
-            targetUserId: member.id,
-            type: AdminActionType.KickFromCall,
-          }),
-      );
-
-      expect(data.type).toBe(AdminActionType.KickFromCall);
-      expect(data.durationMs).toBeUndefined();
-    });
-  });
-
-  // Every procedure here is permission-gated and a plain member holds none of them. The guard is one guard, so
-  // What earns a line is that each procedure is actually behind it — not how any one of them refuses
+  // Every procedure here is permission-gated and a plain member holds none of them
   test.each([
     [RoomPermission.BanMembers, "readBans", () => moderationCaller.readBans({ roomId })],
     [

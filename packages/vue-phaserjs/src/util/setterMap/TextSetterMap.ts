@@ -28,8 +28,8 @@ export const TextSetterMap: SetterMap<TextConfiguration, GameObjects.Text, TextE
   },
   text: (gameObject, emit) => (value) => {
     if (value === undefined) return;
-    // Unfortunately, we also have to refresh width values for vue to properly sync up,
-    // Since it doesn't know that other computed phaser properties have also changed :C
+    // Setting the text changes the derived width values too, and vue cannot see a phaser property change,
+    // So they are emitted back explicitly
     gameObject.setText(value);
     emit("update:width", gameObject.width);
     emit("update:displayWidth", gameObject.displayWidth);

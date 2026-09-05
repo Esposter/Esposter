@@ -5,8 +5,8 @@ import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { getSaveBlobName } from "@@/server/services/blobState/getSaveBlobName";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { getResultAsync, jsonDateParse, streamToText } from "@esposter/shared";
-// The init parameter is typed never so every state class with an optional-init constructor is accepted
-// (their init types vary: Partial<X> vs PartialDeep<X>); the single `as never` below is the centralized cost.
+// The init parameter is typed never so every state class with an optional-init constructor is accepted —
+// Their init types vary (Partial<X> vs PartialDeep<X>), which is what the `as never` below pays for.
 export const createReadBlobStateProcedure = <TData>(container: AzureContainer, Model: new (init?: never) => TData) =>
   standardAuthedProcedure.query<TData>(({ ctx }) =>
     getResultAsync(async () => {

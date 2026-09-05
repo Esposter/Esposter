@@ -5,7 +5,6 @@ import { useRecentStore } from "@/store/resource/recent";
 const recentStore = useRecentStore();
 const { error, isPending, recents } = storeToRefs(recentStore);
 const { readRecents } = recentStore;
-// Fetched after mount (not awaited in setup) so the card shows its skeleton instead of blocking navigation
 const isLoaded = ref(false);
 
 onMounted(async () => {

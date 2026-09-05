@@ -20,8 +20,6 @@ const updateNotificationType = async (newNotificationType: NotificationType) => 
   await executeMutation(
     () => $trpc.userToRoom.updateUserToRoom.mutate({ notificationType: newNotificationType, roomId }),
     {
-      // Read as the write is sent, so a rejected change restores the setting the write ahead of it stored rather
-      // Than the one on screen when the radio was clicked
       applyOptimistic: () => {
         const previousUserToRoom = getMyUserToRoom(roomId);
         if (!previousUserToRoom) return noop;
@@ -29,8 +27,6 @@ const updateNotificationType = async (newNotificationType: NotificationType) => 
         const { notificationType: previousNotificationType } = previousUserToRoom;
         setMyUserToRoom(roomId, { ...previousUserToRoom, notificationType: newNotificationType });
         return () => {
-          // Only the field this write moved, against the record as it stands — reinstating the row as a whole
-          // Would undo everything else that landed on it while this write was in flight
           const currentUserToRoom = getMyUserToRoom(roomId);
           if (currentUserToRoom)
             setMyUserToRoom(roomId, { ...currentUserToRoom, notificationType: previousNotificationType });

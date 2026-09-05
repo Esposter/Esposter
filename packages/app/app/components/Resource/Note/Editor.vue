@@ -6,12 +6,10 @@ import { EditorContent, useEditor } from "@tiptap/vue-3";
 const noteStore = useNoteStore();
 const { loadContent, saveNote } = noteStore;
 const { note } = storeToRefs(noteStore);
-// The Suspense-wrapped blade awaits the content before creating the editor, so it opens seeded with the doc
 await loadContent();
 // Tiptap onUpdate fires per keystroke, so writes coalesce on the shared autosave cadence like the other editors
 const debouncedSave = useAutosaveFunction(saveNote);
-// UseEditor constructs the editor in onMounted (client-only), so the doc is already loaded by then, and
-// Tears it down in its own onBeforeUnmount — nothing here has to
+// `useEditor` constructs the editor in onMounted, which is after the load above, so the doc is already there
 const editor = useEditor({
   content: note.value.doc,
   extensions: getNoteExtensions(),

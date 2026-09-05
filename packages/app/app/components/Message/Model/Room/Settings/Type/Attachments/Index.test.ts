@@ -40,7 +40,6 @@ describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
       }),
     );
     const component = await mountSuspended(MessageModelRoomSettingsTypeAttachmentsIndex, { props: { room } });
-    // The component mounts into the nuxt app's pinia, so read the store it uses rather than a local one
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
     const textField = component.getComponent(VTextField);

@@ -4,16 +4,14 @@ import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessage
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 import type { SetOptional } from "type-fest";
-// Every event is a `[data, device?]` envelope, which is what lets the room subscriptions share one shape. The
-// Device names the client that caused the event so its own subscription can skip it; an event no single client
-// Caused carries none, and reaches everyone in the room.
+// Every event is a `[data, device?]` envelope, so the room subscriptions share one shape. An event no single
+// Client caused carries no device, and reaches everyone in the room
 export interface MessageEvents {
   createMessage: [[StandardMessageEntity[], Pick<Device, "sessionId"> & { isSendToSelf?: true }]];
-  // Typing events also propagate to the account's other devices for better UX.
+  // Typing propagates to the account's other devices too, unlike every other event
   createTyping: [[CreateTypingInput, Device]];
   deleteMessage: [[DeleteMessageInput]];
-  // UpdatedAt is implicitly updated too, but we never read it (all properties are set via Object.assign),
-  // So we don't declare it in the type.
+  // UpdatedAt moves with the write and nothing reads it back, so it is left out of the payload
   updateMessage: [
     [
       SetOptional<

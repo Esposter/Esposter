@@ -1,33 +1,37 @@
+import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { CompositeKey } from "@esposter/azure";
 
+import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
-import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCursor";
+import { CompositeKeyPropertyNames } from "@esposter/azure";
 import { describe, expect, test } from "vitest";
 
 describe(getCursorPaginationData, () => {
-  test("gets all", () => {
+  const firstItem: CompositeKey = { partitionKey: "partitionKey", rowKey: "0" };
+  const secondItem: CompositeKey = { partitionKey: "partitionKey", rowKey: "1" };
+  const sortBy: SortItem<keyof CompositeKey>[] = [{ key: CompositeKeyPropertyNames.rowKey, order: SortOrder.Asc }];
+
+  test("hands back every item when the limit covers them", () => {
     expect.hasAssertions();
 
-    const items: CompositeKey[] = [{ partitionKey: "", rowKey: "" }];
+    const items = [firstItem];
 
-    expect(getCursorPaginationData(items, 1, [])).toStrictEqual({
+    expect(getCursorPaginationData(items, 1, sortBy)).toStrictEqual({
       hasMore: false,
       items,
-      nextCursor: getNextCursor(items, []),
+      nextCursor: "eyJyb3dLZXkiOiIwIn0=",
     });
   });
 
-  test("gets partial", () => {
+  // The extra item is what answers `hasMore`, so it is dropped from the page and never cursored past — a
+  // Cursor naming it would skip it on the next read
+  test("drops the item past the limit and cursors on the last one it kept", () => {
     expect.hasAssertions();
 
-    const firstItem: CompositeKey = { partitionKey: "", rowKey: "" };
-    const secondItem: CompositeKey = { partitionKey: " ", rowKey: " " };
-    const items: CompositeKey[] = [firstItem, secondItem];
-
-    expect(getCursorPaginationData(items, 1, [])).toStrictEqual({
+    expect(getCursorPaginationData([firstItem, secondItem], 1, sortBy)).toStrictEqual({
       hasMore: true,
       items: [firstItem],
-      nextCursor: getNextCursor([firstItem], []),
+      nextCursor: "eyJyb3dLZXkiOiIwIn0=",
     });
   });
 });

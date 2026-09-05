@@ -9,8 +9,6 @@ import { SlopeResolver } from "@/models/resolvers/dashboard/visual/SlopeResolver
 import { TreemapResolver } from "@/models/resolvers/dashboard/visual/TreemapResolver";
 import { TypeResolver } from "@/models/resolvers/dashboard/visual/TypeResolver";
 
-// A resolver carries nothing but the visual type it answers to, so one instance serves every lookup —
-// The chart options and the form schema are both recomputed on each edit keystroke
 const visualTypeResolvers: AVisualTypeResolver[] = [
   new TypeResolver(),
   new ColumnResolver(),

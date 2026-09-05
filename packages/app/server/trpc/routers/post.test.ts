@@ -5,7 +5,6 @@ import type { Post } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { blockRouter } from "@@/server/trpc/routers/block";
@@ -15,7 +14,7 @@ import { blocks, DatabaseEntityType, DerivedDatabaseEntityType, posts } from "@e
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("post", () => {
+describe("postRouter", () => {
   let mockContext: Context;
   let postCaller: DecorateRouterRecord<TRPCRouter["post"]>;
   let likeCaller: DecorateRouterRecord<TRPCRouter["like"]>;
@@ -60,7 +59,7 @@ describe("post", () => {
 
     const postsPage = await postCaller.readPosts();
 
-    expect(postsPage).toStrictEqual(getCursorPaginationData([], 0, []));
+    expect(postsPage).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
   });
 
   test("updates", async () => {

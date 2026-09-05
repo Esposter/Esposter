@@ -41,10 +41,9 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
           ? favorites.value.filter(({ id }) => id !== resource.id)
           : [{ lastAccessedAt: null, ...resource }, ...favorites.value];
         return () => {
-          // Only this resource's own entry is unwound. Stars of different resources do not queue against each
-          // Other and the cached read replaces the list wholesale, so reinstating a copy of it would undo a
-          // Toggle running beside this one and drop whatever that read delivered mid-flight. A restored entry
-          // Returning to the front rather than its read order is the cosmetic price
+          // Only this resource's own entry is unwound: stars of different resources do not queue against each
+          // Other, and the cached read replaces the list wholesale. A restored entry returning to the front
+          // Rather than its read order is the cosmetic price
           favorites.value = previousFavorite
             ? [previousFavorite, ...favorites.value.filter(({ id }) => id !== resource.id)]
             : favorites.value.filter(({ id }) => id !== resource.id);

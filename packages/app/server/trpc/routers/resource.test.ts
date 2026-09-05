@@ -36,24 +36,24 @@ import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // A clone mints a fresh asset id rather than carrying the source's over, so its blob is found by where it
-// Landed, never by rebuilding its name — which is the property these tests exist to hold.
+// Landed, never by rebuilding its name
 const readFilesBlobNames = (id: string): string[] => {
   const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
-  assert(container);
+  assert.exists(container);
   return [...container.keys()].filter((blobName) => blobName.startsWith(`${getFilesDirectoryName(id)}/`));
 };
 
-// Everything a publish writes lands under the resource's published prefix — the snapshot itself beside a
-// Directory of cloned assets — so the bytes it stored are read back off the container rather than restated
+// Everything a publish writes lands under the resource's published prefix: the snapshot itself beside a
+// Directory of cloned assets
 const readPublishedBlobSizes = (id: string): number[] => {
   const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
-  assert(container);
+  assert.exists(container);
   return [...container.entries()]
     .filter(([blobName]) => blobName.startsWith(`${id}/${SnapshotChannel.Published}/`))
     .map(([, data]) => data.byteLength);
 };
 
-describe("resource", () => {
+describe("resourceRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
@@ -71,8 +71,7 @@ describe("resource", () => {
     (await mockContext.db.query.users.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
       ?.storageBytesUsed;
 
-  // Every webpage fixture is the same write against the resource it just created, so the version rides the row
-  // Rather than being restated — only a test writing a second time has to say which version it is claiming
+  // The version rides the row, so only a test writing a second time has to say which version it is claiming
   const saveWebpageContent = (webpageResource: Resource, content: WebpageEditor, contentVersionOffset = 0) =>
     webpageCaller.saveResourceContent({
       content,
@@ -89,7 +88,8 @@ describe("resource", () => {
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 
-  // UpdatedAt is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency deterministic.
+  // `updatedAt` is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency
+  // Deterministic.
   // Only Date: vitest's default set also fakes `process.hrtime`, which every Azure Table row key is derived from,
   // And a frozen tick makes two writes to one partition collide on the same key
   beforeEach(() => {
@@ -122,8 +122,6 @@ describe("resource", () => {
     expect(resource).toStrictEqual({ ...dashboardResource, publication: null });
   });
 
-  // Opening a resource is one round trip: the publication rides the row, so no surface has to follow the read
-  // With a second request that re-resolves the same ownership
   test("reads a resource with its publication", async () => {
     expect.hasAssertions();
 
@@ -466,9 +464,6 @@ describe("resource", () => {
     expect(duplicatedBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
   });
 
-  // A snapshot embeds `{id}/published/{publishId}/…` urls and unpublish wipes that whole prefix, so a restore
-  // That copied the snapshot blob verbatim would hand the draft urls a later unpublish deletes — every image
-  // 404ing permanently, with re-uploading each asset the only recovery
   test("restores a published version by cloning its assets back into the working copy", async () => {
     expect.hasAssertions();
 
@@ -502,7 +497,7 @@ describe("resource", () => {
     await saveWebpageContent(webpageResource, webpageEditor);
     // Corrupt the stored draft so reading it back for the copy fails after the copy's row already exists
     const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
-    assert(container);
+    assert.exists(container);
     container.set(getContentBlobName(webpageResource.id), Buffer.from("a"));
 
     await expect(caller.duplicateResource({ id: webpageResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -516,9 +511,6 @@ describe("resource", () => {
     expect([...container.keys()].every((key) => key.startsWith(`${webpageResource.id}/`))).toBe(true);
   });
 
-  // The copy's content goes through the one content-write path, so it fires the same after-save hook the
-  // Editor's save does — a copy whose items carry future due dates is never left with no reminder at all,
-  // Silently and until the owner happens to re-save that item
   test("runs the after-save hook for a duplicated resource", async () => {
     expect.hasAssertions();
 
@@ -530,7 +522,6 @@ describe("resource", () => {
       id: todoListResource.id,
     });
     const duplicatedResource = await caller.duplicateResource({ id: todoListResource.id });
-    // The hook is fire-and-forget off each write, so drain both before asserting what they enqueued
     await waitForSynchronizedFunctions();
     const reminder = { dueAt, itemId: item.id };
 
@@ -754,9 +745,6 @@ describe("resource", () => {
     expect(publication?.publishVersion).toBe(1);
   });
 
-  // A restore is a content write like any other: an editor open in another tab adopts the restored content and
-  // Its new contentVersion, instead of holding the pre-restore draft and having every further save in that tab
-  // Rejected as stale forever — and the trail records the restore the way the recycle bin's own restore does
   test("restores a published version through the one content-write path", async () => {
     expect.hasAssertions();
 
@@ -779,7 +767,6 @@ describe("resource", () => {
       id: webpageResource.id,
       version: 1,
     });
-    // Every entry on the trail is fire-and-forget off its mutation, so drain them before reading it back
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: webpageResource.id });
     assert.exists(saveEvent);
@@ -801,8 +788,8 @@ describe("resource", () => {
     );
   });
 
-  // Both channels number from 1, so a restore that took a version without the channel it belongs to read the
-  // Published snapshot whenever a revision shared its number — silently discarding the point the owner picked
+  // Both channels number from 1, so a restore taking a version without the channel it belongs to would read the
+  // Published snapshot whenever a revision shares its number, silently discarding the point the owner picked
   test("restores the revision a version names rather than the published snapshot of that number", async () => {
     expect.hasAssertions();
 
@@ -819,8 +806,6 @@ describe("resource", () => {
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(revisionEditor)));
   });
 
-  // A reference snapshot's urls already name the live files directory the working copy points at, so a clone
-  // Would mint a second copy of every asset the resource already holds and charge the owner for it
   test("restores a revision without cloning the assets it already points at", async () => {
     expect.hasAssertions();
 
@@ -841,9 +826,8 @@ describe("resource", () => {
     expect(readFilesBlobNames(webpageResource.id)).toStrictEqual([blobName]);
   });
 
-  // A restore is an append rather than a rewind: the draft it is about to overwrite becomes a revision first,
-  // So the one operation that destroys draft work on purpose is the one with an undo. The version it took rides
-  // Back with the restore, because a listing afterwards cannot say which of its rows this restore had just taken
+  // The version the undo took rides back with the restore, because a listing afterwards cannot say which of its
+  // Rows this restore had just taken
   test(`${SnapshotReason.BeforeRestore}: the draft a restore replaces is restorable afterwards`, async () => {
     expect.hasAssertions();
 
@@ -869,8 +853,6 @@ describe("resource", () => {
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(draftEditor)));
   });
 
-  // A label is what the owner typed when they took a version by hand, so a reason the owner did not choose
-  // Cannot carry one — a labelled BeforeImport row reads in the history as a milestone somebody named
   test("does not save a labelled revision for a reason the owner did not choose", async () => {
     expect.hasAssertions();
 
@@ -888,9 +870,6 @@ describe("resource", () => {
     `);
   });
 
-  // The publication carries the draft version it was taken from, so "has the draft moved since I published?"
-  // Is a comparison rather than a guess off two timestamps — a row left on the column's default answers yes
-  // For every resource, whatever its owner has or has not edited since
   test("records the draft version a publish was taken from", async () => {
     expect.hasAssertions();
 
@@ -928,7 +907,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
-    // The Created write is fire-and-forget, so drain it before purge to prove purge sweeps the partition
+    // Drained before the purge, so the sweep is proved against a partition that has a row in it
     await waitForSynchronizedFunctions();
     await caller.deleteResources({ ids: [dashboardResource.id] });
     await caller.purgeResource({ id: dashboardResource.id });
@@ -950,7 +929,6 @@ describe("resource", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     vi.advanceTimersByTime(1);
     await dashboardCaller.updateResource({ id: dashboardResource.id, name: "renamed" });
-    // Both the Created and Renamed writes are fire-and-forget off the mutation, so drain them first
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: dashboardResource.id });
     const renamedActivity = items.find(({ activityType }) => activityType === ResourceActivityType.Renamed);
@@ -974,7 +952,6 @@ describe("resource", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     vi.advanceTimersByTime(1);
     await dashboardCaller.updateResource({ id: dashboardResource.id, name: "renamed" });
-    // Both the Created and Renamed writes are fire-and-forget off the mutation, so drain them first
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: dashboardResource.id });
     const createdActivity = items.find(({ activityType }) => activityType === ResourceActivityType.Created);
@@ -991,7 +968,6 @@ describe("resource", () => {
 
     const dashboardResource = await dashboardCaller.createResource({ name });
     await dashboardCaller.updateResource({ id: dashboardResource.id, tags: { env: "prod" } });
-    // The Created write is fire-and-forget off createResource, so drain it before reading the trail
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: dashboardResource.id });
     const updatedResource = await caller.readResource({ id: dashboardResource.id });
@@ -1006,8 +982,7 @@ describe("resource", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     vi.advanceTimersByTime(1);
     await saveWebpageContent(webpageResource, webpageEditor);
-    // The activity write is fire-and-forget off the save path, so drain it before the next save's
-    // Coalescing scan can even see it
+    // Drained before the clock moves, so the next save's coalescing scan sees this entry
     await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(1);
     await saveWebpageContent(webpageResource, webpageEditor, 1);
@@ -1031,8 +1006,7 @@ describe("resource", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     vi.advanceTimersByTime(1);
     await saveWebpageContent(webpageResource, webpageEditor);
-    // The activity write is fire-and-forget off the save path, so drain it before the next save's
-    // Coalescing scan can even see it
+    // Drained before the clock moves, so the next save's coalescing scan sees this entry
     await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(CONTENT_SAVED_COALESCE_WINDOW_MS + 1);
     await saveWebpageContent(webpageResource, webpageEditor, 1);

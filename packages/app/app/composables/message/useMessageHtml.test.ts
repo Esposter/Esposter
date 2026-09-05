@@ -45,8 +45,8 @@ describe(useMessageHtml, () => {
     setCurrentRoomId(roomId);
   });
 
-  // The rewrite used to query a tree of its own and serialize a second one, so every mutation was made to a copy
-  // Nobody read — a member who had been renamed still rendered whatever label the message was authored with
+  // The tree that is queried has to be the tree that is serialized: query one and serialize a second and every
+  // Mutation lands on a copy nobody reads, so a renamed member still renders the label it was authored with
   test("resolves a mention to the name the reader's client knows", () => {
     expect.hasAssertions();
 

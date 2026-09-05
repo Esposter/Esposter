@@ -23,7 +23,6 @@ describe("resourceSheetColumnTable", () => {
 
     const dataSource = reactive(createDataSource([createColumn(name)]));
     wrapper = await mountSuspended(ResourceSheetColumnTable, { props: { dataSource }, shallow: true });
-    // Resolved after the mount so it is the same store the component injected from the nuxt app's pinia
     const columnDialogStore = useColumnDialogStore();
     columnDialogStore.chartingColumnName = name;
     columnDialogStore.editingColumnName = name;

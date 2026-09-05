@@ -13,7 +13,6 @@ import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { MessageCreationRejectionReasonMap } from "@@/server/services/message/moderation/MessageCreationRejectionReasonMap";
 import { readMessages } from "@@/server/services/message/readMessages";
-import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { createMentionMessage } from "@@/server/trpc/routers/createMentionMessage.test";
@@ -51,14 +50,13 @@ vi.mock(import("@@/server/services/message/readMessages"), async (importOriginal
 });
 
 // Every message posted here mentions whoever is sending it, which is what makes the stored row carry something
-// Worth asserting — so the body follows the session rather than being restated by each test
+// Worth asserting
 const createOwnMentionMessage = () => createMentionMessage(getMockSession().user.id);
 
-// A message addresses itself by the pair its own entity carries, so every write against one is keyed off the row
-// Rather than rebuilding the pair at each call site
+// A message addresses itself by the pair its own entity carries
 const getCompositeKey = ({ partitionKey, rowKey }: MessageEntity) => ({ partitionKey, rowKey });
 
-describe("message", () => {
+describe("messageRouter", () => {
   const { createMember, getMockContext, getRoomCaller, getRoomId } = setupRoomSuite();
   let mockContext: Context;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
@@ -149,7 +147,7 @@ describe("message", () => {
 
     const readMessages = await messageCaller.readMessages({ roomId });
 
-    expect(readMessages).toStrictEqual(getCursorPaginationData([], 0, []));
+    expect(readMessages).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
   });
 
   test("reads", async () => {
@@ -245,7 +243,6 @@ describe("message", () => {
     const message = createOwnMentionMessage();
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
-    // Limit 1 should return oldest first
     let readMessages = await messageCaller.readMessages({ limit: 1, order: SortOrder.Asc, roomId });
 
     expect(readMessages.items).toHaveLength(1);
@@ -437,8 +434,7 @@ describe("message", () => {
 
   // A vote is a read-modify-write of the whole poll body, so two members voting at once both compute their votes
   // Map from the same stored version. Without a conditional write the later write echoes back a body that never
-  // Saw the earlier vote, erasing it with nothing surfaced to either voter. The first vote's write is held open
-  // Until the second has landed, which is the interleaving a real deployment produces on its own
+  // Saw the earlier vote, erasing it with nothing surfaced to either voter
   test("keeps both votes when two members vote at once", async () => {
     expect.hasAssertions();
 
@@ -558,9 +554,8 @@ describe("message", () => {
     expect(takeOne(data, 1).rowKey).toBe(thirdMessage.rowKey);
   });
 
-  // The catch-up pages MessagesAscending, whose index row lands ahead of the entity every read serves, so a page
-  // Can step past a message whose entity has not landed yet and never come back for it. The emitter listener is
-  // What covers that window, which it can only do if it is already attached while the catch-up is still paging
+  // The emitter listener covers the window a catch-up page can step past, which it can only do if it is already
+  // Attached while the catch-up is still paging
   test("delivers a message created while the catch-up is still paging", async () => {
     expect.hasAssertions();
 
@@ -787,8 +782,6 @@ describe("message", () => {
     expect(unfilteredMembership?.timeoutUntil).toBeNull();
   });
 
-  // Only one rejection can be surfaced to the caller, so the rest have to be logged — otherwise a room that
-  // Failed for its own reason ends up with no forward and nothing anywhere saying so
   test("logs every room a forward failed for", async () => {
     expect.hasAssertions();
 
@@ -1003,9 +996,6 @@ describe("message", () => {
     expect(takeOne(updatedMessages).files).toHaveLength(0);
   });
 
-  // Removing one file rewrites the whole files array, so the write is conditional: an unconditional second write
-  // Computes its survivors from the version before the first deletion and reinstates that file, leaving the
-  // Message pointing at a blob whose deletion has already been published
   test("deletes two files at once without reinstating either", async () => {
     expect.hasAssertions();
 
@@ -1255,290 +1245,273 @@ describe("message", () => {
     expect(takeOne(updatedMessages).message).toBe(updatedMessage);
   });
 
-  describe("slowmode guard", () => {
-    // Only Date, so the message row keys still come from a real `process.hrtime` tick — see the `azure-table` skill
-    beforeEach(() => {
-      vi.useFakeTimers({ now: 0, toFake: ["Date"] });
-    });
+  // Only Date, so the message row keys still come from a real `process.hrtime` tick — see the `azure-table` skill
+  test("fails createMessage with a second message inside the slowmode window", async () => {
+    expect.hasAssertions();
 
-    afterEach(() => {
-      vi.useRealTimers();
-    });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
 
-    test("second message within slowmode window throws TOO_MANY_REQUESTS", async () => {
-      expect.hasAssertions();
+    await roomCaller.updateRoom({ id: roomId, slowmodeMs: 2 });
+    const member = await createMember();
+    const message = createMentionMessage(member.id);
 
-      await roomCaller.updateRoom({ id: roomId, slowmodeMs: 2 });
-      const member = await createMember();
-      const message = createMentionMessage(member.id);
+    await mockSessionOnce(mockContext.db, member);
+    vi.advanceTimersByTime(1);
+    await messageCaller.createMessage({ message, roomId });
+    await mockSessionOnce(mockContext.db, member);
+    vi.advanceTimersByTime(1);
 
-      await mockSessionOnce(mockContext.db, member);
-      vi.advanceTimersByTime(1);
-      await messageCaller.createMessage({ message, roomId });
-      await mockSessionOnce(mockContext.db, member);
-      vi.advanceTimersByTime(1);
-
-      await expect(messageCaller.createMessage({ message, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Slowmode]}]`,
-      );
-    });
-
-    test("message after slowmode window succeeds", async () => {
-      expect.hasAssertions();
-
-      await roomCaller.updateRoom({ id: roomId, slowmodeMs: 1 });
-      const member = await createMember();
-      const message = createMentionMessage(member.id);
-
-      await mockSessionOnce(mockContext.db, member);
-      vi.advanceTimersByTime(1);
-      await messageCaller.createMessage({ message, roomId });
-      await mockSessionOnce(mockContext.db, member);
-      vi.advanceTimersByTime(1);
-
-      const createdMessage = await messageCaller.createMessage({ message, roomId });
-
-      expect(createdMessage).toBeDefined();
-    });
-
-    test("second forward within slowmode window throws TOO_MANY_REQUESTS", async () => {
-      expect.hasAssertions();
-
-      // A forward is a send, so it advances the same clock it was checked against — otherwise the stale
-      // LastMessageAt keeps passing and forwarding floods a room slowmode is supposed to throttle
-      const source = await messageCaller.createMessage({
-        message: createOwnMentionMessage(),
-        roomId,
-      });
-      await roomCaller.updateRoom({ id: roomId, slowmodeMs: 2 });
-      const member = await createMember();
-      const forwardInput = {
-        partitionKey: source.partitionKey,
-        roomIds: [roomId],
-        rowKey: source.rowKey,
-      };
-
-      await mockSessionOnce(mockContext.db, member);
-      vi.advanceTimersByTime(1);
-      await messageCaller.forwardMessage(forwardInput);
-      await mockSessionOnce(mockContext.db, member);
-      vi.advanceTimersByTime(1);
-
-      await expect(messageCaller.forwardMessage(forwardInput)).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Slowmode]}]`,
-      );
-    });
-
-    test("second message within slowmode window from someone who can manage messages succeeds", async () => {
-      expect.hasAssertions();
-
-      // Slowmode throttles the room, not its moderators — the owner sends as fast as they like
-      await roomCaller.updateRoom({ id: roomId, slowmodeMs: 2 });
-      const message = createOwnMentionMessage();
-      vi.advanceTimersByTime(1);
-      await messageCaller.createMessage({ message, roomId });
-      vi.advanceTimersByTime(1);
-
-      const createdMessage = await messageCaller.createMessage({ message, roomId });
-
-      expect(createdMessage).toBeDefined();
-    });
+    await expect(messageCaller.createMessage({ message, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Slowmode]}]`,
+    );
   });
 
-  describe("createMessage read-only guard", () => {
-    test("message from a member of a read-only room throws FORBIDDEN", async () => {
-      expect.hasAssertions();
+  test("createMessage succeeds after the slowmode window", async () => {
+    expect.hasAssertions();
 
-      await roomCaller.updateRoom({ id: roomId, isReadOnly: true });
-      const member = await createMember();
-      const message = createMentionMessage(member.id);
-      await mockSessionOnce(mockContext.db, member);
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
 
-      await expect(messageCaller.createMessage({ message, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.ReadOnly]}]`,
-      );
-    });
+    await roomCaller.updateRoom({ id: roomId, slowmodeMs: 1 });
+    const member = await createMember();
+    const message = createMentionMessage(member.id);
 
-    test("message from someone who can manage messages succeeds in a read-only room", async () => {
-      expect.hasAssertions();
+    await mockSessionOnce(mockContext.db, member);
+    vi.advanceTimersByTime(1);
+    await messageCaller.createMessage({ message, roomId });
+    await mockSessionOnce(mockContext.db, member);
+    vi.advanceTimersByTime(1);
 
-      // Read-only silences the room, not its moderators — the owner always may
-      await roomCaller.updateRoom({ id: roomId, isReadOnly: true });
+    const createdMessage = await messageCaller.createMessage({ message, roomId });
 
-      const createdMessage = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
-
-      expect(createdMessage).toBeDefined();
-    });
+    expect(createdMessage).toBeDefined();
   });
 
-  describe("createMessage timeout guard", () => {
-    // The clock is pinned so "timed out until 1ms from now" is still true by the time the message lands — Date
-    // Only, so the message row keys still come from a real `process.hrtime` tick
-    beforeEach(() => {
-      vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+  test("fails forwardMessage with a second forward inside the slowmode window", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+
+    // A forward is a send, so it advances the same clock it was checked against — otherwise a stale
+    // `lastMessageAt` keeps passing and forwarding floods a room slowmode is supposed to throttle
+    const source = await messageCaller.createMessage({
+      message: createOwnMentionMessage(),
+      roomId,
     });
+    await roomCaller.updateRoom({ id: roomId, slowmodeMs: 2 });
+    const member = await createMember();
+    const forwardInput = {
+      partitionKey: source.partitionKey,
+      roomIds: [roomId],
+      rowKey: source.rowKey,
+    };
 
-    afterEach(() => {
-      vi.useRealTimers();
-    });
+    await mockSessionOnce(mockContext.db, member);
+    vi.advanceTimersByTime(1);
+    await messageCaller.forwardMessage(forwardInput);
+    await mockSessionOnce(mockContext.db, member);
+    vi.advanceTimersByTime(1);
 
-    test("message from a timed out member throws FORBIDDEN", async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      await mockContext.db
-        .update(usersToRoomsInMessage)
-        .set({ timeoutUntil: new Date(Date.now() + 1) })
-        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
-      const message = createMentionMessage(member.id);
-      await mockSessionOnce(mockContext.db, member);
-
-      await expect(messageCaller.createMessage({ message, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Timeout]}]`,
-      );
-    });
-
-    test("a timed out owner is still timed out", async () => {
-      expect.hasAssertions();
-
-      // A timeout outranks every permission, so it is the one rule managing messages cannot talk its way past
-      const userId = getMockSession().user.id;
-      await mockContext.db
-        .update(usersToRoomsInMessage)
-        .set({ timeoutUntil: new Date(Date.now() + 1) })
-        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
-
-      await expect(
-        messageCaller.createMessage({ message: createOwnMentionMessage(), roomId }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Timeout]}]`,
-      );
-    });
+    await expect(messageCaller.forwardMessage(forwardInput)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Slowmode]}]`,
+    );
   });
 
-  describe("createMessage word filter guard", () => {
-    test("message with a blocked word from someone who can manage messages succeeds", async () => {
-      expect.hasAssertions();
+  test("createMessage skips slowmode for someone who can manage messages", async () => {
+    expect.hasAssertions();
 
-      // The filter is a moderation tool, so it never fires on the moderator wielding it
-      await insertWordFilter();
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
 
-      const createdMessage = await messageCaller.createMessage({
-        message: filteredMessage,
-        roomId,
-      });
+    // Slowmode throttles the room, not its moderators — the owner sends as fast as they like
+    await roomCaller.updateRoom({ id: roomId, slowmodeMs: 2 });
+    const message = createOwnMentionMessage();
+    vi.advanceTimersByTime(1);
+    await messageCaller.createMessage({ message, roomId });
+    vi.advanceTimersByTime(1);
 
-      expect(createdMessage).toBeDefined();
-    });
+    const createdMessage = await messageCaller.createMessage({ message, roomId });
 
-    test("message with blocked word throws FORBIDDEN", async () => {
-      expect.hasAssertions();
-
-      await insertWordFilter();
-      const member = await createMember();
-      await mockSessionOnce(mockContext.db, member);
-
-      await expect(
-        messageCaller.createMessage({ message: filteredMessage, roomId }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
-    });
-
-    test("message without blocked word succeeds", async () => {
-      expect.hasAssertions();
-
-      await insertWordFilter();
-      const message = createOwnMentionMessage();
-
-      const createdMessage = await messageCaller.createMessage({ message, roomId });
-
-      expect(createdMessage).toBeDefined();
-    });
-
-    test(`blocked word with the ${WordFilterAction.Timeout} action rejects the message and times out the sender`, async () => {
-      expect.hasAssertions();
-
-      const timeoutDurationMs = 1;
-      await mockContext.db
-        .insert(roomFiltersInMessage)
-        .values({ action: WordFilterAction.Timeout, roomId, timeoutDurationMs, words: [filteredWord] });
-      const member = await createMember();
-      await mockSessionOnce(mockContext.db, member);
-      const beforeCreateMessageTime = Date.now();
-
-      await expect(
-        messageCaller.createMessage({ message: filteredMessage, roomId }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
-
-      const [membership] = await mockContext.db
-        .select()
-        .from(usersToRoomsInMessage)
-        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
-
-      expect(membership?.timeoutUntil?.getTime()).toBeGreaterThanOrEqual(beforeCreateMessageTime + timeoutDurationMs);
-    });
+    expect(createdMessage).toBeDefined();
   });
 
-  describe("thread follows", () => {
-    test("followThread then readFollowedThreads returns the thread root", async () => {
-      expect.hasAssertions();
+  test("fails createMessage in a read-only room", async () => {
+    expect.hasAssertions();
 
-      const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
-      await messageCaller.followThread({ roomId, threadRootRowKey: root.rowKey });
+    await roomCaller.updateRoom({ id: roomId, isReadOnly: true });
+    const member = await createMember();
+    const message = createMentionMessage(member.id);
+    await mockSessionOnce(mockContext.db, member);
 
-      const { threads } = await messageCaller.readFollowedThreads({ roomId });
+    await expect(messageCaller.createMessage({ message, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.ReadOnly]}]`,
+    );
+  });
 
-      expect(threads).toHaveLength(1);
-      expect(takeOne(threads).rowKey).toBe(root.rowKey);
+  test("createMessage succeeds in a read-only room for someone who can manage messages", async () => {
+    expect.hasAssertions();
+
+    // Read-only silences the room, not its moderators — the owner always may
+    await roomCaller.updateRoom({ id: roomId, isReadOnly: true });
+
+    const createdMessage = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
+
+    expect(createdMessage).toBeDefined();
+  });
+
+  // The clock is pinned so "timed out until 1ms from now" is still true by the time the message lands
+  test("fails createMessage for a timed out member", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+
+    const member = await createMember();
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ timeoutUntil: new Date(Date.now() + 1) })
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
+    const message = createMentionMessage(member.id);
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(messageCaller.createMessage({ message, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Timeout]}]`,
+    );
+  });
+
+  test("fails createMessage for a timed out owner", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+
+    // A timeout outranks every permission, so it is the one rule managing messages cannot talk its way past
+    const userId = getMockSession().user.id;
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ timeoutUntil: new Date(Date.now() + 1) })
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
+
+    await expect(
+      messageCaller.createMessage({ message: createOwnMentionMessage(), roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Timeout]}]`,
+    );
+  });
+
+  test("createMessage succeeds with a blocked word for someone who can manage messages", async () => {
+    expect.hasAssertions();
+
+    // The filter is a moderation tool, so it never fires on the moderator wielding it
+    await insertWordFilter();
+
+    const createdMessage = await messageCaller.createMessage({
+      message: filteredMessage,
+      roomId,
     });
 
-    // The roots are read as one batch, and the batch is a single table scan — so the drawer lists them
-    // Newest-message-first rather than in the order the follows were recorded
-    test("readFollowedThreads returns the roots newest-first", async () => {
-      expect.hasAssertions();
+    expect(createdMessage).toBeDefined();
+  });
 
-      const message = createOwnMentionMessage();
-      const firstRoot = await messageCaller.createMessage({ message, roomId });
-      const secondRoot = await messageCaller.createMessage({ message, roomId });
-      // Followed oldest-root-last, so a list that merely echoed the follow order would come back reversed
-      await messageCaller.followThread({ roomId, threadRootRowKey: secondRoot.rowKey });
-      await messageCaller.followThread({ roomId, threadRootRowKey: firstRoot.rowKey });
+  test("fails createMessage with a blocked word", async () => {
+    expect.hasAssertions();
 
-      const { threads } = await messageCaller.readFollowedThreads({ roomId });
+    await insertWordFilter();
+    const member = await createMember();
+    await mockSessionOnce(mockContext.db, member);
 
-      expect(threads.map(({ rowKey }) => rowKey)).toStrictEqual([secondRoot.rowKey, firstRoot.rowKey]);
+    await expect(
+      messageCaller.createMessage({ message: filteredMessage, roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
+  });
+
+  test("createMessage succeeds without a blocked word", async () => {
+    expect.hasAssertions();
+
+    await insertWordFilter();
+    const message = createOwnMentionMessage();
+
+    const createdMessage = await messageCaller.createMessage({ message, roomId });
+
+    expect(createdMessage).toBeDefined();
+  });
+
+  test(`createMessage with a blocked word and the ${WordFilterAction.Timeout} action rejects it and times out the sender`, async () => {
+    expect.hasAssertions();
+
+    const timeoutDurationMs = 1;
+    await mockContext.db
+      .insert(roomFiltersInMessage)
+      .values({ action: WordFilterAction.Timeout, roomId, timeoutDurationMs, words: [filteredWord] });
+    const member = await createMember();
+    await mockSessionOnce(mockContext.db, member);
+    const beforeCreateMessageTime = Date.now();
+
+    await expect(
+      messageCaller.createMessage({ message: filteredMessage, roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
+
+    const [membership] = await mockContext.db
+      .select()
+      .from(usersToRoomsInMessage)
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
+
+    expect(membership?.timeoutUntil?.getTime()).toBeGreaterThanOrEqual(beforeCreateMessageTime + timeoutDurationMs);
+  });
+
+  test("followThread then readFollowedThreads returns the thread root", async () => {
+    expect.hasAssertions();
+
+    const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
+    await messageCaller.followThread({ roomId, threadRootRowKey: root.rowKey });
+
+    const { threads } = await messageCaller.readFollowedThreads({ roomId });
+
+    expect(threads).toHaveLength(1);
+    expect(takeOne(threads).rowKey).toBe(root.rowKey);
+  });
+
+  test("readFollowedThreads returns the roots newest-first", async () => {
+    expect.hasAssertions();
+
+    const message = createOwnMentionMessage();
+    const firstRoot = await messageCaller.createMessage({ message, roomId });
+    const secondRoot = await messageCaller.createMessage({ message, roomId });
+    // Followed oldest-root-last, so a list that merely echoed the follow order would come back reversed
+    await messageCaller.followThread({ roomId, threadRootRowKey: secondRoot.rowKey });
+    await messageCaller.followThread({ roomId, threadRootRowKey: firstRoot.rowKey });
+
+    const { threads } = await messageCaller.readFollowedThreads({ roomId });
+
+    expect(threads.map(({ rowKey }) => rowKey)).toStrictEqual([secondRoot.rowKey, firstRoot.rowKey]);
+  });
+
+  test("unfollowThread removes the follow", async () => {
+    expect.hasAssertions();
+
+    const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
+    await messageCaller.followThread({ roomId, threadRootRowKey: root.rowKey });
+    await messageCaller.unfollowThread({ roomId, threadRootRowKey: root.rowKey });
+
+    const { threads } = await messageCaller.readFollowedThreads({ roomId });
+
+    expect(threads).toHaveLength(0);
+  });
+
+  test("readFollowedThreads keeps a follow whose root was deleted while the display list drops it", async () => {
+    expect.hasAssertions();
+
+    const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
+    await messageCaller.followThread({ roomId, threadRootRowKey: root.rowKey });
+    await messageCaller.deleteMessage(getCompositeKey(root));
+
+    const { threadRootRowKeys, threads } = await messageCaller.readFollowedThreads({ roomId });
+
+    expect(threadRootRowKeys).toStrictEqual([root.rowKey]);
+    expect(threads).toHaveLength(0);
+
+    await messageCaller.unfollowThread({ roomId, threadRootRowKey: root.rowKey });
+
+    const { threadRootRowKeys: threadRootRowKeysAfterUnfollow } = await messageCaller.readFollowedThreads({
+      roomId,
     });
 
-    test("unfollowThread removes the follow", async () => {
-      expect.hasAssertions();
-
-      const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
-      await messageCaller.followThread({ roomId, threadRootRowKey: root.rowKey });
-      await messageCaller.unfollowThread({ roomId, threadRootRowKey: root.rowKey });
-
-      const { threads } = await messageCaller.readFollowedThreads({ roomId });
-
-      expect(threads).toHaveLength(0);
-    });
-
-    test("readFollowedThreads keeps a follow whose root was deleted while the display list drops it", async () => {
-      expect.hasAssertions();
-
-      const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
-      await messageCaller.followThread({ roomId, threadRootRowKey: root.rowKey });
-      await messageCaller.deleteMessage(getCompositeKey(root));
-
-      const { threadRootRowKeys, threads } = await messageCaller.readFollowedThreads({ roomId });
-
-      expect(threadRootRowKeys).toStrictEqual([root.rowKey]);
-      expect(threads).toHaveLength(0);
-
-      await messageCaller.unfollowThread({ roomId, threadRootRowKey: root.rowKey });
-
-      const { threadRootRowKeys: threadRootRowKeysAfterUnfollow } = await messageCaller.readFollowedThreads({
-        roomId,
-      });
-
-      expect(threadRootRowKeysAfterUnfollow).toHaveLength(0);
-    });
+    expect(threadRootRowKeysAfterUnfollow).toHaveLength(0);
   });
 });

@@ -18,8 +18,8 @@ const { smAndDown } = useVDisplay();
 const { isVersionHistoryOpen, previewSnapshotVersionId } = useVersionHistoryRoute();
 </script>
 
-<!-- One box, not two. A list pane beside the blade duplicated a way back the breadcrumb and the toolbar's
-     close ✕ both already give, and it spent width the blade itself uses better -->
+<!-- One box, not two: a list pane beside the blade would duplicate the way back the breadcrumb and the
+     toolbar's close ✕ both already give, and spend width the blade itself uses better -->
 <template>
   <v-sheet flex flex-1>
     <!-- min-w-0 lets the box shrink below its content's intrinsic width so wide blades scroll internally -->

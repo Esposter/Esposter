@@ -27,8 +27,6 @@ const rowStore = useRowStore();
 const { selectedRowIds } = storeToRefs(rowStore);
 const availableColumnIds = computed(() => dataSource.value.columns.map(({ id }) => id));
 // Every column ships unless the reader unticks one, so the boxes start ticked and follow the sheet's own columns.
-// The empty selection used to mean "all of them", which read as the opposite on screen: nothing was ticked while
-// Everything was going out, and the first tick looked like it added a column rather than dropping the other ten
 const { cloned: selectedColumnIds } = useCloned(availableColumnIds);
 </script>
 

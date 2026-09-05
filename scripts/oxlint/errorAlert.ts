@@ -1,7 +1,7 @@
 import type { Plugin } from "@oxlint/plugins";
 
 import { definePlugin, defineRule } from "@oxlint/plugins";
-// Oxlint JS plugin enforcing "who alerts a tRPC rejection" (error-handling/SKILL.md).
+// An oxlint JS plugin enforcing "who alerts a tRPC rejection" (error-handling/SKILL.md).
 //
 // The error link already alerts the codes it owns, so a caller that reads `error.message` off a rejection and
 // Hands it to `createAlert` puts a second identical toast on screen for one failure. `createErrorAlert` is the

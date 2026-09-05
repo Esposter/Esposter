@@ -6,12 +6,13 @@ import { releaseStorageLedgerEntries } from "#src/services/storage/releaseStorag
 import { releaseStorageLedgerEntriesByPrefix } from "#src/services/storage/releaseStorageLedgerEntriesByPrefix";
 import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer, storageLedger, users } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The counter carries stored bytes and nothing else, so every case here is about which of the two signals —
 // Storage saying a blob landed, or a deletion saying it is gone — moved it, and by how much.
-describe("storage blob ledger", () => {
+describe(releaseStorageLedgerEntries, () => {
   let db: Database;
   const userId = crypto.randomUUID();
   const containerName = AzureContainer.ResourceAssets;
@@ -68,10 +69,11 @@ describe("storage blob ledger", () => {
     });
     await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
 
-    const [reconciledStorageLedgerEntry] = await db.query.storageLedger.findMany();
+    const reconciledStorageLedgerEntry = takeOne(await db.query.storageLedger.findMany());
 
-    expect(reconciledStorageLedgerEntry).toMatchObject({ countedBytes: actualBytes, declaredBytes });
-    expect(reconciledStorageLedgerEntry?.reconciledAt).not.toBeNull();
+    expect(reconciledStorageLedgerEntry.countedBytes).toBe(actualBytes);
+    expect(reconciledStorageLedgerEntry.declaredBytes).toBe(declaredBytes);
+    expect(reconciledStorageLedgerEntry.reconciledAt).not.toBeNull();
   });
 
   test("computes a zero delta for a redelivered event", async () => {
@@ -112,9 +114,10 @@ describe("storage blob ledger", () => {
 
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
 
-    const [storageLedgerEntry] = await db.query.storageLedger.findMany();
+    const storageLedgerEntry = takeOne(await db.query.storageLedger.findMany());
 
-    expect(storageLedgerEntry).toMatchObject({ countedBytes: overwrittenBytes, sequencer: laterSequencer });
+    expect(storageLedgerEntry.countedBytes).toBe(overwrittenBytes);
+    expect(storageLedgerEntry.sequencer).toBe(laterSequencer);
   });
 
   test("applies both sizes in turn when the same events arrive in order", async () => {
@@ -144,9 +147,10 @@ describe("storage blob ledger", () => {
     await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
     // The write order is untouched: a charge claims no position, so the next event is still ranked against the
     // Last one that spoke rather than against a charge that cannot be ordered
-    await expect(db.query.storageLedger.findMany()).resolves.toMatchObject([
-      { countedBytes: overwrittenBytes, sequencer },
-    ]);
+    const storageLedgerEntry = takeOne(await db.query.storageLedger.findMany());
+
+    expect(storageLedgerEntry.countedBytes).toBe(overwrittenBytes);
+    expect(storageLedgerEntry.sequencer).toBe(sequencer);
   });
 
   // The server's own writes — a resource's content blob — have no reserve to ledger them, so the charge is
@@ -157,9 +161,10 @@ describe("storage blob ledger", () => {
     await chargeStorageLedgerEntry(db, userId, containerName, blobName, actualBytes);
 
     await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
-    await expect(db.query.storageLedger.findMany()).resolves.toMatchObject([
-      { countedBytes: actualBytes, declaredBytes: 0 },
-    ]);
+    const storageLedgerEntry = takeOne(await db.query.storageLedger.findMany());
+
+    expect(storageLedgerEntry.countedBytes).toBe(actualBytes);
+    expect(storageLedgerEntry.declaredBytes).toBe(0);
   });
 
   test("corrects rather than adds when the server rewrites the same blob", async () => {

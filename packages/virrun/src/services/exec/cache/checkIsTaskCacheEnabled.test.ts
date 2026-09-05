@@ -1,23 +1,12 @@
 import { checkIsTaskCacheEnabled } from "#src/services/exec/cache/checkIsTaskCacheEnabled";
 import { CI_ENV_KEY, VIRRUN_NO_CACHE_KEY } from "#src/services/exec/util/constants";
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(checkIsTaskCacheEnabled, () => {
-  let previousCi: string | undefined;
-  let previousNoCache: string | undefined;
-
+  // The host may be running under either, and each case reads the default it names rather than the dev shell
   beforeEach(() => {
-    previousCi = process.env[CI_ENV_KEY];
-    previousNoCache = process.env[VIRRUN_NO_CACHE_KEY];
-    delete process.env[CI_ENV_KEY];
-    delete process.env[VIRRUN_NO_CACHE_KEY];
-  });
-
-  afterEach(() => {
-    if (previousCi === undefined) delete process.env[CI_ENV_KEY];
-    else process.env[CI_ENV_KEY] = previousCi;
-    if (previousNoCache === undefined) delete process.env[VIRRUN_NO_CACHE_KEY];
-    else process.env[VIRRUN_NO_CACHE_KEY] = previousNoCache;
+    vi.stubEnv(CI_ENV_KEY, undefined);
+    vi.stubEnv(VIRRUN_NO_CACHE_KEY, undefined);
   });
 
   test("is on by default when neither CI nor the opt-out is set", () => {
@@ -29,7 +18,7 @@ describe(checkIsTaskCacheEnabled, () => {
   test("is off in CI so a zero-hit environment does not pay the source-hash cost", () => {
     expect.hasAssertions();
 
-    process.env[CI_ENV_KEY] = "true";
+    vi.stubEnv(CI_ENV_KEY, "true");
 
     expect(checkIsTaskCacheEnabled()).toBe(false);
   });
@@ -37,7 +26,7 @@ describe(checkIsTaskCacheEnabled, () => {
   test("treats an empty or falsy CI value as not-CI", () => {
     expect.hasAssertions();
 
-    process.env[CI_ENV_KEY] = "false";
+    vi.stubEnv(CI_ENV_KEY, "false");
 
     expect(checkIsTaskCacheEnabled()).toBe(true);
   });
@@ -45,7 +34,7 @@ describe(checkIsTaskCacheEnabled, () => {
   test("is off when the explicit opt-out is set", () => {
     expect.hasAssertions();
 
-    process.env[VIRRUN_NO_CACHE_KEY] = "true";
+    vi.stubEnv(VIRRUN_NO_CACHE_KEY, "true");
 
     expect(checkIsTaskCacheEnabled()).toBe(false);
   });

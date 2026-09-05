@@ -16,7 +16,7 @@ describe(checkIsEditableTarget, () => {
 
     const div = document.createElement("div");
     div.contentEditable = "true";
-    // Happy-dom only reflects isContentEditable once the element is attached
+    // `happy-dom` only reflects isContentEditable once the element is attached
     document.body.append(div);
 
     expect(checkIsEditableTarget(div)).toBe(true);

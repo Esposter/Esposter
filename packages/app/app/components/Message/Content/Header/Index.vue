@@ -27,8 +27,6 @@ const updateRoom = async (name: string) => {
   const image = editedImage.value;
   const isNameChanged = name !== currentName;
   await executeMutation(() => $trpc.room.updateRoom.mutate({ id, image, name }), {
-    // Read as the write is sent, so a rejected edit restores what the edit ahead of it stored rather than what
-    // Was on screen when the dialog was submitted
     applyOptimistic: () => {
       const room = rooms.value.find(({ id: roomId }) => roomId === id);
       if (!room) return noop;
@@ -36,8 +34,6 @@ const updateRoom = async (name: string) => {
       const { image: previousImage, name: previousName } = room;
       storeUpdateRoom({ id, image, name });
       return () => {
-        // Only the two fields this write moved — the update is a partial, so everything else that landed on the
-        // Room while this write was in flight stays
         storeUpdateRoom({ id, image: previousImage, name: previousName });
       };
     },

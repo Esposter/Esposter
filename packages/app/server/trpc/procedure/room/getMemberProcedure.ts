@@ -8,7 +8,6 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const getMemberProcedure = <T extends z.ZodType>(schema: T, roomIdKey: keyof inferParser<T>["out"]) =>
   standardAuthedProcedure.input(schema).use(async ({ ctx, input, next }) => {
-    // Skip the membership check when roomIdKey is absent from the input or undefined.
     if (!(roomIdKey in (input as object))) return next();
 
     const value = input[roomIdKey];

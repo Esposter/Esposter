@@ -21,9 +21,8 @@ describe(readMessageSearchDocuments, () => {
     vi.restoreAllMocks();
   });
 
-  // Azure Search reads an absent or empty query as "match nothing" rather than "match everything", so a caller
-  // Filtering on structure alone (the room's Files tab, a member's sent messages) gets an empty page unless the
-  // Match-all stands in. The extra row is what both callers answer `hasMore` with, so it is part of the same page
+  // A caller filtering on structure alone — the room's Files tab, a member's sent messages — gets an empty page
+  // Unless the match-all stands in, and the extra row both callers answer `hasMore` with is part of that page
   test.each([
     [undefined, "*"],
     ["", "*"],
@@ -43,7 +42,7 @@ describe(readMessageSearchDocuments, () => {
   });
 
   // The index stores the composite key capitalized, so a page handed back undeserialized carries neither
-  // `partitionKey` nor `rowKey` — every caller reads both, and an entity class is what makes them readable
+  // `partitionKey` nor `rowKey`, which every caller reads
   test("returns each document as the entity its serialized keys name", async () => {
     expect.hasAssertions();
 

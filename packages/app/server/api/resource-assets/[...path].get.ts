@@ -39,10 +39,8 @@ export default defineEventHandler(async (event) => {
 
   const getSessionPayload = await auth.api.getSession({ headers: event.headers });
   if (IS_PRODUCTION) {
-    // Its own limiter, whose keyPrefix supplies the namespace: a signed-in viewer's key is the bare user id,
-    // The same key every tRPC call consumes, so without the prefix opening one published page full of images
-    // Spends that page's asset requests out of the budget for the user's actual API calls and 429s the app
-    // Around them (see assetRateLimiter)
+    // Its own limiter, because one published page issues a request per embedded asset and that spend must not
+    // Come out of the caller's API budget (see assetRateLimiter)
     const rateLimiterKey = getSessionPayload?.user.id ?? getIpAddress(event.node.req);
     if (rateLimiterKey)
       await getResultAsync(() => assetRateLimiter.consume(rateLimiterKey)).match(noop, (error) => {

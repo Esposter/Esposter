@@ -13,7 +13,6 @@ export const useCreateTyping = async () => {
   // Created before the first await so it stays bound to the component's effect scope
   const throttledInput = useThrottle(input, Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
   const { data: session } = await authClient.useSession(useFetch);
-  // Watchers created after an await inside a composable are not auto-scoped — stop manually on unmount
   const stop = watch(throttledInput, async () => {
     if (!(currentRoomId.value && session.value)) return;
     await $trpc.message.createTyping.query({

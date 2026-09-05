@@ -17,9 +17,9 @@ vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () =
   useContainerClient: () => Promise.resolve(containerClientMock.current),
 }));
 
-// The database here is a stub answering the two readability questions, which is what lets these cases count the
-// Queries the cache is meant to collapse. The charge every clone makes is a real write against a real database,
-// So it is asserted where one exists — the publish and duplicate router tests — rather than faked into this one
+// A stub answering the two readability questions, which is what lets these cases count the queries the cache
+// Collapses. The charge every clone makes is asserted where a real database exists — the publish and duplicate
+// Router tests — rather than faked into this one
 vi.mock(import("@esposter/db"), async (importOriginal) => ({
   ...(await importOriginal()),
   chargeStorageLedgerEntry: () => Promise.resolve(),
@@ -76,8 +76,7 @@ describe(cloneContentAssets, () => {
   };
 
   // Every clone is flattened into the copy's own files directory, so a working copy and a published snapshot of
-  // One file would arrive at the same destination name were the source id carried over. Both must survive as
-  // Distinct blobs — naming one destination twice races two copies at it, which Azure fails, unwinding the clone.
+  // One file would collide were the source id carried over. Both must survive as distinct blobs
   test("clones both a working and a published reference to the same file", async () => {
     expect.hasAssertions();
 
@@ -113,9 +112,8 @@ describe(cloneContentAssets, () => {
     expect(clonedBlobName.slice(prefix.length, -suffix.length)).toMatch(/^[\da-f-]+$/u);
   });
 
-  // Restore clones a snapshot back into the resource's OWN files directory. Reusing the source's id there
-  // Rebuilds the exact name a `deleteFile` of that asset already published for deletion — and a named-blob
-  // Deletion event carries no time bound, so its redelivery or dead-letter replay destroys the restored blob.
+  // Restore clones a snapshot back into the resource's own files directory, so a reused source id rebuilds the
+  // Exact name a `deleteFile` of that asset already published for deletion
   test("never rebuilds the source name when cloning into the same resource", async () => {
     expect.hasAssertions();
 
@@ -132,9 +130,9 @@ describe(cloneContentAssets, () => {
     expect(clonedContent.html).not.toContain(getResourceAssetUrl(workingBlobName));
   });
 
-  // The copy path must repeat the authorization the read path enforces. A working-copy url the caller cannot open
-  // Reaches them easily — a personalized export mails absolute ones out — and copying it would republish someone
-  // Else's private blob under a directory that answers to anyone while the publication row exists
+  // The copy path repeats the authorization the read path enforces: a working-copy url the caller cannot open
+  // Reaches them easily, and copying it would republish someone else's private blob under a directory that
+  // Answers to anyone
   test("carries a url the caller may not read verbatim instead of copying its blob", async () => {
     expect.hasAssertions();
 
@@ -146,9 +144,8 @@ describe(cloneContentAssets, () => {
     expect(clonedContent.html).toContain(getResourceAssetUrl(workingBlobName));
   });
 
-  // Readability is a property of the resource, and content routinely names one resource's assets many times over
-  // (a logo on every row, a gallery from one upload). Asked per url that is a pair of queries each, unbounded and
-  // In parallel, for an answer already computed
+  // Readability is a property of the resource, and content routinely names one resource's assets many times
+  // Over, so asking per url is a pair of queries each for an answer already computed
   test("asks the readability question once per source resource however many of its assets are referenced", async () => {
     expect.hasAssertions();
 
@@ -164,9 +161,8 @@ describe(cloneContentAssets, () => {
     expect(findFirstResource).toHaveBeenCalledTimes(1);
   });
 
-  // Content routinely names both kinds of one resource's urls at once — an exported published image pasted back
-  // Beside its own upload. Ownership answers both, so caching the answer per url kind asked it twice for one
-  // Resource, which is the duplication the cache exists to remove
+  // Content routinely names both kinds of one resource's urls at once, and ownership answers both — so caching
+  // Per url kind asked it twice for one resource
   test("asks the ownership question once for a resource named by both a working-copy and a published url", async () => {
     expect.hasAssertions();
 

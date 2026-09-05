@@ -59,10 +59,7 @@ export const useRoomStore = defineStore("message/room", () => {
   const { executeMutation: executeJoinRoomMutation } = useMutation();
   const { executeMutation: executeLeaveRoomMutation } = useMutation();
   const { executeMutation: executeDeleteRoomMutation } = useMutation();
-  // Server-generated results (ids, navigation targets) — non-optimistic, applied in onSuccess
   const createRoom = async (input: CreateRoomInput) => {
-    // Creates have no natural entity key, so each call gets a unique one — overlapping creates are
-    // Independent operations and must never queue behind each other
     await executeCreateRoomMutation(() => $trpc.room.createRoom.mutate(input), {
       key: Symbol("createRoom"),
       onSuccess: (newRoom) => {
@@ -75,9 +72,7 @@ export const useRoomStore = defineStore("message/room", () => {
   const deleteRoom = async (input: DeleteRoomInput) => {
     let isSuccessful = false;
     await executeDeleteRoomMutation(() => $trpc.room.deleteRoom.mutate(input), {
-      // Restore only this room. Reinstating a whole-list snapshot would re-add a room another removal already
-      // Took out and drop whatever arrived while this write was in flight — and the list is sorted for display,
-      // So where the restored room lands in it is not observable
+      // Restore only this room. The list is sorted for display, so where it lands in it is not observable
       applyOptimistic: () => {
         const deletedRoom = items.value.find(({ id }) => id === input);
         baseStoreDeleteRoom({ id: input });

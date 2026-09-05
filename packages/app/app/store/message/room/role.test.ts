@@ -17,8 +17,7 @@ describe(useRoleStore, () => {
     setActivePinia(createPinia());
   });
 
-  // Every role is its own target, so a settings panel's writes overlap. A rejected edit that reinstated the list
-  // As it stood would bring back the role a deletion running beside it has already removed
+  // Every role is its own target, so a settings panel's writes overlap and a rejected edit unwinds only its own
   test("restores only the role whose edit was rejected", async () => {
     expect.hasAssertions();
 

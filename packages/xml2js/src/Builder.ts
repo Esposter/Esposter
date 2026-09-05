@@ -23,7 +23,6 @@ export class Builder {
     let rootName = this.#options.rootName;
     let rootObject = rootObj;
     if (Object.keys(rootObject).length === 1 && this.#options.rootName === DefaultBuilderOptions.rootName) {
-      // Take the first element as the root element.
       rootName = takeOne(Object.keys(rootObject));
       rootObject = rootObject[rootName] as Record<string, unknown>;
     }
@@ -43,17 +42,16 @@ export class Builder {
         for (const [key, entry] of getEntries<unknown>(child)) element = this.#render(element.ele(key), entry).up();
     else
       for (const [key, child] of Object.entries(object))
-        // Case #1 Attribute
+        // Tag attributes
         if (key === this.#options.attrkey) {
           if (typeof child === "object")
-            // Inserts tag attributes
             for (const [attr, value] of getEntries<string>(child)) element = element.att(attr, value);
-          // Case #2 Char data (CDATA, etc.)
+          // Char data (CDATA, etc.)
         } else if (key === this.#options.charkey) element = this.#renderText(element, child);
-        // Case #3 Array data
+        // Array data
         else if (Array.isArray(child))
           for (const entry of child.values()) element = this.#render(element.ele(key), entry).up();
-        // Case #4 Objects, scalars and nullish leaves
+        // Objects, scalars and nullish leaves
         else element = this.#render(element.ele(key), child).up();
 
     return element;
