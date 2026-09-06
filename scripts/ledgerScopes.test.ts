@@ -1,5 +1,5 @@
 import { AGENT_DIRECTORY } from "@esposter/configuration";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { glob } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -15,8 +15,15 @@ import { describe, expect, test } from "vitest";
 describe("ledgerScopes", () => {
   const repositoryRoot = resolve(import.meta.dirname, "..");
   const LEDGER_ROW_REGEX = /^\| \[(?<ledger>[^\]]+)\]\([^)]+\)\s*\|[^|]*\|[^|]*\|(?<scope>[^|]*)\|$/u;
+  const MARKDOWN_EXTENSION_REGEX = /\.md$/u;
   const PATHSPEC_REGEX = /`(?<pathspec>[^`]+)`/gu;
-  const index = readFileSync(join(repositoryRoot, AGENT_DIRECTORY, "ledgers", "README.md"), "utf8");
+  const ledgerDirectory = join(repositoryRoot, AGENT_DIRECTORY, "ledgers");
+  const index = readFileSync(join(ledgerDirectory, "README.md"), "utf8");
+  // A ledger is either one file or a promoted folder of area files, so both shapes are a name the index owes a
+  // Row to — the folder's own README is its metadata, not a ledger of its own.
+  const ledgers = readdirSync(ledgerDirectory, { withFileTypes: true })
+    .filter((entry) => entry.name !== "README.md")
+    .map((entry) => (entry.isDirectory() ? entry.name : entry.name.replace(MARKDOWN_EXTENSION_REGEX, "")));
   const rows = index
     .split("\n")
     .map((line) => LEDGER_ROW_REGEX.exec(line)?.groups)
@@ -43,11 +50,13 @@ describe("ledgerScopes", () => {
   });
 
   // The index is the only place a scope is written down, so a row that stops parsing takes its assertions with it
-  // Rather than failing — this is what makes the emptiness of that set mean something.
+  // Rather than failing — this is what makes the emptiness of that set mean something. Counted off the directory
+  // Rather than against a number written here, so adding a ledger and forgetting its row is what fails, and the
+  // Check needs nothing done to it when one is added or retired.
   test("the index carries every ledger", () => {
     expect.hasAssertions();
 
-    expect(rows.length).toBeGreaterThanOrEqual(14);
+    expect(ledgers.filter((ledger) => !rows.some(({ ledger: row }) => row === ledger))).toStrictEqual([]);
   });
 
   test.each(rows)("$ledger resolves every pathspec it declares", async ({ pathspecs }) => {

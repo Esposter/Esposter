@@ -20,6 +20,7 @@ are the `sweeps` skill's `references/standing-resume.md`.
 | [styling](styling.md)                     | `styling` + `unocss` + `vuetify` + `responsive` skills | one component tree          | `packages/app/app/components` `packages/app/app/pages` `packages/app/app/layouts` `packages/app/app/assets`  |
 | [testing](testing/)                       | `testing` skill                                        | one tree of suites          | `*.test.ts` `*.test-d.ts` `*.bench.ts`                                                                       |
 | [trpc](trpc.md)                           | `trpc` skill                                           | one router tree             | `packages/app/server/trpc`                                                                                   |
+| [typescript](typescript.md)               | `typescript` skill                                     | one tree                    | `packages` `scripts`                                                                                         |
 | [ux](ux.md)                               | `ux` skill                                             | one product area            | `packages/app/app/components` `packages/app/app/pages`                                                       |
 | [vue-components](vue-components.md)       | `vue-page-composition` + `vue` skills                  | one component tree          | `packages/app/app/components` `packages/app/app/pages` `packages/app/app/layouts`                            |
 
@@ -27,7 +28,6 @@ Two scopes are deliberately the whole tree rather than a list. The quality lane 
 would only hide the areas nobody has looked at; `testing` is scoped by filename because a suite sits beside
 whatever it tests rather than in a tree of its own.
 
-Still unledgered, and known to be: `pagination`, `typescript` (mostly enforced already), `invariants`,
-`runtime-efficiency`, and the product skills (`esbabbler`, `routing`, `slash-commands`, `tiptap`, `vjsf`,
-`grapesjs`, `azure-table`, `string-utils`) — each too small for a sitting today, so a finding against one is
-raised rather than swept.
+Still unledgered, and known to be: `pagination`, `invariants`, `runtime-efficiency`, and the product skills
+(`esbabbler`, `routing`, `slash-commands`, `tiptap`, `vjsf`, `grapesjs`, `azure-table`, `string-utils`) — each
+too small for a sitting today, so a finding against one is raised rather than swept.
