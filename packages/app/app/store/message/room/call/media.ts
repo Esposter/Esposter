@@ -27,7 +27,7 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
   );
   const activeScreenShareStream = computed(() => {
     if (!activeScreenShareParticipantId.value) return undefined;
-    if (activeScreenShareParticipantId.value === participantStore.sessionId) return localScreenShareStream.value;
+    else if (activeScreenShareParticipantId.value === participantStore.sessionId) return localScreenShareStream.value;
     return remoteScreenShareStreams.value.get(activeScreenShareParticipantId.value);
   });
   // One presenter list, maintained the same way for the local share and every remote one — and the pin follows,
