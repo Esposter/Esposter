@@ -23,7 +23,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Resource` — the per-type editors                                           | 2026-09-06 | `Survey`, `TodoList`, `Note`, `Program`, `Webpage`, `Email`, `Blueprint`           |
 | `app/components/Resource` — the entry surfaces                                             | 2026-09-05 | `Home`, `Search`, `Explorer`, `RecycleBin`, `Dashboard`, `Flowchart`               |
 | `app/components/Resource` — the shared chrome                                              | 2026-09-05 | `Blade`, `Create`, `VersionHistory` and the loose dialogs                          |
-| `app/components/Dungeons`                                                                  | —          | canvas-adjacent; much of it is Phaser rather than DOM                              |
+| `app/components/Dungeons`                                                                  | 2026-09-06 | no DOM at all — every template is Phaser game objects                              |
 | `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | 2026-09-05 | the chrome                                                                         |
 | `app/components/Clicker`                                                                   | 2026-09-05 |                                                                                    |
 | `app/components/Visual`                                                                    | 2026-09-05 |                                                                                    |
