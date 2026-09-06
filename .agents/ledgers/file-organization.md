@@ -24,9 +24,9 @@ The question is where a thing lives and whether it exists twice — one export p
 | `server/trpc` — the resource family                                        | 2026-09-06 | `resource`, `survey`, `program`, `procedure/resource`                                        |
 | `server/trpc` — the room family                                            | 2026-09-06 | `room`, `call`, `userToRoom`                                                                 |
 | `server/trpc` — the rest                                                   | 2026-09-06 | the loose routers, `guards`, `procedure`, `plugins`, `middleware`                            |
-| `app/components/Message`                                                   | —          | splits further at `Model/` on contact                                                        |
-| `app/components/Resource`                                                  | —          |                                                                                              |
-| `app/components` — the rest                                                | —          |                                                                                              |
+| `app/components/Message`                                                   | 2026-09-06 | the stray-component half is `components/index.test.ts`, not a pass                           |
+| `app/components/Resource`                                                  | 2026-09-06 |                                                                                              |
+| `app/components` — the rest                                                | 2026-09-06 | a `*Props.ts` beside its component is colocation, not a stray model                          |
 | `packages/db-schema` — `models`                                            | 2026-09-06 |                                                                                              |
 | `packages/db-schema` — `schema`, `relations`                               | 2026-09-06 | a table file declares the table and its select schema; enums live in `models`                |
 | `packages/db-schema` — `services`, root                                    | 2026-09-06 |                                                                                              |
