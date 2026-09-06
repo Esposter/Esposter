@@ -3,13 +3,13 @@
 The repo's own scripts and the agent tree — code no product area claims, and the gap the eight product areas
 left when this ledger was written.
 
-| Unit                                      | Swept      | Notes |
-| ----------------------------------------- | ---------- | ----- |
-| `scripts/outdatedDependencies`            | 2026-09-02 |       |
-| `scripts/oxlint`                          | 2026-09-06 |       |
-| `scripts/updateNode`                      | 2026-09-06 |       |
-| `scripts/services`, `scripts` root files  | 2026-09-06 |       |
-| the repository root — config and Markdown | —          |       |
-| `packages/app/configuration`              | —          |       |
-| the app's root config files               | —          |       |
-| `packages/app/content`                    | —          |       |
+| Unit                                      | Swept      | Notes                                                                                         |
+| ----------------------------------------- | ---------- | --------------------------------------------------------------------------------------------- |
+| `scripts/outdatedDependencies`            | 2026-09-02 |                                                                                               |
+| `scripts/oxlint`                          | 2026-09-06 |                                                                                               |
+| `scripts/updateNode`                      | 2026-09-06 |                                                                                               |
+| `scripts/services`, `scripts` root files  | 2026-09-06 |                                                                                               |
+| the repository root — config and Markdown | —          |                                                                                               |
+| `packages/app/configuration`              | 2026-09-06 | the relative imports are the pre-alias config exception; the splash table is generator output |
+| the app's root config files               | 2026-09-06 |                                                                                               |
+| `packages/app/content`                    | —          |                                                                                               |
