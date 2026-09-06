@@ -1,7 +1,7 @@
 import type { CreateMessageInput } from "#src/models/message/CreateMessageInput";
 
-import { MessageTypeEntityMap } from "#src/models/message/MessageTypeEntityMap";
 import { getReverseTickedTimestamp } from "#src/services/azure/table/getReverseTickedTimestamp";
+import { MessageTypeEntityMap } from "#src/services/message/MessageTypeEntityMap";
 // Which class a message type instantiates is MessageTypeEntityMap's answer, so it is read here rather than
 // Re-decided, and the entity payload — the key the room id becomes, the timestamps every entity carries — is
 // Stated once. The cast is what a union of constructors costs: each arm accepts only its own entity's Partial,

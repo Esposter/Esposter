@@ -1,8 +1,8 @@
 import type { AppUserInMessage } from "#src/schema/appUsersInMessage";
 
 import { MessageType, MessageTypes } from "#src/models/message/MessageType";
-import { MessageTypeEntityMap } from "#src/models/message/MessageTypeEntityMap";
 import { createMessageEntity } from "#src/services/message/createMessageEntity";
+import { MessageTypeEntityMap } from "#src/services/message/MessageTypeEntityMap";
 import { describe, expect, test } from "vitest";
 
 describe(createMessageEntity, () => {
