@@ -124,7 +124,7 @@ stateDiagram-v2
 | `packages/shared/src/util/array/chunkBySerializedSize.ts`                                                            | Greedy chunking against a serialized-JSON byte budget and an event count    |
 | `packages/azure-functions/src/services/checkIsReplayable.ts`                                                         | The replay cap and handler-idempotency bars a dead-lettered event must pass |
 | `packages/azure-functions/src/services/deleteReplayedBlob.ts`                                                        | Best-effort delete of a handled original, logged rather than rethrown       |
-| `packages/db-schema/src/models/azure/function/AzureFunctionIsIdempotentMap.ts`                                       | Which handlers a replay may safely rerun                                    |
+| `packages/db-schema/src/services/azure/function/AzureFunctionIsIdempotentMap.ts`                                     | Which handlers a replay may safely rerun                                    |
 | `packages/azure-functions/src/services/writeDeadLetterBlob.ts`                                                       | Copy a payload under a prefix — copy only, the handler owns the delete      |
 | `packages/azure-functions/src/services/parseReplayId.ts`                                                             | Split an event id into its original identity and replay count               |
 | `packages/azure-functions/src/services/formatReplayId.ts`                                                            | Write the `<eventId>\|<attempt>` id a republished event is sent with        |

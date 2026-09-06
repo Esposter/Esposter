@@ -9,7 +9,7 @@ Turn-based 1v1 battles driven by a state machine: the player picks Fight / Switc
 
 ## How it works
 
-`StateMachine` is a minimal generic class — a map of named states with `onEnter`/`onExit` hooks and an async `setState` — instantiated once as `battleStateMachine` over the 17 battle states. Each state file under `models/dungeons/state/battle/states/` owns one phase and decides the next transition, so a turn is a chain of small, testable steps rather than a monolithic update loop.
+`StateMachine` is a minimal generic class — a map of named states with `onEnter`/`onExit` hooks and an async `setState` — instantiated once as `battleStateMachine` over the 17 battle states. Each state file under `services/dungeons/state/battle/states/` owns one phase and decides the next transition, so a turn is a chain of small, testable steps rather than a monolithic update loop.
 
 ```mermaid
 stateDiagram-v2
@@ -59,7 +59,7 @@ Paths relative to `packages/app/app`.
 
 | File                                                   | Role                                              |
 | ------------------------------------------------------ | ------------------------------------------------- |
-| `models/dungeons/state/StateMachine.ts`                | generic state machine                             |
+| `services/dungeons/state/StateMachine.ts`              | generic state machine                             |
 | `models/dungeons/state/battle/StateMap.ts`             | the 17 battle states                              |
 | `services/dungeons/scene/battle/battleStateMachine.ts` | the singleton instance                            |
 | `services/dungeons/monster/getDamage.ts`               | damage roll                                       |
