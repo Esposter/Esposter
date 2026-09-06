@@ -34,7 +34,10 @@ export type BaseColors = (typeof BaseColorsMap)[Exclude<ThemeMode, ThemeMode.sys
 
 const toSixDigitHexColor = (hexColor: string) =>
   hexColor.length === 3
-    ? Array.from(EN_US_SEGMENTER.segment(hexColor), (s) => s.segment).reduce((acc, curr) => `${acc}${curr}${curr}`, "")
+    ? Array.from(EN_US_SEGMENTER.segment(hexColor), ({ segment }) => segment).reduce(
+        (accumulator, digit) => `${accumulator}${digit}${digit}`,
+        "",
+      )
     : hexColor;
 
 export const getBaseColorsExtension = (colors: BaseColors) => {
