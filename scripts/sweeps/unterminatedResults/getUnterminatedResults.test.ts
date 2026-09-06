@@ -161,6 +161,55 @@ describe(getUnterminatedResults, () => {
     ).toStrictEqual([{ after: "; readSomethingElse;", line: 1 }]);
   });
 
+  // The two characters the annotation is skipped by excluding are the two a type may still spell
+  test("reads a binding through a function type annotation", () => {
+    expect.hasAssertions();
+
+    expect(
+      getUnterminatedResults(`const result: () => Result<void, Error> = getResult(fn);\nreadSomethingElse();`),
+    ).toStrictEqual([{ after: "; readSomethingElse;", line: 1 }]);
+  });
+
+  test("reads a binding through an object type annotation", () => {
+    expect.hasAssertions();
+
+    expect(
+      getUnterminatedResults(`const result: { isOk: boolean; value: string } = getResult(fn);\nreadSomethingElse();`),
+    ).toStrictEqual([{ after: "; readSomethingElse;", line: 1 }]);
+  });
+
+  // `scanCode` drops the bracket, so a terminator and a longer name that starts with one read alike in the code
+  // Alone — only the source says which of the two was called
+  test("does not read a longer name starting with a terminator as the terminator", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults("getResult(fn).matching(noop);")).toStrictEqual([{ after: ".matching;", line: 1 }]);
+  });
+
+  test("does not read a longer name on the binding as its terminator", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults(`const result = getResult(fn);\nresult.matching(noop);`)).toStrictEqual([
+      { after: "; result.matching;", line: 1 },
+    ]);
+  });
+
+  // An identifier is not ASCII, so a name matched with `\w` reads a longer one as the binding it is only the
+  // Tail of, and misses one whose own characters are outside the range
+  test("reads a binding whose name is not ASCII", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults(`const éresult = getResult(fn);\néresult.match(noop, log);`)).toStrictEqual([]);
+  });
+
+  test("does not read a longer non-ASCII name as the binding", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults(`const result = getResult(fn);\néresult.match(noop, log);`)).toStrictEqual([
+      { after: "; éresult.match;", line: 1 },
+    ]);
+  });
+
   // Another object's field spelled the same is not this binding, and reading it as one clears a real finding
   test("does not read a like-named property as the binding", () => {
     expect.hasAssertions();
