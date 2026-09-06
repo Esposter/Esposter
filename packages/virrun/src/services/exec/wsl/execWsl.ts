@@ -2,6 +2,7 @@ import type { ExecFileHiddenOptions } from "#src/models/exec/util/ExecFileHidden
 
 import { WSL_PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
+import { WSL_EXECUTABLE } from "#src/services/exec/wsl/constants";
 // Every wsl.exe probe goes through here so exactly one place knows how wsl.exe writes: its OWN output — the distro
 // List, and every launch failure ("Catastrophic failure  Error code: Wsl/Service/E_UNEXPECTED" when the WSL service
 // Is wedged) — is UTF-16LE, while an `--exec` child's stdout is that child's raw bytes (utf8). Stderr needs nothing
@@ -16,4 +17,4 @@ import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 // Runs anything; a call that does real work overrides it (WSL_WORK_TIMEOUT_MS), which is why the bound lives here
 // Rather than at each site that remembered to pass one.
 export const execWsl = (args: readonly string[], options: ExecFileHiddenOptions = {}): string =>
-  execFileHidden("wsl.exe", args, { timeout: WSL_PROBE_TIMEOUT_MS, ...options });
+  execFileHidden(WSL_EXECUTABLE, args, { timeout: WSL_PROBE_TIMEOUT_MS, ...options });

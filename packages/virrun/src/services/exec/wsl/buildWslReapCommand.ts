@@ -1,3 +1,4 @@
+import { WSL_EXECUTABLE } from "#src/services/exec/wsl/constants";
 // Build the argv for the Ctrl+C reaper: a fresh `wsl.exe --exec` that finds the interrupted run's shell by its
 // Unique `$0` marker (createWslProcessMarker) and kills that shell's entire process group. Group kill is what a
 // Terminal does for Ctrl+C — it reaches the host-side `bwrap` (collapsing its PID namespace, so the sandboxed
@@ -13,5 +14,5 @@ export const buildWslReapCommand = (marker: string): [string, ...string[]] => {
     '  [ -n "$pgid" ] && kill -TERM "-$pgid" 2>/dev/null',
     "done",
   ].join("\n");
-  return ["wsl.exe", "--exec", "sh", "-c", script];
+  return [WSL_EXECUTABLE, "--exec", "sh", "-c", script];
 };

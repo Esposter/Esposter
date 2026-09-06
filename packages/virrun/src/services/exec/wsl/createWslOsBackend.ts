@@ -12,6 +12,7 @@ import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "#src/services/exec/util/constants
 import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 import { spawnBackground } from "#src/services/exec/util/spawnBackground";
 import { buildWslReapCommand } from "#src/services/exec/wsl/buildWslReapCommand";
+import { WSL_EXECUTABLE } from "#src/services/exec/wsl/constants";
 import { createWslBwrapArgs } from "#src/services/exec/wsl/createWslBwrapArgs";
 import { createWslEnvArgs } from "#src/services/exec/wsl/createWslEnvArgs";
 import { createWslProcessMarker } from "#src/services/exec/wsl/createWslProcessMarker";
@@ -69,7 +70,7 @@ export const createWslOsBackend = (errorName: string, environment?: Environment)
       }
       return {
         command: [
-          "wsl.exe",
+          WSL_EXECUTABLE,
           "--exec",
           "env",
           ...createWslEnvArgs(options),

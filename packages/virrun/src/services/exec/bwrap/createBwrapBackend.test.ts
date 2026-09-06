@@ -1,7 +1,8 @@
 // oxlint-disable vitest/prefer-mock-return-shorthand -- the fake child replays its streams on a microtask
 // Scheduled at creation, so it must be created lazily inside the mock — an eager `mockReturnValue(createFakeChild(...))`
 // Would fire the events before `exec` attaches its listeners.
-import type { ExecStdio, ExecTeeTarget } from "#src/models/exec/ExecOptions";
+import type { ExecStdio } from "#src/models/exec/ExecStdio";
+import type { ExecTeeTarget } from "#src/models/exec/ExecTeeTarget";
 import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
 
 import {

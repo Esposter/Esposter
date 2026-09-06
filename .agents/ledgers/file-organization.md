@@ -27,12 +27,12 @@ The question is where a thing lives and whether it exists twice — one export p
 | `packages/db` — `services/azure`                                           | 2026-09-06 |                                                                                              |
 | `packages/db` — the rest, `packages/db-mock`                               | 2026-09-06 |                                                                                              |
 | `packages/azure`, `packages/azure-functions`, `packages/azure-mock`        | 2026-09-06 | cross-package placement: an Azure helper two packages need lives in `db`                     |
-| `packages/virrun` — `services/exec/wsl`                                    | —          |                                                                                              |
-| `packages/virrun` — `services/exec/snapshot`                               | —          |                                                                                              |
-| `packages/virrun` — `services/exec/util`                                   | —          |                                                                                              |
-| `packages/virrun` — `services/exec` — the rest                             | —          | `cache`, `os`, `bwrap`, `vfs`, `differential`, `store`, `native`, `test`                     |
-| `packages/virrun` — `services` — the rest                                  | —          | `cli`, `configuration`, `source`, `vfs`, `virrun`                                            |
-| `packages/virrun` — `models`, root                                         | —          |                                                                                              |
+| `packages/virrun` — `services/exec/wsl`                                    | 2026-09-06 |                                                                                              |
+| `packages/virrun` — `services/exec/snapshot`                               | 2026-09-06 |                                                                                              |
+| `packages/virrun` — `services/exec/util`                                   | 2026-09-06 |                                                                                              |
+| `packages/virrun` — `services/exec` — the rest                             | 2026-09-06 | `cache`, `os`, `bwrap`, `vfs`, `differential`, `store`, `native`, `test`                     |
+| `packages/virrun` — `services` — the rest                                  | 2026-09-06 | `cli`, `configuration`, `source`, `vfs`, `virrun`                                            |
+| `packages/virrun` — `models`, root                                         | 2026-09-06 |                                                                                              |
 | `packages/infra` — `azure/resources`                                       | 2026-09-06 | one resource per file, named for its export                                                  |
 | `packages/infra` — `azure` — the rest                                      | 2026-09-06 | `constants`, `services`, the stack files                                                     |
 | `packages/infra` — `github`, root                                          | 2026-09-06 |                                                                                              |

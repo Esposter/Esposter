@@ -1,6 +1,6 @@
 import type { FlushOp } from "#src/models/exec/FlushOp";
 
-import { FlushOpType } from "#src/models/exec/FlushOp";
+import { FlushOpType } from "#src/models/exec/FlushOpType";
 import { checkHasDependencyClosureMutation } from "#src/services/exec/cache/checkHasDependencyClosureMutation";
 import { PNPM_LOCKFILE_FILENAME } from "#src/services/exec/util/constants";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";

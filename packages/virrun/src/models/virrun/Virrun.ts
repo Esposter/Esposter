@@ -1,5 +1,5 @@
-import type { ExecStdio } from "#src/models/exec/ExecOptions";
 import type { ExecResult } from "#src/models/exec/ExecResult";
+import type { ExecStdio } from "#src/models/exec/ExecStdio";
 import type { BackendType } from "#src/models/virrun/BackendType";
 // The public handle returned by createVirrun. exec runs a command in the resolved backend; fork runs one
 // Over a warm snapshot (specs/snapshot-fork.md). Deliberately tiny — backend name, exec, fork, dispose.

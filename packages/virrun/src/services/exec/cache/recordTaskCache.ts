@@ -2,7 +2,7 @@ import type { TaskCacheEntry } from "#src/models/exec/cache/TaskCacheEntry";
 import type { ExecResult } from "#src/models/exec/ExecResult";
 import type { FlushOp } from "#src/models/exec/FlushOp";
 
-import { FlushOpType } from "#src/models/exec/FlushOp";
+import { FlushOpType } from "#src/models/exec/FlushOpType";
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import {
   TASK_CACHE_META_FILENAME,

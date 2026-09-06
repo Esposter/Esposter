@@ -1,3 +1,5 @@
+import type { ExecStdio } from "#src/models/exec/ExecStdio";
+import type { ExecTeeTarget } from "#src/models/exec/ExecTeeTarget";
 import type { OverlayLayers } from "#src/models/exec/OverlayLayers";
 
 export interface ExecOptions {
@@ -19,8 +21,3 @@ export interface ExecOptions {
   // (install/prepare) tees to "stderr" so a piped caller's stdout is never poisoned by setup logs.
   tee?: ExecTeeTarget;
 }
-// "pipe" captures stdout/stderr into the ExecResult; "inherit" streams them live to the host terminal.
-export type ExecStdio = "inherit" | "pipe";
-
-// The host stream a tee mirrors the child's stdout onto.
-export type ExecTeeTarget = "stderr" | "stdout";

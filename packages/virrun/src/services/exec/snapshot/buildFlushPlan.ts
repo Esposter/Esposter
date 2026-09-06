@@ -1,7 +1,7 @@
 import type { FlushOp } from "#src/models/exec/FlushOp";
 import type { OverlayEntry } from "#src/models/exec/snapshot/OverlayEntry";
 
-import { FlushOpType } from "#src/models/exec/FlushOp";
+import { FlushOpType } from "#src/models/exec/FlushOpType";
 import { OverlayEntryKind } from "#src/models/exec/snapshot/OverlayEntryKind";
 import { exhaustiveGuard } from "@esposter/shared";
 // Path depth = its "/" count; decorate-sort-undecorate below computes it once per copy (a build's upper can hold thousands).

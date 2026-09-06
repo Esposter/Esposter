@@ -1,4 +1,5 @@
-import type { ExecOptions, ExecStdio } from "#src/models/exec/ExecOptions";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
+import type { ExecStdio } from "#src/models/exec/ExecStdio";
 
 import { getOsCacheRoot } from "#src/services/exec/os/getOsCacheRoot";
 import { createSharedPackageStoreOptions } from "#src/services/exec/store/createSharedPackageStoreOptions";

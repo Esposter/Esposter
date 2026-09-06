@@ -1,4 +1,5 @@
-import type { ExecOptions, ExecStdio } from "#src/models/exec/ExecOptions";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
+import type { ExecStdio } from "#src/models/exec/ExecStdio";
 
 import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
 import { CI_ENV_KEY, CI_ENV_VALUE } from "#src/services/exec/util/constants";
