@@ -20,4 +20,4 @@
 | `packages/shared` — `src/services`                         | 2026-09-07 |                                                                                        |
 | `packages/shared` — `src/util/types`                       | 2026-09-06 | the near-duplicate `DeepOmit` type tests are the `testing` ledger's                    |
 | `packages/shared` — the rest of `src/util`                 | 2026-09-06 |                                                                                        |
-| `packages/shared-node`                                     | 2026-08-20 |                                                                                        |
+| `packages/shared-node`                                     | 2026-09-07 |                                                                                        |
