@@ -22,7 +22,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `packages/db`, `packages/db-schema`, `packages/db-mock`                    | —          |                                                                                              |
 | `packages/azure`, `packages/azure-functions`, `packages/azure-mock`        | —          | cross-package placement: an Azure helper two packages need lives in `db`                     |
 | `packages/virrun`, `packages/infra`, `packages/configuration`              | —          |                                                                                              |
-| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`           | —          | barrel contents are `ctix` output — regenerate, never hand-edit                              |
+| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`           | 2026-09-06 | barrel contents are `ctix` output — regenerate, never hand-edit                              |
 | `scripts`                                                                  | 2026-09-02 | a command is a folder once it has internals                                                  |
 
 ## Find recipe

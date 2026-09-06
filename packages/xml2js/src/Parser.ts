@@ -207,14 +207,6 @@ export class Parser {
   }
 }
 
-export const parseStringPromise = <T>(
-  convertableToString: convertableToString,
-  options?: ParserOptions,
-): Promise<T> => {
-  const parserInstance = new Parser(options);
-  return parserInstance.parseStringPromise(convertableToString);
-};
-
 const checkIsEmpty = (value: unknown): boolean =>
   typeof value === "object" && value !== null && Object.keys(value).length === 0;
 
