@@ -1,7 +1,8 @@
-import { createMaxLengthCheckSql } from "#src/models/shared/Check";
-import { createNameCheckSql, createNameSchema } from "#src/models/shared/Name";
+import { createNameSchema } from "#src/models/shared/Name";
 import { StorageTier } from "#src/models/user/StorageTier";
 import { pgTable } from "#src/pgTable";
+import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
+import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNormalizedStringSchema } from "@esposter/shared";
 import { bigint, boolean, check, pgEnum, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";

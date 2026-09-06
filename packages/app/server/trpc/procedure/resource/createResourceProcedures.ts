@@ -7,17 +7,20 @@ import type { ResourceWithPublication } from "#shared/models/resource/ResourceWi
 import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
 import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
+import { createResourceInputSchema } from "#shared/models/db/resource/CreateResourceInput";
+import { deleteFileInputSchema } from "#shared/models/db/resource/DeleteFileInput";
+import { generateUploadFileSasEntitiesInputSchema } from "#shared/models/db/resource/GenerateUploadFileSasEntitiesInput";
+import { readPublishedVersionContentInputSchema } from "#shared/models/db/resource/ReadPublishedVersionContentInput";
+import { readResourcesInputSchema } from "#shared/models/db/resource/ReadResourcesInput";
+import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
+import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateResourceInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
-import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
-import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES } from "#shared/services/storage/constants";
-import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
@@ -51,67 +54,16 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import {
   AzureContainer,
-  BLOB_SEGMENT_MAX_LENGTH,
-  BLOB_SEGMENT_REGEX,
   DatabaseEntityType,
-  fileEntitySchema,
   ResourceActivityType,
   resourcePublications,
   resources,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, getResultAsync, noop, Operation, RoutePath } from "@esposter/shared";
+import { getResultAsync, noop, Operation, RoutePath } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
-
-const readResourcesInputSchema = createOffsetPaginationParamsSchema(selectResourceSchema.keyof()).prefault({});
-
-const createResourceInputSchema = selectResourceSchema.pick({ name: true });
-// Tags replace the whole record rather than merging, which is Azure's own tag update semantics.
-// Both editable fields are optional so a caller writes only the field it owns: a rename and a tag edit are
-// Independent writes to one row, and a tag edit that had to restate the name would put the pre-rename name
-// Back whenever the two overlap
-const updateResourceInputSchema = refineAtLeastOne(
-  z.object({
-    ...selectResourceSchema.pick({ id: true }).shape,
-    ...selectResourceSchema.pick({ name: true, tags: true }).partial().shape,
-  }),
-  ["name", "tags"],
-);
-
-const resourceIdInputSchema = selectResourceSchema.pick({ id: true });
-
-const generateUploadFileSasEntitiesInputSchema = z.object({
-  // `size` is what the storage quota reserves against, so it is bounded at the input boundary rather than
-  // Trusted: a negative or non-finite declaration would decrement the counter and bypass the quota entirely.
-  // It is the client's own claim — an Azure write SAS carries no length constraint — so `BlobCreated` is what
-  // Replaces it with the stored object's real size. The array is bounded by the in-flight hold cap rather than
-  // The generic read limit: a batch above the cap can never pass the reserve however long the client waits.
-  // See /docs/platform/storage-quotas
-  files: createUniqueArraySchema(
-    z.object({
-      ...fileEntitySchema.pick({ filename: true, mimetype: true }).shape,
-      size: fileEntitySchema.shape.size.max(MAX_FILE_REQUEST_SIZE),
-    }),
-    "filename",
-  )
-    .min(1)
-    .max(MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES),
-  id: selectResourceSchema.shape.id,
-});
-
-const deleteFileInputSchema = z.object({
-  // The client recovers this from the stable asset url, so it is always the single `{id}|{filename}` segment
-  // `getBlobName` emits — a separator or a `..` could only ever be an attempt to climb out of {id}/files/
-  blobPath: z.string().min(1).max(BLOB_SEGMENT_MAX_LENGTH).regex(BLOB_SEGMENT_REGEX),
-  id: selectResourceSchema.shape.id,
-});
-
-const readPublishedVersionContentInputSchema = z.object({
-  ...resourceIdInputSchema.shape,
-  version: z.int().positive(),
-});
 
 export const createResourceProcedures = <TType extends ResourceType>(
   type: TType,

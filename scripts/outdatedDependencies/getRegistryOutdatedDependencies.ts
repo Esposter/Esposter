@@ -2,10 +2,10 @@ import type { DependencyEntry } from "#scripts/outdatedDependencies/models/Depen
 import type { OutdatedDependency } from "#scripts/outdatedDependencies/models/OutdatedDependency";
 import type { RegistryCheckError } from "#scripts/outdatedDependencies/models/RegistryCheckError";
 
+import { checkIsVersionOutdated } from "#scripts/outdatedDependencies/checkIsVersionOutdated";
 import { REGISTRY_CONCURRENCY } from "#scripts/outdatedDependencies/constants";
 import { getSpecifierBase } from "#scripts/outdatedDependencies/getSpecifierBase";
 import { getVersionChangeLevel } from "#scripts/outdatedDependencies/getVersionChangeLevel";
-import { isVersionOutdated } from "#scripts/outdatedDependencies/isVersionOutdated";
 import { getLatestVersion } from "#scripts/services/getLatestVersion";
 import { getResultAsync } from "@esposter/shared";
 
@@ -36,7 +36,7 @@ export const getRegistryOutdatedDependencies = async (
         (latest) => {
           const current = getSpecifierBase(specifier);
           const metadata = GroupMetadataMap[group];
-          if (isVersionOutdated(current, latest))
+          if (checkIsVersionOutdated(current, latest))
             outdatedDependencyMap.set(entry, {
               current,
               dependencyType: metadata?.dependencyType ?? "",

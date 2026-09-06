@@ -57,7 +57,7 @@ describe("getWslNativeCacheRoot", () => {
     const { getWslNativeCacheRoot } = await import("#src/services/exec/wsl/getWslNativeCacheRoot");
 
     expect(getWslNativeCacheRoot()).toBe(cacheRoot);
-    expect(execFileSync).toHaveBeenCalledTimes(0);
+    expect(execFileSync).not.toHaveBeenCalled();
   });
 
   test("throws when the home directory cannot be resolved", async () => {

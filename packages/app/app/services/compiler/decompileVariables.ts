@@ -1,5 +1,5 @@
 import { Delimiter } from "#shared/models/compiler/Delimiter";
-import { DelimiterRegexMap } from "#shared/models/compiler/DelimiterRegexMap";
+import { DelimiterRegexMap } from "#shared/services/compiler/DelimiterRegexMap";
 
 export const decompileVariables = (
   string: string,

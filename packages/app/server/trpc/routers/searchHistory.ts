@@ -4,9 +4,8 @@ import type { RelationsFilter } from "drizzle-orm";
 
 import { createSearchHistoryInputSchema } from "#shared/models/db/searchHistory/CreateSearchHistoryInput";
 import { deleteSearchHistoryInputSchema } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
+import { readSearchHistoriesInputSchema } from "#shared/models/db/searchHistory/ReadSearchHistoriesInput";
 import { updateSearchHistoryInputSchema } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
-import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { ownedBy } from "@@/server/services/db/ownedBy";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
@@ -15,15 +14,8 @@ import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { DatabaseEntityType, searchHistoriesInMessage, selectSearchHistoryInMessageSchema } from "@esposter/db-schema";
+import { DatabaseEntityType, searchHistoriesInMessage } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { z } from "zod";
-
-const readSearchHistoriesInputSchema = z.object({
-  ...createCursorPaginationParamsSchema(selectSearchHistoryInMessageSchema.keyof(), [CREATED_AT_DESCENDING_SORT_ITEM])
-    .shape,
-  roomId: selectSearchHistoryInMessageSchema.shape.roomId,
-});
 
 export const searchHistoryRouter = router({
   createSearchHistory: getMemberProcedure(createSearchHistoryInputSchema, "roomId").mutation<SearchHistoryInMessage>(

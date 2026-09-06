@@ -20,7 +20,7 @@ const editedPermissions = ref(role.permissions);
   <!-- Pinned to the bottom rather than trailing the list, which is Discord's own shape here: the switch that made
        the change is scrolled away by the time the reader looks for a save, and a save they cannot see reads as a
        change that already took -->
-  <div v-if="editedPermissions !== role.permissions" py-2 bg-surface flex gap-2 items-center bottom-0 sticky>
+  <div v-if="editedPermissions !== role.permissions" class="save-bar" py-2 flex gap-2 items-center bottom-0 sticky>
     <span flex-1 text-body-medium>You have unsaved changes.</span>
     <v-btn variant="plain" @click="editedPermissions = role.permissions">Reset</v-btn>
     <StyledButton
@@ -29,3 +29,10 @@ const editedPermissions = ref(role.permissions);
     />
   </div>
 </template>
+
+<style scoped>
+/* Opaque so the permission list scrolls under the bar rather than through it */
+.save-bar {
+  background-color: rgb(var(--v-theme-surface));
+}
+</style>

@@ -8,9 +8,9 @@ if (event) setResponseStatus(event, 404);
 <template>
   <NuxtLayout>
     <VisualSpaceBackground>
-      <div flex flex-col items-center>
+      <div flex flex-col gap-y-4 items-center>
         <div text-5xl text-center>Lost in space?</div>
-        <NuxtInvisibleLink pt-4 :to="RoutePath.Index">
+        <NuxtInvisibleLink :to="RoutePath.Index">
           <StyledButton :button-props="{ text: 'Go back home' }" />
         </NuxtInvisibleLink>
       </div>

@@ -7,8 +7,8 @@ import { createDirectMessageInputSchema } from "#shared/models/db/room/CreateDir
 import { createDirectMessageParticipantsInputSchema } from "#shared/models/db/room/CreateDirectMessageParticipantsInput";
 import { deleteDirectMessageParticipantInputSchema } from "#shared/models/db/room/DeleteDirectMessageParticipantInput";
 import { hideDirectMessageInputSchema } from "#shared/models/db/room/HideDirectMessageInput";
-import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { readDirectMessagesInputSchema } from "#shared/models/db/room/ReadDirectMessagesInput";
+import { roomIdsInputSchema } from "#shared/models/db/room/RoomIdsInput";
 import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -30,26 +30,14 @@ import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,
   friends,
-  roomIdsSchema,
   roomsInMessage,
   RoomType,
-  selectRoomInMessageSchema,
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { ItemMetadataPropertyNames, Operation } from "@esposter/shared";
+import { Operation } from "@esposter/shared";
 import { and, eq, getColumns, inArray, ne, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
-import { z } from "zod";
-
-const readDirectMessagesInputSchema = z
-  .object({
-    ...createCursorPaginationParamsSchema(selectRoomInMessageSchema.keyof(), [
-      { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
-    ]).shape,
-  })
-  .prefault({});
-const readDirectMessageParticipantsInputSchema = roomIdsSchema.shape.roomIds.min(1);
 
 export const directMessageRouter = router({
   createDirectMessage: standardAuthedProcedure
@@ -229,7 +217,7 @@ export const directMessageRouter = router({
         );
     }),
   readDirectMessageParticipants: standardAuthedProcedure
-    .input(readDirectMessageParticipantsInputSchema)
+    .input(roomIdsInputSchema)
     .query<DirectMessageParticipants[]>(async ({ ctx, input: roomIds }) => {
       const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
       const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");

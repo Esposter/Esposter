@@ -35,12 +35,12 @@ const save = async () => {
 <template>
   <v-container fluid flex flex-col gap-4 h-full>
     <div flex flex-wrap gap-2 items-center>
-      <span text-h6>Manifest</span>
+      <span text-title-large>Manifest</span>
       <v-spacer />
       <StyledButton :button-props="{ prependIcon: 'mdi-content-save', text: 'Save', variant: 'tonal' }" @click="save" />
       <ResourceBlueprintDeployDialog />
     </div>
     <v-alert v-if="errorMessage" type="error" variant="tonal">{{ errorMessage }}</v-alert>
-    <v-textarea v-model="manifestJson" class="font-mono" flex-1 label="Manifest JSON" />
+    <v-textarea v-model="manifestJson" font-mono flex-1 label="Manifest JSON" />
   </v-container>
 </template>

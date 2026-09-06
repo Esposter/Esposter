@@ -33,7 +33,7 @@ const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
           <v-card-text flex gap-4 items-center>
             <v-icon size="x-large" :icon="ResourceDefinitionMap[type].icon" />
             <div flex flex-col min-w-0>
-              <span text-h5>{{ count }}</span>
+              <span text-headline-small>{{ count }}</span>
               <span truncate op-medium-emphasis>
                 {{ ResourceDefinitionMap[type].title }} {{ pluralize("resource", count) }}
               </span>

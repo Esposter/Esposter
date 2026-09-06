@@ -1,5 +1,3 @@
-import type { User } from "#src/schema/users";
-
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomsInMessage } from "#src/schema/roomsInMessage";
@@ -26,6 +24,5 @@ export const bansInMessage = pgTable(
 );
 
 export type BanInMessage = typeof bansInMessage.$inferSelect;
-export type BanInMessageWithRelations = BanInMessage & { bannedByUser: null | User; user: User };
 
 export const selectBanInMessageSchema = createSelectSchema(bansInMessage);

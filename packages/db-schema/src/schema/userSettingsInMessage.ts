@@ -1,29 +1,17 @@
-import { createBetweenCheckSql, createMaxLengthCheckSql } from "#src/models/shared/Check";
+import {
+  NoiseSuppressionMode,
+  noiseSuppressionModeSchema,
+} from "#src/models/message/userSettings/NoiseSuppressionMode";
+import { VoiceInputMode, voiceInputModeSchema } from "#src/models/message/userSettings/VoiceInputMode";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { users } from "#src/schema/users";
+import { createBetweenCheckSql } from "#src/services/shared/createBetweenCheckSql";
+import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { boolean, check, integer, pgEnum, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-import { z } from "zod";
-
-export enum VoiceInputMode {
-  PushToTalk = "PushToTalk",
-  VoiceActivity = "VoiceActivity",
-}
-
-const voiceInputModeSchema = z.enum(VoiceInputMode) satisfies z.ZodType<VoiceInputMode>;
 
 export const voiceInputModeEnum = pgEnum("voiceInputMode", VoiceInputMode);
-
-export const VoiceInputModes: readonly VoiceInputMode[] = Object.values(VoiceInputMode);
-
-export enum NoiseSuppressionMode {
-  Custom = "Custom",
-  Studio = "Studio",
-  VoiceIsolation = "VoiceIsolation",
-}
-
-const noiseSuppressionModeSchema = z.enum(NoiseSuppressionMode) satisfies z.ZodType<NoiseSuppressionMode>;
 
 export const noiseSuppressionModeEnum = pgEnum("noiseSuppressionMode", NoiseSuppressionMode);
 

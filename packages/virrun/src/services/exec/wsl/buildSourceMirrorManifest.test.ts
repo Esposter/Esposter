@@ -27,14 +27,17 @@ describe(buildSourceMirrorManifest, () => {
     mkdirSync(join(cwd, NESTED_DIRECTORY_NAME));
     writeFileSync(join(cwd, NESTED_DIRECTORY_NAME, TEST_FILENAME), "");
     const { mtimeMs, size } = lstatSync(join(cwd, TEST_FILENAME));
+    const { mtimeMs: nestedMtimeMs } = lstatSync(join(cwd, NESTED_DIRECTORY_NAME, TEST_FILENAME));
 
     const manifest = buildSourceMirrorManifest(cwd, []);
 
     expect(manifest).toStrictEqual({
-      [`${NESTED_DIRECTORY_NAME}/${TEST_FILENAME}`]: expect.objectContaining({
+      [`${NESTED_DIRECTORY_NAME}/${TEST_FILENAME}`]: {
+        mtimeMs: nestedMtimeMs,
         size: 0,
+        target: "",
         type: SourceMirrorEntryType.File,
-      }),
+      },
       [NESTED_DIRECTORY_NAME]: { mtimeMs: 0, size: 0, target: "", type: SourceMirrorEntryType.Directory },
       [TEST_FILENAME]: { mtimeMs, size, target: "", type: SourceMirrorEntryType.File },
     });

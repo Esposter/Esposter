@@ -9,4 +9,4 @@ export enum SurveyResponseMode {
 
 export const surveyResponseModeSchema = z.enum(SurveyResponseMode) satisfies z.ZodType<SurveyResponseMode>;
 
-export const SurveyResponseModes = Object.values(SurveyResponseMode);
+export const SurveyResponseModes: readonly SurveyResponseMode[] = Object.values(SurveyResponseMode);

@@ -3,7 +3,7 @@ import type { Database, RoomFilterInMessage } from "@esposter/db-schema";
 import { checkHasPermission } from "#src/services/room/rbac/checkHasPermission";
 import { MessageCreationRejectionType, RoomPermission } from "@esposter/db-schema";
 
-export type MessageCreationRejection =
+type MessageCreationRejection =
   | {
       filter: Pick<RoomFilterInMessage, "action" | "timeoutDurationMs">;
       type: MessageCreationRejectionType.WordFilter;

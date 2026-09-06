@@ -11,7 +11,7 @@ import { SITE_NAME } from "@esposter/shared";
       text-primary
       font-bold
       transition-colors
-      duration-[--transition-duration]
+      duration="[--transition-duration]"
       hover:text-primary-darken-1
       target="_blank"
       :to="LINKEDIN_PROFILE_URL"

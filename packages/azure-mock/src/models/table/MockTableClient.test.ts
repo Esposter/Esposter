@@ -34,6 +34,19 @@ describe(MockTableClient, () => {
     expect(rowKeys).toStrictEqual(["0", "1"]);
   });
 
+  // The two keys are joined into one map key, and either of them may hold the separator — so a pair that
+  // Straddles it is a different entity from the one whose halves fall on the other side
+  test("keeps two entities apart when one key holds the separator the other is split on", async () => {
+    expect.hasAssertions();
+
+    const client = new MockTableClient(tableName, tableName);
+    await client.createEntity<TableEntity>({ partitionKey: "a|b", rowKey: "c" });
+    await client.createEntity<TableEntity>({ partitionKey: "a", rowKey: "b|c" });
+    const entities = await readByPage(client);
+
+    expect(entities).toHaveLength(2);
+  });
+
   test("orders entities by partitionKey then rowKey regardless of insertion order", async () => {
     expect.hasAssertions();
 

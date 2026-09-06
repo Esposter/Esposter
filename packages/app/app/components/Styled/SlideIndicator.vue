@@ -66,7 +66,7 @@ onMounted(() => {
   <div
     ref="indicator"
     :style="indicatorStyle"
-    rounded-r
+    rd-r
     bg-primary
     w-1
     transition-all

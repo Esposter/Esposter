@@ -21,7 +21,7 @@ const COPY_BUTTON_PROPS = { color: "grey-lighten-1", density: "comfortable", siz
     <StyledTooltipIconButton
       op-0
       transition-opacity
-      duration-[--transition-duration]
+      duration="[--transition-duration]"
       right-2
       top-2
       absolute

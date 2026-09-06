@@ -6,7 +6,7 @@ left when this ledger was written.
 | Unit                                      | Swept      | Notes |
 | ----------------------------------------- | ---------- | ----- |
 | `scripts/outdatedDependencies`            | 2026-09-02 |       |
-| `scripts/oxlint`                          | —          |       |
+| `scripts/oxlint`                          | 2026-09-06 |       |
 | `scripts/updateNode`                      | —          |       |
 | `scripts/services`, `scripts` root files  | —          |       |
 | the repository root — config and Markdown | —          |       |

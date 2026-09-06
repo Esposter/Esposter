@@ -25,7 +25,7 @@ const backgroundColor = computed({
   <v-text-field v-model="label" label="Label" placeholder="Label" />
   <v-color-input
     v-model="backgroundColor"
-    :width="300"
+    width="18.75rem"
     label="Background Color"
     placeholder="Background Color"
     hide-pip

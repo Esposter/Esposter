@@ -1,3 +1,5 @@
+import { KIBIBYTE } from "@esposter/shared";
+
 // The schema version every event this system publishes carries. One value across all publishers, so a consumer
 // Reading `dataVersion` is reading a single repo-wide contract rather than one literal per call site; it only moves
 // When a `data` payload shape changes incompatibly.
@@ -25,7 +27,7 @@ export const MAX_BLOB_DELETION_EVENT_BLOB_NAMES = 500;
 // Envelope every event carries (id, subject, type, time, the rest of `data`) plus JSON's own quoting and commas,
 // None of which the publisher measures. An event that exceeds the real cap is rejected outright, and since the
 // Publish is best-effort and post-persist, the rejection is silent and the blobs it named are never reclaimed.
-export const MAX_BLOB_DELETION_EVENT_DATA_BYTES = 512 * 2 ** 10;
+export const MAX_BLOB_DELETION_EVENT_DATA_BYTES = 512 * KIBIBYTE;
 
 // Event Grid caps a publish REQUEST at 1 MB, independently of the per-event cap — so a batch of individually legal
 // Events is still rejected whole once their sum crosses it. Half that, in bytes of the serialized events, because
@@ -34,7 +36,7 @@ export const MAX_BLOB_DELETION_EVENT_DATA_BYTES = 512 * 2 ** 10;
 // This — Event Grid writes whatever expired together into one dead-letter blob, so a blob at the event cap
 // Republished as a single request exceeds the request cap, and the replay subscription has no dead letter of its
 // Own: the rejection burns every attempt on the same oversized batch and the events are discarded for good.
-export const MAX_EVENT_GRID_PUBLISH_BYTES = 512 * 2 ** 10;
+export const MAX_EVENT_GRID_PUBLISH_BYTES = 512 * KIBIBYTE;
 
 // The other half of the publish-request cap: Event Grid also bounds a request at 5,000 events, independently of
 // Its size, so a batch of small events clears the byte budget above and is still rejected whole. Taken exactly

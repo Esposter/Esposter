@@ -1,4 +1,4 @@
-import { RoomType } from "#src/schema/roomsInMessage";
+import { RoomType } from "#src/models/message/RoomType";
 import { refineRoomSchema } from "#src/services/room/refineRoomSchema";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";

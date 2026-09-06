@@ -32,8 +32,8 @@ skill links. After moving a section, grep the tree for its heading text and repo
 the heading itself.
 
 One pointer form breaks **inside** the moved text as well: a cross-page "see below"/"as above" no longer has its
-target, and it resolves to nothing without failing a build. A `references/x.md` citation is not that — the path
+target, and it resolves to nothing without failing a build. A `references/<page>.md` citation is not that — the path
 is relative to the **skill**, not to the file holding it, so it reads the same from `SKILL.md` and from a sibling
-page and survives the move untouched. Shortening one to bare `x.md` because the pages now sit together is the
+page and survives the move untouched. Shortening one to bare `<page>.md` because the pages now sit together is the
 edit to resist: it drops the context that says which tree the page is in, and it is only correct until the text
 moves again.

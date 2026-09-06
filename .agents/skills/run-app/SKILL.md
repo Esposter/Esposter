@@ -1,6 +1,6 @@
 ---
 name: run-app
-description: Esposter — how a UI change is verified, and why an agent never drives the app in a browser to do it. Driving Chrome over CDP is banned here (flaky and slow); the alternatives are a component test when one is cheap under the default setup, and otherwise the user's own eyes. Also covers launching the dev server for the user. Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works.
+description: Esposter — how a UI change is verified, and why an agent never drives the app in a browser to do it. Driving Chrome over CDP is banned here (flaky and slow); the alternatives are generating the CSS offline for a styling question, a component test when one is cheap under the default setup, and otherwise the user's own eyes. Also covers launching the dev server for the user. Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works.
 ---
 
 # Verifying a UI Change
@@ -18,11 +18,42 @@ So: make the change, run the check suite (`package-scripts`), and say plainly wh
 
 ## What replaces it
 
-1. **A component test, when it is cheap.** If the behaviour mounts under the repo's default Vitest setup and the assertions are about rendered structure or state a user depends on, write one — `testing` owns the conventions.
-2. **Otherwise nothing, and say so.** A component test that only exists after mocking a large surface — a store graph, the tRPC client, Vuetify internals, a browser API per assertion — is not worth its weight: it pins the mocks rather than the component, and it is the maintenance the next change pays. **Not adding the test is the correct outcome there** and needs no apology; the layout is the user's to eyeball.
-3. **The user's own eyes** are the acceptance check for anything visual. Hand over what changed and what to look at, rather than claiming a look you did not take.
+1. **For a styling change, generate the CSS and read it.** Whether a utility resolves at all, and to which
+   property, is a question UnoCSS answers offline — no browser, no judgement call, no flake. It settles exactly
+   the class of finding that otherwise gets parked as "needs eyes on the page": whether an attributify form is
+   equivalent to the `class` form it replaces, whether an arbitrary value is ambiguous between two properties,
+   whether a token is generated for a value a dynamic binding hides from the scanner.
 
-Never report a visual change as verified on the strength of typecheck, lint or a passing suite. Say which of the three above happened.
+   The script has to sit in `packages/app` — it imports `./uno.config`, and bare specifiers resolve from the
+   file's own location — so write it there, run it, and delete it. With a dev server up that create/delete pair
+   triggers a Nitro rebuild (the warning at the end of this page), so stop the server first or accept the rebuild.
+
+   ```ts
+   // packages/app/unoGenerate.ts — pnpm exec tsx ./unoGenerate.ts '<div max-h="[80vh]" />' 80vh
+   import { createGenerator } from "unocss";
+
+   import unoConfig from "./uno.config";
+
+   const generator = await createGenerator(unoConfig);
+   const { css } = await generator.generate(process.argv[2] ?? "", { preflights: false });
+   console.log(
+     css
+       .split("\n")
+       .filter((line) => line.includes(process.argv[3] ?? ""))
+       .join("\n"),
+   );
+   ```
+
+   Filter the output, or the safelist buries the one line that answers the question. **A form that generates
+   nothing is the finding**, and it looks identical to a form that works: `bg-image="[var(--x)]"` produces no
+   rule at all, while `bg="[var(--x)]"` produces `background-color`, so a gradient written either way is lost
+   silently. `bg="[image:--x]"` is the one that produces `background-image`.
+
+2. **A component test, when it is cheap.** If the behaviour mounts under the repo's default Vitest setup and the assertions are about rendered structure or state a user depends on, write one — `testing` owns the conventions.
+3. **Otherwise nothing, and say so.** A component test that only exists after mocking a large surface — a store graph, the tRPC client, Vuetify internals, a browser API per assertion — is not worth its weight: it pins the mocks rather than the component, and it is the maintenance the next change pays. **Not adding the test is the correct outcome there** and needs no apology; the layout is the user's to eyeball.
+4. **The user's own eyes** are the acceptance check for anything visual. Hand over what changed and what to look at, rather than claiming a look you did not take.
+
+Never report a visual change as verified on the strength of typecheck, lint or a passing suite. Say which of the four above happened.
 
 ## Launching the dev server (for the user, not for a driver)
 

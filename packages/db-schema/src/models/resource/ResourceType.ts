@@ -15,4 +15,4 @@ export enum ResourceType {
 
 export const resourceTypeSchema = z.enum(ResourceType) satisfies z.ZodType<ResourceType>;
 
-export const ResourceTypes = Object.values(ResourceType);
+export const ResourceTypes: readonly ResourceType[] = Object.values(ResourceType);

@@ -65,15 +65,33 @@ describe(createWslBwrapArgs, () => {
     const workDir = String.raw`C:\cache\snap\work`;
     const args = createWslBwrapArgs("pnpm install", TEST_REPO_ROOT_WIN, { overlayLayers: { upperDir, workDir } });
 
-    expect(args).toStrictEqual(
-      expect.arrayContaining([
+    expect(args).toMatchInlineSnapshot(`
+      [
+        "--unshare-all",
+        "--die-with-parent",
+        "--ro-bind",
+        "/",
+        "/",
+        "--dev",
+        "/dev",
+        "--proc",
+        "/proc",
+        "--tmpfs",
+        "/tmp",
+        "--overlay-src",
+        "/a/.virrun/sources",
         "--overlay",
-        `${TEST_WSL_PREFIX}${upperDir}`,
-        `${TEST_WSL_PREFIX}${workDir}`,
-        TEST_WSL_LOGICAL,
-      ]),
-    );
-    expect(args).not.toContain("--tmp-overlay");
+        "/wsl/C:\\cache\\snap\\upper",
+        "/wsl/C:\\cache\\snap\\work",
+        "/wsl/C:\\a",
+        "--chdir",
+        "/wsl/C:\\a",
+        "--",
+        "/bin/sh",
+        "-c",
+        "pnpm install",
+      ]
+    `);
   });
 
   test("translates fork overlay lower dirs before building the argv", () => {
@@ -82,8 +100,32 @@ describe(createWslBwrapArgs, () => {
     const snapshotUpper = String.raw`C:\cache\snap\upper`;
     const args = createWslBwrapArgs("vitest", TEST_REPO_ROOT_WIN, { overlayLayers: { lowerDirs: [snapshotUpper] } });
 
-    expect(args).toStrictEqual(
-      expect.arrayContaining(["--overlay-src", `${TEST_WSL_PREFIX}${snapshotUpper}`, "--tmp-overlay"]),
-    );
+    expect(args).toMatchInlineSnapshot(`
+      [
+        "--unshare-all",
+        "--die-with-parent",
+        "--ro-bind",
+        "/",
+        "/",
+        "--dev",
+        "/dev",
+        "--proc",
+        "/proc",
+        "--tmpfs",
+        "/tmp",
+        "--overlay-src",
+        "/a/.virrun/sources",
+        "--overlay-src",
+        "/wsl/C:\\cache\\snap\\upper",
+        "--tmp-overlay",
+        "/wsl/C:\\a",
+        "--chdir",
+        "/wsl/C:\\a",
+        "--",
+        "/bin/sh",
+        "-c",
+        "vitest",
+      ]
+    `);
   });
 });

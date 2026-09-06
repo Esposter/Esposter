@@ -10,11 +10,15 @@ import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
 import { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
+import { readInviteInputSchema } from "#shared/models/db/room/ReadInviteInput";
+import { readMembersByIdsInputSchema } from "#shared/models/db/room/ReadMembersByIdsInput";
+import { readMembersInputSchema } from "#shared/models/db/room/ReadMembersInput";
+import { readRoomInputSchema } from "#shared/models/db/room/ReadRoomInput";
 import { readRoomInvitesInputSchema } from "#shared/models/db/room/ReadRoomInvitesInput";
+import { readRoomsInputSchema } from "#shared/models/db/room/ReadRoomsInput";
 import { revokeInviteInputSchema } from "#shared/models/db/room/RevokeInviteInput";
+import { roomIdsInputSchema } from "#shared/models/db/room/RoomIdsInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
-import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { createId } from "#shared/util/math/random/createId";
@@ -57,67 +61,25 @@ import {
   INVITE_ID_LENGTH,
   InviteInMessageRelations,
   invitesInMessage,
-  refineRoomSchema,
   roomIdSchema,
-  roomIdsSchema,
   RoomPermission,
   roomRolesInMessage,
   roomsInMessage,
   RoomType,
-  selectInviteInMessageSchema,
-  selectRoomInMessageSchema,
-  selectUserSchema,
   userIdSchema,
-  userIdsSchema,
   users,
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
   WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
-import {
-  getResultAsync,
-  InvalidOperationError,
-  ItemMetadataPropertyNames,
-  MAX_READ_LIMIT,
-  noop,
-  Operation,
-  takeOne,
-} from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { and, count, desc, eq, getColumns, gt, ilike, inArray, isNull, lt, ne, not, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
-import { z } from "zod";
 
-const readRoomInputSchema = selectRoomInMessageSchema.shape.id.optional();
-
-const readRoomsInputSchema = z
-  .object({
-    roomId: selectRoomInMessageSchema.shape.id.optional(),
-    ...createCursorPaginationParamsSchema(selectRoomInMessageSchema.keyof(), [
-      { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
-    ]).shape,
-    filter: refineRoomSchema(selectRoomInMessageSchema.pick({ name: true })).optional(),
-  })
-  .prefault({});
-// The rooms a client subscribes to at once — a subscription with no room to watch has nothing to yield
-const roomIdsInputSchema = roomIdsSchema.shape.roomIds.min(1);
 // Invite ids are short enough to collide, so a create re-rolls before giving up
 const MAX_INVITE_ID_RETRIES = 3;
-
-const readMembersInputSchema = z.object({
-  ...roomIdSchema.shape,
-  ...createCursorPaginationParamsSchema(selectUserSchema.keyof(), [
-    { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
-  ]).shape,
-  filter: selectUserSchema.pick({ name: true }).optional(),
-});
-const readMembersByIdsInputSchema = z.object({
-  ...roomIdSchema.shape,
-  ids: userIdsSchema.shape.userIds.min(1),
-});
-
-const readInviteInputSchema = selectInviteInMessageSchema.shape.id;
 
 export const baseRoomRouter = router({
   createInvite: getPermissionsProcedure(RoomPermission.ManageInvites, createInviteInputSchema, "roomId")

@@ -1,5 +1,3 @@
-import type { User } from "#src/schema/users";
-
 import { pgTable } from "#src/pgTable";
 import { users } from "#src/schema/users";
 import { sql } from "drizzle-orm";
@@ -28,4 +26,3 @@ export const friendRequests = pgTable(
 );
 
 export type FriendRequest = typeof friendRequests.$inferSelect;
-export type FriendRequestWithRelations = FriendRequest & { receiver: User; sender: User };

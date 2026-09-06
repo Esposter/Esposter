@@ -47,7 +47,7 @@ describe(deserializeClause, () => {
   test("deserializes a value whose embedded quote was doubled", () => {
     expect.hasAssertions();
 
-    const value = "Jimmy's";
+    const value = "'";
 
     expect(
       deserializeClause(

@@ -1,23 +1,13 @@
+import { WordFilterAction, wordFilterActionSchema } from "#src/models/message/filter/WordFilterAction";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomsInMessage } from "#src/schema/roomsInMessage";
 import { sql } from "drizzle-orm";
 import { check, integer, pgEnum, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-import { z } from "zod";
 
 export const FILTER_KEY_MAX_LENGTH = 100;
 export const FILTER_WORDS_MAX_LENGTH = 1000;
-
-// The automatic action taken when a message matches the room's word filter. Reject is the default
-// (block the message with an error) — Warn and Timeout additionally record a moderation action.
-export enum WordFilterAction {
-  Reject = "Reject",
-  Timeout = "Timeout",
-  Warn = "Warn",
-}
-
-export const wordFilterActionSchema = z.enum(WordFilterAction) satisfies z.ZodType<WordFilterAction>;
 
 export const wordFilterActionEnum = pgEnum("wordFilterAction", WordFilterAction);
 

@@ -2,8 +2,7 @@ import type { ReadNotificationsResult } from "#shared/models/db/notification/Rea
 import type { Notification, relations } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
 
-import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
+import { readNotificationsInputSchema } from "#shared/models/db/notification/ReadNotificationsInput";
 import { ownedBy } from "@@/server/services/db/ownedBy";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
@@ -14,10 +13,6 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { DatabaseEntityType, notifications, selectNotificationSchema } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { and, count, eq } from "drizzle-orm";
-
-const readNotificationsInputSchema = createCursorPaginationParamsSchema(selectNotificationSchema.keyof(), [
-  CREATED_AT_DESCENDING_SORT_ITEM,
-]);
 
 export const notificationRouter = router({
   deleteNotification: standardAuthedProcedure

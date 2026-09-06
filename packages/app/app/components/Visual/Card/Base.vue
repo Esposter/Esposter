@@ -12,7 +12,7 @@ const { sm, xs } = useVDisplay();
 <template>
   <StyledCard
     :class="xs ? 'text-title-large' : sm ? 'text-headline-small' : 'text-headline-large'"
-    font-[montserrat]
+    font="[Montserrat]"
     p-4
     text-center
     flex

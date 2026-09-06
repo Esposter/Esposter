@@ -29,7 +29,7 @@ const { isOpen, item } = useSingletonDialog(detailRowKey, () =>
     @confirm="(onComplete) => onComplete()"
   >
     <!-- The dataset row rendered vertically — answers already arrive flattened, so there is no new read path -->
-    <div gap-x-6 gap-y-3 grid :style="{ gridTemplateColumns: 'auto 1fr' }">
+    <div gap-x-6 gap-y-3 grid grid-cols="[auto_1fr]">
       <template v-for="{ name } of columns" :key="name">
         <span op-medium-emphasis>{{ name }}</span>
         <span v-if="item[name] === null || item[name] === ''" op-medium-emphasis>—</span>

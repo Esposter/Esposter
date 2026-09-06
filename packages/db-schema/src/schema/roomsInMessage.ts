@@ -1,25 +1,18 @@
 import { MimeCategory, mimeCategorySchema } from "#src/models/file/MimeCategory";
-import { createMaxLengthCheckSql } from "#src/models/shared/Check";
-import { createNameCheckSql } from "#src/models/shared/Name";
+import { RoomType, roomTypeSchema } from "#src/models/message/RoomType";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomCategoriesInMessage } from "#src/schema/roomCategoriesInMessage";
 import { users } from "#src/schema/users";
+import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
+import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNormalizedStringSchema, createUniqueArraySchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { boolean, check, integer, pgEnum, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-import { z } from "zod";
 
 export const ROOM_NAME_MAX_LENGTH = 100;
 export const ROOM_TOPIC_MAX_LENGTH = 500;
-
-export enum RoomType {
-  DirectMessage = "DirectMessage",
-  Room = "Room",
-}
-
-export const roomTypeSchema = z.enum(RoomType) satisfies z.ZodType<RoomType>;
 
 export const roomTypeEnum = pgEnum("roomType", RoomType);
 

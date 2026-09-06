@@ -10,7 +10,7 @@ const emit = defineEmits<{ select: [] }>();
 </script>
 
 <template>
-  <v-list min-width="250">
+  <v-list min-width="15.625rem">
     <template v-for="item of items" :key="item.title">
       <v-list-group v-if="item.children" :value="item.title">
         <template #activator="{ props }">

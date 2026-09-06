@@ -17,8 +17,8 @@ await readMemberRoles({ roomId, userIds: [member.id] });
 </script>
 
 <template>
-  <div>
-    <div mb-4 flex gap-x-3 items-center>
+  <div flex flex-col gap-4>
+    <div flex gap-x-3 items-center>
       <StyledAvatar :image="member.image" :name="member.name" />
       <div font-bold text-title-medium>{{ member.name }}</div>
     </div>

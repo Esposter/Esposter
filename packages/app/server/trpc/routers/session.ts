@@ -1,6 +1,7 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { SessionSummary } from "@@/server/models/session/SessionSummary";
 
+import { deleteSessionInputSchema } from "#shared/models/db/session/DeleteSessionInput";
 import { auth } from "@@/server/auth";
 import { closeDeviceConnections } from "@@/server/services/auth/closeDeviceConnections";
 import { getDeviceLabel } from "@@/server/services/auth/getDeviceLabel";
@@ -8,9 +9,7 @@ import { router } from "@@/server/trpc";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType } from "@esposter/db-schema";
-import { z } from "zod";
 
-const sessionIdSchema = z.string().min(1);
 // Better-auth's own `listSessions` sits behind its freshness middleware, which rejects a session older than
 // `freshAge` — a day by default — so a reader who signed in yesterday could neither see their sessions nor revoke
 // One. The rows are ours, so reading them is a plain query and only the writes go through better-auth, whose
@@ -31,7 +30,7 @@ export const sessionRouter = router({
     await auth.api.revokeOtherSessions({ headers: ctx.headers });
     await Promise.all(otherSessionIds.map((sessionId) => closeDeviceConnections({ sessionId, userId: user.id })));
   }),
-  deleteSession: standardAuthedProcedure.input(sessionIdSchema).mutation<void>(async ({ ctx, input }) => {
+  deleteSession: standardAuthedProcedure.input(deleteSessionInputSchema).mutation<void>(async ({ ctx, input }) => {
     const { user } = ctx.getSessionPayload;
     // A session token is a credential, so it never reaches the client: a row is named by id and the token it is
     // Revoked with is resolved here. The read is scoped to the caller, so an id that is not theirs is a

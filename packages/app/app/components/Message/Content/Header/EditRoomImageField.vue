@@ -32,8 +32,10 @@ const { isLoading, uploadImage } = useUploadImage(() => $trpc.room.generateProfi
                 relative
                 type="button"
                 :disabled="isLoading"
-                :op-high-emphasis="!isLoading && !isHovering ? '' : undefined"
-                :op-loading="isLoading ? '' : undefined"
+                :class="[
+                  !isLoading && !isHovering ? 'op-high-emphasis' : undefined,
+                  isLoading ? 'op-loading' : undefined,
+                ]"
                 :="mergeProps(hoverProps, tooltipProps)"
                 @click="input?.click()"
               >

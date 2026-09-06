@@ -10,10 +10,10 @@ import { createCommentInputSchema } from "#shared/models/db/post/CreateCommentIn
 import { createPostInputSchema } from "#shared/models/db/post/CreatePostInput";
 import { deleteCommentInputSchema } from "#shared/models/db/post/DeleteCommentInput";
 import { deletePostInputSchema } from "#shared/models/db/post/DeletePostInput";
+import { readPostInputSchema } from "#shared/models/db/post/ReadPostInput";
+import { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
-import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { ownedBy } from "@@/server/services/db/ownedBy";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
@@ -28,29 +28,9 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import {
-  DatabaseEntityType,
-  DerivedDatabaseEntityType,
-  PostRelations,
-  posts,
-  selectPostSchema,
-} from "@esposter/db-schema";
+import { DatabaseEntityType, DerivedDatabaseEntityType, PostRelations, posts } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { and, arrayContains, eq, inArray, isNotNull, isNull, or, sql } from "drizzle-orm";
-import { z } from "zod";
-
-const readPostInputSchema = selectPostSchema.shape.id;
-
-const readPostsInputSchema = z
-  .object({
-    ...createCursorPaginationParamsSchema(selectPostSchema.keyof(), [
-      { key: "ranking", order: SortOrder.Desc },
-      { key: "id", order: SortOrder.Desc },
-    ]).shape,
-    [selectPostSchema.keyof().enum.parentId]: selectPostSchema.shape.parentId.default(null),
-    [selectPostSchema.keyof().enum.userId]: selectPostSchema.shape.userId.optional(),
-  })
-  .prefault({});
 
 // The row a card renders: the author beside it, and the viewer's own like when there is a viewer to have one.
 // Signed out there is no like to look up, so the read drops the filtered relation rather than filtering on nobody

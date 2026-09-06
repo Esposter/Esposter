@@ -21,7 +21,7 @@ const PROPS_NAME_MESSAGE = `A props interface declared in an SFC is named \`${PR
 // Whether a node sits anywhere under a `defineProps` call. A type reference reaches the macro through any depth
 // Of composite — `A & B`, `Pick<A, "x">`, `A | B` — and a local declaration is no less local for being nested in
 // One, so the ancestry decides membership rather than the shape of the argument.
-const getIsUnderDefineProps = (node: ESTree.Node): boolean => {
+const checkIsUnderDefineProps = (node: ESTree.Node): boolean => {
   for (let current = node.parent; current; current = current.parent)
     if (current.type === "CallExpression")
       return current.callee.type === "Identifier" && current.callee.name === "defineProps";
@@ -55,7 +55,8 @@ const propsNameRule = defineRule({
       TSInterfaceDeclaration: recordDeclaration,
       TSTypeAliasDeclaration: recordDeclaration,
       TSTypeReference(node) {
-        if (node.typeName.type === "Identifier" && getIsUnderDefineProps(node)) propsTypeNames.add(node.typeName.name);
+        if (node.typeName.type === "Identifier" && checkIsUnderDefineProps(node))
+          propsTypeNames.add(node.typeName.name);
       },
     };
   },

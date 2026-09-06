@@ -35,7 +35,7 @@ useSurveyInviteBlocks(editor, publishedSurveys, createWebpageSurveyInviteBlocks)
   <div :id="GRAPES_JS_EDITOR_CONTAINER_ID" h-full overflow-hidden />
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.gjs-mdl-container) {
   z-index: 2000;
 }

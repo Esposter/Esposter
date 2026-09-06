@@ -190,20 +190,6 @@ describe(saveResourceContent, () => {
     expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([createReminder(resource.id)]);
   });
 
-  // A content blob has no reserve behind it to ledger it, so the save itself is what charges the owner — and
-  // For the blob's own size, which is the only number the meter can be right about
-  test("charges the owner for the content blob it stored", async () => {
-    expect.hasAssertions();
-
-    await saveResourceContent(ctx, { content, resource });
-    const storedContent = MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(
-      getContentBlobName(resource.id),
-    );
-    assert.exists(storedContent);
-
-    await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength);
-  });
-
   // Every save rewrites the same blob name and raises its own `BlobCreated` behind it, which settles that name
   // From the Functions host seconds later. So the counter has to follow the save that comes after one of those
   // Events, or the owner's meter moves on their first save of a resource and never again
@@ -228,6 +214,32 @@ describe(saveResourceContent, () => {
 
     expect(storedContent.byteLength).toBeGreaterThan(firstStoredContent.byteLength);
     await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength);
+  });
+
+  // Every save after an idle window keeps a revision, and a revision is a full copy of the content charged
+  // Like any other stored blob — so the counter carries the working copy plus one copy per window the owner
+  // Came back after, which is the only path that grows it without a bigger document behind it
+  test("charges a revision on top of the content whenever a save follows an idle window", async () => {
+    expect.hasAssertions();
+
+    await saveResourceContent(ctx, { activityType: ResourceActivityType.ContentSaved, content, resource });
+    const storedContent = MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(
+      getContentBlobName(resource.id),
+    );
+    assert.exists(storedContent);
+
+    await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength);
+
+    vi.advanceTimersByTime(SNAPSHOT_IDLE_WINDOW_MS);
+    await saveResourceContent(ctx, { activityType: ResourceActivityType.ContentSaved, content, resource });
+
+    await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength * 2);
+
+    // A second window, so the growth is shown to be per window rather than a one-off first revision
+    vi.advanceTimersByTime(SNAPSHOT_IDLE_WINDOW_MS);
+    await saveResourceContent(ctx, { activityType: ResourceActivityType.ContentSaved, content, resource });
+
+    await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength * 3);
   });
 
   // The prior content is read before the write overwrites it, so a hook that diffs sees what it replaced —

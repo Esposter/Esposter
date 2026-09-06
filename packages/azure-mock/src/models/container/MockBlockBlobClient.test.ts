@@ -1,6 +1,7 @@
 import { MOCK_BLOB_BASE_URL } from "#src/constants";
 import { MockBlockBlobClient } from "#src/models/container/MockBlockBlobClient";
-import { MOCK_BLOB_SEEDED_PROPERTIES, MockContainerBlobDatesDatabase } from "#src/store/MockContainerBlobDatesDatabase";
+import { MOCK_BLOB_SEEDED_PROPERTIES } from "#src/services/container/constants";
+import { MockContainerBlobDatesDatabase } from "#src/store/MockContainerBlobDatesDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -22,11 +23,9 @@ describe(MockBlockBlobClient, () => {
     MockContainerDatabase.set(containerName, new Map([[blobName, Buffer.from("")]]));
     const client = getClient();
 
-    const uploadResponse = await client.upload("", 0, {
-      conditions: { ifMatch: MOCK_BLOB_SEEDED_PROPERTIES.etag },
-    });
-
-    expect(uploadResponse._response.status).toBe(201);
+    // The first write resolving is the assertion — the mock returns one hardcoded status whatever the
+    // Conditions were, so a status check would say nothing about the etag being spent
+    await client.upload("", 0, { conditions: { ifMatch: MOCK_BLOB_SEEDED_PROPERTIES.etag } });
 
     await expect(
       client.upload("", 0, { conditions: { ifMatch: MOCK_BLOB_SEEDED_PROPERTIES.etag } }),

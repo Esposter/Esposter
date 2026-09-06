@@ -1,4 +1,4 @@
-import type { MentionConditionBuilder } from "#src/models/message/MentionConditionBuilder";
+import type { MentionConditionBuilder } from "#src/models/message/mention/MentionConditionBuilder";
 import type { ClassifiedMentions } from "@esposter/shared";
 
 import { createMentionConditionBuilders } from "#src/services/message/mention/createMentionConditionBuilders";

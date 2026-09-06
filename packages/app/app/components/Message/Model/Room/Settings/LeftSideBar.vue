@@ -56,7 +56,7 @@ const onClick = (settingsType: SettingsType) => {
       <v-list-group v-for="{ category, settingsTypes } of visibleCategories" :key="category" :value="category">
         <template #activator="{ props: activatorProps }">
           <v-list-item :="activatorProps">
-            <v-list-item-title font-bold op-60 uppercase text-body-small>
+            <v-list-item-title font-bold uppercase text-hint>
               {{ getCategoryTitle(category) }}
             </v-list-item-title>
           </v-list-item>

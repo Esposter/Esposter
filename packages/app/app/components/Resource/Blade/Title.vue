@@ -30,7 +30,7 @@ const activeBladeTitle = computed(() => {
         <span font-bold>{{ resource.name }}</span>
         <template v-if="activeBladeTitle"> | {{ activeBladeTitle }}</template>
       </span>
-      <span op-medium-emphasis text-body-small>{{ ResourceDefinitionMap[resource.type].title }}</span>
+      <span text-hint>{{ ResourceDefinitionMap[resource.type].title }}</span>
     </div>
   </div>
 </template>

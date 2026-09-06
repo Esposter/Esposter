@@ -39,8 +39,8 @@ onMounted(readStorageUsage);
     <template #activator="{ props }">
       <!-- Focusable so the tooltip is reachable without a pointer -->
       <div :="props" flex gap-2 items-center tabindex="0">
-        <v-progress-linear :color="usedColor" height="6" :model-value="usedPercentage" rounded w-16 />
-        <span op-70 whitespace-nowrap text-body-medium>{{ usageText }}</span>
+        <v-progress-linear :color="usedColor" height="0.375rem" :model-value="usedPercentage" rounded w-16 />
+        <span whitespace-nowrap op-medium-emphasis text-body-medium>{{ usageText }}</span>
       </div>
     </template>
     {{ storageUsage.tier }} plan — {{ usageText }} by your resources

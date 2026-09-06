@@ -2,11 +2,11 @@ import type { Filter } from "#src/models/message/filter/Filter";
 
 import { MESSAGE_MAX_LENGTH } from "#src/models/message/BaseMessageEntity";
 import { filterSchema } from "#src/models/message/filter/Filter";
-import { createMaxLengthCheckSql } from "#src/models/shared/Check";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomsInMessage } from "#src/schema/roomsInMessage";
 import { users } from "#src/schema/users";
+import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { check, jsonb, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 

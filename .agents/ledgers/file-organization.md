@@ -2,28 +2,43 @@
 
 The question is where a thing lives and whether it exists twice — one export per file, no magic string where a constant already means it, no duplicate constant, the sole-consumer subfolder rule, alias imports.
 
-| Unit                                                                       | Swept      | Notes                                                                    |
-| -------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------ |
-| `packages/shared`, `packages/shared-node`                                  | 2026-08-30 |                                                                          |
-| `app/shared/services`, `app/shared/util`                                   | 2026-08-27 | `getSynchronizedFunction`'s second export is the exclusion below         |
-| `app/shared/models/db`                                                     | —          |                                                                          |
-| `app/shared/models/resource`                                               | —          |                                                                          |
-| `app/shared/models/dungeons`                                               | —          |                                                                          |
-| `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | —          |                                                                          |
-| `app/shared/models` — the rest                                             | —          | the small folders, several of them a single file                         |
-| `app/services`, `app/util`, `app/models`, `app/types`                      | —          | models vs services vs utils vs constants; duplicate constants            |
-| `app/composables`                                                          | —          | sole-consumer subfolders                                                 |
-| `app/store`                                                                | —          |                                                                          |
-| `server/services`, `server/composables`, `server/models`                   | —          |                                                                          |
-| `server/trpc`                                                              | —          | input schemas belong in `shared/models`, not beside the router           |
-| `app/components/Message`                                                   | —          | splits further at `Model/` on contact                                    |
-| `app/components/Resource`                                                  | —          |                                                                          |
-| `app/components` — the rest                                                | —          |                                                                          |
-| `packages/db`, `packages/db-schema`, `packages/db-mock`                    | —          |                                                                          |
-| `packages/azure`, `packages/azure-functions`, `packages/azure-mock`        | —          | cross-package placement: an Azure helper two packages need lives in `db` |
-| `packages/virrun`, `packages/infra`, `packages/configuration`              | —          |                                                                          |
-| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`           | —          | barrel contents are `ctix` output — regenerate, never hand-edit          |
-| `scripts`                                                                  | 2026-09-02 | a command is a folder once it has internals                              |
+| Unit                                                                       | Swept      | Notes                                                                                        |
+| -------------------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------- |
+| `packages/shared`, `packages/shared-node`                                  | 2026-08-30 |                                                                                              |
+| `app/shared/services`, `app/shared/util`                                   | 2026-08-27 | `getSynchronizedFunction`'s second export is the exclusion below                             |
+| `app/shared/models/db`                                                     | 2026-09-06 |                                                                                              |
+| `app/shared/models/resource`                                               | 2026-09-06 |                                                                                              |
+| `app/shared/models/dungeons`                                               | 2026-09-06 |                                                                                              |
+| `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | 2026-09-06 |                                                                                              |
+| `app/shared/models` — the rest                                             | 2026-09-06 | the small folders, several of them a single file                                             |
+| `app/services`, `app/util`, `app/models`, `app/types`                      | —          | models vs services vs utils vs constants; duplicate constants                                |
+| `app/composables`                                                          | 2026-09-06 | sole-consumer subfolders                                                                     |
+| `app/store`                                                                | 2026-09-06 | a store's file is named for its domain, so the filename never matches its `use*Store` export |
+| `server/services`, `server/composables`, `server/models`                   | 2026-09-06 |                                                                                              |
+| `server/trpc` — the resource family                                        | 2026-09-06 | `resource`, `survey`, `program`, `procedure/resource`                                        |
+| `server/trpc` — the room family                                            | 2026-09-06 | `room`, `call`, `userToRoom`                                                                 |
+| `server/trpc` — the rest                                                   | 2026-09-06 | the loose routers, `guards`, `procedure`, `plugins`, `middleware`                            |
+| `app/components/Message`                                                   | —          | splits further at `Model/` on contact                                                        |
+| `app/components/Resource`                                                  | —          |                                                                                              |
+| `app/components` — the rest                                                | —          |                                                                                              |
+| `packages/db-schema` — `models`                                            | —          |                                                                                              |
+| `packages/db-schema` — `schema`, `relations`                               | 2026-09-06 | a table file declares the table and its select schema; enums live in `models`                |
+| `packages/db-schema` — `services`, root                                    | 2026-09-06 |                                                                                              |
+| `packages/db` — `services/azure`                                           | 2026-09-06 |                                                                                              |
+| `packages/db` — the rest, `packages/db-mock`                               | 2026-09-06 |                                                                                              |
+| `packages/azure`, `packages/azure-functions`, `packages/azure-mock`        | 2026-09-06 | cross-package placement: an Azure helper two packages need lives in `db`                     |
+| `packages/virrun` — `services/exec/wsl`                                    | —          |                                                                                              |
+| `packages/virrun` — `services/exec/snapshot`                               | —          |                                                                                              |
+| `packages/virrun` — `services/exec/util`                                   | —          |                                                                                              |
+| `packages/virrun` — `services/exec` — the rest                             | —          | `cache`, `os`, `bwrap`, `vfs`, `differential`, `store`, `native`, `test`                     |
+| `packages/virrun` — `services` — the rest                                  | —          | `cli`, `configuration`, `source`, `vfs`, `virrun`                                            |
+| `packages/virrun` — `models`, root                                         | —          |                                                                                              |
+| `packages/infra` — `azure/resources`                                       | —          | one resource per file, named for its export                                                  |
+| `packages/infra` — `azure` — the rest                                      | —          | `constants`, `services`, the stack files                                                     |
+| `packages/infra` — `github`, root                                          | —          |                                                                                              |
+| `packages/configuration`                                                   | 2026-09-06 |                                                                                              |
+| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`           | 2026-09-06 | barrel contents are `ctix` output — regenerate, never hand-edit                              |
+| `scripts`                                                                  | 2026-09-02 | a command is a folder once it has internals                                                  |
 
 ## Find recipe
 
@@ -41,24 +56,14 @@ The ≥2-consumers rule is answered by counting the **packages** that name each 
 in memory rather than a grep per name:
 
 ```bash
-node -e '
-const { execSync } = require("node:child_process");
-const fs = require("node:fs");
-const list = (...globs) => execSync(`git ls-files ${globs.map((g) => `"${g}"`).join(" ")}`, { encoding: "utf8", maxBuffer: 1 << 28 }).split("
-").filter(Boolean);
-const sourceFiles = list("packages/shared/src/**/*.ts").filter((f) => !f.includes(".test.") && !f.endsWith("index.ts"));
-const corpus = [...list("*.ts"), ...list("*.vue")].filter((f) => !f.includes("/dist/")).map((f) => [f, fs.readFileSync(f, "utf8")]);
-for (const file of sourceFiles)
-  for (const [, name] of fs.readFileSync(file, "utf8").matchAll(/^export (?:const|function|class|enum|type|interface) ([A-Za-z0-9_$]+)/gmu)) {
-    const packages = [...new Set(corpus.filter(([f, body]) => f !== file && new RegExp(String.raw`${name}`, "u").test(body)).map(([f]) => f.split("/").slice(0, 2).join("/")))];
-    if (packages.length < 2) console.log(`${packages.length}  ${file} -> ${name}`);
-  }'
+pnpm sweep:shared-export-consumers
 ```
 
-`String.raw` is load-bearing — a `\b` written into a template literal here becomes a backspace and the scan
-reports every export as unused, which reads exactly like a tree of dead code (`sweeps` skill). The scan excludes
-the export's own file, so a `0` names an export nothing outside that file references — dead code and an export
-used only inside its own file produce the same result, and the pass tells them apart by opening the file.
+It excludes the export's own **package**, not merely its own file: `packages/shared` naming its own export is the
+library using itself, and counting that would let one real consumer clear a threshold that asks for two. So a
+`0` names an export nothing outside `packages/shared` references — dead code and a helper the package uses
+internally produce the same result, and the pass tells them apart by opening the file. A `1` is the rule's own
+finding: one consumer does not earn a place in a shared package.
 
 ## Exclusions
 

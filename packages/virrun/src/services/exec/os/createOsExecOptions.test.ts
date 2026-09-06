@@ -36,6 +36,12 @@ vi.mock(import("#src/services/exec/wsl/readWslLoginEnvironment"), () => ({
   }),
 }));
 
+// `process.platform` is a read-only own property rather than a global binding, so `vi.stubGlobal` cannot reach it
+// Without replacing the whole `process` object; the suite's afterEach puts the real one back
+const stubWin32Platform = () => {
+  Object.defineProperty(process, "platform", { configurable: true, value: "win32" });
+};
+
 describe(createOsExecOptions, () => {
   // Inert store options (no fs writes) and the shared wsl mocks so getWslSourceMirrorPath resolves a canonical mirror
   // Path from TEST_REPO_ROOT_WIN — the same transform createWslSourceMirrorSync.test / sourceMirrorPaths.test use. The
@@ -44,11 +50,6 @@ describe(createOsExecOptions, () => {
 
   const { cleanup, create } = createTemporaryDirectoryTracker();
   const { platform } = process;
-  // `process.platform` is a read-only own property rather than a global binding, so `vi.stubGlobal` cannot reach
-  // It without replacing the whole `process` object; the afterEach below puts the real one back
-  const stubWin32Platform = () => {
-    Object.defineProperty(process, "platform", { configurable: true, value: "win32" });
-  };
 
   beforeEach(() => {
     osCacheRoot.value = create();

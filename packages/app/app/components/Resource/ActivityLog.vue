@@ -24,7 +24,7 @@ onMounted(async () => {
 
 <template>
   <div p-6 flex flex-col gap-4>
-    <span text-h6>Activity</span>
+    <span text-title-large>Activity</span>
     <StyledSkeleton v-if="isLoading" type="list-item-two-line@5" />
     <StyledEmptyState
       v-else-if="items.length === 0"

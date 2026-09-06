@@ -54,11 +54,11 @@ onMounted(async () => {
 
 <template>
   <div p-6 flex flex-col gap-4>
-    <span text-h6>Essentials</span>
+    <span text-title-large>Essentials</span>
     <StyledSkeleton v-if="isPending" type="article" />
     <v-card v-else>
       <v-card-text>
-        <div gap-x-6 gap-y-2 grid items-center :style="{ gridTemplateColumns: 'auto 1fr' }">
+        <div gap-x-6 gap-y-2 grid items-center grid-cols="[auto_1fr]">
           <span op-medium-emphasis>Type</span>
           <div flex gap-2 items-center>
             <v-icon size="small" :icon="ResourceDefinitionMap[resource.type].icon" />

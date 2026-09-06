@@ -41,10 +41,10 @@ import { getBlobPrefixXml } from "#src/services/container/getBlobPrefixXml";
 import { getBlobUrl } from "#src/services/container/getBlobUrl";
 import { getListBlobsSegmentResponse } from "#src/services/container/getListBlobsSegmentResponse";
 import { getMockContainer } from "#src/services/container/getMockContainer";
+import { readMockBlobDates } from "#src/services/container/readMockBlobDates";
+import { readMockBlobMetadata } from "#src/services/container/readMockBlobMetadata";
 import { createMockResponse } from "#src/services/createMockResponse";
 import { getMockSasUrl } from "#src/services/getMockSasUrl";
-import { readMockBlobDates } from "#src/store/MockContainerBlobDatesDatabase";
-import { readMockBlobMetadata } from "#src/store/MockContainerBlobMetadataDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 /**

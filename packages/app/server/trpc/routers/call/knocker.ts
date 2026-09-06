@@ -1,6 +1,9 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
 
+import { callSessionIdInputSchema } from "#shared/models/db/call/CallSessionIdInput";
+import { callSessionInputSchema } from "#shared/models/db/call/CallSessionInput";
+import { knockerInputSchema } from "#shared/models/db/call/KnockerInput";
 import { on } from "@@/server/services/events/on";
 import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
 import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
@@ -12,12 +15,6 @@ import { callEventEmitter } from "@@/server/services/message/events/callEventEmi
 import { router } from "@@/server/trpc";
 import { getForbiddenError } from "@@/server/trpc/guards/getForbiddenError";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { selectCallSessionInMessageSchema } from "@esposter/db-schema";
-import { z } from "zod";
-
-const callSessionIdInputSchema = selectCallSessionInMessageSchema.shape.id;
-const callSessionInputSchema = z.object({ id: callSessionIdInputSchema });
-const knockerInputSchema = z.object({ callSessionId: z.string(), sessionId: z.string() });
 
 // Only the creator, and only while they are themselves in the call, decides who gets in — for admitting and
 // Dismissing alike

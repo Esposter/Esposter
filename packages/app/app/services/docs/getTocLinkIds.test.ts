@@ -10,14 +10,14 @@ describe(getTocLinkIds, () => {
     const links = [
       {
         children: [
-          { depth: 3, id: "storage-split", text: "Storage split" },
-          { depth: 3, id: "service-map", text: "Service map" },
+          { depth: 3, id: "storage-split", text: "text" },
+          { depth: 3, id: "service-map", text: "text" },
         ],
         depth: 2,
         id: "architecture",
-        text: "Architecture",
+        text: "text",
       },
-      { depth: 2, id: "testing", text: "Testing" },
+      { depth: 2, id: "testing", text: "text" },
     ];
 
     expect(getTocLinkIds(links)).toStrictEqual(["architecture", "storage-split", "service-map", "testing"]);

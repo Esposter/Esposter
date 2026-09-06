@@ -47,7 +47,7 @@ const getReceiverName = (expression: ESTree.CallExpression | ESTree.NewExpressio
 
 const rule = defineRule({
   create(context) {
-    const getIsForwardingCall = (
+    const checkIsForwardingCall = (
       parameterNames: string[],
       expression: ESTree.CallExpression | ESTree.NewExpression,
     ): boolean => {
@@ -65,26 +65,28 @@ const rule = defineRule({
     // A read of what a forward would have returned is the same rename one step further out:
     // `() => useVTheme().global` and `(a) => a.b` both hand back a property the caller could have reached
     // Itself.
-    const getIsForwardingRead = (parameterNames: string[], expression: ESTree.MemberExpression): boolean => {
+    const checkIsForwardingRead = (parameterNames: string[], expression: ESTree.MemberExpression): boolean => {
       if (expression.computed) return false;
       const { object } = expression;
       if (object.type === "Identifier") return parameterNames.includes(object.name);
       else if (object.type === "CallExpression" || object.type === "NewExpression")
-        return getIsForwardingCall(parameterNames, object);
+        return checkIsForwardingCall(parameterNames, object);
       else return false;
     };
     // An exported arrow reaches the surface either named or as the module's default, and the two shapes forward
     // Identically, so both visitors hand their arrow here.
     const reportIfForwarding = (arrow: ESTree.ArrowFunctionExpression): void => {
-      const parameterNames = arrow.params.map((parameter) => getParameterName(parameter));
-      if (parameterNames.some((parameterName) => parameterName === undefined)) return;
-      const names = parameterNames as string[];
+      const parameterNames = arrow.params
+        .map((parameter) => getParameterName(parameter))
+        .filter((parameterName) => parameterName !== undefined);
+      if (parameterNames.length !== arrow.params.length) return;
       // `async (a) => await f(a)` forwards exactly as its sync twin does
       const body = arrow.body.type === "AwaitExpression" ? arrow.body.argument : arrow.body;
       const isForwarding =
         body.type === "MemberExpression"
-          ? getIsForwardingRead(names, body)
-          : (body.type === "CallExpression" || body.type === "NewExpression") && getIsForwardingCall(names, body);
+          ? checkIsForwardingRead(parameterNames, body)
+          : (body.type === "CallExpression" || body.type === "NewExpression") &&
+            checkIsForwardingCall(parameterNames, body);
       if (isForwarding) context.report({ message: MESSAGE, node: arrow });
     };
     return {

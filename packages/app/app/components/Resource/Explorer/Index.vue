@@ -23,7 +23,7 @@ const { isVersionHistoryOpen, previewSnapshotVersionId } = useVersionHistoryRout
 <template>
   <v-sheet flex flex-1>
     <!-- min-w-0 lets the box shrink below its content's intrinsic width so wide blades scroll internally -->
-    <div b-0 b-border b-solid flex flex-1 flex-col min-w-0>
+    <div flex flex-1 flex-col min-w-0>
       <v-toolbar pl-4>
         <ResourceBladeTitle :active-blade :resource />
         <v-spacer />

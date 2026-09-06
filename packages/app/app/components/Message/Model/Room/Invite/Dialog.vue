@@ -21,7 +21,7 @@ const roomName = useRoomName(inviteRoomId);
     v-if="room"
     v-model="isOpen"
     :card-props="{ prependIcon: 'mdi-account-plus', title: `Invite friends to ${roomName}` }"
-    :dialog-props="{ maxWidth: 500 }"
+    :dialog-props="{ maxWidth: '31.25rem' }"
   >
     <div font-semibold text-body-large>Or send a room invite link to a friend</div>
     <MessageModelRoomInviteManager :key="room.id" :room />

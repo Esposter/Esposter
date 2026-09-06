@@ -23,7 +23,7 @@ const save = async () => {
 </script>
 
 <template>
-  <span text-h6>Collection</span>
+  <span text-title-large>Collection</span>
   <v-card>
     <v-card-text flex flex-col gap-4>
       <v-switch
@@ -53,7 +53,7 @@ const save = async () => {
         @update:model-value="save"
       />
       <!-- Modes are collection-time postures, not privacy promises about the answers themselves -->
-      <span text-caption op-medium-emphasis>
+      <span text-hint>
         {{
           editedSettings.responseMode === SurveyResponseMode.Identified
             ? "Only participants holding a link from a program can answer, and you can see who said what."

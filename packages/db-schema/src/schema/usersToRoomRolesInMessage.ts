@@ -1,5 +1,3 @@
-import type { RoomRoleInMessage } from "#src/schema/roomRolesInMessage";
-
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomRolesInMessage } from "#src/schema/roomRolesInMessage";
@@ -36,4 +34,3 @@ export const usersToRoomRolesInMessage = pgTable(
 );
 
 export type UserToRoomRoleInMessage = typeof usersToRoomRolesInMessage.$inferSelect;
-export type UserToRoomRoleInMessageWithRelations = UserToRoomRoleInMessage & { role: RoomRoleInMessage };

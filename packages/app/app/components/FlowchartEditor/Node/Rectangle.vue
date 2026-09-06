@@ -20,10 +20,17 @@ const node = computed(() => flowchartEditor.value.nodes.find(({ id: nodeId }) =>
 </script>
 
 <template>
-  <div :class="node?.style?.backgroundColor ? undefined : 'bg-surface'" :style="node?.style" size-full>
+  <div class="node" :style="node?.style" size-full>
     <NodeResizer :min-width="120" :min-height="60" :color="text" />
     <Handle type="target" :position="Position.Left" />
     <div p-2 text-center>{{ data.label }}</div>
     <Handle type="source" :position="Position.Right" />
   </div>
 </template>
+
+<style scoped>
+/* Unconditional: a node carrying its own backgroundColor sets it inline, which outranks this */
+.node {
+  background-color: rgb(var(--v-theme-surface));
+}
+</style>

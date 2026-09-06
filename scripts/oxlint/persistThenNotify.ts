@@ -13,7 +13,7 @@ import { definePlugin, defineRule } from "@oxlint/plugins";
 // Best-effort internally (so awaiting them never rejects). `withFinalizer`/`withFinalizerAsync` are deliberately
 // NOT here — both unwrap the original result and rethrow on Err (see error-handling/SKILL.md, Finalizers), so
 // Awaiting one after an emit rejects the caller for an entity that already exists and was already broadcast.
-const ALLOWED_ROOTS = new Set([
+const AllowedRoots = new Set([
   "createSystemRoomMessage",
   "getResult",
   "getResultAsync",
@@ -21,10 +21,10 @@ const ALLOWED_ROOTS = new Set([
   "publishBlobPrefixDeletion",
 ]);
 // Terminal helpers whose whole job is to log and put the rejection back.
-const RETHROWING_CALLEES = new Set(["logAndRethrow"]);
-const PROMISE_COMBINATORS = new Set(["all", "any", "race"]);
+const RethrowingCallees = new Set(["logAndRethrow"]);
+const PromiseCombinators = new Set(["all", "any", "race"]);
 // Expressions whose value is written out in place, so nothing already-started can be hiding behind them.
-const LITERAL_NODE_TYPES = new Set([
+const LiteralNodeTypes = new Set([
   "ArrayExpression",
   "ArrowFunctionExpression",
   "Literal",
@@ -36,13 +36,13 @@ const LITERAL_NODE_TYPES = new Set([
 // Same shape — and reporting the first would leave wrapping a pure transform in a best-effort handler as the only
 // Way to silence the rule, which is the harm this standard exists to prevent. The cost is a returned bare promise
 // Call going unflagged; a reviewer catches that, whereas noise trains everyone to silence the rule.
-const getIsCertainPromiseExpression = (expression: ESTree.Expression): boolean =>
+const checkIsCertainPromiseExpression = (expression: ESTree.Expression): boolean =>
   expression.type === "CallExpression" &&
   expression.callee.type === "MemberExpression" &&
   expression.callee.property.type === "Identifier" &&
   (["catch", "finally", "then"].includes(expression.callee.property.name) ||
     (expression.callee.object.type === "Identifier" && expression.callee.object.name === "Promise"));
-const FUNCTION_NODE_TYPES = new Set(["ArrowFunctionExpression", "FunctionDeclaration", "FunctionExpression"]);
+const FunctionNodeTypes = new Set(["ArrowFunctionExpression", "FunctionDeclaration", "FunctionExpression"]);
 // Everything a function reaches without crossing into a nested one; `select` decides what a node contributes,
 // And returning a value stops the descent there. The two stop rules are what every caller needs held: a nested
 // Function's body belongs to that function, not this one, and nodes carry a `parent` backreference that cycles.
@@ -50,7 +50,7 @@ const collectOwnNodes = <T>(value: unknown, select: (node: ESTree.Node) => T[] |
   if (Array.isArray(value)) return value.flatMap((item) => collectOwnNodes(item, select));
   if (value === null || typeof value !== "object") return [];
   const node = value as ESTree.Node;
-  if (typeof node.type !== "string" || FUNCTION_NODE_TYPES.has(node.type)) return [];
+  if (typeof node.type !== "string" || FunctionNodeTypes.has(node.type)) return [];
   const selected = select(node);
   if (selected) return selected;
   return Object.entries(node).flatMap(([key, child]) => (key === "parent" ? [] : collectOwnNodes(child, select)));
@@ -67,41 +67,41 @@ const getBlockEffects = (value: unknown): ESTree.Expression[] =>
   });
 // The identifier a call chain ultimately dispatches on: `getResultAsync(...).orTee(...).unwrapOr(...)`
 // Roots at `getResultAsync`; `containerClient.deleteBlob(...)` roots at nothing nameable (undefined).
-const rootCalleeName = (expression: ESTree.Expression): string | undefined => {
+const getRootCalleeName = (expression: ESTree.Expression): string | undefined => {
   if (expression.type === "CallExpression") {
     if (expression.callee.type === "Identifier") return expression.callee.name;
-    if (expression.callee.type === "MemberExpression") return rootCalleeName(expression.callee.object);
+    if (expression.callee.type === "MemberExpression") return getRootCalleeName(expression.callee.object);
     return undefined;
   }
-  if (expression.type === "MemberExpression") return rootCalleeName(expression.object);
+  if (expression.type === "MemberExpression") return getRootCalleeName(expression.object);
   return undefined;
 };
 // A `throw` this function reaches without entering a nested one: one inside a deeper callback belongs to that
 // Callback, not to this handler.
-const getHasOwnThrow = (value: unknown): boolean =>
+const checkHasOwnThrow = (value: unknown): boolean =>
   collectOwnNodes(value, (node) => (node.type === "ThrowStatement" ? [true] : undefined)).length > 0;
 // An err handler that puts the rejection back rather than absorbing it.
-const getIsRethrowingHandler = (node: unknown): boolean => {
+const checkIsRethrowingHandler = (node: unknown): boolean => {
   if (node === null || typeof node !== "object") return false;
   const expression = node as ESTree.Node;
-  if (expression.type === "Identifier") return RETHROWING_CALLEES.has(expression.name);
+  if (expression.type === "Identifier") return RethrowingCallees.has(expression.name);
   if (expression.type === "CallExpression")
-    return expression.callee.type === "Identifier" && RETHROWING_CALLEES.has(expression.callee.name);
-  if (!FUNCTION_NODE_TYPES.has(expression.type)) return false;
-  return getHasOwnThrow((expression as ESTree.ArrowFunctionExpression).body);
+    return expression.callee.type === "Identifier" && RethrowingCallees.has(expression.callee.name);
+  if (!FunctionNodeTypes.has(expression.type)) return false;
+  return checkHasOwnThrow((expression as ESTree.ArrowFunctionExpression).body);
 };
 // The root says the chain STARTED in a wrapper; it says nothing about how the chain ENDS. `.match(noop, (error)
 // => { throw error })` and `._unsafeUnwrap()` both hand the rejection straight back to the awaiting caller, and
 // Rethrowing from the err branch is a documented repo idiom — so the terminal has to be read, not assumed.
-const getHasRethrowingTerminal = (expression: ESTree.Expression): boolean => {
+const checkHasRethrowingTerminal = (expression: ESTree.Expression): boolean => {
   if (expression.type !== "CallExpression" || expression.callee.type !== "MemberExpression") return false;
   const { callee } = expression;
   if (callee.property.type === "Identifier") {
     if (callee.property.name === "_unsafeUnwrap") return true;
     const [, errorHandler] = expression.arguments;
-    if (callee.property.name === "match" && getIsRethrowingHandler(errorHandler)) return true;
+    if (callee.property.name === "match" && checkIsRethrowingHandler(errorHandler)) return true;
   }
-  return getHasRethrowingTerminal(callee.object);
+  return checkHasRethrowingTerminal(callee.object);
 };
 // Never rejects: an allowed wrapper whose terminal absorbs the error, `Promise.allSettled` over anything, or a
 // Rejecting Promise combinator over a fan-out (array literal or `.map` callback) of such calls — e.g.
@@ -111,9 +111,9 @@ const getHasRethrowingTerminal = (expression: ESTree.Expression): boolean => {
 // Positive and never a miss — and none of them appear anywhere in `packages/app/server`, the only tree this rule
 // Runs over. A false positive here is loud and immediate: it fails the lint on the line that wrote it. Widen this
 // When one of those shapes actually lands, not before — every branch added is one the fixture suite has to pin.
-const isSafeAwait = (argument: ESTree.Expression): boolean => {
-  const rootName = rootCalleeName(argument);
-  if (rootName !== undefined && ALLOWED_ROOTS.has(rootName)) return !getHasRethrowingTerminal(argument);
+const checkIsSafeAwait = (argument: ESTree.Expression): boolean => {
+  const rootName = getRootCalleeName(argument);
+  if (rootName !== undefined && AllowedRoots.has(rootName)) return !checkHasRethrowingTerminal(argument);
   if (
     argument.type === "CallExpression" &&
     argument.callee.type === "MemberExpression" &&
@@ -129,13 +129,13 @@ const isSafeAwait = (argument: ESTree.Expression): boolean => {
     // Would hand the rule's own defect a syntax that walks straight past it
     if (argument.callee.property.name === "resolve") {
       const [value] = argument.arguments;
-      return value === undefined || LITERAL_NODE_TYPES.has(value.type);
+      return value === undefined || LiteralNodeTypes.has(value.type);
     }
-    if (!PROMISE_COMBINATORS.has(argument.callee.property.name)) return false;
+    if (!PromiseCombinators.has(argument.callee.property.name)) return false;
     const [collection] = argument.arguments;
     if (collection?.type === "ArrayExpression")
       return collection.elements.every(
-        (element) => element !== null && element.type !== "SpreadElement" && isSafeAwait(element),
+        (element) => element !== null && element.type !== "SpreadElement" && checkIsSafeAwait(element),
       );
     if (
       collection?.type === "CallExpression" &&
@@ -146,8 +146,8 @@ const isSafeAwait = (argument: ESTree.Expression): boolean => {
       const [callback] = collection.arguments;
       if (callback?.type === "ArrowFunctionExpression")
         return callback.body.type === "BlockStatement"
-          ? getBlockEffects(callback.body).every((effect) => isSafeAwait(effect))
-          : isSafeAwait(callback.body);
+          ? getBlockEffects(callback.body).every((effect) => checkIsSafeAwait(effect))
+          : checkIsSafeAwait(callback.body);
     }
   }
   return false;
@@ -164,7 +164,7 @@ const getBoundFunctionName = (node: ESTree.Node): string | undefined => {
   return undefined;
 };
 
-const isEmitCall = (node: ESTree.CallExpression): boolean =>
+const checkIsEmitCall = (node: ESTree.CallExpression): boolean =>
   node.callee.type === "MemberExpression" &&
   node.callee.property.type === "Identifier" &&
   node.callee.property.name === "emit" &&
@@ -218,7 +218,7 @@ const rule = defineRule({
       }
       return visibleBinding;
     };
-    const getIsNotifyClosureCall = (callee: ESTree.Expression): boolean =>
+    const checkIsNotifyClosureCall = (callee: ESTree.Expression): boolean =>
       callee.type === "Identifier" && (getVisibleBinding(callee.name)?.isNotifying ?? false);
     // An emit inside a nested callback still notifies every function that RUNS that callback, so it arms the whole
     // Enclosing chain — otherwise wrapping the write+emit in `getResultAsync(async () => …)` hides the notify from
@@ -252,7 +252,7 @@ const rule = defineRule({
       // Before the notify — a fatal guard, not a tail effect
       else if (node.start < frame.emitStart) return;
       // Never rejects
-      else if (isSafeAwait(effect)) return;
+      else if (checkIsSafeAwait(effect)) return;
       context.report({ message: MESSAGE, node });
     };
     return {
@@ -264,7 +264,7 @@ const rule = defineRule({
       CallExpression(node) {
         // An emit arms the function holding it, and a call to a closure that holds one arms the function making
         // That call — the two entry points are the same walk from a different starting position
-        if (isEmitCall(node) || getIsNotifyClosureCall(node.callee)) armFramesFrom(node.start);
+        if (checkIsEmitCall(node) || checkIsNotifyClosureCall(node.callee)) armFramesFrom(node.start);
       },
       ForOfStatement(node) {
         // Only `for await`: a plain for-of settles on nothing
@@ -275,7 +275,7 @@ const rule = defineRule({
       FunctionExpression: enterFunction,
       "FunctionExpression:exit": exitFunction,
       ReturnStatement(node) {
-        if (node.argument && getIsCertainPromiseExpression(node.argument)) reportUnhandledEffect(node, node.argument);
+        if (node.argument && checkIsCertainPromiseExpression(node.argument)) reportUnhandledEffect(node, node.argument);
       },
     };
   },

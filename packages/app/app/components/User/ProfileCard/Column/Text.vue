@@ -17,7 +17,7 @@ const valueRules = computed(() => [rules.required(), rules.maxLength(USER_NAME_M
 
 <template>
   <v-col font-bold self-center cols="6">
-    <v-text-field v-if="editMode" v-model="modelValue" size="small" :rules="valueRules" />
+    <v-text-field v-if="editMode" v-model="modelValue" :rules="valueRules" />
     <template v-else>
       {{ value }}
     </template>

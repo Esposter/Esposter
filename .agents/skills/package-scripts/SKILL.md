@@ -1,6 +1,6 @@
 ---
 name: package-scripts
-description: Esposter pnpm script reference — packages/app scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, graph:gen, outdated:dependencies, release), a Settled note that the release stays one local script rather than a CI publish and another that a renamed export of a published package is never a major, the rule that every `.ts` script runs under `tsx` so an enum is always available and why a pre-install CI check is shell rather than a script, the `scriptsComments` key that carries a script's comment because JSON has none, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
+description: Esposter pnpm script reference — packages/app scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, graph:gen, outdated:dependencies, release, the sweep:* scans), a Settled note that the release stays one local script rather than a CI publish and another that a renamed export of a published package is never a major, the rule that every `.ts` script runs under `tsx` so an enum is always available and why a pre-install CI check is shell rather than a script, the `scriptsComments` key that carries a script's comment because JSON has none, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
 ---
 
 # Package Scripts
@@ -38,15 +38,20 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 
 ## Root Scripts
 
-| Command                      | Runs                                              | Notes                                                                                                                                   |
-| ---------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm i`                     | —                                                 | Refresh deps/lockfile after manifest changes.                                                                                           |
-| `pnpm test`                  | `virrun -- vitest run`                            | Whole suite once via the root vitest `projects` config (every package + `scripts/` + `.agents/`). **CI only** — never run bare locally. |
-| `pnpm test:packages`         | `virrun -- vitest run --project "!@esposter/app"` | All projects except the app — skips Nuxt. Local-only, and takes paths like `pnpm test` does: pass them.                                 |
-| `pnpm coverage`              | `vitest run --coverage` (no virrun)               | Root-only (packages have no `coverage` script). CI shards via `--reporter=blob` + `--merge-reports`.                                    |
-| `pnpm outdated:dependencies` | `tsx scripts/outdatedDependencies/index.ts`       | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest.      |
-| `pnpm graph:gen`             | `tsx scripts/dependencyGraph/index.ts`            | Regenerate `dependency-graph.svg` from the workspace manifests. Run it after changing one.                                              |
-| `pnpm release`               | checks, then `lerna publish`                      | The whole release, run locally — see Settled above.                                                                                     |
+| Command                              | Runs                                                | Notes                                                                                                                                   |
+| ------------------------------------ | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm i`                             | —                                                   | Refresh deps/lockfile after manifest changes.                                                                                           |
+| `pnpm test`                          | `virrun -- vitest run`                              | Whole suite once via the root vitest `projects` config (every package + `scripts/` + `.agents/`). **CI only** — never run bare locally. |
+| `pnpm test:packages`                 | `virrun -- vitest run --project "!@esposter/app"`   | All projects except the app — skips Nuxt. Local-only, and takes paths like `pnpm test` does: pass them.                                 |
+| `pnpm coverage`                      | `vitest run --coverage` (no virrun)                 | Root-only (packages have no `coverage` script). CI shards via `--reporter=blob` + `--merge-reports`.                                    |
+| `pnpm outdated:dependencies`         | `tsx scripts/outdatedDependencies/index.ts`         | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest.      |
+| `pnpm graph:gen`                     | `tsx scripts/dependencyGraph/index.ts`              | Regenerate `dependency-graph.svg` from the workspace manifests. Run it after changing one.                                              |
+| `pnpm release`                       | checks, then `lerna publish`                        | The whole release, run locally — see Settled above.                                                                                     |
+| `pnpm sweep:constant-scope`          | `tsx scripts/sweeps/constantScope/index.ts`         | One sweep find recipe, as a tested script rather than a ledger code block (`sweeps` skill). One `sweep:*` per scan.                     |
+| `pnpm sweep:repeated-list-items`     | `tsx scripts/sweeps/repeatedListItems/index.ts`     | A component writing three or more `v-list-item`s out one by one, with no `v-for` anywhere in it.                                        |
+| `pnpm sweep:shared-export-consumers` | `tsx scripts/sweeps/sharedExportConsumers/index.ts` | Every `packages/shared` export naming fewer than two consumer packages, which is what earns a place there.                              |
+| `pnpm sweep:skill-docs`              | `tsx scripts/sweeps/skillDocs/index.ts`             | The skill tree structural check: a page over budget, a reference nothing indexes, a citation resolving nowhere.                         |
+| `pnpm sweep:unterminated-results`    | `tsx scripts/sweeps/unterminatedResults/index.ts`   | Every `getResult` call, matched to its closing bracket, whose chain nothing terminates.                                                 |
 
 ## Running a TypeScript Script
 

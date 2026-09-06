@@ -21,7 +21,7 @@ const { image, isActive, isBold, name, roomId } = defineProps<Props>();
       <template #prepend>
         <StyledAvatar :image :name />
       </template>
-      <v-list-item-title pr-6 :class="isBold ? 'font-weight-bold' : undefined">
+      <v-list-item-title pr-6 :class="isBold ? 'font-bold' : undefined">
         {{ name }}
       </v-list-item-title>
       <template #append>

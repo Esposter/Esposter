@@ -51,7 +51,7 @@ const scrollToSection = async (section: SettingsSection) => {
           density="compact"
           @click="scrollToSection(section)"
         >
-          <v-list-item-title :class="visibleSectionIds.includes(section) ? 'font-bold' : 'op-60'">{{
+          <v-list-item-title :class="visibleSectionIds.includes(section) ? 'font-bold' : 'op-medium-emphasis'">{{
             section
           }}</v-list-item-title>
         </v-list-item>

@@ -1,7 +1,7 @@
-import { createNameCheckSql } from "#src/models/shared/Name";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomsInMessage } from "#src/schema/roomsInMessage";
+import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { normalizeString } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { check, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";

@@ -17,6 +17,8 @@ Oxlint runs as **repo-wide passes**, never per-package — there are no per-pack
 - `pnpm lint` / `pnpm lint:fix` (root) — `oxlint` over the whole repo, then ESLint.
 - `pnpm lint:fix:packages` / `pnpm lint:packages` (root) — `oxlint packages` (all packages), then ESLint over non-app packages.
 
+The root `pnpm lint` is **three** passes, and the two local lanes below cover two of them. The third is `eslint .` from the root, and it is the only one that reaches **`scripts/`, `.agents/` and the root config files** — neither lane does, because one filters to `packages/*` and the other runs inside `packages/app`. A change to a sweep script or a skill is therefore unlinted locally however carefully the lanes are run, and lands as a red CI Lint job over a rule the fix variant would have applied silently. Run `pnpm exec eslint --fix .` from the root whenever the change touches anything outside `packages/`.
+
 **Local verification runs the fix variants**: `pnpm lint:fix:packages` (root) for `packages/*` (non-app) changes; `pnpm lint:fix` from `packages/app/` for app changes. Neither local path oxlints the app — `lint:fix:packages` ignores `packages/app/**` and the app-local script is ESLint-only; app oxlint coverage comes solely from the root `pnpm lint` in CI. Reserve the check-only `pnpm lint` for CI. Never hand-fix lint errors — let the fix script do it. **The one exception is while you are changing a rule**: an edit to `.oxlintrc.json` is verified check-only, because a fix variant would rewrite the repo to satisfy a decision that is still being made (`references/lint-configuration.md`).
 
 ## The `require-await` autofix can break a Promise-returning function

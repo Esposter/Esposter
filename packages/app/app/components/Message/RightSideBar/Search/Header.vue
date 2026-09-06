@@ -12,12 +12,10 @@ const { count, isSearching } = storeToRefs(searchMessageStore);
       <v-col cols="12">
         <MessageRightSideBarSearchMenu />
       </v-col>
-      <v-col flex items-center cols="12">
+      <v-col flex gap-x-2 items-center cols="12">
         <template v-if="isSearching">
           Searching
-          <div pl-2>
-            <v-progress-circular size="small" indeterminate />
-          </div>
+          <v-progress-circular size="small" indeterminate />
         </template>
         <template v-else>
           {{ count }} {{ pluralize("result", count) }}

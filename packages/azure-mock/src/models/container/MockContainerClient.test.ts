@@ -18,15 +18,15 @@ describe(MockContainerClient, () => {
     MockContainerDatabase.set(
       containerName,
       new Map([
-        ["nested/child.txt", Buffer.from("")],
-        ["root.txt", Buffer.from("")],
+        ["a", Buffer.from("")],
+        ["a/a", Buffer.from("")],
       ]),
     );
     const client = new MockContainerClient(MOCK_BLOB_BASE_URL, containerName);
     const [page] = await Array.fromAsync(client.listBlobsByHierarchy("/").byPage());
 
-    expect(page?.segment.blobItems.map(({ name }) => name)).toStrictEqual(["root.txt"]);
-    expect(page?.segment.blobPrefixes?.map(({ name }) => name)).toStrictEqual(["nested/"]);
+    expect(page?.segment.blobItems.map(({ name }) => name)).toStrictEqual(["a"]);
+    expect(page?.segment.blobPrefixes?.map(({ name }) => name)).toStrictEqual(["a/"]);
   });
 
   test("clears a deleted blob's metadata", async () => {

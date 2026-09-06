@@ -2,6 +2,7 @@ import type { AppUserInMessage, WebhookInMessage, WebhookInMessageWithRelations 
 
 import { createWebhookInputSchema } from "#shared/models/db/webhook/CreateWebhookInput";
 import { deleteWebhookInputSchema } from "#shared/models/db/webhook/DeleteWebhookInput";
+import { readAppUsersInputSchema } from "#shared/models/db/webhook/ReadAppUsersInput";
 import { rotateTokenInputSchema } from "#shared/models/db/webhook/RotateTokenInput";
 import { updateWebhookInputSchema } from "#shared/models/db/webhook/UpdateWebhookInput";
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
@@ -18,20 +19,12 @@ import {
   DatabaseEntityType,
   roomIdSchema,
   RoomPermission,
-  selectAppUserInMessageSchema,
   WebhookInMessageRelations,
   webhooksInMessage,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
+import { Operation, takeOne } from "@esposter/shared";
 import { and, count, eq, getColumns, inArray } from "drizzle-orm";
-import { z } from "zod";
 
-const readWebhooksInputSchema = roomIdSchema;
-
-const readAppUsersInputSchema = z.object({
-  ...roomIdSchema.shape,
-  ids: createUniqueArraySchema(selectAppUserInMessageSchema.shape.id).min(1).max(MAX_READ_LIMIT),
-});
 // A webhook is addressed by both keys so the room the permission was checked against is the room the row must
 // Belong to — an id alone would let a moderator of one room rewrite another's
 const getWebhookRoomWhere = (id: string, roomId: string) =>
@@ -105,7 +98,7 @@ export const webhookRouter = router({
         .innerJoin(webhooksInMessage, eq(webhooksInMessage.userId, appUsersInMessage.id))
         .where(and(eq(webhooksInMessage.roomId, roomId), inArray(appUsersInMessage.id, ids))),
   ),
-  readWebhooks: getPermissionsProcedure(RoomPermission.ManageWebhooks, readWebhooksInputSchema, "roomId").query<
+  readWebhooks: getPermissionsProcedure(RoomPermission.ManageWebhooks, roomIdSchema, "roomId").query<
     WebhookInMessageWithRelations[]
   >(({ ctx, input: { roomId } }) =>
     ctx.db.query.webhooksInMessage.findMany({

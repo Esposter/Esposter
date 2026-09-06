@@ -1,6 +1,11 @@
 import type { ReadSurveyResponsesCountResult } from "#shared/models/resource/survey/ReadSurveyResponsesCountResult";
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
 
+import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
+import { createSurveyResponseInputSchema } from "#shared/models/db/survey/CreateSurveyResponseInput";
+import { deleteSurveyResponseInputSchema } from "#shared/models/db/survey/DeleteSurveyResponseInput";
+import { readSurveyResponseInputSchema } from "#shared/models/db/survey/ReadSurveyResponseInput";
+import { updateSurveyResponseInputSchema } from "#shared/models/db/survey/UpdateSurveyResponseInput";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { transformPublishedBlobUrls } from "@@/server/services/resource/transformPublishedBlobUrls";
 import { getInvalidParticipantTokenError } from "@@/server/services/survey/getInvalidParticipantTokenError";
@@ -15,47 +20,8 @@ import { createResourceProcedures } from "@@/server/trpc/procedure/resource/crea
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { createEntity, getEntity, updateEntity } from "@esposter/db";
-import {
-  AzureEntityType,
-  AzureTable,
-  ResourceType,
-  selectResourceSchema,
-  SurveyResponseEntity,
-  surveyResponseEntitySchema,
-} from "@esposter/db-schema";
+import { AzureEntityType, AzureTable, ResourceType, SurveyResponseEntity } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { z } from "zod";
-
-const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
-  participantToken: true,
-  partitionKey: true,
-  rowKey: true,
-});
-
-const createSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
-  model: true,
-  pageNo: true,
-  participantToken: true,
-  partitionKey: true,
-  rowKey: true,
-});
-
-const updateSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
-  model: true,
-  modelVersion: true,
-  pageNo: true,
-  participantToken: true,
-  partitionKey: true,
-  rowKey: true,
-});
-
-const deleteSurveyResponseInputSchema = z.object({
-  ...surveyResponseEntitySchema.pick({ rowKey: true }).shape,
-  // The partition key is the survey id, derived from this owner-checked id — never accepted from the caller
-  id: selectResourceSchema.shape.id,
-});
-
-const surveyIdInputSchema = selectResourceSchema.pick({ id: true });
 
 export const surveyRouter = router({
   // Survey uploads come from the shared fileAssets capability rather than a bespoke set here —
@@ -102,12 +68,12 @@ export const surveyRouter = router({
   // A blade-local read concern, not a Dataset shape change
   readSurveyResponseRecords: getOwnerProcedure(
     ResourceType.Survey,
-    surveyIdInputSchema,
+    resourceIdInputSchema,
     "id",
   ).query<SurveyResponseRecords>(({ ctx }) => readSurveyResponseRecords(ctx.resource.id)),
   readSurveyResponsesCount: getOwnerProcedure(
     ResourceType.Survey,
-    surveyIdInputSchema,
+    resourceIdInputSchema,
     "id",
   ).query<ReadSurveyResponsesCountResult>(({ ctx }) => readSurveyResponsesCount(ctx.resource.id)),
   updateSurveyResponse: standardRateLimitedProcedure
