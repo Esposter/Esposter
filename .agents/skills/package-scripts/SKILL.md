@@ -18,16 +18,16 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 
 ## `packages/app`
 
-| Command             | Runs                      | When to use                                     |
-| ------------------- | ------------------------- | ----------------------------------------------- |
-| `pnpm lint`         | `TIMING=1 eslint .`       | CI/check-only lint verification                 |
-| `pnpm lint:fix`     | `TIMING=1 eslint --fix .` | **Local lint verification** — use this directly |
-| `pnpm typecheck`    | `nuxt typecheck`          | TypeScript type checking                        |
-| `pnpm test`         | `vitest` (watch mode)     | Run this package's tests in watch mode          |
-| `pnpm format`       | `oxfmt`                   | Format code                                     |
-| `pnpm format:check` | `oxfmt --check`           | Check formatting without writing                |
-| `pnpm dev`          | `nuxt dev`                | Start dev server                                |
-| `pnpm build`        | `nuxt build`              | Build for production                            |
+| Command             | Runs                      | When to use                                                        |
+| ------------------- | ------------------------- | ------------------------------------------------------------------ |
+| `pnpm lint`         | `TIMING=1 eslint .`       | CI/check-only lint verification                                    |
+| `pnpm lint:fix`     | `TIMING=1 eslint --fix .` | ESLint only, this package only — never the last lint a change runs |
+| `pnpm typecheck`    | `nuxt typecheck`          | TypeScript type checking                                           |
+| `pnpm test`         | `vitest` (watch mode)     | Run this package's tests in watch mode                             |
+| `pnpm format`       | `oxfmt`                   | Format code                                                        |
+| `pnpm format:check` | `oxfmt --check`           | Check formatting without writing                                   |
+| `pnpm dev`          | `nuxt dev`                | Start dev server                                                   |
+| `pnpm build`        | `nuxt build`              | Build for production                                               |
 
 > `oxfmt` formats code, not markdown, and no prettier binary is installed — reaching for `npx prettier` or
 > `pnpm exec prettier` fails. A `.md` file's own layout is therefore hand-maintained: a table whose cells changed
