@@ -76,15 +76,17 @@ const rule = defineRule({
     // An exported arrow reaches the surface either named or as the module's default, and the two shapes forward
     // Identically, so both visitors hand their arrow here.
     const reportIfForwarding = (arrow: ESTree.ArrowFunctionExpression): void => {
-      const parameterNames = arrow.params.map((parameter) => getParameterName(parameter));
-      if (parameterNames.some((parameterName) => parameterName === undefined)) return;
-      const names = parameterNames as string[];
+      const parameterNames = arrow.params
+        .map((parameter) => getParameterName(parameter))
+        .filter((parameterName) => parameterName !== undefined);
+      if (parameterNames.length !== arrow.params.length) return;
       // `async (a) => await f(a)` forwards exactly as its sync twin does
       const body = arrow.body.type === "AwaitExpression" ? arrow.body.argument : arrow.body;
       const isForwarding =
         body.type === "MemberExpression"
-          ? getIsForwardingRead(names, body)
-          : (body.type === "CallExpression" || body.type === "NewExpression") && getIsForwardingCall(names, body);
+          ? getIsForwardingRead(parameterNames, body)
+          : (body.type === "CallExpression" || body.type === "NewExpression") &&
+            getIsForwardingCall(parameterNames, body);
       if (isForwarding) context.report({ message: MESSAGE, node: arrow });
     };
     return {
