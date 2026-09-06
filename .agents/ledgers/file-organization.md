@@ -14,8 +14,10 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/services`, `app/util`, `app/models`, `app/types`                      | —          | models vs services vs utils vs constants; duplicate constants                                |
 | `app/composables`                                                          | 2026-09-06 | sole-consumer subfolders                                                                     |
 | `app/store`                                                                | 2026-09-06 | a store's file is named for its domain, so the filename never matches its `use*Store` export |
-| `server/services`, `server/composables`, `server/models`                   | —          |                                                                                              |
-| `server/trpc`                                                              | —          | input schemas belong in `shared/models`, not beside the router                               |
+| `server/services`, `server/composables`, `server/models`                   | 2026-09-06 |                                                                                              |
+| `server/trpc` — the resource family                                        | —          | `resource`, `survey`, `program`, `procedure/resource`                                        |
+| `server/trpc` — the room family                                            | —          | `room`, `call`, `userToRoom`                                                                 |
+| `server/trpc` — the rest                                                   | 2026-09-06 | the loose routers, `guards`, `procedure`, `plugins`, `middleware`                            |
 | `app/components/Message`                                                   | —          | splits further at `Model/` on contact                                                        |
 | `app/components/Resource`                                                  | —          |                                                                                              |
 | `app/components` — the rest                                                | —          |                                                                                              |

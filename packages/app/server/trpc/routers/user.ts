@@ -7,10 +7,11 @@ import type { SetNonNullable } from "type-fest";
 import { generateCallBackgroundUploadUrlInputSchema } from "#shared/models/db/user/GenerateCallBackgroundUploadUrlInput";
 import { readUserInputSchema } from "#shared/models/db/user/ReadUserInput";
 import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
+import { upsertStatusInputSchema } from "#shared/models/db/user/UpsertStatusInput";
+import { userStatusIdsInputSchema } from "#shared/models/db/user/UserStatusIdsInput";
 import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
 import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
-import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "@@/server/services/azure/eventGrid/publishBlobPrefixDeletion";
@@ -38,8 +39,6 @@ import {
   getMimeCategory,
   MimeCategory,
   NoiseSuppressionMode,
-  selectUserStatusInMessageSchema,
-  userIdsSchema,
   users,
   userSettingsInMessage,
   UserStatus,
@@ -48,13 +47,6 @@ import {
 } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { eq, inArray } from "drizzle-orm";
-
-const userStatusIdsInputSchema = userIdsSchema.shape.userIds.min(1);
-
-const upsertStatusInputSchema = refineAtLeastOne(
-  selectUserStatusInMessageSchema.pick({ message: true, status: true }).partial(),
-  ["message", "status"],
-);
 
 const upsertConnectedStatus = async (ctx: AuthedContext, isConnected: boolean) => {
   const upsertedStatus = requireMutation(
