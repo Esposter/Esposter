@@ -1,6 +1,6 @@
 ---
 name: sweeps
-description: Esposter repo-wide sweep conventions — a Settled list of the directions already rejected (filing a sweep as a proposal, a progress column or tick count on the index row, fanning one sweep's units out to parallel agents, and inheriting a split row's date onto its children), progress tracked as a ledger in .agents/ledgers/ named after the skill that owns its rules, sweeps being repo state rather than proposals, proving a find recipe can fail before believing it passed, when a mechanical pass earns a ledger and when it is just a commit, splitting a row that reads as too high a level before any pass starts, one unit per commit chunked to the review budget, state living at the leaf with the pass run in the main session one unit at a time, behaviour-preserving passes and where a behaviour-changing finding goes instead, what belongs in the commit message rather than the ledger, every sweep being standing and the changed-files command that resumes one, draining a ledger as a by-product of ordinary work, and handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill — plus deep dives on where a find recipe lives (a grep inline, anything with control flow a tested script under scripts/sweeps/), on what a pass does when its rule turns out silent or wrong, and on the ledger file itself: the six things it may hold, the explanatory prose it may not, and the ban on any record of what a past pass did, promotion to a folder, and a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same), with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
+description: Esposter repo-wide sweep conventions — a Settled list of the directions already rejected (filing a sweep as a proposal, a progress column or tick count on the index row, fanning one sweep's units out to parallel agents, and inheriting a split row's date onto its children), progress tracked as a ledger in .agents/ledgers/ named after the skill that owns its rules, sweeps being repo state rather than proposals, proving a find recipe can fail before believing it passed, when a mechanical pass earns a ledger and when it is just a commit, splitting a row that reads as too high a level before any pass starts, one unit per commit chunked to the review budget, state living at the leaf with the pass run in the main session one unit at a time, behaviour-preserving passes and where a behaviour-changing finding goes instead, what belongs in the commit message rather than the ledger, every sweep being standing, draining a ledger as a by-product of ordinary work, and handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill — plus deep dives on where a find recipe lives (a grep inline, anything with control flow a tested script under scripts/sweeps/), on resuming one from the `Scope` pathspecs its index row declares (the convention's domain rather than the union of its rows), on what a pass does when its rule turns out silent or wrong, and on the ledger file itself: the six things it may hold, the explanatory prose it may not, and the ban on any record of what a past pass did, promotion to a folder, and a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same), with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
 ---
 
 # Sweeps
@@ -77,13 +77,9 @@ written before it, so a ledger that could be finished would only be re-opened by
 column whose every row says the same thing is noise. A unit's row carries a date rather than an end: it means
 the rules held there on that date, nothing more.
 
-A pass resumes from what changed since that date rather than re-reading the unit:
-
-```bash
-git log --since=<Last swept date> --name-only --pretty=format: -- <the globs this sweep declares> | sort -u
-```
-
-Everything outside that list was swept at the last pass — skip it rather than re-reading it.
+A pass resumes from what changed since that date rather than re-reading the unit, over the pathspecs the sweep's
+**`Scope`** declares in the ledger index — the convention's domain, never the union of its rows. **The resume
+command, and writing or widening a scope**, are `references/standing-resume.md`.
 
 A `—` in `Swept` is unswept, and **a fully dated ledger is kept, not deleted**: it is the index that answers
 "was this area swept, and when" in one read, which git can only answer by archaeology from someone who already
