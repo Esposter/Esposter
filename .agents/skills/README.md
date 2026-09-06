@@ -41,6 +41,7 @@ If nothing fits, that may signal a missing single-responsibility skill — creat
 - `styling` / `unocss` — attributify styling usage vs. UnoCSS config.
 - `vuetify` — Vuetify 4 components, dialogs, selects, forms, lists.
 - `responsive` — mobile/narrow-viewport collapse rules.
+- `ux` — where an interaction belongs: point-of-need entry points, what a settings panel configures vs what a dialog creates, and which surfaces earn a management screen at all.
 - `pinia` — store conventions.
 - `tiptap` / `grapesjs` / `vue-phaserjs` / `slash-commands` — feature-library integrations.
 

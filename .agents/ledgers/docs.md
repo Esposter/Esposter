@@ -13,7 +13,7 @@ page that has one.
 | -------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------- |
 | `architecture/*.md`                                            | 2026-08-21 |                                                                                        |
 | `platform/*.md`                                                | 2026-08-21 | every area index carries a `Shipped log`, one line per program of work                 |
-| `esbabbler/*.md`, `esbabbler/calls/`                           | 2026-08-21 | 39 pages — the widest area                                                             |
+| `esbabbler/*.md`, `esbabbler/calls/`                           | 2026-08-21 | the widest area by some margin                                                         |
 | `virrun/*.md`                                                  | 2026-08-21 | bench figures belong to the artifacts that hold them, never to prose                   |
 | `sheet-editor/`, `infra/`                                      | 2026-08-21 | `eventgrid-dead-letter` keeps two diagrams: a delivery path and an event lifecycle     |
 | `clicker/`, `dungeons/`, `posts/`                              | 2026-08-21 | split from `users/` to fit a review window                                             |
