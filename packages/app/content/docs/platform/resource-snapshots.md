@@ -7,7 +7,7 @@ description: Channel-addressed copies of a resource's content — published vers
 
 Every resource type has restorable point-in-time versions of its working copy, whether or not it can be published. A snapshot is addressed by **channel**: `published` is what a publish writes, `revisions` is where the working copy's own recovery points live, and everything between them — the blob address, the listing, the reconstitution, the restore and the ledger — is one mechanism rather than one per channel.
 
-A rollback used to reach only a deliberate publish, on a publishable type, through a nav blade of its own. It now reaches either channel, on any type, from a panel over the thing being restored.
+A rollback reaches either channel, on any type, from a panel over the thing being restored — never a nav blade of its own, and never restricted to a deliberate publish on a publishable type. Restoring is an operation on one resource, so it belongs beside that resource rather than in a surface of its own.
 
 ## The mechanism: channels
 
@@ -70,9 +70,9 @@ flowchart LR
 
 Survey draws a line through its content blob that no other part of the system knows about: `model` is snapshot state, `settings` is live state, re-read on every public read so closing a survey takes effect without re-publishing every participant link already sent.
 
-That line used to be declared in one direction only, and **restore got it wrong**: it copied the snapshot's content wholesale into the working copy, `settings` included, silently reopening a closed survey or flipping the response mode between Anonymous and Identified — a setting the write boundary makes authorization decisions on ([survey response modes](/docs/platform/survey-response-modes)).
+**That line has to be declared in both directions, or restore gets it wrong**: a restore that copies the snapshot's content wholesale into the working copy carries `settings` with it, silently reopening a closed survey or flipping the response mode between Anonymous and Identified — a setting the write boundary makes authorization decisions on ([survey response modes](/docs/platform/survey-response-modes)).
 
-So the boundary is a **two-way declaration the mechanism owns**: `ResourceLiveContentMap` says which parts of a type's content are live rather than frozen, and `reapplyLiveResourceContent` applies it on every path that reconstitutes a snapshot — the public read, the version preview, and the restore. Writing those apart is what produced the defect; one shared reconstitution makes it impossible.
+So the boundary is a **two-way declaration the mechanism owns**: `ResourceLiveContentMap` says which parts of a type's content are live rather than frozen, and `reapplyLiveResourceContent` applies it on every path that reconstitutes a snapshot — the public read, the version preview, and the restore. Writing those paths apart is what lets them disagree; one shared reconstitution makes it impossible.
 
 ```mermaid
 sequenceDiagram

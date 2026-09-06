@@ -26,7 +26,7 @@ flowchart TD
 
 Anything the UI reads and writes over time — a collapsed sidebar, a display mode, a device id, a draft — is `useLocalStorage`. VueUse's ref answers the default off-browser, so there is nothing to guard, and the value is reactive, so nothing has to be re-read after a write.
 
-The consequence worth naming: **the ref is the storage, not a copy kept beside it.** The message input store used to hold `drafts` as a `Map` _and_ mirror every change into a key per composer, which is two sources of truth held in step by hand — the arrangement in which one call site can be forgotten, as one was. It is now a single `Map` behind `useLocalStorage`, with a serializer (`draftsSerializer`) that validates on read with the same Zod schema the model already declares. `flush: "sync"` is set there deliberately: a draft is persisted state rather than rendered state, and the default pre-flush write leaves a window in which the composer is empty but the storage still holds what was in it.
+The consequence worth naming: **the ref is the storage, not a copy kept beside it.** The message input store holds `drafts` as a single `Map` behind `useLocalStorage`, with a serializer (`draftsSerializer`) that validates on read with the same Zod schema the model already declares. Holding that `Map` _and_ mirroring every change into a key per composer would be two sources of truth kept in step by hand — the arrangement in which one call site gets forgotten. `flush: "sync"` is set there deliberately: a draft is persisted state rather than rendered state, and the default pre-flush write leaves a window in which the composer is empty but the storage still holds what was in it.
 
 A store that needs a `Map` or a class instance passes a `serializer` rather than falling back to raw keys.
 
@@ -43,6 +43,8 @@ The position this page is about is enforced too. A browser global read at the **
 A genuine top-level fork disables the rule on the line with its reason, the same way the storage ban is excepted — the test setup's viewport stub is the one that does, because the `checkIsServer()` branch above it has already decided.
 
 What this leaves unenforced is the subtler half, and it is worth naming: a browser global inside a `computed` is inside a function, so nothing flags it, and it survives SSR only for as long as nothing reads that computed during the server render. A dialog that happens to be closed on the server is not a guard, and the share dialog's link was built that way until a sweep read it.
+
+What separates that from a computed whose browser read is genuinely safe is **why** the read is unreachable on the server. A dialog being closed, a panel being collapsed, a list being empty — those are states the server render happens to be in, and any of them can change without anyone touching the computed. A read is safe instead when the value guarding it **cannot exist** on the server: `EditFormDialog/ErrorIcon` queries the DOM for a field label only inside `if (error)`, and `error` comes from a Vuetify form's `errors` array, which is populated by client-side validation on a form instance that is a template ref — so on the server there is no form, no validation and no error, structurally rather than incidentally. State the reason in a comment where it is not obvious; a computed whose guard is a state rather than a structural impossibility takes the phase or the ref instead.
 
 ## What `checkIsServer()` is still for
 
