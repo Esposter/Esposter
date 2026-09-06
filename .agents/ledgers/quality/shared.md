@@ -13,8 +13,8 @@
 | `shared/models/dashboard` + `dataset` + `services/dataset` | 2026-08-20 |                                                                                        |
 | `shared/models/flowchartEditor`                            | 2026-08-20 | a faithful mirror of @vue-flow/core, so its nulls stay                                 |
 | `emailEditor` + `webpageEditor` + `grapesjs`               | 2026-08-20 |                                                                                        |
-| `shared/models/pagination` + `services/pagination`         | 2026-08-20 |                                                                                        |
-| `shared/models/compiler` + `services/compiler`             | 2026-08-20 |                                                                                        |
+| `shared/models/pagination` + `services/pagination`         | 2026-09-07 |                                                                                        |
+| `shared/models/compiler` + `services/compiler`             | 2026-09-07 |                                                                                        |
 | the small shared roots                                     | 2026-08-20 |                                                                                        |
 | `packages/shared` — `src/models`, `src/test`               | 2026-09-07 |                                                                                        |
 | `packages/shared` — `src/services`                         | 2026-09-07 |                                                                                        |
