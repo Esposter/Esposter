@@ -22,6 +22,7 @@ packages/app/content/docs/
     roadmap.md                ← open work only (omit for mature areas with none)
   proposals/
     <area>/<name>.md          ← unimplemented design spec, one folder per area
+    <area>/<name>/index.md    ← the same spec as a folder, once it carries sub-specs (see Proposals)
     refactors/<name>.md       ← cross-area refactor plans (not an area — no index/roadmap/deferred). A mechanical sweep is not one: it designs no behaviour and lives in `.agents/ledgers/` (`sweeps` skill)
 ```
 
@@ -52,6 +53,10 @@ Omit any section with nothing to say.
 ## Proposals
 
 Same template plus an explicit scope: what works today vs what the proposal adds, cheapest viable infrastructure (reuse existing Azure resources first), and failure/retry semantics when background work is involved. A proposal is the design conversation done in advance — trim it the moment implementation teaches you better.
+
+**A proposal becomes a folder when it carries genuinely separate sub-specs** — an algorithm, the package that holds it, the integration into the app, a follow-on phase — for the same reason a feature page does: single responsibility beats file count, and a reader executing one part should not scroll past three others. `index.md` holds the decision, the scope and the evidence for it, and links every sibling; each sibling is one sub-spec, self-contained. Start flat and split when the second responsibility appears — a folder for a spec that is really one page is just a longer path. Sub-specs must not contradict the index: a decision revised in one page is revised in the index's scope section in the same edit.
+
+**A proposal describes files that do not exist yet, and the Key Files check does not know that.** Any table whose header names a file triggers the path-existence test over every backticked repo path in it, so a Key Files table in a proposal lists only the **existing** files the work touches or replaces, with the role each plays after the change. Paths the proposal would create go in a fenced block as a tree — which reads better for a layout anyway.
 
 ## Deferred and rejected pages
 
