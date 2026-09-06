@@ -1,23 +1,12 @@
 import { createMaxLengthCheckSql } from "#src/models/shared/Check";
+import { UserStatus, userStatusSchema } from "#src/models/user/UserStatus";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { users } from "#src/schema/users";
 import { boolean, check, pgEnum, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-import { z } from "zod";
 
 export const STATUS_MESSAGE_MAX_LENGTH = 64;
-
-export enum UserStatus {
-  DoNotDisturb = "DoNotDisturb",
-  Idle = "Idle",
-  Offline = "Offline",
-  Online = "Online",
-}
-
-const userStatusSchema = z.enum(UserStatus) satisfies z.ZodType<UserStatus>;
-
-export const UserStatuses: readonly UserStatus[] = Object.values(UserStatus);
 
 export const userStatusEnum = pgEnum("userStatus", UserStatus);
 

@@ -1,4 +1,4 @@
-import { RoomPermission } from "#src/schema/roomRolesInMessage";
+import { RoomPermission } from "#src/models/message/RoomPermission";
 
 // What a permission bitfield means, in one place. The check lives beside `RoomPermission` rather than in
 // Either consumer because both need it and neither may depend on the other: the client evaluates it against

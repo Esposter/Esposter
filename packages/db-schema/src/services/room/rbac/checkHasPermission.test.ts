@@ -1,4 +1,4 @@
-import { RoomPermission } from "#src/schema/roomRolesInMessage";
+import { RoomPermission } from "#src/models/message/RoomPermission";
 import { checkHasPermission } from "#src/services/room/rbac/checkHasPermission";
 import { describe, expect, test } from "vitest";
 

@@ -1,3 +1,4 @@
+import { NotificationType, notificationTypeSchema } from "#src/models/message/NotificationType";
 import { createMaxLengthCheckSql } from "#src/models/shared/Check";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
@@ -7,15 +8,6 @@ import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { boolean, check, index, integer, pgEnum, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-import { z } from "zod";
-
-export enum NotificationType {
-  All = "All",
-  DirectMessage = "DirectMessage",
-  Never = "Never",
-}
-
-export const notificationTypeSchema = z.enum(NotificationType) satisfies z.ZodType<NotificationType>;
 
 export const notificationTypeEnum = pgEnum("notificationType", NotificationType);
 
