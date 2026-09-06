@@ -3,10 +3,11 @@ import {
   noiseSuppressionModeSchema,
 } from "#src/models/message/userSettings/NoiseSuppressionMode";
 import { VoiceInputMode, voiceInputModeSchema } from "#src/models/message/userSettings/VoiceInputMode";
-import { createBetweenCheckSql, createMaxLengthCheckSql } from "#src/models/shared/Check";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { users } from "#src/schema/users";
+import { createBetweenCheckSql } from "#src/services/shared/createBetweenCheckSql";
+import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { boolean, check, integer, pgEnum, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 

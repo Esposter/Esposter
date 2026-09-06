@@ -1,8 +1,8 @@
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 
-import { createMaxLengthCheckSql } from "#src/models/shared/Check";
 import { pgTable } from "#src/pgTable";
 import { users } from "#src/schema/users";
+import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { sanitizeTextHtml } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { check, doublePrecision, index, integer, text, uuid } from "drizzle-orm/pg-core";

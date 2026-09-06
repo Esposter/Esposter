@@ -1,9 +1,10 @@
-import { createNameCheckSql, createNameSchema } from "#src/models/shared/Name";
+import { createNameSchema } from "#src/models/shared/Name";
 import { pgTable } from "#src/pgTable";
 import { appUsersInMessage } from "#src/schema/appUsersInMessage";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomsInMessage } from "#src/schema/roomsInMessage";
 import { users } from "#src/schema/users";
+import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { boolean, check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 

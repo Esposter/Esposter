@@ -1,8 +1,8 @@
-import { createMaxLengthCheckSql } from "#src/models/shared/Check";
 import { UserStatus, userStatusSchema } from "#src/models/user/UserStatus";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { users } from "#src/schema/users";
+import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { boolean, check, pgEnum, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 

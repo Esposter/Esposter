@@ -1,9 +1,9 @@
 import { NotificationType, notificationTypeSchema } from "#src/models/message/NotificationType";
-import { createMaxLengthCheckSql } from "#src/models/shared/Check";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomsInMessage } from "#src/schema/roomsInMessage";
 import { users } from "#src/schema/users";
+import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { boolean, check, index, integer, pgEnum, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";

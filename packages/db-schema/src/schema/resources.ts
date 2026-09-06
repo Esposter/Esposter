@@ -2,9 +2,10 @@ import type { ResourceTags } from "#src/models/resource/ResourceTags";
 
 import { resourceTagsSchema } from "#src/models/resource/ResourceTags";
 import { ResourceType } from "#src/models/resource/ResourceType";
-import { createNameCheckSql, createNameSchema } from "#src/models/shared/Name";
+import { createNameSchema } from "#src/models/shared/Name";
 import { pgTable } from "#src/pgTable";
 import { users } from "#src/schema/users";
+import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { sql } from "drizzle-orm";
 import { check, index, integer, jsonb, pgEnum, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";

@@ -1,11 +1,11 @@
 import { MimeCategory, mimeCategorySchema } from "#src/models/file/MimeCategory";
 import { RoomType, roomTypeSchema } from "#src/models/message/RoomType";
-import { createMaxLengthCheckSql } from "#src/models/shared/Check";
-import { createNameCheckSql } from "#src/models/shared/Name";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomCategoriesInMessage } from "#src/schema/roomCategoriesInMessage";
 import { users } from "#src/schema/users";
+import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
+import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNormalizedStringSchema, createUniqueArraySchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { boolean, check, integer, pgEnum, text, uuid } from "drizzle-orm/pg-core";

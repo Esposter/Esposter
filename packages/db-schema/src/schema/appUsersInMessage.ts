@@ -1,6 +1,7 @@
-import { createNameCheckSql, createNameSchema } from "#src/models/shared/Name";
+import { createNameSchema } from "#src/models/shared/Name";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
+import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
