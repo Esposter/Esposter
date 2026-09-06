@@ -8,6 +8,7 @@ import { setEnginesNode } from "#scripts/updateNode/setEnginesNode";
 import { spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const root = resolve(import.meta.dirname, "..", "..");
 // 1. Resolve target node version to a full published release (strip a leading `v`/`^`); a partial
@@ -45,7 +46,7 @@ const result = spawnSync(`pnpm crossOS update:node ${version} ${oldVersion}`, {
   shell: true,
   stdio: "inherit",
 });
-if (result.status !== 0) throw new Error("fnm install/switch failed");
+if (result.status !== 0) throw new InvalidOperationError(Operation.Update, "update:node", "fnm install/switch failed");
 
 console.info(
   isNewVersion

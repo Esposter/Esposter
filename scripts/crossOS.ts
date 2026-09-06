@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 
 // oxlint-disable-next-line no-restricted-imports -- the repo-root manifest, which no `#` map can reach
 import packageJsonType from "../package.json" with { type: "json" };
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const minArgv = 3;
 const property = "crossOS";
@@ -12,14 +13,19 @@ if (process.argv.length < minArgv)
   throw new RangeError(`${property} requires at least ${minArgv - 2} arguments`);
 
 const script = process.argv[2];
-if (!script) throw new Error("script is required");
+if (!script) throw new InvalidOperationError(Operation.Read, property, "script is required");
 
 const args = process.argv.slice(3);
 const { platform } = process;
 const require = createRequire(import.meta.url);
 const packageJson = require(resolve(process.cwd(), "package.json")) as typeof packageJsonType;
 const command = (packageJson[property] as Record<string, Partial<Record<string, string>>>)[script]?.[platform];
-if (!command) throw new Error(`script: "${script}" not found for the current platform: ${platform}`);
+if (!command)
+  throw new InvalidOperationError(
+    Operation.Read,
+    property,
+    `script: "${script}" not found for the current platform: ${platform}`,
+  );
 // With shell: true, pass a single command string (no args array) — Node deprecates (DEP0190) array
 // Args here since they are concatenated unescaped anyway. args are internal, trusted CLI tokens.
 const proc = spawn([command, ...args].join(" "), { shell: true, stdio: "inherit" });

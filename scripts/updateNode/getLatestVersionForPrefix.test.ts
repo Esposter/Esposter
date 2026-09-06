@@ -30,7 +30,7 @@ describe(getLatestVersionForPrefix, () => {
     expect.hasAssertions();
 
     expect(() => getLatestVersionForPrefix(["2.0.0"], "1")).toThrowErrorMatchingInlineSnapshot(
-      `[Error: No published version found for prefix 1]`,
+      `[InvalidOperationError: Invalid operation: Read, name: getLatestVersionForPrefix, No published version found for prefix 1]`,
     );
   });
 });

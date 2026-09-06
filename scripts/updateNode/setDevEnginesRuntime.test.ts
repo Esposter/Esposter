@@ -48,14 +48,16 @@ describe(setDevEnginesRuntime, () => {
 
     expect(() =>
       setDevEnginesRuntime('{ "devEngines": { "packageManager": { "version": "12.1.0" } } }', "1.0.0"),
-    ).toThrowErrorMatchingInlineSnapshot(`[Error: Could not find devEngines.runtime.version in package.json]`);
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: setVersion, Could not find devEngines.runtime.version in package.json]`,
+    );
   });
 
   test("throws when devEngines.runtime.version is absent", () => {
     expect.hasAssertions();
 
     expect(() => setDevEnginesRuntime("{}", "1.0.0")).toThrowErrorMatchingInlineSnapshot(
-      `[Error: Could not find devEngines.runtime.version in package.json]`,
+      `[InvalidOperationError: Invalid operation: Update, name: setVersion, Could not find devEngines.runtime.version in package.json]`,
     );
   });
 });

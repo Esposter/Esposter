@@ -32,7 +32,7 @@ describe(getEnginesNode, () => {
     expect.hasAssertions();
 
     expect(() => getEnginesNode("{}")).toThrowErrorMatchingInlineSnapshot(
-      `[Error: Could not find engines.node in package.json]`,
+      `[InvalidOperationError: Invalid operation: Read, name: getEnginesNode, Could not find engines.node in package.json]`,
     );
   });
 });

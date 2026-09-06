@@ -31,7 +31,7 @@ describe(setEnginesNode, () => {
     expect.hasAssertions();
 
     expect(() => setEnginesNode("{}", "1.0.0")).toThrowErrorMatchingInlineSnapshot(
-      `[Error: Could not find engines.node in package.json]`,
+      `[InvalidOperationError: Invalid operation: Update, name: setVersion, Could not find engines.node in package.json]`,
     );
   });
 });

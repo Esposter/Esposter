@@ -20,7 +20,7 @@ describe(setCatalogTypesNode, () => {
     expect.hasAssertions();
 
     expect(() => setCatalogTypesNode("catalog:", "1.0.0")).toThrowErrorMatchingInlineSnapshot(
-      `[Error: Could not find @types/node in pnpm-workspace.yaml]`,
+      `[InvalidOperationError: Invalid operation: Update, name: setVersion, Could not find @types/node in pnpm-workspace.yaml]`,
     );
   });
 });

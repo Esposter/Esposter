@@ -34,7 +34,7 @@
 | `packages/virrun` — `exec` — the rest                            | 2026-08-31 | `bwrap`, `native`, `store`, `vfs`, `differential`, `test`                             |
 | `packages/virrun` — `services/cli`                               | 2026-08-31 | a CLI answers a failure with an exit code and stderr rather than an alert             |
 | `packages/virrun` — `src/models`, `services` — the rest          | 2026-08-31 | every chain rethrows or falls back on a value its own comment names                   |
-| `scripts`                                                        | —          | never covered by a unit; the `new Error` throws there have never been read            |
+| `scripts`                                                        | 2026-09-06 | `TypeError`/`RangeError` stay — the ban is on the bare `Error`, not on a precise one  |
 | `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-08-30 | every throw is a stub, an unsupported-in-mock, or an Azure wire response              |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-08-30 | every throw is a named error class, no chain to terminate outside `shared`            |
 
