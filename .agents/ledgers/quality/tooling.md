@@ -16,6 +16,6 @@ left when this ledger was written.
 | `content/docs` — `platform`               | —          |                                                                                               |
 | `content/docs` — `esbabbler`              | —          |                                                                                               |
 | `content/docs` — `architecture`           | —          |                                                                                               |
-| `content/docs` — `virrun`                 | —          |                                                                                               |
+| `content/docs` — `virrun`                 | 2026-09-06 | `wsl.exe` in prose is the command, not a constant the code should have carried                |
 | `content/docs` — the product areas        | —          | `sheet-editor`, `vue-phaserjs`, `clicker`, `dungeons`, `posts`, `anime`, `fluid-simulator`    |
 | `content/docs` — the rest                 | 2026-09-06 | `proposals`, `infra`, `users`, `achievements`, the root index                                 |
