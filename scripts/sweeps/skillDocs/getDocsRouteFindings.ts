@@ -6,11 +6,11 @@ import { SkillDocsFindingType } from "#scripts/sweeps/skillDocs/models/SkillDocs
 
 const DOCS_ROUTE_REGEX = /`\/docs\//u;
 // The two that teach the route and url forms, and so are the two that may write one
-const ROUTE_OWNER_SKILLS = new Set(["docs", "readme-standards"]);
+const RouteOwnerSkills = new Set(["docs", "readme-standards"]);
 
 export const getDocsRouteFindings = (files: SkillDocsFile[]): SkillDocsFinding[] =>
   files
-    .filter(({ path }) => !ROUTE_OWNER_SKILLS.has(getSkillName(path)))
+    .filter(({ path }) => !RouteOwnerSkills.has(getSkillName(path)))
     .flatMap(({ path, text }) =>
       text
         .split("\n")

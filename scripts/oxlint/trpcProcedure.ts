@@ -11,7 +11,7 @@ import { definePlugin, defineRule } from "@oxlint/plugins";
 //
 // Neither needs type information. A missing generic is an absent `typeArguments`, and a hand-rolled error is an
 // Object literal whose `message` reads `.message` off a `new *Error(...)` the repo already has a constructor for.
-const GUARD_BY_ERROR: Record<string, string> = {
+const ErrorGuardMap: Record<string, string> = {
   ForbiddenError: "getForbiddenError",
   InvalidOperationError: "getInvalidOperationError",
   NotFoundError: "getNotFoundError",
@@ -43,7 +43,7 @@ const getHandRolledErrorName = (property: ESTree.Node): string | undefined => {
   return object.callee.name;
 };
 
-const getIsBadRequestCode = (property: ESTree.Node): boolean => {
+const checkIsBadRequestCode = (property: ESTree.Node): boolean => {
   const value = getPropertyValue(property, "code");
   return value?.type === "Literal" && value.value === "BAD_REQUEST";
 };
@@ -60,7 +60,7 @@ const noHandRolledError = defineRule({
         // Make `message: new NotFoundError(...).message` mean anything else
         for (const property of argument.properties) {
           const errorName = getHandRolledErrorName(property);
-          const guardName = errorName === undefined ? undefined : GUARD_BY_ERROR[errorName];
+          const guardName = errorName === undefined ? undefined : ErrorGuardMap[errorName];
           if (errorName !== undefined && guardName !== undefined) {
             context.report({ message: getHandRolledMessage(errorName, guardName), node });
             return;
@@ -76,7 +76,7 @@ const noHandRolledError = defineRule({
         else if (lastSpreadIndex !== -1) return;
         // A bare BAD_REQUEST is the other half of the same convention: the code without the message the skill
         // Requires beside it
-        if (argument.properties.some((property) => getIsBadRequestCode(property)))
+        if (argument.properties.some((property) => checkIsBadRequestCode(property)))
           context.report({ message: MISSING_MESSAGE, node });
       },
     };

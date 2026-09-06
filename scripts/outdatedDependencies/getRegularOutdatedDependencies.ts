@@ -1,9 +1,9 @@
 import type { OutdatedDependency } from "#scripts/outdatedDependencies/models/OutdatedDependency";
 import type { RegistryCheckError } from "#scripts/outdatedDependencies/models/RegistryCheckError";
 
+import { checkIsPnpmOutdatedDependency } from "#scripts/outdatedDependencies/checkIsPnpmOutdatedDependency";
 import { getDependencyType } from "#scripts/outdatedDependencies/getDependencyType";
 import { getOutdatedDependents } from "#scripts/outdatedDependencies/getOutdatedDependents";
-import { isPnpmOutdatedDependency } from "#scripts/outdatedDependencies/isPnpmOutdatedDependency";
 import { runPnpmOutdated } from "#scripts/outdatedDependencies/runPnpmOutdated";
 import { getResult, jsonDateParse } from "@esposter/shared";
 
@@ -39,7 +39,7 @@ export const getRegularOutdatedDependencies = async (
 
       const outdatedDependencies: OutdatedDependency[] = [];
       for (const [pkg, dependency] of Object.entries(parsed)) {
-        if (!isPnpmOutdatedDependency(dependency))
+        if (!checkIsPnpmOutdatedDependency(dependency))
           return {
             errors: [{ error: `unexpected JSON entry for ${pkg}`, pkg: "pnpm outdated -r" }],
             outdatedDependencies: [],

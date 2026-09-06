@@ -3,15 +3,15 @@ import { getUnterminatedResults } from "#scripts/sweeps/unterminatedResults/getU
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const SOURCE_PREFIXES = ["packages/app/app/", "packages/app/server/", "packages/app/shared/"];
+const SourcePrefixes = ["packages/app/app/", "packages/app/server/", "packages/app/shared/"];
 const SOURCE_REGEX = /^packages\/[^/]+\/src\//u;
 const root = resolve(import.meta.dirname, "..", "..", "..");
 const checkIsInScope = (path: string) =>
-  !path.includes(".test.") && (SOURCE_REGEX.test(path) || SOURCE_PREFIXES.some((prefix) => path.startsWith(prefix)));
+  !path.includes(".test.") && (SOURCE_REGEX.test(path) || SourcePrefixes.some((prefix) => path.startsWith(prefix)));
 
-// Prints rather than exits non-zero: what it still reports is the chain assigned to a named `const` and
-// Terminated on a later line, which is the repo's own preference over nesting the call inside its terminator.
-// The ledger names them (`.agents/ledgers/error-handling.md`); telling one from a finding is a read.
+// Prints rather than exits non-zero, like the other sweep scans: a hit is a chain to read against what the
+// Enclosing function does with it, and the ledger carries the standing exclusions
+// (`.agents/ledgers/error-handling.md`).
 for (const path of [...getSweepFilePaths("*.ts"), ...getSweepFilePaths("*.vue")].filter((filePath) =>
   checkIsInScope(filePath),
 ))
