@@ -9,7 +9,7 @@ left when this ledger was written.
 | `scripts/oxlint`                          | 2026-09-06 |                                                                                               |
 | `scripts/updateNode`                      | 2026-09-06 |                                                                                               |
 | `scripts/services`, `scripts` root files  | 2026-09-06 |                                                                                               |
-| the repository root — config and Markdown | —          |                                                                                               |
+| the repository root — config and Markdown | 2026-09-06 | the composite actions already carry what the workflows share                                  |
 | `packages/app/configuration`              | 2026-09-06 | the relative imports are the pre-alias config exception; the splash table is generator output |
 | the app's root config files               | 2026-09-06 |                                                                                               |
 | `content/docs` — the two suites           | 2026-09-06 | the enforcers, not the pages                                                                  |
