@@ -72,7 +72,7 @@ An Azure Functions handler that rethrows asks for a retry — EventGrid delivery
 
 Both reduce to the same sentence: after the persist, the only honest thing a failure can do is get logged.
 
-Idempotent post-write steps are the one place a rethrow is admissible — a step that can rerun without duplicating anything loses nothing by being retried. Handlers declare this explicitly rather than by inference (`AzureFunctionIsIdempotentMap`), and everything not on that list is best-effort.
+Idempotent post-write steps are the one place a rethrow is admissible — a step that can rerun without duplicating anything loses nothing by being retried. Handlers declare this explicitly rather than by inference (`AzureFunctionIsIdempotentMap`), and everything not on that list is best-effort. The entry is a claim about the handler, though, never a licence granted to it: a handler is idempotent **because** every step after its primary write is best-effort, so a fatal step in that tail does not inherit the `true` — it falsifies it. `ProcessNotification` is the worked case. Its bell insert is the last step allowed to fail the invocation, and the retention trim and subscription read behind it are best-effort for exactly that reason; either one rethrowing would ask for a redelivery that writes the rows it already wrote.
 
 ## Enforcement
 
