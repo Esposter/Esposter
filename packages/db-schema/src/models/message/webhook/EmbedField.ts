@@ -1,6 +1,9 @@
 import { createNameSchema } from "#src/models/shared/Name";
 import { z } from "zod";
 
+export const EMBED_FIELD_NAME_MAX_LENGTH = 256;
+export const EMBED_FIELD_VALUE_MAX_LENGTH = 1024;
+
 export interface EmbedField {
   inline?: boolean;
   name: string;
@@ -9,6 +12,6 @@ export interface EmbedField {
 
 export const embedFieldSchema = z.object({
   inline: z.boolean().optional(),
-  name: createNameSchema(256),
-  value: z.string().min(1).max(1024),
+  name: createNameSchema(EMBED_FIELD_NAME_MAX_LENGTH),
+  value: z.string().min(1).max(EMBED_FIELD_VALUE_MAX_LENGTH),
 }) satisfies z.ZodType<EmbedField>;
