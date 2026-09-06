@@ -12,4 +12,10 @@ left when this ledger was written.
 | the repository root — config and Markdown | —          |                                                                                               |
 | `packages/app/configuration`              | 2026-09-06 | the relative imports are the pre-alias config exception; the splash table is generator output |
 | the app's root config files               | 2026-09-06 |                                                                                               |
-| `packages/app/content`                    | —          |                                                                                               |
+| `content/docs` — the two suites           | 2026-09-06 | the enforcers, not the pages                                                                  |
+| `content/docs` — `platform`               | —          |                                                                                               |
+| `content/docs` — `esbabbler`              | —          |                                                                                               |
+| `content/docs` — `architecture`           | —          |                                                                                               |
+| `content/docs` — `virrun`                 | —          |                                                                                               |
+| `content/docs` — the product areas        | —          | `sheet-editor`, `vue-phaserjs`, `clicker`, `dungeons`, `posts`, `anime`, `fluid-simulator`    |
+| `content/docs` — the rest                 | —          | `proposals`, `infra`, `users`, `achievements`, the root index                                 |
