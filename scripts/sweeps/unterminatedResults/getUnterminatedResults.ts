@@ -3,8 +3,11 @@ import type { UnterminatedResult } from "#scripts/sweeps/unterminatedResults/mod
 import { scanCode } from "#scripts/sweeps/scanCode";
 
 const ASYNC_NAME = "getResultAsync";
-const BINDING_REGEX = /\b(?:const|let|var)\s+(?<binding>[$A-Z_a-z][$\w]*)\s*=\s*$/u;
+// The annotation is skipped rather than parsed: it may hold generics, unions and commas, but never a `=` or a
+// `;`, so excluding those two characters is what keeps the match inside one declaration
+const BINDING_REGEX = /\b(?:const|let|var)\s+(?<binding>[$A-Z_a-z][$\w]*)\s*(?::[^;=]*)?=\s*$/u;
 const CALL_REGEX = /getResult/gu;
+const DOLLAR_REGEX = /\$/gu;
 const IDENTIFIER_REGEX = /[$\p{ID_Continue}]/u;
 const NAME = "getResult";
 const PRECEDING_AWAIT_REGEX = /\bawait\s*$/u;
@@ -62,7 +65,13 @@ export const getUnterminatedResults = (text: string): UnterminatedResult[] => {
     const before = text.slice(0, start[2]).replace(PRECEDING_TRIVIA_REGEX, "").replace(PRECEDING_AWAIT_REGEX, "");
     const { binding } = BINDING_REGEX.exec(before)?.groups ?? {};
     if (binding) {
-      if (new RegExp(`\\b${binding}\\??\\.(?:${TERMINATOR_NAMES})`, "u").test(code.slice(match.index))) continue;
+      // The lookbehind is what makes this the binding rather than any property spelled the same: `\b` holds
+      // After the dot in `other.result.match`, so it would read an unrelated object's field as the terminator
+      // And clear a real finding. `$` is legal in an identifier and is an anchor in a pattern, so it is escaped
+      // Rather than interpolated — unescaped it compiles to a regex that matches nothing at all
+      const escapedBinding = binding.replaceAll(DOLLAR_REGEX, (character) => `\\${character}`);
+      const bindingRegex = new RegExp(`(?<![$\\w.])${escapedBinding}\\??\\.(?:${TERMINATOR_NAMES})`, "u");
+      if (bindingRegex.test(code.slice(match.index))) continue;
     } else if (!STATEMENT_START_REGEX.test(before)) continue;
 
     results.push({ after, line: text.slice(0, start[2]).split("\n").length });

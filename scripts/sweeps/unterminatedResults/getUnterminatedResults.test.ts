@@ -153,6 +153,30 @@ describe(getUnterminatedResults, () => {
     expect(getUnterminatedResults("handle(getResult(fn));")).toStrictEqual([]);
   });
 
+  test("reads a binding through its type annotation", () => {
+    expect.hasAssertions();
+
+    expect(
+      getUnterminatedResults(`const result: Result<void, Error> = getResult(fn);\nreadSomethingElse();`),
+    ).toStrictEqual([{ after: "; readSomethingElse;", line: 1 }]);
+  });
+
+  // Another object's field spelled the same is not this binding, and reading it as one clears a real finding
+  test("does not read a like-named property as the binding", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults(`const result = getResult(fn);\nother.result.match(noop, log);`)).toStrictEqual([
+      { after: "; other.result.match;", line: 1 },
+    ]);
+  });
+
+  // `$` is legal in an identifier and an anchor in a pattern, so an unescaped one matches nothing
+  test("reads a binding whose name carries a dollar sign", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults(`const $result = getResult(fn);\n$result.match(noop, log);`)).toStrictEqual([]);
+  });
+
   // `await` is not what receives the value, so stripping it is what leaves the call standing as a statement
   test("reports an awaited call nothing terminates", () => {
     expect.hasAssertions();
