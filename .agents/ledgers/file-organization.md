@@ -12,7 +12,10 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | 2026-09-06 |                                                                                              |
 | `app/shared/models` — the rest                                             | 2026-09-06 | the small folders, several of them a single file                                             |
 | `app/services`                                                             | —          | models vs services vs utils vs constants; duplicate constants                                |
-| `app/models`                                                               | —          | the value maps a `Map`-suffixed name gives away belong in `services`                         |
+| `app/models/dungeons`                                                      | 2026-09-06 | a class hierarchy stays a model; a map and the behaviour it dispatches to do not             |
+| `app/models/resource`                                                      | —          | the value maps a `Map`-suffixed name gives away belong in `services`                         |
+| `app/models/message`                                                       | —          | the value maps a `Map`-suffixed name gives away belong in `services`                         |
+| `app/models` — the rest                                                    | —          | `UnifiedColors` reaches the vuetify config by relative path                                  |
 | `app/util`                                                                 | 2026-09-06 | a type-only third-party import is the `util/types` escape, not a `services/` move            |
 | `app/types`                                                                | 2026-09-06 | ambient `.d.ts` only                                                                         |
 | `app/composables`                                                          | 2026-09-06 | sole-consumer subfolders                                                                     |

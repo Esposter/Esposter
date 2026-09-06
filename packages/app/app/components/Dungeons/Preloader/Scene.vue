@@ -4,12 +4,12 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { FontLoaders } from "@/models/dungeons/loader/FontLoaderMap";
-import { ImageLoaders } from "@/models/dungeons/loader/image/ImageLoaderMap";
-import { SoundLoaders } from "@/models/dungeons/loader/sound/SoundLoaderMap";
-import { SpritesheetLoaders } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
-import { TilemapLoaders } from "@/models/dungeons/loader/TilemapLoaderMap";
-import { TilesetLoaders } from "@/models/dungeons/loader/TilesetLoaderMap";
+import { FontLoaders } from "@/services/dungeons/loader/FontLoaderMap";
+import { ImageLoaders } from "@/services/dungeons/loader/image/ImageLoaderMap";
+import { SoundLoaders } from "@/services/dungeons/loader/sound/SoundLoaderMap";
+import { SpritesheetLoaders } from "@/services/dungeons/loader/spritesheet/SpritesheetLoaderMap";
+import { TilemapLoaders } from "@/services/dungeons/loader/TilemapLoaderMap";
+import { TilesetLoaders } from "@/services/dungeons/loader/TilesetLoaderMap";
 import {
   PROGRESS_BAR_HEIGHT,
   PROGRESS_BAR_MAX_WIDTH,
