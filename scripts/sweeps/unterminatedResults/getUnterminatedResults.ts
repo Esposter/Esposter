@@ -3,10 +3,15 @@ import type { UnterminatedResult } from "#scripts/sweeps/unterminatedResults/mod
 import { scanCode } from "#scripts/sweeps/scanCode";
 
 const ASYNC_NAME = "getResultAsync";
+const BINDING_REGEX = /\b(?:const|let|var)\s+(?<binding>[$A-Z_a-z][$\w]*)\s*=\s*$/u;
 const CALL_REGEX = /getResult/gu;
 const IDENTIFIER_REGEX = /[$\p{ID_Continue}]/u;
 const NAME = "getResult";
-const TERMINATOR_REGEX = /^\.(?:andTee|andThen|mapErr|map|match|orElse|orTee|unwrapOr)/u;
+const PRECEDING_AWAIT_REGEX = /\bawait\s*$/u;
+const PRECEDING_TRIVIA_REGEX = /(?:\s+|\/\*[\s\S]*?\*\/)+$/u;
+const STATEMENT_START_REGEX = /[;{}]\s*$|^\s*$/u;
+const TERMINATOR_NAMES = "andTee|andThen|mapErr|map|match|orElse|orTee|unwrapOr";
+const TERMINATOR_REGEX = new RegExp(`^\\.(?:${TERMINATOR_NAMES})`, "u");
 const TRIVIA_REGEX = /^(?:\s+|\/\/.*|\/\*[\s\S]*?\*\/)+/u;
 const AFTER_LENGTH = 34;
 
@@ -47,6 +52,19 @@ export const getUnterminatedResults = (text: string): UnterminatedResult[] => {
       .trim()
       .slice(0, AFTER_LENGTH);
     if (TERMINATOR_REGEX.test(after)) continue;
+
+    // Where no terminator follows the call, whatever the call's value reaches owns it instead — so the code
+    // Before the call decides, and only one of its shapes is still this file's to answer. A binding is
+    // Terminated wherever its name is read, which is the repo's preferred spelling over nesting a long call
+    // Inside its own terminator, so the name is looked up. Everywhere else the value leaves the statement —
+    // Handed to `return`, to a combinator's callback, to another call's argument list — and the caller
+    // Terminates it. What is left is a call standing alone as a statement, which is the silent drop.
+    const before = text.slice(0, start[2]).replace(PRECEDING_TRIVIA_REGEX, "").replace(PRECEDING_AWAIT_REGEX, "");
+    const { binding } = BINDING_REGEX.exec(before)?.groups ?? {};
+    if (binding) {
+      if (new RegExp(`\\b${binding}\\??\\.(?:${TERMINATOR_NAMES})`, "u").test(code.slice(match.index))) continue;
+    } else if (!STATEMENT_START_REGEX.test(before)) continue;
+
     results.push({ after, line: text.slice(0, start[2]).split("\n").length });
   }
 

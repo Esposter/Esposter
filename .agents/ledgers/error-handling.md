@@ -58,8 +58,13 @@ or a comment closes nothing:
 pnpm sweep:unterminated-results
 ```
 
-What it still reports is the chain assigned to a named `const` and terminated on a later line — which is the
-repo's own preference over nesting the call inside its own terminator, so those are read rather than counted.
+Where no terminator follows the call, the code **before** it decides, because whatever the value reaches owns
+the terminator instead. A binding is the one shape the file can still answer — the chain is terminated wherever
+the name is read, which is the repo's own spelling over nesting a long call inside its own terminator — so the
+scan looks the name up. Everywhere else the value leaves the statement, handed to `return`, to a combinator's
+callback or to another call's arguments, and the caller terminates it. What is left is a call standing alone as
+a statement, which is the silent drop the scan exists for, so a clean run now means something and every hit is
+a finding to read.
 
 The **fire-and-forget** half has its own census, because a callback nothing awaits is the one place an
 unterminated body is invisible rather than merely unhandled — `getSynchronizedFunction` reports the rejection

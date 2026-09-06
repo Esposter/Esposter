@@ -105,4 +105,58 @@ describe(getUnterminatedResults, () => {
       { after: ";", line: 3 },
     ]);
   });
+
+  // Naming the chain and terminating it below is the repo's own spelling, so what follows the call is `;` and
+  // The name is where the terminator went
+  test("reports nothing for a binding terminated on a later line", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults(`const result = getResult(fn);\nresult.match(noop, console.error);`)).toStrictEqual(
+      [],
+    );
+  });
+
+  test("reads an optional call on the binding as the terminator", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults(`const result = getResult(fn);\nresult?.match(noop, console.error);`)).toStrictEqual(
+      [],
+    );
+  });
+
+  test("reports a binding no later line reads", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults(`const result = getResult(fn);\nreadSomethingElse();`)).toStrictEqual([
+      { after: "; readSomethingElse;", line: 1 },
+    ]);
+  });
+
+  // The value leaves the statement, so the terminator is the caller's — every shape of that
+  test("reports nothing for a chain its own function returns", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults("const read = () => getResult(fn);")).toStrictEqual([]);
+  });
+
+  test("reports nothing for a chain handed to a combinator's callback", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults("getResult(first).orElse(() => getResult(second)).match(noop, log);")).toStrictEqual(
+      [],
+    );
+  });
+
+  test("reports nothing for a chain passed as an argument", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults("handle(getResult(fn));")).toStrictEqual([]);
+  });
+
+  // `await` is not what receives the value, so stripping it is what leaves the call standing as a statement
+  test("reports an awaited call nothing terminates", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults("await getResultAsync(fn);")).toStrictEqual([{ after: ";", line: 1 }]);
+  });
 });
