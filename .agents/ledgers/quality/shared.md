@@ -7,7 +7,7 @@
 | `shared/models/db` + `shared/models/resource`              | 2026-08-20 |                                                                                        |
 | `shared/models/dungeons`                                   | 2026-08-20 |                                                                                        |
 | `shared/models/clicker`                                    | 2026-08-20 |                                                                                        |
-| `shared/models/achievement` + `services/achievement`       | 2026-08-20 |                                                                                        |
+| `shared/models/achievement` + `services/achievement`       | 2026-09-07 |                                                                                        |
 | `shared/services/resource`                                 | 2026-08-20 | nothing to collapse — `ResourceDefinitionMap.title` restating the type is load-bearing |
 | `shared/models/message` + `services/message`               | 2026-08-20 |                                                                                        |
 | `shared/models/dashboard` + `dataset` + `services/dataset` | 2026-08-20 |                                                                                        |

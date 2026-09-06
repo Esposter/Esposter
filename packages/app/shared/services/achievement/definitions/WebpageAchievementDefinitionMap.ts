@@ -9,6 +9,6 @@ export const WebpageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     description: "Save a webpage",
     icon: "mdi-web",
     points: 20,
-    triggerPath: "webpage.saveResourceContent" as const,
+    triggerPath: "webpage.saveResourceContent",
   }),
 });
