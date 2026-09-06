@@ -1,6 +1,6 @@
 import type { OverlayEntry } from "#src/models/exec/snapshot/OverlayEntry";
 
-import { FlushOpType } from "#src/models/exec/FlushOp";
+import { FlushOpType } from "#src/models/exec/FlushOpType";
 import { OverlayEntryKind } from "#src/models/exec/snapshot/OverlayEntryKind";
 import { buildFlushPlan } from "#src/services/exec/snapshot/buildFlushPlan";
 import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";

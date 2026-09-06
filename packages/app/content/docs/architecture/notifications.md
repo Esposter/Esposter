@@ -77,14 +77,14 @@ There is no new Function, no new Event Grid subscription and no new delivery pat
 
 ## Key files
 
-| File                                                                          | Role                                                 |
-| ----------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `packages/db-schema/src/services/azure/eventGrid/publishNotification.ts`      | the single publish path                              |
-| `packages/db-schema/src/models/azure/eventGrid/NotificationEventGridData.ts`  | the one envelope, discriminated by type              |
-| `packages/db-schema/src/models/notification/AppNotificationTypeChannelMap.ts` | which surfaces each type reaches                     |
-| `packages/db-schema/src/schema/notifications.ts`                              | the persisted bell row                               |
-| `packages/azure-functions/src/services/notification/resolveNotification.ts`   | copy, deep link and recipients per type              |
-| `packages/azure-functions/src/services/notification/sendNotification.ts`      | the fan-out — bell rows, then devices                |
-| `packages/db/src/services/notification/getMessageRecipientUserIds.ts`         | a message's recipients, thread followers included    |
-| `packages/db/src/services/notification/getPushSubscriptionsForUsers.ts`       | the one device lookup, minus the originating session |
-| `packages/app/app/plugins/pushNotification.client.ts`                         | the tab end of the service worker's postMessage      |
+| File                                                                            | Role                                                 |
+| ------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `packages/db-schema/src/services/azure/eventGrid/publishNotification.ts`        | the single publish path                              |
+| `packages/db-schema/src/models/azure/eventGrid/NotificationEventGridData.ts`    | the one envelope, discriminated by type              |
+| `packages/db-schema/src/services/notification/AppNotificationTypeChannelMap.ts` | which surfaces each type reaches                     |
+| `packages/db-schema/src/schema/notifications.ts`                                | the persisted bell row                               |
+| `packages/azure-functions/src/services/notification/resolveNotification.ts`     | copy, deep link and recipients per type              |
+| `packages/azure-functions/src/services/notification/sendNotification.ts`        | the fan-out — bell rows, then devices                |
+| `packages/db/src/services/notification/getMessageRecipientUserIds.ts`           | a message's recipients, thread followers included    |
+| `packages/db/src/services/notification/getPushSubscriptionsForUsers.ts`         | the one device lookup, minus the originating session |
+| `packages/app/app/plugins/pushNotification.client.ts`                           | the tab end of the service worker's postMessage      |

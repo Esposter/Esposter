@@ -1,4 +1,6 @@
 /* oxlint-disable typescript/no-inferrable-types */
+// The Windows launcher every WSL-side command goes through.
+export const WSL_EXECUTABLE = "wsl.exe";
 // The `$0` we give the WSL-side `sh -c` that hosts a run's bwrap, plus a per-run suffix (createWslProcessMarker).
 // It makes the run's process tree findable Linux-side by cmdline (pgrep -f) so a Ctrl+C reaper can kill its whole
 // Process group without a Windows→WSL PID handoff. Kept generic ("virrun-bwrap") so it reads clearly in `ps`.

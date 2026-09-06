@@ -1,5 +1,5 @@
 import type { DeleteBanInput } from "#shared/models/db/moderation/DeleteBanInput";
-import type { BanInMessageWithRelations } from "@esposter/db-schema";
+import type { BanInMessageWithUsers } from "@esposter/db-schema";
 
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
@@ -8,7 +8,7 @@ import { ID_SEPARATOR } from "@esposter/shared";
 export const useBanStore = defineStore("message/user/ban", () => {
   const { $trpc } = useNuxtApp();
   const { executeMutation } = useMutation();
-  const { hasMore, items, readItems, readMoreItems } = useCursorPaginationData<BanInMessageWithRelations>();
+  const { hasMore, items, readItems, readMoreItems } = useCursorPaginationData<BanInMessageWithUsers>();
   const { createBan: storeCreateBan, deleteBan: storeDeleteBan } = createOperationData(
     items,
     ["roomId", "userId"],

@@ -1,6 +1,7 @@
 import ApplicationTags from "#src/azure/constants/ApplicationTags";
 import AzureAppServiceManagedApiId from "#src/azure/constants/AzureAppServiceManagedApiId";
 import AzureAustraliaEastLocation from "#src/azure/constants/AzureAustraliaEastLocation";
+import AzureBudgetActionWorkflowTriggers from "#src/azure/constants/AzureBudgetActionWorkflowTriggers";
 import AzureLogicAppEndpointsConfiguration from "#src/azure/constants/AzureLogicAppEndpointsConfiguration";
 import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
 import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
@@ -47,110 +48,7 @@ export const prodLogicEsposterAe001: azure_native.logic.Workflow = new azure_nat
           status: "Succeeded",
         },
       },
-      triggers: {
-        When_Budget_Action_is_received: {
-          inputs: {
-            method: "POST",
-            schema: {
-              properties: {
-                data: {
-                  properties: {
-                    alertContext: {
-                      properties: {
-                        AlertCategory: {
-                          type: "string",
-                        },
-                        AlertData: {
-                          properties: {
-                            BudgetCreator: {
-                              type: "string",
-                            },
-                            BudgetId: {
-                              type: "string",
-                            },
-                            BudgetName: {
-                              type: "string",
-                            },
-                            BudgetStartDate: {
-                              type: "string",
-                            },
-                            BudgetThreshold: {
-                              type: "string",
-                            },
-                            BudgetType: {
-                              type: "string",
-                            },
-                            ForecastedTotalForPeriod: {
-                              type: "string",
-                            },
-                            NotificationThresholdAmount: {
-                              type: "string",
-                            },
-                            Scope: {
-                              type: "string",
-                            },
-                            SpentAmount: {
-                              type: "string",
-                            },
-                            ThresholdType: {
-                              type: "string",
-                            },
-                            Unit: {
-                              type: "string",
-                            },
-                          },
-                          type: "object",
-                        },
-                      },
-                      type: "object",
-                    },
-                    essentials: {
-                      properties: {
-                        alertContextVersion: {
-                          type: "string",
-                        },
-                        alertId: {
-                          type: "string",
-                        },
-                        configurationItems: {
-                          items: {
-                            type: "string",
-                          },
-                          type: "array",
-                        },
-                        description: {
-                          type: "string",
-                        },
-                        essentialsVersion: {
-                          type: "string",
-                        },
-                        firedDateTime: {
-                          type: "string",
-                        },
-                        monitorCondition: {
-                          type: "string",
-                        },
-                        monitoringService: {
-                          type: "string",
-                        },
-                      },
-                      type: "object",
-                    },
-                  },
-                  type: "object",
-                },
-                schemaId: {
-                  type: "string",
-                },
-              },
-              type: "object",
-            },
-          },
-          kind: "Http",
-          operationOptions: "EnableSchemaValidation",
-          type: "Request",
-        },
-      },
+      triggers: AzureBudgetActionWorkflowTriggers,
     },
     endpointsConfiguration: AzureLogicAppEndpointsConfiguration,
     identity: {

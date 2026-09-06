@@ -2,10 +2,8 @@ import ApplicationTags from "#src/azure/constants/ApplicationTags";
 import AzureGlobalDisplayLocation from "#src/azure/constants/AzureGlobalDisplayLocation";
 import { devLogicEsposterAe003 } from "#src/azure/resources/Microsoft.Logic/workflows/devLogicEsposterAe003";
 import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
+import { configuration } from "#src/configuration";
 import * as azure_native from "@pulumi/azure-native";
-import * as pulumi from "@pulumi/pulumi";
-
-const configuration = new pulumi.Config();
 
 const actionGroupName = "dev-ag-esposter-003";
 

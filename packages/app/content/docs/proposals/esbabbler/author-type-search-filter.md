@@ -70,7 +70,7 @@ The values live in an enum of their own with a map from each value to the clause
 | ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | `packages/db-schema/src/models/message/filter/FilterType.ts`           | the filter enum a keyword is parsed into                             |
 | `packages/db-schema/src/models/message/MessageType.ts`                 | the kind `authorType:` reads, and where a real bot would add one     |
-| `packages/db-schema/src/models/message/MessageTypeEntityMap.ts`        | which entity each kind instantiates — the union `type` discriminates |
+| `packages/db-schema/src/services/message/MessageTypeEntityMap.ts`      | which entity each kind instantiates — the union `type` discriminates |
 | `packages/db-schema/src/schema/appUsersInMessage.ts`                   | the webhook's identity, which is why there is no separate bot value  |
 | `packages/db/src/services/azure/search/filtersToClauses.ts`            | where a filter becomes a search clause                               |
 | `packages/app/app/services/message/filter/SearchFilterComponentMap.ts` | which picker a filter type opens                                     |

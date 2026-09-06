@@ -19,9 +19,9 @@ import glassPanelGreen from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceE
 import glassPanelPurple from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanelPurple.png";
 import cursor from "@/assets/dungeons/UI/cursor/cursor.png";
 import cursorWhite from "@/assets/dungeons/UI/cursor/cursorWhite.png";
-import { BallLoaderMap } from "@/models/dungeons/loader/image/UI/BallLoaderMap";
-import { ControlsLoaderMap } from "@/models/dungeons/loader/image/UI/ControlsLoaderMap";
-import { MonsterLoaderMap } from "@/models/dungeons/loader/image/UI/MonsterLoaderMap";
+import { BallLoaderMap } from "@/services/dungeons/loader/image/UI/BallLoaderMap";
+import { ControlsLoaderMap } from "@/services/dungeons/loader/image/UI/ControlsLoaderMap";
+import { MonsterLoaderMap } from "@/services/dungeons/loader/image/UI/MonsterLoaderMap";
 
 export const ImageLoaderMap = {
   [ImageKey.BarLeftCapShadow]: (scene) => scene.load.image(ImageKey.BarLeftCapShadow, barHorizontalShadowLeft),

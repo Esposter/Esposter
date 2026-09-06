@@ -1,7 +1,7 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { Context } from "@@/server/trpc/context";
 import type { Clause } from "@esposter/azure";
-import type { BanInMessage, BanInMessageWithRelations } from "@esposter/db-schema";
+import type { BanInMessage, BanInMessageWithUsers } from "@esposter/db-schema";
 
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
 import { deleteBanInputSchema } from "#shared/models/db/moderation/DeleteBanInput";
@@ -212,7 +212,7 @@ export const moderationRouter = router({
     }
   }),
   readBans: getPermissionsProcedure(RoomPermission.BanMembers, readBansInputSchema, "roomId").query<
-    CursorPaginationData<BanInMessageWithRelations>
+    CursorPaginationData<BanInMessageWithUsers>
   >(async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
     const sortBy: SortItem<keyof BanInMessage>[] = [CREATED_AT_DESCENDING_SORT_ITEM];
     const wheres: (SQL | undefined)[] = [eq(bansInMessage.roomId, roomId), isNull(bansInMessage.deletedAt)];

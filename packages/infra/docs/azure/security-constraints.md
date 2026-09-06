@@ -20,7 +20,7 @@ Migration path: move to managed identity or user delegation SAS if the app gains
 
 `allowBlobPublicAccess` stays enabled.
 
-`AppAssets`, `DungeonsAssets`, and `PublicUserAssets` are intentionally public for anonymous asset delivery. See `packages/db-schema/src/models/azure/container/AzureContainerPropertiesMap.ts`.
+`AppAssets`, `DungeonsAssets`, and `PublicUserAssets` are intentionally public for anonymous asset delivery. See `packages/db-schema/src/services/azure/container/AzureContainerPropertiesMap.ts`.
 
 Migration path: move public assets behind signed URLs, CDN, or app-mediated delivery before disabling account-level public access.
 

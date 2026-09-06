@@ -1,5 +1,6 @@
 import type { ExecBackend } from "#src/models/exec/ExecBackend";
-import type { ExecOptions, ExecStdio } from "#src/models/exec/ExecOptions";
+import type { ExecOptions } from "#src/models/exec/ExecOptions";
+import type { ExecStdio } from "#src/models/exec/ExecStdio";
 import type { Lease } from "#src/models/exec/snapshot/Lease";
 import type { Environment } from "#src/models/virrun/Environment";
 import type { Virrun } from "#src/models/virrun/Virrun";

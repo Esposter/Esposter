@@ -1,5 +1,6 @@
 import { OVERLAY_WRITE_BACK_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
+import { WSL_EXECUTABLE } from "#src/services/exec/wsl/constants";
 import { readWslPath } from "#src/services/exec/wsl/readWslPath";
 // Cap above the default 1 MB so a large diff's JSON manifest never overflows the buffer.
 const OVERLAY_SCRIPT_MAX_BUFFER = 256 * 1024 * 1024;
@@ -8,7 +9,7 @@ const OVERLAY_SCRIPT_MAX_BUFFER = 256 * 1024 * 1024;
 export const runOverlayScript = (script: string, paths: readonly string[], input = ""): string => {
   const isWin32 = process.platform === "win32";
   const scriptArgs = isWin32 ? paths.map((path) => readWslPath(path)) : [...paths];
-  const file = isWin32 ? "wsl.exe" : "python3";
+  const file = isWin32 ? WSL_EXECUTABLE : "python3";
   const args = isWin32 ? ["--exec", "python3", "-c", script, ...scriptArgs] : ["-c", script, ...scriptArgs];
   // Bounded like every other WSL-side worker, but on its own data-proportional cap: the copy is the run's whole
   // Diff, so the work cap sized for one cache entry would SIGTERM a large write-back partway and fail a command

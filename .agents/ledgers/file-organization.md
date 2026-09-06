@@ -11,7 +11,13 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/shared/models/dungeons`                                               | 2026-09-06 |                                                                                              |
 | `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | 2026-09-06 |                                                                                              |
 | `app/shared/models` — the rest                                             | 2026-09-06 | the small folders, several of them a single file                                             |
-| `app/services`, `app/util`, `app/models`, `app/types`                      | —          | models vs services vs utils vs constants; duplicate constants                                |
+| `app/services`                                                             | —          | models vs services vs utils vs constants; duplicate constants                                |
+| `app/models/dungeons`                                                      | 2026-09-06 | a class hierarchy stays a model; a map and the behaviour it dispatches to do not             |
+| `app/models/resource`                                                      | —          | the value maps a `Map`-suffixed name gives away belong in `services`                         |
+| `app/models/message`                                                       | —          | the value maps a `Map`-suffixed name gives away belong in `services`                         |
+| `app/models` — the rest                                                    | —          | `UnifiedColors` reaches the vuetify config by relative path                                  |
+| `app/util`                                                                 | 2026-09-06 | a type-only third-party import is the `util/types` escape, not a `services/` move            |
+| `app/types`                                                                | 2026-09-06 | ambient `.d.ts` only                                                                         |
 | `app/composables`                                                          | 2026-09-06 | sole-consumer subfolders                                                                     |
 | `app/store`                                                                | 2026-09-06 | a store's file is named for its domain, so the filename never matches its `use*Store` export |
 | `server/services`, `server/composables`, `server/models`                   | 2026-09-06 |                                                                                              |
@@ -21,21 +27,21 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/components/Message`                                                   | —          | splits further at `Model/` on contact                                                        |
 | `app/components/Resource`                                                  | —          |                                                                                              |
 | `app/components` — the rest                                                | —          |                                                                                              |
-| `packages/db-schema` — `models`                                            | —          |                                                                                              |
+| `packages/db-schema` — `models`                                            | 2026-09-06 |                                                                                              |
 | `packages/db-schema` — `schema`, `relations`                               | 2026-09-06 | a table file declares the table and its select schema; enums live in `models`                |
 | `packages/db-schema` — `services`, root                                    | 2026-09-06 |                                                                                              |
 | `packages/db` — `services/azure`                                           | 2026-09-06 |                                                                                              |
 | `packages/db` — the rest, `packages/db-mock`                               | 2026-09-06 |                                                                                              |
 | `packages/azure`, `packages/azure-functions`, `packages/azure-mock`        | 2026-09-06 | cross-package placement: an Azure helper two packages need lives in `db`                     |
-| `packages/virrun` — `services/exec/wsl`                                    | —          |                                                                                              |
-| `packages/virrun` — `services/exec/snapshot`                               | —          |                                                                                              |
-| `packages/virrun` — `services/exec/util`                                   | —          |                                                                                              |
-| `packages/virrun` — `services/exec` — the rest                             | —          | `cache`, `os`, `bwrap`, `vfs`, `differential`, `store`, `native`, `test`                     |
-| `packages/virrun` — `services` — the rest                                  | —          | `cli`, `configuration`, `source`, `vfs`, `virrun`                                            |
-| `packages/virrun` — `models`, root                                         | —          |                                                                                              |
-| `packages/infra` — `azure/resources`                                       | —          | one resource per file, named for its export                                                  |
-| `packages/infra` — `azure` — the rest                                      | —          | `constants`, `services`, the stack files                                                     |
-| `packages/infra` — `github`, root                                          | —          |                                                                                              |
+| `packages/virrun` — `services/exec/wsl`                                    | 2026-09-06 |                                                                                              |
+| `packages/virrun` — `services/exec/snapshot`                               | 2026-09-06 |                                                                                              |
+| `packages/virrun` — `services/exec/util`                                   | 2026-09-06 |                                                                                              |
+| `packages/virrun` — `services/exec` — the rest                             | 2026-09-06 | `cache`, `os`, `bwrap`, `vfs`, `differential`, `store`, `native`, `test`                     |
+| `packages/virrun` — `services` — the rest                                  | 2026-09-06 | `cli`, `configuration`, `source`, `vfs`, `virrun`                                            |
+| `packages/virrun` — `models`, root                                         | 2026-09-06 |                                                                                              |
+| `packages/infra` — `azure/resources`                                       | 2026-09-06 | one resource per file, named for its export                                                  |
+| `packages/infra` — `azure` — the rest                                      | 2026-09-06 | `constants`, `services`, the stack files                                                     |
+| `packages/infra` — `github`, root                                          | 2026-09-06 |                                                                                              |
 | `packages/configuration`                                                   | 2026-09-06 |                                                                                              |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`           | 2026-09-06 | barrel contents are `ctix` output — regenerate, never hand-edit                              |
 | `scripts`                                                                  | 2026-09-02 | a command is a folder once it has internals                                                  |
