@@ -23,7 +23,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/components` — the rest                                                | —          |                                                                                              |
 | `packages/db-schema` — `models`                                            | —          |                                                                                              |
 | `packages/db-schema` — `schema`, `relations`                               | —          | a table file declares the table and its select schema; enums live in `models`                |
-| `packages/db-schema` — `services`, root                                    | —          |                                                                                              |
+| `packages/db-schema` — `services`, root                                    | 2026-09-06 |                                                                                              |
 | `packages/db` — `services/azure`                                           | 2026-09-06 |                                                                                              |
 | `packages/db` — the rest, `packages/db-mock`                               | 2026-09-06 |                                                                                              |
 | `packages/azure`, `packages/azure-functions`, `packages/azure-mock`        | 2026-09-06 | cross-package placement: an Azure helper two packages need lives in `db`                     |

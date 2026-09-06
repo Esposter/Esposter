@@ -39,5 +39,3 @@ export type AchievementName =
   | SurveyAchievementName
   | TableAchievementName
   | WebpageAchievementName;
-
-export const AchievementNames: ReadonlySet<AchievementName> = new Set(Object.values(AchievementName));
