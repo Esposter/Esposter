@@ -3,7 +3,7 @@ import type { Database } from "@esposter/db-schema";
 import { roomRolesInMessage, usersToRoomRolesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, inArray, or } from "drizzle-orm";
 
-export interface GetPermissions {
+interface GetPermissions {
   (db: Database, userId: string, roomId: string): Promise<bigint>;
   (db: Database, userId: string, roomIds: string[]): Promise<Map<string, bigint>>;
 }
