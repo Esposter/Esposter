@@ -61,10 +61,10 @@ const getClass = (cardId: number): string => {
   const offset = cardIds.value.indexOf(cardId);
   if (cardId === activeCardId.value) return "active-card";
   // In the initial state, set the last card as inactive.
-  if ((inactiveCardId.value === undefined && cardId === maxShownCards) || cardId === inactiveCardId.value)
+  else if ((inactiveCardId.value === undefined && cardId === maxShownCards) || cardId === inactiveCardId.value)
     return "inactive-card";
   else if (offset > maxShownCards - 2) return "overflow-card";
-  return `normal-card-${offset}`;
+  else return `normal-card-${offset}`;
 };
 // Main timer driving card movement.
 const moveCardsTimer = ref<number>();

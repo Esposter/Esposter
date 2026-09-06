@@ -78,7 +78,7 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
   getValue({ x, y }: Position) {
     if (y < 0 || y > this.rowSize - 1) return undefined;
     else if (x < 0 || x > this.getColumnSize(y) - 1) return undefined;
-    return takeOne(takeOne(unref(this.grid), y), x);
+    else return takeOne(takeOne(unref(this.grid), y), x);
   }
 
   move(direction: Direction, isSkipValidation?: boolean) {

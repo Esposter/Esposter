@@ -66,5 +66,5 @@ export const getMessageCreationRejection = async (
   const normalizedMessage = message.toLowerCase();
   if (!filter.words.some((word) => normalizedMessage.includes(word.toLowerCase()))) return undefined;
   else if (await checkHasManageMessages()) return undefined;
-  return { filter, type: MessageCreationRejectionType.WordFilter };
+  else return { filter, type: MessageCreationRejectionType.WordFilter };
 };

@@ -7,5 +7,5 @@ const MESSAGE_DATE_FORMAT = "DD/MM/YYYY H:mm";
 export const getMessageDateLabel = (date: Date) => {
   if (checkIsToday(date)) return getShortTimeLabel(date);
   else if (checkIsYesterday(date)) return `Yesterday at ${getShortTimeLabel(date)}`;
-  return formatDate(date, MESSAGE_DATE_FORMAT);
+  else return formatDate(date, MESSAGE_DATE_FORMAT);
 };

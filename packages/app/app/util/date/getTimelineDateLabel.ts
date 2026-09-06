@@ -6,5 +6,5 @@ const TIMELINE_DATE_FORMAT = "dddd, MMMM Do";
 export const getTimelineDateLabel = (date: Date) => {
   if (checkIsToday(date)) return "Today";
   else if (checkIsYesterday(date)) return "Yesterday";
-  return formatDate(date, TIMELINE_DATE_FORMAT);
+  else return formatDate(date, TIMELINE_DATE_FORMAT);
 };

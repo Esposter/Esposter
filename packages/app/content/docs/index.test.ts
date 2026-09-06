@@ -180,14 +180,15 @@ describe("keyFiles", () => {
           if (!TABLE_ROW_REGEX.test(line)) {
             isKeyFilesTable = false;
             return [];
-          } else if (!isKeyFilesTable) {
+          } else if (isKeyFilesTable)
+            return [...line.matchAll(BACKTICKED_TOKEN_REGEX)].map((match) => ({
+              page,
+              token: match.groups?.token ?? "",
+            }));
+          else {
             isKeyFilesTable = KEY_FILES_HEADER_REGEX.test(line);
             return [];
           }
-          return [...line.matchAll(BACKTICKED_TOKEN_REGEX)].map((match) => ({
-            page,
-            token: match.groups?.token ?? "",
-          }));
         });
       })
       .filter(
