@@ -17,6 +17,16 @@ on:
         description: The storage account holding that container, whose firewall the runner is added to.
         required: true
         type: string
+    secrets:
+      AZURE_CLIENT_ID:
+        description: The federated credential azure/login exchanges its OIDC token against.
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        description: The subscription the storage account and function app live in.
+        required: true
+      AZURE_TENANT_ID:
+        description: The tenant that credential belongs to.
+        required: true
 
 env:
   OUTPUT_DIRECTORY: dist
@@ -89,13 +99,21 @@ jobs:
 
       - name: 🌐 Get GitHub Runner IP
         id: get_ip
-        run: echo runner_ip=$(curl -s ipinfo.io/ip) >> $GITHUB_OUTPUT
+        run: |
+          runner_ip="$(curl --fail --silent --show-error --proto '=https' https://ipinfo.io/ip)"
+          if ! printf '%s' "$runner_ip" | grep -Eq '^[0-9]{1,3}(\.[0-9]{1,3}){3}$'; then
+            echo "Unexpected runner IP response: $runner_ip" >&2
+            exit 1
+          fi
+          echo "runner_ip=$runner_ip" >> "$GITHUB_OUTPUT"
 
       - name: 📡 Allow Runner IP in Storage Account Firewall
+        env:
+          RUNNER_IP: ${{ steps.get_ip.outputs.runner_ip }}
         run: |
           az storage account network-rule add \
             --account-name ${{ inputs.storageAccountName }} \
-            --ip-address ${{ steps.get_ip.outputs.runner_ip }}
+            --ip-address "$RUNNER_IP"
 
       - name: 🚀 Upload Package to Blob Storage
         run: |
@@ -104,7 +122,9 @@ jobs:
 
       - name: 📡 Remove Runner IP from Storage Account Firewall
         if: always() # This ensures the rule is removed even if deployment fails
+        env:
+          RUNNER_IP: ${{ steps.get_ip.outputs.runner_ip }}
         run: |
           az storage account network-rule remove \
             --account-name ${{ inputs.storageAccountName }} \
-            --ip-address ${{ steps.get_ip.outputs.runner_ip }}
+            --ip-address "$RUNNER_IP"

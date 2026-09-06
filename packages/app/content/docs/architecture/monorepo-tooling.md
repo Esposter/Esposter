@@ -132,7 +132,12 @@ Declare job permissions explicitly and narrowly:
 - OIDC deployment jobs: `id-token: write`, `contents: read` — and on **both ends** when the job is a call into a
   reusable workflow. A called workflow's token can only be as permissive as its caller's, and `id-token: write`
   is never a repository default, so declaring it only on the called workflow leaves `azure/login` with no token
-  to exchange. Secrets do not cross that boundary either: the caller passes `secrets: inherit`.
+  to exchange. Secrets do not cross that boundary either, and the way they are handed over is the narrow one: the
+  called workflow **declares** the secrets it uses under `on.workflow_call.secrets` and each caller maps exactly
+  those. `secrets: inherit` is the tempting one line, and it forwards every secret the caller can reach — so a
+  deploy that needs three Azure credentials would also be handed the release and agent tokens it has no use for.
+  The cost of declaring them is that a new secret is named in three places; the benefit is that the workflow's
+  own contract says what it may read, and a caller that stops supplying one fails rather than silently widening.
 - Release jobs: `contents: write`.
 - PR-commenting previews: minimum scopes for OIDC, repo reads, and PR comments.
 
