@@ -2,9 +2,7 @@
 import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
-import { getItemCategoryDefinition } from "@/services/resource/getItemCategoryDefinition";
 import { TodoListHeaders } from "@/services/resource/todoList/TodoListHeaders";
-import { TodoListItemTypeItemCategoryDefinitions } from "@/services/resource/todoList/TodoListItemTypeItemCategoryDefinitions";
 import { useTodoListStore } from "@/store/resource/todoList";
 
 const todoListStore = useTodoListStore();
@@ -32,10 +30,7 @@ await loadContent();
         <ResourceTodoListTopSlot />
       </template>
       <template #[`item.type`]="{ item }">
-        <v-chip label>
-          <v-icon mr-2 :icon="getItemCategoryDefinition(TodoListItemTypeItemCategoryDefinitions, item).icon" />
-          {{ getItemCategoryDefinition(TodoListItemTypeItemCategoryDefinitions, item).title }}
-        </v-chip>
+        <ResourceTodoListItemTypeChip :item />
       </template>
       <template #[`item.notes`]="{ item }">
         <div class="rich-text-content" v-html="item.notes" />
