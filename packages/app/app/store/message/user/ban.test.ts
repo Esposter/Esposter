@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { BanInMessageWithRelations, User } from "@esposter/db-schema";
+import type { BanInMessageWithUsers, User } from "@esposter/db-schema";
 
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
@@ -13,7 +13,7 @@ describe(useBanStore, () => {
   const roomId = crypto.randomUUID();
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
-  const createBan = (user: User): BanInMessageWithRelations => ({
+  const createBan = (user: User): BanInMessageWithUsers => ({
     bannedByUser: null,
     bannedByUserId: null,
     createdAt: new Date(0),

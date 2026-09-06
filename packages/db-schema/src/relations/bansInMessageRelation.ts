@@ -24,4 +24,4 @@ export const bansInMessageRelation = defineRelationsPart(schema, (r) => ({
   },
 }));
 
-export type BanInMessageWithRelations = BanInMessage & { bannedByUser: null | User; user: User };
+export type BanInMessageWithUsers = BanInMessage & { bannedByUser: null | User; user: User };

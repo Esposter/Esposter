@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { BanInMessageWithRelations } from "@esposter/db-schema";
+import type { BanInMessageWithUsers } from "@esposter/db-schema";
 
 import { useBanStore } from "@/store/message/user/ban";
 import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
-  ban: BanInMessageWithRelations;
+  ban: BanInMessageWithUsers;
   roomId: string;
 }
 
