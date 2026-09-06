@@ -15,7 +15,7 @@ description: Esposter oxlint + ESLint linting conventions — which lint script 
 Oxlint runs as **repo-wide passes**, never per-package — there are no per-package `.oxlintrc.json` files, only one `.oxlintrc.json` at the repo root. Per-package `lint`/`lint:fix` scripts (in each package's `package.json`) run **ESLint only**. Oxlint is wired into the **root** scripts instead:
 
 - `pnpm lint` / `pnpm lint:fix` (root) — `oxlint` over the whole repo, then ESLint.
-- `pnpm lint:fix:packages` / `pnpm lint:packages` (root) — `oxlint packages` (all packages), then ESLint over non-app packages.
+- `pnpm lint:fix:packages` / `pnpm lint:packages` (root) — `oxlint packages` with `packages/app/**` ignored, then ESLint over non-app packages.
 
 The root `pnpm lint` is **three** passes, and the two local lanes below cover two of them. The third is `eslint .` from the root, and it is the only one that reaches **`scripts/`, `.agents/` and the root config files** — neither lane does, because one filters to `packages/*` and the other runs inside `packages/app`. A change to a sweep script or a skill is therefore unlinted locally however carefully the lanes are run, and lands as a red CI Lint job over a rule the fix variant would have applied silently. Run `pnpm exec eslint --fix .` from the root whenever the change touches anything outside `packages/`.
 

@@ -70,7 +70,8 @@ composable never has one.
 
 ## No cardinality suffixes
 
-Upgrading single-item → batch keeps the same name. Never add `ByRooms`, `ByIds`, `Many` or `Batch`; `readFoo` →
+Upgrading single-item → batch keeps the same name. Never add `Many` or `Batch`, and never pluralize a selector
+because the batch takes several of what it selects on (`readMessagesByRoom` → `readMessagesByRooms`); `readFoo` →
 `readFoos` is the case this ban is for.
 
 **A `By<Selector>` separating two reads of the same rows is not one of these.** The ban is on a suffix that only
