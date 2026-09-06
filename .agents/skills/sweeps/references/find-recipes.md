@@ -45,3 +45,9 @@ the agent tree, living where the toolchain already looks.
   every file sitting in `a/b/` itself. The scan then covers almost everything, which is what makes it hard to
   see — the count looks right and the missing files are exactly the top-level ones a new scan is most likely to
   be pointed at. Write the pathspec without `**`.
+- **A repo-wide grep run from a subdirectory.** A tool that defaults its search root to the working directory
+  answers about that directory alone, and a shell whose `cd` persists between calls moves that root without
+  saying so. "Nothing outside this file names it" then reads the same as "nothing outside this **package** names
+  it", which is how a used export is deleted as dead — and the deletion typechecks inside its own package, so
+  the failure surfaces one package away or not at all. Pass the repo root explicitly on any scan whose whole
+  claim is that a name has no consumers, rather than trusting where the last command left you.
