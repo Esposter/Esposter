@@ -2,6 +2,12 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { JoinCallResult } from "@@/server/models/room/call/JoinCallResult";
 import type { CallSessionInMessage } from "@esposter/db-schema";
 
+import { callSessionIdInputSchema } from "#shared/models/db/call/CallSessionIdInput";
+import { callSessionInputSchema } from "#shared/models/db/call/CallSessionInput";
+import { roomCallInputSchema } from "#shared/models/db/call/RoomCallInput";
+import { setCameraEnabledInputSchema } from "#shared/models/db/call/SetCameraEnabledInput";
+import { setHandRaisedInputSchema } from "#shared/models/db/call/SetHandRaisedInput";
+import { setMutedInputSchema } from "#shared/models/db/call/SetMutedInput";
 import { on } from "@@/server/services/events/on";
 import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
@@ -23,32 +29,9 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { knockerRouter } from "@@/server/trpc/routers/call/knocker";
 import { checkHasPermission } from "@esposter/db";
-import {
-  AzureEntityType,
-  callSessionIdSchema,
-  DatabaseEntityType,
-  roomIdSchema,
-  RoomPermission,
-  selectCallSessionInMessageSchema,
-} from "@esposter/db-schema";
+import { AzureEntityType, callSessionIdSchema, DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
-import { z } from "zod";
 
-const callSessionIdInputSchema = selectCallSessionInMessageSchema.shape.id;
-const callSessionInputSchema = z.object({ id: callSessionIdInputSchema });
-// A room call and a thread call are the same call addressed by where it is, and the empty root rowKey is the
-// Room's own
-const roomCallInputSchema = z.object({
-  ...roomIdSchema.shape,
-  threadRootRowKey: z.string().default(""),
-});
-const setCameraEnabledInputSchema = z.object({ ...callSessionIdSchema.shape, isCameraEnabled: z.boolean() });
-const setHandRaisedInputSchema = z.object({
-  ...callSessionIdSchema.shape,
-  isHandRaised: z.boolean(),
-  participantId: z.string(),
-});
-const setMutedInputSchema = z.object({ ...callSessionIdSchema.shape, isMuted: z.boolean() });
 // The live participant row is the only place a per-session flag lives: a session with no row has not joined,
 // Whether it is the caller's own or the target of a moderation
 const requireCallParticipant = (callSessionId: string, sessionId: string) => {

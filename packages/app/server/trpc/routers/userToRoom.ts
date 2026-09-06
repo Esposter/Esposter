@@ -1,5 +1,7 @@
 import type { UserToRoomInMessage } from "@esposter/db-schema";
 
+import { readMyUsersToRoomsInputSchema } from "#shared/models/db/userToRoom/ReadMyUsersToRoomsInput";
+import { readNicknamesInputSchema } from "#shared/models/db/userToRoom/ReadNicknamesInput";
 import { updateUserToRoomInputSchema } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
 import { on } from "@@/server/services/events/on";
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
@@ -8,18 +10,8 @@ import { router } from "@@/server/trpc";
 import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { roomIdSchema, roomIdsSchema, userIdsSchema, usersToRoomsInMessage } from "@esposter/db-schema";
+import { roomIdSchema, roomIdsSchema, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, ne } from "drizzle-orm";
-import { z } from "zod";
-
-const readNicknamesInputSchema = z.object({
-  ...roomIdSchema.shape,
-  userIds: userIdsSchema.shape.userIds.min(1),
-});
-
-const readMyUsersToRoomsInputSchema = z.object({
-  roomIds: roomIdsSchema.shape.roomIds.min(1),
-});
 
 const onUpdateUserToRoomInputSchema = roomIdsSchema.shape.roomIds.min(1);
 
