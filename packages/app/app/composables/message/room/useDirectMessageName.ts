@@ -14,7 +14,7 @@ export const useDirectMessageName = (room: MaybeRefOrGetter<RoomInMessage | unde
 
     const participants = getDirectMessageParticipants(roomValue.id);
     if (participants.length === 0) return "";
-    if (participants.length === 1) return takeOne(participants).name;
-    return participants.map(({ name }) => name).join(", ");
+    else if (participants.length === 1) return takeOne(participants).name;
+    else return participants.map(({ name }) => name).join(", ");
   });
 };

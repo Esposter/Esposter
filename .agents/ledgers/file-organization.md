@@ -11,11 +11,11 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/shared/models/dungeons`                                               | 2026-09-06 |                                                                                              |
 | `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | 2026-09-06 |                                                                                              |
 | `app/shared/models` — the rest                                             | 2026-09-06 | the small folders, several of them a single file                                             |
-| `app/services`                                                             | —          | models vs services vs utils vs constants; duplicate constants                                |
+| `app/services`                                                             | 2026-09-06 | a file is named for its export, and a second map is a second file                            |
 | `app/models/dungeons`                                                      | 2026-09-06 | a class hierarchy stays a model; a map and the behaviour it dispatches to do not             |
-| `app/models/resource`                                                      | —          | the value maps a `Map`-suffixed name gives away belong in `services`                         |
-| `app/models/message`                                                       | —          | the value maps a `Map`-suffixed name gives away belong in `services`                         |
-| `app/models` — the rest                                                    | —          | `UnifiedColors` reaches the vuetify config by relative path                                  |
+| `app/models/resource`                                                      | 2026-09-06 | a command class stays a model; the map beside a form union does not                          |
+| `app/models/message`                                                       | 2026-09-06 | a type derived from a services map is a type-only import, not a move                         |
+| `app/models` — the rest                                                    | 2026-09-06 | the resolver class hierarchies stay models, like the sheet commands                          |
 | `app/util`                                                                 | 2026-09-06 | a type-only third-party import is the `util/types` escape, not a `services/` move            |
 | `app/types`                                                                | 2026-09-06 | ambient `.d.ts` only                                                                         |
 | `app/composables`                                                          | 2026-09-06 | sole-consumer subfolders                                                                     |
@@ -24,9 +24,9 @@ The question is where a thing lives and whether it exists twice — one export p
 | `server/trpc` — the resource family                                        | 2026-09-06 | `resource`, `survey`, `program`, `procedure/resource`                                        |
 | `server/trpc` — the room family                                            | 2026-09-06 | `room`, `call`, `userToRoom`                                                                 |
 | `server/trpc` — the rest                                                   | 2026-09-06 | the loose routers, `guards`, `procedure`, `plugins`, `middleware`                            |
-| `app/components/Message`                                                   | —          | splits further at `Model/` on contact                                                        |
-| `app/components/Resource`                                                  | —          |                                                                                              |
-| `app/components` — the rest                                                | —          |                                                                                              |
+| `app/components/Message`                                                   | 2026-09-06 | the stray-component half is `components/index.test.ts`, not a pass                           |
+| `app/components/Resource`                                                  | 2026-09-06 |                                                                                              |
+| `app/components` — the rest                                                | 2026-09-06 | a `*Props.ts` beside its component is colocation, not a stray model                          |
 | `packages/db-schema` — `models`                                            | 2026-09-06 |                                                                                              |
 | `packages/db-schema` — `schema`, `relations`                               | 2026-09-06 | a table file declares the table and its select schema; enums live in `models`                |
 | `packages/db-schema` — `services`, root                                    | 2026-09-06 |                                                                                              |
@@ -75,8 +75,9 @@ finding: one consumer does not earn a place in a shared package.
 
 - Generated barrels (`index.ts` from `ctix`) and `snapshot.json` — machine state.
 - Literals a postinstall-evaluated or JSON config must repeat, which the skill names as the one sanctioned duplication.
-- `getSynchronizedFunction.ts` exporting `waitForSynchronizedFunctions` beside it: the pair shares the pending
-  set through closure, so one-export-per-file cannot reach them without making that state a module global.
+- Two exports sharing module-private state through closure — a pending set, a cached promise, a code set, a
+  dispatch map. One-export-per-file cannot reach them without making that state a module global, which trades a
+  file boundary for a wider one.
 
 ## Next enforceable
 

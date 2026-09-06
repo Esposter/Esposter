@@ -16,6 +16,8 @@ const errorMessage = computed(() => {
   const error = editForm?.errors[0];
   if (error) {
     const errorText = takeOne(error.errorMessages);
+    // Safe to read the DOM from a computed: an error only exists once the form has validated on the client, and
+    // The form is a template ref, so there is nothing to validate during the server render
     const element = window.document.querySelector(`label[for="${error.id}"]`);
     return element ? `${element.textContent}: ${errorText}` : errorText;
   }

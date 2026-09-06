@@ -10,9 +10,19 @@ export const AzureFunctionIsIdempotentMap = {
   // Deletes each blob with deleteIfExists, so a blob an earlier attempt already removed is a no-op rather than a
   // 404: a replay converges on the same empty state instead of duplicating work.
   [AzureFunction.ProcessBlobDeletion]: true,
-  // Delivers an already-persisted occurrence to its recipients: a second delivery is a duplicate notification for a
-  // Notification that was never delivered in the first place, which is the outcome the replay exists to produce. The
-  // Bell row it also writes duplicates rather than repairs, which is the same trade and the same answer.
+  // Delivers an already-persisted occurrence to its recipients. Its bell write is the last step that may fail the
+  // Invocation — the retention trim, the subscription read and every push past it are best-effort — so nothing the
+  // Handler does after the rows land can ask for the redelivery that would write them twice.
+  //
+  // What that does not remove is delivery's own at-least-once window: a host that dies between the insert
+  // Committing and the acknowledgement reaching Event Grid is redelivered and inserts a second set of rows. Closing
+  // That needs the envelope's event id claimed in the same transaction as the insert, the way
+  // ProcessScheduledMessageJob claims its job below — and it is deliberately not built, because the cost of the
+  // Duplicate is one repeated bell row and one repeated push, which the retention trim bounds and the reader
+  // Dismisses. The claim is what a duplicate *message in a room* is worth, not what a duplicate notification is.
+  // So this `true` means "no handler-caused duplicate", which is the bar the replay gate needs: a dead letter is
+  // Almost always an occurrence nobody was told about, and quarantining it to avoid a rare double-notify would
+  // Trade a certain silence for an unlikely repeat.
   [AzureFunction.ProcessNotification]: true,
   // Creates a message like ProcessWebhook does, but claims its job on `processingStartedAt IS NULL` first: a rerun
   // Finds the job already claimed and does nothing, so the second copy the fresh rowKey would produce never lands.

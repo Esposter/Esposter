@@ -32,15 +32,15 @@ a better arrangement of our own is an acceptable answer to it, as long as a comm
 
 | Unit                                             | Swept      | Notes                                                                                      |
 | ------------------------------------------------ | ---------- | ------------------------------------------------------------------------------------------ |
-| custom emoji                                     | 2026-08-21 |                                                                                            |
-| the rest of room settings — the other panels     | 2026-08-22 | which panels a member may see is a gate map with a test over it                            |
-| messaging — composer, message actions, reactions | 2026-08-22 | a dialog's composer entry and its slash command share one execute switch and one icon      |
-| messaging — rooms, invites, roles, moderation    | 2026-08-22 | the role toggle is one component over one composable, so no surface reads hierarchy itself |
-| calls                                            | 2026-08-22 |                                                                                            |
-| resource explorer — blades and the service menu  | 2026-08-22 | the reference product here is the Azure portal                                             |
-| resource editors — sheet, dashboard, flowchart   | 2026-08-22 | the sheet's Settings blade is its data-source configuration and nothing else               |
-| user settings and profile                        | 2026-08-22 | the settings dialog and `/user/settings` render the same cards rather than two forms       |
-| posts and achievements                           | 2026-08-22 | the reference products here are Reddit and GitHub                                          |
+| custom emoji                                     | 2026-09-06 |                                                                                            |
+| the rest of room settings — the other panels     | 2026-09-06 | which panels a member may see is a gate map with a test over it                            |
+| messaging — composer, message actions, reactions | 2026-09-06 | a dialog's composer entry and its slash command share one execute switch and one icon      |
+| messaging — rooms, invites, roles, moderation    | 2026-09-06 | the role toggle is one component over one composable, so no surface reads hierarchy itself |
+| calls                                            | 2026-09-06 |                                                                                            |
+| resource explorer — blades and the service menu  | 2026-09-06 | the reference product here is the Azure portal                                             |
+| resource editors — sheet, dashboard, flowchart   | 2026-09-06 | the sheet's Settings blade is its data-source configuration and nothing else               |
+| user settings and profile                        | 2026-09-06 | the settings dialog and `/user/settings` render the same cards rather than two forms       |
+| posts and achievements                           | 2026-09-06 | the reference products here are Reddit and GitHub                                          |
 
 ## Open findings
 

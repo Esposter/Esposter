@@ -2,6 +2,7 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
 import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
+import type { Item } from "@/models/shared/Item";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
 import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
@@ -10,6 +11,10 @@ import { ResourceListSourceDefinitionMap } from "@/services/resource/list/Resour
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { useListDialogStore } from "@/store/resource/listDialog";
 import { RoutePath } from "@esposter/shared";
+
+// A row is always in the map it was built from, so this only satisfies the lookup type — bound as a module constant
+// So the fallback cannot allocate per render
+const NO_ACTION_ITEMS: Item[] = [];
 
 interface Props {
   source?: ResourceListSource;
@@ -54,6 +59,9 @@ const { count, createResourcesPageReader, error, isPending, items, readResources
   },
   source,
 );
+// One build per page rather than one per row per render — the row ⋮ menu binds an array of closures, so rebuilding
+// It inline hands the menu a new identity on every parent render
+const resourceIdActionItemsMap = computed(() => new Map(items.value.map((item) => [item.id, getActionItems(item)])));
 const { exportAllResourcesCsv } = useExportResourcesCsv();
 // One spelling of "everything this list is filtered by", so adding a filter is one edit rather than three
 const filterValues = computed<ResourceFilterValues>(() => ({
@@ -194,7 +202,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       </template>
       <template #[`item.actions`]="{ item }">
         <div @click.stop>
-          <StyledOverflowMenu :items="getActionItems(item)" />
+          <StyledOverflowMenu :items="resourceIdActionItemsMap.get(item.id) ?? NO_ACTION_ITEMS" />
         </div>
       </template>
       <template #group-header="{ columns, isGroupOpen, item, toggleGroup }">

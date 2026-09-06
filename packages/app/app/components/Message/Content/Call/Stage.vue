@@ -13,8 +13,8 @@ const { callParticipantMap, participantTilePropsMap, presenterName } = useCallPa
 const isScreenSharePresenting = computed(() => hasScreenShare.value && Boolean(activeScreenShareStream.value));
 const callParticipantGridClass = computed(() => {
   if (callParticipantMap.value.size <= 1) return "grid-cols-1";
-  if (callParticipantMap.value.size === 2) return "grid-cols-1 md:grid-cols-2";
-  return "grid-cols-1 md:grid-cols-2 xl:grid-cols-3";
+  else if (callParticipantMap.value.size === 2) return "grid-cols-1 md:grid-cols-2";
+  else return "grid-cols-1 md:grid-cols-2 xl:grid-cols-3";
 });
 </script>
 

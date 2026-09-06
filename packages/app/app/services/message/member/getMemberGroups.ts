@@ -23,7 +23,7 @@ export const getMemberGroups = <TMember extends Pick<User, "id">>(
   }
   return [...roleIdGroupMap.values()].toSorted((firstGroup, secondGroup) => {
     if (!firstGroup.role) return 1;
-    else if (!secondGroup.role) return -1;
-    return secondGroup.role.position - firstGroup.role.position;
+    else if (secondGroup.role) return secondGroup.role.position - firstGroup.role.position;
+    else return -1;
   });
 };

@@ -24,7 +24,7 @@ describe("workspace package symlinks", () => {
       const path = join(directory, entry.name);
       if (entry.isSymbolicLink()) return [path];
       else if (entry.isDirectory() && entry.name !== NODE_MODULES_DIRECTORY) return readSymlinkPaths(path);
-      return [];
+      else return [];
     });
 
   test("never resolve outside their own package", () => {

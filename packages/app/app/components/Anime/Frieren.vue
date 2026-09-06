@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FrierenExpressions } from "@/services/anime/frierenExpressions";
+import { FrierenExpressions } from "@/services/anime/FrierenExpressions";
 </script>
 
 <template>

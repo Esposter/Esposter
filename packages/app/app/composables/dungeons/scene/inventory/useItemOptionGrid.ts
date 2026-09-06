@@ -13,7 +13,7 @@ const ItemOptionGrid = new Grid<(Item | PlayerSpecialInput.Cancel)[][]>({
     // Runs — the guard is what lets the item check take an item rather than an item-or-nothing
     if (!value) return false;
     else if (value === PlayerSpecialInput.Cancel) return true;
-    return useIsUsableItem(value);
+    else return useIsUsableItem(value);
   },
   wrap: true,
 });

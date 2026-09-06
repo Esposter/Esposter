@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SerializableValue } from "@esposter/azure";
 
-import { FilterTypeHasIconMap } from "@/models/message/FilterTypeHasIconMap";
+import { FilterTypeHasIconMap } from "@/services/message/FilterTypeHasIconMap";
 import { FilterTypeHases } from "@esposter/db-schema";
 
 const emit = defineEmits<{ select: [value: SerializableValue] }>();

@@ -4,7 +4,7 @@
 
 | Area                 | Score   | Notes                                                                      |
 | -------------------- | ------- | -------------------------------------------------------------------------- |
-| Architecture         | 20 / 20 | 14 packages, clean DAG, data-driven maps, command pattern                  |
+| Architecture         | 20 / 20 | 15 packages, clean DAG, data-driven maps, command pattern                  |
 | TypeScript           | 10 / 10 | Maximum strictness; `skipLibCheck` only trade-off                          |
 | Code Quality         | 10 / 10 | Guard clauses, `InvalidOperationError`, `neverthrow` over `try`/`catch`    |
 | Testing              | 10 / 10 | Several hundred test files; only Phaser store gaps remain                  |
@@ -20,7 +20,7 @@ A TypeScript-strict monorepo with strong architectural discipline and comprehens
 
 ## Architecture & Organisation — 20 / 20
 
-14 packages with clear responsibilities and a sensible dependency DAG (`shared` has no Vue deps, `db-schema` has no server deps). Data-driven map pattern (`*TypeColorMap`, `ColumnStatDefinitionMap`) enforces single-entry extension. Command pattern for undo/redo is well-scoped. Dozens of tRPC routers and well over a hundred Pinia store files, split across a dozen feature modules. Barrel files managed by ctix — no accidental re-export drift.
+15 packages with clear responsibilities and a sensible dependency DAG (`shared` has no Vue deps, `db-schema` has no server deps). Data-driven map pattern (`*TypeColorMap`, `ColumnStatDefinitionMap`) enforces single-entry extension. Command pattern for undo/redo is well-scoped. Dozens of tRPC routers and well over a hundred Pinia store files, split across a dozen feature modules. Barrel files managed by ctix — no accidental re-export drift.
 
 ## TypeScript — 10 / 10
 

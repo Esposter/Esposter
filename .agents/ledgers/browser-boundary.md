@@ -2,11 +2,11 @@
 
 | Unit                                         | Swept      | Notes                                               |
 | :------------------------------------------- | :--------- | :-------------------------------------------------- |
-| `app/services`, `app/util`                   | 2026-08-26 |                                                     |
-| `app/store`                                  | 2026-08-26 | `message/input` — the Map is the storage            |
-| `app/composables`                            | 2026-08-26 | holds the standing exception below                  |
-| `app/components`, `app/pages`, `app/plugins` | 2026-08-26 | phases, plus one genuine fork                       |
-| `app/middleware`, `app/layouts`              | 2026-08-26 | the only browser reach is a `.client.ts` middleware |
+| `app/services`, `app/util`                   | 2026-09-06 |                                                     |
+| `app/store`                                  | 2026-09-06 | `message/input` — the Map is the storage            |
+| `app/composables`                            | 2026-09-06 | holds the standing exception below                  |
+| `app/components`, `app/pages`, `app/plugins` | 2026-09-06 | phases, plus one genuine fork                       |
+| `app/middleware`, `app/layouts`              | 2026-09-06 | the only browser reach is a `.client.ts` middleware |
 
 Rules: `/docs/architecture/browser-execution`. Greps, per unit:
 

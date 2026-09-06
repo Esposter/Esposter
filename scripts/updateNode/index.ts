@@ -5,6 +5,7 @@ import { getRegistryLatestVersionForPrefix } from "#scripts/updateNode/getRegist
 import { setCatalogTypesNode } from "#scripts/updateNode/setCatalogTypesNode";
 import { setDevEnginesRuntime } from "#scripts/updateNode/setDevEnginesRuntime";
 import { setEnginesNode } from "#scripts/updateNode/setEnginesNode";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -45,7 +46,7 @@ const result = spawnSync(`pnpm crossOS update:node ${version} ${oldVersion}`, {
   shell: true,
   stdio: "inherit",
 });
-if (result.status !== 0) throw new Error("fnm install/switch failed");
+if (result.status !== 0) throw new InvalidOperationError(Operation.Update, "update:node", "fnm install/switch failed");
 
 console.info(
   isNewVersion

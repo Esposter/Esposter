@@ -13,12 +13,12 @@ const { storageUsage } = storeToRefs(storageStore);
 const usedPercentage = computed(() => {
   if (!storageUsage.value) return 0;
   else if (storageUsage.value.quotaBytes === 0) return 100;
-  return Math.min((storageUsage.value.bytesUsed / storageUsage.value.quotaBytes) * 100, 100);
+  else return Math.min((storageUsage.value.bytesUsed / storageUsage.value.quotaBytes) * 100, 100);
 });
 const usedColor = computed(() => {
   if (usedPercentage.value >= STORAGE_USAGE_ERROR_PERCENTAGE) return "error";
   else if (usedPercentage.value >= STORAGE_USAGE_WARNING_PERCENTAGE) return "warning";
-  return "primary";
+  else return "primary";
 });
 // The label and the tooltip say the same thing, so they say it from one place
 const usageText = computed(() =>

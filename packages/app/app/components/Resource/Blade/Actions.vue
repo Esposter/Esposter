@@ -45,19 +45,19 @@ const createFormatCommands = (
   else if (formats.length === 1) {
     const format = takeOne(formats);
     return [{ icon, isGroupStart, onClick: () => getRun(format)?.(), title: `${verb} ${format.label}` }];
-  }
-  return [
-    {
-      icon,
-      isGroupStart,
-      items: formats.map<Item>((format) => ({
-        icon: format.icon,
-        onClick: () => getRun(format)?.(),
-        title: format.label,
-      })),
-      title: verb,
-    },
-  ];
+  } else
+    return [
+      {
+        icon,
+        isGroupStart,
+        items: formats.map<Item>((format) => ({
+          icon: format.icon,
+          onClick: () => getRun(format)?.(),
+          title: format.label,
+        })),
+        title: verb,
+      },
+    ];
 };
 // One command set rendered two ways — a labelled bar when there is room, the overflow menu when there is not.
 // Built once rather than written twice, so a label, an icon or a pending state cannot differ between them

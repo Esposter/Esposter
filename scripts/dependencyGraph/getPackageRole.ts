@@ -9,5 +9,5 @@ export const getPackageRole = (directory: string, { development, runtime }: Work
   if (!runtime.some(({ to }) => to === directory) && !development.some(({ to }) => to === directory))
     return PackageRole.Entrypoint;
   else if (runtime.some(({ from }) => from === directory)) return PackageRole.Library;
-  return PackageRole.Foundation;
+  else return PackageRole.Foundation;
 };

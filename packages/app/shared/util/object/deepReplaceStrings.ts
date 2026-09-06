@@ -11,9 +11,10 @@ export const deepReplaceStrings = <TValue>(value: TValue, replace: (value: strin
   if (typeof value === "string") return replace(value) as TValue;
   else if (Array.isArray(value)) return value.map((item) => deepReplaceStrings(item, replace)) as TValue;
   else if (value === null || typeof value !== "object" || value instanceof Date) return value;
-  return Object.fromEntries(
-    Object.entries(value)
-      .filter(([, item]) => item !== undefined)
-      .map(([key, item]) => [key, deepReplaceStrings(item, replace)]),
-  ) as TValue;
+  else
+    return Object.fromEntries(
+      Object.entries(value)
+        .filter(([, item]) => item !== undefined)
+        .map(([key, item]) => [key, deepReplaceStrings(item, replace)]),
+    ) as TValue;
 };

@@ -76,7 +76,7 @@ So it is typed `readonly`, and the write does not compile. A writer comes from `
 Two corollaries that are easy to get backwards:
 
 - **Resolve per operation, never per composable.** A composable that outlives one target (`useMessageCache` is constructed once and lives across every room switch) would bind to the first key and stay there forever, which is worse than not binding at all — so a long-lived consumer takes `getSlice` itself and resolves inside the operation.
-- **A partition that has already been named needs no re-check.** `usePaginationCache` used to bail when the partition moved on mid-hydrate; it now hydrates `getSlice(partitionKey)`, so the late write lands in the partition it was read for and re-opening that partition shows it. A guard added back on top would drop rows that are correctly filed.
+- **A partition that has already been named needs no re-check.** `usePaginationCache` hydrates `getSlice(partitionKey)` unconditionally, so a write that lands after the partition has moved on is still filed under the partition it was read for, and re-opening that partition shows it. A staleness guard on top of that — bailing because the current partition is no longer the one being hydrated — drops rows that are correctly filed.
 
 Why the readonly type rather than a convention everyone remembers: the `invariants` skill.
 

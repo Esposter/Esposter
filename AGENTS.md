@@ -33,10 +33,13 @@ From `packages/app/` unless noted. Always `pnpm`, never `npx`/`npm`.
 ```bash
 pnpm dev                                # start dev server
 pnpm typecheck                          # vue-tsc
-pnpm lint:fix                           # eslint --fix — the local lint check
 pnpm test path/to/file.test.ts --run    # a named suite; never a bare full run locally
 pnpm coverage                           # from the repo root, across all workspace projects
 ```
+
+**Lint is a root command.** A package's own `lint` is ESLint over that package and nothing else, so it carries no
+oxlint rule and reaches no other package — a change that passes it still fails CI. `pnpm lint:fix` from the repo
+root is the one that matches the workflow (`package-scripts`).
 
 From the repo root: `pnpm i` after a manifest change, `pnpm update:node [version]` to bump node everywhere, `pnpm graph:gen` for `dependency-graph.svg`. In the package where exports changed: `pnpm export:gen` regenerates the ctix barrel, which every build also does for itself. Migrations are generated from `packages/db-schema/` and applied at app startup, never from the CLI — the `drizzle` skill owns all of it.
 
@@ -49,7 +52,7 @@ Working is not finished. Once the change does what it should — a feature, a fi
 1. **`/code-review` over what you changed.** Both lanes, unprompted, every time: quality (reuse, simplification, efficiency, altitude) and correctness (defects, broken conventions). A first draft of anything non-trivial leaves duplicated copy, a constant restated in two files, a twin of an existing helper, or a special case that belonged in the shared mechanism — that gets found here, not by a reviewer. The `code-review` skill owns the lanes, which rules a window loads, the trigger rule a finding must carry, and the stop rule.
 2. **Ground the result in tests — only where a test earns its line.** This step deletes at least as often as it adds. Add the regression test for what the review exposed; add nothing another enforcer already owns (typecheck, a Zod constraint, an existing test), because such a test cannot fail honestly and only pins today's implementation; and trim the tests the change made redundant. The full criterion is the `testing` skill's "What to Test".
 3. **Carry the docs and skills with it.** A shipped decision updates its owning docs page and, if it is a reusable convention, its owning skill (`docs`, `skill-authoring`) — in the same change, never "later". A rename owes the same sweep over prose: grep the old name across `content/docs`, `.agents/skills`, `.agents/ledgers` and the READMEs, and fix the flow diagrams that label an edge with it. No test fails on a name that only lives in a sentence.
-4. **`pnpm format` → `typecheck` → `lint:fix` → tests**, batched once at the end (`context-efficiency`, `package-scripts`). Tests means the paths the change touched, passed as arguments.
+4. **`pnpm format` → `typecheck` → `lint:fix` → tests**, batched once at the end, with **`lint:fix` run from the repo root** (`context-efficiency`, `package-scripts`). Tests means the paths the change touched, passed as arguments — plus, where a change moved bytes into a bundle, that package's own suite, since only a fresh build moves its size snapshot.
 5. **Commit** the coherent chunk. Never push unless asked — but once asked, step 4 does not stand in the way: a review slot costs an hour and the checks cost minutes, so the push goes out and the checks run against the same tree beside it (`coderabbit`). Anything they turn up is a commit in the next window.
 
 Skip step 1 only for a genuinely one-line change. When a step finds nothing, say so — that is a result.

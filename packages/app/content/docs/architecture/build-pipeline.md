@@ -150,7 +150,7 @@ A published package owes an installable promise to a stranger, and two more opti
 
 A private package gets neither, because nobody installs it — and it emits no declarations either, for the same reason. Its `dist` is only ever reached through the `default` arm by something that _runs_ it: a host loading a deploy artifact, Node loading the infrastructure program. Everything that types against a workspace package resolves the source condition and reads its TypeScript instead, so the `.d.ts` had no reader.
 
-That is not a small saving. A package whose types cannot satisfy `isolatedDeclarations` falls back to a full TypeScript program rather than the oxc transform, and for the Drizzle schema — 206 files of inferred table types — that was four minutes and a 6.8 MB file. It left one invariant behind worth keeping: declarations are emitted only where `isolatedDeclarations` holds, so no build here takes the slow path.
+That is not a small saving. A package whose types cannot satisfy `isolatedDeclarations` falls back to a full TypeScript program rather than the oxc transform, and for the Drizzle schema — two hundred-odd files of inferred table types — that was four minutes and a 6.8 MB file. It left one invariant behind worth keeping: declarations are emitted only where `isolatedDeclarations` holds, so no build here takes the slow path.
 
 ## How a package refers to its own source
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
 
-import { CodeRenderer, DefaultRenderer, TypeRendererMap } from "@/models/message/file/TypeRendererMap";
 import { getLanguage } from "@/services/codemirror/getLanguage";
 import { getInferredMimetype } from "@/services/file/getInferredMimetype";
+import { CodeRenderer, DefaultRenderer, TypeRendererMap } from "@/services/message/file/TypeRendererMap";
 import { takeOne } from "@esposter/shared";
 
 const props = defineProps<FileRendererComponentProps>();

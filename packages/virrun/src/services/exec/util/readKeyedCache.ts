@@ -20,7 +20,7 @@ export const readKeyedCache = <TValue>(
     (cache) => {
       if (cache.key !== key) return undefined;
       else if (maxAgeMs !== undefined && Date.now() - cache.storedAtMs > maxAgeMs) return undefined;
-      return cache.value;
+      else return cache.value;
     },
     () => undefined,
   );
