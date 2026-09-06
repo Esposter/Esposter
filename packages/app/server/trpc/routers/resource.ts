@@ -1,3 +1,4 @@
+import type { ResourceFilterInput } from "#shared/models/db/resource/ResourceFilterInput";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
@@ -10,16 +11,20 @@ import type { Context } from "@@/server/trpc/context";
 import type { Clause } from "@esposter/azure";
 import type { Resource } from "@esposter/db-schema";
 
+import { deleteResourcesInputSchema } from "#shared/models/db/resource/DeleteResourcesInput";
+import { readActivitiesInputSchema } from "#shared/models/db/resource/ReadActivitiesInput";
+import { readDeletedResourcesInputSchema } from "#shared/models/db/resource/ReadDeletedResourcesInput";
+import { readResourceListInputSchema } from "#shared/models/db/resource/ReadResourceListInput";
+import { resourceFilterInputSchema } from "#shared/models/db/resource/ResourceFilterInput";
+import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
+import { restoreSnapshotVersionInputSchema } from "#shared/models/db/resource/RestoreSnapshotVersionInput";
+import { saveResourceRevisionInputSchema } from "#shared/models/db/resource/SaveResourceRevisionInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
-import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
-import { resourceListSortKeySchema } from "#shared/models/resource/ResourceListItem";
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { SnapshotKind } from "#shared/models/resource/SnapshotKind";
 import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
-import { MAX_SNAPSHOT_LABEL_LENGTH } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
@@ -59,22 +64,12 @@ import {
   RESOURCE_NAME_MAX_LENGTH,
   resourceAccesses,
   ResourceActivityEntity,
-  resourceActivityEntitySchema,
   ResourceActivityType,
   resourceFavorites,
   resourcePublications,
   resources,
-  resourceTypeSchema,
-  selectResourceSchema,
 } from "@esposter/db-schema";
-import {
-  createNormalizedStringSchema,
-  createUniqueArraySchema,
-  MAX_READ_LIMIT,
-  Operation,
-  RoutePath,
-  takeOne,
-} from "@esposter/shared";
+import { MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
 import {
   and,
   asc,
@@ -92,73 +87,7 @@ import {
   or,
   sql,
 } from "drizzle-orm";
-import { z } from "zod";
 
-const readResourceInputSchema = selectResourceSchema.pick({ id: true });
-
-const restoreSnapshotVersionInputSchema = z.object({
-  ...readResourceInputSchema.shape,
-  // Which address space the version belongs to: the two channels number independently, so a version alone
-  // Names two different snapshots and the caller has to say which of them it means
-  channel: z.enum(SnapshotChannel),
-  version: z.int().positive(),
-});
-
-// The reasons a client may name, which is not the whole enum: Automatic is decided by the save path from a
-// Clock, and BeforeRestore by the restore itself. Both would be a lie coming from a caller
-const saveResourceRevisionInputSchema = z
-  .object({
-    ...readResourceInputSchema.shape,
-    label: createNormalizedStringSchema(MAX_SNAPSHOT_LABEL_LENGTH).default(""),
-    reason: z.enum([SnapshotReason.BeforeImport, SnapshotReason.Manual]).default(SnapshotReason.Manual),
-  })
-  // A label is what the owner typed when they took a version by hand, so it belongs to that reason alone: a
-  // Labelled BeforeImport row reads in the history as a milestone someone chose, when the import took it
-  .refine(({ label, reason }) => label === "" || reason === SnapshotReason.Manual, {
-    message: `A label is only accepted on a ${SnapshotReason.Manual} revision`,
-  });
-
-const resourceFilterInputSchema = z.object({
-  // Narrows a read to an explicit set — the search dropdown resolves its own ids this way
-  ids: createUniqueArraySchema(selectResourceSchema.shape.id).max(MAX_READ_LIMIT).optional(),
-  // Whether the caller has ever opened it, and whether they have starred it. The Recent and Favorites list
-  // Views are these two filters and nothing else, so each inherits every other filter, the row count and the
-  // Summary cards rather than re-implementing the workbench against its own read
-  isAccessed: z.boolean().optional(),
-  isFavorite: z.boolean().optional(),
-  isPublished: z.boolean().optional(),
-  searchQuery: z.string().optional(),
-  // The Tag pill's value is optional, and containment cannot express "has this tag, any value" —
-  // That is key-existence, so the two filters are separate inputs rather than one nullable record
-  tagName: z.string().optional(),
-  // Filters are lookups, not writes: an unsaveable tag (over-length, blank name) can simply never
-  // Match, so reusing the write-time resourceTagsSchema here would only turn "no results" into a
-  // Rejected query that errors the whole list
-  tags: z.record(z.string(), z.string()).optional(),
-  types: z.array(resourceTypeSchema).optional(),
-  updatedAfter: z.date().optional(),
-  updatedBefore: z.date().optional(),
-});
-
-type ResourceFilterInput = z.infer<typeof resourceFilterInputSchema>;
-
-const readResourcesInputSchema = z.object({
-  ...createOffsetPaginationParamsSchema(resourceListSortKeySchema).shape,
-  ...resourceFilterInputSchema.shape,
-});
-
-const readDeletedResourcesInputSchema = createOffsetPaginationParamsSchema(resourceListSortKeySchema).prefault({});
-
-const readActivitiesInputSchema = z.object({
-  ...readResourceInputSchema.shape,
-  ...createCursorPaginationParamsSchema(resourceActivityEntitySchema.keyof(), [MESSAGE_ROWKEY_SORT_ITEM]).omit({
-    sortBy: true,
-  }).shape,
-});
-
-const deleteResourcesInputSchema = z.object({
-  ids: createUniqueArraySchema(selectResourceSchema.shape.id).min(1).max(MAX_READ_LIMIT),
-});
 // Appended to a duplicated resource's name; the base name is truncated so the whole stays within the length check
 const DUPLICATE_NAME_SUFFIX = " (copy)";
 // Not index-backed — resources_name_trgm_index serves the `ilike` arm below, not a `similarity()` inequality
@@ -243,7 +172,7 @@ export const resourceRouter = router({
         });
       return deletedResources;
     }),
-  duplicateResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
+  duplicateResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
     const { name, tags, type } = ctx.resource;
     const newResource = await createResourceRow(
       ctx,
@@ -279,7 +208,7 @@ export const resourceRouter = router({
     });
     return newResource;
   }),
-  purgeResource: getOwnerProcedure(undefined, readResourceInputSchema, "id", true).mutation<Resource>(
+  purgeResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id", true).mutation<Resource>(
     async ({ ctx, input: { id } }) => {
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
       // Purge is the only place these partitions are destroyed, since delete is soft
@@ -349,7 +278,7 @@ export const resourceRouter = router({
   }),
   // Publish state rides the row rather than answering a second request: `resourcePublications` is one table
   // For every type, so this cross-type read resolves it whatever the resource turns out to be
-  readResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").query<ResourceWithPublication>(
+  readResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id").query<ResourceWithPublication>(
     async ({ ctx }) => ({
       ...ctx.resource,
       publication:
@@ -357,7 +286,7 @@ export const resourceRouter = router({
     }),
   ),
   readResources: standardAuthedProcedure
-    .input(readResourcesInputSchema.prefault({}))
+    .input(readResourceListInputSchema.prefault({}))
     .query<OffsetPaginationData<ResourceListItem>>(async ({ ctx, input: { limit, offset, sortBy, ...filter } }) => {
       const userId = ctx.getSessionPayload.user.id;
       const resultResources = await ctx.db
@@ -426,7 +355,7 @@ export const resourceRouter = router({
   // Both channels in one time-ordered list, because the owner has one question — where can I go back to — and
   // The channels are an address space rather than two things to make them choose between. Every type is asked
   // For both: a non-publishable one simply has no published prefix to enumerate
-  readSnapshotHistory: getOwnerProcedure(undefined, readResourceInputSchema, "id").query<SnapshotVersion[]>(
+  readSnapshotHistory: getOwnerProcedure(undefined, resourceIdInputSchema, "id").query<SnapshotVersion[]>(
     async ({ ctx }) => {
       const publication = await ctx.db.query.resourcePublications.findFirst({
         where: { resourceId: { eq: ctx.resource.id } },
@@ -442,7 +371,7 @@ export const resourceRouter = router({
   ),
   // An upsert rather than an insert: the open that just happened is always the newest, so there is nothing to
   // Compare. Owner-scoped, like every other resource write
-  recordAccess: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<void>(
+  recordAccess: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<void>(
     async ({ ctx, input: { id } }) => {
       const userId = ctx.getSessionPayload.user.id;
       await ctx.db
@@ -454,7 +383,7 @@ export const resourceRouter = router({
         });
     },
   ),
-  restoreResource: getOwnerProcedure(undefined, readResourceInputSchema, "id", true).mutation<Resource>(
+  restoreResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id", true).mutation<Resource>(
     async ({ ctx, input: { id } }) => {
       // Names are not unique, so a restore can never conflict
       const restoredResource = requireMutation(
@@ -559,7 +488,7 @@ export const resourceRouter = router({
   saveResourceRevision: getOwnerProcedure(undefined, saveResourceRevisionInputSchema, "id").mutation<
     number | undefined
   >(({ ctx, input: { label, reason } }) => takeResourceRevision(ctx, ctx.resource, reason, label)),
-  toggleFavorite: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<boolean>(
+  toggleFavorite: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<boolean>(
     async ({ ctx, input: { id } }) => {
       const userId = ctx.getSessionPayload.user.id;
       // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports
