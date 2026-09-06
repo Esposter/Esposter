@@ -1,5 +1,6 @@
 import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 
+import { checkIsConflict } from "#src/services/azure/checkIsConflict";
 import { createProvisionedClientCache } from "#src/services/azure/createProvisionedClientCache";
 import { TableClient } from "@azure/data-tables";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -7,7 +8,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 const provisionTableClient = async (connectionString: string, tableName: AzureTable) => {
   const tableClient = TableClient.fromConnectionString(connectionString, tableName);
   await getResultAsync(() => tableClient.createTable()).match(noop, (error) => {
-    if ((error as { statusCode?: number }).statusCode !== 409) throw error;
+    if (!checkIsConflict(error)) throw error;
   });
   return tableClient;
 };
