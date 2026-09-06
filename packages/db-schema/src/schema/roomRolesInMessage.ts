@@ -7,6 +7,7 @@ import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { bigint, boolean, check, index, integer, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+
 export const ROOM_ROLE_COLOR_MAX_LENGTH = 9;
 export const ROOM_ROLE_NAME_MAX_LENGTH = 100;
 
