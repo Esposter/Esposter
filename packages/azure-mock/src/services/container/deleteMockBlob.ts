@@ -1,9 +1,7 @@
 import { getMockContainer } from "#src/services/container/getMockContainer";
-import {
-  getMockContainerBlobDatesKey,
-  MockContainerBlobDatesDatabase,
-} from "#src/store/MockContainerBlobDatesDatabase";
-import { storeMockBlobMetadata } from "#src/store/MockContainerBlobMetadataDatabase";
+import { getMockContainerBlobDatesKey } from "#src/services/container/getMockContainerBlobDatesKey";
+import { storeMockBlobMetadata } from "#src/services/container/storeMockBlobMetadata";
+import { MockContainerBlobDatesDatabase } from "#src/store/MockContainerBlobDatesDatabase";
 
 // A blob is its content plus everything keyed to it, and the dates and metadata live in maps of their own —
 // So a delete that takes only the content leaves records the next blob seeded under that name inherits, and a

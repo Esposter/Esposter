@@ -20,7 +20,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/components/Resource`                                                  | —          |                                                                                              |
 | `app/components` — the rest                                                | —          |                                                                                              |
 | `packages/db`, `packages/db-schema`, `packages/db-mock`                    | —          |                                                                                              |
-| `packages/azure`, `packages/azure-functions`, `packages/azure-mock`        | —          | cross-package placement: an Azure helper two packages need lives in `db`                     |
+| `packages/azure`, `packages/azure-functions`, `packages/azure-mock`        | 2026-09-06 | cross-package placement: an Azure helper two packages need lives in `db`                     |
 | `packages/virrun`, `packages/infra`, `packages/configuration`              | —          |                                                                                              |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`           | 2026-09-06 | barrel contents are `ctix` output — regenerate, never hand-edit                              |
 | `scripts`                                                                  | 2026-09-02 | a command is a folder once it has internals                                                  |
