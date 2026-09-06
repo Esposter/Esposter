@@ -3,7 +3,7 @@ import type { DataSourceType } from "#shared/models/resource/sheet/datasource/Da
 
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
-import { DataSourceTypeItemCategoryDefinitions } from "@/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitions";
+import { DataSourceTypeItemCategoryDefinitions } from "@/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitionMap";
 import { useSheetStore } from "@/store/resource/sheet";
 import { Vjsf } from "@koumoul/vjsf";
 

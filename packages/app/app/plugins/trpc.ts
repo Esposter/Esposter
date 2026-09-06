@@ -4,8 +4,8 @@ import type { TRPCLink } from "@trpc/client";
 import { transformer } from "#shared/services/trpc/transformer";
 import { IS_PRODUCTION, IS_TEST } from "#shared/util/environment/constants";
 import { TRPC_CLIENT_PATH, TRPC_WS_PATH } from "@/services/trpc/constants";
+import { createOfflineLink } from "@/services/trpc/createOfflineLink";
 import { errorLink } from "@/services/trpc/errorLink";
-import { createOfflineLink } from "@/services/trpc/offlineLink";
 import { checkIsServer } from "@esposter/shared";
 import {
   createWSClient,
