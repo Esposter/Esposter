@@ -1,8 +1,6 @@
 import { ENGINES_NODE_REGEX } from "#scripts/updateNode/constants";
+import { setVersion } from "#scripts/updateNode/setVersion";
 
 /** Rewrite a package.json string's `engines.node` to `^${version}`. */
-export const setEnginesNode = (packageJson: string, version: string): string => {
-  if (!ENGINES_NODE_REGEX.test(packageJson)) throw new Error("Could not find engines.node in package.json");
-
-  return packageJson.replace(ENGINES_NODE_REGEX, `$<lead>^${version}`);
-};
+export const setEnginesNode = (packageJson: string, version: string): string =>
+  setVersion(packageJson, ENGINES_NODE_REGEX, version, "engines.node in package.json");
