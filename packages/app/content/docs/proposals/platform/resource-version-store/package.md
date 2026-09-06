@@ -26,7 +26,7 @@ A node-only published package built with the node tsdown factory, extending `tsc
 ```text
 packages/keyframe-store/
   src/
-    constants.ts                  the compression level, window bounds and promotion ratio
+    constants.ts                  the compression level, window bounds, promotion ratio and segment budget
     createKeyframeStore.ts        the factory — the only entry point a consumer calls
     models/
       KeyframeStore.ts            the returned interface
@@ -65,19 +65,26 @@ export interface WrittenVersion {
   storedBytes: number;
 }
 
+export interface VersionAnchor {
+  // The bytes already anchored to this keyframe, which the segment budget is measured against
+  anchoredBytes: number;
+  // Empty for a lineage that has none yet
+  hash: string;
+}
+
 export interface KeyframeStore {
   // Takes the hashes an eviction released and the hashes still named by surviving rows, and returns the
   // Objects it deleted, so the caller can credit their bytes back
   collect: (releasedHashes: string[], retainedHashes: string[]) => ResultAsync<string[], Error>;
   read: (hash: string) => ResultAsync<Uint8Array, Error>;
-  // The anchor is the caller's state, empty for a lineage that has none yet
-  write: (plaintext: Uint8Array, anchorHash: string) => ResultAsync<WrittenVersion, Error>;
+  // The anchor is the caller's state
+  write: (plaintext: Uint8Array, anchor: VersionAnchor) => ResultAsync<WrittenVersion, Error>;
 }
 
 export const createKeyframeStore: (objectStore: ObjectStore, options?: KeyframeStoreOptions) => KeyframeStore;
 ```
 
-The lineage anchor is the caller's state rather than the store's, which is what keeps the store free of any notion of a lineage at all. A caller holds one hash per history and updates it whenever a write comes back with an empty base.
+The lineage anchor is the caller's state rather than the store's, which is what keeps the store free of any notion of a lineage at all. A caller derives one anchor per history — the hash, and the bytes anchored to it — and both reset whenever a write comes back with an empty base.
 
 ## Tests
 
@@ -86,6 +93,7 @@ Colocated beside each source file ([testing](/docs/architecture/server-testing))
 - A keyframe and a delta each round-trip to the exact input bytes.
 - Writing the same plaintext twice writes one object, and the second write reports itself deduplicated with no stored bytes.
 - A small edit encodes as a delta; a wholesale rewrite promotes to a keyframe. Both are asserted through the reported base rather than through object internals.
+- A run of small edits, each cheap enough for the ratio, promotes once the bytes anchored to the keyframe reach the segment budget — the regression test for the storage bound, which the ratio alone does not hold.
 - A document large enough to need a wide window decodes, which is the regression test for the window being recorded in the header rather than assumed by the decoder.
 - A truncated or altered object fails the read instead of returning bytes that do not hash to the key.
 - Collection keeps an object still named as a base by a surviving row, and deletes one nothing names.

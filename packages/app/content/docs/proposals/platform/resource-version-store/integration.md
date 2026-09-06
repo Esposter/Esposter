@@ -15,7 +15,7 @@ Storing **both** sizes matters. The plaintext size is what the history listing s
 
 The base hash is denormalised onto the row purely so garbage collection is a query rather than a walk of every surviving object's header, which is the reasoning [store design](/docs/proposals/platform/resource-version-store/store-design) sets out.
 
-**The anchor is derived, not stored.** A channel's current anchor is the newest row in that channel whose base is empty, which the listing index already orders. A column holding it would be a second source of truth for something a single indexed read answers, and one that could disagree with the rows after a failed write.
+**The anchor is derived, not stored.** A channel's current anchor is the newest row in that channel whose base is empty, which the listing index already orders. A column holding it would be a second source of truth for something a single indexed read answers, and one that could disagree with the rows after a failed write. The bytes anchored to it — what the segment budget is measured against ([store design](/docs/proposals/platform/resource-version-store/store-design)) — come from the same read as a sum of the stored sizes above that row, for the same reason.
 
 ## Object keys
 
@@ -28,7 +28,7 @@ The keys stay in the resource assets container, so the ledger, the blob deletion
 ```mermaid
 flowchart TD
   trigger["A save reaches the idle-window trigger"] --> current["Read the working copy — the bytes this save replaces"]
-  current --> anchorRead["Read the channel anchor — newest row with an empty base"]
+  current --> anchorRead["Read the channel anchor — newest row with an empty base, and the bytes stored above it"]
   anchorRead --> store["Write to the store"]
   store --> deduped{"Content already held?"}
   deduped -->|yes| row[("Insert the version row — no charge")]

@@ -37,15 +37,17 @@ Keying on the plaintext rather than on the stored bytes is what makes deduplicat
 
 ## Writing a version
 
-The lineage — one resource's history — carries the hash of its current anchor. Writing plaintext against that anchor is:
+The lineage — one resource's history — supplies two things about its current anchor: the hash, and the delta bytes already anchored to it. Writing plaintext against that anchor is:
 
 1. Hash the plaintext. If the object exists, record the row and stop; nothing is written and nothing is charged.
 2. Compress standalone.
 3. With no anchor yet, write the standalone form as a keyframe. This version becomes the anchor.
 4. Otherwise read and decode the anchor, and compress the plaintext again with the anchor's plaintext as the dictionary.
-5. If the delta is at or below the promotion ratio of the standalone size, write the delta. Otherwise write the standalone form as a keyframe, and this version becomes the new anchor.
+5. If the delta is at or below the promotion ratio of the standalone size **and** the bytes already anchored plus this delta stay within the segment budget, write the delta. Otherwise write the standalone form as a keyframe, and this version becomes the new anchor.
 
-The **promotion ratio** is the one tuning knob, and one third of the standalone size is the proposed default. A version whose difference from the anchor no longer compresses to meaningfully less than the version itself has drifted far enough that anchoring it buys little and costs a second read forever; making it the next anchor restores the margin for everything after it. Because promotion is driven by measured drift rather than by a counted interval, a document edited in small steps keeps one anchor for a long run, and a document rewritten wholesale promotes immediately — both without configuration.
+The **promotion ratio** is the drift knob, and one third of the standalone size is the proposed default. A version whose difference from the anchor no longer compresses to meaningfully less than the version itself has drifted far enough that anchoring it buys little and costs a second read forever; making it the next anchor restores the margin for everything after it. Because promotion is driven by measured drift rather than by a counted interval, a document edited in small steps keeps one anchor for a long run, and a document rewritten wholesale promotes immediately — both without configuration.
+
+The **segment budget** is the storage knob, and the keyframe's own compressed size is the proposed default. The ratio bounds each delta against its own standalone size, which says nothing about how many of them a segment holds: a run of small edits satisfies it indefinitely, so segment storage would grow with version count and the storage guarantee below would be false. Budgeting the accumulated bytes instead of counting deltas is what keeps the bound in bytes — a length limit would cap the count while a hundred near-ratio deltas still cost a hundred times what the count suggests. The total is derived from the rows rather than stored, exactly as the anchor is ([integration](/docs/proposals/platform/resource-version-store/integration)), so the budget adds a summed column to a read the write path already makes and no state that can disagree with the rows.
 
 Step 4 is the only read on the write path. It is avoidable within a process by caching anchor plaintexts by hash, which is safe precisely because objects are immutable: a cache keyed by content address can never be stale, only absent. Correctness never depends on it, so a multi-instance server needs no coordination.
 
@@ -91,7 +93,7 @@ Sizes below are of the document; `k` is the number of versions an eviction relea
 | Write, promoting        | 2            | 1             | one hash, two compressions     |
 | Evict and collect       | 0            | 0             | two indexed queries, k deletes |
 
-Nothing here scales with history depth. Storage per anchored segment is the keyframe plus the sum of its deltas, each bounded by the promotion ratio against its own standalone size — so a segment can never cost more than a small multiple of one compressed copy, whatever happens inside it.
+Nothing here scales with history depth. Storage per anchored segment is the keyframe plus the deltas anchored to it, and the segment budget caps that sum directly — so a segment costs at most one compressed copy plus the budget, whatever happens inside it. The promotion ratio does not carry that bound on its own: it is a per-delta test, and a long enough run of edits that pass it would otherwise grow the segment with the version count.
 
 ## Compression parameters
 

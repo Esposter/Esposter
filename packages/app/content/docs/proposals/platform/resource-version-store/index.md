@@ -13,7 +13,7 @@ This proposal keeps every trigger, channel and retention rule exactly as they ar
 
 ## The decision
 
-**Store versions as content-addressed objects that are either keyframes or deltas.** Serialize deterministically, address by the hash of the plaintext, and encode each version either as a self-contained compressed object — a keyframe — or as a compression delta against a keyframe, whichever the encoder finds cheaper by a stated margin. Reconstructing any version costs at most two object reads and one decompression, with no chain to walk and no version depending on the one written before it.
+**Store versions as content-addressed objects that are either keyframes or deltas.** Serialize deterministically, address by the hash of the plaintext, and encode each version either as a self-contained compressed object — a keyframe — or as a compression delta against a keyframe, whichever the encoder finds cheaper by a stated margin. Reconstructing any version costs at most two object reads and two decompressions — the keyframe, whose plaintext is the dictionary, and then the delta against it — with no chain to walk and no version depending on the one written before it.
 
 The compressor is zstd from `node:zlib`, given a previous version as its dictionary. That is a delta with none of the ceremony: no diff format, no per-type structural knowledge, no schema coupling. It behaves identically for a Sheet's tabular JSON, a ProseMirror document and a GrapesJS project, and it preserves a field a newer schema stopped declaring, because it never parses anything.
 
@@ -34,7 +34,7 @@ flowchart TD
   exists -->|no| anchor{"Does the lineage have a keyframe?"}
   anchor -->|no| promote["Write a keyframe — this version becomes the anchor"]
   anchor -->|yes| encode["Encode twice — against the keyframe, and standalone"]
-  encode --> margin{"Delta below the promotion ratio?"}
+  encode --> margin{"Delta below the promotion ratio, and the segment budget still has room?"}
   margin -->|yes| delta["Write a delta object naming its keyframe"]
   margin -->|no| promote
   delta --> charge["Charge the stored bytes to the owner"]
@@ -44,6 +44,8 @@ flowchart TD
 ```
 
 The gate that matters is the promotion ratio. A version whose delta is not meaningfully smaller than its own standalone compression has drifted too far from the anchor to be worth anchoring, so it becomes the next anchor. That holds reads at two objects forever and bounds how far a delta can sit from the content it reconstructs, without a fixed keyframe interval that would be wrong for both slowly-edited and wholesale-rewritten documents.
+
+The ratio alone bounds one delta rather than a segment, and a long run of cheap edits accumulates as many of them as it likes under one keyframe. So the same gate carries a **segment budget**: the bytes already anchored to the current keyframe are part of the decision, and a delta that would push them past the budget promotes instead of being written ([store design](/docs/proposals/platform/resource-version-store/store-design)). Storage is then bounded by the two rules together, whatever the edit pattern does.
 
 ## What it costs, measured
 
