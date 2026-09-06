@@ -3,10 +3,8 @@ import AzureAustraliaEastDisplayLocation from "#src/azure/constants/AzureAustral
 import { prodEvgtEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/topics/prodEvgtEsposterAe001";
 import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { prodAspEsposterAe001 } from "#src/azure/resources/Microsoft.Web/serverFarms/prodAspEsposterAe001";
+import { configuration } from "#src/configuration";
 import * as azure_native from "@pulumi/azure-native";
-import * as pulumi from "@pulumi/pulumi";
-
-const configuration = new pulumi.Config();
 
 const siteName = "prod-func-esposter-001";
 

@@ -1,8 +1,6 @@
+import { configuration } from "#src/configuration";
 import { repository } from "#src/github/repository";
 import * as github from "@pulumi/github";
-import * as pulumi from "@pulumi/pulumi";
-
-const configuration = new pulumi.Config();
 
 export const azureTenantId: github.ActionsSecret = new github.ActionsSecret(
   "actionsSecret-AZURE-TENANT-ID",
