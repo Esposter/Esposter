@@ -10,9 +10,11 @@ export const AzureFunctionIsIdempotentMap = {
   // Deletes each blob with deleteIfExists, so a blob an earlier attempt already removed is a no-op rather than a
   // 404: a replay converges on the same empty state instead of duplicating work.
   [AzureFunction.ProcessBlobDeletion]: true,
-  // Delivers an already-persisted occurrence to its recipients: a second delivery is a duplicate notification for a
-  // Notification that was never delivered in the first place, which is the outcome the replay exists to produce. The
-  // Bell row it also writes duplicates rather than repairs, which is the same trade and the same answer.
+  // Delivers an already-persisted occurrence to its recipients. Its bell write is the last step that may fail the
+  // Invocation — the retention trim, the subscription read and every push past it are best-effort — so an event
+  // That dead-lettered is one whose rows never landed, and the replay writes them once rather than twice. That
+  // Tail staying best-effort is what keeps this `true`: a throw after the insert would ask for a redelivery that
+  // Duplicates the rows it already wrote.
   [AzureFunction.ProcessNotification]: true,
   // Creates a message like ProcessWebhook does, but claims its job on `processingStartedAt IS NULL` first: a rerun
   // Finds the job already claimed and does nothing, so the second copy the fresh rowKey would produce never lands.

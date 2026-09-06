@@ -96,6 +96,30 @@ describe(sendNotification, () => {
     await expect(mockDb.select().from(notifications)).resolves.toStrictEqual([]);
   });
 
+  // The bell insert is the last step allowed to fail this handler. Event Grid reads a throw as a retry request
+  // And AzureFunctionIsIdempotentMap marks this function replayable, so a trim that failed the invocation would
+  // have the rows written again on the redelivery
+  test("keeps the bell row and does not throw when the retention trim fails", async () => {
+    expect.hasAssertions();
+
+    const trim = vi.spyOn(mockDb, "delete").mockImplementationOnce(() => {
+      throw new Error("trim failed");
+    });
+
+    await expect(
+      sendNotification(context, {
+        path,
+        title,
+        type: AppNotificationType.ResourceOperation,
+        userId: subscriberUserId,
+      }),
+    ).resolves.toBeUndefined();
+    await expect(mockDb.select().from(notifications)).resolves.toHaveLength(1);
+    expect(trim).toHaveBeenCalledOnce();
+
+    trim.mockRestore();
+  });
+
   test("a resource operation writes a bell row and skips the session that caused it", async () => {
     expect.hasAssertions();
 

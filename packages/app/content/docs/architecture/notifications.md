@@ -55,7 +55,7 @@ Feedback about the tab's own action — a mutation error, a save conflict, an ex
 
 A type whose channels include the bell writes one `notifications` row per recipient, in one statement. The row is the render shape the panel already uses, and its `severity` comes from `AppNotificationTypeSeverityMap` rather than from a field every publisher would restate identically.
 
-Rows are trimmed to `NOTIFICATION_RETENTION_MS` on the write path, where the recipients are already known — nothing else trims them, and the only other delete is the cascade that takes a user's rows with the user, so an untrimmed bell is a table that only grows. The unread badge is a property of what the panel read, so no count rides on the push payload and no service worker writes one.
+Rows are trimmed to `NOTIFICATION_RETENTION_MS` on the write path, where the recipients are already known — nothing else trims them, and the only other delete is the cascade that takes a user's rows with the user, so an untrimmed bell is a table that only grows. The trim is best-effort, and so is everything past it: the insert above is the last step allowed to fail the invocation, because Event Grid reads a throw as a retry request and this handler is marked replayable — a trim that failed the invocation would have the rows it was trimming written a second time. The unread badge is a property of what the panel read, so no count rides on the push payload and no service worker writes one.
 
 ## Delivery
 
