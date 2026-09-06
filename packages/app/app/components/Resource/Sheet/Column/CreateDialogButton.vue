@@ -3,9 +3,10 @@ import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { columnFormSchema, ColumnTypeFormSchemaMap } from "@/models/resource/sheet/column/ColumnForm";
+import { columnFormSchema } from "@/models/resource/sheet/column/ColumnForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { ColumnTypeCreateMap } from "@/services/resource/sheet/column/ColumnTypeCreateMap";
+import { ColumnTypeFormSchemaMap } from "@/services/resource/sheet/column/ColumnTypeFormSchemaMap";
 import { extractSchemaFields } from "@/services/zod/extractSchemaFields";
 import { Vjsf } from "@koumoul/vjsf";
 
