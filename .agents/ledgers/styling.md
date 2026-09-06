@@ -18,7 +18,7 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Message/RightSideBar`                                                      | 2026-09-06 | the member list, followed threads and search                                       |
 | `app/components/Message/DraftsAndSent`                                                     | 2026-09-06 | the three tabs and the schedule dialog                                             |
 | `app/components/Message/Friends`, `LeftSideBar`                                            | 2026-09-06 | the friend lists and the room column                                               |
-| `app/components/Resource/Sheet`                                                            | —          | the sheet editor's own chrome                                                      |
+| `app/components/Resource/Sheet`                                                            | 2026-09-06 | the sheet editor's own chrome                                                      |
 | `app/components/Resource/List`                                                             | 2026-09-06 |                                                                                    |
 | `app/components/Resource` — the per-type editors                                           | 2026-09-06 | `Survey`, `TodoList`, `Note`, `Program`, `Webpage`, `Email`, `Blueprint`           |
 | `app/components/Resource` — the entry surfaces                                             | 2026-09-05 | `Home`, `Search`, `Explorer`, `RecycleBin`, `Dashboard`, `Flowchart`               |
