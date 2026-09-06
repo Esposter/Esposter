@@ -1,3 +1,6 @@
+import type { FriendRequest } from "#src/schema/friendRequests";
+import type { User } from "#src/schema/users";
+
 import { schema } from "#src/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
@@ -20,3 +23,5 @@ export const FriendRequestRelations = {
   receiver: true,
   sender: true,
 } as const;
+
+export type FriendRequestWithRelations = FriendRequest & { receiver: User; sender: User };

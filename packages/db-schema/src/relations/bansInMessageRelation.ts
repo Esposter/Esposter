@@ -1,3 +1,6 @@
+import type { BanInMessage } from "#src/schema/bansInMessage";
+import type { User } from "#src/schema/users";
+
 import { schema } from "#src/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
@@ -20,3 +23,5 @@ export const bansInMessageRelation = defineRelationsPart(schema, (r) => ({
     }),
   },
 }));
+
+export type BanInMessageWithRelations = BanInMessage & { bannedByUser: null | User; user: User };
