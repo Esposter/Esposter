@@ -13,7 +13,7 @@ left when this ledger was written.
 | `packages/app/configuration`              | 2026-09-06 | the relative imports are the pre-alias config exception; the splash table is generator output |
 | the app's root config files               | 2026-09-06 |                                                                                               |
 | `content/docs` — the two suites           | 2026-09-06 | the enforcers, not the pages                                                                  |
-| `content/docs` — `platform`               | —          |                                                                                               |
+| `content/docs` — `platform`               | 2026-09-06 |                                                                                               |
 | `content/docs` — `esbabbler`              | 2026-09-06 |                                                                                               |
 | `content/docs` — `architecture`           | 2026-09-06 | the idempotency-entry implication was the one finding                                         |
 | `content/docs` — `virrun`                 | 2026-09-06 | `wsl.exe` in prose is the command, not a constant the code should have carried                |
