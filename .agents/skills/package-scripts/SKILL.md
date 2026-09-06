@@ -103,14 +103,14 @@ Only the scripts that need a note appear there — this is not a place to docume
 The suite runs **once per coherent chunk, on `develop`, before that chunk is pushed** — not per commit — see the git skill's "Verify On `develop`". Run before declaring work done:
 
 1. `pnpm typecheck`
-2. Lint fix — `pnpm lint:fix` from `packages/app/` for app changes, `pnpm lint:fix:packages` from the root for non-app `packages/*` changes. **Neither runs oxlint over the app**, and CI's root `pnpm lint` does: an app change that passes both of these still fails there on the rules only oxlint carries (unused bindings, comment capitalisation, `return-await`, the custom plugins). So an app change adds a root `pnpm lint` before it is pushed — the whole-repo pass, from the root, once per chunk.
+2. Lint fix — **`pnpm lint:fix` from the repo root**: oxlint over the whole tree, then ESLint, then every package's own `lint:fix`. A package's own is ESLint over that package and nothing else, so it carries none of the rules only oxlint has (unused bindings, comment capitalisation, `return-await`, the custom plugins) — a change that passes it still fails CI, which runs the root pass. Reach for the package-local one only to iterate inside one package mid-change; the last lint a chunk runs is the root one.
 3. Tests for **what the change touched**, and only that — **the whole suite is never run locally**. Pass paths: `pnpm test app/services/message/emoji app/components/Styled/EmojiPicker -u --run`. `-u` refreshes snapshots, `--run` forces a single non-watch run. Skip the step entirely for test-only or doc-only edits, running just the file(s) involved.
 
 **A bare `pnpm test --run` is banned.** It takes tens of minutes on this repo, and it is CI's job — CI shards it across runners and is the thing that gates the merge. Locally it buys a slower answer to a question CI is already asking. The scope to run is what the diff touched: the files changed, their direct consumers, and any suite whose snapshots the change moves. When unsure whether a distant suite is affected, name it in the same invocation rather than widening to everything — a second path argument costs seconds, the full sweep costs the session.
 
 ## Key Rules
 
-- **Lint locally** with the fix scripts — never hand-edit to satisfy the linter. The check-only root `pnpm lint` is not a substitute for them: it is the extra pass an app change owes before it is pushed, because it is the only one that runs oxlint over the app (see the check suite above).
+- **Lint locally** with the fix scripts — never hand-edit to satisfy the linter. The root `pnpm lint:fix` is the one that matches CI, so it is what a chunk ends on; the check-only root `pnpm lint` differs from it only in not writing the fixes.
 - **Vitest loads a minimal Nuxt module allowlist** (`packages/app/configuration/modules.ts`, under `process.env.VITEST`) — the full set crashes config startup on Windows. A test that needs an excluded module adds it to that branch rather than widening the allowlist for every run.
 - **Long-running** (`dev`, `build`, `test`, `typecheck`): use `run_in_background: true` (2+ min).
 - **Never use `pnpm <script> -- <args>`**: pnpm forwards the literal `--`, so trailing flags become post-`--` positionals and are dropped. Use `pnpm exec <binary> <args>` or direct args (`pnpm test -u`).

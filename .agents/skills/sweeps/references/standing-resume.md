@@ -9,11 +9,16 @@ A pass resumes from what changed since the row's date rather than re-reading the
 sweep's **`Scope`** declares in `.agents/ledgers/README.md`:
 
 ```bash
-git log --since=<Last swept date> --name-only --pretty=format: -- <the ledger's Scope> | sort -u
+git log --since=<Last swept date> --name-only --pretty=format: -- '<pathspec>' '<pathspec>' | sort -u
 ```
 
 Everything outside that list was swept at the last pass — skip it rather than re-reading it. A row still at `—`
 has no date to resume from and is a first pass over the whole unit.
+
+**Each pathspec is quoted, one argument each.** Git does its own matching, and a wildcard that reaches it
+unquoted is expanded by the shell against the working directory first — which narrows the scope silently rather
+than failing: `*README.md` unquoted becomes the single README at the repo root, so the `docs` sweep resumes over
+one file and reports every other tree as clean.
 
 ## Scope is the convention's domain, not the union of the rows
 

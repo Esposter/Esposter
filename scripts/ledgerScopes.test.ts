@@ -25,10 +25,11 @@ describe("ledgerScopes", () => {
       ledger: String(ledger),
       pathspecs: [...String(scope).matchAll(PATHSPEC_REGEX)].map((match) => String(match.groups?.pathspec)),
     }));
-  // A git pathspec naming a directory means everything under it, and one carrying no separator matches at any
-  // Depth — neither is what a glob reads them as, so the two are answered apart rather than through one pattern.
+  // A git pathspec naming a directory means everything under it, so a plain path that exists resolves whatever
+  // Sits inside it; one carrying no separator matches at any depth, which a glob only reads that way once it is
+  // Prefixed. Neither is what a bare glob would do with it, hence the two steps rather than one pattern.
   const checkIsResolved = async (pathspec: string): Promise<boolean> => {
-    if (!pathspec.includes("*")) return existsSync(resolve(repositoryRoot, pathspec));
+    if (existsSync(resolve(repositoryRoot, pathspec))) return true;
 
     const pattern = pathspec.includes("/") ? pathspec : `**/${pathspec}`;
     for await (const _ of glob(pattern, { cwd: repositoryRoot })) return true;
