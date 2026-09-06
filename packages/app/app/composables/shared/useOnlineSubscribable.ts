@@ -9,10 +9,6 @@ export interface OnlineSubscribableContext {
   scope?: EffectScope | null;
 }
 
-export const getOnlineSubscribableContext = (): OnlineSubscribableContext => ({
-  instance: getCurrentInstance(),
-  scope: getCurrentScope(),
-});
 type OnlineSubscribableSource = object | WatchSource<unknown>;
 
 type OnlineSubscribableValues<TSources extends readonly OnlineSubscribableSource[]> = {

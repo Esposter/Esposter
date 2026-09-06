@@ -12,7 +12,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | 2026-09-06 |                                                                          |
 | `app/shared/models` — the rest                                             | 2026-09-06 | the small folders, several of them a single file                         |
 | `app/services`, `app/util`, `app/models`, `app/types`                      | —          | models vs services vs utils vs constants; duplicate constants            |
-| `app/composables`                                                          | —          | sole-consumer subfolders                                                 |
+| `app/composables`                                                          | 2026-09-06 | sole-consumer subfolders                                                 |
 | `app/store`                                                                | —          |                                                                          |
 | `server/services`, `server/composables`, `server/models`                   | —          |                                                                          |
 | `server/trpc`                                                              | —          | input schemas belong in `shared/models`, not beside the router           |
