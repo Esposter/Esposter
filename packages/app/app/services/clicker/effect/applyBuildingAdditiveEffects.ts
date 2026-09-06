@@ -11,7 +11,7 @@ export const applyBuildingAdditiveEffects = (
   for (const buildingAdditiveEffect of buildingAdditiveEffects)
     for (const target of buildingAdditiveEffect.configuration.targets ?? []) {
       const foundBuilding = boughtBuildings.find(({ id }) => id === target);
-      if (!foundBuilding) break;
+      if (!foundBuilding) continue;
 
       resultPower += buildingAdditiveEffect.value * foundBuilding.amount;
     }

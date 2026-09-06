@@ -50,4 +50,3 @@ Paths relative to `packages/app`.
 ## Notes
 
 - Appliers are pure functions of `(basePower, effects, boughtBuildings)` — trivially unit-testable and free of store coupling.
-- `applyBuildingAdditiveEffects` `break`s out of a target loop when a target building isn't owned yet, skipping that effect's remaining targets; with today's single-target effects this is invisible, but a multi-target effect would silently drop later targets.
