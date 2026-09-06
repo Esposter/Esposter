@@ -5,10 +5,10 @@ import { getRegistryLatestVersionForPrefix } from "#scripts/updateNode/getRegist
 import { setCatalogTypesNode } from "#scripts/updateNode/setCatalogTypesNode";
 import { setDevEnginesRuntime } from "#scripts/updateNode/setDevEnginesRuntime";
 import { setEnginesNode } from "#scripts/updateNode/setEnginesNode";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const root = resolve(import.meta.dirname, "..", "..");
 // 1. Resolve target node version to a full published release (strip a leading `v`/`^`); a partial
