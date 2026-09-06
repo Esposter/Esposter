@@ -36,7 +36,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `packages/infra` — `azure/resources`                                       | —          | one resource per file, named for its export                                                  |
 | `packages/infra` — `azure` — the rest                                      | —          | `constants`, `services`, the stack files                                                     |
 | `packages/infra` — `github`, root                                          | —          |                                                                                              |
-| `packages/configuration`                                                   | —          |                                                                                              |
+| `packages/configuration`                                                   | 2026-09-06 |                                                                                              |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`           | 2026-09-06 | barrel contents are `ctix` output — regenerate, never hand-edit                              |
 | `scripts`                                                                  | 2026-09-02 | a command is a folder once it has internals                                                  |
 

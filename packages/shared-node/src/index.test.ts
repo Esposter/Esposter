@@ -1,4 +1,4 @@
-import { getFileSize } from "@esposter/configuration";
+import { getFileSizeReport } from "@esposter/configuration";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -11,11 +11,11 @@ describe("@esposter/shared-node", () => {
 
   test("reporter bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distReporterFile)).toMatchInlineSnapshot(`"reporter.js: 5.61 KB (5745 bytes)"`);
+    expect(getFileSizeReport(distReporterFile)).toMatchInlineSnapshot(`"reporter.js: 5.61 KB (5745 bytes)"`);
   });
 
   test("runner bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distRunnerFile)).toMatchInlineSnapshot(`"runner.js: 0.57 KB (581 bytes)"`);
+    expect(getFileSizeReport(distRunnerFile)).toMatchInlineSnapshot(`"runner.js: 0.57 KB (581 bytes)"`);
   });
 });

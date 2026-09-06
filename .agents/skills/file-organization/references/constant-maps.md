@@ -20,6 +20,11 @@ the service that builds its entries, which inverts the layering.
 
 `FooConfigurationMap.ts` exports only `FooConfigurationMap`. Never colocate two independent maps in one file.
 
+**A map nothing exports stays in the file that reads it.** The rule above places an _exported_ map; under
+`packages/*/src`, extracting a module-private one is not a move but a publication, because `ctix` barrels every
+export in the tree and the package's public API grows by a wiring detail nobody outside can use. The map is at
+the top of its consumer's file, above the runtime logic, like any other local declaration.
+
 **Exception**: a map that only indexes declarations already in that file (a `type → schema` lookup beside the discriminated union built from those same schemas) stays with them — it has no existence apart from them, and splitting it would import every sibling straight back. This is the Zod colocation exception applied to a map.
 
 When a map transforms another (e.g. omitting a key), derive it rather than restating the entries: `[Foo.Bar]: FooSchemaMap[Foo.Bar].omit({ name: true })`.

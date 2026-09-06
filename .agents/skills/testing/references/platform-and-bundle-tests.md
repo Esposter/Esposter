@@ -13,7 +13,7 @@
 
 ## Bundle size snapshots
 
-Every library package (`packages/*` except `app`) has `src/index.test.ts` asserting two `getFileSize` snapshots — bundle size (`dist/index.js`) and types size (`dist/index.d.ts`), with `getFileSize` imported from `@esposter/configuration`. **Copy the file from any sibling package** rather than writing it from scratch.
+Every library package (`packages/*` except `app`) has `src/index.test.ts` asserting two `getFileSizeReport` snapshots — bundle size (`dist/index.js`) and types size (`dist/index.d.ts`), with `getFileSizeReport` imported from `@esposter/configuration`. **Copy the file from any sibling package** rather than writing it from scratch.
 
 - **Workflow**: create with **empty** snapshots (`toMatchInlineSnapshot()`), then `pnpm build` (the test reads compiled `dist/`) + `pnpm test --run -u src/index.test.ts` to fill them in. Re-run `-u` after any later build change.
 - **Refreshing several packages at once** (a change rippled through `dist/` and CI is red on the snapshots): from the repo root, `pnpm build:packages` then `pnpm test:packages -u -t "size" index.test.ts` — one rebuild of every library package, then only the size tests updated. Rebuilding first is not optional: without it `-u` writes the **stale** `dist/` back into the snapshot and CI stays red against the freshly-built bytes. The counts are byte-identical between a local build and CI's on the same OS, so a snapshot filled in locally is the one that OS's CI asserts — across OSes they can drift, which is what the per-platform split below covers.

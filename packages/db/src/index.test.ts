@@ -1,4 +1,4 @@
-import { getFileSize } from "@esposter/configuration";
+import { getFileSizeReport } from "@esposter/configuration";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -7,6 +7,6 @@ describe("@esposter/db", () => {
 
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 1705.92 KB (1746860 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 1705.92 KB (1746860 bytes)"`);
   });
 });
