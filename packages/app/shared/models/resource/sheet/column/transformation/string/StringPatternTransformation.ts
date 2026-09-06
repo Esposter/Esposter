@@ -2,9 +2,9 @@ import type { SourceColumnIds } from "#shared/models/resource/sheet/column/trans
 import type { ItemEntityType } from "@esposter/shared";
 
 import { Delimiter } from "#shared/models/compiler/Delimiter";
-import { DelimiterRegexMap } from "#shared/models/compiler/DelimiterRegexMap";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { sourceColumnIdsSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnIds";
+import { DelimiterRegexMap } from "#shared/services/compiler/DelimiterRegexMap";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 

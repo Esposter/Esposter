@@ -2,6 +2,12 @@
 
 Read when adding a map keyed by an enum or a discriminant, or when deciding whether a second map may share its file.
 
+## Where one lives
+
+A map is a value rather than a type, so it lives in `services/` — or `assets/` when its entries are content
+rather than wiring. `models/` holds classes and interfaces, and a map placed there routinely ends up importing
+the service that builds its entries, which inverts the layering.
+
 ## Naming and typing
 
 **PascalCase matching the filename, with `as const satisfies`** — `export const FooConfigurationMap = { ... } as const satisfies Record<...>`. Per-variant definition maps and their `as const satisfies` mapped type are the `typescript` skill's (`references/type-modelling.md`).

@@ -6,11 +6,11 @@ The question is where a thing lives and whether it exists twice — one export p
 | -------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------ |
 | `packages/shared`, `packages/shared-node`                                  | 2026-08-30 |                                                                          |
 | `app/shared/services`, `app/shared/util`                                   | 2026-08-27 | `getSynchronizedFunction`'s second export is the exclusion below         |
-| `app/shared/models/db`                                                     | —          |                                                                          |
-| `app/shared/models/resource`                                               | —          |                                                                          |
-| `app/shared/models/dungeons`                                               | —          |                                                                          |
-| `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | —          |                                                                          |
-| `app/shared/models` — the rest                                             | —          | the small folders, several of them a single file                         |
+| `app/shared/models/db`                                                     | 2026-09-06 |                                                                          |
+| `app/shared/models/resource`                                               | 2026-09-06 |                                                                          |
+| `app/shared/models/dungeons`                                               | 2026-09-06 |                                                                          |
+| `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | 2026-09-06 |                                                                          |
+| `app/shared/models` — the rest                                             | 2026-09-06 | the small folders, several of them a single file                         |
 | `app/services`, `app/util`, `app/models`, `app/types`                      | —          | models vs services vs utils vs constants; duplicate constants            |
 | `app/composables`                                                          | —          | sole-consumer subfolders                                                 |
 | `app/store`                                                                | —          |                                                                          |

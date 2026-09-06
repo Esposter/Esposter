@@ -1,5 +1,5 @@
 import { Delimiter } from "#shared/models/compiler/Delimiter";
-import { DelimiterCharacterMap } from "#shared/models/compiler/DelimiterCharacterMap";
+import { DelimiterCharacterMap } from "#shared/services/compiler/DelimiterCharacterMap";
 
 export const compileVariable = (key: string, delimiter: Delimiter = Delimiter.CurlyBraces): string => {
   const [open, close] = DelimiterCharacterMap[delimiter];
