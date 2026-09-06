@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { AttackComponentMap } from "@/services/dungeons/scene/battle/attack/AttackComponentMap";
-import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
+import { useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 
 const attackManagerStore = useAttackManagerStore();
+const { completeAttack } = attackManagerStore;
 const { attackId, isActive, isToEnemy } = storeToRefs(attackManagerStore);
 </script>
 
@@ -12,12 +13,6 @@ const { attackId, isActive, isToEnemy } = storeToRefs(attackManagerStore);
     v-if="attackId !== undefined && isToEnemy !== undefined"
     v-model:is-active="isActive"
     :is-to-enemy
-    @complete="
-      () => {
-        const onComplete = ExternalAttackManagerStore.onComplete;
-        attackId = isToEnemy = ExternalAttackManagerStore.onComplete = undefined;
-        onComplete?.();
-      }
-    "
+    @complete="completeAttack()"
   />
 </template>

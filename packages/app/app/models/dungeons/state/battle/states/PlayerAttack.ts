@@ -3,6 +3,7 @@ import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { getDamage } from "@/services/dungeons/monster/getDamage";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
+import { useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
@@ -12,6 +13,8 @@ import { sleepScene } from "vue-phaserjs";
 export const PlayerAttack: State<StateName> = {
   name: StateName.PlayerAttack,
   onEnter: async (scene) => {
+    const attackManagerStore = useAttackManagerStore();
+    const { playAttack } = attackManagerStore;
     const battleDialogStore = useBattleDialogStore();
     const { showMessageNoInputRequired } = battleDialogStore;
     const battlePlayerStore = useBattlePlayerStore();
@@ -25,7 +28,7 @@ export const PlayerAttack: State<StateName> = {
 
     await showMessageNoInputRequired(scene, `${prettify(activeMonster.value.key)} used ${prettify(attack.id)}.`);
     await sleepScene(scene, 500);
-    await useAttackAnimation(scene, attack, true);
+    await playAttack(scene, attack, true);
     await takeDamage(
       getDamage(activeMonster.value.statistics.attack, attack.power, enemyActiveMonster.value.statistics.defense),
     );
