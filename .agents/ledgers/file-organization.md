@@ -21,9 +21,22 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/components/Message`                                                   | —          | splits further at `Model/` on contact                                                        |
 | `app/components/Resource`                                                  | —          |                                                                                              |
 | `app/components` — the rest                                                | —          |                                                                                              |
-| `packages/db`, `packages/db-schema`, `packages/db-mock`                    | —          |                                                                                              |
+| `packages/db-schema` — `models`                                            | —          |                                                                                              |
+| `packages/db-schema` — `schema`, `relations`                               | —          | a table file declares the table and its select schema; enums live in `models`                |
+| `packages/db-schema` — `services`, root                                    | —          |                                                                                              |
+| `packages/db` — `services/azure`                                           | —          |                                                                                              |
+| `packages/db` — the rest, `packages/db-mock`                               | —          |                                                                                              |
 | `packages/azure`, `packages/azure-functions`, `packages/azure-mock`        | 2026-09-06 | cross-package placement: an Azure helper two packages need lives in `db`                     |
-| `packages/virrun`, `packages/infra`, `packages/configuration`              | —          |                                                                                              |
+| `packages/virrun` — `services/exec/wsl`                                    | —          |                                                                                              |
+| `packages/virrun` — `services/exec/snapshot`                               | —          |                                                                                              |
+| `packages/virrun` — `services/exec/util`                                   | —          |                                                                                              |
+| `packages/virrun` — `services/exec` — the rest                             | —          | `cache`, `os`, `bwrap`, `vfs`, `differential`, `store`, `native`, `test`                     |
+| `packages/virrun` — `services` — the rest                                  | —          | `cli`, `configuration`, `source`, `vfs`, `virrun`                                            |
+| `packages/virrun` — `models`, root                                         | —          |                                                                                              |
+| `packages/infra` — `azure/resources`                                       | —          | one resource per file, named for its export                                                  |
+| `packages/infra` — `azure` — the rest                                      | —          | `constants`, `services`, the stack files                                                     |
+| `packages/infra` — `github`, root                                          | —          |                                                                                              |
+| `packages/configuration`                                                   | —          |                                                                                              |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`           | 2026-09-06 | barrel contents are `ctix` output — regenerate, never hand-edit                              |
 | `scripts`                                                                  | 2026-09-02 | a command is a folder once it has internals                                                  |
 
