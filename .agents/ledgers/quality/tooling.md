@@ -8,7 +8,7 @@ left when this ledger was written.
 | `scripts/outdatedDependencies`            | 2026-09-02 |       |
 | `scripts/oxlint`                          | 2026-09-06 |       |
 | `scripts/updateNode`                      | 2026-09-06 |       |
-| `scripts/services`, `scripts` root files  | —          |       |
+| `scripts/services`, `scripts` root files  | 2026-09-06 |       |
 | the repository root — config and Markdown | —          |       |
 | `packages/app/configuration`              | —          |       |
 | the app's root config files               | —          |       |
