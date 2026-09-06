@@ -223,8 +223,10 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     else this.table.set(key, { ...entity, etag: this.#getEtag() });
   }
 
+  // Both halves are encoded before they are joined: either key may hold the separator, and joining them raw
+  // Lets one entity's key collide with another's
   #getCompositeKey(partitionKey: string, rowKey: string): string {
-    return `${partitionKey}${ID_SEPARATOR}${rowKey}`;
+    return `${encodeURIComponent(partitionKey)}${ID_SEPARATOR}${encodeURIComponent(rowKey)}`;
   }
   // Random rather than timestamped: two writes can land within one clock tick, and equal etags across
   // Versions would make a stale conditional update falsely match
