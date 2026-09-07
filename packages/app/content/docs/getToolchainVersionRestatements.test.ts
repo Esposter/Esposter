@@ -20,7 +20,8 @@ describe("getToolchainVersionRestatements", () => {
         markdown
           .split("\n")
           .flatMap((line, index) =>
-            [...line.matchAll(TOOLCHAIN_VERSION_REGEX)].map(
+            Array.from(
+              line.matchAll(TOOLCHAIN_VERSION_REGEX),
               (match) => `${path}:${index + 1} → ${match.groups?.restatement ?? ""}`,
             ),
           ),

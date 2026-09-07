@@ -37,7 +37,7 @@ export const useCallParticipantTiles = () => {
     const screenSharingIdSet = new Set(screenSharingParticipantIds.value);
     const speakingIdSet = new Set(speakingIds.value);
     return new Map<string, CallParticipantTileProps>(
-      [...callParticipantMap.value.values()].map((participant) => {
+      Array.from(callParticipantMap.value.values(), (participant) => {
         const isSelf = participant.id === sessionId.value;
         return [
           participant.id,

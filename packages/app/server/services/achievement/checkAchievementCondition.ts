@@ -25,8 +25,7 @@ export const checkAchievementCondition = (
           const sanitizedValue = value.toLowerCase().replaceAll(/[^a-z0-9]/gu, "");
           return (
             sanitizedValue ===
-            [...EN_US_SEGMENTER.segment(sanitizedValue)]
-              .map(({ segment }) => segment)
+            Array.from(EN_US_SEGMENTER.segment(sanitizedValue), ({ segment }) => segment)
               .toReversed()
               .join("")
           );

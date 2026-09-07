@@ -18,7 +18,7 @@ const createEditor = (blocks: RegisteredBlock[]) => {
         registry.set(id, { category, content, id, label });
       },
       getAll: () =>
-        [...registry.values()].map((block) => ({
+        Array.from(registry.values(), (block) => ({
           get: (key: keyof RegisteredBlock) => block[key],
           getId: () => block.id,
         })),

@@ -27,6 +27,20 @@ export default [
     selector: "CallExpression[callee.property.name=/^(catch|finally|then)$/]",
   },
   {
+    // A spread that exists only to reach `.map` builds a whole intermediate array to throw away; `Array.from`
+    // Takes the map function and allocates once. The two are not always the same call, which is why the rewrite
+    // Is read rather than applied: the spread drains the iterable before any callback runs where `Array.from`
+    // Interleaves them, so an iterator its own callback advances yields a different array — and `.map` passes
+    // `(value, index, array)` where `Array.from` passes `(value, index)`, so a callback reading a third
+    // Parameter changes meaning. Either case keeps its evaluation order as `Array.from(iterable).map(fn)`, which
+    // This selector does not match. A multi-element literal is not matched either: `[...a, ...b]` is a
+    // Concatenation, and there is no iterable for `Array.from` to take.
+    message:
+      "Use `Array.from(iterable, fn)` rather than spreading into an array to `.map` it — or `Array.from(iterable).map(fn)` where the callback needs its third argument or the iterator carries state.",
+    selector:
+      "CallExpression[callee.type='MemberExpression'][callee.computed=false][callee.property.name='map'][callee.object.type='ArrayExpression'][callee.object.elements.length=1][callee.object.elements.0.type='SpreadElement']",
+  },
+  {
     // Banned outright (no Vue modifier exists for it, and it couples behavior to listener registration order).
     message:
       "stopImmediatePropagation is banned — it couples behavior to listener registration order. Restructure the handlers (or use @event.stop) instead.",

@@ -30,7 +30,7 @@ describe("ledgerScopes", () => {
     .filter((groups) => groups !== undefined)
     .map(({ ledger, scope }) => ({
       ledger: String(ledger),
-      pathspecs: [...String(scope).matchAll(PATHSPEC_REGEX)].map((match) => String(match.groups?.pathspec)),
+      pathspecs: Array.from(String(scope).matchAll(PATHSPEC_REGEX), (match) => String(match.groups?.pathspec)),
     }));
   // A git pathspec naming a directory means everything under it, so a plain path that exists resolves whatever
   // Sits inside it; one carrying no separator matches at any depth, which a glob only reads that way once it is

@@ -2,8 +2,7 @@ import { scanCode } from "#scripts/sweeps/scanCode";
 import { describe, expect, test } from "vitest";
 
 const readCode = (text: string) =>
-  [...scanCode(text)]
-    .map(([character]) => character)
+  Array.from(scanCode(text), ([character]) => character)
     .join("")
     .trim();
 

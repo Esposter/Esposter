@@ -9,6 +9,7 @@ const permissionItems = Object.entries(RoomPermission).map(([key, permission]) =
 });
 // Grouped in the order the bits already run, which is category by category from what every member has to what
 // Only an owner should — so the headings are read off that order rather than being a third list to maintain
-export const RoomPermissionCategoryItems = [...new Set(permissionItems.map(({ category }) => category))].map(
+export const RoomPermissionCategoryItems = Array.from(
+  new Set(permissionItems.map(({ category }) => category)),
   (category) => ({ category, permissions: permissionItems.filter((item) => item.category === category) }),
 );

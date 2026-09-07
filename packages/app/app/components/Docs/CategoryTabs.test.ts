@@ -9,7 +9,7 @@ import { describe, expect, test } from "vitest";
 import { RouterLink } from "vue-router";
 
 const readTabs = (element: Element) =>
-  [...element.querySelectorAll(".v-tab")].map((tab) => ({
+  Array.from(element.querySelectorAll(".v-tab"), (tab) => ({
     isColored: tab.classList.contains("text-primary"),
     isSelected: tab.classList.contains("v-tab--selected"),
     title: tab.textContent?.trim(),

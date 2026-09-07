@@ -42,15 +42,3 @@ rg -U --pcre2 '^(\s*)if \(.*\) return .*;\n\1(if \(.*\) return .*;|return .*;)' 
 
 - **`packages/app/content/docs`** — prose, and the `docs` ledger's.
 - **`*.test.ts`, `*.bench.ts`** — the `testing` ledger reads them against its own skill, which states where a suite may diverge from these rules.
-
-## Next enforceable
-
-- **`[...iterable].map(fn)` → `Array.from(iterable, fn)`** — the _shape_ is decidable from the syntax alone: a
-  `.map` whose callee object is an array literal holding one spread element. The **equivalence** is not, in two
-  ways a selector cannot see. The spread drains the iterable before a single callback runs, where `Array.from`
-  interleaves them, so a stateful iterator whose callback advances it yields a different array. And `.map` passes
-  `(value, index, array)` where `Array.from` passes `(value, index)`, so a callback reading its third parameter
-  changes meaning. A `no-restricted-syntax` selector still takes the shape — ratcheted onto the swept paths
-  first — but each site is rewritten by reading it: an iterable with no state of its own and a callback of at
-  most two parameters becomes `Array.from(iterable, fn)`, and anything else keeps its evaluation order as
-  `Array.from(iterable).map(fn)`.

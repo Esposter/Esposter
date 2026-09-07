@@ -25,9 +25,9 @@ describe(useReadPublishedResourceContent, () => {
     assert.exists(head);
     // An entry's input widens to everything unhead accepts — a ref, a computed, a getter, or `false` — so the
     // Head entry is picked by the key it carries rather than by reading through that union
-    const seoMetaInput = [...head.entries.values()]
-      .map(({ input }) => input)
-      .find((input) => input && typeof input === "object" && "title" in input);
+    const seoMetaInput = Array.from(head.entries.values(), ({ input }) => input).find(
+      (input) => input && typeof input === "object" && "title" in input,
+    );
     assert.exists(seoMetaInput);
 
     expect(seoMetaInput).toStrictEqual({
