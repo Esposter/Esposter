@@ -56,6 +56,7 @@ import { AnonymousCredential } from "@azure/storage-blob";
  * await blockBlobClient.upload("hello world", 11);
  * const content = await blockBlobClient.downloadToBuffer();
  */
+// Every listing comes back in one page: `maxPageSize` and continuation tokens are not implemented
 export class MockContainerClient implements Except<ContainerClient, "accountName"> {
   connectionString: string;
   containerName: string;
@@ -161,7 +162,6 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     return {
       byPage: () =>
         async function* (this: MockContainerClient): AsyncGenerator<ContainerListBlobHierarchySegmentResponse> {
-          // Every blob comes back in one page: `maxPageSize` and continuation tokens are not implemented
           const allBlobItems: BlobItem[] = [];
           const allBlobItemXml: string[] = [];
           const allBlobPrefixes: { name: string }[] = [];
@@ -199,7 +199,6 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     return {
       byPage: () =>
         async function* (this: MockContainerClient): AsyncGenerator<ContainerListBlobFlatSegmentResponse> {
-          // Every blob comes back in one page: `maxPageSize` and continuation tokens are not implemented
           const allBlobItems: BlobItem[] = [];
           const allBlobItemXml: string[] = [];
           for await (const blobItem of blobItemIterator) {

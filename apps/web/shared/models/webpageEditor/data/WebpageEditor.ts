@@ -737,7 +737,6 @@ export class WebpageEditor extends AGrapesJsEditor {
   }
 }
 
-// The catchall is re-declared rather than inherited, for the reason AGrapesJsEditor states
 export const webpageEditorSchema = z
   .object({
     ...grapesJsEditorSchema.shape,

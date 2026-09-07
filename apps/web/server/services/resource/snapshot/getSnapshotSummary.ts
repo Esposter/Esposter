@@ -16,8 +16,5 @@ export const getSnapshotSummary = (type: ResourceType, serializedContent: string
     ResourceDefinitionMap[type].contentSchema.safeParse(JSON.parse(serializedContent)),
   ).unwrapOr(undefined);
   if (!parsedContent?.success) return "";
-  // Reached through a runtime resource type, so the parameter collapses to the intersection of every content
-  // Shape; the line above parsed the content with that same type's schema, so it is pinned back to what the
-  // Declaration takes
-  return (summarize as (content: unknown) => string)(parsedContent.data);
+  return summarize(parsedContent.data as never);
 };

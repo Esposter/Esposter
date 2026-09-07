@@ -5,13 +5,10 @@ import type { Resource } from "@esposter/db-schema";
 
 import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
 import { DeletedResourceHeaders } from "@/services/resource/DeletedResourceHeaders";
+import { NO_ACTION_ITEMS } from "@/services/shared/constants";
 import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { useRecycleBinDialogStore } from "@/store/resource/recycleBinDialog";
 import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
-
-// A row is always in the map it was built from, so this only satisfies the lookup type — bound as a module constant
-// So the fallback cannot allocate per render
-const NO_ACTION_ITEMS: Item[] = [];
 
 const { count, error, isPending, items, readDeletedResources, refresh } = useReadDeletedResources();
 const navigationTrailStore = useNavigationTrailStore();
@@ -37,8 +34,6 @@ const getActionItems = (resource: Resource): Item[] => [
     title: "Delete forever",
   },
 ];
-// One build per page rather than one per row per render — the row ⋮ menu binds an array of closures, so rebuilding
-// It inline hands the menu a new identity on every parent render
 const resourceIdActionItemsMap = computed(() => new Map(items.value.map((item) => [item.id, getActionItems(item)])));
 const onUpdateOptions = (options: ReadResourcesOptions) => readDeletedResources(options);
 </script>
