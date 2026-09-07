@@ -141,6 +141,15 @@ jobs:
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
+      # Two suites assert against a built bundle rather than against source: the Functions package counts the
+      # `app.*` registrations in its `dist` — the one check that catches a bundler tree-shaking every trigger
+      # away — and both apps snapshot their bundle's size. The `package-builds` artifact holds libraries only,
+      # because an app's `dist` is built by the workflow that ships it, and the test suite is the third such
+      # workflow. Built here rather than carried in that artifact so the bundle is always the source this shard
+      # checked out, which no cache entry keyed on `packages/` could promise. Seconds, and only these two apps
+      # build: nothing reads the web app's output.
+      - name: 🏗️ Build the app bundles the suite asserts against
+        run: pnpm build:functions && pnpm build:infra
       # `--shard=i/n` runs a distinct slice of ALL test files (every package + scripts, via the root
       # Vitest `projects` config) on this runner; `--reporter=blob` serialises this shard's results and
       # Coverage data (vitest writes the per-shard `.vitest-reports/blob-i-n.json`) for the merge job.
