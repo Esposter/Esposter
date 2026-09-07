@@ -1,5 +1,5 @@
 name: 🏗️ Build Packages
-# Reusable workflow: build every non-app package once (ctix barrels + tsdown bundles) and publish the
+# Reusable workflow: build every library once (ctix barrels + tsdown bundles) and publish the
 # output as the `package-builds` artifact for the caller's downstream jobs. Called by both 🏗️ CI and 🏎️ Bench
 # via `uses: ./.github/workflows/build-packages.yaml`, so there is a single definition of the build + its cache
 # key. Artifacts are run-scoped (a reusable workflow shares the caller's run, so the artifact reaches the
@@ -68,12 +68,13 @@ jobs:
       # From the restored paths — so a hit needs no `node_modules` at all. Every job in both callers
       # `needs` this one, so an install nothing goes on to use is latency the whole workflow waits behind.
       #
-      # Filtered rather than a plain `pnpm i`: this job builds `!@esposter/web`, so the app's dependency tree
-      # And its `postinstall: nuxt prepare` are install work nothing here reads. Every other postinstall still
-      # Runs, for the projects that are installed — the project set narrows, scripts are not disabled.
+      # Filtered rather than a plain `pnpm i`, and by the path it builds: this job builds the libraries, so all
+      # Three apps' dependency trees — the app's `postinstall: nuxt prepare`, the Pulumi SDKs, the Functions
+      # Host's own deps — are install work nothing here reads. Every other postinstall still runs, for the
+      # Projects that are installed: the project set narrows, scripts are not disabled.
       - name: 📦 Install dependencies
         if: steps.verify.outputs.complete != 'true'
-        run: pnpm --filter "!@esposter/web" i
+        run: pnpm --filter "./packages/*" i
 
       - name: 🏗️ Build packages
         if: steps.verify.outputs.complete != 'true'
@@ -84,7 +85,7 @@ jobs:
       # Builds.
       - name: 🔍 Check generated manifest fields are committed
         if: steps.verify.outputs.complete != 'true'
-        run: git diff --exit-code -- "apps/*/package.json" "packages/*/package.json"
+        run: git diff --exit-code -- "packages/*/package.json"
       # The same check again, now as an assertion: every job in both callers reads the artifact this one uploads,
       # So an incomplete tree here is a broken build rather than a cold cache, and it fails where the cause is
       # Still readable instead of surfacing as a missing barrel in `typecheck`.

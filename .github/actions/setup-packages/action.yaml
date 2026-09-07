@@ -1,17 +1,34 @@
 name: Setup Packages
-description: Install dependencies, then download the compiled package output (dist + generated barrels) produced by the build-packages job
+description: Install dependencies, then download the compiled library output (dist + generated barrels) produced by the build-packages job
+inputs:
+  install-filter:
+    description: >
+      A pnpm selector limiting the install to the projects this job reads — `@esposter/web...` for a job that
+      only builds the app, empty for the repo-wide checks that run every project's own script. Narrowing it
+      skips the excluded projects' dependency trees and their postinstalls, which is the whole cost of a
+      project a job never touches.
+    required: false
+    default: ""
 runs:
   using: composite
   steps:
     - name: 📦 Install dependencies
-      run: pnpm i
       shell: bash
-    # `*/dist` is the published build output and `*/src/**/index.ts` are the ctix-generated barrels (gitignored,
-    # Absent on a fresh checkout), under `apps/` and `packages/` alike. Both are produced once by the
-    # `build-packages` job and passed here as the `package-builds` artifact; the two roots put their common
-    # Ancestor at the repository root, so download into `.`.
+      env:
+        INSTALL_FILTER: ${{ inputs.install-filter }}
+      run: |
+        if [ -n "$INSTALL_FILTER" ]; then
+          pnpm --filter "$INSTALL_FILTER" i
+        else
+          pnpm i
+        fi
+    # `packages/*/dist` is the published build output and `packages/*/src/**/index.ts` are the ctix-generated
+    # Barrels (gitignored, absent on a fresh checkout). Both are produced once by the `build-packages` job and
+    # Passed here as the `package-builds` artifact, whose entries share `packages` as their common ancestor —
+    # So that is the directory they unpack into. An app's `dist` is not in it: nothing imports one, so each app
+    # Builds in the workflow that ships it.
     - name: 📥 Download package builds
       uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
         name: package-builds
-        path: .
+        path: packages

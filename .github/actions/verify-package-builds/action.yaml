@@ -1,5 +1,5 @@
 name: Verify Package Builds
-description: Report whether every workspace package that builds has output on disk, so a job gates its build on the build itself rather than on a cache's own verdict
+description: Report whether every library that builds has output on disk, so a job gates its build on the build itself rather than on a cache's own verdict
 inputs:
   fail-when-incomplete:
     description: Fail the step rather than reporting `complete=false`. For the check that runs *after* a build, where an incomplete tree is a broken build rather than a cold cache
@@ -7,7 +7,7 @@ inputs:
     default: "false"
 outputs:
   complete:
-    description: "`true` when every package that builds has a non-empty `dist`"
+    description: "`true` when every library that builds has a non-empty `dist`"
     value: ${{ steps.verify.outputs.complete }}
 runs:
   using: composite
@@ -18,7 +18,9 @@ runs:
     # Answer, so the answer comes from the disk instead.
     #
     # The package set is discovered rather than listed, the way the workspace invariants under `scripts/workspace`
-    # Discover theirs: a package builds if it has a tsdown config, so one added later is covered by nothing.
+    # Discover theirs: a library builds if it has a tsdown config, so one added later is covered by nothing. The
+    # Glob is `packages/*` because that is what the cache entry holds — an app's `dist` is built in its own
+    # Deploy job, so reading for one here would report every restore incomplete.
     # `dist` alone is checked, deliberately. It is the half that gets deployed and published, so it is the half
     # Whose absence is silent — a barrel missing beside it fails the consuming `typecheck` and `lint` jobs loudly,
     # Naming the package. Pure shell for the same reason it is `dist`-shaped: a cache hit is designed to need no
@@ -30,7 +32,7 @@ runs:
         FAIL_WHEN_INCOMPLETE: ${{ inputs.fail-when-incomplete }}
       run: |
         missingPackages=()
-        for tsdownConfiguration in apps/*/tsdown.config.ts packages/*/tsdown.config.ts; do
+        for tsdownConfiguration in packages/*/tsdown.config.ts; do
           package="${tsdownConfiguration%/tsdown.config.ts}"
           [ -n "$(ls -A "$package/dist" 2>/dev/null)" ] || missingPackages+=("$package")
         done

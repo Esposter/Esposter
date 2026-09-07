@@ -40,10 +40,12 @@
   },
   "scripts": {
     "bench": "vitest bench --run --project scripts && pnpm -r --if-present run bench",
-    "build": "pnpm build:packages && pnpm build:app",
-    "build:app": "virrun -- pnpm --filter @esposter/web run build",
+    "build": "virrun -- pnpm --filter \"@esposter/web...\" run build",
+    "build:functions": "pnpm -C apps/functions run build",
+    "build:infra": "pnpm -C apps/infra run build",
     "build:docs": "virrun -- typedoc",
-    "build:packages": "pnpm -r --filter \"!@esposter/web\" run build",
+    "build:packages": "pnpm -r --filter \"./packages/*\" run build",
+    "build:web": "virrun -- pnpm -C apps/web run build",
     "coverage": "vitest run --coverage",
     "crossOS": "tsx scripts/crossOS.ts",
     "format": "oxfmt",
@@ -51,25 +53,26 @@
     "graph:gen": "tsx scripts/dependencyGraph/index.ts",
     "lint": "virrun -- oxlint --format=default --disable-nested-config && virrun -- eslint . && virrun -- pnpm -r --parallel run lint",
     "lint:fix": "virrun -- oxlint --format=default --fix --disable-nested-config && virrun -- eslint --fix . && virrun -- pnpm -r --parallel run lint:fix",
-    "lint:fix:packages": "virrun -- oxlint --format=default --fix --disable-nested-config --ignore-pattern \"apps/web/**\" packages && virrun -- pnpm -r --filter \"!@esposter/web\" --parallel run lint:fix",
-    "lint:packages": "virrun -- oxlint --format=default --disable-nested-config --ignore-pattern \"apps/web/**\" packages && virrun -- pnpm -r --filter \"!@esposter/web\" --parallel run lint",
+    "lint:fix:packages": "virrun -- oxlint --format=default --fix --disable-nested-config packages && virrun -- pnpm -r --filter \"./packages/*\" --parallel run lint:fix",
+    "lint:packages": "virrun -- oxlint --format=default --disable-nested-config packages && virrun -- pnpm -r --filter \"./packages/*\" --parallel run lint",
     "outdated:dependencies": "tsx scripts/outdatedDependencies/index.ts",
     "prepare": "git config core.hooksPath .githooks || true",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
     "release": "pnpm format:check && pnpm build:packages && pnpm lint:packages && pnpm typecheck:packages && pnpm test:packages && lerna publish --yes",
-    "start": "pnpm --filter @esposter/web run start",
+    "start": "pnpm -C apps/web run start",
     "sweep:constant-scope": "tsx scripts/sweeps/constantScope/index.ts",
     "sweep:repeated-list-items": "tsx scripts/sweeps/repeatedListItems/index.ts",
     "sweep:shared-export-consumers": "tsx scripts/sweeps/sharedExportConsumers/index.ts",
     "sweep:skill-docs": "tsx scripts/sweeps/skillDocs/index.ts",
     "sweep:unterminated-results": "tsx scripts/sweeps/unterminatedResults/index.ts",
     "test": "virrun -- vitest run",
-    "test:packages": "virrun -- vitest run --project \"!@esposter/web\"",
+    "test:packages": "virrun -- vitest run --project \"packages/*\"",
+    "test:web": "virrun -- vitest run --project \"apps/web\"",
     "typecheck": "virrun -- tsc && virrun -- pnpm -r --parallel run typecheck",
-    "typecheck:packages": "virrun -- pnpm -r --filter \"!@esposter/web\" --parallel run typecheck",
+    "typecheck:packages": "virrun -- pnpm -r --filter \"./packages/*\" --parallel run typecheck",
     "update:node": "tsx scripts/updateNode/index.ts",
-    "watch:packages": "pnpm -r --filter \"!@esposter/web\" --parallel exec tsdown --watch"
+    "watch:packages": "pnpm -r --filter \"./packages/*\" --parallel exec tsdown --watch"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
@@ -116,6 +119,6 @@
     }
   },
   "scriptsComments": {
-    "build": "@TODO: restore `pnpm build:docs` to the chain when a bridge build grows the AST navigation API. TypeDoc exits 6 against the `typescript-native-bridge` alias, and `build` is what deploy runs, so the deploy would fail on documentation alone. `build:docs` stays as the probe. See the `build-docs` job in .github/workflows/CI.yaml."
+    "build": "One dependency closure rather than a hand-ordered chain: `--filter \"@esposter/web...\"` runs `build` for the app and everything it imports, topologically, so nothing here has to know which libraries exist or in what order they go. `build:packages` is a different set: the libraries on their own, which is what CI caches and hands to the checks, with no app in it because nothing imports an app's `dist`. @TODO: restore `pnpm build:docs` to the chain when a bridge build grows the AST navigation API. TypeDoc exits 6 against the `typescript-native-bridge` alias, and `build` is what deploy runs, so the deploy would fail on documentation alone. `build:docs` stays as the probe. See the `build-docs` job in .github/workflows/CI.yaml."
   }
 }

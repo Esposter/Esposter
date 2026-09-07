@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Build every non-app package once and publish the `package-builds` artifact. Extracted into a reusable
+  # Build every library once and publish the `package-builds` artifact. Extracted into a reusable
   # workflow so 🏗️ CI and 🏎️ Bench share one definition + one content-hash cache key (a build from either
   # workflow warms the cache for the other). The job id stays `build-packages`, so every `needs: build-packages`
   # below is unchanged.
@@ -73,6 +73,11 @@ jobs:
       - name: 📦 Setup Packages
         if: ${{ hashFiles('.app-build-marker') == '' }}
         uses: ./.github/actions/setup-packages
+        with:
+          # This job builds one project, so the install is that project and what it imports. The two other apps
+          # Are neither imported nor built here, and their trees — the Pulumi SDKs above all — are the largest
+          # Install work in the workflow's longest job.
+          install-filter: "@esposter/web..."
       # The marker is written only after the build returns, so a failed build leaves nothing for the post-run
       # Save to find and the next push rebuilds. It holds the hash it was saved under, which is the only thing
       # A restored marker can be read for.
@@ -81,7 +86,7 @@ jobs:
         env:
           APP_BUILD_HASH: ${{ steps.keys.outputs.app-build-hash }}
         run: |
-          pnpm build:app
+          pnpm build:web
           echo "$APP_BUILD_HASH" > .app-build-marker
 
   # @TODO: Commented out, not deleted: TypeDoc cannot run against the `typescript-native-bridge` alias. Its

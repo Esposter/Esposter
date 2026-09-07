@@ -1,4 +1,4 @@
-import { getBenchmarkTestConfiguration } from "@esposter/configuration";
+import { getBenchmarkTestConfiguration, getVitestProjectName } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
 
 const vitestConfig = await defineVitestProject({
@@ -10,6 +10,10 @@ const vitestConfig = await defineVitestProject({
     // Empty key — Nuxt coerces an unset runtimeConfig value to "", which `createHmac` accepts, so the failure
     // Would otherwise be a forgeable token in production and nothing at all in a test.
     env: { BETTER_AUTH_SECRET: "mock-auth-secret" },
+    // Named after this directory, like every member the shared factory names — `defineVitestProject` builds its
+    // Own config, so the name is set here rather than inherited. It is what `--project "apps/web"` addresses,
+    // And what keeps `--project "packages/*"` from reaching the app.
+    name: getVitestProjectName(import.meta.dirname),
     // Root the Nuxt project at this package, not the vitest cwd (the repo root, where `@nuxt/kit` and the
     // App don't resolve) — the run is driven by the root `projects` config.
     environmentOptions: { nuxt: { rootDir: import.meta.dirname } },
