@@ -17,7 +17,7 @@
 | `shared/models` — the cross-cutting trees                                       | 2026-09-07 | `auth`, `content`, `entity`, `environment`, `file`, `notification`, `room`, `storage`, `trpc`          |
 | `shared/services` — the cross-cutting trees                                     | 2026-09-07 | `app`, `intl`, `notification`, `room`, `storage`, `superjson`, `survey`, `trpc`, `zod`                 |
 | `shared/util`                                                                   | 2026-09-07 |                                                                                                        |
-| `shared/services/dungeons` + `shared/assets`                                    | —          | the definition data both halves read; `shared/generated` is generator output                           |
+| `shared/services/dungeons` + `shared/assets`                                    | 2026-09-07 | the definition data both halves read; `shared/generated` is generator output                           |
 | `shared/models/dungeons`                                                        | 2026-08-20 |                                                                                                        |
 | `shared/models/clicker`                                                         | 2026-09-07 |                                                                                                        |
 | `shared/models/achievement` + `services/achievement`                            | 2026-09-07 |                                                                                                        |
