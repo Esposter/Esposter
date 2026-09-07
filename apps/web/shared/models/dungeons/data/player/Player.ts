@@ -8,7 +8,6 @@ import { directionSchema } from "#shared/models/dungeons/data/player/Direction";
 import { inventorySchema } from "#shared/models/dungeons/data/player/Inventory";
 import { positionSchema } from "#shared/models/dungeons/data/player/Position";
 import { RespawnLocation, respawnLocationSchema } from "#shared/models/dungeons/data/player/RespawnLocation";
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster, monsterSchema } from "#shared/models/dungeons/monster/Monster";
 import { MONSTER_PARTY_MAX_LENGTH } from "#shared/services/dungeons/constants";
 import { getItem } from "#shared/services/dungeons/item/getItem";
@@ -16,6 +15,7 @@ import { getInitialMetadata } from "#shared/services/dungeons/scene/world/getIni
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
+import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 
 export class Player {
   direction: Direction;

@@ -3,7 +3,7 @@ import type { Effect } from "@/models/dungeons/npc/effect/Effect";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { NpcId } from "#shared/generated/tiled/propertyTypes/enum/NpcId";
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 import { Monster } from "#shared/models/dungeons/monster/Monster";
 import { EffectType } from "@/models/dungeons/npc/effect/EffectType";
 import { Npc } from "@/models/dungeons/scene/world/Npc";

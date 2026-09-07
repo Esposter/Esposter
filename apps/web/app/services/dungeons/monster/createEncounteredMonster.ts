@@ -1,4 +1,4 @@
-import type { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import type { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 
 import { Monster } from "#shared/models/dungeons/monster/Monster";
 import { getLevelExperience } from "@/services/dungeons/monster/getLevelExperience";

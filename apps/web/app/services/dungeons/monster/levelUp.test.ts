@@ -1,9 +1,9 @@
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster } from "#shared/models/dungeons/monster/Monster";
 import { getLevelExperience } from "@/services/dungeons/monster/getLevelExperience";
 import { levelUp } from "@/services/dungeons/monster/levelUp";
 import { createRandomNumber } from "@/util/math/random/createRandomNumber";
 import { describe, expect, test, vi } from "vitest";
+import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 
 // Pin the growth rolls to their lower bound by default so the stat gains are deterministic
 vi.mock(import("@/util/math/random/createRandomNumber"), () => ({ createRandomNumber: vi.fn<() => number>(() => 0) }));

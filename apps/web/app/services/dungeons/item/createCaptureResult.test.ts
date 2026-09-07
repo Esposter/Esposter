@@ -1,4 +1,4 @@
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 import { Monster } from "#shared/models/dungeons/monster/Monster";
 import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
 import { createCaptureResult } from "@/services/dungeons/item/createCaptureResult";

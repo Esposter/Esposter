@@ -1,10 +1,10 @@
 import type { AttackId } from "#shared/models/dungeons/attack/AttackId";
-import type { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import type { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 import type { Statistics } from "#shared/models/dungeons/monster/Statistics";
 import type { Status } from "#shared/models/dungeons/monster/Status";
 
 import { attackIdSchema } from "#shared/models/dungeons/attack/AttackId";
-import { monsterKeySchema } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { monsterKeySchema } from "#shared/models/dungeons/keys/MonsterKey";
 import { statisticsSchema } from "#shared/models/dungeons/monster/Statistics";
 import { statusSchema } from "#shared/models/dungeons/monster/Status";
 import { getMonsterData } from "#shared/services/dungeons/monster/getMonsterData";

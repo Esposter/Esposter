@@ -1,4 +1,4 @@
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 import { getMonsterData } from "#shared/services/dungeons/monster/getMonsterData";
 import { describe, expect, test } from "vitest";
 

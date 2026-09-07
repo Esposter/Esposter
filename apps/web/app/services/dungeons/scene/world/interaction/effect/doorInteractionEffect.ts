@@ -1,9 +1,9 @@
 import type { TeleportTarget } from "#shared/generated/tiled/propertyTypes/class/TeleportTarget";
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
 
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { ObjectgroupName } from "#shared/generated/tiled/layers/ObjectgroupName";
 import { TeleportObjectProperty } from "#shared/generated/tiled/propertyTypes/class/TeleportObjectProperty";
-import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 import { DirectionToGridDirectionMap } from "@/services/dungeons/direction/DirectionToGridDirectionMap";
 import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction/getPositionAfterDirectionMovement";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
@@ -30,7 +30,7 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
   const { switchToTilemap } = worldSceneStore;
   const { objectLayerMap, tilemap } = storeToRefs(worldSceneStore);
   fadeOut(scene);
-  getDungeonsSoundEffect(scene, SoundEffectKey.OpenDoor).play();
+  getDungeonsSoundEffect(scene, FileKey.SoundOpenDoor).play();
   // Phaser's emitter drops the promise an async listener returns, so getResultAsync logs a failed teleport instead
   scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
     getResultAsync(async () => {

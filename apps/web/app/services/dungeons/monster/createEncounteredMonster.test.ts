@@ -1,7 +1,7 @@
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { getMonsterData } from "#shared/services/dungeons/monster/getMonsterData";
 import { createEncounteredMonster } from "@/services/dungeons/monster/createEncounteredMonster";
 import { describe, expect, test, vi } from "vitest";
+import { MonsterKey } from "#shared/models/dungeons/keys/MonsterKey";
 
 // Pin the growth rolls to their lower bound so the stat gains are deterministic
 vi.mock(import("@/util/math/random/createRandomNumber"), () => ({ createRandomNumber: () => 0 }));

@@ -6,7 +6,7 @@ import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { MONSTER_PARTY_MAX_LENGTH } from "#shared/services/dungeons/constants";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
-import { checkIsBallKey } from "@/services/dungeons/item/checkIsBallKey";
+import { CaptureItemFileKeyMap } from "@/services/dungeons/item/CaptureItemFileKeyMap";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { useBallStore } from "@/store/dungeons/battle/ball";
@@ -35,10 +35,12 @@ export class CaptureItemResolver extends AItemResolver {
   }
 
   override handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
+    const fileKey = CaptureItemFileKeyMap[item.value.id];
+    if (!fileKey) throw new NotFoundError(this.handleItem.name, item.value.id);
+
     const ballStore = useBallStore();
     const { texture } = storeToRefs(ballStore);
-    if (!checkIsBallKey(item.value.id)) throw new NotFoundError(this.handleItem.name, item.value.id);
-    texture.value = item.value.id;
+    texture.value = fileKey;
     phaserEventEmitter.emit("useItem", scene, item.value, monster.value, () =>
       battleStateMachine.setState(StateName.CatchMonster),
     );

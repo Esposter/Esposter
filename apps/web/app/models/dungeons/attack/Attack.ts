@@ -1,8 +1,8 @@
+import type { FileKey } from "#shared/generated/phaser/FileKey";
 import type { AttackId } from "#shared/models/dungeons/attack/AttackId";
-import type { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 
 export interface Attack {
+  fileKey: FileKey;
   id: AttackId;
   power: number;
-  soundEffectKey: SoundEffectKey;
 }

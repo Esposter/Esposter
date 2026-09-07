@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import { getActiveInputResolvers } from "@/services/dungeons/scene/world/getActiveInputResolvers";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { useCameraStore } from "vue-phaserjs";
@@ -13,7 +13,7 @@ const activeInputResolvers = getActiveInputResolvers();
 const update = useResolveInput(activeInputResolvers);
 
 const create = (scene: SceneWithPlugins) => {
-  playDungeonsBackgroundMusic(scene, BackgroundMusicKey.AndTheJourneyBegins);
+  playDungeonsBackgroundMusic(scene, FileKey.ThirdPartyXDeviruchiAndTheJourneyBegins);
   fadeIn(scene, Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
 };
 </script>

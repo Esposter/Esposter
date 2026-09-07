@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { MenuExperienceTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuExperienceTextStyle";
 import { MenuTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuTextStyle";
 import { ExperienceLabelTextStyle } from "@/assets/dungeons/styles/ExperienceLabelTextStyle";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { MonsterKeyFileKeyMap } from "@/services/dungeons/monster/MonsterKeyFileKeyMap";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { prettify } from "@/util/text/prettify";
@@ -20,7 +21,7 @@ const monsterName = computed(() => prettify(selectedMonster.value.key));
 
 <template>
   <DungeonsScene :scene-key="SceneKey.MonsterDetails" @update="onPlayerInput($event, controls.getInput(true))">
-    <Image :configuration="{ origin: 0, texture: ImageKey.MonsterDetailsBackground }" />
+    <Image :configuration="{ origin: 0, texture: FileKey.SceneMonsterPartyMonsterDetailsBackground }" />
     <Text :configuration="{ x: 10, text: 'Monster Details', style: { ...MenuTextStyle, fontSize: 48 } }" />
     <Text
       :configuration="{
@@ -31,7 +32,16 @@ const monsterName = computed(() => prettify(selectedMonster.value.key));
       }"
     />
     <Text :configuration="{ x: 200, y: 60, text: monsterName, style: { ...MenuTextStyle, fontSize: 40 } }" />
-    <Image :configuration="{ x: 160, y: 310, originX: 0, originY: 1, texture: selectedMonster.key, scale: 0.7 }" />
+    <Image
+      :configuration="{
+        x: 160,
+        y: 310,
+        originX: 0,
+        originY: 1,
+        texture: MonsterKeyFileKeyMap[selectedMonster.key],
+        scale: 0.7,
+      }"
+    />
     <Text :configuration="{ x: 20, y: 340, origin: 0, text: 'Current Exp.', style: MenuExperienceTextStyle }" />
     <Text
       :configuration="{

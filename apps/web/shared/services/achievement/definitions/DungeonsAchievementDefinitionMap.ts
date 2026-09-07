@@ -1,7 +1,7 @@
 // @unocss-include
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { saveDungeonsInputSchema } from "#shared/models/db/dungeons/SaveDungeonsInput";
-import { MonsterKeys } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { MonsterKeys } from "#shared/models/dungeons/keys/MonsterKey";
 import { property } from "#shared/services/achievement/conditions/property";
 import { defineTriggerAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";

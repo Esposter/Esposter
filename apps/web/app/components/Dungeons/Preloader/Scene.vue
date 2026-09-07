@@ -2,11 +2,9 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import files from "#shared/generated/phaser/files.json";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { FontLoaders } from "@/services/dungeons/loader/FontLoaderMap";
-import { ImageLoaders } from "@/services/dungeons/loader/image/ImageLoaderMap";
 import { PixelArtTextureKeys } from "@/services/dungeons/loader/PixelArtTextureKeys";
-import { SoundLoaders } from "@/services/dungeons/loader/sound/SoundLoaderMap";
 import { SpritesheetLoaders } from "@/services/dungeons/loader/spritesheet/SpritesheetLoaderMap";
 import { TilemapLoaders } from "@/services/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaders } from "@/services/dungeons/loader/TilesetLoaderMap";
@@ -17,6 +15,7 @@ import {
   PROGRESS_BOX_WIDTH,
 } from "@/services/dungeons/scene/preloader/constants";
 import { prettify } from "@/util/text/prettify";
+import { StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { Textures } from "phaser";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
@@ -28,6 +27,7 @@ const y = ref<number>();
 const percentageText = ref("0%");
 const assetText = ref("");
 const progressBarWidth = ref(0);
+const publicAssetsBaseUrl = usePublicAssetsBaseUrl();
 
 const preload = (scene: SceneWithPlugins) => {
   const { height, width } = scene.cameras.main;
@@ -47,15 +47,22 @@ const preload = (scene: SceneWithPlugins) => {
     })
     .once(
       "complete",
-      getSynchronizedFunction(() => getResultAsync(() => switchToScene(SceneKey.Title)).match(noop, console.error)),
+      getSynchronizedFunction(() => {
+        // The pack's base url stays set for the whole load, so it has to come back off before any later scene
+        // Loads a bundled asset by its own relative path
+        scene.load.setBaseURL();
+        return getResultAsync(() => switchToScene(SceneKey.Title)).match(noop, console.error);
+      }),
     );
 
-  for (const fontLoader of FontLoaders) fontLoader(scene);
-  for (const soundLoader of SoundLoaders) soundLoader(scene);
   for (const spritesheetLoader of SpritesheetLoaders) spritesheetLoader(scene);
-  for (const imageLoader of ImageLoaders) imageLoader(scene);
   for (const tilesetLoader of TilesetLoaders) tilesetLoader(scene);
   for (const tilemapLoader of TilemapLoaders) tilemapLoader(scene);
+
+  // Every image, sound and font lives in the public dungeons bucket and is described by the generated file pack, so the
+  // Loader reads one manifest instead of a loader map per asset family
+  scene.load.setBaseURL(`${publicAssetsBaseUrl}/${StorageBucket.PublicDungeonsAssets}`);
+  scene.load.pack(files);
 };
 </script>
 
