@@ -1,11 +1,11 @@
 ---
 title: virrun retirement
-description: virrun does three separable jobs; Vite+ replaces one, the dev environment answers another, and only the third decides whether the package can be deleted.
+description: virrun does three separable jobs; Vite+ replaces one, the third turns out to be self-inflicted, and what is left is a speed-against-maintenance trade with nothing gating it.
 ---
 
 # virrun Retirement
 
-"Migrate off virrun" reads as one decision and is three, because virrun does three separable jobs and only one of them is a caching job. Vite+ replaces that one. The other two are answered — or not — by a decision about the development environment that has nothing to do with which toolchain runs on top of it.
+"Migrate off virrun" reads as one decision and is three, because virrun does three separable jobs. Vite+ replaces one of them. The second is a speed feature with no replacement. The third looks like a correctness requirement that would block removal, and does not survive being checked.
 
 Worth establishing first, because it changes the stakes: **virrun already does nothing in CI.** The committed config branches on the platform, resolving the `os` backend on win32 and the native passthrough backend everywhere else, so on a Linux runner `virrun -- <cmd>` is a prefix that execs the command. Every `virrun --` in a workflow today is a no-op wrapper. Removing virrun therefore buys CI nothing directly, and the case for removal is entirely about the development loop and the maintenance surface.
 
@@ -15,15 +15,15 @@ Worth establishing first, because it changes the stakes: **virrun already does n
 flowchart TD
   virrun["virrun — the outer command on a Windows host"] --> cache["Job 1 — content-keyed task cache"]
   virrun --> speed["Job 2 — RAM filesystem, warm snapshot and fork"]
-  virrun --> correct["Job 3 — Linux-generated prepare layer for a Win32 host"]
+  virrun --> correct["Job 3 — a Linux-generated prepare layer"]
   cache --> vp["vp run --cache replaces it, and removes a competing notion of staleness"]
-  speed --> lost["No replacement — this is a real loss, priced below"]
-  correct --> gate{"Does the Windows dev loop move onto Linux?"}
-  gate -->|"yes — WSL-native or a container"| delete["virrun has no remaining job — delete the package"]
-  gate -->|no| keep["virrun stays, reduced to job 2 and job 3"]
+  speed --> trade["No replacement — the one real loss, priced below"]
+  correct --> why{"Why is the host's own prepare output unusable?"}
+  why --> root["The sandbox mounts a different root — the baked paths miss"]
+  root --> circular["A cost the sandbox imposes, not a reason it exists — it leaves with virrun"]
 ```
 
-The diamond is the whole decision. Jobs 1 and 2 are optimisations and could be traded away on their own merits; job 3 is a correctness property, and nothing in Vite+ provides it.
+The diagram used to put a gate at job 3, on a decision about which operating system the development loop runs on. That gate was wrong, and the section below is why.
 
 ### Job 1 — the task cache
 
@@ -35,25 +35,30 @@ Content-keyed on environment key, working tree and command, replaying a recorded
 
 Dependencies fetched once into a shared store, `node_modules` and build output living in a RAM filesystem, a warm snapshot forked per run so install is skipped entirely. Vite+ has no equivalent and does not attempt one.
 
-This is a genuine loss and should be recorded as one rather than argued away. What makes it acceptable is that it is a **local-loop** loss on one platform, measured against a maintenance surface that is not local: a published package, a differential correctness harness that hard-fails CI on any divergence from native execution, committed bench artifacts under a speed gate, and a documentation area larger than most product areas here. The speed is real; so is the cost of keeping the thing that produces it correct.
+This is the one genuine loss, and it should be recorded as one rather than argued away. What makes it a defensible trade is that it is a **local-loop** gain on one platform, bought with a maintenance surface that is not local: a published package, a differential correctness harness that hard-fails CI on any divergence from native execution, committed bench artifacts under a speed gate, and a documentation area larger than most product areas here.
 
-### Job 3 — platform correctness, and the only real blocker
+It is also the job that a change of development platform addresses directly, since most of what the RAM filesystem is buying back is the cost of `node_modules` on NTFS. That makes moving the loop onto Linux a **substitute** for job 2 rather than a prerequisite for the removal — a distinction the earlier version of this page had backwards.
 
-A Win32-generated `.nuxt` misfires Linux-targeted type-aware tooling, so sandboxed commands on a Windows host need a Linux-generated prepare layer, and virrun's source-keyed prepare overlay is what produces it. This is not a speed feature. It is the reason the sandbox is not optional on that host, and it is why the config selects the `os` backend there and nothing else.
+### Job 3 — the prepare layer, which is circular
 
-Vite+ does not solve this and is not the kind of tool that would. `vp env` manages a Node runtime; it does not give a Windows host a Linux filesystem or a Linux process. **So virrun cannot be deleted by adopting Vite+ — it can only be deleted by moving the Windows development loop onto Linux.**
+The recorded reason for the layer is narrow and specific: a win32-generated `.nuxt` makes a Linux sandbox's type-aware linter collapse types to `any`, producing a phantom rule finding — **"even though it is fine natively"** ([snapshot and fork](/docs/virrun/snapshot-and-fork)). That last clause is the whole answer, and it was there the entire time.
 
-## The decision that actually gates deletion
+The mechanism is absolute paths. `nuxt prepare` writes host-absolute paths into its generated declaration files, so on a Windows host the generated module declarations name `C:/…` locations inside the host's package store. Those paths resolve for a consumer running on that host. They resolve for nothing else. A sandbox mounts the source at a different root by construction, so the declarations it reads point at paths that do not exist, the modules do not resolve, the types degrade to `any`, and a type-aware rule fires on the degraded types.
 
-Three options, and this is a question about how the repository is developed rather than a technical unknown to research:
+So this is not a property of Windows. It is a property of **any consumer whose filesystem root differs from the generator's**, and the sandbox is the only such consumer here. Windows-native tooling reading a Windows-generated `.nuxt` is self-consistent and correct.
 
-1. **Develop inside WSL.** The repository already maintains an ext4 source mirror inside WSL and keeps it fresh with a host-side manifest diff, precisely so that Windows-side source reads stop crossing the 9p filesystem ([WSL source mirror](/docs/virrun/wsl-source-mirror)). Working _in_ WSL rather than mirroring _into_ it deletes the mirror, the delta sync, the probe caches and the platform branch in one move, and the prepare layer stops being a problem because the tooling is already running on Linux.
-2. **A container.** Same effect, more ceremony, and it reintroduces a filesystem boundary between the editor and the source that the mirror exists to work around.
-3. **Re-test the premise.** The `.nuxt` misfire was observed against a particular combination of Nuxt and type-aware tooling. If it no longer reproduces, job 3 evaporates and the sandbox is optional on every platform. This is cheap to check and should be checked before either of the above is planned, because a negative result makes the decision for free.
+The consequence is that job 3 is not a reason virrun exists. It is a cost virrun imposes on itself, and it leaves when virrun leaves. Nothing has to be migrated to make it go away, and no probe is needed to confirm it — the generated tree can be inspected directly, and the host paths are in it.
 
-Option 1 is the recommendation, with option 3 run first as a probe. Neither is part of the Vite+ migration, and both should be settled before its final phase is scheduled.
+## What actually gates deletion
 
-## What deletion removes, if the decision lands
+Nothing external. With job 1 replaced and job 3 self-cancelling, the decision reduces to a single question with no dependencies: **is the local speed of the warm-snapshot loop worth the maintenance surface that keeps it correct?**
+
+That is a judgement call about this repository's priorities rather than a technical unknown, and it can be taken at any point — it does not wait on a Vite+ phase, and a Vite+ phase does not wait on it. Two things inform it and neither is a blocker:
+
+- **Moving the development loop onto Linux substitutes for job 2.** The repository already maintains an ext4 source mirror inside WSL with a host-side manifest diff keeping it fresh, precisely so Windows-side source reads stop crossing the 9p filesystem ([WSL source mirror](/docs/virrun/wsl-source-mirror)). Working _in_ WSL rather than mirroring _into_ it deletes the mirror, the delta sync, the probe caches and the platform branch — and it recovers most of the filesystem speed that the RAM overlay exists to provide, because the source is then on a Linux filesystem to begin with.
+- **The absolute-path fragility is worth knowing about independently.** Generated declarations carrying host-absolute paths are hostile to anything that relocates the tree — a container, a second checkout path, a cache restored onto a different runner layout. Nothing in this proposal depends on fixing that, and it is not a defect this page is entitled to file, but it is the reason job 3 existed and it does not stop being true when virrun goes.
+
+## What deletion removes
 
 Beyond the package itself and its documentation area, three things elsewhere in the repository exist only because virrun does:
 

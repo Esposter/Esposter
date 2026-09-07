@@ -23,7 +23,7 @@ Three things do not move, and each is a bounded exception rather than an unresol
 
 - **The app build stays Nuxt's.** `nuxt build` is not `vite build` with extra steps.
 - **ESLint stays for Vue templates.** Oxlint parses a `.vue` file's script and not its template ([Nuxt discussion](https://github.com/nuxt/nuxt/discussions/34857)), which is most of this repo's component surface.
-- **The Linux dev loop on a Windows host needs an answer before virrun can go.** Vite+ does not provide one; WSL-native development does. See [virrun retirement](/docs/proposals/refactors/vite-plus/virrun-retirement).
+- **virrun's local speed has no replacement.** Its task cache is subsumed and its prepare layer turns out to be a cost it imposes on itself, so what removal actually trades away is the warm-snapshot loop and nothing else. See [virrun retirement](/docs/proposals/refactors/vite-plus/virrun-retirement).
 
 ## Where the entry point lands
 
@@ -62,7 +62,7 @@ Each phase is independently shippable and independently revertible, and none of 
 1. **Task caching in CI.** Highest value, smallest surface, and it is the phase that proves or kills the rest — if traced inputs do not reproduce a correct key under this repo's builds, nothing below is worth attempting. Measurable against the existing key: the gap between vp's inferred input set and what `get-build-cache-keys` hashes is the finding.
 2. **Configuration.** Lint and format move into the Vite+ config, decomposed per concern rather than as one root file. Nothing about the checks changes; only who reads their settings.
 3. **The command surface.** Root scripts become `vp` tasks. This is where the script count falls.
-4. **virrun retirement.** Last, because it depends on a dev-environment decision that has nothing to do with Vite+, and because phases 1–3 remove most of virrun's remaining reasons to exist before the removal is even considered.
+4. **virrun retirement.** Last, not because anything gates it — nothing does — but because phases 1–3 remove its remaining jobs one at a time, and a removal argued after them is a removal of something already unused rather than a substitution to be got right.
 5. **Docs and skills.** In the same change as each phase, never after it.
 
 ## What this is expected to delete
@@ -71,7 +71,7 @@ Stated as an expectation rather than a count, because the point of the phase ord
 
 - One of the two content-hash caches outright, and the composite action that computes the other's key.
 - The subtract-list heuristics in that key — the test-source, bench-artifact and markdown exclusions each stop being expressible, because nothing enumerates inputs any more.
-- The `virrun --` prefix from every root script, and — if the WSL decision lands — a published workspace package, its differential correctness harness, its bench artifacts and its docs area.
+- The `virrun --` prefix from every root script, and — once the speed trade is accepted — a published workspace package, its differential correctness harness, its bench artifacts and its docs area.
 - The root scripts that exist only to compose other root scripts, and the runtime-pinning script that `vp env` subsumes.
 
 ## What it does not buy
