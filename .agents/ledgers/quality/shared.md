@@ -12,8 +12,8 @@
 | `shared/models/db/post`, `moderation`                                           | 2026-09-07 |                                                                                                        |
 | `shared/models/db/role`, `call`                                                 | 2026-09-07 |                                                                                                        |
 | `shared/models/db` — the identity trees                                         | 2026-09-07 | `user`, `userSettings`, `session`, `webhook`, `searchHistory`, `friend`, `notification`, `achievement` |
-| `shared/models/resource` — the roots                                            | —          |                                                                                                        |
-| `shared/models/resource` — `survey`, `program`, `blueprint`, `todoList`, `note` | —          |                                                                                                        |
+| `shared/models/resource` — the roots                                            | 2026-09-07 |                                                                                                        |
+| `shared/models/resource` — `survey`, `program`, `blueprint`, `todoList`, `note` | 2026-09-07 |                                                                                                        |
 | `shared/models` — the cross-cutting trees                                       | —          | `auth`, `content`, `entity`, `environment`, `file`, `notification`, `room`, `storage`, `trpc`          |
 | `shared/services` — the cross-cutting trees                                     | —          | `app`, `intl`, `notification`, `room`, `storage`, `superjson`, `survey`, `trpc`, `zod`                 |
 | `shared/util`                                                                   | 2026-09-07 |                                                                                                        |
