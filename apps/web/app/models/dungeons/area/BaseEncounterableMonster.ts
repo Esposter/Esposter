@@ -1,7 +1,7 @@
-import type { FileKey } from "#shared/generated/phaser/FileKey";
+import type { MonsterFileKey } from "#shared/models/dungeons/keys/MonsterFileKey";
 import type { Weight } from "@/models/math/Weight";
 
 export interface BaseEncounterableMonster extends Weight {
-  key: FileKey;
+  key: MonsterFileKey;
   level: number;
 }

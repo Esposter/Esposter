@@ -1,3 +1,4 @@
+import type { MonsterFileKey } from "#shared/models/dungeons/keys/MonsterFileKey";
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { Except } from "type-fest";
 
@@ -82,6 +83,6 @@ const MonstersDataMap = {
     },
     status: { experience: 0, health: 25 },
   },
-} as const satisfies Partial<Record<FileKey, Except<Monster, "id" | "key">>>;
+} as const satisfies Record<MonsterFileKey, Except<Monster, "id" | "key">>;
 
 export const monstersData: Except<Monster, "id">[] = parseDictionaryToArray(MonstersDataMap, "key");
