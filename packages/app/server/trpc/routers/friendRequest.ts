@@ -46,12 +46,7 @@ export const friendRequestRouter = router({
         friendshipId,
         "NOT_FOUND",
       );
-      friendEventEmitter.emit("acceptFriendRequest", {
-        receiverId: userId,
-        receiverUser,
-        senderId,
-        senderUser,
-      });
+      friendEventEmitter.emit("acceptFriendRequest", { receiverUser, senderUser });
       return senderUser;
     }),
   declineFriendRequest: standardAuthedProcedure
@@ -78,13 +73,9 @@ export const friendRequestRouter = router({
     }),
   onAcceptFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;
-    for await (const [{ receiverId, receiverUser, senderId, senderUser }] of on(
-      friendEventEmitter,
-      "acceptFriendRequest",
-      { signal },
-    ))
-      if (senderId === userId) yield receiverUser;
-      else if (receiverId === userId) yield senderUser;
+    for await (const [{ receiverUser, senderUser }] of on(friendEventEmitter, "acceptFriendRequest", { signal }))
+      if (senderUser.id === userId) yield receiverUser;
+      else if (receiverUser.id === userId) yield senderUser;
   }),
   onDeclineFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;
@@ -94,10 +85,8 @@ export const friendRequestRouter = router({
   }),
   onSendFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;
-    for await (const [{ friendRequest, receiverId, senderId }] of on(friendEventEmitter, "sendFriendRequest", {
-      signal,
-    })) {
-      if (![receiverId, senderId].includes(userId)) continue;
+    for await (const [friendRequest] of on(friendEventEmitter, "sendFriendRequest", { signal })) {
+      if (![friendRequest.receiverId, friendRequest.senderId].includes(userId)) continue;
       yield friendRequest;
     }
   }),
@@ -150,7 +139,7 @@ export const friendRequestRouter = router({
         receiver: receiverUser,
         sender: senderUser,
       };
-      friendEventEmitter.emit("sendFriendRequest", { friendRequest, receiverId, senderId: userId });
+      friendEventEmitter.emit("sendFriendRequest", friendRequest);
       // Best-effort after the insert — a failed publish loses one notification, never the friend request that
       // Already landed.
       await getResultAsync(() =>
