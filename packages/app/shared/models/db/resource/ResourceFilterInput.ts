@@ -19,7 +19,7 @@ export const resourceFilterInputSchema = z.object({
   // Match, so reusing the write-time resourceTagsSchema here would only turn "no results" into a
   // Rejected query that errors the whole list
   tags: z.record(z.string(), z.string()).optional(),
-  types: z.array(resourceTypeSchema).optional(),
+  types: createUniqueArraySchema(resourceTypeSchema).optional(),
   updatedAfter: z.date().optional(),
   updatedBefore: z.date().optional(),
 });

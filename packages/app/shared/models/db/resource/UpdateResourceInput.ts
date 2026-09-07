@@ -7,11 +7,13 @@ import { z } from "zod";
 // Both editable fields are optional so a caller writes only the field it owns: a rename and a tag edit are
 // Independent writes to one row, and a tag edit that had to restate the name would put the pre-rename name
 // Back whenever the two overlap
+const updatableResourceSchema = selectResourceSchema.pick({ name: true, tags: true });
+
 export const updateResourceInputSchema = refineAtLeastOne(
   z.object({
     ...resourceIdInputSchema.shape,
-    ...selectResourceSchema.pick({ name: true, tags: true }).partial().shape,
+    ...updatableResourceSchema.partial().shape,
   }),
-  ["name", "tags"],
+  updatableResourceSchema.keyof().options,
 );
 export type UpdateResourceInput = z.infer<typeof updateResourceInputSchema>;

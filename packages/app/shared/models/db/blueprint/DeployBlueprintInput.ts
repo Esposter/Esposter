@@ -14,5 +14,4 @@ export const deployBlueprintInputSchema = z.object({
     })
     .default({}),
 });
-
 export type DeployBlueprintInput = z.infer<typeof deployBlueprintInputSchema>;
