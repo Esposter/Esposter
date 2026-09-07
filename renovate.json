@@ -1,7 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended", ":semanticCommitTypeAll(chore)", "helpers:pinGitHubActionDigests"],
-  "gitIgnoredAuthors": ["41898282+github-actions[bot]@users.noreply.github.com"],
   "ignorePresets": [":prHourlyLimit2"],
   "lockFileMaintenance": {
     "automerge": true,

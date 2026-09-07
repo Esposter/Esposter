@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs), version-capped packages (h3, vitest, vuetify, unocss), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, why a Renovate branch has its generated manifest fields rebuilt and committed back by a workflow of their own rather than failing CI, and tracked open issues. Apply when updating package versions.
+description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs), version-capped packages (h3, vitest, vuetify, unocss), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues. Apply when updating package versions.
 ---
 
 # Dependency Updates
@@ -52,10 +52,6 @@ When `@electric-sql/pglite` changes between minor versions, regenerate the db-mo
 When `vuetify` or `unocss` changes, `packages/app/uno.config.test.ts` and `packages/app/vuetify.config.test.ts` are the check: they snapshot resolved config, so a failure is the upstream release moving a derived rule, colour or default, and it is the only place that shows. **Read the diff and account for it in the commit before regenerating** — a reflexive `-u` throws away the one signal the bump produces. The `unocss` skill owns the detail.
 
 `inlinedDependencies` in a package manifest is written by tsdown on every build, so a vendored package's bump lands in a reviewed diff — every package included, `packages/azure-functions` among them: it keeps the `main` the Functions host reads through `exports: { legacy: true }` rather than by switching generation off, and generation is the same write that records the list. Nothing there is hand-maintained, so a recorded version that no longer exists under `node_modules/.pnpm` is a build nobody re-ran rather than an edit nobody made — rebuild and read the diff, which is also the explanation on offer for that package's bundle size moving when nothing in its own manifest did.
-
-A Renovate branch is the one place nobody rebuilds by hand. Renovate edits the catalog and the lockfile and regenerates nothing else — `postUpgradeTasks` would, but it is self-hosted-only and this repository runs the hosted app — so a bundled bump, and every lock file maintenance run, leaves the recorded versions behind. 🏗️ Build Packages therefore stands its committed-manifest check aside on a `renovate/**` branch, and 🔁 Renovate Manifest supplies the write instead: one job rebuilds under a read-only token and uploads the manifests, a second job holding the only `contents: write` in the repository commits them back without running an install, a build or any third-party code. On every other branch the same diff is still a failure — a build nobody re-ran.
-
-That commit's author is named in `renovate.json`'s `gitIgnoredAuthors`, so Renovate keeps managing the branch instead of abandoning it as modified by someone else. A push made with `GITHUB_TOKEN` starts no workflow, so the pushed head carries no checks and an automerge waiting on it stalls — merge it by hand, on the strength of the checks that ran one commit earlier against a tree differing only by a generated field nothing reads.
 
 Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them per the `testing` skill's `references/platform-and-bundle-tests.md` — rebuild first, then the narrowed `-u` pair — never by editing a snapshot to the number a failure printed.
 
