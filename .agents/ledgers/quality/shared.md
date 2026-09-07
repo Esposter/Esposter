@@ -12,10 +12,12 @@
 | `shared/models/db/post`, `moderation`                                           | —          |                                                                                                        |
 | `shared/models/db/role`, `call`                                                 | —          |                                                                                                        |
 | `shared/models/db` — the identity trees                                         | —          | `user`, `userSettings`, `session`, `webhook`, `searchHistory`, `friend`, `notification`, `achievement` |
-| `shared/models/resource/sheet/column`                                           | —          |                                                                                                        |
-| `shared/models/resource/sheet` — the rest                                       | —          |                                                                                                        |
 | `shared/models/resource` — the roots                                            | —          |                                                                                                        |
 | `shared/models/resource` — `survey`, `program`, `blueprint`, `todoList`, `note` | —          |                                                                                                        |
+| `shared/models` — the cross-cutting trees                                       | —          | `auth`, `content`, `entity`, `environment`, `file`, `notification`, `room`, `storage`, `trpc`          |
+| `shared/services` — the cross-cutting trees                                     | —          | `app`, `intl`, `notification`, `room`, `storage`, `superjson`, `survey`, `trpc`, `zod`                 |
+| `shared/util`                                                                   | —          |                                                                                                        |
+| `shared/services/dungeons` + `shared/assets`                                    | —          | the definition data both halves read; `shared/generated` is generator output                           |
 | `shared/models/dungeons`                                                        | 2026-08-20 |                                                                                                        |
 | `shared/models/clicker`                                                         | 2026-09-07 |                                                                                                        |
 | `shared/models/achievement` + `services/achievement`                            | 2026-09-07 |                                                                                                        |
@@ -32,3 +34,5 @@
 | `packages/shared` — `src/util/types`                                            | 2026-09-06 | the near-duplicate `DeepOmit` type tests are the `testing` ledger's                                    |
 | `packages/shared` — the rest of `src/util`                                      | 2026-09-06 |                                                                                                        |
 | `packages/shared-node`                                                          | 2026-09-07 |                                                                                                        |
+
+`shared/models/resource/sheet` belongs to `platform.md`, alongside the `store/resource/sheet` it is read with.
