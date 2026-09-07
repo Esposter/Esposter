@@ -71,9 +71,9 @@ describe(useAutosaveFunction, () => {
     expect(save).not.toHaveBeenCalled();
   });
 
-  // Edits that exist only in the tab are the one thing the toolbar must not call saved, so the arming is what
-  // The state reads rather than the write it eventually issues. Armed twice for one instance and the count
-  // Would never come back down
+  // Edits that exist only in the tab are the one thing the toolbar must not call saved, and the debounce
+  // Re-arms for as long as the owner keeps typing — so a state read from the write alone reports a tab full of
+  // Unwritten edits as saved for however long the typing lasts
   test("reports saving from the keystroke rather than from the write", async () => {
     expect.hasAssertions();
 
@@ -90,14 +90,17 @@ describe(useAutosaveFunction, () => {
     expect(saveState.value).toBe(ResourceSaveState.Saved);
   });
 
-  test("unwinds the armed save when its scope is disposed", async () => {
+  // A save this refuses is a save nothing else is going to make either, so the edit it was holding stops being
+  // Something the toolbar is waiting on — otherwise the resource navigated to reports a save that never comes
+  test("stops waiting on an edit whose save it refuses", async () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
     const { saveState } = storeToRefs(resourceStore);
     await mountAutosave();
     autosave();
-    wrapper.unmount();
+    router.currentRoute.value.params.id = otherResourceId;
+    await elapseDebounce();
 
     expect(saveState.value).toBe(ResourceSaveState.Saved);
   });

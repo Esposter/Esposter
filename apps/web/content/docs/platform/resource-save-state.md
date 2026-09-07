@@ -22,7 +22,7 @@ flowchart TD
   LIB["a third-party editor's own cadence<br/>GrapesJS storage, SurveyJS creator"] --> DOOR
   DOOR["resourceStore.saveContent<br/>dirty check, queue, contentVersion guard"]
 
-  AUTO -.->|"arms the debounce"| ARMED(["armedAutosaveCount > 0"])
+  AUTO -.->|"holds the edit"| ARMED(["hasUnwrittenContent"])
   DOOR -.->|"in flight"| PENDING(["isSaveContentPending"])
   DOOR -.->|"rejected as stale"| STALE(["isContentStale"])
   DOOR -.->|"rejected otherwise"| FAILED(["hasSaveContentFailed"])
@@ -45,9 +45,11 @@ flowchart TD
 | `Failed` | Not saved         | the last write was rejected for any other reason   | retry the edit, or copy it out |
 | `Saved`  | Saved, and _when_ | none of the above                                  | nothing                        |
 
-**The armed debounce counts as saving.** The window between the keystroke and the write is short, but it is the one window in which the indicator could say `Saved` about edits that exist only in the tab — the single lie it must not tell. Folding it into `Saving` rather than giving unsaved edits a state of their own also keeps a sub-second word off the screen, which would read as a flicker rather than as information.
+**An edit the debounce is still holding counts as saving.** The debounce re-arms on every keystroke, so nothing is in flight for as long as the owner keeps typing — a state read from the write alone would call a tab full of unwritten edits `Saved`, for however long the typing lasts. That is the one lie the indicator must not tell, so `hasUnwrittenContent` is set where the edit is seen and cleared when the write is issued, with the mutation's own pending flag taking over from there. Folding it into `Saving` rather than giving unwritten edits a state of their own also keeps a word off the screen that would appear and vanish between keystrokes.
 
-The count is a count, not a flag: a blade may watch more than one source — Sheet's settings beside its data — and the first debounce to fire would otherwise report the rest as saved. It unwinds on scope disposal too, or a blade closed mid-debounce would leave the next resource claiming a save that is never coming.
+**It is a flag, not a count of armed debounces.** A save writes the whole content blob, so one write cleans every edit waiting on the resource however many watchers observed them — a count would claim two pending saves where there is one, and would need a per-instance guard and a disposal hook to stay honest about a number nothing reads. A pair of counters beside a ref in a store is the shape the [async sequencing rule](/docs/architecture/async-operations) names as the tell for ordering done by hand.
+
+It is also never derived by comparing the content against what was persisted, though the store holds exactly that snapshot: deriving it reactively means serializing the whole blob on every keystroke, which is the cost the debounce exists to avoid. The flag is the cheap early signal, and `persistedContentJson` is the exact one the write itself consults.
 
 **`Saved` carries the time.** The word on its own is a claim the owner has to take on trust, which is exactly the trust they did not have when they went looking for a Save button. `updatedAt` is what the row already tracks, so the resting state is `Saved` plus a relative time, with the absolute one on hover.
 

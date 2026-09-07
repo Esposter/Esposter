@@ -15,24 +15,13 @@ import { getResultAsync, noop } from "@esposter/shared";
 export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
   const { currentRoute } = useRouter();
   const resourceStore = useResourceStore();
-  const { armAutosave, disarmAutosave } = resourceStore;
-  // Edits that exist only in the tab are what the toolbar calls "Saving", so the window between the keystroke
-  // And the write counts as part of it. Held per instance rather than per call: the timer is re-armed on every
-  // Keystroke and a second arm for one already-armed instance would leave the count stuck above zero
-  let isArmed = false;
-  const disarm = () => {
-    if (!isArmed) return;
-
-    isArmed = false;
-    disarmAutosave();
-  };
-  // A blade that closes mid-debounce drops its timer with the scope, so the count it claimed has to unwind
-  // With it — otherwise the next resource opens reporting a save that is never coming
-  onScopeDispose(disarm);
+  const { hasUnwrittenContent } = storeToRefs(resourceStore);
   const { start } = useTimeoutFn(
     getSynchronizedFunction((scheduledResourceId: string) =>
       getResultAsync(async () => {
-        disarm();
+        // Cleared before the save rather than after it: from here the write's own pending flag is what says
+        // Edits are on their way, and a save this refuses is a save nothing else is going to make either
+        hasUnwrittenContent.value = false;
         if (getRouteParamString(currentRoute.value.params.id) !== scheduledResourceId) return;
         await save();
       }).match(noop, console.error),
@@ -41,10 +30,10 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
     { immediate: false },
   );
   return () => {
-    if (!isArmed) {
-      isArmed = true;
-      armAutosave();
-    }
+    // The debounce holds this edit for half a second and re-arms for as long as the owner keeps typing, so
+    // Between the keystroke and the write there is nothing in flight to read — the toolbar would call a tab
+    // Full of unwritten edits saved (/docs/platform/resource-save-state)
+    hasUnwrittenContent.value = true;
     start(getRouteParamString(currentRoute.value.params.id));
   };
 };

@@ -58,23 +58,19 @@ export const useResourceStore = defineStore("resource", () => {
   // Whether the last content write was rejected for any other reason. Its notification is a one-shot the owner
   // Dismisses; this is what keeps saying so afterwards, because a failed save leaves work only in the tab
   const hasSaveContentFailed = ref(false);
-  // How many autosave debounces are armed. A count rather than a flag because a blade can watch more than one
-  // Source — Sheet's settings beside its data — and the first to fire would otherwise report the rest as saved.
-  // Armed is folded into Saving rather than shown as a state of its own: the debounce is half a second, and a
-  // Word that appears for half a second reads as a flicker rather than as information
-  const armedAutosaveCount = ref(0);
-  const armAutosave = () => {
-    armedAutosaveCount.value += 1;
-  };
-  const disarmAutosave = () => {
-    armedAutosaveCount.value -= 1;
-  };
+  // An edit the debounce is holding that no write has taken yet. A flag rather than a count of armed
+  // Debounces: a save writes the whole content blob, so one write cleans every edit waiting on this resource
+  // However many watchers observed them — a count would claim two pending saves where there is one. Set where
+  // The edit is seen rather than derived from the content, because deriving it means serializing the whole blob
+  // On every keystroke, which is the cost the debounce exists to avoid; the write clears it and
+  // `persistedContentJson` takes over from there
+  const hasUnwrittenContent = ref(false);
   // Every type's edits land through saveContent, so the state every type shows is derived here rather than
   // Declared per type — a third-party editor autosaving on its own cadence, a toolbar command and a dialog's
   // Save are the same write. See /docs/platform/resource-save-state
   const saveState = computed(() => {
     if (isContentStale.value) return ResourceSaveState.Stale;
-    else if (isSaveContentPending.value || armedAutosaveCount.value > 0) return ResourceSaveState.Saving;
+    else if (isSaveContentPending.value || hasUnwrittenContent.value) return ResourceSaveState.Saving;
     else if (hasSaveContentFailed.value) return ResourceSaveState.Failed;
     else return ResourceSaveState.Saved;
   });
@@ -95,9 +91,11 @@ export const useResourceStore = defineStore("resource", () => {
         const { publication: newPublication, ...newResource } = await $trpc.resource.readResource.query({ id });
         resource.value = newResource;
         publication.value = newPublication ?? undefined;
-        // A fresh read carries the current contentVersion, so saving is meaningful again
+        // A fresh read carries the current contentVersion, so saving is meaningful again, and the row it
+        // Carries is by definition what is written — whatever a closed blade left armed is not this one's
         isContentStale.value = false;
         hasSaveContentFailed.value = false;
+        hasUnwrittenContent.value = false;
       },
       () => {
         isPending.value = false;
@@ -116,7 +114,7 @@ export const useResourceStore = defineStore("resource", () => {
     persistedContentJson = undefined;
     isContentStale.value = false;
     hasSaveContentFailed.value = false;
-    armedAutosaveCount.value = 0;
+    hasUnwrittenContent.value = false;
   };
   // This resource's content was replaced underneath whatever blade is open — a restore is the one write that
   // Does that. The row is re-read here and the content stores re-read themselves through the hook registry,
@@ -339,11 +337,10 @@ export const useResourceStore = defineStore("resource", () => {
     });
   };
   return {
-    armAutosave,
     clearResource,
     deleteResource,
-    disarmAutosave,
     duplicateResource,
+    hasUnwrittenContent,
     isDuplicatePending,
     isPending,
     isPublicationPending,
