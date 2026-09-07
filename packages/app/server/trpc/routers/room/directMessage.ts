@@ -35,7 +35,7 @@ import {
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { getOrCreate, Operation } from "@esposter/shared";
 import { and, eq, getColumns, inArray, ne, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
@@ -243,11 +243,7 @@ export const directMessageRouter = router({
           ),
         );
       const participantsMap = new Map<string, User[]>();
-      for (const { roomId, user } of rows) {
-        const existingParticipants = participantsMap.get(roomId) ?? [];
-        existingParticipants.push(user);
-        participantsMap.set(roomId, existingParticipants);
-      }
+      for (const { roomId, user } of rows) getOrCreate(participantsMap, roomId, () => []).push(user);
       return Array.from(participantsMap, ([roomId, participants]) => ({ participants, roomId }));
     }),
   readDirectMessages: standardAuthedProcedure

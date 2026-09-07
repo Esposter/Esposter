@@ -272,10 +272,7 @@ export const baseRoomRouter = router({
         where: { id: { eq: input }, userId: { eq: userId } },
       });
 
-      if (ownedRoom) {
-        const { id } = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
-        return id;
-      }
+      if (ownedRoom) return (await deleteRoom(ctx.db, ctx.getSessionPayload, input)).id;
 
       const userToRoom = requireMutation(
         (
