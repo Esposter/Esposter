@@ -13,8 +13,8 @@ runs:
     # package is the GitHub release asset byte for byte, and npm signs a checksum over it that `get-pnpm`
     # verifies against a pinned key. What is gone is the npm CLI: one signed binary over a retrying HTTP client
     # instead of a dependency resolution, which is what made setup hostage to registry latency.
-    # `install: false` because each caller owns its own install — `--ignore-scripts` for format, the
-    # artifact-aware `setup-packages` everywhere else.
+    # `install: false` because each caller owns its own install — the root project alone with
+    # `--ignore-scripts` for format, the artifact-aware `setup-packages` everywhere else.
     - name: 📦 Install pnpm and node
       uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
       with:

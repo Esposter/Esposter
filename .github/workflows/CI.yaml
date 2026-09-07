@@ -228,15 +228,23 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      # `--ignore-scripts`, because the only thing this job needs out of the install is the lockfile-pinned
-      # `oxfmt` binary. A plain install additionally runs the app's `postinstall: nuxt prepare` and every
-      # `allowBuilds` native postinstall, none of which a formatter reading source files can observe — which
-      # Put the workflow's quickest check behind its slowest install right after it stopped waiting on the
-      # Package build. Installing oxfmt globally or through `dlx` would skip more still and is the wrong trade:
-      # A formatter's version is its output, so a second source of truth for it drifts from the lockfile until
-      # `format:check` here and `pnpm format` locally disagree — the exact failure this job exists to catch.
+      # Both narrowings say the same thing: the only thing this job needs out of the install is the
+      # Lockfile-pinned `oxfmt` binary. `--filter "{.}"` is the root project alone, which is where that binary
+      # Is declared — every other project's tree is a dependency graph a formatter reading source files cannot
+      # Observe. The root *alone*, not the `{.}...` closure `setup-packages` takes: that closure exists to
+      # Provision `virrun`, and `format:check` is native by design — one standalone binary over source, with no
+      # Module resolution to isolate. `--ignore-scripts` drops what remains, the app's `postinstall: nuxt
+      # prepare` and every `allowBuilds` native postinstall. Together they are what keeps the workflow's
+      # Quickest check off its slowest install, the same way dropping `needs: build-packages` kept it off the
+      # Slowest job.
+      #
+      # Installing oxfmt globally or through `dlx` would skip more still and is the wrong trade: a formatter's
+      # Version is its output, so a second source of truth for it drifts from the lockfile until `format:check`
+      # Here and `pnpm format` locally disagree — the exact failure this job exists to catch. No
+      # `--fail-if-no-match` here, unlike `setup-packages`: that guard is for a selector that can stop matching,
+      # And `{.}` is the workspace root by path — it matches for as long as there is a workspace to run in.
       - name: 📦 Install dependencies
-        run: pnpm i --ignore-scripts
+        run: pnpm --filter "{.}" i --ignore-scripts
 
       - name: 📝 Format
         run: pnpm format:check
