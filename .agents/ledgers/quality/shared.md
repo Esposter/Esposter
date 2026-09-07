@@ -9,7 +9,7 @@
 | `shared/models/db/room`                                                         | 2026-09-07 |                                                                                                        |
 | `shared/models/db/roomCategory`, `roomEmoji`, `userToRoom`                      | 2026-09-07 |                                                                                                        |
 | `shared/models/db/resource`, `blueprint`, `survey`                              | 2026-09-07 |                                                                                                        |
-| `shared/models/db/post`, `moderation`                                           | —          |                                                                                                        |
+| `shared/models/db/post`, `moderation`                                           | 2026-09-07 |                                                                                                        |
 | `shared/models/db/role`, `call`                                                 | 2026-09-07 |                                                                                                        |
 | `shared/models/db` — the identity trees                                         | —          | `user`, `userSettings`, `session`, `webhook`, `searchHistory`, `friend`, `notification`, `achievement` |
 | `shared/models/resource` — the roots                                            | —          |                                                                                                        |
