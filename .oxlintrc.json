@@ -157,6 +157,7 @@
     "curly": ["error", "multi"],
     "error-alert/no-raw-error-alert": "error",
     "func-names": "off",
+    "id-denylist": ["error", "acc", "curr", "idx"],
     "id-length": "off",
     "import/default": "off",
     "import/exports-last": "off",

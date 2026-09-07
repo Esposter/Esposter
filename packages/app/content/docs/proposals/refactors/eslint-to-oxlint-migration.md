@@ -34,7 +34,7 @@ The remaining expensive rules, in descending cost order, and the trigger for mig
 | ---------------------- | ------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------ |
 | `vue/no-child-content` | ~two thirds        | Not implemented in oxlint's vue plugin | upstream implements it (check `eslint-plugin-oxlint`'s generated rule maps after upgrades) |
 | `perfectionist/sort-*` | ~a sixth, combined | oxlint has no sorting rules            | upstream implements sorting                                                                |
-| `no-restricted-syntax` | negligible         | oxlint has no AST-selector rule        | oxlint ships a selector-based rule (the custom bans move into `.oxlintrc.json`)            |
+| `no-restricted-syntax` | negligible         | oxlint has no AST-selector rule        | either oxlint ships a selector rule, or the ban is rewritten as a JS plugin (below)        |
 
 Once the type-aware rules were gone, `vue/no-child-content` became the pass — it alone is worth more than everything else combined, so it is the only migration here that would move the number.
 
@@ -50,6 +50,8 @@ On every oxlint / `eslint-plugin-oxlint` catalog bump:
 2. Check whether the top ESLint rules appear in `eslint-plugin-oxlint`'s generated rule maps (`dist/generated/rules-by-category.*` — including the `*TypeAwareRules` sets). If a rule is newly covered, it disappears from ESLint automatically via the appended config — verify with `eslint --print-config` on a sample file rather than editing anything.
 3. For custom rules (`no-restricted-syntax` selectors), evaluate oxlint's JS-plugin support as it matures — non-type-aware custom rules can move as soon as oxlint's plugin API supports the needed AST surface for `.vue` and `.ts` files. A selector can also retire without oxlint gaining a selector rule at all, when a **plugin** rule turns out to express the same ban — so read a bump's new plugin rules against the selector list too, and confirm the two agree against planted cases before deleting the entry.
 4. Remove ESLint-side manual `"off"` entries that only existed to duplicate oxlint coverage (they are dead weight once `eslint-plugin-oxlint` disables the rule).
+
+**A new ban is written against a rule that already exists before anything is authored for it**, in that order: a configurable oxlint rule, then an oxlint JS plugin, then an ESLint selector. The first step is the one that gets skipped — `id-denylist` was already shipping when a selector and then a plugin were written for the same ban — so the check is a planted violation run through `oxlint -c` with the candidate rule configured, not a reading of the rule list. Every step down that ladder is surface this repo then owns and migrates later: the plugins under `scripts/oxlint/` each carry a fixture suite, and an ESLint selector is a second migration to schedule. The existing selectors move as each is next touched; one whose predicate needs types has no plugin form and stays where it is.
 
 ## Key files
 

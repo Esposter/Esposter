@@ -47,7 +47,7 @@ Where two of these collide — `get` against `read` against `count`, `set` again
 
 ## Variables
 
-- **No abbreviations** — `directMessageRoom` not `dmRoom`, `existingDirectMessage` not `existing`. Exception: `Ms` suffix for time values: `slowmodeMs`, `durationMs`
+- **No abbreviations** — `directMessageRoom` not `dmRoom`, `existingDirectMessage` not `existing`. Exception: `Ms` suffix for time values: `slowmodeMs`, `durationMs`. The three with no site left — `acc`, `curr`, `idx` — are oxlint's `id-denylist`; a name still in use is not added to it, since the ban would buy disables instead of coverage
   - **A stored count is `<singular noun>Count`** — `commentCount`, `likeCount`, `webhookCount`, DB columns included. Singular, because the suffix already carries the plurality. It names a **field**; `read*Count` names the fetch that answers with a count and `count*` the in-memory tally, which are calls
   - Applies to exported names too — spell the full English word: `statistics` not `stat`/`stats` (`ColumnStatistics`, `ColumnStatisticsDefinitionMap`, `useColumnStatistics`, never `ColumnStatDefinitions`/`defineColumnStat`), `summation` not `sum` as a statistics identifier (the `ColumnStatisticsKey` is `summation`). Does NOT apply to math accumulator locals (`acc`, `s`) or the display title `"Sum"`
   - Applies to component and file names, which are identifiers the whole app types: `Navigation` never `Nav` (`StyledNavigationList`, `ResourceBladeNavigation`, `app/models/shared/NavigationItem.ts`)
