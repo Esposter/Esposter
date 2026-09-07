@@ -6,8 +6,7 @@ const AzureAppServiceApiReference: azure_native.types.input.web.ApiReferenceArgs
   brandColor: "#FFFFFF",
   description: "Azure App Service connector allows you to manage app services and server farms in your subscription.",
   displayName: "Azure App Service",
-  iconUri:
-    "https://conn-afd-prod-endpoint-bmc9bqahasf3grgk.b01.azurefd.net/releases/v1.0.1679/1.0.1679.3643/azureappservice/icon.png",
+  iconUri: "https://static.powerapps.com/resource/ppcr/releases/v1.0.1827/1.0.1827.4902/azureappservice/icon.png",
   id: AzureAppServiceManagedApiId,
   name: "azureappservice",
   type: AzureManagedApiType,
