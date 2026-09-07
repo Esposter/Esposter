@@ -1,15 +1,12 @@
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { UPDATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { refineRoomSchema, selectRoomInMessageSchema } from "@esposter/db-schema";
-import { ItemMetadataPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export const readRoomsInputSchema = z
   .object({
     roomId: selectRoomInMessageSchema.shape.id.optional(),
-    ...createCursorPaginationParamsSchema(selectRoomInMessageSchema.keyof(), [
-      { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
-    ]).shape,
+    ...createCursorPaginationParamsSchema(selectRoomInMessageSchema.keyof(), [UPDATED_AT_DESCENDING_SORT_ITEM]).shape,
     filter: refineRoomSchema(selectRoomInMessageSchema.pick({ name: true })).optional(),
   })
   .prefault({});

@@ -13,10 +13,10 @@ export const useReadMembersByIds = () => {
   return async (memberIds: User["id"][]) => {
     if (!currentRoomId.value) return;
 
-    const ids = [...new Set(memberIds)].filter((id) => !userMap.value.has(id));
-    if (ids.length === 0) return;
+    const userIds = [...new Set(memberIds)].filter((id) => !userMap.value.has(id));
+    if (userIds.length === 0) return;
 
-    const members = await $trpc.room.readMembersByIds.query({ ids, roomId: currentRoomId.value });
+    const members = await $trpc.room.readMembersByIds.query({ roomId: currentRoomId.value, userIds });
     storeUsers(members);
   };
 };

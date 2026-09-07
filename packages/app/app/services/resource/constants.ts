@@ -3,7 +3,7 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
-import { ItemMetadataPropertyNames } from "@esposter/shared";
+import { UPDATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 
 // How long a pending "G" chord prefix stays armed before the second key must be pressed
 export const KEY_CHORD_TIMEOUT_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
@@ -25,9 +25,9 @@ export const RESOURCE_DATE_TIME_ATTRIBUTES = {
 } as const;
 // Caps the chunked CSV export re-query so export cost stays bounded on huge lists
 export const MAX_CSV_EXPORT_ROWS = 10_000;
-export const DEFAULT_RESOURCE_SORT_BY = [
-  { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
-] as const satisfies readonly SortItem<keyof ResourceListItem>[];
+export const DEFAULT_RESOURCE_SORT_BY = [UPDATED_AT_DESCENDING_SORT_ITEM] as const satisfies readonly SortItem<
+  keyof ResourceListItem
+>[];
 // What Recent means: newest open first. Rows this device — any device — has never opened are filtered out
 // Of that view entirely, so the null case never reaches the sort
 export const LAST_ACCESSED_RESOURCE_SORT_BY = [

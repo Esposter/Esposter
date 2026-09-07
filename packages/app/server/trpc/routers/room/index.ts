@@ -413,12 +413,12 @@ export const baseRoomRouter = router({
     },
   ),
   readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query<User[]>(
-    ({ ctx, input: { ids, roomId } }) =>
+    ({ ctx, input: { roomId, userIds } }) =>
       ctx.db
         .select(getColumns(users))
         .from(users)
         .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
-        .where(and(eq(usersToRoomsInMessage.roomId, roomId), inArray(users.id, ids))),
+        .where(and(eq(usersToRoomsInMessage.roomId, roomId), inArray(users.id, userIds))),
   ),
   readMembersCount: getMemberProcedure(roomIdSchema, "roomId").query<number>(
     async ({ ctx, input: { roomId } }) =>

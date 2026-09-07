@@ -6,7 +6,7 @@
 | `app/components/Styled`                                                         | 2026-08-20 |                                                                                                        |
 | `shared/models/db/message` — the roots                                          | —          |                                                                                                        |
 | `shared/models/db/message` — `scheduledMessageJob`, `metadata`                  | 2026-09-07 |                                                                                                        |
-| `shared/models/db/room`                                                         | —          |                                                                                                        |
+| `shared/models/db/room`                                                         | 2026-09-07 |                                                                                                        |
 | `shared/models/db/roomCategory`, `roomEmoji`, `userToRoom`                      | —          |                                                                                                        |
 | `shared/models/db/resource`, `blueprint`, `survey`                              | —          |                                                                                                        |
 | `shared/models/db/post`, `moderation`                                           | —          |                                                                                                        |
