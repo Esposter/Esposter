@@ -14,7 +14,7 @@
 | `server/services/pagination`, `survey`                                        | 2026-09-07 |       |
 | `server/services/auth`, `rateLimiter`, `livekit`                              | 2026-09-07 |       |
 | `server/services/dataset`, `storage`, `azure`                                 | —          |       |
-| `server/services/program`, `post`, `achievement`                              | —          |       |
+| `server/services/program`, `post`, `achievement`                              | 2026-09-07 |       |
 | `server/services/friend`, `db`, `blobState`                                   | 2026-09-07 |       |
 | `server/services/user`, `role`, `request`, `notification`                     | 2026-09-07 |       |
 | `server/services/events`, `emailEditor`, `dashboard`                          | 2026-09-07 |       |
