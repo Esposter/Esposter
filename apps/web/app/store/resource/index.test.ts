@@ -99,6 +99,55 @@ describe(useResourceStore, () => {
     expect(saveResourceContent).toHaveBeenCalledTimes(1);
   });
 
+  // The signal is armed by the keystroke and cleared by the write, and every door into a write is this one — a
+  // Settings dialog saving directly arms nothing, so a door that cleared its own would leave the toolbar at
+  // Saving for an edit the server already has. A save with nothing left to write is a save all the same
+  test("clears the unwritten-edit signal on a save with nothing to write", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { hasUnwrittenContent, saveState } = storeToRefs(resourceStore);
+    const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
+    await readResource();
+    await readContent();
+    setPersistedContent(createDefaultSheetResource());
+    hasUnwrittenContent.value = true;
+    const isSuccessful = await saveContent(createDefaultSheetResource());
+
+    expect(isSuccessful).toBe(true);
+    expect(saveResourceContent).not.toHaveBeenCalled();
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
+  });
+
+  // Saves of different resources are different single-flight keys, so one settles after the blade has moved on.
+  // The contentVersion it carries back is its own resource's, and merged into the loaded one it makes that one's
+  // Next save carry a version the server never issued for it — which comes back as a stale rejection
+  test("leaves the loaded resource alone when a save settles for another", async () => {
+    expect.hasAssertions();
+
+    const { promise: isNavigated, resolve: resolveNavigated } = Promise.withResolvers<void>();
+    server.use(
+      trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
+        await isNavigated;
+        return { ...createResource(input.id), contentVersion: input.contentVersion + 1 };
+      }),
+    );
+    const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent();
+    const save = saveContent(createDefaultSheetResource());
+    setRouteId(otherResourceId);
+    await readResource();
+    await readContent();
+    resolveNavigated();
+
+    await expect(save).resolves.toBe(true);
+    expect(resource.value?.id).toBe(otherResourceId);
+    expect(resource.value?.contentVersion).toBe(0);
+  });
+
   // Autosave fires again while the previous save is still in flight, and the row is read when the write is sent
   // Rather than when it was issued — sending the version it was holding makes the server reject our own
   // Overlapping save as a cross-session edit and strand the blade behind a refresh prompt

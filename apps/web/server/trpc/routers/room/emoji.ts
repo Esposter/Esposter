@@ -177,6 +177,8 @@ export const roomEmojiRouter = router({
   onCreateRoomEmoji: getRoomEventSubscription(roomEmojiEventEmitter, "createRoomEmoji", ({ roomId }) => roomId),
   onDeleteRoomEmoji: getRoomEventSubscription(roomEmojiEventEmitter, "deleteRoomEmoji", ({ roomId }) => roomId),
   onUpdateRoomEmoji: getRoomEventSubscription(roomEmojiEventEmitter, "updateRoomEmoji", ({ roomId }) => roomId),
+  // Membership rather than the `ManageEmojis` its panel is gated on: the picker and every rendered message read
+  // This, so the list is already the room's to see — the panel is a management surface over public-to-the-room data
   readRoomEmojis: getMemberProcedure(roomIdSchema, "roomId").query<RoomEmojiWithSasUrl[]>(
     async ({ ctx, input: { roomId } }) => {
       const [roomEmojis, containerClient] = await Promise.all([

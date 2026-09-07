@@ -3,7 +3,6 @@ import type { RoomFilterInMessage } from "@esposter/db-schema";
 import { upsertRoomFilterInputSchema } from "#shared/models/db/room/UpsertRoomFilterInput";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import {
   DatabaseEntityType,
@@ -15,9 +14,11 @@ import {
 import { Operation } from "@esposter/shared";
 
 export const filterRouter = router({
-  readRoomFilter: getMemberProcedure(roomIdSchema, "roomId").query<RoomFilterInMessage | undefined>(
-    ({ ctx, input: { roomId } }) => ctx.db.query.roomFiltersInMessage.findFirst({ where: { roomId: { eq: roomId } } }),
-  ),
+  // Gated like the write it sits beside, rather than at membership: the banned words *are* the filter, so a
+  // Member who can read them can spell around every one of them
+  readRoomFilter: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").query<
+    RoomFilterInMessage | undefined
+  >(({ ctx, input: { roomId } }) => ctx.db.query.roomFiltersInMessage.findFirst({ where: { roomId: { eq: roomId } } })),
   upsertRoomFilter: getPermissionsProcedure(
     RoomPermission.ManageRoom,
     upsertRoomFilterInputSchema,

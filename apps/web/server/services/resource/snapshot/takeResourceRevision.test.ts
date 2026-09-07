@@ -137,6 +137,31 @@ describe(takeResourceRevision, () => {
     expect(revisedResource?.revisionTakenAt).toBeInstanceOf(Date);
   });
 
+  // Every caller reads its row before it saves, so two concurrent saves both hold a clock from before either
+  // Took a revision and both pass the caller-side interval check — the throttle only holds if the row itself
+  // Refuses the second claim
+  test("takes one automatic revision per interval however many claims race for it", async () => {
+    expect.hasAssertions();
+
+    seedContentBlob(resource.id);
+    await Promise.all([
+      takeResourceRevision(ctx, resource, SnapshotReason.Automatic),
+      takeResourceRevision(ctx, resource, SnapshotReason.Automatic),
+    ]);
+
+    await expect(readSnapshotHistory(resource.id, SnapshotChannel.Revisions)).resolves.toHaveLength(1);
+  });
+
+  // A deliberate take is the thing that makes one destructive act undoable, so it claims whatever the clock says
+  test(`takes a ${SnapshotReason.BeforeRestore} revision inside an interval an automatic one already claimed`, async () => {
+    expect.hasAssertions();
+
+    seedContentBlob(resource.id);
+    await takeResourceRevision(ctx, resource, SnapshotReason.Automatic);
+
+    await expect(takeResourceRevision(ctx, resource, SnapshotReason.BeforeRestore)).resolves.toBe(2);
+  });
+
   // The counter is the ring's position, so eviction is one publish rather than a walk of the prefix on every
   // Save, and it goes through the deletion event that gives the evicted revision's bytes back
   test("evicts the oldest revision once the ring buffer is full", async () => {

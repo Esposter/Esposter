@@ -112,6 +112,8 @@ Two things sit outside the invariant: the **ring buffer** evicts the oldest revi
 
 **The interval is measured from the last revision, not from the last save.** `saveResourceContent` fires on every coalesced keystroke batch, and Sheet and Dashboard put real data in the content blob — so a per-save revision copies the whole artifact each time, charges the owner's quota while they type, and grows a listing that has no limit. Throttling is the whole of the cost control. But throttling on the _save_ clock inverts the feature: `updatedAt` moves with every autosave, so a resource being actively edited never looks idle, and the session that most deserves recovery points is the one that leaves none. `revisionTakenAt` is a clock only a revision moves, so a working session leaves one point per interval however continuously it is edited.
 
+**The interval is claimed in the row, not checked before it.** A save reads its `Resource` before it writes, so two concurrent saves both hold a `revisionTakenAt` from before either took a revision and both pass a caller-side comparison — leaving two revisions inside one interval and two copies of the artifact charged to the owner. The automatic take's `UPDATE` therefore carries the interval in its own `WHERE`, and a claim that returns no row takes no revision: losing that race is not a failure, because the interval already has its point. The caller-side check stays as a filter, so the saves that obviously have nothing to take skip the content download. A deliberate take — before a restore, before an import — claims unconditionally, since there the revision is what makes the act undoable.
+
 A resource's first content write takes none — there is no prior state to keep, and the blob a revision would copy is the one that write is creating. The take is also the one trigger that swallows its own failure: a save must never fail because a revision could not be taken. A blueprint deploy takes none either — it creates resources rather than overwriting one, so there is no draft to hand back.
 
 ## Retention
@@ -135,7 +137,7 @@ The two counters that reach the UI are different axes: **`publishVersion` is wha
 
 The last row is a comparison rather than a guess: `resource_publications.publishedContentVersion` records the `contentVersion` the publish was taken from, and `updatedAt` cannot answer it because a rename or a tag edit moves that too.
 
-`revisionVersion` itself is never rendered — an owner picks a version by time, reason and label, never by ordinal — but it remains what the mechanism counts with.
+`revisionVersion` itself is never rendered — an owner picks a version by time, reason and summary, never by ordinal — but it remains what the mechanism counts with.
 
 ## The rollback surface
 
@@ -144,7 +146,7 @@ Version history is a **panel over whichever blade is open**, not a nav blade: ro
 - **Opens from `Resource/Blade/Actions`**, because Sheet and TodoList are blade-only types with no Editor blade — the action bar is the one surface every type has. It is the only command the feature has: the history is a place you go, never a thing you maintain.
 - **Deep-linkable by route** — `?versions` opens the panel, `?version={channel}|{n}` names the version being previewed, so the back button, a refresh and a shared link all land in the same place.
 - **One list, two address spaces.** Both channels merge into one time-ordered timeline, because the owner has one question. `Current` is always the first row, so the list is never empty on a resource that has just been created; a `Published only` chip filters on publishable types.
-- **A row is choosable**: its channel and version as a label rather than a bare ordinal, a relative time with the absolute one on hover, its reason from `SnapshotReasonTitleMap`, and a one-line summary from `SnapshotSummaryMap` — `12 items`, `3 columns · 40 rows`. The summary is computed where the snapshot is taken and carried in its blob metadata, so the listing stays one round trip for the whole history.
+- **A row is choosable**: its channel and version spelled out rather than a bare ordinal, a relative time with the absolute one on hover, its reason from `SnapshotReasonTitleMap`, and a one-line summary from `SnapshotSummaryMap` — `12 items`, `3 columns · 40 rows`. The summary is computed where the snapshot is taken and carried in its blob metadata, so the listing stays one round trip for the whole history.
 - **Preview in place** renders a published version through the type's own public renderer where the blade was, under a banner carrying `Restore this version` and `Back to current`. A revision has no rendered form of its own — that would be a read-only renderer per type, publishable or not — so its row restores rather than previews.
 - **Restore notifies with an Undo** that restores the `BeforeRestore` revision it had just taken, naming the resource it was offered for rather than whichever is open when it is clicked. Single-use: a second fire would restore a draft the first already replaced.
 

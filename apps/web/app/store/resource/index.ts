@@ -154,16 +154,26 @@ export const useResourceStore = defineStore("resource", () => {
     // Writing it would replace this resource's document with another one's, under this one's id and version
     if (!current || isContentStale.value || (contentResourceId !== undefined && contentResourceId !== current.id))
       return false;
+    // Cleared here rather than by whichever trigger armed it, because this is the one door every save comes
+    // Through — a dialog's Save arms nothing, and a debounce clearing its own would call a save it then refuses
+    // Saved (/docs/platform/resource-save-state). The unchanged-content path below is a save all the same: it
+    // Wrote nothing because there was nothing left to write
+    hasUnwrittenContent.value = false;
     const contentJson = JSON.stringify(content);
     if (contentJson === persistedContentJson) return true;
+    // Saves of different resources are different single-flight keys, so this one can settle after the blade has
+    // Moved on, and everything it carries back — a stale latch, a failure, a contentVersion, the persisted-content
+    // Baseline — is its own resource's. Applied to whichever resource is loaded now, it strands that one behind a
+    // Refresh prompt or a version the server never issued for it. The notifications are not scoped: the write
+    // Failed for the owner either way (/docs/platform/resource-save-state)
+    const getActiveResource = () => (resource.value?.id === current.id ? resource.value : undefined);
     let isSuccessful = false;
     await executeSaveContentMutation(
       () => {
         // Read when the write is sent rather than when it was issued: a save that queued behind another must
         // Carry the contentVersion that one wrote back, or the server rejects our own overlapping saves as a
         // Cross-session edit. A load that swapped the resource in between leaves the issue-time row in place
-        const latest = resource.value;
-        const target = latest?.id === current.id ? latest : current;
+        const target = getActiveResource() ?? current;
         // Calling the union of every type's content write needs an argument every arm accepts, so the
         // Content is narrowed the same way the read above widens it
         return getResourceRouter(target.type).saveResourceContent.mutate({
@@ -177,7 +187,7 @@ export const useResourceStore = defineStore("resource", () => {
         key: current.id,
         onError: (error) => {
           if (error.message === staleContentVersionErrorMessage) {
-            isContentStale.value = true;
+            if (getActiveResource()) isContentStale.value = true;
             createNotification({
               action: {
                 // A hard reload is the one path guaranteed to re-run every blade's content loader
@@ -190,15 +200,17 @@ export const useResourceStore = defineStore("resource", () => {
               title: `"${current.name}" was modified elsewhere — refresh to load the latest`,
             });
           } else {
-            hasSaveContentFailed.value = true;
+            if (getActiveResource()) hasSaveContentFailed.value = true;
             createErrorNotification(error);
           }
         },
         onSuccess: (newResource) => {
+          isSuccessful = true;
+          if (!getActiveResource()) return;
+
           mergeResource({ contentVersion: newResource.contentVersion, updatedAt: newResource.updatedAt }, newResource);
           persistedContentJson = contentJson;
           hasSaveContentFailed.value = false;
-          isSuccessful = true;
         },
       },
     );

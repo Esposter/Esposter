@@ -56,15 +56,27 @@ url_decode() {
   printf '%b' "${value//%/\\x}"
 }
 
-# rediss:// is the whole difference between an encrypted connection and a cleartext one, so it is read before
-# The scheme is stripped rather than being lost with it
-REDIS_USE_TLS=false
-case "$REDIS_URL" in
-  rediss://*) REDIS_USE_TLS=true ;;
+# rediss:// is the whole difference between an encrypted connection and a cleartext one, so it is read before the
+# Scheme is stripped rather than being lost with it. Matched case-insensitively, because a scheme is: `REDISS://`
+# Compared literally is no scheme anyone knows, which leaves TLS off and the scheme in front of the credentials.
+# An unknown scheme is rejected rather than defaulted — both ways of guessing at it connect. A url carrying no
+# `://` leaves this empty, so it is refused by the same branch rather than by a check of its own
+REDIS_SCHEME=""
+
+if [[ "$REDIS_URL" == *"://"* ]]; then
+  REDIS_SCHEME="$(printf "%s" "${REDIS_URL%%://*}" | tr "[:upper:]" "[:lower:]")"
+fi
+
+case "$REDIS_SCHEME" in
+  redis) REDIS_USE_TLS=false ;;
+  rediss) REDIS_USE_TLS=true ;;
+  *)
+    echo "ERROR: REDIS_URL must use the redis:// or rediss:// scheme"
+    exit 1
+    ;;
 esac
 
-REDIS_NO_SCHEME="${REDIS_URL#redis://}"
-REDIS_NO_SCHEME="${REDIS_NO_SCHEME#rediss://}"
+REDIS_NO_SCHEME="${REDIS_URL#*://}"
 REDIS_NO_QUERY="${REDIS_NO_SCHEME%%\?*}"
 REDIS_USERNAME=""
 REDIS_PASSWORD=""
@@ -78,7 +90,9 @@ if [[ "$REDIS_NO_QUERY" == *"@"* ]]; then
     REDIS_USERNAME="$(url_decode "${REDIS_AUTH%%:*}")"
     REDIS_PASSWORD="$(url_decode "${REDIS_AUTH#*:}")"
   else
-    REDIS_PASSWORD="$(url_decode "$REDIS_AUTH")"
+    # Userinfo is `username[:password]`, so the half on its own is the username. Read as the password it drops
+    # The name the server authenticates against and offers the name as the secret, which fails ACL auth twice over
+    REDIS_USERNAME="$(url_decode "$REDIS_AUTH")"
   fi
 else
   REDIS_HOST_PORT_DB="$REDIS_NO_QUERY"

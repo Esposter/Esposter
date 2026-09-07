@@ -49,7 +49,11 @@ export const saveResourceContent = async (
   // Their own, and a first write has no prior state. Before the write, since what is worth keeping is what this
   // Save replaces, and awaited so a revision cannot snapshot the content it was meant to precede. Best-effort
   // Only here: a failed safety net must not fail the autosave it was protecting, where every other trigger
-  // Throws to keep one deliberate destructive act undoable (/docs/platform/resource-snapshots)
+  // Throws to keep one deliberate destructive act undoable (/docs/platform/resource-snapshots).
+  //
+  // This check is a filter, not the throttle. `resource` was read before the save, so two concurrent saves both
+  // Hold the same pre-take timestamp and both pass — what it buys is skipping the content download on the saves
+  // That obviously have no revision to take. `takeResourceRevision` claims the interval in the row itself
   if (
     activityType === ResourceActivityType.ContentSaved &&
     (!resource.revisionTakenAt || Date.now() - resource.revisionTakenAt.getTime() >= SNAPSHOT_INTERVAL_MS)

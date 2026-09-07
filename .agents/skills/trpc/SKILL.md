@@ -1,6 +1,6 @@
 ---
 name: trpc
-description: Esposter tRPC conventions — return-type generics on the method, async only when there is an await, where input schemas, server event emitters and server/shared/@esposter-db helpers live, useQuery/useMutation for every client read and write, calling conventions for all-optional and UUID inputs, router structure mirroring the file path, Function.prototype router-key collisions, procedure and result naming, base*Router composition with mergeRouters, the three room RBAC procedure builders, ownedBy ownership guards, one router and store per DB table, BAD_REQUEST messages, plus deep dives on router tests, subscription procedures, read/pagination endpoints, and mutations that write blobs. Apply when writing tRPC routers, procedures, or router tests.
+description: Esposter tRPC conventions — return-type generics on the method, async only when there is an await, where input schemas, server event emitters and server/shared/@esposter-db helpers live, useQuery/useMutation for every client read and write, calling conventions for all-optional and UUID inputs, router structure mirroring the file path, Function.prototype router-key collisions, procedure and result naming, base*Router composition with mergeRouters, the three room RBAC procedure builders and a read taking the builder its data deserves rather than the one its caller's UI implies, ownedBy ownership guards, one router and store per DB table, BAD_REQUEST messages, plus deep dives on router tests, subscription procedures, read/pagination endpoints, and mutations that write blobs. Apply when writing tRPC routers, procedures, or router tests.
 ---
 
 # tRPC Conventions
@@ -79,6 +79,8 @@ Three builders in `server/trpc/procedure/room/`:
 - `getOwnerProcedure(schema, roomIdKey, rateLimiterType?)` — verifies caller owns the room; destructive room operations.
 
 `rateLimiterType` defaults to `RateLimiterType.Standard`; pass another only to opt into a different limiter.
+
+**A read takes the builder its data deserves, never the one its caller's UI implies.** Hiding a control or a settings panel from a caller who lacks a permission is presentation — the procedure behind it stays callable by anyone the client reaches. So a read whose data is only shown inside a permission-gated surface takes `getPermissionsProcedure` with **that same permission**, and `getMemberProcedure` is correct only where the data is genuinely the room's to see. Deciding it from the surface is how a `getMemberProcedure` ends up behind a `ManageRoom` panel; the exception, where a management panel reads data members already see elsewhere, is stated at the procedure (`/docs/esbabbler/rbac`).
 
 ## Ownership Guards in Mutations
 

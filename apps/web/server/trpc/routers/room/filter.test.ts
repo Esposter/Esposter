@@ -82,6 +82,20 @@ describe("filterRouter", () => {
     expect(upsertedRoomFilter.timeoutDurationMs).toBeNull();
   });
 
+  // The read carries the same gate as the write: the word list is the filter, so a member who can read it can
+  // Write around every entry, and the panel being hidden below the permission withholds nothing on its own
+  test(`fails readRoomFilter for a member without ${RoomPermission.ManageRoom} permission`, async () => {
+    expect.hasAssertions();
+
+    await roomFilterCaller.upsertRoomFilter({ roomId, words });
+    const member = await createMember();
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(roomFilterCaller.readRoomFilter({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
+  });
+
   test(`fails upsertRoomFilter for a member without ${RoomPermission.ManageRoom} permission`, async () => {
     expect.hasAssertions();
 

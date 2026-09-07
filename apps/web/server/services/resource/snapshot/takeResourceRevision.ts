@@ -1,8 +1,9 @@
-import type { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Resource } from "@esposter/db-schema";
 
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
+import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
+import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
@@ -14,7 +15,7 @@ import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/char
 import { checkIsNotFound, getContentBlobName } from "@esposter/db";
 import { AzureContainer, resources } from "@esposter/db-schema";
 import { getResultAsync, streamToText } from "@esposter/shared";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, isNull, lte, or, sql } from "drizzle-orm";
 
 // A point the owner can return to, taken from the working copy as it stands. Returns the version it wrote, or
 // Undefined when there was nothing to take — a resource whose content blob does not exist yet has no state worth
@@ -47,11 +48,27 @@ export const takeResourceRevision = async (
   // Upload burns a number rather than reusing one — which is the harmless direction: the listing is what
   // Answers which revisions exist, and it simply never sees the number that was skipped. The timestamp moves
   // With it for the same reason: it throttles the automatic take, and a failed upload that left the clock
-  // Untouched would have the next save retry immediately
+  // Untouched would have the next save retry immediately.
+  //
+  // The interval is part of the claim rather than only the caller's precondition. A save reads its row before it
+  // Writes, so two concurrent saves both hold a `revisionTakenAt` from before either took a revision and both
+  // Pass that check — the throttle only holds if the row itself refuses the second one. Losing the race is not a
+  // Failure: the interval already has its recovery point. A deliberate take (before a restore, before an import)
+  // Claims unconditionally, because there the revision is the thing that makes the act undoable
   const [updatedResource] = await ctx.db
     .update(resources)
     .set({ revisionTakenAt: new Date(), revisionVersion: sql`${resources.revisionVersion} + 1` })
-    .where(eq(resources.id, id))
+    .where(
+      reason === SnapshotReason.Automatic
+        ? and(
+            eq(resources.id, id),
+            or(
+              isNull(resources.revisionTakenAt),
+              lte(resources.revisionTakenAt, new Date(Date.now() - SNAPSHOT_INTERVAL_MS)),
+            ),
+          )
+        : eq(resources.id, id),
+    )
     .returning({ revisionVersion: resources.revisionVersion });
   if (!updatedResource) return undefined;
 

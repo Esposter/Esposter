@@ -19,9 +19,6 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
   const { start } = useTimeoutFn(
     getSynchronizedFunction((scheduledResourceId: string) =>
       getResultAsync(async () => {
-        // Cleared before the save rather than after it: from here the write's own pending flag is what says
-        // Edits are on their way, and a save this refuses is a save nothing else is going to make either
-        hasUnwrittenContent.value = false;
         if (getRouteParamString(currentRoute.value.params.id) !== scheduledResourceId) return;
         await save();
       }).match(noop, console.error),
@@ -32,7 +29,9 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
   return () => {
     // The debounce holds this edit for half a second and re-arms for as long as the owner keeps typing, so
     // Between the keystroke and the write there is nothing in flight to read — the toolbar would call a tab
-    // Full of unwritten edits saved (/docs/platform/resource-save-state)
+    // Full of unwritten edits saved (/docs/platform/resource-save-state). Only set here: `saveContent` is the
+    // One door every save goes through, so clearing it is its, and a save this refuses never reaches it — which
+    // Is the point, since a refused save is an edit that was dropped rather than one that landed
     hasUnwrittenContent.value = true;
     start(getRouteParamString(currentRoute.value.params.id));
   };

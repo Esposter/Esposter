@@ -22,7 +22,8 @@ flowchart TD
   LIB["a third-party editor's own cadence<br/>GrapesJS storage, SurveyJS creator"] --> DOOR
   DOOR["resourceStore.saveContent<br/>dirty check, queue, contentVersion guard"]
 
-  AUTO -.->|"holds the edit"| ARMED(["hasUnwrittenContent"])
+  AUTO -.->|"arms"| ARMED(["hasUnwrittenContent"])
+  DOOR -.->|"clears"| ARMED
   DOOR -.->|"in flight"| PENDING(["isSaveContentPending"])
   DOOR -.->|"rejected as stale"| STALE(["isContentStale"])
   DOOR -.->|"rejected otherwise"| FAILED(["hasSaveContentFailed"])
@@ -45,7 +46,9 @@ flowchart TD
 | `Failed` | Not saved         | the last write was rejected for any other reason   | retry the edit, or copy it out |
 | `Saved`  | Saved, and _when_ | none of the above                                  | nothing                        |
 
-**An edit the debounce is still holding counts as saving.** The debounce re-arms on every keystroke, so nothing is in flight for as long as the owner keeps typing — a state read from the write alone would call a tab full of unwritten edits `Saved`, for however long the typing lasts. That is the one lie the indicator must not tell, so `hasUnwrittenContent` is set where the edit is seen and cleared when the write is issued, with the mutation's own pending flag taking over from there. Folding it into `Saving` rather than giving unwritten edits a state of their own also keeps a word off the screen that would appear and vanish between keystrokes.
+**An edit the debounce is still holding counts as saving.** The debounce re-arms on every keystroke, so nothing is in flight for as long as the owner keeps typing — a state read from the write alone would call a tab full of unwritten edits `Saved`, for however long the typing lasts. That is the one lie the indicator must not tell, so `hasUnwrittenContent` is set where the edit is seen and cleared by `saveContent` itself, with the mutation's own pending flag taking over from there. Folding it into `Saving` rather than giving unwritten edits a state of their own also keeps a word off the screen that would appear and vanish between keystrokes.
+
+**The clear belongs to the door, not to the trigger that armed it.** A dialog's Save arms nothing and would leave a flag it never set standing; a debounce that cleared its own would clear it for a save it then refuses — one scheduled against a resource the app has since navigated away from — and so report a dropped edit as `Saved`. The door is the one place that knows the edit was actually taken, and the navigation that refused it clears the flag through the `readResource()` its own page awaits.
 
 **It is a flag, not a count of armed debounces.** A save writes the whole content blob, so one write cleans every edit waiting on the resource however many watchers observed them — a count would claim two pending saves where there is one, and would need a per-instance guard and a disposal hook to stay honest about a number nothing reads. A pair of counters beside a ref in a store is the shape the [async sequencing rule](/docs/architecture/async-operations) names as the tell for ordering done by hand.
 
@@ -65,15 +68,16 @@ The indicator is a readout, never a control. Pending state that gates a _trigger
 
 ## Key files
 
-| File                                                                | Role                                                          |
-| ------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `apps/web/app/store/resource/index.ts`                              | `saveContent`, the flags it sets and the derived `saveState`  |
-| `apps/web/app/composables/resource/autosave/useAutosaveFunction.ts` | the shared debounce, and the arm/disarm that makes it visible |
-| `apps/web/app/models/resource/ResourceSaveState.ts`                 | the four states                                               |
-| `apps/web/app/services/resource/ResourceSaveStateDefinitionMap.ts`  | what each one looks like                                      |
-| `apps/web/app/components/Resource/SaveStateIndicator.vue`           | the toolbar readout                                           |
+| File                                                                | Role                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `apps/web/app/store/resource/index.ts`                              | `saveContent`, the flags it sets and the derived `saveState` |
+| `apps/web/app/composables/resource/autosave/useAutosaveFunction.ts` | the shared debounce, and the arm that makes it visible       |
+| `apps/web/app/models/resource/ResourceSaveState.ts`                 | the four states                                              |
+| `apps/web/app/services/resource/ResourceSaveStateDefinitionMap.ts`  | what each one looks like                                     |
+| `apps/web/app/components/Resource/SaveStateIndicator.vue`           | the toolbar readout                                          |
 
 ## Notes
 
 - The colour rides the icon rather than the text: Vuetify resolves a colour prop at runtime, where a UnoCSS class built from a state name is a class the scanner never sees.
+- A save reports the resource that issued it. Saves of different resources are different single-flight keys, so one can settle after the blade has moved on — its rejection, its `contentVersion` and its persisted-content baseline all belong to the resource it was for, and every one of them is applied only while that resource is still the loaded one. Its notification is not scoped: the write failed for the owner either way.
 - Recovery points are [resource snapshots](/docs/platform/resource-snapshots), a separate mechanism on a separate clock. This page answers "did my edit land"; that one answers "can I go back".
