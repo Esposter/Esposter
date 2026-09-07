@@ -10,16 +10,16 @@ const vitestConfig = await defineVitestProject({
     // Empty key — Nuxt coerces an unset runtimeConfig value to "", which `createHmac` accepts, so the failure
     // Would otherwise be a forgeable token in production and nothing at all in a test.
     env: { BETTER_AUTH_SECRET: "mock-auth-secret" },
-    // Named after this directory, like every member the shared factory names — `defineVitestProject` builds its
-    // Own config, so the name is set here rather than inherited. It is what `--project "apps/web"` addresses,
-    // And what keeps `--project "packages/*"` from reaching the app.
-    name: getVitestProjectName(import.meta.dirname),
     // Root the Nuxt project at this package, not the vitest cwd (the repo root, where `@nuxt/kit` and the
     // App don't resolve) — the run is driven by the root `projects` config.
     environmentOptions: { nuxt: { rootDir: import.meta.dirname } },
     // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
     // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
     hookTimeout: Temporal.Duration.from({ minutes: 5 }).total("milliseconds"),
+    // Named after this directory, like every member the shared factory names — `defineVitestProject` builds its
+    // Own config, so the name is set here rather than inherited. It is what `--project "apps/web"` addresses,
+    // And what keeps `--project "packages/*"` from reaching the app.
+    name: getVitestProjectName(import.meta.dirname),
     // DOM globals come from the nuxt environment itself: nuxt-env tests (`// @vitest-environment nuxt`)
     // Build their own happy-dom window, so no manual happy-dom registration is needed, and tests in
     // The node environment run without a DOM. `fake-indexeddb/auto` polyfills the IDB* global
