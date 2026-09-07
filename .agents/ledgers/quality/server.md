@@ -5,7 +5,7 @@
 | `server/trpc/routers/message`                                                 | 2026-08-20 |       |
 | `server/trpc/routers/room`                                                    | 2026-08-20 |       |
 | the remaining routers                                                         | 2026-08-20 |       |
-| `server/services/message` — `call`                                            | —          |       |
+| `server/services/message` — `call`                                            | 2026-09-07 |       |
 | `server/services/message` — the roots                                         | —          |       |
 | `server/services/message` — `moderation`, `events`, `thread`, `file`, `emoji` | —          |       |
 | `server/services/resource` — the roots                                        | —          |       |
