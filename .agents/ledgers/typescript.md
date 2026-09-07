@@ -6,7 +6,7 @@ Most of the `typescript` skill is lint- or typecheck-decided; what this sweep ca
 | --------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------- |
 | `server/trpc/routers/message`, `server/trpc/routers/room`                               | 2026-09-07 | the widest branch sets in the app                                                     |
 | `server/trpc/routers` — the resource family                                             | 2026-09-07 |                                                                                       |
-| `server/trpc/routers` — the rest                                                        | —          |                                                                                       |
+| `server/trpc/routers` — the rest                                                        | 2026-09-07 |                                                                                       |
 | `server/services/message`                                                               | 2026-09-07 |                                                                                       |
 | `server/services` — the rest, `server/composables`                                      | —          | plus `server/api`, `server/routes`                                                    |
 | `app/store/message`                                                                     | —          |                                                                                       |
