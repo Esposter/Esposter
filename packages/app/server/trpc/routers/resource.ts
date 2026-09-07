@@ -33,7 +33,7 @@ import { useTableClient } from "@@/server/composables/azure/table/useTableClient
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { publishResourceOperation } from "@@/server/services/notification/publishResourceOperation";
 import { readCursorPaginationDataAzureTable } from "@@/server/services/pagination/cursor/readCursorPaginationDataAzureTable";
-import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
+import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
 import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
@@ -252,7 +252,7 @@ export const resourceRouter = router({
         .orderBy(...(sortBy.length > 0 ? parseSortByToSql(resourceListSelection, sortBy) : [desc(resources.deletedAt)]))
         .limit(limit + 1)
         .offset(offset);
-      return getOffsetPaginationData(resultResources, limit);
+      return getBasePaginationData(resultResources, limit);
     }),
   readDeletedResourcesCount: standardAuthedProcedure.query<number>(
     async ({ ctx }) =>
@@ -308,7 +308,7 @@ export const resourceRouter = router({
         )
         .limit(limit + 1)
         .offset(offset);
-      return getOffsetPaginationData(resultResources, limit);
+      return getBasePaginationData(resultResources, limit);
     }),
   readResourcesCount: standardAuthedProcedure.input(resourceFilterInputSchema.prefault({})).query<number>(
     async ({ ctx, input }) =>
