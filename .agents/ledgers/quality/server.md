@@ -12,7 +12,7 @@
 | `server/services/resource` — `snapshot`, `todoList`, `events`                 | —          |       |
 | `server/services/room`, `blueprint`                                           | —          |       |
 | `server/services/pagination`, `survey`                                        | 2026-09-07 |       |
-| `server/services/auth`, `rateLimiter`, `livekit`                              | —          |       |
+| `server/services/auth`, `rateLimiter`, `livekit`                              | 2026-09-07 |       |
 | `server/services/dataset`, `storage`, `azure`                                 | —          |       |
 | `server/services/program`, `post`, `achievement`                              | —          |       |
 | `server/services/friend`, `db`, `blobState`                                   | 2026-09-07 |       |

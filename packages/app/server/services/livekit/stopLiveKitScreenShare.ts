@@ -1,8 +1,8 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
+import { CALL_TRACK_SOURCES, SCREEN_SHARE_TRACK_SOURCES } from "@@/server/services/livekit/constants";
 import { createLiveKitRoomServiceClient } from "@@/server/services/livekit/createLiveKitRoomServiceClient";
 import { getResultAsync, noop } from "@esposter/shared";
-import { TrackSource } from "livekit-server-sdk";
 
 export const stopLiveKitScreenShare = async (
   callSessionId: string,
@@ -20,13 +20,13 @@ export const stopLiveKitScreenShare = async (
           permission: {
             canPublish: true,
             canPublishData: true,
-            canPublishSources: [TrackSource.MICROPHONE, TrackSource.CAMERA],
+            canPublishSources: [...CALL_TRACK_SOURCES],
             canSubscribe: true,
           },
         });
         const participant = await roomServiceClient.getParticipant(callSessionId, id);
         const screenShareTracks = participant.tracks.filter(({ source }) =>
-          [TrackSource.SCREEN_SHARE, TrackSource.SCREEN_SHARE_AUDIO].includes(source),
+          SCREEN_SHARE_TRACK_SOURCES.includes(source),
         );
         await Promise.all(
           screenShareTracks.map(({ sid }) => roomServiceClient.mutePublishedTrack(callSessionId, id, sid, true)),
