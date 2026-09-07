@@ -33,7 +33,9 @@ flowchart LR
   A --> I["apps/infra — tsdown, inside the Pulumi job"]
 ```
 
-The shared artifact carries libraries only, and each app builds in the job that ships it. That moves the Functions and infra builds rather than adding them — they leave `build:packages` and arrive in the one job that reads their output — and it is what lets the two cache keys become plain statements of their inputs: the package key is a hash of `packages/`, and an app's key is that hash plus its own directory. The subtraction disappears because the boundary it was simulating is now a directory. [The toolchain after the split](/docs/proposals/refactors/workspace-layout/toolchain) argues that against the bar in [monorepo tooling](/docs/architecture/monorepo-tooling).
+The shared artifact carries libraries only, and each app builds in the workflow that ships it. Nothing imports an app's `dist` — that is what makes it an app — so today it is built once and then downloaded by every job that cannot read it: lint, typecheck, bench, the web build, every coverage shard. Building it where it is shipped takes that repeated payload off the common path and leaves each app's build happening on the days its own workflow runs.
+
+The same boundary lets the two cache keys become plain statements of their inputs: the package key is a hash of `packages/`, and an app's key is that hash plus its own directory. The subtraction disappears because the thing it was simulating is now a directory. [The toolchain after the split](/docs/proposals/refactors/workspace-layout/toolchain) argues both against the bar in [monorepo tooling](/docs/architecture/monorepo-tooling).
 
 ## Scope
 
@@ -50,7 +52,6 @@ The layout is one cause among several, and the honest accounting matters more th
 - **The `virrun --` prefixes** are a platform sandbox decision. They are unaffected — and virrun itself needs no code change, because it discovers the Nuxt package from its config rather than from a path, so every `packages/app/.nuxt` in that package is a comment.
 - **`crossOS` and the shell script pairs behind it** exist because Windows and POSIX disagree, which no directory fixes.
 - **`scriptsComments`** exists because JSON has no comments.
-- **`test:packages` keeps naming the app.** Its exclusion is about the Nuxt environment's cost, not about role — a fast local run wants to skip that one project whether or not it lives in `apps/`. It survives the refactor and is renamed to say what it means.
 - **The prose.** Well over a hundred hand-written files name `packages/app`, and nothing fails when one of them goes stale. That sweep is the third pull request and the largest share of the work.
 
 ## The pages
