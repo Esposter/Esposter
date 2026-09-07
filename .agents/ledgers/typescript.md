@@ -48,6 +48,10 @@ chain from the pattern without it, and a guard is exactly where this codebase wr
 `disallowTypeAnnotations`, and `vi.mock(import(…))` is the sanctioned Vitest idiom, so it needs that option
 off and its own violation sweep before it can be switched on.
 
+Switching it on would decide `.ts` and nothing else: oxlint skips the rule for `.vue`, since it cannot tell
+from the script block whether the template uses an import as a value, and nothing in the ESLint config turns it
+on there. So the `.vue` rows keep this dimension however `.oxlintrc.json` ends up.
+
 ## Exclusions
 
 - **`packages/app/content/docs`** — prose, and the `docs` ledger's.
