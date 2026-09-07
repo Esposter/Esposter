@@ -45,8 +45,13 @@ jobs:
           path: ${{ steps.keys.outputs.package-builds-paths }}
           key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
 
+      # The root and its closure ride along with the program's own, for the reason `setup-packages` states at
+      # Length: the toolchain is declared at the root, and `typescript` in particular is a root devDependency that
+      # No library redeclares — so a selection without it leaves the library build below generating declarations
+      # Against whatever it could resolve on its own. The closure rather than the root alone, because `virrun` is
+      # A workspace project of ours and a filtered install writes `node_modules` for the selected projects only.
       - name: 📦 Install dependencies
-        run: pnpm --filter @esposter/infra... i
+        run: pnpm --filter "@esposter/infra..." --filter "{.}..." --fail-if-no-match i
       # Gated on the build output rather than on the restore's `cache-hit`: that flag reports the entry the cache
       # Found, not what it extracted, so a `path` list that drifted from the save's reports a hit while a build
       # Skipped on it hands Pulumi an empty program. Every building package's `dist` is read rather than this

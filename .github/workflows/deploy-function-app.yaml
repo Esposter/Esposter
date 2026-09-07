@@ -65,8 +65,13 @@ jobs:
           path: ${{ steps.keys.outputs.package-builds-paths }}
           key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
 
+      # The root and its closure ride along with the app's own, for the reason `setup-packages` states at length:
+      # The toolchain is declared at the root, and `typescript` in particular is a root devDependency that no
+      # Library redeclares — so a selection without it leaves the library build below generating declarations
+      # Against whatever it could resolve on its own. The closure rather than the root alone, because `virrun` is
+      # A workspace project of ours and a filtered install writes `node_modules` for the selected projects only.
       - name: 🔧 Resolve Project Dependencies
-        run: pnpm --filter @esposter/functions... i
+        run: pnpm --filter "@esposter/functions..." --filter "{.}..." --fail-if-no-match i
       # Gated on the build output rather than on the restore's `cache-hit`: that flag reports the entry the cache
       # Found, not what it extracted, so a `path` list that drifted from the save's reports a hit while a build
       # Skipped on it zips an empty `dist` and deploys a function app that registers nothing, with the host still
