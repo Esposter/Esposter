@@ -19,5 +19,7 @@ export const searchMessagesInputSchema = z
     filters: filterSchema.array().max(MAX_READ_LIMIT).default([]),
     query: selectSearchHistoryInMessageSchema.shape.query,
   })
-  .refine(({ filters, query }) => !checkIsSearchQueryEmpty(query, filters));
+  .refine(({ filters, query }) => !checkIsSearchQueryEmpty(query, filters), {
+    error: "A search needs either text or a filter",
+  });
 export type SearchMessagesInput = z.infer<typeof searchMessagesInputSchema>;
