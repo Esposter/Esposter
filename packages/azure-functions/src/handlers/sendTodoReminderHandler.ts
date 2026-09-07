@@ -44,7 +44,7 @@ export const sendTodoReminderHandler: ServiceBusQueueHandler = (message, context
       context.log(`${AzureFunction.SendTodoReminder} skipped: no content`, { resourceId });
       return;
     }
-    // eslint-disable-next-line no-restricted-syntax -- todoReminderContentSchema coerces dueAt itself
+    // oxlint-disable-next-line no-restricted-properties -- todoReminderContentSchema coerces dueAt itself
     const { items } = todoReminderContentSchema.parse(JSON.parse(buffer.toString()));
     const item = items.find(({ id }) => id === itemId);
     // The reminder fires against a save-time snapshot, so re-verify against the live blob: the item may

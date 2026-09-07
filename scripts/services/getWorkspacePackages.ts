@@ -18,7 +18,7 @@ export const getWorkspacePackages = (root: string): WorkspacePackage[] => {
     .toSorted()
     .map((packageJsonPath) => ({
       directory: basename(dirname(packageJsonPath)),
-      // eslint-disable-next-line no-restricted-syntax -- a package manifest carries no dates, and reading one through `jsonDateParse` would make this script wait on `@esposter/shared` being built
+      // oxlint-disable-next-line no-restricted-properties -- a package manifest carries no dates, and reading one through `jsonDateParse` would make this script wait on `@esposter/shared` being built
       manifest: JSON.parse(readFileSync(packageJsonPath, "utf8")) as PackageManifest,
     }));
 };

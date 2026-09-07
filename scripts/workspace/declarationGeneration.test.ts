@@ -9,7 +9,7 @@ import { describe, expect, test } from "vitest";
  * which for a package of inferred types is minutes rather than milliseconds. Nothing fails when a package crosses
  * that line — the build still succeeds, the declarations are still correct, and only the clock knows.
  */
-// eslint-disable-next-line no-restricted-syntax -- neither a manifest nor a tsconfig carries a date, so jsonDateParse would only cost a parse
+// oxlint-disable-next-line no-restricted-properties -- neither a manifest nor a tsconfig carries a date, so jsonDateParse would only cost a parse
 const readJsonFile = (path: string): Record<string, unknown> => JSON.parse(readFileSync(path, "utf8"));
 
 describe("declaration generation", () => {

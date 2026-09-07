@@ -34,7 +34,7 @@ The remaining expensive rules, in descending cost order, and the trigger for mig
 | ---------------------- | ------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------ |
 | `vue/no-child-content` | ~two thirds        | Not implemented in oxlint's vue plugin | upstream implements it (check `eslint-plugin-oxlint`'s generated rule maps after upgrades) |
 | `perfectionist/sort-*` | ~a sixth, combined | oxlint has no sorting rules            | upstream implements sorting                                                                |
-| `no-restricted-syntax` | negligible         | oxlint has no AST-selector rule        | either oxlint ships a selector rule, or the ban is rewritten as a JS plugin (below)        |
+| `no-restricted-syntax` | negligible         | oxlint has no AST-selector rule        | per ban, not per rule — the ladder and the standing list are below                         |
 
 Once the type-aware rules were gone, `vue/no-child-content` became the pass — it alone is worth more than everything else combined, so it is the only migration here that would move the number.
 
@@ -51,9 +51,46 @@ On every oxlint / `eslint-plugin-oxlint` catalog bump:
 3. For custom rules (`no-restricted-syntax` selectors), evaluate oxlint's JS-plugin support as it matures — non-type-aware custom rules can move as soon as oxlint's plugin API supports the needed AST surface for `.vue` and `.ts` files. A selector can also retire without oxlint gaining a selector rule at all, when a **plugin** rule turns out to express the same ban — so read a bump's new plugin rules against the selector list too, and confirm the two agree against planted cases before deleting the entry.
 4. Remove ESLint-side manual `"off"` entries that only existed to duplicate oxlint coverage (they are dead weight once `eslint-plugin-oxlint` disables the rule).
 
-**A new ban is written against a rule that already exists before anything is authored for it**, in that order: a configurable oxlint rule, then an oxlint JS plugin, then an ESLint selector. The first step is the one that gets skipped — `id-denylist` was already shipping when a selector and then a plugin were written for the same ban — so the check is a planted violation run through `oxlint -c` with the candidate rule configured, not a reading of the rule list. Every step down that ladder is surface this repo then owns and migrates later: the plugins under `scripts/oxlint/` each carry a fixture suite, and an ESLint selector is a second migration to schedule. One whose predicate needs types has no plugin form and stays where it is.
+## Where a ban is written
 
-**Every selector standing today has been read against that ladder, and none moves.** `no-restricted-properties` expresses three of them exactly — `window.localStorage`, `stopImmediatePropagation` and the `splice` ban — and oxlint reports all three from an SFC's `<script>` block and none from its template, where those bans also apply through `vue/no-restricted-syntax`. Taking the script half would split one ban across two mechanisms, so those three move when oxlint lints template expressions, not before. `promise/prefer-await-to-then` covers the `.then`/`.catch` syntax and is still the wrong rule: it prescribes `await` with `try`/`catch`, which this repo bans, and it does not see `.finally`. Nothing else has an oxlint rule at all — `typescript/naming-convention`, which the `A`-prefix and lookup-name bans would use, is not implemented.
+A ban goes to the first of these that can express it, and the step is chosen by running a planted violation
+through `oxlint -c` with the candidate rule configured — never by reading a rule list. `oxlint --rules` prints
+nothing in the shipped binary, and `id-denylist` was already shipping when a selector and then a JS plugin were
+written for the same ban, which is what this order exists to stop happening again.
+
+```mermaid
+flowchart TD
+  BAN["a ban to write"] --> OX{"an oxlint rule expresses it?"}
+  OX -->|"yes"| OXLINT[".oxlintrc.json — done"]
+  OX -->|"no"| ES{"an ESLint rule expresses it?"}
+  ES -->|"yes"| ESLINT["ESLint — and say which kind"]
+  ES -->|"no"| PLUGIN["an oxlint JS plugin under scripts/oxlint/"]
+  ESLINT --> KIND{"will oxlint ship this rule?"}
+  KIND -->|"yes — upstream gap"| TABLE["a row in the table above, with its trigger"]
+  KIND -->|"no — nothing upstream to wait for"| PARK["stays, and says so"]
+```
+
+**An ESLint entry has to say which of the two it is**, because they age in opposite directions. One waiting on an
+upstream gap — a rule oxlint will plausibly ship, or a context it will plausibly reach — is temporary, and earns
+a row in the table above so a bump is read against it. One expressing something no linter will ever ship a rule
+for is permanent, and a note saying so is what stops the next audit re-deriving it. A JS plugin is the last step
+rather than the second: it is surface this repo then owns, tests and maintains, so it is only right when nothing
+else can express the ban at all.
+
+**What has moved, and what has not.** `expect.any`, the polling ban, `JSON.parse` and `useRoute` are now
+`no-restricted-properties` and `no-restricted-globals` in `.oxlintrc.json`; the sites that disable them spell the
+directive `oxlint-disable-next-line` with the reporting rule's name. `useRoute` also takes a
+`no-restricted-imports` entry, because `no-restricted-globals` sees the auto-imported form and not an explicit
+`vue-router` import.
+
+What stays in ESLint, and why:
+
+| Ban                                                                                                                                                         | Why it stays                                                                                                                                                                          | Kind         |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| `window.localStorage`, `stopImmediatePropagation`, `splice`                                                                                                 | `no-restricted-properties` expresses all three, but oxlint reads an SFC's `<script>` and not its template, where these also apply through `vue/no-restricted-syntax`                  | upstream gap |
+| `.then`/`.catch`/`.finally`                                                                                                                                 | `promise/prefer-await-to-then` is off for the reasons the `oxlint` skill's `references/lint-configuration.md` states                                                                  | upstream gap |
+| `try`/`catch`, the `A`-prefix interface, the lookup-name and `can`/`should` bans, `field: T \| undefined`, the `*Store` member read, the template-only bans | each needs a syntax predicate; `typescript/naming-convention` and `camelcase` are not implemented in oxlint, and `id-match` is one repo-wide regex rather than a per-construct format | upstream gap |
+| the TypeScript `private` keyword ban                                                                                                                        | no linter ships it; it is this repo's own preference for `#`                                                                                                                          | permanent    |
 
 ## Key files
 

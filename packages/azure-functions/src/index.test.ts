@@ -28,7 +28,7 @@ describe("@esposter/azure-functions", () => {
   // Because the suite runs from the repo root as well as from here
   test("declares the entry point the Functions host loads", () => {
     expect.hasAssertions();
-    // eslint-disable-next-line no-restricted-syntax -- a package manifest carries no dates, so reviving them would only cost a pass over it
+    // oxlint-disable-next-line no-restricted-properties -- a package manifest carries no dates, so reviving them would only cost a pass over it
     const { main } = JSON.parse(readFileSync(resolve(packageDirectory, "package.json"), "utf8")) as PackageManifest;
 
     expect(main).toBe("./dist/index.js");

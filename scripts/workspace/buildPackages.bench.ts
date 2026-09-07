@@ -46,7 +46,7 @@ const readBuildOrder = (): { directory: string; packageName: string }[] =>
       const trimmedLine = line.trim();
       if (!trimmedLine.startsWith("[")) return [];
 
-      // eslint-disable-next-line no-restricted-syntax -- a package name and a directory, neither of which is a date
+      // oxlint-disable-next-line no-restricted-properties -- a package name and a directory, neither of which is a date
       const [packageName, directory] = JSON.parse(trimmedLine) as [string, string];
       return [{ directory, packageName }];
     });

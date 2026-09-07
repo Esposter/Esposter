@@ -14,7 +14,7 @@ describe("sourceCondition", () => {
     expect.hasAssertions();
 
     const tsconfigPath = resolve(import.meta.dirname, "../tsconfig.base.json");
-    // eslint-disable-next-line no-restricted-syntax -- a tsconfig carries no dates, and this package builds before @esposter/shared so it cannot import jsonDateParse
+    // oxlint-disable-next-line no-restricted-properties -- a tsconfig carries no dates, and this package builds before @esposter/shared so it cannot import jsonDateParse
     const { compilerOptions } = JSON.parse(readFileSync(tsconfigPath, "utf8")) as {
       compilerOptions: { customConditions: string[] };
     };
@@ -35,7 +35,7 @@ describe("nonSourceSuffixes", () => {
   // Matching them here would make this assert the rest of an exclude list it has no opinion on.
   const NON_SOURCE_GLOB_REGEX = /\*\*\/\*(?<suffix>\.[\w-]+\.ts)$/u;
   const readExcludedSuffixes = (fileName: string): string[] => {
-    // eslint-disable-next-line no-restricted-syntax -- neither config carries dates, and this package builds before @esposter/shared so it cannot import jsonDateParse
+    // oxlint-disable-next-line no-restricted-properties -- neither config carries dates, and this package builds before @esposter/shared so it cannot import jsonDateParse
     const { exclude } = JSON.parse(readFileSync(resolve(import.meta.dirname, "..", fileName), "utf8")) as {
       exclude: string[];
     };

@@ -8,5 +8,5 @@
 // (/docs/architecture/serialization.md).
 // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
 export const parseMachineJson = <TValue = unknown>(json: string): TValue =>
-  // eslint-disable-next-line no-restricted-syntax -- machine JSON holds no dates, and its path-valued strings are exactly what a reviver corrupts
+  // oxlint-disable-next-line no-restricted-properties -- machine JSON holds no dates, and its path-valued strings are exactly what a reviver corrupts
   JSON.parse(json);

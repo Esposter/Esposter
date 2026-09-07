@@ -8,7 +8,7 @@ import { describe, expect, test } from "vitest";
  * safe middle either — absent means *unknown*, so every consumer's bundler keeps everything, which is the same
  * outcome as declaring `true` while reading as nobody having considered the question.
  */
-// eslint-disable-next-line no-restricted-syntax -- a package manifest carries no dates, and this suite has no bundler to make jsonDateParse worth an import
+// oxlint-disable-next-line no-restricted-properties -- a package manifest carries no dates, and this suite has no bundler to make jsonDateParse worth an import
 const readJsonFile = (path: string): Record<string, unknown> => JSON.parse(readFileSync(path, "utf8"));
 // The field is only the three shapes a bundler acts on. Anything else — `null`, a bare path string, an array
 // Holding something other than globs — is read by every bundler as no declaration at all, so a package carrying

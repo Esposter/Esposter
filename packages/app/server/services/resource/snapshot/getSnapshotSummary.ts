@@ -12,7 +12,7 @@ export const getSnapshotSummary = (type: ResourceType, serializedContent: string
   if (!summarize) return "";
 
   const parsedContent = getResult(() =>
-    // eslint-disable-next-line no-restricted-syntax -- the content schema owns date coercion, exactly as readContentBlob relies on
+    // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, exactly as readContentBlob relies on
     ResourceDefinitionMap[type].contentSchema.safeParse(JSON.parse(serializedContent)),
   ).unwrapOr(undefined);
   if (!parsedContent?.success) return "";

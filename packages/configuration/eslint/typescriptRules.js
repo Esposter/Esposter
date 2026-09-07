@@ -64,40 +64,11 @@ export default {
         ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",
     },
     {
-      message: "Avoid `expect.any` — capture the real value from the mock call and assert it exactly (or toBeTypeOf).",
-      selector: "MemberExpression[object.name='expect'][property.name='any']",
-    },
-    {
-      // Polling is banned repo-wide — see content/docs/architecture/no-polling.md.
-      message:
-        "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
-      selector:
-        ":matches(MemberExpression[object.name='expect'][property.name='poll'], MemberExpression[object.name='vi'][property.name=/^(waitFor|waitUntil)$/], CallExpression[callee.name=/^(waitFor|waitUntil)$/])",
-    },
-    {
-      // Dates survive JSON only as strings, so the default parse has to revive them — see
-      // /docs/architecture/serialization.md. Every place plain parsing is the deliberate choice (the content
-      // Blobs and drafts a Zod schema coerces itself, payloads replayed verbatim, machine config) disables this
-      // Rule on the line with its reason.
-      message:
-        "Use `jsonDateParse` from `@esposter/shared` — plain `JSON.parse` leaves every Date as an ISO string. Disable this rule with a reason where blanket revival is wrong (see /docs/architecture/serialization.md).",
-      selector: "MemberExpression[object.name='JSON'][property.name='parse']",
-    },
-    {
       // The child combinators are load-bearing — they match only the property's own annotation, so
       // `Ref<T | undefined>`, `(T | undefined)[]`, tuple members and function params are untouched.
       message: "Declare the property optional (`field?: T`) instead of `field: T | undefined`.",
       selector:
         ":matches(TSPropertySignature, PropertyDefinition, TSAbstractPropertyDefinition) > TSTypeAnnotation > TSUnionType > TSUndefinedKeyword",
-    },
-    {
-      // `useRoute()` resolves through the page's *injected* route, which is pinned to that page instance and
-      // Freezes to its last value once the page is swapped out. Anything outliving the page it was created
-      // Under — a Pinia store above all, cached for the app's lifetime — then answers for a route the user has
-      // Already left, and a route naming no segment yields the `""` sentinel a uuid input rejects.
-      message:
-        "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
-      selector: "CallExpression[callee.name='useRoute']",
     },
   ],
   // Parked, per /docs/proposals/refactors/eslint-to-oxlint-migration. A block comment because every line
