@@ -6,6 +6,7 @@ import type { Database, MessageEntity } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { readMessageSearchDocuments } from "@@/server/services/message/readMessageSearchDocuments";
+import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
 import { BinaryOperator, getSearchNullClause, serializeSearchClauses } from "@esposter/azure";
 import { roomsInMessage, StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
@@ -26,15 +27,17 @@ export const readMySentMessages = async (
     offset,
     orderBy: [`${ItemMetadataPropertyNames.createdAt} ${SortOrder.Desc}`],
   });
-  const roomIds = [...new Set(messages.map(({ partitionKey }) => partitionKey))];
+  const { hasMore, items } = getBasePaginationData(messages, limit);
+  // Named off the page rather than the read, so the row that only answered `hasMore` never widens the join
+  const roomIds = [...new Set(items.map(({ partitionKey }) => partitionKey))];
   const rooms =
     roomIds.length > 0 ? await db.select().from(roomsInMessage).where(inArray(roomsInMessage.id, roomIds)) : [];
   const roomMap = new Map(rooms.map((room) => [room.id, room]));
   return {
     count: count ?? 0,
     data: {
-      hasMore: messages.length > limit,
-      items: messages.slice(0, limit).flatMap((message) => {
+      hasMore,
+      items: items.flatMap((message) => {
         const room = roomMap.get(message.partitionKey);
         return room ? [{ message, room }] : [];
       }),

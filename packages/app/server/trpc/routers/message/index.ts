@@ -388,7 +388,7 @@ export const baseMessageRouter = router({
       if (threadRootRowKeys.length === 0) return { threadRootRowKeys, threads: [] };
       // Every root in one scan, which also drops the deleted ones — so the drawer lists them newest-root-first
       // Rather than in the order the follows were recorded
-      return { threadRootRowKeys, threads: await readMessagesByRowKeys(roomId, threadRootRowKeys) };
+      else return { threadRootRowKeys, threads: await readMessagesByRowKeys(roomId, threadRootRowKeys) };
     },
   ),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query<CursorPaginationData<MessageEntity>>(
@@ -417,7 +417,7 @@ export const baseMessageRouter = router({
         }),
       ]);
       if (!rootMessage || rootMessage.deletedAt) return replies;
-      return [rootMessage, ...replies];
+      else return [rootMessage, ...replies];
     },
   ),
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query<SearchMessagesResult>(

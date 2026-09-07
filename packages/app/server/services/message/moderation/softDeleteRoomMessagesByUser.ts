@@ -23,11 +23,12 @@ import { ItemMetadataPropertyNames } from "@esposter/shared";
 // As soon as it commits, so a purge that stops partway still hides everything it managed to write.
 export const softDeleteRoomMessagesByUser = async (roomId: string, targetUserId: string): Promise<void> => {
   const messageClient = await useTableClient(AzureTable.Messages);
-  const filter = serializeClauses([
+  const clauses: Clause<StandardMessageEntity>[] = [
     { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
     { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: targetUserId },
     getTableNullClause(ItemMetadataPropertyNames.deletedAt),
-  ] as Clause<StandardMessageEntity>[]);
+  ];
+  const filter = serializeClauses(clauses);
   const now = new Date();
   for await (const page of messageClient
     .listEntities<StandardMessageEntity>({ queryOptions: { filter } })

@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-// One of the few app-owned types that keeps `null`: it is the empty cell, and `""` is already spent on a
-// Cell holding the empty string. The two sort apart, filter apart and count apart (nullCount), and an
-// Absent key cannot stand in for either — rows are serialized to JSON
+// A persisted-JSON-blob boundary type, so `null` stays: rows are serialized to JSON, where `JSON.stringify`
+// Drops an undefined key outright and an absent key is not a readable empty cell. `null` is the empty cell and
+// `""` a cell holding the empty string — they sort apart, filter apart and count apart (nullCount)
 export type ColumnValue = boolean | null | number | string;
 
 export const columnValueSchema = z.union([

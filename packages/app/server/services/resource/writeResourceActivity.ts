@@ -23,21 +23,22 @@ export const writeResourceActivity = ({ resourceId, ...rest }: WriteResourceActi
       // Coalesce on existence rather than on the partition head, so the answer does not depend on the order
       // Entities come back in. Two saves racing inside the window both read empty and both write, which costs the
       // Trail one extra line — the alternative is a deterministic rowKey, and the rowKey is what orders the trail
+      const clauses: Clause<BaseResourceActivityEntity>[] = [
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: resourceId },
+        {
+          key: ResourceActivityEntityPropertyNames.activityType,
+          operator: BinaryOperator.eq,
+          value: ResourceActivityType.ContentSaved,
+        },
+        { key: ResourceActivityEntityPropertyNames.userId, operator: BinaryOperator.eq, value: rest.userId },
+        {
+          key: ItemMetadataPropertyNames.createdAt,
+          operator: BinaryOperator.gt,
+          value: new Date(Date.now() - CONTENT_SAVED_COALESCE_WINDOW_MS),
+        },
+      ];
       const recentEntries = await getTopNEntities(resourceActivityClient, 1, ResourceActivityEntity, {
-        filter: serializeClauses([
-          { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: resourceId },
-          {
-            key: ResourceActivityEntityPropertyNames.activityType,
-            operator: BinaryOperator.eq,
-            value: ResourceActivityType.ContentSaved,
-          },
-          { key: ResourceActivityEntityPropertyNames.userId, operator: BinaryOperator.eq, value: rest.userId },
-          {
-            key: ItemMetadataPropertyNames.createdAt,
-            operator: BinaryOperator.gt,
-            value: new Date(Date.now() - CONTENT_SAVED_COALESCE_WINDOW_MS),
-          },
-        ] as Clause<BaseResourceActivityEntity>[]),
+        filter: serializeClauses(clauses),
       });
       if (recentEntries.length > 0) return;
     }

@@ -61,8 +61,9 @@ export const surveyRouter = router({
       // Indistinguishable from one that does not exist. Only Identified mode resolves a token to compare —
       // Anonymous carries no identity to contradict, so a survey switched to it still resumes its
       // Identified-era responses, exactly as the write boundary treats them
-      if (resolvedParticipantToken && resolvedParticipantToken !== surveyResponse.participantToken) return undefined;
-      return surveyResponse;
+      else if (resolvedParticipantToken && resolvedParticipantToken !== surveyResponse.participantToken)
+        return undefined;
+      else return surveyResponse;
     }),
   // The dataset contract carries no keys, so the blade reads rows keyed through its own procedure —
   // A blade-local read concern, not a Dataset shape change

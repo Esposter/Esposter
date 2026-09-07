@@ -1,3 +1,4 @@
+import type { Transaction } from "@@/server/models/db/Transaction";
 import type { Context } from "@@/server/trpc/context";
 import type { RoomInMessage } from "@esposter/db-schema";
 
@@ -6,7 +7,7 @@ import { roomsInMessage } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
 export const updateDirectMessageParticipantKey = (
-  db: Context["db"] | Parameters<Parameters<Context["db"]["transaction"]>[0]>[0],
+  db: Context["db"] | Transaction,
   roomId: RoomInMessage["id"],
   userIds: string[],
 ) =>

@@ -174,8 +174,8 @@ export const postRouter = router({
       return { ancestorIds, removedCommentCount };
     }),
   ),
-  deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<Post>(async ({ ctx, input }) => {
-    const deletedPost = requireMutation(
+  deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<Post>(async ({ ctx, input }) =>
+    requireMutation(
       (
         await ctx.db
           .delete(posts)
@@ -185,9 +185,8 @@ export const postRouter = router({
       Operation.Delete,
       DatabaseEntityType.Post,
       input,
-    );
-    return deletedPost;
-  }),
+    ),
+  ),
   readPost: standardRateLimitedProcedure
     .input(readPostInputSchema)
     // The procedure is rate-limited, so a session may be absent — no viewer means no like lookup at all

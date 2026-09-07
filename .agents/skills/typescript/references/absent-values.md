@@ -27,7 +27,7 @@ A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends
 
 ## `null` vs `undefined`
 
-`undefined` is **banned in app-owned code unless it carries a meaning distinct from every real value** — including the `""` string sentinel and an absent optional property. Only reach for it when absence must be told apart from a valid value (e.g. a cache read where a stored `""` is real and `undefined` means "miss"). `null` is only permitted at the external system boundary.
+`undefined` is **banned in app-owned code unless it carries a meaning distinct from every real value** — including the `""` string sentinel and an absent optional property. Only reach for it when absence must be told apart from a valid value (e.g. a cache read where a stored `""` is real and `undefined` means "miss"). `null` is only permitted at the external system boundary — every `null` in the repo belongs to one of the shapes listed below, and a type keeping one names the boundary it came from.
 
 **App-owned code — prefer absence over an explicit `undefined`:**
 
@@ -43,14 +43,23 @@ A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends
 
 **External boundary — keep `null` where required:**
 
-- **Drizzle ORM** — nullable columns infer as `T | null`; leave the boundary shape as-is and consume it at the call site (`??` onto a sentinel, truthiness guard) only where the app-owned shape is actually needed — there is no conversion layer. See `packages/app/content/docs/architecture/null-vs-undefined.md`.
+- **Drizzle ORM** — nullable columns infer as `T | null`, and so does an absent one-to-one relation loaded through `with` (`ResourceWithPublication.publication`); leave the boundary shape as-is and consume it at the call site (`??` onto a sentinel, truthiness guard) only where the app-owned shape is actually needed — there is no conversion layer. See `packages/app/content/docs/architecture/null-vs-undefined.md`.
+- **Persisted JSON blobs** — `JSON.stringify` drops an `undefined` key outright, so a blob that must round-trip an empty slot stores `null`. `ColumnValue` is `boolean | null | number | string`: `null` is the empty spreadsheet cell, `""` a cell holding the empty string, and they sort, filter and count apart.
 - **Azure SDK / EventGrid** — `SerializableValue`, EventGrid data shapes; keep raw types, convert on ingress.
 - **Vuetify** — a few Vuetify props are typed `T | null`; use `null` only where the prop type requires it, with a comment explaining why.
 
-**Domain values — `null` where the domain already spends `""`:**
+**A tRPC read whose row is absent answers `undefined`** — never `?? null` on a `findFirst`, which only re-spells
+the absence the query already returned.
 
-`null` is also permitted, outside any boundary, where it is a **value of the domain rather than an absence** — which happens when `""` is separately meaningful, so the `""` sentinel is already taken. The spreadsheet cell is the case: `ColumnValue` is `boolean | null | number | string`, where `null` is the empty cell and `""` is a cell holding the empty string. They sort differently, filter differently (`NULL_BOOLEAN_FILTER_VALUE`), and `nullCount` counts one and not the other, so collapsing them loses data the user entered. Nor can it be an absent key: rows are `Record<string, ColumnValue>` serialized to JSON, and a dropped key is not a readable empty cell.
+**"Not loaded yet" is `isPending`, not a third value.** The one place the rule looks like it needs an exception is a
+consumer that must tell "still loading" from "loaded, and there is no row", since `useQuery` seeds `data` as
+`undefined`. `useQuery` returns `isPending` beside `data` for exactly this, and it is true on the first render
+because the read claims its key synchronously during setup — so the consumer gates on the flag and the read keeps
+answering `undefined`:
 
-Such a value is `null` throughout, including `?? null` to fill a hole from a missing key — the ban on `?? null` is about a fallback that only re-spells absence, not about landing on the domain's own empty. New cases are rare and each needs a comment on the type saying which real value `""` is already carrying.
+```vue
+<!-- WordFilter/Index.vue — renders once the read has answered, row or no row -->
+<MessageModelRoomSettingsTypeWordFilterForm v-if="!isPending" :room-id="room.id" :filter />
+```
 
 When checking `null` at a boundary, use `=== null` (strict equality).

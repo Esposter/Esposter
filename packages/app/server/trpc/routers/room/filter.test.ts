@@ -28,12 +28,12 @@ describe("filterRouter", () => {
     roomId = getRoomId();
   });
 
-  test("readRoomFilter returns null when the room has no filter", async () => {
+  test("readRoomFilter returns undefined when the room has no filter", async () => {
     expect.hasAssertions();
 
     const readFilter = await roomFilterCaller.readRoomFilter({ roomId });
 
-    expect(readFilter).toBeNull();
+    expect(readFilter).toBeUndefined();
   });
 
   test("readRoomFilter returns the row upsertRoomFilter wrote", async () => {

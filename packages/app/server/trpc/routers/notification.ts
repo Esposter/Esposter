@@ -17,8 +17,8 @@ import { and, count, eq } from "drizzle-orm";
 export const notificationRouter = router({
   deleteNotification: standardAuthedProcedure
     .input(selectNotificationSchema.shape.id)
-    .mutation<Notification>(async ({ ctx, input }) => {
-      const deletedNotification = requireMutation(
+    .mutation<Notification>(async ({ ctx, input }) =>
+      requireMutation(
         (
           await ctx.db
             .delete(notifications)
@@ -28,9 +28,8 @@ export const notificationRouter = router({
         Operation.Delete,
         DatabaseEntityType.Notification,
         input,
-      );
-      return deletedNotification;
-    }),
+      ),
+    ),
   deleteNotifications: standardAuthedProcedure.mutation<void>(async ({ ctx }) => {
     await ctx.db.delete(notifications).where(eq(notifications.userId, ctx.getSessionPayload.user.id));
   }),

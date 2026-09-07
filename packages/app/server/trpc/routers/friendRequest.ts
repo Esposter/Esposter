@@ -37,8 +37,9 @@ export const friendRequestRouter = router({
               .delete(friendRequests)
               .where(and(eq(friendRequests.id, friendshipId), eq(friendRequests.receiverId, userId)))
               .returning();
-            if (!deletedFriendRequest) return [];
-            return tx.insert(friends).values({ id: friendshipId, receiverId: userId, senderId }).returning();
+            if (deletedFriendRequest)
+              return tx.insert(friends).values({ id: friendshipId, receiverId: userId, senderId }).returning();
+            else return [];
           })
         )[0],
         Operation.Update,

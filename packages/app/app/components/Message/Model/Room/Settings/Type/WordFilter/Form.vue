@@ -8,9 +8,10 @@ import { toRawDeep } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 
 interface Props {
-  filter: null | RoomFilterInMessage;
+  filter?: RoomFilterInMessage;
   roomId: string;
 }
+
 interface WordFilterFormData {
   action: WordFilterAction;
   timeoutDurationMs: number;
@@ -20,7 +21,7 @@ interface WordFilterFormData {
 const { filter, roomId } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const actionSelectItems = Object.values(WordFilterAction).map((value) => ({ title: value, value }));
-const getWordFilterFormData = (roomFilter: null | RoomFilterInMessage): WordFilterFormData => ({
+const getWordFilterFormData = (roomFilter: RoomFilterInMessage | undefined): WordFilterFormData => ({
   action: roomFilter?.action ?? WordFilterAction.Reject,
   timeoutDurationMs: roomFilter?.timeoutDurationMs ?? TimeoutDurationMap["5 minutes"],
   words: roomFilter?.words ?? [],

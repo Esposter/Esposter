@@ -15,9 +15,8 @@ import {
 import { Operation } from "@esposter/shared";
 
 export const filterRouter = router({
-  readRoomFilter: getMemberProcedure(roomIdSchema, "roomId").query<null | RoomFilterInMessage>(
-    async ({ ctx, input: { roomId } }) =>
-      (await ctx.db.query.roomFiltersInMessage.findFirst({ where: { roomId: { eq: roomId } } })) ?? null,
+  readRoomFilter: getMemberProcedure(roomIdSchema, "roomId").query<RoomFilterInMessage | undefined>(
+    ({ ctx, input: { roomId } }) => ctx.db.query.roomFiltersInMessage.findFirst({ where: { roomId: { eq: roomId } } }),
   ),
   upsertRoomFilter: getPermissionsProcedure(
     RoomPermission.ManageRoom,

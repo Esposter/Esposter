@@ -272,10 +272,7 @@ export const baseRoomRouter = router({
         where: { id: { eq: input }, userId: { eq: userId } },
       });
 
-      if (ownedRoom) {
-        const { id } = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
-        return id;
-      }
+      if (ownedRoom) return (await deleteRoom(ctx.db, ctx.getSessionPayload, input)).id;
 
       const userToRoom = requireMutation(
         (
@@ -355,13 +352,13 @@ export const baseRoomRouter = router({
   }),
   readInvite: standardAuthedProcedure
     .input(readInviteInputSchema)
-    .query<null | ReadInviteResult>(async ({ ctx, input }) => {
+    .query<ReadInviteResult | undefined>(async ({ ctx, input }) => {
       const invite = await ctx.db.query.invitesInMessage.findFirst({
         where: { id: { eq: input } },
         with: InviteInMessageRelations,
       });
       // Expired/exhausted invites behave exactly like unknown tokens — don't leak which
-      if (!invite || !checkIsInviteUsable(invite)) return null;
+      if (!invite || !checkIsInviteUsable(invite)) return undefined;
 
       const membership = await ctx.db.query.usersToRoomsInMessage.findFirst({
         where: {
@@ -452,48 +449,53 @@ export const baseRoomRouter = router({
   }),
   readMyInvite: getMemberProcedure(roomIdSchema, "roomId")
     .use(assertIsRoomMiddleware)
-    .query<InviteInMessage | null>(({ ctx, input: { roomId } }) =>
+    .query<InviteInMessage | undefined>(({ ctx, input: { roomId } }) =>
       readMyInvite(ctx.db, ctx.getSessionPayload.user.id, roomId),
     ),
-  readRoom: standardAuthedProcedure.input(readRoomInputSchema).query<null | RoomInMessage>(async ({ ctx, input }) => {
-    if (input) {
-      const room = ctx.db.query.roomsInMessage.findFirst({
-        where: {
-          RAW: (roomTable, { and: andFilter, eq: eqFilter, exists }) => {
-            const where = andFilter(
-              eqFilter(roomTable.id, input),
-              exists(
-                ctx.db
-                  .select({ _: sql`1` })
-                  .from(usersToRoomsInMessage)
-                  .where(
-                    andFilter(
-                      eqFilter(usersToRoomsInMessage.roomId, roomTable.id),
-                      eqFilter(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+  readRoom: standardAuthedProcedure
+    .input(readRoomInputSchema)
+    .query<RoomInMessage | undefined>(async ({ ctx, input }) => {
+      if (input) {
+        const room = ctx.db.query.roomsInMessage.findFirst({
+          where: {
+            RAW: (roomTable, { and: andFilter, eq: eqFilter, exists }) => {
+              const where = andFilter(
+                eqFilter(roomTable.id, input),
+                exists(
+                  ctx.db
+                    .select({ _: sql`1` })
+                    .from(usersToRoomsInMessage)
+                    .where(
+                      andFilter(
+                        eqFilter(usersToRoomsInMessage.roomId, roomTable.id),
+                        eqFilter(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+                      ),
                     ),
-                  ),
-              ),
-            );
-            if (!where) throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, input);
-            return where;
+                ),
+              );
+              if (!where) throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, input);
+              return where;
+            },
           },
-        },
-      });
-      return requireEntity(room, DatabaseEntityType.Room, input);
-    }
-    const latestRoom = (
-      await ctx.db
-        .select(getColumns(roomsInMessage))
-        .from(roomsInMessage)
-        .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
-        .where(
-          and(eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id), eq(roomsInMessage.type, RoomType.Room)),
-        )
-        .orderBy(desc(roomsInMessage.updatedAt))
-        .limit(1)
-    )[0];
-    return latestRoom ?? null;
-  }),
+        });
+        return requireEntity(room, DatabaseEntityType.Room, input);
+      }
+      const latestRoom = (
+        await ctx.db
+          .select(getColumns(roomsInMessage))
+          .from(roomsInMessage)
+          .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
+          .where(
+            and(
+              eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+              eq(roomsInMessage.type, RoomType.Room),
+            ),
+          )
+          .orderBy(desc(roomsInMessage.updatedAt))
+          .limit(1)
+      )[0];
+      return latestRoom;
+    }),
   readRoomInvites: getPermissionsProcedure(RoomPermission.ManageRoom, readRoomInvitesInputSchema, "roomId").query<
     CursorPaginationData<InviteInMessageWithCreator>
   >(async ({ ctx, input: { cursor, limit, roomId } }) => {

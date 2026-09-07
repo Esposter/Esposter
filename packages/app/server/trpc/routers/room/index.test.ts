@@ -154,12 +154,12 @@ describe("roomRouter", () => {
     expect(readRoom).toStrictEqual(newRoom);
   });
 
-  test("reads latest updated room with no rooms to be null", async () => {
+  test("reads latest updated room with no rooms to be undefined", async () => {
     expect.hasAssertions();
 
     const readRoom = await roomCaller.readRoom();
 
-    expect(readRoom).toBeNull();
+    expect(readRoom).toBeUndefined();
   });
 
   test("reads latest updated room excluding direct messages", async () => {
@@ -485,7 +485,7 @@ describe("roomRouter", () => {
 
     const readInvite = await roomCaller.readInvite(createId(INVITE_ID_LENGTH));
 
-    expect(readInvite).toBeNull();
+    expect(readInvite).toBeUndefined();
   });
 
   test("reads my invite", async () => {
@@ -503,16 +503,16 @@ describe("roomRouter", () => {
     expect(newInvite.user.id).toBe(getMockSession().user.id);
   });
 
-  test("reads my invite with no invite to be null", async () => {
+  test("reads my invite with no invite to be undefined", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
-    expect(myInvite).toBeNull();
+    expect(myInvite).toBeUndefined();
   });
 
-  test("reads my expired invite to be null", async () => {
+  test("reads my expired invite to be undefined", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -524,7 +524,7 @@ describe("roomRouter", () => {
     vi.setSystemTime(Temporal.Duration.from({ minutes: 31 }).total("milliseconds"));
     const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
-    expect(myInvite).toBeNull();
+    expect(myInvite).toBeUndefined();
   });
 
   // The usability predicate runs over the page rather than in SQL, so a page can filter down to fewer rows than it
@@ -649,7 +649,7 @@ describe("roomRouter", () => {
 
     const readInvite = await roomCaller.readInvite(newInvite.id);
 
-    expect(readInvite).toBeNull();
+    expect(readInvite).toBeUndefined();
   });
 
   test("revoking own invite makes the link unknown, and another member's is not revocable", async () => {
@@ -671,7 +671,7 @@ describe("roomRouter", () => {
     await roomCaller.revokeInvite({ id: newInvite.id, roomId: newRoom.id });
     const readInvite = await roomCaller.readInvite(newInvite.id);
 
-    expect(readInvite).toBeNull();
+    expect(readInvite).toBeUndefined();
   });
 
   test("pausing invites refuses a create and answers a live link like an unknown token", async () => {

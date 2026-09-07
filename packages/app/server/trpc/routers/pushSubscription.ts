@@ -17,8 +17,8 @@ export const pushSubscriptionRouter = router({
         expirationTime,
         keys: { auth, p256dh },
       },
-    }) => {
-      const newPushSubscription = requireMutation(
+    }) =>
+      requireMutation(
         (
           await ctx.db
             .insert(pushSubscriptions)
@@ -46,14 +46,12 @@ export const pushSubscriptionRouter = router({
         Operation.Create,
         DatabaseEntityType.PushSubscription,
         "subscribe",
-      );
-      return newPushSubscription;
-    },
+      ),
   ),
   unsubscribe: standardAuthedProcedure
     .input(pushSubscriptionSchema.shape.endpoint)
-    .mutation<PushSubscription>(async ({ ctx, input }) => {
-      const deletedPushSubscription = requireMutation(
+    .mutation<PushSubscription>(async ({ ctx, input }) =>
+      requireMutation(
         (
           await ctx.db
             .delete(pushSubscriptions)
@@ -65,7 +63,6 @@ export const pushSubscriptionRouter = router({
         Operation.Delete,
         DatabaseEntityType.PushSubscription,
         "unsubscribe",
-      );
-      return deletedPushSubscription;
-    }),
+      ),
+    ),
 });
