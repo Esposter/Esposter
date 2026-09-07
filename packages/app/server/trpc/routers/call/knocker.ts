@@ -1,4 +1,5 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { Context } from "@@/server/trpc/context";
 
 import { callSessionIdInputSchema } from "#shared/models/db/call/CallSessionIdInput";
@@ -15,6 +16,7 @@ import { callEventEmitter } from "@@/server/services/message/events/callEventEmi
 import { router } from "@@/server/trpc";
 import { getForbiddenError } from "@@/server/trpc/guards/getForbiddenError";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { getOrCreate } from "@esposter/shared";
 
 // Only the creator, and only while they are themselves in the call, decides who gets in — for admitting and
 // Dismissing alike
@@ -42,12 +44,7 @@ export const knockerRouter = router({
       const knockerMap = callKnockerMap.get(callSessionId);
       if (!knockerMap?.has(knockerSessionId)) return;
       knockerMap.delete(knockerSessionId);
-      let admittedParticipantIds = callAdmittedParticipantMap.get(callSessionId);
-      if (!admittedParticipantIds) {
-        admittedParticipantIds = new Set();
-        callAdmittedParticipantMap.set(callSessionId, admittedParticipantIds);
-      }
-      admittedParticipantIds.add(knockerSessionId);
+      getOrCreate(callAdmittedParticipantMap, callSessionId, () => new Set<string>()).add(knockerSessionId);
 
       callEventEmitter.emit("knockerAdmitted", { callSessionId, knockerSessionId });
     }),
@@ -69,12 +66,7 @@ export const knockerRouter = router({
     const { session, user } = ctx.getSessionPayload;
     const knocker = createParticipant(session, user);
 
-    let knockerMap = callKnockerMap.get(id);
-    if (!knockerMap) {
-      knockerMap = new Map();
-      callKnockerMap.set(id, knockerMap);
-    }
-    knockerMap.set(session.id, knocker);
+    getOrCreate(callKnockerMap, id, () => new Map<string, CallParticipant>()).set(session.id, knocker);
 
     callEventEmitter.emit("knockCall", { callSessionId: id, knocker, knockerSessionId: session.id });
   }),
