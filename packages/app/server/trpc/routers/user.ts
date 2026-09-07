@@ -164,20 +164,21 @@ export const userRouter = router({
     const userId = ctx.getSessionPayload.user.id;
     const containerClient = await useContainerClient(AzureContainer.PrivateUserAssets);
     const callBackgroundBlobs = await readCallBackgroundBlobs(containerClient, userId);
-    const unservableBlobNames = callBackgroundBlobs
-      .filter((callBackgroundBlob) => !checkIsServableCallBackground(callBackgroundBlob))
-      .map(({ name }) => name);
+    // Partitioned in one pass rather than filtered twice, so the cap is applied to each slot exactly once
+    const servableCallBackgroundBlobs: CallBackgroundBlob[] = [];
+    const unservableBlobNames: string[] = [];
+    for (const callBackgroundBlob of callBackgroundBlobs)
+      if (checkIsServableCallBackground(callBackgroundBlob)) servableCallBackgroundBlobs.push(callBackgroundBlob);
+      else unservableBlobNames.push(callBackgroundBlob.name);
     // A slot that came back over the cap is dropped from what the picker receives and reclaimed through the
     // Same event every other blob delete goes through. Best-effort: a dropped publish only leaves a slot
     // Occupied by a blob nothing will ever hand out
     await publishBlobDeletion(userId, AzureContainer.PrivateUserAssets, unservableBlobNames);
     return Promise.all(
-      callBackgroundBlobs
-        .filter((callBackgroundBlob) => checkIsServableCallBackground(callBackgroundBlob))
-        .map(async ({ name, slot }) => ({
-          sasUrl: await generateReadSasUrl(containerClient.getBlockBlobClient(name)),
-          slot,
-        })),
+      servableCallBackgroundBlobs.map(async ({ name, slot }) => ({
+        sasUrl: await generateReadSasUrl(containerClient.getBlockBlobClient(name)),
+        slot,
+      })),
     );
   }),
   readStatuses: standardAuthedProcedure
@@ -233,33 +234,35 @@ export const userRouter = router({
     )[0];
     if (foundUserSettings) return foundUserSettings;
     // No row yet — return the defaults without persisting; the first update upserts the row
-    return {
-      autoIdleThresholdMs: DEFAULT_AUTO_IDLE_THRESHOLD_MS,
-      createdAt: new Date(),
-      deletedAt: null,
-      inputSensitivityDecibels: DEFAULT_INPUT_SENSITIVITY_DECIBELS,
-      isDeafenOnJoin: false,
-      isMuteOnJoin: false,
-      microphoneVolumePercentage: DEFAULT_MICROPHONE_VOLUME_PERCENTAGE,
-      noiseSuppressionMode: NoiseSuppressionMode.Custom,
-      pushToTalkKeybind: "",
-      pushToTalkReleaseDelayMs: DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
-      speakerVolumePercentage: DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
-      updatedAt: new Date(),
-      userId: ctx.getSessionPayload.user.id,
-      virtualBackground: "",
-      voiceInputMode: VoiceInputMode.VoiceActivity,
-    } satisfies UserSettingsInMessage;
+    else
+      return {
+        autoIdleThresholdMs: DEFAULT_AUTO_IDLE_THRESHOLD_MS,
+        createdAt: new Date(),
+        deletedAt: null,
+        inputSensitivityDecibels: DEFAULT_INPUT_SENSITIVITY_DECIBELS,
+        isDeafenOnJoin: false,
+        isMuteOnJoin: false,
+        microphoneVolumePercentage: DEFAULT_MICROPHONE_VOLUME_PERCENTAGE,
+        noiseSuppressionMode: NoiseSuppressionMode.Custom,
+        pushToTalkKeybind: "",
+        pushToTalkReleaseDelayMs: DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
+        speakerVolumePercentage: DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
+        updatedAt: new Date(),
+        userId: ctx.getSessionPayload.user.id,
+        virtualBackground: "",
+        voiceInputMode: VoiceInputMode.VoiceActivity,
+      } satisfies UserSettingsInMessage;
   }),
-  updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation<User>(async ({ ctx, input }) => {
-    const updatedUser = requireMutation(
-      (await ctx.db.update(users).set(input).where(eq(users.id, ctx.getSessionPayload.user.id)).returning())[0],
-      Operation.Update,
-      DatabaseEntityType.User,
-      ctx.getSessionPayload.user.id,
-    );
-    return updatedUser;
-  }),
+  updateUser: standardAuthedProcedure
+    .input(updateUserInputSchema)
+    .mutation<User>(async ({ ctx, input }) =>
+      requireMutation(
+        (await ctx.db.update(users).set(input).where(eq(users.id, ctx.getSessionPayload.user.id)).returning())[0],
+        Operation.Update,
+        DatabaseEntityType.User,
+        ctx.getSessionPayload.user.id,
+      ),
+    ),
   updateUserSettings: standardAuthedProcedure
     .input(updateUserSettingsInputSchema)
     .mutation<UserSettingsInMessage>(async ({ ctx, input }) =>

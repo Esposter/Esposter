@@ -19,8 +19,8 @@ import { Operation } from "@esposter/shared";
 
 export const searchHistoryRouter = router({
   createSearchHistory: getMemberProcedure(createSearchHistoryInputSchema, "roomId").mutation<SearchHistoryInMessage>(
-    async ({ ctx, input }) => {
-      const newSearchHistory = requireMutation(
+    async ({ ctx, input }) =>
+      requireMutation(
         (
           await ctx.db
             .insert(searchHistoriesInMessage)
@@ -30,14 +30,12 @@ export const searchHistoryRouter = router({
         Operation.Create,
         DatabaseEntityType.SearchHistory,
         JSON.stringify(input),
-      );
-      return newSearchHistory;
-    },
+      ),
   ),
   deleteSearchHistory: standardAuthedProcedure
     .input(deleteSearchHistoryInputSchema)
-    .mutation<SearchHistoryInMessage>(async ({ ctx, input }) => {
-      const deletedSearchHistory = requireMutation(
+    .mutation<SearchHistoryInMessage>(async ({ ctx, input }) =>
+      requireMutation(
         (
           await ctx.db
             .delete(searchHistoriesInMessage)
@@ -47,9 +45,8 @@ export const searchHistoryRouter = router({
         Operation.Delete,
         DatabaseEntityType.SearchHistory,
         input,
-      );
-      return deletedSearchHistory;
-    }),
+      ),
+    ),
   readSearchHistories: getMemberProcedure(readSearchHistoriesInputSchema, "roomId").query<
     CursorPaginationData<SearchHistoryInMessage>
   >(async ({ ctx, input: { cursor, limit, roomId, sortBy } }) => {
@@ -69,8 +66,8 @@ export const searchHistoryRouter = router({
   }),
   updateSearchHistory: standardAuthedProcedure
     .input(updateSearchHistoryInputSchema)
-    .mutation<SearchHistoryInMessage>(async ({ ctx, input: { id, query } }) => {
-      const updatedSearchHistory = requireMutation(
+    .mutation<SearchHistoryInMessage>(async ({ ctx, input: { id, query } }) =>
+      requireMutation(
         (
           await ctx.db
             .update(searchHistoriesInMessage)
@@ -81,7 +78,6 @@ export const searchHistoryRouter = router({
         Operation.Update,
         DatabaseEntityType.SearchHistory,
         id,
-      );
-      return updatedSearchHistory;
-    }),
+      ),
+    ),
 });
