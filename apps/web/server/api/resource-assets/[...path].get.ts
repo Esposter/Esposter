@@ -28,7 +28,8 @@ export default defineEventHandler(async (event) => {
   // Filename legally holding one arrives as a truncated blob name that resolves to a 404 nothing reports.
   // The target keeps the percent-encoded form `parseResourceAssetPath` needs, which decodes per segment so a
   // `%2F` can never widen the directory the caller was authorized for
-  const requestTarget = event.node.req.url ?? "";
+  const nodeRequest = event.runtime?.node?.req;
+  const requestTarget = nodeRequest?.url ?? "";
   const queryIndex = requestTarget.indexOf("?");
   const encodedPath = (queryIndex === -1 ? requestTarget : requestTarget.slice(0, queryIndex)).slice(
     `${RESOURCE_ASSETS_URL_PREFIX}/`.length,
@@ -41,7 +42,7 @@ export default defineEventHandler(async (event) => {
   if (IS_PRODUCTION) {
     // Its own limiter, because one published page issues a request per embedded asset and that spend must not
     // Come out of the caller's API budget (see assetRateLimiter)
-    const rateLimiterKey = getSessionPayload?.user.id ?? getIpAddress(event.node.req);
+    const rateLimiterKey = getSessionPayload?.user.id ?? (nodeRequest ? getIpAddress(nodeRequest) : undefined);
     if (rateLimiterKey)
       await getResultAsync(() => assetRateLimiter.consume(rateLimiterKey)).match(noop, (error) => {
         if (checkIsRateLimitExceeded(error)) throw createError({ statusCode: 429 });

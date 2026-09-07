@@ -15,7 +15,7 @@ export const getRateLimitedMiddleware = (type: RateLimiterType) =>
     const getSessionPayload = await auth.api.getSession({ headers: ctx.headers });
     if (!IS_PRODUCTION) return next({ ctx: { getSessionPayload } });
 
-    const ipAddress = getIpAddress(ctx.req);
+    const ipAddress = ctx.req ? getIpAddress(ctx.req) : undefined;
     if (!getSessionPayload && !ipAddress) {
       console.warn(RATE_LIMITER_BYPASS_LOG_MESSAGE);
       return next({ ctx: { getSessionPayload } });
@@ -32,7 +32,7 @@ export const getRateLimitedMiddleware = (type: RateLimiterType) =>
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       },
     );
-    if ("setHeader" in ctx.res) {
+    if (ctx.res && "setHeader" in ctx.res) {
       ctx.res.setHeader(
         "Retry-After",
         Math.ceil(Temporal.Duration.from({ milliseconds: msBeforeNext }).total("seconds")),

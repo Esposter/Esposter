@@ -1,4 +1,4 @@
-import type { NitroConfig } from "nitropack/types";
+import type { NitroConfig } from "nitro/types";
 // Client-only pages (no SSR/SEO benefit) that touch window/localStorage during setup.
 // Defined globally because inline defineRouteRules (experimental.inlineRouteRules) is not
 // Reliably applied, leaving "window is not defined" SSR crashes.

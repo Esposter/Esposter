@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs), version-capped packages (h3, vitest, vuetify, unocss), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues. Apply when updating package versions.
+description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (nuxt nightly alias, drizzle-kit/drizzle-orm RCs), version-capped packages (vitest, vuetify, unocss), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues. Apply when updating package versions.
 ---
 
 # Dependency Updates
@@ -57,15 +57,15 @@ Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them pe
 
 ## Exact-pinned packages (no caret)
 
+- **`nuxt`** — the `npm:nuxt-nightly@5x` alias rather than a range, so the install tracks the latest v5 nightly and Renovate cannot propose it. `h3` (2.x RC) and `nitro` (3.x beta) are the same decision and move with it; all three are Nuxt 5 infrastructure, never a routine bump.
 - **`drizzle-kit`, `drizzle-orm`** — pinned to an exact RC (no `^`). Leave the caret off: a caret would float them across RC builds. Bump both together, deliberately, to the same version.
 - **`typescript`** — an exact-pinned `npm:typescript-native-bridge@…` alias, so Renovate cannot propose it (`renovate.json` sets `updatePinnedDependencies: false`) and a caret would float it across bridge builds. The alias is what runs `tsc`/`vue-tsc` on the Go compiler (`apps/web/content/docs/architecture/monorepo-tooling.md`); a bump moves the bridge, the TypeScript version behind it and `typescript-eslint` at once, so it is a deliberate, dedicated pass and never part of a routine update.
 
 ## Version-capped packages (keep the caret, cap the range)
 
-- **`h3`** — has `^` (both catalog and `overrides:`). Skip major/RC bumps; only update minor/patch within the current major.
 - **`vitest`, `@vitest/coverage-v8`** — have `^`, so the major cap is already the caret's. `@nuxt/test-utils` peers `vitest: ^4.0.2`; until it widens to 5, the 5.x line is unreachable however deliberate the pass. `@vitest/coverage-v8` peers vitest exactly (`5.0.0` peers `vitest: 5.0.0`), so the two move together or not at all.
 - **`vuetify`** — `~4.1.13`, a tilde rather than a caret. 4.2.0 does not work under `vuetify-nuxt-module`, and no peer range catches it: the module peers `vuetify: ^3.4.0 || ^4.0.0`, so the install resolves happily and breaks at runtime. The block is a **minor**, so a caret would float straight into it — the cap has to narrow the range itself, and a bump is an explicit widening back to `^` once the module ships support. `vuetify.config.test.ts` is where a bad resolution shows.
-- **`unocss`, `@unocss/nuxt`, `@unocss/eslint-config`** — `~66.9.2`, tildes, and they move as one trio because every `@unocss/*` package pins its siblings to its own exact version. 66.10.0 rewrote `@unocss/inspector` onto `devframe`, which depends on `h3` 2.x; the `h3` override above holds the tree at 1.x, so `devframe` resolves against a major that has no `H3` export and `nuxt build` dies at the Nitro stage with `The requested module 'h3' does not provide an export named 'H3'`. `@unocss/vite` imports the inspector at the top of its entry, so `inspector: false` does not skip the import and no UnoCSS-side setting avoids it. The block is a **minor**, and the unblock is the `h3` cap lifting — not an UnoCSS release — so re-check it whenever `h3` 2.x becomes takeable, and widen both back together.
+- **`unocss`, `@unocss/nuxt`, `@unocss/eslint-config`** — `~66.9.2`, tildes, and they move as one trio because every `@unocss/*` package pins its siblings to its own exact version. 66.10.0 rewrote `@unocss/inspector` onto `devframe`, which depends on `h3` 2.x — which the `h3` 2.x override now satisfies, so the block this cap was written for is gone. Widen the trio back to `^` on the next pass and read `uno.config.test.ts` for what the resolution moves.
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 

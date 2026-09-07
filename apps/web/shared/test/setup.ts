@@ -90,7 +90,7 @@ vi.mock(
   () => import("@@/server/composables/azure/table/useTableClient.test"),
 );
 // oxlint-disable-next-line vitest/prefer-import-in-mock
-vi.mock("nitropack/runtime", () => ({
+vi.mock("nitro/runtime", () => ({
   useRuntimeConfig: () => ({
     // Nuxt 4.5's generated `#internal/nuxt/paths` reads `useRuntimeConfig().app.baseURL` at module scope
     // (via `#build/fetch`'s eager `$fetch.create`), so the mock must carry the standard `app` defaults.

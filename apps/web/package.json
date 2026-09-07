@@ -224,6 +224,7 @@
     "happy-dom": "catalog:",
     "msw": "catalog:",
     "msw-trpc": "catalog:",
+    "nitro": "catalog:",
     "nuxt": "catalog:",
     "nuxt-security": "catalog:",
     "sass-embedded": "catalog:",
