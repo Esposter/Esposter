@@ -76,7 +76,6 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
     const { items: roomItems } = getSlice(roomId);
     const { deleteWebhook: storeDeleteWebhook } = getRoomOperationData(roomId);
     await executeDeleteWebhookMutation(() => $trpc.webhook.deleteWebhook.mutate({ ...input, roomId }), {
-      // Put back only this row, at the position it held
       applyOptimistic: () => {
         const deletedIndex = roomItems.value.findIndex(({ id }) => id === input.id);
         const deletedWebhook = roomItems.value[deletedIndex];

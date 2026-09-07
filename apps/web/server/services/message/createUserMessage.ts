@@ -27,9 +27,6 @@ export const createUserMessage = async (
 ): Promise<MessageEntity> => {
   await assertCanCreateMessage(db, user.id, input.roomId, input.message);
   const now = new Date();
-  // The slowmode clock is what the NEXT send is checked against, so it advances with the guards rather than
-  // After the write: a failed update behind a successful write leaves a stale lastMessageAt that keeps passing
-  // And slowmode silently stops applying, while advancing first can only cost one window on a write that throws
   await updateUserToRoom(db, user.id, {
     lastMessageAt: now,
     roomId: input.roomId,

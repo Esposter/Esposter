@@ -103,7 +103,6 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   };
   const deleteRoomEmoji = async (roomId: RoomInMessage["id"], input: Except<DeleteRoomEmojiInput, "roomId">) => {
     await executeDeleteRoomEmojiMutation(() => $trpc.room.emoji.deleteRoomEmoji.mutate({ ...input, roomId }), {
-      // Put back only this row, at the position it held
       applyOptimistic: () => {
         const { items: roomItems } = getSlice(roomId);
         const deletedIndex = roomItems.value.findIndex(({ id }) => id === input.id);

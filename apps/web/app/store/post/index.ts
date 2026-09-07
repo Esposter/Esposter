@@ -62,13 +62,9 @@ export const usePostStore = defineStore("post", () => {
   const deletePost = async (input: DeletePostInput) => {
     await executeDeletePostMutation(() => $trpc.post.deletePost.mutate(input), {
       applyOptimistic: () => {
-        // The one row this write removes, read when the write is sent — deletes of different posts do not queue
-        // Against each other
         const deletedPost = items.value.find(({ id }) => id === input);
         storeDeletePost({ id: input });
         return () => {
-          // The row comes back at the end rather than in its ranked place — cosmetic next to dropping rows the
-          // Feed gained while the delete was in flight
           if (deletedPost) storeCreatePost(deletedPost);
         };
       },

@@ -57,16 +57,16 @@ The two delivery paths order their guards differently, because only one of them 
 
 Postgres table `scheduledMessageJobsInMessage`:
 
-| Field                 | Notes                                                                                                                                                              |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `id`                  | UUID primary key — the only thing put on the queue                                                                                                                 |
-| `userId`              | creator / recipient                                                                                                                                                |
-| `roomId`              | required room scope                                                                                                                                                |
-| `payload`             | discriminated JSON by `type`: `Reminder` (`text`) or `ScheduledMessage` (`message`)                                                                                |
-| `runAt`               | timestamp                                                                                                                                                          |
-| `processingStartedAt` | nullable; the delivery handler's single-shot claim, stamped atomically on `IS NULL` — a claimed job is invisible to cancel/reschedule/send-now and to the listings |
-| `completedAt`         | nullable; set after success; a pre-claim failure leaves it null so redelivery retries, a post-claim failure leaves the job mid-delivery rather than posting twice  |
-| `cancelledAt`         | nullable; set by `cancelScheduledMessageJob`, `rescheduleMessage` (on the old row) and `sendScheduledMessageNow`; workers skip jobs where this is set              |
+| Field                 | Notes                                                                                                                                                                                                           |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                  | UUID primary key — the only thing put on the queue                                                                                                                                                              |
+| `userId`              | creator / recipient                                                                                                                                                                                             |
+| `roomId`              | required room scope                                                                                                                                                                                             |
+| `payload`             | discriminated JSON by `type`: `Reminder` (`text`) or `ScheduledMessage` (`message`, plus the `replyRowKey` that lands a message scheduled from a thread back in that thread, exactly as sending it there would) |
+| `runAt`               | timestamp                                                                                                                                                                                                       |
+| `processingStartedAt` | nullable; the delivery handler's single-shot claim, stamped atomically on `IS NULL` — a claimed job is invisible to cancel/reschedule/send-now and to the listings                                              |
+| `completedAt`         | nullable; set after success; a pre-claim failure leaves it null so redelivery retries, a post-claim failure leaves the job mid-delivery rather than posting twice                                               |
+| `cancelledAt`         | nullable; set by `cancelScheduledMessageJob`, `rescheduleMessage` (on the old row) and `sendScheduledMessageNow`; workers skip jobs where this is set                                                           |
 
 ## Procedures
 
