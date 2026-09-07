@@ -94,14 +94,14 @@ The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`
 
 ## Key files
 
-| File                                                                        | Role                                                |
-| --------------------------------------------------------------------------- | --------------------------------------------------- |
-| `packages/app/server/trpc/routers/message/index.ts`                         | Message router (procedures above)                   |
-| `packages/app/server/services/message/createUserMessage.ts`                 | Send pipeline: table write, emit, EventGrid publish |
-| `packages/db-schema/src/models/azure/table/AzureTable.ts`                   | Table name enum (Messages, MessagesAscending, …)    |
-| `packages/db-schema/src/models/message/MessageType.ts`                      | Message type discriminator                          |
-| `packages/app/shared/services/message/MessageTypeOperationPermissionMap.ts` | Which operations each type supports, and for whom   |
-| `packages/app/server/services/message/events/`                              | `messageEventEmitter` and friends                   |
+| File                                                                    | Role                                                |
+| ----------------------------------------------------------------------- | --------------------------------------------------- |
+| `apps/web/server/trpc/routers/message/index.ts`                         | Message router (procedures above)                   |
+| `apps/web/server/services/message/createUserMessage.ts`                 | Send pipeline: table write, emit, EventGrid publish |
+| `packages/db-schema/src/models/azure/table/AzureTable.ts`               | Table name enum (Messages, MessagesAscending, …)    |
+| `packages/db-schema/src/models/message/MessageType.ts`                  | Message type discriminator                          |
+| `apps/web/shared/services/message/MessageTypeOperationPermissionMap.ts` | Which operations each type supports, and for whom   |
+| `apps/web/server/services/message/events/`                              | `messageEventEmitter` and friends                   |
 
 ## Notes
 

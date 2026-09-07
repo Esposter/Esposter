@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 describe(getChangedExcludes, () => {
   const NODE_MODULES_EXCLUDE = "node_modules";
   const WORKTREE_EXCLUDE = `./${AGENT_WORKTREES_DIRECTORY}`;
-  const NUXT_OUTPUT_EXCLUDE = "./packages/app/.nuxt";
+  const NUXT_OUTPUT_EXCLUDE = "./apps/web/.nuxt";
 
   test("returns the excludes only one side holds, in both directions", () => {
     expect.hasAssertions();

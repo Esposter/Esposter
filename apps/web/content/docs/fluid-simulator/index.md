@@ -11,9 +11,9 @@ Everything lives in one page component — there is no store, server procedure, 
 
 ## Key files
 
-| File                                         | Role                                                |
-| -------------------------------------------- | --------------------------------------------------- |
-| `packages/app/app/pages/fluid-simulator.vue` | the entire scene: setup, GUI, render loop, disposal |
+| File                                     | Role                                                |
+| ---------------------------------------- | --------------------------------------------------- |
+| `apps/web/app/pages/fluid-simulator.vue` | the entire scene: setup, GUI, render loop, disposal |
 
 ## Notes
 

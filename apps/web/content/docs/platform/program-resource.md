@@ -43,18 +43,18 @@ Plus the full `createResourceProcedures(ResourceType.Program)` set. Token _valid
 
 ## Key files
 
-| File                                                                             | Role                                          |
-| -------------------------------------------------------------------------------- | --------------------------------------------- |
-| `packages/db-schema/src/models/resource/ResourceType.ts`                         | the `Program` type value                      |
-| `packages/db-schema/src/models/program/ProgramParticipantEntity.ts`              | the participant entity + its key              |
-| `packages/app/shared/models/resource/program/ProgramResource.ts`                 | audience/key/email/survey bindings            |
-| `packages/app/server/trpc/routers/program.ts`                                    | factory + participants + status               |
-| `packages/app/server/services/program/generateProgramParticipants.ts`            | idempotent token issuance                     |
-| `packages/app/server/services/program/getProgramParticipantId.ts`                | the key value → rowKey derivation             |
-| `packages/app/server/services/program/readProgramStatusRows.ts`                  | the server-only participants × responses join |
-| `packages/app/server/services/dataset/programStatus/readProgramStatusDataset.ts` | the `ProgramStatus` provider                  |
-| `packages/app/app/components/Resource/Program/Setup.vue`                         | the bindings blade                            |
-| `packages/app/app/components/Resource/Program/Status.vue`                        | the funnel blade                              |
+| File                                                                         | Role                                          |
+| ---------------------------------------------------------------------------- | --------------------------------------------- |
+| `packages/db-schema/src/models/resource/ResourceType.ts`                     | the `Program` type value                      |
+| `packages/db-schema/src/models/program/ProgramParticipantEntity.ts`          | the participant entity + its key              |
+| `apps/web/shared/models/resource/program/ProgramResource.ts`                 | audience/key/email/survey bindings            |
+| `apps/web/server/trpc/routers/program.ts`                                    | factory + participants + status               |
+| `apps/web/server/services/program/generateProgramParticipants.ts`            | idempotent token issuance                     |
+| `apps/web/server/services/program/getProgramParticipantId.ts`                | the key value → rowKey derivation             |
+| `apps/web/server/services/program/readProgramStatusRows.ts`                  | the server-only participants × responses join |
+| `apps/web/server/services/dataset/programStatus/readProgramStatusDataset.ts` | the `ProgramStatus` provider                  |
+| `apps/web/app/components/Resource/Program/Setup.vue`                         | the bindings blade                            |
+| `apps/web/app/components/Resource/Program/Status.vue`                        | the funnel blade                              |
 
 ## Notes
 

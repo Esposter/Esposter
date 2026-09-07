@@ -37,14 +37,14 @@ The `virrun -- <cmd>` prefix sandboxes any command; the child's exit code is pro
 
 ## <a name="shipped">✅ Shipped</a>
 
-What's landed and dogfooded in this repo (the [roadmap](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/roadmap.md) tracks open work; both gates — differential correctness + speed — run from the first backend onward):
+What's landed and dogfooded in this repo (the [roadmap](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/virrun/roadmap.md) tracks open work; both gates — differential correctness + speed — run from the first backend onward):
 
 - **`vfs` backend** — recognised pure-JS `node` invocations run in-process, no spawn; falls back to native otherwise.
-- **`os` backend** — bubblewrap RAM-overlay exec with a shared CAS dep store and the WSL2 bridge. macOS has no WSL equivalent to target and is [deferred](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/deferred/additional-isolation-targets.md), not open work.
+- **`os` backend** — bubblewrap RAM-overlay exec with a shared CAS dep store and the WSL2 bridge. macOS has no WSL equivalent to target and is [deferred](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/virrun/deferred/additional-isolation-targets.md), not open work.
 - **Snapshot + warm-fork** — an environment-keyed (lockfile + sandbox node major) warm post-install snapshot, forked read-only per run so commands reuse the dep tree instead of reinstalling.
 - **Task cache** — a persist run whose inputs are unchanged (keyed by that same environment key + working-tree hash + command) skips the sandbox entirely and replays the recorded output, so re-running an unchanged build/test/lint is near-instant. Default-on locally, off in CI (a fresh commit means ~0 hits) and under `--no-cache`. The capability probe is likewise cached across processes so each `virrun -- <cmd>` skips re-probing.
-- **Write-back persistence** — a normal `virrun -- <cmd>` flushes produced files to the host so disk matches native; the ephemeral fork stays for CI/verification. → [write-back.md](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/write-back.md)
-- **Source-mirror manifest delta (win32)** — the WSL bridge reads source from an ext4 mirror, and a host-side manifest diff syncs only changed files into it — folded into the run's own `wsl.exe` invocation, skipped entirely on a clean tree. Nothing stat-walks the tree over 9p, which on a repo of thousands of files cost more with zero changes than the sandbox overhead it was serving. → [wsl-source-mirror.md](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/wsl-source-mirror.md)
+- **Write-back persistence** — a normal `virrun -- <cmd>` flushes produced files to the host so disk matches native; the ephemeral fork stays for CI/verification. → [write-back.md](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/virrun/write-back.md)
+- **Source-mirror manifest delta (win32)** — the WSL bridge reads source from an ext4 mirror, and a host-side manifest diff syncs only changed files into it — folded into the run's own `wsl.exe` invocation, skipped entirely on a clean tree. Nothing stat-walks the tree over 9p, which on a repo of thousands of files cost more with zero changes than the sandbox overhead it was serving. → [wsl-source-mirror.md](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/virrun/wsl-source-mirror.md)
 - **CLI (citty)** — `run` / `exec` / `warm` / `init` / `cache` / `doctor` subcommands with `--help`, the bare `virrun -- <cmd>` prefix preserved as the default.
 - **Config backend selection** — committed `virrun.config.{ts,mts,js,mjs,json}` picks the backend (loaded via unconfig); the TS form (`defineConfig` from `virrun/config`) is where `process.platform` branching lives. The prefix stays the sole on/off switch (no allowlist).
 - **Dogfooded scripts** — `format`, `lint`/`lint:fix`, `test`, `typecheck`, and the producing `build:app` / `build:docs` route through the prefix. The platform-branched config resolves the WSL os backend on win32 and native on Linux (so the CI runners are plain native execs); `build:packages` (bootstrap) and `coverage` (correctness gate) stay native by design — see [ci.md](https://github.com/Esposter/Esposter/blob/main/packages/virrun/readme/ci.md).
@@ -57,7 +57,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 - 🤖 [CI][doc-ci] — the two gates (differential correctness + speed) and the CI snapshot cache.
 - 🏎️ [Speed Harness][doc-speed-harness] — benchmarking conventions, committed `*.bench.md`, the CI smoke signal.
 
-Design docs live in [`packages/app/content/docs/virrun`](https://github.com/Esposter/Esposter/tree/main/packages/app/content/docs/virrun) — start with the [architecture overview](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/architecture.md) and the [execution backends page](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/execution-backends.md).
+Design docs live in [`apps/web/content/docs/virrun`](https://github.com/Esposter/Esposter/tree/main/apps/web/content/docs/virrun) — start with the [architecture overview](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/virrun/architecture.md) and the [execution backends page](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/virrun/execution-backends.md).
 
 ## <a name="license">⚖️ License</a>
 

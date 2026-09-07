@@ -63,9 +63,9 @@ A reply deep-links to the thread root rather than to itself: the thread is where
 
 ## Key files
 
-| File                                                                        | Role                                                |
-| :-------------------------------------------------------------------------- | :-------------------------------------------------- |
-| `packages/db/src/services/notification/getMessageRecipientUserIds.ts`       | the room's recipients, thread followers unioned in  |
-| `packages/db/src/services/notification/getThreadFollowerUserIds.ts`         | the thread half of that union                       |
-| `packages/azure-functions/src/services/notification/resolveNotification.ts` | the message case — body, deep link, recipients      |
-| `packages/app/server/services/message/createUserMessage.ts`                 | publishes one notification per send, reply included |
+| File                                                                  | Role                                                |
+| :-------------------------------------------------------------------- | :-------------------------------------------------- |
+| `packages/db/src/services/notification/getMessageRecipientUserIds.ts` | the room's recipients, thread followers unioned in  |
+| `packages/db/src/services/notification/getThreadFollowerUserIds.ts`   | the thread half of that union                       |
+| `apps/functions/src/services/notification/resolveNotification.ts`     | the message case — body, deep link, recipients      |
+| `apps/web/server/services/message/createUserMessage.ts`               | publishes one notification per send, reply included |

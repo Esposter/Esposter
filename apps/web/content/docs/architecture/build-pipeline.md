@@ -112,7 +112,7 @@ app by `main`, so generation deletes the field the artifact needs, and nothing i
 resolves through it, a private package is not gated by publint, and every check passes. The deployed app then
 reports Running while registering no functions at all, which stops every trigger with no error anywhere.
 
-`@esposter/azure-functions` therefore sets `exports: { legacy: true }`, which is what makes tsdown _own_ the
+`@esposter/functions` therefore sets `exports: { legacy: true }`, which is what makes tsdown _own_ the
 field: for a package with no CJS output the ESM chunk is written into `main`, so the host's contract is generated
 from the build rather than typed beside it. Its `src/index.test.ts` asserts the field, which is the only check
 that can fail on its absence.
@@ -185,7 +185,7 @@ A **directory is not a specifier**, which is the one place the substitution is l
 - **It is declared once, where the package already declares everything else.** The manifest travels with the package, and a fresh clone resolves it before any configuration is loaded.
 - **It is private and cannot collide.** `#` specifiers are unreachable from outside the package by specification. `@/*` was reachable only because `tsconfig.base.json` mapped it, and it sat beside a `"*"` fallback that shadowed real package names — a mapping that turns a mistyped dependency into a same-named local file rather than an error.
 
-`packages/app` has none of those pressures. Nothing bundles it from source, nothing publishes it, nothing resolves into it; it is the leaf of the graph. Its `@/` and `~/` are **Nuxt's own aliases**, generated into `.nuxt/tsconfig.*.json` and understood by the Vite and Nitro builds without anything being configured — so they are the framework's convention rather than one of ours, and replacing them would mean fighting generated configuration for a property the app cannot use.
+`apps/web` has none of those pressures. Nothing bundles it from source, nothing publishes it, nothing resolves into it; it is the leaf of the graph. Its `@/` and `~/` are **Nuxt's own aliases**, generated into `.nuxt/tsconfig.*.json` and understood by the Vite and Nitro builds without anything being configured — so they are the framework's convention rather than one of ours, and replacing them would mean fighting generated configuration for a property the app cannot use.
 
 The repo-root `scripts/` tree is not a package either, but it converted anyway — it declares `"#scripts/*": "./scripts/*.ts"` in the root manifest. It had no framework generating an alias for it, so keeping one meant keeping a `paths` block and the `resolve.tsconfigPaths` that made Vitest read it; converting deleted both. **There is now no `paths` entry anywhere in the repo that anyone here wrote** — only the ones Nuxt generates for the app.
 

@@ -34,13 +34,13 @@ The increment is internal to the public read, not a procedure.
 
 ## Key files
 
-| File                                                                      | Role                                               |
-| ------------------------------------------------------------------------- | -------------------------------------------------- |
-| `packages/db-schema/src/models/resource/ResourceViewEntity.ts`            | the day-bucket entity                              |
-| `packages/app/server/services/resource/incrementResourceViewCount.ts`     | the fire-and-forget increment                      |
-| `packages/app/server/services/resource/readResourceViewCount.ts`          | the summed read                                    |
-| `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts` | increment on the public read + the count procedure |
-| `packages/app/app/components/Resource/Overview.vue`                       | the Views row                                      |
+| File                                                                  | Role                                               |
+| --------------------------------------------------------------------- | -------------------------------------------------- |
+| `packages/db-schema/src/models/resource/ResourceViewEntity.ts`        | the day-bucket entity                              |
+| `apps/web/server/services/resource/incrementResourceViewCount.ts`     | the fire-and-forget increment                      |
+| `apps/web/server/services/resource/readResourceViewCount.ts`          | the summed read                                    |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | increment on the public read + the count procedure |
+| `apps/web/app/components/Resource/Overview.vue`                       | the Views row                                      |
 
 ## Notes
 

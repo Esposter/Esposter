@@ -32,14 +32,14 @@ flowchart LR
 
 ## Key files
 
-| File                                                                    | Role                                      |
-| ----------------------------------------------------------------------- | ----------------------------------------- |
-| `packages/db-schema/src/models/survey/SurveyResponseMode.ts`            | the mode values                           |
-| `packages/db-schema/src/models/survey/SurveyResponseEntity.ts`          | the `participantToken` field              |
-| `packages/app/shared/models/resource/survey/SurveySettings.ts`          | `responseMode` on the settings section    |
-| `packages/app/server/services/survey/SurveyResponseModeValidatorMap.ts` | one validation arm per mode               |
-| `packages/app/server/services/survey/resolveIdentifiedToken.ts`         | the Identified arm — token must bind here |
-| `packages/app/app/components/Resource/Survey/View.vue`                  | `?t=` passthrough + token-required state  |
+| File                                                                | Role                                      |
+| ------------------------------------------------------------------- | ----------------------------------------- |
+| `packages/db-schema/src/models/survey/SurveyResponseMode.ts`        | the mode values                           |
+| `packages/db-schema/src/models/survey/SurveyResponseEntity.ts`      | the `participantToken` field              |
+| `apps/web/shared/models/resource/survey/SurveySettings.ts`          | `responseMode` on the settings section    |
+| `apps/web/server/services/survey/SurveyResponseModeValidatorMap.ts` | one validation arm per mode               |
+| `apps/web/server/services/survey/resolveIdentifiedToken.ts`         | the Identified arm — token must bind here |
+| `apps/web/app/components/Resource/Survey/View.vue`                  | `?t=` passthrough + token-required state  |
 
 ## Notes
 

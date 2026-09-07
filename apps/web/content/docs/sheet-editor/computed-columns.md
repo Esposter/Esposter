@@ -85,7 +85,7 @@ Non-numeric and `null` source cells are ignored; an all-null column yields `null
 
 ## Key files
 
-All paths relative to `packages/app`.
+All paths relative to `apps/web`.
 
 | File                                                                                       | Role                                                            |
 | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |

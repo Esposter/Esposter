@@ -57,16 +57,16 @@ Its twin, [`captureBlueprint`](/docs/platform/blueprint-capture), joins the same
 
 ## Key files
 
-| File                                                              | Role                                             |
-| ----------------------------------------------------------------- | ------------------------------------------------ |
-| `packages/db-schema` `ResourceType.Blueprint` + migration         | new type value                                   |
-| `packages/app/shared/models/resource/blueprint/`                  | manifest schema (entries, parameters)            |
-| `packages/app/shared/services/resource/blueprint/`                | token grammar (constants, entry-token builder)   |
-| `packages/app/shared/services/resource/ResourceDefinitionMap.ts`  | Blueprint entry                                  |
-| `packages/app/server/trpc/routers/blueprint.ts`                   | factory + `deployBlueprint` + `captureBlueprint` |
-| `packages/app/server/services/blueprint/`                         | substitution, validation, topo-sort, cleanup     |
-| `packages/app/app/components/Resource/Blueprint/Editor.vue`       | manifest editor blade                            |
-| `packages/app/app/components/Resource/Blueprint/DeployDialog.vue` | parameter form + created-resources result        |
+| File                                                          | Role                                             |
+| ------------------------------------------------------------- | ------------------------------------------------ |
+| `packages/db-schema` `ResourceType.Blueprint` + migration     | new type value                                   |
+| `apps/web/shared/models/resource/blueprint/`                  | manifest schema (entries, parameters)            |
+| `apps/web/shared/services/resource/blueprint/`                | token grammar (constants, entry-token builder)   |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`  | Blueprint entry                                  |
+| `apps/web/server/trpc/routers/blueprint.ts`                   | factory + `deployBlueprint` + `captureBlueprint` |
+| `apps/web/server/services/blueprint/`                         | substitution, validation, topo-sort, cleanup     |
+| `apps/web/app/components/Resource/Blueprint/Editor.vue`       | manifest editor blade                            |
+| `apps/web/app/components/Resource/Blueprint/DeployDialog.vue` | parameter form + created-resources result        |
 
 ## Notes
 

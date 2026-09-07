@@ -57,18 +57,18 @@ The emoji index follows the same once-for-the-whole-list rule from the other dir
 
 ## Key files
 
-| File                                                                        | Role                                                          |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `packages/app/app/components/Message/Model/Message/List/Item.vue`           | Hover wrapper, lazy options menu mount, context-menu handling |
-| `packages/app/app/components/Message/Model/Message/Type/Body.vue`           | Shared authored-message body, edited marker, editor slot      |
-| `packages/app/app/components/Message/Model/Message/Type/SystemLine.vue`     | Shared shell for the unauthored message lines                 |
-| `packages/app/app/components/Message/Model/Message/OptionsMenu/Index.vue`   | Options toolbar (reactions, picker, items, More menu)         |
-| `packages/app/app/components/Message/Model/Message/ConfirmDeleteDialog.vue` | Store-driven delete dialog singleton                          |
-| `packages/app/app/components/Message/Model/Message/ConfirmPinDialog.vue`    | Store-driven pin dialog singleton                             |
-| `packages/app/app/composables/message/message/useMessageActionItems.ts`     | Action items writing store targets directly                   |
-| `packages/app/app/services/message/emoji/getEmojiIndex.ts`                  | Shared emoji index, built once on first use                   |
-| `packages/app/app/store/message/index.ts`                                   | `optionsMenu`, `editingRowKey`                                |
-| `packages/app/app/store/message/dialog.ts`                                  | Dialog targets: `deletingRowKey`, `pinningRowKey`             |
+| File                                                                    | Role                                                          |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `apps/web/app/components/Message/Model/Message/List/Item.vue`           | Hover wrapper, lazy options menu mount, context-menu handling |
+| `apps/web/app/components/Message/Model/Message/Type/Body.vue`           | Shared authored-message body, edited marker, editor slot      |
+| `apps/web/app/components/Message/Model/Message/Type/SystemLine.vue`     | Shared shell for the unauthored message lines                 |
+| `apps/web/app/components/Message/Model/Message/OptionsMenu/Index.vue`   | Options toolbar (reactions, picker, items, More menu)         |
+| `apps/web/app/components/Message/Model/Message/ConfirmDeleteDialog.vue` | Store-driven delete dialog singleton                          |
+| `apps/web/app/components/Message/Model/Message/ConfirmPinDialog.vue`    | Store-driven pin dialog singleton                             |
+| `apps/web/app/composables/message/message/useMessageActionItems.ts`     | Action items writing store targets directly                   |
+| `apps/web/app/services/message/emoji/getEmojiIndex.ts`                  | Shared emoji index, built once on first use                   |
+| `apps/web/app/store/message/index.ts`                                   | `optionsMenu`, `editingRowKey`                                |
+| `apps/web/app/store/message/dialog.ts`                                  | Dialog targets: `deletingRowKey`, `pinningRowKey`             |
 
 ## Notes
 

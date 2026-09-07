@@ -1,6 +1,6 @@
 # Packages
 
-Every workspace package outside `packages/app`. `virrun` holds a fifth of the repo's suites on its own, so it
+Every workspace package outside `apps/web`. `virrun` holds a fifth of the repo's suites on its own, so it
 splits at `services/exec`'s subdirectories.
 
 | Unit                                                                                                | Swept      | Notes                                                  |

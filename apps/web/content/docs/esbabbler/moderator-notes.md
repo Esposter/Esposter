@@ -36,9 +36,9 @@ All under `message.moderation.` (`server/trpc/routers/message/moderation.ts`), g
 
 ## Key files
 
-| File                                                                                  | Role                   |
-| :------------------------------------------------------------------------------------ | :--------------------- |
-| `packages/db-schema/src/models/message/ModerationNoteEntity.ts`                       | note entity            |
-| `packages/app/server/trpc/routers/message/moderation.ts`                              | the three procedures   |
-| `packages/app/app/store/message/moderation/note.ts`                                   | client note list store |
-| `packages/app/app/components/Message/Model/User/ProfileCard/MoreMenu/NotesDialog.vue` | notes menu + dialog    |
+| File                                                                              | Role                   |
+| :-------------------------------------------------------------------------------- | :--------------------- |
+| `packages/db-schema/src/models/message/ModerationNoteEntity.ts`                   | note entity            |
+| `apps/web/server/trpc/routers/message/moderation.ts`                              | the three procedures   |
+| `apps/web/app/store/message/moderation/note.ts`                                   | client note list store |
+| `apps/web/app/components/Message/Model/User/ProfileCard/MoreMenu/NotesDialog.vue` | notes menu + dialog    |

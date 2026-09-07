@@ -71,10 +71,10 @@ One dynamic public page, `pages/view/[type]/[id].vue`, dispatches through `ViewC
 
 ## Key files
 
-| File                                                                       | Role                                             |
-| -------------------------------------------------------------------------- | ------------------------------------------------ |
-| `packages/db-schema/src/schema/resourcePublications.ts`                    | publish state table                              |
-| `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts`  | publish procedures + transform hooks             |
-| `packages/app/app/pages/view/[type]/[id].vue`                              | public view route                                |
-| `packages/app/app/composables/resource/useReadPublishedResourceContent.ts` | shared view read — fetch-or-404 plus the og meta |
-| `packages/app/app/services/resource/ViewComponentMap.ts`                   | `PublishableResourceType` → view page component  |
+| File                                                                   | Role                                             |
+| ---------------------------------------------------------------------- | ------------------------------------------------ |
+| `packages/db-schema/src/schema/resourcePublications.ts`                | publish state table                              |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`  | publish procedures + transform hooks             |
+| `apps/web/app/pages/view/[type]/[id].vue`                              | public view route                                |
+| `apps/web/app/composables/resource/useReadPublishedResourceContent.ts` | shared view read — fetch-or-404 plus the og meta |
+| `apps/web/app/services/resource/ViewComponentMap.ts`                   | `PublishableResourceType` → view page component  |

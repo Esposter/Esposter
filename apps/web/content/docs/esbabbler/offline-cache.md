@@ -82,16 +82,16 @@ Nothing in a fetch composable touches the cache: hydration is a watcher's job, f
 
 ## Key files
 
-| File                                                              | Role                                                       |
-| :---------------------------------------------------------------- | :--------------------------------------------------------- |
-| `packages/app/app/models/cache/indexedDb/`                        | store name enum, configuration interface, typed `DBSchema` |
-| `packages/app/app/services/cache/indexedDb/openIndexedDb.ts`      | singleton `openDB` + `resetIndexedDb` (tests)              |
-| `packages/app/app/services/cache/indexedDb/readIndexedDb.ts`      | read all items by `partitionKey`                           |
-| `packages/app/app/services/cache/indexedDb/writeIndexedDb.ts`     | replace all items for a `partitionKey` (respects `limit`)  |
-| `packages/app/app/composables/cache/indexedDb/`                   | the generic pagination cache composables                   |
-| `packages/app/app/composables/message/message/useMessageCache.ts` | message wiring                                             |
-| `packages/app/app/composables/message/room/useMemberCache.ts`     | member wiring                                              |
-| `packages/app/app/composables/message/room/useRoomCache.ts`       | room wiring                                                |
+| File                                                          | Role                                                       |
+| :------------------------------------------------------------ | :--------------------------------------------------------- |
+| `apps/web/app/models/cache/indexedDb/`                        | store name enum, configuration interface, typed `DBSchema` |
+| `apps/web/app/services/cache/indexedDb/openIndexedDb.ts`      | singleton `openDB` + `resetIndexedDb` (tests)              |
+| `apps/web/app/services/cache/indexedDb/readIndexedDb.ts`      | read all items by `partitionKey`                           |
+| `apps/web/app/services/cache/indexedDb/writeIndexedDb.ts`     | replace all items for a `partitionKey` (respects `limit`)  |
+| `apps/web/app/composables/cache/indexedDb/`                   | the generic pagination cache composables                   |
+| `apps/web/app/composables/message/message/useMessageCache.ts` | message wiring                                             |
+| `apps/web/app/composables/message/room/useMemberCache.ts`     | member wiring                                              |
+| `apps/web/app/composables/message/room/useRoomCache.ts`       | room wiring                                                |
 
 ## Notes
 

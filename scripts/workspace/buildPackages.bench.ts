@@ -15,7 +15,7 @@ const IS_CI = Boolean(process.env.CI);
 // `pnpm` is a `.cmd` shim on Windows, which Node cannot spawn without one — but `shell` cuts both ways. With
 // It the whole command line goes to `cmd.exe`, which splits on whitespace, so an argument holding any has to
 // Arrive already quoted; without it every argument reaches pnpm verbatim and those same quotes become part of
-// The value. A `--filter` of `"!@esposter/app"` — quotes included — matches no package at all, and pnpm exits
+// The value. A `--filter` of `"!@esposter/web"` — quotes included — matches no package at all, and pnpm exits
 // 0 having done nothing, which reads exactly like a workspace with nothing to build. So the quoting is applied
 // On the platform that needs it and nowhere else.
 const IS_SHELL = process.platform === "win32";
@@ -36,7 +36,7 @@ const readBuildOrder = (): { directory: string; packageName: string }[] =>
     "-r",
     "--workspace-concurrency=1",
     "--filter",
-    quoteArgument("!@esposter/app"),
+    quoteArgument("!@esposter/web"),
     "exec",
     "node",
     "-e",

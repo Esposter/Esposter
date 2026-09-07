@@ -38,7 +38,7 @@ done
 ```bash
 start=$(git rev-parse --abbrev-ref HEAD)
 git switch --detach <candidate>
-(cd packages/app && pnpm typecheck); isGreen=$?
+(cd apps/web && pnpm typecheck); isGreen=$?
 git switch "$start"   # unconditional: a red candidate is the expected result, not an abort
 ```
 

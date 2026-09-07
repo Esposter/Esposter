@@ -30,15 +30,15 @@ stateDiagram-v2
 
 ## Key files
 
-| File                                                                                                  | Role                                                              |
-| :---------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| `packages/app/app/composables/message/room/call/usePushToTalk.ts`                                     | keydown/keyup/blur listener composable (hosted by the call store) |
-| `packages/app/app/util/dom/checkIsEditableTarget.ts`                                                  | cross-realm-safe editable-target skip                             |
-| `packages/app/app/models/message/room/call/MicrophoneProcessor.ts`                                    | key-driven gate mode (`isPushToTalkKeyHeld`)                      |
-| `packages/app/app/store/message/room/liveKit.ts`                                                      | `setPushToTalkKeyHeld` + release-delay timer                      |
-| `packages/app/app/components/Message/Content/Call/Pip/Host.vue`                                       | PiP window listener wiring                                        |
-| `packages/app/app/components/Message/Model/User/Settings/Type/Voice/PushToTalkKeybindButton.vue`      | keybind capture field                                             |
-| `packages/app/app/components/Message/Model/User/Settings/Type/Voice/PushToTalkReleaseDelaySlider.vue` | release-delay slider                                              |
+| File                                                                                              | Role                                                              |
+| :------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------- |
+| `apps/web/app/composables/message/room/call/usePushToTalk.ts`                                     | keydown/keyup/blur listener composable (hosted by the call store) |
+| `apps/web/app/util/dom/checkIsEditableTarget.ts`                                                  | cross-realm-safe editable-target skip                             |
+| `apps/web/app/models/message/room/call/MicrophoneProcessor.ts`                                    | key-driven gate mode (`isPushToTalkKeyHeld`)                      |
+| `apps/web/app/store/message/room/liveKit.ts`                                                      | `setPushToTalkKeyHeld` + release-delay timer                      |
+| `apps/web/app/components/Message/Content/Call/Pip/Host.vue`                                       | PiP window listener wiring                                        |
+| `apps/web/app/components/Message/Model/User/Settings/Type/Voice/PushToTalkKeybindButton.vue`      | keybind capture field                                             |
+| `apps/web/app/components/Message/Model/User/Settings/Type/Voice/PushToTalkReleaseDelaySlider.vue` | release-delay slider                                              |
 
 ## Notes
 

@@ -1,4 +1,4 @@
-# @esposter/app
+# @esposter/web
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
@@ -21,7 +21,7 @@ pnpm i
 pnpm build:packages
 ```
 
-Then from `packages/app/`:
+Then from `apps/web/`:
 
 ```bash
 # Copy and fill in environment variables
@@ -73,7 +73,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### Commands
 
-All commands run from `packages/app/`:
+All commands run from `apps/web/`:
 
 ```bash
 pnpm dev              # start dev server (http://localhost:3000)
@@ -88,7 +88,7 @@ pnpm test             # vitest watch mode (coverage is run from the repo root)
 ### App Structure
 
 ```text
-packages/app/
+apps/web/
 ├── app/
 │   ├── components/       # Vue components
 │   ├── composables/      # Vue composables

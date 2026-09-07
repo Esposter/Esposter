@@ -33,7 +33,7 @@ flowchart TD
 ## Data model
 
 ```ts
-// packages/app/shared/models/resource/sheet/SheetResource.ts — interface-first
+// apps/web/shared/models/resource/sheet/SheetResource.ts — interface-first
 export const sheetResourceSchema = z.object({
   data: dataSourceSchema, // columns, rows, metadata
   settings: sheetSettingsSchema, // discriminatedUnion("type"): Csv | Json | Xlsx file settings

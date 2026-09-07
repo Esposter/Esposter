@@ -38,7 +38,7 @@ Both branches start at `computeValue`, which matters for computed columns: a com
 
 ## Key files
 
-All paths relative to `packages/app`.
+All paths relative to `apps/web`.
 
 | File                                                        | Role                                                                |
 | ----------------------------------------------------------- | ------------------------------------------------------------------- |

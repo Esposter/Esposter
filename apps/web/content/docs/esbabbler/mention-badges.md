@@ -44,14 +44,14 @@ flowchart LR
 
 ## Key files
 
-| File                                                           | Role                                                            |
-| -------------------------------------------------------------- | --------------------------------------------------------------- |
-| `packages/db-schema/src/schema/usersToRoomsInMessage.ts`       | `mentionCount` column + check                                   |
-| `packages/db/src/services/message/incrementMentionCounts.ts`   | batched increment (`MentionBadgeConditionBuilderMap` targeting) |
-| `packages/app/server/services/message/createUserMessage.ts`    | best-effort increment + `updateUserToRoom` fan-out              |
-| `packages/app/server/trpc/routers/userToRoom.ts`               | `clearMentionCount`                                             |
-| `packages/app/app/pages/messages/[id]/index.vue`               | clears the count on room view                                   |
-| `packages/app/app/components/Message/Model/Room/List/Item.vue` | red count chip                                                  |
+| File                                                         | Role                                                            |
+| ------------------------------------------------------------ | --------------------------------------------------------------- |
+| `packages/db-schema/src/schema/usersToRoomsInMessage.ts`     | `mentionCount` column + check                                   |
+| `packages/db/src/services/message/incrementMentionCounts.ts` | batched increment (`MentionBadgeConditionBuilderMap` targeting) |
+| `apps/web/server/services/message/createUserMessage.ts`      | best-effort increment + `updateUserToRoom` fan-out              |
+| `apps/web/server/trpc/routers/userToRoom.ts`                 | `clearMentionCount`                                             |
+| `apps/web/app/pages/messages/[id]/index.vue`                 | clears the count on room view                                   |
+| `apps/web/app/components/Message/Model/Room/List/Item.vue`   | red count chip                                                  |
 
 ## Notes
 

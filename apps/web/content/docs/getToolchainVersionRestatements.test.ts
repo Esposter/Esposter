@@ -77,7 +77,7 @@ describe("getToolchainVersionRestatements", () => {
       ...(await globPaths(`${AGENT_DIRECTORY}/*.md`)),
       ...(await globPaths(`${AGENT_DIRECTORY}/skills/**/*.md`)),
       ...(await globPaths("packages/*/README.md")),
-      ...(await globPaths("packages/app/content/docs/**/*.md")),
+      ...(await globPaths("apps/web/content/docs/**/*.md")),
     ];
     const files = await Promise.all(
       paths.map(async (path) => ({ markdown: await readFile(join(repositoryDirectory, path), "utf8"), path })),

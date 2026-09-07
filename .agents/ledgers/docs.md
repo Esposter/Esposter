@@ -1,6 +1,6 @@
 # Docs
 
-`packages/app/content/docs` plus the hand-written markdown at the repo root, in each package, and in `.agents/` —
+`apps/web/content/docs` plus the hand-written markdown at the repo root, in each package, and in `.agents/` —
 read against the `docs` skill, `readme-standards` for the READMEs, `skill-authoring` for `.agents/skills`. The
 diagram-mandate verdict is recorded per page inside the row's pass, never per area. The skill tree is one
 subject and has one ledger: its rows are here, and reading a skill for duplication and for prose that does not

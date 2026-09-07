@@ -38,15 +38,15 @@ Automod adds no procedure of its own — it is a caller of the moderation intern
 
 ## Key files
 
-| File                                                                                | Role                                                          |
-| :---------------------------------------------------------------------------------- | :------------------------------------------------------------ |
-| `packages/db-schema/src/schema/roomFiltersInMessage.ts`                             | `action` + `timeoutDurationMs` + enum                         |
-| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`        | the shared gate — returns the matched filter, applies nothing |
-| `packages/db/src/services/message/moderation/executeAutomodAction.ts`               | timeout + moderation-log core                                 |
-| `packages/app/server/services/message/moderation/executeAutomodAction.ts`           | app wrapper — adds the `onAdminAction` emit                   |
-| `packages/db/src/services/message/moderation/writeModerationLogEntry.ts`            | shared audit-log writer                                       |
-| `packages/db-schema/src/services/message/constants.ts`                              | reserved AutoMod actor id (`AUTOMOD_USER_ID`)                 |
-| `packages/app/app/components/Message/Model/Room/Settings/Type/WordFilter/Index.vue` | action + duration settings                                    |
+| File                                                                            | Role                                                          |
+| :------------------------------------------------------------------------------ | :------------------------------------------------------------ |
+| `packages/db-schema/src/schema/roomFiltersInMessage.ts`                         | `action` + `timeoutDurationMs` + enum                         |
+| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`    | the shared gate — returns the matched filter, applies nothing |
+| `packages/db/src/services/message/moderation/executeAutomodAction.ts`           | timeout + moderation-log core                                 |
+| `apps/web/server/services/message/moderation/executeAutomodAction.ts`           | app wrapper — adds the `onAdminAction` emit                   |
+| `packages/db/src/services/message/moderation/writeModerationLogEntry.ts`        | shared audit-log writer                                       |
+| `packages/db-schema/src/services/message/constants.ts`                          | reserved AutoMod actor id (`AUTOMOD_USER_ID`)                 |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/WordFilter/Index.vue` | action + duration settings                                    |
 
 ## Notes
 

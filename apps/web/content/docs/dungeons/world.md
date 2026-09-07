@@ -30,7 +30,7 @@ NPC dialog and effects come from the `NpcMap` content map (`assets/dungeons/data
 
 ## Key files
 
-Paths relative to `packages/app`.
+Paths relative to `apps/web`.
 
 | File                                                                                 | Role                                     |
 | ------------------------------------------------------------------------------------ | ---------------------------------------- |

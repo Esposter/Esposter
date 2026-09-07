@@ -19,7 +19,7 @@ All creature and item content is data: constant maps validated against Zod schem
 
 ## Key files
 
-Paths relative to `packages/app`.
+Paths relative to `apps/web`.
 
 | File                                                                             | Role                            |
 | -------------------------------------------------------------------------------- | ------------------------------- |

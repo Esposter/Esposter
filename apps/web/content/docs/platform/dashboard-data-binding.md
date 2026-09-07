@@ -25,7 +25,7 @@ flowchart LR
 `Visual.dataset?: VisualDatasetBinding` — stored inside the dashboard content blob, no DB columns:
 
 ```ts
-// packages/app/shared/models/dashboard/data/VisualDatasetBinding.ts
+// apps/web/shared/models/dashboard/data/VisualDatasetBinding.ts
 interface VisualDatasetBinding {
   reference: DatasetReference;
   query: DatasetQuery; // { xColumn, series: { column, aggregation: DatasetAggregationType }[] }

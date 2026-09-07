@@ -5,7 +5,7 @@ description: Esposter tsdown build conventions — a Settled list of the directi
 
 # Build Conventions (tsdown)
 
-The mechanism — what runs, in what order, and why — is `packages/app/content/docs/architecture/build-pipeline.md`. This skill is the conventions you apply when editing it.
+The mechanism — what runs, in what order, and why — is `apps/web/content/docs/architecture/build-pipeline.md`. This skill is the conventions you apply when editing it.
 
 ## Settled — do not re-propose
 
@@ -22,7 +22,7 @@ Every line here is a direction a reader reaches for on meeting the rules below. 
 - **Dropping `composite` from `tsconfig.library.json`**, on the reading that nothing consumes it — only the app has `references`, and Nuxt generates those. It is the precondition for `isolatedDeclarations`, which is what keeps the declaration emit on the per-file path: without `composite` or `declaration`, every package fails `TS5069` before it checks a line (`references/tsconfig-presets.md`).
 - **A `compilerOptions` block in `tsconfig.build.base.json`, or a `paths` block in `tsconfig.base.json`.** The first emits declarations against a different lib set than the source was written for; the second shadowed real package names with same-named local files (`references/tsconfig-presets.md`).
 - **Hashing `.github/` into either build cache key**, so that editing a workflow's build step invalidates the artifact that step produces. Every command those workflows run is already hashed — it lives in a manifest under `packages/` or in the root one — so what `.github/` adds to the key is the YAML around them, and a comment edit in a workflow would then discard both caches and pay the app build, the longest job in CI, for a change no build can observe. The uncovered case is a workflow that changes what a build _does_ without touching a script, which is rare enough to be worth one manual cache eviction rather than a key that moves on every unrelated CI edit.
-- **Filling a published package's metadata fields** — `engines`, `repository.directory`, or a `LICENSE` file beside the `license` the manifest already names. Every published-surface promise here is derived by the build and checked by a gate; a metadata field is neither. `engines` is a judgement no build can compute and no linter available here can hold honest, and the other two buy a reader this repository does not currently have. A licence in particular cannot be shared by symlink — `npm pack` skips symlinks, so the tarball ships nothing while the tree looks correct. The argument in full is `packages/app/content/docs/architecture/rejected/published-package-metadata.md`.
+- **Filling a published package's metadata fields** — `engines`, `repository.directory`, or a `LICENSE` file beside the `license` the manifest already names. Every published-surface promise here is derived by the build and checked by a gate; a metadata field is neither. `engines` is a judgement no build can compute and no linter available here can hold honest, and the other two buy a reader this repository does not currently have. A licence in particular cannot be shared by symlink — `npm pack` skips symlinks, so the tarball ships nothing while the tree looks correct. The argument in full is `apps/web/content/docs/architecture/rejected/published-package-metadata.md`.
 
 ## Shared configs
 
@@ -125,7 +125,7 @@ Absence of `private` in the manifest switches on `publint` and `attw`. Never dis
 
 ## Self-alias and source exports — `references/source-exports.md`
 
-A package refers to its own source through Node subpath imports (`"imports": { "#src/*": "./src/*.ts" }`), never `@/` — `packages/app` is the one tree that keeps `@/`, because Nuxt generates those aliases and nothing bundles the app from source. That is what lets `getTsdownConfiguration` give every package a second `source` export arm pointing at its TypeScript. **Writing a specifier that has to survive a sibling bundling this package, or deciding what the `source` condition reaches**, is that page — its two rejected variants are in `Settled` above.
+A package refers to its own source through Node subpath imports (`"imports": { "#src/*": "./src/*.ts" }`), never `@/` — `apps/web` is the one tree that keeps `@/`, because Nuxt generates those aliases and nothing bundles the app from source. That is what lets `getTsdownConfiguration` give every package a second `source` export arm pointing at its TypeScript. **Writing a specifier that has to survive a sibling bundling this package, or deciding what the `source` condition reaches**, is that page — its two rejected variants are in `Settled` above.
 
 ## Dist size is the correctness signal
 
@@ -139,4 +139,4 @@ Presets live in `@esposter/configuration` and are extended by path; the base car
 
 ## Dependency installs & workspace graph
 
-Covered by root `CLAUDE.md` (`pnpm i`, `pnpm graph:gen`) and `packages/app/content/docs/architecture/monorepo-tooling.md` (install safety rules). One addition: if `pnpm i` needs network access, request approval for plain `pnpm i` rather than changing pnpm store settings.
+Covered by root `CLAUDE.md` (`pnpm i`, `pnpm graph:gen`) and `apps/web/content/docs/architecture/monorepo-tooling.md` (install safety rules). One addition: if `pnpm i` needs network access, request approval for plain `pnpm i` rather than changing pnpm store settings.

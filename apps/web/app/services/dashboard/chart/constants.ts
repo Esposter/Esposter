@@ -12,7 +12,7 @@ import "apexcharts/features/measure";
 // Undo/redo over every zoom, series toggle and annotation edit; a right-click menu that acts at the point under
 // The cursor; a ruler for the change between two points; and draggable, editable annotations. They sit in one
 // Switch because they share one condition — each is a vendor feature that renders a watermark over the chart
-// It is on (packages/app/content/docs/platform/dashboard-chart-interaction.md), so they are turned on and off
+// It is on (apps/web/content/docs/platform/dashboard-chart-interaction.md), so they are turned on and off
 // As a set rather than weighed one at a time
 export const VISUAL_INTERACTION_CHART_OPTIONS = {
   contextMenu: { enabled: true },

@@ -51,15 +51,15 @@ The timer purges per resource rather than as one batch, so one poisoned resource
 
 ## Key files
 
-| File                                                              | Role                                      |
-| ----------------------------------------------------------------- | ----------------------------------------- |
-| `packages/db/src/services/resource/purgeResource.ts`              | The shared, retry-ordered purge protocol  |
-| `packages/db-schema/src/services/resource/constants.ts`           | `RECYCLE_BIN_RETENTION_MS`                |
-| `server/trpc/routers/resource.ts`                                 | Bin/restore/purge + the `where` predicate |
-| `server/trpc/procedure/resource/getOwnerProcedure.ts`             | Soft-delete guard + `isDeletedOnly` mode  |
-| `packages/azure-functions/src/functions/purgeDeletedResources.ts` | Daily 30-day timer sweep                  |
-| `app/pages/resource-explorer/recycle-bin.vue`                     | The bin page                              |
-| `app/composables/resource/list/useReadResourcesPage.ts`           | The paged reader it shares with `/all`    |
+| File                                                    | Role                                      |
+| ------------------------------------------------------- | ----------------------------------------- |
+| `packages/db/src/services/resource/purgeResource.ts`    | The shared, retry-ordered purge protocol  |
+| `packages/db-schema/src/services/resource/constants.ts` | `RECYCLE_BIN_RETENTION_MS`                |
+| `server/trpc/routers/resource.ts`                       | Bin/restore/purge + the `where` predicate |
+| `server/trpc/procedure/resource/getOwnerProcedure.ts`   | Soft-delete guard + `isDeletedOnly` mode  |
+| `apps/functions/src/functions/purgeDeletedResources.ts` | Daily 30-day timer sweep                  |
+| `app/pages/resource-explorer/recycle-bin.vue`           | The bin page                              |
+| `app/composables/resource/list/useReadResourcesPage.ts` | The paged reader it shares with `/all`    |
 
 ## Notes
 

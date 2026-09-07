@@ -76,15 +76,15 @@ tRPC procedure builders in `server/trpc/procedure/room/`:
 
 ## Key files
 
-| File                                                                 | Role                                    |
-| -------------------------------------------------------------------- | --------------------------------------- |
-| `packages/db-schema/src/schema/roomRolesInMessage.ts`                | `RoomPermission` const + roles table    |
-| `packages/db-schema/src/schema/usersToRoomRolesInMessage.ts`         | Assignment table                        |
-| `packages/db/src/services/room/rbac/`                                | `getPermissions` + `checkHasPermission` |
-| `packages/app/server/services/room/rbac/`                            | Server helpers + re-export shims        |
-| `packages/app/shared/services/room/rbac/checkIsManageable.ts`        | Hierarchy predicate shared w/ client    |
-| `packages/app/server/trpc/procedure/room/getPermissionsProcedure.ts` | Permission middleware builder           |
-| `packages/app/server/trpc/routers/role.ts`                           | Role CRUD + `readMemberRoles`           |
+| File                                                             | Role                                    |
+| ---------------------------------------------------------------- | --------------------------------------- |
+| `packages/db-schema/src/schema/roomRolesInMessage.ts`            | `RoomPermission` const + roles table    |
+| `packages/db-schema/src/schema/usersToRoomRolesInMessage.ts`     | Assignment table                        |
+| `packages/db/src/services/room/rbac/`                            | `getPermissions` + `checkHasPermission` |
+| `apps/web/server/services/room/rbac/`                            | Server helpers + re-export shims        |
+| `apps/web/shared/services/room/rbac/checkIsManageable.ts`        | Hierarchy predicate shared w/ client    |
+| `apps/web/server/trpc/procedure/room/getPermissionsProcedure.ts` | Permission middleware builder           |
+| `apps/web/server/trpc/routers/role.ts`                           | Role CRUD + `readMemberRoles`           |
 
 ## Notes
 

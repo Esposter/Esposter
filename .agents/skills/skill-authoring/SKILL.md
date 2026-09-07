@@ -51,7 +51,7 @@ So a skill whose domain has directions that were tried or considered and rejecte
 
 - **One line per direction**: what would be proposed, why it fails, what to do instead — `**Bundling `` `external-pkg` `` into every consumer** — duplicates it in each dist and splits its types, so `` `instanceof` `` fails across copies; externalise and let the consumer dedupe.`
 - **It holds directions, not rules.** A rule says what to do. A settled line exists only because a reader would plausibly propose the alternative — if nobody would, it is a rule and belongs with the rules.
-- **The rationale stays where it already lives.** The line carries one clause of why, never the argument: where the skill makes the case further down, or `packages/app/content/docs/architecture/rejected/` holds a page for it, the line ends with that pointer. Two full statements of one rejection drift like any other copy.
+- **The rationale stays where it already lives.** The line carries one clause of why, never the argument: where the skill makes the case further down, or `apps/web/content/docs/architecture/rejected/` holds a page for it, the line ends with that pointer. Two full statements of one rejection drift like any other copy.
 - The reproducible-pattern test applies unchanged: no dates, no PR numbers, no account of the session that got it wrong. What would be proposed and why it fails is the whole entry.
 
 `code-review` greps this tree as the tiebreaker for a finding that argues with a decision, so a rejection that never reaches a `Settled` list is one that keeps being re-litigated.
@@ -139,7 +139,7 @@ opening lines owe a reader who arrived by search, and the pointer forms a move s
 
 Nothing resolves a link out of a skill: no renderer opens one, and a relative `../../../` hop or a
 `github.com/.../blob/main/...` url is a path the reader has to reconstruct or a network fetch they cannot make.
-So a citation is the **repo-relative path in backticks** — `packages/app/content/docs/architecture/foo.md` — which
+So a citation is the **repo-relative path in backticks** — `apps/web/content/docs/architecture/foo.md` — which
 is what a reader greps, opens and edits, and which stays right when the skill moves. A path relative to anything
 but the repo root (`docs/architecture/foo.md`) resolves nowhere and is the form that silently rots.
 

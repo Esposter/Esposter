@@ -69,7 +69,7 @@ Merging two user rows that already exist. This prevents the split going forward,
 
 ## Key files
 
-Paths relative to `packages/app`.
+Paths relative to `apps/web`.
 
 | File                                                       | Role                                                           |
 | ---------------------------------------------------------- | -------------------------------------------------------------- |

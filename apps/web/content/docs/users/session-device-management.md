@@ -75,13 +75,13 @@ No admin-facing counterpart. An operator terminating another user's sessions is 
 
 ## Key files
 
-| File                                                          | Role                                            |
-| ------------------------------------------------------------- | ----------------------------------------------- |
-| `packages/app/server/trpc/routers/session.ts`                 | the three procedures                            |
-| `packages/app/server/models/session/SessionSummary.ts`        | what a row is allowed to say — no address       |
-| `packages/app/server/services/auth/closeDeviceConnections.ts` | best-effort per-device Web PubSub close         |
-| `packages/app/app/components/User/SessionsCard/`              | the card, its row, and the two confirm dialogs  |
-| `packages/app/server/services/auth/getDeviceLabel.ts`         | the stored user agent → a readable device label |
-| `packages/app/app/store/user/sessionDialog.ts`                | the singleton revoke target                     |
-| `packages/db-schema/src/schema/pushSubscriptions.ts`          | `sessionId`, cascading on the session row       |
-| `packages/db-schema/src/schema/sessions.ts`                   | the session rows, now cascading on the user     |
+| File                                                      | Role                                            |
+| --------------------------------------------------------- | ----------------------------------------------- |
+| `apps/web/server/trpc/routers/session.ts`                 | the three procedures                            |
+| `apps/web/server/models/session/SessionSummary.ts`        | what a row is allowed to say — no address       |
+| `apps/web/server/services/auth/closeDeviceConnections.ts` | best-effort per-device Web PubSub close         |
+| `apps/web/app/components/User/SessionsCard/`              | the card, its row, and the two confirm dialogs  |
+| `apps/web/server/services/auth/getDeviceLabel.ts`         | the stored user agent → a readable device label |
+| `apps/web/app/store/user/sessionDialog.ts`                | the singleton revoke target                     |
+| `packages/db-schema/src/schema/pushSubscriptions.ts`      | `sessionId`, cascading on the session row       |
+| `packages/db-schema/src/schema/sessions.ts`               | the session rows, now cascading on the user     |

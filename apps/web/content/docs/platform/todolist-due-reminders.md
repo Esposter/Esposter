@@ -37,21 +37,21 @@ sequenceDiagram
 
 ## Data model
 
-None in Postgres. The TodoList item already carries `dueAt` (the Items and Calendar blades render it), and the reminder is stateless — the scheduled Service Bus message holds the whole payload and the blob re-read is the truth check. The `todo-reminders` Service Bus queue is provisioned alongside the existing `scheduled-message-jobs` queue in `packages/infra`.
+None in Postgres. The TodoList item already carries `dueAt` (the Items and Calendar blades render it), and the reminder is stateless — the scheduled Service Bus message holds the whole payload and the blob re-read is the truth check. The `todo-reminders` Service Bus queue is provisioned alongside the existing `scheduled-message-jobs` queue in `apps/infra`.
 
 ## Key files
 
-| File                                                                        | Role                                                                |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `packages/app/server/services/resource/todoList/scheduleTodoReminders.ts`   | Post-save due-date diff and per-item enqueue                        |
-| `packages/app/server/services/resource/ResourceAfterSaveContentMap.ts`      | Registers the diff as TodoList's after-save hook                    |
-| `packages/app/server/services/resource/runAfterSaveResourceContent.ts`      | Fires the registered hook, fire-and-forget                          |
-| `packages/app/server/services/resource/saveResourceContent.ts`              | The one content write that runs the hook                            |
-| `packages/db/src/services/azure/serviceBus/enqueueTodoReminder.ts`          | Schedules the Service Bus message at `dueAt`                        |
-| `packages/db-schema/src/models/azure/queue/TodoReminderQueueMessage.ts`     | The `{ resourceId, itemId, dueAt }` message schema                  |
-| `packages/azure-functions/src/functions/sendTodoReminder.ts`                | Queue-trigger registration for `SendTodoReminder`                   |
-| `packages/azure-functions/src/handlers/sendTodoReminderHandler.ts`          | Re-reads the blob, verifies the item, and publishes                 |
-| `packages/azure-functions/src/services/notification/resolveNotification.ts` | Turns the published reminder into its copy, deep link and recipient |
+| File                                                                    | Role                                                                |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `apps/web/server/services/resource/todoList/scheduleTodoReminders.ts`   | Post-save due-date diff and per-item enqueue                        |
+| `apps/web/server/services/resource/ResourceAfterSaveContentMap.ts`      | Registers the diff as TodoList's after-save hook                    |
+| `apps/web/server/services/resource/runAfterSaveResourceContent.ts`      | Fires the registered hook, fire-and-forget                          |
+| `apps/web/server/services/resource/saveResourceContent.ts`              | The one content write that runs the hook                            |
+| `packages/db/src/services/azure/serviceBus/enqueueTodoReminder.ts`      | Schedules the Service Bus message at `dueAt`                        |
+| `packages/db-schema/src/models/azure/queue/TodoReminderQueueMessage.ts` | The `{ resourceId, itemId, dueAt }` message schema                  |
+| `apps/functions/src/functions/sendTodoReminder.ts`                      | Queue-trigger registration for `SendTodoReminder`                   |
+| `apps/functions/src/handlers/sendTodoReminderHandler.ts`                | Re-reads the blob, verifies the item, and publishes                 |
+| `apps/functions/src/services/notification/resolveNotification.ts`       | Turns the published reminder into its copy, deep link and recipient |
 
 ## Notes
 

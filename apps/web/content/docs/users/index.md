@@ -30,7 +30,7 @@ The account surface: signing in at `/login` (Google, GitHub, or Facebook — see
 
 ## Key files
 
-Paths relative to `packages/app/app`.
+Paths relative to `apps/web/app`.
 
 | File                            | Role                              |
 | ------------------------------- | --------------------------------- |

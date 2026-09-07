@@ -3,8 +3,8 @@ import { getUnterminatedResults } from "#scripts/sweeps/unterminatedResults/getU
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const SourcePrefixes = ["packages/app/app/", "packages/app/server/", "packages/app/shared/"];
-const SOURCE_REGEX = /^packages\/[^/]+\/src\//u;
+const SourcePrefixes = ["apps/web/app/", "apps/web/server/", "apps/web/shared/"];
+const SOURCE_REGEX = /^(?:apps|packages)\/[^/]+\/src\//u;
 const root = resolve(import.meta.dirname, "..", "..", "..");
 const checkIsInScope = (path: string) =>
   !path.includes(".test.") && (SOURCE_REGEX.test(path) || SourcePrefixes.some((prefix) => path.startsWith(prefix)));

@@ -11,18 +11,18 @@ This is the pull request the refactor exists for. Every exclusion whose only job
 
 **No script is renamed, and none has to be.** Every `:packages` script keeps its name and finally deserves it, because the selector underneath stops excluding an identity and starts naming a directory. pnpm already selects that way — `--filter "./packages/*"` resolves a directory glob against the workspace:
 
-| Script               | Selector today                                       | Selector after                  |
-| -------------------- | ---------------------------------------------------- | ------------------------------- |
-| `build:packages`     | `--filter "!@esposter/app"`                          | `--filter "./packages/*"`       |
-| `typecheck:packages` | `--filter "!@esposter/app"`                          | `--filter "./packages/*"`       |
-| `watch:packages`     | `--filter "!@esposter/app"`                          | `--filter "./packages/*"`       |
-| `test:packages`      | `--project "!@esposter/app"`                         | `--project "packages/*"`        |
-| `lint:packages`      | `--ignore-pattern "packages/app/**"` plus the filter | the positional `packages` alone |
-| `lint:fix:packages`  | `--ignore-pattern "packages/app/**"` plus the filter | the positional `packages` alone |
+| Script               | Selector today                                   | Selector after                  |
+| -------------------- | ------------------------------------------------ | ------------------------------- |
+| `build:packages`     | `--filter "!@esposter/web"`                      | `--filter "./packages/*"`       |
+| `typecheck:packages` | `--filter "!@esposter/web"`                      | `--filter "./packages/*"`       |
+| `watch:packages`     | `--filter "!@esposter/web"`                      | `--filter "./packages/*"`       |
+| `test:packages`      | `--project "!@esposter/web"`                     | `--project "packages/*"`        |
+| `lint:packages`      | `--ignore-pattern "apps/web/**"` plus the filter | the positional `packages` alone |
+| `lint:fix:packages`  | `--ignore-pattern "apps/web/**"` plus the filter | the positional `packages` alone |
 
 The two lint scripts are the clearest case: they already pass `packages` as the path to lint, then subtract a subdirectory of the path they just named. Once the app is not under it, the subtraction is the empty statement it always wanted to be. Every one of these is now an **inclusion**, so a library added later is inside it and an app added later is outside it, with nothing edited either way.
 
-`test:packages` reaches that form because Vitest's `--project` patterns are wildcards over a project's _name_, and its `*` compiles to `.*` — a pattern crosses a `/` like any other character. So the shared Vitest factory names each project by its **workspace-relative directory**, and the app's config, which builds its own project through `defineVitestProject` rather than the factory, names itself the same way. `--project` then addresses the tree exactly as `--filter` does.
+`test:packages` reaches that form only if the projects are renamed, and that is a change this pull request has to make rather than one the move hands it. Vitest's `--project` patterns are wildcards over a project's _name_, and a project that declares no `test.name` takes the name in its nearest manifest — so the names today are `@esposter/configuration`, `azure-mock`, `parse-tmx`, `virrun`, and `--project "packages/*"` would select none of them. What makes the pattern work is that `*` compiles to `.*`, so it crosses a `/` like any other character and a name may be a path. **The shared factory therefore starts naming the project after the caller's own directory** — `getVitestConfiguration(import.meta.dirname)`, resolved against the repository root, so `packages/azure` names itself — and the app's config, which builds its own project through `defineVitestProject` rather than the factory, sets the same `test.name` by hand. `--project` then addresses the tree exactly as `--filter` does.
 
 ### One script per addressable set
 
@@ -39,13 +39,13 @@ That is what makes the CI section below possible: a workflow calls the script fo
 
 ## Configs
 
-| Config                   | What goes                                                                                              |
-| ------------------------ | ------------------------------------------------------------------------------------------------------ |
-| `typedoc.config.js`      | The app leaves the `exclude` list — its entry points are `packages/*`, which no longer contains an app |
-| `eslint.config.js`       | Ignores both product roots for one reason, that a member lints itself with its own flat config         |
-| `vitest.config.ts`       | Projects become a glob per root; the hand-written entry for `scripts` goes with the next pull request  |
-| `getVitestConfiguration` | Names each project by its workspace-relative directory, so `--project` addresses the tree              |
-| `.oxlintrc.json`         | Nothing is deleted — the app-tree overrides move with the app and keep doing their job                 |
+| Config                   | What goes                                                                                               |
+| ------------------------ | ------------------------------------------------------------------------------------------------------- |
+| `typedoc.config.js`      | The app leaves the `exclude` list — its entry points are `packages/*`, which no longer contains an app  |
+| `eslint.config.js`       | Ignores both product roots for one reason, that a member lints itself with its own flat config          |
+| `vitest.config.ts`       | Projects become a glob per root; the hand-written entry for `scripts` goes with the next pull request   |
+| `getVitestConfiguration` | Takes the caller's directory and sets `test.name` to it, replacing the manifest name Vitest defaults to |
+| `.oxlintrc.json`         | Nothing is deleted — the app-tree overrides move with the app and keep doing their job                  |
 
 ## CI
 
@@ -63,7 +63,7 @@ flowchart TD
   PB --> AG
 ```
 
-The shape is the one that already runs; what changes is that neither key subtracts anything. Today the package key is a hash of `packages/` with `packages/app` removed from it, because no consumer of that cache builds the app. After the move the app is not in the hashed tree, so the package key is a hash of `packages/`, and an app's key is that hash plus that app's own directory — which is the rule a second app follows without any of this being touched.
+The shape is the one that already runs; what changes is that neither key subtracts anything. Today the package key is a hash of `packages/` with `apps/web` removed from it, because no consumer of that cache builds the app. After the move the app is not in the hashed tree, so the package key is a hash of `packages/`, and an app's key is that hash plus that app's own directory — which is the rule a second app follows without any of this being touched.
 
 Both `verify-package-builds` and the artifact path list keep globbing `packages/*`, and both become exactly right by doing nothing: the set they discover is the set the cache holds, with no app in it to have been an exception.
 
@@ -93,4 +93,4 @@ No cache gate is proposed for those two builds. Gating something measured in sec
 | `.github/workflows/deploy-function-app.yaml`           | Builds the Functions app it deploys, on top of the library artifact         |
 | `.github/workflows/Pulumi.yaml`                        | Builds the infra program it runs, on top of the library artifact            |
 | `typedoc.config.js`                                    | Entry points over the libraries, with no app to exclude                     |
-| `packages/configuration/src/getVitestConfiguration.ts` | The shared factory, naming each project by its directory                    |
+| `packages/configuration/src/getVitestConfiguration.ts` | The shared factory, taking a directory and naming the project after it      |

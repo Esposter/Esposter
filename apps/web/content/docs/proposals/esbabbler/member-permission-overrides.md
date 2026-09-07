@@ -60,15 +60,15 @@ Leaving a room deletes the row with the membership. A permission bit that is ret
 
 ## Key files
 
-| File                                                                               | Change                                                   |
-| :--------------------------------------------------------------------------------- | :------------------------------------------------------- |
-| `packages/db-schema/src/schema.ts`                                                 | registers the new `roomMemberPermissions` table          |
-| `packages/db/src/services/room/rbac/checkHasPermission.ts`                         | the resolution chain above                               |
-| `packages/app/server/services/room/rbac/getRoomMemberAuthority.ts`                 | an override counts toward what a member may be given     |
-| `packages/app/server/trpc/routers/role.ts`                                         | write and delete an override, behind the hierarchy check |
-| `packages/app/app/components/Message/Model/Room/Settings/Type/Role/List/`          | entries rather than roles                                |
-| `packages/app/app/components/Message/Model/Room/Settings/Type/Role/CreateForm.vue` | `Add role or member`                                     |
-| `packages/app/app/components/Message/Model/Room/Settings/Type/Role/Permission/`    | the three-state control beside the switch                |
+| File                                                                           | Change                                                   |
+| :----------------------------------------------------------------------------- | :------------------------------------------------------- |
+| `packages/db-schema/src/schema.ts`                                             | registers the new `roomMemberPermissions` table          |
+| `packages/db/src/services/room/rbac/checkHasPermission.ts`                     | the resolution chain above                               |
+| `apps/web/server/services/room/rbac/getRoomMemberAuthority.ts`                 | an override counts toward what a member may be given     |
+| `apps/web/server/trpc/routers/role.ts`                                         | write and delete an override, behind the hierarchy check |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Role/List/`          | entries rather than roles                                |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Role/CreateForm.vue` | `Add role or member`                                     |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Role/Permission/`    | the three-state control beside the switch                |
 
 ## Notes
 

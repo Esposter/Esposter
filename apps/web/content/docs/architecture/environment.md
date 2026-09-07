@@ -22,7 +22,7 @@ Nuxt code runs in three contexts, each with different capabilities:
 Use `import.meta.env` for universal env constants. Vite replaces these at build time in every bundle — client, server (Nitro), and Vitest:
 
 ```ts
-// packages/app/shared/util/environment/constants.ts
+// apps/web/shared/util/environment/constants.ts
 export const IS_PRODUCTION = import.meta.env.PROD;
 export const IS_TEST = import.meta.env.MODE === Environment.Test;
 export const IS_DEVELOPMENT = import.meta.env.DEV;
@@ -40,7 +40,7 @@ These are set automatically:
 
 **`IS_PRODUCTION` / `IS_TEST` / `IS_DEVELOPMENT` (from `#shared/util/environment/constants`)** — the single consistent choice everywhere: module-level code, class property initialisers, composables, server routes, plugins. `vite.mode` is set from `APP_ENV` in `configuration/vite.ts`, so these build-time constants always reflect the deployed environment.
 
-**`process.env.*` directly** — secrets, urls and connection strings, in code that only ever runs server-side (`server/`, `packages/azure-functions/`, and the `shared/` modules only those contexts import) or at build time (`configuration/`, which the Nuxt build evaluates and never ships), plus `APP_ENV` in the build-time config files where `import.meta.env` is not available yet.
+**`process.env.*` directly** — secrets, urls and connection strings, in code that only ever runs server-side (`server/`, `apps/functions/`, and the `shared/` modules only those contexts import) or at build time (`configuration/`, which the Nuxt build evaluates and never ships), plus `APP_ENV` in the build-time config files where `import.meta.env` is not available yet.
 
 ## What not to do
 

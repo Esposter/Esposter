@@ -1,4 +1,4 @@
-# @esposter/azure-functions
+# @esposter/functions
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
@@ -50,7 +50,7 @@ App (createMessage) → Azure EventGrid → ProcessNotification
 
 ### Commands
 
-Run from `packages/azure-functions/`:
+Run from `apps/functions/`:
 
 ```bash
 pnpm build        # compile to dist/

@@ -12,7 +12,7 @@
 | `server/services/message`                                        | 2026-08-31 |                                                                                       |
 | `server/services` — the rest                                     | 2026-08-31 | the `CONFLICT` pair is the documented exception                                       |
 | `server/composables`                                             | 2026-08-30 | nine client constructors — none wraps a call, so there is nothing to terminate        |
-| `packages/azure-functions`                                       | 2026-08-30 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)` |
+| `apps/functions`                                                 | 2026-08-30 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)` |
 | `app/store/message`                                              | 2026-08-31 | the fire-and-forget callbacks here are pinned by a test                               |
 | `app/store` — the rest                                           | 2026-08-31 | reports through `useMutation`                                                         |
 | `app/composables/message/room`                                   | 2026-08-31 | the pre-join device probes and the call-session read                                  |
@@ -26,7 +26,7 @@
 | `app/components/Message`                                         | 2026-08-31 |                                                                                       |
 | `app/components/Resource`, `app/components/Dungeons`             | 2026-08-31 | `Resource` reaches the server by primitive; the scene lifecycle drops what it returns |
 | `app/components` — the rest                                      | 2026-08-31 |                                                                                       |
-| `packages/db`, `packages/infra`                                  | 2026-08-30 | `db` rolls back then rethrows; `infra` is resource declarations with no error path    |
+| `packages/db`, `apps/infra`                                      | 2026-08-30 | `db` rolls back then rethrows; `infra` is resource declarations with no error path    |
 | `packages/virrun` — `exec/snapshot`                              | 2026-08-31 | a self-healing branch traces rather than alerts                                       |
 | `packages/virrun` — `exec/wsl`                                   | 2026-08-31 | the mirror's origin marker is the one swallow another sweep's age arm rests on        |
 | `packages/virrun` — `exec/util`                                  | 2026-08-31 | the `unwrapOr` readers answer a missing path with a value                             |
@@ -46,7 +46,7 @@ the rows are for is the half no grep sees: what a chain wraps, and who alerts.
 
 ```bash
 # new Error, which InvalidOperationError replaces outside unimplemented stubs
-grep -rn 'new Error(' --include=*.ts --include=*.vue packages/app/app packages/app/server packages/app/shared packages/*/src
+grep -rn 'new Error(' --include=*.ts --include=*.vue apps/web/app apps/web/server apps/web/shared packages/*/src
 ```
 
 A chain that never terminates cannot be grepped for. A line-anchored `getResult(Async)?\(` reports all 234 call
@@ -72,7 +72,7 @@ unterminated body is invisible rather than merely unhandled — `getSynchronized
 nowhere and its drain settles it away, which its own suite pins:
 
 ```bash
-grep -rn 'getSynchronizedFunction(' packages/app/app packages/app/shared packages/app/server --include=*.ts --include=*.vue
+grep -rn 'getSynchronizedFunction(' apps/web/app apps/web/shared apps/web/server --include=*.ts --include=*.vue
 ```
 
 Every hit's callback body has to terminate its own chain. That is a per-site read, not a count: a body whose
@@ -98,7 +98,7 @@ local writes has nothing to terminate.
 
 - **`new Error` is a `no-restricted-syntax` candidate and nothing bans it today** — the convention is currently
   carried by review alone. A selector would need the stub exemption above, which is a message match rather than a
-  shape, so it is worth doing only for `packages/app/**` where no stubs live.
+  shape, so it is worth doing only for `apps/web/**` where no stubs live.
 - An unterminated `Result` is the bigger prize: a type-aware rule could flag a `ResultAsync` whose value is
   discarded, the way `no-floating-promises` does for promises. Nothing checks it today, and the skill says an
   unterminated chain fails silently — but nothing type-aware runs in either linter here (`oxlint` skill), so this

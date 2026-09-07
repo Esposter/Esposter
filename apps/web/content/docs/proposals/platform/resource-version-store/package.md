@@ -11,7 +11,7 @@ The store is a workspace package, `packages/keyframe-store`, published like the 
 
 Three properties decide it, and each would be lost by putting the code anywhere else.
 
-**It has more than one consumer.** The app server writes versions and reconstructs them; the Functions host collects objects when a resource is purged. That clears the bar a shared home requires, so the code cannot stay beside a single caller in `packages/app`.
+**It has more than one consumer.** The app server writes versions and reconstructs them; the Functions host collects objects when a resource is purged. That clears the bar a shared home requires, so the code cannot stay beside a single caller in `apps/web`.
 
 **It must not know about Azure.** The store's only contact with storage is an injected interface of four methods. That is what makes it testable and benchmarkable against an in-memory map, with no emulator, no container client and no mock package — and a benchmark that measures the codec instead of the network is the only kind whose numbers mean anything. Putting it in `@esposter/db` would put it behind a package whose whole purpose is Azure and Drizzle clients, and the dependency would flow the wrong way.
 

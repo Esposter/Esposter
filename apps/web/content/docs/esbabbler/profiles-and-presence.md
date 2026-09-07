@@ -41,9 +41,9 @@ In room contexts the displayed name goes through `getDisplayName` — the per-ro
 
 ## Key files
 
-| File                                                          | Role                                                 |
-| :------------------------------------------------------------ | :--------------------------------------------------- |
-| `packages/db-schema/src/schema/userStatusesInMessage.ts`      | presence table + `UserStatus` enum                   |
-| `packages/app/server/trpc/routers/user.ts`                    | `upsertStatus`, `readStatuses`, `updateUser`         |
-| `packages/app/app/components/User/ProfileCard/`               | editable profile card (global surface)               |
-| `packages/app/app/components/Message/Model/User/ProfileCard/` | in-room profile card (mutual rooms, moderation menu) |
+| File                                                      | Role                                                 |
+| :-------------------------------------------------------- | :--------------------------------------------------- |
+| `packages/db-schema/src/schema/userStatusesInMessage.ts`  | presence table + `UserStatus` enum                   |
+| `apps/web/server/trpc/routers/user.ts`                    | `upsertStatus`, `readStatuses`, `updateUser`         |
+| `apps/web/app/components/User/ProfileCard/`               | editable profile card (global surface)               |
+| `apps/web/app/components/Message/Model/User/ProfileCard/` | in-room profile card (mutual rooms, moderation menu) |

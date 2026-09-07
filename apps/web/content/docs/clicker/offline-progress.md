@@ -24,7 +24,7 @@ The award works because [saving stamps `updatedAt`](/docs/clicker/game-loop-and-
 
 ## Key files
 
-Paths relative to `packages/app`.
+Paths relative to `apps/web`.
 
 | File                                               | Role                                                        |
 | -------------------------------------------------- | ----------------------------------------------------------- |

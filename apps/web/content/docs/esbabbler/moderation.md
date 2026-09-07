@@ -72,18 +72,18 @@ The **Bans** tab searches by the banned user's name, over the join that already 
 
 ## Key files
 
-| File                                                                                   | Role                              |
-| :------------------------------------------------------------------------------------- | :-------------------------------- |
-| `packages/db-schema/src/models/message/AdminActionType.ts`                             | action type enum                  |
-| `packages/app/server/trpc/routers/message/moderation.ts`                               | moderation router                 |
-| `packages/app/server/services/message/moderation/AdminActionPermissionMap.ts`          | action → required permission      |
-| `packages/app/server/services/room/announceRoomMemberRemoval.ts`                       | the departure event + system line |
-| `packages/app/shared/models/db/moderation/ExecuteAdminActionInput.ts`                  | discriminated union input         |
-| `packages/app/app/composables/message/moderation/useAdminActionMap.ts`                 | client-side per-action handlers   |
-| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`           | shared message-creation gate      |
-| `packages/app/server/services/message/moderation/assertCanCreateMessage.ts`            | tRPC face — applies + rejects     |
-| `packages/app/server/services/message/moderation/MessageCreationRejectionReasonMap.ts` | what each rule tells the sender   |
-| `packages/app/server/trpc/routers/room/filter.ts`                                      | word filter CRUD                  |
+| File                                                                               | Role                              |
+| :--------------------------------------------------------------------------------- | :-------------------------------- |
+| `packages/db-schema/src/models/message/AdminActionType.ts`                         | action type enum                  |
+| `apps/web/server/trpc/routers/message/moderation.ts`                               | moderation router                 |
+| `apps/web/server/services/message/moderation/AdminActionPermissionMap.ts`          | action → required permission      |
+| `apps/web/server/services/room/announceRoomMemberRemoval.ts`                       | the departure event + system line |
+| `apps/web/shared/models/db/moderation/ExecuteAdminActionInput.ts`                  | discriminated union input         |
+| `apps/web/app/composables/message/moderation/useAdminActionMap.ts`                 | client-side per-action handlers   |
+| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`       | shared message-creation gate      |
+| `apps/web/server/services/message/moderation/assertCanCreateMessage.ts`            | tRPC face — applies + rejects     |
+| `apps/web/server/services/message/moderation/MessageCreationRejectionReasonMap.ts` | what each rule tells the sender   |
+| `apps/web/server/trpc/routers/room/filter.ts`                                      | word filter CRUD                  |
 
 ## Notes
 

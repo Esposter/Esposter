@@ -16,7 +16,7 @@ Nothing in the app breaks loudly. The `messages-indexer` is a scheduled pull ind
 ## Why deferred
 
 - Message volume is nowhere near the storage cap, and the two spare index slots absorb the next indexing idea without any change.
-- The tier of an Azure AI Search service **cannot be changed after creation** — there is no Free → Basic upgrade. Moving up means standing up a second service, re-creating the index and indexer from `packages/infra/data/searchIndexes/messages-index.json`, letting it backfill, and repointing the app. That is a real migration, not a SKU edit, and it is not worth rehearsing before the numbers demand it.
+- The tier of an Azure AI Search service **cannot be changed after creation** — there is no Free → Basic upgrade. Moving up means standing up a second service, re-creating the index and indexer from `apps/infra/data/searchIndexes/messages-index.json`, letting it backfill, and repointing the app. That is a real migration, not a SKU edit, and it is not worth rehearsing before the numbers demand it.
 - Basic is the first paid tier and costs tens of dollars a month — an order of magnitude above every other line item in this estate, whose whole posture is the `$0.01` budget guard.
 
 ## Revisit when

@@ -36,13 +36,13 @@ flowchart LR
 
 ## Key files
 
-| File                                                               | Role                                           |
-| ------------------------------------------------------------------ | ---------------------------------------------- |
-| `packages/app/server/trpc/routers/blueprint.ts`                    | `captureBlueprint` joins the blueprint router  |
-| `packages/app/server/services/blueprint/captureBlueprint.ts`       | ownership check, key derivation, orchestration |
-| `packages/app/server/services/blueprint/rewriteIdsToAliases.ts`    | the deep-walk exact-match rewrite              |
-| `packages/app/app/components/Resource/List/Selection/Toolbar.vue`  | bulk Save-as-blueprint entry point             |
-| `packages/app/app/components/Resource/Blueprint/CaptureDialog.vue` | name prompt + create + navigate                |
+| File                                                           | Role                                           |
+| -------------------------------------------------------------- | ---------------------------------------------- |
+| `apps/web/server/trpc/routers/blueprint.ts`                    | `captureBlueprint` joins the blueprint router  |
+| `apps/web/server/services/blueprint/captureBlueprint.ts`       | ownership check, key derivation, orchestration |
+| `apps/web/server/services/blueprint/rewriteIdsToAliases.ts`    | the deep-walk exact-match rewrite              |
+| `apps/web/app/components/Resource/List/Selection/Toolbar.vue`  | bulk Save-as-blueprint entry point             |
+| `apps/web/app/components/Resource/Blueprint/CaptureDialog.vue` | name prompt + create + navigate                |
 
 ## Notes
 

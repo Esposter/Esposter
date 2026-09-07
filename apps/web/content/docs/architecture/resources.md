@@ -66,7 +66,7 @@ Content blobs live in one container, `AzureContainer.ResourceAssets`, keyed by i
 
 Ownership is enforced through the Postgres row, never inferred from the blob path. Deleting a resource is soft — identically for every type: it stamps `deletedAt` and drops the publication row, leaving the `{id}/` blob directory intact so a restore can hand the content back. Purging is what deletes the directory and then the row ([recycle bin](/docs/platform/recycle-bin)).
 
-Each type owns one content schema (Zod, interface-first, one export per file) in `packages/app/shared/models/`. A content schema always produces an **object** (never a bare string/array) so future fields extend without a blob-shape break.
+Each type owns one content schema (Zod, interface-first, one export per file) in `apps/web/shared/models/`. A content schema always produces an **object** (never a bare string/array) so future fields extend without a blob-shape break.
 
 ## Capabilities
 
@@ -83,12 +83,12 @@ Explicitly **not** capabilities: collecting public responses (Survey-only — st
 
 ### Declaration — `ResourceDefinitionMap`
 
-One shared as-const-satisfies map (`packages/app/shared/services/resource/ResourceDefinitionMap.ts`) is the single source of truth for what a type is: its `contentSchema`, `icon`, `title`, and `capabilities` (`{ datasetProvider?: true; fileAssets?: true; portable?: true; publishable?: true }`), keyed by `ResourceType`.
+One shared as-const-satisfies map (`apps/web/shared/services/resource/ResourceDefinitionMap.ts`) is the single source of truth for what a type is: its `contentSchema`, `icon`, `title`, and `capabilities` (`{ datasetProvider?: true; fileAssets?: true; portable?: true; publishable?: true }`), keyed by `ResourceType`.
 
 A generic mapped type derives the subset of types declaring each capability:
 
 ```ts
-// packages/app/shared/models/resource/CapabilityResourceType.ts
+// apps/web/shared/models/resource/CapabilityResourceType.ts
 export type CapabilityResourceType<TCapability extends keyof ResourceCapabilities> = {
   [T in ResourceType]: (typeof ResourceDefinitionMap)[T]["capabilities"] extends Record<TCapability, true> ? T : never;
 }[ResourceType];
@@ -181,24 +181,24 @@ Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key of
 ## Client
 
 - **Explorer** (`/resource-explorer`) is an Azure-portal-style shell: a Home landing (search + quick-create tiles + recent resources), a full list at `/resource-explorer/all`, and a route-driven create flow (`/resource-explorer/create` gallery → `/resource-explorer/create/[type]` form). Home and `/resource-explorer/all` read through the shared `useReadResources` composable (`resource.readResourcesCount` + `resource.readResources`, different sort/limit/filter per surface). Resource pages live at `/resource-explorer/[id]/[[blade]]`.
-- **`useResourceStore`** (`packages/app/app/store/resource/index.ts`) is the open resource: it loads the row (`resource.readResource`) with its publication, reads typed content (`{type}.readResourceContent`), and owns every write against that resource — `saveContent` (optimistic `contentVersion`), `renameResource`, `updateResourceTags`, `deleteResource`, `duplicateResource` and the capability actions (`publishResource`/`unpublishResource`, no-ops for non-publishable types). It is **blade-scoped**: the store is app-lifetime, this state is one open resource's, so the page clears it on unmount, keyed by the id it opened because a keyed page swap mounts the next resource's page first.
+- **`useResourceStore`** (`apps/web/app/store/resource/index.ts`) is the open resource: it loads the row (`resource.readResource`) with its publication, reads typed content (`{type}.readResourceContent`), and owns every write against that resource — `saveContent` (optimistic `contentVersion`), `renameResource`, `updateResourceTags`, `deleteResource`, `duplicateResource` and the capability actions (`publishResource`/`unpublishResource`, no-ops for non-publishable types). It is **blade-scoped**: the store is app-lifetime, this state is one open resource's, so the page clears it on unmount, keyed by the id it opened because a keyed page swap mounts the next resource's page first.
 - **A type's content store composes the resource store rather than loading its own copy** — `useSheetStore`, `useNoteStore`, `useDashboardStore` and the rest hold only their own parsed content and reach the row through `readResource`/`readContent`/`saveContent`. The store cannot be generic over `ResourceType`, so the type parameter moved to `readContent<ResourceType.Sheet>()`, the one member whose return shape depends on it; everything else about a resource row is identical for every type. One row, one publication, one loading flag, so a rename in the toolbar is the name the editor sees.
 - **`save` skips content identical to what was last persisted**, compared as JSON, so an editor whose autosave fires per frame does not bump `contentVersion` for a document nobody changed. Every content store seeds that comparison with `setPersistedContent` after hydrating, and nothing may stamp the content on the way in — a store that refreshed the content's own `updatedAt` before saving would make every comparison differ, and the modified time the explorer reads is the `resources` row's, which the server bumps per accepted write.
 - Resource pages are auth-gated. There is no unauthenticated/localStorage editing path — one persistence mechanism, not two.
 
 ## Key files
 
-| File                                                                      | Role                                       |
-| ------------------------------------------------------------------------- | ------------------------------------------ |
-| `packages/db-schema/src/schema/resources.ts`                              | identity table                             |
-| `packages/db-schema/src/schema/resourcePublications.ts`                   | publish state table                        |
-| `packages/app/shared/services/resource/ResourceDefinitionMap.ts`          | type definitions + capability declarations |
-| `packages/app/shared/models/resource/CapabilityResourceType.ts`           | derived capability unions                  |
-| `packages/app/shared/services/resource/getFilesDirectoryName.ts`          | the `{id}/files` path convention           |
-| `packages/app/shared/services/resource/hasCapability.ts`                  | runtime capability guard                   |
-| `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts` | the procedure factory                      |
-| `packages/app/server/trpc/procedure/resource/getOwnerProcedure.ts`        | ownership middleware                       |
-| `packages/app/app/store/resource/index.ts`                                | the open resource — state and every write  |
-| `packages/app/app/services/resource/ResourceBladeDefinitionMap.ts`        | type-specific blades                       |
-| `packages/app/app/services/resource/ViewComponentMap.ts`                  | public view renderers (Publishable)        |
-| `packages/app/app/services/resource/PortableFormatMap.ts`                 | import/export formats (Portable)           |
+| File                                                                  | Role                                       |
+| --------------------------------------------------------------------- | ------------------------------------------ |
+| `packages/db-schema/src/schema/resources.ts`                          | identity table                             |
+| `packages/db-schema/src/schema/resourcePublications.ts`               | publish state table                        |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`          | type definitions + capability declarations |
+| `apps/web/shared/models/resource/CapabilityResourceType.ts`           | derived capability unions                  |
+| `apps/web/shared/services/resource/getFilesDirectoryName.ts`          | the `{id}/files` path convention           |
+| `apps/web/shared/services/resource/hasCapability.ts`                  | runtime capability guard                   |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | the procedure factory                      |
+| `apps/web/server/trpc/procedure/resource/getOwnerProcedure.ts`        | ownership middleware                       |
+| `apps/web/app/store/resource/index.ts`                                | the open resource — state and every write  |
+| `apps/web/app/services/resource/ResourceBladeDefinitionMap.ts`        | type-specific blades                       |
+| `apps/web/app/services/resource/ViewComponentMap.ts`                  | public view renderers (Publishable)        |
+| `apps/web/app/services/resource/PortableFormatMap.ts`                 | import/export formats (Portable)           |

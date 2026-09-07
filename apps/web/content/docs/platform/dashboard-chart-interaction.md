@@ -66,9 +66,9 @@ Coherent data transitions and the touch gestures are on by default in v6 and nee
 
 ## Key files
 
-| File                                                                     | Role                                                   |
-| ------------------------------------------------------------------------ | ------------------------------------------------------ |
-| `packages/app/app/components/Styled/ApexChart.vue`                       | theme pinning, canvas renderer, instance getter        |
-| `packages/app/app/services/dashboard/chart/constants.ts`                 | the gated interaction switch and the view url format   |
-| `packages/app/app/services/dashboard/chart/getVisualLinkChartOptions.ts` | which visuals move together when one is brushed        |
-| `packages/app/app/composables/dashboard/useVisualPerspective.ts`         | capture and restore a visual's view state from the url |
+| File                                                                 | Role                                                   |
+| -------------------------------------------------------------------- | ------------------------------------------------------ |
+| `apps/web/app/components/Styled/ApexChart.vue`                       | theme pinning, canvas renderer, instance getter        |
+| `apps/web/app/services/dashboard/chart/constants.ts`                 | the gated interaction switch and the view url format   |
+| `apps/web/app/services/dashboard/chart/getVisualLinkChartOptions.ts` | which visuals move together when one is brushed        |
+| `apps/web/app/composables/dashboard/useVisualPerspective.ts`         | capture and restore a visual's view state from the url |

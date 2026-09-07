@@ -55,8 +55,8 @@ Not every piece of test scaffolding is a workaround, and treating them alike wou
 
 | File                                            | Role                                                                                       |
 | ----------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `packages/app/shared/test/setup.ts`             | Storage, `visualViewport`, the Azure and runtime-config mocks, and the warm-up hook        |
-| `packages/app/vitest.config.ts`                 | `setupFiles` including `fake-indexeddb/auto`, the node default, and the timeouts around it |
-| `packages/app/configuration/modules.ts`         | The Vitest module allowlist                                                                |
+| `apps/web/shared/test/setup.ts`                 | Storage, `visualViewport`, the Azure and runtime-config mocks, and the warm-up hook        |
+| `apps/web/vitest.config.ts`                     | `setupFiles` including `fake-indexeddb/auto`, the node default, and the timeouts around it |
+| `apps/web/configuration/modules.ts`             | The Vitest module allowlist                                                                |
 | `packages/vue-phaserjs/src/test/setupCanvas.ts` | The canvas, image and `readyState` spies Phaser boots against                              |
 | `packages/vue-phaserjs/src/test/setup.ts`       | The `Phaser` global stub                                                                   |

@@ -66,7 +66,7 @@ afterEach(() => {
 
 ### 3. `context.test.ts` — wiring hub
 
-`packages/app/server/trpc/context.test.ts` is the central test utility file. It installs the `vi.mock` for auth — the one whose factory needs this module's session state — and exports helpers consumed by every tRPC router test.
+`apps/web/server/trpc/context.test.ts` is the central test utility file. It installs the `vi.mock` for auth — the one whose factory needs this module's session state — and exports helpers consumed by every tRPC router test.
 
 **Every Azure composable is mocked once in `shared/test/setup.ts`, not here.** A `vi.mock` is hoisted only within the file that writes it, so a registration made from an imported module does not intercept a test file's own direct import of the same composable, which would leave every suite that reads a table directly repeating the registration verbatim. A setup file runs before the test module is imported, so one registration there covers both the router path and a direct `await useTableClient(...)` in the test. Import the composable from its **real** path; never from its `.test` mock.
 
@@ -116,15 +116,15 @@ All cleanup — Azure mock stores and DB rows — lives in `afterEach`, never `b
 
 ## Key files
 
-| File                                                                                  | Role                                                                     |
-| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `packages/db-mock/src/createMockDb.ts`                                                | PGlite setup + snapshot loading                                          |
-| `packages/azure-mock/src/`                                                            | `MockTableClient`, `MockContainerClient`, `MockEventGridPublisherClient` |
-| `packages/app/server/trpc/context.test.ts`                                            | `createMockContext`, session helpers, `vi.mock` wiring                   |
-| `packages/app/server/composables/azure/table/useTableClient.test.ts`                  | module double — re-exports `useTableClient` over `MockTableClient`       |
-| `packages/app/server/composables/azure/container/useContainerClient.test.ts`          | module double — re-exports `useContainerClient`                          |
-| `packages/app/server/composables/azure/eventGrid/useEventGridPublisherClient.test.ts` | module double — re-exports `useEventGridPublisherClient`                 |
-| `packages/app/server/composables/azure/serviceBus/useServiceBusSender.test.ts`        | module double — re-exports `useServiceBusSender`                         |
+| File                                                                              | Role                                                                     |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `packages/db-mock/src/createMockDb.ts`                                            | PGlite setup + snapshot loading                                          |
+| `packages/azure-mock/src/`                                                        | `MockTableClient`, `MockContainerClient`, `MockEventGridPublisherClient` |
+| `apps/web/server/trpc/context.test.ts`                                            | `createMockContext`, session helpers, `vi.mock` wiring                   |
+| `apps/web/server/composables/azure/table/useTableClient.test.ts`                  | module double — re-exports `useTableClient` over `MockTableClient`       |
+| `apps/web/server/composables/azure/container/useContainerClient.test.ts`          | module double — re-exports `useContainerClient`                          |
+| `apps/web/server/composables/azure/eventGrid/useEventGridPublisherClient.test.ts` | module double — re-exports `useEventGridPublisherClient`                 |
+| `apps/web/server/composables/azure/serviceBus/useServiceBusSender.test.ts`        | module double — re-exports `useServiceBusSender`                         |
 
 ## Adding a new router test
 

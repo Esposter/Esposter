@@ -61,21 +61,21 @@ All in `server/trpc/routers/room/index.ts`:
 
 ## Key files
 
-| File                                                                      | Role                                        |
-| :------------------------------------------------------------------------ | :------------------------------------------ |
-| `packages/db-schema/src/schema/invitesInMessage.ts`                       | table + check constraints                   |
-| `packages/app/shared/services/room/invite/InviteExpireAfterMinutesMap.ts` | Expiry options in minutes (single source)   |
-| `packages/app/shared/models/db/room/CreateInviteInput.ts`                 | Zod input — only the fixed option values    |
-| `packages/app/shared/services/room/invite/checkIsInviteUsable.ts`         | shared usability predicate, client included |
-| `packages/app/server/services/message/readMyInvite.ts`                    | own-invite read + lazy delete               |
-| `packages/app/app/store/message/room/invite.ts`                           | shared per-room invite map                  |
-| `packages/app/app/store/message/room/roomInvite.ts`                       | the panel's room-keyed list of every link   |
-| `packages/app/app/services/message/room/invite/inviteCreateHooks.ts`      | create fan-out from the dialog to the panel |
-| `packages/app/app/components/Message/Model/Room/Invite/Manager.vue`       | invite manager with option selects          |
-| `packages/app/app/components/Message/Model/Room/Invite/Dialog.vue`        | the dialog hosting the manager              |
-| `packages/app/app/components/Message/Model/Room/Invite/TableRow.vue`      | the settings panel's row for a live link    |
-| `packages/app/app/composables/message/room/useReadMyInvite.ts`            | own-invite read every surface seeds from    |
-| `packages/app/app/pages/messages/invite/[code].vue`                       | invite landing page                         |
+| File                                                                  | Role                                        |
+| :-------------------------------------------------------------------- | :------------------------------------------ |
+| `packages/db-schema/src/schema/invitesInMessage.ts`                   | table + check constraints                   |
+| `apps/web/shared/services/room/invite/InviteExpireAfterMinutesMap.ts` | Expiry options in minutes (single source)   |
+| `apps/web/shared/models/db/room/CreateInviteInput.ts`                 | Zod input — only the fixed option values    |
+| `apps/web/shared/services/room/invite/checkIsInviteUsable.ts`         | shared usability predicate, client included |
+| `apps/web/server/services/message/readMyInvite.ts`                    | own-invite read + lazy delete               |
+| `apps/web/app/store/message/room/invite.ts`                           | shared per-room invite map                  |
+| `apps/web/app/store/message/room/roomInvite.ts`                       | the panel's room-keyed list of every link   |
+| `apps/web/app/services/message/room/invite/inviteCreateHooks.ts`      | create fan-out from the dialog to the panel |
+| `apps/web/app/components/Message/Model/Room/Invite/Manager.vue`       | invite manager with option selects          |
+| `apps/web/app/components/Message/Model/Room/Invite/Dialog.vue`        | the dialog hosting the manager              |
+| `apps/web/app/components/Message/Model/Room/Invite/TableRow.vue`      | the settings panel's row for a live link    |
+| `apps/web/app/composables/message/room/useReadMyInvite.ts`            | own-invite read every surface seeds from    |
+| `apps/web/app/pages/messages/invite/[code].vue`                       | invite landing page                         |
 
 ## Surfaces
 

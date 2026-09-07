@@ -35,4 +35,4 @@ export const useFooCache = () => {
 - `getWriteItems` — feature-specific filtering before persisting
 - `onHydrate` — companion state updates after an offline hydrate (member counts, user maps)
 
-`useMessageCache`, `useMemberCache`, `useRoomCache` are the reference shapes. Architecture doc: `packages/app/content/docs/esbabbler/offline-cache.md`.
+`useMessageCache`, `useMemberCache`, `useRoomCache` are the reference shapes. Architecture doc: `apps/web/content/docs/esbabbler/offline-cache.md`.

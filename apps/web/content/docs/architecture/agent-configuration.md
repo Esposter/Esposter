@@ -46,7 +46,7 @@ Only the agent harness's machine-local `.git/info/exclude` hides live worktrees 
 
 ## Configuration there, documentation in public
 
-Documentation is **public by default**. Everything explanatory lives in `packages/app/content/docs`, ships with the app, and is readable at `/docs` on the deployed site — it is written for a person in a browser, and hiding it in a dotfolder is what stops it being read. See [monorepo tooling](/docs/architecture/monorepo-tooling) for how that package is built and published.
+Documentation is **public by default**. Everything explanatory lives in `apps/web/content/docs`, ships with the app, and is readable at `/docs` on the deployed site — it is written for a person in a browser, and hiding it in a dotfolder is what stops it being read. See [monorepo tooling](/docs/architecture/monorepo-tooling) for how that package is built and published.
 
 `.agents/` holds only what a machine consumes:
 
@@ -66,7 +66,7 @@ The installed Matt Pocock engineering skills — `triage`, `to-tickets`, `to-spe
 `improve-codebase-architecture` — were scaffolded to read their configuration from `docs/agents/*.md`, and several
 say so literally: one of them tells the user to re-run `/setup-matt-pocock-skills` when `docs/agents/issue-tracker.md`
 is missing. **It is not missing; it is at `.agents/issue-tracker.md`**, because this repo has no root `docs/` folder
-at all — `packages/app/content/docs` is the public docs site, and a second root-level `docs/` would read as a rival
+at all — `apps/web/content/docs` is the public docs site, and a second root-level `docs/` would read as a rival
 to it.
 
 `AGENTS.md` names the real paths, so a skill that reads the instruction file first finds them. Re-running the setup

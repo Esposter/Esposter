@@ -27,14 +27,14 @@ flowchart LR
 
 ## Key files
 
-| File                                                                | Role                                               |
-| ------------------------------------------------------------------- | -------------------------------------------------- |
-| `packages/app/shared/models/resource/survey/SurveySettings.ts`      | the `settings` section — the toggle + message      |
-| `packages/app/server/services/survey/readSurveySettings.ts`         | the live settings read                             |
-| `packages/app/server/services/survey/resolveSurveyResponseWrite.ts` | the one write boundary both mutations pass through |
-| `packages/app/server/services/survey/reapplySurveyLiveContent.ts`   | merges live settings onto the public read          |
-| `packages/app/app/components/Resource/Survey/Collection.vue`        | the toggle + closed message field                  |
-| `packages/app/app/components/Resource/Survey/View.vue`              | the closed state                                   |
+| File                                                            | Role                                               |
+| --------------------------------------------------------------- | -------------------------------------------------- |
+| `apps/web/shared/models/resource/survey/SurveySettings.ts`      | the `settings` section — the toggle + message      |
+| `apps/web/server/services/survey/readSurveySettings.ts`         | the live settings read                             |
+| `apps/web/server/services/survey/resolveSurveyResponseWrite.ts` | the one write boundary both mutations pass through |
+| `apps/web/server/services/survey/reapplySurveyLiveContent.ts`   | merges live settings onto the public read          |
+| `apps/web/app/components/Resource/Survey/Collection.vue`        | the toggle + closed message field                  |
+| `apps/web/app/components/Resource/Survey/View.vue`              | the closed state                                   |
 
 ## Notes
 

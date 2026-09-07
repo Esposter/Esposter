@@ -93,22 +93,22 @@ Deleting an emoji removes the row first and then publishes the blob deletion, be
 
 ## Key files
 
-| File                                                                    | Role                                                       |
-| :---------------------------------------------------------------------- | :--------------------------------------------------------- |
-| `packages/db-schema/src/schema/roomEmojisInMessage.ts`                  | the table, the name charset, and the per-room unique index |
-| `packages/app/server/trpc/routers/room/emoji.ts`                        | upload SAS, create, rename, delete, read, subscriptions    |
-| `packages/app/server/services/message/emoji/getRoomEmojiBlobName.ts`    | the one place the blob name is spelled                     |
-| `packages/app/server/services/message/emoji/checkIsUnicodeEmojiSlug.ts` | the shadowing guard                                        |
-| `packages/app/app/store/message/room/emoji.ts`                          | the room's set, its upload action, and the id-keyed map    |
-| `packages/app/app/models/message/emoji/CustomEmoji.ts`                  | what a picking surface sees                                |
-| `packages/app/app/components/Styled/Emoji.vue`                          | one glyph component — a character or an image              |
-| `packages/app/app/components/Message/Model/Message/Emoji/Tag.vue`       | a stored reaction tag, resolved or placeheld               |
-| `packages/app/app/composables/message/emoji/useCustomEmojiExtension.ts` | the content node, carrying id and name and no url          |
-| `packages/app/app/composables/message/useMessageHtml.ts`                | the render pass — mentions and emoji, one parse            |
-| `packages/app/app/components/Message/Model/Room/Emoji/CreateDialog.vue` | the Add Emoji dialog the picker footer opens               |
-| `packages/app/app/components/Message/Model/Room/Emoji/NameField.vue`    | the one name field — colons as chrome, one rule set        |
-| `packages/app/app/components/Message/Model/Message/Emoji/Picker.vue`    | the room's picker — its set, and Add Emoji for who may     |
-| `packages/app/app/components/Message/Model/Room/Settings/Type/Emoji/`   | the settings panel: the whole set, rename, delete          |
+| File                                                                | Role                                                       |
+| :------------------------------------------------------------------ | :--------------------------------------------------------- |
+| `packages/db-schema/src/schema/roomEmojisInMessage.ts`              | the table, the name charset, and the per-room unique index |
+| `apps/web/server/trpc/routers/room/emoji.ts`                        | upload SAS, create, rename, delete, read, subscriptions    |
+| `apps/web/server/services/message/emoji/getRoomEmojiBlobName.ts`    | the one place the blob name is spelled                     |
+| `apps/web/server/services/message/emoji/checkIsUnicodeEmojiSlug.ts` | the shadowing guard                                        |
+| `apps/web/app/store/message/room/emoji.ts`                          | the room's set, its upload action, and the id-keyed map    |
+| `apps/web/app/models/message/emoji/CustomEmoji.ts`                  | what a picking surface sees                                |
+| `apps/web/app/components/Styled/Emoji.vue`                          | one glyph component — a character or an image              |
+| `apps/web/app/components/Message/Model/Message/Emoji/Tag.vue`       | a stored reaction tag, resolved or placeheld               |
+| `apps/web/app/composables/message/emoji/useCustomEmojiExtension.ts` | the content node, carrying id and name and no url          |
+| `apps/web/app/composables/message/useMessageHtml.ts`                | the render pass — mentions and emoji, one parse            |
+| `apps/web/app/components/Message/Model/Room/Emoji/CreateDialog.vue` | the Add Emoji dialog the picker footer opens               |
+| `apps/web/app/components/Message/Model/Room/Emoji/NameField.vue`    | the one name field — colons as chrome, one rule set        |
+| `apps/web/app/components/Message/Model/Message/Emoji/Picker.vue`    | the room's picker — its set, and Add Emoji for who may     |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Emoji/`   | the settings panel: the whole set, rename, delete          |
 
 ## Notes
 

@@ -62,15 +62,15 @@ A browser without background-processor support keeps the earlier behaviour: uplo
 
 ## Key files
 
-| File                                                                              | Role                                                    |
-| :-------------------------------------------------------------------------------- | :------------------------------------------------------ |
-| `packages/db-schema/src/schema/userSettingsInMessage.ts`                          | the persisted selection                                 |
-| `packages/app/server/services/message/call/getCallBackgroundBlobName.ts`          | the one place a slot's blob name is spelled             |
-| `packages/app/server/trpc/routers/user.ts`                                        | slot upload SAS, slot listing, slot delete              |
-| `packages/app/app/services/message/room/call/CallVirtualBackgroundDefinitions.ts` | presets as one source among two                         |
-| `packages/app/app/store/message/user/settings/callBackground.ts`                  | the listing, the upload/delete writes, and the resolver |
-| `packages/app/app/components/Message/Content/Call/VirtualBackground/Grid.vue`     | upload tile, per-slot delete, resolved image urls       |
-| `packages/app/app/store/message/room/liveKit.ts`                                  | processor applied from a resolved url                   |
+| File                                                                          | Role                                                    |
+| :---------------------------------------------------------------------------- | :------------------------------------------------------ |
+| `packages/db-schema/src/schema/userSettingsInMessage.ts`                      | the persisted selection                                 |
+| `apps/web/server/services/message/call/getCallBackgroundBlobName.ts`          | the one place a slot's blob name is spelled             |
+| `apps/web/server/trpc/routers/user.ts`                                        | slot upload SAS, slot listing, slot delete              |
+| `apps/web/app/services/message/room/call/CallVirtualBackgroundDefinitions.ts` | presets as one source among two                         |
+| `apps/web/app/store/message/user/settings/callBackground.ts`                  | the listing, the upload/delete writes, and the resolver |
+| `apps/web/app/components/Message/Content/Call/VirtualBackground/Grid.vue`     | upload tile, per-slot delete, resolved image urls       |
+| `apps/web/app/store/message/room/liveKit.ts`                                  | processor applied from a resolved url                   |
 
 ## Notes
 

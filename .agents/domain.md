@@ -2,12 +2,12 @@
 
 How the engineering skills should consume this repo's domain documentation when exploring the codebase.
 
-This repo has **no root `CONTEXT.md` and no `docs/adr/`**, and neither should be created. The equivalent already exists as the in-app docs site at `packages/app/content/docs`, rendered by `@nuxt/content` at `/docs`. Read that instead.
+This repo has **no root `CONTEXT.md` and no `docs/adr/`**, and neither should be created. The equivalent already exists as the in-app docs site at `apps/web/content/docs`, rendered by `@nuxt/content` at `/docs`. Read that instead.
 
 ## Before exploring, read these
 
-- **`packages/app/content/docs/index.md`** — the map. Names every area and what it covers, in place of a `CONTEXT-MAP.md`.
-- **`packages/app/content/docs/architecture/index.md`** and the `architecture/*.md` pages it tables — the ADRs. Each page is one cross-cutting decision, single-responsibility, describing the as-built repo-wide answer to "whenever we need X, we do it this way".
+- **`apps/web/content/docs/index.md`** — the map. Names every area and what it covers, in place of a `CONTEXT-MAP.md`.
+- **`apps/web/content/docs/architecture/index.md`** and the `architecture/*.md` pages it tables — the ADRs. Each page is one cross-cutting decision, single-responsibility, describing the as-built repo-wide answer to "whenever we need X, we do it this way".
 - **The relevant area's `index.md` plus its feature pages** — `esbabbler`, `platform`, `posts`, `users`, `sheet-editor`, `infra`, `virrun`, and the rest. An area's overview carries its vocabulary; a feature page carries the shipped behaviour.
 
 Read only the pages that touch the area you're about to work in. If a page you'd expect doesn't exist, **proceed silently** — don't flag its absence and don't propose creating docs upfront.
@@ -35,7 +35,7 @@ If the concept you need isn't in the docs yet, that's a signal — either you're
 
 ## Writing a decision down
 
-Adding or editing any page under `packages/app/content/docs` is governed by the repo's own **`docs` skill** — two-field frontmatter, a Mermaid diagram where the subject is a flow, plain `.md` with GFM only, registration in the area `index.md`, and — for a top-level feature page in a section the sidebar map covers — an entry in `DocsSectionGroupsMap.ts` too. `content/docs/index.test.ts` parse-validates every diagram, so a malformed page fails `pnpm test`. Load that skill before writing; don't hand-roll an ADR file.
+Adding or editing any page under `apps/web/content/docs` is governed by the repo's own **`docs` skill** — two-field frontmatter, a Mermaid diagram where the subject is a flow, plain `.md` with GFM only, registration in the area `index.md`, and — for a top-level feature page in a section the sidebar map covers — an entry in `DocsSectionGroupsMap.ts` too. `content/docs/index.test.ts` parse-validates every diagram, so a malformed page fails `pnpm test`. Load that skill before writing; don't hand-roll an ADR file.
 
 ## Flag conflicts
 

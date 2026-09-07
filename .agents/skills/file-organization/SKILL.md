@@ -8,9 +8,9 @@ description: Esposter file and folder organisation — the alias imports (shared
 ## Imports
 
 - **Always use alias imports** — never relative imports (`./`, `../`), even for same-folder files. Enforced by oxlint `no-restricted-imports` for `packages/*/src/**` (the `#src/*` half). Repo-root `scripts/**` is enforced too, against the root manifest's own `#scripts/*` map. Two things are exempt, sharing one override because the alias ban still applies to both: the ctix-generated `src/index.ts` barrel, which is not hand-written, and `.agents/**`, which is the one tree with no `imports` map to point at. `packages/configuration` is **not** exempt — it declares `#src/*` like every other package, its root `tsdown.config.ts` and `vitest.config.ts` included, and the bootstrap survives it because Node resolves the map to a `.ts` target it can already type-strip. Reaching the repo-root `package.json` is the one exception anywhere, since no `#` map reaches up out of its own package, and both sites carry an `oxlint-disable-next-line` saying so.
-  - `#shared/` — the app's shared dir (`packages/app/shared/`, **not** `app/shared/`); models, services, constants shared between client and server.
-  - `@@/` — project root (`packages/app/`); `server/` and other root-level paths.
-  - `@/` — app source dir (`packages/app/app/`); `composables/`, `components/`, `store/`, `services/`, etc.
+  - `#shared/` — the app's shared dir (`apps/web/shared/`, **not** `app/shared/`); models, services, constants shared between client and server.
+  - `@@/` — project root (`apps/web/`); `server/` and other root-level paths.
+  - `@/` — app source dir (`apps/web/app/`); `composables/`, `components/`, `store/`, `services/`, etc.
   - Never use `~~/` (old Nuxt alias) — replace with `@@/`.
   - **Never import a composable — `configuration/imports.ts` auto-imports `composables/**` whole.** An
     `import { useMutation } from "@/composables/shared/useMutation"` resolves to the same function the auto-import
@@ -19,7 +19,7 @@ description: Esposter file and folder organisation — the alias imports (shared
     `OnlineSubscribableContext`), which the auto-import does not carry, and a `*.test.ts` / `*.bench.ts` helper
     living under `composables/`, which the scan skips.
   - Those are the **app's** aliases and Nuxt generates them. Everywhere else — every `packages/*` and the repo-root `scripts/` — a tree addresses its own source through the `#src/*` / `#scripts/*` subpath imports its manifest declares, and oxlint bans `@/` there (`build` skill).
-- **`shared/` may never import `@/` or `~/`** — it is parsed by the server as well as shipped to the browser, so a client import drags UI-library types and browser-only values into the server's graph. Banned by a root `.oxlintrc.json` override, type-only imports included. When a `shared/` module needs a client concern, give it a **twin**: `shared/` keeps the validating schema, `app/` derives the form schema from it with `safeExtend` and `satisfies z.ZodType<TSharedType>`. Moving the client module down into `shared/` relocates the boundary instead of restoring it. See `packages/app/content/docs/architecture/module-boundaries.md`.
+- **`shared/` may never import `@/` or `~/`** — it is parsed by the server as well as shipped to the browser, so a client import drags UI-library types and browser-only values into the server's graph. Banned by a root `.oxlintrc.json` override, type-only imports included. When a `shared/` module needs a client concern, give it a **twin**: `shared/` keeps the validating schema, `app/` derives the form schema from it with `safeExtend` and `satisfies z.ZodType<TSharedType>`. Moving the client module down into `shared/` relocates the boundary instead of restoring it. See `apps/web/content/docs/architecture/module-boundaries.md`.
 - Import grouping, blank lines, ordering, and line endings — see the `formatting` skill.
 
 ## Files and Exports

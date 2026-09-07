@@ -46,7 +46,7 @@ az account set --subscription "<subscription-id>"
 Select the stack:
 
 ```bash
-cd packages/infra
+cd apps/infra
 pulumi stack select prod
 ```
 
@@ -63,7 +63,7 @@ pulumi stack select prod
 
 ### Commands
 
-Run from `packages/infra/`:
+Run from `apps/infra/`:
 
 ```bash
 pnpm build             # regenerate the ctix barrel and compile the Pulumi program to dist/

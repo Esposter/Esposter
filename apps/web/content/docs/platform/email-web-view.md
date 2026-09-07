@@ -26,13 +26,13 @@ flowchart LR
 
 ## Key files
 
-| File                                                             | Role                                         |
-| ---------------------------------------------------------------- | -------------------------------------------- |
-| `packages/app/shared/models/emailEditor/data/EmailEditor.ts`     | compiled `html` on the content schema        |
-| `packages/app/app/services/emailEditor/getEmailHtml.ts`          | the one MJML compile, shared with export     |
-| `packages/app/app/store/emailEditor/index.ts`                    | save-time capture alongside the project data |
-| `packages/app/app/components/Resource/Email/View.vue`            | `ViewComponentMap[Email]` renderer           |
-| `packages/app/shared/services/resource/ResourceDefinitionMap.ts` | `publishable: true` on Email                 |
+| File                                                         | Role                                         |
+| ------------------------------------------------------------ | -------------------------------------------- |
+| `apps/web/shared/models/emailEditor/data/EmailEditor.ts`     | compiled `html` on the content schema        |
+| `apps/web/app/services/emailEditor/getEmailHtml.ts`          | the one MJML compile, shared with export     |
+| `apps/web/app/store/emailEditor/index.ts`                    | save-time capture alongside the project data |
+| `apps/web/app/components/Resource/Email/View.vue`            | `ViewComponentMap[Email]` renderer           |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts` | `publishable: true` on Email                 |
 
 ## Notes
 

@@ -11,7 +11,7 @@ Serving is the **DatasetProvider capability** ([resources](/docs/architecture/re
 
 ## Contract
 
-Shared models in `packages/app/shared/models/dataset/` (one type + schema per file, interface-first). `ColumnType` and `ColumnValue` are reused from the Sheet resource models — they are already the canonical cell-type vocabulary.
+Shared models in `apps/web/shared/models/dataset/` (one type + schema per file, interface-first). `ColumnType` and `ColumnValue` are reused from the Sheet resource models — they are already the canonical cell-type vocabulary.
 
 ```ts
 interface DatasetColumn {

@@ -43,7 +43,7 @@ Logic App HTTP trigger callback URLs are external secrets — rotating them is a
 
 ## Security constraints
 
-Every deferred hardening step is gated on the app moving off key-based Azure SDK clients — flipping the infra switch first would break production. The blockers, each mapped to the app code path that holds it open, live in `packages/infra/docs/azure/security-constraints.md`:
+Every deferred hardening step is gated on the app moving off key-based Azure SDK clients — flipping the infra switch first would break production. The blockers, each mapped to the app code path that holds it open, live in `apps/infra/docs/azure/security-constraints.md`:
 
 - Storage shared-key and blob public access stay until blob clients, SAS generation, and public containers migrate.
 - Search and Event Grid local auth stay until the app replaces `AzureKeyCredential` with managed identity.
@@ -58,9 +58,9 @@ Carried forward for any future infra change: keep `protect: true` on imported re
 
 ## Key files
 
-| File                                                                         | Role                                                                             |
-| ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `packages/infra/src/azure/resources/Microsoft.Consumption/budgets/`          | The four `$0.01` guard budgets                                                   |
-| `packages/infra/src/azure/resources/Microsoft.Logic/workflows/`              | Stop/start/delete/recreate guard workflows (`001`–`004` per environment)         |
-| `packages/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/` | Subscriptions for `ProcessWebhook`, `ProcessNotification`, `ProcessBlobDeletion` |
-| `packages/infra/docs/azure/security-constraints.md`                          | Hardening blockers + gating app code paths                                       |
+| File                                                                     | Role                                                                             |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| `apps/infra/src/azure/resources/Microsoft.Consumption/budgets/`          | The four `$0.01` guard budgets                                                   |
+| `apps/infra/src/azure/resources/Microsoft.Logic/workflows/`              | Stop/start/delete/recreate guard workflows (`001`–`004` per environment)         |
+| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/` | Subscriptions for `ProcessWebhook`, `ProcessNotification`, `ProcessBlobDeletion` |
+| `apps/infra/docs/azure/security-constraints.md`                          | Hardening blockers + gating app code paths                                       |

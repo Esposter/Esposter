@@ -71,7 +71,7 @@ for (const [property, value] of Object.entries(entity))
 
 `checkIsSerializable` returns `true` for arrays and non-Date objects — i.e. properties that were stored in Azure Table as a JSON string (e.g. `files: FileEntity[]`, `mentions: string[]`).
 
-### SSR path — `packages/app/app/plugins/customPayloads.ts`
+### SSR path — `apps/web/app/plugins/customPayloads.ts`
 
 Registered with Nuxt's payload plugin API. Fires for any class instance in Pinia state or `useAsyncData` that Nuxt serializes into the HTML payload for client hydration.
 
@@ -80,7 +80,7 @@ definePayloadReducer(name, (data) => data instanceof cls && JSON.stringify(data)
 definePayloadReviver(name, (data) => new cls(jsonDateParse(data)));
 ```
 
-### tRPC path — `packages/app/shared/services/trpc/transformer.ts`
+### tRPC path — `apps/web/shared/services/trpc/transformer.ts`
 
 Used as the SuperJSON transformer for all tRPC HTTP batch links and WebSocket links. `registerClass` alone does not call `jsonDateParse` on revival, so `registerCustom` is used instead.
 
@@ -97,7 +97,7 @@ SuperJSON.registerCustom(
 
 ## Class registry
 
-All three transport paths share the same source of truth: `packages/app/shared/services/superjson/JSONClassMap.ts`.
+All three transport paths share the same source of truth: `apps/web/shared/services/superjson/JSONClassMap.ts`.
 
 Adding a new serializable class requires a single entry in that map. The SSR and tRPC paths pick it up automatically. The Azure Table path uses `MessageTypeEntityMap` (in `@esposter/db-schema`) to select the correct concrete class per `type` discriminant — new message entity types must be registered there separately.
 

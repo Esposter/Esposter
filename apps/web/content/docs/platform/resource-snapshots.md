@@ -172,16 +172,16 @@ The channel rides with the version on every command, because a version alone nam
 
 | File                                                                       | Role                                                          |
 | -------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `packages/app/shared/services/resource/SnapshotChannelDefinitionMap.ts`                 | what a channel is — kind, retention, title                    |
-| `packages/app/shared/services/resource/SnapshotSummaryMap.ts`                           | the per-type one line a history row carries                   |
-| `packages/app/server/services/resource/snapshot/takeResourceRevision.ts`                | the revision take, its ring buffer and its ledger charge      |
-| `packages/app/server/services/resource/snapshot/readSnapshotHistory.ts`                 | a channel's prefix listing as history rows                    |
-| `packages/app/server/services/resource/ResourceLiveContentMap.ts`                       | the boundary — what a type declares live                      |
-| `packages/app/server/services/resource/reapplyLiveResourceContent.ts`                   | the reconstitution every snapshot read goes through           |
-| `packages/app/server/trpc/routers/resource.ts`                                          | history, restore and save-version procedures                  |
-| `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts`               | the publish take, its version claim and its succession repair |
-| `packages/app/app/components/Resource/VersionHistory/`                                  | the panel, its rows, the preview banner and the two dialogs   |
-| `packages/app/app/store/resource/versionHistory.ts`                                     | the timeline, the restore and its Undo                        |
+| `apps/web/shared/services/resource/SnapshotChannelDefinitionMap.ts`                 | what a channel is — kind, retention, title                    |
+| `apps/web/shared/services/resource/SnapshotSummaryMap.ts`                           | the per-type one line a history row carries                   |
+| `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`                | the revision take, its ring buffer and its ledger charge      |
+| `apps/web/server/services/resource/snapshot/readSnapshotHistory.ts`                 | a channel's prefix listing as history rows                    |
+| `apps/web/server/services/resource/ResourceLiveContentMap.ts`                       | the boundary — what a type declares live                      |
+| `apps/web/server/services/resource/reapplyLiveResourceContent.ts`                   | the reconstitution every snapshot read goes through           |
+| `apps/web/server/trpc/routers/resource.ts`                                          | history, restore and save-version procedures                  |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`               | the publish take, its version claim and its succession repair |
+| `apps/web/app/components/Resource/VersionHistory/`                                  | the panel, its rows, the preview banner and the two dialogs   |
+| `apps/web/app/store/resource/versionHistory.ts`                                     | the timeline, the restore and its Undo                        |
 | `packages/db-schema/src/schema/resources.ts`                               | `revisionVersion`                                             |
 | `packages/db-schema/src/schema/resourcePublications.ts`                    | `publishedContentVersion`                                     |
 

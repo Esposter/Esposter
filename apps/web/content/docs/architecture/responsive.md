@@ -38,7 +38,7 @@ A breakpoint answers how wide the window is, which is not the same question as w
 
 ## Key files
 
-Paths relative to `packages/app`.
+Paths relative to `apps/web`.
 
 | File                           | Role                                                                  |
 | ------------------------------ | --------------------------------------------------------------------- |

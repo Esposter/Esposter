@@ -29,7 +29,7 @@ flowchart LR
 
 ## Key files
 
-Paths relative to `packages/app/app`.
+Paths relative to `apps/web/app`.
 
 | File                                                            | Role                                                   |
 | --------------------------------------------------------------- | ------------------------------------------------------ |

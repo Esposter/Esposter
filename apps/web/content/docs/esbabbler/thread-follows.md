@@ -57,14 +57,14 @@ All under `message.` in `server/trpc/routers/message/index.ts`, member-gated:
 
 ## Key files
 
-| File                                                                        | Role                                 |
-| :-------------------------------------------------------------------------- | :----------------------------------- |
-| `packages/db-schema/src/schema/threadFollowsInMessage.ts`                   | follow table                         |
-| `packages/db/src/services/notification/getThreadFollowerUserIds.ts`         | follower recipient query             |
-| `packages/db/src/services/message/thread/createThreadFollow.ts`             | idempotent follow insert             |
-| `packages/db/src/services/message/thread/createReplyThreadFollows.ts`       | the follows a reply owes             |
-| `packages/app/server/services/message/thread/createThreadUnfollow.ts`       | records the unfollow on the row      |
-| `packages/azure-functions/src/services/notification/resolveNotification.ts` | unions followers into the recipients |
-| `packages/app/app/store/message/threadFollow.ts`                            | client follow state + drawer list    |
-| `packages/app/app/components/Message/RightSideBar/Threads/`                 | Followed Threads drawer              |
-| `packages/app/app/composables/message/thread/useThreadActionItems.ts`       | thread menu's notification toggle    |
+| File                                                                  | Role                                 |
+| :-------------------------------------------------------------------- | :----------------------------------- |
+| `packages/db-schema/src/schema/threadFollowsInMessage.ts`             | follow table                         |
+| `packages/db/src/services/notification/getThreadFollowerUserIds.ts`   | follower recipient query             |
+| `packages/db/src/services/message/thread/createThreadFollow.ts`       | idempotent follow insert             |
+| `packages/db/src/services/message/thread/createReplyThreadFollows.ts` | the follows a reply owes             |
+| `apps/web/server/services/message/thread/createThreadUnfollow.ts`     | records the unfollow on the row      |
+| `apps/functions/src/services/notification/resolveNotification.ts`     | unions followers into the recipients |
+| `apps/web/app/store/message/threadFollow.ts`                          | client follow state + drawer list    |
+| `apps/web/app/components/Message/RightSideBar/Threads/`               | Followed Threads drawer              |
+| `apps/web/app/composables/message/thread/useThreadActionItems.ts`     | thread menu's notification toggle    |

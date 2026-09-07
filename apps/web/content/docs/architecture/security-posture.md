@@ -48,7 +48,7 @@ The accepted cost is a privacy one, and it is accepted rather than unnoticed: a 
 
 ## Key files
 
-Paths relative to `packages/app`.
+Paths relative to `apps/web`.
 
 | File                                          | Role                                                               |
 | --------------------------------------------- | ------------------------------------------------------------------ |

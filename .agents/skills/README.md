@@ -15,7 +15,7 @@ If nothing fits, that may signal a missing single-responsibility skill — creat
 ### Meta
 
 - `skill-authoring` — how to write a `SKILL.md`: frontmatter/selection, one owner per topic, the enforcer rule, generic placeholders, the two-tier layout, the `Settled — do not re-propose` list.
-- `docs` — `packages/app/content/docs` conventions: the Mermaid mandate, location-carries-status, page templates, area lifecycle.
+- `docs` — `apps/web/content/docs` conventions: the Mermaid mandate, location-carries-status, page templates, area lifecycle.
 - `readme-standards` — package `README.md` template, badges, published-vs-private split.
 
 ### Cross-cutting code
@@ -69,7 +69,7 @@ The `vue` / `vue-component-patterns` / `vue-page-composition` / `vue-composable-
 - `build` — rolldown configs and external lists.
 - `bench` — colocated `*.bench.ts` and the benchmark reporter.
 - `dependency-updates` — the catalog, pinning, node bumps.
-- `pulumi-infra` — `packages/infra` Azure resources.
+- `pulumi-infra` — `apps/infra` Azure resources.
 - `claude-permissions` — `.agents/settings.local.json` rule semantics.
 - `model-delegation` — what to think through in-session vs delegate to a subagent.
 - `score` — the `SCORE.md` repository audit: re-scoring process, README badge sync, `compatibilityDate` bump.

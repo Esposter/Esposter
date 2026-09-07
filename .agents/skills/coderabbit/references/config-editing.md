@@ -21,7 +21,7 @@ git worktree add <scratch-path> <base-branch>   # commit there, push, then: git 
 
 The working tree keeps whatever is in flight, which matters when agents are mid-edit in it. Rebase inside the worktree before pushing — the base branch moves under you (Renovate).
 
-**On Windows the worktree can fail outright**: checking this repo out under a long scratch path trips `Filename too long` on the deepest `packages/infra` paths and aborts with `Could not reset index file`. For a one-file config edit, skip the checkout and commit through the API, which is atomic and cannot disturb the working tree:
+**On Windows the worktree can fail outright**: checking this repo out under a long scratch path trips `Filename too long` on the deepest `apps/infra` paths and aborts with `Could not reset index file`. For a one-file config edit, skip the checkout and commit through the API, which is atomic and cannot disturb the working tree:
 
 ```bash
 baseBranch=$(gh pr view <pr> --json baseRefName --jq .baseRefName)

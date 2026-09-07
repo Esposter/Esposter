@@ -42,7 +42,7 @@ A `Save` is the full run state: `player` (position, direction, party monsters, i
 
 ## Key files
 
-Paths relative to `packages/app`.
+Paths relative to `apps/web`.
 
 | File                                                                          | Role                          |
 | ----------------------------------------------------------------------------- | ----------------------------- |

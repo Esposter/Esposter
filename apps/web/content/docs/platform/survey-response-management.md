@@ -32,14 +32,14 @@ flowchart LR
 
 ## Key files
 
-| File                                                                   | Role                            |
-| ---------------------------------------------------------------------- | ------------------------------- |
-| `packages/app/server/services/survey/readSurveyResponsesCount.ts`      | the capped count                |
-| `packages/app/server/services/survey/readSurveyResponseRecords.ts`     | rows + their keys from one read |
-| `packages/app/app/components/Resource/Survey/Responses.vue`            | row actions                     |
-| `packages/app/app/components/Resource/Survey/ResponseDetailDialog.vue` | the detail dialog               |
-| `packages/app/app/components/Resource/Survey/ResponseDeleteDialog.vue` | the destructive confirm         |
-| `packages/app/app/components/Resource/Survey/Overview.vue`             | count + blade link              |
+| File                                                               | Role                            |
+| ------------------------------------------------------------------ | ------------------------------- |
+| `apps/web/server/services/survey/readSurveyResponsesCount.ts`      | the capped count                |
+| `apps/web/server/services/survey/readSurveyResponseRecords.ts`     | rows + their keys from one read |
+| `apps/web/app/components/Resource/Survey/Responses.vue`            | row actions                     |
+| `apps/web/app/components/Resource/Survey/ResponseDetailDialog.vue` | the detail dialog               |
+| `apps/web/app/components/Resource/Survey/ResponseDeleteDialog.vue` | the destructive confirm         |
+| `apps/web/app/components/Resource/Survey/Overview.vue`             | count + blade link              |
 
 ## Notes
 

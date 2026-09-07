@@ -58,7 +58,7 @@ The anchor is preserved across Shift+click and Shift+Arrow; dragging re-anchors 
 
 ## Key files
 
-All paths relative to `packages/app/app`.
+All paths relative to `apps/web/app`.
 
 | File                                                                 | Role                                                                                                                                               |
 | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |

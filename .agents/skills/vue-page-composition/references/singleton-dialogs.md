@@ -1,6 +1,6 @@
 # Wiring a singleton dialog for a list
 
-Read when a list item needs a dialog, menu or other overlay opened from a row, or when a dialog carries per-open local state. The rule — never mount a dialog inside a list item — is in `SKILL.md`, and the rationale in `packages/app/content/docs/architecture/singleton-dialogs.md`.
+Read when a list item needs a dialog, menu or other overlay opened from a row, or when a dialog carries per-open local state. The rule — never mount a dialog inside a list item — is in `SKILL.md`, and the rationale in `apps/web/content/docs/architecture/singleton-dialogs.md`.
 
 The pattern has three parts:
 

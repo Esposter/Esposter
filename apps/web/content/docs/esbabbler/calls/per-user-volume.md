@@ -27,13 +27,13 @@ flowchart LR
 
 ## Key files
 
-| File                                                                            | Role                                                         |
-| :------------------------------------------------------------------------------ | :----------------------------------------------------------- |
-| `packages/app/app/store/message/room/call/media.ts`                             | `participantVolumePercentageMap` + set/delete mutations      |
-| `packages/app/app/store/message/room/liveKit.ts`                                | applies master × participant volume to remote audio elements |
-| `packages/app/app/components/Message/Content/Call/Participant/ActionMenu.vue`   | shared menu: volume slider + moderation actions              |
-| `packages/app/app/components/Message/Content/Call/Participant/VolumeSlider.vue` | the slider bound to the store map                            |
-| `packages/app/app/composables/message/room/call/useCallJoinedSubscribables.ts`  | deletes the entry on participant leave                       |
+| File                                                                        | Role                                                         |
+| :-------------------------------------------------------------------------- | :----------------------------------------------------------- |
+| `apps/web/app/store/message/room/call/media.ts`                             | `participantVolumePercentageMap` + set/delete mutations      |
+| `apps/web/app/store/message/room/liveKit.ts`                                | applies master × participant volume to remote audio elements |
+| `apps/web/app/components/Message/Content/Call/Participant/ActionMenu.vue`   | shared menu: volume slider + moderation actions              |
+| `apps/web/app/components/Message/Content/Call/Participant/VolumeSlider.vue` | the slider bound to the store map                            |
+| `apps/web/app/composables/message/room/call/useCallJoinedSubscribables.ts`  | deletes the entry on participant leave                       |
 
 ## Notes
 

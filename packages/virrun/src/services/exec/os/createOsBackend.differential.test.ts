@@ -12,7 +12,7 @@ import { afterEach, describe, expect, test } from "vitest";
 
 // Compares the observable command result (exit code + stdout + stderr) against native - not host disk
 // Side-effects, since the os backend intentionally hides writes from the host. The isolation contract
-// Is asserted separately below. See packages/app/content/docs/virrun/correctness.md.
+// Is asserted separately below. See apps/web/content/docs/virrun/correctness.md.
 describe.skipIf(!checkIsOsBackendSupported())(createOsBackend, () => {
   const native = createOsBaselineBackend();
   const temporaryDirectories = createTemporaryDirectoryTracker();

@@ -20,7 +20,7 @@ describe(checkHasDependencyClosureMutation, () => {
   test("flags a nested workspace lockfile at any depth", () => {
     expect.hasAssertions();
 
-    const plan: FlushOp[] = [{ relativePath: `packages/app/${PNPM_LOCKFILE_FILENAME}`, type: FlushOpType.Copy }];
+    const plan: FlushOp[] = [{ relativePath: `apps/web/${PNPM_LOCKFILE_FILENAME}`, type: FlushOpType.Copy }];
 
     expect(checkHasDependencyClosureMutation(plan)).toBe(true);
   });

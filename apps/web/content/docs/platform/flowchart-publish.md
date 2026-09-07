@@ -27,11 +27,11 @@ flowchart LR
 
 ## Key files
 
-| File                                                             | Role                             |
-| ---------------------------------------------------------------- | -------------------------------- |
-| `packages/app/shared/services/resource/ResourceDefinitionMap.ts` | `publishable: true` on Flowchart |
-| `packages/app/app/components/Resource/Flowchart/View.vue`        | read-only VueFlow renderer       |
-| `packages/app/app/services/resource/ViewComponentMap.ts`         | Flowchart entry                  |
+| File                                                         | Role                             |
+| ------------------------------------------------------------ | -------------------------------- |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts` | `publishable: true` on Flowchart |
+| `apps/web/app/components/Resource/Flowchart/View.vue`        | read-only VueFlow renderer       |
+| `apps/web/app/services/resource/ViewComponentMap.ts`         | Flowchart entry                  |
 
 ## Notes
 

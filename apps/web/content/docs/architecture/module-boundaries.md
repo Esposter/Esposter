@@ -5,7 +5,7 @@ description: The app's three import zones — shared/ is parsed by the server, s
 
 # Module boundaries
 
-`packages/app` is one package with three import zones, and the whole standard is a single rule about which way an import may point.
+`apps/web` is one package with three import zones, and the whole standard is a single rule about which way an import may point.
 
 ```mermaid
 flowchart LR
@@ -35,7 +35,7 @@ The sheet column forms are the worked example. `shared/models/resource/sheet/col
 
 ## Enforcement
 
-An `overrides` entry in the root `.oxlintrc.json` scopes `no-restricted-imports` to `packages/app/shared/**` and bans the `@/**` and `~/**` patterns. It catches type-only imports too, which matters — a `.d.ts` augmentation reaching into `app/` is the same coupling with the runtime cost hidden.
+An `overrides` entry in the root `.oxlintrc.json` scopes `no-restricted-imports` to `apps/web/shared/**` and bans the `@/**` and `~/**` patterns. It catches type-only imports too, which matters — a `.d.ts` augmentation reaching into `app/` is the same coupling with the runtime cost hidden.
 
 Two things about that entry are easy to get wrong. Oxlint's path globs do not cross `/`, so the pattern must be `@/**` and never `@/*`. And an `overrides` entry **replaces** a rule's options rather than merging with them, so the repo-wide `node:crypto` ban has to be restated inside the override or it silently stops applying to `shared/`.
 
@@ -61,9 +61,9 @@ The seam that is worth keeping is the opposite shape: a local function that _wra
 
 ## Key files
 
-| File                                                                                       | Role                                                     |
-| ------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
-| `.oxlintrc.json`                                                                           | The `packages/app/shared/**` override carrying the ban   |
-| `packages/app/shared/types/zod.d.ts`                                                       | Zod metadata both zones share                            |
-| `packages/app/app/types/zod.d.ts`                                                          | Client-only Zod metadata, merged into the same interface |
-| `packages/app/app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts` | The worked twin                                          |
+| File                                                                                   | Role                                                     |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `.oxlintrc.json`                                                                       | The `apps/web/shared/**` override carrying the ban       |
+| `apps/web/shared/types/zod.d.ts`                                                       | Zod metadata both zones share                            |
+| `apps/web/app/types/zod.d.ts`                                                          | Client-only Zod metadata, merged into the same interface |
+| `apps/web/app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts` | The worked twin                                          |

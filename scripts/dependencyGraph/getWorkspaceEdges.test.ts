@@ -9,26 +9,28 @@ import { describe, expect, test } from "vitest";
 describe(getWorkspaceEdges, () => {
   const workspacePackages: WorkspacePackage[] = [
     {
-      directory: "app",
+      directory: "web",
       manifest: {
         dependencies: { "@esposter/shared": "workspace:^" },
         devDependencies: { "@esposter/configuration": "workspace:^", "@esposter/shared": "workspace:^" },
-        name: "@esposter/app",
+        name: "@esposter/web",
       },
+      workspaceDirectory: "apps",
     },
     {
       directory: "configuration",
       manifest: { devDependencies: { "@esposter/shared": "1.0.0" }, name: "@esposter/configuration" },
+      workspaceDirectory: "packages",
     },
-    { directory: "shared", manifest: { name: "@esposter/shared" } },
+    { directory: "shared", manifest: { name: "@esposter/shared" }, workspaceDirectory: "packages" },
   ];
 
   test("draws a sibling declared in both fields once, at runtime", () => {
     expect.hasAssertions();
 
     expect(getWorkspaceEdges(workspacePackages)).toStrictEqual({
-      development: [{ from: "app", to: "configuration" }],
-      runtime: [{ from: "app", to: "shared" }],
+      development: [{ from: "web", to: "configuration" }],
+      runtime: [{ from: "web", to: "shared" }],
     });
   });
 });

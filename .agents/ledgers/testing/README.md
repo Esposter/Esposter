@@ -19,24 +19,24 @@ A bare zero-argument `vi.fn` is not in this table because
 
 Every row resets when a rule joins this table: a unit dated against a narrower rule set is not swept against the
 current one, and there is no partially-swept state. The environment row is the one exception, and only because
-its scope is narrower than the ledger's: `packages/app` is the sole package whose vitest config offers a choice
+its scope is narrower than the ledger's: `apps/web` is the sole package whose vitest config offers a choice
 of environment, so the rule cannot fail anywhere else and the rows outside it keep their dates.
 
 ## Areas
 
 Coverage lives in the area file, never here. A pass loads this file and the one area it is sweeping.
 
-| Area                      | What it holds                                                                        |
-| ------------------------- | ------------------------------------------------------------------------------------ |
-| [app-shell](app-shell.md) | the chrome, the routes, and the cross-cutting service, composable and store layers   |
-| [messaging](messaging.md) | Esbabbler — its components, store, composables, services and routers                 |
-| [platform](platform.md)   | the resource explorer, the sheet editor and the other editors                        |
-| [products](products.md)   | the smaller products — posts, the clicker, achievements                              |
-| [dungeons](dungeons.md)   | the game                                                                             |
-| [server](server.md)       | `packages/app/server` — routers, procedure builders, guards and services             |
-| [shared](shared.md)       | `packages/app/shared` and `app/components/Styled` — what both halves of the app read |
-| [packages](packages.md)   | every workspace package outside `packages/app`                                       |
-| [tooling](tooling.md)     | `scripts/`, `.agents/`, the app's root config suites and `content/`                  |
+| Area                      | What it holds                                                                      |
+| ------------------------- | ---------------------------------------------------------------------------------- |
+| [app-shell](app-shell.md) | the chrome, the routes, and the cross-cutting service, composable and store layers |
+| [messaging](messaging.md) | Esbabbler — its components, store, composables, services and routers               |
+| [platform](platform.md)   | the resource explorer, the sheet editor and the other editors                      |
+| [products](products.md)   | the smaller products — posts, the clicker, achievements                            |
+| [dungeons](dungeons.md)   | the game                                                                           |
+| [server](server.md)       | `apps/web/server` — routers, procedure builders, guards and services               |
+| [shared](shared.md)       | `apps/web/shared` and `app/components/Styled` — what both halves of the app read   |
+| [packages](packages.md)   | every workspace package outside `apps/web`                                         |
+| [tooling](tooling.md)     | `scripts/`, `.agents/`, the app's root config suites and `content/`                |
 
 The area names are [quality](../quality/)'s, so "was this area swept, for which question, and when" reads off one
 set of names across both ledgers.
@@ -85,7 +85,7 @@ rule would move it into.
 
 ## The environment a suite declares
 
-`packages/app`'s vitest config leaves every file in the node environment and lets `// @vitest-environment nuxt`
+`apps/web`'s vitest config leaves every file in the node environment and lets `// @vitest-environment nuxt`
 opt in, because the nuxt environment builds the app per file — it is the difference between the suite's plain
 files averaging well under a second and its nuxt files averaging several. So the directive is part of what a
 test costs, and a suite that carries it without needing it is the same waste as a test that proves nothing.
@@ -100,7 +100,7 @@ file, because the failure names the global that was missing.
 
 - Coverage thresholds are not a reason to keep a test — a number that only holds because a test restates a
   constant is measuring nothing.
-- `packages/app/uno.config.test.ts` and `packages/app/vuetify.config.test.ts` read as config restatements and are
+- `apps/web/uno.config.test.ts` and `apps/web/vuetify.config.test.ts` read as config restatements and are
   not: both snapshot **resolved** output, so the edit they catch is a `unocss` or `vuetify` bump moving a derived
   rule, colour or default with no diff in this repo. The `unocss` skill owns the reason; a pass that reaches them
   reads that first. They were deleted once on the restatement rule alone, which is why the reason is written

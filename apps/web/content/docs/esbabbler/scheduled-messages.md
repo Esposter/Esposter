@@ -90,10 +90,10 @@ All under `message.scheduledMessageJob.`:
 
 ## Key files
 
-| File                                                                         | Role                          |
-| :--------------------------------------------------------------------------- | :---------------------------- |
-| `packages/db-schema/src/schema/scheduledMessageJobsInMessage.ts`             | job table                     |
-| `packages/app/server/trpc/routers/message/scheduledMessageJob.ts`            | scheduling/cancel/list router |
-| `packages/app/server/composables/azure/serviceBus/useServiceBusSender.ts`    | Service Bus scheduling        |
-| `packages/azure-functions/src/functions/processScheduledMessageJob.ts`       | worker trigger                |
-| `packages/azure-functions/src/handlers/processScheduledMessageJobHandler.ts` | worker logic + guards         |
+| File                                                                  | Role                          |
+| :-------------------------------------------------------------------- | :---------------------------- |
+| `packages/db-schema/src/schema/scheduledMessageJobsInMessage.ts`      | job table                     |
+| `apps/web/server/trpc/routers/message/scheduledMessageJob.ts`         | scheduling/cancel/list router |
+| `apps/web/server/composables/azure/serviceBus/useServiceBusSender.ts` | Service Bus scheduling        |
+| `apps/functions/src/functions/processScheduledMessageJob.ts`          | worker trigger                |
+| `apps/functions/src/handlers/processScheduledMessageJobHandler.ts`    | worker logic + guards         |

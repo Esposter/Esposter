@@ -2,29 +2,29 @@
 
 | Unit                                                   | Swept      | Notes                                                    |
 | ------------------------------------------------------ | ---------- | -------------------------------------------------------- |
-| `packages/app` — `app/components`                      | 2026-09-05 | the densest prose in the app                             |
-| `packages/app` — `app/services`, `app/util`            | 2026-09-05 | the separator and alerting rules, restated per call site |
-| `packages/app` — `app/composables/message`             | 2026-09-05 | the file, room and subscribable trees                    |
-| `packages/app` — the rest of `app/composables`         | 2026-09-05 | the pagination binder and readiness rules, per call site |
-| `packages/app` — `app/models`, `app/types`             | 2026-09-05 | the dungeons tree's legacy prose                         |
-| `packages/app` — `app/store`                           | 2026-09-05 | the rollback rationale, restated per call site           |
-| `packages/app` — `app/pages`, `layouts`, the rest      | 2026-09-05 | plus `middleware`, `plugins`, `assets`                   |
-| `packages/app` — `server/trpc/routers`                 | 2026-09-05 | the per-type router suites                               |
-| `packages/app` — `server/trpc/routers` subtrees        | 2026-09-05 | `message`, `room`, `call`                                |
-| `packages/app` — the rest of `server/trpc`             | 2026-09-05 | `guards`, `middleware`, `procedure`, `plugins`, root     |
-| `packages/app` — `server/services/resource`            | 2026-09-05 |                                                          |
-| `packages/app` — `server/services/message`             | 2026-09-05 |                                                          |
-| `packages/app` — `server/services` — the dense rest    | 2026-09-05 | `blueprint`, `azure`, `storage`, `survey`, `program`     |
-| `packages/app` — the rest of `server/services`         | 2026-09-05 |                                                          |
-| `packages/app` — the rest of `server`                  | 2026-09-05 | `models`, `composables`, `api`, `plugins`, `db`, root    |
-| `packages/app` — `shared/models/resource`              | 2026-09-05 |                                                          |
-| `packages/app` — `shared/models/db`                    | 2026-09-05 |                                                          |
-| `packages/app` — the rest of `shared/models`           | 2026-09-05 |                                                          |
-| `packages/app` — `shared/services`                     | 2026-09-05 |                                                          |
-| `packages/app` — the rest of `shared`                  | 2026-09-05 | `util`, `types`, `assets`, `test`                        |
-| `packages/app` — `configuration`, `content`            | 2026-09-05 | CSP labels, Nuxt config prose                            |
-| `packages/azure-functions` — `handlers`                | 2026-09-05 | the densest prose in the package                         |
-| `packages/azure-functions` — `services`, the rest      | 2026-09-05 | plus `functions`, `hooks`, `models`, `index.test.ts`     |
+| `apps/web` — `app/components`                          | 2026-09-05 | the densest prose in the app                             |
+| `apps/web` — `app/services`, `app/util`                | 2026-09-05 | the separator and alerting rules, restated per call site |
+| `apps/web` — `app/composables/message`                 | 2026-09-05 | the file, room and subscribable trees                    |
+| `apps/web` — the rest of `app/composables`             | 2026-09-05 | the pagination binder and readiness rules, per call site |
+| `apps/web` — `app/models`, `app/types`                 | 2026-09-05 | the dungeons tree's legacy prose                         |
+| `apps/web` — `app/store`                               | 2026-09-05 | the rollback rationale, restated per call site           |
+| `apps/web` — `app/pages`, `layouts`, the rest          | 2026-09-05 | plus `middleware`, `plugins`, `assets`                   |
+| `apps/web` — `server/trpc/routers`                     | 2026-09-05 | the per-type router suites                               |
+| `apps/web` — `server/trpc/routers` subtrees            | 2026-09-05 | `message`, `room`, `call`                                |
+| `apps/web` — the rest of `server/trpc`                 | 2026-09-05 | `guards`, `middleware`, `procedure`, `plugins`, root     |
+| `apps/web` — `server/services/resource`                | 2026-09-05 |                                                          |
+| `apps/web` — `server/services/message`                 | 2026-09-05 |                                                          |
+| `apps/web` — `server/services` — the dense rest        | 2026-09-05 | `blueprint`, `azure`, `storage`, `survey`, `program`     |
+| `apps/web` — the rest of `server/services`             | 2026-09-05 |                                                          |
+| `apps/web` — the rest of `server`                      | 2026-09-05 | `models`, `composables`, `api`, `plugins`, `db`, root    |
+| `apps/web` — `shared/models/resource`                  | 2026-09-05 |                                                          |
+| `apps/web` — `shared/models/db`                        | 2026-09-05 |                                                          |
+| `apps/web` — the rest of `shared/models`               | 2026-09-05 |                                                          |
+| `apps/web` — `shared/services`                         | 2026-09-05 |                                                          |
+| `apps/web` — the rest of `shared`                      | 2026-09-05 | `util`, `types`, `assets`, `test`                        |
+| `apps/web` — `configuration`, `content`                | 2026-09-05 | CSP labels, Nuxt config prose                            |
+| `apps/functions` — `handlers`                          | 2026-09-05 | the densest prose in the package                         |
+| `apps/functions` — `services`, the rest                | 2026-09-05 | plus `functions`, `hooks`, `models`, `index.test.ts`     |
 | `packages/azure-mock`                                  | 2026-09-05 | filter/search/container mocks                            |
 | `packages/configuration`                               | 2026-09-05 | external lists, `global.d.ts`                            |
 | `packages/db-mock`                                     | 2026-09-05 |                                                          |
@@ -34,7 +34,7 @@
 | `packages/db-schema` — `models`                        | 2026-09-05 | entity classes, Azure payloads                           |
 | `packages/db-schema` — `schema`, `relations`           | 2026-09-05 | tables and their v2 relations                            |
 | `packages/db-schema` — `services`, package root        | 2026-09-05 | `schema.test.ts`, `pgTable.ts`                           |
-| `packages/infra`                                       | 2026-09-05 | event subscriptions, GitHub rulesets                     |
+| `apps/infra`                                           | 2026-09-05 | event subscriptions, GitHub rulesets                     |
 | `packages/parse-tmx`                                   | 2026-09-05 | `TMXNode.ts`                                             |
 | `packages/shared`, `packages/shared-node`              | 2026-09-05 | `takeOne`                                                |
 | `packages/virrun` — `models`, package root             | 2026-09-05 |                                                          |
@@ -60,6 +60,6 @@ Greps, per unit:
 
 Never swept anywhere: 3-line `//` blocks with every line short.
 
-Excluded: `packages/app/configuration/plugins/fixAjv.ts` + test (numbered step list is a deliberate reference) · `packages/app/shared/types/nuxt.d.ts`, `packages/app/app/types/desmos.d.ts`, `packages/configuration/types/global.d.ts`, `packages/vue-phaserjs/auto-imports.d.ts` (vendored/generated) · `packages/app/app/util/math/random/getRandomValues.ts`, `packages/azure/src/services/table/getTableNullClause.ts` (source-URL references) · `*/tsdown.config.ts`, `@ts-expect-error` / `oxlint-disable` lines (directives) · doc blocks copied verbatim from an upstream type (`azure-mock`'s paging interfaces, the Desmos enums) — they are kept diff-identical to their source, same ground as an unimplemented interface stub.
+Excluded: `apps/web/configuration/plugins/fixAjv.ts` + test (numbered step list is a deliberate reference) · `apps/web/shared/types/nuxt.d.ts`, `apps/web/app/types/desmos.d.ts`, `packages/configuration/types/global.d.ts`, `packages/vue-phaserjs/auto-imports.d.ts` (vendored/generated) · `apps/web/app/util/math/random/getRandomValues.ts`, `packages/azure/src/services/table/getTableNullClause.ts` (source-URL references) · `*/tsdown.config.ts`, `@ts-expect-error` / `oxlint-disable` lines (directives) · doc blocks copied verbatim from an upstream type (`azure-mock`'s paging interfaces, the Desmos enums) — they are kept diff-identical to their source, same ground as an unimplemented interface stub.
 
 Enforceable next: comment length and blank-before-comment, via a custom oxlint plugin — oxlint excludes layout rules by design, so this needs a JS plugin rather than a stock rule. SFC block padding already went to `vue/padding-line-between-blocks`. Grep 8 wants the same plugin and is the stronger candidate, because it is the one rule here whose violations another rule's `--fix` actively creates: the plugin knows a wrapped line's opening word and can check it against the identifiers in scope, which a grep can only approximate.

@@ -1,7 +1,7 @@
-// Bit order is the wire format and is fixed by `packages/app/content/docs/esbabbler/rbac.md`; the sort is
+// Bit order is the wire format and is fixed by `apps/web/content/docs/esbabbler/rbac.md`; the sort is
 // Disabled because that order, not the alphabet, is the contract. It runs category by category — text channel,
 // General, moderation, advanced — and what each bit grants is said once, on the screen that grants it, by
-// `packages/app/app/services/message/room/role/RoomPermissionDefinitionMap.ts`.
+// `apps/web/app/services/message/room/role/RoomPermissionDefinitionMap.ts`.
 /* eslint-disable perfectionist/sort-objects */
 export const RoomPermission = {
   ReadMessages: 1n << 0n,

@@ -117,25 +117,25 @@ stateDiagram-v2
 
 ## Key files
 
-| File                                                                                                                 | Role                                                                        |
-| :------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `packages/azure-functions/src/functions/replayDeadLetterEvent.ts`                                                    | Event Grid trigger registration for the replay function                     |
-| `packages/azure-functions/src/handlers/replayDeadLetterEventHandler.ts`                                              | Validate, partition the batch, republish in chunks, archive or quarantine   |
-| `packages/shared/src/util/array/chunkBySerializedSize.ts`                                                            | Greedy chunking against a serialized-JSON byte budget and an event count    |
-| `packages/azure-functions/src/services/checkIsReplayable.ts`                                                         | The replay cap and handler-idempotency bars a dead-lettered event must pass |
-| `packages/azure-functions/src/services/deleteReplayedBlob.ts`                                                        | Best-effort delete of a handled original, logged rather than rethrown       |
-| `packages/db-schema/src/services/azure/function/AzureFunctionIsIdempotentMap.ts`                                     | Which handlers a replay may safely rerun                                    |
-| `packages/azure-functions/src/services/writeDeadLetterBlob.ts`                                                       | Copy a payload under a prefix — copy only, the handler owns the delete      |
-| `packages/azure-functions/src/services/parseReplayId.ts`                                                             | Split an event id into its original identity and replay count               |
-| `packages/azure-functions/src/services/formatReplayId.ts`                                                            | Write the `<eventId>\|<attempt>` id a republished event is sent with        |
-| `packages/azure-functions/src/services/constants.ts`                                                                 | `MAX_DEAD_LETTER_REPLAY_ATTEMPTS`                                           |
-| `packages/azure-functions/src/models/ReplayId.ts`                                                                    | The parsed `{ eventId, replayAttempts }` pair                               |
-| `packages/db-schema/src/models/azure/eventGrid/EventGridEventInput.ts`                                               | The shared event envelope and its `createEventGridEventSchema` factory      |
-| `packages/db-schema/src/services/azure/container/constants.ts`                                                       | Subject, `archived/`, and `quarantine/` prefixes shared with the infra code |
-| `packages/infra/src/azure/resources/Microsoft.EventGrid/systemTopics/`                                               | Per-environment system topic over the storage account                       |
-| `packages/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/`                                         | Ten application subscriptions plus the two filtered replay subscriptions    |
-| `packages/infra/src/azure/resources/Microsoft.Storage/storageAccounts/blobContainers/prodstesposter001Deadletter.ts` | `deadletter` container                                                      |
-| `packages/infra/src/azure/resources/Microsoft.Storage/storageAccounts/managementPolicies/`                           | 30-day lifecycle delete rule for the dead-letter prefix                     |
+| File                                                                                                             | Role                                                                        |
+| :--------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `apps/functions/src/functions/replayDeadLetterEvent.ts`                                                          | Event Grid trigger registration for the replay function                     |
+| `apps/functions/src/handlers/replayDeadLetterEventHandler.ts`                                                    | Validate, partition the batch, republish in chunks, archive or quarantine   |
+| `packages/shared/src/util/array/chunkBySerializedSize.ts`                                                        | Greedy chunking against a serialized-JSON byte budget and an event count    |
+| `apps/functions/src/services/checkIsReplayable.ts`                                                               | The replay cap and handler-idempotency bars a dead-lettered event must pass |
+| `apps/functions/src/services/deleteReplayedBlob.ts`                                                              | Best-effort delete of a handled original, logged rather than rethrown       |
+| `packages/db-schema/src/services/azure/function/AzureFunctionIsIdempotentMap.ts`                                 | Which handlers a replay may safely rerun                                    |
+| `apps/functions/src/services/writeDeadLetterBlob.ts`                                                             | Copy a payload under a prefix — copy only, the handler owns the delete      |
+| `apps/functions/src/services/parseReplayId.ts`                                                                   | Split an event id into its original identity and replay count               |
+| `apps/functions/src/services/formatReplayId.ts`                                                                  | Write the `<eventId>\|<attempt>` id a republished event is sent with        |
+| `apps/functions/src/services/constants.ts`                                                                       | `MAX_DEAD_LETTER_REPLAY_ATTEMPTS`                                           |
+| `apps/functions/src/models/ReplayId.ts`                                                                          | The parsed `{ eventId, replayAttempts }` pair                               |
+| `packages/db-schema/src/models/azure/eventGrid/EventGridEventInput.ts`                                           | The shared event envelope and its `createEventGridEventSchema` factory      |
+| `packages/db-schema/src/services/azure/container/constants.ts`                                                   | Subject, `archived/`, and `quarantine/` prefixes shared with the infra code |
+| `apps/infra/src/azure/resources/Microsoft.EventGrid/systemTopics/`                                               | Per-environment system topic over the storage account                       |
+| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/`                                         | Ten application subscriptions plus the two filtered replay subscriptions    |
+| `apps/infra/src/azure/resources/Microsoft.Storage/storageAccounts/blobContainers/prodstesposter001Deadletter.ts` | `deadletter` container                                                      |
+| `apps/infra/src/azure/resources/Microsoft.Storage/storageAccounts/managementPolicies/`                           | 30-day lifecycle delete rule for the dead-letter prefix                     |
 
 ## Notes
 

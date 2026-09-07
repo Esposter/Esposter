@@ -48,7 +48,7 @@ flowchart TD
 
 ## Key files
 
-Paths relative to `packages/app`.
+Paths relative to `apps/web`.
 
 | File                                          | Role                                              |
 | --------------------------------------------- | ------------------------------------------------- |

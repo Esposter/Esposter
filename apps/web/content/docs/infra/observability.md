@@ -21,7 +21,7 @@ One consequence to know: nothing pages on the [Event Grid dead-letter](/docs/inf
 
 ## Key files
 
-| File                                                                | Role                                                 |
-| :------------------------------------------------------------------ | :--------------------------------------------------- |
-| `packages/infra/src/azure/resources/Microsoft.Consumption/budgets/` | The `$0.01` guard budgets — the actual cost ceiling  |
-| `packages/infra/src/azure/resources/Microsoft.Web/sites/`           | Function Apps, carrying no App Insights app settings |
+| File                                                            | Role                                                 |
+| :-------------------------------------------------------------- | :--------------------------------------------------- |
+| `apps/infra/src/azure/resources/Microsoft.Consumption/budgets/` | The `$0.01` guard budgets — the actual cost ceiling  |
+| `apps/infra/src/azure/resources/Microsoft.Web/sites/`           | Function Apps, carrying no App Insights app settings |

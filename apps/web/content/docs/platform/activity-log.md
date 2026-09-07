@@ -62,9 +62,9 @@ Soft delete leaves the partition intact: history survives the [recycle bin](/doc
 | ------------------------------------------------------------------- | -------------------------------------------- |
 | `packages/db-schema/src/models/resource/ResourceActivityEntity.ts`  | The entity + its schema                      |
 | `packages/db-schema/src/models/azure/table/AzureTable.ts`           | `ResourceActivity` table key                 |
-| `packages/app/server/services/resource/writeResourceActivity.ts`    | Best-effort emit + `ContentSaved` coalescing |
+| `apps/web/server/services/resource/writeResourceActivity.ts`        | Best-effort emit + `ContentSaved` coalescing |
 | `packages/db/src/services/resource/deleteTablePartitionEntities.ts` | Purge-time partition sweep                   |
-| `packages/app/app/components/Resource/ActivityLog.vue`              | The blade timeline                           |
+| `apps/web/app/components/Resource/ActivityLog.vue`                  | The blade timeline                           |
 
 ## Notes
 

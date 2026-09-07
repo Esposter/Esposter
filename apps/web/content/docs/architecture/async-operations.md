@@ -5,7 +5,7 @@ description: One primitive decides concurrency from what an operation targets an
 
 # Async Operations
 
-Every user-facing async operation on the client declares exactly two things: **what it targets** and **whether it reads or writes**. `useMutation` (`packages/app/app/composables/shared/useMutation.ts`) derives the **default** concurrency behaviour from those two facts, and the two opt-ins below — `isExclusive` and `isSupersede` — are the only things that change it.
+Every user-facing async operation on the client declares exactly two things: **what it targets** and **whether it reads or writes**. `useMutation` (`apps/web/app/composables/shared/useMutation.ts`) derives the **default** concurrency behaviour from those two facts, and the two opt-ins below — `isExclusive` and `isSupersede` — are the only things that change it.
 
 ## No call site orders its own async work
 
@@ -161,12 +161,12 @@ flowchart TD
 
 ## Key files
 
-| File                                                           | Role                                                                           |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `packages/app/app/composables/shared/useMutation.ts`           | The primitive — per-target queue, latest-wins guard, pending counts, reporting |
-| `packages/app/app/composables/shared/useQuery.ts`              | Read composable built on `executeQuery` — auto-fetch on setup, `data` ref      |
-| `packages/app/app/models/shared/MutationStatus.ts`             | The four outcomes                                                              |
-| `packages/app/shared/util/function/getSynchronizedFunction.ts` | Fires an async operation from a sync callback slot                             |
+| File                                                       | Role                                                                           |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `apps/web/app/composables/shared/useMutation.ts`           | The primitive — per-target queue, latest-wins guard, pending counts, reporting |
+| `apps/web/app/composables/shared/useQuery.ts`              | Read composable built on `executeQuery` — auto-fetch on setup, `data` ref      |
+| `apps/web/app/models/shared/MutationStatus.ts`             | The four outcomes                                                              |
+| `apps/web/shared/util/function/getSynchronizedFunction.ts` | Fires an async operation from a sync callback slot                             |
 
 ## Notes
 

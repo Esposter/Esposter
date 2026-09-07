@@ -17,7 +17,7 @@ The chosen type is part of the save (`clicker.type`), so it persists like any ot
 
 ## Key files
 
-Paths relative to `packages/app`.
+Paths relative to `apps/web`.
 
 | File                                                 | Role                                                    |
 | ---------------------------------------------------- | ------------------------------------------------------- |

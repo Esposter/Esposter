@@ -7,7 +7,7 @@ description: Proposal — split the workspace into apps/ for what the repo runs 
 
 Every workspace member lives under `packages/`, and three of them are not packages. The Nuxt app, the Azure Functions app and the Pulumi program are **entrypoints**: nothing in the workspace imports them, none is published, and each is driven by its own framework rather than by the shared tsdown factory. Everything else is a library that exists to be imported.
 
-The tree cannot say which is which, so every tool that wants one group has to enumerate the other. The result is a single exclusion — "everything except the app" — restated in four syntaxes across the root manifest, three workflows and four tool configs: `--filter "!@esposter/app"` in six root scripts, `--ignore-pattern "packages/app/**"` on both oxlint invocations, `--project "!@esposter/app"` for the test run, an `exclude` entry in the TypeDoc config, and a content-hash cache key that hashes `packages/` and then **subtracts** `packages/app` back out. None of them is wrong. They are all the same fact, written down a dozen times, and a second app would have to be added to every one of them by hand.
+The tree cannot say which is which, so every tool that wants one group has to enumerate the other. The result is a single exclusion — "everything except the app" — restated in four syntaxes across the root manifest, three workflows and four tool configs: `--filter "!@esposter/web"` in six root scripts, `--ignore-pattern "apps/web/**"` on both oxlint invocations, `--project "!@esposter/web"` for the test run, an `exclude` entry in the TypeDoc config, and a content-hash cache key that hashes `packages/` and then **subtracts** `apps/web` back out. None of them is wrong. They are all the same fact, written down a dozen times, and a second app would have to be added to every one of them by hand.
 
 ## The decision
 
@@ -43,16 +43,16 @@ The same boundary lets the two cache keys become plain statements of their input
 
 **This changes** where three packages sit and what two of them are called, `pnpm-workspace.yaml`, and every tool config that names a moved path. It then deletes the exclusions those paths existed to work around, and makes `scripts/` a workspace member so the checks reach it the way they reach everything else ([the scripts package](/docs/proposals/refactors/workspace-layout/scripts-package)). The LiveKit deployments move under `apps/infra/docker/`, which gives them the owner that already provisions the service they configure.
 
-**It does not change** any source file's contents, any import between packages (a workspace import goes by name, and only two names move), the published set or its versioning, the tsdown factories, the virrun backends, or what any check actually checks. No package is added, merged or removed.
+**It does not change** any source file's contents, any import between packages (a workspace import goes by name, and only two names move), the published set or its versioning, the tsdown factories, the virrun backends, or what any check actually checks. No **product** package is added, merged or removed, and nothing published changes: the one member the workspace gains is `scripts/`, a private tree that already existed and already ran, joining the list that names it.
 
 ## What this does not fix
 
 The layout is one cause among several, and the honest accounting matters more than the win:
 
-- **The `virrun --` prefixes** are a platform sandbox decision. They are unaffected — and virrun itself needs no code change, because it discovers the Nuxt package from its config rather than from a path, so every `packages/app/.nuxt` in that package is a comment.
+- **The `virrun --` prefixes** are a platform sandbox decision. They are unaffected — and virrun itself needs no code change, because it discovers the Nuxt package from its config rather than from a path, so every `apps/web/.nuxt` in that package is a comment.
 - **`crossOS` and the shell script pairs behind it** exist because Windows and POSIX disagree, which no directory fixes.
 - **`scriptsComments`** exists because JSON has no comments.
-- **The prose.** Well over a hundred hand-written files name `packages/app`, and nothing fails when one of them goes stale. That sweep is the third pull request and the largest share of the work.
+- **The prose.** Well over a hundred hand-written files name `apps/web`, and nothing fails when one of them goes stale. That sweep is the third pull request and the largest share of the work.
 
 ## The pages
 

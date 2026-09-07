@@ -28,14 +28,14 @@ flowchart LR
 
 ## Key files
 
-| File                                                                         | Role                                       |
-| ---------------------------------------------------------------------------- | ------------------------------------------ |
-| `packages/app/app/services/grapesjs/createSurveyInviteBlocks.ts`             | shared core — survey list to block defs    |
-| `packages/app/app/services/emailEditor/createEmailSurveyInviteBlocks.ts`     | MJML button flavour                        |
-| `packages/app/app/services/webpageEditor/createWebpageSurveyInviteBlocks.ts` | plain-HTML button flavour                  |
-| `packages/app/app/composables/survey/useReadPublishedSurveys.ts`             | the shared block source                    |
-| `packages/app/app/composables/grapesjs/useSurveyInviteBlocks.ts`             | the shared re-sync watch both editors call |
-| `packages/app/app/services/grapesjs/setBlocks.ts`                            | wholesale block-category re-sync           |
+| File                                                                     | Role                                       |
+| ------------------------------------------------------------------------ | ------------------------------------------ |
+| `apps/web/app/services/grapesjs/createSurveyInviteBlocks.ts`             | shared core — survey list to block defs    |
+| `apps/web/app/services/emailEditor/createEmailSurveyInviteBlocks.ts`     | MJML button flavour                        |
+| `apps/web/app/services/webpageEditor/createWebpageSurveyInviteBlocks.ts` | plain-HTML button flavour                  |
+| `apps/web/app/composables/survey/useReadPublishedSurveys.ts`             | the shared block source                    |
+| `apps/web/app/composables/grapesjs/useSurveyInviteBlocks.ts`             | the shared re-sync watch both editors call |
+| `apps/web/app/services/grapesjs/setBlocks.ts`                            | wholesale block-category re-sync           |
 
 ## Notes
 

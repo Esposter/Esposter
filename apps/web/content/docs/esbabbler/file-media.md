@@ -78,24 +78,24 @@ Removing an attachment (`deleteFile`), deleting a message with attachments, or d
 
 ## Key files
 
-| File                                                                                 | Role                                                        |
-| :----------------------------------------------------------------------------------- | :---------------------------------------------------------- |
-| `packages/app/app/services/file/uploadFileToSas.ts`                                  | The one SAS upload round-trip every site funnels through    |
-| `packages/app/app/services/file/validateFile.ts`                                     | Single file validator returning a discriminated result      |
-| `packages/app/app/services/file/generateImageThumbnail.ts`                           | Canvas downscale to a WebP thumbnail blob                   |
-| `packages/app/app/components/Message/Model/Message/File/ViewerDialog.vue`            | The media viewer — one file, the gallery around it          |
-| `packages/app/app/store/message/file/dialog.ts`                                      | The viewer's target id                                      |
-| `packages/app/app/composables/message/file/useUploadFiles.ts`                        | Composer path — validate, upload original, upload thumbnail |
-| `packages/app/app/composables/message/file/useReadFileUrls.ts`                       | Batch-resolves originals and thumbnails into read urls      |
-| `packages/app/app/components/Message/Model/FileRenderer/Image.vue`                   | Renders the thumbnail inline, original in the viewer        |
-| `packages/db-schema/src/schema/roomsInMessage.ts`                                    | `maxFileSizeBytes` + `allowedMimeCategories` columns        |
-| `packages/db-schema/src/services/file/getMimeCategory.ts`                            | Mimetype to coarse category mapping                         |
-| `packages/db/src/services/azure/container/generateUploadFileSasEntities.ts`          | Issues the original and sibling thumbnail write SAS         |
-| `packages/db/src/services/azure/search/filtersToClauses.ts`                          | `has: file` — the non-empty-attachments clause              |
-| `packages/app/app/components/Message/Model/Room/Settings/Type/Attachments/Index.vue` | Room-settings Moderation page editing the limits            |
-| `packages/app/server/services/azure/eventGrid/publishBlobDeletion.ts`                | The one chunked best-effort deletion publish                |
-| `packages/azure-functions/src/handlers/processBlobDeletionHandler.ts`                | Durable blob deletion — idempotent `deleteIfExists` worker  |
-| `packages/db-schema/src/models/azure/eventGrid/BlobDeletionEventGridData.ts`         | The deletion event payload and its schema                   |
+| File                                                                             | Role                                                        |
+| :------------------------------------------------------------------------------- | :---------------------------------------------------------- |
+| `apps/web/app/services/file/uploadFileToSas.ts`                                  | The one SAS upload round-trip every site funnels through    |
+| `apps/web/app/services/file/validateFile.ts`                                     | Single file validator returning a discriminated result      |
+| `apps/web/app/services/file/generateImageThumbnail.ts`                           | Canvas downscale to a WebP thumbnail blob                   |
+| `apps/web/app/components/Message/Model/Message/File/ViewerDialog.vue`            | The media viewer — one file, the gallery around it          |
+| `apps/web/app/store/message/file/dialog.ts`                                      | The viewer's target id                                      |
+| `apps/web/app/composables/message/file/useUploadFiles.ts`                        | Composer path — validate, upload original, upload thumbnail |
+| `apps/web/app/composables/message/file/useReadFileUrls.ts`                       | Batch-resolves originals and thumbnails into read urls      |
+| `apps/web/app/components/Message/Model/FileRenderer/Image.vue`                   | Renders the thumbnail inline, original in the viewer        |
+| `packages/db-schema/src/schema/roomsInMessage.ts`                                | `maxFileSizeBytes` + `allowedMimeCategories` columns        |
+| `packages/db-schema/src/services/file/getMimeCategory.ts`                        | Mimetype to coarse category mapping                         |
+| `packages/db/src/services/azure/container/generateUploadFileSasEntities.ts`      | Issues the original and sibling thumbnail write SAS         |
+| `packages/db/src/services/azure/search/filtersToClauses.ts`                      | `has: file` — the non-empty-attachments clause              |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Attachments/Index.vue` | Room-settings Moderation page editing the limits            |
+| `apps/web/server/services/azure/eventGrid/publishBlobDeletion.ts`                | The one chunked best-effort deletion publish                |
+| `apps/functions/src/handlers/processBlobDeletionHandler.ts`                      | Durable blob deletion — idempotent `deleteIfExists` worker  |
+| `packages/db-schema/src/models/azure/eventGrid/BlobDeletionEventGridData.ts`     | The deletion event payload and its schema                   |
 
 ## Notes
 

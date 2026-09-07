@@ -35,10 +35,10 @@ Any future setting added in the portal is therefore drift by definition, and the
 
 ## Key files
 
-| File                                                                            | Role                           |
-| :------------------------------------------------------------------------------ | :----------------------------- |
-| `packages/infra/src/azure/resources/Microsoft.Web/sites/devFuncEsposter001.ts`  | Dev Function App app settings  |
-| `packages/infra/src/azure/resources/Microsoft.Web/sites/prodFuncEsposter001.ts` | Prod Function App app settings |
+| File                                                                        | Role                           |
+| :-------------------------------------------------------------------------- | :----------------------------- |
+| `apps/infra/src/azure/resources/Microsoft.Web/sites/devFuncEsposter001.ts`  | Dev Function App app settings  |
+| `apps/infra/src/azure/resources/Microsoft.Web/sites/prodFuncEsposter001.ts` | Prod Function App app settings |
 
 ## Notes
 

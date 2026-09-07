@@ -55,7 +55,7 @@ Attack visuals are Vue components (`DungeonsBattleAttackSlash`, `DungeonsBattleA
 
 ## Key files
 
-Paths relative to `packages/app/app`.
+Paths relative to `apps/web/app`.
 
 | File                                                   | Role                                              |
 | ------------------------------------------------------ | ------------------------------------------------- |

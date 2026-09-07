@@ -58,9 +58,9 @@ When any participant publishes a screen track, the shared `MessageContentCallSta
 
 ## Key files
 
-| File                                                                      | Role                                         |
-| :------------------------------------------------------------------------ | :------------------------------------------- |
-| `packages/app/app/components/Message/Content/Call/ScreenShare/Stage.vue`  | presenter `<video>` stage                    |
-| `packages/app/app/components/Message/Content/Call/ScreenShare/Button.vue` | start/stop toggle                            |
-| `packages/app/app/store/message/room/call/media.ts`                       | screenshare/pin state + local/remote streams |
-| `packages/app/app/store/message/room/liveKit.ts`                          | `setScreenShare` + screen track event bridge |
+| File                                                                  | Role                                         |
+| :-------------------------------------------------------------------- | :------------------------------------------- |
+| `apps/web/app/components/Message/Content/Call/ScreenShare/Stage.vue`  | presenter `<video>` stage                    |
+| `apps/web/app/components/Message/Content/Call/ScreenShare/Button.vue` | start/stop toggle                            |
+| `apps/web/app/store/message/room/call/media.ts`                       | screenshare/pin state + local/remote streams |
+| `apps/web/app/store/message/room/liveKit.ts`                          | `setScreenShare` + screen track event bridge |

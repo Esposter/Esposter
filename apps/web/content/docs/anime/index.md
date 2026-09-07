@@ -11,7 +11,7 @@ Each drawing is a tiny component pairing an expressions file with `VisualDesmosD
 
 ## Key files
 
-Paths relative to `packages/app/app`.
+Paths relative to `apps/web/app`.
 
 | File                             | Role                                        |
 | -------------------------------- | ------------------------------------------- |

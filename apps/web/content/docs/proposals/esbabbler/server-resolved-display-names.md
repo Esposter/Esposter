@@ -75,11 +75,11 @@ Step 5 is separable and lands second — steps 1–4 fix a wrong answer, step 5 
 
 ## Key files
 
-| File                                                                | Role                                      |
-| :------------------------------------------------------------------ | :---------------------------------------- |
-| `packages/app/server/trpc/routers/room/index.ts`                    | `readMembers`, `readRooms`                |
-| `packages/app/server/services/pagination/cursor/getCursorWhere.ts`  | cursor key, table-only today              |
-| `packages/app/app/composables/message/room/useReadMembers.ts`       | the page read and its metadata fan-out    |
-| `packages/app/app/store/message/user/member.ts`                     | the `members` sort and `getMemberName`    |
-| `packages/app/app/store/message/room/userToRoom.ts`                 | `getDisplayName`, the render-path overlay |
-| `packages/app/app/composables/message/room/useDirectMessageName.ts` | the client-side DM name                   |
+| File                                                            | Role                                      |
+| :-------------------------------------------------------------- | :---------------------------------------- |
+| `apps/web/server/trpc/routers/room/index.ts`                    | `readMembers`, `readRooms`                |
+| `apps/web/server/services/pagination/cursor/getCursorWhere.ts`  | cursor key, table-only today              |
+| `apps/web/app/composables/message/room/useReadMembers.ts`       | the page read and its metadata fan-out    |
+| `apps/web/app/store/message/user/member.ts`                     | the `members` sort and `getMemberName`    |
+| `apps/web/app/store/message/room/userToRoom.ts`                 | `getDisplayName`, the render-path overlay |
+| `apps/web/app/composables/message/room/useDirectMessageName.ts` | the client-side DM name                   |

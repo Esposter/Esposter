@@ -5,7 +5,7 @@ description: How Esposter's Azure resources are managed in Pulumi — one resour
 
 # Azure Pulumi Layout
 
-Every Azure resource Esposter runs is declared in `packages/infra`, which is the source of truth for both the development and production resource groups under a single Pulumi stack named `prod`. Anything created by hand in the portal is drift, not a resource — it is imported and declared, or it is deleted.
+Every Azure resource Esposter runs is declared in `apps/infra`, which is the source of truth for both the development and production resource groups under a single Pulumi stack named `prod`. Anything created by hand in the portal is drift, not a resource — it is imported and declared, or it is deleted.
 
 ## Layout rules
 
@@ -13,7 +13,7 @@ Every Azure resource Esposter runs is declared in `packages/infra`, which is the
 - **Source paths mirror ARM resource IDs**: `src/azure/resources/<ProviderNamespace>/<resourceType>/<resourceName>.ts`, e.g. `Microsoft.Web/sites/…`. Finding a resource in the Azure portal tells you exactly where its declaration lives.
 - **`protect: true`** on imported resources so a bad refactor can't delete live infrastructure.
 - **Providers are split**: `src/azure/` for Azure Native resources, `src/github/` for the `@pulumi/github` provider (collaborators, environments, labels, secrets via Pulumi ESC, and a single `develop`+`main` branch ruleset with `required_approving_review_count: 0`).
-- **CAF-aligned naming** with a `parent` hierarchy, documented in `packages/infra/docs/azure/naming-conventions.md` and followed by every dev and prod resource, stateless and stateful alike. Renaming a stateful resource moves its data, so the convention is applied at declaration time rather than corrected later.
+- **CAF-aligned naming** with a `parent` hierarchy, documented in `apps/infra/docs/azure/naming-conventions.md` and followed by every dev and prod resource, stateless and stateful alike. Renaming a stateful resource moves its data, so the convention is applied at declaration time rather than corrected later.
 - The package entrypoint `src/index.ts` is a generated ctix barrel; Pulumi executes the compiled `dist/index.js`.
 
 ## Resource inventory
@@ -36,16 +36,16 @@ What each provider namespace under `src/azure/resources/` holds:
 
 ## Key files
 
-| File                                                | Role                                                                |
-| --------------------------------------------------- | ------------------------------------------------------------------- |
-| `packages/infra/Pulumi.yaml` / `Pulumi.prod.yaml`   | Project + the single `prod` stack configuration                     |
-| `packages/infra/src/azure/resources/`               | One file per Azure resource, ARM-aligned paths                      |
-| `packages/infra/src/github/`                        | GitHub repository settings, labels, environments, rulesets, secrets |
-| `packages/infra/docs/azure/naming-conventions.md`   | CAF-aligned naming convention reference                             |
-| `packages/infra/docs/azure/security-constraints.md` | Hardening blockers and the app code paths gating each one           |
+| File                                            | Role                                                                |
+| ----------------------------------------------- | ------------------------------------------------------------------- |
+| `apps/infra/Pulumi.yaml` / `Pulumi.prod.yaml`   | Project + the single `prod` stack configuration                     |
+| `apps/infra/src/azure/resources/`               | One file per Azure resource, ARM-aligned paths                      |
+| `apps/infra/src/github/`                        | GitHub repository settings, labels, environments, rulesets, secrets |
+| `apps/infra/docs/azure/naming-conventions.md`   | CAF-aligned naming convention reference                             |
+| `apps/infra/docs/azure/security-constraints.md` | Hardening blockers and the app code paths gating each one           |
 
 ## Notes
 
 - App-plane settings are declared too: each Function App's runtime settings live in its `WebApp` declaration, so nothing about a deployed app is portal-only — see [Pulumi source of truth](/docs/infra/pulumi-source-of-truth).
 - The tag policy assignment was renamed onto the naming convention (`pa-require-application-tag` → `pa-esposter-001`), which is a replace, not an update. `protect: true` stays on the declaration, so the delete half needs one operator step first: `pulumi state unprotect "<old-urn>"`, then a single `pulumi up` deletes the old assignment and creates the renamed one. Without it the update aborts on the protected resource and nothing else in the plan lands either.
-- Not everything in the package is a Pulumi declaration: `packages/infra/data/searchIndexes/messages-index.json` holds the Azure AI Search index schema, which is a data-plane resource recreated from that file rather than managed by the provider ([Azure services](/docs/architecture/azure-services)).
+- Not everything in the package is a Pulumi declaration: `apps/infra/data/searchIndexes/messages-index.json` holds the Azure AI Search index schema, which is a data-plane resource recreated from that file rather than managed by the provider ([Azure services](/docs/architecture/azure-services)).

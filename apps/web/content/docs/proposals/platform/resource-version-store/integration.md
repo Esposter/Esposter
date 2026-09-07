@@ -71,13 +71,13 @@ The idle-window guard, the ring-buffer cap, the published channel's no-pruning r
 
 ## Key files
 
-| File                                                                     | Role                                                                     |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
-| `packages/app/server/services/resource/snapshot/takeResourceRevision.ts` | the version take — becomes a store write plus a row insert               |
-| `packages/app/server/services/resource/snapshot/readSnapshotHistory.ts`  | the prefix walk the listing uses — becomes a query over the version rows |
-| `packages/app/server/services/resource/snapshot/getSnapshotSummary.ts`   | the summary, unchanged, stored in a column instead of blob metadata      |
-| `packages/app/server/services/azure/eventGrid/publishBlobDeletion.ts`    | the deletion publish an eviction now hands an exact key set              |
-| `packages/db/src/services/storage/chargeStorageLedgerEntry.ts`           | the charge, now for the object a version stored                          |
-| `packages/db/src/services/storage/releaseStorageLedgerEntriesWhere.ts`   | the credit when a collected object is deleted                            |
-| `packages/azure-functions/src/handlers/processBlobDeletionHandler.ts`    | deletes and releases each wave, unchanged                                |
-| `packages/db-schema/src/schema/resources.ts`                             | the resource a version row hangs off, and the counter numbering it       |
+| File                                                                   | Role                                                                     |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`   | the version take — becomes a store write plus a row insert               |
+| `apps/web/server/services/resource/snapshot/readSnapshotHistory.ts`    | the prefix walk the listing uses — becomes a query over the version rows |
+| `apps/web/server/services/resource/snapshot/getSnapshotSummary.ts`     | the summary, unchanged, stored in a column instead of blob metadata      |
+| `apps/web/server/services/azure/eventGrid/publishBlobDeletion.ts`      | the deletion publish an eviction now hands an exact key set              |
+| `packages/db/src/services/storage/chargeStorageLedgerEntry.ts`         | the charge, now for the object a version stored                          |
+| `packages/db/src/services/storage/releaseStorageLedgerEntriesWhere.ts` | the credit when a collected object is deleted                            |
+| `apps/functions/src/handlers/processBlobDeletionHandler.ts`            | deletes and releases each wave, unchanged                                |
+| `packages/db-schema/src/schema/resources.ts`                           | the resource a version row hangs off, and the counter numbering it       |

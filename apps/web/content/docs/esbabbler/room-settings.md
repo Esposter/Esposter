@@ -53,14 +53,14 @@ The shared `MessageModelSettingsLeftSideBar` drawer is `permanent` only on deskt
 
 ## Key files
 
-| File                                                                  | Role                                                  |
-| :-------------------------------------------------------------------- | :---------------------------------------------------- |
-| `packages/app/app/models/message/room/SettingsType.ts`                | panel enum (values double as titles)                  |
-| `packages/app/app/models/message/room/SettingsCategory.ts`            | sidebar category enum                                 |
-| `packages/app/app/services/message/settings/SettingsCategoryMap.ts`   | category → panels grouping                            |
-| `packages/app/app/services/message/settings/SettingsListItemMap.ts`   | panel icons/colors                                    |
-| `packages/app/app/services/message/settings/SettingsContentMap.ts`    | panel → lazy component                                |
-| `packages/app/app/services/message/settings/SettingsPermissionMap.ts` | panel → required `RoomPermission`                     |
-| `packages/app/app/composables/message/room/useSaveRoom.ts`            | shared optimistic room-row save + key-scoped rollback |
-| `packages/app/app/components/Message/Model/Room/Settings/`            | dialog + sidebar + `Type/*` panels                    |
-| `packages/app/app/services/room/rbac/constants.ts`                    | the dialog's own gate, derived from the panel map     |
+| File                                                              | Role                                                  |
+| :---------------------------------------------------------------- | :---------------------------------------------------- |
+| `apps/web/app/models/message/room/SettingsType.ts`                | panel enum (values double as titles)                  |
+| `apps/web/app/models/message/room/SettingsCategory.ts`            | sidebar category enum                                 |
+| `apps/web/app/services/message/settings/SettingsCategoryMap.ts`   | category → panels grouping                            |
+| `apps/web/app/services/message/settings/SettingsListItemMap.ts`   | panel icons/colors                                    |
+| `apps/web/app/services/message/settings/SettingsContentMap.ts`    | panel → lazy component                                |
+| `apps/web/app/services/message/settings/SettingsPermissionMap.ts` | panel → required `RoomPermission`                     |
+| `apps/web/app/composables/message/room/useSaveRoom.ts`            | shared optimistic room-row save + key-scoped rollback |
+| `apps/web/app/components/Message/Model/Room/Settings/`            | dialog + sidebar + `Type/*` panels                    |
+| `apps/web/app/services/room/rbac/constants.ts`                    | the dialog's own gate, derived from the panel map     |

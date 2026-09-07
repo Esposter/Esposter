@@ -7,7 +7,7 @@ description: One cached-read primitive owns read-once-per-session, and a write i
 
 A handful of reads are the same for the whole session: the favourite set every row's star checks against, the recently-opened list Home previews, the storage number the meter renders, the message settings record the fullscreen dialog edits, one room's thread-follow state. Every surface that shows one asks for it on mount, and asking the server again on each mount is a round trip for an answer that cannot have changed.
 
-`useCachedRead` (`packages/app/app/composables/shared/useCachedRead.ts`) is the only thing that caches such a read, and `CacheTag` plus the cache registry are the only way one is invalidated. **No store keeps a read-once flag of its own**, and no composable holds a list of which caches a mutation affects.
+`useCachedRead` (`apps/web/app/composables/shared/useCachedRead.ts`) is the only thing that caches such a read, and `CacheTag` plus the cache registry are the only way one is invalidated. **No store keeps a read-once flag of its own**, and no composable holds a list of which caches a mutation affects.
 
 ## The primitive
 
@@ -48,7 +48,7 @@ await executeMutation(() => $trpc.resource.deleteResources.mutate({ ids }), {
 });
 ```
 
-`CacheTag` (`packages/app/app/models/cache/CacheTag.ts`) is small on purpose — a tag is the smallest fact a cache can subscribe to, not an entity id:
+`CacheTag` (`apps/web/app/models/cache/CacheTag.ts`) is small on purpose — a tag is the smallest fact a cache can subscribe to, not an entity id:
 
 | Tag         | Means                                             | Written by                        |
 | ----------- | ------------------------------------------------- | --------------------------------- |
@@ -57,7 +57,7 @@ await executeMutation(() => $trpc.resource.deleteResources.mutate({ ids }), {
 
 `invalidates` lives on `useMutation`'s write options and **never** on its read options: a read has no reason to invalidate anything. It fires **after the write has landed**, so a rejected or rolled-back write invalidates nothing — it changed nothing to be stale about.
 
-The registry itself is a Pinia store (`packages/app/app/store/cache.ts`) rather than a module-level `Map`, because a module map is shared across Pinia instances: it would leak registrations between tests and, on the server, from one request's app into the next's.
+The registry itself is a Pinia store (`apps/web/app/store/cache.ts`) rather than a module-level `Map`, because a module map is shared across Pinia instances: it would leak registrations between tests and, on the server, from one request's app into the next's.
 
 Three consequences worth knowing:
 
@@ -107,9 +107,9 @@ flowchart TD
 
 ## Key files
 
-| File                                                   | Role                                                             |
-| ------------------------------------------------------ | ---------------------------------------------------------------- |
-| `packages/app/app/composables/shared/useCachedRead.ts` | The primitive — the read-once gate, keyed or session-scoped      |
-| `packages/app/app/store/cache.ts`                      | The registry — tag to invalidators, scoped to the Pinia instance |
-| `packages/app/app/models/cache/CacheTag.ts`            | The tags                                                         |
-| `packages/app/app/composables/shared/useMutation.ts`   | `invalidates` on the write path                                  |
+| File                                               | Role                                                             |
+| -------------------------------------------------- | ---------------------------------------------------------------- |
+| `apps/web/app/composables/shared/useCachedRead.ts` | The primitive — the read-once gate, keyed or session-scoped      |
+| `apps/web/app/store/cache.ts`                      | The registry — tag to invalidators, scoped to the Pinia instance |
+| `apps/web/app/models/cache/CacheTag.ts`            | The tags                                                         |
+| `apps/web/app/composables/shared/useMutation.ts`   | `invalidates` on the write path                                  |

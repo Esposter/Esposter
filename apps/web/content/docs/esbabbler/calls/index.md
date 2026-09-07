@@ -144,13 +144,13 @@ DM calls work identically — call procedures accept `RoomType.DirectMessage`; m
 | File                                                     | Role                                                     |
 | :------------------------------------------------------- | :------------------------------------------------------- |
 | `packages/db-schema/src/schema/callSessionsInMessage.ts` | session anchor table                                     |
-| `packages/app/server/trpc/routers/call/index.ts`         | all call procedures (registered as `callSession`)        |
-| `packages/app/server/trpc/routers/call/knocker.ts`       | waiting-room procedures (merged under `knocker`)         |
-| `packages/app/server/services/message/call/`             | participant/knocker/admitted maps + CRUD                 |
-| `packages/app/server/api/webhooks/livekit.post.ts`       | webhook backup for join/leave                            |
-| `packages/app/app/store/message/room/call/`              | root + participant + media + knocker stores              |
-| `packages/app/app/store/message/room/liveKit.ts`         | LiveKit `Room` bridge                                    |
-| `packages/app/app/pages/calls/`                          | standalone lobby (`index.vue`) + call route (`[id].vue`) |
+| `apps/web/server/trpc/routers/call/index.ts`             | all call procedures (registered as `callSession`)        |
+| `apps/web/server/trpc/routers/call/knocker.ts`           | waiting-room procedures (merged under `knocker`)         |
+| `apps/web/server/services/message/call/`                 | participant/knocker/admitted maps + CRUD                 |
+| `apps/web/server/api/webhooks/livekit.post.ts`           | webhook backup for join/leave                            |
+| `apps/web/app/store/message/room/call/`                  | root + participant + media + knocker stores              |
+| `apps/web/app/store/message/room/liveKit.ts`             | LiveKit `Room` bridge                                    |
+| `apps/web/app/pages/calls/`                              | standalone lobby (`index.vue`) + call route (`[id].vue`) |
 
 ## Notes
 

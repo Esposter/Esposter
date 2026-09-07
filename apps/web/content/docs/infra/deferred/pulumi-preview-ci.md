@@ -5,7 +5,7 @@ description: Deferred — pulumi preview as a PR check on infra changes.
 
 # Pulumi Preview in CI
 
-Run `pulumi preview` on PRs touching `packages/infra` and comment the plan — catching destructive diffs before merge.
+Run `pulumi preview` on PRs touching `apps/infra` and comment the plan — catching destructive diffs before merge.
 
 **Why deferred**
 

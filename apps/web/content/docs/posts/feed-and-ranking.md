@@ -46,7 +46,7 @@ The log term means early likes matter most; the time term gives newer posts a co
 
 ## Key files
 
-Paths relative to `packages/app`.
+Paths relative to `apps/web`.
 
 | File                                         | Role                               |
 | -------------------------------------------- | ---------------------------------- |

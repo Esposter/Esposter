@@ -147,4 +147,4 @@ So the follow-through from any decision here is an `allowed` entry carrying the 
 | `pnpm-workspace.yaml`                             | The catalog — every version in the workspace, under `catalogMode: strict` |
 | `packages/configuration/eslint/plugins/depend.js` | `depend/ban-dependencies` and its `allowed` escape hatch                  |
 | `packages/shared/src`                             | Where an absorbed utility lands                                           |
-| `packages/app/app/services/message/emoji`         | The precedent — data and search engine kept, behaviour taken back         |
+| `apps/web/app/services/message/emoji`             | The precedent — data and search engine kept, behaviour taken back         |

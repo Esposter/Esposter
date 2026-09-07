@@ -57,17 +57,17 @@ DMs are invisible to non-participants: invite links are rejected for `RoomType.D
 
 ## Key files
 
-| File                                                     | Role                                                    |
-| -------------------------------------------------------- | ------------------------------------------------------- |
-| `packages/db-schema/src/schema/friendRequests.ts`        | Pending-request table                                   |
-| `packages/db-schema/src/schema/friends.ts`               | Accepted-friendship table                               |
-| `packages/db-schema/src/schema/blocks.ts`                | Block table                                             |
-| `packages/app/server/trpc/routers/friend.ts`             | Friend procedures                                       |
-| `packages/app/server/trpc/routers/friendRequest.ts`      | Request lifecycle                                       |
-| `packages/app/server/trpc/routers/block.ts`              | Blocking                                                |
-| `packages/app/server/trpc/routers/room/directMessage.ts` | DM creation, participants, hide                         |
-| `packages/app/app/pages/messages/friends.vue`            | Friends management page                                 |
-| `packages/app/app/store/message/user/friend.ts`          | Friends client state (+ `friendRequest.ts`, `block.ts`) |
+| File                                                 | Role                                                    |
+| ---------------------------------------------------- | ------------------------------------------------------- |
+| `packages/db-schema/src/schema/friendRequests.ts`    | Pending-request table                                   |
+| `packages/db-schema/src/schema/friends.ts`           | Accepted-friendship table                               |
+| `packages/db-schema/src/schema/blocks.ts`            | Block table                                             |
+| `apps/web/server/trpc/routers/friend.ts`             | Friend procedures                                       |
+| `apps/web/server/trpc/routers/friendRequest.ts`      | Request lifecycle                                       |
+| `apps/web/server/trpc/routers/block.ts`              | Blocking                                                |
+| `apps/web/server/trpc/routers/room/directMessage.ts` | DM creation, participants, hide                         |
+| `apps/web/app/pages/messages/friends.vue`            | Friends management page                                 |
+| `apps/web/app/store/message/user/friend.ts`          | Friends client state (+ `friendRequest.ts`, `block.ts`) |
 
 ## Notes
 

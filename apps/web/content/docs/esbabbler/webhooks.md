@@ -70,22 +70,22 @@ The webhook surface is the **Integrations → Webhooks** tab of the [room settin
 
 ## Key files
 
-Paths are relative to `packages/app`; an entry that begins with `packages/` is relative to the repository root instead.
+Paths are relative to `apps/web`; an entry that begins with `packages/` is relative to the repository root instead.
 
-| File                                                                    | Role                                                        |
-| ----------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `packages/db-schema/src/schema/webhooksInMessage.ts`                    | the webhook row — room, creator, token, active flag         |
-| `packages/db-schema/src/schema/appUsersInMessage.ts`                    | the bot identity a webhook message is authored by           |
-| `packages/db-schema/src/models/message/webhook/WebhookPayload.ts`       | the accepted request body                                   |
-| `packages/db-schema/src/models/message/WebhookMessageEntity.ts`         | message entity carrying `appUser` in place of `userId`      |
-| `server/trpc/routers/webhook.ts`                                        | create, read, update, rotate, delete, and identity lookup   |
-| `server/api/webhooks/[id]/[token].post.ts`                              | the public url — rate limits, then forwards to the function |
-| `packages/azure-functions/src/functions/pushWebhook.ts`                 | the HTTP trigger registration and its route                 |
-| `packages/azure-functions/src/handlers/pushWebhookHandler.ts`           | token validation, payload parsing, event publish            |
-| `packages/azure-functions/src/handlers/processWebhookHandler.ts`        | message creation, broadcast, push notification              |
-| `packages/azure-functions/src/services/getWebhookCreateMessageInput.ts` | payload to `MessageType.Webhook` message input              |
-| `app/store/message/room/webhook.ts`                                     | client store for the settings tab                           |
-| `app/store/message/user/appUser.ts`                                     | cache of bot identities for the message list                |
-| `app/composables/message/room/useCreator.ts`                            | resolves a message's author, app user or user               |
-| `app/components/Message/Model/Room/Settings/Type/Webhook/Index.vue`     | the Integrations tab content                                |
-| `app/components/Message/Model/Message/AppUserBadge.vue`                 | the "app" badge on a webhook message                        |
+| File                                                                | Role                                                        |
+| ------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `packages/db-schema/src/schema/webhooksInMessage.ts`                | the webhook row — room, creator, token, active flag         |
+| `packages/db-schema/src/schema/appUsersInMessage.ts`                | the bot identity a webhook message is authored by           |
+| `packages/db-schema/src/models/message/webhook/WebhookPayload.ts`   | the accepted request body                                   |
+| `packages/db-schema/src/models/message/WebhookMessageEntity.ts`     | message entity carrying `appUser` in place of `userId`      |
+| `server/trpc/routers/webhook.ts`                                    | create, read, update, rotate, delete, and identity lookup   |
+| `server/api/webhooks/[id]/[token].post.ts`                          | the public url — rate limits, then forwards to the function |
+| `apps/functions/src/functions/pushWebhook.ts`                       | the HTTP trigger registration and its route                 |
+| `apps/functions/src/handlers/pushWebhookHandler.ts`                 | token validation, payload parsing, event publish            |
+| `apps/functions/src/handlers/processWebhookHandler.ts`              | message creation, broadcast, push notification              |
+| `apps/functions/src/services/getWebhookCreateMessageInput.ts`       | payload to `MessageType.Webhook` message input              |
+| `app/store/message/room/webhook.ts`                                 | client store for the settings tab                           |
+| `app/store/message/user/appUser.ts`                                 | cache of bot identities for the message list                |
+| `app/composables/message/room/useCreator.ts`                        | resolves a message's author, app user or user               |
+| `app/components/Message/Model/Room/Settings/Type/Webhook/Index.vue` | the Integrations tab content                                |
+| `app/components/Message/Model/Message/AppUserBadge.vue`             | the "app" badge on a webhook message                        |

@@ -59,13 +59,13 @@ The PiP window opens with an empty document, so `useDocumentPictureInPicture`:
 
 ## Key files
 
-| File                                                                        | Role                                                             |
-| :-------------------------------------------------------------------------- | :--------------------------------------------------------------- |
-| `packages/app/app/types/documentPictureInPicture.d.ts`                      | ambient types (API not yet in lib.dom)                           |
-| `packages/app/app/composables/useDocumentPictureInPicture.ts`               | SSR-safe `requestWindow` wrapper + style bridge + cleanup        |
-| `packages/app/app/components/Message/Content/Call/Pip/Host.vue`             | persistent window owner + teleport target (mounted in app.vue)   |
-| `packages/app/app/components/Message/Content/Call/Pip/View.vue`             | compact call surface inside the window                           |
-| `packages/app/app/components/Message/Content/Call/Pip/ControlBar.vue`       | trimmed control row (mute/camera/share/deafen/hand/expand/leave) |
-| `packages/app/app/components/Message/Content/Call/Pip/Button.vue`           | feature-detected pop-out toggle                                  |
-| `packages/app/app/components/Message/Content/Call/Pip/Placeholder.vue`      | main-page "mini player" notice                                   |
-| `packages/app/app/composables/message/room/call/useCallParticipantTiles.ts` | shared tile/presenter-name source for both surfaces              |
+| File                                                                    | Role                                                             |
+| :---------------------------------------------------------------------- | :--------------------------------------------------------------- |
+| `apps/web/app/types/documentPictureInPicture.d.ts`                      | ambient types (API not yet in lib.dom)                           |
+| `apps/web/app/composables/useDocumentPictureInPicture.ts`               | SSR-safe `requestWindow` wrapper + style bridge + cleanup        |
+| `apps/web/app/components/Message/Content/Call/Pip/Host.vue`             | persistent window owner + teleport target (mounted in app.vue)   |
+| `apps/web/app/components/Message/Content/Call/Pip/View.vue`             | compact call surface inside the window                           |
+| `apps/web/app/components/Message/Content/Call/Pip/ControlBar.vue`       | trimmed control row (mute/camera/share/deafen/hand/expand/leave) |
+| `apps/web/app/components/Message/Content/Call/Pip/Button.vue`           | feature-detected pop-out toggle                                  |
+| `apps/web/app/components/Message/Content/Call/Pip/Placeholder.vue`      | main-page "mini player" notice                                   |
+| `apps/web/app/composables/message/room/call/useCallParticipantTiles.ts` | shared tile/presenter-name source for both surfaces              |

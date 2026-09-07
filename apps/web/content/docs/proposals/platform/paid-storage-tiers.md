@@ -84,14 +84,14 @@ Ship this only alongside those, or not at all — a paid tier without a way out 
 
 ## Key files
 
-| File                                                          | Change                                             |
-| :------------------------------------------------------------ | :------------------------------------------------- |
-| `packages/db-schema/src/models/user/StorageTier.ts`           | the paid tier values                               |
-| `packages/app/shared/services/storage/StorageTierQuotaMap.ts` | one allowance entry per tier                       |
-| `packages/db-schema/src/schema/`                              | the subscription table, registered in the schema   |
-| `packages/app/server/api/`                                    | the signed, idempotent provider webhook route      |
-| `packages/app/app/components/Resource/StorageMeter.vue`       | the upgrade affordance and the over-quota state    |
-| `packages/infra/src/`                                         | the provider secret, wherever secrets are declared |
+| File                                                      | Change                                             |
+| :-------------------------------------------------------- | :------------------------------------------------- |
+| `packages/db-schema/src/models/user/StorageTier.ts`       | the paid tier values                               |
+| `apps/web/shared/services/storage/StorageTierQuotaMap.ts` | one allowance entry per tier                       |
+| `packages/db-schema/src/schema/`                          | the subscription table, registered in the schema   |
+| `apps/web/server/api/`                                    | the signed, idempotent provider webhook route      |
+| `apps/web/app/components/Resource/StorageMeter.vue`       | the upgrade affordance and the over-quota state    |
+| `apps/infra/src/`                                         | the provider secret, wherever secrets are declared |
 
 ## Notes
 

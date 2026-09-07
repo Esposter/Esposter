@@ -124,31 +124,31 @@ Closing these needs a recompute that lists real object sizes per user. Worth doi
 
 ## Key files
 
-| File                                                                                                 | Role                                              |
-| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `packages/db-schema/src/models/user/StorageTier.ts`                                                  | tier enum                                         |
-| `packages/db-schema/src/schema/users.ts`                                                             | `storageTier` + `storageBytesUsed`                |
-| `packages/db-schema/src/schema/storageLedger.ts`                                                     | the ledger                                        |
-| `packages/db-schema/src/services/azure/container/getBlobSubjectPrefix.ts`                            | storage's event subject shape, read by both ends  |
-| `packages/db-schema/src/services/azure/container/parseBlobSubject.ts`                                | subject → (container, blob name)                  |
-| `packages/app/shared/services/storage/StorageTierQuotaMap.ts`                                        | tier → quota bytes                                |
-| `packages/db/src/services/storage/chargeStorageLedgerEntry.ts`                                       | ledgers and charges a server-written blob         |
-| `packages/app/server/services/resource/cloneContentAssets.ts`                                        | charges each clone before its copy                |
-| `packages/app/server/services/storage/generateReservedUploadFileSasEntities.ts`                      | the upload chokepoint — mint and reserve as one   |
-| `packages/app/server/services/storage/reserveStorageBytes.ts`                                        | GC expired holds, lock, gate, write holds         |
-| `packages/app/server/services/storage/getStorageBlobReservations.ts`                                 | SAS batch → the holds it needs                    |
-| `packages/db/src/services/storage/reconcileStorageLedgerEntry.ts`                                    | declared hold → charged bytes                     |
-| `packages/db/src/services/storage/deleteStorageBlobs.ts`                                             | delete a set of blobs and release what it removed |
-| `packages/app/server/services/azure/webPubSub/generateWebPubSubClientAccessUrl.ts`                   | one hub's client access token, group-scoped       |
-| `packages/db/src/services/storage/releaseStorageLedgerEntriesWhere.ts`                               | the one place bytes leave the counter             |
-| `packages/azure-functions/src/handlers/reconcileStorageLedgerEntryHandler.ts`                        | the `BlobCreated` handler                         |
-| `packages/azure-functions/src/services/broadcastStorageUsage.ts`                                     | tells an owner's meter their counter moved        |
-| `packages/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe007.ts` | the subscription, filtered to resource assets     |
-| `packages/app/server/trpc/routers/storage.ts`                                                        | `readUsage`, `onUpdateUsage`, the hub access url  |
-| `packages/app/app/composables/storage/useStorageSubscribables.ts`                                    | both halves of the live meter                     |
-| `packages/app/app/components/Resource/StorageMeter.vue`                                              | the usage meter in the explorer shell             |
-| `packages/app/app/store/storage.ts`                                                                  | the usage the meter renders, updated dynamically  |
-| `packages/app/app/layouts/resource.vue`                                                              | the shell that mounts it on every resource page   |
+| File                                                                                             | Role                                              |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------- |
+| `packages/db-schema/src/models/user/StorageTier.ts`                                              | tier enum                                         |
+| `packages/db-schema/src/schema/users.ts`                                                         | `storageTier` + `storageBytesUsed`                |
+| `packages/db-schema/src/schema/storageLedger.ts`                                                 | the ledger                                        |
+| `packages/db-schema/src/services/azure/container/getBlobSubjectPrefix.ts`                        | storage's event subject shape, read by both ends  |
+| `packages/db-schema/src/services/azure/container/parseBlobSubject.ts`                            | subject → (container, blob name)                  |
+| `apps/web/shared/services/storage/StorageTierQuotaMap.ts`                                        | tier → quota bytes                                |
+| `packages/db/src/services/storage/chargeStorageLedgerEntry.ts`                                   | ledgers and charges a server-written blob         |
+| `apps/web/server/services/resource/cloneContentAssets.ts`                                        | charges each clone before its copy                |
+| `apps/web/server/services/storage/generateReservedUploadFileSasEntities.ts`                      | the upload chokepoint — mint and reserve as one   |
+| `apps/web/server/services/storage/reserveStorageBytes.ts`                                        | GC expired holds, lock, gate, write holds         |
+| `apps/web/server/services/storage/getStorageBlobReservations.ts`                                 | SAS batch → the holds it needs                    |
+| `packages/db/src/services/storage/reconcileStorageLedgerEntry.ts`                                | declared hold → charged bytes                     |
+| `packages/db/src/services/storage/deleteStorageBlobs.ts`                                         | delete a set of blobs and release what it removed |
+| `apps/web/server/services/azure/webPubSub/generateWebPubSubClientAccessUrl.ts`                   | one hub's client access token, group-scoped       |
+| `packages/db/src/services/storage/releaseStorageLedgerEntriesWhere.ts`                           | the one place bytes leave the counter             |
+| `apps/functions/src/handlers/reconcileStorageLedgerEntryHandler.ts`                              | the `BlobCreated` handler                         |
+| `apps/functions/src/services/broadcastStorageUsage.ts`                                           | tells an owner's meter their counter moved        |
+| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe007.ts` | the subscription, filtered to resource assets     |
+| `apps/web/server/trpc/routers/storage.ts`                                                        | `readUsage`, `onUpdateUsage`, the hub access url  |
+| `apps/web/app/composables/storage/useStorageSubscribables.ts`                                    | both halves of the live meter                     |
+| `apps/web/app/components/Resource/StorageMeter.vue`                                              | the usage meter in the explorer shell             |
+| `apps/web/app/store/storage.ts`                                                                  | the usage the meter renders, updated dynamically  |
+| `apps/web/app/layouts/resource.vue`                                                              | the shell that mounts it on every resource page   |
 
 ## Notes
 

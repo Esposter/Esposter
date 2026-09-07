@@ -40,7 +40,7 @@ A file that was renamed _and_ carries a real logic change still needs review. Wh
 
 Never excludable, whatever the budget:
 
-- **Documentation** (`packages/app/content/docs/**`) — docs are the design record, not commentary. A wrong standard there propagates into every change built on it afterward, and prose is precisely what a human reviewer catches and no typechecker can.
+- **Documentation** (`apps/web/content/docs/**`) — docs are the design record, not commentary. A wrong standard there propagates into every change built on it afterward, and prose is precisely what a human reviewer catches and no typechecker can.
 - **Agent skills** (`.agents/skills/**`) — a skill binds every future agent session. An unreviewed wrong rule is worse than unreviewed wrong code, because it silently authors more wrong code.
 - **Tests** (`*.test.ts`, `*.test-d.ts`) — tests are the behaviour contract. One asserting the wrong thing is a defect that passes CI forever, and "the source it covers is still reviewed" does not catch it — the reviewer sees green assertions and infers the intent from them.
 - **Config, schema, and migration inputs** — small diffs with large blast radius.
@@ -49,7 +49,7 @@ The rule reduces to: exclude a file only when its diff carries no information a 
 
 ## Why per-file, not globs
 
-CodeRabbit's `path_filters` are static globs with no notion of "this file was only renamed". A glob like `!packages/app/app/services/foo/**` excludes that tree for **every future PR**, permanently blinding review of real changes until someone remembers to revert it.
+CodeRabbit's `path_filters` are static globs with no notion of "this file was only renamed". A glob like `!apps/web/app/services/foo/**` excludes that tree for **every future PR**, permanently blinding review of real changes until someone remembers to revert it.
 
 List every excluded file explicitly instead. It is verbose, and that verbosity is the point — a several-hundred-line block is obviously temporary and obviously scoped, where a 3-line glob quietly rots.
 
@@ -69,8 +69,8 @@ Import-path-only edits need two conditions, not one — every changed line is an
 git diff --name-only -M <base>..<head> | while IFS= read -r path; do
   # §When to exclude never lets these out, whatever the diff shape says
   case "$path" in
-    *.test.ts|*.test-d.ts|packages/app/content/docs/*|.agents/skills/*) continue ;;
-    *.yaml|*.yml|*.json|*.config.ts|packages/db-schema/*|packages/app/server/db/migrations/*) continue ;;
+    *.test.ts|*.test-d.ts|apps/web/content/docs/*|.agents/skills/*) continue ;;
+    *.yaml|*.yml|*.json|*.config.ts|packages/db-schema/*|apps/web/server/db/migrations/*) continue ;;
   esac
   diff=$(git diff -U0 -M <base>..<head> -- "$path")
   # a mode flip rides in the diff header rather than on a +/- line, so it would survive every
@@ -122,8 +122,8 @@ git diff -M --name-status "$SHA^" "$SHA" | while IFS=$'\t' read -r status old ne
   for path in "$path_old" "$path_new"; do
     # §When to exclude never lets these out, whatever the diff says
     case "$path" in
-      *.test.ts|*.test-d.ts|packages/app/content/docs/*|.agents/skills/*) isKept=1 ;;
-      *.yaml|*.yml|*.json|*.config.ts|packages/db-schema/*|packages/app/server/db/migrations/*) isKept=1 ;;
+      *.test.ts|*.test-d.ts|apps/web/content/docs/*|.agents/skills/*) isKept=1 ;;
+      *.yaml|*.yml|*.json|*.config.ts|packages/db-schema/*|apps/web/server/db/migrations/*) isKept=1 ;;
     esac
     grep -qxF "$path" "$otherPaths" && isKept=1
   done

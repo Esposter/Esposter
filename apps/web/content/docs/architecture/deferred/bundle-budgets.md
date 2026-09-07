@@ -7,7 +7,7 @@ description: Deferred — an enforced payload ceiling in CI instead of the manua
 
 A size ceiling that fails a build: `size-limit`, `bundlesize`, `bundlewatch`, or Lighthouse CI wired into a workflow, so a change that grows the first-load payload past a configured number is rejected at review time rather than noticed later.
 
-Nothing of the sort is installed, and no workflow in `.github/workflows/` inspects build output size. The only tooling is the `analyze` script in `packages/app/package.json` — a plain `nuxt analyze` — which is manual, produces a treemap to look at, and enforces no threshold. `configuration/vite.ts` sets no `manualChunks` and no `chunkSizeWarningLimit`, so Rollup's own size warning is at its default and chunking is entirely Nuxt's.
+Nothing of the sort is installed, and no workflow in `.github/workflows/` inspects build output size. The only tooling is the `analyze` script in `apps/web/package.json` — a plain `nuxt analyze` — which is manual, produces a treemap to look at, and enforces no threshold. `configuration/vite.ts` sets no `manualChunks` and no `chunkSizeWarningLimit`, so Rollup's own size warning is at its default and chunking is entirely Nuxt's.
 
 Payload control today is idiomatic rather than measured: Nuxt's per-route code splitting, component maps that resolve their components lazily, and explicit dynamic imports for the heavy ones — `DocsMermaid` imports mermaid only after mount, precisely so the multi-megabyte chunk never lands in the docs route's initial load. (The `ssr: false` entries in `configuration/routeRules.ts` are often mistaken for a payload lever; their comment says otherwise — they exist because those pages touch `window`/`localStorage` during setup and crash under SSR.)
 
@@ -23,4 +23,4 @@ A heavy dependency lands in the **shared** entry chunk rather than a route or la
 
 ## Cheaper interim
 
-Run `pnpm analyze` in `packages/app` before merging anything that adds a runtime dependency, and keep the discipline that already works: heavy libraries behind a dynamic `import()` resolved after mount, never a top-level import in a component that a common route renders.
+Run `pnpm analyze` in `apps/web` before merging anything that adds a runtime dependency, and keep the discipline that already works: heavy libraries behind a dynamic `import()` resolved after mount, never a top-level import in a component that a common route renders.

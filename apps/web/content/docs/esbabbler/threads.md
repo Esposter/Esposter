@@ -66,14 +66,14 @@ Opening a thread replaces whatever the right drawer was showing. Split view keep
 
 ## Key files
 
-| File                                                                  | Role                                                      |
-| :-------------------------------------------------------------------- | :-------------------------------------------------------- |
-| `packages/app/app/store/message/thread.ts`                            | active thread, the read, and the hooks that keep it live  |
-| `packages/app/app/components/Message/RightSideBar/Thread/`            | the pane, its composer and its header                     |
-| `packages/app/app/composables/message/thread/useThreadActionItems.ts` | the overflow menu                                         |
-| `packages/app/app/models/message/ComposerTarget.ts`                   | which composer a piece of composer state belongs to       |
-| `packages/app/app/services/message/composer/getComposerKey.ts`        | the partition key every per-composer map uses             |
-| `packages/app/app/store/message/input/index.ts`                       | per-composer text and drafts                              |
-| `packages/app/app/store/message/input/uploadFile.ts`                  | per-composer attachments                                  |
-| `packages/app/app/pages/messages/[id]/thread/[rowKey].vue`            | the thread route                                          |
-| `packages/db-schema/src/schema/callSessionsInMessage.ts`              | `threadRootRowKey` and the one-call-per-thread constraint |
+| File                                                              | Role                                                      |
+| :---------------------------------------------------------------- | :-------------------------------------------------------- |
+| `apps/web/app/store/message/thread.ts`                            | active thread, the read, and the hooks that keep it live  |
+| `apps/web/app/components/Message/RightSideBar/Thread/`            | the pane, its composer and its header                     |
+| `apps/web/app/composables/message/thread/useThreadActionItems.ts` | the overflow menu                                         |
+| `apps/web/app/models/message/ComposerTarget.ts`                   | which composer a piece of composer state belongs to       |
+| `apps/web/app/services/message/composer/getComposerKey.ts`        | the partition key every per-composer map uses             |
+| `apps/web/app/store/message/input/index.ts`                       | per-composer text and drafts                              |
+| `apps/web/app/store/message/input/uploadFile.ts`                  | per-composer attachments                                  |
+| `apps/web/app/pages/messages/[id]/thread/[rowKey].vue`            | the thread route                                          |
+| `packages/db-schema/src/schema/callSessionsInMessage.ts`          | `threadRootRowKey` and the one-call-per-thread constraint |

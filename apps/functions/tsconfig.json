@@ -1,5 +1,5 @@
 {
-  "extends": "../configuration/tsconfig.node.json",
+  "extends": "../../packages/configuration/tsconfig.node.json",
   "compilerOptions": {
     "isolatedDeclarations": false
   }

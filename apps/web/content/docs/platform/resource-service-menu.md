@@ -57,7 +57,7 @@ Home keeps its Recent and Favorites card. The card and the routes are the same t
 
 ## Key files
 
-Paths relative to `packages/app`.
+Paths relative to `apps/web`.
 
 | File                                                            | Role                                                                       |
 | --------------------------------------------------------------- | -------------------------------------------------------------------------- |

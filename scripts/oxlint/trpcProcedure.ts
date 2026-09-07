@@ -2,7 +2,7 @@ import type { ESTree, Plugin } from "@oxlint/plugins";
 
 import { definePlugin, defineRule } from "@oxlint/plugins";
 // Oxlint JS plugin enforcing the two decidable halves of the `trpc` skill, scoped in the root .oxlintrc.json to
-// `packages/app/server/trpc/**` — `.query`/`.mutation` only mean a procedure there, and `TRPCError` is only
+// `apps/web/server/trpc/**` — `.query`/`.mutation` only mean a procedure there, and `TRPCError` is only
 // Constructed there.
 //
 // Both rules exist to shrink the trpc ledger rather than to be swept forever: each was found by hand in two

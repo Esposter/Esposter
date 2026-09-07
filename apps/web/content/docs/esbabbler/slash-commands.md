@@ -64,16 +64,16 @@ Collapsing parameter mode back to text (Escape, or Backspace in an empty command
 
 ## Key files
 
-| File                                                                            | Role                                                          |
-| :------------------------------------------------------------------------------ | :------------------------------------------------------------ |
-| `packages/app/app/models/message/slashCommands/SlashCommandType.ts`             | command enum                                                  |
-| `packages/app/app/services/message/slashCommands/SlashCommandDefinitionMap.ts`  | `Record<SlashCommandType, SlashCommand>` — static definitions |
-| `packages/app/app/composables/message/slashCommand/useExecuteSlashCommand.ts`   | execution switch                                              |
-| `packages/app/app/composables/message/slashCommand/useSlashCommandExtension.ts` | TipTap extension (mirrors `useMentionExtension`)              |
-| `packages/app/app/services/message/slashCommands/SlashCommandSuggestion.ts`     | picker suggestion config                                      |
-| `packages/app/app/services/message/slashCommands/parseTextAndParameters.ts`     | text → parameterValues re-parsing                             |
-| `packages/app/app/store/message/input/slashCommand.ts`                          | pendingCommand + parameterValues + trailingMessage store      |
-| `packages/app/app/components/Message/Model/Message/Input/ActionsMenuButton.vue` | the composer's `+` menu over the dialog commands              |
+| File                                                                        | Role                                                          |
+| :-------------------------------------------------------------------------- | :------------------------------------------------------------ |
+| `apps/web/app/models/message/slashCommands/SlashCommandType.ts`             | command enum                                                  |
+| `apps/web/app/services/message/slashCommands/SlashCommandDefinitionMap.ts`  | `Record<SlashCommandType, SlashCommand>` — static definitions |
+| `apps/web/app/composables/message/slashCommand/useExecuteSlashCommand.ts`   | execution switch                                              |
+| `apps/web/app/composables/message/slashCommand/useSlashCommandExtension.ts` | TipTap extension (mirrors `useMentionExtension`)              |
+| `apps/web/app/services/message/slashCommands/SlashCommandSuggestion.ts`     | picker suggestion config                                      |
+| `apps/web/app/services/message/slashCommands/parseTextAndParameters.ts`     | text → parameterValues re-parsing                             |
+| `apps/web/app/store/message/input/slashCommand.ts`                          | pendingCommand + parameterValues + trailingMessage store      |
+| `apps/web/app/components/Message/Model/Message/Input/ActionsMenuButton.vue` | the composer's `+` menu over the dialog commands              |
 
 ## Notes
 

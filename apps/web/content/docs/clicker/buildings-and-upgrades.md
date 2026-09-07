@@ -35,7 +35,7 @@ Content lives in `shared/assets/clicker/data/` as constant maps, typed by `satis
 
 ## Key files
 
-Paths relative to `packages/app`.
+Paths relative to `apps/web`.
 
 | File                                                 | Role                                           |
 | ---------------------------------------------------- | ---------------------------------------------- |

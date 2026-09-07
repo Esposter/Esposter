@@ -54,9 +54,9 @@ The same "server guesses, client knows" split hits the theme: Vuetify resolves `
 | File                                                  | Role                                                                    |
 | :---------------------------------------------------- | :---------------------------------------------------------------------- |
 | `packages/configuration/eslint/overrides/vueRules.js` | The `vue/no-restricted-syntax` rule, and the `<time>` element ban       |
-| `packages/app/app/services/resource/constants.ts`     | `RESOURCE_DATE_TIME_ATTRIBUTES` and its string counterpart              |
-| `packages/app/app/util/date/`                         | The message-list labels, the one place a display format is hand-written |
-| `packages/app/shared/util/date/`                      | `formatDate`/`parseDate` and the token map they share                   |
-| `packages/app/configuration/routeRules.ts`            | The client-rendered app surfaces                                        |
-| `packages/app/app/components/Nuxt/Theme.vue`          | System-theme resolution, the theme half of the same problem             |
-| `packages/app/configuration/vuetify.ts`               | `ssrClientHints.prefersColorScheme`, which carries the scheme into SSR  |
+| `apps/web/app/services/resource/constants.ts`         | `RESOURCE_DATE_TIME_ATTRIBUTES` and its string counterpart              |
+| `apps/web/app/util/date/`                             | The message-list labels, the one place a display format is hand-written |
+| `apps/web/shared/util/date/`                          | `formatDate`/`parseDate` and the token map they share                   |
+| `apps/web/configuration/routeRules.ts`                | The client-rendered app surfaces                                        |
+| `apps/web/app/components/Nuxt/Theme.vue`              | System-theme resolution, the theme half of the same problem             |
+| `apps/web/configuration/vuetify.ts`                   | `ssrClientHints.prefersColorScheme`, which carries the scheme into SSR  |

@@ -43,7 +43,7 @@ A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends
 
 **External boundary — keep `null` where required:**
 
-- **Drizzle ORM** — nullable columns infer as `T | null`, and so does an absent one-to-one relation loaded through `with` (`ResourceWithPublication.publication`); leave the boundary shape as-is and consume it at the call site (`??` onto a sentinel, truthiness guard) only where the app-owned shape is actually needed — there is no conversion layer. See `packages/app/content/docs/architecture/null-vs-undefined.md`.
+- **Drizzle ORM** — nullable columns infer as `T | null`, and so does an absent one-to-one relation loaded through `with` (`ResourceWithPublication.publication`); leave the boundary shape as-is and consume it at the call site (`??` onto a sentinel, truthiness guard) only where the app-owned shape is actually needed — there is no conversion layer. See `apps/web/content/docs/architecture/null-vs-undefined.md`.
 - **Persisted JSON blobs** — `JSON.stringify` drops an `undefined` key outright, so a blob that must round-trip an empty slot stores `null`. `ColumnValue` is `boolean | null | number | string`: `null` is the empty spreadsheet cell, `""` a cell holding the empty string, and they sort, filter and count apart.
 - **Azure SDK / EventGrid** — `SerializableValue`, EventGrid data shapes; keep raw types, convert on ingress.
 - **Vuetify** — a few Vuetify props are typed `T | null`; use `null` only where the prop type requires it, with a comment explaining why.

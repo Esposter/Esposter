@@ -84,12 +84,12 @@ Migration is out of scope: existing snapshots are discarded rather than converte
 
 ## Key files
 
-| File                                                                           | Role                                                                   |
-| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
-| `packages/app/server/services/resource/snapshot/takeResourceRevision.ts`       | takes a revision and charges a full copy — becomes a store write       |
-| `packages/app/server/services/resource/snapshot/getSnapshotContentBlobName.ts` | the snapshot blob path — deleted, a version is addressed by its hash   |
-| `packages/app/server/services/resource/snapshot/getSnapshotMetadata.ts`        | reason and label as blob metadata — deleted, both become columns       |
-| `packages/app/server/services/resource/snapshot/readSnapshotHistory.ts`        | the prefix walk behind the history listing — becomes a query           |
-| `packages/app/server/services/resource/saveResourceContent.ts`                 | the one content write, and where the idle-window trigger fires         |
-| `packages/db/src/services/storage/chargeStorageLedgerEntry.ts`                 | the charge a version pays, now for stored bytes rather than for a copy |
-| `packages/db-schema/src/schema/resources.ts`                                   | holds `revisionVersion`, the counter a version row is numbered by      |
+| File                                                                       | Role                                                                   |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`       | takes a revision and charges a full copy — becomes a store write       |
+| `apps/web/server/services/resource/snapshot/getSnapshotContentBlobName.ts` | the snapshot blob path — deleted, a version is addressed by its hash   |
+| `apps/web/server/services/resource/snapshot/getSnapshotMetadata.ts`        | reason and label as blob metadata — deleted, both become columns       |
+| `apps/web/server/services/resource/snapshot/readSnapshotHistory.ts`        | the prefix walk behind the history listing — becomes a query           |
+| `apps/web/server/services/resource/saveResourceContent.ts`                 | the one content write, and where the idle-window trigger fires         |
+| `packages/db/src/services/storage/chargeStorageLedgerEntry.ts`             | the charge a version pays, now for stored bytes rather than for a copy |
+| `packages/db-schema/src/schema/resources.ts`                               | holds `revisionVersion`, the counter a version row is numbered by      |

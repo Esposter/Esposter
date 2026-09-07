@@ -64,19 +64,19 @@ Reads have no procedure — they go through the `/api/resource-assets` endpoint.
 
 ## Key files
 
-| File                                                                      | Role                                       |
-| ------------------------------------------------------------------------- | ------------------------------------------ |
-| `packages/app/shared/services/resource/getResourceAssetUrl.ts`            | blob name → stable url (closed charset)    |
-| `packages/app/shared/services/resource/parseResourceAssetPath.ts`         | the single decoder/validator               |
-| `packages/app/server/api/resource-assets/[...path].get.ts`                | authorize + 302 to a minutes-scale SAS     |
-| `packages/app/server/services/resource/cloneContentAssets.ts`             | clone referenced blobs + rewrite urls      |
-| `packages/app/server/services/resource/checkIsResourceAssetReadable.ts`   | may this caller read this asset path       |
-| `packages/app/shared/services/resource/ResourceDefinitionMap.ts`          | `fileAssets` declarations                  |
-| `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts` | conditionally spread asset procedures      |
-| `packages/app/shared/services/resource/getFilesDirectoryName.ts`          | the `{id}/files` path convention           |
-| `packages/app/app/composables/resource/useUploadResourceFile.ts`          | upload round-trip, returns the stable url  |
-| `packages/app/app/composables/resource/useDeleteResourceFile.ts`          | stable url to blob path, then `deleteFile` |
-| `packages/app/app/composables/grapesjs/useGrapesJsEditor.ts`              | Asset Manager upload adapter               |
+| File                                                                  | Role                                       |
+| --------------------------------------------------------------------- | ------------------------------------------ |
+| `apps/web/shared/services/resource/getResourceAssetUrl.ts`            | blob name → stable url (closed charset)    |
+| `apps/web/shared/services/resource/parseResourceAssetPath.ts`         | the single decoder/validator               |
+| `apps/web/server/api/resource-assets/[...path].get.ts`                | authorize + 302 to a minutes-scale SAS     |
+| `apps/web/server/services/resource/cloneContentAssets.ts`             | clone referenced blobs + rewrite urls      |
+| `apps/web/server/services/resource/checkIsResourceAssetReadable.ts`   | may this caller read this asset path       |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`          | `fileAssets` declarations                  |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | conditionally spread asset procedures      |
+| `apps/web/shared/services/resource/getFilesDirectoryName.ts`          | the `{id}/files` path convention           |
+| `apps/web/app/composables/resource/useUploadResourceFile.ts`          | upload round-trip, returns the stable url  |
+| `apps/web/app/composables/resource/useDeleteResourceFile.ts`          | stable url to blob path, then `deleteFile` |
+| `apps/web/app/composables/grapesjs/useGrapesJsEditor.ts`              | Asset Manager upload adapter               |
 
 ## Notes
 

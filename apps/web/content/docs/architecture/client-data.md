@@ -5,7 +5,7 @@ description: useQuery and useMutation are the two primitives for every user-faci
 
 # Client Data Access
 
-Every user-facing tRPC call on the client goes through one of two symmetric primitives, both in `packages/app/app/composables/shared/`:
+Every user-facing tRPC call on the client goes through one of two symmetric primitives, both in `apps/web/app/composables/shared/`:
 
 - **`useQuery`** — reads. Fetches without blocking setup, populates reactive data, surfaces errors.
 - **`useMutation`** — writes. Applies optimistically, rolls back on failure, surfaces errors.

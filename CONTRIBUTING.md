@@ -12,9 +12,9 @@ Thanks for taking the time to contribute!
    ```
 4. Copy the env file and fill in values:
    ```bash
-   cp packages/app/.env.example packages/app/.env
+   cp apps/web/.env.example apps/web/.env
    ```
-5. Start the dev server (from `packages/app/`):
+5. Start the dev server (from `apps/web/`):
    ```bash
    pnpm dev
    ```
@@ -25,7 +25,7 @@ Esposter is a pnpm workspaces monorepo. Every package, what it holds and whether
 
 ## Commands
 
-All commands run from `packages/app/` unless noted.
+All commands run from `apps/web/` unless noted.
 
 ```bash
 pnpm dev              # start dev server
@@ -58,7 +58,7 @@ pnpm db:studio        # open Drizzle Studio UI
 When you change a schema file in `packages/db-schema/src/schema/`:
 
 1. Run `pnpm db:gen` to generate the migration SQL.
-2. Start the app — migrations are applied at startup by the Nitro plugin `packages/app/server/plugins/migrate.ts`. Nothing applies them from the CLI, `db:up` included.
+2. Start the app — migrations are applied at startup by the Nitro plugin `apps/web/server/plugins/migrate.ts`. Nothing applies them from the CLI, `db:up` included.
 3. If you added or removed exports, run `pnpm export:gen` in `packages/db-schema/` to regenerate the barrel.
 
 ## Before You Start
