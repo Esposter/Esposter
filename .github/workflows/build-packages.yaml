@@ -82,8 +82,16 @@ jobs:
       # And nothing downstream reads one — every other check runs against the `dist` this job just made. So an
       # Uncommitted manifest is green everywhere else. Gated on the miss because that is the only branch that
       # Builds.
+      #
+      # A Renovate branch is the one place the diff is expected rather than an oversight, and the one place it
+      # Is not a failure. Renovate edits the catalog and the lockfile and regenerates nothing else — the hook
+      # That would, `postUpgradeTasks`, is self-hosted-only and this repository runs the hosted app — so a
+      # Bundled bump, and every lock file maintenance run, leaves the recorded versions behind through no
+      # Fault of the branch. 🔁 Renovate Manifest rebuilds and commits the manifests back there; this step
+      # Stands aside for it rather than reporting a red no one caused. Every other branch keeps the failure:
+      # A manifest that drifted where a person was working is a build nobody re-ran.
       - name: 🔍 Check generated manifest fields are committed
-        if: steps.verify.outputs.complete != 'true'
+        if: steps.verify.outputs.complete != 'true' && !startsWith(github.ref_name, 'renovate/')
         run: git diff --exit-code -- "packages/*/package.json"
       # The same check again, now as an assertion: every job in both callers reads the artifact this one uploads,
       # So an incomplete tree here is a broken build rather than a cold cache, and it fails where the cause is
