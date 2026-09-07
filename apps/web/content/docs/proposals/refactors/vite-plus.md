@@ -15,7 +15,7 @@ Three of Vite+'s conventions are things this repo does today for its own reasons
 
 - **Centralised configuration with per-package overrides by glob.** Vite+ composes one root config with lint and format overrides scoped by pattern. That is exactly the shape of the single root `.oxlintrc.json` whose `overrides` name file globs, and of the shared factories in `@esposter/configuration` that every package's config calls.
 - **One package manager and one catalog.** Versions live in the workspace catalog, not in fifteen manifests.
-- **Recursive tasks selected by filter.** `vp run -r --parallel --filter` is the command this repo already writes as `pnpm -r --parallel --filter`, and [the toolchain after the split](/docs/proposals/refactors/workspace-layout/toolchain) is what makes those filters address a directory rather than a name — which is how Vite+'s examples select them too.
+- **Recursive tasks selected by filter.** `vp run -r --parallel --filter` is the command this repo already writes as `pnpm -r --parallel --filter`, and the [two product roots](/docs/architecture/monorepo-tooling) are what make those filters address a directory rather than a name — which is how Vite+'s examples select them too.
 
 The layout in this proposal is the fourth. It is worth doing on its own evidence, and if the toolchain never moves, nothing has been spent on a migration that did not happen.
 

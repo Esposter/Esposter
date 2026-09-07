@@ -25,6 +25,7 @@ Repo-wide refactor plans have no area roadmap and live here directly:
 - [ESLint → oxlint migration](/docs/proposals/refactors/eslint-to-oxlint-migration) — move rules to oxlint as coverage lands, prioritized by ESLint rule time.
 - [dependency reduction](/docs/proposals/refactors/dependency-reduction) — what a third-party package must earn to stay in the catalog, and the ranked backlog of absorptions.
 - [test harness workarounds](/docs/proposals/refactors/test-harness-workarounds) — the shims the suite carries for a gap in a runner or its DOM, each with the probe that retires it.
-- [workspace layout](/docs/proposals/refactors/workspace-layout) — split the workspace into `apps/` and `packages/`, so the toolchain addresses a role instead of naming the app in a dozen filters.
+- [the scripts package](/docs/proposals/refactors/scripts-package) — make the repository's own tooling tree a workspace member, so the checks reach it the way they reach every other member.
+- [what this takes from Vite+](/docs/proposals/refactors/vite-plus) — the four tools Vite+ already bundles, what else is cheap to align now, and what a full migration would have to answer.
 
 Sweeps are not proposals. A proposal designs behaviour that does not exist yet; a sweep carries a settled convention across code that already works and changes nothing about what it does. They are tracked as repo state in `.agents/ledgers/`, one ledger file per sweep — or one coverage folder, once a sweep outgrows a single file.
