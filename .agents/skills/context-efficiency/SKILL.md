@@ -23,11 +23,19 @@ Batch format/typecheck/tests until **all** edits are done. Each pass re-pays a f
 
 Commit per coherent chunk regardless: commits are cheap and protect against other sessions' resets, checks are not.
 
+## The pass runs in the background
+
+Every check in it is minutes long — `apps/web` typecheck ~3.5 min, the root oxlint pass ~3 min, a Nuxt suite ~1 min — and none of them needs supervision while it runs. So each goes out with `run_in_background: true` and the session keeps working: the next ledger row, the commit message, the docs sweep, the next unit's edits. Read the output when the completion notification lands.
+
+**Blocking on a check is only correct when the sole remaining step is commit, merge or push**, which is rare by construction — the checks are the last step, so there is almost always something ahead of them that does not depend on their result. The tell that this went wrong is a turn that ran a 3-minute typecheck, waited, ran a 3-minute lint, waited, and produced no edits in between: that is ten minutes of wall clock spent on a single tool result.
+
+Fire the independent ones in **one block** so they run concurrently rather than one after another — typecheck, lint and the touched suites do not feed each other. A check whose result changes what you do next (a lint fix, then the same lint again) is the one case where the second call waits on the first.
+
 The pass runs **after** the review's quality lane, not before — cleanup edits code, so checking first pays the startup cost twice. See "Finishing a change" in `CLAUDE.md` for the full order.
 
 ## Wait on a condition, never a sleep
 
-This is about waiting on an **external process from the shell** — a dev server, a build, a deploy. It is not a loosening of the polling ban, which is about code and tests: inside the repo, a wait is an awaited signal, never a retry loop (`testing` skill, and `packages/app/content/docs/architecture/no-polling.md`). Nothing here may be copied into a test.
+This is about waiting on an **external process from the shell** — a dev server, a build, a deploy. It is not a loosening of the polling ban, which is about code and tests: inside the repo, a wait is an awaited signal, never a retry loop (`testing` skill, and `apps/web/content/docs/architecture/no-polling.md`). Nothing here may be copied into a test.
 
 Poll until the thing you need is actually true, with a bounded loop:
 

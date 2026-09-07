@@ -1,11 +1,11 @@
 ---
 name: package-scripts
-description: Esposter pnpm script reference — packages/app scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, graph:gen, outdated:dependencies, release, the sweep:* scans), a Settled note that the release stays one local script rather than a CI publish and another that a renamed export of a published package is never a major, the rule that every `.ts` script runs under `tsx` so an enum is always available and why a pre-install CI check is shell rather than a script, the `scriptsComments` key that carries a script's comment because JSON has none, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
+description: Esposter pnpm script reference — apps/web scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, graph:gen, outdated:dependencies, release, the sweep:* scans), a Settled note that the release stays one local script rather than a CI publish and another that a renamed export of a published package is never a major, the rule that every `.ts` script runs under `tsx` so an enum is always available and why a pre-install CI check is shell rather than a script, the `scriptsComments` key that carries a script's comment because JSON has none, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
 ---
 
 # Package Scripts
 
-`packages/app` scripts run from `packages/app/`; root scripts run from the repo root. Always `pnpm` — never `npm` or `npx`.
+`apps/web` scripts run from `apps/web/`; root scripts run from the repo root. Always `pnpm` — never `npm` or `npx`.
 
 ## Settled — do not re-propose
 
@@ -16,7 +16,7 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
   [no compatibility debt](/docs/architecture/no-compatibility-debt).
 - **Splitting the release into a local `lerna version` and a CI publish** — a tag-triggered job publishing through npm's trusted publishing, which lerna-lite supports out of the box (`id-token: write`, a per-package token exchange, provenance attached for a public package). It buys an attestation that the published tarball is the one CI built. Nobody here is asking for that attestation, and the price is a release path that lives in two places and a per-package trusted-publisher registration on npmjs.com that fails closed the day a new package is added. **One script, run locally, is the whole release**: `pnpm release` gates the tree and hands `lerna publish` a version, a tag and a `dist` it just built, and 🚀 Release turns the pushed tag into a GitHub release. Publishing from a developer's machine is the deliberate simplification, not an oversight.
 
-## `packages/app`
+## `apps/web`
 
 | Command             | Runs                      | When to use                                                        |
 | ------------------- | ------------------------- | ------------------------------------------------------------------ |
@@ -42,7 +42,7 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 | ------------------------------------ | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `pnpm i`                             | —                                                   | Refresh deps/lockfile after manifest changes.                                                                                           |
 | `pnpm test`                          | `virrun -- vitest run`                              | Whole suite once via the root vitest `projects` config (every package + `scripts/` + `.agents/`). **CI only** — never run bare locally. |
-| `pnpm test:packages`                 | `virrun -- vitest run --project "!@esposter/app"`   | All projects except the app — skips Nuxt. Local-only, and takes paths like `pnpm test` does: pass them.                                 |
+| `pnpm test:packages`                 | `virrun -- vitest run --project "!@esposter/web"`   | All projects except the app — skips Nuxt. Local-only, and takes paths like `pnpm test` does: pass them.                                 |
 | `pnpm coverage`                      | `vitest run --coverage` (no virrun)                 | Root-only (packages have no `coverage` script). CI shards via `--reporter=blob` + `--merge-reports`.                                    |
 | `pnpm outdated:dependencies`         | `tsx scripts/outdatedDependencies/index.ts`         | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest.      |
 | `pnpm graph:gen`                     | `tsx scripts/dependencyGraph/index.ts`              | Regenerate `dependency-graph.svg` from the workspace manifests. Run it after changing one.                                              |
@@ -61,12 +61,12 @@ stripping cannot transform an `enum` — and an enum is this repo's default shap
 declares the enum and dies at startup with `ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX`, or a union gets written where the
 enum belonged and a convention has been bent to suit a loader. **The code is never bent to reach `node`.** One
 devDependency removes the question, so a new script is `tsx path/to/index.ts` and `tsx` is a devDependency of
-every package that owns one — the root (for `scripts/**`), `packages/app`, `packages/db-mock`.
+every package that owns one — the root (for `scripts/**`), `apps/web`, `packages/db-mock`.
 
 Two further things `tsx` absorbs, which is why there is nothing to gain by trying `node` first:
 
 - **A tsconfig `paths` alias** — node resolves `imports` subpaths and nothing else, so `@/models/…` is a bare
-  specifier it goes looking for in `node_modules`. `packages/app/scripts/*` reaches app source through the
+  specifier it goes looking for in `node_modules`. `apps/web/scripts/*` reaches app source through the
   Nuxt-generated `@/*`, `@@/*` and `#shared/*`, so both of them (`phaser:gen` and `tiled:gen`) pass
   `--tsconfig tsconfig.root.json`.
 - **An extensionless relative import** (`../src/constants`) — node wants the extension, tsx does not. Banned
@@ -111,6 +111,8 @@ The suite runs **once per coherent chunk, on `develop`, before that chunk is pus
 ## Key Rules
 
 - **Lint locally** with the fix scripts — never hand-edit to satisfy the linter. The root `pnpm lint:fix` is the one that matches CI, so it is what a chunk ends on; the check-only root `pnpm lint` differs from it only in not writing the fixes.
-- **Vitest loads a minimal Nuxt module allowlist** (`packages/app/configuration/modules.ts`, under `process.env.VITEST`) — the full set crashes config startup on Windows. A test that needs an excluded module adds it to that branch rather than widening the allowlist for every run.
-- **Long-running** (`dev`, `build`, `test`, `typecheck`): use `run_in_background: true` (2+ min).
+- **Vitest loads a minimal Nuxt module allowlist** (`apps/web/configuration/modules.ts`, under `process.env.VITEST`) — the full set crashes config startup on Windows. A test that needs an excluded module adds it to that branch rather than widening the allowlist for every run.
+- **Long-running** (`dev`, `build`, `test`, `typecheck`, root `lint:fix`): use `run_in_background: true` (2+ min),
+  and keep working while it runs — the check suite is not a place to sit and wait (`context-efficiency`, "The pass
+  runs in the background").
 - **Never use `pnpm <script> -- <args>`**: pnpm forwards the literal `--`, so trailing flags become post-`--` positionals and are dropped. Use `pnpm exec <binary> <args>` or direct args (`pnpm test -u`).
