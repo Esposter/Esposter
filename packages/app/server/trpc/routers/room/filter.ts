@@ -15,6 +15,8 @@ import {
 import { Operation } from "@esposter/shared";
 
 export const filterRouter = router({
+  // Null rather than undefined, which the pending query already spends: the settings panel renders its form only
+  // Once the read has answered, and a room with no filter row configured is an answer
   readRoomFilter: getMemberProcedure(roomIdSchema, "roomId").query<null | RoomFilterInMessage>(
     async ({ ctx, input: { roomId } }) =>
       (await ctx.db.query.roomFiltersInMessage.findFirst({ where: { roomId: { eq: roomId } } })) ?? null,

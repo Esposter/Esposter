@@ -11,8 +11,7 @@ export const useReadMyInvite = (roomId: RoomInMessage["id"], onSuccess?: (invite
   const { invites } = storeToRefs(inviteStore);
   const { seedInvite, setInvite } = inviteStore;
   return useQuery(() => $trpc.room.readMyInvite.query({ roomId }), {
-    onSuccess: (newInvite) => {
-      const invite = newInvite ?? undefined;
+    onSuccess: (invite) => {
       const storedInvite = invites.value.get(roomId);
       // A read that finds nothing beats a stored link that has since lapsed — the server deletes an expired or
       // Exhausted row lazily, so the map would otherwise go on offering a token nobody can join with. A stored

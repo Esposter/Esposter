@@ -47,6 +47,14 @@ A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends
 - **Azure SDK / EventGrid** — `SerializableValue`, EventGrid data shapes; keep raw types, convert on ingress.
 - **Vuetify** — a few Vuetify props are typed `T | null`; use `null` only where the prop type requires it, with a comment explaining why.
 
+**A tRPC read whose row is absent answers `undefined`** — the app-owned spelling, and what `?? null` on a
+`findFirst` only converts away, since every consumer then guards it truthily or converts it straight back. `null`
+survives on such a read only where the consumer must tell **"not loaded yet" from "loaded, and there is no row"**:
+`useQuery` spends `undefined` on the pending state, so the sentinel is taken and the third state has to be `null`
+(`readRoomFilter` gating on `filter !== undefined`, `ResourceWithPublication.publication`). A read whose consumer
+never distinguishes the two — a page awaiting the query and guarding `if (!room)` — has no such state and takes
+`undefined`. Where `null` is kept, the type says why, because the next reader cannot see the consumer from here.
+
 **Domain values — `null` where the domain already spends `""`:**
 
 `null` is also permitted, outside any boundary, where it is a **value of the domain rather than an absence** — which happens when `""` is separately meaningful, so the `""` sentinel is already taken. The spreadsheet cell is the case: `ColumnValue` is `boolean | null | number | string`, where `null` is the empty cell and `""` is a cell holding the empty string. They sort differently, filter differently (`NULL_BOOLEAN_FILTER_VALUE`), and `nullCount` counts one and not the other, so collapsing them loses data the user entered. Nor can it be an absent key: rows are `Record<string, ColumnValue>` serialized to JSON, and a dropped key is not a readable empty cell.

@@ -50,8 +50,11 @@ export const readMessages = async ({
     const indices = await getTopNEntities(indexClient, limit + 1, CompositeKey, {
       filter: serializeClauses(indexClauses),
     });
-    if (indices.length === 0) return getCursorPaginationData([], 0, []);
     const { hasMore, items, nextCursor } = getCursorPaginationData(indices, limit, sortBy);
+    // No index row is no page, and the join below reads every rowKey the page named — with none to name, its
+    // Filter would degrade to the whole partition
+    if (items.length === 0) return { hasMore, items: [], nextCursor };
+
     const messageClient = await useTableClient(AzureTable.Messages);
     for (const { rowKey } of items)
       clauses.push({
