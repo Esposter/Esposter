@@ -18,7 +18,7 @@ export const SpecialAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     description: "Send a message in all uppercase",
     icon: "mdi-format-letter-case-upper",
     points: 15,
-    triggerPath: "message.createMessage" as const,
+    triggerPath: "message.createMessage",
   }),
   [SpecialAchievementName.AllLower]: defineAchievementDefinition({
     amount: 1,
@@ -31,7 +31,7 @@ export const SpecialAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     description: "Send a message in all lowercase",
     icon: "mdi-format-letter-case-lower",
     points: 15,
-    triggerPath: "message.createMessage" as const,
+    triggerPath: "message.createMessage",
   }),
   [SpecialAchievementName.EmojiLover]: defineAchievementDefinition({
     amount: 1,
@@ -45,7 +45,7 @@ export const SpecialAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     icon: "mdi-emoticon-excited",
     isHidden: true,
     points: 15,
-    triggerPath: "message.createMessage" as const,
+    triggerPath: "message.createMessage",
   }),
   [SpecialAchievementName.Meta]: defineAchievementDefinition({
     condition: {
@@ -58,7 +58,7 @@ export const SpecialAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     icon: "mdi-trophy",
     isHidden: true,
     points: 100,
-    triggerPath: "message.createMessage" as const,
+    triggerPath: "message.createMessage",
   }),
   [SpecialAchievementName.NumberEnthusiast]: defineAchievementDefinition({
     amount: 1,
@@ -71,7 +71,7 @@ export const SpecialAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     description: "Send a message with 10+ numbers",
     icon: "mdi-numeric",
     points: 20,
-    triggerPath: "message.createMessage" as const,
+    triggerPath: "message.createMessage",
   }),
   [SpecialAchievementName.Palindrome]: defineAchievementDefinition({
     amount: 1,
@@ -85,6 +85,6 @@ export const SpecialAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     icon: "mdi-mirror",
     isHidden: true,
     points: 50,
-    triggerPath: "message.createMessage" as const,
+    triggerPath: "message.createMessage",
   }),
 });

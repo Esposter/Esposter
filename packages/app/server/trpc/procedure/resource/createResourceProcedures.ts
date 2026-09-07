@@ -28,7 +28,7 @@ import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishB
 import { publishBlobPrefixDeletion } from "@@/server/services/azure/eventGrid/publishBlobPrefixDeletion";
 import { on } from "@@/server/services/events/on";
 import { publishResourceOperation } from "@@/server/services/notification/publishResourceOperation";
-import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
+import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
@@ -173,7 +173,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
           },
           with: { publication: true },
         });
-        return getOffsetPaginationData(resultResources, limit);
+        return getBasePaginationData(resultResources, limit);
       }),
     saveResourceContent: getOwnerProcedure(type, saveResourceContentInputSchema, "id").mutation<Resource>(
       ({ ctx, input: { content, contentVersion, id } }) =>

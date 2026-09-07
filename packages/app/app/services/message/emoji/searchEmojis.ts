@@ -27,7 +27,7 @@ const createMiniSearch = () => {
   });
   // `emojilib` is keyed by the same character `unicode-emoji-json` is, which is what makes the join a lookup
   index.addAll(
-    [...getEmojiIndex().slugEmojiMap.values()].map(({ character, name, slug }) => ({
+    Array.from(getEmojiIndex().slugEmojiMap.values(), ({ character, name, slug }) => ({
       keywords: (characterKeywordsMap[character] ?? []).join(" "),
       name,
       slug,

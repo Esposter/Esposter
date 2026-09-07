@@ -17,14 +17,14 @@ export const FlowchartAchievementDefinitionMap = defineAchievementDefinitionMap(
     description: "Save a flowchart with more than 20 edges",
     icon: "mdi-chart-timeline-variant-shimmer",
     points: 40,
-    triggerPath: "flowchart.saveResourceContent" as const,
+    triggerPath: "flowchart.saveResourceContent",
   }),
   [FlowchartAchievementName.Flowcharter]: defineAchievementDefinition({
     amount: 1,
     description: "Save a flowchart",
     icon: "mdi-chart-timeline-variant",
     points: 20,
-    triggerPath: "flowchart.saveResourceContent" as const,
+    triggerPath: "flowchart.saveResourceContent",
   }),
   [FlowchartAchievementName.SystemArchitect]: defineAchievementDefinition({
     amount: 1,
@@ -37,6 +37,6 @@ export const FlowchartAchievementDefinitionMap = defineAchievementDefinitionMap(
     description: "Save a flowchart with more than 10 nodes",
     icon: "mdi-sitemap",
     points: 30,
-    triggerPath: "flowchart.saveResourceContent" as const,
+    triggerPath: "flowchart.saveResourceContent",
   }),
 });

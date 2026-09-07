@@ -14,7 +14,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 describe(useRecentStore, () => {
   const server = setupMswTrpc();
   const resource = createResourceListItem();
-  // The object literal `getOffsetPaginationData` returns, not `new OffsetPaginationData(...)`: superjson only
+  // The object literal `getBasePaginationData` returns, not `new OffsetPaginationData(...)`: superjson only
   // Walks plain objects, so an unregistered class instance crosses the wire without type annotations for its
   // Children and every nested `Date` arrives as a string. Matching what the server actually sends keeps the
   // Assertion below able to compare whole rows

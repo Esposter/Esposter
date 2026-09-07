@@ -21,11 +21,11 @@ const HEADER = ["task", "vs base", "mean (ms)", "±rme", "p99 (ms)", "samples"];
 // Display width because the only non-ASCII glyphs we emit (×, ±, em dash) are each a single UTF-16 unit.
 const formatTable = (rows: string[][]): string[] => {
   const widths = rows.reduce<number[]>(
-    (acc, row) => acc.map((width, i) => Math.max(width, takeOne(row, i).length)),
+    (accumulator, row) => accumulator.map((width, index) => Math.max(width, takeOne(row, index).length)),
     HEADER.map((header) => header.length),
   );
   const formatRow = (cells: string[]): string =>
-    `| ${cells.map((cell, i) => cell.padEnd(takeOne(widths, i))).join(" | ")} |`;
+    `| ${cells.map((cell, index) => cell.padEnd(takeOne(widths, index))).join(" | ")} |`;
   return [
     formatRow(HEADER),
     `| ${widths.map((width) => "-".repeat(width)).join(" | ")} |`,

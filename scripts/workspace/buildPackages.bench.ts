@@ -1,3 +1,4 @@
+import { parseMachineJson } from "#scripts/services/parseMachineJson";
 import { execFileSync } from "node:child_process";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
@@ -46,8 +47,7 @@ const readBuildOrder = (): { directory: string; packageName: string }[] =>
       const trimmedLine = line.trim();
       if (!trimmedLine.startsWith("[")) return [];
 
-      // eslint-disable-next-line no-restricted-syntax -- a package name and a directory, neither of which is a date
-      const [packageName, directory] = JSON.parse(trimmedLine) as [string, string];
+      const [packageName, directory] = parseMachineJson<[string, string]>(trimmedLine);
       return [{ directory, packageName }];
     });
 // Module scope rather than a suite hook: Vitest fires bench() callbacks before hooks resolve. Gated on CI ahead

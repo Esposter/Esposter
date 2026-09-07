@@ -9,6 +9,6 @@ export const EmailAchievementDefinitionMap = defineAchievementDefinitionMap(Achi
     description: "Save an email template",
     icon: "mdi-email-edit",
     points: 20,
-    triggerPath: "email.saveResourceContent" as const,
+    triggerPath: "email.saveResourceContent",
   }),
 });

@@ -5,7 +5,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
 import { readMessageSearchDocuments } from "@@/server/services/message/readMessageSearchDocuments";
-import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
+import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
 import {
   BinaryOperator,
   CompositeKeyPropertyNames,
@@ -34,5 +34,5 @@ export const searchMessages = async ({ filters, limit, offset, query, roomId, so
     query,
     searchFields: SearchIndexSearchableFieldsMap[SearchIndex.Messages],
   });
-  return { count, data: getOffsetPaginationData(messages, limit) };
+  return { count, data: getBasePaginationData(messages, limit) };
 };

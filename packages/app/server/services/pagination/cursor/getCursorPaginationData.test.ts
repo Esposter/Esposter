@@ -23,8 +23,6 @@ describe(getCursorPaginationData, () => {
     });
   });
 
-  // The extra item is what answers `hasMore`, so it is dropped from the page and never cursored past — a
-  // Cursor naming it would skip it on the next read
   test("drops the item past the limit and cursors on the last one it kept", () => {
     expect.hasAssertions();
 

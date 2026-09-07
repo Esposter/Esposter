@@ -157,6 +157,7 @@
     "curly": ["error", "multi"],
     "error-alert/no-raw-error-alert": "error",
     "func-names": "off",
+    "id-denylist": ["error", "acc", "curr", "idx"],
     "id-length": "off",
     "import/default": "off",
     "import/exports-last": "off",
@@ -221,6 +222,11 @@
             "importNames": ["randomUUID"],
             "message": "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
             "name": "node:crypto"
+          },
+          {
+            "importNames": ["useRoute"],
+            "message": "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
+            "name": "vue-router"
           }
         ]
       }
@@ -258,6 +264,46 @@
       {
         "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
         "name": "sessionStorage"
+      },
+      {
+        "message": "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
+        "name": "useRoute"
+      },
+      {
+        "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
+        "name": "waitFor"
+      },
+      {
+        "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
+        "name": "waitUntil"
+      }
+    ],
+    "no-restricted-properties": [
+      "error",
+      {
+        "message": "Avoid `expect.any` — capture the real value from the mock call and assert it exactly (or toBeTypeOf).",
+        "object": "expect",
+        "property": "any"
+      },
+      {
+        "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
+        "object": "expect",
+        "property": "poll"
+      },
+      {
+        "message": "Use `jsonDateParse` from `@esposter/shared` — plain `JSON.parse` leaves every Date as an ISO string. Disable this rule with a reason where blanket revival is wrong (see /docs/architecture/serialization.md).",
+        "object": "JSON",
+        "property": "parse"
+      },
+      {
+        "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
+        "object": "vi",
+        "property": "waitFor"
+      },
+      {
+        "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
+        "object": "vi",
+        "property": "waitUntil"
       }
     ],
     "no-ternary": "off",

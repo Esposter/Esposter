@@ -17,4 +17,4 @@ Periodic _work_ on a fixed cadence is not polling: the clicker game tick, the au
 
 If a dependency genuinely exposes no signal — no promise, no event, no webhook — that is an integration-design problem to fix at the boundary (add the completion handle, subscribe to the service's events), never a license to poll around it.
 
-The mechanical surfaces are lint-enforced: `expect.poll`, `vi.waitFor`, and `vi.waitUntil` are `no-restricted-syntax` errors in the shared ESLint config. Hand-rolled check-on-a-timer loops can't be caught by a selector, so those fall to review under this standard.
+The mechanical surfaces are lint-enforced: `expect.poll`, `vi.waitFor` and `vi.waitUntil` are `no-restricted-properties` errors in `.oxlintrc.json`, and a bare `waitFor`/`waitUntil` is a `no-restricted-globals` one. Hand-rolled check-on-a-timer loops match no rule, so those fall to review under this standard.

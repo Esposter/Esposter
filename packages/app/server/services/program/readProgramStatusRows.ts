@@ -2,22 +2,16 @@ import type { ProgramStatusParticipantRow } from "@@/server/models/program/Progr
 import type { Resource } from "@esposter/db-schema";
 
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { readProgramParticipantEntities } from "@@/server/services/program/readProgramParticipantEntities";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { readSurveyResponseEntities } from "@@/server/services/survey/readSurveyResponseEntities";
-import { AZURE_MAX_PAGE_SIZE, getPartitionKeyFilter } from "@esposter/azure";
-import { getTopNEntities } from "@esposter/db";
-import { AzureTable, ProgramParticipantEntity } from "@esposter/db-schema";
 
 // The canonical participants × responses join, purpose-built rather than routed through a generic join engine.
 // A response with no matching participant (an anonymous-era row) carries nobody, so it never appears here
 export const readProgramStatusRows = async (
   programId: Resource["id"],
 ): Promise<{ isRespondedPartial: boolean; rows: ProgramStatusParticipantRow[] }> => {
-  const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
-  const participants = await getTopNEntities(programParticipantClient, AZURE_MAX_PAGE_SIZE, ProgramParticipantEntity, {
-    filter: getPartitionKeyFilter(programId),
-  });
+  const participants = await readProgramParticipantEntities(programId);
   // A deleted or unbound survey leaves the participants readable with nothing responded — the same
   // Fail-soft posture as every dangling reference
   const content = await readResourceContent(programResourceSchema, programId);

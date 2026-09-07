@@ -11,19 +11,19 @@ export const SheetAchievementDefinitionMap = defineAchievementDefinitionMap(Achi
     description: "Save a file",
     icon: "mdi-table",
     points: 20,
-    triggerPath: "sheet.saveResourceContent" as const,
+    triggerPath: "sheet.saveResourceContent",
   }),
   [TableAchievementName.MathWhiz]: defineAchievementDefinition({
     amount: 1,
     condition: {
       operator: BinaryOperator.ge,
-      path: "content.data.rows.length" as const,
+      path: "content.data.rows.length",
       type: AchievementConditionType.Property,
       value: 5,
     },
     description: "Create a table with at least 5 rows",
     icon: "mdi-calculator",
     points: 25,
-    triggerPath: "sheet.saveResourceContent" as const,
+    triggerPath: "sheet.saveResourceContent",
   }),
 });

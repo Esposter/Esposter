@@ -17,14 +17,14 @@ export const LikeAchievementDefinitionMap = defineAchievementDefinitionMap(Achie
     description: "Dislike 10 posts",
     icon: "mdi-thumb-down",
     points: 15,
-    triggerPath: "like.createLike" as const,
+    triggerPath: "like.createLike",
   }),
   [LikeAchievementName.CriticalThinker]: defineAchievementDefinition({
     amount: 50,
     description: "Remove 50 likes",
     icon: "mdi-thumb-down-outline",
     points: 40,
-    triggerPath: "like.deleteLike" as const,
+    triggerPath: "like.deleteLike",
   }),
   [LikeAchievementName.Disliker]: defineAchievementDefinition({
     amount: 1,
@@ -37,14 +37,14 @@ export const LikeAchievementDefinitionMap = defineAchievementDefinitionMap(Achie
     description: "Dislike a post",
     icon: "mdi-thumb-down",
     points: 5,
-    triggerPath: "like.createLike" as const,
+    triggerPath: "like.createLike",
   }),
   [LikeAchievementName.Hater]: defineAchievementDefinition({
     amount: 10,
     description: "Unlike 10 posts",
     icon: "mdi-thumb-down",
     points: 15,
-    triggerPath: "like.deleteLike" as const,
+    triggerPath: "like.deleteLike",
   }),
   [LikeAchievementName.Liker]: defineAchievementDefinition({
     amount: 1,
@@ -57,7 +57,7 @@ export const LikeAchievementDefinitionMap = defineAchievementDefinitionMap(Achie
     description: "Like a post",
     icon: "mdi-thumb-up",
     points: 5,
-    triggerPath: "like.createLike" as const,
+    triggerPath: "like.createLike",
   }),
   [LikeAchievementName.SuperFan]: defineAchievementDefinition({
     amount: 100,
@@ -70,13 +70,13 @@ export const LikeAchievementDefinitionMap = defineAchievementDefinitionMap(Achie
     description: "Like 100 posts",
     icon: "mdi-heart-multiple",
     points: 75,
-    triggerPath: "like.createLike" as const,
+    triggerPath: "like.createLike",
   }),
   [LikeAchievementName.Unliker]: defineAchievementDefinition({
     amount: 1,
     description: "Unlike a post",
     icon: "mdi-thumb-down",
     points: 5,
-    triggerPath: "like.deleteLike" as const,
+    triggerPath: "like.deleteLike",
   }),
 });

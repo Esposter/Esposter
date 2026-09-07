@@ -1,6 +1,6 @@
 ---
 name: sweeps
-description: Esposter repo-wide sweep conventions — a Settled list of the directions already rejected (filing a sweep as a proposal, a progress column or tick count on the index row, fanning one sweep's units out to parallel agents, and inheriting a split row's date onto its children), progress tracked as a ledger in .agents/ledgers/ named after the skill that owns its rules, sweeps being repo state rather than proposals, proving a find recipe can fail before believing it passed, when a mechanical pass earns a ledger and when it is just a commit, splitting a row that reads as too high a level before any pass starts, one unit per commit chunked to the review budget, state living at the leaf with the pass run in the main session one unit at a time, behaviour-preserving passes and where a behaviour-changing finding goes instead, what belongs in the commit message rather than the ledger, every sweep being standing, draining a ledger as a by-product of ordinary work, and handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill — plus deep dives on where a find recipe lives (a grep inline, anything with control flow a tested script under scripts/sweeps/), on resuming one from the `Scope` pathspecs its index row declares (the convention's domain rather than the union of its rows), on what a pass does when its rule turns out silent or wrong, and on the ledger file itself: the six things it may hold, the explanatory prose it may not, and the ban on any record of what a past pass did, promotion to a folder, and a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same), with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
+description: Esposter repo-wide sweep conventions — a Settled list of the directions already rejected (filing a sweep as a proposal, a progress column or tick count on the index row, fanning one sweep's units out to parallel agents, and inheriting a split row's date onto its children), progress tracked as a ledger in .agents/ledgers/ named after the skill that owns its rules, sweeps being repo state rather than proposals, proving a find recipe can fail before believing it passed, when a mechanical pass earns a ledger and when it is just a commit, splitting a row that reads as too high a level before any pass starts, one unit per commit chunked to the review budget, state living at the leaf with the pass run in the main session one unit at a time, behaviour-preserving passes and where a behaviour-changing finding goes instead, what belongs in the commit message rather than the ledger, every sweep being standing, why re-running one converges — a review window budgeted in files but spent on findings, so thinning findings buy more units per window until a window reports nothing — draining a ledger as a by-product of ordinary work, and handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill — plus deep dives on where a find recipe lives (a grep inline, anything with control flow a tested script under scripts/sweeps/), on resuming one from the `Scope` pathspecs its index row declares (the convention's domain rather than the union of its rows), on what a pass does when its rule turns out silent or wrong, and on the ledger file itself: the six things it may hold, the explanatory prose it may not, and the ban on any record of what a past pass did, promotion to a folder, and a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same), with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
 ---
 
 # Sweeps
@@ -91,6 +91,32 @@ lines stop fitting.
 and adding it resets that ledger's dates, because a unit swept against a narrower rule set is not swept against
 the current one and there is no partially-swept state. Sharing a file set with an existing ledger is not what
 decides this; the next section is.
+
+## Re-running converges
+
+A resume that reports nothing reads like effort spent for no return, and it is the opposite. A pass is bounded by
+the review window, which is a budget of **files changed** — the `coderabbit` skill owns the number, and it is never
+restated here. What spends that budget is **findings**, since a unit reported clean changes no file at all: a unit
+carrying three fixes fills the window by itself; a unit carrying none costs only its reading and leaves the whole
+budget for the next unit. So as the density of findings falls, the number of units one window carries rises, and
+the same fixed budget reaches further into the tree every cycle. The cap still binds the window it reaches: units
+are added while the files they change stay under it, never because the last few reported nothing.
+
+```mermaid
+flowchart LR
+  FIRST["first pass — dense findings"] --> ONE["one unit fills the window"]
+  ONE --> LATER["later pass — sparse findings"]
+  LATER --> MANY["several units fit one window"]
+  MANY --> FIXED["the fixed point: one window touches every open row and reports nothing"]
+```
+
+That is what the coverage dates make visible, and it is why a convention is swept again rather than declared done.
+A pass that finds nothing is not the sweep failing to pay — it is the sweep having converged **there**, recorded as
+a date so the next cycle starts from it instead of re-reading it.
+
+This is not the treadmill the section above rejects. What must never repeat is a pass **re-deriving** a rule a
+machine could decide; that work is handed to an enforcer and leaves the sweep's scope for good. A reading pass
+whose findings thin out each cycle is the opposite shape: each cycle is cheaper than the last, and it ends.
 
 ## Draining beats scheduling
 

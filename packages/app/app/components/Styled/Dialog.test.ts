@@ -118,7 +118,7 @@ describe("styledDialog", () => {
     );
 
     expect(
-      [...body.querySelectorAll(".v-card-actions .v-btn")].map(({ textContent }) => textContent?.trim()),
+      Array.from(body.querySelectorAll(".v-card-actions .v-btn"), ({ textContent }) => textContent?.trim()),
     ).toStrictEqual(["Cancel", "Discard changes", text]);
   });
 
@@ -130,7 +130,7 @@ describe("styledDialog", () => {
     const body = await mountOpenDialog({}, { "prepend-confirm": '<button class="v-btn">Discard changes</button>' });
 
     expect(
-      [...body.querySelectorAll(".v-card-actions .v-btn")].map(({ textContent }) => textContent?.trim()),
+      Array.from(body.querySelectorAll(".v-card-actions .v-btn"), ({ textContent }) => textContent?.trim()),
     ).toStrictEqual(["Cancel", "Discard changes"]);
     // The row carries the dismissal, so the append close button would be a second one
     expect(body.querySelector('[aria-label="Close"], button .mdi-close')).toBeNull();

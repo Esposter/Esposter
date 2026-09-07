@@ -39,7 +39,7 @@ flowchart TB
   end
 ```
 
-`jsonDateParse` is the default parse repo-wide: plain `JSON.parse` is banned by the `no-restricted-syntax` ESLint rule, so each of the deliberate exceptions below carries an `eslint-disable-next-line no-restricted-syntax` with its reason.
+`jsonDateParse` is the default parse repo-wide: plain `JSON.parse` is banned by oxlint's `no-restricted-properties`, so each of the deliberate exceptions below carries an `oxlint-disable-next-line no-restricted-properties` with its reason.
 
 ## Why `jsonDateParse` is needed on the transport paths
 

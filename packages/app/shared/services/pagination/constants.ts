@@ -17,3 +17,8 @@ export const CREATED_AT_DESCENDING_SORT_ITEM = {
   key: ItemMetadataPropertyNames.createdAt,
   order: SortOrder.Desc,
 } as const satisfies SortItem<typeof ItemMetadataPropertyNames.createdAt>;
+// Most-recently-touched first, the default every paginated read of a mutable entity opens on.
+export const UPDATED_AT_DESCENDING_SORT_ITEM = {
+  key: ItemMetadataPropertyNames.updatedAt,
+  order: SortOrder.Desc,
+} as const satisfies SortItem<typeof ItemMetadataPropertyNames.updatedAt>;

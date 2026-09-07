@@ -11,7 +11,7 @@ describe("@esposter/shared-node", () => {
 
   test("reporter bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSizeReport(distReporterFile)).toMatchInlineSnapshot(`"reporter.js: 5.61 KB (5745 bytes)"`);
+    expect(getFileSizeReport(distReporterFile)).toMatchInlineSnapshot(`"reporter.js: 5.64 KB (5777 bytes)"`);
   });
 
   test("runner bundle size", () => {

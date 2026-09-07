@@ -25,7 +25,7 @@ vi.mock(import("#src/services/getContainerClient"), () => import("#src/services/
 const readContainer = () => {
   const container = MockContainerDatabase.get(AzureContainer.DeadLetter);
   assert.exists(container);
-  return Object.fromEntries([...container].map(([name, buffer]) => [name, buffer.toString("utf8")]));
+  return Object.fromEntries(Array.from(container, ([name, buffer]) => [name, buffer.toString("utf8")]));
 };
 
 describe(replayDeadLetterEventHandler, () => {

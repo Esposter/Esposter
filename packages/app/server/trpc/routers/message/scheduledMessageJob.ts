@@ -12,7 +12,7 @@ import { useServiceBusSender } from "@@/server/composables/azure/serviceBus/useS
 import { ownedBy } from "@@/server/services/db/ownedBy";
 import { createUserMessage } from "@@/server/services/message/createUserMessage";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
-import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
+import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
@@ -96,7 +96,7 @@ export const scheduledMessageJobRouter = router({
         .orderBy(asc(scheduledMessageJobsInMessage.runAt))
         .limit(limit + 1)
         .offset(offset);
-      return getOffsetPaginationData(
+      return getBasePaginationData(
         rows.map(({ room, scheduledMessageJob }) => Object.assign(scheduledMessageJob, { room })),
         limit,
       );

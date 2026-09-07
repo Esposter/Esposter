@@ -1,7 +1,8 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
+import { CALL_TRACK_SOURCES, SCREEN_SHARE_TRACK_SOURCES } from "@@/server/services/livekit/constants";
 import { getLiveKitCredentials } from "@@/server/services/livekit/getLiveKitCredentials";
-import { AccessToken, TrackSource } from "livekit-server-sdk";
+import { AccessToken } from "livekit-server-sdk";
 
 export const createLiveKitToken = async (callSessionId: string, participant: CallParticipant) => {
   const credentials = getLiveKitCredentials();
@@ -14,12 +15,7 @@ export const createLiveKitToken = async (callSessionId: string, participant: Cal
   });
   token.addGrant({
     canPublish: true,
-    canPublishSources: [
-      TrackSource.MICROPHONE,
-      TrackSource.CAMERA,
-      TrackSource.SCREEN_SHARE,
-      TrackSource.SCREEN_SHARE_AUDIO,
-    ],
+    canPublishSources: [...CALL_TRACK_SOURCES, ...SCREEN_SHARE_TRACK_SOURCES],
     canSubscribe: true,
     room: callSessionId,
     roomJoin: true,

@@ -871,7 +871,7 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const user = getMockSession().user;
-    const members = await roomCaller.readMembersByIds({ ids: [user.id], roomId: newRoom.id });
+    const members = await roomCaller.readMembersByIds({ roomId: newRoom.id, userIds: [user.id] });
 
     expect(takeOne(members).id).toBe(user.id);
   });
@@ -884,7 +884,7 @@ describe("roomRouter", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      roomCaller.readMembersByIds({ ids: [userId], roomId: newRoom.id }),
+      roomCaller.readMembersByIds({ roomId: newRoom.id, userIds: [userId] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

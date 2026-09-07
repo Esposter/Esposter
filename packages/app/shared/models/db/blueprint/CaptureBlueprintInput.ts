@@ -7,5 +7,4 @@ export const captureBlueprintInputSchema = z.object({
   ids: createUniqueArraySchema(selectResourceSchema.shape.id).min(1).max(MAX_BLUEPRINT_ENTRIES),
   name: selectResourceSchema.shape.name,
 });
-
 export type CaptureBlueprintInput = z.infer<typeof captureBlueprintInputSchema>;

@@ -26,7 +26,7 @@ export const computeDatasetVisualPropsData = (
   }
   const categories = [...categoryRowsMap.keys()];
   const series = query.series.map(({ aggregation, column }) => ({
-    data: [...categoryRowsMap.values()].map((rows) =>
+    data: Array.from(categoryRowsMap.values(), (rows) =>
       DatasetAggregationComputeMap[aggregation](rows.map((row) => row[column] ?? null)),
     ),
     name: column,

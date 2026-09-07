@@ -2,6 +2,7 @@ import type { WorkspacePackage } from "#scripts/models/WorkspacePackage";
 import type { PackageManifest } from "@esposter/configuration";
 
 import { getPackageJsonPaths } from "#scripts/services/getPackageJsonPaths";
+import { parseMachineJson } from "#scripts/services/parseMachineJson";
 import { readFileSync } from "node:fs";
 import { basename, dirname, resolve } from "node:path";
 
@@ -18,7 +19,6 @@ export const getWorkspacePackages = (root: string): WorkspacePackage[] => {
     .toSorted()
     .map((packageJsonPath) => ({
       directory: basename(dirname(packageJsonPath)),
-      // eslint-disable-next-line no-restricted-syntax -- a package manifest carries no dates, and reading one through `jsonDateParse` would make this script wait on `@esposter/shared` being built
-      manifest: JSON.parse(readFileSync(packageJsonPath, "utf8")) as PackageManifest,
+      manifest: parseMachineJson<PackageManifest>(readFileSync(packageJsonPath, "utf8")),
     }));
 };

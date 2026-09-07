@@ -49,7 +49,8 @@ vi.mock(import("@@/server/composables/azure/container/useUpload"), async (import
 // And the type's registered after-save hook — is asserted here once. TodoList is the representative type: it is
 // The one with a registered after-save hook
 const readActivityTypes = () =>
-  [...(MockTableDatabase.get(AzureTable.ResourceActivity)?.values() ?? [])].map(
+  Array.from(
+    MockTableDatabase.get(AzureTable.ResourceActivity)?.values() ?? [],
     ({ activityType }) => activityType as ResourceActivityType,
   );
 

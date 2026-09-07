@@ -27,7 +27,7 @@ const defineMonsterLevelAchievementDefinition = ({
     description: `Train a monster to level ${level} in your dungeon game`,
     icon,
     points,
-    triggerPath: "dungeons.saveDungeons" as const,
+    triggerPath: "dungeons.saveDungeons",
   });
 
 export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Dungeons, {
@@ -36,7 +36,7 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
     description: "Save your dungeon game",
     icon: "mdi-sword",
     points: 10,
-    triggerPath: "dungeons.saveDungeons" as const,
+    triggerPath: "dungeons.saveDungeons",
   }),
   [DungeonsAchievementName.DungeonHomeowner]: defineAchievementDefinition({
     amount: 1,
@@ -52,14 +52,14 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
     description: "Open every chest you have discovered in your dungeon game",
     icon: "mdi-treasure-chest-outline",
     points: 100,
-    triggerPath: "dungeons.saveDungeons" as const,
+    triggerPath: "dungeons.saveDungeons",
   }),
   [DungeonsAchievementName.DungeonMaster]: defineAchievementDefinition({
     amount: 50,
     description: "Save your dungeon game 50 times",
     icon: "mdi-castle",
     points: 100,
-    triggerPath: "dungeons.saveDungeons" as const,
+    triggerPath: "dungeons.saveDungeons",
   }),
   [DungeonsAchievementName.MonsterCatcher]: defineAchievementDefinition({
     amount: 1,
@@ -73,7 +73,7 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
     description: "Catch your first monster in your dungeon game",
     icon: "mdi-pokeball",
     points: 20,
-    triggerPath: "dungeons.saveDungeons" as const,
+    triggerPath: "dungeons.saveDungeons",
   }),
   [DungeonsAchievementName.MonsterCollector]: defineAchievementDefinition({
     amount: 1,
@@ -86,7 +86,7 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
     description: "Catch every monster species in your dungeon game",
     icon: "mdi-book-open-page-variant",
     points: 200,
-    triggerPath: "dungeons.saveDungeons" as const,
+    triggerPath: "dungeons.saveDungeons",
   }),
   [DungeonsAchievementName.MonsterElite]: defineMonsterLevelAchievementDefinition({
     icon: "mdi-shield-star",

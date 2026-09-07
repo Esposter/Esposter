@@ -1,3 +1,1 @@
-import { SAVE_FILENAME } from "@@/server/services/blobState/constants";
-
-export const getSaveBlobName = (userId: string): string => `${userId}/${SAVE_FILENAME}`;
+export const getSaveBlobName = (userId: string): string => `${userId}/save.json`;

@@ -20,7 +20,7 @@ export const getUnresolvedFindings = (files: SkillDocsFile[], paths: Set<string>
         ({ groups }) => groups?.name ?? "",
       );
       const owners = [skill, ...cited.filter((name) => name !== skill && skillNames.has(name))];
-      return [...new Set([...line.matchAll(CITATION_REGEX)].map((match) => match.groups?.target ?? ""))]
+      return [...new Set(Array.from(line.matchAll(CITATION_REGEX), (match) => match.groups?.target ?? ""))]
         .filter((target) => !owners.some((owner) => paths.has(`.agents/skills/${owner}/references/${target}`)))
         .map((target) => ({ detail: `-> ${target}`, path, type: SkillDocsFindingType.Unresolved }));
     });

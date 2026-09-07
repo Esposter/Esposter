@@ -7,9 +7,10 @@ import { useTableClient } from "@@/server/composables/azure/table/useTableClient
 import { DatasetProviderMap } from "@@/server/services/dataset/DatasetProviderMap";
 import { getDanglingProgramBindingError } from "@@/server/services/program/getDanglingProgramBindingError";
 import { getProgramParticipantId } from "@@/server/services/program/getProgramParticipantId";
+import { readProgramParticipantEntities } from "@@/server/services/program/readProgramParticipantEntities";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
-import { AZURE_MAX_BATCH_SIZE, AZURE_MAX_PAGE_SIZE, getPartitionKeyFilter } from "@esposter/azure";
-import { checkIsConflict, createEntity, getEntity, getTopNEntities, serializeEntity } from "@esposter/db";
+import { AZURE_MAX_BATCH_SIZE } from "@esposter/azure";
+import { checkIsConflict, createEntity, getEntity, serializeEntity } from "@esposter/db";
 import { AzureTable, ProgramParticipantEntity } from "@esposter/db-schema";
 import { chunk, getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -49,15 +50,10 @@ export const generateProgramParticipants = async (
   );
   if (!columns.some(({ name }) => name === content.keyColumn)) throw getDanglingProgramBindingError();
 
-  const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
   // The capped page is a warm cache, never the source of truth — a participant past the cap is simply one
   // This read did not see, and the insert below still refuses to issue them a second token
-  const existingParticipants = await getTopNEntities(
-    programParticipantClient,
-    AZURE_MAX_PAGE_SIZE,
-    ProgramParticipantEntity,
-    { filter: getPartitionKeyFilter(programId) },
-  );
+  const existingParticipants = await readProgramParticipantEntities(programId);
+  const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
   const keyValueParticipantMap = new Map<string, ProgramParticipant>(
     existingParticipants.map(({ keyValue, token }) => [keyValue, { keyValue, token }]),
   );

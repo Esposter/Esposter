@@ -57,7 +57,7 @@ describe(mermaid.parse, () => {
   // In front of anyone — nothing loads a skill and draws it — so an unparseable one is invisible until an
   // Agent reads a broken picture as the process. This is the only place the parser is already wired up
   const diagrams = [...pages, ...skillPages].flatMap(({ markdown, page }) =>
-    [...markdown.matchAll(MERMAID_REGEX)].map((match, index) => ({
+    Array.from(markdown.matchAll(MERMAID_REGEX), (match, index) => ({
       code: match.groups?.code ?? "",
       ordinal: index + 1,
       page,
@@ -100,8 +100,7 @@ describe(mermaid.parse, () => {
     expect.hasAssertions();
 
     const offenders = diagrams.flatMap(({ code, ordinal, page }) =>
-      [...code.matchAll(LABEL_REGEX)]
-        .map(({ groups }) => groups?.label ?? "")
+      Array.from(code.matchAll(LABEL_REGEX), ({ groups }) => groups?.label ?? "")
         .filter((label) => label.length > MAX_LABEL_LENGTH || label.split("<br/>").length > MAX_LABEL_LINE_BREAKS + 1)
         .map((label) => `${page} diagram ${ordinal}: ${label}`),
     );
@@ -119,7 +118,7 @@ describe("docsLinks", () => {
 
     const brokenLinks = pages
       .flatMap(({ markdown, page }) =>
-        [...markdown.matchAll(DOCS_LINK_REGEX)].map((match) => ({ page, target: match.groups?.target ?? "" })),
+        Array.from(markdown.matchAll(DOCS_LINK_REGEX), (match) => ({ page, target: match.groups?.target ?? "" })),
       )
       .filter(
         ({ target }) =>
@@ -141,7 +140,8 @@ describe("docsLinks", () => {
       .flatMap((page) => {
         const directory = page.slice(0, -"index.md".length);
         const listed = new Set(
-          [...(pages.find((candidate) => candidate.page === page)?.markdown ?? "").matchAll(DOCS_LINK_REGEX)].map(
+          Array.from(
+            (pages.find((candidate) => candidate.page === page)?.markdown ?? "").matchAll(DOCS_LINK_REGEX),
             (match) => (match.groups?.target ?? "").replace(/\/$/u, ""),
           ),
         );
@@ -181,7 +181,7 @@ describe("keyFiles", () => {
             isKeyFilesTable = false;
             return [];
           } else if (isKeyFilesTable)
-            return [...line.matchAll(BACKTICKED_TOKEN_REGEX)].map((match) => ({
+            return Array.from(line.matchAll(BACKTICKED_TOKEN_REGEX), (match) => ({
               page,
               token: match.groups?.token ?? "",
             }));

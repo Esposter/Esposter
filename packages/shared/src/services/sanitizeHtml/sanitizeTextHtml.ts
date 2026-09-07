@@ -8,6 +8,8 @@ import {
 } from "#src/services/message/constants";
 import { sanitizeHtml } from "#src/services/sanitizeHtml/sanitizeHtml";
 
+const COLOR_REGEXES = [/^#[\da-fA-F]{3,8}$/u, /^rgba?\(\d{1,3},\s*\d{1,3},\s*\d{1,3}(?:,\s*[\d.]+)?\)$/u, /^[a-z]+$/iu];
+
 export const sanitizeTextHtml = (html: string): string =>
   sanitizeHtml(html, {
     allowedAttributes: {
@@ -27,13 +29,9 @@ export const sanitizeTextHtml = (html: string): string =>
     },
     allowedStyles: {
       span: {
-        "background-color": [
-          /^#[\da-fA-F]{3,8}$/u,
-          /^rgba?\(\d{1,3},\s*\d{1,3},\s*\d{1,3}(?:,\s*[\d.]+)?\)$/u,
-          /^[a-z]+$/iu,
-        ],
+        "background-color": COLOR_REGEXES,
         "border-radius": [/^[\d.]+(?<unit>px|em|rem|%)$/u],
-        color: [/^#[\da-fA-F]{3,8}$/u, /^rgba?\(\d{1,3},\s*\d{1,3},\s*\d{1,3}(?:,\s*[\d.]+)?\)$/u, /^[a-z]+$/iu],
+        color: COLOR_REGEXES,
       },
     },
   });

@@ -60,9 +60,10 @@ export const fixAjv = {
         .replaceAll(/(?<!module\.)\bexports\b/gu, "_exports")
         .replaceAll(/^module\.exports = (?<body>.+);\n/gmu, "const _debug = $1;\nexport default _debug;\n")
         .replaceAll(/\bmodule\.exports\b/gu, "_debug");
-      const imports = [...inlineRequireMap.entries()]
-        .map(([path, varName]) => `import * as ${varName} from "${path}";\n`)
-        .join("");
+      const imports = Array.from(
+        inlineRequireMap.entries(),
+        ([path, varName]) => `import * as ${varName} from "${path}";\n`,
+      ).join("");
       return `${imports}const _exports = {}\n${result}`;
     }
     // ── debug/src/common.js ──────────────────────────────────────────────────
@@ -183,9 +184,10 @@ export const fixAjv = {
       .replaceAll(/\bexports\.(?<name>[\w$]+)\b/gu, "$1");
     // Prepend imports for inline requires extracted in step 5.
     if (inlineRequireMap.size > 0) {
-      const imports = [...inlineRequireMap.entries()]
-        .map(([path, varName]) => `import * as ${varName} from "${path}";\n`)
-        .join("");
+      const imports = Array.from(
+        inlineRequireMap.entries(),
+        ([path, varName]) => `import * as ${varName} from "${path}";\n`,
+      ).join("");
       result = imports + result;
     }
     // Set `.default = self` on default-exported identifiers so consumers that call `X.default(...)`

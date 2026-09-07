@@ -112,7 +112,7 @@ export const cloneContentAssets = async <TContent>(
   };
   const clones = (
     await Promise.all(
-      [...urls].map(async (url) => {
+      Array.from(urls, async (url) => {
         const resourceAssetPath = parseResourceAssetPath(url.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length));
         // A published url is cloned like any other: it names another publication's directory, which that
         // Resource's next unpublish wipes wholesale, so carrying it verbatim would leave this snapshot's images

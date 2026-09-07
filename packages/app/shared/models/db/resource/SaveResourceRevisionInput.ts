@@ -15,6 +15,6 @@ export const saveResourceRevisionInputSchema = z
   // A label is what the owner typed when they took a version by hand, so it belongs to that reason alone: a
   // Labelled BeforeImport row reads in the history as a milestone someone chose, when the import took it
   .refine(({ label, reason }) => label === "" || reason === SnapshotReason.Manual, {
-    message: `A label is only accepted on a ${SnapshotReason.Manual} revision`,
+    error: `A label is only accepted on a ${SnapshotReason.Manual} revision`,
   });
 export type SaveResourceRevisionInput = z.infer<typeof saveResourceRevisionInputSchema>;
