@@ -6,5 +6,5 @@ import { selectNotificationSchema } from "@esposter/db-schema";
 
 export const readNotificationsInputSchema = createCursorPaginationParamsSchema(selectNotificationSchema.keyof(), [
   CREATED_AT_DESCENDING_SORT_ITEM,
-]);
+]).prefault({});
 export type ReadNotificationsInput = z.infer<typeof readNotificationsInputSchema>;
