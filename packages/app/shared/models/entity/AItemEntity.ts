@@ -4,7 +4,10 @@ import { applyItemMetadataMixin, getPropertyNames, Serializable } from "@esposte
 import { z } from "zod";
 
 class BaseAItemEntity extends Serializable {
-  id = crypto.randomUUID();
+  // Widened deliberately: inferred, `crypto.randomUUID()` types the field as a `${string}-…` template literal,
+  // Which `z.uuid()`'s plain `string` output then fails to satisfy in every `satisfies z.ZodType<ToData<…>>`
+  // Below this class
+  id: string = crypto.randomUUID();
 }
 
 export const AItemEntity = applyItemMetadataMixin(BaseAItemEntity);
