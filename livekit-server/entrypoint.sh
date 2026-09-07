@@ -48,28 +48,57 @@ yaml_escape() {
   printf "%s" "$1" | sed "s/'/''/g"
 }
 
+# A URL carries its credentials percent-encoded, so a generated password containing @ : / % reaches us as
+# Escapes and has to be handed to Redis as what it actually is. Literal backslashes are doubled first, or %b
+# Would interpret one that was already in the password
+url_decode() {
+  local value="${1//\\/\\\\}"
+  printf '%b' "${value//%/\\x}"
+}
+
+# rediss:// is the whole difference between an encrypted connection and a cleartext one, so it is read before
+# The scheme is stripped rather than being lost with it
+REDIS_USE_TLS=false
+case "$REDIS_URL" in
+  rediss://*) REDIS_USE_TLS=true ;;
+esac
+
 REDIS_NO_SCHEME="${REDIS_URL#redis://}"
 REDIS_NO_SCHEME="${REDIS_NO_SCHEME#rediss://}"
 REDIS_NO_QUERY="${REDIS_NO_SCHEME%%\?*}"
+REDIS_USERNAME=""
 REDIS_PASSWORD=""
 
 if [[ "$REDIS_NO_QUERY" == *"@"* ]]; then
+  # The *last* @ separates credentials from host, so a password holding one survives the split
   REDIS_AUTH="${REDIS_NO_QUERY%@*}"
-  REDIS_HOST_PORT="${REDIS_NO_QUERY#*@}"
+  REDIS_HOST_PORT_DB="${REDIS_NO_QUERY##*@}"
 
   if [[ "$REDIS_AUTH" == *":"* ]]; then
-    REDIS_PASSWORD="${REDIS_AUTH#*:}"
+    REDIS_USERNAME="$(url_decode "${REDIS_AUTH%%:*}")"
+    REDIS_PASSWORD="$(url_decode "${REDIS_AUTH#*:}")"
   else
-    REDIS_PASSWORD="$REDIS_AUTH"
+    REDIS_PASSWORD="$(url_decode "$REDIS_AUTH")"
   fi
 else
-  REDIS_HOST_PORT="$REDIS_NO_QUERY"
+  REDIS_HOST_PORT_DB="$REDIS_NO_QUERY"
 fi
 
-REDIS_HOST_PORT="${REDIS_HOST_PORT%%/*}"
+# The path segment is the database number, and dropping it silently points LiveKit at db 0
+REDIS_HOST_PORT="${REDIS_HOST_PORT_DB%%/*}"
+REDIS_DB=""
+
+if [[ "$REDIS_HOST_PORT_DB" == */* ]]; then
+  REDIS_DB="${REDIS_HOST_PORT_DB#*/}"
+fi
 
 if [ -z "$REDIS_HOST_PORT" ]; then
   echo "ERROR: Could not parse REDIS_URL"
+  exit 1
+fi
+
+if [ -n "$REDIS_DB" ] && ! [[ "$REDIS_DB" =~ ^[0-9]+$ ]]; then
+  echo "ERROR: REDIS_URL database must be a number"
   exit 1
 fi
 
@@ -129,11 +158,30 @@ rtc:
   port_range_end: 0
 EOF
 
+# Each of these is omitted rather than written empty: LiveKit reads an absent key as its own default, where a
+# Blank username or a db of "" is a value it has to reject
+REDIS_OPTIONS=""
+
+if [ -n "$REDIS_USERNAME" ]; then
+  REDIS_OPTIONS="${REDIS_OPTIONS}
+  username: '$(yaml_escape "${REDIS_USERNAME}")'"
+fi
+
+if [ -n "$REDIS_DB" ]; then
+  REDIS_OPTIONS="${REDIS_OPTIONS}
+  db: ${REDIS_DB}"
+fi
+
+if [ "$REDIS_USE_TLS" = true ]; then
+  REDIS_OPTIONS="${REDIS_OPTIONS}
+  use_tls: true"
+fi
+
 cat >> /etc/livekit.yaml <<EOF
 
 redis:
   address: '$(yaml_escape "${REDIS_HOST_PORT}")'
-  password: '$(yaml_escape "${REDIS_PASSWORD}")'
+  password: '$(yaml_escape "${REDIS_PASSWORD}")'${REDIS_OPTIONS}
 
 keys:
   '$(yaml_escape "${LIVEKIT_API_KEY}")': '$(yaml_escape "${LIVEKIT_API_SECRET}")'
