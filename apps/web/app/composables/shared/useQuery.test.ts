@@ -44,4 +44,35 @@ describe(useQuery, () => {
     expect(data.value).toBeUndefined();
     expect(alerts.value).toHaveLength(1);
   });
+
+  test("reports the failure through error instead of the toast when it is rendered inline", async () => {
+    expect.hasAssertions();
+
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
+    const { error, refresh } = useQuery(() => Promise.reject(new Error("error")), { isInlineError: true });
+    await refresh();
+
+    expect(error.value).toBe("error");
+    expect(alerts.value).toHaveLength(0);
+  });
+
+  test("clears a previous failure once the read lands", async () => {
+    expect.hasAssertions();
+
+    let isFailing = true;
+    const { data, error, refresh } = useQuery(
+      () => (isFailing ? Promise.reject(new Error("error")) : Promise.resolve("result")),
+      { isInlineError: true },
+    );
+    await waitForSynchronizedFunctions();
+
+    expect(error.value).toBe("error");
+
+    isFailing = false;
+    await refresh();
+
+    expect(error.value).toBe("");
+    expect(data.value).toBe("result");
+  });
 });
