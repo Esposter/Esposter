@@ -50,13 +50,16 @@ describe("ledgerScopes", () => {
   });
 
   // The index is the only place a scope is written down, so a row that stops parsing takes its assertions with it
-  // Rather than failing — this is what makes the emptiness of that set mean something. Counted off the directory
+  // Rather than failing — this is what makes the emptiness of these sets mean something. Counted off the directory
   // Rather than against a number written here, so adding a ledger and forgetting its row is what fails, and the
-  // Check needs nothing done to it when one is added or retired.
-  test("the index carries every ledger", () => {
+  // Check needs nothing done to it when one is added or retired. Both directions, because a row that outlives the
+  // Ledger it names points a resume at a file that is not there, which reads as a swept tree like every other
+  // Silence.
+  test("the index and the ledger directory name the same set", () => {
     expect.hasAssertions();
 
     expect(ledgers.filter((ledger) => !rows.some(({ ledger: row }) => row === ledger))).toStrictEqual([]);
+    expect(rows.filter(({ ledger }) => !ledgers.includes(ledger))).toStrictEqual([]);
   });
 
   test.each(rows)("$ledger resolves every pathspec it declares", async ({ pathspecs }) => {
