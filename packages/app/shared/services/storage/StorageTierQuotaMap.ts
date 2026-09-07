@@ -6,4 +6,3 @@ import { StorageTier } from "@esposter/db-schema";
 export const StorageTierQuotaMap = {
   [StorageTier.Free]: 10 * GIBIBYTE,
 } as const satisfies Record<StorageTier, number>;
-export type StorageTierQuotaMap = typeof StorageTierQuotaMap;

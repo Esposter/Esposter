@@ -4,8 +4,9 @@ import { applyItemMetadataMixin, getPropertyNames, Serializable } from "@esposte
 import { z } from "zod";
 
 class BaseAItemEntity extends Serializable {
-  id: string = crypto.randomUUID();
+  id = crypto.randomUUID();
 }
+
 export const AItemEntity = applyItemMetadataMixin(BaseAItemEntity);
 export type AItemEntity = typeof AItemEntity.prototype;
 
