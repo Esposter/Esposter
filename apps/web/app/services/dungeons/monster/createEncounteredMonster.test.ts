@@ -1,4 +1,4 @@
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { getMonsterData } from "#shared/services/dungeons/monster/getMonsterData";
 import { createEncounteredMonster } from "@/services/dungeons/monster/createEncounteredMonster";
 import { describe, expect, test, vi } from "vitest";
@@ -7,7 +7,7 @@ import { describe, expect, test, vi } from "vitest";
 vi.mock(import("@/util/math/random/createRandomNumber"), () => ({ createRandomNumber: () => 0 }));
 
 describe(createEncounteredMonster, () => {
-  const key = MonsterKey.Iguanignite;
+  const key = FileKey.UIMonstersIguanignite;
   const baseStatistics = getMonsterData(key).statistics;
 
   test("spawns at the species' base level unchanged", () => {

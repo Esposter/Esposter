@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useInventoryInputStore } from "@/store/dungeons/inventory/input";
@@ -16,7 +16,7 @@ const { onPlayerInput } = inventoryInputStore;
     <Image
       :configuration="{
         origin: 0,
-        texture: ImageKey.InventoryBackground,
+        texture: FileKey.SceneInventoryBackground,
       }"
     />
     <Image
@@ -24,7 +24,7 @@ const { onPlayerInput } = inventoryInputStore;
         x: 40,
         y: 120,
         origin: 0,
-        texture: ImageKey.Bag,
+        texture: FileKey.SceneInventoryBag,
         scale: 0.5,
       }"
     />

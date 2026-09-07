@@ -2,18 +2,18 @@ import type { BaseEncounterableMonster } from "@/models/dungeons/area/BaseEncoun
 import type { EncounterArea } from "@/models/dungeons/area/EncounterArea";
 import type { Except } from "type-fest";
 
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { Area } from "#shared/generated/tiled/propertyTypes/enum/Area";
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
 export const EncounterAreaMap = {
   [Area.Grass]: {
     // Common species spawn at their base level; rarer ones spawn levelled up so rarity feels rewarding
     encounterableMonsters: [
-      { key: MonsterKey.Aquavalor, level: 5, weight: 45 },
-      { key: MonsterKey.Carnodusk, level: 5, weight: 40 },
-      { key: MonsterKey.Frostsaber, level: 7, weight: 10 },
-      { key: MonsterKey.Ignivolt, level: 6, weight: 25 },
+      { key: FileKey.UIMonstersAquavalor, level: 5, weight: 45 },
+      { key: FileKey.UIMonstersCarnodusk, level: 5, weight: 40 },
+      { key: FileKey.UIMonstersFrostsaber, level: 7, weight: 10 },
+      { key: FileKey.UIMonstersIgnivolt, level: 6, weight: 25 },
     ],
   },
 } as const satisfies Record<Area, Except<EncounterArea<BaseEncounterableMonster>, "id">>;

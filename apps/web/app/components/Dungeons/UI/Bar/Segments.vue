@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import type { FileKey } from "#shared/generated/phaser/FileKey";
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 
 import { BarOrigin } from "@/models/dungeons/UI/bar/BarOrigin";
@@ -9,7 +9,7 @@ interface Props {
   isHiddenWhenEmpty?: true;
   middleDisplayWidth?: number;
   scaleY: number;
-  textures: Record<BarOrigin, ImageKey>;
+  textures: Record<BarOrigin, FileKey>;
 }
 
 const leftCapDisplayWidth = defineModel<number | undefined>("leftCapDisplayWidth");

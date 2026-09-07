@@ -1,4 +1,4 @@
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { Monster } from "#shared/models/dungeons/monster/Monster";
 import { getLevelExperience } from "@/services/dungeons/monster/getLevelExperience";
 import { levelUp } from "@/services/dungeons/monster/levelUp";
@@ -11,7 +11,7 @@ describe(levelUp, () => {
   test("grows statistics and consumes the level's experience", () => {
     expect.hasAssertions();
 
-    const monster = new Monster(MonsterKey.Iguanignite);
+    const monster = new Monster(FileKey.UIMonstersIguanignite);
     const { attack, defense, level, maxHealth } = monster.statistics;
     monster.status.experience = getLevelExperience(level);
     levelUp(monster);

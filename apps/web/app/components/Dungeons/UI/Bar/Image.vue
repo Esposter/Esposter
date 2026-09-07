@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import type { FileKey } from "#shared/generated/phaser/FileKey";
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 
 import { Image } from "vue-phaserjs";
@@ -10,7 +10,7 @@ interface Props {
   // The bar's own segments disappear as they empty, while the shadow behind them is always drawn
   isHiddenWhenEmpty?: true;
   scaleY: number;
-  texture: ImageKey;
+  texture: FileKey;
 }
 
 const { displayWidth, imagePosition, isHiddenWhenEmpty, scaleY, texture } = defineProps<Props>();

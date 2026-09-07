@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { HealthLabelTextStyle } from "@/assets/dungeons/styles/HealthLabelTextStyle";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { prettify } from "@/util/text/prettify";
@@ -31,7 +31,7 @@ const monsterName = computed(() => prettify(monster.key));
   >
     <Image
       :configuration="{
-        texture: ImageKey.HealthBarBackground,
+        texture: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionCustomUI,
         origin: 0,
         scaleX: 1.1,
         scaleY: 1.2,

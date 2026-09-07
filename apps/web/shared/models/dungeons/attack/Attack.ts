@@ -1,18 +1,18 @@
+import type { FileKey } from "#shared/generated/phaser/FileKey";
 import type { AttackId } from "#shared/models/dungeons/attack/AttackId";
-import type { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 
 import { attackIdSchema } from "#shared/models/dungeons/attack/AttackId";
-import { soundEffectKeySchema } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
+import { fileKeySchema } from "#shared/models/dungeons/keys/FileKey";
 import { z } from "zod";
 
 export interface Attack {
+  fileKey: FileKey;
   id: AttackId;
   power: number;
-  soundEffectKey: SoundEffectKey;
 }
 
 export const attackSchema = z.object({
+  fileKey: fileKeySchema,
   id: attackIdSchema,
   power: z.int().positive(),
-  soundEffectKey: soundEffectKeySchema,
 }) satisfies z.ZodType<Attack>;

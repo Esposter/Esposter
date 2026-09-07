@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import { INITIAL_SETTINGS_VALUE_POSITION } from "@/services/dungeons/scene/settings/constants";
 import { getSettingsOptionY } from "@/services/dungeons/scene/settings/getSettingsOptionY";
@@ -27,7 +27,7 @@ const CURSOR_Y = TEXT_Y + 12;
       y: CURSOR_Y,
       originX: 1,
       originY: 0,
-      texture: ImageKey.CursorWhite,
+      texture: FileKey.UICursorCursorWhite,
       scaleX: 2.5,
       flipX: true,
     }"
@@ -48,7 +48,7 @@ const CURSOR_Y = TEXT_Y + 12;
       x: TEXT_X + PADDING,
       y: CURSOR_Y,
       origin: 0,
-      texture: ImageKey.CursorWhite,
+      texture: FileKey.UICursorCursorWhite,
       scaleX: 2.5,
     }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateThemeModeSetting(Direction.RIGHT)"

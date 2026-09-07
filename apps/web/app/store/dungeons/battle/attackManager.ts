@@ -31,7 +31,7 @@ export const useAttackManagerStore = defineStore("dungeons/battle/attackManager"
         // The gate the battle turn waits on, so a failed animation resolves it rather than stalling the turn
         await getResultAsync(async () => {
           await sleepScene(scene, 200);
-          getDungeonsSoundEffect(scene, attack.soundEffectKey).play();
+          getDungeonsSoundEffect(scene, attack.fileKey).play();
         }).match(noop, (error) => {
           console.error(error);
           resolve();

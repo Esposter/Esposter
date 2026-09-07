@@ -9,11 +9,11 @@ Every Phaser scene is a Vue component registered in `SceneKeyMap` and rendered i
 
 ## How it works
 
-The Preloader scene loads every asset through the loader constant maps (`services/dungeons/loader/` — images, spritesheets, tilemaps, sounds, fonts, all keyed by enums), then hands off to the Title scene. Title offers New Game / Continue / Settings; both game options land in the World scene, and battles swap World for Battle. `fadeSwitchToScene` on the dungeons store wraps every transition in a camera fade.
+The Preloader scene loads in two halves. Images, sounds and fonts live in the `dungeons-assets` blob container and are described by `shared/generated/phaser/files.json`, a pack `createFilePack` writes by listing that container along with the `FileKey` enum naming every blob — the loader reads the one manifest against a base url of the container, then clears that base url so later scenes still resolve bundled paths. Spritesheets, tilesets and tilemaps stay bundled and keep their loader constant maps under `services/dungeons/loader/`. Preloader then hands off to the Title scene. Title offers New Game / Continue / Settings; both game options land in the World scene, and battles swap World for Battle. `fadeSwitchToScene` on the dungeons store wraps every transition in a camera fade.
 
 ```mermaid
 flowchart LR
-  pre[Preloader<br/>asset loader maps] --> title[Title]
+  pre[Preloader<br/>blob file pack + bundled loader maps] --> title[Title]
   title -->|New Game / Continue| world[World]
   title -->|Settings| settings[Settings]
   world -->|encounter| battle[Battle]

@@ -1,17 +1,16 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { Except } from "type-fest";
 
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { AttackId } from "#shared/models/dungeons/attack/AttackId";
-import { AssetKey } from "#shared/models/dungeons/keys/AssetKey";
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { BASE_DEFENSE } from "#shared/services/dungeons/monster/constants";
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
 const MonstersDataMap = {
   // Tank: shrugs off hits but chips away slowly
-  [MonsterKey.Aquavalor]: {
+  [FileKey.UIMonstersAquavalor]: {
     asset: {
-      key: AssetKey.Aquavalor,
+      key: FileKey.UIMonstersAquavalor,
     },
     attackIds: [AttackId["Aqua Jet"], AttackId["Ice Shard"], AttackId.Bite],
     statistics: {
@@ -24,9 +23,9 @@ const MonstersDataMap = {
     status: { experience: 0, health: 40 },
   },
   // Fast and fragile: hits hard, folds fast
-  [MonsterKey.Carnodusk]: {
+  [FileKey.UIMonstersCarnodusk]: {
     asset: {
-      key: AssetKey.Carnodusk,
+      key: FileKey.UIMonstersCarnodusk,
     },
     attackIds: [AttackId["Shadow Claw"], AttackId.Slash, AttackId.Bite],
     statistics: {
@@ -39,9 +38,9 @@ const MonstersDataMap = {
     status: { experience: 0, health: 18 },
   },
   // Rare and strong on both axes — the prize encounter
-  [MonsterKey.Frostsaber]: {
+  [FileKey.UIMonstersFrostsaber]: {
     asset: {
-      key: AssetKey.Frostsaber,
+      key: FileKey.UIMonstersFrostsaber,
     },
     attackIds: [AttackId["Frost Fang"], AttackId["Ice Shard"], AttackId.Slash],
     statistics: {
@@ -54,9 +53,9 @@ const MonstersDataMap = {
     status: { experience: 0, health: 30 },
   },
   // Glass cannon: strong attack, thin health pool
-  [MonsterKey.Ignivolt]: {
+  [FileKey.UIMonstersIgnivolt]: {
     asset: {
-      key: AssetKey.Ignivolt,
+      key: FileKey.UIMonstersIgnivolt,
     },
     attackIds: [AttackId["Volt Claw"], AttackId.Slash, AttackId.Bite],
     statistics: {
@@ -69,9 +68,9 @@ const MonstersDataMap = {
     status: { experience: 0, health: 20 },
   },
   // Balanced starter
-  [MonsterKey.Iguanignite]: {
+  [FileKey.UIMonstersIguanignite]: {
     asset: {
-      key: AssetKey.Iguanignite,
+      key: FileKey.UIMonstersIguanignite,
     },
     attackIds: [AttackId.Slash, AttackId.Bite],
     statistics: {
@@ -83,6 +82,6 @@ const MonstersDataMap = {
     },
     status: { experience: 0, health: 25 },
   },
-} as const satisfies Record<MonsterKey, Except<Monster, "id" | "key">>;
+} as const satisfies Partial<Record<FileKey, Except<Monster, "id" | "key">>>;
 
 export const monstersData: Except<Monster, "id">[] = parseDictionaryToArray(MonstersDataMap, "key");

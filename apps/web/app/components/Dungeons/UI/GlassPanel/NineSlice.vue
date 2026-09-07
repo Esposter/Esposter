@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { height, width } = defineProps<Props>();
-const glassPanelImageKey = useGlassPanelImageKey();
+const glassPanelFileKey = useGlassPanelFileKey();
 </script>
 
 <template>
@@ -21,7 +21,7 @@ const glassPanelImageKey = useGlassPanelImageKey();
       rightWidth: GLASS_PANEL_CORNER_CUT_LENGTH,
       topHeight: GLASS_PANEL_CORNER_CUT_LENGTH,
       bottomHeight: GLASS_PANEL_CORNER_CUT_LENGTH,
-      texture: glassPanelImageKey,
+      texture: glassPanelFileKey,
     }"
   />
 </template>
