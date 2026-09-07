@@ -12,11 +12,16 @@ inputs:
 runs:
   using: composite
   steps:
-    # The root project is added to whatever selector arrives, because it is where the toolchain itself is
-    # Declared: `virrun`, `vitest`, `oxlint`, `oxfmt`, `tsx` and the `typescript` alias are root
-    # devDependencies, so a narrowed install without it lays down no `virrun` bin and the first `virrun -- …`
-    # Script in the job fails on a missing binary rather than on anything the filter was about. Doing it here
-    # Means a caller names only what it reads and never has to remember the root. The alternative — an
+    # The root project *and its dependency closure* are added to whatever selector arrives, because the root is
+    # Where the toolchain itself is declared: `virrun`, `vitest`, `oxlint`, `oxfmt`, `tsx` and the `typescript`
+    # Alias are root devDependencies, so a narrowed install without it lays down no `virrun` bin and the first
+    # `virrun -- …` script in the job fails on a missing binary rather than on anything the filter was about.
+    # The closure `{.}...` rather than a bare `.`, because part of that toolchain is a workspace project of our
+    # Own: a filtered install builds `node_modules` for the selected projects only, so selecting the root alone
+    # Links `virrun` in without ever installing what `packages/virrun` itself needs, and the bin then dies on
+    # `ERR_MODULE_NOT_FOUND: Cannot find package 'unconfig'` — its one runtime dependency, external by design
+    # (see that package's tsdown config). Doing it here means a caller names only what it reads and never has to
+    # Remember the root. The alternative — an
     # `includeWorkspaceRoot: true` setting in `pnpm-workspace.yaml` — is refused: it also pushes the root into
     # Every recursive `run`, and the root's own `lint` script ends in `pnpm -r run lint`, which would then
     # Include the root and recurse. `--fail-if-no-match` so a selector that matches nothing fails here, where
@@ -27,7 +32,7 @@ runs:
         INSTALL_FILTER: ${{ inputs.install-filter }}
       run: |
         if [ -n "$INSTALL_FILTER" ]; then
-          pnpm --filter "$INSTALL_FILTER" --filter "." --fail-if-no-match i
+          pnpm --filter "$INSTALL_FILTER" --filter "{.}..." --fail-if-no-match i
         else
           pnpm i
         fi

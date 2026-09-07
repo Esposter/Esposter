@@ -71,13 +71,13 @@ jobs:
       # Filtered rather than a plain `pnpm i`, and by the path it builds: this job builds the libraries, so all
       # Three apps' dependency trees — the web app's `postinstall: nuxt prepare`, the Pulumi SDKs, the Functions
       # Host's own deps — are install work nothing here reads. Every other postinstall still runs, for the
-      # Projects that are installed: the project set narrows, scripts are not disabled. The root project is in
-      # The selection for the reason `setup-packages` states at length: the toolchain is declared there, and
-      # `typescript` in particular is a root devDependency that no library redeclares, so tsdown would generate
-      # Declarations against whatever it could resolve on its own.
+      # Projects that are installed: the project set narrows, scripts are not disabled. The root project and its
+      # Closure are in the selection for the reason `setup-packages` states at length: the toolchain is declared
+      # There, and `typescript` in particular is a root devDependency that no library redeclares, so tsdown would
+      # Generate declarations against whatever it could resolve on its own.
       - name: 📦 Install dependencies
         if: steps.verify.outputs.complete != 'true'
-        run: pnpm --filter "./packages/*" --filter "." --fail-if-no-match i
+        run: pnpm --filter "./packages/*" --filter "{.}..." --fail-if-no-match i
 
       - name: 🏗️ Build packages
         if: steps.verify.outputs.complete != 'true'
