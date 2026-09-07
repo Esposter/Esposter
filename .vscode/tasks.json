@@ -6,7 +6,7 @@
       "isBackground": true,
       "label": "func: host start",
       "options": {
-        "cwd": "${workspaceFolder}/packages/azure-functions"
+        "cwd": "${workspaceFolder}/apps/functions"
       },
       "problemMatcher": "$func-node-watch",
       "type": "func"
@@ -15,7 +15,7 @@
       "command": "pnpm i",
       "label": "pnpm i (functions)",
       "options": {
-        "cwd": "${workspaceFolder}/packages/azure-functions"
+        "cwd": "${workspaceFolder}/apps/functions"
       },
       "type": "shell"
     },
@@ -23,7 +23,7 @@
       "command": "pnpm prune --prod",
       "label": "pnpm prune (functions)",
       "options": {
-        "cwd": "${workspaceFolder}/packages/azure-functions"
+        "cwd": "${workspaceFolder}/apps/functions"
       },
       "type": "shell"
     }

@@ -1,5 +1,5 @@
 {
-  "name": "@esposter/app",
+  "name": "@esposter/web",
   "version": "2.39.0",
   "private": true,
   "description": "An approachable, performant and versatile javascript application powered by Vue.",

@@ -2,13 +2,13 @@ name: Get Build Cache Keys
 description: Compute the content hashes that key the package-builds and app-build caches, and the path list the package-builds entry is saved and restored with, shared by the workflows that save one and every workflow that restores one
 outputs:
   app-build-hash:
-    description: sha256 over every tracked file `pnpm build:app` could read — the package-builds inputs plus `packages/app`
+    description: sha256 over every tracked file `pnpm build:app` could read — the package-builds inputs plus `apps/web`
     value: ${{ steps.keys.outputs.app-build-hash }}
   package-builds-hash:
     description: sha256 over every tracked file `pnpm build:packages` could read
     value: ${{ steps.keys.outputs.package-builds-hash }}
   package-builds-paths:
-    description: The paths the package-builds cache entry and its artifact hold — `packages/*/dist` and the generated barrels
+    description: The paths the package-builds cache entry and its artifact hold — every building member's `dist` and the generated barrels
     value: ${{ steps.paths.outputs.package-builds-paths }}
 runs:
   using: composite
@@ -29,7 +29,7 @@ runs:
     # Everything is an input until proven otherwise, and only four things are subtracted. Three are subtracted
     # from both keys: test/bench sources, which no entrypoint reaches and which change far more often than
     # anything they sit beside; the committed bench reports beside them (`*.bench.json`, `*.bench.md` and
-    # their platform-suffixed variants) — a `pnpm bench` run rewrites those in `packages/app` and `virrun`
+    # their platform-suffixed variants) — a `pnpm bench` run rewrites those in `apps/web` and `virrun`
     # alike, and hashing them cost a full app rebuild for a number no build reads; and every `.md` outside the
     # app's `content` directory. Exactly one thing here reads markdown: the @nuxt/content collection, whose
     # source is `docs/**/*.md` under that directory — so the subtraction is scoped to what that collection
@@ -37,7 +37,7 @@ runs:
     # sits. Scoping it to the package instead would leave the app's own pair hashed, and the release that
     # rewrites a CHANGELOG in every package writes one there too — private or not, since versioning is not
     # publishing — so the release commit would still pay the app build, which is the longest job in CI. The
-    # fourth is `packages/app` itself, subtracted from the package key alone because no consumer of that cache
+    # fourth is `apps/web` itself, subtracted from the package key alone because no consumer of that cache
     # builds it — that sweeps the app's remaining markdown with everything else under there, so the package key
     # needs no markdown clause of its own. The two failure
     # directions are not symmetric — subtracting too little costs one rebuild on a push that was already
@@ -54,23 +54,25 @@ runs:
       shell: bash
       run: |
         readBuildInputs() {
-          git ls-tree -r HEAD packages | awk -F'\t' '$2 ~ /\.(test|test-d|bench)\.ts$/ || $2 ~ /\.bench(\.[^.]+)?\.(json|md)$/ || ($2 ~ /\.md$/ && $2 !~ /^packages\/app\/content\//) { next } { print }'
+          git ls-tree -r HEAD apps packages | awk -F'\t' '$2 ~ /\.(test|test-d|bench)\.ts$/ || $2 ~ /\.bench(\.[^.]+)?\.(json|md)$/ || ($2 ~ /\.md$/ && $2 !~ /^apps\/web\/content\//) { next } { print }'
           git rev-parse HEAD:package.json HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml HEAD:virrun.config.ts
         }
         {
           echo "app-build-hash=$(readBuildInputs | sha256sum | cut -d' ' -f1)"
-          echo "package-builds-hash=$(readBuildInputs | awk -F'\t' '$2 ~ /^packages\/app\// { next } { print }' | sha256sum | cut -d' ' -f1)"
+          echo "package-builds-hash=$(readBuildInputs | awk -F'\t' '$2 ~ /^apps\/web\// { next } { print }' | sha256sum | cut -d' ' -f1)"
         } >> "$GITHUB_OUTPUT"
-    # `packages/*/dist` is the build output and `packages/*/src/**/index.ts` are the ctix-generated barrels
-    # (gitignored, absent on a fresh checkout). Both are produced by `pnpm build:packages`, and both share the
-    # `packages/` common ancestor, so the artifact made from them downloads into `packages`. Five workflows save
-    # or restore this entry; none of them repeats these two globs.
+    # `*/dist` is the build output and `*/src/**/index.ts` are the ctix-generated barrels (gitignored, absent on
+    # a fresh checkout), under both roots: `pnpm build:packages` builds every member but the web app, and two of
+    # those sit under `apps/`. Their common ancestor is the repository root, so the artifact made from them
+    # downloads into `.`. Five workflows save or restore this entry; none of them repeats these globs.
     - name: 🗂️ Emit the package-builds path list
       id: paths
       shell: bash
       run: |
         {
           echo 'package-builds-paths<<PACKAGE_BUILDS_PATHS'
+          echo 'apps/*/dist'
+          echo 'apps/*/src/**/index.ts'
           echo 'packages/*/dist'
           echo 'packages/*/src/**/index.ts'
           echo 'PACKAGE_BUILDS_PATHS'

@@ -9,6 +9,7 @@ const vitestConfiguration: ViteUserConfig = defineConfig({
   test: {
     ...baseVitestConfiguration.test,
     projects: [
+      "apps/*",
       "packages/*",
       // The root `scripts/` suite is not a workspace package, so it needs its own project entry;
       // `extends: true` inherits this file's shared base (tsconfig paths, hook timeout). Scope both the

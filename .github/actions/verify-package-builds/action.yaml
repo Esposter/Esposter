@@ -30,7 +30,7 @@ runs:
         FAIL_WHEN_INCOMPLETE: ${{ inputs.fail-when-incomplete }}
       run: |
         missingPackages=()
-        for tsdownConfiguration in packages/*/tsdown.config.ts; do
+        for tsdownConfiguration in apps/*/tsdown.config.ts packages/*/tsdown.config.ts; do
           package="${tsdownConfiguration%/tsdown.config.ts}"
           [ -n "$(ls -A "$package/dist" 2>/dev/null)" ] || missingPackages+=("$package")
         done

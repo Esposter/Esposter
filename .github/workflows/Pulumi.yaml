@@ -3,7 +3,7 @@ name: 🏗️ Pulumi
 on:
   pull_request:
     paths:
-      - "packages/infra/**"
+      - "apps/infra/**"
       - ".github/workflows/Pulumi.yaml"
       - ".github/actions/setup-project-dependencies/**"
       - ".github/actions/get-build-cache-keys/**"
@@ -63,7 +63,7 @@ jobs:
         with:
           command: preview
           stack-name: prod
-          work-dir: packages/infra
+          work-dir: apps/infra
           comment-on-pr: true
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
