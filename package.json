@@ -40,7 +40,7 @@
   },
   "scripts": {
     "bench": "vitest bench --run --project scripts && pnpm -r --if-present run bench",
-    "build": "virrun -- pnpm --filter \"@esposter/web...\" run build",
+    "build": "pnpm --filter \"@esposter/web^...\" run build && pnpm build:web",
     "build:functions": "pnpm -C apps/functions run build",
     "build:infra": "pnpm -C apps/infra run build",
     "build:docs": "virrun -- typedoc",
@@ -119,6 +119,6 @@
     }
   },
   "scriptsComments": {
-    "build": "One dependency closure rather than a hand-ordered chain: `--filter \"@esposter/web...\"` runs `build` for the app and everything it imports, topologically, so nothing here has to know which libraries exist or in what order they go. `build:packages` is a different set: the libraries on their own, which is what CI caches and hands to the checks, with no app in it because nothing imports an app's `dist`. @TODO: restore `pnpm build:docs` to the chain when a bridge build grows the AST navigation API. TypeDoc exits 6 against the `typescript-native-bridge` alias, and `build` is what deploy runs, so the deploy would fail on documentation alone. `build:docs` stays as the probe. See the `build-docs` job in .github/workflows/CI.yaml."
+    "build": "The app's dependencies are derived rather than named: `--filter \"@esposter/web^...\"` is everything the app imports, in topological order, so nothing here knows which libraries exist. The two halves stay separate commands because only the second one belongs in the sandbox — a library's output is platform-neutral and read from host disk, so `virrun` would charge it the mirror tax for an isolation nothing wants, while the app build is the one that needs the Linux-generated `.nuxt` (see the virrun adoption page). `build:packages` is a third set: every library rather than the ones this app imports, which is what CI caches and hands to the checks. @TODO: restore `pnpm build:docs` to the chain when a bridge build grows the AST navigation API. TypeDoc exits 6 against the `typescript-native-bridge` alias, and `build` is what deploy runs, so the deploy would fail on documentation alone. `build:docs` stays as the probe. See the `build-docs` job in .github/workflows/CI.yaml."
   }
 }

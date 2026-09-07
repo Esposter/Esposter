@@ -64,7 +64,7 @@ jobs:
       # Dot is matched as the ordinary character it is.
       #
       # The platform-branched virrun.config.ts resolves the native backend on Linux, so `virrun --` is a passthrough
-      # Here: `pnpm i` (warm pnpm store cache) provisions node_modules and its `postinstall: nuxt prepare` generates
+      # Here: the filtered install (warm pnpm store cache) provisions node_modules and `nuxt prepare` generates
       # The platform-correct Linux `.nuxt` in place — no sandbox, no bubblewrap, no warm overlay layers.
       - name: 🔧 Setup Project Dependencies
         if: ${{ hashFiles('.app-build-marker') == '' }}
