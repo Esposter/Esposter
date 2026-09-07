@@ -11,10 +11,27 @@ import {
 import { getLegendLabel } from "#scripts/dependencyGraph/getLegendLabel";
 import { getPackageRole } from "#scripts/dependencyGraph/getPackageRole";
 import { PackageRoleColorsMap } from "#scripts/dependencyGraph/PackageRoleColorsMap";
-import { PACKAGES_DIRECTORY } from "#scripts/services/constants";
+import { WORKSPACE_DIRECTORIES } from "#scripts/services/constants";
 
 const getEdgeLines = (workspaceEdges: WorkspaceEdge[], attributes: string): string[] =>
   workspaceEdges.map(({ from, to }) => `  "${from}" -> "${to}" [${attributes}];`);
+
+// The nodes are boxed and titled by the workspace root they live under. Graphviz draws a subgraph as a box only
+// When its name starts with `cluster`, and it boxes the nodes declared inside that subgraph — so the node lines
+// Are nested and the edges are not, which keeps an edge from silently deciding which box a node is in.
+const getClusterLines = (
+  workspaceDirectory: string,
+  workspacePackages: WorkspacePackage[],
+  workspaceEdges: WorkspaceEdges,
+): string[] => [
+  `  subgraph cluster_${workspaceDirectory} {`,
+  ...CLUSTER_ATTRIBUTES.map((attribute) => `    ${attribute};`),
+  `    label="${workspaceDirectory}";`,
+  ...workspacePackages
+    .filter((workspacePackage) => workspacePackage.workspaceDirectory === workspaceDirectory)
+    .map((workspacePackage) => getNodeLine(workspacePackage, workspaceEdges)),
+  "  }",
+];
 
 // A private package is drawn dashed: nothing installs it, so its edges are internal wiring rather than a
 // Promise to anyone outside this repo. The role decides the colour, and it is read off the edges rather than
@@ -31,14 +48,10 @@ export const getGraphSource = (workspacePackages: WorkspacePackage[], workspaceE
     "digraph dependencies {",
     ...GRAPH_ATTRIBUTES.map((attribute) => `  ${attribute};`),
     `  label=${getLegendLabel()};`,
-    // The nodes are boxed and titled by the directory they all live in. Graphviz draws a subgraph as a box only
-    // When its name starts with `cluster`, and it boxes the nodes declared inside that subgraph — so the node
-    // Lines are nested and the edges are not, which keeps an edge from silently deciding which box a node is in.
-    `  subgraph cluster_${PACKAGES_DIRECTORY} {`,
-    ...CLUSTER_ATTRIBUTES.map((attribute) => `    ${attribute};`),
-    `    label="${PACKAGES_DIRECTORY}";`,
-    ...workspacePackages.map((workspacePackage) => getNodeLine(workspacePackage, workspaceEdges)),
-    "  }",
+    // One cluster per workspace root, in the order the roots are declared
+    ...WORKSPACE_DIRECTORIES.flatMap((workspaceDirectory) =>
+      getClusterLines(workspaceDirectory, workspacePackages, workspaceEdges),
+    ),
     ...getEdgeLines(workspaceEdges.runtime, RUNTIME_EDGE_ATTRIBUTES),
     ...getEdgeLines(workspaceEdges.development, DEVELOPMENT_EDGE_ATTRIBUTES),
     "}",

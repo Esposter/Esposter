@@ -72,7 +72,7 @@ Room navigation (`useCallSubscribables` cleanup) is **not** a leave boundary —
 
 `useMediaStore` (`call/media.ts`): `isDeafened`, `isForceMuted`, `isCameraEnabled`, `isPoppedOut`, `isScreenSharing`, `screenSharingParticipantIds`, `pinnedParticipantId`, `participantVolumePercentageMap`, `selectedVirtualBackground`, `localVideoStream`, `remoteVideoStreams`, `localScreenShareStream`, `remoteScreenShareStreams`.
 
-`useLiveKitStore` (`store/message/room/liveKit.ts`) wraps the LiveKit `Room`: `connect`, `disconnect`, `setCamera`, `setMicrophone`, `setRemoteAudioMuted`, `setScreenShare`, `setVirtualBackground`, `setActiveDevice`. All track/media logic lives here; `useCallStore` delegates to it. Device selection is sourced from the persisted `useVoiceDeviceSettingsStore` (single source of truth) — `setActiveDevice` writes that store and per-kind watchers call `room.switchActiveDevice` to restart the live track. The store keeps no `selectedAudioInputDeviceId`-style refs. See `packages/app/content/docs/esbabbler/voice-video.md` (Device selection).
+`useLiveKitStore` (`store/message/room/liveKit.ts`) wraps the LiveKit `Room`: `connect`, `disconnect`, `setCamera`, `setMicrophone`, `setRemoteAudioMuted`, `setScreenShare`, `setVirtualBackground`, `setActiveDevice`. All track/media logic lives here; `useCallStore` delegates to it. Device selection is sourced from the persisted `useVoiceDeviceSettingsStore` (single source of truth) — `setActiveDevice` writes that store and per-kind watchers call `room.switchActiveDevice` to restart the live track. The store keeps no `selectedAudioInputDeviceId`-style refs. See `apps/web/content/docs/esbabbler/voice-video.md` (Device selection).
 
 ## Deep Dives
 

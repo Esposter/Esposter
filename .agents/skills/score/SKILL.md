@@ -13,7 +13,7 @@ Every score review updates all three in the same commit:
 
 1. **`SCORE.md`** — the `Last reviewed` date, the `Nuxt compatibilityDate` mirrored in the header line, the overall total, each area score/note, and the per-area sections.
 2. **`README.md`** — the `[badge-score]` shields URL (`score-<total>%2F100-<color>`). The number must equal SCORE.md's overall.
-3. **`packages/app/configuration/compatibilityDate.ts`** — bumped to the review date.
+3. **`apps/web/configuration/compatibilityDate.ts`** — bumped to the review date.
 
 ## Why compatibilityDate moves with the review
 
@@ -22,7 +22,7 @@ Nuxt's `compatibilityDate` opts into the framework behaviour as of a given date.
 ## Process
 
 1. Re-audit each of the nine areas against the code as it exists today — versions, workflows, and CSP/security posture all go stale. Volatile counts (test files, routers, stores) do not need re-auditing, because they are written as magnitudes rather than readings; see the writing style below. Re-check one only when its _magnitude_ has plausibly moved.
-2. Bump `compatibilityDate` to today, then run `pnpm typecheck` and `pnpm test` from `packages/app/`.
+2. Bump `compatibilityDate` to today, then run `pnpm typecheck` and `pnpm test` from `apps/web/`.
 3. Rewrite `SCORE.md`: header line (date + compatibilityDate + overall), summary table, and the section bodies. Keep it terse — notes are one line each.
 4. Update the README badge number and color.
 5. Commit all three together so the badge never advertises a stale number.

@@ -5,7 +5,7 @@ Read when creating a page and deciding where it goes: the directory layout, side
 ## Directory layout
 
 ```text
-packages/app/content/docs/
+apps/web/content/docs/
   index.md                    ← landing: what Esposter is + map of the docs
   architecture/
     index.md                  ← index of cross-cutting topics
@@ -28,7 +28,7 @@ packages/app/content/docs/
 
 ## Sidebar grouping
 
-Sections with many flat feature pages get logical subheader groups in the in-app left sidebar via `packages/app/app/services/docs/DocsSectionGroupsMap.ts` (section slug → group title → page slugs; declaration order is display order). When adding a feature page to a mapped section, add its slug to the right group — unmapped slugs render ungrouped at the top. `roadmap`/`deferred`/`rejected` group automatically under a trailing "Planning" subheader; sections with few pages need no map entry (alphabetical is enough).
+Sections with many flat feature pages get logical subheader groups in the in-app left sidebar via `apps/web/app/services/docs/DocsSectionGroupsMap.ts` (section slug → group title → page slugs; declaration order is display order). When adding a feature page to a mapped section, add its slug to the right group — unmapped slugs render ungrouped at the top. `roadmap`/`deferred`/`rejected` group automatically under a trailing "Planning" subheader; sections with few pages need no map entry (alphabetical is enough).
 
 ## Feature page template
 

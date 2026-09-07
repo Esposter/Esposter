@@ -103,7 +103,7 @@ Read it when anything needs the signed-in user. Two call forms, and the access s
 
 Read it before writing any `watch`, or when a local `ref` mirrors a prop/store value. In short: a read-only derived value is a `computed`; form state initialized from a prop/store initializes the `ref` directly (`watchImmediate` to set an initial value is always a smell) and resyncs via `useCloned`; an id the instance is keyed by cannot change, so read it once in `onMounted`. Watching is correct for bridging imperative APIs (Phaser, Tiptap, Desmos) and for async side effects of state that genuinely varies under a live instance.
 
-- Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `watchImmediate(source, cb)` over `{ immediate: true }`. When both are needed: `watchDeep(source, cb, { immediate: true })` (alphabetical: deep before immediate). Both aliases are VueUse via Nuxt auto-imports, so they exist in `packages/app` only — a published package taking on VueUse for an alias would push that dependency onto every consumer, so the option object stays there.
+- Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `watchImmediate(source, cb)` over `{ immediate: true }`. When both are needed: `watchDeep(source, cb, { immediate: true })` (alphabetical: deep before immediate). Both aliases are VueUse via Nuxt auto-imports, so they exist in `apps/web` only — a published package taking on VueUse for an alias would push that dependency onto every consumer, so the option object stays there.
 - **Never `watchEffect`** — always `watch` with explicit dependencies; implicit tracking is hard to audit and re-runs on unrelated changes. Wrap a prop dependency in a getter: `watch(() => isActive, ...)`.
 
 ## Lifecycle hooks and the browser — `references/lifecycle-and-ssr.md`
@@ -116,4 +116,4 @@ Ours are `<script setup>` only (`vue/component-api-style`, which bans plain `def
 
 ## Dates Are `<NuxtTime>` — `references/dates.md`
 
-Every rendered date is a `<NuxtTime>`; `formatDate(…)`, `toLocaleDateString()`, `useTimeAgo` and `useDateFormat` inside a `.vue` are `vue/no-restricted-syntax` errors, and a hand-written `<time>` is a `vue/no-restricted-html-elements` one. Standard: `packages/app/content/docs/architecture/date-time-display.md`. Read the page for what the lint rule can't say — options rather than format strings, what bare `title` really renders, and the client-rendered message list as the one exception.
+Every rendered date is a `<NuxtTime>`; `formatDate(…)`, `toLocaleDateString()`, `useTimeAgo` and `useDateFormat` inside a `.vue` are `vue/no-restricted-syntax` errors, and a hand-written `<time>` is a `vue/no-restricted-html-elements` one. Standard: `apps/web/content/docs/architecture/date-time-display.md`. Read the page for what the lint rule can't say — options rather than format strings, what bare `title` really renders, and the client-rendered message list as the one exception.

@@ -30,7 +30,7 @@ dependency.
 
 Dates are `Temporal` too, and the repo owns the two things Temporal has no answer for:
 
-- A **format string** goes through `formatDate`/`parseDate` (`packages/app/shared/util/date/`), the dayjs-token
+- A **format string** goes through `formatDate`/`parseDate` (`apps/web/shared/util/date/`), the dayjs-token
   subset the repo actually writes.
 - A **calendar-day question** goes through `@esposter/shared` (`getStartOfDay`, `getEndOfDay`, `checkIsSameDay`,
   `checkIsToday`, `checkIsYesterday`), never a hand-rolled instant comparison.

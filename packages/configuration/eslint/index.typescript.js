@@ -4,7 +4,7 @@ import plugins from "@esposter/configuration/eslint/plugins/index.js";
 import restrictedTestSyntaxes from "@esposter/configuration/eslint/restrictedTestSyntaxes.js";
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
 
-import { withNuxt } from "../../app/.nuxt/eslint.config.mjs";
+import { withNuxt } from "../../../apps/web/.nuxt/eslint.config.mjs";
 // The rules are the `no-restricted-syntax` bans oxlint cannot express, scoped to the `.ts` source these
 // Non-Vue packages hold.
 export default withNuxt(plugins, {

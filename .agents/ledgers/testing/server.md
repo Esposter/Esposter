@@ -1,6 +1,6 @@
 # Server
 
-`packages/app/server` — every router, procedure builder, guard and service.
+`apps/web/server` — every router, procedure builder, guard and service.
 
 | Unit                                                                                                                                 | Swept      | Notes                         |
 | ------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ----------------------------- |

@@ -1,14 +1,14 @@
 import { DOCS_API_DIRECTORY } from "@esposter/configuration";
 import { config } from "dotenv";
 
-config({ path: "packages/app/.env" });
+config({ path: "apps/web/.env" });
 /** @satisfies {import('typedoc').TypeDocOptions} */
 const typedocConfiguration = {
   entryPoints: ["packages/*"],
   entryPointStrategy: "packages",
-  exclude: ["packages/app", "packages/configuration"],
+  exclude: ["apps/web", "packages/configuration"],
   name: "Esposter",
-  out: `packages/app/public/${DOCS_API_DIRECTORY}`,
+  out: `apps/web/public/${DOCS_API_DIRECTORY}`,
   packageOptions: {
     entryPoints: ["src/index.ts"],
     includeVersion: true,

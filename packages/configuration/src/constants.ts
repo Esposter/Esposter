@@ -20,7 +20,7 @@ export const AGENT_ALIAS_DIRECTORY = ".claude";
 // Under --isolatedDeclarations, which is what emits this package's types.
 // oxlint-disable-next-line typescript/no-inferrable-types
 export const AGENT_WORKTREES_DIRECTORY: string = `${AGENT_DIRECTORY}/worktrees`;
-// The docs site's one path segment. `packages/app/content/docs` holds the pages, `app/pages/docs/[...slug].vue` is
+// The docs site's one path segment. `apps/web/content/docs` holds the pages, `app/pages/docs/[...slug].vue` is
 // The route that renders them, and `/docs/...` is therefore the url every page is linked by — so the content
 // Collection, the TypeDoc output path and the docs suites all build their paths from here rather than repeating it.
 // Three consumers cannot import it, and none needs a pin: a Nuxt route is its own directory name, a markdown link

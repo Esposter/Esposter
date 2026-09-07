@@ -1,6 +1,6 @@
 # Shared
 
-`packages/app/shared` and the `Styled` primitives — what both halves of the app read.
+`apps/web/shared` and the `Styled` primitives — what both halves of the app read.
 
 | Unit                                              | Swept      | Notes             |
 | ------------------------------------------------- | ---------- | ----------------- |

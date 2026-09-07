@@ -7,7 +7,7 @@ import { definePlugin, defineRule } from "@oxlint/plugins";
 // Caller's outcome is decided — so every later `await` must be best-effort (never rejects) or the fatal
 // Work must move before the emit. The check is purely syntactic, so it runs in oxlint's single root pass.
 //
-// Scoped to packages/app/server in the root .oxlintrc.json: only there does an emitter carry the
+// Scoped to apps/web/server in the root .oxlintrc.json: only there does an emitter carry the
 // Persist-then-notify meaning. Client emitters (e.g. the Phaser game bus) are a different concept.
 // Calls that never reject: the neverthrow wrappers, plus helpers that wrap their own effect
 // Best-effort internally (so awaiting them never rejects). `withFinalizer`/`withFinalizerAsync` are deliberately
@@ -108,7 +108,7 @@ const checkHasRethrowingTerminal = (expression: ESTree.Expression): boolean => {
 // `Promise.all(users.map((u) => createSystemRoomMessage(u)))`.
 // Unrecognised syntax falls through to `false`, which reports rather than exempts, so the shapes deliberately left
 // Out (a ternary or `&&` chain in the await position, a `function` expression as the `.map` callback) cost a false
-// Positive and never a miss — and none of them appear anywhere in `packages/app/server`, the only tree this rule
+// Positive and never a miss — and none of them appear anywhere in `apps/web/server`, the only tree this rule
 // Runs over. A false positive here is loud and immediate: it fails the lint on the line that wrote it. Widen this
 // When one of those shapes actually lands, not before — every branch added is one the fixture suite has to pin.
 const checkIsSafeAwait = (argument: ESTree.Expression): boolean => {

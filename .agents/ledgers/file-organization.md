@@ -32,16 +32,16 @@ The question is where a thing lives and whether it exists twice — one export p
 | `packages/db-schema` — `services`, root                                    | 2026-09-06 |                                                                                              |
 | `packages/db` — `services/azure`                                           | 2026-09-06 |                                                                                              |
 | `packages/db` — the rest, `packages/db-mock`                               | 2026-09-06 |                                                                                              |
-| `packages/azure`, `packages/azure-functions`, `packages/azure-mock`        | 2026-09-06 | cross-package placement: an Azure helper two packages need lives in `db`                     |
+| `packages/azure`, `apps/functions`, `packages/azure-mock`                  | 2026-09-06 | cross-package placement: an Azure helper two packages need lives in `db`                     |
 | `packages/virrun` — `services/exec/wsl`                                    | 2026-09-06 |                                                                                              |
 | `packages/virrun` — `services/exec/snapshot`                               | 2026-09-06 |                                                                                              |
 | `packages/virrun` — `services/exec/util`                                   | 2026-09-06 |                                                                                              |
 | `packages/virrun` — `services/exec` — the rest                             | 2026-09-06 | `cache`, `os`, `bwrap`, `vfs`, `differential`, `store`, `native`, `test`                     |
 | `packages/virrun` — `services` — the rest                                  | 2026-09-06 | `cli`, `configuration`, `source`, `vfs`, `virrun`                                            |
 | `packages/virrun` — `models`, root                                         | 2026-09-06 |                                                                                              |
-| `packages/infra` — `azure/resources`                                       | 2026-09-06 | one resource per file, named for its export                                                  |
-| `packages/infra` — `azure` — the rest                                      | 2026-09-06 | `constants`, `services`, the stack files                                                     |
-| `packages/infra` — `github`, root                                          | 2026-09-06 |                                                                                              |
+| `apps/infra` — `azure/resources`                                           | 2026-09-06 | one resource per file, named for its export                                                  |
+| `apps/infra` — `azure` — the rest                                          | 2026-09-06 | `constants`, `services`, the stack files                                                     |
+| `apps/infra` — `github`, root                                              | 2026-09-06 |                                                                                              |
 | `packages/configuration`                                                   | 2026-09-06 |                                                                                              |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`           | 2026-09-06 | barrel contents are `ctix` output — regenerate, never hand-edit                              |
 | `scripts`                                                                  | 2026-09-02 | a command is a folder once it has internals                                                  |
@@ -52,7 +52,7 @@ A duplicate constant is the one thing no skill states a grep for, because it is 
 
 ```bash
 # String literals appearing in more than one file — the candidate list, not the finding
-grep -rhoE '"[a-zA-Z][a-zA-Z0-9 ./_-]{4,}"' --include=*.ts --include=*.vue packages/app/app packages/app/server packages/app/shared packages/*/src |
+grep -rhoE '"[a-zA-Z][a-zA-Z0-9 ./_-]{4,}"' --include=*.ts --include=*.vue apps/web/app apps/web/server apps/web/shared packages/*/src |
   sort | uniq -c | sort -rn | awk '$1 > 1'
 ```
 

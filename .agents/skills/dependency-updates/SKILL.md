@@ -9,7 +9,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 ## Process
 
-If the very first `pnpm` command dies inside the app's `postinstall` (`nuxt prepare`, `Cannot find module '@nuxt/devtools-kit'`), that is `node_modules` drift blocking every script, not a lockfile problem: `pnpm i --force`, then `pnpm build:packages`. → `packages/app/content/docs/architecture/monorepo-tooling.md`
+If the very first `pnpm` command dies inside the app's `postinstall` (`nuxt prepare`, `Cannot find module '@nuxt/devtools-kit'`), that is `node_modules` drift blocking every script, not a lockfile problem: `pnpm i --force`, then `pnpm build:packages`. → `apps/web/content/docs/architecture/monorepo-tooling.md`
 
 1. **Check what's outdated and mismatched** (from repo root): `pnpm outdated:dependencies`
 2. **Update versions** in `pnpm-workspace.yaml` — all non-pinned packages need a `^` caret prefix.
@@ -49,16 +49,16 @@ It deliberately does **not** refresh the lockfile. After it finishes, run `pnpm 
 
 When `@electric-sql/pglite` changes between minor versions, regenerate the db-mock data directory snapshot from `packages/db-mock/` with `pnpm snapshot:gen`, then verify the db-mock tests. The committed `packages/db-mock/src/snapshot.tar.gz` is tied to PGlite's dump format and may need refreshing even without schema changes.
 
-When `vuetify` or `unocss` changes, `packages/app/uno.config.test.ts` and `packages/app/vuetify.config.test.ts` are the check: they snapshot resolved config, so a failure is the upstream release moving a derived rule, colour or default, and it is the only place that shows. **Read the diff and account for it in the commit before regenerating** — a reflexive `-u` throws away the one signal the bump produces. The `unocss` skill owns the detail.
+When `vuetify` or `unocss` changes, `apps/web/uno.config.test.ts` and `apps/web/vuetify.config.test.ts` are the check: they snapshot resolved config, so a failure is the upstream release moving a derived rule, colour or default, and it is the only place that shows. **Read the diff and account for it in the commit before regenerating** — a reflexive `-u` throws away the one signal the bump produces. The `unocss` skill owns the detail.
 
-`inlinedDependencies` in a package manifest is written by tsdown on every build, so a vendored package's bump lands in a reviewed diff — every package included, `packages/azure-functions` among them: it keeps the `main` the Functions host reads through `exports: { legacy: true }` rather than by switching generation off, and generation is the same write that records the list. Nothing there is hand-maintained, so a recorded version that no longer exists under `node_modules/.pnpm` is a build nobody re-ran rather than an edit nobody made — rebuild and read the diff, which is also the explanation on offer for that package's bundle size moving when nothing in its own manifest did.
+`inlinedDependencies` in a package manifest is written by tsdown on every build, so a vendored package's bump lands in a reviewed diff — every package included, `apps/functions` among them: it keeps the `main` the Functions host reads through `exports: { legacy: true }` rather than by switching generation off, and generation is the same write that records the list. Nothing there is hand-maintained, so a recorded version that no longer exists under `node_modules/.pnpm` is a build nobody re-ran rather than an edit nobody made — rebuild and read the diff, which is also the explanation on offer for that package's bundle size moving when nothing in its own manifest did.
 
 Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them per the `testing` skill's `references/platform-and-bundle-tests.md` — rebuild first, then the narrowed `-u` pair — never by editing a snapshot to the number a failure printed.
 
 ## Exact-pinned packages (no caret)
 
 - **`drizzle-kit`, `drizzle-orm`** — pinned to an exact RC (no `^`). Leave the caret off: a caret would float them across RC builds. Bump both together, deliberately, to the same version.
-- **`typescript`** — an exact-pinned `npm:typescript-native-bridge@…` alias, so Renovate cannot propose it (`renovate.json` sets `updatePinnedDependencies: false`) and a caret would float it across bridge builds. The alias is what runs `tsc`/`vue-tsc` on the Go compiler (`packages/app/content/docs/architecture/monorepo-tooling.md`); a bump moves the bridge, the TypeScript version behind it and `typescript-eslint` at once, so it is a deliberate, dedicated pass and never part of a routine update.
+- **`typescript`** — an exact-pinned `npm:typescript-native-bridge@…` alias, so Renovate cannot propose it (`renovate.json` sets `updatePinnedDependencies: false`) and a caret would float it across bridge builds. The alias is what runs `tsc`/`vue-tsc` on the Go compiler (`apps/web/content/docs/architecture/monorepo-tooling.md`); a bump moves the bridge, the TypeScript version behind it and `typescript-eslint` at once, so it is a deliberate, dedicated pass and never part of a routine update.
 
 ## Version-capped packages (keep the caret, cap the range)
 
@@ -82,7 +82,7 @@ What that trades is real and accepted: a just-published bad version installs imm
 - **`oxlint`** — has `^`; open issue https://github.com/oxc-project/oxc/issues/13204.
 - **`oxlint-tsgolint`** — a bump here is the one thing that could retire the `ignorePatterns` entry covering tsgo's infinite loop on the recursive `three/tsl` types. It ships its own Go binaries, so the `typescript` alias does not move it. Check it on every bump; the exclusion itself, and the CI symptom that does not look like a hang, are documented in the `oxlint` skill's `references/lint-configuration.md`.
 - **`ajv`, `ajv-errors`, `ajv-formats`, `ajv-i18n`, `debug`** — required by `@koumoul/vjsf`; tracked at https://github.com/json-layout/json-layout/issues/5.
-- **`vitest`** — capped above, so the 5.0.0 the outdated table keeps offering is not takeable yet. What is waiting on it: 5.0.0 retires the `Temporal.Now` fake-timer workaround (https://github.com/vitest-dev/vitest/issues/10345, closed against that milestone as a breaking change), and nothing on 4.x fakes `Temporal`, so the workaround stays as long as the cap does. When `@nuxt/test-utils` widens its peer, take the bump as its own deliberate pass — it is a major — and drop the workaround in it. That row, its probe, and every other shim a bump can retire live in `packages/app/content/docs/proposals/refactors/test-harness-workarounds.md`.
+- **`vitest`** — capped above, so the 5.0.0 the outdated table keeps offering is not takeable yet. What is waiting on it: 5.0.0 retires the `Temporal.Now` fake-timer workaround (https://github.com/vitest-dev/vitest/issues/10345, closed against that milestone as a breaking change), and nothing on 4.x fakes `Temporal`, so the workaround stays as long as the cap does. When `@nuxt/test-utils` widens its peer, take the bump as its own deliberate pass — it is a major — and drop the workaround in it. That row, its probe, and every other shim a bump can retire live in `apps/web/content/docs/proposals/refactors/test-harness-workarounds.md`.
 - **`db:run` script** — workaround for https://github.com/drizzle-team/drizzle-orm/issues/1228.
 
 ## Dependency placement (deps vs peerDeps)

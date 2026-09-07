@@ -1,6 +1,6 @@
 ---
 name: esbabbler
-description: Esposter messaging feature (esbabbler) conventions — the Discord parity default (match behaviour/naming/defaults, diverge only on styling and recorded infra constraints, record unknowns as open questions), display name resolution through getDisplayName/getMemberName with nickname applied everywhere including push titles, the || not ?? empty-string nickname fallback, MessageTypeOperationPermissionMap as the single source of truth for what may be done to a message, and subscriptions written on another member's behalf recording the member's own decision on the row rather than deleting it — plus deep dives on capability vs permission for message operations, subscriptions-as-source-of-truth store mutations and stable subscribable watch sources, the room/user settings dialog surfaces, and the Service Bus scheduled-message-job architecture. Apply when working on the messaging module (packages/app/app/…/message/, server/trpc/routers/message/, userToRoom, roles, members, rooms). Calls/voice internals live in the esbabbler-call skill.
+description: Esposter messaging feature (esbabbler) conventions — the Discord parity default (match behaviour/naming/defaults, diverge only on styling and recorded infra constraints, record unknowns as open questions), display name resolution through getDisplayName/getMemberName with nickname applied everywhere including push titles, the || not ?? empty-string nickname fallback, MessageTypeOperationPermissionMap as the single source of truth for what may be done to a message, and subscriptions written on another member's behalf recording the member's own decision on the row rather than deleting it — plus deep dives on capability vs permission for message operations, subscriptions-as-source-of-truth store mutations and stable subscribable watch sources, the room/user settings dialog surfaces, and the Service Bus scheduled-message-job architecture. Apply when working on the messaging module (apps/web/app/…/message/, server/trpc/routers/message/, userToRoom, roles, members, rooms). Calls/voice internals live in the esbabbler-call skill.
 ---
 
 # Esbabbler (Messaging) Feature Conventions
@@ -12,7 +12,7 @@ Esbabbler is a Discord clone. When a behaviour, structure, naming, information a
 - **Match:** feature behaviour, settings layout/categories, naming (Discord's term wins — e.g. "Roles", "Voice & Video"), defaults (e.g. push-to-talk off), scope (user vs server/room setting), keybinds, and copy.
 - **Diverge only on:** visual styling (Vuetify-defined — not ours to match pixel-for-pixel) and the explicit infra/storage constraints already recorded (Postgres + Azure Table split, no expensive infrastructure).
 - **When Discord's behaviour is unknown or ambiguous:** record it as an open question in the spec/roadmap — do not silently invent. A guess that diverges from Discord is a defect, not a design choice.
-- A feature Discord has but we deliberately dropped lives in `packages/app/content/docs/esbabbler/rejected/` or `deferred/` with rationale — grep there before re-proposing.
+- A feature Discord has but we deliberately dropped lives in `apps/web/content/docs/esbabbler/rejected/` or `deferred/` with rationale — grep there before re-proposing.
 
 ## Display Name Resolution
 
@@ -50,7 +50,7 @@ getUserToRoomMap(roomId)?.get(user.id)?.nickname || user.name;
 
 ## A Subscription Written on Somebody Else's Behalf Records the Member's Own Decision
 
-Discord parity means a member's action routinely subscribes _another_ member — replying to a message follows that thread for its root's author too (`packages/app/content/docs/esbabbler/thread-follows.md`). Two rules fall out, and both are about the row, not the caller:
+Discord parity means a member's action routinely subscribes _another_ member — replying to a message follows that thread for its root's author too (`apps/web/content/docs/esbabbler/thread-follows.md`). Two rules fall out, and both are about the row, not the caller:
 
 - **Deleting the row on opt-out makes "never subscribed" and "opted out" the same absence**, so the next third-party action re-subscribes them and the opt-out can never stick. Record the decision on the row instead (`threadFollowsInMessage.isUnfollowed`) and filter it out of every read. Whether a write may clear that tombstone is decided by **whose action it is** — the member's own (the bell, their own reply) clears it, anyone else's only ever inserts.
 - **The other member may not exist.** A webhook message has no `userId` at all, so any id lifted off a message entity is guarded on presence before it reaches a `NOT NULL` column — the whole best-effort tail is swallowed into `console.error`, so the constraint violation costs the operator a stack trace per message and nothing else surfaces.

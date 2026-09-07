@@ -42,7 +42,7 @@ jobs:
       # Tree built green. That is what the marker is, and it is why the key may be an app-wide content hash:
       # A hit means the identical source already built, so the build has nothing left to say.
       #
-      # The key comes from the same action that keys `package-builds`, over the same inputs plus `packages/app`
+      # The key comes from the same action that keys `package-builds`, over the same inputs plus `apps/web`
       # — so a change to a package this app bundles moves it too, and the two caches can never disagree about
       # What the tree is.
       - name: 🔑 Get build cache keys

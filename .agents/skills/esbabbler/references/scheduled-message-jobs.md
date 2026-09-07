@@ -10,4 +10,4 @@ Read when scheduling work to run at a future time (scheduled messages, reminders
 
 **No timer function** — a separate polling timer is unnecessary; Service Bus scheduled delivery handles the delay.
 
-**Azure composable** — `useServiceBusSender(AzureQueue.ScheduledMessageJobs)` (`@@/server/composables/azure/serviceBus/useServiceBusSender`) in server routes and tRPC routers. `packages/azure-functions` uses its own `getServiceBusSender(azureQueue)` wrapper over `@esposter/db`'s `getServiceBusSender(connectionString, azureQueue)`.
+**Azure composable** — `useServiceBusSender(AzureQueue.ScheduledMessageJobs)` (`@@/server/composables/azure/serviceBus/useServiceBusSender`) in server routes and tRPC routers. `apps/functions` uses its own `getServiceBusSender(azureQueue)` wrapper over `@esposter/db`'s `getServiceBusSender(connectionString, azureQueue)`.

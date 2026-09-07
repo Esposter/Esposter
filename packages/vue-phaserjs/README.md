@@ -25,8 +25,8 @@ pnpm i vue-phaserjs @esposter/shared parse-tmx vue phaser phaser4-rex-plugins pi
 
 Add the type declaration files so scene key types and custom plugins get proper intellisense:
 
-- [`phaser.d.ts`](https://github.com/Esposter/Esposter/blob/main/packages/app/app/types/phaser.d.ts) — narrows scene key types
-- [`vue-phaserjs.d.ts`](https://github.com/Esposter/Esposter/blob/main/packages/app/app/types/vue-phaserjs.d.ts) — provides custom plugin types
+- [`phaser.d.ts`](https://github.com/Esposter/Esposter/blob/main/apps/web/app/types/phaser.d.ts) — narrows scene key types
+- [`vue-phaserjs.d.ts`](https://github.com/Esposter/Esposter/blob/main/apps/web/app/types/vue-phaserjs.d.ts) — provides custom plugin types
 
 ## <a name="documentation">📖 Documentation</a>
 
@@ -34,7 +34,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### Usage
 
-See the reference implementation in [`packages/app/app/pages/dungeons.vue`](https://github.com/Esposter/Esposter/blob/main/packages/app/app/pages/dungeons.vue) for a complete example of a Phaser game embedded in a Nuxt/Vue page with Pinia-driven state.
+See the reference implementation in [`apps/web/app/pages/dungeons.vue`](https://github.com/Esposter/Esposter/blob/main/apps/web/app/pages/dungeons.vue) for a complete example of a Phaser game embedded in a Nuxt/Vue page with Pinia-driven state.
 
 ### Features
 

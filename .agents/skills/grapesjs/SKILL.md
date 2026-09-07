@@ -9,9 +9,9 @@ description: Esposter GrapesJS editor conventions — useGrapesJsEditor init com
 
 There are no editor **pages** — an editor is a component the generic resource routes mount, so a new editor type costs a component rather than a route and a picker of its own:
 
-- `packages/app/app/components/Resource/Email/Editor.vue`
-- `packages/app/app/components/Resource/Webpage/Editor.vue`
-- `packages/app/app/components/Resource/Webpage/View.vue` and `Resource/Email/View.vue` — the public read-only renders
+- `apps/web/app/components/Resource/Email/Editor.vue`
+- `apps/web/app/components/Resource/Webpage/Editor.vue`
+- `apps/web/app/components/Resource/Webpage/View.vue` and `Resource/Email/View.vue` — the public read-only renders
 
 ## Initialization — Always `useGrapesJsEditor`
 
@@ -55,4 +55,4 @@ Survey invite blocks are shared by both editors: `createSurveyInviteBlocks` (`ap
 
 **Never inline block markup in a component.** A block's content string lives in a `create*Blocks` service beside its siblings, which is also what makes it testable — merge fields build through `createMergeFieldBlocks` (`app/services/emailEditor/`), never inline in the editor blade.
 
-Merge fields use the canonical `toMergeField(columnName)` token (`{{columnName}}`), inserted into block content as `escapeHtml(toMergeField(columnName))` — the canvas entity-encodes special characters on serialization, so the exported HTML carries the escaped token form. `substituteMergeFields` therefore replaces **both** the raw and escaped token forms with the HTML-escaped row value. See `packages/app/content/docs/platform/email-personalization.md`.
+Merge fields use the canonical `toMergeField(columnName)` token (`{{columnName}}`), inserted into block content as `escapeHtml(toMergeField(columnName))` — the canvas entity-encodes special characters on serialization, so the exported HTML carries the escaped token form. `substituteMergeFields` therefore replaces **both** the raw and escaped token forms with the HTML-escaped row value. See `apps/web/content/docs/platform/email-personalization.md`.

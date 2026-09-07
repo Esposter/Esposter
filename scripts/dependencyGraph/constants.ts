@@ -41,8 +41,8 @@ export const GRAPH_ATTRIBUTES: string[] = [
   `node [shape="box3d" style="filled" gradientangle="270" fontname="Helvetica" fontsize="13" fontcolor="#161b22" margin="0.28,0.14" penwidth="1.6"]`,
   'edge [arrowhead="normal"]',
 ];
-// The one cluster the graph draws. Every node in it lives under `packages/`, so the cluster is that directory
-// Rather than a grouping invented for the picture, and the label is the directory's own name.
+// The clusters the graph draws, one per workspace root, so a cluster is a directory that exists rather than a
+// Grouping invented for the picture, and each label is the directory's own name.
 export const CLUSTER_ATTRIBUTES: string[] = [
   'style="rounded"',
   // The graph's `labelloc` is inherited, and the graph puts its legend at the bottom.

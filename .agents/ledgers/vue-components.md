@@ -53,16 +53,16 @@ every render. That is a fix, not a regression.
 
 ```bash
 # more than one action button in a file — the rule's loudest failure
-grep -rlE "<(v-btn|StyledButton)" --include=*.vue packages/app/app | xargs grep -cE "<(v-btn|StyledButton)" | awk -F: '$2 > 1'
+grep -rlE "<(v-btn|StyledButton)" --include=*.vue apps/web/app | xargs grep -cE "<(v-btn|StyledButton)" | awk -F: '$2 > 1'
 # a v-for whose item body carries its own handler
-grep -rn -A 20 "v-for" --include=*.vue packages/app/app | grep "@click"
+grep -rn -A 20 "v-for" --include=*.vue apps/web/app | grep "@click"
 # a v-for whose item body calls a helper per row — the computed sweep's handover
-grep -rn -A 18 'v-for=' --include=*.vue packages/app/app |
+grep -rn -A 18 'v-for=' --include=*.vue apps/web/app |
   grep -E '\b[a-z][a-zA-Z0-9]*\(' | grep -vE 'onClick|\$emit|emit\('
 # a dialog mounted per row
-grep -rn -A 25 'v-for=' --include=*.vue packages/app/app | grep -E '<(v-dialog|v-menu)'
+grep -rn -A 25 'v-for=' --include=*.vue apps/web/app | grep -E '<(v-dialog|v-menu)'
 # a page or layout owning an element's state
-grep -rlE "\b(ref|computed|useTemplateRef)\(" --include=*.vue packages/app/app/pages packages/app/app/layouts
+grep -rlE "\b(ref|computed|useTemplateRef)\(" --include=*.vue apps/web/app/pages apps/web/app/layouts
 ```
 
 The array-and-loop rule needs more than a pattern — a count per file, and the absence of a loop in the same
@@ -90,7 +90,7 @@ the body is extracted; if that child's props are rebuilt per row, the fix is hoi
 
 ## Find recipe — naming
 
-`packages/app/app/components/index.test.ts` owns the half that needs no judgement: a file standing beside a folder
+`apps/web/app/components/index.test.ts` owns the half that needs no judgement: a file standing beside a folder
 whose name its own name opens with. Nothing here has to look for those.
 
 What is left is the crowded directory — roughly ten or more flat components — and whether a shared first word in
@@ -100,7 +100,7 @@ scatters the `FilterPill` family and renames its members for the worse.
 
 ```bash
 # directories carrying ten or more flat components — the only ones the rule asks about
-find packages/app/app/components -name '*.vue' -printf '%h
+find apps/web/app/components -name '*.vue' -printf '%h
 ' | sort | uniq -c | awk '$1 >= 10'
 ```
 
@@ -116,13 +116,13 @@ first, from the repository root:
 ```bash
 # Prop-bound allocations that are not fully static — a literal with a spread, a call, or an identifier value
 grep -rnE ':[a-z-]+="(\{[^"]*(\.\.\.|\w+\(|: *[a-z][a-zA-Z0-9]*[ ,}?])|\[[^"]*(\w+\(|\.\.\.))' \
-  --include=*.vue packages/app/app | grep -vE ':(style|class)='
+  --include=*.vue apps/web/app | grep -vE ':(style|class)='
 
 # Collection work inlined into a template
-grep -rnE '(\{\{|:[a-z-]+=")[^"}]*\.(filter|map|toSorted|sort|reduce|flatMap|join)\(' --include=*.vue packages/app/app
+grep -rnE '(\{\{|:[a-z-]+=")[^"}]*\.(filter|map|toSorted|sort|reduce|flatMap|join)\(' --include=*.vue apps/web/app
 
 # Every call in a render position, so the pass judges each callee's body rather than a guessed list of names
-grep -rnoE '(\{\{[^}]*|:[a-z-]+="[^"]*)\b[a-z][a-zA-Z0-9]*\(' --include=*.vue packages/app/app |
+grep -rnoE '(\{\{[^}]*|:[a-z-]+="[^"]*)\b[a-z][a-zA-Z0-9]*\(' --include=*.vue apps/web/app |
   grep -oE '\b[a-z][a-zA-Z0-9]*\($' | sort -u
 ```
 
@@ -147,7 +147,7 @@ clean grep is the start of the pass, not its result.
 ## Exclusions — computed extraction
 
 - `app/assets/dashboard/demo/icon/*.vue` — chart-icon SVG markup with no script block, so there is no responsibility to split.
-- `packages/vue-phaserjs`, `packages/infra` — engine wrappers whose shape is fixed by Phaser's object model, not app UI.
+- `packages/vue-phaserjs`, `apps/infra` — engine wrappers whose shape is fixed by Phaser's object model, not app UI.
 
 ## Next enforceable
 

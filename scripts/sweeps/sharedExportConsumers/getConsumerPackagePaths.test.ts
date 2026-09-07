@@ -10,10 +10,10 @@ describe(getConsumerPackagePaths, () => {
 
     expect(
       getConsumerPackagePaths(name, [
-        ["packages/app/app/first.ts", `${name}(items)`],
+        ["apps/web/app/first.ts", `${name}(items)`],
         ["packages/virrun/src/second.ts", `${name}(items)`],
       ]),
-    ).toStrictEqual(["packages/app", "packages/virrun"]);
+    ).toStrictEqual(["apps/web", "packages/virrun"]);
   });
 
   test("counts a package once however many of its files reference the export", () => {
@@ -21,10 +21,10 @@ describe(getConsumerPackagePaths, () => {
 
     expect(
       getConsumerPackagePaths(name, [
-        ["packages/app/app/first.ts", `${name}(items)`],
-        ["packages/app/app/second.ts", `${name}(items)`],
+        ["apps/web/app/first.ts", `${name}(items)`],
+        ["apps/web/app/second.ts", `${name}(items)`],
       ]),
-    ).toStrictEqual(["packages/app"]);
+    ).toStrictEqual(["apps/web"]);
   });
 
   // The whole reason this scan exists: a scan that reports nothing reads exactly like a tree with no dead code,
@@ -32,20 +32,20 @@ describe(getConsumerPackagePaths, () => {
   test("reports nothing when the export is named nowhere", () => {
     expect.hasAssertions();
 
-    expect(getConsumerPackagePaths(name, [["packages/app/app/first.ts", "somethingElse(items)"]])).toStrictEqual([]);
+    expect(getConsumerPackagePaths(name, [["apps/web/app/first.ts", "somethingElse(items)"]])).toStrictEqual([]);
   });
 
   test("does not count a longer name that merely contains this one", () => {
     expect.hasAssertions();
 
-    expect(getConsumerPackagePaths(name, [["packages/app/app/first.ts", `${name}Async(items)`]])).toStrictEqual([]);
+    expect(getConsumerPackagePaths(name, [["apps/web/app/first.ts", `${name}Async(items)`]])).toStrictEqual([]);
   });
 
   test("matches a name carrying a $, which is not a word character", () => {
     expect.hasAssertions();
 
-    expect(
-      getConsumerPackagePaths("$trpc", [["packages/app/app/first.ts", "$trpc.room.readRooms.query()"]]),
-    ).toStrictEqual(["packages/app"]);
+    expect(getConsumerPackagePaths("$trpc", [["apps/web/app/first.ts", "$trpc.room.readRooms.query()"]])).toStrictEqual(
+      ["apps/web"],
+    );
   });
 });

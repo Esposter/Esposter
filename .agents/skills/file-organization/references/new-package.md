@@ -14,7 +14,7 @@ New packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
    ```
    No per-package `.oxlintrc.json` — oxlint runs once from the repo root against the single root `.oxlintrc.json`.
 6. **`src/index.ts`** — generated, never written by hand or committed; `pnpm build` runs `ctix` over the package, and `pnpm export:gen` runs it alone.
-7. **Run plain `pnpm i`** from repo root to link the package. Follow `packages/app/content/docs/architecture/monorepo-tooling.md` for install safety.
+7. **Run plain `pnpm i`** from repo root to link the package. Follow `apps/web/content/docs/architecture/monorepo-tooling.md` for install safety.
 8. **Run `pnpm build`** in the new package to produce `dist/`.
 
 ## Bin entrypoints — no shebang

@@ -30,7 +30,7 @@ import { escapeValue } from "#src/services/transformer/escapeValue";
 
 `@/*` was a `paths` entry, which is resolved by whichever tsconfig drives the _current compilation_ — so the moment a sibling bundles the package from source, `@/models/Clause` re-points into the bundling package and resolves to nothing. A `#` specifier is resolved by walking up to the nearest `package.json`, which is the one owning the importing **file**, so it survives. That is not a tooling gap to wait out: `paths` is a compiler fiction with no runtime meaning, and no configuration makes it survive. `imports` is in the Node ESM specification, implemented by Node, TypeScript, Rolldown, Vite, esbuild, webpack, Vitest and jiti alike, and it is private to the package by that same specification.
 
-**`packages/app` is the one tree that keeps `@/`.** Its `@/` and `~/` are Nuxt's own aliases, generated into `.nuxt/tsconfig.*.json`, not a `paths` entry anyone here wrote. Nothing bundles the app from source, publishes it, or resolves into it — it is the leaf — so none of the reasons above apply to it, and converting it would mean fighting generated configuration for a property it cannot use. Anywhere else — a package, `scripts/`, `.agents/` — a `@/` specifier is a bug, and oxlint says so.
+**`apps/web` is the one tree that keeps `@/`.** Its `@/` and `~/` are Nuxt's own aliases, generated into `.nuxt/tsconfig.*.json`, not a `paths` entry anyone here wrote. Nothing bundles the app from source, publishes it, or resolves into it — it is the leaf — so none of the reasons above apply to it, and converting it would mean fighting generated configuration for a property it cannot use. Anywhere else — a package, `scripts/`, `.agents/` — a `@/` specifier is a bug, and oxlint says so.
 
 The repo-root `scripts/` tree converted too, to `#scripts/*` declared in the root manifest — so **no `paths` entry anyone here wrote survives**, and `resolve.tsconfigPaths` came out of `getVitestConfiguration` with it. The only `paths` left in the repo are the ones Nuxt generates for the app.
 
@@ -61,12 +61,12 @@ Node's own ESM loader cannot read that second shape, twice over: it resolves no 
 
 Four places opt in, and they are the whole mechanism:
 
-| Where                                      | How                                           | Reaches                  |
-| :----------------------------------------- | :-------------------------------------------- | :----------------------- |
-| `tsconfig.base.json`                       | `customConditions: [SOURCE_CONDITION]`        | every package            |
-| `getVitestConfiguration`                   | `resolve.conditions`                          | every test but the app's |
-| `packages/app/configuration/typescript.ts` | `customConditions` on all four Nuxt tsconfigs | the app's types          |
-| `packages/app/configuration/nitro.ts`      | `customConditions` on the server tsconfig     | the app's server types   |
+| Where                                  | How                                           | Reaches                  |
+| :------------------------------------- | :-------------------------------------------- | :----------------------- |
+| `tsconfig.base.json`                   | `customConditions: [SOURCE_CONDITION]`        | every package            |
+| `getVitestConfiguration`               | `resolve.conditions`                          | every test but the app's |
+| `apps/web/configuration/typescript.ts` | `customConditions` on all four Nuxt tsconfigs | the app's types          |
+| `apps/web/configuration/nitro.ts`      | `customConditions` on the server tsconfig     | the app's server types   |
 
 `resolve.conditions` **replaces** Vite's defaults rather than adding to them, which is why `getVitestConfiguration` spreads `defaultServerConditions` back in — dropping `module` and `node` silently re-resolves half the dependency tree. The tsconfig spells the condition out as a literal because JSON cannot import `SOURCE_CONDITION`; renaming the constant means editing that file too, and nothing fails loudly if you forget — every package silently falls back to `dist`.
 

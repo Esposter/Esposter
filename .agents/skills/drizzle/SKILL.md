@@ -117,4 +117,4 @@ Do not coerce `undefined` to `null` with `?? null` unless null has distinct doma
 
 **`db:gen` (from `packages/db-schema/`) is the only sanctioned way to produce a migration, and `snapshot.json` is machine state — never hand-clone it.** Copying a previous snapshot and bumping `id`/`prevIds` by hand forks the chain the instant two migrations descend from the same parent, and the next `db:gen` fails with `Non-commutative migrations detected`.
 
-**Don't run `db:gen` as an unprompted side effect** of a schema edit — note the pending migration and let the user decide when to run it. Nothing applies migrations from the CLI; they apply automatically at app startup (`packages/app/server/plugins/migrate.ts`). Running it, fixing up the generated SQL and recovering a damaged chain: `references/migrations.md`.
+**Don't run `db:gen` as an unprompted side effect** of a schema edit — note the pending migration and let the user decide when to run it. Nothing applies migrations from the CLI; they apply automatically at app startup (`apps/web/server/plugins/migrate.ts`). Running it, fixing up the generated SQL and recovering a damaged chain: `references/migrations.md`.

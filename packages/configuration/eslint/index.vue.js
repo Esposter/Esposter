@@ -6,7 +6,7 @@ import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedSt
 import restrictedTestSyntaxes from "@esposter/configuration/eslint/restrictedTestSyntaxes.js";
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
 
-import { withNuxt } from "../../app/.nuxt/eslint.config.mjs";
+import { withNuxt } from "../../../apps/web/.nuxt/eslint.config.mjs";
 
 export default withNuxt(plugins)
   .overrides({

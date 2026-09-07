@@ -34,26 +34,26 @@
       }
     },
     {
-      "files": ["packages/app/server/**/*.ts"],
+      "files": ["apps/web/server/**/*.ts"],
       "rules": {
         "persist-then-notify/no-unhandled-effect-after-emit": "error",
         "trpc-procedure/no-hand-rolled-error": "error"
       }
     },
     {
-      "files": ["packages/app/server/trpc/guards/*.ts"],
+      "files": ["apps/web/server/trpc/guards/*.ts"],
       "rules": {
         "trpc-procedure/no-hand-rolled-error": "off"
       }
     },
     {
-      "files": ["packages/app/server/trpc/**/*.ts"],
+      "files": ["apps/web/server/trpc/**/*.ts"],
       "rules": {
         "trpc-procedure/require-return-type": "error"
       }
     },
     {
-      "files": ["packages/app/server/trpc/**/*.test.ts"],
+      "files": ["apps/web/server/trpc/**/*.test.ts"],
       "rules": {
         "trpc-procedure/require-return-type": "off"
       }
@@ -65,7 +65,7 @@
       }
     },
     {
-      "files": ["packages/app/shared/**"],
+      "files": ["apps/web/shared/**"],
       "rules": {
         "no-restricted-imports": [
           "error",
@@ -94,7 +94,7 @@
       }
     },
     {
-      "files": ["packages/app/app/services/trpc/createErrorAlert.ts", "packages/app/app/services/trpc/errorLink.ts"],
+      "files": ["apps/web/app/services/trpc/createErrorAlert.ts", "apps/web/app/services/trpc/errorLink.ts"],
       "rules": {
         "error-alert/no-raw-error-alert": "off"
       }
@@ -115,7 +115,7 @@
             "patterns": [
               {
                 "group": ["@/**", "~/**"],
-                "message": "A package addresses its own source through the `#src/*` subpath imports its manifest declares, never a tsconfig `paths` alias — a `paths` entry re-points into whichever package is compiling, so a sibling bundling this one from source resolves it to nothing. See /docs/architecture/build-pipeline. (`packages/app` is the only tree that keeps `@/` — those are Nuxt's own aliases.)"
+                "message": "A package addresses its own source through the `#src/*` subpath imports its manifest declares, never a tsconfig `paths` alias — a `paths` entry re-points into whichever package is compiling, so a sibling bundling this one from source resolves it to nothing. See /docs/architecture/build-pipeline. (`apps/web` is the only tree that keeps `@/` — those are Nuxt's own aliases.)"
               },
               {
                 "group": ["./*", "./**", "../*", "../**"],
@@ -142,7 +142,7 @@
             "patterns": [
               {
                 "group": ["@/**", "~/**"],
-                "message": "A package addresses its own source through the `#src/*` subpath imports its manifest declares, never a tsconfig `paths` alias — a `paths` entry re-points into whichever package is compiling, so a sibling bundling this one from source resolves it to nothing. See /docs/architecture/build-pipeline. (`packages/app` is the only tree that keeps `@/` — those are Nuxt's own aliases.)"
+                "message": "A package addresses its own source through the `#src/*` subpath imports its manifest declares, never a tsconfig `paths` alias — a `paths` entry re-points into whichever package is compiling, so a sibling bundling this one from source resolves it to nothing. See /docs/architecture/build-pipeline. (`apps/web` is the only tree that keeps `@/` — those are Nuxt's own aliases.)"
               }
             ]
           }

@@ -1,5 +1,5 @@
 // Whether an exclude pattern is a bare name — the shape that matches that segment at ANY depth (`node_modules`,
-// `.git`), as opposed to a root-anchored path (`./app`, `packages/app/.nuxt`) that matches one place in the tree.
+// `.git`), as opposed to a root-anchored path (`./app`, `apps/web/.nuxt`) that matches one place in the tree.
 // The single home of that test, because three sites branch on it and each would otherwise re-derive it from the
 // String: the matcher (checkIsExcludedPath), the mirror's rebuild trigger (createWslSourceMirrorSync — a bare name is the
 // One shape a delete list cannot target) and the delete derivation (diffSourceMirrorManifests). A derived tree path

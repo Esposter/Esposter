@@ -56,8 +56,8 @@ When the same attributify utility combination recurs across components (e.g. `op
 
 ## The resolved-config snapshots
 
-`packages/app/uno.config.test.ts` snapshots `rules`, `safelist`, `shortcuts` and `theme`;
-`packages/app/vuetify.config.test.ts` snapshots the whole Vuetify configuration.
+`apps/web/uno.config.test.ts` snapshots `rules`, `safelist`, `shortcuts` and `theme`;
+`apps/web/vuetify.config.test.ts` snapshots the whole Vuetify configuration.
 
 **They are not there to restate what the config file sets** — that would fail only on a deliberate edit, where
 the diff is already the review. They are there for the edit nobody makes: **a `vuetify` or `unocss` bump**. Both

@@ -46,7 +46,7 @@ The conventions a finding cites live in the domain skills, not here — restatin
 | `server/trpc/**`                     | `trpc`, `error-handling`                                  |
 | `packages/db-schema/**`, a migration | `drizzle`                                                 |
 | a Zod schema                         | `zod`                                                     |
-| `packages/infra/**`                  | `pulumi-infra`                                            |
+| `apps/infra/**`                      | `pulumi-infra`                                            |
 | `*.test.ts`, `*.bench.ts`            | `testing`, `bench`                                        |
 | `content/docs/**`                    | `docs`                                                    |
 | `.agents/skills/**`                  | `skill-authoring`                                         |
@@ -85,7 +85,7 @@ This is the whole of what the independent verifier used to do, and it fails the 
 
 The dominant false-positive class is a finding arguing against a decision already made and written down: a tightened retry policy, an ingestion cap, a best-effort publish that swallows its error. From the diff alone the argument always sounds right, and it returns every round with a different answer.
 
-`packages/app/content/docs/`, `.agents/skills/**/*.md` and `.agents/ledgers/**/*.md` are the tiebreaker — the whole skill tree, not the index pages alone, and a ledger's **Exclusions** section exists precisely to stop a unit being re-litigated: a binding rule as often sits in a skill's `references/*.md` deep dive as in its `SKILL.md`. A choice any of the three states deliberately, with its consequence acknowledged, is settled — not a finding. It is a finding again only when the code contradicts the record, when a mitigation the record promises is missing, or when the change ships behaviour the record does not cover.
+`apps/web/content/docs/`, `.agents/skills/**/*.md` and `.agents/ledgers/**/*.md` are the tiebreaker — the whole skill tree, not the index pages alone, and a ledger's **Exclusions** section exists precisely to stop a unit being re-litigated: a binding rule as often sits in a skill's `references/*.md` deep dive as in its `SKILL.md`. A choice any of the three states deliberately, with its consequence acknowledged, is settled — not a finding. It is a finding again only when the code contradicts the record, when a mitigation the record promises is missing, or when the change ships behaviour the record does not cover.
 
 Grep all three trees before reporting a finding that argues with a decision. A genuinely undocumented decision that keeps drawing fire is closed by writing the page (`docs` skill), not by arguing it again. A record invalidated by materially new evidence (an advisory, a changed dependency contract) reopens the decision — update the page first, then fix the code against the new record.
 

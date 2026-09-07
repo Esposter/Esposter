@@ -10,7 +10,7 @@ const checkHasNodeModules = (dir: string): boolean =>
     (entry) => entry.isDirectory() && (entry.name === NODE_MODULES_DIRECTORY || checkHasNodeModules(join(dir, entry.name))),
   );
 // A captured snapshot upper is everything the frozen `pnpm install` wrote: the dependency closure (node_modules)
-// Plus any source-tree artifact a postinstall lifecycle script generated (e.g. `nuxt prepare` → packages/app/.nuxt).
+// Plus any source-tree artifact a postinstall lifecycle script generated (e.g. `nuxt prepare` → apps/web/.nuxt).
 // Those artifacts derive from *source*, but the snapshot is keyed only on the lockfile, so freezing them lets a fork
 // Serve a stale copy that shadows the host's fresh one the moment source moves on — silently diverging the sandboxed
 // Toolchain from native (a type-aware linter reads the stale graph, collapses types to `any`, and misfires). Prune

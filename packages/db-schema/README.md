@@ -26,7 +26,7 @@ pnpm db:up      # upgrade snapshot metadata to a newer drizzle-kit format
 pnpm db:studio  # open Drizzle Studio UI for visual inspection
 ```
 
-Migrations are output to `packages/app/server/db/migrations/` and are applied automatically at app startup by the Nitro plugin `packages/app/server/plugins/migrate.ts` — there is no apply script.
+Migrations are output to `apps/web/server/db/migrations/` and are applied automatically at app startup by the Nitro plugin `apps/web/server/plugins/migrate.ts` — there is no apply script.
 
 ### Schema Layout
 

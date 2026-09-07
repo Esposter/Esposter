@@ -6,7 +6,7 @@ import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
 // Source file living under such a parent (`packages/<pkg>/src/foo.ts`) — the bug that stranded `lint:fix` edits — so
 // Mask only the snapshot-lower entry itself and anything inside a `node_modules` tree; (2) `maskedPaths`, matched by
 // The shared checkIsExcludedPath so the mask and the source-side exclude can never drift. That covers an environment's
-// Prepare outputs (e.g. `packages/app/.nuxt`, owned by the source-keyed prepare layer, never the host) and, on win32,
+// Prepare outputs (e.g. `apps/web/.nuxt`, owned by the source-keyed prepare layer, never the host) and, on win32,
 // The whole mirror exclude set: a path kept out of the source mirror has no upper entry that could legitimately have
 // Come from the host, so anything the sandbox wrote there is a ghost of a stale mirror — flushing it materialises a
 // Tree the user already deleted. A sibling that merely shares a masked path's prefix still flushes.

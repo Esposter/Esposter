@@ -1,6 +1,6 @@
 # area mode — auditing a subsystem and the docs governing it
 
-Anchored on code that already exists, with no change to review: a subsystem plus the `packages/app/content/docs/` pages and `.agents/skills/**/*.md` pages that govern it. Use it for "review the docs on X and everything implementing them", for hunting bugs in code nobody has touched recently, and before a substantial change to an area you are about to rework.
+Anchored on code that already exists, with no change to review: a subsystem plus the `apps/web/content/docs/` pages and `.agents/skills/**/*.md` pages that govern it. Use it for "review the docs on X and everything implementing them", for hunting bugs in code nobody has touched recently, and before a substantial change to an area you are about to rework.
 
 **A target is required** — it is the scope. Without a change to fall back on, an area review with no target audits something nobody asked about, expensively. Ask which subsystem rather than guessing. The target can be a path, a package, a feature, or a subsystem by its domain name.
 

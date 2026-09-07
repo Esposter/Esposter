@@ -1,5 +1,5 @@
 name: 🚀 Deploy Function App
-# Reusable workflow: build `@esposter/azure-functions` and deploy it to one function app. Called by the two
+# Reusable workflow: build `@esposter/functions` and deploy it to one function app. Called by the two
 # Per-branch workflows via `uses: ./.github/workflows/deploy-function-app.yaml`, so a fix to the deploy reaches
 # Both stacks — the pair it replaced differed only in the branch it triggered on and the two resource names
 # Below, which is how a prod-only edit used to become drift.
@@ -30,7 +30,7 @@ on:
 
 env:
   OUTPUT_DIRECTORY: dist
-  PACKAGE_PATH: packages/azure-functions
+  PACKAGE_PATH: apps/functions
   ZIP_FILE_NAME: release.zip
 
 jobs:
@@ -51,7 +51,7 @@ jobs:
         uses: ./.github/actions/setup-project-dependencies
 
       # 🏗️ CI already built every non-app package at this content hash and saved it under this key, and
-      # `@esposter/azure-functions` is one of them — so on a hit this job builds nothing and deploys exactly the
+      # `@esposter/functions` is one of them — so on a hit this job builds nothing and deploys exactly the
       # Bundle CI checked. Restore only: this job builds a subset, so saving from here would publish a partial
       # `dist` set under the full build's key.
       - name: 🔑 Get build cache keys
@@ -65,7 +65,7 @@ jobs:
           key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
 
       - name: 🔧 Resolve Project Dependencies
-        run: pnpm --filter @esposter/azure-functions... i
+        run: pnpm --filter @esposter/functions... i
       # Gated on the build output rather than on the restore's `cache-hit`: that flag reports the entry the cache
       # Found, not what it extracted, so a `path` list that drifted from the save's reports a hit while a build
       # Skipped on it zips an empty `dist` and deploys a function app that registers nothing, with the host still
@@ -77,11 +77,11 @@ jobs:
 
       - name: 🏗️ Build
         if: steps.verify.outputs.complete != 'true'
-        run: pnpm --filter @esposter/azure-functions... build
+        run: pnpm --filter @esposter/functions... build
 
       - name: 📦 Collect Deployment Output
         run: |
-          pnpm --filter @esposter/azure-functions deploy --prod ${{ env.OUTPUT_DIRECTORY }} --config.inject-workspace-packages=true --config.node-linker=hoisted
+          pnpm --filter @esposter/functions deploy --prod ${{ env.OUTPUT_DIRECTORY }} --config.inject-workspace-packages=true --config.node-linker=hoisted
           cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.OUTPUT_DIRECTORY }}/host.json
 
       - name: 📦 Zip Artifact for Deployment

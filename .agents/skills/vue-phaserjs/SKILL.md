@@ -63,7 +63,7 @@ Multi-line setters already use braces naturally — no change needed.
 
 **Always use `markRaw()` when assigning a Phaser object to any reactive ref in a Pinia store** — the rule and its rationale live in the `pinia` skill ("Storing Class Instances — markRaw").
 
-This package itself has zero `markRaw` usages — the rule bites in the consuming app (`packages/app/app/`: `store/`, `components/Dungeons/`, `composables/dungeons/`). Look there for real examples.
+This package itself has zero `markRaw` usages — the rule bites in the consuming app (`apps/web/app/`: `store/`, `components/Dungeons/`, `composables/dungeons/`). Look there for real examples.
 
 ```ts
 sprite.value = markRaw(newSprite); // traverse-safe

@@ -53,37 +53,37 @@ What a component looks like rather than how it is composed: attributify props ov
 
 ```bash
 # px in a template or a style block — rem is the rule, with narrow exceptions
-grep -rnE '[^a-z-][0-9]+px' --include=*.vue --include=*.scss packages/app/app
+grep -rnE '[^a-z-][0-9]+px' --include=*.vue --include=*.scss apps/web/app
 # class= where attributify would do — the survivors should be scoped refs, dynamic bindings, or third-party selectors
-grep -rn 'class="' --include=*.vue packages/app/app/components
+grep -rn 'class="' --include=*.vue apps/web/app/components
 # A bare --variable inside a colour function in an arbitrary value: the token matches, the declaration is
 # Invalid, and the whole property is dropped with nothing to see (styling/references/arbitrary-values.md)
-grep -rnE '(rgb|rgba|hsl)\(--|color-mix\(in srgb, --' --include=*.vue --include=*.scss packages/app/app
+grep -rnE '(rgb|rgba|hsl)\(--|color-mix\(in srgb, --' --include=*.vue --include=*.scss apps/web/app
 # A bare bracket attribute — UnoCSS extracts it as a class token, so the rule it emits is a `.class` the
 # Element never carries. Only the valued form `prop="[...]"` produces an attribute selector
-grep -rnoE '(^|[[:space:]])[a-z][A-Za-z0-9:_-]*-\[[^]"'"'"']*\]([[:space:]/>]|$)' --include=*.vue packages/app/app
+grep -rnoE '(^|[[:space:]])[a-z][A-Za-z0-9:_-]*-\[[^]"'"'"']*\]([[:space:]/>]|$)' --include=*.vue apps/web/app
 # A Vuetify length given a bare number, which renders as px rather than the rem it was authored in. A props
 # Object takes every name; as an attribute only `size` and the `min-`/`max-` pair, because bare `width`/`height`
 # Are dominated by SVG attributes and third-party APIs, where the unit is not ours
-grep -rnE "(maxWidth|minWidth|maxHeight|minHeight|width|height|size): *[0-9]+ *[,}]" --include=*.vue packages/app/app
-grep -rnE "[[:space:]:](size|(min|max)-(width|height))=\"[0-9]+\"" --include=*.vue packages/app/app
+grep -rnE "(maxWidth|minWidth|maxHeight|minHeight|width|height|size): *[0-9]+ *[,}]" --include=*.vue apps/web/app
+grep -rnE "[[:space:]:](size|(min|max)-(width|height))=\"[0-9]+\"" --include=*.vue apps/web/app
 # A long form where the abbreviation is canonical — `rd` for `rounded`, `op-` for `opacity-`. A bare
 # `rounded` on a Vuetify component is that component's own boolean prop and stays
-grep -rnE "(^|[[:space:]])(rounded(-[a-z0-9]+)?|opacity-[0-9]+)([[:space:]/>]|$)" --include=*.vue packages/app/app
+grep -rnE "(^|[[:space:]])(rounded(-[a-z0-9]+)?|opacity-[0-9]+)([[:space:]/>]|$)" --include=*.vue apps/web/app
 # A Vuetify helper class where the UnoCSS name belongs — as an attribute it generates nothing at all
-grep -rnE "(^|[^-a-z])font-weight-(thin|light|regular|medium|bold|black)" --include=*.vue packages/app/app
+grep -rnE "(^|[^-a-z])font-weight-(thin|light|regular|medium|bold|black)" --include=*.vue apps/web/app
 # A Vuetify theme colour this theme never registers — `warning`/`success` exist at runtime but generate no
 # Utility, so the attribute form is inert while the `color` prop still works
-grep -rnE '(^|[^-a-z"'"'"'])(bg|text|b)-(warning|success)([^-a-z0-9]|$)' --include=*.vue packages/app/app
+grep -rnE '(^|[^-a-z"'"'"'])(bg|text|b)-(warning|success)([^-a-z0-9]|$)' --include=*.vue apps/web/app
 # A valueless utility bound as an attribute — an empty-string literal emits nothing, so it matches only when
 # An unrelated file writes the same utility bare. `:class` is the reliable form
-grep -rnE ":[a-z][a-z0-9-]*=\"[^\"]*\? *'' *: *undefined\"" --include=*.vue packages/app/app
+grep -rnE ":[a-z][a-z0-9-]*=\"[^\"]*\? *'' *: *undefined\"" --include=*.vue apps/web/app
 # The `text-hint` shortcut written out — uno.config.ts defines it as exactly this pair
-grep -rn 'op-medium-emphasis text-body-small' --include=*.vue packages/app/app
+grep -rn 'op-medium-emphasis text-body-small' --include=*.vue apps/web/app
 # A numeric opacity spelling out an emphasis token — op-60 is medium, op-87 is high; op-0/op-100 are reveals
-grep -rnE '(^|[^-a-z0-9])op-(38|60|87)([^0-9]|$)' --include=*.vue packages/app/app
+grep -rnE '(^|[^-a-z0-9])op-(38|60|87)([^0-9]|$)' --include=*.vue apps/web/app
 # An emphasis name used as a colour: they are opacity utilities, so b-/bg-/text- prefixed they generate nothing
-grep -rnE '(^|[^-a-z])(b|bg|text)-(medium|high)-emphasis' --include=*.vue packages/app/app
+grep -rnE '(^|[^-a-z])(b|bg|text)-(medium|high)-emphasis' --include=*.vue apps/web/app
 ```
 
 ## Next enforceable
