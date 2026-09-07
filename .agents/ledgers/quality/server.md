@@ -15,6 +15,6 @@
 | `server/services/auth`, `rateLimiter`, `livekit`                              | —          |       |
 | `server/services/dataset`, `storage`, `azure`                                 | —          |       |
 | `server/services/program`, `post`, `achievement`                              | —          |       |
-| `server/services/friend`, `db`, `blobState`                                   | —          |       |
-| `server/services/user`, `role`, `request`, `notification`                     | —          |       |
-| `server/services/events`, `emailEditor`, `dashboard`                          | —          |       |
+| `server/services/friend`, `db`, `blobState`                                   | 2026-09-07 |       |
+| `server/services/user`, `role`, `request`, `notification`                     | 2026-09-07 |       |
+| `server/services/events`, `emailEditor`, `dashboard`                          | 2026-09-07 |       |
