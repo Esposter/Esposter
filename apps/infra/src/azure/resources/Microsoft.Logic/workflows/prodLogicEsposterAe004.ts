@@ -28,8 +28,6 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
           inputs: {
             body: {
               properties: {
-                // Mirrors the Pulumi subscription: a subscription recreated without this simply drops every event
-                // Whose delivery runs out of attempts, and the replay pipeline is inert for it
                 deadLetterDestination: {
                   endpointType: "StorageBlob",
                   properties: {
@@ -80,8 +78,6 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
           inputs: {
             body: {
               properties: {
-                // Mirrors the Pulumi subscription: a subscription recreated without this simply drops every event
-                // Whose delivery runs out of attempts, and the replay pipeline is inert for it
                 deadLetterDestination: {
                   endpointType: "StorageBlob",
                   properties: {

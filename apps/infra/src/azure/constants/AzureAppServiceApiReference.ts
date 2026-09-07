@@ -2,8 +2,6 @@ import AzureAppServiceManagedApiId from "#src/azure/constants/AzureAppServiceMan
 import AzureManagedApiType from "#src/azure/constants/AzureManagedApiType";
 import * as azure_native from "@pulumi/azure-native";
 
-// The managed API every App Service connection points at. The block is the connector's own published
-// Metadata, so it is identical in both stacks — only the connection's name and resource group differ.
 const AzureAppServiceApiReference: azure_native.types.input.web.ApiReferenceArgs = {
   brandColor: "#FFFFFF",
   description: "Azure App Service connector allows you to manage app services and server farms in your subscription.",

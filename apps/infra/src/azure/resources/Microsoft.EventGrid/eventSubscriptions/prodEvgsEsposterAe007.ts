@@ -9,12 +9,6 @@ import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
 const eventSubscriptionName = "prod-evgs-esposter-ae-007";
-// Storage reports how many bytes actually landed, which is the only authority on it — the client PUTs straight
-// To Azure, so nothing of ours is in the data path. This is what settles a storage quota hold into a real
-// Charge against a user's allowance (/docs/platform/storage-quotas).
-// Filtered to the one container whose uploads go through a quota reserve: every other blob in the account —
-// Room attachments, published clones, avatars, dead-letter payloads — is accounted to nobody, so delivering it
-// Would only pay a function invocation to look up a ledger row that cannot exist.
 export const prodEvgsEsposterAe007: azure_native.eventgrid.SystemTopicEventSubscription =
   new azure_native.eventgrid.SystemTopicEventSubscription(
     eventSubscriptionName,
