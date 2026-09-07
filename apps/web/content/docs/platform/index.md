@@ -34,6 +34,7 @@ The standards the platform applies live in architecture: the layer model ([the p
 - [Recycle bin](/docs/platform/recycle-bin) — soft delete with restore, permanent purge, and a 30-day timer sweep
 - [Activity log](/docs/platform/activity-log) — the per-resource audit trail blade, in Azure Table Storage
 - [Resource snapshots](/docs/platform/resource-snapshots) — published versions and revisions of the working copy in one version history panel, with preview, restore and undo
+- [Resource save state](/docs/platform/resource-save-state) — one derived state in the blade toolbar saying whether the open resource's edits have reached the server, and when
 - [Shell cohesion](/docs/platform/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
 - [Breadcrumb trail](/docs/platform/breadcrumb-trail) — crumbs are the click path, the current page is the title, and a direct link shows no ancestor at all
 - [Sheet resource](/docs/platform/sheet-resource) — CSV/JSON/XLSX files as resources with Data + Settings blades

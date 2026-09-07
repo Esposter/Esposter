@@ -27,14 +27,10 @@ const snapshotVersionId = computed(() => getSnapshotVersionId(snapshotVersion));
 const isPreviewable = computed(
   () => snapshotVersion.channel === SnapshotChannel.Published && hasCapability(resource.type, "publishable"),
 );
-// What the row says it is, in the owner's words: why it was taken, what the owner named it, and one line about
-// What is in it. A bare version and a time is not something a person can choose between
+// What the row says it is: why it was taken and one line about what is in it. A bare version and a time is not
+// Something a person can choose between
 const subtitle = computed(() =>
-  [
-    snapshotVersion.reason ? SnapshotReasonTitleMap[snapshotVersion.reason] : "",
-    snapshotVersion.label,
-    snapshotVersion.summary,
-  ]
+  [snapshotVersion.reason ? SnapshotReasonTitleMap[snapshotVersion.reason] : "", snapshotVersion.summary]
     .filter(Boolean)
     .join(" · "),
 );

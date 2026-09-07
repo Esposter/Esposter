@@ -4,7 +4,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { Resource } from "@esposter/db-schema";
 
 import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
-import { SNAPSHOT_IDLE_WINDOW_MS } from "#shared/services/resource/constants";
+import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
@@ -42,15 +42,17 @@ export const saveResourceContent = async (
   { activityType, content, resource, updateContentVersion }: SaveResourceContentInput,
 ): Promise<Resource> => {
   const { id } = resource;
-  // The first save after a quiet spell keeps a point the owner can return to; every save inside the window keeps
-  // None. Ordinary saves only — a restore and a blueprint deploy take their own, and a first write has no prior
-  // State. Before the write, since what is worth keeping is what this save replaces, and awaited so a revision
-  // Cannot snapshot the content it was meant to precede. Best-effort only here: a failed safety net must not fail
-  // The autosave it was protecting, where every other trigger throws to keep one deliberate destructive act
-  // Undoable (/docs/platform/resource-snapshots)
+  // One recovery point per interval, so an hour of editing leaves a handful of them. Measured from the last
+  // Revision rather than from the last save: `updatedAt` moves on every autosave, so a save clock says "still
+  // Busy" for as long as the owner keeps typing and a continuous session would leave no points at all — which
+  // Is the opposite of when recovery is wanted. Ordinary saves only — a restore and a blueprint deploy take
+  // Their own, and a first write has no prior state. Before the write, since what is worth keeping is what this
+  // Save replaces, and awaited so a revision cannot snapshot the content it was meant to precede. Best-effort
+  // Only here: a failed safety net must not fail the autosave it was protecting, where every other trigger
+  // Throws to keep one deliberate destructive act undoable (/docs/platform/resource-snapshots)
   if (
     activityType === ResourceActivityType.ContentSaved &&
-    Date.now() - resource.updatedAt.getTime() >= SNAPSHOT_IDLE_WINDOW_MS
+    (!resource.revisionTakenAt || Date.now() - resource.revisionTakenAt.getTime() >= SNAPSHOT_INTERVAL_MS)
   )
     await getResultAsync(() => takeResourceRevision(ctx, resource, SnapshotReason.Automatic)).match(
       noop,

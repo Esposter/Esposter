@@ -3,6 +3,8 @@ import type { NoteResource } from "#shared/models/resource/note/NoteResource";
 import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
 import { EMPTY_NOTE_DOC } from "#shared/models/resource/note/NoteResource";
+import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
+import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
@@ -117,6 +119,58 @@ describe(useResourceStore, () => {
     await Promise.all([saveContent(createDefaultSheetResource()), saveContent(createDefaultSheetResource())]);
 
     expect(contentVersions).toStrictEqual([0, 1]);
+  });
+
+  // The notification that reports a failed save is a one-shot the owner dismisses, so the state is what keeps
+  // Saying their work is only in the tab
+  test("reports a rejected save as not saved until one lands", async () => {
+    expect.hasAssertions();
+
+    let isSaveRejected = true;
+    server.use(
+      trpcMsw.sheet.saveResourceContent.mutation(({ input }) => {
+        if (isSaveRejected) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+
+        return { ...createResource(resourceId), contentVersion: input.contentVersion + 1 };
+      }),
+    );
+    const resourceStore = useResourceStore();
+    const { saveState } = storeToRefs(resourceStore);
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent();
+    await saveContent(createDefaultSheetResource());
+
+    expect(saveState.value).toBe(ResourceSaveState.Failed);
+
+    isSaveRejected = false;
+    await saveContent(createDefaultSheetResource());
+
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
+  });
+
+  // Every retry after a stale rejection is a guaranteed rejection, so the state latches: the remedy is a reload,
+  // Not waiting, and the owner has to be able to see that after the warning is gone
+  test("reports a stale save as out of date until the next read", async () => {
+    expect.hasAssertions();
+
+    server.use(
+      trpcMsw.sheet.saveResourceContent.mutation(() => {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: staleContentVersionErrorMessage });
+      }),
+    );
+    const resourceStore = useResourceStore();
+    const { saveState } = storeToRefs(resourceStore);
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent();
+    await saveContent(createDefaultSheetResource());
+
+    expect(saveState.value).toBe(ResourceSaveState.Stale);
+
+    await readResource();
+
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
   });
 
   // Renames of one resource queue, so the second's rollback has to restore the name the rename ahead of it

@@ -5,6 +5,7 @@ import { ResourceOperationType } from "#shared/models/notification/ResourceOpera
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { hasCapability } from "#shared/services/resource/hasCapability";
+import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { useNotificationStore } from "@/store/notification";
@@ -18,7 +19,7 @@ import { checkIsUuidV4, RoutePath, withFinalizerAsync } from "@esposter/shared";
 // Them. Blade-scoped: the store is app-lifetime, this state is not, so the page clears it on unmount
 export const useResourceStore = defineStore("resource", () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation: executeSaveContentMutation } = useMutation();
+  const { executeMutation: executeSaveContentMutation, isPending: isSaveContentPending } = useMutation();
   const { executeMutation: executeRenameMutation } = useMutation();
   const { executeMutation: executeUpdateTagsMutation } = useMutation();
   const { executeMutation: executeDeleteMutation } = useMutation();
@@ -51,8 +52,32 @@ export const useResourceStore = defineStore("resource", () => {
   let persistedContentJson: string | undefined;
   // A stale contentVersion can only be cured by reloading, so once the server rejects a save every
   // Retry is a guaranteed rejection — the flag turns saveContent() into a no-op (and the warning into a
-  // One-shot) until the next readResource() reads a fresh version
-  let isContentStale = false;
+  // One-shot) until the next readResource() reads a fresh version. A ref because the toolbar renders it:
+  // "out of date" is the one save state the owner has to act on
+  const isContentStale = ref(false);
+  // Whether the last content write was rejected for any other reason. Its notification is a one-shot the owner
+  // Dismisses; this is what keeps saying so afterwards, because a failed save leaves work only in the tab
+  const hasSaveContentFailed = ref(false);
+  // How many autosave debounces are armed. A count rather than a flag because a blade can watch more than one
+  // Source — Sheet's settings beside its data — and the first to fire would otherwise report the rest as saved.
+  // Armed is folded into Saving rather than shown as a state of its own: the debounce is half a second, and a
+  // Word that appears for half a second reads as a flicker rather than as information
+  const armedAutosaveCount = ref(0);
+  const armAutosave = () => {
+    armedAutosaveCount.value += 1;
+  };
+  const disarmAutosave = () => {
+    armedAutosaveCount.value -= 1;
+  };
+  // Every type's edits land through saveContent, so the state every type shows is derived here rather than
+  // Declared per type — a third-party editor autosaving on its own cadence, a toolbar command and a dialog's
+  // Save are the same write. See /docs/platform/resource-save-state
+  const saveState = computed(() => {
+    if (isContentStale.value) return ResourceSaveState.Stale;
+    else if (isSaveContentPending.value || armedAutosaveCount.value > 0) return ResourceSaveState.Saving;
+    else if (hasSaveContentFailed.value) return ResourceSaveState.Failed;
+    else return ResourceSaveState.Saved;
+  });
   const readResource = async () => {
     // Resolved per call rather than captured: the store outlives the page, so the loader always reads whichever
     // Resource the route names now
@@ -71,7 +96,8 @@ export const useResourceStore = defineStore("resource", () => {
         resource.value = newResource;
         publication.value = newPublication ?? undefined;
         // A fresh read carries the current contentVersion, so saving is meaningful again
-        isContentStale = false;
+        isContentStale.value = false;
+        hasSaveContentFailed.value = false;
       },
       () => {
         isPending.value = false;
@@ -88,7 +114,9 @@ export const useResourceStore = defineStore("resource", () => {
     publication.value = undefined;
     contentResourceId = undefined;
     persistedContentJson = undefined;
-    isContentStale = false;
+    isContentStale.value = false;
+    hasSaveContentFailed.value = false;
+    armedAutosaveCount.value = 0;
   };
   // This resource's content was replaced underneath whatever blade is open — a restore is the one write that
   // Does that. The row is re-read here and the content stores re-read themselves through the hook registry,
@@ -126,7 +154,7 @@ export const useResourceStore = defineStore("resource", () => {
     // A debounced autosave can fire after readResource() swapped in another resource but before the content
     // Store has re-seeded its content ref, and the content in hand is then still the previous resource's —
     // Writing it would replace this resource's document with another one's, under this one's id and version
-    if (!current || isContentStale || (contentResourceId !== undefined && contentResourceId !== current.id))
+    if (!current || isContentStale.value || (contentResourceId !== undefined && contentResourceId !== current.id))
       return false;
     const contentJson = JSON.stringify(content);
     if (contentJson === persistedContentJson) return true;
@@ -151,7 +179,7 @@ export const useResourceStore = defineStore("resource", () => {
         key: current.id,
         onError: (error) => {
           if (error.message === staleContentVersionErrorMessage) {
-            isContentStale = true;
+            isContentStale.value = true;
             createNotification({
               action: {
                 // A hard reload is the one path guaranteed to re-run every blade's content loader
@@ -163,11 +191,15 @@ export const useResourceStore = defineStore("resource", () => {
               severity: NotificationSeverity.Warning,
               title: `"${current.name}" was modified elsewhere — refresh to load the latest`,
             });
-          } else createErrorNotification(error);
+          } else {
+            hasSaveContentFailed.value = true;
+            createErrorNotification(error);
+          }
         },
         onSuccess: (newResource) => {
           mergeResource({ contentVersion: newResource.contentVersion, updatedAt: newResource.updatedAt }, newResource);
           persistedContentJson = contentJson;
+          hasSaveContentFailed.value = false;
           isSuccessful = true;
         },
       },
@@ -307,8 +339,10 @@ export const useResourceStore = defineStore("resource", () => {
     });
   };
   return {
+    armAutosave,
     clearResource,
     deleteResource,
+    disarmAutosave,
     duplicateResource,
     isDuplicatePending,
     isPending,
@@ -321,6 +355,7 @@ export const useResourceStore = defineStore("resource", () => {
     renameResource,
     resource,
     saveContent,
+    saveState,
     setPersistedContent,
     storeContentVersion,
     unpublishResource,

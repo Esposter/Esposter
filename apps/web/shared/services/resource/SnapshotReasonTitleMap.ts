@@ -6,5 +6,4 @@ export const SnapshotReasonTitleMap = {
   [SnapshotReason.Automatic]: "Autosaved",
   [SnapshotReason.BeforeImport]: "Before import",
   [SnapshotReason.BeforeRestore]: "Before restore",
-  [SnapshotReason.Manual]: "Saved version",
 } as const satisfies Record<SnapshotReason, string>;

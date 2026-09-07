@@ -18,7 +18,6 @@ import { readResourceListInputSchema } from "#shared/models/db/resource/ReadReso
 import { resourceFilterInputSchema } from "#shared/models/db/resource/ResourceFilterInput";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { restoreSnapshotVersionInputSchema } from "#shared/models/db/resource/RestoreSnapshotVersionInput";
-import { saveResourceRevisionInputSchema } from "#shared/models/db/resource/SaveResourceRevisionInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { SnapshotKind } from "#shared/models/resource/SnapshotKind";
@@ -482,12 +481,12 @@ export const resourceRouter = router({
     });
     return { resource: restoredResource, undoRevisionVersion };
   }),
-  // The deliberate milestone, and the one an owner may name. Returns the version it wrote, or undefined when
-  // The resource has no content blob to take one from — a resource created and never saved has no state worth
-  // Keeping, which is an answer rather than a failure
-  saveResourceRevision: getOwnerProcedure(undefined, saveResourceRevisionInputSchema, "id").mutation<
-    number | undefined
-  >(({ ctx, input: { label, reason } }) => takeResourceRevision(ctx, ctx.resource, reason, label)),
+  // The safety net an import takes before it replaces a draft wholesale. Returns the version it wrote, or
+  // Undefined when the resource has no content blob to take one from — a resource created and never saved has
+  // No state worth keeping, which is an answer rather than a failure
+  saveResourceRevision: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<number | undefined>(
+    ({ ctx }) => takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeImport),
+  ),
   toggleFavorite: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<boolean>(
     async ({ ctx, input: { id } }) => {
       const userId = ctx.getSessionPayload.user.id;

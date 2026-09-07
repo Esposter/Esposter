@@ -10,6 +10,7 @@ One page per rejected idea (won't do). Check here and [deferred](/docs/platform/
 - [Games integration](/docs/platform/rejected/games-integration) — a game save is one blob; achievements are the right touchpoint
 - [Generic event bus](/docs/platform/rejected/generic-event-bus) — the tRPC mutation path already is the event taxonomy
 - [JSON/config parity](/docs/platform/rejected/json-config-parity) — our resources aren't declarative config
+- [Owner-named versions](/docs/platform/rejected/owner-named-versions) — a recovery point somebody has to remember to take is not recovery, and its Save verb read as durability
 - [Offline editing](/docs/platform/rejected/offline-editing) — queued offline saves guarantee contentVersion conflicts; single write path is the design
 - [Pin to dashboard](/docs/platform/rejected/pin-to-dashboard) — Dashboard is a data product, not a portal homepage
 - [Portal chrome extras](/docs/platform/rejected/portal-chrome-extras) — cosmetic fidelity to needs we don't have

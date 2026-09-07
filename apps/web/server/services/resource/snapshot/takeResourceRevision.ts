@@ -27,7 +27,6 @@ export const takeResourceRevision = async (
   ctx: AuthedContext,
   resource: Resource,
   reason: SnapshotReason,
-  label = "",
 ): Promise<number | undefined> => {
   const { id } = resource;
   // A missing content blob is "nothing to snapshot", never an error: a resource created and never saved
@@ -46,10 +45,12 @@ export const takeResourceRevision = async (
   const serializedContent = await streamToText(contentStream);
   // Claimed in SQL so concurrent takes each get a distinct number. The counter leads the write, so a failed
   // Upload burns a number rather than reusing one — which is the harmless direction: the listing is what
-  // Answers which revisions exist, and it simply never sees the number that was skipped
+  // Answers which revisions exist, and it simply never sees the number that was skipped. The timestamp moves
+  // With it for the same reason: it throttles the automatic take, and a failed upload that left the clock
+  // Untouched would have the next save retry immediately
   const [updatedResource] = await ctx.db
     .update(resources)
-    .set({ revisionVersion: sql`${resources.revisionVersion} + 1` })
+    .set({ revisionTakenAt: new Date(), revisionVersion: sql`${resources.revisionVersion} + 1` })
     .where(eq(resources.id, id))
     .returning({ revisionVersion: resources.revisionVersion });
   if (!updatedResource) return undefined;
@@ -60,7 +61,7 @@ export const takeResourceRevision = async (
     AzureContainer.ResourceAssets,
     blobName,
     serializedContent,
-    getSnapshotMetadata({ label, reason, summary: getSnapshotSummary(resource.type, serializedContent) }),
+    getSnapshotMetadata({ reason, summary: getSnapshotSummary(resource.type, serializedContent) }),
   );
   // A revision is stored bytes the owner keeps, charged like the working copy it was taken from. On the
   // Owner rather than the caller: a deploy or a restore writes on their behalf. See /docs/platform/storage-quotas

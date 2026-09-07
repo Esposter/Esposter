@@ -1,4 +1,3 @@
-import type { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
@@ -19,7 +18,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
   const { reloadResourceContent } = resourceStore;
   const { executeQuery, isPending } = useMutation();
   const { executeMutation: executeRestoreMutation, isPending: isRestorePending } = useMutation();
-  const { executeMutation: executeSaveRevisionMutation, isPending: isSaveRevisionPending } = useMutation();
+  const { executeMutation: executeSaveRevisionMutation } = useMutation();
   const versions = ref<SnapshotVersion[]>([]);
   // The row a confirmation is open for, which is its channel and version together: a version alone names one
   // Row per channel
@@ -83,15 +82,15 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
       },
     );
   };
-  // The deliberate milestone, and the one an owner may name. Reports whether it landed, because the paths that
-  // Take one before overwriting a draft wholesale have no business proceeding when it did not. The reasons a
-  // Caller may name are the two the input schema accepts — the rest are decided by the paths that take them
-  const saveResourceRevision = async (reason?: SnapshotReason.BeforeImport | SnapshotReason.Manual, label = "") => {
+  // The safety net a write that replaces a draft wholesale takes first. Reports whether it landed, because such
+  // A write has no business proceeding when it did not. Every other revision is taken by the server on its own
+  // Clock, so this is the only one a client asks for
+  const saveResourceRevision = async () => {
     const resource = resourceStore.resource;
     if (!resource) return false;
 
     const outcome = await executeSaveRevisionMutation(
-      () => $trpc.resource.saveResourceRevision.mutate({ id: resource.id, label, reason }),
+      () => $trpc.resource.saveResourceRevision.mutate({ id: resource.id }),
       {
         key: resource.id,
         onError: createErrorNotification,
@@ -104,7 +103,6 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
     clearVersionHistory,
     isPending,
     isRestorePending,
-    isSaveRevisionPending,
     readSnapshotHistory,
     restoreSnapshot,
     restoringSnapshotVersionId,

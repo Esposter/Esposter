@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
 
@@ -22,8 +21,7 @@ const { saveResourceRevision } = versionHistoryStore;
     :confirm-button-props="{ text: 'Import' }"
     @confirm="
       async (onComplete) => {
-        if (previewDataSource && (await saveResourceRevision(SnapshotReason.BeforeImport)))
-          await setDataSource(previewDataSource);
+        if (previewDataSource && (await saveResourceRevision())) await setDataSource(previewDataSource);
         onComplete();
       }
     "

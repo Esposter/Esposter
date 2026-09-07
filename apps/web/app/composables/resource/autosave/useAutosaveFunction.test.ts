@@ -3,7 +3,9 @@ import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
+import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
+import { useResourceStore } from "@/store/resource";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -67,6 +69,37 @@ describe(useAutosaveFunction, () => {
     await elapseDebounce();
 
     expect(save).not.toHaveBeenCalled();
+  });
+
+  // Edits that exist only in the tab are the one thing the toolbar must not call saved, so the arming is what
+  // The state reads rather than the write it eventually issues. Armed twice for one instance and the count
+  // Would never come back down
+  test("reports saving from the keystroke rather than from the write", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { saveState } = storeToRefs(resourceStore);
+    await mountAutosave();
+    autosave();
+    autosave();
+
+    expect(saveState.value).toBe(ResourceSaveState.Saving);
+
+    await elapseDebounce();
+
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
+  });
+
+  test("unwinds the armed save when its scope is disposed", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { saveState } = storeToRefs(resourceStore);
+    await mountAutosave();
+    autosave();
+    wrapper.unmount();
+
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
   });
 
   // The blade is reused across resources, so disposal never runs on this path: the edit was scheduled against

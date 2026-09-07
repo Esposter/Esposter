@@ -6,8 +6,8 @@ import type { ItemEntityType, ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
-import { reverseTickedTimestampSchema } from "#src/models/azure/table/reverseTickedTimestampSchema";
 import { fileEntitySchema } from "#src/models/azure/table/FileEntity";
+import { reverseTickedTimestampSchema } from "#src/models/azure/table/reverseTickedTimestampSchema";
 import { MessageType, standardMessageTypeSchema } from "#src/models/message/MessageType";
 import { selectRoomInMessageSchema } from "#src/schema/roomsInMessage";
 import { selectUserSchema } from "#src/schema/users";

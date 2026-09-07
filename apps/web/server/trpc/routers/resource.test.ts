@@ -62,7 +62,6 @@ describe("resourceRouter", () => {
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
   const filename = "filename";
-  const label = "before the layout redo";
   const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
   const dueAt = new Date(1);
@@ -798,9 +797,16 @@ describe("resourceRouter", () => {
     await webpageCaller.publishResource({ id: webpageResource.id });
     const revisionEditor = new WebpageEditor({ css: "b", html: "b" });
     await saveWebpageContent(webpageResource, revisionEditor, 1);
-    await caller.saveResourceRevision({ id: webpageResource.id });
+    // Named by what the take reported rather than by an ordinal: the save path keeps points of its own, so
+    // Which number this one lands on is the mechanism's business
+    const revisionVersion = await caller.saveResourceRevision({ id: webpageResource.id });
+    assert.exists(revisionVersion);
     await saveWebpageContent(webpageResource, new WebpageEditor({ css: "c", html: "c" }), 2);
-    await caller.restoreSnapshotVersion({ channel: SnapshotChannel.Revisions, id: webpageResource.id, version: 1 });
+    await caller.restoreSnapshotVersion({
+      channel: SnapshotChannel.Revisions,
+      id: webpageResource.id,
+      version: revisionVersion,
+    });
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
 
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(revisionEditor)));
@@ -816,9 +822,14 @@ describe("resourceRouter", () => {
       webpageResource,
       new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
     );
-    await caller.saveResourceRevision({ id: webpageResource.id });
+    const revisionVersion = await caller.saveResourceRevision({ id: webpageResource.id });
+    assert.exists(revisionVersion);
     await saveWebpageContent(webpageResource, webpageEditor, 1);
-    await caller.restoreSnapshotVersion({ channel: SnapshotChannel.Revisions, id: webpageResource.id, version: 1 });
+    await caller.restoreSnapshotVersion({
+      channel: SnapshotChannel.Revisions,
+      id: webpageResource.id,
+      version: revisionVersion,
+    });
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
     assert.exists(content);
 
@@ -849,25 +860,7 @@ describe("resourceRouter", () => {
     });
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
 
-    expect(undoRevisionVersion).toBe(1);
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(draftEditor)));
-  });
-
-  test("does not save a labelled revision for a reason the owner did not choose", async () => {
-    expect.hasAssertions();
-
-    const webpageResource = await webpageCaller.createResource({ name });
-
-    await expect(caller.saveResourceRevision({ id: webpageResource.id, label, reason: SnapshotReason.BeforeImport }))
-      .rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "code": "custom",
-          "path": [],
-          "message": "A label is only accepted on a Manual revision"
-        }
-      ]]
-    `);
   });
 
   test("records the draft version a publish was taken from", async () => {

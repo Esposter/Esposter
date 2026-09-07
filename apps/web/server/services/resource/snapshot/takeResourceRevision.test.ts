@@ -1,7 +1,10 @@
+import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Context } from "@@/server/trpc/context";
 import type { BlobDeletionEventGridData, Resource } from "@esposter/db-schema";
 
+import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
+import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
@@ -21,7 +24,6 @@ describe(takeResourceRevision, () => {
   let ctx: AuthedContext;
   let resource: Resource;
   const name = "name";
-  const label = "before the layout redo";
   const serializedContent = JSON.stringify({ items: [] });
   const { maxRetained } = SnapshotChannelDefinitionMap[SnapshotChannel.Revisions];
   const seedContentBlob = (id: Resource["id"]) => {
@@ -59,14 +61,14 @@ describe(takeResourceRevision, () => {
     await mockContext.db.update(users).set({ storageBytesUsed: 0 });
   });
 
-  // The reason, the label and the type's own one-line summary are what make a row choosable, and all three ride
-  // The blob's own metadata so the listing never has to open a snapshot to say what one is
+  // The reason and the type's own one-line summary are what make a row choosable, and both ride the blob's own
+  // Metadata so the listing never has to open a snapshot to say what one is
   test("writes the working copy under the revision channel with what it was taken for", async () => {
     expect.hasAssertions();
 
     seedContentBlob(resource.id);
 
-    await expect(takeResourceRevision(ctx, resource, SnapshotReason.Manual, label)).resolves.toBe(1);
+    await expect(takeResourceRevision(ctx, resource, SnapshotReason.BeforeImport)).resolves.toBe(1);
 
     const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
     assert.exists(container);
@@ -85,8 +87,7 @@ describe(takeResourceRevision, () => {
     expect(snapshotVersionRest).toStrictEqual({
       channel: SnapshotChannel.Revisions,
       isCurrent: false,
-      label,
-      reason: SnapshotReason.Manual,
+      reason: SnapshotReason.BeforeImport,
       summary: "0 items",
       version: 1,
     });
@@ -94,17 +95,46 @@ describe(takeResourceRevision, () => {
     await expect(readStorageBytesUsed()).resolves.toBe(Buffer.byteLength(serializedContent));
   });
 
-  // A label is whatever the owner typed, and metadata travels as http headers — so it is encoded on the way in
-  // And has to come back as what they typed rather than as its encoding
-  test("round-trips a label that is not spellable in ascii", async () => {
+  // A summary is built from the type's own words and metadata travels as http headers — Sheet's separator is
+  // Already outside ascii, so it is encoded on the way in and has to come back as what it was rather than as
+  // Its encoding
+  test("round-trips a summary that is not spellable in ascii", async () => {
     expect.hasAssertions();
 
-    const unicodeLabel = "vor dem Umbau — 90% fertig";
-    seedContentBlob(resource.id);
-    await takeResourceRevision(ctx, resource, SnapshotReason.Manual, unicodeLabel);
-    const [snapshotVersion] = await readSnapshotHistory(resource.id, SnapshotChannel.Revisions);
+    const sheetResource = takeOne(
+      await mockContext.db
+        .insert(resources)
+        .values({ name, type: ResourceType.Sheet, userId: ctx.getSessionPayload.user.id })
+        .returning(),
+    );
+    const sheetContent: SheetResource = {
+      data: {
+        columns: [],
+        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
+        rows: [],
+      },
+      settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
+    };
+    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets) ?? new Map<string, Buffer>();
+    container.set(getContentBlobName(sheetResource.id), Buffer.from(JSON.stringify(sheetContent)));
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, container);
+    await takeResourceRevision(ctx, sheetResource, SnapshotReason.Automatic);
+    const [snapshotVersion] = await readSnapshotHistory(sheetResource.id, SnapshotChannel.Revisions);
 
-    expect(snapshotVersion?.label).toBe(unicodeLabel);
+    expect(snapshotVersion?.summary).toBe("0 columns · 0 rows");
+  });
+
+  // The clock the automatic trigger throttles on, which only a revision moves
+  test("moves the revision clock onto the row", async () => {
+    expect.hasAssertions();
+
+    seedContentBlob(resource.id);
+    await takeResourceRevision(ctx, resource, SnapshotReason.Automatic);
+    const revisedResource = await mockContext.db.query.resources.findFirst({
+      where: { id: { eq: resource.id } },
+    });
+
+    expect(revisedResource?.revisionTakenAt).toBeInstanceOf(Date);
   });
 
   // The counter is the ring's position, so eviction is one publish rather than a walk of the prefix on every
