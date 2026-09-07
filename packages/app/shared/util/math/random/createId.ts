@@ -1,8 +1,12 @@
 export const ID_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+const BYTE_VALUE_COUNT = 256;
+
 export const createId = (length: number): string => {
   const charsetLength = ID_CHARACTERS.length;
-  const maxValidByte = 256 - (256 % charsetLength);
+  // The bytes above the last whole charset repetition are discarded rather than wrapped, so every character
+  // Is drawn with equal probability instead of the first few being over-represented
+  const maxValidByte = BYTE_VALUE_COUNT - (BYTE_VALUE_COUNT % charsetLength);
   const id: string[] = [];
 
   while (id.length < length)
