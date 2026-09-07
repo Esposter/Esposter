@@ -11,7 +11,7 @@
 | `server/services/resource` — the roots                                        | —          |       |
 | `server/services/resource` — `snapshot`, `todoList`, `events`                 | —          |       |
 | `server/services/room`, `blueprint`                                           | —          |       |
-| `server/services/pagination`, `survey`                                        | —          |       |
+| `server/services/pagination`, `survey`                                        | 2026-09-07 |       |
 | `server/services/auth`, `rateLimiter`, `livekit`                              | —          |       |
 | `server/services/dataset`, `storage`, `azure`                                 | —          |       |
 | `server/services/program`, `post`, `achievement`                              | —          |       |
