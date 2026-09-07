@@ -6,7 +6,7 @@ config({ path: "apps/web/.env" });
 const typedocConfiguration = {
   entryPoints: ["packages/*"],
   entryPointStrategy: "packages",
-  exclude: ["apps/web", "packages/configuration"],
+  exclude: ["packages/configuration"],
   name: "Esposter",
   out: `apps/web/public/${DOCS_API_DIRECTORY}`,
   packageOptions: {

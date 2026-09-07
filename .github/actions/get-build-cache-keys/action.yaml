@@ -2,13 +2,13 @@ name: Get Build Cache Keys
 description: Compute the content hashes that key the package-builds and app-build caches, and the path list the package-builds entry is saved and restored with, shared by the workflows that save one and every workflow that restores one
 outputs:
   app-build-hash:
-    description: sha256 over every tracked file `pnpm build:app` could read — the package-builds inputs plus `apps/web`
+    description: sha256 over every tracked file `pnpm build:web` could read — the package-builds inputs plus `apps/web`
     value: ${{ steps.keys.outputs.app-build-hash }}
   package-builds-hash:
     description: sha256 over every tracked file `pnpm build:packages` could read
     value: ${{ steps.keys.outputs.package-builds-hash }}
   package-builds-paths:
-    description: The paths the package-builds cache entry and its artifact hold — every building member's `dist` and the generated barrels
+    description: The paths the package-builds cache entry and its artifact hold — every library's `dist` and the generated barrels
     value: ${{ steps.paths.outputs.package-builds-paths }}
 runs:
   using: composite
@@ -19,27 +19,28 @@ runs:
     # reports a hit. So both get one definition here, and no job trusts that hit: each verifies the build output
     # on disk with the `verify-package-builds` action before it skips a build.
     #
-    # Both keys are a content hash (mode + blob hash + path) of the TRACKED files under `packages/` that the
-    # build could read, plus the root package.json (infra bundles it via
+    # Neither key subtracts a directory any more, because the tree states what each one covers. The package key
+    # is a content hash (mode + blob hash + path) of the TRACKED files under `packages/` — the set that cache
+    # holds a `dist` for — plus the root package.json (infra bundles it via
     # `import packageJson from "../../../../package.json"`), the lockfile, the catalog and `virrun.config.ts`.
     # Reading the lockfile and the catalog is what makes a dependency bump — a catalog version, a resolution —
     # a new key rather than a stale hit; reading `virrun.config.ts` is what makes a change to the backend
-    # `pnpm build:app` runs under one, since the root package.json only carries the script that names `virrun`.
+    # `pnpm build:web` runs under one, since the root package.json only carries the script that names `virrun`.
+    # The app key is that same walk plus `apps/web`, which is the rule a second app would follow with nothing
+    # here edited. `apps/functions` and `apps/infra` are in neither: each builds inside the workflow that ships
+    # it, from the source that workflow checked out, and a build measured in seconds earns no cache gate.
     #
-    # Everything is an input until proven otherwise, and only four things are subtracted. Three are subtracted
-    # from both keys: test/bench sources, which no entrypoint reaches and which change far more often than
-    # anything they sit beside; the committed bench reports beside them (`*.bench.json`, `*.bench.md` and
-    # their platform-suffixed variants) — a `pnpm bench` run rewrites those in `apps/web` and `virrun`
-    # alike, and hashing them cost a full app rebuild for a number no build reads; and every `.md` outside the
-    # app's `content` directory. Exactly one thing here reads markdown: the @nuxt/content collection, whose
-    # source is `docs/**/*.md` under that directory — so the subtraction is scoped to what that collection
-    # cannot reach rather than to a package, and a README or a CHANGELOG is prose no build opens wherever it
-    # sits. Scoping it to the package instead would leave the app's own pair hashed, and the release that
-    # rewrites a CHANGELOG in every package writes one there too — private or not, since versioning is not
-    # publishing — so the release commit would still pay the app build, which is the longest job in CI. The
-    # fourth is `apps/web` itself, subtracted from the package key alone because no consumer of that cache
-    # builds it — that sweeps the app's remaining markdown with everything else under there, so the package key
-    # needs no markdown clause of its own. The two failure
+    # Everything under a hashed root is an input until proven otherwise, and only three things are subtracted:
+    # test/bench sources, which no entrypoint reaches and which change far more often than anything they sit
+    # beside; the committed bench reports beside them (`*.bench.json`, `*.bench.md` and their platform-suffixed
+    # variants) — a `pnpm bench` run rewrites those in `apps/web` and `virrun` alike, and hashing them cost a
+    # full app rebuild for a number no build reads; and every `.md` outside the app's `content` directory.
+    # Exactly one thing here reads markdown: the @nuxt/content collection, whose source is `docs/**/*.md` under
+    # that directory — so the subtraction is scoped to what that collection cannot reach rather than to a
+    # package, and a README or a CHANGELOG is prose no build opens wherever it sits. Scoping it to the package
+    # instead would leave the app's own pair hashed, and the release that rewrites a CHANGELOG in every package
+    # writes one there too — private or not, since versioning is not publishing — so the release commit would
+    # still pay the app build, which is the longest job in CI. The two failure
     # directions are not symmetric — subtracting too little costs one rebuild on a push that was already
     # touching a package's internals, while subtracting too much serves a `dist` that does not match the source
     # it claims to be built from, and every check downstream then passes against the stale artifact. So the
@@ -53,26 +54,29 @@ runs:
       id: keys
       shell: bash
       run: |
-        readBuildInputs() {
-          git ls-tree -r HEAD apps packages | awk -F'\t' '$2 ~ /\.(test|test-d|bench)\.ts$/ || $2 ~ /\.bench(\.[^.]+)?\.(json|md)$/ || ($2 ~ /\.md$/ && $2 !~ /^apps\/web\/content\//) { next } { print }'
+        readTrackedInputs() {
+          git ls-tree -r HEAD "$@" | awk -F'\t' '$2 ~ /\.(test|test-d|bench)\.ts$/ || $2 ~ /\.bench(\.[^.]+)?\.(json|md)$/ || ($2 ~ /\.md$/ && $2 !~ /^apps\/web\/content\//) { next } { print }'
+        }
+        readPackageInputs() {
+          readTrackedInputs packages
           git rev-parse HEAD:package.json HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml HEAD:virrun.config.ts
         }
         {
-          echo "app-build-hash=$(readBuildInputs | sha256sum | cut -d' ' -f1)"
-          echo "package-builds-hash=$(readBuildInputs | awk -F'\t' '$2 ~ /^apps\/web\// { next } { print }' | sha256sum | cut -d' ' -f1)"
+          echo "app-build-hash=$({ readPackageInputs; readTrackedInputs apps/web; } | sha256sum | cut -d' ' -f1)"
+          echo "package-builds-hash=$(readPackageInputs | sha256sum | cut -d' ' -f1)"
         } >> "$GITHUB_OUTPUT"
     # `*/dist` is the build output and `*/src/**/index.ts` are the ctix-generated barrels (gitignored, absent on
-    # a fresh checkout), under both roots: `pnpm build:packages` builds every member but the web app, and two of
-    # those sit under `apps/`. Their common ancestor is the repository root, so the artifact made from them
-    # downloads into `.`. Five workflows save or restore this entry; none of them repeats these globs.
+    # a fresh checkout). Libraries only, which is the whole of what `pnpm build:packages` builds and the whole
+    # of what anything downstream can import — an app's `dist` is deploy payload nothing reads, so it is built
+    # in its own deploy job rather than carried through every job that downloads this. Their common ancestor is
+    # `packages`, which is where the artifact made from them unpacks. Five workflows save or restore this entry;
+    # none of them repeats these globs.
     - name: 🗂️ Emit the package-builds path list
       id: paths
       shell: bash
       run: |
         {
           echo 'package-builds-paths<<PACKAGE_BUILDS_PATHS'
-          echo 'apps/*/dist'
-          echo 'apps/*/src/**/index.ts'
           echo 'packages/*/dist'
           echo 'packages/*/src/**/index.ts'
           echo 'PACKAGE_BUILDS_PATHS'

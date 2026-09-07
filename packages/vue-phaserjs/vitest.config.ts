@@ -2,7 +2,7 @@ import { getVitestConfiguration, getVuePlugins } from "@esposter/configuration";
 import { join } from "node:path";
 import { mergeConfig } from "vitest/config";
 
-export default mergeConfig(getVitestConfiguration(), {
+export default mergeConfig(getVitestConfiguration(import.meta.dirname), {
   plugins: getVuePlugins(),
   resolve: {
     alias: {

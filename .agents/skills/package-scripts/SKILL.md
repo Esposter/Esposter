@@ -38,20 +38,24 @@ description: Esposter pnpm script reference — apps/web scripts (lint, typechec
 
 ## Root Scripts
 
-| Command                              | Runs                                                | Notes                                                                                                                                   |
-| ------------------------------------ | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm i`                             | —                                                   | Refresh deps/lockfile after manifest changes.                                                                                           |
-| `pnpm test`                          | `virrun -- vitest run`                              | Whole suite once via the root vitest `projects` config (every package + `scripts/` + `.agents/`). **CI only** — never run bare locally. |
-| `pnpm test:packages`                 | `virrun -- vitest run --project "!@esposter/web"`   | All projects except the app — skips Nuxt. Local-only, and takes paths like `pnpm test` does: pass them.                                 |
-| `pnpm coverage`                      | `vitest run --coverage` (no virrun)                 | Root-only (packages have no `coverage` script). CI shards via `--reporter=blob` + `--merge-reports`.                                    |
-| `pnpm outdated:dependencies`         | `tsx scripts/outdatedDependencies/index.ts`         | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest.      |
-| `pnpm graph:gen`                     | `tsx scripts/dependencyGraph/index.ts`              | Regenerate `dependency-graph.svg` from the workspace manifests. Run it after changing one.                                              |
-| `pnpm release`                       | checks, then `lerna publish`                        | The whole release, run locally — see Settled above.                                                                                     |
-| `pnpm sweep:constant-scope`          | `tsx scripts/sweeps/constantScope/index.ts`         | One sweep find recipe, as a tested script rather than a ledger code block (`sweeps` skill). One `sweep:*` per scan.                     |
-| `pnpm sweep:repeated-list-items`     | `tsx scripts/sweeps/repeatedListItems/index.ts`     | A component writing three or more `v-list-item`s out one by one, with no `v-for` anywhere in it.                                        |
-| `pnpm sweep:shared-export-consumers` | `tsx scripts/sweeps/sharedExportConsumers/index.ts` | Every `packages/shared` export naming fewer than two consumer packages, which is what earns a place there.                              |
-| `pnpm sweep:skill-docs`              | `tsx scripts/sweeps/skillDocs/index.ts`             | The skill tree structural check: a page over budget, a reference nothing indexes, a citation resolving nowhere.                         |
-| `pnpm sweep:unterminated-results`    | `tsx scripts/sweeps/unterminatedResults/index.ts`   | Every `getResult` call, matched to its closing bracket, whose chain nothing terminates.                                                 |
+| Command                                    | Runs                                                   | Notes                                                                                                                                                                                                                                                 |
+| ------------------------------------------ | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm i`                                   | —                                                      | Refresh deps/lockfile after manifest changes.                                                                                                                                                                                                         |
+| `pnpm test`                                | `virrun -- vitest run`                                 | Whole suite once via the root vitest `projects` config (every package + `scripts/` + `.agents/`). **CI only** — never run bare locally.                                                                                                               |
+| `pnpm test:packages`                       | `virrun -- vitest run --project "packages/*"`          | Every library suite, no Nuxt. Local-only, and takes paths like `pnpm test` does: pass them.                                                                                                                                                           |
+| `pnpm test:web`                            | `virrun -- vitest run --project "apps/web"`            | The app's suite on its own — the slow one. Same path arguments.                                                                                                                                                                                       |
+| `pnpm build`                               | `--filter "@esposter/web^..." build`, then `build:web` | The app's dependencies derived rather than named, then the app. Two commands because only the app build belongs in the sandbox. The bare name meaning the app rather than the workspace is deliberate — Railway runs it as its default build command. |
+| `pnpm build:packages`                      | `pnpm -r --filter "./packages/*" run build`            | The libraries as a set: what CI caches and hands to every check. No app is in it, since nothing imports an app's `dist` — the coverage shards build the two whose bundles the suite asserts against.                                                  |
+| `pnpm build:web` / `:functions` / `:infra` | `pnpm -C apps/<app> run build`                         | One app, addressed by its directory. A `--filter` is kept only for a set or a dependency closure.                                                                                                                                                     |
+| `pnpm coverage`                            | `vitest run --coverage` (no virrun)                    | Root-only (packages have no `coverage` script). CI shards via `--reporter=blob` + `--merge-reports`.                                                                                                                                                  |
+| `pnpm outdated:dependencies`               | `tsx scripts/outdatedDependencies/index.ts`            | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest.                                                                                                                    |
+| `pnpm graph:gen`                           | `tsx scripts/dependencyGraph/index.ts`                 | Regenerate `dependency-graph.svg` from the workspace manifests. Run it after changing one.                                                                                                                                                            |
+| `pnpm release`                             | checks, then `lerna publish`                           | The whole release, run locally — see Settled above.                                                                                                                                                                                                   |
+| `pnpm sweep:constant-scope`                | `tsx scripts/sweeps/constantScope/index.ts`            | One sweep find recipe, as a tested script rather than a ledger code block (`sweeps` skill). One `sweep:*` per scan.                                                                                                                                   |
+| `pnpm sweep:repeated-list-items`           | `tsx scripts/sweeps/repeatedListItems/index.ts`        | A component writing three or more `v-list-item`s out one by one, with no `v-for` anywhere in it.                                                                                                                                                      |
+| `pnpm sweep:shared-export-consumers`       | `tsx scripts/sweeps/sharedExportConsumers/index.ts`    | Every `packages/shared` export naming fewer than two consumer packages, which is what earns a place there.                                                                                                                                            |
+| `pnpm sweep:skill-docs`                    | `tsx scripts/sweeps/skillDocs/index.ts`                | The skill tree structural check: a page over budget, a reference nothing indexes, a citation resolving nowhere.                                                                                                                                       |
+| `pnpm sweep:unterminated-results`          | `tsx scripts/sweeps/unterminatedResults/index.ts`      | Every `getResult` call, matched to its closing bracket, whose chain nothing terminates.                                                                                                                                                               |
 
 ## Running a TypeScript Script
 
@@ -88,10 +92,10 @@ JSON has no comments, so a script whose command needs one carries it in a siblin
 ```json
 {
   "scripts": {
-    "build": "pnpm build:packages && pnpm build:app"
+    "build": "pnpm --filter \"@esposter/web^...\" run build && pnpm build:web"
   },
   "scriptsComments": {
-    "build": "@TODO: restore `pnpm build:docs` to the chain when …"
+    "build": "A deviation taken on purpose: … the app's dependencies derived rather than named … @TODO: restore `pnpm build:docs` to the chain when …"
   }
 }
 ```

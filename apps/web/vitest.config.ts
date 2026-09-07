@@ -1,4 +1,4 @@
-import { getBenchmarkTestConfiguration } from "@esposter/configuration";
+import { getBenchmarkTestConfiguration, getVitestProjectName } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
 
 const vitestConfig = await defineVitestProject({
@@ -16,6 +16,10 @@ const vitestConfig = await defineVitestProject({
     // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
     // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
     hookTimeout: Temporal.Duration.from({ minutes: 5 }).total("milliseconds"),
+    // Named after this directory, like every member the shared factory names — `defineVitestProject` builds its
+    // Own config, so the name is set here rather than inherited. It is what `--project "apps/web"` addresses,
+    // And what keeps `--project "packages/*"` from reaching the app.
+    name: getVitestProjectName(import.meta.dirname),
     // DOM globals come from the nuxt environment itself: nuxt-env tests (`// @vitest-environment nuxt`)
     // Build their own happy-dom window, so no manual happy-dom registration is needed, and tests in
     // The node environment run without a DOM. `fake-indexeddb/auto` polyfills the IDB* global

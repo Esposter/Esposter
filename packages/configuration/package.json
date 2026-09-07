@@ -41,13 +41,15 @@
       "default": "./dist/index.js"
     },
     "./package.json": "./package.json",
-    "./eslint/*": "./eslint/*"
+    "./eslint/*": "./eslint/*",
+    "./types/*": "./types/*"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
       "./package.json": "./package.json",
-      "./eslint/*": "./eslint/*"
+      "./eslint/*": "./eslint/*",
+      "./types/*": "./types/*"
     }
   },
   "scripts": {
