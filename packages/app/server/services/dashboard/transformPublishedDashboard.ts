@@ -1,6 +1,5 @@
 import type { Dashboard } from "#shared/models/dashboard/data/Dashboard";
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Resource } from "@esposter/db-schema";
+import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
 import type { ToData } from "@esposter/shared";
 
 import { DatasetProviderMap } from "@@/server/services/dataset/DatasetProviderMap";
@@ -9,11 +8,9 @@ import { getResultAsync } from "@esposter/shared";
 
 // Bakes each bound visual's resolved dataset into the published content
 // So public viewers render a static snapshot without resolving references
-export const transformPublishedDashboard = async (
-  ctx: AuthedContext,
-  _resource: Resource,
-  dashboard: ToData<Dashboard>,
-): Promise<ToData<Dashboard>> => ({
+export const transformPublishedDashboard: NonNullable<
+  PublishableResourceProcedureOptions<ToData<Dashboard>>["transformPublishedContent"]
+> = async (ctx, _resource, dashboard) => ({
   ...dashboard,
   visuals: await Promise.all(
     dashboard.visuals.map(async (visual) => {
