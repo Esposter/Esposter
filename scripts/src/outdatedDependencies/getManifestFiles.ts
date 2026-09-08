@@ -1,7 +1,7 @@
-import type { ManifestFile } from "#scripts/outdatedDependencies/models/ManifestFile";
+import type { ManifestFile } from "#src/outdatedDependencies/models/ManifestFile";
 import type { PackageManifest } from "@esposter/configuration";
 
-import { getPackageJsonPaths } from "#scripts/services/getPackageJsonPaths";
+import { getPackageJsonPaths } from "#src/services/getPackageJsonPaths";
 import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 

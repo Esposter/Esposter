@@ -1,4 +1,4 @@
-import { NODE_GROUP_PREFIX, NODE_SHADOW_DEFINITION, NODE_SHADOW_ID } from "#scripts/dependencyGraph/constants";
+import { NODE_GROUP_PREFIX, NODE_SHADOW_DEFINITION, NODE_SHADOW_ID } from "#src/dependencyGraph/constants";
 
 // Graphviz has no shadow attribute, so the depth the `box3d` fold only suggests is finished off in the svg it
 // Emits. The filter goes on the face polygon alone — the fold polylines and the label sit inside that

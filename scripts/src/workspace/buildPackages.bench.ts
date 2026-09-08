@@ -1,4 +1,4 @@
-import { parseMachineJson } from "#scripts/services/parseMachineJson";
+import { parseMachineJson } from "#src/services/parseMachineJson";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { execFileSync } from "node:child_process";
 import { rmSync } from "node:fs";

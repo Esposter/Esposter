@@ -1,8 +1,8 @@
-import type { ColorPalette } from "#scripts/outdatedDependencies/models/ColorPalette";
+import type { ColorPalette } from "#src/outdatedDependencies/models/ColorPalette";
 
-import { getVersionChangeLevel } from "#scripts/outdatedDependencies/getVersionChangeLevel";
-import { VersionChangeLevel } from "#scripts/outdatedDependencies/models/VersionChangeLevel";
-import { getVersionParts } from "#scripts/services/getVersionParts";
+import { getVersionChangeLevel } from "#src/outdatedDependencies/getVersionChangeLevel";
+import { VersionChangeLevel } from "#src/outdatedDependencies/models/VersionChangeLevel";
+import { getVersionParts } from "#src/services/getVersionParts";
 
 export const getColorizedLatestVersion = (current: string, latest: string, color: ColorPalette): string => {
   const changeLevel = getVersionChangeLevel(current, latest);

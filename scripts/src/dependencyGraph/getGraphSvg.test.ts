@@ -1,7 +1,7 @@
-import { GRAPH_FILENAME } from "#scripts/dependencyGraph/constants";
-import { getGraphSvg } from "#scripts/dependencyGraph/getGraphSvg";
-import { getWorkspaceEdges } from "#scripts/dependencyGraph/getWorkspaceEdges";
-import { getWorkspacePackages } from "#scripts/services/getWorkspacePackages";
+import { GRAPH_FILENAME } from "#src/dependencyGraph/constants";
+import { getGraphSvg } from "#src/dependencyGraph/getGraphSvg";
+import { getWorkspaceEdges } from "#src/dependencyGraph/getWorkspaceEdges";
+import { getWorkspacePackages } from "#src/services/getWorkspacePackages";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";

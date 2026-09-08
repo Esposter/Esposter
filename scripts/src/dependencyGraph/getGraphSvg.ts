@@ -1,8 +1,8 @@
-import type { WorkspaceEdges } from "#scripts/dependencyGraph/models/WorkspaceEdges";
-import type { WorkspacePackage } from "#scripts/models/WorkspacePackage";
+import type { WorkspaceEdges } from "#src/dependencyGraph/models/WorkspaceEdges";
+import type { WorkspacePackage } from "#src/models/WorkspacePackage";
 
-import { getGraphSource } from "#scripts/dependencyGraph/getGraphSource";
-import { getShadowedSvg } from "#scripts/dependencyGraph/getShadowedSvg";
+import { getGraphSource } from "#src/dependencyGraph/getGraphSource";
+import { getShadowedSvg } from "#src/dependencyGraph/getShadowedSvg";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 
 // Graphviz proper, compiled to wasm — the layout is `dot`'s, so the svg is what the graphviz binary would emit

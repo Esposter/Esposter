@@ -1,4 +1,4 @@
-import type { PnpmOutdatedDependency } from "#scripts/outdatedDependencies/models/PnpmOutdatedDependency";
+import type { PnpmOutdatedDependency } from "#src/outdatedDependencies/models/PnpmOutdatedDependency";
 // Only `latest` is required; pnpm omits or reshapes the other fields, so treat them as optional when building.
 export const checkIsPnpmOutdatedDependency = (value: unknown): value is PnpmOutdatedDependency => {
   if (!value || typeof value !== "object") return false;

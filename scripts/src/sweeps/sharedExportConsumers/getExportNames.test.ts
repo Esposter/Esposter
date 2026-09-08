@@ -1,4 +1,4 @@
-import { getExportNames } from "#scripts/sweeps/sharedExportConsumers/getExportNames";
+import { getExportNames } from "#src/sweeps/sharedExportConsumers/getExportNames";
 import { describe, expect, test } from "vitest";
 
 describe(getExportNames, () => {

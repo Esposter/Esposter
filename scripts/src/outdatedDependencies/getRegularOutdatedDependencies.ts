@@ -1,10 +1,10 @@
-import type { OutdatedDependency } from "#scripts/outdatedDependencies/models/OutdatedDependency";
-import type { RegistryCheckError } from "#scripts/outdatedDependencies/models/RegistryCheckError";
+import type { OutdatedDependency } from "#src/outdatedDependencies/models/OutdatedDependency";
+import type { RegistryCheckError } from "#src/outdatedDependencies/models/RegistryCheckError";
 
-import { checkIsPnpmOutdatedDependency } from "#scripts/outdatedDependencies/checkIsPnpmOutdatedDependency";
-import { getDependencyType } from "#scripts/outdatedDependencies/getDependencyType";
-import { getOutdatedDependents } from "#scripts/outdatedDependencies/getOutdatedDependents";
-import { runPnpmOutdated } from "#scripts/outdatedDependencies/runPnpmOutdated";
+import { checkIsPnpmOutdatedDependency } from "#src/outdatedDependencies/checkIsPnpmOutdatedDependency";
+import { getDependencyType } from "#src/outdatedDependencies/getDependencyType";
+import { getOutdatedDependents } from "#src/outdatedDependencies/getOutdatedDependents";
+import { runPnpmOutdated } from "#src/outdatedDependencies/runPnpmOutdated";
 import { getResult, jsonDateParse } from "@esposter/shared";
 
 export const getRegularOutdatedDependencies = async (

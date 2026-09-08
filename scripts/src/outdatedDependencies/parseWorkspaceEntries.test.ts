@@ -1,4 +1,4 @@
-import { parseWorkspaceEntries } from "#scripts/outdatedDependencies/parseWorkspaceEntries";
+import { parseWorkspaceEntries } from "#src/outdatedDependencies/parseWorkspaceEntries";
 import { describe, expect, test } from "vitest";
 
 describe(parseWorkspaceEntries, () => {

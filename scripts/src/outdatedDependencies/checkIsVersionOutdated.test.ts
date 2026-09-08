@@ -1,4 +1,4 @@
-import { checkIsVersionOutdated } from "#scripts/outdatedDependencies/checkIsVersionOutdated";
+import { checkIsVersionOutdated } from "#src/outdatedDependencies/checkIsVersionOutdated";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsVersionOutdated, () => {

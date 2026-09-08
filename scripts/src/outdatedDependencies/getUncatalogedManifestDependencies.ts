@@ -1,4 +1,4 @@
-import type { ManifestDependency } from "#scripts/outdatedDependencies/models/ManifestDependency";
+import type { ManifestDependency } from "#src/outdatedDependencies/models/ManifestDependency";
 
 export const getUncatalogedManifestDependencies = (manifestDependencies: ManifestDependency[]): ManifestDependency[] =>
   manifestDependencies.filter(

@@ -1,5 +1,5 @@
-import { DependencyField } from "#scripts/models/DependencyField";
-import { getWorkspacePackages } from "#scripts/services/getWorkspacePackages";
+import { DependencyField } from "#src/models/DependencyField";
+import { getWorkspacePackages } from "#src/services/getWorkspacePackages";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 

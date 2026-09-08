@@ -1,5 +1,5 @@
-import { getModuleScopeConstants } from "#scripts/sweeps/constantScope/getModuleScopeConstants";
-import { getSweepFilePaths } from "#scripts/sweeps/getSweepFilePaths";
+import { getModuleScopeConstants } from "#src/sweeps/constantScope/getModuleScopeConstants";
+import { getSweepFilePaths } from "#src/sweeps/getSweepFilePaths";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 

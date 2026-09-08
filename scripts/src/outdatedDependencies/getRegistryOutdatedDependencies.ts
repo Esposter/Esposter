@@ -1,12 +1,12 @@
-import type { DependencyEntry } from "#scripts/outdatedDependencies/models/DependencyEntry";
-import type { OutdatedDependency } from "#scripts/outdatedDependencies/models/OutdatedDependency";
-import type { RegistryCheckError } from "#scripts/outdatedDependencies/models/RegistryCheckError";
+import type { DependencyEntry } from "#src/outdatedDependencies/models/DependencyEntry";
+import type { OutdatedDependency } from "#src/outdatedDependencies/models/OutdatedDependency";
+import type { RegistryCheckError } from "#src/outdatedDependencies/models/RegistryCheckError";
 
-import { checkIsVersionOutdated } from "#scripts/outdatedDependencies/checkIsVersionOutdated";
-import { REGISTRY_CONCURRENCY } from "#scripts/outdatedDependencies/constants";
-import { getSpecifierBase } from "#scripts/outdatedDependencies/getSpecifierBase";
-import { getVersionChangeLevel } from "#scripts/outdatedDependencies/getVersionChangeLevel";
-import { getLatestVersion } from "#scripts/services/getLatestVersion";
+import { checkIsVersionOutdated } from "#src/outdatedDependencies/checkIsVersionOutdated";
+import { REGISTRY_CONCURRENCY } from "#src/outdatedDependencies/constants";
+import { getSpecifierBase } from "#src/outdatedDependencies/getSpecifierBase";
+import { getVersionChangeLevel } from "#src/outdatedDependencies/getVersionChangeLevel";
+import { getLatestVersion } from "#src/services/getLatestVersion";
 import { getResultAsync } from "@esposter/shared";
 
 const GroupMetadataMap: Record<string, { dependencyType: string; dependent: string }> = {

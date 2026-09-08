@@ -1,5 +1,5 @@
-import type { DependencyEntry } from "#scripts/outdatedDependencies/models/DependencyEntry";
-import type { ManifestFile } from "#scripts/outdatedDependencies/models/ManifestFile";
+import type { DependencyEntry } from "#src/outdatedDependencies/models/DependencyEntry";
+import type { ManifestFile } from "#src/outdatedDependencies/models/ManifestFile";
 
 export const getEngineEntries = (manifests: ManifestFile[]): DependencyEntry[] => {
   const entryMap = new Map<string, DependencyEntry>();

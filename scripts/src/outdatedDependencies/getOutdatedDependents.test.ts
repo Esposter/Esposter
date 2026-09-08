@@ -1,4 +1,4 @@
-import { getOutdatedDependents } from "#scripts/outdatedDependencies/getOutdatedDependents";
+import { getOutdatedDependents } from "#src/outdatedDependencies/getOutdatedDependents";
 import { describe, expect, test } from "vitest";
 
 describe(getOutdatedDependents, () => {

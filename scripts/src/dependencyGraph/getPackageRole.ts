@@ -1,6 +1,6 @@
-import type { WorkspaceEdges } from "#scripts/dependencyGraph/models/WorkspaceEdges";
+import type { WorkspaceEdges } from "#src/dependencyGraph/models/WorkspaceEdges";
 
-import { PackageRole } from "#scripts/dependencyGraph/models/PackageRole";
+import { PackageRole } from "#src/dependencyGraph/models/PackageRole";
 
 // Entrypoint is checked against both edge kinds and foundation against runtime alone: a package a sibling only
 // Ever builds against is still not something this repo ships, but a dev-only edge out of it says nothing about

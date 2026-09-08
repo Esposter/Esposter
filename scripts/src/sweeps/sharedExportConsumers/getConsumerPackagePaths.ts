@@ -1,4 +1,4 @@
-import { getPackagePath } from "#scripts/sweeps/sharedExportConsumers/getPackagePath";
+import { getPackagePath } from "#src/sweeps/sharedExportConsumers/getPackagePath";
 
 // The `\b` this needs cannot be written into a template literal — it becomes a backspace there, and the scan
 // Then reports every export as unreferenced, which reads exactly like a tree of dead code. `String.raw` is what

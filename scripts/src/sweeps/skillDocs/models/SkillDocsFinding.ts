@@ -1,4 +1,4 @@
-import type { SkillDocsFindingType } from "#scripts/sweeps/skillDocs/models/SkillDocsFindingType";
+import type { SkillDocsFindingType } from "#src/sweeps/skillDocs/models/SkillDocsFindingType";
 
 export interface SkillDocsFinding {
   detail: string;

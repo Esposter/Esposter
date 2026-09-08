@@ -1,4 +1,4 @@
-import { setEnginesNode } from "#scripts/updateNode/setEnginesNode";
+import { setEnginesNode } from "#src/updateNode/setEnginesNode";
 import { describe, expect, test } from "vitest";
 
 describe(setEnginesNode, () => {

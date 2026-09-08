@@ -1,4 +1,4 @@
-import { setupPluginSuite } from "#scripts/oxlint/setupPluginSuite.test";
+import { setupPluginSuite } from "#src/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
 const RULE = "error-alert/no-raw-error-alert";

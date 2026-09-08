@@ -1,10 +1,10 @@
-import type { SkillDocsFile } from "#scripts/sweeps/skillDocs/models/SkillDocsFile";
+import type { SkillDocsFile } from "#src/sweeps/skillDocs/models/SkillDocsFile";
 
-import { getSweepFilePaths } from "#scripts/sweeps/getSweepFilePaths";
-import { getBudgetFindings } from "#scripts/sweeps/skillDocs/getBudgetFindings";
-import { getDocsRouteFindings } from "#scripts/sweeps/skillDocs/getDocsRouteFindings";
-import { getUnindexedFindings } from "#scripts/sweeps/skillDocs/getUnindexedFindings";
-import { getUnresolvedFindings } from "#scripts/sweeps/skillDocs/getUnresolvedFindings";
+import { getSweepFilePaths } from "#src/sweeps/getSweepFilePaths";
+import { getBudgetFindings } from "#src/sweeps/skillDocs/getBudgetFindings";
+import { getDocsRouteFindings } from "#src/sweeps/skillDocs/getDocsRouteFindings";
+import { getUnindexedFindings } from "#src/sweeps/skillDocs/getUnindexedFindings";
+import { getUnresolvedFindings } from "#src/sweeps/skillDocs/getUnresolvedFindings";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 

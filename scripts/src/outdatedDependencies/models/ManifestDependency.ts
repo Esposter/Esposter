@@ -1,4 +1,4 @@
-import type { DependencyField } from "#scripts/models/DependencyField";
+import type { DependencyField } from "#src/models/DependencyField";
 
 export interface ManifestDependency {
   field: DependencyField;

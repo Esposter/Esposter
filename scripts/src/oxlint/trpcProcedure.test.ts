@@ -1,4 +1,4 @@
-import { setupPluginSuite } from "#scripts/oxlint/setupPluginSuite.test";
+import { setupPluginSuite } from "#src/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
 const ERROR_RULE = "trpc-procedure/no-hand-rolled-error";

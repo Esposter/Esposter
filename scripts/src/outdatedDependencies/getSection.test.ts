@@ -1,4 +1,4 @@
-import { getSection } from "#scripts/outdatedDependencies/getSection";
+import { getSection } from "#src/outdatedDependencies/getSection";
 import { describe, expect, test } from "vitest";
 
 describe(getSection, () => {

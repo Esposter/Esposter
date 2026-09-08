@@ -1,8 +1,8 @@
-import type { ColorPalette } from "#scripts/outdatedDependencies/models/ColorPalette";
-import type { OutdatedDependency } from "#scripts/outdatedDependencies/models/OutdatedDependency";
+import type { ColorPalette } from "#src/outdatedDependencies/models/ColorPalette";
+import type { OutdatedDependency } from "#src/outdatedDependencies/models/OutdatedDependency";
 
-import { getColorizedLatestVersion } from "#scripts/outdatedDependencies/getColorizedLatestVersion";
-import { printTable } from "#scripts/outdatedDependencies/printTable";
+import { getColorizedLatestVersion } from "#src/outdatedDependencies/getColorizedLatestVersion";
+import { printTable } from "#src/outdatedDependencies/printTable";
 
 export const printOutdatedDependencies = (outdatedDependencies: OutdatedDependency[], color: ColorPalette): void => {
   if (outdatedDependencies.length === 0) return;

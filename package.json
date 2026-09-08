@@ -36,7 +36,7 @@
   },
   "type": "module",
   "imports": {
-    "#scripts/*": "./scripts/src/*.ts"
+    "#src/*": "./scripts/src/*.ts"
   },
   "scripts": {
     "bench": "vitest bench --run scripts/ && pnpm -r --if-present run bench",

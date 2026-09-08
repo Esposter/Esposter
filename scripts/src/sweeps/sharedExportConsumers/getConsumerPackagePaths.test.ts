@@ -1,4 +1,4 @@
-import { getConsumerPackagePaths } from "#scripts/sweeps/sharedExportConsumers/getConsumerPackagePaths";
+import { getConsumerPackagePaths } from "#src/sweeps/sharedExportConsumers/getConsumerPackagePaths";
 import { describe, expect, test } from "vitest";
 
 describe(getConsumerPackagePaths, () => {

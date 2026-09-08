@@ -1,4 +1,4 @@
-import { WORKSPACE_DIRECTORIES } from "#scripts/services/constants";
+import { WORKSPACE_DIRECTORIES } from "#src/services/constants";
 import { readdirSync } from "node:fs";
 import { resolve } from "node:path";
 

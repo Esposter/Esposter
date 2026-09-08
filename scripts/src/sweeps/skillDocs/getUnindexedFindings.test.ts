@@ -1,5 +1,5 @@
-import { getUnindexedFindings } from "#scripts/sweeps/skillDocs/getUnindexedFindings";
-import { SkillDocsFindingType } from "#scripts/sweeps/skillDocs/models/SkillDocsFindingType";
+import { getUnindexedFindings } from "#src/sweeps/skillDocs/getUnindexedFindings";
+import { SkillDocsFindingType } from "#src/sweeps/skillDocs/models/SkillDocsFindingType";
 import { describe, expect, test } from "vitest";
 
 describe(getUnindexedFindings, () => {

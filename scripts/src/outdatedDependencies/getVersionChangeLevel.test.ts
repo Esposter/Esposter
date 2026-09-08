@@ -1,5 +1,5 @@
-import { getVersionChangeLevel } from "#scripts/outdatedDependencies/getVersionChangeLevel";
-import { VersionChangeLevel } from "#scripts/outdatedDependencies/models/VersionChangeLevel";
+import { getVersionChangeLevel } from "#src/outdatedDependencies/getVersionChangeLevel";
+import { VersionChangeLevel } from "#src/outdatedDependencies/models/VersionChangeLevel";
 import { describe, expect, test } from "vitest";
 
 describe(getVersionChangeLevel, () => {

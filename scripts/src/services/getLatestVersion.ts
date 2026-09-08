@@ -1,6 +1,6 @@
-import type { PackumentVersion } from "#scripts/models/PackumentVersion";
+import type { PackumentVersion } from "#src/models/PackumentVersion";
 
-import { fetchRegistry } from "#scripts/services/fetchRegistry";
+import { fetchRegistry } from "#src/services/fetchRegistry";
 import { getResultAsync } from "@esposter/shared";
 
 // One retry, because the registry answers a cold request with a 5xx often enough to fail a release run that

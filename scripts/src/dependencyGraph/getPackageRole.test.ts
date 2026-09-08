@@ -1,7 +1,7 @@
-import type { WorkspaceEdges } from "#scripts/dependencyGraph/models/WorkspaceEdges";
+import type { WorkspaceEdges } from "#src/dependencyGraph/models/WorkspaceEdges";
 
-import { getPackageRole } from "#scripts/dependencyGraph/getPackageRole";
-import { PackageRole } from "#scripts/dependencyGraph/models/PackageRole";
+import { getPackageRole } from "#src/dependencyGraph/getPackageRole";
+import { PackageRole } from "#src/dependencyGraph/models/PackageRole";
 import { describe, expect, test } from "vitest";
 
 describe(getPackageRole, () => {

@@ -1,7 +1,7 @@
-import type { SkillDocsFile } from "#scripts/sweeps/skillDocs/models/SkillDocsFile";
-import type { SkillDocsFinding } from "#scripts/sweeps/skillDocs/models/SkillDocsFinding";
+import type { SkillDocsFile } from "#src/sweeps/skillDocs/models/SkillDocsFile";
+import type { SkillDocsFinding } from "#src/sweeps/skillDocs/models/SkillDocsFinding";
 
-import { SkillDocsFindingType } from "#scripts/sweeps/skillDocs/models/SkillDocsFindingType";
+import { SkillDocsFindingType } from "#src/sweeps/skillDocs/models/SkillDocsFindingType";
 
 export const MAX_SKILL_BYTES = 15000;
 export const MAX_SKILL_LINES = 150;
