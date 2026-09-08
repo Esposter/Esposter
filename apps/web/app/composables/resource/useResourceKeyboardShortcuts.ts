@@ -15,29 +15,25 @@ export const useResourceKeyboardShortcuts = () => {
   let chordStartedAtMs = 0;
 
   useEventListener("keydown", async (event) => {
+    const key = event.key.toLowerCase();
+
     if (event.ctrlKey || event.metaKey) {
-      if (event.key.toLowerCase() === "k" && !event.altKey && !event.shiftKey) {
+      if (key === "k" && !event.altKey && !event.shiftKey) {
         event.preventDefault();
         isSearchDialogOpen.value = true;
       }
-      return;
     } else if (event.altKey || checkIsEditableTarget(event.target)) return;
     else if (event.shiftKey) {
       if (event.key === "?") isShortcutsOverlayOpen.value = true;
-      return;
+    } else if (key === "g") chordStartedAtMs = Date.now();
+    // A chord only counts while the G that opened it is still recent
+    else if (chordStartedAtMs && Date.now() - chordStartedAtMs <= KEY_CHORD_TIMEOUT_MS) {
+      chordStartedAtMs = 0;
+      if (key === "/") {
+        event.preventDefault();
+        isSearchDialogOpen.value = true;
+      } else if (key === "a") await navigateTo(RoutePath.ResourceExplorerAll);
+      else if (key === "n") isNotificationPanelOpen.value = true;
     }
-
-    const key = event.key.toLowerCase();
-    if (key === "g") {
-      chordStartedAtMs = Date.now();
-      return;
-    } else if (!chordStartedAtMs || Date.now() - chordStartedAtMs > KEY_CHORD_TIMEOUT_MS) return;
-
-    chordStartedAtMs = 0;
-    if (key === "/") {
-      event.preventDefault();
-      isSearchDialogOpen.value = true;
-    } else if (key === "a") await navigateTo(RoutePath.ResourceExplorerAll);
-    else if (key === "n") isNotificationPanelOpen.value = true;
   });
 };

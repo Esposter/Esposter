@@ -17,10 +17,7 @@ import { resourceTypeSchema } from "@esposter/db-schema";
 const createUpdatedBound = (key: string) => {
   const boundQuery = useRouteQuery(key, "", { transform: String });
   return computed<Date | undefined>({
-    get: () => {
-      if (!boundQuery.value) return undefined;
-      return parseDate(boundQuery.value, ISO_DATE_FORMAT);
-    },
+    get: () => (boundQuery.value ? parseDate(boundQuery.value, ISO_DATE_FORMAT) : undefined),
     set: (value) => {
       boundQuery.value = value ? formatDate(value, ISO_DATE_FORMAT) : "";
     },
