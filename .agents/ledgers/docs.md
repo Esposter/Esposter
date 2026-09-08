@@ -50,7 +50,7 @@ indexes, a `references/` citation resolving nowhere.
 pnpm sweep:skill-docs
 ```
 
-It lives in `scripts/sweeps/skillDocs/` rather than in this file, because it is a program: four checks over the
+It lives in `scripts/src/sweeps/skillDocs/` rather than in this file, because it is a program: four checks over the
 whole tree, one of which has to decide when **not** to resolve a pointer. It was a `python3` heredoc, which on a
 Windows checkout prints a Microsoft Store notice and exits 0 — no findings, no error, indistinguishable from a
 clean tree (`sweeps`, `references/find-recipes.md`).

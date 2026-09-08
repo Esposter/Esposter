@@ -16,11 +16,11 @@
     "**/composables/visual/useFluidSimulator.ts"
   ],
   "jsPlugins": [
-    "./scripts/oxlint/errorAlert.ts",
-    "./scripts/oxlint/passThroughHelper.ts",
-    "./scripts/oxlint/persistThenNotify.ts",
-    "./scripts/oxlint/propsInterface.ts",
-    "./scripts/oxlint/trpcProcedure.ts"
+    "./scripts/src/oxlint/errorAlert.ts",
+    "./scripts/src/oxlint/passThroughHelper.ts",
+    "./scripts/src/oxlint/persistThenNotify.ts",
+    "./scripts/src/oxlint/propsInterface.ts",
+    "./scripts/src/oxlint/trpcProcedure.ts"
   ],
   "options": {
     "typeAware": true
@@ -126,7 +126,7 @@
       }
     },
     {
-      "files": ["apps/*/src/**", "packages/*/src/**", "scripts/**"],
+      "files": ["apps/*/src/**", "packages/*/src/**", "scripts/src/**"],
       "rules": {
         "no-restricted-imports": [
           "error",

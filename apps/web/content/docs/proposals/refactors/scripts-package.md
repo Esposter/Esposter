@@ -56,11 +56,11 @@ Nothing about the tooling's behaviour changes: the same files run under the same
 
 ## Key files
 
-| File                                      | Role after the change                                                          |
-| ----------------------------------------- | ------------------------------------------------------------------------------ |
-| `pnpm-workspace.yaml`                     | Lists `scripts` beside the product roots                                       |
-| `tsconfig.json`                           | The root program, narrowed to the root config files                            |
-| `vitest.config.ts`                        | Projects as three globs, with no inline project definition                     |
-| `.oxlintrc.json`                          | `jsPlugins` paths, which move with the sources they name                       |
-| `scripts/oxlint/setupPluginSuite.test.ts` | The plugin suite that proves the moved plugin paths still load                 |
-| `package.json`                            | Root manifest, losing the subpath and the devDependencies it held for one tree |
+| File                                          | Role after the change                                                          |
+| --------------------------------------------- | ------------------------------------------------------------------------------ |
+| `pnpm-workspace.yaml`                         | Lists `scripts` beside the product roots                                       |
+| `tsconfig.json`                               | The root program, narrowed to the root config files                            |
+| `vitest.config.ts`                            | Projects as three globs, with no inline project definition                     |
+| `.oxlintrc.json`                              | `jsPlugins` paths, which move with the sources they name                       |
+| `scripts/src/oxlint/setupPluginSuite.test.ts` | The plugin suite that proves the moved plugin paths still load                 |
+| `package.json`                                | Root manifest, losing the subpath and the devDependencies it held for one tree |

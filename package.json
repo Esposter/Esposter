@@ -36,7 +36,7 @@
   },
   "type": "module",
   "imports": {
-    "#scripts/*": "./scripts/*.ts"
+    "#scripts/*": "./scripts/src/*.ts"
   },
   "scripts": {
     "bench": "vitest bench --run scripts/ && pnpm -r --if-present run bench",
@@ -47,31 +47,31 @@
     "build:packages": "pnpm -r --filter \"./packages/*\" run build",
     "build:web": "virrun -- pnpm -C apps/web run build",
     "coverage": "vitest run --coverage",
-    "crossOS": "tsx scripts/crossOS.ts",
+    "crossOS": "tsx scripts/src/crossOS.ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "graph:gen": "tsx scripts/dependencyGraph/index.ts",
+    "graph:gen": "tsx scripts/src/dependencyGraph/index.ts",
     "lint": "virrun -- oxlint --format=default --disable-nested-config && virrun -- eslint . && virrun -- pnpm -r --parallel run lint",
     "lint:fix": "virrun -- oxlint --format=default --fix --disable-nested-config && virrun -- eslint --fix . && virrun -- pnpm -r --parallel run lint:fix",
     "lint:fix:packages": "virrun -- oxlint --format=default --fix --disable-nested-config packages && virrun -- pnpm -r --filter \"./packages/*\" --parallel run lint:fix",
     "lint:packages": "virrun -- oxlint --format=default --disable-nested-config packages && virrun -- pnpm -r --filter \"./packages/*\" --parallel run lint",
-    "outdated:dependencies": "tsx scripts/outdatedDependencies/index.ts",
+    "outdated:dependencies": "tsx scripts/src/outdatedDependencies/index.ts",
     "prepare": "git config core.hooksPath .githooks || true",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
     "release": "pnpm format:check && pnpm build:packages && pnpm lint:packages && pnpm typecheck:packages && pnpm test:packages && lerna publish --yes",
     "start": "pnpm -C apps/web run start",
-    "sweep:constant-scope": "tsx scripts/sweeps/constantScope/index.ts",
-    "sweep:repeated-list-items": "tsx scripts/sweeps/repeatedListItems/index.ts",
-    "sweep:shared-export-consumers": "tsx scripts/sweeps/sharedExportConsumers/index.ts",
-    "sweep:skill-docs": "tsx scripts/sweeps/skillDocs/index.ts",
-    "sweep:unterminated-results": "tsx scripts/sweeps/unterminatedResults/index.ts",
+    "sweep:constant-scope": "tsx scripts/src/sweeps/constantScope/index.ts",
+    "sweep:repeated-list-items": "tsx scripts/src/sweeps/repeatedListItems/index.ts",
+    "sweep:shared-export-consumers": "tsx scripts/src/sweeps/sharedExportConsumers/index.ts",
+    "sweep:skill-docs": "tsx scripts/src/sweeps/skillDocs/index.ts",
+    "sweep:unterminated-results": "tsx scripts/src/sweeps/unterminatedResults/index.ts",
     "test": "virrun -- vitest run",
     "test:packages": "virrun -- vitest run --project \"packages/*\"",
     "test:web": "virrun -- vitest run --project \"apps/web\"",
     "typecheck": "virrun -- tsc && virrun -- pnpm -r --parallel run typecheck",
     "typecheck:packages": "virrun -- pnpm -r --filter \"./packages/*\" --parallel run typecheck",
-    "update:node": "tsx scripts/updateNode/index.ts",
+    "update:node": "tsx scripts/src/updateNode/index.ts",
     "watch:packages": "pnpm -r --filter \"./packages/*\" --parallel exec tsdown --watch"
   },
   "devDependencies": {
@@ -108,14 +108,14 @@
   "packageManager": "pnpm@12.3.4+sha512.961aa41fb077da3a04a441d9f8e15ebc0c96da8ef710b2eb67bf9ee7cb0610eabd48f1fd85f51cffe73846785fa0f87c56a3a872a1d893f8446741b5cce45457",
   "crossOS": {
     "refresh:lockfile": {
-      "darwin": "sh ./scripts/refreshLockfile/index.sh",
-      "linux": "./scripts/refreshLockfile/index.sh",
-      "win32": "pnpm pwsh scripts/refreshLockfile/index.ps1"
+      "darwin": "sh ./scripts/src/refreshLockfile/index.sh",
+      "linux": "./scripts/src/refreshLockfile/index.sh",
+      "win32": "pnpm pwsh scripts/src/refreshLockfile/index.ps1"
     },
     "update:node": {
-      "darwin": "sh ./scripts/updateNode/install.sh",
-      "linux": "./scripts/updateNode/install.sh",
-      "win32": "pnpm pwsh scripts/updateNode/install.ps1"
+      "darwin": "sh ./scripts/src/updateNode/install.sh",
+      "linux": "./scripts/src/updateNode/install.sh",
+      "win32": "pnpm pwsh scripts/src/updateNode/install.ps1"
     }
   },
   "scriptsComments": {

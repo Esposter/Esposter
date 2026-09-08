@@ -47,7 +47,7 @@ set of names across both ledgers.
 pnpm sweep:constant-scope
 ```
 
-The scan lives in `scripts/sweeps/constantScope/` rather than in this file, because it is a program: a
+The scan lives in `scripts/src/sweeps/constantScope/` rather than in this file, because it is a program: a
 line-anchored regex cannot decide constant scope on its own — it reads a multi-line arrow as a constant, since
 the `=>` lands on a later line, and it cannot tell where a declaration ends, since a template literal's `${…}`
 and a `;` inside a string both fool a bracket count. Its cases are pinned by
@@ -58,7 +58,7 @@ Everything it still reports on a swept repo is one of the exceptions below, so a
 rather than an empty one: the top-level-await clusters in `app/content/docs/index.test.ts`, `app/components/index.test.ts`
 and `app/store/index.test.ts` — each with the constants their module-scope readers pin out there alongside them —
 the `mockDb` a hoisted `vi.mock` factory returns in each `azure-functions` suite, virrun's two mocked path constants,
-and each `scripts/oxlint` rule name, which names its own `describe` and so is evaluated before the callback the scope
+and each `scripts/src/oxlint` rule name, which names its own `describe` and so is evaluated before the callback the scope
 rule would move it into.
 
 ## Judging a match

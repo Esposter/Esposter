@@ -11,7 +11,7 @@ So the line is what the recipe is, not how long it is:
 
 - **A grep stays inline.** One command whose whole logic is its pattern is read at a glance, and it fails loudly
   when it fails at all. The ledger is the right home for it.
-- **Anything with control flow moves to `scripts/sweeps/<scanName>/`**, beside the other root scripts — a bracket
+- **Anything with control flow moves to `scripts/src/sweeps/<scanName>/`**, beside the other root scripts — a bracket
   matcher, a tokenizer, a two-pass scan over a corpus. It is then typechecked by the root `tsc`, linted by the
   root ESLint and oxlint, formatted by `oxfmt`, and run by the `scripts` vitest project, all with no
   configuration: the folder is already in every one of those globs. Wire it as `pnpm sweep:<scan-name>` and let
@@ -26,7 +26,7 @@ prose that used to explain each trap in the ledger becomes the test that fails w
 **Not `.agents/`.** The tree is the rules an agent reads, and mixing an executable into it makes "is this a rule
 or a tool" unanswerable from the path. It was also tried: an `agents` vitest project over `.agents/**/*.test.ts`
 existed for the review workflow's scripts and went out with it, taking a third `projects` entry and its
-worktree-glob exclusion with it. `scripts/agentDirectories.test.ts` is the shape that stayed — a test **about**
+worktree-glob exclusion with it. `scripts/src/agentDirectories.test.ts` is the shape that stayed — a test **about**
 the agent tree, living where the toolchain already looks.
 
 ## How a scan comes back empty without being clean
