@@ -10,7 +10,7 @@
 # is denied" and the run is repeatable; killing a stranger's process is not.
 # Then skip our own ancestry: pnpm runs this script through node from inside the
 # workspace, so it matches the first filter and would terminate the refresh mid-run.
-$workspacePath = (Resolve-Path (Join-Path $PSScriptRoot "../..")).Path
+$workspacePath = (Resolve-Path (Join-Path $PSScriptRoot "../../..")).Path
 $processMap = @{}
 foreach ($process in Get-CimInstance Win32_Process) { $processMap[[int]$process.ProcessId] = $process }
 $ancestors = [System.Collections.Generic.HashSet[int]]::new()
