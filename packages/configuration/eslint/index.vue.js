@@ -4,6 +4,7 @@ import plugins from "@esposter/configuration/eslint/plugins/index.js";
 import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
 import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
 import restrictedTestSyntaxes from "@esposter/configuration/eslint/restrictedTestSyntaxes.js";
+import restrictedWatchSyntaxes from "@esposter/configuration/eslint/restrictedWatchSyntaxes.js";
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
 
 import { withNuxt } from "../../../apps/web/.nuxt/eslint.config.mjs";
@@ -26,6 +27,19 @@ export default withNuxt(plugins)
         ...typescriptRules["no-restricted-syntax"].slice(1),
         ...restrictedDateSyntaxes,
         ...restrictedStoreSyntaxes,
+        ...restrictedWatchSyntaxes,
+      ],
+    },
+  })
+  // A `watch` sits in a store or a composable as often as in a component, so the alias ban is the one script-side
+  // Addition that has to reach `.ts` as well. It goes above the test override so a suite keeps its own list.
+  .append({
+    files: ["**/*.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...restrictedWatchSyntaxes,
       ],
     },
   })
