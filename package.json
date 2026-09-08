@@ -72,6 +72,7 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
     "@lerna-lite/cli": "catalog:",
     "@lerna-lite/publish": "catalog:",
     "@types/node": "catalog:",
