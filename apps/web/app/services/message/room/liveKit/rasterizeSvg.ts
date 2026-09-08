@@ -19,7 +19,9 @@ export const rasterizeSvg = (svgUrl: string) =>
           image.onload = () => {
             resolve(image);
           };
-          image.onerror = reject;
+          image.onerror = () => {
+            reject(new InvalidOperationError(Operation.Read, rasterizeSvg.name, svgUrl));
+          };
           image.src = svgObjectUrl;
         }),
       () => {
