@@ -1,3 +1,4 @@
+import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 
@@ -18,35 +19,31 @@ export const useRoomEmojiSubscribables = () => {
     // The subscription owns every remote-visible transition: an emoji an admin adds has to reach the picker and
     // The message renderer of everyone already in the room, or a message using it renders its fallback until
     // They next open it
-    const createRoomEmojiUnsubscribable = $trpc.room.emoji.onCreateRoomEmoji.subscribe(
-      { roomId },
-      {
-        onData: (newRoomEmoji) => {
-          storeCreateRoomEmoji(roomId, newRoomEmoji);
+    return getUnsubscribe(
+      $trpc.room.emoji.onCreateRoomEmoji.subscribe(
+        { roomId },
+        {
+          onData: (newRoomEmoji) => {
+            storeCreateRoomEmoji(roomId, newRoomEmoji);
+          },
         },
-      },
-    );
-    const deleteRoomEmojiUnsubscribable = $trpc.room.emoji.onDeleteRoomEmoji.subscribe(
-      { roomId },
-      {
-        onData: ({ id }) => {
-          storeDeleteRoomEmoji(roomId, { id });
+      ),
+      $trpc.room.emoji.onDeleteRoomEmoji.subscribe(
+        { roomId },
+        {
+          onData: ({ id }) => {
+            storeDeleteRoomEmoji(roomId, { id });
+          },
         },
-      },
-    );
-    const updateRoomEmojiUnsubscribable = $trpc.room.emoji.onUpdateRoomEmoji.subscribe(
-      { roomId },
-      {
-        onData: (updatedRoomEmoji) => {
-          storeUpdateRoomEmoji(roomId, updatedRoomEmoji);
+      ),
+      $trpc.room.emoji.onUpdateRoomEmoji.subscribe(
+        { roomId },
+        {
+          onData: (updatedRoomEmoji) => {
+            storeUpdateRoomEmoji(roomId, updatedRoomEmoji);
+          },
         },
-      },
+      ),
     );
-
-    return () => {
-      createRoomEmojiUnsubscribable.unsubscribe();
-      deleteRoomEmojiUnsubscribable.unsubscribe();
-      updateRoomEmojiUnsubscribable.unsubscribe();
-    };
   });
 };

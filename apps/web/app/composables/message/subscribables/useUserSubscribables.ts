@@ -1,5 +1,6 @@
 import { authClient } from "@/services/auth/authClient";
 import { getIdsKey } from "@/services/message/subscribables/getIdsKey";
+import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useMemberStore } from "@/store/message/user/member";
 import { useStatusStore } from "@/store/message/user/status";
 
@@ -20,15 +21,13 @@ export const useUserSubscribables = async () => {
       const newMemberIds = memberIdsString.split(",").filter((id) => id && id !== newSession.user.id);
       if (newMemberIds.length === 0) return undefined;
 
-      const upsertStatusUnsubscribable = $trpc.user.onUpsertStatus.subscribe(newMemberIds, {
-        onData: ({ userId, ...userStatus }) => {
-          storeStatus(userId, userStatus);
-        },
-      });
-
-      return () => {
-        upsertStatusUnsubscribable.unsubscribe();
-      };
+      return getUnsubscribe(
+        $trpc.user.onUpsertStatus.subscribe(newMemberIds, {
+          onData: ({ userId, ...userStatus }) => {
+            storeStatus(userId, userStatus);
+          },
+        }),
+      );
     },
     onlineSubscribableContext,
   );
