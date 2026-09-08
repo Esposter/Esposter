@@ -2,7 +2,7 @@ import { parseMachineJson } from "#src/services/parseMachineJson";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { execFileSync } from "node:child_process";
 import { rmSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { test } from "vitest";
 
 // This bench rebuilds every package from cold, and the only way to do that is to delete the `dist` it is about
@@ -13,6 +13,15 @@ import { test } from "vitest";
 // `*.bench.md` is written, which is a developer's machine. Skipped here rather than excluded in the workflow
 // So the reason travels with the file.
 const IS_CI = Boolean(process.env.CI);
+// Switched off locally too, and this is that switch. Three iterations over every package is three full `build:packages` runs
+// — ten minutes before any other member's bench starts — and what it measures is tsdown and rolldown rather than
+// Anything in this repo, so it moves when a dependency bumps and not when the code does. It is also the one bench
+// That deletes state it does not own: each `dist` it removes to force a cold build is the same `dist` a concurrent
+// Member's `vitest.config.ts` resolves `@esposter/configuration` through, which is why the root `bench` script
+// Pins `--workspace-concurrency=1`. Flip to `true` when the build pipeline itself changes, run `pnpm bench` in
+// This package, commit the artifact, flip it back.
+const IS_ENABLED = false;
+const isBenchable = IS_ENABLED && !IS_CI;
 // `pnpm` is a `.cmd` shim on Windows, which Node cannot spawn without one — but `shell` cuts both ways. With
 // It the whole command line goes to `cmd.exe`, which splits on whitespace, so an argument holding any has to
 // Arrive already quoted; without it every argument reaches pnpm verbatim and those same quotes become part of
@@ -21,7 +30,14 @@ const IS_CI = Boolean(process.env.CI);
 // On the platform that needs it and nowhere else.
 const IS_SHELL = process.platform === "win32";
 const quoteArgument = (argument: string): string => (IS_SHELL ? `"${argument}"` : argument);
-const runPnpm = (args: string[]): string => execFileSync("pnpm", args, { encoding: "utf8", shell: IS_SHELL });
+// The cwd is pinned to the repository root rather than inherited: this file's project root is `scripts/`, and a
+// `--filter` of `./packages/*` is resolved against the cwd — so an inherited one looks for `scripts/packages/`,
+// Matches nothing, and pnpm exits 0 having done nothing. That reads as a workspace with nothing to build, which
+// Is indistinguishable here from a workspace whose packages were all found, and the emptiness only surfaces one
+// Layer up as `bench.compare() requires at least 2 benchmarks, received 0`.
+const REPOSITORY_ROOT = resolve(import.meta.dirname, "..", "..", "..");
+const runPnpm = (args: string[]): string =>
+  execFileSync("pnpm", args, { cwd: REPOSITORY_ROOT, encoding: "utf8", shell: IS_SHELL });
 // Pnpm orders a recursive run topologically, and `--workspace-concurrency=1` is what makes that order observable:
 // Each package prints while it is the only one running. Asking pnpm rather than deriving the order from the
 // Manifests keeps one definition of what depends on what — the same one the real build uses. The directory comes
@@ -53,7 +69,7 @@ const readBuildOrder = (): { directory: string; packageName: string }[] =>
     });
 // Read once at module scope — the order is the same for every task, and a walk per task would time it. Gated on
 // CI ahead of the spawn, so a runner does not pay for a workspace walk whose every task is about to be skipped.
-const packages = IS_CI ? [] : readBuildOrder();
+const packages = isBenchable ? readBuildOrder() : [];
 
 // One task per package, declared in build order and so run in it — the serial shape a real `pnpm build:packages`
 // Has, which is the only one worth reading. A parallel build is noisier than the differences being measured,
@@ -61,7 +77,7 @@ const packages = IS_CI ? [] : readBuildOrder();
 //
 // `vs base` compares each package against the first one built, so the package holding most of the serial build is
 // The smallest multiplier in the group — the only one worth optimising, and what a regression looks like here.
-test.skipIf(IS_CI)("build - packages", async ({ bench }) => {
+test.skipIf(!isBenchable)("build - packages", async ({ bench }) => {
   await bench.compare(
     ...packages.map(({ directory, packageName }) =>
       bench(packageName, () => {

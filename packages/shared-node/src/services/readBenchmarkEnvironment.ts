@@ -17,7 +17,10 @@ export const readBenchmarkEnvironment = (): string => {
     `- Commit: ${readCommit()}`,
     `- Node: ${process.version}`,
     `- OS: ${platform()} ${release()} (${arch()})`,
-    `- CPU: ${cpu[0]?.model ?? "unknown"} × ${cpu.length}`,
+    // `os.cpus()` hands back the model exactly as the platform reports it, and some pad it to a fixed width —
+    // A Ryzen 7730U arrives with ten trailing spaces. Unnormalized, the same host writes a different line than
+    // It did before, so every artifact shows a one-line environment diff that means nothing.
+    `- CPU: ${normalizeString(cpu[0]?.model) || "unknown"} × ${cpu.length}`,
     `- RAM: ${(totalmem() / GIBIBYTE).toFixed(1)} GiB`,
   ].join("\n");
 };

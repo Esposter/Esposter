@@ -6,45 +6,45 @@
         {
           "benchmarks": [
             {
-              "mean": 0.06443000000008396,
-              "name": "all unique — First mode",
-              "p99": 0.08259999999972933,
-              "rme": 7.459088863139058,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.0920100000000275,
-              "name": "all unique — Last mode",
-              "p99": 0.14310000000023138,
-              "rme": 15.377069704456265,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.06797999999998865,
+              "mean": 0.07163999999975205,
               "name": "half duplicates — First mode",
-              "p99": 0.08240000000023429,
-              "rme": 5.75707487205346,
+              "p99": 0.12728699999937818,
+              "rme": 21.68719620913414,
               "sampleCount": 10
             },
             {
-              "mean": 0.19458000000004178,
-              "name": "half duplicates — Last mode",
-              "p99": 0.2518000000000029,
-              "rme": 9.844985486514526,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.05077000000001135,
-              "name": "all duplicates — First mode",
-              "p99": 0.13829999999961728,
-              "rme": 44.44443297031349,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.08032000000021071,
+              "mean": 0.09842999999982566,
               "name": "all duplicates — Last mode",
-              "p99": 0.09340000000065629,
-              "rme": 12.104482752741289,
+              "p99": 0.1455239999999594,
+              "rme": 20.292818749488028,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.12173999999986336,
+              "name": "all duplicates — First mode",
+              "p99": 0.1669020000004639,
+              "rme": 11.937515826728047,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.1470699999998942,
+              "name": "all unique — Last mode",
+              "p99": 0.28076999999983854,
+              "rme": 28.8475829619849,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.1910300000001371,
+              "name": "half duplicates — Last mode",
+              "p99": 0.27843200000027535,
+              "rme": 14.147152776497954,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.20679999999993015,
+              "name": "all unique — First mode",
+              "p99": 0.2841039999997429,
+              "rme": 11.480516413988093,
               "sampleCount": 10
             }
           ],
@@ -53,45 +53,45 @@
         {
           "benchmarks": [
             {
-              "mean": 0.4001999999999498,
-              "name": "all unique — First mode",
-              "p99": 0.4920000000001892,
-              "rme": 7.994526640589596,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.4754499999999098,
-              "name": "all unique — Last mode",
-              "p99": 0.5884000000005472,
-              "rme": 8.61627221353844,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.3904500000002372,
-              "name": "half duplicates — First mode",
-              "p99": 0.48509999999987485,
-              "rme": 6.652903829149018,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.4411600000001272,
-              "name": "half duplicates — Last mode",
-              "p99": 0.515400000000227,
-              "rme": 5.704550115519067,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.3990600000000086,
+              "mean": 0.7164699999999357,
               "name": "all duplicates — First mode",
-              "p99": 0.46199999999953434,
-              "rme": 4.917194661700565,
+              "p99": 1.019689000000335,
+              "rme": 14.788146164641395,
               "sampleCount": 10
             },
             {
-              "mean": 0.747899999999845,
+              "mean": 0.7730600000000777,
               "name": "all duplicates — Last mode",
-              "p99": 1.1772000000000844,
-              "rme": 19.680433487217908,
+              "p99": 0.8571230000002834,
+              "rme": 4.465540697101033,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.8528599999999642,
+              "name": "half duplicates — First mode",
+              "p99": 1.6430079999999636,
+              "rme": 25.8365761652402,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.9529999999999745,
+              "name": "half duplicates — Last mode",
+              "p99": 1.1430199999996422,
+              "rme": 7.103455655519528,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.3264000000001035,
+              "name": "all unique — Last mode",
+              "p99": 2.2312479999998778,
+              "rme": 25.56553747492006,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.5029199999999037,
+              "name": "all unique — First mode",
+              "p99": 2.167669000000069,
+              "rme": 27.466485146480522,
               "sampleCount": 10
             }
           ],
@@ -100,45 +100,45 @@
         {
           "benchmarks": [
             {
-              "mean": 8.860799999999836,
-              "name": "all unique — First mode",
-              "p99": 18.230199999999968,
-              "rme": 30.683066606480963,
-              "sampleCount": 10
-            },
-            {
-              "mean": 6.281770000000051,
-              "name": "all unique — Last mode",
-              "p99": 7.817900000000009,
-              "rme": 8.327409649250951,
-              "sampleCount": 10
-            },
-            {
-              "mean": 4.463130000000001,
-              "name": "half duplicates — First mode",
-              "p99": 5.623700000000099,
-              "rme": 7.614260649032779,
-              "sampleCount": 10
-            },
-            {
-              "mean": 5.534560000000056,
-              "name": "half duplicates — Last mode",
-              "p99": 6.7643000000007305,
-              "rme": 10.386794873588327,
-              "sampleCount": 10
-            },
-            {
-              "mean": 2.661080000000129,
+              "mean": 5.854519999999775,
               "name": "all duplicates — First mode",
-              "p99": 3.4817000000002736,
-              "rme": 8.156971935518747,
+              "p99": 7.334478999999438,
+              "rme": 9.339533967811331,
               "sampleCount": 10
             },
             {
-              "mean": 3.5112699999999677,
+              "mean": 9.214229999999953,
               "name": "all duplicates — Last mode",
-              "p99": 4.295199999999568,
-              "rme": 8.554006882999099,
+              "p99": 11.364655000000093,
+              "rme": 10.39646925579157,
+              "sampleCount": 10
+            },
+            {
+              "mean": 11.388739999999961,
+              "name": "half duplicates — First mode",
+              "p99": 14.720254000000033,
+              "rme": 13.696711314842872,
+              "sampleCount": 10
+            },
+            {
+              "mean": 12.187819999999828,
+              "name": "all unique — First mode",
+              "p99": 14.9318480000001,
+              "rme": 9.237938830901486,
+              "sampleCount": 10
+            },
+            {
+              "mean": 12.340489999999955,
+              "name": "half duplicates — Last mode",
+              "p99": 15.578524999999491,
+              "rme": 9.36620104352411,
+              "sampleCount": 10
+            },
+            {
+              "mean": 15.525990000000183,
+              "name": "all unique — Last mode",
+              "p99": 17.553987000000305,
+              "rme": 6.786043573616944,
               "sampleCount": 10
             }
           ],

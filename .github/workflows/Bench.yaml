@@ -39,10 +39,11 @@ jobs:
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
-      # A bare root `vitest bench --run` discovers every project's `*.bench.ts` (per the root vitest.config.ts
-      # `projects`, which is every workspace member) as one file set and runs it in one process, where the
-      # `pnpm bench` root script (`pnpm -r --if-present run bench`) is each member's own bench run in turn.
-      # Local `pnpm bench` — the committed `*.bench.md` gate — uses the script. The BenchmarkMarkdownReporter
+      # `bench:ci` is a bare root `vitest bench --run`: it discovers every project's `*.bench.ts` (per the root
+      # vitest.config.ts `projects`, which is every workspace member) as one file set and runs it in one
+      # process, where the `pnpm bench` root script is each member's own bench run in turn, sequentially.
+      # Local `pnpm bench` — the committed `*.bench.md` gate — uses that one. The two live side by side in the
+      # Root manifest so neither reads as the other's long way round. The BenchmarkMarkdownReporter
       # rewrites `*.bench.md` beside each bench on ephemeral runner disk; nothing commits it, so the committed
       # artifacts are untouched. Unsharded: this job is a smoke test that every bench still executes, so the
       # only thing splitting it buys is runner minutes spent on setup.
@@ -52,4 +53,4 @@ jobs:
       # artifact `setup-packages` just downloaded, including the `@esposter/shared-node` reporter this very run
       # writes its results through. It skips on `CI`, and says so in the file.
       - name: 🏎️ Run benchmarks
-        run: pnpm exec vitest bench --run
+        run: pnpm bench:ci

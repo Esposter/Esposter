@@ -22,7 +22,16 @@ import { afterAll, test } from "vitest";
 // Bind, the WSL login PATH, network, corepack home and CI=true. Routing through those builders keeps the bench from
 // Drifting from production — hand-rolled options miss e.g. the WSL login PATH and die with `node: not found` (the
 // WSL bridge resolves the Windows pnpm shim instead).
-const isOsSupported = checkIsOsBackendSupported();
+// Switched off, and this is the one switch for the whole file. Every task here forks a real sandbox over the whole
+// Monorepo, and the module-scope `createSnapshot` below captures a full install before the first one runs — north
+// Of ten minutes on win32, where each fork also pays the /mnt/c → ext4 source mirror. That is more than a `pnpm
+// Bench` triggered by a change to anything else should cost, and the numbers move with the host more than with
+// This repo, so the committed artifact is regenerated deliberately rather than incidentally: flip this to `true`
+// When the os backend or its option builders change, run `pnpm bench` in this package, commit, flip it back.
+// ANDed into the existing host gate rather than replacing it, so a flipped-on run on a host without the backend
+// Still skips instead of crashing in the module-scope install.
+const IS_ENABLED = false;
+const isOsSupported = IS_ENABLED && checkIsOsBackendSupported();
 const isWindows = process.platform === "win32";
 const OS_TASK_NAME = isWindows ? `${BackendType.Os}/wsl` : `${BackendType.Os}/linux`;
 const native = createNativeBackend();
