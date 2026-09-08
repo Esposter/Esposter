@@ -32,7 +32,7 @@ export const checkAchievementCondition = (
         }
         case AchievementOperator.Matches:
           if (!(condition.value instanceof RegExp)) return false;
-          return typeof value === "string" && condition.value.test(value);
+          else return typeof value === "string" && condition.value.test(value);
         case AchievementOperator.Operation:
           // @ts-expect-error achievementDefinitions is well-typed at its definition site
           return condition.operation(value);
@@ -53,10 +53,9 @@ export const checkAchievementCondition = (
         case BinaryOperator.ne:
           return value !== condition.value;
         default:
-          exhaustiveGuard(condition);
+          return exhaustiveGuard(condition);
       }
     }
-    // oxlint-disable-next-line no-fallthrough
     case AchievementConditionType.Time: {
       const { maximum, minimum, referenceUnit, unit } = condition;
       const now = Temporal.Now.zonedDateTimeISO();
@@ -66,7 +65,6 @@ export const checkAchievementCondition = (
       return value >= minimum && value < maximum;
     }
     default:
-      exhaustiveGuard(condition);
-      return false;
+      return exhaustiveGuard(condition);
   }
 };

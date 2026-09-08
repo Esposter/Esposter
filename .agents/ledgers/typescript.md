@@ -9,7 +9,7 @@ Most of the `typescript` skill is lint- or typecheck-decided; what this sweep ca
 | `server/trpc/routers` — the rest                                                                | 2026-09-07 |                                                                                       |
 | `server/services/message`                                                                       | 2026-09-07 |                                                                                       |
 | `server/services/resource`                                                                      | 2026-09-08 | the snapshot and rollback paths                                                       |
-| `server/services/room`, `friend`, `user`, `role`, `achievement`                                 | —          | membership and the social graph                                                       |
+| `server/services/room`, `friend`, `user`, `role`, `achievement`                                 | 2026-09-08 | membership and the social graph                                                       |
 | `server/services/survey`, `dataset`, `program`                                                  | —          | the response and reporting path                                                       |
 | `server/services/blueprint`, `storage`, `blobState`, `notification`, `dashboard`, `emailEditor` | —          |                                                                                       |
 | `server/services/auth`, `livekit`, `rateLimiter`, `request`                                     | —          |                                                                                       |
