@@ -19,7 +19,7 @@ Most of the `typescript` skill is lint- or typecheck-decided; what this sweep ca
 | `server/models`, `server/db`, `server/plugins`, `server/auth.ts`                                | 2026-09-08 |                                                                                       |
 | `app/store/message/room`                                                                        | 2026-09-08 |                                                                                       |
 | `app/store/message/user`, `ui`, `search`                                                        | 2026-09-08 |                                                                                       |
-| `app/store/message/input`, `moderation`, `file`, `draftsAndSent`                                | —          |                                                                                       |
+| `app/store/message/input`, `moderation`, `file`, `draftsAndSent`                                | 2026-09-08 |                                                                                       |
 | `app/store/message` — the top level                                                             | —          |                                                                                       |
 | `app/store/resource`                                                                            | —          |                                                                                       |
 | `app/store/dungeons/battle`, `world`, `monsterParty`                                            | —          |                                                                                       |
