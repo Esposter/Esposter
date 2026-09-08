@@ -8,23 +8,24 @@ This file is an **index and a process**, never a reference. Anything explaining 
 
 **Esposter** — a social platform monorepo ("a nice and casual place for posting random things"), TypeScript in strict mode across a pnpm workspace. Nuxt + Vue on the front, tRPC and Nitro server routes behind it, Drizzle over PostgreSQL alongside Azure Table and Blob Storage, Azure Functions for async work, Pinia for state, UnoCSS attributify + Vuetify for styling, Vitest for tests, oxlint + ESLint for lint, Pulumi for infrastructure. Versions live in the manifests; node in `engines.node`, pnpm in `packageManager`.
 
-| Package Path             | npm name                  | Description                                                                |
-| :----------------------- | :------------------------ | :------------------------------------------------------------------------- |
-| `apps/web`               | `@esposter/web`           | Main Nuxt web application (frontend, server routes, tRPC)                  |
-| `packages/azure`         | `@esposter/azure`         | Azure wire conventions shared by the real clients and the mocks            |
-| `apps/functions`         | `@esposter/functions`     | Serverless backend (EventGrid, Service Bus, Timers)                        |
-| `packages/azure-mock`    | `azure-mock`              | Mock Azure service classes for local dev and testing                       |
-| `packages/configuration` | `@esposter/configuration` | Shared ESLint, TSConfig, and tsdown build configs                          |
-| `packages/db`            | `@esposter/db`            | DB connection utilities (Drizzle ORM, Azure Table, Blob, WebPubSub)        |
-| `packages/db-mock`       | `@esposter/db-mock`       | In-memory PGlite database factory for unit/integration tests               |
-| `packages/db-schema`     | `@esposter/db-schema`     | **Source of truth** for DB: Drizzle ORM schemas, migrations                |
-| `apps/infra`             | `@esposter/infra`         | Pulumi infrastructure code and migration tools for Azure                   |
-| `packages/parse-tmx`     | `parse-tmx`               | Parser for Tiled Map Editor `.tmx` files                                   |
-| `packages/shared`        | `@esposter/shared`        | Shared TypeScript types, utilities, and error classes                      |
-| `packages/shared-node`   | `@esposter/shared-node`   | Benchmark reporting/running for vitest bench (no barrel entrypoint)        |
-| `packages/virrun`        | `virrun`                  | Ephemeral in-memory virtual runner — runs a repo's real toolchain isolated |
-| `packages/vue-phaserjs`  | `vue-phaserjs`            | Phaser game engine integration for Vue                                     |
-| `packages/xml2js`        | `@esposter/xml2js`        | TypeScript rewrite of xml2js — XML ↔ JSON conversion                       |
+| Package Path             | npm name                  | Description                                                                 |
+| :----------------------- | :------------------------ | :-------------------------------------------------------------------------- |
+| `apps/web`               | `@esposter/web`           | Main Nuxt web application (frontend, server routes, tRPC)                   |
+| `packages/azure`         | `@esposter/azure`         | Azure wire conventions shared by the real clients and the mocks             |
+| `apps/functions`         | `@esposter/functions`     | Serverless backend (EventGrid, Service Bus, Timers)                         |
+| `packages/azure-mock`    | `azure-mock`              | Mock Azure service classes for local dev and testing                        |
+| `packages/configuration` | `@esposter/configuration` | Shared ESLint, TSConfig, and tsdown build configs                           |
+| `packages/db`            | `@esposter/db`            | DB connection utilities (Drizzle ORM, Azure Table, Blob, WebPubSub)         |
+| `packages/db-mock`       | `@esposter/db-mock`       | In-memory PGlite database factory for unit/integration tests                |
+| `packages/db-schema`     | `@esposter/db-schema`     | **Source of truth** for DB: Drizzle ORM schemas, migrations                 |
+| `apps/infra`             | `@esposter/infra`         | Pulumi infrastructure code and migration tools for Azure                    |
+| `packages/parse-tmx`     | `parse-tmx`               | Parser for Tiled Map Editor `.tmx` files                                    |
+| `packages/shared`        | `@esposter/shared`        | Shared TypeScript types, utilities, and error classes                       |
+| `packages/shared-node`   | `@esposter/shared-node`   | Benchmark reporting/running for vitest bench (no barrel entrypoint)         |
+| `packages/virrun`        | `virrun`                  | Ephemeral in-memory virtual runner — runs a repo's real toolchain isolated  |
+| `packages/vue-phaserjs`  | `vue-phaserjs`            | Phaser game engine integration for Vue                                      |
+| `packages/xml2js`        | `@esposter/xml2js`        | TypeScript rewrite of xml2js — XML ↔ JSON conversion                        |
+| `scripts`                | `@esposter/scripts`       | The repo's own tooling: workspace graph, dependency report, sweeps, plugins |
 
 ## Commands
 

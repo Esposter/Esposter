@@ -17,6 +17,20 @@ New packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
 7. **Run plain `pnpm i`** from repo root to link the package. Follow `apps/web/content/docs/architecture/monorepo-tooling.md` for install safety.
 8. **Run `pnpm build`** in the new package to produce `dist/`.
 
+## A member that is only run
+
+`scripts` at the repository root is the other shape: tooling the repo runs, which nothing imports, publishes or
+bundles. It skips everything above that exists for a consumer — `types`, `files`, `sideEffects`, `exports`, both
+build tsconfigs, the tsdown config, the generated barrel, and `pnpm build` — and keeps the manifest, the
+`#src/*` map, the tsconfig, the ESLint re-export, a Vitest config from the shared factory, and its own `bench`,
+`lint`, `lint:fix`, `typecheck` and `test`. Its entrypoints are scripts of its own (`tsx src/<tool>/index.ts`)
+that the root names with `pnpm -C <directory> run <script>`, so the root manifest holds no path into it.
+
+A member outside `apps/` and `packages/` also needs its directory added to `packages:` in
+`pnpm-workspace.yaml` — that file is what the tooling reads to find the members, so the entry is the whole
+registration: the Vitest projects, the dependency graph, the outdated-dependency report and the workspace
+invariants all pick it up from there.
+
 ## Bin entrypoints — no shebang
 
 Don't add `#!/usr/bin/env node` to source files, including `bin` entrypoints (`src/cli.ts`). pnpm generates the bin shim that invokes `node` for the target, so the shebang is dead weight. Only add one if a file is genuinely meant to be executed directly (`chmod +x ./file`), which workspace bins are not.

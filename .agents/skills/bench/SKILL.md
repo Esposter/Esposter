@@ -31,11 +31,11 @@ A benchmark is a test. `bench` comes from the test context, each registration is
 
 ## Running
 
-`pnpm bench` per package is `vitest bench --run`. Nothing else to chain.
+`pnpm bench` in a package is `vitest bench --run`. Nothing else to chain.
 
-From the **repo root** it is `vitest bench --run scripts/ && pnpm -r --if-present run bench` — the root `scripts/` suite first, then every package's, all **sequentially**: concurrent benches contend for CPU and skew machine-dependent numbers.
+From the **repo root** it is `pnpm -r --if-present run bench` — every member that owns a bench, in turn and **sequentially**: concurrent benches contend for CPU and skew machine-dependent numbers. A bare root `vitest bench --run` is the other thing entirely, and what the 🏎️ Bench job runs: one process over every project's bench files at once, which is a smoke test that they all still execute rather than a measurement anything should be compared against.
 
-The leading root run exists because `scripts/` is not a workspace package, so `pnpm -r` skips it. The `scripts/` filter isolates it — a bare root `vitest bench` would re-run every package's benches in parallel, the thing being avoided — and it is a **path** rather than `--project scripts` because Vitest names a project `scripts (bench)` in bench mode, which that filter silently fails to match (`No projects matched the filter`). The project scopes both globs to `scripts/`, `benchmark.include` included, since the default `**/*.bench.ts` would otherwise pull every package's bench file into it. Only deterministic, CPU-bound script units earn a bench; the network and spawn helpers are I/O-bound and unbenchable.
+The tooling benches live in `scripts`, which is a member like any other, so `pnpm -r` reaches it and nothing at the root names its path. Only deterministic, CPU-bound units earn a bench there; the network and spawn helpers are I/O-bound and unbenchable.
 
 **A bench whose work would destroy what CI restored skips on `CI`, in the file.** The 🏎️ Bench job runs against the downloaded `package-builds` artifact, so a bench that deletes each `dist` to measure a cold build would take out the `@esposter/shared-node` reporter the run writes its own results through. Gate it with `test.skipIf` on `process.env.CI` and keep the module-level setup behind the same flag so the runner never pays for it — excluding the path in the workflow instead puts the reason in a file nobody reads while editing the bench.
 

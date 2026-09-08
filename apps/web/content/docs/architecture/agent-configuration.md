@@ -20,9 +20,9 @@ flowchart LR
   Tree --> Worktrees[".agents/worktrees — a full repo copy per live agent"]
 
   subgraph Tooling
-    TS[tsconfig.json]
     Vitest[vitest.config.ts]
     Oxlint[.oxlintrc.json]
+    Oxfmt[.oxfmtrc.json]
     ESLint[eslint.config.js]
   end
 
@@ -31,16 +31,16 @@ flowchart LR
   Tooling -. ignored .-> Worktrees
 ```
 
-`AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` are the single source for all three paths, so anything that can import interpolates them instead of repeating a literal. The rest are import-less formats — `tsconfig.json`, `.oxlintrc.json`, `.oxfmtrc.json` and `.gitignore` — so they repeat the literal and `scripts/src/agentDirectories.test.ts` pins every copy to its constant. Two of them have been silently un-excluded once before by an unrelated edit widening a glob.
+`AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` are the single source for all three paths, so anything that can import interpolates them instead of repeating a literal. The rest are import-less formats — `.oxlintrc.json`, `.oxfmtrc.json` and `.gitignore` — so they repeat the literal and `scripts/src/agentDirectories.test.ts` pins every copy to its constant. A copy has been silently un-excluded before by an unrelated edit widening a glob, and nothing else would have noticed.
 
 Which literal a tool needs follows from how far it walks, so the two exclusions are not interchangeable:
 
-| Exclusion           | Needed by                                       | Not needed by                                                                                |
-| ------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `.claude` alias     | The root TypeScript program, oxlint             | oxfmt and VS Code search, neither of which follows a directory symlink; git, which stores it |
-| `.agents/worktrees` | The root TypeScript program, oxlint, oxfmt, git | Vitest and TypeDoc, whose globs are already rooted at `packages/`                            |
+| Exclusion           | Needed by          | Not needed by                                                                                                                                                    |
+| ------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.claude` alias     | oxlint             | oxfmt and VS Code search, neither of which follows a directory symlink; git, which stores it                                                                     |
+| `.agents/worktrees` | oxlint, oxfmt, git | Vitest and TypeDoc, whose globs are rooted at the workspace members; the root TypeScript program, which compiles the root config files and descends into nothing |
 
-ESLint states neither. The shared config bridges `.oxlintrc.json`'s `ignorePatterns` into flat-config global `ignores` through `eslint-plugin-oxlint`, so one list governs both linters and the root `eslint.config.js` only ignores `packages`, which lints itself.
+ESLint states neither. The shared config bridges `.oxlintrc.json`'s `ignorePatterns` into flat-config global `ignores` through `eslint-plugin-oxlint`, so one list governs both linters and the root `eslint.config.js` only ignores the workspace members, each of which lints itself.
 
 Only the agent harness's machine-local `.git/info/exclude` hides live worktrees from git on the machine that made them. No clone, CI runner, or non-git tool ever reads that file, which is why `.gitignore` carries the exclusion too and each tool states it in its own configuration.
 

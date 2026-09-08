@@ -187,9 +187,9 @@ A **directory is not a specifier**, which is the one place the substitution is l
 
 `apps/web` has none of those pressures. Nothing bundles it from source, nothing publishes it, nothing resolves into it; it is the leaf of the graph. Its `@/` and `~/` are **Nuxt's own aliases**, generated into `.nuxt/tsconfig.*.json` and understood by the Vite and Nitro builds without anything being configured — so they are the framework's convention rather than one of ours, and replacing them would mean fighting generated configuration for a property the app cannot use.
 
-The repo-root `scripts/` tree is not a package either, but it converted anyway — it declares `"#scripts/*": "./scripts/*.ts"` in the root manifest. It had no framework generating an alias for it, so keeping one meant keeping a `paths` block and the `resolve.tsconfigPaths` that made Vitest read it; converting deleted both. **There is now no `paths` entry anywhere in the repo that anyone here wrote** — only the ones Nuxt generates for the app.
+The repo-root `scripts/` tree declares the same `#src/*`, as the workspace member it is. It had no framework generating an alias for it, so keeping one meant keeping a `paths` block and the `resolve.tsconfigPaths` that made Vitest read it; converting deleted both. **There is now no `paths` entry anywhere in the repo that anyone here wrote** — only the ones Nuxt generates for the app.
 
-An `.oxlintrc.json` override bans `@/**` and `~/**` under `packages/*/src/**`, `scripts/**` and `.agents/**` — everything except the app — so the split is enforced rather than remembered.
+An `.oxlintrc.json` override bans `@/**` and `~/**` under `packages/*/src/**`, `scripts/src/**` and `.agents/**` — everything except the app — so the split is enforced rather than remembered.
 
 ## Which unlocks source exports
 
