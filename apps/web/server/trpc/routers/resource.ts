@@ -216,7 +216,7 @@ export const resourceRouter = router({
       );
       await purgeResource(ctx.db, containerClient, tableClients, id);
       // The other half of the counter: a purge is the one delete that gives bytes back from this process, so
-      // It is the one delete whose owner is here to be told. See /docs/platform/storage-quotas
+      // It is the one delete whose owner is here to be told. See /docs/resource/storage-quotas
       await emitStorageUsage(ctx.db, ctx.resource.userId);
       await publishResourceOperation(ctx.getSessionPayload, {
         path: RoutePath.ResourceExplorerRecycleBin,

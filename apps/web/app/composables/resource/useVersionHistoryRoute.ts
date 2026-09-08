@@ -5,7 +5,7 @@ import { getRouteParamString } from "@/util/router/getRouteParamString";
 // The version history panel's place in the route, which is what makes it deep-linkable: the back button, a
 // Refresh and a shared link all land on the same panel over the same version, because none of it is state the
 // Panel keeps to itself. `versions` says the panel is open; `version` names the snapshot being previewed in
-// Place of the blade. See /docs/platform/resource-snapshots
+// Place of the blade. See /docs/resource/resource-snapshots
 export const useVersionHistoryRoute = () => {
   const { currentRoute } = useRouter();
   const previewSnapshotVersionId = computed(() => getRouteParamString(currentRoute.value.query.version));

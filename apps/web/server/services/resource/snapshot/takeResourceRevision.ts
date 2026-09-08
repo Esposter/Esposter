@@ -20,7 +20,7 @@ import { and, eq, isNull, lte, or, sql } from "drizzle-orm";
 // A point the owner can return to, taken from the working copy as it stands. Returns the version it wrote, or
 // Undefined when there was nothing to take — a resource whose content blob does not exist yet has no state worth
 // A revision, and the paths that take one before overwriting a draft must not fail on an empty draft. It throws,
-// So only a caller that can proceed without a revision swallows it (/docs/platform/resource-snapshots)
+// So only a caller that can proceed without a revision swallows it (/docs/resource/resource-snapshots)
 //
 // The bytes are copied rather than parsed and re-serialized: a revision is what the working copy was, so a field
 // A later version of the type stopped declaring must not be filtered out of the snapshot taken to recover it
@@ -81,7 +81,7 @@ export const takeResourceRevision = async (
     getSnapshotMetadata({ reason, summary: getSnapshotSummary(resource.type, serializedContent) }),
   );
   // A revision is stored bytes the owner keeps, charged like the working copy it was taken from. On the
-  // Owner rather than the caller: a deploy or a restore writes on their behalf. See /docs/platform/storage-quotas
+  // Owner rather than the caller: a deploy or a restore writes on their behalf. See /docs/resource/storage-quotas
   await chargeAndEmitStorageLedgerEntry(
     ctx.db,
     resource.userId,
@@ -91,7 +91,7 @@ export const takeResourceRevision = async (
   );
   // Evicting by number rather than by listing keeps this to one publish rather than a walk of the prefix on
   // Every save, and a number the buffer already passed over names a blob that is not there — which the deletion
-  // Path treats as success (/docs/platform/resource-snapshots)
+  // Path treats as success (/docs/resource/resource-snapshots)
   const { maxRetained } = SnapshotChannelDefinitionMap[SnapshotChannel.Revisions];
   const evictedVersion = revisionVersion - maxRetained;
   if (evictedVersion > 0)

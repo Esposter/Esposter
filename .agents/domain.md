@@ -8,7 +8,7 @@ This repo has **no root `CONTEXT.md` and no `docs/adr/`**, and neither should be
 
 - **`apps/web/content/docs/index.md`** — the map. Names every area and what it covers, in place of a `CONTEXT-MAP.md`.
 - **`apps/web/content/docs/architecture/index.md`** and the `architecture/*.md` pages it tables — the ADRs. Each page is one cross-cutting decision, single-responsibility, describing the as-built repo-wide answer to "whenever we need X, we do it this way".
-- **The relevant area's `index.md` plus its feature pages** — `esbabbler`, `platform`, `posts`, `users`, `sheet-editor`, `infra`, `virrun`, and the rest. An area's overview carries its vocabulary; a feature page carries the shipped behaviour.
+- **The relevant area's `index.md` plus its feature pages** — `esbabbler`, `resource`, `post`, `user`, `infra`, `virrun`, and the rest. An area's overview carries its vocabulary; a feature page carries the shipped behaviour.
 
 Read only the pages that touch the area you're about to work in. If a page you'd expect doesn't exist, **proceed silently** — don't flag its absence and don't propose creating docs upfront.
 

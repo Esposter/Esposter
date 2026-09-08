@@ -1,0 +1,204 @@
+---
+title: Resources
+description: The standard for product persistence and surface — one Postgres table, one blob container, one procedure factory, opt-in capabilities.
+---
+
+# Resources
+
+The standard for product persistence and product surface. **Everything is a resource**: a file, a survey, a todo list, a dashboard, an email, a webpage, a flowchart. One Postgres table, one blob container, one procedure factory, one explorer UI. Cross-cutting behaviors (publishing, dataset serving, asset hosting, import/export) are opt-in **capabilities**, never baked into the core.
+
+## Anatomy
+
+A resource is three things: an identity row (Postgres), a content blob (Azure Blob), and a definition (shared code).
+
+```mermaid
+flowchart LR
+  subgraph pg [Postgres — identity and lifecycle]
+    ROW["resources row<br/>id · type · name · userId · contentVersion"]
+    PUBROW["resource_publications row<br/>exists iff published"]
+    ROW -. "1:0..1, Publishable only" .-> PUBROW
+  end
+
+  subgraph blob ["Azure Blob resource-assets — every path under {id}/"]
+    CONTENT["content.json — the working copy"]
+    PUB["published/{publishVersion}.json — immutable"]
+    FILES["files/… — binary assets, FileAssets only"]
+  end
+
+  DEF["ResourceDefinitionMap entry"]
+
+  ROW -- "id is the blob path prefix" --> CONTENT
+  CONTENT -- "publishResource copies" --> PUB
+  DEF -- "contentSchema validates" --> CONTENT
+  DEF -- "capabilities gate procedures, blades, commands" --> ROW
+```
+
+**Settings vs data is a UX separation, not a storage separation.** A resource's parse settings and its actual data are distinct sections of one content blob, edited in distinct blades, saved through one procedure with one `contentVersion`. Never split one artifact across two write paths.
+
+## Data model
+
+Drizzle table `resources` (`packages/db-schema/src/schema/resources.ts`) — pure identity + content lifecycle:
+
+| Column           | Type                   | Notes                                                                                   |
+| ---------------- | ---------------------- | --------------------------------------------------------------------------------------- |
+| `id`             | uuid PK                | becomes the blob path prefix                                                            |
+| `type`           | `ResourceType` pg enum | Blueprint, Dashboard, Email, Flowchart, Note, Program, Sheet, Survey, TodoList, Webpage |
+| `name`           | text + length check    | `createNameSchema` pattern; a trigram GIN index backs similarity ranking in search      |
+| `tags`           | jsonb, not null, `{}`  | free-form key/value labels; a GIN index backs the `tags @> input` containment filter    |
+| `userId`         | FK → users, cascade    | owner; resources are single-owner                                                       |
+| `contentVersion` | integer                | optimistic concurrency on content saves                                                 |
+
+Publish state is **normalized into its own table**, `resource_publications` — a row exists iff the resource is currently published. Publishing is a capability, not a base attribute, so publish columns do not belong on every resource row:
+
+| Column           | Type                             | Notes                                      |
+| ---------------- | -------------------------------- | ------------------------------------------ |
+| `resourceId`     | uuid PK, FK → resources, cascade | one publication per resource               |
+| `publishVersion` | integer, default 1               | keys the immutable published blob snapshot |
+| `publishedAt`    | timestamp, default now           | when the current publish happened          |
+
+Content blobs live in one container, `AzureContainer.ResourceAssets`, keyed by id only (type lives in the row; ids are UUIDs — a type prefix would duplicate authoritative data into path strings):
+
+```text
+{id}/content.json                      working copy (JSON, validated by the type's content schema)
+{id}/published/{publishVersion}.json   publish snapshots (Publishable only)
+{id}/files/…                           binary assets (FileAssets types only)
+```
+
+Ownership is enforced through the Postgres row, never inferred from the blob path. Deleting a resource is soft — identically for every type: it stamps `deletedAt` and drops the publication row, leaving the `{id}/` blob directory intact so a restore can hand the content back. Purging is what deletes the directory and then the row ([recycle bin](/docs/resource/recycle-bin)).
+
+Each type owns one content schema (Zod, interface-first, one export per file) in `apps/web/shared/models/`. A content schema always produces an **object** (never a bare string/array) so future fields extend without a blob-shape break.
+
+## Capabilities
+
+A capability is a cross-cutting mechanism a resource type opts into via its definition. **Admission rule: a capability exists only when ≥2 resource types need the same mechanism, or when the type system must guarantee its absence** (a TodoList must not have publish endpoints). Anything used by exactly one type is type-specific code — promoting a single-consumer mechanism is over-engineering.
+
+| Capability          | Contract                                                                                                                              | Adopters                                                                |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command → [publishing](/docs/architecture/publishing)   | Dashboard, Email, Flowchart, Note, Survey, Webpage                      |
+| **DatasetProvider** | registers a provider so `dataset.readDataset` resolves the type → [datasets](/docs/architecture/dataset)                              | Program (participant status), Sheet, Survey (responses)                 |
+| **FileAssets**      | owner-only upload/download/delete of binary assets under `{id}/files/…` → [resource file assets](/docs/resource/resource-file-assets) | Email, Survey, Webpage                                                  |
+| **Portable**        | import/export via declared formats (self-contained `export()` / `import()`) + Import/Export commands                                  | Sheet (csv/json/xlsx, both ways), Email (personalized html export only) |
+
+Explicitly **not** capabilities: collecting public responses (Survey-only — stays survey-specific code) and dataset _consumption_ (just calling `dataset.readDataset` from a component; no per-type wiring to declare).
+
+### Declaration — `ResourceDefinitionMap`
+
+One shared as-const-satisfies map (`apps/web/shared/services/resource/ResourceDefinitionMap.ts`) is the single source of truth for what a type is: its `contentSchema`, `icon`, `title`, and `capabilities` (`{ datasetProvider?: true; fileAssets?: true; portable?: true; publishable?: true }`), keyed by `ResourceType`.
+
+A generic mapped type derives the subset of types declaring each capability:
+
+```ts
+// apps/web/shared/models/resource/CapabilityResourceType.ts
+export type CapabilityResourceType<TCapability extends keyof ResourceCapabilities> = {
+  [T in ResourceType]: (typeof ResourceDefinitionMap)[T]["capabilities"] extends Record<TCapability, true> ? T : never;
+}[ResourceType];
+```
+
+`PublishableResourceType`, `FileAssetsResourceType`, and `PortableResourceType` are its aliases, and `hasCapability(type, capability)` is the matching runtime type guard. Capability implementation maps are keyed by the derived unions — `ViewComponentMap: Record<PublishableResourceType, Component>`, `PortableFormatMap: Record<PortableResourceType, …>` — so a missing view page or format entry is a compile error, and adding one for a non-capable type is also a compile error.
+
+### Wiring
+
+```mermaid
+flowchart TB
+  DEF["ResourceDefinitionMap[type].capabilities"]
+
+  DEF -->|"derives literal unions"| UNIONS["PublishableResourceType<br/>FileAssetsResourceType<br/>PortableResourceType"]
+
+  subgraph server [Server]
+    FACTORY["createResourceProcedures(type, options?)"]
+    BASE["base procedures — CRUD, read and save content"]
+    PUBP["publish procedures"]
+    FAP["file-asset procedures"]
+    DPM["DatasetProviderMap"]
+  end
+
+  subgraph client [Client]
+    BLADES["ResourceBladeDefinitionMap"]
+    CMDS["Toolbar commands — Publish · Import · Export"]
+    VIEWS["ViewComponentMap"]
+    FMT["PortableFormatMap"]
+  end
+
+  UNIONS -->|"conditional return type:<br/>a procedure exists iff the type declares it"| FACTORY
+  FACTORY --> BASE
+  FACTORY -.->|"publishable types only<br/>(compile error otherwise)"| PUBP
+  FACTORY -.->|"fileAssets types only"| FAP
+  UNIONS --> VIEWS
+  UNIONS --> FMT
+  FMT --> CMDS
+  DEF --> DPM
+  DEF --> BLADES
+```
+
+Component wiring cannot live in shared code, so the client keeps one thin satellite map per surface a type can hand a component to: `ResourceBladeDefinitionMap` (type-specific blades), `ResourceEditorComponentMap` (the inline Editor blade), `ResourceOverviewComponentMap` (an Overview blade richer than the generic one) and `ViewComponentMap` (public view renderers). `PortableFormatMap` sits beside them and is deliberately not one of them: its entries are the import and export handlers a type offers the command bar, not components. **A component map is for components only** — everything else procedural reaches a type through its own router name (`useResourceRouter`), so a create, a rename or a publish never needs an entry anywhere. The two maps whose entries carry a vendor canvas — `ResourceEditorComponentMap` and `ViewComponentMap` — hold `defineAsyncComponent` loaders rather than imports, because a static entry lands every type's editor in the chunk of whoever reads the map: opening one resource would download all of them. Server-side hooks (publish transform, read transform) are passed at router construction because they import server code.
+
+## Procedures
+
+One factory, `createResourceProcedures(type, options?)` (`server/trpc/procedure/resource/createResourceProcedures.ts`), spread into each type's router. Content schema and container come from `ResourceDefinitionMap[type]` — callers never pass them. Publish procedures are spread **conditionally with a conditional return type** (guarded by `hasCapability(type, "publishable")` at runtime), so a non-publishable type's router has no publish endpoints at the type level — a compile error on the client `$trpc` type, a 404 on the wire. The options argument itself is a conditional tuple: publish hooks are only accepted when `TType extends PublishableResourceType`.
+
+| Procedure                                     | Auth                                            | Purpose                                                         |
+| --------------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
+| `createResource`                              | authed                                          | metadata row; content blob written on first save                |
+| `readResources`                               | authed                                          | per-type offset-paginated list, publication state joined along  |
+| `updateResource`                              | owner                                           | metadata edit — `{ id, name?, tags? }`, at least one of the two |
+| `deleteResource`                              | owner                                           | soft delete — stamps `deletedAt`, blobs survive until purge     |
+| `readResourceContent` / `saveResourceContent` | owner                                           | blob read/write with `contentVersion` check                     |
+| `onSaveResourceContent`                       | owner                                           | subscription — streams each save's content to other devices     |
+| the publish set                               | see [publishing](/docs/architecture/publishing) | Publishable types only                                          |
+
+`updateResource` replaces the whole `tags` record rather than merging it (Azure's own tag update semantics), and only a changed `name` writes a `Renamed` [activity](/docs/resource/activity-log) entry — a tags-only edit is not a rename, so it leaves no trail entry. Both editable fields are optional (at least one is required) so a caller writes only the field it owns: a rename and a tag edit are independent writes to one row, and a tag edit that had to restate the name would put the pre-rename name back whenever the two overlap.
+
+`saveResourceContent` bumps `contentVersion` and writes the blob in one transaction — the version check is part of the `UPDATE`'s `WHERE`, so concurrent saves cannot both pass and silently lose a write, and a failed blob upload rolls the version back.
+
+Every content write funnels through the `saveResourceContent` service (`server/services/resource/`), not just the procedure of the same name: the editor's save, [blueprint](/docs/resource/blueprint-resource) deploy, [duplicate](/docs/resource/resource-page-parity) and [restore](/docs/resource/resource-snapshots) all write their content through it. It parses the caller's content against `ResourceDefinitionMap[type].contentSchema` and then performs the blob write, the `resourceEventEmitter` emit, the [activity](/docs/resource/activity-log) entry and the type's after-save hook as one unit, because a path that writes content and misses one of them leaves a resource whose reminders, schedules or derived state exist or not depending on which door its content came through.
+
+The parse belongs to that unit for the same reason. `content` arrives as `unknown` and the hook reads it as the type's own shape, so a caller that hands over content it never parsed — a blueprint manifest carries every entry's content as `z.unknown()` — reaches the hook with ISO strings where it declares `Date`s, and the hook's failure is best-effort and swallowed. Parsing at the one door means no caller can be the one that forgets; a caller that already parsed pays an idempotent second pass.
+
+So real-time sync is one subscription: after a successful write it emits on `resourceEventEmitter` and `onSaveResourceContent` streams `{ content, contentVersion, id }` to the owner's other devices (the emitting device is filtered out, same as the messaging emitters). Subscribers adopt both the content and the `contentVersion`, so a remote write keeps their next save from being rejected as stale. TodoList wires this up client-side (`useTodoListSubscribables` → `storeSaveResourceContent`), making every item table operation live; other types can reuse the same subscription as needed.
+
+The type's after-save hook is registered in `ResourceAfterSaveContentMap`, keyed by `ResourceType`, rather than handed to the procedure factory — a hook reachable from only one of the paths that write content is the failure above. It receives the prior content (read before the write overwrites it, `undefined` on a first write) so it can diff, and is fire-and-forget and best-effort: it must never fail or delay the write. TodoList registers [due reminders](/docs/resource/todolist-due-reminders) there.
+
+The factory also accepts an optional publish-time content-transform hook, `transformPublishedContent` — see [publishing](/docs/architecture/publishing). What a type declares **live** rather than frozen is not a hook but a declaration the snapshot mechanism owns — see [resource snapshots](/docs/resource/resource-snapshots).
+
+`resource.readResource` answers with the row plus its `publication` (the `resource_publications` row, or `null` when there is none) — see [publishing](/docs/architecture/publishing).
+
+Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey, isDeletedOnly = false)` in `server/trpc/procedure/resource/`, querying `resources` and exposing `ctx.resource`; a typeless overload (`type: undefined`) backs the cross-type `resource.readResource`. `isDeletedOnly` inverts which rows resolve, so the [recycle bin](/docs/resource/recycle-bin) procedures (`purgeResource`, `restoreResource`) reach only soft-deleted resources and every other procedure only live ones.
+
+### Router topology
+
+Router-per-type plus one cross-type router:
+
+| Router                                                                    | Contents                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `resource`                                                                | everything that must work without knowing the type — the explorer's reads and counts (sharing one filter schema so list and total stay in lockstep), favourites, activity, publish history, duplicate, and the recycle-bin lifecycle |
+| `sheet`, `todoList`, `dashboard`, `email`, `webpage`, `flowchart`, `note` | `createResourceProcedures(type, …)`                                                                                                                                                                                                  |
+| `survey`                                                                  | factory + type-specific procedures (public respondent responses)                                                                                                                                                                     |
+| `program`                                                                 | factory + type-specific procedures (`generateProgramParticipants`, `readProgramStatus`)                                                                                                                                              |
+| `blueprint`                                                               | factory + type-specific procedures (`captureBlueprint`, `deployBlueprint`)                                                                                                                                                           |
+
+Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key off the literal tRPC path (`"flowchart.saveResourceContent"`), and type-specific procedures need a home.
+
+## Client
+
+- **Explorer** (`/resource-explorer`) is an Azure-portal-style shell: a Home landing (search + quick-create tiles + recent resources), a full list at `/resource-explorer/all`, and a route-driven create flow (`/resource-explorer/create` gallery → `/resource-explorer/create/[type]` form). Home and `/resource-explorer/all` read through the shared `useReadResources` composable (`resource.readResourcesCount` + `resource.readResources`, different sort/limit/filter per surface). Resource pages live at `/resource-explorer/[id]/[[blade]]`.
+- **`useResourceStore`** (`apps/web/app/store/resource/index.ts`) is the open resource: it loads the row (`resource.readResource`) with its publication, reads typed content (`{type}.readResourceContent`), and owns every write against that resource — `saveContent` (optimistic `contentVersion`), `renameResource`, `updateResourceTags`, `deleteResource`, `duplicateResource` and the capability actions (`publishResource`/`unpublishResource`, no-ops for non-publishable types). It is **blade-scoped**: the store is app-lifetime, this state is one open resource's, so the page clears it on unmount, keyed by the id it opened because a keyed page swap mounts the next resource's page first.
+- **A type's content store composes the resource store rather than loading its own copy** — `useSheetStore`, `useNoteStore`, `useDashboardStore` and the rest hold only their own parsed content and reach the row through `readResource`/`readContent`/`saveContent`. The store cannot be generic over `ResourceType`, so the type parameter moved to `readContent<ResourceType.Sheet>()`, the one member whose return shape depends on it; everything else about a resource row is identical for every type. One row, one publication, one loading flag, so a rename in the toolbar is the name the editor sees.
+- **`save` skips content identical to what was last persisted**, compared as JSON, so an editor whose autosave fires per frame does not bump `contentVersion` for a document nobody changed. Every content store seeds that comparison with `setPersistedContent` after hydrating, and nothing may stamp the content on the way in — a store that refreshed the content's own `updatedAt` before saving would make every comparison differ, and the modified time the explorer reads is the `resources` row's, which the server bumps per accepted write.
+- Resource pages are auth-gated. There is no unauthenticated/localStorage editing path — one persistence mechanism, not two.
+
+## Key files
+
+| File                                                                  | Role                                       |
+| --------------------------------------------------------------------- | ------------------------------------------ |
+| `packages/db-schema/src/schema/resources.ts`                          | identity table                             |
+| `packages/db-schema/src/schema/resourcePublications.ts`               | publish state table                        |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`          | type definitions + capability declarations |
+| `apps/web/shared/models/resource/CapabilityResourceType.ts`           | derived capability unions                  |
+| `apps/web/shared/services/resource/getFilesDirectoryName.ts`          | the `{id}/files` path convention           |
+| `apps/web/shared/services/resource/hasCapability.ts`                  | runtime capability guard                   |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | the procedure factory                      |
+| `apps/web/server/trpc/procedure/resource/getOwnerProcedure.ts`        | ownership middleware                       |
+| `apps/web/app/store/resource/index.ts`                                | the open resource — state and every write  |
+| `apps/web/app/services/resource/ResourceBladeDefinitionMap.ts`        | type-specific blades                       |
+| `apps/web/app/services/resource/ViewComponentMap.ts`                  | public view renderers (Publishable)        |
+| `apps/web/app/services/resource/PortableFormatMap.ts`                 | import/export formats (Portable)           |

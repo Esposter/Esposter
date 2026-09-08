@@ -6,8 +6,8 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
   architecture: {
     "Core standards": [
       "platform",
-      "resources",
-      "datasets",
+      "resource",
+      "dataset",
       "publishing",
       "serialization",
       "client-data",
@@ -64,7 +64,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     Calls: ["voice-video", "push-to-talk", "calls"],
     Infrastructure: ["push-notifications", "offline-cache", "webhooks"],
   },
-  platform: {
+  resource: {
     "Explorer & shell": [
       "resource-explorer",
       "resource-service-menu",
@@ -88,6 +88,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     Resources: [
       "sheet-resource",
       "create-from-file",
+      "sheet",
       "survey-resource",
       "program-resource",
       "note-resource",

@@ -22,7 +22,7 @@ Which Azure services are used, what each one owns, and which package accesses it
 
 EventGrid vs Service Bus: EventGrid is fire-and-forget **now** (push a notification the moment a message lands); Service Bus is fire **later** (a scheduled message job or TodoList reminder must run at its `runAt`/`dueAt`). Both terminate in Azure Functions handlers.
 
-Not every EventGrid handler consumes an event this app published. `ReconcileStorageLedgerEntry` — the deployed function, which calls the service of the same name — subscribes to the storage account's own **system topic**, so `Microsoft.Storage.BlobCreated` is what replaces a client's declared upload size with the stored object's real length in the per-user storage ledger — a fact no server of ours ever observes, because the block PUT never passes through one ([storage quotas](/docs/platform/storage-quotas)).
+Not every EventGrid handler consumes an event this app published. `ReconcileStorageLedgerEntry` — the deployed function, which calls the service of the same name — subscribes to the storage account's own **system topic**, so `Microsoft.Storage.BlobCreated` is what replaces a client's declared upload size with the stored object's real length in the per-user storage ledger — a fact no server of ours ever observes, because the block PUT never passes through one ([storage quotas](/docs/resource/storage-quotas)).
 
 ## Blob Storage containers
 
@@ -37,7 +37,7 @@ Container names live in the `AzureContainer` enum (`packages/db-schema/src/model
 | `MessageAssets`              | Message file attachments (`{roomId}/{fileId}\|{filename}`). Lifecycle policy tiers blobs Cool@30d → Cold@90d to cut storage cost              |
 | `PrivateUserAssets`          | Per-user private blobs                                                                                                                        |
 | `PublicUserAssets`           | User profile images (`{userId}/ProfileImage`), room profile images (`rooms/{roomId}/ProfileImage/{uuid}`)                                     |
-| `ResourceAssets`             | Resource content blobs, publish snapshots, and type-owned files → [resources](/docs/architecture/resources)                                   |
+| `ResourceAssets`             | Resource content blobs, publish snapshots, and type-owned files → [resources](/docs/architecture/resource)                                    |
 
 ## Table Storage tables
 
@@ -48,7 +48,7 @@ Table names live in the `AzureTable` enum (`packages/db-schema/src/models/azure/
 | `MessagesAscending`  | Key-only mirror of `Messages` keyed by the original timestamp, so the same rows can be read oldest-first |
 | `MessagesMetadata`   | Sidecar entities keyed to a message rather than to a point in time                                       |
 | `ResourceViews`      | Best-effort view counters bucketed per resource per UTC day, not one row per event                       |
-| `SurveyResponses`    | `partitionKey = survey resource id`, and served as a dataset → [datasets](/docs/architecture/datasets)   |
+| `SurveyResponses`    | `partitionKey = survey resource id`, and served as a dataset → [datasets](/docs/architecture/dataset)    |
 
 ## Search index (`messages-index`)
 
@@ -112,6 +112,6 @@ EventGrid decouples the HTTP response from delivery. The Function handles retrie
 | Cross-process fan-out | Azure Web PubSub                                                                            | All server instances   | Webhook message delivery, storage usage from the Functions host |
 | Media / signaling     | LiveKit SFU                                                                                 | External service       | Audio, video, screenshare tracks and participant lifecycle      |
 
-The layers split on **which process holds the writer**, not on how much fan-out is wanted. A change the app makes announces itself in-process; a change an Azure Function makes has no emitter the app is listening to, so it publishes to a hub instead — webhook messages on `Messages`, and a settled or released storage charge on `Storage` ([storage quotas](/docs/platform/storage-quotas)). A surface fed by both writers subscribes to both.
+The layers split on **which process holds the writer**, not on how much fan-out is wanted. A change the app makes announces itself in-process; a change an Azure Function makes has no emitter the app is listening to, so it publishes to a hub instead — webhook messages on `Messages`, and a settled or released storage charge on `Storage` ([storage quotas](/docs/resource/storage-quotas)). A surface fed by both writers subscribes to both.
 
 tRPC subscriptions are driven by the in-process EventEmitter. The LiveKit webhook (`server/api/webhooks/livekit.post.ts`) feeds participant join/leave back into `callEventEmitter` so non-participants and tRPC subscriptions stay consistent without touching the SFU.

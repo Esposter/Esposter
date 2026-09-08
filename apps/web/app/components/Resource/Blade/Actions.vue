@@ -27,7 +27,7 @@ const isRenameOpen = ref(false);
 const isDeleteOpen = ref(false);
 const isShareOpen = ref(false);
 // The panel opens from here rather than from the editor, because Sheet and TodoList are blade-only types with
-// No editor at all — the action bar is the one surface every type has. See /docs/platform/resource-snapshots
+// No editor at all — the action bar is the one surface every type has. See /docs/resource/resource-snapshots
 const { openVersionHistory } = useVersionHistoryRoute();
 const { exportFormats, importFormats } = usePortableFormats(() => resource);
 // A type with several formats gets one command whose submenu names them, rather than one command per format —

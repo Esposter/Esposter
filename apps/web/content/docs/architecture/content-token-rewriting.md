@@ -5,7 +5,7 @@ description: Finding and rewriting tokens inside authored content — self-delim
 
 # Content Token Rewriting
 
-Several features find a token inside content someone else authored and rewrite it: stable asset urls in a resource's saved content ([resource file assets](/docs/platform/resource-file-assets) — the token-we-control case), `{{variable}}` merge fields in email personalization, `{{entry:key}}` aliases in a blueprint. The content is arbitrary — HTML, CSS, JSON, or all three nested — so "where does this token end" is the whole problem, and getting it wrong silently corrupts a document rather than failing.
+Several features find a token inside content someone else authored and rewrite it: stable asset urls in a resource's saved content ([resource file assets](/docs/resource/resource-file-assets) — the token-we-control case), `{{variable}}` merge fields in email personalization, `{{entry:key}}` aliases in a blueprint. The content is arbitrary — HTML, CSS, JSON, or all three nested — so "where does this token end" is the whole problem, and getting it wrong silently corrupts a document rather than failing.
 
 These rules apply to every such rewrite.
 

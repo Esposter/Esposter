@@ -56,7 +56,7 @@ The agent starts with zero conversation context. The prompt must carry:
 
 ## While the agent runs
 
-- The main session may only edit files the agent will not stage — agree the file boundary in the prompt (e.g. agent excludes `proposals/platform/blueprint-*`), and queue everything else until its commit lands.
+- The main session may only edit files the agent will not stage — agree the file boundary in the prompt (e.g. agent excludes `proposals/resource/blueprint-*`), and queue everything else until its commit lands.
 - Never spawn a duplicate agent for the same task; wait for the completion notification, then verify its commit yourself (git log, spot-check the grep audits) before building on it.
 
 ## Running several agents at once
@@ -84,4 +84,4 @@ Reviews are execution roles, not the thinking role. The full convention — sing
 
 ## Design for agents
 
-Every feature is designed agentic-first: resource creation (and eventually most authoring) may be done by AI, so specs must keep that path open — content is schema-validated JSON, writes go through ordinary validated procedures, no hidden client-side state, validation before side effects. `apps/web/content/docs/platform/blueprint-resource.md` is the canonical statement: whatever creates resources — human, form, or model — goes through the same front door.
+Every feature is designed agentic-first: resource creation (and eventually most authoring) may be done by AI, so specs must keep that path open — content is schema-validated JSON, writes go through ordinary validated procedures, no hidden client-side state, validation before side effects. `apps/web/content/docs/resource/blueprint-resource.md` is the canonical statement: whatever creates resources — human, form, or model — goes through the same front door.

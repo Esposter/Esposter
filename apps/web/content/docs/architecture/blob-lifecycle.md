@@ -72,7 +72,7 @@ That comparison alone does not decide which blobs are safe, because the submitte
 | `ResourceAssets` · `{id}/content.json`                    | fixed, overwritten | `saveResourceContent`                                                                    | `purgeResource`                                                                                                                                                                                                   |
 | `ClickerAssets` / `DungeonsAssets` · `{userId}/save`      | fixed, overwritten | game save writes                                                                         | none — overwrite in place                                                                                                                                                                                         |
 
-Soft-deleting a resource deliberately keeps every `ResourceAssets` blob — restore must hand back a whole resource, so `purgeResource` is the only sweep of the `{id}/` directory ([recycle bin](/docs/platform/recycle-bin)).
+Soft-deleting a resource deliberately keeps every `ResourceAssets` blob — restore must hand back a whole resource, so `purgeResource` is the only sweep of the `{id}/` directory ([recycle bin](/docs/resource/recycle-bin)).
 
 ## Notes
 

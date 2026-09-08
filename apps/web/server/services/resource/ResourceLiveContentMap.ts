@@ -9,7 +9,7 @@ import { ResourceType } from "@esposter/db-schema";
 // Change under an already-published link, while its `settings` decide whether the survey is still collecting and
 // Under which response mode, so those take effect on the next read rather than the next publish. Declared here,
 // It applies on every path that reconstitutes content from a snapshot: the public read, the owner's version
-// Preview and the restore (/docs/platform/resource-snapshots)
+// Preview and the restore (/docs/resource/resource-snapshots)
 export const ResourceLiveContentMap: {
   [TType in ResourceType]?: (resource: Resource, content: ResourceContent<TType>) => Promise<ResourceContent<TType>>;
 } = {

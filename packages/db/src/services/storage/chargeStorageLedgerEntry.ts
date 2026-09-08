@@ -7,7 +7,7 @@ import { storageLedger } from "@esposter/db-schema";
 // So no reserve — the bytes are stored by the time this runs, and the client was never in the data path, so
 // There is nothing to gate and nothing to overshoot. It charges after the fact rather than holding space first,
 // Which is also why a save is never rejected for being over quota: the upload it would refuse has already
-// Happened, and refusing the charge would only make the counter lie. See /docs/platform/storage-quotas
+// Happened, and refusing the charge would only make the counter lie. See /docs/resource/storage-quotas
 //
 // The amount is provisional: the write raises its own `BlobCreated`, which finds the row this wrote and
 // Replaces the figure with the stored object's real size. It measures where this declares, so it always wins —

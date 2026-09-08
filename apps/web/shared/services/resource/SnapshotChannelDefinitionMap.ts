@@ -5,7 +5,7 @@ import { SnapshotKind } from "#shared/models/resource/SnapshotKind";
 // Channels beyond these three fields — which counter numbers them, whether an unpublish sweep takes them,
 // Whether taking one is an outward act with a public url and a view count — is owned by the caller that takes
 // Them, because driving that from a map would be a branch with indirection between it and its reader.
-// See /docs/platform/resource-snapshots
+// See /docs/resource/resource-snapshots
 export const SnapshotChannelDefinitionMap = {
   // No cap: publishes are deliberate and rare, and a retired public artifact is something an owner may need
   // To point at, so nothing is pruned

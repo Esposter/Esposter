@@ -30,7 +30,7 @@ Coverage lives in the area file, never here. A pass loads this file and the one 
 | ------------------------- | ---------------------------------------------------------------------------------- |
 | [app-shell](app-shell.md) | the chrome, the routes, and the cross-cutting service, composable and store layers |
 | [messaging](messaging.md) | Esbabbler — its components, store, composables, services and routers               |
-| [platform](platform.md)   | the resource explorer, the sheet editor and the other editors                      |
+| [resource](resource.md)   | the resource explorer, the sheet editor and the other editors                      |
 | [products](products.md)   | the smaller products — posts, the clicker, achievements                            |
 | [dungeons](dungeons.md)   | the game                                                                           |
 | [server](server.md)       | `apps/web/server` — routers, procedure builders, guards and services               |

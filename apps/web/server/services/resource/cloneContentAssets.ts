@@ -39,7 +39,7 @@ const cloneAsset = async (
   // A clone is stored bytes like any other, charged to whoever the clone is for. The source's length is
   // Provisional: the copy raises its own `BlobCreated`, which finds this row and replaces the figure with what
   // Landed, so a source overwritten mid-copy costs seconds of a wrong number rather than a second HEAD on every
-  // Clone (/docs/platform/storage-quotas). Charged before the copy, never after: Event Grid orders nothing, and
+  // Clone (/docs/resource/storage-quotas). Charged before the copy, never after: Event Grid orders nothing, and
   // An event arriving before the row exists is dropped for good — `reconcileStorageLedgerEntry` reads a blob
   // Nothing reserved as unaccounted rather than as an error, so nothing retries the provisional figure away
   await chargeStorageLedgerEntry(db, userId, AzureContainer.ResourceAssets, destinationBlobName, contentLength);

@@ -12,7 +12,7 @@ import { getDecodedUriComponent, getResultAsync, noop } from "@esposter/shared";
 // Ourselves — it reports what happened on a data path our servers are never part of.
 // Resource assets only — the quota counts what a user keeps in their own resources, and a room's attachments
 // Belong to the room. The subscription filters to this container and the handler agrees with that filter, so an
-// Event from anywhere else is dropped rather than mis-attributed. See /docs/platform/storage-quotas
+// Event from anywhere else is dropped rather than mis-attributed. See /docs/resource/storage-quotas
 const STORAGE_BLOB_CONTAINERS = [AzureContainer.ResourceAssets];
 
 export const reconcileStorageLedgerEntryHandler: EventGridHandler = (event, context) => {

@@ -10,7 +10,7 @@ export const generateUploadFileSasEntitiesInputSchema = z.object({
   // It is the client's own claim — an Azure write SAS carries no length constraint — so `BlobCreated` is what
   // Replaces it with the stored object's real size. The array is bounded by the in-flight hold cap rather than
   // The generic read limit: a batch above the cap can never pass the reserve however long the client waits.
-  // See /docs/platform/storage-quotas
+  // See /docs/resource/storage-quotas
   files: createUniqueArraySchema(
     z.object({
       ...fileEntitySchema.pick({ filename: true, mimetype: true }).shape,

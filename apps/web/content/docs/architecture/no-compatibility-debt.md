@@ -51,7 +51,7 @@ flowchart TD
 
 ## The one thing that is kept
 
-A name that is still **accurate** is not churn to be renamed for symmetry with its neighbours. `deleteStorageBlobs` sits beside `releaseStorageLedgerEntries` because it really does delete blobs and then release their ledger entries ([storage quotas](/docs/platform/storage-quotas)); renaming it to match the table would make it describe something it does not do. Correctness is the criterion, not consistency of prefix.
+A name that is still **accurate** is not churn to be renamed for symmetry with its neighbours. `deleteStorageBlobs` sits beside `releaseStorageLedgerEntries` because it really does delete blobs and then release their ledger entries ([storage quotas](/docs/resource/storage-quotas)); renaming it to match the table would make it describe something it does not do. Correctness is the criterion, not consistency of prefix.
 
 ## What this rules out
 

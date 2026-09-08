@@ -9,7 +9,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Functions host, while the meter watching it is subscribed to an in-process emitter in the app — so without
 // This the number is right in postgres and stale on screen until the next full page load. The group is the
 // Owner rather than a device, because the quota is a property of the account and every device showing it is
-// Wrong by the same amount. See /docs/platform/storage-quotas
+// Wrong by the same amount. See /docs/resource/storage-quotas
 //
 // The payload says only whose counter moved: the quota is derived from the tier by the app, and a figure
 // Computed twice on either side of a process boundary is a figure that can disagree with the gate. The client

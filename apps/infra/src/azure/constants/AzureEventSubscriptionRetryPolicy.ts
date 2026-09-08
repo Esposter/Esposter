@@ -6,7 +6,7 @@ import { EVENT_GRID_DELIVERY_TTL_MINUTES } from "@esposter/db-schema";
 // Carries the older policy, and Pulumi reports no diff until someone refreshes.
 // The time-to-live is taken from `EVENT_GRID_DELIVERY_TTL_MINUTES` rather than written here, because a consumer
 // Outside this package is bounded by the same window — the storage ledger keeps a hold alive for exactly as
-// Long as a `BlobCreated` for it can still be redelivered (/docs/platform/storage-quotas).
+// Long as a `BlobCreated` for it can still be redelivered (/docs/resource/storage-quotas).
 const AzureEventSubscriptionRetryPolicy: { eventTimeToLiveInMinutes: number; maxDeliveryAttempts: number } = {
   eventTimeToLiveInMinutes: EVENT_GRID_DELIVERY_TTL_MINUTES,
   maxDeliveryAttempts: 10,

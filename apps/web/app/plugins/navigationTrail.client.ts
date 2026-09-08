@@ -12,7 +12,7 @@ const getRecordedTrail = (trail: unknown) =>
 // The trail is state of the history entry: "how I got here" is not an address, so it does not belong in the url
 // (two addresses for one resource), and it is not a preference, so it does not belong in storage. The browser
 // Already keeps entry state across a reload and restores each entry's own on back and forward — exactly the
-// Lifetime a trail wants — so this hook is the only writer. See /docs/platform/breadcrumb-trail
+// Lifetime a trail wants — so this hook is the only writer. See /docs/resource/breadcrumb-trail
 export default defineNuxtPlugin(() => {
   const router = useRouter();
   const navigationTrailStore = useNavigationTrailStore();

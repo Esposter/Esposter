@@ -23,7 +23,7 @@ const saveStateDefinition = computed<{ color?: string; icon: string; title: stri
 
 <template>
   <!-- Why there is no Save command anywhere: an edit is durable the moment this says so. The word alone would be
-    a claim the owner has to take on trust, so the resting state names when — /docs/platform/resource-save-state -->
+    a claim the owner has to take on trust, so the resting state names when — /docs/resource/resource-save-state -->
   <v-tooltip location="bottom">
     <template #activator="{ props: tooltipActivatorProps }">
       <div :="tooltipActivatorProps" flex gap-1 items-center text-hint>

@@ -10,7 +10,7 @@ import { generateUploadFileSasEntities } from "@esposter/db";
 // Taken in the same call. Signing is local and touches nothing in Azure, so the reserve runs after it and
 // Before the response — a rejection is a write target the client never receives. Keeping the two in one
 // Function is what stops a new upload path from minting SAS urls nothing accounts for.
-// See /docs/platform/storage-quotas
+// See /docs/resource/storage-quotas
 export const generateReservedUploadFileSasEntities = async (
   db: Context["db"],
   userId: User["id"],

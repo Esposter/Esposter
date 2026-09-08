@@ -69,7 +69,7 @@ export const achievementRouter = router({
       const sessionUserId = ctx.getSessionPayload?.user.id;
       const userId = input ?? sessionUserId;
       if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
-      // The endpoint is deliberately public (docs/users/public-profile.md), so anyone may ask for anyone's
+      // The endpoint is deliberately public (docs/user/public-profile.md), so anyone may ask for anyone's
       // Achievements — but only the unlocked ones. A locked row names a hidden achievement the viewer has not
       // Earned, and an in-progress row publishes how far along someone is; the public profile renders neither,
       // So the filter belongs here rather than in the one surface that currently happens to drop them

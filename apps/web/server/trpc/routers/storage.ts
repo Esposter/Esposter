@@ -13,7 +13,7 @@ export const storageRouter = router({
   // The counter's other writer is the Functions host, which shares no event emitter with this process — so the
   // Blob events that settle a save or a deletion reach the meter through Web PubSub instead. The group is the
   // Account, not the device: a quota belongs to the user, and every device of theirs is stale by the same
-  // Amount. See /docs/platform/storage-quotas
+  // Amount. See /docs/resource/storage-quotas
   generateWebPubSubClientAccessUrl: standardAuthedProcedure.query<string>(({ ctx, signal }) =>
     generateWebPubSubClientAccessUrl(
       AzureWebPubSubHub.Storage,
@@ -28,7 +28,7 @@ export const storageRouter = router({
     for await (const [[storageUsage, targetUserId]] of events) if (targetUserId === userId) yield storageUsage;
   }),
   // Only the usage is stored — the quota is derived from the tier on every read, so moving a user to another
-  // Tier changes what they see and what the gate enforces in the same instant. See /docs/platform/storage-quotas
+  // Tier changes what they see and what the gate enforces in the same instant. See /docs/resource/storage-quotas
   readUsage: standardAuthedProcedure.query<StorageUsage>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const { storageBytesUsed, storageTier } = await requireEntity(

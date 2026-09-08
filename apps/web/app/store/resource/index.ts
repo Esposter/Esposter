@@ -67,7 +67,7 @@ export const useResourceStore = defineStore("resource", () => {
   const hasUnwrittenContent = ref(false);
   // Every type's edits land through saveContent, so the state every type shows is derived here rather than
   // Declared per type — a third-party editor autosaving on its own cadence, a toolbar command and a dialog's
-  // Save are the same write. See /docs/platform/resource-save-state
+  // Save are the same write. See /docs/resource/resource-save-state
   const saveState = computed(() => {
     if (isContentStale.value) return ResourceSaveState.Stale;
     // Asked of this resource rather than of the executor: a save is keyed by the resource it writes, and one
@@ -160,7 +160,7 @@ export const useResourceStore = defineStore("resource", () => {
       return false;
     // Cleared here rather than by whichever trigger armed it, because this is the one door every save comes
     // Through — a dialog's Save arms nothing, and a debounce clearing its own would call a save it then refuses
-    // Saved (/docs/platform/resource-save-state). The unchanged-content path below is a save all the same: it
+    // Saved (/docs/resource/resource-save-state). The unchanged-content path below is a save all the same: it
     // Wrote nothing because there was nothing left to write
     hasUnwrittenContent.value = false;
     const contentJson = JSON.stringify(content);
@@ -169,7 +169,7 @@ export const useResourceStore = defineStore("resource", () => {
     // Moved on, and everything it carries back — a stale latch, a failure, a contentVersion, the persisted-content
     // Baseline — is its own resource's. Applied to whichever resource is loaded now, it strands that one behind a
     // Refresh prompt or a version the server never issued for it. The notifications are not scoped: the write
-    // Failed for the owner either way (/docs/platform/resource-save-state)
+    // Failed for the owner either way (/docs/resource/resource-save-state)
     const getActiveResource = () => (resource.value?.id === current.id ? resource.value : undefined);
     let isSuccessful = false;
     await executeSaveContentMutation(

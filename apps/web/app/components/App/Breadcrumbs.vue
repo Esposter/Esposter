@@ -25,7 +25,7 @@ const items = computed(() => {
 
 <!-- Where the visitor came from, not where the url sits in the route tree — the page they are on is the
      header's title, never a crumb, and the hub above it is always reachable.
-     See /docs/platform/breadcrumb-trail -->
+     See /docs/resource/breadcrumb-trail -->
 <template>
   <v-breadcrumbs v-if="items.length > 0" :items p-0>
     <template #item="{ item }">

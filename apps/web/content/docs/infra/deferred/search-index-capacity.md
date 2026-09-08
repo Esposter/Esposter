@@ -21,8 +21,8 @@ Nothing in the app breaks loudly. The `messages-indexer` is a scheduled pull ind
 
 ## Revisit when
 
-The indexer's status endpoint reports a quota or storage failure, index storage passes roughly half the 50 MB cap, or a second feature needs an index and would take the last free slot (the pending candidate is [resource search](/docs/platform/deferred/azure-ai-search)).
+The indexer's status endpoint reports a quota or storage failure, index storage passes roughly half the 50 MB cap, or a second feature needs an index and would take the last free slot (the pending candidate is [resource search](/docs/resource/deferred/azure-ai-search)).
 
 ## Cheaper interim
 
-Bounding the corpus buys capacity before spend does: [message retention](/docs/esbabbler/deferred/message-retention) pruning old rows shrinks what the indexer feeds, and keeping resource search on `pg_trgm` ([global search relevance](/docs/platform/global-search-relevance)) leaves the two spare index slots unspent.
+Bounding the corpus buys capacity before spend does: [message retention](/docs/esbabbler/deferred/message-retention) pruning old rows shrinks what the indexer feeds, and keeping resource search on `pg_trgm` ([global search relevance](/docs/resource/global-search-relevance)) leaves the two spare index slots unspent.

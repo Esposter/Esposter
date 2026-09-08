@@ -355,7 +355,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // A snapshot is stored bytes the owner keeps, so it is charged like the working copy it was taken from —
         // Its cloned assets charge themselves as each copy lands. After the transaction, never inside: the
         // Charge locks the ledger row and then the user's, and a transaction held open across that waits on
-        // Locks it is itself holding. See /docs/platform/storage-quotas
+        // Locks it is itself holding. See /docs/resource/storage-quotas
         await chargeAndEmitStorageLedgerEntry(
           ctx.db,
           ctx.getSessionPayload.user.id,

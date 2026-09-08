@@ -49,7 +49,7 @@ export const saveResourceContent = async (
   // Their own, and a first write has no prior state. Before the write, since what is worth keeping is what this
   // Save replaces, and awaited so a revision cannot snapshot the content it was meant to precede. Best-effort
   // Only here: a failed safety net must not fail the autosave it was protecting, where every other trigger
-  // Throws to keep one deliberate destructive act undoable (/docs/platform/resource-snapshots).
+  // Throws to keep one deliberate destructive act undoable (/docs/resource/resource-snapshots).
   //
   // This check is a filter, not the throttle. `resource` was read before the save, so two concurrent saves both
   // Hold the same pre-take timestamp and both pass — what it buys is skipping the content download on the saves
@@ -152,7 +152,7 @@ export const saveResourceContent = async (
   // And a blob with no reserve behind it has no ledger row for `BlobCreated` to find. `resource.userId`, not the
   // Caller: a blueprint deploy or a restore writes on the owner's behalf. After the transaction, because the
   // Charge takes the ledger row's lock and then the user's, and a save's transaction held open across those is a
-  // Connection waiting on locks it will not release (/docs/platform/storage-quotas)
+  // Connection waiting on locks it will not release (/docs/resource/storage-quotas)
   await chargeAndEmitStorageLedgerEntry(
     ctx.db,
     resource.userId,

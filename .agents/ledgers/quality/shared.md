@@ -35,4 +35,4 @@
 | `packages/shared` — the rest of `src/util`                                      | 2026-09-06 |                                                                                                        |
 | `packages/shared-node`                                                          | 2026-09-07 |                                                                                                        |
 
-`shared/models/resource/sheet` belongs to `platform.md`, alongside the `store/resource/sheet` it is read with.
+`shared/models/resource/sheet` belongs to `resource.md`, alongside the `store/resource/sheet` it is read with.

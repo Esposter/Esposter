@@ -17,7 +17,7 @@ const getPageKey = (path: string) => path.split("/").slice(0, 3).join("/");
 // Browser and the plugin only has to decide when to ask. Every branch returns a fresh plain array, never the one
 // It was handed: the caller writes the result onto the history entry, which the browser structured-clones, and
 // The trail it passes in is the store's own reactive array — a proxy the serializer rejects outright.
-// See /docs/platform/breadcrumb-trail
+// See /docs/resource/breadcrumb-trail
 export const getNextNavigationTrail = (
   fromPath: string,
   toPath: string,

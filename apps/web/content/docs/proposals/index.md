@@ -9,12 +9,12 @@ Everything under this folder is **future work awaiting implementation** — one 
 
 Each product area's roadmap is the prioritized index over its proposals:
 
-- [users roadmap](/docs/users/roadmap)
+- [users roadmap](/docs/user/roadmap)
 - [esbabbler roadmap](/docs/esbabbler/roadmap)
-- [posts roadmap](/docs/posts/roadmap)
-- [platform roadmap](/docs/platform/roadmap)
-- [sheet editor roadmap](/docs/sheet-editor/roadmap)
-- [achievements roadmap](/docs/achievements/roadmap)
+- [posts roadmap](/docs/post/roadmap)
+- [resource roadmap](/docs/resource/roadmap)
+- [sheet editor roadmap](/docs/resource/sheet/roadmap)
+- [achievements roadmap](/docs/achievement/roadmap)
 - [virrun roadmap](/docs/virrun/roadmap)
 - [infra roadmap](/docs/infra/roadmap)
 

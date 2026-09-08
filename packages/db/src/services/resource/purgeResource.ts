@@ -29,7 +29,7 @@ export const purgeResource = async (
   // Back at once too — the deletion never enumerates names. The ledger's only foreign key is `userId`, so the
   // Row deleted below cascades nothing here: without this call the rows survive the purge forever, holding
   // Their `countedBytes` against an owner who no longer has the resource. Resources are the only thing purged,
-  // So the container is theirs by construction. See /docs/platform/storage-quotas
+  // So the container is theirs by construction. See /docs/resource/storage-quotas
   //
   // Last but one, immediately before the row: released bytes are reported back exactly once, and a step that
   // Fails after the release replays a purge that now frees nothing and so tells the caller nobody to notify —

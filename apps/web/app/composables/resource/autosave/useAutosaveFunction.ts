@@ -29,7 +29,7 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
   return () => {
     // The debounce holds this edit for half a second and re-arms for as long as the owner keeps typing, so
     // Between the keystroke and the write there is nothing in flight to read — the toolbar would call a tab
-    // Full of unwritten edits saved (/docs/platform/resource-save-state). Only set here: `saveContent` is the
+    // Full of unwritten edits saved (/docs/resource/resource-save-state). Only set here: `saveContent` is the
     // One door every save goes through, so clearing it is its, and a save this refuses never reaches it — which
     // Is the point, since a refused save is an edit that was dropped rather than one that landed
     hasUnwrittenContent.value = true;

@@ -7,7 +7,7 @@ description: Preset and uploaded call backgrounds — fixed per-user blob slots,
 
 The camera background the local media pipeline composites behind you, applied through `@livekit/track-processors`. Two kinds of background share one selection: the presets the repo ships as static SVGs, and up to `MAX_CALL_BACKGROUNDS` images you upload yourself.
 
-This is not profile imagery — the profile image is user-editable separately ([users](/docs/users)). A background is composited **locally**, before the track is published, so nobody but the uploader ever fetches it.
+This is not profile imagery — the profile image is user-editable separately ([users](/docs/user)). A background is composited **locally**, before the track is published, so nobody but the uploader ever fetches it.
 
 ## Uploads into fixed slots — no table, no metering
 

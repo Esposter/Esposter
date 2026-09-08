@@ -65,7 +65,7 @@ That check reads the dataset as it stands, so a later Unicode release can still 
 
 ## What bounds the cost
 
-Room emoji are room-owned, exactly like attachments, so they sit outside the personal [storage quota](/docs/platform/storage-quotas) for the reason that mechanism states — a room's files belong to the room, not to whoever uploaded them. What bounds them instead is a **per-room count cap** plus a per-file size cap, which is also Discord's model.
+Room emoji are room-owned, exactly like attachments, so they sit outside the personal [storage quota](/docs/resource/storage-quotas) for the reason that mechanism states — a room's files belong to the room, not to whoever uploaded them. What bounds them instead is a **per-room count cap** plus a per-file size cap, which is also Discord's model.
 
 The cap is the whole accounting story: a room's worst case is a fixed number rather than an open-ended one, with nothing to meter, no ledger row per emoji, and no usage figure for a room owner to act on. It is checked twice on purpose — once when the write target is minted, so a full room never receives one it cannot use, and again inside the transaction that inserts, which is what stops two uploads racing the last slot.
 

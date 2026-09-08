@@ -18,8 +18,8 @@ New products join the platform by adding one `ResourceType` and one `ResourceDef
 | Layer          | Contract                                                                                                               |
 | -------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | **Identity**   | `users.id` (better-auth) keys every row, blob path, and session — shared by all products                               |
-| **Resources**  | Postgres identity row + content blob + capability declaration → [resources](/docs/architecture/resources)              |
-| **Datasets**   | Columns + rows served by DatasetProvider types → [datasets](/docs/architecture/datasets)                               |
+| **Resources**  | Postgres identity row + content blob + capability declaration → [resources](/docs/architecture/resource)               |
+| **Datasets**   | Columns + rows served by DatasetProvider types → [datasets](/docs/architecture/dataset)                                |
 | **Publishing** | Versioned publish copy + public rate-limited read at `/view/[type]/[id]` → [publishing](/docs/architecture/publishing) |
 | **Events**     | tRPC mutation path = achievement trigger key (`achievementPlugin`) — every new procedure is automatically triggerable  |
 
@@ -60,7 +60,7 @@ sequenceDiagram
 
 ## Capability matrix
 
-`ResourceDefinitionMap` ([resources](/docs/architecture/resources)) is the authoritative declaration; this is the summary:
+`ResourceDefinitionMap` ([resources](/docs/architecture/resource)) is the authoritative declaration; this is the summary:
 
 | ResourceType | Publishable | DatasetProvider | FileAssets | Portable  | Blades beyond Overview/Editor |
 | ------------ | :---------: | :-------------: | :--------: | :-------: | ----------------------------- |

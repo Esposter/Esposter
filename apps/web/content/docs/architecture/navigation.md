@@ -41,7 +41,7 @@ Three places can hold state a navigation produces, and picking the wrong one is 
 
 The middle row is the one worth stating, because both neighbours look tempting. Putting "how I got here" in the url mints a second address for one page — worse for sharing, bookmarks and analytics, and editable by anyone who types. Putting it in storage makes it outlive the journey that produced it, so a tab restored a week later claims a path nobody walked. History-entry state (`history.replaceState`, read back from `window.history.state`) is the only one whose lifetime matches: per entry, restored on back and forward, gone when the entry is.
 
-Write it in **one** place — a `router.afterEach` hook — never at each link. A value appended by hand at N call sites is one the N+1th link silently drops, and the page that lost it is indistinguishable from a page that never had it. [Breadcrumb trail](/docs/platform/breadcrumb-trail) is the worked example.
+Write it in **one** place — a `router.afterEach` hook — never at each link. A value appended by hand at N call sites is one the N+1th link silently drops, and the page that lost it is indistinguishable from a page that never had it. [Breadcrumb trail](/docs/resource/breadcrumb-trail) is the worked example.
 
 ## Instant docs navigation
 

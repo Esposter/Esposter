@@ -14,7 +14,7 @@ const { activeBlade, resource } = defineProps<Props>();
 const { smAndDown } = useVDisplay();
 // Version history is a panel over whichever blade is open rather than a blade of its own, because the blade
 // Action bar is the one surface every type has — Sheet and TodoList have no editor to hang it off. Its state
-// Is the route's, so the back button and a shared link both land on it. See /docs/platform/resource-snapshots
+// Is the route's, so the back button and a shared link both land on it. See /docs/resource/resource-snapshots
 const { isVersionHistoryOpen, previewSnapshotVersionId } = useVersionHistoryRoute();
 </script>
 
@@ -28,7 +28,7 @@ const { isVersionHistoryOpen, previewSnapshotVersionId } = useVersionHistoryRout
         <ResourceBladeTitle :active-blade :resource />
         <v-spacer />
         <!-- Beside the commands rather than inside the blade, because content saves are the resource's and
-          every blade of it writes through the same door — /docs/platform/resource-save-state -->
+          every blade of it writes through the same door — /docs/resource/resource-save-state -->
         <ResourceSaveStateIndicator :resource />
         <ResourceBladeActions :resource />
       </v-toolbar>

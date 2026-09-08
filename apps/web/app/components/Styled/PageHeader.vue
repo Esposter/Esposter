@@ -14,7 +14,7 @@ const slots = defineSlots<{
 
 <!-- Breadcrumb row on top, carrying any standing readout at its far end so the width the trail leaves is spent
      rather than padded, then the page's own title beside its actions — the title is never repeated as a crumb
-     (/docs/platform/breadcrumb-trail). A page whose content already names itself passes no title, and with no
+     (/docs/resource/breadcrumb-trail). A page whose content already names itself passes no title, and with no
      actions either that row is not rendered at all -->
 <template>
   <v-toolbar height="auto">

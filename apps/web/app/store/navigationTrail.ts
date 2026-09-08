@@ -7,7 +7,7 @@ import { RoutePath } from "@esposter/shared";
 // Resource page to decide whether it is a drill-down (list rail beside the blade) or a direct arrival.
 //
 // The plugin keeps this in step with the browser's history entries, so back, forward and a refresh all restore
-// The trail that entry was left with. See /docs/platform/breadcrumb-trail
+// The trail that entry was left with. See /docs/resource/breadcrumb-trail
 export const useNavigationTrailStore = defineStore("navigationTrail", () => {
   const trail = ref<NavigationTrailPage[]>([]);
   // Each crumb is a plain path: it is a page, not a state, and the trail it lands with is recomputed from the

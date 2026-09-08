@@ -30,7 +30,7 @@ Both surfaces read the same widths, so the choice is about what changes, not abo
 
 **Reach for a UnoCSS prefix in the template** when the layout is unchanged and only a value moves — a grid's column count, a flex direction, a utility that applies above a width. It costs no reactivity and no script line, and it is the right tool precisely when there is nothing for script to decide.
 
-Applied examples live with the features that own them: the [resource explorer](/docs/platform/resource-explorer) folds its two-box layout into a single column on `smAndDown`, and the [call view](/docs/esbabbler/calls/call-view) flips its prejoin screen from a column to a row with a `lg:` prefix.
+Applied examples live with the features that own them: the [resource explorer](/docs/resource/resource-explorer) folds its two-box layout into a single column on `smAndDown`, and the [call view](/docs/esbabbler/calls/call-view) flips its prejoin screen from a column to a row with a `lg:` prefix.
 
 ## Viewport is not device
 
