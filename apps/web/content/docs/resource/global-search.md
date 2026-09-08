@@ -5,7 +5,7 @@ description: Azure-portal-faithful resource-explorer search — grouped as-you-t
 
 # Global Search
 
-Azure-portal-faithful search over the resource platform: one `ResourceSearchMenu` combobox with an as-you-type dropdown grouped into Resources / Services / Pages, mounted inline on Home (portal landing parity) and as a `Ctrl+K` command-palette dialog, both from the explorer home page (`pages/resource-explorer/index.vue`) — the app bar is cross-product chrome (messaging, posts, games), so it carries no resource-search entry. No new backend — the Resources group rides `resource.readResources`, which ranks prefix matches first.
+Azure-portal-faithful search over the Resource Explorer: one `ResourceSearchMenu` combobox with an as-you-type dropdown grouped into Resources / Services / Pages, mounted inline on Home (portal landing parity) and as a `Ctrl+K` command-palette dialog, both from the explorer home page (`pages/resource-explorer/index.vue`) — the app bar is cross-product chrome (messaging, posts, games), so it carries no resource-search entry. No new backend — the Resources group rides `resource.readResources`, which ranks prefix matches first.
 
 ## How it works
 

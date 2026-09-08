@@ -32,7 +32,7 @@ The workbench is one component, `ResourceListView`, and every list route renders
 
 ## Rows
 
-- **Row click** is the single affordance for opening a resource — the name cell is plain text, not a competing link ([resource explorer](/docs/resource/resource-explorer)).
+- **Row click** is the single affordance for opening a resource — the name cell is plain text, not a competing link ([resource explorer](/docs/resource/explorer)).
 - **Context menu** on right-click (positioned `v-menu`, singleton), the same command list as the row `⋮` menu: Open in new tab, Copy link, Save as blueprint, Rename, Delete — the rename/delete dialogs are store-driven singletons (`useListDialogStore`). A plain **Open** command is deliberately absent, since clicking the row already does that.
 - **Export CSV**: serializes the current filtered result via `getResourcesCsv`, re-querying the same filter in page-sized chunks up to `MAX_CSV_EXPORT_ROWS` — never a single query with the full count as its limit; hitting the cap truncates the export with a warning notification. Bulk-selection export uses the selected rows.
 - **Refresh** re-runs `readResources` with the last options the table asked for.

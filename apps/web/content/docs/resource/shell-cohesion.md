@@ -5,13 +5,13 @@ description: The shared chrome primitives — page header, breadcrumbs, empty/lo
 
 # Shell Cohesion
 
-One consistent chrome across every product: a shared page header, shared empty/loading primitives, breadcrumbs, and a trimmed launcher — so the platform reads as one product instead of five editors that each rolled their own toolbar. The [Resource Explorer](/docs/resource/resource-explorer) builds on these primitives.
+One consistent chrome across every product: a shared page header, shared empty/loading primitives, breadcrumbs, and a trimmed launcher — so the platform reads as one product instead of five editors that each rolled their own toolbar. The [Resource Explorer](/docs/resource/explorer) builds on these primitives.
 
 ## Components
 
 Shell primitives live in `app/components/Styled/` (design-system set) and `app/components/App/` (app-chrome), one export per file.
 
-- `StyledPageHeader` — the canonical page header. A `v-toolbar` (surface, `height="auto"`) laying out flex rows — the breadcrumb trail with a right-aligned `status` slot for a standing readout, then the page title beside a right-aligned `actions` slot, then an optional `filters` row — never inside `v-toolbar-title`. The trail row is where a persistent number belongs: the trail rarely fills a line, so anything parked on the title row instead pays a row of its own for width already going spare. The title row renders only when there is a title or actions, so a page named by its own content ([resource explorer](/docs/resource/resource-explorer)) costs no empty row.
+- `StyledPageHeader` — the canonical page header. A `v-toolbar` (surface, `height="auto"`) laying out flex rows — the breadcrumb trail with a right-aligned `status` slot for a standing readout, then the page title beside a right-aligned `actions` slot, then an optional `filters` row — never inside `v-toolbar-title`. The trail row is where a persistent number belongs: the trail rarely fills a line, so anything parked on the title row instead pays a row of its own for width already going spare. The title row renders only when there is a title or actions, so a page named by its own content ([resource explorer](/docs/resource/explorer)) costs no empty row.
 - `StyledEmptyState` — icon + title + description + optional action slot, for "no resources yet" / "no rows" / "not bound to data" states.
 - `StyledSkeleton` — thin `v-skeleton-loader` wrapper with the project's bordered-card preset, for per-region loading (instead of relying on the single global `AppLoadingIndicator`).
 - `StyledKeyboardShortcutsDialog` — the shared shortcuts help dialog (category groups + `kbd` chips over a `KeyboardShortcutCategory[]` prop); bound to the messaging shortcuts dialog and the resource explorer's `Resource/ShortcutsOverlay`.

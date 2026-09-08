@@ -7,19 +7,19 @@ description: The Azure-portal-like Resource Explorer over sheets, surveys, progr
 
 The resource area is the cross-product integration program: **everything is a resource with opt-in capabilities**, surfaced through one Azure-portal-like Resource Explorer at `/resource-explorer`. A sheet, a survey, a program, a todo list, a dashboard, an email, a webpage, and a flowchart are all the same thing to the resource layer — an identity row, a content blob, and a definition — differing only in which blades and commands their type declares.
 
-The standards the area applies live in architecture: the layer model ([the platform layer model](/docs/architecture/platform)), the resource model ([resource](/docs/architecture/resource)), datasets ([dataset](/docs/architecture/dataset)), and publishing ([publishing](/docs/architecture/publishing)). The pages in this area describe the product surface built on them.
+The standards the area applies live in architecture: the layer model ([cross-product layer model](/docs/architecture/layer-model)), the resource model ([resource](/docs/architecture/resource)), datasets ([dataset](/docs/architecture/dataset)), and publishing ([publishing](/docs/architecture/publishing)). The pages in this area describe the product surface built on them.
 
 ## Key concepts
 
 - **Resource** — one Postgres identity row + one content blob in Azure Blob + one `ResourceDefinitionMap` entry. Single-owner, auth-gated, one `contentVersion` write path.
 - **Capability** — a cross-cutting mechanism a type opts into: **Publishable** (versioned snapshot + public `/view/[type]/[id]`), **DatasetProvider** (serves columns + rows through `dataset.readDataset`), **Portable** (import/export formats), **FileAssets** (hosted binary assets under `{id}/files/…` — see [resource file assets](/docs/resource/resource-file-assets)).
-- **Explorer** — the Azure-portal-shaped shell: Home landing, `/resource-explorer/all` list, marketplace-style create flow, and a resource page composing blades. See [resource explorer](/docs/resource/resource-explorer).
+- **Explorer** — the Azure-portal-shaped shell: Home landing, `/resource-explorer/all` list, marketplace-style create flow, and a resource page composing blades. See [resource explorer](/docs/resource/explorer).
 - **Blade** — one panel of a resource page, addressed by route segment (`/resource-explorer/[id]/[[blade]]`). Every resource has a built-in Overview; types add their own (Sheet: Data + Settings, Survey: Responses, Program: Setup + Status, TodoList: Items + Calendar) and editor-backed types render their editor inline in the Editor blade.
 - **Dataset** — the read contract that lets one resource consume another's data: a Dashboard visual binds to a `DatasetReference` ([dashboard data binding](/docs/resource/dashboard-data-binding)), an Email binds one for merge fields ([email personalization](/docs/resource/email-personalization)), and a Program both binds one as its audience and serves one as its funnel status ([program resource](/docs/resource/program-resource)).
 
 ## Feature pages
 
-- [Resource explorer](/docs/resource/resource-explorer) — the shell: Home, list, create flow, resource page, blades, command bar
+- [Resource explorer](/docs/resource/explorer) — the shell: Home, list, create flow, resource page, blades, command bar
 - [Resource service menu](/docs/resource/resource-service-menu) — the standing left rail: All, Favorites, Recent, Tags and the bin as sibling routes over one list surface
 - [List filters & views](/docs/resource/list-filters-and-views) — the list workbench: filter pills, URL-synced state, bulk operations, column chooser, grouping, CSV export
 - [Summary view](/docs/resource/summary-view) — the `/all` List/Summary toggle: per-type count cards over a grouped count procedure
