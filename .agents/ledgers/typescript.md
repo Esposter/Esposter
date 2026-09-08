@@ -12,7 +12,7 @@ Most of the `typescript` skill is lint- or typecheck-decided; what this sweep ca
 | `server/services/room`, `friend`, `user`, `role`, `achievement`                                 | 2026-09-08 | membership and the social graph                                                       |
 | `server/services/survey`, `dataset`, `program`                                                  | 2026-09-08 | the response and reporting path                                                       |
 | `server/services/blueprint`, `storage`, `blobState`, `notification`, `dashboard`, `emailEditor` | 2026-09-08 |                                                                                       |
-| `server/services/auth`, `livekit`, `rateLimiter`, `request`                                     | —          |                                                                                       |
+| `server/services/auth`, `livekit`, `rateLimiter`, `request`                                     | 2026-09-08 |                                                                                       |
 | `server/services/azure`, `pagination`, `db`, `events`, `post`                                   | —          |                                                                                       |
 | `server/trpc` — everything outside `routers`                                                    | —          | context, procedure builders, middleware                                               |
 | `server/composables`, `server/api`, `server/routes`                                             | —          |                                                                                       |
