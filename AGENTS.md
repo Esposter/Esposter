@@ -10,15 +10,15 @@ This file is an **index and a process**, never a reference. Anything explaining 
 
 | Package Path             | npm name                  | Description                                                                 |
 | :----------------------- | :------------------------ | :-------------------------------------------------------------------------- |
+| `apps/functions`         | `@esposter/functions`     | Serverless backend (EventGrid, Service Bus, Timers)                         |
+| `apps/infra`             | `@esposter/infra`         | Pulumi infrastructure code and migration tools for Azure                    |
 | `apps/web`               | `@esposter/web`           | Main Nuxt web application (frontend, server routes, tRPC)                   |
 | `packages/azure`         | `@esposter/azure`         | Azure wire conventions shared by the real clients and the mocks             |
-| `apps/functions`         | `@esposter/functions`     | Serverless backend (EventGrid, Service Bus, Timers)                         |
 | `packages/azure-mock`    | `azure-mock`              | Mock Azure service classes for local dev and testing                        |
 | `packages/configuration` | `@esposter/configuration` | Shared ESLint, TSConfig, and tsdown build configs                           |
 | `packages/db`            | `@esposter/db`            | DB connection utilities (Drizzle ORM, Azure Table, Blob, WebPubSub)         |
 | `packages/db-mock`       | `@esposter/db-mock`       | In-memory PGlite database factory for unit/integration tests                |
 | `packages/db-schema`     | `@esposter/db-schema`     | **Source of truth** for DB: Drizzle ORM schemas, migrations                 |
-| `apps/infra`             | `@esposter/infra`         | Pulumi infrastructure code and migration tools for Azure                    |
 | `packages/parse-tmx`     | `parse-tmx`               | Parser for Tiled Map Editor `.tmx` files                                    |
 | `packages/shared`        | `@esposter/shared`        | Shared TypeScript types, utilities, and error classes                       |
 | `packages/shared-node`   | `@esposter/shared-node`   | Benchmark reporting/running for vitest bench (no barrel entrypoint)         |
