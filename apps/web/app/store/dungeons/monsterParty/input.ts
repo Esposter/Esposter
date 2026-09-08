@@ -56,15 +56,14 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
 
     switch (previousSceneKey.value) {
       case SceneKey.Battle:
-        if (checkIsMonsterFainted(value)) {
+        if (checkIsMonsterFainted(value))
           monsterPartyInfoPanelStore.infoDialogMessage.text = "Selected monster is fainted.";
-          return;
-        } else if (battlePlayerStore.activeMonster.id === value.id) {
+        else if (battlePlayerStore.activeMonster.id === value.id)
           monsterPartyInfoPanelStore.infoDialogMessage.text = "Selected monster is already battling.";
-          return;
+        else {
+          switchToPreviousScene(scene);
+          phaserEventEmitter.emit("switchMonster", value);
         }
-        switchToPreviousScene(scene);
-        phaserEventEmitter.emit("switchMonster", value);
         return;
       case SceneKey.Inventory: {
         const itemOptionGrid = useItemOptionGrid();

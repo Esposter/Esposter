@@ -17,8 +17,11 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
   const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
 
   const onPlayerInput = (_scene: SceneWithPlugins, justDownInput: PlayerInput) => {
-    if (monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel) return false;
-    else if (monsterPartySceneStore.sceneMode !== SceneMode.Confirmation) return false;
+    if (
+      monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel ||
+      monsterPartySceneStore.sceneMode !== SceneMode.Confirmation
+    )
+      return false;
 
     if (justDownInput === PlayerSpecialInput.Confirm)
       switch (MonsterPartyConfirmationMenuOptionGrid.value) {
