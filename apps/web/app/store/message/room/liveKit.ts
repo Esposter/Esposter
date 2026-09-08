@@ -363,8 +363,19 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     connectionState.value = ConnectionState.Disconnected;
     clearRemoteAudio();
   };
-  watch(() => userSettingsStore.userSettings?.speakerVolumePercentage, applySpeakerVolume);
-  watch(() => mediaStore.participantVolumePercentageMap, applySpeakerVolume, { deep: true });
+  watch(
+    () => userSettingsStore.userSettings?.speakerVolumePercentage,
+    () => {
+      applySpeakerVolume();
+    },
+  );
+  watch(
+    () => mediaStore.participantVolumePercentageMap,
+    () => {
+      applySpeakerVolume();
+    },
+    { deep: true },
+  );
   watch(
     () => userSettingsStore.userSettings?.noiseSuppressionMode,
     (newNoiseSuppressionMode) => {
@@ -377,7 +388,9 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
       userSettingsStore.userSettings?.microphoneVolumePercentage,
       userSettingsStore.userSettings?.voiceInputMode,
     ],
-    applyMicrophoneSettings,
+    () => {
+      applyMicrophoneSettings();
+    },
   );
 
   return {

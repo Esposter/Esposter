@@ -8,11 +8,12 @@ export const useFindReplaceStore = defineStore("resource/sheet/findReplace", () 
   const findValue = ref("");
   const replaceValue = ref("");
   const occurrences = computed(() => {
-    if (!findValue.value) return [];
-    return findMatchingCells(sheetStore.dataSource, findValue.value).map(({ columnName, rowIndex }) => ({
-      columnName,
-      rowIndex,
-    }));
+    if (findValue.value)
+      return findMatchingCells(sheetStore.dataSource, findValue.value).map(({ columnName, rowIndex }) => ({
+        columnName,
+        rowIndex,
+      }));
+    else return [];
   });
   // The occurrence list is a ring: stepping past either end lands on the other, so Enter keeps cycling
   const goToOccurrence = (delta: number) => {

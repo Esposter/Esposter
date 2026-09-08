@@ -19,13 +19,12 @@ export const scheduleTodoReminders = (
 ): Promise<void> =>
   getResultAsync(async () => {
     const previousDueAtMap = new Map(
-      (previousContent?.items ?? []).flatMap((item) => (item.dueAt ? [[item.id, item.dueAt.getTime()]] : [])),
+      (previousContent?.items ?? []).flatMap(({ dueAt, id }) => (dueAt ? [[id, dueAt.getTime()]] : [])),
     );
     const now = Date.now();
-    const reminders = content.items.flatMap((item) => {
-      const { dueAt } = item;
-      if (!dueAt || dueAt.getTime() <= now || previousDueAtMap.get(item.id) === dueAt.getTime()) return [];
-      return [{ dueAt, itemId: item.id, resourceId }];
+    const reminders = content.items.flatMap(({ dueAt, id }) => {
+      if (!dueAt || dueAt.getTime() <= now || previousDueAtMap.get(id) === dueAt.getTime()) return [];
+      else return [{ dueAt, itemId: id, resourceId }];
     });
     if (reminders.length === 0) return;
 

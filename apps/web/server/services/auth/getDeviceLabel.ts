@@ -22,5 +22,5 @@ export const getDeviceLabel = (userAgent: string): string => {
   // `10_15_7`, so a version here would be confidently wrong rather than merely absent
   const deviceLabel = platform.model ?? os.name;
   if (browserLabel && deviceLabel) return `${browserLabel} on ${deviceLabel}`;
-  return browserLabel ?? deviceLabel ?? UNKNOWN_DEVICE_LABEL;
+  else return browserLabel ?? deviceLabel ?? UNKNOWN_DEVICE_LABEL;
 };

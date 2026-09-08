@@ -53,10 +53,10 @@ export const useInputStore = defineStore("message/input", () => {
       const draft: Draft = { content: sanitizedContent, updatedAt };
       drafts.value.set(composerKey, draft);
       return draft;
+    } else {
+      drafts.value.delete(composerKey);
+      return undefined;
     }
-
-    drafts.value.delete(composerKey);
-    return undefined;
   };
 
   // Restoring is re-sanitizing what a previous session stored, so a draft whose content no longer survives the

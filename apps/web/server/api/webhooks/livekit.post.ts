@@ -18,9 +18,8 @@ export default defineEventHandler(async (event) => {
   const webhookReceiver = new WebhookReceiver(livekit.apiKey, livekit.apiSecret);
   return getResultAsync(() => webhookReceiver.receive(body, getHeader(event, "authorization"))).match(
     async (webhookEvent) => {
-      const participant = webhookEvent.participant;
       const callSessionId = webhookEvent.room?.name ?? "";
-      const sessionId = participant?.identity ?? "";
+      const sessionId = webhookEvent.participant?.identity ?? "";
       if (!callSessionId || !sessionId) return { ok: true };
 
       if (["participant_connection_aborted", "participant_left"].includes(webhookEvent.event)) {

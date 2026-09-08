@@ -328,15 +328,15 @@ pnpm graph:gen
 
 | Package                                                                                           | Description                                                                      | Published |
 | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | :-------: |
+| [`apps/functions`](https://github.com/Esposter/Esposter/tree/main/apps/functions)                 | Serverless Azure Functions backend — push notifications, webhooks, EventGrid     |     —     |
+| [`apps/infra`](https://github.com/Esposter/Esposter/tree/main/apps/infra)                         | Pulumi infrastructure code and migration tools for Azure resources               |     —     |
 | [`apps/web`](https://github.com/Esposter/Esposter/tree/main/apps/web)                             | Main Nuxt 4 web application — frontend, server routes, tRPC API                  |     —     |
 | [`packages/azure`](https://github.com/Esposter/Esposter/tree/main/packages/azure)                 | Azure wire conventions — OData filter clauses, entity key casing, service limits |     ✓     |
-| [`apps/functions`](https://github.com/Esposter/Esposter/tree/main/apps/functions)                 | Serverless Azure Functions backend — push notifications, webhooks, EventGrid     |     —     |
 | [`packages/azure-mock`](https://github.com/Esposter/Esposter/tree/main/packages/azure-mock)       | Mock Azure service classes for local dev and testing                             |     ✓     |
 | [`packages/configuration`](https://github.com/Esposter/Esposter/tree/main/packages/configuration) | Shared ESLint, TSConfig, and tsdown build configurations                         |     —     |
 | [`packages/db`](https://github.com/Esposter/Esposter/tree/main/packages/db)                       | Database connection utilities for Drizzle ORM, Azure Table, Blob, and WebPubSub  |     —     |
 | [`packages/db-mock`](https://github.com/Esposter/Esposter/tree/main/packages/db-mock)             | In-memory PGlite database factory for unit and integration tests                 |     —     |
 | [`packages/db-schema`](https://github.com/Esposter/Esposter/tree/main/packages/db-schema)         | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                  |     —     |
-| [`apps/infra`](https://github.com/Esposter/Esposter/tree/main/apps/infra)                         | Pulumi infrastructure code and migration tools for Azure resources               |     —     |
 | [`packages/parse-tmx`](https://github.com/Esposter/Esposter/tree/main/packages/parse-tmx)         | Parser for Tiled Map Editor `.tmx` files                                         |     ✓     |
 | [`packages/shared`](https://github.com/Esposter/Esposter/tree/main/packages/shared)               | Shared TypeScript types, utilities, and error classes                            |     ✓     |
 | [`packages/shared-node`](https://github.com/Esposter/Esposter/tree/main/packages/shared-node)     | Node-only shared tooling — benchmark reporting for vitest bench runs             |     —     |

@@ -9,5 +9,5 @@ interface LiveKitCredentials {
 export const getLiveKitCredentials = (): LiveKitCredentials | undefined => {
   const { livekit } = useRuntimeConfig();
   if (!livekit?.url || !livekit.apiKey || !livekit.apiSecret) return undefined;
-  return { apiKey: livekit.apiKey, apiSecret: livekit.apiSecret, url: livekit.url };
+  else return { apiKey: livekit.apiKey, apiSecret: livekit.apiSecret, url: livekit.url };
 };
