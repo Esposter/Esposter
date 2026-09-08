@@ -21,7 +21,7 @@ Most of the `typescript` skill is lint- or typecheck-decided; what this sweep ca
 | `app/store/message/user`, `ui`, `search`                                                        | 2026-09-08 |                                                                                       |
 | `app/store/message/input`, `moderation`, `file`, `draftsAndSent`                                | 2026-09-08 |                                                                                       |
 | `app/store/message` — the top level                                                             | 2026-09-08 |                                                                                       |
-| `app/store/resource`                                                                            | —          |                                                                                       |
+| `app/store/resource`                                                                            | 2026-09-08 |                                                                                       |
 | `app/store/dungeons/battle`, `world`, `monsterParty`                                            | —          |                                                                                       |
 | `app/store/dungeons` — the rest                                                                 | —          |                                                                                       |
 | `app/store/clicker`, `post`, and the one-store trees                                            | —          | dashboard, emailEditor, flowchartEditor, webpageEditor, survey, user, achievement     |
