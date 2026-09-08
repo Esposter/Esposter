@@ -22,13 +22,23 @@ description: Esposter pnpm script reference — apps/web scripts (lint, typechec
 | ------------------- | ------------------------- | ------------------------------------------------------------------ |
 | `pnpm lint`         | `TIMING=1 eslint .`       | CI/check-only lint verification                                    |
 | `pnpm lint:fix`     | `TIMING=1 eslint --fix .` | ESLint only, this package only — never the last lint a change runs |
-| `pnpm typecheck`    | `nuxt typecheck`          | TypeScript type checking                                           |
+| `pnpm typecheck`    | `nuxt typecheck`          | TypeScript type checking — never `vue-tsc` directly, see below     |
 | `pnpm test`         | `vitest` (watch mode)     | Run this package's tests in watch mode                             |
 | `pnpm format`       | `oxfmt`                   | Format code                                                        |
 | `pnpm format:check` | `oxfmt --check`           | Check formatting without writing                                   |
 | `pnpm dev`          | `nuxt dev`                | Start dev server                                                   |
 | `pnpm bench`        | `vitest bench --run`      | Run this package's benchmarks                                      |
 | `pnpm build`        | `nuxt build`              | Build for production                                               |
+
+**`nuxt typecheck` is the only typecheck, and `pnpm lint` from the repo root is the only lint.** Reaching past
+either for the underlying binary — `vue-tsc -p tsconfig.json` in `apps/web`, `oxlint` over a path — checks
+strictly less than CI does and reports success while CI fails: the app's real project is the generated
+`.nuxt` tsconfig rather than the one in the package, and `oxlint` carries no ESLint rule, which is where the
+import sort and every `no-restricted-syntax` ban live. Targeted `oxlint` is still worth running per unit
+during a sweep, because it is seconds rather than minutes — but it is a fast pre-check, never the gate.
+
+A backgrounded run of either reports the _wrapper's_ exit code, which is `0` even when the run inside it
+failed. Read the output for `exited 1` or a `problem`/`error` line rather than trusting the status.
 
 > `oxfmt` formats code, not markdown, and no prettier binary is installed — reaching for `npx prettier` or
 > `pnpm exec prettier` fails. A `.md` file's own layout is therefore hand-maintained: a table whose cells changed
