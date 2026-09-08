@@ -12,7 +12,9 @@ import { exhaustiveGuard } from "@esposter/shared";
 export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/scene", () => {
   const selectedMonster = ref<Monster>();
   const attackNames = computed(() =>
-    (selectedMonster.value?.attackIds.map(getAttack) ?? []).slice(0, ATTACK_DISPLAY_LIMIT).map(({ id }) => id),
+    (selectedMonster.value?.attackIds.map((attackId) => getAttack(attackId)) ?? [])
+      .slice(0, ATTACK_DISPLAY_LIMIT)
+      .map(({ id }) => id),
   );
   const { switchToPreviousScene } = usePreviousScene(SceneKey.MonsterDetails);
 

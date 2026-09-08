@@ -17,7 +17,7 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
   const switchActiveMonster = (id: string) => {
     activeMonsterIndex.value = monsterPartySceneStore.monsters.findIndex((monster) => monster.id === id);
   };
-  const attacks = computed(() => activeMonster.value.attackIds.map(getAttack));
+  const attacks = computed(() => activeMonster.value.attackIds.map((attackId) => getAttack(attackId)));
 
   return {
     activeMonster,

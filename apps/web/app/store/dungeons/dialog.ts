@@ -29,9 +29,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     else if (isWaitingForPlayerSpecialInput.value) {
       if (input === PlayerSpecialInput.Confirm) await showMessage(scene);
       return true;
-    }
-
-    return false;
+    } else return false;
   };
 
   const updateQueuedMessagesAndShowMessage = (
@@ -73,26 +71,24 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
       // Show the cursor after vue's rendering cycle has caught up with phaser
       // Seems like it takes exactly 2 ticks for vue to register phaser's text changes
       await sleepScene(scene, textDelayMs.value * 2);
-      showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
-      isWaitingForPlayerSpecialInput.value = true;
-      return;
+    } else {
+      const dialogTargetText = computed({
+        get: () => dialogTarget.message.value.text,
+        set: (newText) => {
+          dialogTarget.message.value.text = newText;
+        },
+      });
+      dialogTarget.message.value.title = message.title;
+      isQueuedMessagesAnimationPlaying.value = true;
+      // The flag gates player input, so an animation that rejects has to clear it or input stays blocked forever
+      await withFinalizerAsync(
+        () => useAnimateText(scene, dialogTargetText, message.text),
+        () => {
+          isQueuedMessagesAnimationPlaying.value = false;
+        },
+      );
     }
 
-    const dialogTargetText = computed({
-      get: () => dialogTarget.message.value.text,
-      set: (newText) => {
-        dialogTarget.message.value.text = newText;
-      },
-    });
-    dialogTarget.message.value.title = message.title;
-    isQueuedMessagesAnimationPlaying.value = true;
-    // The flag gates player input, so an animation that rejects has to clear it or input stays blocked forever
-    await withFinalizerAsync(
-      () => useAnimateText(scene, dialogTargetText, message.text),
-      () => {
-        isQueuedMessagesAnimationPlaying.value = false;
-      },
-    );
     showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
     isWaitingForPlayerSpecialInput.value = true;
   };
