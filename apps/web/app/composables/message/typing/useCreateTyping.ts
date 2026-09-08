@@ -14,12 +14,12 @@ export const useCreateTyping = async () => {
   const throttledInput = useThrottle(input, Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
   const { data: session } = await authClient.useSession(useFetch);
   const stop = watch(throttledInput, async () => {
-    if (!(currentRoomId.value && session.value)) return;
-    await $trpc.message.createTyping.query({
-      roomId: currentRoomId.value,
-      userId: session.value.user.id,
-      username: session.value.user.name,
-    });
+    if (currentRoomId.value && session.value)
+      await $trpc.message.createTyping.query({
+        roomId: currentRoomId.value,
+        userId: session.value.user.id,
+        username: session.value.user.name,
+      });
   });
 
   onUnmounted(stop, currentInstance);
