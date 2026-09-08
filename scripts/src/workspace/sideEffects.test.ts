@@ -1,6 +1,6 @@
-import { WORKSPACE_DIRECTORIES } from "#src/services/constants";
+import { getWorkspacePackageDirectories } from "#src/services/getWorkspacePackageDirectories";
 import { parseMachineJson } from "#src/services/parseMachineJson";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -22,13 +22,11 @@ describe("side effects", () => {
   const repositoryRoot = resolve(import.meta.dirname, "../../..");
   // Discovered rather than listed, for the same reason the declaration-generation invariant discovers its set: a
   // Listed one stops covering the package added after it was written, which is the only way this can be broken.
-  // Both workspace roots, because two of the members that build sit under `apps`. (`apps/web` is a Nuxt
-  // Application, has no tsdown config, and nothing resolves into it.)
-  const PACKAGE_PATHS = WORKSPACE_DIRECTORIES.flatMap((workspaceDirectory) =>
-    readdirSync(resolve(repositoryRoot, workspaceDirectory)).map(
-      (packageName) => `${workspaceDirectory}/${packageName}`,
-    ),
-  ).filter((packagePath) => existsSync(resolve(repositoryRoot, packagePath, "tsdown.config.ts")));
+  // Every member the workspace declares, because two of the ones that build sit under `apps`. (`apps/web` is a
+  // Nuxt application, has no tsdown config, and nothing resolves into it.)
+  const PACKAGE_PATHS = getWorkspacePackageDirectories(repositoryRoot).filter((packagePath) =>
+    existsSync(resolve(repositoryRoot, packagePath, "tsdown.config.ts")),
+  );
   // The Functions app registers each handler with a bare `app.eventGrid(...)` call in a module whose only export
   // Is `export default {}`, which the barrel does not re-export. Told it has no side effects, rolldown drops
   // Every registration and the deployed app reports Running while running no trigger — so it is the one package

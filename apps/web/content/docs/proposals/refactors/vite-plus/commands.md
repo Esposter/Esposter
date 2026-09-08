@@ -5,7 +5,7 @@ description: Every root script under the migration — which become `vp` tasks, 
 
 # Commands
 
-The root manifest carries a script per check, per build target and per filtered subset of each, and the subsets are where the count comes from: lint exists four times because it is crossed with two filters and a fix flag, and test and typecheck exist three and two times for the same reason. A task runner that takes filters as arguments makes most of those spellings unnecessary.
+The root manifest carries a script per check, per build target and per filtered subset of each, and the subsets are where the count comes from: lint exists four times because it is crossed with two filters and a fix flag, and test and typecheck exist twice each for the same reason. A task runner that takes filters as arguments makes most of those spellings unnecessary.
 
 This page is the inventory. It assumes the phases in order — a script only loses its `virrun --` prefix once [virrun retirement](/docs/proposals/refactors/vite-plus/virrun-retirement) has landed, and every row below that mentions the prefix is gated on it.
 
@@ -16,7 +16,7 @@ Four families account for most of the reduction, and in each case the script var
 | Family        | Today                                                                    | After                                                             |
 | :------------ | :----------------------------------------------------------------------- | :---------------------------------------------------------------- |
 | **Lint**      | `lint`, `lint:fix`, `lint:packages`, `lint:fix:packages`                 | `vp lint`, with `--fix` and a filter as arguments                 |
-| **Test**      | `test`, `test:packages`, `test:web`                                      | one task; the project selector is an argument, as it already is   |
+| **Test**      | `test`, `test:packages`                                                  | one task; the project selector is an argument, as it already is   |
 | **Typecheck** | `typecheck`, `typecheck:packages`                                        | one task plus a filter                                            |
 | **Build**     | `build`, `build:web`, `build:packages`, `build:functions`, `build:infra` | `vp run build` with a filter, plus the one deploy-entrypoint name |
 

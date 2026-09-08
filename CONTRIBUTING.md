@@ -39,9 +39,9 @@ From the **repo root**:
 
 ```bash
 pnpm lint             # oxlint over the whole repo, then eslint — the one that matches CI
-pnpm build            # build all packages then the app
-pnpm test             # run all package tests
-pnpm typecheck        # typecheck all packages
+pnpm build            # build the app and the libraries it imports
+pnpm test <path>      # the suites a change touched — never run bare, it is the whole workspace
+pnpm typecheck        # typecheck every package
 pnpm coverage         # run every project's tests with coverage
 ```
 
@@ -95,8 +95,10 @@ Scope monorepo commits where helpful: `feat(db-schema): add createdAt to posts`.
 1. Create a branch from `develop`: `git checkout -b my-feature develop`
 2. Make your changes and ensure all checks pass:
    ```bash
-   pnpm lint:fix && pnpm typecheck && pnpm test
+   pnpm lint:fix && pnpm typecheck && pnpm test <paths your change touched>
    ```
+   Name the paths — a bare `pnpm test` runs every project in the workspace, which is CI's job and takes tens of
+   minutes locally.
 3. Push and open a PR against `develop`.
 4. PR description should explain **what** changed and **why**.
 

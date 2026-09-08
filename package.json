@@ -65,7 +65,6 @@
     "sweep:unterminated-results": "pnpm -C scripts run sweep:unterminated-results",
     "test": "virrun -- vitest run",
     "test:packages": "virrun -- vitest run --project \"packages/*\"",
-    "test:web": "virrun -- vitest run --project \"apps/web\"",
     "typecheck": "virrun -- tsc && virrun -- pnpm -r --parallel run typecheck",
     "typecheck:packages": "virrun -- pnpm -r --filter \"./packages/*\" --parallel run typecheck",
     "update:node": "pnpm -C scripts run update:node",
