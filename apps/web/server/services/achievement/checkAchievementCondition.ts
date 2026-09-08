@@ -31,8 +31,8 @@ export const checkAchievementCondition = (
           );
         }
         case AchievementOperator.Matches:
-          if (!(condition.value instanceof RegExp)) return false;
-          else return typeof value === "string" && condition.value.test(value);
+          if (condition.value instanceof RegExp) return typeof value === "string" && condition.value.test(value);
+          else return false;
         case AchievementOperator.Operation:
           // @ts-expect-error achievementDefinitions is well-typed at its definition site
           return condition.operation(value);
