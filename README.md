@@ -343,6 +343,7 @@ pnpm graph:gen
 | [`packages/virrun`](https://github.com/Esposter/Esposter/tree/main/packages/virrun)               | Ephemeral, in-memory virtual runner — runs a repo's real toolchain isolated      |     ✓     |
 | [`packages/vue-phaserjs`](https://github.com/Esposter/Esposter/tree/main/packages/vue-phaserjs)   | Phaser 4 game engine integration for Vue 3                                       |     ✓     |
 | [`packages/xml2js`](https://github.com/Esposter/Esposter/tree/main/packages/xml2js)               | TypeScript rewrite of xml2js — XML ↔ JSON conversion                             |     ✓     |
+| [`scripts`](https://github.com/Esposter/Esposter/tree/main/scripts)                               | The repository's own tooling — workspace graph, dependency report, sweep scans   |     —     |
 
 ## <a name="community">🤝 Community</a>
 

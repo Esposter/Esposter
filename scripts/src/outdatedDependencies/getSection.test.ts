@@ -10,6 +10,12 @@ describe(getSection, () => {
     expect(getSection("catalog", text)).toBe("  a: b\n");
   });
 
+  test("extracts the body of a section a CRLF file declares", () => {
+    expect.hasAssertions();
+
+    expect(getSection("catalog", text.replaceAll("\n", "\r\n"))).toBe("  a: b\r\n");
+  });
+
   test("returns an empty string when the section is missing", () => {
     expect.hasAssertions();
 

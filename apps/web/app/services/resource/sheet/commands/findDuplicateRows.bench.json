@@ -6,45 +6,45 @@
         {
           "benchmarks": [
             {
-              "mean": 0.06443000000008396,
-              "name": "all unique — First mode",
-              "p99": 0.08259999999972933,
-              "rme": 7.459088863139058,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.0920100000000275,
-              "name": "all unique — Last mode",
-              "p99": 0.14310000000023138,
-              "rme": 15.377069704456265,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.06797999999998865,
-              "name": "half duplicates — First mode",
-              "p99": 0.08240000000023429,
-              "rme": 5.75707487205346,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.19458000000004178,
-              "name": "half duplicates — Last mode",
-              "p99": 0.2518000000000029,
-              "rme": 9.844985486514526,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.05077000000001135,
-              "name": "all duplicates — First mode",
-              "p99": 0.13829999999961728,
-              "rme": 44.44443297031349,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.08032000000021071,
+              "mean": 0.07401999999992769,
               "name": "all duplicates — Last mode",
-              "p99": 0.09340000000065629,
-              "rme": 12.104482752741289,
+              "p99": 0.10509399999946255,
+              "rme": 13.119981389683225,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.0829199999998309,
+              "name": "all duplicates — First mode",
+              "p99": 0.163113999999905,
+              "rme": 34.53904401694418,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.10950999999995474,
+              "name": "half duplicates — Last mode",
+              "p99": 0.16243399999978464,
+              "rme": 22.820139532517704,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.16130999999986673,
+              "name": "half duplicates — First mode",
+              "p99": 0.2901879999997891,
+              "rme": 27.010492150306664,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.19461000000010245,
+              "name": "all unique — First mode",
+              "p99": 0.3584879999997247,
+              "rme": 27.22331211172881,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.22934000000013838,
+              "name": "all unique — Last mode",
+              "p99": 0.44857900000009976,
+              "rme": 31.22228617535755,
               "sampleCount": 10
             }
           ],
@@ -53,45 +53,45 @@
         {
           "benchmarks": [
             {
-              "mean": 0.4001999999999498,
-              "name": "all unique — First mode",
-              "p99": 0.4920000000001892,
-              "rme": 7.994526640589596,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.4754499999999098,
-              "name": "all unique — Last mode",
-              "p99": 0.5884000000005472,
-              "rme": 8.61627221353844,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.3904500000002372,
-              "name": "half duplicates — First mode",
-              "p99": 0.48509999999987485,
-              "rme": 6.652903829149018,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.4411600000001272,
-              "name": "half duplicates — Last mode",
-              "p99": 0.515400000000227,
-              "rme": 5.704550115519067,
-              "sampleCount": 10
-            },
-            {
-              "mean": 0.3990600000000086,
+              "mean": 1.177280000000064,
               "name": "all duplicates — First mode",
-              "p99": 0.46199999999953434,
-              "rme": 4.917194661700565,
+              "p99": 1.2372180000004482,
+              "rme": 1.715122486366188,
               "sampleCount": 10
             },
             {
-              "mean": 0.747899999999845,
+              "mean": 1.250920000000042,
+              "name": "half duplicates — First mode",
+              "p99": 2.1924500000001172,
+              "rme": 24.301596838585887,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.4008900000001632,
+              "name": "all unique — Last mode",
+              "p99": 2.0973680000004244,
+              "rme": 21.363529210349853,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.5410600000000159,
+              "name": "half duplicates — Last mode",
+              "p99": 1.674016999999867,
+              "rme": 3.559061714573809,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.6643099999999322,
+              "name": "all unique — First mode",
+              "p99": 1.9418680000005224,
+              "rme": 10.804563889237208,
+              "sampleCount": 10
+            },
+            {
+              "mean": 2.1532599999996824,
               "name": "all duplicates — Last mode",
-              "p99": 1.1772000000000844,
-              "rme": 19.680433487217908,
+              "p99": 3.3229979999998616,
+              "rme": 29.005946735108058,
               "sampleCount": 10
             }
           ],
@@ -100,45 +100,45 @@
         {
           "benchmarks": [
             {
-              "mean": 8.860799999999836,
-              "name": "all unique — First mode",
-              "p99": 18.230199999999968,
-              "rme": 30.683066606480963,
-              "sampleCount": 10
-            },
-            {
-              "mean": 6.281770000000051,
-              "name": "all unique — Last mode",
-              "p99": 7.817900000000009,
-              "rme": 8.327409649250951,
-              "sampleCount": 10
-            },
-            {
-              "mean": 4.463130000000001,
-              "name": "half duplicates — First mode",
-              "p99": 5.623700000000099,
-              "rme": 7.614260649032779,
-              "sampleCount": 10
-            },
-            {
-              "mean": 5.534560000000056,
-              "name": "half duplicates — Last mode",
-              "p99": 6.7643000000007305,
-              "rme": 10.386794873588327,
-              "sampleCount": 10
-            },
-            {
-              "mean": 2.661080000000129,
+              "mean": 8.054970000000049,
               "name": "all duplicates — First mode",
-              "p99": 3.4817000000002736,
-              "rme": 8.156971935518747,
+              "p99": 9.81741199999985,
+              "rme": 8.171773643979817,
               "sampleCount": 10
             },
             {
-              "mean": 3.5112699999999677,
+              "mean": 8.834419999999955,
               "name": "all duplicates — Last mode",
-              "p99": 4.295199999999568,
-              "rme": 8.554006882999099,
+              "p99": 10.273882000000158,
+              "rme": 8.104931848040245,
+              "sampleCount": 10
+            },
+            {
+              "mean": 13.85623999999998,
+              "name": "half duplicates — First mode",
+              "p99": 15.90149399999972,
+              "rme": 9.2912852407549,
+              "sampleCount": 10
+            },
+            {
+              "mean": 15.340099999999985,
+              "name": "half duplicates — Last mode",
+              "p99": 17.295020999999842,
+              "rme": 6.802049496993455,
+              "sampleCount": 10
+            },
+            {
+              "mean": 15.840640000000075,
+              "name": "all unique — First mode",
+              "p99": 18.927453999999916,
+              "rme": 6.925266446336526,
+              "sampleCount": 10
+            },
+            {
+              "mean": 17.747029999999906,
+              "name": "all unique — Last mode",
+              "p99": 18.643470999999717,
+              "rme": 2.9505466131790223,
               "sampleCount": 10
             }
           ],

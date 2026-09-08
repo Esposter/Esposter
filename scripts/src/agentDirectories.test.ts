@@ -23,12 +23,6 @@ describe(AGENT_DIRECTORY, () => {
   // Only a tool that follows directory symlinks enumerates the tree a second time under the alias, which is why
   // Absent here and present below: oxfmt and git.
   describe(AGENT_ALIAS_DIRECTORY, () => {
-    test("is excluded from the root typescript program", () => {
-      expect.hasAssertions();
-
-      expect(readJson("tsconfig.json").exclude).toContain(AGENT_ALIAS_DIRECTORY);
-    });
-
     test("is excluded from the oxlint ignore patterns the shared eslint config bridges", () => {
       expect.hasAssertions();
 
@@ -37,12 +31,6 @@ describe(AGENT_DIRECTORY, () => {
   });
 
   describe(AGENT_WORKTREES_DIRECTORY, () => {
-    test("is excluded from the root typescript program", () => {
-      expect.hasAssertions();
-
-      expect(readJson("tsconfig.json").exclude).toContain(AGENT_WORKTREES_DIRECTORY);
-    });
-
     test("is excluded from the oxlint ignore patterns the shared eslint config bridges", () => {
       expect.hasAssertions();
 

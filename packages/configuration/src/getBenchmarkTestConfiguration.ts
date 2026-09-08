@@ -13,5 +13,26 @@ const BENCHMARK_TIMEOUT_MS = Temporal.Duration.from({ hours: 1 }).total("millise
 // A test run that reports nothing at all still exits on the failure it never printed.
 export const getBenchmarkTestConfiguration = (): NonNullable<ViteUserConfig["test"]> => {
   const reporters = getBenchmarkReporters();
-  return reporters ? { hookTimeout: BENCHMARK_TIMEOUT_MS, reporters, testTimeout: BENCHMARK_TIMEOUT_MS } : {};
+  return reporters
+    ? {
+        // Vitest's module runner turns every import into a getter, and its getter tracker counts each read
+        // Through a Map get plus a Map set so it can warn past a million of them. A bench over a unit that
+        // Calls an imported helper once per cell pays that bookkeeping O(rows × columns) times, and it is
+        // Not a rounding error: interleaved A/B runs of the 10000-row `CreateRowsCommand` bench measured
+        // ~42ms per execute with the tracker installed against ~28ms without it, every off-run beating
+        // Every on-run. Turning the warning off is what uninstalls it — the flag gates the tracker's
+        // Construction, not just the message — so this buys the measurement back rather than hiding a
+        // Result. The warning it silences is unactionable anyway: the reads it names come from inside the
+        // Benched unit's own hot loop, so the only ways to answer it are aliasing a production import into
+        // A module-scope local for the harness's benefit, or cutting iterations until the counter stays
+        // Under the threshold — noise in shipped code, or signal thrown away, to satisfy a heuristic on an
+        // Absolute count that every large-N bench here will trip. The plain getters that remain are uniform
+        // Across runs, and the gate is the diff between two committed artifacts, not an absolute claim about
+        // The shipped bundle (which has collapsed those imports into direct references and pays neither).
+        benchmark: { suppressExportGetterWarnings: true },
+        hookTimeout: BENCHMARK_TIMEOUT_MS,
+        reporters,
+        testTimeout: BENCHMARK_TIMEOUT_MS,
+      }
+    : {};
 };

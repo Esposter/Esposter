@@ -11,10 +11,17 @@ import {
 import { getLegendLabel } from "#src/dependencyGraph/getLegendLabel";
 import { getPackageRole } from "#src/dependencyGraph/getPackageRole";
 import { PackageRoleColorsMap } from "#src/dependencyGraph/PackageRoleColorsMap";
-import { WORKSPACE_DIRECTORIES } from "#src/services/constants";
 
 const getEdgeLines = (workspaceEdges: WorkspaceEdge[], attributes: string): string[] =>
   workspaceEdges.map(({ from, to }) => `  "${from}" -> "${to}" [${attributes}];`);
+
+// In the order the members come in, which `getWorkspacePackages` sorts by path — so the clusters are drawn
+// In the same order however the workspace file happens to list its globs.
+const getWorkspaceDirectories = (workspacePackages: WorkspacePackage[]): string[] => [
+  ...new Set(
+    workspacePackages.flatMap(({ workspaceDirectory }) => (workspaceDirectory === "" ? [] : [workspaceDirectory])),
+  ),
+];
 
 // The nodes are boxed and titled by the workspace root they live under. Graphviz draws a subgraph as a box only
 // When its name starts with `cluster`, and it boxes the nodes declared inside that subgraph — so the node lines
@@ -29,7 +36,7 @@ const getClusterLines = (
   `    label="${workspaceDirectory}";`,
   ...workspacePackages
     .filter((workspacePackage) => workspacePackage.workspaceDirectory === workspaceDirectory)
-    .map((workspacePackage) => getNodeLine(workspacePackage, workspaceEdges)),
+    .map((workspacePackage) => `    ${getNodeLine(workspacePackage, workspaceEdges)}`),
   "  }",
 ];
 
@@ -40,7 +47,7 @@ const getClusterLines = (
 const getNodeLine = ({ directory, manifest }: WorkspacePackage, workspaceEdges: WorkspaceEdges): string => {
   const { deepFill, paleFill, stroke } = PackageRoleColorsMap[getPackageRole(directory, workspaceEdges)];
   const style = manifest.private === true ? "filled,dashed" : "filled";
-  return `    "${directory}" [fillcolor="${paleFill}:${deepFill}" color="${stroke}" style="${style}"];`;
+  return `"${directory}" [fillcolor="${paleFill}:${deepFill}" color="${stroke}" style="${style}"];`;
 };
 
 export const getGraphSource = (workspacePackages: WorkspacePackage[], workspaceEdges: WorkspaceEdges): string =>
@@ -48,10 +55,16 @@ export const getGraphSource = (workspacePackages: WorkspacePackage[], workspaceE
     "digraph dependencies {",
     ...GRAPH_ATTRIBUTES.map((attribute) => `  ${attribute};`),
     `  label=${getLegendLabel()};`,
-    // One cluster per workspace root, in the order the roots are declared
-    ...WORKSPACE_DIRECTORIES.flatMap((workspaceDirectory) =>
+    // One cluster per workspace directory, read off the members themselves so a cluster is a directory that
+    // Holds members rather than a list kept in step with `pnpm-workspace.yaml` by hand.
+    ...getWorkspaceDirectories(workspacePackages).flatMap((workspaceDirectory) =>
       getClusterLines(workspaceDirectory, workspacePackages, workspaceEdges),
     ),
+    // A member sitting at the repository root is in no cluster: it belongs to neither of the things the repo
+    // Ships, which is the whole reason it lives up there.
+    ...workspacePackages
+      .filter(({ workspaceDirectory }) => workspaceDirectory === "")
+      .map((workspacePackage) => `  ${getNodeLine(workspacePackage, workspaceEdges)}`),
     ...getEdgeLines(workspaceEdges.runtime, RUNTIME_EDGE_ATTRIBUTES),
     ...getEdgeLines(workspaceEdges.development, DEVELOPMENT_EDGE_ATTRIBUTES),
     "}",

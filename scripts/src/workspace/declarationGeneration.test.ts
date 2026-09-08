@@ -1,6 +1,6 @@
-import { WORKSPACE_DIRECTORIES } from "#src/services/constants";
+import { getWorkspacePackageDirectories } from "#src/services/getWorkspacePackageDirectories";
 import { parseMachineJson } from "#src/services/parseMachineJson";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -17,13 +17,11 @@ describe("declaration generation", () => {
   const repositoryRoot = resolve(import.meta.dirname, "../../..");
   // A package builds with tsdown exactly when it has a tsdown config, so the set is discovered rather than listed:
   // A listed set silently stops covering the package added after it was written, which is the only way this
-  // Invariant can be broken. Both workspace roots, because two of the members that build sit under `apps`.
-  // (`apps/web` is a Nuxt application, has no tsdown config, and emits nothing.)
-  const PACKAGE_PATHS = WORKSPACE_DIRECTORIES.flatMap((workspaceDirectory) =>
-    readdirSync(resolve(repositoryRoot, workspaceDirectory)).map(
-      (packageName) => `${workspaceDirectory}/${packageName}`,
-    ),
-  ).filter((packagePath) => existsSync(resolve(repositoryRoot, packagePath, "tsdown.config.ts")));
+  // Invariant can be broken. Every member the workspace declares, because two of the ones that build sit under
+  // `apps`. (`apps/web` is a Nuxt application, has no tsdown config, and emits nothing.)
+  const PACKAGE_PATHS = getWorkspacePackageDirectories(repositoryRoot).filter((packagePath) =>
+    existsSync(resolve(repositoryRoot, packagePath, "tsdown.config.ts")),
+  );
   // The one package the invariant cannot cover: an SFC's types cannot be written out by hand, so its declarations
   // Go through vue-tsc by way of `dts.vue` whatever `isolatedDeclarations` says. Any other package joining it is
   // The regression this test exists to show.

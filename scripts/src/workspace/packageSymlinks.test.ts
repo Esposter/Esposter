@@ -1,4 +1,4 @@
-import { WORKSPACE_DIRECTORIES } from "#src/services/constants";
+import { getWorkspacePackageDirectories } from "#src/services/getWorkspacePackageDirectories";
 import { readdirSync, readlinkSync } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -31,23 +31,18 @@ describe("workspace package symlinks", () => {
   test("never resolve outside their own package", () => {
     expect.hasAssertions();
 
-    const escapingSymlinkPaths = WORKSPACE_DIRECTORIES.flatMap((workspaceDirectory) => {
-      const workspaceRoot = resolve(repositoryRoot, workspaceDirectory);
-      return readdirSync(workspaceRoot, { withFileTypes: true }).flatMap((entry) => {
-        if (!entry.isDirectory()) return [];
-
-        const packageRoot = join(workspaceRoot, entry.name);
-        return readSymlinkPaths(packageRoot)
-          .filter((path) => {
-            // The escape is a leading `..` segment, matched as a whole component so an entry named `..fixtures` stays
-            // Inside. An absolute result means `relative` could not express the target as a walk from the package — a
-            // Different Windows drive — which is as far outside it as a `..` is.
-            const target = relative(packageRoot, resolve(dirname(path), readlinkSync(path)));
-            const [firstSegment] = target.split(sep);
-            return firstSegment === PARENT_DIRECTORY || isAbsolute(target);
-          })
-          .map((path) => relative(repositoryRoot, path));
-      });
+    const escapingSymlinkPaths = getWorkspacePackageDirectories(repositoryRoot).flatMap((packageDirectory) => {
+      const packageRoot = resolve(repositoryRoot, packageDirectory);
+      return readSymlinkPaths(packageRoot)
+        .filter((path) => {
+          // The escape is a leading `..` segment, matched as a whole component so an entry named `..fixtures` stays
+          // Inside. An absolute result means `relative` could not express the target as a walk from the package — a
+          // Different Windows drive — which is as far outside it as a `..` is.
+          const target = relative(packageRoot, resolve(dirname(path), readlinkSync(path)));
+          const [firstSegment] = target.split(sep);
+          return firstSegment === PARENT_DIRECTORY || isAbsolute(target);
+        })
+        .map((path) => relative(repositoryRoot, path));
     });
 
     expect(escapingSymlinkPaths).toStrictEqual([]);

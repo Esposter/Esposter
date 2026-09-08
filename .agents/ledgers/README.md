@@ -8,6 +8,7 @@ are the `sweeps` skill's `references/standing-resume.md`.
 
 | Ledger                                                | Rules                                                  | Unit                        | Scope                                                                                                |
 | ----------------------------------------------------- | ------------------------------------------------------ | --------------------------- | ---------------------------------------------------------------------------------------------------- |
+| [bench](bench.md)                                     | `bench` skill                                          | one package that benches    | `*.bench.ts`                                                                                         |
 | [browser-boundary](browser-boundary.md)               | `/docs/architecture/browser-execution`                 | one `app/` tree             | `apps/web/app`                                                                                       |
 | [comments](comments.md)                               | `formatting` skill                                     | one package                 | `apps` `packages` `scripts` `.agents` `*.config.ts`                                                  |
 | [docs](docs.md)                                       | `docs` + `readme-standards` + `skill-authoring` skills | one docs area or skill tree | `apps/web/content/docs` `.agents/skills` `*README.md` `AGENTS.md` `CONTRIBUTING.md` `SCORE.md`       |
@@ -25,9 +26,10 @@ are the `sweeps` skill's `references/standing-resume.md`.
 | [vue-components](vue-components.md)                   | `vue-page-composition` + `vue` skills                  | one component tree          | `apps/web/app/components` `apps/web/app/pages` `apps/web/app/layouts`                                |
 | [vue-composable-patterns](vue-composable-patterns.md) | `vue-composable-patterns` skill                        | one composable tree         | `apps/web/app/composables` `apps/web/app/store`                                                      |
 
-Two scopes are deliberately the whole tree rather than a list. The quality lane reads any code, so narrowing it
+Three scopes are deliberately not a directory list. The quality lane reads any code, so narrowing it
 would only hide the areas nobody has looked at; `testing` is scoped by filename because a suite sits beside
-whatever it tests rather than in a tree of its own.
+whatever it tests rather than in a tree of its own — as does `bench`, which reads the same files for a different
+question: `testing` asks whether the file is a well-formed suite, `bench` whether the measurement is honest.
 
 Still unledgered, and known to be: `pagination`, `invariants`, `runtime-efficiency`, and the product skills
 (`esbabbler`, `routing`, `slash-commands`, `tiptap`, `vjsf`, `grapesjs`, `azure-table`, `string-utils`) — each

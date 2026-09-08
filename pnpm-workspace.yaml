@@ -1,6 +1,7 @@
 packages:
   - apps/*
   - packages/*
+  - scripts
 
 allowBuilds:
   "@parcel/watcher": true

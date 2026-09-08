@@ -1,0 +1,61 @@
+{
+  "name": "@esposter/scripts",
+  "version": "2.39.0",
+  "private": true,
+  "description": "The repository's own tooling: the workspace dependency graph, the outdated-dependency report, the custom oxlint plugins, the sweep scans and the cross-platform launcher.",
+  "keywords": [
+    "cli",
+    "dependency-graph",
+    "graphviz",
+    "linting",
+    "monorepo",
+    "oxlint",
+    "pnpm",
+    "tooling",
+    "ts",
+    "typescript",
+    "workspace"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/scripts#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "type": "module",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "scripts": {
+    "bench": "vitest bench --run",
+    "crossOS": "tsx src/crossOS.ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "graph:gen": "tsx src/dependencyGraph/index.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "outdated:dependencies": "tsx src/outdatedDependencies/index.ts",
+    "sweep:constant-scope": "tsx src/sweeps/constantScope/index.ts",
+    "sweep:repeated-list-items": "tsx src/sweeps/repeatedListItems/index.ts",
+    "sweep:shared-export-consumers": "tsx src/sweeps/sharedExportConsumers/index.ts",
+    "sweep:skill-docs": "tsx src/sweeps/skillDocs/index.ts",
+    "sweep:unterminated-results": "tsx src/sweeps/unterminatedResults/index.ts",
+    "test": "vitest",
+    "typecheck": "tsc",
+    "update:node": "tsx src/updateNode/index.ts"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*",
+    "@esposter/shared": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
+    "@hpcc-js/wasm-graphviz": "catalog:",
+    "@oxlint/plugins": "catalog:",
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "vitest": "catalog:"
+  }
+}

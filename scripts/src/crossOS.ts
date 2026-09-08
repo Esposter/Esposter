@@ -1,10 +1,9 @@
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawn } from "node:child_process";
-import { createRequire } from "node:module";
 import { resolve } from "node:path";
 
 // oxlint-disable-next-line no-restricted-imports -- the repo-root manifest, which no `#` map can reach
-import packageJsonType from "../../package.json" with { type: "json" };
+import packageJson from "../../package.json" with { type: "json" };
 
 const minArgv = 3;
 const property = "crossOS";
@@ -17,8 +16,6 @@ if (!script) throw new InvalidOperationError(Operation.Read, property, "script i
 
 const args = process.argv.slice(3);
 const { platform } = process;
-const require = createRequire(import.meta.url);
-const packageJson = require(resolve(process.cwd(), "package.json")) as typeof packageJsonType;
 const command = (packageJson[property] as Record<string, Partial<Record<string, string>>>)[script]?.[platform];
 if (!command)
   throw new InvalidOperationError(
@@ -28,5 +25,13 @@ if (!command)
   );
 // With shell: true, pass a single command string (no args array) — Node deprecates (DEP0190) array
 // Args here since they are concatenated unescaped anyway. args are internal, trusted CLI tokens.
-const proc = spawn([command, ...args].join(" "), { shell: true, stdio: "inherit" });
+// Every command in the map is written against the repository root — a relative path into `scripts/`, an
+// `rm -rf pnpm-lock.yaml` — while the root delegates here with `pnpm -C scripts`, whose cwd is this package.
+// So the root is resolved from this file rather than inherited, and the map is read from the manifest that
+// Declares it rather than from whichever one the caller happened to be standing in.
+const proc = spawn([command, ...args].join(" "), {
+  cwd: resolve(import.meta.dirname, "..", ".."),
+  shell: true,
+  stdio: "inherit",
+});
 proc.on("exit", (code) => process.exit(code));
