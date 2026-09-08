@@ -16,7 +16,7 @@ Most of the `typescript` skill is lint- or typecheck-decided; what this sweep ca
 | `server/services/azure`, `pagination`, `db`, `events`, `post`                                   | 2026-09-08 |                                                                                       |
 | `server/trpc` — everything outside `routers`                                                    | 2026-09-08 | context, procedure builders, middleware                                               |
 | `server/composables`, `server/api`, `server/routes`                                             | 2026-09-08 |                                                                                       |
-| `server/models`, `server/db`, `server/plugins`, `server/auth.ts`                                | —          |                                                                                       |
+| `server/models`, `server/db`, `server/plugins`, `server/auth.ts`                                | 2026-09-08 |                                                                                       |
 | `app/store/message`                                                                             | —          |                                                                                       |
 | `app/store` — the rest                                                                          | —          |                                                                                       |
 | `app/composables/message`                                                                       | —          |                                                                                       |
