@@ -10,6 +10,10 @@ const vitestConfig = await defineVitestProject({
     // Root the Nuxt project at this package, not the vitest cwd (the repo root, where `@nuxt/kit` and the
     // App don't resolve) — the run is driven by the root `projects` config.
     environmentOptions: { nuxt: { rootDir: import.meta.dirname } },
+    // `defineVitestProject` builds its own config rather than taking `getVitestConfiguration`, so the transform
+    // Cache the other members inherit is opted into here. This is the member it matters most for: the app's
+    // Module graph is the largest in the workspace, and transforming it was otherwise redone on every run.
+    fsModuleCache: true,
     // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
     // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
     hookTimeout: Temporal.Duration.from({ minutes: 5 }).total("milliseconds"),
