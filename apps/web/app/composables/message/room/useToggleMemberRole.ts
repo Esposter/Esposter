@@ -18,8 +18,9 @@ export const useToggleMemberRole = (
   );
   const isManageable = computed(() => {
     const myPermissions = getMyPermissions(toValue(roomId));
-    if (!myPermissions) return false;
-    return checkIsManageable(myPermissions.topRolePosition, toValue(role).position, myPermissions.isRoomOwner);
+    if (myPermissions)
+      return checkIsManageable(myPermissions.topRolePosition, toValue(role).position, myPermissions.isRoomOwner);
+    else return false;
   });
   const toggleRole = async () => {
     const input = { roleId: toValue(role).id, roomId: toValue(roomId), userId: toValue(userId) };
