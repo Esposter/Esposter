@@ -23,11 +23,8 @@ export const useSaveRichTextEdit = (
   getSynchronizedFunction(async (editor: Editor) => {
     await getResultAsync(async () => {
       if (edited.value === getOriginal()) return;
-      else if (EMPTY_TEXT_REGEX.test(editor.getText())) {
-        emit("update:delete-mode", true);
-        return;
-      }
-      await update();
+      else if (EMPTY_TEXT_REGEX.test(editor.getText())) emit("update:delete-mode", true);
+      else await update();
     }).match(noop, console.error);
     emit("update:update-mode", false);
     edited.value = getOriginal();
