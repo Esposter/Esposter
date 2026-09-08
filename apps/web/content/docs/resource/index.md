@@ -59,7 +59,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Storage quotas](/docs/resource/storage-quotas) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar in the explorer shell's header
 - [Webpage survey invite blocks](/docs/resource/webpage-survey-invite-blocks) — published surveys as drag-in invite buttons in both GrapesJS editors
 
-Open work is in the [roadmap](/docs/resource/roadmap); the Azure-portal-parity designs it references live under [proposals](/docs/proposals). Ideas we chose not to pursue are under [deferred](/docs/resource/deferred) (with revisit triggers) and [rejected](/docs/resource/rejected).
+Open work is in the [roadmap](/docs/resource/roadmap); the Azure-portal-parity designs it references live under [proposals](/docs/proposals). Ideas we chose not to pursue are under [deferred](/docs/resource/deferred) (with revisit triggers) and [rejected](/docs/resource/rejected). The grid editor keeps its own roadmap, deferred and rejected pages beside it, under [sheet editor](/docs/resource/sheet).
 
 ## Shipped log
 

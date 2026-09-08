@@ -5,7 +5,7 @@ description: Resource ideas we decided against — one page per idea, with the r
 
 # Resource rejected ideas
 
-One page per rejected idea (won't do). Check here and [deferred](/docs/resource/deferred) before adding a roadmap item or proposal — never re-argue a decided idea.
+One page per rejected idea (won't do). Check here and [deferred](/docs/resource/deferred) before adding a roadmap item or proposal — never re-argue a decided idea. Grid-editor ideas are decided one level down, in the [sheet editor](/docs/resource/sheet)'s own deferred and rejected pages.
 
 - [Games integration](/docs/resource/rejected/games-integration) — a game save is one blob; achievements are the right touchpoint
 - [Generic event bus](/docs/resource/rejected/generic-event-bus) — the tRPC mutation path already is the event taxonomy
